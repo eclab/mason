@@ -1,0 +1,256 @@
+<h2>Tutorial 1: Build Conway's Game of Life (Without Visualization)</h2>
+
+<p>In this tutorial we will build a basic version of Conway's Game of Life, a simple two-dimensional cellular automata.  The simulation will run from the command line and will not be visualizable (that's Tutorial 2) so you'll have to take it on faith that it runs properly.
+
+<p>This tutorial teaches:
+<ul>
+<li> How to build a basic simulation, use the random number generator, use the schedule (the representation of time), and schedule agents.
+<li> How to add a basic field (an object neighborhood, or representation of space) to the simulation.
+<li> How to make an agent
+</ul>
+
+<h2>Create a SimState</h2>
+
+<p>In the <b>sim/app/tutorial1and2</b> directory, create a file called <b>Tutorial1.java</b>  In this file, add:
+
+<pre><tt>
+package sim.app.tutorial1and2;
+
+import sim.engine.*;
+import sim.field.grid.*;
+import ec.util.*;
+
+public class Tutorial1 extends SimState
+    {
+    public Tutorial1(long seed)
+        {
+        super(seed);
+        }
+</tt></pre>
+
+<p>A <tt>sim.engine.<b>SimState</b></tt> is the basic class for modelling a simulation.  You can think of it as a singleton object which holds all of your simulation information.  You create a model by subclassing SimState and adding things to it as you like.
+
+<p>
+<table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Why the <i>ec</i> package rather than the <i>sim</i> package?</b>
+<p>Because MersenneTwisterFast was originally part of GMU's <a href="http://cs.gmu.edu/~eclab/tools.html">ECJ</a> Evolutionary Computation system</a>
+</font></td></tr></table>
+
+The basic SimState already holds two important objects for you: an <tt>ec.util.<b>MersenneTwisterFast</b></tt> random number generator, and a <tt>sim.engine.<b>Schedule</b></tt>.  The Schedule is a discrete event scheduler which represents time in the simulation and lets you schedule events to occur in specific times in the future.  The MersenneTwisterFast is a fast, unsynchronized implementation of the Mersenne Twister random number generator, a very high quality and popular generator.  MersenneTwisterFast has the same functions as <tt>java.util.<b>Random</b></tt>, so you should feel at home with it.  We'll talk more about the generator in Tutorial 3.
+
+<p>SimState has various constructors for setting up the MersenneTwisterFast and the Schedule.  We'll just use the simplest: we pass in a long value which is the random seed for the MersenneTwisterFast.
+
+<h2>Make a Grid</h2>
+
+<p>
+In this simulation we will implement Conway's Game of Life, a simple two-dimensional, two-state, eight-neighbor cellular automaton.   The Game of Life is played out on a 2D grid of "live" (state=1) and "dead" (state=0) cells.  It begins with some initial configuration of cells.   Each timestep, all of the cells simultaneously (synchronously) update themselves.  Each cell uses the same rule to update itself, based on its eight neighboring cells.  That rule is:
+
+<ul>
+<li>If I am alive and have one or fewer neighbors who are alive, then I die (presumably of loneliness).
+<li>If I am alive and have four or more neighbors who are alive, then I die (of overcrowding).
+<li>If I am dead and have exactly three alive neighbors, then I become alive again.
+<li>Otherwise, I stay as I am
+</ul>
+
+A good webpage on the Game of Life can be found <a href="http://www.radicaleye.com/lifepage/">here</a>.
+
+<p>
+We will use a two-dimensional toroidal grid that is 100 x 100 in size, consisting entirely of 1's and 0's.  To do this, we'll borrow special <b>Field</b> called <tt>sim.field.grid.<b>IntGrid2D</b></tt>.  Fields are our simulation's representation of space: they relate objects or data using some neighborhood function.  In this case, our field is simply a wrapper two-dimensional array of integers.  Feel free to examine the IntGrid2D code: it's very simple and straightforward.  The 2D integer array it contains is public, and you are strongly encouraged to directly access the data for speed.
+
+<p>Add the grid as follows:
+
+<pre><tt>
+    public IntGrid2D grid;
+    
+    <font color=gray>// our own parameters for setting the grid size later on</font>
+    public int gridWidth = 100;
+    public int gridHeight = 100;
+</tt></pre>
+
+<h2>Seed the Grid</h2>
+
+<p>
+<table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>What's a b-heptomino?</b>
+<p>A heptomino is seven live cells.  Martin Gardner popularized the Game of Life by showing the dynamics of various heptominos, which he named the a-heptomino, b-heptomino, c-heptomino, etc.
+</font></td></tr></table>
+Next we need to define the function which seeds the grid with some initial configuration.  Let's use the <b>b-heptomino</b> seed popular in the Game of Life.  We'll seed the grid by placing the b-heptomino right in the middle of the grid.  Add the seeding code:
+
+<pre><tt>
+    <font color=gray>// A b-heptomino looks like this:</font>
+    <font color=gray>//  X</font>
+    <font color=gray>// XXX</font>
+    <font color=gray>// X XX</font>
+    public static final int[][] b_heptomino = new int[][]
+        {{0, 1, 1},
+         {1, 1, 0},
+         {0, 1, 1},
+         {0, 0, 1}};
+    
+    void seedGrid()
+        {
+        <font color=gray>// we stick a b_heptomino in the center of the grid</font>
+        for(int x=0;x&lt;b_heptomino.length;x++)
+            for(int y=0;y&lt;b_heptomino[x].length;y++)
+                grid.field[x + grid.field.length/2 - b_heptomino.length/2]
+                          [y + grid.field[x].length/2 - b_heptomino[x].length/2] =
+                    b_heptomino[x][y];
+        }
+</tt></pre>
+
+<p>Notice that we're directly accessing the grid's 2D integer <b>field</b> array.  IntGrid2D's require that their 2D array be rectangular, so we could have written <tt>grid.getWidth()</tt> and <tt>grid.getHeight()</tt> instead of <tt>grid.field.length</tt> and <tt>grid.field[x].length</tt> respectively.
+
+<h2>Add the Start and Finish Methods</h2>
+
+<p>The general structure of a simulation is as follows:
+
+<ul>
+<li>The SimState's <b>start()</b> method is called.
+<li>The SimState's <b>schedule.step(state)</b> method is called some number of times or until it returns <tt>false</tt>.  This in turn fires events on agents to manipulate the simulation.
+<li>The SimState's <b>finish()</b> method is called.
+</ul>
+
+<p>We don't need a <b>finish()</b> method, but we do need a <b>start()</b> method.  In this method, we need to call <b>super.start()</b> to let the SimState set up its Schedule.  Then we create the grid and seed it.  Last, we schedule our (in this case) single agent (called <b>CA</b> -- we'll come to that) to repeatedly manipulate the simulation:
+
+<pre><tt>
+    public void start()
+        {
+        super.start();  <font color=gray>// very important!  This resets and cleans out the Schedule.</font>
+        grid = new IntGrid2D(gridWidth, gridHeight);
+        seedGrid();
+        schedule.scheduleRepeating(new CA());
+        }
+</tt></pre>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>How do you stop an infinitely repeating schedule?</b>
+<p>schedule.<b>scheduleRepeating(agent)</b> returns a <tt>sim.engine.<b>Stoppable</b></tt> object.  Call <b>stop()</b> on that object.
+</font></td></tr></table>
+The schedule has a number of methods for scheduling agents to have events fired once or repeating.  We have chosen the simplest repeating schedule: schedule the agent to be fired once every time step forever.
+
+<p>
+<table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Can't it get simpler than that?</b>
+<p>Actually, in Tutorial 2, we'll simplify the <tt>main(...)</tt> code down to just a single method call.  But you should understand what's going on here before using that convenience method (which does it for you and a whole lot more).
+</font></td></tr></table>
+Last we'll write a very simple <b>main(String[] args)</b> method which creates a Tutorial1 with a random seed, starts it, calls step(tutorial1) until the schedule steps to 5000, then finishes up.  After every 500 steps have transpired, the number of steps transpired so far is printed out, plus the timestamp of the last step.  Since timestamps start at 0.0, if the schedule is doing one step per unit of time, the timestamp of the 100th step is 99.0.
+
+<pre><tt>
+    public static void main(String[] args)
+        {
+        Tutorial1 tutorial1 = new Tutorial1(System.currentTimeMillis());
+        tutorial1.start();
+        long steps;
+        do
+            {
+            if (!tutorial1.schedule.step(tutorial1))
+                break;
+            steps = tutorial1.schedule.getSteps();
+            if (steps % 500 == 0)
+                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.time());
+            }
+        while(steps &lt; 5000);
+        tutorial1.finish();
+        System.exit(0);  <font color=gray>// make sure any threads finish up</font>
+        }
+    }
+</tt></pre>
+
+<p>The number of steps of the schedule is a long. But the time used by the schedule is real-valued.  This means you can schedule items to occur at some real-valued timestep (such as at time 3.14159).  When it is stepped, the schedule grabs the minimum-time scheduled agents and sends them an event, then unschedules and removes them.
+
+
+<h2>Create the Cellular Automaton</h2>
+
+<p>All that's left is to write the actual agent which updates the cells in the grid.  Since all the cells must be updated synchronously, at each time step this agent will dump the grid into a secondary grid; then it will update the original grid cells based on the secondary grid cell values.  Create a new file called <b>CA.java</b>.  In this file, put:
+
+<pre><tt>
+package sim.app.tutorial1and2;
+
+import sim.engine.*;
+import sim.field.grid.*;
+
+public class CA implements Steppable
+    {
+    <font color=gray>// the width and height will change later</font>
+    public IntGrid2D tempGrid = new IntGrid2D(0,0);
+</tt></pre>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>What's an Agent?</b>
+<p>We define an Agent in a very specific manner.  An Agent is an object which can be scheduled on a Schedule to be activated at some time step, ostensibly in order for it to change the simulation environment in some way.  Agents don't have to be physically <i>in</i> the environment (that is, in any Field).  They can be in a Field of course, and often are: we call such agents <i>embodied agents</i>.
+</font></td></tr></table>
+So far we've spoken of Agents receiving <i>events</i> from the Schedule.  In fact agents can receive only a single kind of event from the Schedule: the Agent can have its <b>step(SimState)</b> method called.  All agents must implement this method, which in turn means that they must implement the single-method interface <tt>sim.engine.<b>Steppable</b></tt>.
+
+<p>Here's the step(SimState) method:
+
+<pre><tt>
+    public void step(SimState state)
+        {
+        Tutorial1 tut = (Tutorial1)state;
+        tempGrid.setTo(tut.grid);   <font color=gray>// first copy the grid into tempGrid</font>
+        
+        <font color=gray>// for each cell...</font>
+        int width = tempGrid.getWidth();
+        int height = tempGrid.getHeight();
+        for(int x=0;x&lt;width;x++)
+            for(int y=0;y&lt;height;y++)
+                {
+                int count = 0;
+                <font color=gray>// count the number of live neighbors around the cell,</font>
+                <font color=gray>// and to simplify the for-loop, just include the cell itself</font>
+                for(int dx = -1; dx &lt; 2; dx++)
+                    for(int dy = -1; dy &lt; 2; dy++)
+                        count += tempGrid.field[tempGrid.stx(x+dx)][tempGrid.sty(y+dy)];
+                
+                <font color=gray>// since we're including the cell itself, the rule is slightly different:</font>
+                <font color=gray>// if the count is 2 or less, or 5 or higher, the cell dies</font>
+                <font color=gray>// else if the count is 3 exactly, a dead cell becomes live again</font>
+                <font color=gray>// else the cell stays as it is</font>
+                        
+                if (count &lt;= 2 || count >= 5)  <font color=gray>// death</font>
+                    tut.grid.field[x][y] = 0;
+                else if (count == 3)           <font color=gray>// birth</font>
+                    tut.grid.field[x][y] = 1;
+                }
+        }
+    }
+</tt></pre>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Can this be faster?</b>
+<p>In HotSpot, you can get a 15% improvement in speed by copying instance variables to final local variables, like this:
+<pre><tt>
+final int width = tempGrid.getWidth();
+final int height = tempGrid.getHeight();
+final int[][] field = tempGrid.field;
+final int[][] field2 = tut.grid.field;
+for(int x=0;x&lt;width;x++)
+    for(int y=0;y&lt;height;y++)
+        {
+        count = 0;
+        for(int dx = -1; dx < 2; dx++)
+            for(int dy = -1; dy < 2; dy++)
+                count += field[tempGrid.stx(x+dx)][tempGrid.sty(y+dy)];
+        if (count &lt;= 2 || count >= 5)
+            field2[x][y] = 0;
+        else if (count == 3)
+            field2[x][y] = 1;
+        }
+</tt></pre>
+<p>Some other tricks can make it faster yet.  For an extensive tutorial on how to speed up Java, see the sim/app/heatbugs/Diffuser.java file.
+</font></td></tr></table>
+Some notes:
+
+<ul>
+<li>The <b>step(SimState)</b> method will pass in your SimState instance (or more specifically, whatever instance you had passed into the Schedule.step(SimState) method).
+<li>The <b>setTo(IntGrid2D)</b> method resizes the array in the original grid if necessary.  Thus we can start with a tempGrid of unknown size and lazily set it.
+<li>The <b>stx(x)</b> and <b>sty(y)</b> methods are methods to simplify your toroidal math.  For example, if the grid's width is 100, then stx(123) returns 23 to wrap the value back into the legal range.  Similarly, stx(-23) returns 77.  These methods are inlined and fairly fast: there's at most a 25% loss in speed (usually much less) to use them rather than doing your own toroidal computation here.  The methods work properly if your values are no more than a dimension out of bounds: for example, stx(223) will not work correctly.  For complete out-of-bounds toroidal locations regardless of bounds, use the slower <b>tx(x)</b> and <b>ty(y)</b> methods.
+</ul>
+
+<h2>Run the simulation</h2>
+
+<p>As mentioned before, when we run the simulation from the command line, it won't do anything exciting.  You can see the simulation by completing Tutorial 2.
+
+<p>Compile the simulation's two Java files.  Then issue <b>java sim.app.tutorial1and2.Tutorial1</b> from the command line.  Java should run for a second, then silently finish.
+
+

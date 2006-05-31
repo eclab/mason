@@ -1,0 +1,62 @@
+TYPE DECLARATIONS
+
+Kawa makes use of type declarations in order to give compiler hints as to the
+type of a variable, and also in order to access various Java classes.  A type
+declaration looks like this:
+
+	<void>			void type
+	<int>			basic data types (typically java ones)
+	<hereIsASchemeClass>	Scheme classes
+	<java.lang.String>	Java classes
+	<int[][]>		Java arrays
+
+You can type a variable using the :: operator.  This gives a hint to Kawa that
+the varaible will *only* hold an object of that type, which enables it to
+compile to much faster code.  Without ::, the tutorial1 example runs at 1/40
+the speed of the MASON Java version.  With ::, the tutorial1 example runs at
+about 3/4 the speed.  Pretty impressive!
+
+Variables are typed in various places:
+
+	(let (x :: <java.lang.String>
+	     ((y :: <int> 4 ))) ....
+
+	(do ((x :: <int> 0 (+ x 1))) ...
+
+etc.  Basically anywhere where you define a variable or slot, you can instead 
+define that variable :: <type>.
+
+ALLOCATING A JAVA OBJECT
+
+(make <java.util.Random> initialSeed)
+or
+(<java.util.Random> initialSeed)
+; new java.util.Random(initialSeed)
+
+
+CASTING INTO SUBCLASSES
+
+(as <javax.swing.JCheckBox> myButton)
+; ((javax.swing.JCheckBox)myButton)
+
+
+CALLING A STATIC METHOD
+
+(<java.lang.String>:valueOf myObject)
+; java.lang.String.valueOf(myObject)
+
+
+CALLING AN INSTANCE METHOD ON A JAVA OBJECT
+
+(myButton:setSize 100 200)
+; myButton.setSize(100, 200)
+
+
+GETTING/SETTING AN INSTANCE VARIABLE
+
+myButton:val
+(set! myButton:val 42)
+; myButton.val    myButton.val = 42
+
+
+CREATING AN ARRAY OF A GIVEN SIZE

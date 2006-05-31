@@ -1,0 +1,364 @@
+<h2>Tutorial 2: Visualize Conway's Game of Life</h2>
+
+<p>In this tuiorial we will visualize the model created in Tutorial1.
+
+<p>This tutorial teaches:
+<ul>
+<li> How to create a GUIState visualization of a SimState model.
+<li> How to use a basic Portrayal
+<li> How to set up a Controller
+<li> How to do model checkpointing
+<li> How to write a simpler, more sophisticated main() loop.
+</ul>
+
+<h2>Create a GUIState</h2>
+
+<p>In the <b>sim/app/tutorial1and2</b> directory, create a file called <b>Tutorial2.java</b>  In this file, add:
+
+<pre><tt>
+package sim.app.tutorial1and2;
+import sim.engine.*;
+import sim.display.*;
+import sim.portrayal.grid.*;
+import java.awt.*;
+import javax.swing.*;
+
+public class Tutorial2 extends GUIState
+    {
+    public Tutorial2() { super(new Tutorial1(System.currentTimeMillis())); }
+    
+    public Tutorial2(SimState state) { super(state); }
+</tt></pre>
+
+<p>This simulation library makes a very bright dividing line between the simulation model and visualizers of that model.  This enables us (as we'll discover later) to run the model without visualization, then hook visualizers to it and see how it's doing (on a different machine no less), then unhook them and let it continue running at that point.
+
+<p>To do this, we need to make certain that <i>no</i> visualization objects are mixed into the simulation.  We do this by wrapping the SimState in an external object, called a <tt>sim.display.<b>GUIState</b></tt>, which is the sole access point for external visualization tools.  The GUIState is constructed by passing in the SimState it's supposed to wrap.  In this case, that's a <b>Tutorial1</b> object.
+
+<p>Additionally, the GUIState provides a name for the simulation, and a description of the simulation in HTML.  Add:
+
+<pre><tt>
+    public static String getName() { return "Tutorial 2: Life"; }
+    
+    public static Object getInfo()
+        {
+        return 
+        "&lt;H2>Conway's Game of Life&lt;/H2>" +
+        "&lt;p>... with a B-Heptomino"; 
+        }
+</tt></pre>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>I'd prefer to load my description from an HTML file.</b>
+<p>No problem.  If you don't override the <b>getInfo()</b> method at all, the default version loads from a file called <tt>index.html</tt> which must be located in the same directory as your class file (in this case, Tutorial2.class)
+<p>You can also specify a URL for an HTML file of your choosing: instead of returning a String in getInfo(), return a <tt>java.net.URL</tt></table>
+Note that these methods are static.  They're relevant only to this class, and not to subclasses or superclasses -- if you make a subclass of Tutorial2, you'll need to give it its own static methods.  This is done like this because these methods may be called before the class is instantiated (if it's instantiated at all), perhaps to give the user a chance to view information about the simulation before choosing it.
+
+<p>The GUIState is to the visualized simulation as the SimState is to the underlying model: it's essentially a singleton that holds everything we care about.  To the GUIState, we'll add one visualization tool: a <tt>sim.display.<b>Display2D</b></tt>, which is a Swing JComponent that lets us examine 2D model information.  The Display2D isn't in a JFrame window by default, so we need to put it in one (in fact it has a convenience function which "sprouts" the window for us).  Add:
+
+<pre><tt>
+    public Display2D display;
+    public JFrame displayFrame;
+</tt></pre>
+
+<h2>About Portrayals</h2>
+
+<p>A <tt>sim.portrayal.<b>Portrayal</b></tt> is an object which knows how to draw an object and/or allow the user to manipulate it graphically.  There are 2D portrayals for fields (various subclasses of <tt>sim.portrayal.<b>FieldPortrayal2D</b></tt>) and for the objects or values stored inside fields (various subclasses of <tt>sim.portrayal.<b>SimplePortrayal2D</b></tt>).  Most field portrayals work by using their underlying fields to ascertain the objects that need to be drawn, then requesting simple portrayals for those objects, and telling the simple portrayals to draw them.
+
+<p>The portrayal we will be concerned with knows how to draw IntGrid2D (and DoubleGrid2D) fields.  There are two versions of this portrayal: the flexible <tt>sim.portrayal.grid.<b>ValueGridPortrayal2D</b></tt> and the faster but inflexible <tt>sim.portrayal.grid.<b>FastValueGridPortrayal2D</b></tt>.  The first version allows the user to specify a custom simple portrayal to draw each value in the grid.  The second version can only draw its values as colored squares no matter what.  We'll use the second one.  Add:
+
+<pre><tt>
+    FastValueGridPortrayal2D gridPortrayal = new FastValueGridPortrayal2D();
+</tt></pre>
+
+<p>We begin by writing our own private method which sets up the gridPortrayal:
+
+<pre><tt>
+    public void setupPortrayals()
+        {
+        <font color=gray>// tell the portrayals what to portray and how to portray them</font>
+        gridPortrayal.setField(((Tutorial1)state).grid);
+        gridPortrayal.setMap(
+            new sim.util.gui.SimpleColorMap(
+            	new Color[] {new Color(0,0,0,0), Color.blue}));
+        }
+</tt></pre>
+
+<p>The first line attaches the FastValueGridPortrayal2D to its underlying field (the grid).  This isn't done in the FastValueGridPortrayal2D's constructor because at that point the grid may not exist yet.
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>How about gradients?</b>
+<p>SimpleColorMap also supports linear gradients.  Calling <b>new SimpleColorMap(minValue,maxValue,minColor,maxColor)</b> lets you state that colors should run smoothly from minColor to maxColor for the value range from minValue to maxValue.  You can also make SimpleColorMaps which use <i>both</i> gradients <i>and</i> color lookup tables (the color table overrides the gradient within the color table's range).  For more sophisticated drawing, you can provide your own underlying SimplePortrayal2D.
+</font></td></tr></table>
+The second line tells FastValueGridPortrayal2D or ValueGridPortrayal2D that they should use the provided ColorMap (an interface) to associate colors with the numerical values in the Grid.  The <tt>sim.util.guil.<b>SimpleColorMap</b></tt> shown here implements this interface by using a color lookup table.  Here we have the SimpleColorMap say that value 0 should be drawn transparently, and value 1 should be drawn in opaque blue.
+
+<h2>Start and Finish</h2>
+
+<p>Like SimState, GUIState has <b>start()</b> and <b>finish()</b> methods, which in turn call the underlying SimState's start() and finish() methods.  We'll override just the <b>start</b> method:
+
+<pre><tt>
+    public void start()
+        {
+        super.start();      
+        setupPortrayals();  <font color=gray>// set up our portrayals</font>
+        display.reset();    <font color=gray>// reschedule the displayer</font>
+        display.repaint();  <font color=gray>// redraw the display</font>
+        }
+</tt></pre>
+
+<p>The start() method is where we prepare the visualizer for the start of a model run.  To do this, we need to attach the portrayals to the model, reset the display, and repaint the display once.
+
+<p>The GUIstate provides a "schedule wrapper" for Steppable objects which need to schedule themselves to assist in visualization, but are not part of the model (keep in mind we don't want to schedule <i>anything</i> in the SimState's schedule that's not part of the underlying model).  The Display2D is one of these objects: it needs to update its display after each time step.  It schedules itself in this "schedule wrapper" this by calling the GUIState's <b>scheduleImmediateRepeat(...)</b> method.  This happens in the display's <b>reset()</b> method, which is why it must be called here at the start of a model run.
+
+<h2>Controllers</h2>
+
+<p>A GUIState also needs to know when the GUI application has been launched and when it is being quit.  This can't be inside the start() and finish() methods because a simulation can be started and restarted many times while the application is running.  Thus this information is supplied by the <b>init(Controller)</b> and <b>quit()</b> methods.  We won't bother with a <b>quit()</b> method, but we need the <b>init(Controller)</b> method
+
+<p>The init() method is passed a <tt>sim.display.<b>Controller</b></tt> object.  A Controller is responsible for running the simulation.  The Controller calls the start() and finish() methods, and calls the GUIState's step() method (which in turn calls the underlying model's step() method).  You can do various things with the Controller (and especially with its most common subclass, <tt>sim.display.<b>Console</b></tt>); but for our purposes there's one useful function: registering our Display2D's JFrame in the Controller's graphical list of JFrames.  This has several benefits.  First, it allows us to "hide" the JFrame by closing it, and "unhide" it by picking it graphically in the Controller.  Second, whenever the user modifies the model graphically, the JFrame will be repainted to give the Display2D a chance to update itself to reflect this modification.  Without registry, the Display2D will not repaint itself automatically until the next time step.  Third, all windows in the registry will get dispose() called on them automatically before the program quits.  Register your windows.  It's a Good Thing.
+
+<p>Add:
+
+<pre><tt>
+    public void init(Controller c)
+        {
+        super.init(c);
+        
+        <font color=gray>// Make the Display2D.  We'll have it display stuff later.</font>
+        Tutorial1 tut = (Tutorial1)state;
+        display = new Display2D(tut.gridWidth * 4, tut.gridHeight * 4,this,1);
+        displayFrame = display.createFrame();
+        c.registerFrame(displayFrame);   <font color=gray>// register the frame so it appears in the "Display" list</font>
+        displayFrame.setVisible(true);
+
+        display.attach(gridPortrayal,"Life");  <font color=gray>// attach the portrayals</font>
+
+        <font color=gray>// specify the backdrop color  -- what gets painted behind the displays</font>
+        display.setBackdrop(Color.black);
+        }
+</tt></pre>
+
+<p>We first created a Display2D with a drawing area of 400x400.  Since we have a 100x100 grid, this makes our cells 4x4 pixels each.  Second, we let the Display2D sprout its own frame by calling <b>createFrame()</b>.  Third, we registered the frame, then made the window visible.
+
+<p>Next, we attached our grid to the display.  You can attach multiple FieldPortrayals to a display, and they will be drawn one on top of the other (hence why transparency is nice).  Each FieldPortrayal is attached with a simple name which appears in a menu on the Display2D window.
+
+<p>Last, we set the "backdrop color" of the Display2D.  This sets the color to be painted behind all of the Portrayals.
+
+<h2>Initial Test</h2>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>What about Inspectors?</b>
+<p>Portrayals also provide <b>inspectors</b> (part of what Swarm might call "probes") that give the user a chance to read and manipulate information about objects.  If you double-click on any square on the grid, the inspector for that square pops up showing the location of the square and its current value.  Note that you cannot change the value to things other than 0 or 1.  This is because we only gave colors (transparent and blue) for these values when we called setColorTable(...).
+
+<p>You can make custom inspectors in a variety of ways; we'll discuss this in a later tutorial.
+</font></td></tr></table>
+
+Before we can test the program, we need to write a new <b>main(String[])</b> function which launches the visualization system.  Add to the file the following:
+
+<pre><tt>
+    public static void main(String[] args)
+        {
+        Tutorial2 tutorial2 = new Tutorial2();
+        Console c = new Console(tutorial2);
+        c.setVisible(true);
+        }
+</tt></pre>
+
+This creates a Tutorial2.  It then creates a <tt>sim.display.<b>Console</b></tt>, which is a Controller that provides a nice graphical interface (the Console is the window with the Play/Stop/Pause buttons).  The Console needs to know what GUIState to launch and run -- we pass it our Tutorial2.  Then we make the Console window visible.
+
+<p>Now we're ready to test.  Save the <b>Tutorial2.java</b> file.  Compile the <b>CA.java</b>, <b>Tutorial1.java</b>, and <b>Tutorial2.java</b> files.  Then run the program as <b>java sim.app.tutorial1and2.Tutorial2</b>
+
+<p>The program will launch, displaying the grid cells, with the live ones hilighted in blue.  Press play and watch it go.
+
+
+<h2>Checkpointing</h2>
+
+<p>One nice point about the system is its ability to <b>checkpoint out</b> the model, and to read models from checkpoints.  This permits us to do the following sequence, for example:
+
+<ol>
+<li>Run a Tutorial1 (the model) on the command line.  Let it checkpoint out at some point in time.
+<li>Launch a Tutorial2 (the visualizer).
+<li>Load the model's checkpoint into the visualizer.
+<li>Press UnPause and watch it continue from the checkpointed time.
+<li>Let it run for a bit, then write out <i>another</i> checkpoint to the disk.
+<li>Run a Tutorial1 using the new checkpoint.  It starts from that checkpointed position and continues.
+</ol>
+
+<p>For some experiments this isn't really a necessary feature.  But the simulation system was designed for large numbers of long, complex runs on back-end machines, with occasional visualization of the results.
+
+<p>Checkpoint files can even be traded among different operating systems.  This trick is done by using Java's Serialization features.  To do checkpointing, all classes used in the underlying model must implement the interface <tt>java.io.<b>Serializable</b></tt>.  Since CA implements Steppable, it automatically implements Serializable as well.
+
+<p>To checkpoint out from Tutorial1, we need to add some features to the main() method.  In the <b>Tutorial1.java</b> file, delete the existing main() method.  In its place, write:
+
+<pre><tt>
+    public static void main(String[] args)
+        {
+        Tutorial1 tutorial1 = null;
+        
+        <font color=gray>// should we load from checkpoint?</font>
+        
+        for(int x=0;x&lt;args.length-1;x++)  <font color=gray>// "-fromcheckpoint" can't be the last string</font>
+            if (args[x].equals("-fromcheckpoint"))
+                {
+                SimState state = SimState.readFromCheckpoint(new java.io.File(args[x+1]));
+                if (state == null)   <font color=gray>// there was an error -- quit (error will be displayed)</font>
+                    System.exit(1);
+                else if (!(state instanceof Tutorial1))  <font color=gray>// uh oh, wrong simulation stored in the file!</font>
+                    {
+                    System.out.println("Checkpoint contains some other simulation: " + state);
+                    System.exit(1);
+                    }
+                else <font color=gray>// we're ready to lock and load!</font>
+                    tutorial1 = (Tutorial1)state;
+                }
+</tt></pre>
+
+<p>This little chunk of code lets us start a Tutorial1 simulation on the command line, loading from an existing checkpoint file using the <b>-fromcheckpoint</b> parameter.  Continuing:
+
+<pre><tt>
+        <font color=gray>// ...or should we start fresh?</font>
+        if (tutorial1==null)  <font color=gray>// no checkpoint file requested</font>
+            {
+            tutorial1 = new Tutorial1(System.currentTimeMillis());
+            tutorial1.start();
+            }
+</tt></pre>
+
+<p>Here, if no <b>-fromcheckpoint</b> argument was provided, we just start a brand-spanking-new Tutorial1.  Continuing, we run the main loop as before, but every 500 steps we write out a checkpoint file of the model.
+
+<pre><tt>
+        long steps;
+        do
+            {
+            if (!tutorial1.schedule.step(tutorial1))
+                break;
+            steps = tutorial1.schedule.getSteps();
+            if (steps % 500 == 0)
+                {
+                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.time());
+                String s = steps + ".Tutorial1.checkpoint";
+                System.out.println("Checkpointing to file: " + s);
+                tutorial1.writeToCheckpoint(new java.io.File(s));
+                }
+            }
+        while(steps < 5000);
+        tutorial1.finish();
+        System.exit(0);  <font color=gray>// make sure any threads finish up</font>
+        }
+</tt></pre>
+
+<p>Now, we need to add an additional function to the <b>Tutorial2.java</b> file: the <b>load()</b> method.  This method is similar to <b>start()</b>, except that it is called after a checkpoint has been loaded into the visualizer.
+
+<p>Just like in <b>start()</b>, in <b>load()</b>, we typically have to attach the visulization equipment to the newly-loaded model.  Add the following to the Tutorial2.java file:
+
+<pre><tt>
+    public void load(SimState state)
+        {
+        super.load(state);      
+        setupPortrayals();  <font color=gray>// set up our portrayals for the new SimState model</font>
+        display.reset();    <font color=gray>// reschedule the displayer</font>
+        display.repaint();  <font color=gray>// redraw the display</font>
+        }
+</tt></pre>
+
+<h2>Test the Checkpointing</h2>
+
+<p>Save and compile the <b>Tutorial1.java</b> and <b>Tutorial2.java</b> files.  Then run <b>java sim.app.tutorial1and2.Tutorial1</b> and note that it writes out a checkpoint file every 500 timesteps.  We only care about the first one, so feel free to quit the program after that checkpoint has been written out.
+
+<p>Next, let's view the model at that checkpoint.  Run <b>java sim.app.tutorial1and2.Tutorial2</b> and click on the Console window (the window with the Play/Pause/Stop buttons).  Choose <b>Open...</b> from the <b>File</b> menu.  Select the file <b>500.tutorial1.checkpoint</b>.  The display will change to reflect timestep 499, and the Console will go into paused mode.  Unpausing the simulation results in the model running starting at timestep 500.
+
+<p>Let it run for a little while. Then select <b>Save As...</b> from the <b>File</b> menu.  Save out the simulation with the file name <b>new.checkpoint</b> then quit the program.
+
+<p>Last, let's start up the model from the command line starting at the timestep where we saved out <b>new.checkpoint</b>.  Simply run <b>java sim.app.tutorial1and2.Tutorial1 -fromcheckpoint new.checkpoint</b> and watch it go!
+
+<p>For extra fun, try trading the checkpoint file across different operating systems (MacOS X and Linux for example).  This mostly works if the systems are running the same Java version (say, 1.4.1).  There's another gotcha here regarding inner classes which we'll get to in Tutorial 3.
+
+<h2>A Simpler, More Sophisticated main(...)</h2>
+
+<p>This <b>main(...)</b> loop got complicated.  But there are still more command-line arguments we might like: like quitting after N steps, or specifying how often to write out the checkpoint, or providing the random number generator seed.
+
+<p>To handle most of the common situations, we've whipped up a somewhat more complicated main(...) loop for you, called <b>SimState.doLoop(...)</b>.  In the Tutorial1.java file, replace the main() with a whole new one that looks like this:
+
+<pre><tt>
+    public static void main(String[] args)
+        {
+        doLoop(Tutorial1.class, args);
+        System.exit(0);
+        }
+</tt></pre>
+
+<p>Well!  That's a lot easier.  <b>doLoop(...)</b> needs two things: the class that it should instantiate a simulation from, and the command line arguments.  That's it.  Compile the Tutorial1.java file.  We start by running <b><tt>java sim.app.tutorial1and2.Tutorial1 -help</tt></b> and see the following message:
+
+<pre><tt>
+Format:           java sim.app.tutorial1and2.Tutorial1 \
+                       [-help] [-checkpoint C] [-repeat R] [-seed S] \
+                       [-for F] [-until U] [-time T] [-docheckpoint D] 
+
+-help             Shows this message.
+
+-repeat R         Long value > 0: Runs the job R times. The random seed for
+                  each job is the provided -seed plus the job# (starting at 0).
+                  Default: runs once only: job number is 0.
+
+-checkpoint C     String: loads the simulation from file C for
+                  job# 0. Further jobs are started new using -seed as normal.
+                  Default: starts a new simulation rather than loading one.
+
+-until U          Double value >= 0: the simulation must stop when the
+                  simulation time U has been reached or exceeded.
+                  Default: don't stop.
+
+-for N            Long value >= 0: the simulation must stop when N
+                  simulation steps have transpired.
+                  Default: don't stop.
+
+-seed S           Long value not 0: the random number generator seed.
+                  Default: the system time in milliseconds.
+
+-time T           Long value >= 0: print a timestamp every T simulation steps.
+                  If 0, nothing is printed.
+                  Default: auto-chooses number of steps based on how many
+                  appear to fit in one second of wall clock time.  Rounds to
+                  one of 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, etc.
+
+-docheckpoint D   Long value > 0: checkpoint every D simulation steps.
+                  Default: never.
+                  Checkpoints files named
+                  &lt;steps>.&lt;job#>.Tutorial1.checkpoint
+</tt></pre>
+
+<p>Let's try some.  We'll run 3 times for 1000 steps each, checkpointing every 500 steps, with a random seed of 2000 (then 2001, then 2002).  Here we go:  <b><tt>java sim.app.tutorial1and2.Tutorial1 -repeat 3 -docheckpoint 500 -for 1000 -seed 2000</tt></b>  We get printed out something like this:
+
+<pre><tt>
+Job: 0 Seed: 2000
+Starting sim.app.tutorial1and2.Tutorial1
+Steps: 250 Time: 249 Rate: 131.92612
+Steps: 500 Time: 499 Rate: 130.0052
+Checkpointing to file: 500.0.Tutorial1.checkpoint
+Steps: 750 Time: 749 Rate: 117.92453
+Steps: 1000 Time: 999 Rate: 134.77089
+Checkpointing to file: 1000.0.Tutorial1.checkpoint
+Quit
+Job: 1 Seed: 2001
+Starting sim.app.tutorial1and2.Tutorial1
+Steps: 250 Time: 249 Rate: 130.89005
+Steps: 500 Time: 499 Rate: 136.91128
+Checkpointing to file: 500.1.Tutorial1.checkpoint
+Steps: 750 Time: 749 Rate: 129.19897
+Steps: 1000 Time: 999 Rate: 135.94345
+Checkpointing to file: 1000.1.Tutorial1.checkpoint
+Quit
+Job: 2 Seed: 2002
+Starting sim.app.tutorial1and2.Tutorial1
+Steps: 250 Time: 249 Rate: 134.26423
+Steps: 500 Time: 499 Rate: 130.68479
+Checkpointing to file: 500.2.Tutorial1.checkpoint
+Steps: 750 Time: 749 Rate: 129.06557
+Steps: 1000 Time: 999 Rate: 136.61202
+Checkpointing to file: 1000.2.Tutorial1.checkpoint
+Quit
+</tt></pre>
+
+Your printout may vary depending on how many steps your computer can process in a second.
+
+<p>Some explanation.  "Job" is the job number (starting at 0).  "Seed" is the random number seed (2000, 2001, 2002) of that job.  If a job is started new rather than loaded from checkpoint, you'll see "Starting..." (rather than "Loading...")  Every so many steps a timestep is printed out.  Unless it's hard-set in the options, it's computed to be roughly every 1 second of clock time.  The timestep states "Steps": how many steps have transpired, "Time", the time of the last tep, and "Rate", the approximate number of steps per second.  As you can see, checkpoints are done every 200 steps.  Finally the job will state either "Quit" or "Expired".  "Quit" means that the job was run for so long and then stopped.  "Expired" means the job quit because there was nothing left on the Schedule to execute.
+
+<p>Keep in mind that the <b>doLoop(...)</b> facility is just a convenience function to make it easy for you to write a reasonably complex main() loop.  But we've taken pains to build other main() loops for you so you can see that all you have to do to run a MASON simulation is create a SimState, start() it, step() its schedule some number of times, then finish() it and throw it away.  It's self-contained: don't be afraid of it.

@@ -1,0 +1,254 @@
+/*
+  Copyright 2006 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
+package sim.util;
+
+/**
+   Double3D is more or less the same class as javax.vecmath.Point3d, but it is immutable: once the x and y and z values are set, they cannot be changed (they're final).  Why use this immutable class when you could just use Point3d?  Because Point3d is broken with respect to hash tables.  You use Point3d as a key in a hash table at your own peril.  Try this: hash an object by a Point3d as key.  Then change the x value of the original Point3d.  Ta-da!  The object is lost in the hash table.  Additionally, Point3d is in a nonstandard package (javax.vecmath) that we may or may not distribute with.
+
+   <p>One day in the far future, Double2D should also be HIGHLY efficient; since it is immutable, it can be passed by value rather than by pointer by a smart compiler.  Not today, though.  But it's not bad.
+
+   <p>This class has an elaborate hash code generation that is much more random than Sun's standard generator, but takes more time.  For very large numbers of objects, this is a good idea, but we may change it to a simpler version in the future.
+
+   <p>Double3D.equals(...) can compare by value against other Int3Ds and Double3Ds.
+*/
+
+public final class Double3D implements java.io.Serializable
+    {
+    public final double x;
+    public final double y;
+    public final double z;
+    
+    public Double3D() { x = 0.0; y = 0.0; z = 0.0;}
+    /** Explicitly assumes the z value is set to 0 */
+    public Double3D(final Int2D p) { x = p.x; y = p.y; z = 0.0; }
+    public Double3D(final Int2D p, final double z) { x = p.x; y = p.y; this.z = z; }
+    public Double3D(final Int3D p) { x = p.x; y = p.y ; z = p.z; }
+    /** Explicitly assumes the z value is set to 0 */
+    public Double3D(final MutableInt2D p) { x = p.x; y = p.y; z = 0.0; }
+    public Double3D(final MutableInt2D p, final double z) { x = p.x; y = p.y; this.z = z; }
+    public Double3D(final MutableInt3D p) { x = p.x; y = p.y ; z = p.z; }
+    /** Explicitly assumes the z value is set to 0 */
+    public Double3D(final Double2D p) { x = p.x; y = p.y; z = 0.0; }
+    public Double3D(final Double2D p, final double z) { x = p.x; y = p.y; this.z = z; }
+    public Double3D(final Double3D p) { x=p.x; y=p.y; z=p.z; }
+    /** Explicitly assumes the z value is set to 0 */
+    public Double3D(final MutableDouble2D p) { x = p.x; y = p.y; z = 0.0; }
+    public Double3D(final MutableDouble2D p, final double z) { x = p.x; y = p.y; this.z = z; }
+    public Double3D(final MutableDouble3D p) { x=p.x; y=p.y; z=p.z; }
+    public Double3D(final double x, final double y, double z) { this.x = x; this.y = y; this.z = z;}
+    public final double getX() { return x; }
+    public final double getY() { return y; }
+    public final double getZ() { return z; }
+    public String toString() { return "Double3D["+x+","+y+","+z+"]"; }
+    public String toCoordinates() { return "(" + x + ", " + y + ", " + z + ")"; }
+
+    public int hashCode()
+        {
+        // so we hash to the same value as Int2D does, if we're ints
+        if ((((int)x) == x) && (((int)y) == y) && (((int)z) == z))
+            //  return Int3D.hashCodeFor((int)x,(int)y,(int)z);
+        
+            {
+            int y = (int)this.y;
+            int x = (int)this.x;
+            int z = (int)this.z;
+            
+            // copied from Int3D and inserted here because hashCodeFor can't be
+            // inlined and this saves us a fair chunk on some hash-heavy applications
+                        
+            z += ~(z << 15);
+            z ^=  (z >>> 10);
+            z +=  (z << 3);
+            z ^=  (z >>> 6);
+            z += ~(z << 11);
+            z ^=  (z >>> 16);
+            
+            z ^= y;
+            z += 17;    // a little prime number shifting -- waving a dead chicken?  dunno
+            
+            z += ~(z << 15);
+            z ^=  (z >>> 10);
+            z +=  (z << 3);
+            z ^=  (z >>> 6);
+            z += ~(z << 11);
+            z ^=  (z >>> 16);
+
+            // nifty!  Now mix in x
+            
+            return x ^ z;
+            }
+            
+
+        // I don't like Sun's simplistic approach to random shuffling.  So...
+        // basically we need to randomly disperse <double,double,double> --> int
+        // We do this by doing <double,double,double> -> <long,long,long> -> long -> int
+        // The first step is done with doubleToLongBits (not RawLongBits;
+        // we want all NaN to hash to the same thing).  Then conversion to
+        // a single long is done by hashing (shuffling) z, then xoring it with y,
+        // then hashing that and xoring with x.
+        // I do that as x ^ hash(y ^ hash(z) + 17 [or whatever]). Hash function
+        // taken from http://www.cris.com/~Ttwang/tech/inthash.htm
+
+        // Some further discussion.  Sun's moved to a new hash table scheme
+        // which has (of all things!) tables with lengths that are powers of two!
+        // Normally hash table lengths should be prime numbers, in order to
+        // compensate for bad hashcodes.  To fix matters, Sun now is
+        // pre-shuffling the hashcodes with the following algorithm (which
+        // is short but not too bad -- should we adopt it?  Dunno).  See
+        // http://developer.java.sun.com/developer/bugParade/bugs/4669519.html
+        //    key += ~(key << 9);
+        //    key ^=  (key >>> 14);
+        //    key +=  (key << 4);
+        //    key ^=  (key >>> 10);
+        // This is good for us because Int2D, Int3D, Double2D, and Double3D
+        // have hashcodes well distributed with regard to y and z, but when
+        // you mix in x, they're just linear in x.  We could do a final
+        // shuffle I guess.  In Java 1.3, they DON'T do a pre-shuffle, so
+        // it may be suboptimal.  Since we're all moving to 1.4.x, it's not
+        // a big deal since 1.4.x is shuffling the final result using the
+        // Sun shuffler above.  But I'd appreciate some tests on our method
+        // below, and suggestions as to whether or not we should adopt the
+        // shorter, likely suboptimal but faster Sun shuffler instead
+        // for y and z values.  -- Sean
+        
+        long key = Double.doubleToLongBits(z);
+        key += ~(key << 32);
+        key ^= (key >>> 22);
+        key += ~(key << 13);
+        key ^= (key >>> 8);
+        key += (key << 3);
+        key ^= (key >>> 15);
+        key += ~(key << 27);
+        key ^= (key >>> 31);
+        
+        key ^= Double.doubleToLongBits(y);
+        key += 17;    // a little prime number shifting -- waving a dead chicken?  dunno
+        
+        key += ~(key << 32);
+        key ^= (key >>> 22);
+        key += ~(key << 13);
+        key ^= (key >>> 8);
+        key += (key << 3);
+        key ^= (key >>> 15);
+        key += ~(key << 27);
+        key ^= (key >>> 31);
+
+        // nifty!  Now mix in z
+        
+        key ^= Double.doubleToLongBits(z);
+        
+        // Last we fold on top of each other
+        return (int)(key ^ (key >> 32));
+        }
+        
+    // can't have separate equals(...) methods as the
+    // argument isn't virtual
+    public boolean equals(final Object obj)
+        {
+        if (obj==null) return false;
+        else if (obj instanceof Double3D)  // do Double3D first
+            {
+            Double3D other = (Double3D) obj;
+            // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
+            return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
+                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+                    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+            }
+        else if (obj instanceof MutableDouble3D)
+            {
+            MutableDouble3D other = (MutableDouble3D) obj;
+            // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
+            return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
+                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+                    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+            }
+        else if (obj instanceof Int3D)
+            {
+            Int3D other = (Int3D) obj;
+            return (other.x == x && other.y == y && other.z == z);
+            }
+        else if (obj instanceof MutableInt3D)
+            {
+            MutableInt3D other = (MutableInt3D) obj;
+            return (other.x == x && other.y == y && other.z == z);
+            }
+        else return false;
+        }
+
+
+    /** Returns the distance FROM this Double3D TO the specified point */
+    public double distance(final double x, final double y, final double z)
+        {
+        final double dx = (double)this.x - x;
+        final double dy = (double)this.y - y;
+        final double dz = (double)this.z - z;
+        return Math.sqrt(dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the distance FROM this Double3D TO the specified point.   */
+    public double distance(final Double3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return Math.sqrt(dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the distance FROM this Double3D TO the specified point.    */
+    public double distance(final Int3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return Math.sqrt(dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the distance FROM this Double3D TO the specified point.    */
+    public double distance(final MutableInt3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return Math.sqrt(dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this Double3D TO the specified point */
+    public double distanceSq(final double x, final double y, final double z)
+        {
+        final double dx = (double)this.x - x;
+        final double dy = (double)this.y - y;
+        final double dz = (double)this.z - z;
+        return (dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    public double distanceSq(final Double3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return (dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    public double distanceSq(final Int3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return (dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    public double distanceSq(final MutableInt3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return (dx*dx+dy*dy+dz*dz);
+        }
+    }

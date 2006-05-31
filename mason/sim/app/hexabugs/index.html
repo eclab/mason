@@ -1,0 +1,23 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>HexaBugs</h2> 
+By Liviu Panait
+</table>
+
+<p>HexaBugs is a variation of HeatBugs on a hexagonal grid, an idea largely inspired by <a href="http://repast.sourceforge.net/examples/index.html">Hexabugs</a> on the Repast toolkit.  By default the grid cells are drawn as elongated rectangles; if you want to draw them as true hexagons (slower), there's an option for that under the Model tab.  Like HeatBugs, HexaBugs has a hand-optimized diffuser (HexaDiffuser.java) and a multithreaded version (ThreadedHexaDiffuser.java), plus a tutorial about different levels of optimization.
+
+<p>You might compare to plain HeatBugs.  Or try 3D HeatBugs: HeatBugs in 2D but cast in 3D space.
+
+<p><hr>
+<b>From the HeatBugs console documentation:</b> HeatBugs is a model originally developed on the <a href="http://www.swarm.org/examples-heatbugs.html">Swarm toolkit.</a>  The environment is a toroidal 100x100 grid of "heat", populated with 100 "bugs" with built-in heaters which heat up their environment.  The bugs prefer it to be not too warm and not too cold (the range differs from bug to bug), and will follow the gradient towards regions more to their liking.  The heat diffuses and evaporates at the provided rate. We have set up various model parameters you might like to play with.
+
+<p>HeatBugs spends the large majority of its computer time in the diffusion of heat.  Our version of HeatBugs optimizes this in two ways:
+
+<ol>
+<li> We've hand-optimized it carefully.  In the body of the Diffuser.java we have a step-by-step tutorial showing optimization after optimization.  
+<li> We have a special version of Diffuser.java, called ThreadedDiffuser.java, which takes advantage of dual-processor machines to break the diffusion work up among two processors.  If you have more than two processors, ThreadedDiffuser.java can be modified with some elbow grease to take advantage of them as well.
+</ol>
+
+</body></html>

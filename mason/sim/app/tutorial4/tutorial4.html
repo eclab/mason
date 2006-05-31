@@ -1,0 +1,573 @@
+<h2>Tutorial 4: Inspect a Multiagent Simulation</h2>
+
+<p>In this tutorial we will continue what was done in Tutorial 3, adding more features.
+
+<p>This tutorial teaches:
+<ul>
+<li> How to use multiple Displays
+<li> How to use different SimplePortrayals and FieldPortrayals simultaneously
+<li> How to create basic Inspectors
+<li> How to specify Inspector Proxies
+<li> How to specify a global model Inspector
+<li> How to create a custom Inspector
+<li> How to handle thread issues
+</ul>
+
+<h2>Convert Tutorial3</h2>
+
+<p>We begin by converting the Tutorial3 code to Tutorial4.  Create a directory called <b>sim/app/tutorial4</b>.  Copy all the Tutorial3 java files into this directory.  Rename the <b>sim/app/tutorial4/Tutorial3.java</b> and <b>sim/app/tutorial4/Tutorial3WithUI.java</b> to <b>Tutorial4.java</b> and <b>Tutorial4WithUI.java</b> respectively.  Then modify the three java file copies as follows:
+
+<ol>
+<li>Replace all references to <tt>tutorial3</tt> with <tt>tutorial4</tt>
+<li>Replace all references to <tt>Tutorial3</tt> with <tt>Tutorial4</tt>
+</ol>
+
+<p>At this point we'll be working solely with these copied and modified files.
+
+<h2>Add another Display2D</h2>
+
+<p>Let's add another Display2D.  In the <b>Tutorial4WithUI.java</b>, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td><td align=center><b>CHANGE TO</b></td>
+<tr><td><pre><tt>
+public Display2D display;
+public JFrame displayFrame;
+</tt></pre></td><td><pre><tt>
+public Display2D display;
+public JFrame displayFrame;
+<font color=blue>
+
+public Display2D display2;
+public JFrame displayFrame2;
+</font>
+</tt></pre></td></tr></table>
+
+<p>Now we'll hook it up to only show the agents (the original display will show <i>both</i> the agents and the trails).  Also for good measure, we'll make its background blue.  And stretch it weirdly, how about 400x600? Heck, why not? Change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td><td align=center><b>CHANGE TO</b></td>
+<tr><td><pre><tt>
+display = new Display2D(400,400,this,1);
+displayFrame = display.createFrame();
+c.registerFrame(displayFrame);
+displayFrame.setVisible(true);
+display.setBackdrop(Color.black);
+display.attach(trailsPortrayal,"Trails");
+display.attach(particlesPortrayal,"Particles");
+</tt></pre></td><td><pre><tt>
+display = new Display2D(400,400,this,1);
+displayFrame = display.createFrame();
+c.registerFrame(displayFrame);
+displayFrame.setVisible(true);
+display.setBackdrop(Color.black);
+display.attach(trailsPortrayal,"Trails");
+display.attach(particlesPortrayal,"Particles");
+<font color="blue">
+
+display2 = new Display2D(400,600,this,1);
+displayFrame2 = display2.createFrame();
+displayFrame2.setTitle("The Other Display");
+c.registerFrame(displayFrame2);
+displayFrame2.setVisible(true);
+display2.setBackdrop(Color.blue);
+display2.attach(particlesPortrayal,"Squished Particles!");
+</font>
+</tt></pre></td></tr></table>
+
+<p>Last, we need to update this new Display2D.  Change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td><td align=center><b>CHANGE TO</b></td>
+<tr><td><pre><tt>
+<font color=gray>// reschedule the displayer</font>
+display.reset();
+        
+<font color=gray>// redraw the display</font>
+display.repaint();
+</tt></pre></td><td><pre><tt>
+<font color=gray>// reschedule the displayer</font>
+display.reset();
+<font color=blue>display2.reset();</font>
+
+<font color=gray>// redraw the display</font>
+display.repaint();
+<font color=blue>display2.repaint();</font>
+</tt></pre></td></tr></table>
+
+<p>Save the file and compile all three files.  Run <b>java sim.app.tutorial4.Tutorial4WithUI</b> and note that two Display2D windows pop up now.  Try it out. 
+
+<p>On many Java platforms, when the "Other Display" is visible (if you close it, you can get it back under the Displays tab), things slow down a lot.  This is because there was hardware acceleration for circles, but "The Other Display" has to draw circles (they're squished), and there's no hardware acceleration for that.  This slows stuff down a ton.
+
+<p>Let's make things faster by changing how the "Other Display"'s portrayal portrays the agents -- we'll have it display them as rectangles, not circles; this is hardware accelerated, and it teaches an important notion about portrayals as well.  We'll add a <b>second portrayal for the same field</b>:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+SparseGridPortrayal2D particlesPortrayal = new SparseGridPortrayal2D();
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+SparseGridPortrayal2D particlesPortrayal = new SparseGridPortrayal2D();
+<font color="blue">SparseGridPortrayal2D particlesPortrayal2 = new SparseGridPortrayal2D();
+</font>
+</tt></pre></td></tr></table>
+
+<p>Now we'll hook it up to the SparseGrid2D just like the other portrayal was hooked up.  Only we'll tell it to use Squares rather than Ovals to draw the agents.
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+particlesPortrayal.setField(((Tutorial4)state).particles);
+particlesPortrayal.setPortrayalForAll( new sim.portrayal.simple.OvalPortrayal2D(Color.green) );
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+particlesPortrayal.setField(((Tutorial4)state).particles);
+particlesPortrayal.setPortrayalForAll( new sim.portrayal.simple.OvalPortrayal2D(Color.green) );
+<font color="blue">particlesPortrayal2.setField(((Tutorial4)state).particles);
+particlesPortrayal2.setPortrayalForAll( new sim.portrayal.simple.RectanglePortrayal2D(Color.green) );
+</font>
+</tt></pre></td></tr></table>
+
+<p>Last we need to tell the "Other Display" to use this different portrayal to portray the field.
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+display2.attach(particlesPortrayal,"Squished Particles!");
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+<font color="blue">display2.attach(particlesPortrayal2,"Squished Particles as Squares!");</font>
+</tt></pre></td></tr></table>
+
+<p>Compile and run it.  Now we have two fast portrayals in two displays, one drawing with ovals and one drawing with squares.  The point of this exercise is to show that <b>Displays are separate from Portrayals</b> and <b>Portrayals are separate from Fields or their Objects</b>.  Just as you can have multiple portrayals per display, you can have multiple displays per portrayal.  Similarly, you can have multiple portrayals portraying the same field, in different ways, using different underlying SimplePortrayals.
+
+<H2>Add Another Agent</H2>
+
+Let's add a special kind of Particle called a BigParticle.  It bounces off walls like the others; but it doesn't ever get randomized.  Create the file <b>BigParticle.java</b>.  In this file, add:
+
+<pre><tt>
+package sim.app.tutorial4;
+import sim.engine.*;
+import sim.util.*;
+
+<font color=gray>/** A bouncing particle that cannot be randomized */</font>
+
+public class BigParticle extends Particle
+    {
+    public BigParticle(int xdir, int ydir) { super(xdir,ydir); }
+
+    public void step(SimState state)
+        {
+        <font color=gray>// hard-code me to be non-randomized</font>
+        randomize = false;
+        super.step(state);
+        }
+    }
+</tt></pre>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Ah, so <i>that's</i> what gets scheduled in Order 1</b>
+<p>Yes.
+</font></td></tr></table>
+<p>Save the file. Now let's schedule the BigParticle in some interesting way: it gets fired after the other Particles, but before the Decreaser, and it gets fired only once every 5 time steps.  In the <b>Tutorial4.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+<font color=gray>// Schedule the decreaser</font>
+Steppable decreaser = new Steppable()
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+<font color="blue">
+BigParticle b = new BigParticle(random.nextInt(3) - 1, random.nextInt(3) - 1);
+particles.setObjectLocation(b,
+    new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));
+schedule.scheduleRepeating(Schedule.EPOCH,1,b,5);
+</font>
+<font color=gray>// Schedule the decreaser</font>
+Steppable decreaser = new Steppable()
+</tt></pre></td></tr></table>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>What other Portrayal options are there?</b>
+<p>We could have <b>setPortrayalForObject(...)</b> to give a unique portrayal for a specific agent (rather than a class).  Or we could have let the agent subclass from, say, <b>OvalPortrayal2D</b> (or override some other SimplePortrayal) and it'd draw itself onscreen.  There are more options yet. </font></td></tr></table>
+<p>We'll have the BigParticle only show up in the regular Display2D (not the "Other Display").  But let's have it show up as a red square slightly too big.  The problem is, we've told the SparseGridPortrayal2D that <b>all objects</b> should be drawn as ovals.  We need to change that.  Remember that Field Portrayals go through a lookup process to determine which SimplePortrayal to use for a given object.  We'll just specify different objects.  To do this, we tell the FieldPortrayal to use ovals for members of the Particle class, but to use slightly-too-big red squares for members of the BigParticle class.  In the <b>Tutorial4WithUI.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+particlesPortrayal.setPortrayalForAll( new sim.portrayal.simple.OvalPortrayal2D(Color.green) );
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+<font color="blue">
+particlesPortrayal.setPortrayalForClass(
+    Particle.class, new sim.portrayal.simple.OvalPortrayal2D(Color.green) );
+particlesPortrayal.setPortrayalForClass(
+    BigParticle.class, new sim.portrayal.simple.RectanglePortrayal2D(Color.red, 1.5) );</font>
+</tt></pre></td></tr></table>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Sometimes the Red Square doesn't move!</b>
+<p>Because, by random chance, its velocity is x=0, y=0.  Stop and play again.
+</font></td></tr></table>
+<p>Save all the files, compile them, and run.  Notice the red square slowly bouncing around oblivious to the others (but affecting them!).
+
+<H2>Add an Inspector</H2>
+
+<p>In Tutorial2, we discussed <b>Inspectors</b> (part of what Swarm would call "probes").  These are panels which let you view and modify state information about individual objects.
+
+<p>SimplePortrayals provide inspectors for the objects they're portraying by implementing the <b>getInspector</b> method, which looks like this:
+
+<pre><tt>
+    public Inspector getInspector(LocationWrapper wrapper, GUIState state)
+        {
+        ...
+        }
+</tt></pre>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>What's a Java Bean Property?</b>
+<p>A standard way to write method names to access or modify a variable.  "Foo" is a <i>Read-Only</i> property if there exists a method called <b>getFoo()</b> (or for methods that return boolean values, <b>isFoo()</b> is also kosher).  "Foo" is a <i>Read-Write</i> property if there <i>also</i> exists a method called <b>setFoo(<i>val</i>)</b>.
+</font></td></tr></table>
+<p>The <b>LocationWrapper</b> is an object which can be queried to provide the object and its current position (and it stays up-to-date automatically as well).  The GUIState is the one you had created.  A little while later we'll override this method to provide a custom Inspector.  But for now, we'll rely on the default implementation which all SimplePortrayals provide: the <b>SimpleInspector</b>, which simply lets you access any Java Bean Properties.
+
+<p>To the Particle class, let's add some Properties.  We'll add read-only properites for directions, and a read-write property for randomization (so you can randomize a Particle at any time).  Add to the <b>Particle.java</b> file:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+public boolean randomize = false;
+public int xdir;  <font color=gray>// -1, 0, or 1</font>
+public int ydir;  <font color=gray>// -1, 0, or 1</font>
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+public boolean randomize = false;
+public int xdir;  <font color=gray>// -1, 0, or 1</font>
+public int ydir;  <font color=gray>// -1, 0, or 1</font>
+<font color="blue">
+
+public int getXDir() { return xdir; }
+public int getYDir() { return ydir; }
+public boolean getRandomize() { return randomize; }
+public void setRandomize(boolean val) { randomize = val; }
+</tt></pre></td></tr></table>
+
+<p>Save and compile all files, and run again.  Notice that if you play the simulation, then pause it, you can double-click on an agent and the Console will switch to show Inspectors for that agent (and also for the Trail location below it).  Choose the agent's inspector, and note that you can now see read-only properties for XDir and YDir, and a modifiable property for Randomize.
+
+<h2>Give BigParticle an Inspector Proxy</h2>
+
+<p>We have a problem.  If you double-click on the BigParticle, you'll notice that its inspector <i>also</i> lets you modify Randomize.  But BigParticle isn't supposed to be Randomizable!  It's inheriting the setRandomize() and getRandomize() methods from Particle.  This leads us to our first opportunity to customize an Inspector: by <b>providing an Inspector Proxy</b>.
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Can the Inspector Proxy be an Anonymous Class?</b>
+<p>Usually not.  Indeed, all inspectable objects should be <b>public, non-anonymous classes</b>.  They can be inner classes as long as they obey this rule.  This is mostly due to quirks in Java's reflection library.
+</font></td></tr></table>
+<p>An Inspector Proxy is simply an object that our BigParticle will state should be inspected instead of the BigParticle itself.  Objects state their intention to provide a proxy by implementing the <b>Proxiable</b> interface (which gives the single method <b>propertiesProxy()</b>.  Change the <b>BigParticle.java</b> file as follows:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+public class BigParticle extends Particle
+    {
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+<font color="blue">
+public class BigParticle extends Particle implements Proxiable
+    {
+    <font color=gray>// we can't "turn off" setRandomize by making it protected or whatnot.
+    // but we can tell SimpleProperties to use a proxy of our invention
+    // rather than querying us directly.  The proxy class MUST be public;
+    // and if it's to be used in our model, it must be Serializable.
+    // Also remember that if it's a non-static inner class, and we care
+    // about cross-platform serialization, it needs to have a serialversionUID,
+    // as well as its inclosing class!</font>
+    public class MyProxy
+        {
+        public int getXDir() { return xdir; }
+        public int getYDir() { return ydir; }
+        <font color=gray>// because we are a non-static inner class</font>
+        static final long serialVersionUID = -2815745192429358605L;
+        }
+        
+    <font color=gray>// because we contain a non-static inner class</font>
+    static final long serialVersionUID = 7720089824883511682L;
+
+    public Object propertiesProxy()
+        {
+        return new MyProxy();
+        }
+</font>
+</tt></pre></td></tr></table>
+
+<p>Save and compile the files, and run.  Notice that now the Randomize checkbox has disappeared for BigParticle.
+
+<h2>Provide a Model Inspector</h2>
+
+<p>Models can have a global inspector as well.  We do this either overriding the <b>GUIState.getInspector()</b> method, or (easier) by overriding the <b>GUIState.getSimulationInspectedObject()</b> method, which provides an object to be inspected by a SimpleInspector.
+
+<p>To the <b>Tutorial4WithUI.java</b> file, add the method:
+
+<pre><tt>
+    public Object getSimulationInspectedObject()
+        {
+        return state;
+        }
+</tt></pre>
+
+<p>This tells the simulation system that <tt>state</tt> (our Tutorial4 object -- the model) should be checked for Java Bean Properties to display.  At present we don't have any.  In the <b>Tutorial4.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+public int gridWidth = 100;
+public int gridHeight = 100;
+public int numParticles = 500;
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+public int gridWidth = 100;
+public int gridHeight = 100;
+public int numParticles = 500;
+<font color="blue">
+
+public int getWidth() { return gridWidth; }
+public void setWidth(int val) { if (val > 0 ) gridWidth = val; }
+public int getHeight() { return gridHeight; }
+public void setHeight(int val) { if (val > 0 ) gridHeight = val; }
+public int getNumParticles() { return numParticles; }
+public void setNumParticles(int val) { if (val >= 0) numParticles = val; }
+</font>
+</tt></pre></td></tr></table>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Wow, with 20,000 Particles, and a width and height of 400 each, things really start to slow down!</b>
+<p>Well, what did you expect?  You've increased the number of Particles 40-fold and the number of trail squares 16-fold.  The slowdown is due to several areas: 
+<ol>
+<li>40 times as many agents to schedule.
+<li>Accessing SparseGrid2D's hash tables 40 times as often -- start using an ObjectGrid2D instead?
+<li>The arrays and hash tables may now be bigger than can be stored in cache.  That's a big hit.
+<li>The big one: drawing 40 times as many ovals and 16 times as many squares.  That's expensive to say the least!
+</ol>
+<p>By the way, we've investigated moving from Java 2D arrays to Repast-style linearized (1D) arrays; for some problems it's faster with large arrays; for others (like HeatBugs) it's significantly slower.  So it's still under investigation.
+</font></td></tr></table>
+<p>Save, compile, and run.  Notice that the Console now has an extra tab called "Model".  If you click on this tab, you can modify the width, height, and number of particles.  Because these variables are only accessed by our model in its <b>start()</b> method, changing them won't have any effect until you stop and restart the model.  Try it.
+
+<h2>Make the Model Inspector Volatile</h2>
+
+<p>At present, the Model Inspector doesn't update itself as the Model runs.  It only displays the initial values and lets you change them.  What if you want to show up-to-the-minute statistics?  You need a "volatile" inspector.  Note that repainting a volatile inspector at every time step is significantly more expensive: so only do this if you need it.
+
+<p>First, let's add the need for such a thing.  We'll keep track of "collisions" among the particles.  To the <b>Tutorial4.java</b> file, add some extra stuff:
+
+<pre><tt>
+    public int collisions;
+    public double collisionRate;
+    public double getCollisionRate() { return collisionRate; }
+</tt></pre>
+
+<p>Similarly, in the <b>Particle.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+if (randomize)
+    {
+    xdir = tut.random.nextInt(3) - 1;
+    ydir = tut.random.nextInt(3) - 1;
+    randomize = false;
+    }
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+if (randomize)
+    {
+    xdir = tut.random.nextInt(3) - 1;
+    ydir = tut.random.nextInt(3) - 1;
+    randomize = false;
+<font color="blue">    tut.collisions++;</font>
+    }
+</tt></pre></td></tr></table>
+
+<p>Now we update the collision rate using the collisions.  In the <b>Tutorial4.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+Steppable decreaser = new Steppable()
+    {
+    public void step(SimState state)
+        {
+        <font color=gray>// decrease the trails</font>
+        trails.multiply(0.9);
+        }
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+Steppable decreaser = new Steppable()
+    {
+    public void step(SimState state)
+        {
+        <font color=gray>// decrease the trails</font>
+        trails.multiply(0.9);
+<font color="blue">        
+        <font color=gray>// compute and reset the collision info</font>
+        collisionRate = collisions / (double)numParticles;
+        collisions = 0;
+</font>        }
+</tt></pre></td></tr></table>
+
+<p>Now we have a reason for a volatile inspector -- we'd like to see how the collisionRate changes.  To make the inspector volatile, we set the Inspector's <b>setVolatile</b> method.  Add to <b>Tutorial4WithUI.java</b> the following:
+
+<pre><tt>
+public Inspector getInspector()
+    {
+    Inspector i = super.getInspector();
+    i.setVolatile(true);
+    return i;
+    }		
+</tt></pre>
+
+<p>Save, compile, and run.  Click on the Model tab and note that the Collisions property updates in real-time.
+
+<h2>Make a Custom Inspector</h2>
+
+<p>All an Inspector is is a JPanel with a single extra method: <b>updateInspector()</b>.  This method is called whenever the model thinks the Inspector should update itself to reflect new changes in whatever it's inspecting.  Beyond this, it's up to you.
+
+<p>The SimpleInspector subclasses make this pretty by providing property inspection.  But sometimes you want more.  In this example, let's add a JButton called "Roll the Dice" to our BigParticle.  When you press this button, the BigParticle's location and direction will be randomized.
+
+<p>As mentioned earlier, Inspectors are provided by Portrayals through the <b>getInspector()</b> method.  We need to customize our BigParticle's portrayal.  To do this, let's create a new file called <b>BigParticleInspector.java</b>.  To this, we add:
+
+<pre><tt>
+package sim.app.tutorial4;
+import sim.portrayal.*;
+import sim.portrayal.grid.*;
+import sim.field.grid.*;
+import java.awt.event.*;
+import java.awt.*;
+import javax.swing.*;
+import sim.engine.*;
+import sim.util.*;
+import sim.display.*;
+
+public class BigParticleInspector extends Inspector
+    {
+    public Inspector originalInspector;
+    
+    public BigParticleInspector(Inspector originalInspector,
+                                LocationWrapper wrapper,
+                                GUIState guiState)
+        {
+        this.originalInspector = originalInspector;
+        
+        <font color=gray>// get info out of the wrapper</font>
+        SparseGridPortrayal2D gridportrayal = (SparseGridPortrayal2D) wrapper.getFieldPortrayal();
+        <font color=gray>// these are final so that we can use them in the anonymous inner class below...</font>
+        final SparseGrid2D grid = (SparseGrid2D)(gridportrayal.getField());
+        final BigParticle particle = (BigParticle) wrapper.getObject();
+        final SimState state = guiState.state;
+        final Controller console = guiState.controller;  <font color=gray>// The Console (it's a Controller subclass)</font>
+</tt></pre>
+
+<p>Here we are making a new inspector which will build on the original inspector (a SimpleInspector), because we'd like to keep the original one around to display Xdir and Ydir, what the heck.  As shown, we can use the wrapper to extract the inspected object and the field portrayal it's in.  From the field portrayal we can extract the SparseGrid2D.  Also, from the GUIState, we can extract the SimState object and the Console (a Controller subclass).  Continuing:
+
+<pre><tt>
+        <font color=gray>// now let's add a Button</font>
+        Box box = new Box(BoxLayout.X_AXIS);
+        JButton button = new JButton("Roll the Dice");
+        box.add(button);
+        box.add(box.createGlue());
+
+        <font color=gray>// set up our inspector: keep the properties inspector around too</font>
+        setLayout(new BorderLayout());
+        add(originalInspector, BorderLayout.CENTER);
+        add(box, BorderLayout.NORTH);
+</tt></pre>
+        
+<p>...our inspector will hold the Roll the Dice button, plus the old inspector.  Now we say what the button does:
+
+<pre><tt>
+        <font color=gray>// set what the button does</font>
+        button.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                synchronized(state.schedule)
+                	{
+	                <font color=gray>// randomize direction</font>
+	                particle.xdir = state.random.nextInt(3) - 1;
+	                particle.ydir = state.random.nextInt(3) - 1;
+	                
+	                <font color=gray>// randomize location</font>
+	                grid.setObjectLocation(particle,
+	                    new Int2D(state.random.nextInt(grid.getWidth()),
+	                              state.random.nextInt(grid.getHeight())));
+	                
+	                <font color=gray>// update everything: console, inspectors, displays,</font>
+	                <font color=gray>// everything that might be affected by randomization</font>
+	                console.refresh();
+	                }
+                }
+            });
+        }
+</tt></pre>
+
+<p>The <b>synchronized(state.schedule)</b> directive is there for an important reason.  The button is being pressed in the <b>Swing Event Thread</b>.  The model that it will be modifying <i>may</i> be running in the <b>underlying model thread</b>.  This is a sure-fire race condition.
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>I need to tweak a Swing Widget.  What about calling the Swing Event Loop from inside the Model Thread?</b>
+<p>You can only do so <b>asynchronously</b>.  Create a Runnable, then pass it to SwingUtilities.invokeLater().  It'll get called in the Swing Event Loop.  Note that this Runnable shouldn't then turn around and attempt to acquire objects in the model, unless it does so locking on <tt>state.schedule</tt> or using <b>Controller.doChangeCode(...)</b>.  In general the best approach is to load up the Runnable with copies of stuff it needs to tell Swing beforehand, so it doesn't need to ask for them.
+</font></td></tr></table>Because there are two threads going on, we have to be careful.  Since we're acting from the Swing Event Thread, we have three options: two synchronous, one asynchronous:
+
+<ol>
+<li>(Synchronous) Lock on <tt>state.schedule</tt>.  The underlying model locks on this lock before it does any work; so grabbing it will synchronize us.
+<li>(Synchronous) Pass a Runnable to <b>Controller.doChangeCode(...).</b>  This in effect stops the model thread at the next time step, runs our code, then starts the model thread again.  This is the "guaranteed" way to do it, but it's heavyweight -- usually locking on state.schedule is sufficient.
+<li>(Asynchronous) Load a Steppable with copies of the relevant information to send to the model, then schedule it as GUIState.scheduleImmediate().  The Steppable will be called from inside the Model thread.
+</ol>
+
+<p>Elsewhere in the simulator's documentation (the "notes.html" page) is more discussion about how to handle threading issues.
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>No I forgot about that.</b>
+<p>Well, pay attention next time!
+</font></td></tr></table>
+<p>The <b>refresh()</b> method updates all inspectors and all <b>registered displays or other registered windows.</b>  Remember in Tutorial 2 when we said you should always register any window that could get updated by the model?
+
+<p><b>refresh()</b> is very expensive: only use it in response to user events; don't refresh in a tight loop.  Also, never call this method from inside the model thread -- only from the Swing Event loop.
+
+<p>Since we're an inspector, we need to implement <b>updateInspector()</b>.  Easy:
+
+<pre><tt>
+    public void updateInspector()
+        {
+        originalInspector.updateInspector();
+        }
+    }
+</tt></pre>
+
+<p>Last, we need to create this inspector from a customized SimplePortrayal subclass for our BigParticle.  All that needs to be done is overriding the <b>getInspector</b> method mentioned earlier in Tutorial 3.   In the Tutorial4WithUI.java file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+particlesPortrayal.setPortrayalForClass(
+    BigParticle.class, new sim.portrayal.simple.RectanglePortrayal2D(Color.red, 1.5) );
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+particlesPortrayal.setPortrayalForClass(<font color="blue">
+    BigParticle.class, new sim.portrayal.simple.RectanglePortrayal2D(Color.red, 1.5)
+        {
+        public Inspector getInspector(LocationWrapper wrapper, GUIState state)
+            {
+            <font color=gray>// make the inspector</font>
+            return new BigParticleInspector(super.getInspector(wrapper,state), wrapper, state);
+            }
+        });</font>
+</tt></pre></td></tr></table>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Hey, it moved in the "Other Display" too.</b>
+<p>Yes, but it's not red there, or bigger than the others.  Can you figure out why?
+</font></td></tr></table>
+<p>Save the files, compile and run.  When you can, double-click on the BigParticle and note that its inspector now has a button.  Press the button and the inspector's location and direction changes.
+
+<h2>Optionally Update the Serial Versions</h2>
+
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Wait, there are other anonymous classes now!</b>
+<p>True.  BigParticleInspector has one, and Tutorial4WithUI has one.  But neither of them are part of the model (they're not serialized).  So no need to give them UIDs.
+</font></td></tr></table>
+<p>Classnames have changed, and so the <b>serialVersionUID</b> values are technically "incorrect".  If you really feel the need for it, you might re-run serialver and change the values.  On MacOS X, they're 
+6976157378487763326L for the Decreaser, and 6930440709111220430L for Tutorial4.
+
+<br>
+<br>
+<br>
+<br>
+
+
+

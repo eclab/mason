@@ -1,0 +1,25 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>The Swarm Game</h2> 
+By Sean Luke
+</table>
+
+<p>This is a set of swarm behaviors proposed by the Fratelli Theater Group and popularized by Eric Bonabeau and Carl Anderson at <a href="http://www.icosystem.com">IcoSystem</a>.  The idea is to guess what certain combinations of individual agent behaviors are likely to cause in "emergent behavior" of the whole system.  Each agent first picks two random individuals A and B that are different from one another and neither of which are the agent himself.  Then the agents all follow the same behavior.  This game has often been played with "real" human swarms.  There are five behaviors in this example:
+<ol>
+<li>Head towards A
+<li>Head away from B
+<li>Head to the center between A and B
+<li>Head to the point on the other side of B from A that is twice as far away from A as from B.
+<li>Move in a random direction
+</ol>
+<p>In the Model pane you can change how much each behavior is mixed in to form the final behavior.  Some stuff to try:
+
+<ul>
+<li>Go towards A
+<li>Go away from B
+<li>Go towards A: 0.5, Go away from B: 0.5
+<li>Go between A and B: 0.5, Go behind B from A: 0.5
+<li>Go away from B: 0.5, Go between A and B: 0.5 (try very slightly off of this too)
+</ul>

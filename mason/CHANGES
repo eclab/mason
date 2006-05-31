@@ -1,0 +1,1134 @@
+Version 0
+	Initial release at Agent2003 Conference
+
+Version 1
+	mason and mason3d directories collapsed.
+	mousetraps application included.
+	Various small bugs squashed.
+	Documentation updated.
+	Known bug: 3D Heat information not provided (bug in inspector)
+
+Version 2
+	sim.app.networktest.CustomNode now specifies its font
+	sim.portrayal.FieldPortrayal's CustomInspector properly sets its
+		SimState instance variable.  This enables 3D HeatBugs, among
+		other things, to properly update their inspectors.
+	Various static variables converted to instance variables to
+		facilitate simultaneous parallel models in one
+		process.
+	Improved class docs
+	Moved the color mapping functionality out of FastValueGrid2DPortrayal
+		and ValueGrid2DPortrayal.  Now they use sim.guil.ColorMap.
+		This is slightly slower; however we've compensated with an
+		improved code in ColorMap so it's about the same speed still.
+		This change will require applications which use these 
+		portrayals to change themselves slightly: no longer is there
+		a setLevels() or setColors() function -- it's gone -- and 
+		instead, there's a setMap() function which does the same
+		thing.  See HeatBugsWithUI.java for an example of how to
+		convert over (it's a one-line change).
+	The info HTML page may now be loaded in the Console via a file
+		rather than specified by a string.  See GUIState.getInfo()
+	Fixes to 3D inspectors to avoid flashing
+	Cleanups and fixes to 3D applications
+	2D displays update when their options are modified (in the wrench 
+		window)
+	Bug fix so 2D display backgrounds are striped rather than white
+		in MacOS X Panther (10.3)
+	Reformatting
+	MacOS X Panther 1.3.1 has a bug which causes a number of drawing
+		events to reset the clip afterwards (messing up later
+		drawing events).  I don't know HOW they messed this up.
+		We've only worked around this where it wouldn't impact
+		redrawing significantly: clips are set before stretched
+		image drawing, before drawing sparse grids (because
+		they're often circles, which trigger the bug for some
+		reason).  Expect a slight slow-down in sparse grid
+		graphics until Apple fixes this stupidity and we can
+		remove our fix hack.
+	New nifty Makefile
+	Released at the 2003 Workshop on the Mathematics and Algorithms
+                of Social Insects
+
+Version 3
+	Scale can no longer be 0
+	Display2Ds may be offset (see the options pane -- useful
+		for Tutorial 5 and Lsystem).  Lsystem's offset facility
+		has been eliminated as a result.
+	If the inspector pane has been removed, switching to it will no
+		longer generate an error -- it just won't do anything
+	LabelledPortrayal2D added.  This is a "wrapper Portrayal" which
+		is meant to use an underlying portrayal to draw the
+		main object -- then LabelledPortrayal2D will add a label.
+	Added some Triangular grid code to the Grid2D objects.  No
+		FieldPortrayal yet tho.
+	CircledPortrayal2D added.  Another "wrapper Portrayal" which
+		draws a circle around the underlying portrayal.  Will
+		be useful for showing selection.
+	Added sim.util.DoubleDimension2D, which is a concrete subclass
+		of Dimension2D that stores dimension information as
+		doubles.  For some reason Java doesn't have such
+		a class (nor a "FloatDimension2D") -- it only has
+		Dimension (for ints).  Yet it has equivalents for
+		Point2D (Point2D.Double, Point2D.Float, Point),
+		Rectangle2D (Rectangle2D.Double, Rectangle2D.Float,
+		Rectangle), etc.  Totally inexplicable.  Anyway, this
+		class should make the new movement and selection APIs
+		easy to implement.
+	Partially implemented the movement and selection APIs in
+		FieldPortrayal2D and SimplePortrayal2D.  More yet to
+		do however.
+	Modified sim.util.Indexed so that it has consistent naming
+		(setValue and getValue).  Neither approach is good,
+		but this is better.  Updated Bag, DoubleBag, IntBag
+		with the new function name.
+	Made DoubleBag Indexed.  Dunno why it wasn't.
+	Slight bugfix which properly brings up the dialog box when
+		jmf.jar is missing but the user asks to make a movie.
+	Modified PropertyField to be able to switch among property
+		display styles.
+	Replaced deprecated getClipRect() with getClipBounds.  Dunno
+		why we didn't see that earlier.  No biggie.
+	Bug fix to Bag.resize(), IntBag.resize(), and 
+		DoubleBag.resize().  If requested size to resize to
+		is the same size as the bag, now nothing happens.
+		Previously the bag doubled in size.
+	Bug fix to [Double|Int|]Bag.addAll(...).  numObjs was not
+		being correctly changed.
+	Addition of [Double|int|]Bag.doubleCapacityPlusOne() private
+		function in order to bring add(...) and push(...)
+		back under 35 bytes for inlining.  Couldn't use
+		normal resize() function because it wasted a few
+		bytes (ARG!!!)
+	Added a little efficiency to SparseField.getObjectsAtLocations,
+		SparseGrid[2|3]D.getObjectsAtLocations, and
+		Continuous[2|3]D.getObjectsWithinDistance: if the
+		discovered object bags are null or empty, they're
+		not added to the result; if they're 1 they're added
+		using Bag.add, and if the're > 1 in size they're
+		added using Bag.addAll.  With any luck this should
+		be a bit faster.	
+	Added some further discussion in the hashCode() code for
+		Int2D, Int3D, Double2D, and Double3D.  We may want
+		to simplify the code to make it faster, though it
+		is of very high quality, particularly for Java
+		1.4.1.  Any comments would be welcome.
+	Bag Iterators now allow remove(), and next() now throws
+		an exception if we're at the end, rather than
+		returning null.
+	Major revisions to Display3D and various portrayal3D objects,
+		including complete revisions of updating and creating
+		scene graphs, updating and creating models,
+		transformations, facility for resetting rotations 
+		etc. on option panel, etc.  This will NOT be very
+		backward-compatible, sorry.  But now we have a 
+		more orthogonal approach to 3D, and the start() and 
+		init() methods in the example applications are much 
+		cleaner and simpler.
+	Added Oriented2D and OrientedPortrayal2D to make it easier
+		to describe oriented objects.  OrientedPortrayal2D
+		is yet another "wrapper portrayal".
+	Display3D no longer puts a black band at the bottom of
+		pictures and movies (oops).
+	getPolygonAttributes is now polygonAttributes in order to
+		prevent it from showing up as a property in the
+		inspector.
+	Addition of CircledPortrayal3D, LabeledPortrayal3D, and 
+		TransformedPortrayal3D "wrapper portrayals", the equivalent
+		of their counterparts in 2D more or less.
+	Addition of ConePortrayal3D, CylinderPortrayal3D,
+		(untested)Shape3DPortrayal.
+	Removed FixPortrayal3D.  Added SharedGroupPortrayal3D in its place.
+	Removed DirectionalLightPortrayal3D and replaced it with
+		the general LightPortrayal3D.
+	Added Scale to the Display3D.  This is different from zoom.  Scale 
+		magnifies.  Zoom moves the eye closer to center (and thus 
+		possibly past some objects which are now behind you).
+		We may remove this if it proves too confusing.
+	Modified ImagePortrayal2D so that it no longer requires square images 
+		(or tries to squish them into a square).
+	Added ImagePortrayal3D
+	fastgridcell package renamed to quad package
+	GridQuadCellPortrayal renamed to QuadPortrayal.
+	MeshCellPortrayal renamed to MeshPortrayal.
+	TileGridCellPortrayal renamed to TilePortrayal.
+	NoZGridCellPortrayal deleted (it's the same as TileGridCellPortrayal 
+		at 0 z scale)
+	Color map and scaling moved into QuadPortrayal.
+	setData() method on QuadPortrayals now has a width and a height.  
+		Accordingly all QuadPortrayals have had changes in their 
+		constructors.
+	QuadPortrayals now have their getName() methods called.  Previously 
+		that was interrupted by the ValueGrid2D3DPortrayal which used 
+		its own getName method.
+	GridCellInfo renamed to ValueGridCellInfo
+	Display2D now creates BufferedImages using getGraphicsConfiguration
+		rather than the older way of just using Component.createImage
+		and casting it to a BufferedImage and hoping for the best. :-)
+	Moved Axes to 3D Options.  Added the ability to have a backdrop.
+	Can now turn on/off left/right vs. up/down rotation and translation
+	Can now autospin negative values.  Still don't know what to think about
+		bugs in Java3D's handling of autospinning.  :-(
+	Added Tutorial6 and Tutorial7
+	Display3D used to hang until you moved the mouse if there's *no* 
+		change to the underlying model in-between steps.  This is due 
+		to a stupidity in Java3D.  Now we get around that by adding a
+		single (supposedly invisible) point and reset its location
+		each timestep.
+	Fixed little bug in GUIState which generated a null pointer exception
+		when trying to load the index.html and discovering that one
+		doesn't exist.  Oops!
+	If the user doesn't set the location of the Console in the GUIState's
+		init() method, then the Console will attempt to place itself
+		to the far right of the rightmost attached window; if there
+		is no room, it'll go to the default location.
+	Bug fix to Bag.iterator.next() and Bag.iterator.remove(); they had
+		a comparator wrong and thus were always throwing exceptions.
+		Thanks to Matthew Nelson (mnelson()mailsnare.net).
+	SimpleInspector has slightly more space between labels and widgets
+	Added the (temporary) convert and convert_h scripts and UPGRADING
+		file to help upgrade
+	SwarmGame added
+	null inspectors not added to the list.
+	GREAT RENAMING.  We've renamed all the 2D and 3D field portrayals 
+		to be consistent with the rest of the system.  Well, more 
+		consistent.  Anyway, it's better than it used to be.  Now 
+		the system is as follows: if a 2D field portrayal can handle 
+		(or will in the future be able to handle :-) both 2D and 3D 
+		fields, it's called FooPortrayal2D.  Similarly, a 3D field 
+		portrayal would be FooPortrayal3D.  If the field portrayal 
+		is designed specifically for 2D fields only, it's 
+		Foo2DPortrayal2D or Foo2DPortrayal3D.  Similarly for 3D fields 
+		only...  At present none of the 2D field portrayals can display 
+		3D fields; but they will in the future so they're named
+		appropriately.  Renamed portrayals:
+
+		ValueGridPortrayal2D
+		FastValueGridPortrayal2D
+		HexaValueGridPortrayal2D
+		ObjectGridPortrayal2D
+		HexaObjectGridPortrayal2D
+		SparseGridPortrayal2D
+		HexaSparseGridPortrayal2D
+		ContinuousPortrayal2D
+		NetworkPortrayal2D
+		ValueGrid2DPortrayal3D
+		SparseGrid2DPortrayal3D
+		SparseGridPortrayal3D
+		ContinuousPortrayal3D
+
+	Changed some demos to use loaded index.html files rather than embedded
+		HTML.  No particularly good reason other than demonstration.
+	MAVs in the MAV demo no longer can have their size changed.  This is
+		because we're using OrientedPortrayal2Ds and OvalPortrayal2Ds
+		to portray the MAVs rather than having them portray themselves,
+		also primarily for demonstration purposes.  To see a portrayal
+		which changes its size, Tutorial5 is useful.
+	Set Oriented2D's sole method to be "orientation2D" rather than
+		our original "get2DOrientation".  The reason is that we don't
+		necessarily want it showing up as a property of the underlying
+		object.  It's in radians rather than degrees (the Java3D stuff
+		we've done is in degrees) because the vast majority of time
+		you'll already have it in radians:  Math.atan2(dy,dx).  So
+		yeah, an inconsistency there...
+
+Version 4
+	Added a main() to sim.display.Console so that if you run
+		java sim.app.Console
+		... you're presented with the ComboBox of available simulations
+		and can choose one immediately.
+	Fixed some bugs in the Makefile indent feature
+	Slightly modified the stx and tx functions and documentation so that
+		they'd run a little faster in some cases.
+	Fixed a bug where if a Display2D was playing, then pressing the movie 
+		button would hang the bug.  Now the behavior is that pressing
+		the movie button temporarily pauses the Display2D (if it's 
+		playing), and cancelling will unpause again if necessary.
+	Similar fix in Display3D.  This required making Console.getPlayState() 
+		public, which shouldn't be much of a problem (probably would be
+		useful anyway).  Similarly, when the user does Open... in the 
+		Console, the current simulation is paused (if it's playing).  
+		The new model is still opened in a paused state.  But if the 
+		user cancels, we automatically unpause again if necessary.
+	Fixed a documentation bug in MersenneTwisterFast that suggested that
+		nextDouble() returned a number in [0,1].  It does not.  
+		It's [0,1), just like java.util.Random.
+	MovieMaker now displays its default frame rate as the frame rate
+		of the simulation currently.
+	SimulatorLayout.graffle and SimulatorLayout.pdf updated.
+	Added hardware acceleration for old Powerbook G4s and iBooks
+	Switched to using TYPE_INT_ARGB_PRE for buffers in 
+		FastValueGridPortrayal2D as it's supported natively by MacOS X
+	convert and convert_h removed
+	removed UPGRADING
+	new [Int|Double|]Bag(bag) can accept a null bag now
+	[Int|Double|]Bag all have new fill(), sort(), reverse(), and shuffle()
+		methods.  The shuffle method will make [Int|Double|]Bag reliant
+		on ec.util.MersenneTwister; but you can snip that out if you
+		don't need it.  Suggestion by Russ Abbott rabbott()calstatela.edu
+	Added numObjectsAtLocation per suggestion by Norman Makoto Su 
+		(normsu()uci.edu).  Also modified Continuous[2|3]D documentation
+		to warn against using numObjectsAtLocation or 
+		getObjectsAtLocation, both of which look up discretized regions
+		and that'd give unexpected results.
+	Console's JEditorPane is now public.  Suggestion by Russ Abbott
+		rabbott()calstatela.edu
+	Well, it appears that changing to TYPE_INT_RGB_PRE in fact is SLOWER
+		on MacOS X 1.3.1. By 1/3!  So we're undoing that change.
+	Released at the 2004 SwarmFest conference
+
+Version 5
+	Fixed bug in 2D offset -- they weren't being considered for hit testing
+	Continuous[2|3]D's toroidal neighborhood had a bug where objects on the
+		0 x or y or z border weren't grabbing values wrapped around, due
+		to truncation of negatives rather than flooring them.
+	Bags, IntBags, and DoubleBags can be initialized with a given capacity
+	Added toroidal distance functions to Continuous2D and Continuous3D.
+	Console's JEditorPane now has a back button and properly handles 
+		hyperlinks.  Of course, now that the JEditorPane is public,
+		people can mess this up if they please -- we trust you to
+		be gentle.
+	Made the DEFAULT_... stuff in [Oriented|Circled|Labelled]Portrayal2D 
+		final.
+	Added two more shapes to OrientedPortrayal2D options
+	Added new Flockers demo
+
+Version 6
+	Fixed minor bug in ObjectGridPortrayal2D which displayed null object
+		slots as "null" in the inspectors.
+	Fixed bugs in tx/ty/tz: if the width/height/length is >= half the
+		maximal size of an integer, the toroidal computation doesn't
+		work properly.  In the process of fixing it we got rid of a 
+		modulo, so they probably run faster now as well.
+	Slight improvements in the speed of 
+		Continuous[2|3]D.getObjectsWithinDistance(...).  I believe
+		that it should still run correctly for all possible values
+		of width, height, and length (see tx/ty/tz fixes above),
+		but uses slightly less code and a few minor speedups.
+	Slight fix to [Int|Double|]Bag.resize method so it doubles in size
+		more often (correctly)
+	Fix to our recent Continuous[2|3]D fixes: non-point objects
+		now properly increase the size of the lookup.  Maybe we
+		should revisit the non-point object issue in the future and
+		consider a different approach (perhaps increasing the range
+		of the lookup by exactly the maximum dimension of the
+		object?)
+	Added toPoint() to Int2D
+	Bug fixes in CollectionProperties' handling of Bags etc.  I think
+		we should move to a table mechanism anyway.
+	In order to implement ObjectGridPortrayal3D, it's necessary to
+		modify the completedWrapper(...) function to include
+		a PickResult object as well.  We could deprecate the
+		older function and create a new one which default calls
+		the older one; but I highly doubt anyone is creating 3D
+		fields at this time, so we'll just go ahead and modify it.
+	Added ObjectGridPortrayal3D
+	ObjectGrid3D's field moved from Bags (why was this here?) to Objects
+	Deleted extraneous HeatBugPortrayal3D code
+	Fixed bug in SparseFieldPortrayal3D and SparseGrid2DPortrayal3D which
+		wouldn't properly handle new models created during getModel()
+	Heavy bug fixes to ObjectGridPortrayal3D
+	ValueGrid2DPortrayal3D allows cells to be displayed EITHER as squares
+		or as two triangles.  This is because squares trigger a Java3D
+		bug (well, Sun insists its a "misfeature" that's part of the
+		spec, but IT'S A BUG) where squares bent at strong angles
+		won't pick right, so selecting them goes all haywire -- the
+		wrong squares get selected by far.  Why not just do it always
+		as two triangles?  Why bother with the option?  Because if
+		you just show the mesh's lines, the diagonal line of the
+		triangles shows up.  That's the only reason.
+	Gouraud Shading added to ValueGrid2DPortrayal3D's cells.
+	Previously if you loaded a simulation from checkpoint in the Console
+		while STOPPED, what happened was that pause() was pressed
+		first.  This resulted in a fresh model getting spuriously 
+		start()ed and then immediately wiped out by the newly-loaded 
+		model.  This confused people who saw a start() happening
+		even though it was generally harmless.  But we've modified
+		Console.doOpen() now so that this doesn't happen.  To do 
+		this we've modified Console.pressPause() so that it now 
+		calls an underlying pressPause(bool) which optionally does
+		startSimulation() only if in stopped mode and bool == true.
+		Thus we can control whether or not pausing the model in
+		stopped mode starts the simulation proper.
+		All this is no big deal, I think (hope!).
+	Modification to HeatBugs.setRandomMovementProbability() so it doesn't
+		change all the bugs' probabilities mid-stream.  This helps
+		us in an upcoming parameter-loading tutorial.
+	Hard-code-inlined Int2D and Int3D's hash codes into Double2D and
+		Double3D, eliminating the hashCodeFor() function which
+		couldn't get inlined.  This saves us a few percent on
+		Flockers etc.
+	Added FastHexaValueGridPortrayal2D
+	Moved the Buffering property up to FieldPortrayal2D.
+	Modified hexabugs's model inspector to show how you can change
+		the two kinds of hex grids
+	All FieldPortrayals now store three new instance variables:
+		an Object called field, an immutableField boolean, and a 
+		dirtyField boolean.  This promoted the field and immutableField
+		variables up from FieldPortrayal3D.  In the process we have also
+		eliminated all references to instance variables called field
+		in various FieldPortrayal2Ds; they all now use the central field
+		variable (which is an Object) and so must ensure its validity
+		in the setField(...) method (which they already do).  Added some
+		lines at the beginning of relevant methods which say basically
+			final MyFieldType field = (MyFieldType) this.field;
+		for compatability with existing code.  The dirtyField flag
+		is supposed to be set during all setField() operations and
+		cleared (if the field cares about immutableFields at all).
+	Tutorial 4 had referenced SparseGridPortrayal2D's field variable;
+		now that it's an Object and not a SparseGrid2D (and it's not
+		public any more also), we replaced it with getField().
+	Console now kills all existing inspectors and rebuilds the model 
+		inspector (if there is one) when the user loads from a 
+		checkpoint.  Oops, we should have done that before!
+	Replaced SelectionBehavior.SetInspectorsRunnable with a smaller,
+		simpler anonymous class.
+	Random number seed now shown when the model is first displayed.
+	When a model is loaded from a checkpoint, who knows what the random
+		number seed is; so we display "Unknown" instead.
+	When the user enters an invalid random number seed, it's replaced with
+		the original seed (previously we had been randomizing it).
+	We were not performing the specified check for valid classes when
+		loading simulations in the Console (validSimState()).
+		Now we do.
+	Additional minor functions added to Schedule
+	Fixed a bug in Schedule.scheduleRepeating(event,interval) which
+		scheduled for time() and not time()+1.
+	Reduced the division count in spheres used for Woims3D from 15 to 6.
+		This makes it usable at 200-300 Woims (by default it's 40).
+		With 15 divisions, for 200 woims you have about 15*200*4=12,000
+		polygons which for Java3D is horribly unusable, at least on 
+		a Mac powerbook (our test). Here's hoping Java3D speeds up now
+		that it's open source.
+	Added some clearCapabilityIsFrequent(...) statements to possibly improve
+		Java3D optimization
+	Makefile revisions
+	Tiny speed tweaks to SimpleColorMap
+	Made MutableDouble a subclass of Number
+	NetworkField.getEdgesOut(...) and NetworkField.getEdgesIn(...) no longer
+		return null if there are no edges.  Instead they return an empty
+		Bag.  In fact, they all return the *same* empty Bag.  This is 
+		okay because your contract is to never modify the Bag returned 
+		by these methods.  Modified NetworkPortrayal2D and NetworkField
+		in a few places to obviate the need to do a null check as
+		a result.
+	Added NetworkField.getEdges(...)
+	Added Edge.getWeight(...)
+	Added methods to [Int|Double][2|3]D which bring them to approximate
+		parity with Point2D.
+	Added NetworkField.getAdjacencyMatrix(...) and
+		NetworkField.getMultigraphAdjacencyMatrix(...)
+
+Version 7
+	Added Edge.getOtherNode(node), which simplifies algorithms which operate
+		both on directed and undirected graphs.
+	Bug fix to ImagePortrayal3D to set oriented polygon attributes without
+		triggering a null pointer exception
+	FieldPortrayal3D.defaultPortrayal now protected
+	Added ColorMap.getAlpha(value), which simplifies some Java3D stuff.
+	Fixed a bug in ParallelSequence which generated an error if the
+		model thread was interrupted while waiting for the
+		ParallelSequence to finish up.
+	Worked around a MacOS X bug where if a Canvas3D is in a window which is
+		hidden and then reshown, the Canvas3D doesn't redisplay itself.
+	Worked around a Linux bug where if a Canvas3D is in a window which is
+		hidden, the whole Java3D system hangs until the window is
+		reshown.
+	Added MutableInt2D and MutableInt3D, and modified SparseGrid2D,
+		SparseGrid3D, Continuous2D, and Continuous3D to take advantage
+		of the mutable versions.  MutableInt[2|3]D is hash-equivalent 
+		with Int[2|3]D, and can be used to look up objects in hash
+		tables keyed internally by Int[2|3]D.  This is helpful because
+		normally in these SparseFields, lots of Int[2|3]Ds are created
+		over and over again to look up neighbors.  Reusing a single 
+		MutableInt[2|3]D thus saves a LOT of unneeded GCing.
+	Replaced DecimalFormat with NumberFormat universally, including in
+		Tutorial5
+	Added SimpleEdgePortrayal2D.getLabel(), which is a hook you can
+		override to customize the label without rewriting the drawing.
+        Early version of the NetworkPortrayal3D and ValueGridPortrayal3D 
+                provided; they may have bugs.
+        OrientedPortrayal2D now fits in smallest dimension rather than largest.
+	Added the balls3d and particles3d examples
+	Numerical properties can now include domains (either min and max, or a 
+		list of strings representing integer values' "names") in order
+		to make possible pop-up lists and sliders in the various
+		inspectors.  To do so, you create a function called domFoo()
+		where Foo is your property name (along with setFoo and
+		getFoo).  This function returns either an array of objects
+		(representing the "names" to display for the values 0 ...
+		array.length - 1) on a pop-up list, or a sim.util.Interval, 
+		which represents either a double-valued or long-values min 
+		and max range for a slider.
+	Removed unneccessary checks for index < 0 and other == null, plus
+		in Bag, IntBag, and DoubleBag, and allAll(...) now throws
+		an exception of other == null or if index > numObjs or
+		index < 0 rather than returning false (incorrectly).
+	Added ThreadedDiffuser and made HeatBugs multithreadable.  Results
+		in almost twice the speed in the underlying model when
+		using two processors.  When multithreaded, the heatbugs console
+		says so. Nifty!  I've noticed that Linux is bizarre in how
+		well it does multithreading (or *doesn't*) in java.  Linux's
+		threading is an unbelievable mess.  MacOS X is much more
+		straightforward: 2x speedup give or take.
+	Added a few sliders to HeatBugs and HexaBugs, and made a few more
+		HexaBugs properties writable.
+	Changed HexaBugs' Hexagonal/Rectangular popup to use the new
+		Domain Property code (mostly to test it that's all).
+	Made some methods in Schedule non-final (in case you want to override
+		'em.  Also, Console now uses schedule.getTimestamp to get
+		the timestamp to display -- you can thus override Schedule
+		to provide a more interesting timestamp of your own if you
+		like.
+	Fixed typo in the license.  Thanks to Rob Alexander (rda()cs.york.ac.uk)
+
+Version 8
+	Tweaks to Makefile to make compiling with jikes more straightforward
+	Removed colons from some labels in Console
+	Cleaned up code in Display2D and Console so applets can tell they're
+		running on Macs (and draw faster as a result).
+	Added make jar to Makefile.  It makes a file called mason.jar :-)
+	Wrapped all cases of thread.interrupt() in a try to catch for
+		SecurityExceptions -- IE sometimes incorrectly claims a given
+		thread of ours is not interruptable.
+	Slight mods to SimulatorLayout.graffle
+	SimApplet can now launch Console
+	Added sim/app/mousetraps to Makefile.  Dunno why it wasn't there.
+	Added sim/util/Valuable for some future usage.
+	Displays now don't allow snapshots or movies when in applet mode.
+	Console now doesn't allow open/save/saveAs when in applet mode.
+	Console's quit menu works properly now in applet mode.
+	Modified sim/display/SimApplet.html to work with the new mason.jar
+	Fixed a bug in ParallelSequence which didn't serialize properly --
+		generated a null pointer exception.
+	Added Console to the layers menu.  Dunno if we like this or not...
+	Added memory warnings to Particle3D
+	Added even more speed improvements to heatbugs' diffuser, plus a
+		long discussion and examples showing the progression of
+		better and better diffusers.
+	Modified mason.1.3.1.command so it doesn't try to specify the
+		dock name -- looks like a bug in 1.3.1 will cause java
+		to fail if the dock name is specified.  Oh, well.
+	Slight bug fix to parallelized HeatBugs
+	Added GUIState.scheduleAtEnd and GUIState.scheduleAtStart
+	mason.1.3.1.command bombs if -Xdock is used.  It's a bug in OS X.
+	Slight bug in MersenneTwister: seeds were only allowed to be 28 bits.
+		The mask was supposed to allow 32 bits.
+	Modifications to Inspector.  Inspector now states whether or not it is
+		volatile (you can set this), and also provides a convenience
+		"Update Button" for non-volatile inspectors.  Accordingly,
+		isInspectorVolatile() is now deprecated.  This required a
+		modification of Tutorial 4 I think to reflect the new
+		approach.  This only really effects people who have made
+		non-volatile model inspectors.
+	Added [Int|Double|]Bag.shrink(...), now used in SparseField
+	Bag.addAll was requesting bag resizes twice what they should have been.
+	If SparseField.replaceLargeBags is true, and we need to replace a Bag,
+		now we just shrink it rather than deleting it and generating
+		a new Bag.  This saves a hash in setObjectLocation.
+	SparseField.LocationAndIndex now holds onto the Bag containing all
+		objects at the given location so we don't have to hash for it.
+		This saves a hash in setObjectLocation.  The new field means
+		previous serialized models won't work with the new version.
+	Added SparseField.getObjectsAtLocationOfObject and
+		SparseField.numObjectsAtLocationOfObject
+	Upgraded MersenneTwisterFast to version 9.  Bug fix in seeder was
+		only bothering to look at the first 28 bits of the seed.
+		Now it's 32 bits.
+	Slight fix to SparseGrid[2|3]D.getObjectLocationAsDouble[2|3]D(),
+		which now returns null if the object doesn't exist
+		(instead of bombing!  :-)
+	SparseField.numObjectsAtLocation bypasses getRawObjectLocation().
+	SparseField.getObjectsAtLocation now ALWAYS returns null if the
+		bag is empty.  This should prevent some bugs people were
+		having when turning off removeEmptyBags.  But it'll be
+		a tiny bit slower methinks.
+	Accordingly, slight modification to SparseField.getObjectsAtLocations
+		since the bag size can now never be 0
+	SparseField.removeObjectsAtLocation is now public and there's no
+		need to override it with a public submethod.
+	In SparseGrid[2|3]D.getNeighborsMaxDistance(),
+		SparseGrid[2|3]D.getNeighborsHamiltonianDistance() and
+		SparseGrid2D.getNeighborsHexagonalDistance():
+		- the upper bounds in the for loops are now precomputed
+		- "int x_0 = x0;" were removed
+	Console.main() now checks to see if we're an applet, and doesn't call
+		System.exit(0) if so.
+	Console.doNew(...) now checks to see if there's a default constructor
+		and signals an appropriate error if there isn't.
+	Bug fix in NetworkPortrayal2D: it was drawing edges incorrectly with
+		SparseGrid2D.
+	Slight fix to AntsForageWithUI to draw the home pheromone faster
+	simulation.classes can now contain comments and blank lines.  And if
+		you add the word 'ONLY' to a line all by itself, the Console
+		will only permit the user to select from the classes in the
+		simulation.classes file: he won't be able to type in his own
+		class.
+	Maximum number of properties in the inspecrtor increased to 100
+	Added MutableDouble2D in order to support some basic functionality
+		in the upcoming physics model.
+	Added FooDistance() changes to AbstractGrid[2|3]D just like they were
+		changed for SparseGrid[2|3]D above.
+	start\mason.bat was changed to work around pushd and popd, which are not
+		available in win2k.
+	Edge weights can now be sim.util.Valuable
+	NetworkField now constructed to be either directed or undirected.
+	Added pressed versions of all icons
+	Modified the Update button and heavily modified / fixed the paging
+		facility for inspectors with too many properties.  They now
+		both optionally appear in a "header" above the properties.
+	Schedule has new facility called cleanup, in preparation for more
+		multithreading.
+	Added asynchronous steppables to the system, which run in their own
+		thread for some period of time.  This code may be very
+		buggy for all we know, so use it at your peril.  :-)
+	Revised notes.html to include multithreading info
+	GUIState.scheduleAtExtreme now deprecated.  use scheduleAtEnd or
+		scheduleAtStart
+	Fixed bug in Schedule.scheduleRepeating(time,ordering,event) which
+		tried to create a repeat interval of 0 in length
+	If ScheduleRepeating(time,ordering,event,interval) has a negative
+		or zero interval, the method fails and returns null now.
+	Non-volatile inspectors are no longer updated (oops)
+	MutableDouble2D
+		-fixed a bug in subtractIn
+		-added a bunch of set methods, plus reverse() and 
+			addIn(double, double)
+		-added a distanceSq method for Double2D
+	GUIState.scheduleAtStart() and scheduleAtEnd() have been redefined.
+		scheduleAtStart() now schedules things which will be called
+		when start() is called, OR when load() is called.  Likewise
+		scheduleAtEnd() schedules things which will be called when
+		finish() is called, including just before loading a new
+		simulation (see next item below).
+	Upon loading a new simulation, GUIState.finish() is called on 
+		the old one.
+	GUIState.finish() now resets the queues (scheduleImmediate...
+		scheduleAtStart/End).  If you had something there you'll
+		have to add it again at start() time.
+	FastValueGridPortrayal2D now writes directly to buffers.  This
+		results in a drawing speed improvement of approximately 30%.
+	HexaFastValueGridPortrayal2D also similarly writes to buffers
+		(somewhat less efficiently), with a speed improvement of
+		well over 35%.
+	MacOS X 1.4.x has a stupid minimum window size (128x37 -- the docs
+		say 128x32 but they're wrong).  That'd be fine except that
+		if you pack() the windows to something smaller, they'll TELL
+		you that their size is now smaller even though it isn't.
+		It's a bug.  This bites small inspectors.  So we have a bug
+		fix to keep OS X inspector windows from dropping below
+		this size on pack().
+	Bug fix in DoubleGrid[2|3]D.truncate(), which didn't round properly
+		for very large (over long sized) double integers.
+	Various Grid...getNeighbors...Distance(...) methods have been modified
+		to return the neighbor Bag and to allow null neighbor Bags
+		too be passed in (though it's not efficient to do so).
+	Documentation improvements in sim.field.grid
+	We are transitioning the *name* NetworkField to simply Network.  In
+		order to give you some transition time, we have made
+		NetworkField a subclass of Network and have deprecated it.
+		In a following version we will delete NetworkField entirely.
+		However if in the unlikely event your code relies on 
+		knowing about the class NetworkField.IndexOutIn, you'll 
+		have to make the transition immediately -- all it is is a 
+		name change -- just use Network instead of NetworkField 
+		and Network.IndexOutIn instead of NetworkField.IndexOutIn.
+		And we'd like to know about you.
+	Network.getEdges(...) un-deprecated
+	Made HexaBugs's custom model inspector non-volatile
+	Added some Java3D documentation
+	Added a hack to MovieEncoder to eliminate the jmf.log file.  It
+		appears to be working, at least on the Mac.
+	"Spurious Sun JMF Error?" messages result in hanging the
+		simulator.  Added some notifyAll()s in MovieEncoder in
+		the hopes that we'd create a failure rather than a hang.
+		Don't know if it works yet or not.  JMF is buggy.  :-(
+        Identified the race condition which caused movies to lock up and
+                bomb the simulator -- under certain conditions MovieMaker.add
+                can be called while MovieMaker.stop or MovieMaker.start is
+                called (from a different thread), while the MovieMaker is
+                being destroyed.  Fixed in both Display2D and Display3D.
+		The fix involves locking on the schedule whenever the
+		MovieMaker variable is being modified or when stop() or
+		add() or start() are being called on it.  Locking on the
+		schedule will also pause the simulation while the movie maker
+		is being set up or brought down, a good thing (JOptionPane in 
+		would hang the program if the movie button was pressed while
+		the system was running and not paused).  Display3D already
+		had some pause/unpause code which did largely the same
+		thing to fix the JOptionPane business, but with the race
+		condition fixed this code has been commented out as redundant.
+		Plus, it required Display3D to know that the underlying
+		Controller was a Console (bad).  Note: at present the 
+		pausing above doesn't deal with asynchronous
+		steppables, which could conceivably fire off some swing
+		event and gum stuff up.  We'll have to keep an eye on that.
+	Identified the race condition which causes JMF movies to fail if
+		you press stop during a JMF production and then try to make
+		another movie -- stop calls interrupt() on the thread and
+		JMF no like that while writing.  So what Console does now
+		is synchronize on the schedule before calling interrupt().
+		I think that's fine because the function of the interrupt()
+		is to force Display2D out of invokeAndWait, and at that point
+		Display2D's not locked on the schedule.
+	Deleted some unused / unnecessary Display3D internal variables.	
+        Bug fix in Hexabugs when number of bugs are changed in Console
+        FieldPortrayal2D contains concrete default versions of the abstract
+                methods getDefaultPortrayal(...) and setField(...) so it can
+                easily be used simply to draw stuff on-screen and not wrap
+                a field per se.
+        Added how-tos
+        Added FastObjectGridPortrayal2D and FastHexaObjectGridPortrayal2D
+                These objects use Valuable or Number as their default tests.
+        Modified speed slider to be more forgiving on the low-end
+        Made SimpleEdgePortrayal2D and LabelledPortrayal2D capable of scaling
+                their text
+        Bug fix to mason.1.3.1.command, mason.command, and mason.sh, which had
+                been failing if multiple jar files are found in the mason
+                directory
+        Documentation fixes in Schedule.  Thanks to Rob Alexander
+                rda()cs.york.ac.uk
+        Bug fixes to [Double|Int|]Bag.shuffle: it was doing a somewhat non-
+                uniform shuffle.  Also minor bug fix to RandomSequence,
+                which was including the final item in the shuffle (unnecessary)
+        Bug fix to Properties.getProperties with four parameters: the recursive
+                call has been replaced with a call to the getProperties method
+                with an additional parameter.
+        [March 24 Revision] Fixed bad jpeg files -- oops!
+
+
+Version 9
+        Version 9 has a real-valued schedule.  This necessitated a number of
+                changes internally, including moving the Heap to accept
+                doubles rather than Longs, plus lots of other little
+                changes.  It shouldn't have much of a negative effect on    
+                your code actually: most changes were internal.
+		The biggest things that will affect your schedule:
+			- The epoch is no longer 1.  It is now 0.0
+			  This will affect you if you had scheduled
+			  some items with the default mechanisms and others
+			  where you explicitly said '1' rather than
+			  'Schedule.EPOCH'.  Or maybe if some items
+			  were scheduled to start at '2' or something.
+			- You can now schedule items to occur at the
+			  present time.  At present the meaning of this
+			  is that they will be scheduled to occur at
+			  the present time + epsilon, where epsilon is
+			  the smallest possible non-zero interval.  In
+			  the future, we may further modify this to allow
+			  you to schedule events into orderings of the
+			  current time which have not been fired yet;
+			  but not now.
+			- If you used an 'L' (like '12432L') or other
+			  long to pass in express times, you should change
+			  it to a double.
+			- The semantics of Schedule.scheduleRepeating(event,
+			  interval) have changed -- see below.
+			- sim.util.Heap now uses doubles and not longs
+        Console's look has changed: now only one number (time/steps/rate/none)
+                is shown at a time, rather than showing steps and rate
+                together (and only them).
+        Schedule.scheduleRepeating(event,interval) has changed its meaning.   
+                It used to be every [interval] ticks starting at time() + 1.0.
+                now it's every [interval] ticks starting at time() + interval.
+        SimState now has a convenience function called doLoop(...) which steps
+                through the simulation for you, plus two functions
+                extractArgument(...) and extractLocationAfterArgument(...)
+                which provide some convenience mechanisms for dealing with the
+                args[] list.
+        All the applications and tutorials have been updated to use the much
+                simpler doLoop(...) in their main(...) body code.
+        Performed De-tickification.  Now that we have separate steps and time
+                formally defined in the user's mind with a real-valued
+                schedule, to which one does "ticks" refer to?  This was always
+                a poorly-worded term.  We've changed all tick references to
+                either time or steps.
+        Merged in the next-queue stuff into the Schedule again.  This should 
+                make the Schedule a bit faster for those simulations which   
+                really deal in integral schedules; but we may have introduced
+                bugs.  I hope not.
+        Updated Tutorial2 to discuss the new doLoop(...) method
+	Modified Schedule's documentation to reflect new scheduling info.
+	Updated Schedule's and Schedule.Repeat's serialversionUIDs.  This
+		should guarantee incompatability with the old schedule for
+		purposes of serialization (a good thing).
+	Made scheduleRepeating(final Steppable event) synchronized (eliminating
+                a race condition).
+	UN-merged the next-queue stuff.  Commented it out from Schedule but left
+		it in in case you want to put it back in (see 5 comments ago).
+		It appears that the overhead for doing next-queue in the real-
+		valued Schedule outweighs the overhead for not having it now.
+		We could also improve the Schedule perhaps by using a single
+		heap and pre-sorting by ordering; I wonder if that buys us much.
+		At any rate, right now we have about 4% decrease in efficiency
+		in rapid-step items such as Tutorial 5 when compared to the
+		integral Schedule despite my best efforts at optimization.  :-(
+	[March 24 Revision] Fixed bad jpeg files -- oops!
+
+Version 10
+	Fixed Display2D.takeSnapshot() which should have taken a snapshot
+		WHEN the button is pressed, but on Windows/XWindows it
+		was allowing the buffer to be shared with the current graphics
+		context and the image stored would be something much later,
+		when the image was being saved, oops.
+	Fixed Display3D.takeSnapshot() to take a snapshot WHEN the button 
+		is pressed, not when the image was being saved (i.e. file was
+		selected).
+	Fixed Console so that the pop-up time/rate/etc. menu isn't stretched
+		in Windows.
+	MouseTrapsWithUI takes advantage of the double-time scheduler; 
+		MouseTraps3DWithUI is still on discrete time-steps.
+	Added Display2D.attach(..., visible) and Display3D.attach(..., visible)
+		added so you can attach portrayals hidden.  We may add more
+		programmatic capabilities in the future.  We also made 
+		certain PortrayalHolder variables consistent.  Thanks to 
+		Rob Alexander <rda()CS.YORK.AC.UK>
+	Bugfix in Balls3DWithUI: we had been changing the labels every time
+		to test that feature and forgot to remove it for versions 8
+		and 9, resulting in very slow redrawing.
+	NetworkField.java deleted.  We said it'd happen!  Use Network.java.
+	Fixed a bug in FastHexaValueGridPortrayal2D which, for non-Mac users,
+		was skipping every other line to draw.  Oops!  Sorry about that!
+        Updated MersenneTwister to latest version (11)
+                Thanks to Seth Sticco sethn()snsware.net
+	Small HTML fixes, spelling fixes, etc. to howto.html
+	Added exception throwing to Schedule and GUIState to make errors in
+		one's models' scheduling behavior more obvious.  See the
+		documentation for these classes to understand how to change
+		back to the previous behavior if you so desire.
+	If you double-click on a hidden field portrayal, it won't give you
+		inspectors any more.
+	Fixed a bug in HexaObjectGridPortrayal2D.hitOrDraw: the HexaDrawInfo2D
+		object for the simple portrayal had width and height swapped.
+	Added -version option to MASON to print out versioning.  Thanks to
+		R. Paul Wiegand <paul()tesseract.org>
+	Added about box.  Also thanks to Paul.
+	Further speedups to HeatBugs' diffuser
+	Added TentativeStep
+	In doLoop, no need to check for (until <= POSITIVE_INFINITY)!...
+	Fixed bugs related to hexagonal neighborhoods in non-toroidal spaces
+	Optimized the diffuser for hexabugs, which is now three times faster.
+	Optimized the diffuser for antsforage, which is now rather faster.
+	Bag Docs fix. Thanks to John McManus <jmcmanus()rsmas.miami.edu>
+	Added ObjectGrid[2|3]D.clear()
+	Added discussion of deleting things to the howto.
+	If you press TAB or SHIFT-TAB in a PropertyField, it will be submitted
+		just like if you pressed RETURN.
+	Bug fix in sliders for integer property fields.  Thanks to Chad George
+		<chad()mgproductscnc.com>
+	Property fields for integers now accept double values that are integral
+		(like "1.0")
+	Added MutableDouble3D.java
+	Made all Mutable... classes Cloneable.
+	Added some methods to MutableInt3D, MutableDouble2D.
+	Added WordWrap.split()
+	Added a new constructor for Console to allow specifying the random seed.
+	Fixed a bug in FastValueGridPortrayal2D that made it crash when zooming
+		too much into the field.
+	Fixed a bug in Schedule.Repeat and GUIState.Repeat: if time has expired
+		in the Schedule, further repeated objects would have exceptions
+		thrown when they tried to reschedule.  No catch was made for
+		that so it'd just get printed to the screen (oops).
+	Fixed AbstractGrid2D to complain about toroidal hexagonal fields that
+		have an odd width.  It was before complaining about odd heights.
+	Added some minor efficiencies and documentation statements which should
+		improve speed if/when we allow opaque FastValueGrid2DPortrayals
+		in Windows and X11.
+	Added TransformedPortrayal2D and ShapePortrayal2D.
+		TransformedPortrayal2D still needs to have its hitObjects code
+		working properly.
+	Fixed bugs in various Mutable/NonMutable Int/Double 2D/3D .equals(...)
+	Reformatting
+
+Version 11
+	ValueGridPortrayal3D wasn't passing the polygonAttributes() method to
+		its underlying child portrayal.  That's been fixed.
+	ValuePortrayal3D now can draw either a cube or a square.
+	Display3D's cull-setting and polygon mode-setting now catches
+		javax.media.j3d.CapabilityNotSetException
+	Upgraded MersenneTwister to version 12
+	Switching to getDeviceConfiguration().createCompatableImage(...), as
+		suggested by Sun, produces bizarre bugs in Java 1.3.1 on
+		the Mac.  We've gone back to making BufferedImages the
+		old fashioned way: with new BufferedImage(...)
+	Added [Double|Int]Grid2D to ValueGridPortrayal3D.
+	Changed the check field's listener from a ChangeListener to
+		an ActionListener to fix it in PropertyField.
+	LabelledList now can do 5 columns (2 main ones and 3 interspersed)
+	Small tweaks to SimpleInspector
+	Tweaks to tutorials
+	View Button on PropertyField moved to left
+	Added some tweaks to be more compatible with Quaqua
+	Added tool tips to Display2D
+	SimState's asynchronousLock is now a boolean[1] rather than a string
+		because arrays are both serializable *and* unique.  Strings
+		are not unique, so in theory someone else could have locked
+		on the String.
+	AsynchronousSteppable's documentation has been enhanced and fixed.
+		We now include an example for full pause and resume, and we
+		have changed the locks from strings to boolean[1] for the
+		same reason as described immediately above.
+	Slight efficiency improvements to Bag.addAll(...) when a Bag
+		is passed in as a Collection.
+	ValuePortrayal3D's geometry array is shared
+	Added Properties.getObject()
+	Added Inspector.createFrame() and SimpleInspector.createFrame()
+	Added TabbedInspector
+	Fixed (mostly removed) "un-read variable" warnings in 
+		PngEncoder, MiniHistogram, Heap, Axes, QuadPortrayal (fixed), 
+		ObjectGridPortrayal3D, LabelledPortrayal2D (fixed),
+		HexaValueGridPortrayal2D, FieldPortrayal, DoubleGrid2D (fixed),
+		DoubleGrid3D (fixed), SimState, Display3D, ToolTipBehavior,
+		BandPortrayal2D, CooperativeObservation, Woims3D, Woim
+	Fixed bug in DoubleGrid3D.setTo()
+	Fixed bug in various popup menus: their Y location was incorrectly
+		specified
+	Added SinglePropertyInspector
+	Added singlepropertyinspector.classes file
+	Added StreamingSinglePropertyInspector
+	Updated MersenneTwisterFast
+	Added Utilities, merged some common static methods into this class
+	Bugfix to MovieEncoder: if images are added fast enough, the very
+		last one may not get included in the file.  Thanks to
+		Anja Colgan (a.colgan()iggf.geo.uni-muenchen.de)
+	Added Property Inspector facility, creating new package 
+		sim.portrayal.inspector. The new facility permits dynamically
+		loadable per-property inspectors designed for certain types
+		of data.  This is in preparation for the Chart inspector.
+		We've moved TabbedInspector into sim/portrayal/inspector,
+		and have added the classes:
+			sim/portrayal/inspector/PropertyInspector.java
+			sim/portrayal/inspector/StreamingPropertyInspector.java
+			sim/portrayal/inspector/propertyinspector.classes
+			sim/portrayal/Inspect.png
+			sim/portrayal/InspectPressed.png
+	Added Charting facility.  While we've done our best to make it
+		possible to delete this facility if you don't want it, but
+		otherwise this facility will require iText and JFreeChart.
+		The facility includes:
+			sim/util/media/ChartGenerator.java
+			sim/portrayal/inspector/ChartingPropertyInspector.java
+	Fixes to Balls3D: deleted lots of static junk, and generally cleaned
+		up the portrayals; fixed a bug causing the balls to not bounce
+		in a certain direction; and renamed NodePortrayal to
+		BallPortrayal.
+	Slight mods to MiniHistogram
+	Changes to Schedule, Heap, and SimState:
+		Heap now uses Comparables as its keys, not doubles.  We may
+			change this to a Leftist Heap if the constant is not
+			too high.
+		Schedule now allows any number of orderings without specifying
+			them at construction time, and uses just a single
+			heap.  This is much simpler and more flexible code, 
+			but it is likely to be slower, as we're now allocating
+			Comparables instead of using doubles as keys.  We're
+			trying to reuse Comparables where we can though.
+		SimState now has a method called kill() which is a way that
+			Steppables scheduled on the Schedule can kill the
+			entire simulation.  Untested though.
+		One result of all of this is that the sorting order of objects
+			within an ordering will be different than they were
+			before.  Still properly randomized, but the
+			randomization won't be the same.  This is because
+			we're pulling out of a single heap rather than multiple
+			ones and the single heap shuffles objects internally
+			as it pulls them out in a different fashion than
+			the multiple heaps do.
+        Added tool tips to Display3D
+	Fixed a race condition in Display3D.reset() which would cause the
+		skip field to lock up
+	Fixed bugs in LocationWrapper -- some field portrayal 3Ds were
+		triggering null pointer exceptions in getLocationName()
+		when the object had left the field.
+	Updated mason.bat to include the jars in the mason directory to 
+		classpath.  Added ignoreme.bat.
+	Bug fix to Network.removeEdge(...): undirected graphs were
+		resulting in bombing when removing edges due to incorrect
+		shifting of new edges' indices.  Thanks to Peter Vrancx
+		(pvrancx()vub.ac.be) and Mike Little 
+		(little()research.telcorida.com) for the bug reports.
+	Bug fix to Network.removeNode(...): graphs were not removing the
+		node's indexInOutHash from the hash table, so if you
+		removed the node twice, it'd corrupt the nodes in the
+		allNodes bag. 
+	Formally added schelling to the apps
+	Schedule.reset() now stops everything immediately instead of waiting
+		until the next timestep.
+	Updates and cleanups to MutableDouble[2|3]D
+	GUIState.getName() and GUIState.getInfo() have been deprecated and
+		made final -- this will necessitate a minor change.  If you
+		were implementing getName() and getInfo, just change your
+		implementations to be under 
+			public static String getName()
+		and
+		        public static Object getInfo()
+		If you were *calling* these methods, then you should instead
+		call
+			public static String getName(Class theClass)
+		and
+			public static Object getInfo(Class theClass)
+		The point of these changes is to make it possible to extract
+		the name and information about the simulation GUIState without
+		having to instantiate it.  We may yet change the names of
+		these suckers, but will try to do so in at least a partially
+		backward-compatible way.
+	Fixed a bug in Schedule which threw an null-pointer exception when the
+		schedule ended because there was nothing left in the Schedule.
+		This was due to our revised single-heap Schedule design.
+	SimState now can be constructed with just a MersenneTwisterFast (the
+		Schedule is made for you) or with just a random number seed
+		(the Schedule and MersenneTwisterFast are made for you).  This
+		is possible because the Schedule no longer requires orderings to
+		be prespecified.
+	All apps and tutorials updated to reflect the new SimState constructors,
+		getName(), getInfo(), and other little items.
+	Broke out the HTML browser into a separate class, sim.util.HTMLBrowser,
+		to enable a new simulation-selection mechanism.
+	Updated the doNew() method to show a new window with a list and HTML
+		views of the various classes
+	Updated Console.informOfError() method so it doesn't need to have a
+		frame to do its job
+	Fixed checkpoint error in Schedule.Key
+	Updates to Tutorial 4.  Thanks to Mitch Potter mpotter()cs.gmu.edu
+	Removed printlns in Network.java
+	Added a few more scheduleOnce and scheduleRepeating methods to make
+		certain things a little easier; but we made a mistake early
+		on in the order of our parameters for scheduleRepeating
+		and as a result it's nontrivial to make a method which
+		lets you just schedule something repeating for a given
+		ordering with a default interval and starting at time+1
+		(the default).  At best we can now let you do 
+			scheduleRepeating(steppable, ordering, 1)
+		To do better we'd need to come up with a new name for
+		the method rather than continuing to overload the name.  :-(
+	Tweaked to satisfy Java 5 -Xlint warnings except for serialization and
+		unchecked warnings.
+	Added an attach method to Display2D which allows easy translation of
+		the world coordinates (to move 0,0 to the center of the screen,
+		say).
+	simstate.kill() now sets the schedule to AFTER_SIMULATION
+	Reindented
+	Bug fixes in PropertyInspector and ChartingPropertyInspector
+	Made AsynchronousSteppable.run(...) and halt(...) protected, and
+		fixed documentation example errors which did not properly
+		reset the flags afterwards.  If you were using
+		AsynchronousSteppable, you should reread the documentation.
+	Added some more howtos
+	Replaced '@' with '()' in all email addresses in CHANGES
+	Added method Console.stopAllInspectors().  pressStop() calls this
+		to stop all the inspectors though not close them.
+	Deleted spurious ExperimentalToolTipBehavior.java
+	Added new Console method stopAllInspectors which stops inspectors
+		but does not delete them.  This method is now called when
+		the simulation stops.  It's also called by
+		removeAllInspectors when the simulation is started; thus
+		Stoppables may get called multiple times.
+	Added new Inspector method reviseStopper(...), which gives the
+		user a hook to "wrap" the stopper the system is going
+		to use.  Various Inspector subclasses updated.  This
+		fixes a bug in MASON where inspectors' stoppables weren't
+		being reliably called if they were doing wrapping in the
+		createFrame method (as was the case for
+		StreamingPropertyInspector for example).  This was a
+		significant revision of a number of classes in little
+		places.  Let's hope all went well.
+	Updated StreamingPropertyInspector to be able to stream to
+		files, append to files, write to stdout, and write
+		to a window.
+	Heavily updated the Inspector and PropertyInspector documentation
+		to explain the various ins and outs of these classes.
+	Removed System.out.println in most cases from the code.
+	Framerate now updates once every half second (and doesn't redraw
+		unless it's changed)
+	Moved DialogToolTip to sim/util/gui
+	Significant revamping of documentation
+	SimplePortrayal2D.hitObject(...) now returns FALSE by default.
+		This is proper given that it's supposed to be an
+		invisible, non-selectable object.
+	SimplePortrayal2D.setSelected(...) now returns true by default.
+	Console strips out failed classes (perhaps Java3D classes) from
+		the simulation list.
+	Added legend checkbox to ChartGenerator.
+	Added rudimentary setSelected(...) functionality to Continuous2D
+		and SparseGrid2D.  For an example, see MavDemo
+	Relicensed under Academic Free License Version 3.0
+	Added MutableDouble3D.setLength and MutableDouble2D.setLength
+	Slight tweak to MutableDouble2D.normalize and
+		MutableDouble3D.normalize: multiplication by 1/x rather
+		than division by x, should be a tiny bit faster.
+	Removed Vector2D.java from Keepaway.  Replaced with
+		MutableDouble2D.
+	Fixed some bugs in Keepaway.
+	Bug fixes in Light Cycles.
+	Class renaming in LSystem.
+	Bug fixes in LSystem.
+	In all simple 3d portrayals, the top-level transform group now
+		can have its children read.
+	ValuePortrayal3D.getModel(obj,...) officially states that obj
+		should be a ValueWrapper and not some other object.
+		ValueGridPortrayal3D now assumes this and doesn't try
+		to set the userdata anyway.
+	Fixed bugs, added features to Shape3DPortrayal3D
+	Removed sim.app.crowd3d.GullPortrayal3D.  Replaced with standard
+		Shape3DPortrayal3D.
+	When balls' masses are changed in 3D Balls and Bands, the spheres
+		change size appropriately.
+	Updated simulation documentation text.
+	Modified ValueGridPortrayal3D to look up the user data in the
+		child of the transformgroup, not the transformgroup itself.
+	Squashed a nasty bug in Java 1.4.2/1.5 on OS X when making 2D movies.
+		The buffer was being shared by accident, and this resulted
+		in excruciatingly long drawing times to the buffered image.
+		Now if we can just figure out why 3D movies and PNGs sometimes
+		generate black blanks.  :-)
+	ShapePortrayal2D should now hit-test (hopefully).
+	Upgraded MersenneTwisterFast to version 14
+	Slight bug fix for Bag.shuffle, IntBag.shuffle, DoubleBag.shuffle,
+		and RandomSequence.step.  In all cases shuffling was done
+		even for the very last element (which would be staying
+		put anyway).  No big deal.
+	Bug fix in OrientedPortrayal2D, which hadn't done any hit testing
+		as it relied on the underlying SimplePortrayal2D to do so;
+		now that SimplePortrayal2D doesn't hit-test, flockers weren't
+		hitting.
+
+Version 12
+	Minor refactoring: removed unused variables, import declarations, and
+		a few method calls.
+	Some of the Grid3D subclasses were using fieldx[y][z] when
+		fieldxy[z] was available -- we updated them to use fieldxy[z]
+	Added option for hit-testing on OrientedPortrayal2D at the user's
+		choice.
+	Fixed bug null pointer exception in ChartingPropertyInspector
+	Refactoring ChartGenerator to allow for Histograms and other kinds of
+		charts which share common code.  This required moving to a new
+		package and renaming the old ChartGenerator to
+		TimeSeriesChartGenerator.  You'll need to update your code.
+	Added HistogramChartingPropertyInspector, moved 
+		ChartingPropertyInspector to 
+		TimeSeriesChartingPropertyInspector, and made an abstract
+		superclass ChartingPropertyInspector
+	Updated howto.html to reflect the revision
+	Minor bug fix to Schedule: if the time was AFTER_SIMULATION, and
+		someone scheduled an event at that time, then it'd get
+		bumped to AFTER_SIMULATION's bits + 1, which equals NaN.
+		So we keep it at AFTER_SIMULATION (which will properly
+		fail).
+	Added portrayalForNonNull as an option to FieldPortrayal.  It's
+		checked for after checking to see if the object is
+		a Portrayal itself, but before searching the hash table
+		for a registered portrayal.  The code is rearranged
+		a bit to be easier to read and cleaner.  The purpose for
+		portrayalForNonNull is to make typical 
+		ObjectGridPortrayal2Ds quite a bit faster because you
+		can just provide a portrayal for null objects and
+		a portrayal for non-null objects.  It shouldn't slow
+		down other graphics stuff except by a tiny amount, as
+		it's just another quick check.
+	Added MiniHistogram.makeBucketPositions, though it's presently
+		unused.
+	Added some gizmos in HeatBugs as example for Histogram
+	Indexed.getValue() explicitly throws IndexOutOfBoundsException
+	Minor null pointer exception in LightCycles fixed
+	Small efficiency improvements in AbstractGrid2D/3D and
+		SparseGrid2D/3D

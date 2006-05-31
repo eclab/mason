@@ -1,0 +1,13 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>Virus Infection</h2> 
+By Liviu Panait
+</table>
+
+<p>A simulation of intentional virus infection and disinfection in a population.  The bad guys (red) either move randomly or greedily chase after the nearest uninfected individual.  Infected individuals (in green) move randomly and may be disinfected by good guys (black with red crosses) who likewise eeither move randomly or greedily.
+
+<p>This model uses a carefully constructed notion of random movement.  If individuals take a random walk (changing direction every time step), their actions tend to be jittery and rarely go far.  Instead one might have each individual pick a random location on-screen, then achieve that location, then pick another random location, etc.  It turns out this second approach tends to cause too many individuals to be clustered in the middle of the field, as most paths from random A to random B will cross through the field center.  Our agents do something in-between: they pick a random location no more than half the field's diameter away.
+
+</body></html>

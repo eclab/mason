@@ -1,0 +1,199 @@
+<html>
+<head>
+<title>MASON</title>
+<style type="text/css">
+
+h2  {
+    text-align:center;
+    font-family:Times,Times New Roman,Serif;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border-top: solid 3px #333355;
+    border-bottom: solid 3px #333355;
+    background-color: #F3F3F3;
+    }
+
+h1  {
+    text-align:center;
+    font-family:Times,Times New Roman,Serif;
+    color: #FFFFFF;
+    font-weight: 100;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border-bottom: solid 10px #CCCCCC;
+    background-color: #333355;
+    }
+
+</style>
+
+</head>
+<body>
+
+<h1>M&nbsp;A&nbsp;S&nbsp;O&nbsp;N</h1>
+
+<p>MASON is a single-process discrete-event simulation core and visualization library aimed at multiagent simulations with large numbers of agents.  The system is written in pure Java and is intended for experienced Java coders who want something general and easily hackable to start with, rather than a domain-specific simulation environment. Some features:
+
+<ul>
+<li> Simulations can be serialized to <i>checkpoints</i> (freeze-dried and written to disk), which can be recovered from at any time, even to different Java platforms and new MASON visualization toolkits.
+<li> MASON can be set up to be <i>guaranteed duplicatable</i>, meaning that the same simulation parameters will produce the same results regardless of platform.
+<li> Libraries are provided for visualizing in 2D and in 3D (using Java3D), to manipulate the model graphically, to take screenshots, and to generate movies (using Java Media Framework).
+<li> While the visualization toolkits are fairly large, the core simulation model is intentionally very small, fast, and easy to understand.
+</ul>
+
+<p>MASON is open-source software licensed under the Academic Free License, version 3.0.  See the <a href="../LICENSE">LICENSE</a> file for more information.
+
+<p><ul>
+<li><a href="#unpacking">Unpacking and Running MASON</a>
+<li><a href="#docs">MASON Documentation and Tutorials</a>
+<li><a href="#compiling">Compiling MASON</a>
+</ul>
+
+<a name="unpacking"><h2>Unpacking and Running MASON</h2>
+
+The distribution uncompresses into the <tt>mason</tt> directory.  MASON is designed to be run both <b>with</b> or <b>without</b> certain add-on features which we predict you will want to add on.  In most cases, MASON is most easily recompiled with all the add-on libraries installed.
+
+<h3>Quick Start (no add-ons)</h3>
+In the same <b>mason</b> there is a directory
+called <b>start</b>.  Inside this directory there are scripts to fire up MASON. 
+
+<p align=center><table cellpadding=3 cellspacing=0 border=1>
+<tr><td align=right>        Windows:        <td>double-click on <b>mason.bat</b>
+<tr><td align=right>        OS X:           <td>double-click on <b>mason.1.3.1.command</b>
+                                [for fastest 2D demos but no 3D demos]
+<tr><td align=right>                (or) OS X:      <td>double-click on <b>mason.command</b>
+                                [for 3D demos]
+<tr><td align=right>        Linux/X11:      <td>exec <b>mason.sh</b>
+</table>
+
+<p>Pick an application from the list which appears and have fun!
+
+<h3>Add-On Java3D</h3>
+
+To use MASON's 3D toolkit (or view its 3D demo apps), <b>install Sun's <a href="http://java.sun.com/products/java-media/3D/download.html">Java3D</a> framework.</b>  Get the version "for the JDK" rather than "for the JRE".  We very strongly suggest that Windows users install the OpenGL version.  Linux users can get Java3D <a href="http://www.blackdown.org/java-linux/java2-status/java-3d-status.html">here</a>.  Java3D for MacOS X only runs under MacOS X 10.3.x or later with Java 1.4.2, and can be downloaded at <a href="http://www.apple.com/downloads/macosx/apple/java3dandjavaadvancedimagingupdate.html">Apple's Download Page</a>.
+
+<h3>Add-On Charting</h3>
+
+To do charting, you'll need to install two libraries:
+
+    <ol>
+    <li><a href="http://www.jfree.org/jfreechart/index.php">jFreeChart</a>.  The <b>jfreechart-1.0.1.jar</b> and <b>jcommon-1.0.0.jar</b> files are located in the <b>lib</b> directory of the jFreeChart distribution.  Move them to the <b>mason</b> directory.
+    <li><a href="http://www.lowagie.com/iText/download.html">iText</a>.  Move the <b>itext-1.4.jar</b> file to the <b>mason</b> directory.
+    </ol>
+
+<p>Alternatively you can download the library collection on the MASON web page, which contains these libraries, and move them into MASON from there.
+    
+<h3>Add-On Movie Generation</h3>
+
+To make Quicktime movies, you have to install Sun's <a href="http://java.sun.com/products/java-media/jmf/2.1.1/download.html">Java Media Framework</a>.</b>  
+
+<ul>
+<li>MacOS X users should install the "Cross-platform Java" version, and place the <b>jmf.jar</b> file directly into the <b>mason</b> directory.
+<li>Windows and Linux users may install the custom versions of JMF Sun provides for them.  But if those versions are frustrating you, you may follow the same instructions as the OS X users (which is simpler).
+</ul>
+
+<p>Alternatively you can download the library collection on the MASON web page, which contains this library, and move it into MASON from there.  
+
+<h3>Prettier OS X Experience</h3>
+
+<ul>
+<li>Java's color chooser is poor.  You might try the "quaqua-colorchooser-only.jar" file in the <a href="http://www.randelshofer.ch/quaqua/download.html">Quaqua</a> look and feel distribution.
+</ul>
+
+<p>Alternatively you can download the library collection on the MASON web page, which contains this library, and move it into MASON from there.  
+
+<a name="docs"><h2>MASON Documentation and Tutorials</h2>
+
+<h3>New Users</h3>
+
+Start with <a href="tutorial0/index.html">Tutorial 0</a>, which is a tour through various features of MASON's GUI code, and doesn't require much knowledge of Java.
+
+<h3>Beginning Coders</h3>
+
+When you're ready to start coding, go through our seven tutorials located in the <tt>mason/sim/app</tt> directory.  Each has an early HTML file walking through the tutorial, plus completed tutorial class files.  Walking through these tutorials will help in learning to code with MASON more than anything else, we think.
+
+<p>If you're the kind of person who likes UML charts (or a bad approximation thereof), take a look at our <a href="SimulatorLayout.pdf">Simulator Layout diagram</a>, last updated a few versions ago and still pretty accurate.
+
+<p>Last but hardly least, we predict that the <a href="classdocs/index.html">Class Documentation</a> will prove useful to you.  There is also an <a href="overview.html">overview</a> of the basic MASON classes.  
+
+<h3>Advanced Coders</h3>
+
+After the Tutorials, you should check out the <a href="howto.html">How-Tos</a> for answers to common things (parallelizing MASON, building an applet, etc.)
+
+<p>The <a href="notes.html">Notes</a> contain vital stuff that any MASON hacker should know.
+
+<p>If you're interested in grokking the internal scenegraphs of the Java3D code (which admittedly can get hairy), we have provided you with a <a href="Java3D.pdf">graphical depiction</a> of the important scenegraph structures.
+
+<p>Last, the <b>app</b> directory contains a number of example programs illustrating various MASON programs (and of varying quality!).
+
+<h3>Lost?</h3>
+
+<p>Hop on the MASON mailing list and post a question!  Humans are often the best documentation of all.  See the <a href="http://cs.gmu.edu/~eclab/projects/mason/">MASON website</a> for instructions.
+
+
+<a name="compiling"><h2>Compiling MASON</h2>
+
+<p>MASON compilation presumes you are experienced with setting up CLASSPATHs (<a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/classpath.html">Windows example</a>, <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/classpath.html">OS X, Linux, etc.</a>), running javac or jikes, and using a Makefile (if you're running Linux or MacOS X).
+
+<p>Here's what needs to go into the CLASSPATH:
+    <ol>
+    <li>The <b>mason</b> directory itself
+    <li>All <b>jar</b> files located inside the <b>mason</b> directory, specifically the jar files for JFreeChart and JCommon, iText, and JMF.
+    </ol>
+
+<p>If you're planning on using jikes, you'll also need to set up the JIKESPATH to include everything in the CLASSPATH, plus the various jar files of your java installation.  See the jikes documentation for more information.
+
+<h3>Compiling From Eclipse</h3>
+
+<p>On <a href="http://www.swarm.org/wiki/Software_IDEs">this page</a> Steve Lytinen and Steve Railsback have written a nice tutorial for using MASON in Eclipse.
+
+<h3>Compiling from the OS X / Linux Makefile</h3>
+
+<p>Make sure your CLASSPATH is set up right.  Then:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>cd mason; make 3d</tt>
+
+<P>...will compile all the files.  Try <tt>make help</tt> to see more options.  
+
+<p>If you've not installed Java3D and just want to play with the 2D stuff, try:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>cd mason; make</tt>
+
+<p>If you get an error about <b>jikes</b> not installed, you can modify the Makefile's JAVAC variable to use the <b>javac</b> compiler instead.  Or if you'd like to try jikes (it's much faster), install it from <a href="http://www.research.ibm.com/jikes/">IBM's site.</a>
+
+<h3>Compiling from the Windows DOS prompt</h3>
+
+<p>Make sure your CLASSPATH is set up right.  Then try this:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>cd mason</tt><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>javac */*.java */*/*.java */*/*/*.java */*/*/*/*.java</tt>
+
+<h3>Running an App from the Command Line</h3>
+
+<p>Every GUI app class ends with the extension "WithUI.java".  Assuming your CLASSPATH is set up properly, you can run any of them directly from the command line.  For example:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>java sim.app.heatbugs.HeatBugsWithUI</tt>
+
+<p>You can also run MASON proper from the command line like this:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>java sim.display.Console</tt>
+
+<p>In certain situations you may wish to run with more memory.  First, certain Java3D applications (notably Particles3D) require a lot of RAM because Java3D is a memory hog.  Second, if you're running in Windows or Linux and wish to use the faster stretched image technique for drawing grids of rectangles (see the Options window -- the wrench icon <img src="../sim/display/Options.png">), increasing RAM will help performance.  You can do this by including the <tt>-Xmx</tt> option in Java.  For example, to run MASON directly using 200 megs of RAM:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>java -Xmx200M sim.display.Console</tt>
+
+<p>MacOS X presents a special gotcha. The 2D MASON code runs much faster on MacOS X when using Java 1.3.1, as 1.4.1 is not presently hardware accelerated on the Mac. But the 3D MASON code only runs on 1.4.1. So if you're doing a MASON 3D app you must run 1.4.1 on the Mac; but if you're doing a MASON 2D app, you'll probably be much happier running 1.3.1. Sorry about that!
+
+<p>If you've upgraded to the latest Java on the Mac, you're running 1.4.1 or later. You can make a given Terminal window use 1.3.1 instead of 1.4.1 java with the command:
+
+<p>(In tcsh)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>alias java /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Home/bin/java</tt><br>
+(In bash)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>alias java='/System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Home/bin/java'</tt>
+
+<br>
+<br>
+
+</body>
+</html>
