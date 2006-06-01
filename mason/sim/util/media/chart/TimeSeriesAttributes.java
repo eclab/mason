@@ -41,14 +41,14 @@ public class TimeSeriesAttributes extends SeriesAttributes
     static final float[][] dashes = 
         { 
         { DASH, 0.0f }, // --------
-        { DASH * 2, SKIP }, 
-        { DASH, SKIP } , // -  -  -  
-        { DASH, SPACE } , // - - - -
-        { DASH, SPACE, DASH, SPACE, DOT, SPACE },  // - - . - - . 
-        { DASH, SPACE, DOT, SPACE, }, // - . - .
-        { DASH, SPACE, DOT, SPACE, DOT, SPACE },  // - . . - . . 
-        { DOT, SPACE }, // . . . .
-        { DOT, SKIP }   // .  .  .  .  
+            { DASH * 2, SKIP }, 
+            { DASH, SKIP } , // -  -  -  
+            { DASH, SPACE } , // - - - -
+            { DASH, SPACE, DASH, SPACE, DOT, SPACE },  // - - . - - . 
+            { DASH, SPACE, DOT, SPACE, }, // - . - .
+            { DASH, SPACE, DOT, SPACE, DOT, SPACE },  // - . . - . . 
+            { DOT, SPACE }, // . . . .
+            { DOT, SKIP }   // .  .  .  .  
         };
     
     /** How much we should stretch the dashes listed above.  1.0 is normal. */
