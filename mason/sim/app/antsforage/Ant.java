@@ -273,7 +273,7 @@ public /*strictfp*/ class Ant extends OvalPortrayal2D implements Steppable
             justCreated = false;
             }
 
-		// final int START=-1;
+        // final int START=-1;
         int bestx, besty, besto;
 
         DecisionInfo movingDecision = null;

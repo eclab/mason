@@ -1513,7 +1513,7 @@ public class Console extends JFrame implements Controller
         // this line is to fix a stupidity in MacOS X 1.3.1, where if Display2D isn't loaded before
         // windows are created (so its static { } can be executed before the graphics subsystem
         // fires up) the underlying graphics subsystem is messed up.  Apple's fixed this in 1.4.1.
-    	sacrificial = Display2D.isMacOSX();  // sacrificial  -- something to force Display2D.class to load
+        sacrificial = Display2D.isMacOSX();  // sacrificial  -- something to force Display2D.class to load
                 
         // Okay here we go with the real code.
         if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
@@ -2256,7 +2256,7 @@ public class Console extends JFrame implements Controller
         // start the playing thread
         Runnable run = new Runnable()
             {
-        	//final static int STEPHISTORY = 32;
+            //final static int STEPHISTORY = 32;
             //long[] stephistory = new long[STEPHISTORY];
 
             public void run()

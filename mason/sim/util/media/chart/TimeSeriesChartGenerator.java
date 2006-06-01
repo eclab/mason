@@ -43,19 +43,19 @@ import com.lowagie.text.pdf.*;
 
 public class TimeSeriesChartGenerator extends ChartGenerator
     {
-	/** The dataset.  Generated in buildChart(). */
-	protected XYSeriesCollection dataset;
-	/** A list of SeriesChangeListeners, one per element in the dataset, and indexed in the same way.
-		When an element is removed from the dataset and deleted from the chart, its corresponding
-		SeriesChangeListener will be removed and have seriesChanged(...) called. */
-	protected ArrayList stoppables = new ArrayList();
-	
-	public AbstractSeriesDataset getSeriesDataset() { return dataset; }
+    /** The dataset.  Generated in buildChart(). */
+    protected XYSeriesCollection dataset;
+    /** A list of SeriesChangeListeners, one per element in the dataset, and indexed in the same way.
+        When an element is removed from the dataset and deleted from the chart, its corresponding
+        SeriesChangeListener will be removed and have seriesChanged(...) called. */
+    protected ArrayList stoppables = new ArrayList();
+        
+    public AbstractSeriesDataset getSeriesDataset() { return dataset; }
 
     DatasetChangeEvent updateEvent;
-	// We issue a datset change event because various changes may have been made by our attributes
-	// objects and they haven't informed the graph yet.   That way we can bulk up lots of changes
-	// before we do a redraw.
+    // We issue a datset change event because various changes may have been made by our attributes
+    // objects and they haven't informed the graph yet.   That way we can bulk up lots of changes
+    // before we do a redraw.
     public void update()
         {
         if (updateEvent == null)
@@ -65,34 +65,34 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 
     public void removeSeries(int index)
         {
-		// stop the inspector....
+        // stop the inspector....
         Object tmpObj = stoppables.remove(index);
         if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
             ((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
         
-		// remove from the dataset.  This is easier done in some JFreeChart plots than others, dang coders
-		dataset.removeSeries(index);
-		
-		// remove the attribute
-		seriesAttributes.remove(index);
-		
-		// shift all the seriesAttributes' indices down so they know where they are
-		Component[] c = seriesAttributes.getComponents();
-		for(int i = index; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
-			{
-			if (i >= index) 
-				{
-				SeriesAttributes csa = (SeriesAttributes)(c[i]);
+        // remove from the dataset.  This is easier done in some JFreeChart plots than others, dang coders
+        dataset.removeSeries(index);
+                
+        // remove the attribute
+        seriesAttributes.remove(index);
+                
+        // shift all the seriesAttributes' indices down so they know where they are
+        Component[] c = seriesAttributes.getComponents();
+        for(int i = index; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
+            {
+            if (i >= index) 
+                {
+                SeriesAttributes csa = (SeriesAttributes)(c[i]);
                 csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-				csa.rebuildGraphicsDefinitions();
-				}
-			}
+                csa.rebuildGraphicsDefinitions();
+                }
+            }
         revalidate();
         }
                 
     protected void buildChart()
         {
-		dataset = new XYSeriesCollection();
+        dataset = new XYSeriesCollection();
         chart = ChartFactory.createXYLineChart("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
                                                PlotOrientation.VERTICAL, false, true, false);
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
@@ -110,17 +110,17 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user.  The series should have a key
-		in the form of a String.  Returns the series index number. */
+        in the form of a String.  Returns the series index number. */
     public int addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
         {
         int i = dataset.getSeriesCount();
         dataset.addSeries(series);
         SeriesAttributes csa = new TimeSeriesAttributes(this, series, i); 
-		seriesAttributes.add(csa);
+        seriesAttributes.add(csa);
         stoppables.add( stopper );
         revalidate();
         return i;
         }
-    	
+        
 
-	}
+    }

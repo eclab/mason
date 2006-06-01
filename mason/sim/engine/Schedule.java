@@ -89,18 +89,18 @@ public class Schedule implements java.io.Serializable
     // whether or not the Schedule throws errors when it encounters an exceptional condition
     // on attempting to schedule an item
     boolean throwingScheduleExceptions = true;
-	
-	/** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
-		in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
-		exceptions is set to TRUE.  You should change this only if you require backward-compatability. */
+        
+    /** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
+        in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
+        exceptions is set to TRUE.  You should change this only if you require backward-compatability. */
     public synchronized void setThrowingScheduleExceptions(boolean val)
         {
         throwingScheduleExceptions = val;
         }
         
-	/** Returns if the Schedule is set to either throw exceptions or return false when a Steppable is scheduled
-		in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
-		exceptions is set to TRUE.  */
+    /** Returns if the Schedule is set to either throw exceptions or return false when a Steppable is scheduled
+        in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
+        exceptions is set to TRUE.  */
     public synchronized boolean isThrowingScheduleExceptions()
         {
         return throwingScheduleExceptions;
@@ -140,7 +140,7 @@ public class Schedule implements java.io.Serializable
         return Double.toString(time);
         }
 
-	/** Returns the number of steps the Schedule has pulsed so far. */
+    /** Returns the number of steps the Schedule has pulsed so far. */
     public synchronized long getSteps() { return steps; }
 
     // pushes the time to AFTER_SIMULATION and attempts to kill all
@@ -286,7 +286,7 @@ public class Schedule implements java.io.Serializable
         // check to see if we're scheduling for the same exact time -- even if of different orderings, that doesn't matter
         if (t == time && t != AFTER_SIMULATION)
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
-			t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
+            t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
 
         if (t < EPOCH || t >= AFTER_SIMULATION || t != t /* NaN */ || t < time || event == null)
             {
@@ -331,7 +331,7 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to recur at the specified interval starting at time() + interval, and at 0 ordering.
         If this is a valid interval (must be >= 0)
         and event, schedules the event and returns a Stoppable, else returns null.
-		If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
+        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until time() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
 
@@ -349,7 +349,7 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to recur at the specified interval starting at time() + interval, and at the provided ordering.
         If this is a valid interval (must be >=> 0)
         and event, schedules the event and returns a Stoppable, else returns null.
-		If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
+        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until time() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
 
@@ -387,7 +387,7 @@ public class Schedule implements java.io.Serializable
         time, then the first event is instead scheduled to occur at time() + epsilon (the minimum possible next
         timestamp). If this is a valid time, interval (must be >=0), 
         and event, schedules the event and returns a Stoppable, else returns null.
-		If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
+        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until time() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     
@@ -424,7 +424,7 @@ public class Schedule implements java.io.Serializable
         time, then the first event is instead scheduled to occur at time() + epsilon (the minimum possible next
         timestamp). If this is a valid time, ordering, interval (must be >= 0), 
         and event, schedules the event and returns a Stoppable, else returns null.
-		If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
+        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until time() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     

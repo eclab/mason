@@ -21,5 +21,5 @@ public interface Indexed
     /** Throws an IndexOutOfBoundsException if index is inappropriate.  Not called get() because
         this would conflict with get() methods in IntBag etc. which don't return objects. */
     public Object getValue(final int index)
-	throws IndexOutOfBoundsException;
+        throws IndexOutOfBoundsException;
     }

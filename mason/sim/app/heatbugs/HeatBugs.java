@@ -41,32 +41,32 @@ public /*strictfp*/ class HeatBugs extends SimState
     public void setDiffusionConstant( double temp ) { if( temp >= 0 && temp <= 1 ) diffusionRate = temp; }
     public Object domDiffusionConstant() { return new Interval(0.0, 1.0); }
     public double getRandomMovementProbability() { return randomMovementProbability; }
-	
-	public double[] getBugXPos() {
-		try
-			{
-			double[] d = new double[bugs.length];
-			for(int x=0;x<bugs.length;x++)
-				{
-				d[x] = ((Int2D)(buggrid.getObjectLocation(bugs[x]))).x;
-				}
-			return d;
-			}
-		catch (Exception e) { return new double[0]; }
-		}
+        
+    public double[] getBugXPos() {
+        try
+            {
+            double[] d = new double[bugs.length];
+            for(int x=0;x<bugs.length;x++)
+                {
+                d[x] = ((Int2D)(buggrid.getObjectLocation(bugs[x]))).x;
+                }
+            return d;
+            }
+        catch (Exception e) { return new double[0]; }
+    }
     
-	public double[] getBugYPos() {
-		try
-			{
-			double[] d = new double[bugs.length];
-			for(int x=0;x<bugs.length;x++)
-				{
-				d[x] = ((Int2D)(buggrid.getObjectLocation(bugs[x]))).y;
-				}
-			return d;
-			}
-		catch (Exception e) { return new double[0]; }
-		}
+    public double[] getBugYPos() {
+        try
+            {
+            double[] d = new double[bugs.length];
+            for(int x=0;x<bugs.length;x++)
+                {
+                d[x] = ((Int2D)(buggrid.getObjectLocation(bugs[x]))).y;
+                }
+            return d;
+            }
+        catch (Exception e) { return new double[0]; }
+    }
 
 
     public void setRandomMovementProbability( double t )

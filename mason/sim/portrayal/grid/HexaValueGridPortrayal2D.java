@@ -81,7 +81,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         final double[][] doubleField = (isDoubleGrid2D ? ((DoubleGrid2D) field).field : null);
         final int[][] intField = (isDoubleGrid2D ? null : ((IntGrid2D) field).field);
 
-		double xyC_x, xyC_y, xyC_ulx, xyC_uly, xyC_upx, xyC_upy, xyC_urx, xyC_ury, x0, y0, tx, ty;
+        double xyC_x, xyC_y, xyC_ulx, xyC_uly, xyC_upx, xyC_upy, xyC_urx, xyC_ury, x0, y0, tx, ty;
 
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
@@ -91,30 +91,30 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         for(int y=starty;y<endy;y++)
             for(int x=startx;x<endx;x++)
                 {
-                    Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
-                    if (c.getAlpha() == 0) continue;
-                    graphics.setColor(c);
+                Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
+                if (c.getAlpha() == 0) continue;
+                graphics.setColor(c);
 
                 //getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
                 //getxyC( field.ulx(x,y), field.uly(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ul );
                 //getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
                 //getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
-				x0 = x; y0 = y; tx = info.draw.x; ty = info.draw.y;
-				xyC_x = tx + xScale * (1.5 * x0 + 1);
-				xyC_y = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
+                x0 = x; y0 = y; tx = info.draw.x; ty = info.draw.y;
+                xyC_x = tx + xScale * (1.5 * x0 + 1);
+                xyC_y = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
 
-				x0 = field.ulx(x,y); y0 = field.uly(x,y); tx = info.draw.x; ty = info.draw.y;
-				xyC_ulx = tx + xScale * (1.5 * x0 + 1);
-				xyC_uly = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
+                x0 = field.ulx(x,y); y0 = field.uly(x,y); tx = info.draw.x; ty = info.draw.y;
+                xyC_ulx = tx + xScale * (1.5 * x0 + 1);
+                xyC_uly = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
 
-				x0 = field.upx(x,y); y0 = field.upy(x,y); tx = info.draw.x; ty = info.draw.y;
-				xyC_upx = tx + xScale * (1.5 * x0 + 1);
-				xyC_upy = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
+                x0 = field.upx(x,y); y0 = field.upy(x,y); tx = info.draw.x; ty = info.draw.y;
+                xyC_upx = tx + xScale * (1.5 * x0 + 1);
+                xyC_upy = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
 
-				x0 = field.urx(x,y); y0 = field.ury(x,y); tx = info.draw.x; ty = info.draw.y;
-				xyC_urx = tx + xScale * (1.5 * x0 + 1);
-				xyC_ury = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
+                x0 = field.urx(x,y); y0 = field.ury(x,y); tx = info.draw.x; ty = info.draw.y;
+                xyC_urx = tx + xScale * (1.5 * x0 + 1);
+                xyC_ury = ty + yScale * (1.0 + 2.0 * y0 + (x0<0?(-x0)%2:x0%2) );
 
 
                 xPoints[0] = (int)(xyC_urx-0.5*xScale);

@@ -156,21 +156,21 @@ public abstract class FieldPortrayal
         // return the portrayal-for-all if any
         if (portrayalForAll != null) return portrayalForAll;
         
-		if (obj == null)
-			{
-			if (portrayalForNull != null) return portrayalForNull;
-			if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
-			return getDefaultNullPortrayal();
-			}
-		else
-			{
-			if (obj instanceof Portrayal) return (Portrayal) obj;
-			if (portrayalForNonNull != null) return portrayalForNonNull;
-			if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
-			if ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null) return tmp;
-			if (portrayalForRemainder!=null) return portrayalForRemainder;
-			return getDefaultPortrayal();
-			}
+        if (obj == null)
+            {
+            if (portrayalForNull != null) return portrayalForNull;
+            if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
+            return getDefaultNullPortrayal();
+            }
+        else
+            {
+            if (obj instanceof Portrayal) return (Portrayal) obj;
+            if (portrayalForNonNull != null) return portrayalForNonNull;
+            if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
+            if ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null) return tmp;
+            if (portrayalForRemainder!=null) return portrayalForRemainder;
+            return getDefaultPortrayal();
+            }
         }
     
     protected Object field = null;

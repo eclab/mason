@@ -44,51 +44,51 @@ import com.lowagie.text.pdf.*;
    
    <p>ChartGenerator displays three regions:
    
-	<p><ul>
-		<li>The <tt>chart</tt> proper, stored in a <tt>chartPanel</tt>.  This panel is in turn stored in a JScrollPane.
-		<li>The <tt>globalAttributes</tt>, a collection of Components on the top-left which control global features
-			of the chart (its title, axis labels, etc.)
-		<li>The <tt>seriesAttributes</tt>, a scrollable collection of Components on the bottom-left which control features
-			of each separate series in the chart.  Each seriesAttribute is associated in turn with a Stoppable (stored in
-			the list <tt>stoppables</tt>) which will have its <tt>stop()</tt> method called when the series is deleted from
-			the chart.
-	</ul>
-		
+   <p><ul>
+   <li>The <tt>chart</tt> proper, stored in a <tt>chartPanel</tt>.  This panel is in turn stored in a JScrollPane.
+   <li>The <tt>globalAttributes</tt>, a collection of Components on the top-left which control global features
+   of the chart (its title, axis labels, etc.)
+   <li>The <tt>seriesAttributes</tt>, a scrollable collection of Components on the bottom-left which control features
+   of each separate series in the chart.  Each seriesAttribute is associated in turn with a Stoppable (stored in
+   the list <tt>stoppables</tt>) which will have its <tt>stop()</tt> method called when the series is deleted from
+   the chart.
+   </ul>
+                
 */
 
 public abstract class ChartGenerator extends JPanel
     {
-	/** A holder for global attributes components */
+    /** A holder for global attributes components */
     protected Box globalAttributes = Box.createVerticalBox();
-	/** A holder for series attributes components */
+    /** A holder for series attributes components */
     protected Box seriesAttributes = Box.createVerticalBox();
-	/** The chart */
+    /** The chart */
     protected JFreeChart chart;
-	/** The panel which holds and draws the chart */
+    /** The panel which holds and draws the chart */
     protected ChartPanel chartPanel;
-	/** The JScrollPane which holdw the ChartPanel */
-	protected JScrollPane chartHolder = new JScrollPane();
-	/** The JFrame which stores the whole chart.  Set in createFrame(), else null. */
+    /** The JScrollPane which holdw the ChartPanel */
+    protected JScrollPane chartHolder = new JScrollPane();
+    /** The JFrame which stores the whole chart.  Set in createFrame(), else null. */
     protected JFrame frame;
-	/** The global attributes chart title field. */
+    /** The global attributes chart title field. */
     protected JTextField titleField;
-	/** The global attributes domain axis field. */
+    /** The global attributes domain axis field. */
     protected JTextField xLabel;
-	/** The global attributes range axis field. */
+    /** The global attributes range axis field. */
     protected  JTextField yLabel;
-	
-	/** Override this to return the JFreeChart data set used by your Chart.  For example, time series charts
-		might return the XYSeriesCollection. */ 
-	public abstract AbstractSeriesDataset getSeriesDataset();
-	
+        
+    /** Override this to return the JFreeChart data set used by your Chart.  For example, time series charts
+        might return the XYSeriesCollection. */ 
+    public abstract AbstractSeriesDataset getSeriesDataset();
+        
     /** Override this to update the chart to reflect new data. */
     public abstract void update();
-    	
+        
     /** Override this to remove a series from the chart. */
     public abstract void removeSeries(int index);
                 
     /** Override this to construct the appropriate kind of chart.  This is the first thing called from the constructor; so certain
-		of your instance variables may not have been set yet and you may need to set them yourself.  */
+        of your instance variables may not have been set yet and you may need to set them yourself.  */
     protected abstract void buildChart();
     
     /** Deletes all series from the chart. */
@@ -105,7 +105,7 @@ public abstract class ChartGenerator extends JPanel
         }
 
     /** Returns the ChartPanel holding the chart. */
-	public ChartPanel getChartPanel() { return chartPanel; }
+    public ChartPanel getChartPanel() { return chartPanel; }
 
     /** Adds a global attribute panel to the frame */
     public void addGlobalAttribute(Component component)
@@ -137,7 +137,7 @@ public abstract class ChartGenerator extends JPanel
         return component;
         }
                 
-	/** Sets the title of the chart (and the window frame). */
+    /** Sets the title of the chart (and the window frame). */
     public void setTitle(String title)
         {
         chart.setTitle(title);
@@ -146,13 +146,13 @@ public abstract class ChartGenerator extends JPanel
         titleField.setText(title);
         }
 
-	/** Returns the title of the chart */
+    /** Returns the title of the chart */
     public String getTitle()
         {
         return chart.getTitle().getText();
         }
                 
-	/** Sets the name of the Range Axis label -- usually this is the Y axis. */
+    /** Sets the name of the Range Axis label -- usually this is the Y axis. */
     public void setRangeAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
@@ -161,13 +161,13 @@ public abstract class ChartGenerator extends JPanel
         yLabel.setText(val);
         }
                 
-	/** Returns the name of the Range Axis Label -- usually this is the Y axis. */
+    /** Returns the name of the Range Axis Label -- usually this is the Y axis. */
     public String getRangeAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getRangeAxis().getLabel();
         }
                 
-	/** Sets the name of the Domain Axis label  -- usually this is the X axis. */
+    /** Sets the name of the Domain Axis label  -- usually this is the X axis. */
     public void setDomainAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
@@ -176,7 +176,7 @@ public abstract class ChartGenerator extends JPanel
         xLabel.setText(val);
         }
                 
-	/** Returns the name of the Domain Axis label -- usually this is the X axis. */
+    /** Returns the name of the Domain Axis label -- usually this is the X axis. */
     public String getDomainAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getDomainAxis().getLabel();
@@ -228,7 +228,7 @@ public abstract class ChartGenerator extends JPanel
 
         xLabel = new JTextField();
         xLabel.setText(getDomainAxisLabel());
-		xLabel.addKeyListener(new KeyListener()
+        xLabel.addKeyListener(new KeyListener()
             {
             public void keyReleased(KeyEvent keyEvent) {}
             public void keyTyped(KeyEvent keyEvent) {}
@@ -254,7 +254,7 @@ public abstract class ChartGenerator extends JPanel
 
         yLabel = new JTextField();
         yLabel.setText(getRangeAxisLabel());
-		yLabel.addKeyListener(new KeyListener()
+        yLabel.addKeyListener(new KeyListener()
             {
             public void keyReleased(KeyEvent keyEvent) {}
             public void keyTyped(KeyEvent keyEvent) {}
@@ -313,7 +313,7 @@ public abstract class ChartGenerator extends JPanel
         JLabel j = new JLabel("Right-Click or Control-Click");
         j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
         list.add(j);
-		j = new JLabel("on Chart for More Options");
+        j = new JLabel("on Chart for More Options");
         j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
         list.add(j);
 
@@ -349,15 +349,15 @@ public abstract class ChartGenerator extends JPanel
         p.setMinimumSize(new Dimension(0,0));
         p.setPreferredSize(new Dimension(200,0));
         split.setLeftComponent(p);
-		
-		chartHolder.setMinimumSize(new Dimension(0,0));
+                
+        chartHolder.setMinimumSize(new Dimension(0,0));
         split.setRightComponent(chartHolder);
         setLayout(new BorderLayout());
         add(split,BorderLayout.CENTER);
         }
     
-	/** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when
-		the JFrame is being closed. */
+    /** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when
+        the JFrame is being closed. */
     public JFrame createFrame( final sim.display.GUIState state )
         {
         frame = new JFrame()
@@ -388,8 +388,8 @@ public abstract class ChartGenerator extends JPanel
         return frame;
         }
     
-	/* Generates PDF from the chart, saving ou to the given file.  width and height are the
-		desired width and height of the chart in points. */
+    /* Generates PDF from the chart, saving ou to the given file.  width and height are the
+       desired width and height of the chart in points. */
     void generatePDF( JFreeChart chart, int width, int height, String fileName )
         {
         try

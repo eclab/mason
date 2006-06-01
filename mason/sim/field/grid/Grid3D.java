@@ -8,25 +8,25 @@ package sim.field.grid;
 import sim.util.IntBag;
 
 /**
-  Define basic neighborhood functions for 3D Grids.  The basic interface defines a width and a height
-  (not all grids require a width and a height unless you're doing toroidal grids), and basic math for
-  toroidal computation.
+   Define basic neighborhood functions for 3D Grids.  The basic interface defines a width and a height
+   (not all grids require a width and a height unless you're doing toroidal grids), and basic math for
+   toroidal computation.
     
-  <H3>Toroidal Computation</H3>
+   <H3>Toroidal Computation</H3>
     
-  <p>If you're using the Grid to define a toroidal (wrap-around) world, you can use the <b>tx</b>
-  and <b>ty</b> and <b>tz</b> methods to simplify the math for you.  For example, to increment in the x direction,
-  including wrap-around, you can do:  x = tx(x+1).
+   <p>If you're using the Grid to define a toroidal (wrap-around) world, you can use the <b>tx</b>
+   and <b>ty</b> and <b>tz</b> methods to simplify the math for you.  For example, to increment in the x direction,
+   including wrap-around, you can do:  x = tx(x+1).
     
-  <p>If you're sure that the values you'd pass into the toroidal functions would not wander off more than
-  a grid dimension in either direction (height, width, length), you can use the slightly faster toroidal functions
-  <b>stx</b> and <b>sty</b> and <b>stz</b> instead.  For example, to increment in the x direction,
-  including wrap-around, you can do:  x = stx(x+1).  See the documentation on these functions for
-  when they're appropriate to use.  Under most common situations, they're okay.
+   <p>If you're sure that the values you'd pass into the toroidal functions would not wander off more than
+   a grid dimension in either direction (height, width, length), you can use the slightly faster toroidal functions
+   <b>stx</b> and <b>sty</b> and <b>stz</b> instead.  For example, to increment in the x direction,
+   including wrap-around, you can do:  x = stx(x+1).  See the documentation on these functions for
+   when they're appropriate to use.  Under most common situations, they're okay.
 
-  <p>In HotSpot 1.4.1, stx, sty, and stz are inlined.  In Hotspot 1.3.1, they are not (they contain if-statements).
+   <p>In HotSpot 1.4.1, stx, sty, and stz are inlined.  In Hotspot 1.3.1, they are not (they contain if-statements).
 
-  <p>While this interface defines various methods common to many grids, you should endeavor not to call these grids casted into this interface: it's slow.  If you call the grids' methods directly by their class, their methods are almost certain to be inlined into your code, which is very fast.
+   <p>While this interface defines various methods common to many grids, you should endeavor not to call these grids casted into this interface: it's slow.  If you call the grids' methods directly by their class, their methods are almost certain to be inlined into your code, which is very fast.
 */
 
 public interface Grid3D extends java.io.Serializable

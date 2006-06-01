@@ -218,7 +218,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
                 fieldxy = fieldx[y];
                 for(int z=0;z<length;z++)
                     if (fieldxy[z] < toNoLowerThanThisMuch)
-                    	fieldxy[z] = toNoLowerThanThisMuch;
+                        fieldxy[z] = toNoLowerThanThisMuch;
                 }
             }
         return this;
@@ -325,7 +325,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
                 
                 fieldxy = fieldx[y];
                 for(int z=0;z<length;z++)
-                	fieldxy[z]*=byThisMuch;
+                    fieldxy[z]*=byThisMuch;
                 }
             }
         return this;

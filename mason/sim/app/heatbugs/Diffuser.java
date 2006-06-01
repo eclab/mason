@@ -26,12 +26,12 @@ public /*strictfp*/ class Diffuser implements Steppable
         
         // Let's go through some variations of the diffusion portion (dumping the
         // evaporated, diffused stuff into heatbugs.valgrid2), starting with the
-		// simplest and slowest, and moving to the fastest variations.
-		
-		// We begin with the obvious way to do it: double-loop through each of the
-		// grid values, and for each grid value, double-loop through its neighbors
-		// to gather diffusion information, then dump into the new cell.  We have
-		// to handle toroidal boundaries as well:
+        // simplest and slowest, and moving to the fastest variations.
+                
+        // We begin with the obvious way to do it: double-loop through each of the
+        // grid values, and for each grid value, double-loop through its neighbors
+        // to gather diffusion information, then dump into the new cell.  We have
+        // to handle toroidal boundaries as well:
         
         //         double average;
                 

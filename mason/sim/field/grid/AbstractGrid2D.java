@@ -59,11 +59,11 @@ public abstract class AbstractGrid2D implements Grid2D
     public final int sty(final int y) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
         
-	// faster version
+    // faster version
     final int stx(final int x, final int width) 
         { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
         
-	// faster version
+    // faster version
     final int sty(final int y, final int height) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
 
@@ -111,9 +111,9 @@ public abstract class AbstractGrid2D implements Grid2D
         xPos.clear();
         yPos.clear();
 
-		// local variables are faster
-		final int height = this.height;
-		final int width = this.width;
+        // local variables are faster
+        final int height = this.height;
+        final int width = this.width;
 
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )
@@ -171,10 +171,10 @@ public abstract class AbstractGrid2D implements Grid2D
 
         xPos.clear();
         yPos.clear();
-		
-		// local variables are faster
-		final int height = this.height;
-		final int width = this.width;
+                
+        // local variables are faster
+        final int height = this.height;
+        final int width = this.width;
 
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )
@@ -232,10 +232,10 @@ public abstract class AbstractGrid2D implements Grid2D
         xPos.clear();
         yPos.clear();
 
-		// local variables are faster
-		final int height = this.height;
-		final int width = this.width;
-		
+        // local variables are faster
+        final int height = this.height;
+        final int width = this.width;
+                
         if( toroidal && width%2==1 )
             throw new RuntimeException( "Runtime exception in getNeighborsHexagonalDistance: toroidal hexagonal environment should have an even width" );
 
