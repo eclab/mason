@@ -10,7 +10,7 @@ applications.  To run them:
 	java kawa.repl run2.scm		(tutorial 2)
 
 Scheme is a dialect from the Lisp family of languages, and is designed to be
-very small and elegant.  Kawa is a Lisp compiler and interpreter which runs
+very small and elegant.  Kawa is a Scheme compiler and interpreter which runs
 on the Java virtual machine and has nice hooks into Java proper.
 
 What's the point?  I wanted to see how easy it was for MASON to be hooked up
@@ -18,7 +18,7 @@ with non-Java languages.  I'm an AI guy, so Lisp was the obvious choice.  :-)
 Other possible language targets in the future: JRuby, Jython.  I've already
 done it in BeanShell, but it was unacceptably, ridiculously slow.
 
-Speed.  Scheme is an untyped language.  Without type declarations, the examples
+Speed.  Scheme is an untyped language.  In standard Scheme form, the examples
 in this directory run at 1/40 the speed of Java.  But Kawa has certain
 language extensions in the form of type declarations and Java method call
 forms.  Including the optional type declarations everywhere allows Kawa to

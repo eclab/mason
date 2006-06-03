@@ -60,7 +60,6 @@ ec/util/*.java \
 
 
 # The additional 3D java files
-# sim/app/crowd3d/*.java
 3DDIRS = \
 sim/app/heatbugs3d/*.java \
 sim/app/woims3d/*.java \
@@ -68,6 +67,7 @@ sim/app/mousetraps3d/*.java \
 sim/app/crowd3d/*.java \
 sim/app/balls3d/*.java \
 sim/app/particles3d/*.java \
+sim/app/pso3d/*.java \
 sim/app/tutorial6/*.java \
 sim/app/tutorial7/*.java \
 sim/portrayal3d/*.java \
