@@ -9,7 +9,6 @@ package sim.app.pso;
 /**
    @author Ankur Desai and Joey Harrison
 */
-
 public class Griewangk implements Evaluatable 
     {
     public double calcFitness(double x, double y) 

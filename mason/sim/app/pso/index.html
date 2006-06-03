@@ -22,6 +22,7 @@ By Joey Harrison and Ankur Desai
 <ul>
 <li><b>NumParticles</b>: how many particles are placed in the space.
 <li><b>NeighborhoodSize</b>: the size of the particle's "neighborhood", including himself.
+<li><b>InitialVelocityRange</b>: the range of possible initial velocities, which are randomly chosen.
 <li><b>VelocityScalar</b>: multiplies the final velocity vector by a constant (causing the particles to move more rapidly or more cautiously).  A smaller value will cause particles to tend to get stuck in local optima more easily.  A higher value will cause particles to move more rapidly towards good solutions, but they then cannot converge to precise locations as easily.  Very large velocity values cause the swarm to become unstable.
 <li><b>FitnessFunction</b>: the quality function applied to the space.  "Better" values are higher.  There are several available functions, all common to the stochastic search literature:
 	<ul>

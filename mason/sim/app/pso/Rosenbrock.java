@@ -4,12 +4,11 @@
   See the file "LICENSE" for more information
 */
 
+package sim.app.pso;
+
 /**
    @author Ankur Desai and Joey Harrison
 */
-
-package sim.app.pso;
-
 public class Rosenbrock implements Evaluatable 
     {
     public double calcFitness(double x, double y) 

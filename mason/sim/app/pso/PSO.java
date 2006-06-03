@@ -11,21 +11,17 @@ import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
-import sim.util.Double2D;
 import sim.util.MutableDouble2D;
-import sim.util.MutableDouble3D;
 
 /**
    @author Ankur Desai and Joey Harrison
 */
-
 public class PSO extends SimState 
     {       
     public Continuous2D space;
         
     public double width = 10.24;
     public double height = 10.24;
-    public double initialVelocityRange = 1.0;
     public Particle[] particles;
     int prevSuccessCount = -1;      
         
@@ -37,6 +33,10 @@ public class PSO extends SimState
     public int neighborhoodSize = 10;
     public int getNeighborhoodSize() { return neighborhoodSize; }
     public void setNeighborhoodSize(int val) { if ((val >= 0) && (val <= numParticles)) neighborhoodSize = val; }
+
+    public double initialVelocityRange = 1.0;
+    public double getInitialVelocityRange() { return initialVelocityRange; }
+    public void setInitialVelocityRange(double val) { if (val >= 0.0) initialVelocityRange = val; }
     
     public double velocityScalar = 2.7;
     public double getVelocityScalar() { return velocityScalar; }

@@ -10,30 +10,19 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import javax.swing.JFrame;
 
-import ec.util.MersenneTwisterFast;
-import sim.app.flockers.Flockers;
-import sim.app.flockers.FlockersWithUI;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
-import sim.engine.Schedule;
 import sim.engine.SimState;
-import sim.engine.Steppable;
-import sim.field.continuous.Continuous2D;
 import sim.portrayal.DrawInfo2D;
-import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
-import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
-import sim.util.Double2D;
-import sim.util.MutableDouble2D;
 import sim.util.gui.SimpleColorMap;
 
 /**
    @author Ankur Desai and Joey Harrison
 */
-
 public class PSOWithUI extends GUIState
     {
     public Display2D display;
@@ -50,7 +39,7 @@ public class PSOWithUI extends GUIState
     
     public static String getName() { return "Particle Swarm Optimization"; }
 
-    ContinuousPortrayal2D flockersPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D swarmPortrayal = new ContinuousPortrayal2D();
     
     public PSOWithUI()
         {
@@ -81,13 +70,13 @@ public class PSOWithUI extends GUIState
             swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);
          
         // obstacle portrayal needs no setup
-        flockersPortrayal.setField(swarm.space);
+        swarmPortrayal.setField(swarm.space);
         
         // make the flockers random colors and four times their normal size (prettier)
         for(int x=0;x<swarm.space.allObjects.numObjs;x++)
             {
             final Particle p = (Particle)(swarm.space.allObjects.objs[x]);
-            flockersPortrayal.setPortrayalForObject(p,
+            swarmPortrayal.setPortrayalForObject(p,
                                                     new RectanglePortrayal2D(Color.green,0.05)
                                                         {
                                                         public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
@@ -123,12 +112,11 @@ public class PSOWithUI extends GUIState
         display = new Display2D(750,750,this,1);
         display.setBackdrop(Color.black);
 
-
         displayFrame = display.createFrame();
         displayFrame.setTitle("Particle Swarm Optimization");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
-        display.attach(flockersPortrayal, "Behold the Swarm!", 
+        display.attach(swarmPortrayal, "Behold the Swarm!", 
                        (display.insideDisplay.width * 0.5), (display.insideDisplay.height * 0.5), true);
         }
         

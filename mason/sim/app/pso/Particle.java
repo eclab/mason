@@ -4,17 +4,14 @@
   See the file "LICENSE" for more information
 */
 
-/**
-   @author Ankur Desai and Joey Harrison
-*/
-
 package sim.app.pso;
 
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
 
+/**
+   @author Ankur Desai and Joey Harrison
+*/
 public class Particle
     {       
     static final public long serialVersionUID = 15L;
@@ -73,7 +70,7 @@ public class Particle
         double y = position.y;
                 
         MutableDouble2D nBestPos = new MutableDouble2D(); 
-        double nBest = pso.getNeighborhoodBest(index, nBestPos);
+        pso.getNeighborhoodBest(index, nBestPos);	// updates the location of nBestPos
                 
         // calc new velocity
         // calc x component
