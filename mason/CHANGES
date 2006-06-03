@@ -1132,4 +1132,5 @@ Version 12
 	Minor null pointer exception in LightCycles fixed
 	Small efficiency improvements in AbstractGrid2D/3D and
 		SparseGrid2D/3D
+	Added scheme example
 	Added PSO3D, made small tweaks to PSO
