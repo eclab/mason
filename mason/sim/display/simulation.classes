@@ -41,6 +41,7 @@ sim.app.mousetraps3d.MouseTraps3DWithUI
 sim.app.networktest.NetworkTestWithUI
 sim.app.particles3d.Particles3DWithUI
 sim.app.pso.PSOWithUI
+sim.app.pso3d.PSO3DWithUI
 sim.app.schelling.SchellingWithUI
 sim.app.swarmgame.SwarmGameWithUI
 sim.app.tutorial1and2.Tutorial2

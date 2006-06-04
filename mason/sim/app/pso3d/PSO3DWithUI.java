@@ -22,109 +22,111 @@ import sim.portrayal3d.continuous.*;
 import javax.media.j3d.*;
 
 public class PSO3DWithUI extends GUIState
-{
-	public Display3D display;
+    {
+    public Display3D display;
 
-	public JFrame displayFrame;
+    public JFrame displayFrame;
 
-	public static void main(String[] args)
-	{
-		PSO3DWithUI pso = new PSO3DWithUI(); 
-		
-		Console c = new Console(pso);
-		c.setVisible(true);
-	}
+    public static void main(String[] args)
+        {
+        PSO3DWithUI pso = new PSO3DWithUI(); 
+                
+        Console c = new Console(pso);
+        c.setVisible(true);
+        }
 
-	public Object getSimulationInspectedObject()
-	{
-		return state;
-	} // non-volatile
+    public Object getSimulationInspectedObject()
+        {
+        return state;
+        } // non-volatile
 
-	ContinuousPortrayal3D swarmPortrayal = new ContinuousPortrayal3D();
+    ContinuousPortrayal3D swarmPortrayal = new ContinuousPortrayal3D();
 
-	public PSO3DWithUI()
-	{
-		super(new PSO3D(System.currentTimeMillis()));
-	}
+    public PSO3DWithUI()
+        {
+        super(new PSO3D(System.currentTimeMillis()));
+        }
 
-	public PSO3DWithUI(SimState state)
-	{
-		super(state);
-	}
+    public PSO3DWithUI(SimState state)
+        {
+        super(state);
+        }
 
-	public static String getName()
-	{
-		return "Particle Swarm Optimization 3D";
-	}
+    public static String getName()
+        {
+        return "3D Particle Swarm Optimization";
+        }
 
-	public void start()
-	{
-		super.start();
-		setupPortrayals();
-	}
+    public void start()
+        {
+        super.start();
+        setupPortrayals();
+        }
 
-	public void load(SimState state)
-	{
-		super.load(state);
-		setupPortrayals();
-	}
+    public void load(SimState state)
+        {
+        super.load(state);
+        setupPortrayals();
+        }
 
-	public void setupPortrayals()
-	{
-		final SimpleColorMap map = new SimpleColorMap(950, 1000, Color.blue, Color.red);
+    public void setupPortrayals()
+        {
+        final SimpleColorMap map = new SimpleColorMap(950, 1000, Color.blue, Color.red);
 
-		PSO3D swarm = (PSO3D) state;
+        PSO3D swarm = (PSO3D) state;
 
-		swarmPortrayal.setField(swarm.space);
+        swarmPortrayal.setField(swarm.space);
 
-		//for (int x = 0; x < swarm.fakeSpace.allObjects.numObjs; x++)
-		for (int x = 0; x < swarm.space.allObjects.numObjs; x++)
-		{
-			final Particle3D p = (Particle3D) (swarm.space.allObjects.objs[x]);
-			swarmPortrayal.setPortrayalForObject(p, new CubePortrayal3D(Color.green, 0.05f) 
-				{
-					public TransformGroup getModel(Object obj,TransformGroup j3dModel)
-					{
-						appearance = appearanceForColor(map.getColor(p.getFitness()));
-						TransformGroup model = super.getModel(obj, j3dModel);
-						Shape3D shape = (Shape3D) (model.getChild(0));
-						shape.setAppearance(appearance);
-						return model;
-					}
-				});
-		}
+        //for (int x = 0; x < swarm.fakeSpace.allObjects.numObjs; x++)
+        for (int x = 0; x < swarm.space.allObjects.numObjs; x++)
+            {
+            final Particle3D p = (Particle3D) (swarm.space.allObjects.objs[x]);
+            swarmPortrayal.setPortrayalForObject(p, new CubePortrayal3D(Color.green, 0.05f) 
+                {
+                public TransformGroup getModel(Object obj,TransformGroup j3dModel)
+                    {
+                    appearance = appearanceForColor(map.getColor(p.getFitness()));
+                    TransformGroup model = super.getModel(obj, j3dModel);
+                    Shape3D shape = (Shape3D) (model.getChild(0));
+                    shape.setAppearance(appearance);
+                    return model;
+                    }
+                });
+            }
 
-		display.createSceneGraph();
-		display.reset();
+        display.attach(new WireFrameBoxPortrayal3D(-5.12,-5.12,-5.12,5.12,5.12,5.12), "Bounds");
 
-	}
+        display.createSceneGraph();
+        display.reset();
 
-	public void init(Controller c)
-	{
-		super.init(c);
+        }
 
-		double w = 10.24;
+    public void init(Controller c)
+        {
+        super.init(c);
 
-		display = new Display3D(600, 600, this, 1);
-		display.attach(swarmPortrayal, "Swarm");
+        double w = 10.24;
 
-		display.scale(1.0 / w);
+        display = new Display3D(600, 600, this, 1);
+        display.attach(swarmPortrayal, "Swarm");
 
-		displayFrame = display.createFrame();
-		displayFrame.setTitle("PSO 3D Display");
-		c.registerFrame(displayFrame); // register the frame so it appears in
-										// the "Display" list
-		displayFrame.setVisible(true);
-	}
+        display.scale(1.0 / w);
 
-	public void quit()
-	{
-		super.quit();
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("PSO 3D Display");
+        c.registerFrame(displayFrame); // register the frame so it appears in
+        // the "Display" list
+        displayFrame.setVisible(true);
+        }
 
-		if (displayFrame != null)
-			displayFrame.dispose();
-		displayFrame = null;
-		display = null;
-	}
+    public void quit()
+        {
+        super.quit();
 
-}
+        if (displayFrame != null)
+            displayFrame.dispose();
+        displayFrame = null;
+        display = null;
+        }
+
+    }

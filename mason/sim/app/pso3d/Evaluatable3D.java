@@ -10,6 +10,6 @@ package sim.app.pso3d;
    @author Ankur Desai and Joey Harrison   
 */
 public interface Evaluatable3D 
-{
-	public double calcFitness(double x, double y, double z);
-}
+    {
+    public double calcFitness(double x, double y, double z);
+    }

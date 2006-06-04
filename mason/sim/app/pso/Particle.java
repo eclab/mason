@@ -70,7 +70,7 @@ public class Particle
         double y = position.y;
                 
         MutableDouble2D nBestPos = new MutableDouble2D(); 
-        pso.getNeighborhoodBest(index, nBestPos);	// updates the location of nBestPos
+        pso.getNeighborhoodBest(index, nBestPos);       // updates the location of nBestPos
                 
         // calc new velocity
         // calc x component
