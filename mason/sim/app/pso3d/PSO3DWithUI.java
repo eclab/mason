@@ -6,9 +6,6 @@
 
 package sim.app.pso3d;
 
-/**
-   @author Ankur Desai and Joey Harrison
-*/
 import java.awt.Color;
 import javax.swing.JFrame;
 import sim.display.Console;
@@ -21,24 +18,24 @@ import sim.portrayal3d.simple.*;
 import sim.portrayal3d.continuous.*;
 import javax.media.j3d.*;
 
+/**
+   @author Ankur Desai and Joey Harrison
+*/
 public class PSO3DWithUI extends GUIState
     {
     public Display3D display;
-
     public JFrame displayFrame;
 
     public static void main(String[] args)
         {
         PSO3DWithUI pso = new PSO3DWithUI(); 
-                
         Console c = new Console(pso);
         c.setVisible(true);
         }
 
-    public Object getSimulationInspectedObject()
-        {
-        return state;
-        } // non-volatile
+    public Object getSimulationInspectedObject() { return state; }
+
+    public static String getName() { return "Particle Swarm Optimization 3D"; }
 
     ContinuousPortrayal3D swarmPortrayal = new ContinuousPortrayal3D();
 
@@ -50,11 +47,6 @@ public class PSO3DWithUI extends GUIState
     public PSO3DWithUI(SimState state)
         {
         super(state);
-        }
-
-    public static String getName()
-        {
-        return "3D Particle Swarm Optimization";
         }
 
     public void start()
@@ -71,13 +63,12 @@ public class PSO3DWithUI extends GUIState
 
     public void setupPortrayals()
         {
-        final SimpleColorMap map = new SimpleColorMap(950, 1000, Color.blue, Color.red);
-
         PSO3D swarm = (PSO3D) state;
+        final SimpleColorMap map = new SimpleColorMap(
+            swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);
 
         swarmPortrayal.setField(swarm.space);
 
-        //for (int x = 0; x < swarm.fakeSpace.allObjects.numObjs; x++)
         for (int x = 0; x < swarm.space.allObjects.numObjs; x++)
             {
             final Particle3D p = (Particle3D) (swarm.space.allObjects.objs[x]);
@@ -94,8 +85,8 @@ public class PSO3DWithUI extends GUIState
                 });
             }
 
-        display.attach(new WireFrameBoxPortrayal3D(-5.12,-5.12,-5.12,5.12,5.12,5.12), "Bounds");
-
+        display.attach(new WireFrameBoxPortrayal3D(-5.12, -5.12, -5.12, 5.12, 5.12, 5.12), "Bounds");
+                
         display.createSceneGraph();
         display.reset();
 

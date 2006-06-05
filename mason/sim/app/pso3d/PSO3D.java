@@ -6,9 +6,6 @@
 
 package sim.app.pso3d;
 
-/**
-   @author Ankur Desai and Joey Harrison
-*/
 import ec.util.MersenneTwisterFast;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -16,24 +13,28 @@ import sim.engine.Steppable;
 import sim.field.continuous.Continuous3D;
 import sim.util.MutableDouble3D;
 
+/**
+   @author Ankur Desai and Joey Harrison
+*/
 public class PSO3D extends SimState 
     {       
     public Continuous3D space; // the final frontier
         
-    public int numParticlesPerNeighborhood = 10;
-    public int numNeighborhoods = 10;
     public double width = 10.24;
     public double height = 10.24;
-    public double length = 10.24;   
+    public double length = 10.24;
+    public Particle3D[] particles;
+    private int previousSuccessCount = -1;
 
     // public modifier values
-        
-    public int getNumParticlesPerNeighborhood() { return numParticlesPerNeighborhood; }
-    public void setNumParticlesPerNeighborhood(int val) { if (val > 0) numParticlesPerNeighborhood = val; }
-        
-    public int getNumNeighborhoods() { return numNeighborhoods; }
-    public void setNumNeighborhoods(int val) { if (val > 0) numNeighborhoods = val; }
-                
+    public int numParticles = 1000;
+    public int getNumParticles() { return numParticles; }
+    public void setNumParticles(int val) { if (val >= 0) numParticles = val; }
+
+    public int neighborhoodSize = 10;
+    public int getNeighborhoodSize() { return neighborhoodSize; }
+    public void setNeighborhoodSize(int val) { if ((val >= 0) && (val <= numParticles)) neighborhoodSize = val; }
+
     public double initialVelocityRange = 1.0;
     public double getInitialVelocityRange() { return initialVelocityRange; }
     public void setInitialVelocityRange(double val) { if (val >= 0.0) initialVelocityRange = val; }
@@ -49,12 +50,7 @@ public class PSO3D extends SimState
         { 
         return new String[] { "Rastrigin", "Griewangk", "Rosenbrock" };
         }
-    
-    public double successThreshold = 1.0e-8;
-    public double getSuccessThreshold() { return successThreshold; }
-    public void setSuccessThreshold(double val) { if (val >= 0.0) successThreshold = val; }
-    
-    
+        
     private Evaluatable3D mapFitnessFunction(int val)
         {
         switch (val)
@@ -66,7 +62,18 @@ public class PSO3D extends SimState
         
         return new Rastrigin3D();
         }
+    
+    public double[] fitnessFunctionLowerBound = 
+        {
+        950,
+        998,
+        200
+        };
 
+    public double successThreshold = 1.0e-8;
+    public double getSuccessThreshold() { return successThreshold; }
+    public void setSuccessThreshold(double val) { if (val >= 0.0) successThreshold = val; }
+    
     public double bestVal = 0;
     MutableDouble3D bestPosition = new MutableDouble3D();
         
@@ -93,50 +100,64 @@ public class PSO3D extends SimState
             bestPosition.setTo(currX, currY, currZ);
             }               
         }
+    public double getNeighborhoodBest(int index, MutableDouble3D pos)
+        {
+        double bv = Double.NEGATIVE_INFINITY;
+        Particle3D p;     
         
-    int previousSuccessCount = -1;
+        int start = (index - neighborhoodSize / 2);
+        if (start < 0)
+            start += numParticles;
+                    
+        for (int i = 0; i < neighborhoodSize; i++)
+            {
+            p = particles[(start + i) % numParticles];
+            if (p.bestVal > bv)
+                {
+                bv = p.bestVal;
+                pos.setTo(p.bestPosition);
+                }
+            }
+        return 1.0;             
+        }
+        
     public void start()
         {
         // reset the global best
         bestVal = 0;
-        //TODO fix this
                 
         super.start();
-        space = new Continuous3D(1,length, width, height);
-        //fakeSpace = new Continuous2D(height, width, height);
+        particles = new Particle3D[numParticles];
+        space = new Continuous3D(1, length, width, height);
         Evaluatable3D f = mapFitnessFunction(fitnessFunction);
                 
-        for (int i = 0; i < numNeighborhoods; i++)
+        for (int i = 0; i < numParticles; i++)
             {
-            Neighborhood3D n = new Neighborhood3D(this);
+            double x = (random.nextDouble() * width) - (width * 0.5);
+            double y = (random.nextDouble() * height) - (height * 0.5);
+            double z = (random.nextDouble() * height) - (height * 0.5);
+            double vx = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
+            double vy = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
+            double vz = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
                         
-            for (int j = 0; j < numParticlesPerNeighborhood; j++)
+            final Particle3D p = new Particle3D(x, y, z, vx, vy, vz, this, f, i);
+            particles[i] = p;
+                        
+            schedule.scheduleRepeating(Schedule.EPOCH,1,new Steppable()
                 {
-                double x = (random.nextDouble() * width) - (width * 0.5);
-                double y = (random.nextDouble() * height) - (height * 0.5);
-                double z = (random.nextDouble() * height) - (height * 0.5);
-                double vx = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
-                double vy = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
-                double vz = (random.nextDouble() * initialVelocityRange) - (initialVelocityRange * 0.5);
-                                
-                final Particle3D p = new Particle3D(x, y, z, vx, vy, vz, n, f);
-                                
-                schedule.scheduleRepeating(Schedule.EPOCH,1,new Steppable()
-                    {
-                    public void step(SimState state) { p.stepUpdateFitness(); }
-                    });
-                                
-                schedule.scheduleRepeating(Schedule.EPOCH,2,new Steppable()
-                    {
-                    public void step(SimState state) { p.stepUpdateVelocity(); }
-                    });
-                                
-                schedule.scheduleRepeating(Schedule.EPOCH,3,new Steppable()
-                    {
-                    public void step(SimState state) { p.stepUpdatePosition(); }
-                    });
-                }                        
-            }
+                public void step(SimState state) { p.stepUpdateFitness(); }
+                });
+                        
+            schedule.scheduleRepeating(Schedule.EPOCH,2,new Steppable()
+                {
+                public void step(SimState state) { p.stepUpdateVelocity(); }
+                });
+                        
+            schedule.scheduleRepeating(Schedule.EPOCH,3,new Steppable()
+                {
+                public void step(SimState state) { p.stepUpdatePosition(); }
+                });
+            }       
                 
         schedule.scheduleRepeating(Schedule.EPOCH, 4, new Steppable()
             {
@@ -155,18 +176,11 @@ public class PSO3D extends SimState
                     //System.out.println("SuccessCount = " + successCount);
                     previousSuccessCount = successCount;
                     }
-                if (successCount == (numNeighborhoods * numParticlesPerNeighborhood))
+                if (successCount == numParticles)
                     state.kill();
                 }
-            });
-                
-        // init a best watcher
-        //space.setObjectLocation()
+            });             
         }
-
-    /**
-     * @param args
-     */
 
     public static void main(String[] args) 
         {
