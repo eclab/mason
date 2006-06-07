@@ -1134,3 +1134,9 @@ Version 12
 		SparseGrid2D/3D
 	Added scheme example
 	Added PSO3D, made small tweaks to PSO
+	An incorrect bug report motivated a change in Console's loading
+		of classes.  Now we have a method called buildClassList
+		which is called lazily on doNew() or on the construction
+		of a Console, rather than doing the class list building
+		in static { } which is where we had it originally
+		(and which probably wasn't a good idea).

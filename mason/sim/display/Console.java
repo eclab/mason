@@ -106,68 +106,6 @@ public class Console extends JFrame implements Controller
             // System.setProperty("com.apple.macos.smallTabs", "true");  // nah, looks dorky...
             }
         catch (Exception e) { }
-        
-        ///////// Build doNew() comboBox
-        allowOtherClassNames = true;
-        try
-            {
-            InputStream s = Console.class.getResourceAsStream("simulation.classes");
-            StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
-            st.resetSyntax();
-            st.wordChars(32,255);
-            st.whitespaceChars(0,31);  // everything but space
-            st.commentChar(35);
-            boolean errout = false;
-            String nextName = null;
-            //st.whitespaceChars(0,32);  // control chars
-            while(st.nextToken()!=StreamTokenizer.TT_EOF)
-                {
-                if (st.sval == null) { } // ignore
-                else if ("ONLY".equalsIgnoreCase(st.sval))
-                    allowOtherClassNames = false;
-                else if (st.sval.toUpperCase().startsWith("NAME:"))
-                    {
-                    //if (shortNames.size() == 0) throw new Exception("The 'NAME:' tag occurred before any class name was declared");
-                    //shortNames.set(shortNames.size()-1, st.sval.substring(5).trim());
-                    nextName = st.sval.substring(5).trim();
-                    }
-                else 
-                    {
-                    String shortName = null;
-                    if (nextName==null)
-                        {
-                        try
-                            {
-                            Class c = Class.forName(st.sval);
-                            try
-                                { shortName = GUIState.getName(c); }
-                            catch (Throwable e)
-                                { shortName = GUIState.getTruncatedName(c); }
-                            }
-                        catch (Throwable e) 
-                            {
-                            if (!errout) 
-                                System.err.println("Not all classes loaded, due to error: probably no Java3D");
-                            errout = true;
-                            }
-                        }
-                    else { shortName = nextName; nextName = null; }
-                    // at this point if it's still null we shouldn't list it.
-                    if (shortName!=null)
-                        {
-                        classNames.add(st.sval);
-                        shortNames.add(shortName);
-                        }
-                    }
-                }
-            if (nextName != null) System.err.println("Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
-            s.close();
-            }
-        catch (Exception e)
-            {
-            System.err.println("Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
-            e.printStackTrace();
-            }
         }
 
     /** Returns icons for a given filename, such as "NotPlaying.png". A utility function. */
@@ -901,6 +839,8 @@ public class Console extends JFrame implements Controller
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         
+		buildClassList(); // load the simulation class list in case it's not been loaded yet, to determine if we want to have simulations
+
         JMenuItem _new = new JMenuItem("New Simulation...");
         if (!allowOtherClassNames && classNames.size() == 0)  // nothing permitted
             _new.setEnabled(false);
@@ -1652,10 +1592,82 @@ public class Console extends JFrame implements Controller
                 return counter;
         return -1;
         }
-        
+	
+	static Object classLock = new Object();
+	static boolean classListLoaded = false;
+	static void buildClassList()
+		{
+		// just in case someone crazy tries to load twice
+		synchronized(classLock) { if (classListLoaded) return; else classListLoaded = true; }
+		
+		///////// Build doNew() comboBox
+		allowOtherClassNames = true;
+		try
+			{
+			InputStream s = Console.class.getResourceAsStream("simulation.classes");
+			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
+			st.resetSyntax();
+			st.wordChars(32,255);
+			st.whitespaceChars(0,31);  // everything but space
+			st.commentChar(35);
+			boolean errout = false;
+			String nextName = null;
+			//st.whitespaceChars(0,32);  // control chars
+			while(st.nextToken()!=StreamTokenizer.TT_EOF)
+				{
+				if (st.sval == null) { } // ignore
+				else if ("ONLY".equalsIgnoreCase(st.sval))
+					allowOtherClassNames = false;
+				else if (st.sval.toUpperCase().startsWith("NAME:"))
+					{
+					//if (shortNames.size() == 0) throw new Exception("The 'NAME:' tag occurred before any class name was declared");
+					//shortNames.set(shortNames.size()-1, st.sval.substring(5).trim());
+					nextName = st.sval.substring(5).trim();
+					}
+				else 
+					{
+					String shortName = null;
+					if (nextName==null)
+						{
+						try
+							{
+							Class c = Class.forName(st.sval);
+							try
+								{ shortName = GUIState.getName(c); }
+							catch (Throwable e)
+								{ shortName = GUIState.getTruncatedName(c); }
+							}
+						catch (Throwable e) 
+							{
+							if (!errout) 
+								System.err.println("Not all classes loaded, due to error: probably no Java3D");
+							errout = true;
+							}
+						}
+					else { shortName = nextName; nextName = null; }
+					// at this point if it's still null we shouldn't list it.
+					if (shortName!=null)
+						{
+						classNames.add(st.sval);
+						shortNames.add(shortName);
+						}
+					}
+				}
+			if (nextName != null) System.err.println("Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
+			s.close();
+			}
+		catch (Exception e)
+			{
+			System.err.println("Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+			e.printStackTrace();
+			}
+		}
+
     /** Returns true if a new simulation has been created; false if the user cancelled. */
     static boolean doNew(JFrame originalFrame, boolean startingUp)
         {
+		buildClassList();
+		
         final String defaultText = "<html><body bgcolor='white'><font face='dialog'><br><br><br><br><p align='center'>Select a MASON simulation from the list at left,<br>or type a Java class name below.</p></font></body></html>";
         final String nothingSelectedText = "<html><body bgcolor='white'></body></html>";
                 
@@ -2330,6 +2342,8 @@ public class Console extends JFrame implements Controller
                         // to store in a long first as follows:
                        
                         //                      long a = (stephistory[STEPHISTORY - 1] - stephistory[STEPHISTORY - numSteps]);
+
+			// now we do something different instead anyway, so the above bug fix is immaterial
                         currentSteps++;
                         long l = System.currentTimeMillis();
                         if (l - lastStepTime >= RATE_UPDATE_INTERVAL)

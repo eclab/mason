@@ -41,6 +41,12 @@ proof of concept purposes.
 Sean
 
 
+
+CASE SENSITIVITY
+
+Kawa is by default case-sensitive, which makes it a bit easier to interoperate
+with Java symbols.
+
 TYPE DECLARATIONS
 
 Kawa makes use of type declarations in order to give compiler hints as to the
