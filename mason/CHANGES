@@ -1140,3 +1140,10 @@ Version 12
 		of a Console, rather than doing the class list building
 		in static { } which is where we had it originally
 		(and which probably wasn't a good idea).
+	Tweaks to doLoop, keeping around the job number and random seed
+		across checkpoints so they continue on recovery from the
+		command line.  The GUI largely ignores this; it's mostly
+		for people who want to have better control of the small
+		loop facility in MASON.  Also, SimState.job() is introduced,
+		giving the user some knowledge about which job number is
+		being used.
