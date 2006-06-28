@@ -1,7 +1,7 @@
 @ECHO OFF
 
 rem Saving the classpath so we can restore it at the end.
-SET OLDCLASSPATH=%CLASSPATH%;
+SET OLDCLASSPATH=%CLASSPATH%
 
 
 rem Assuming you kept this batch file in MASON_DIR\start
@@ -23,11 +23,11 @@ SET JAR_DIR=%MASON_DIR%
 
 
 rem adding all jars in the jar directory to the classpath.
-(for /F %%f IN ('dir /b /a-d %JAR_DIR%\*.jar') do call ignoreme.bat %JAR_DIR%\%%f%) 2>nul
+(for /F %%f IN ('dir /b /a-d "%JAR_DIR%\*.jar"') do call ignoreme.bat %JAR_DIR%\%%f%)
 
 
 
 java -Xmx200M sim.display.Console >nul 2>nul 
 
 rem Restoring the classpath.
-SET CLASSPATH=%OLDCLASSPATH%;
+SET CLASSPATH=%OLDCLASSPATH%
