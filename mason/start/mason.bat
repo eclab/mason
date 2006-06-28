@@ -23,7 +23,7 @@ SET JAR_DIR=%MASON_DIR%
 
 
 rem adding all jars in the jar directory to the classpath.
-(for /F %%f IN ('dir /b /a-d "%JAR_DIR%\*.jar"') do call ignoreme.bat %JAR_DIR%\%%f%)
+(for /F %%f IN ('dir /b /a-d "%JAR_DIR%\*.jar"') do call ignoreme.bat %JAR_DIR%\%%f%) 2>nul
 
 
 
