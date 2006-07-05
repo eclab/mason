@@ -323,7 +323,9 @@ portrayal.setMap(new sim.util.gui.SimpleColorMap(new Color[] { Color.red, Color.
 <p><i>Speed hint #1 for ColorMaps.</i>  If a large portion of your map is going to be the same color, consider making it 100% transparent (<tt>new Color(0,0,0,0)</tt>).  Just set the backdrop color of the Display instead and let it bleed through.  If a grid cell is completely transparent, MASON avoids drawing it all, resulting in a major speed boost.
 
 <p><i>Speed hint #2 for ColorMaps.</i>  If you're running on Linux or Windows, semi-transparent colors are expensive to draw.  Use opaque or fully transparent.  On OS X semi-transparency is quite fast.
- 
+
+<p>Last, certain hexagonal portrayals differ in an important way speed-wise.  The HexaValueGridPortrayal2D draws with true hexagons, but it does not use an underlying simple portrayal -- instead it just draws the hexagons directly.  In fact, it's the <i>only</i> non-"fast" portrayal to use a ColorMap rather than a SimplePortrayal, and it does this because the speed gains are to significant.  But you can get even faster yet: the FastHexaValueGridPortrayal2D draws its hexagonal values not with hexagons but with rectangles, laid on in brick-wall fashion.  This allows it to take advantage of the two approaches to drawing square grids as discussed earlier, and it's much <i>much</i> faster than drawing hexagons.  The FastHexaObjectGridPortrayal2D likewise draws with rectangles.
+
 <p>Here's a chart of fields and their regular/fast portrayals (as of MASON 11).
 
 <p align=center><table border=0 cellpadding=3 cellspacing=5>

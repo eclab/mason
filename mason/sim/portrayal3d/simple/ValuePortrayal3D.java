@@ -112,7 +112,7 @@ public class ValuePortrayal3D extends SimplePortrayal3D
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
 
-            if (ga==null)
+            if (ga==null || ga.isLive() || ga.isCompiled())
                 {
                 float[] verts = null;
                 if (shape == SHAPE_CUBE)
