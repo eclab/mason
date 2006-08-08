@@ -66,10 +66,10 @@ public class CapturingCanvas3D extends Canvas3D
             keepOnWriting_ |= movie;
             //(the user can record movie and take still shots)
             }
-        fillBuffer();
+        fillBuffer(true);
         }
     
-    void fillBuffer()
+    void fillBuffer(boolean doubleRasterRead)
         {
         GraphicsContext3D  ctx = getGraphicsContext3D();
         // The raster components need all be set!
@@ -83,6 +83,7 @@ public class CapturingCanvas3D extends Canvas3D
                 new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)),
             null);
         ctx.readRaster(ras);
+        if(doubleRasterRead)ctx.readRaster(ras); 
         // Now strip out the image info
         buffer_ = ras.getImage().getImage();
         buffer_.flush();  // prevents possible os x 1.4.2 memory leak
@@ -97,7 +98,7 @@ public class CapturingCanvas3D extends Canvas3D
         {
         if(writeBuffer_)
             {
-            fillBuffer();
+            fillBuffer(false);
             if(!keepOnWriting_)
                 writeBuffer_ = false;
             }

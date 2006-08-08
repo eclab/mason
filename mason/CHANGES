@@ -1147,3 +1147,8 @@ Version 12
 		loop facility in MASON.  Also, SimState.job() is introduced,
 		giving the user some knowledge about which job number is
 		being used.
+	Minor patching to CapturingCanvas3D to avoid getting blank 
+		snapshots of Display3D.  There might be a race condition 
+		in GraphicsContext3D.readRaster(). Right now we call 
+		readRaster twice and this seems to fix the problem.
+
