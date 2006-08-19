@@ -521,12 +521,16 @@ class Key implements Comparable, Serializable
         Key o = (Key)obj;
         double time = this.time;
         double time2 = o.time;
+		if (time == time2)  // the most common situation
+			{
+			int ordering = this.ordering;
+			int ordering2 = o.ordering;
+			if (ordering == ordering2) return 0;  // the most common situation
+			if (ordering < ordering2) return -1;
+			/* if (ordering > ordering2) */ return 1;
+			}
+		// okay, so they're different times
         if (time < time2) return -1;
-        if (time > time2) return 1;
-        int ordering = this.ordering;
-        int ordering2 = o.ordering;
-        if (ordering < ordering2) return -1;
-        if (ordering > ordering2) return 1;
-        return 0;
+        /* if (time > time2) */ return 1;
         }
     }

@@ -14,6 +14,10 @@ import sim.util.*;
 
 /**
    Portrayal for hexagonal grids (each cell has six equally-distanced neighbors) containing objects.
+
+   <p>By default this portrayal describes objects as gray ovals (that's what getDefaultPortrayal() returns)
+   and null values as empty regions (that's what getDefaultNullPortrayal() returns).  You may wish to override this
+   for your own purposes.
 */
 
 public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D

@@ -108,7 +108,7 @@ public abstract class Properties implements java.io.Serializable
     /** Returns the Class (or for primitive objects, the primitive TYPE) of the property at the given index. */
     public abstract Class getType(int index);
 
-    abstract Object _setValue(int index, Object value);
+    protected abstract Object _setValue(int index, Object value);
 
     /** Sets the current value of the property.  Simple values (byte, int, etc.)
         must be boxed (into Byte, Integer, etc.).  Then returns the current (hopefully changed) value of the property.

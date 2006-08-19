@@ -271,7 +271,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             }
         }
     
-    Object _setValue(int index, Object value)
+    protected Object _setValue(int index, Object value)
         {
         try
             {

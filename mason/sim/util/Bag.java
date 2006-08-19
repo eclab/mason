@@ -457,6 +457,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
             // more consistent with the following line than 'obj > bag.numObjs' would be...
             if (obj - 1 >=  bag.numObjs) throw new NoSuchElementException("No More Elements");
             bag.removeNondestructively(obj-1);
+			obj--;
             canRemove = false;
             }
         // static inner class -- no need to add a serialVersionUID

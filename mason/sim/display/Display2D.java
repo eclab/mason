@@ -1276,7 +1276,7 @@ public class Display2D extends JComponent implements Steppable
         FileDialog fd = new FileDialog(getFrame(), 
                                        "Save Snapshot as 24-bit PNG...", FileDialog.SAVE);
         fd.setFile("Untitled.png");
-        fd.setVisible(true);;
+        fd.setVisible(true);
         if (fd.getFile()!=null) try
             {
             OutputStream stream = new BufferedOutputStream(new FileOutputStream(
@@ -1287,6 +1287,8 @@ public class Display2D extends JComponent implements Steppable
             stream.close();
             }
         catch (Exception e) { e.printStackTrace(); }
+		
+		PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
         }
 
     /** Starts a Quicktime movie on the given Display2D.  The size of the movie frame will be the size of

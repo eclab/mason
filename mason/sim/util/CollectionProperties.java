@@ -201,7 +201,7 @@ public class CollectionProperties extends Properties
         return obj.getClass();
         }
 
-    Object _setValue(int index, Object value)
+    protected Object _setValue(int index, Object value)
         {
         if (index < 0 || index > numProperties()) return null;
 

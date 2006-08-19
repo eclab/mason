@@ -1151,4 +1151,16 @@ Version 12
 		snapshots of Display3D.  There might be a race condition 
 		in GraphicsContext3D.readRaster(). Right now we call 
 		readRaster twice and this seems to fix the problem.
-
+	Bug fix Bag.java's iterator remove() method.  Performing a remove
+		wouldn't back up to let next() consider the new item
+		which just got put into the removed item's slot.  Thanks
+		to Bruna VanDenBossche (Bruno.VanDenBossche@intec.ugent.be)
+	Properties._setValue now protected
+	PropertyInspector.setStopper now public
+	ObjectGridPortrayal2D now has a SimplePortrayal2D as its default
+		null portrayal, to be a bit more consistent with
+		SparseGridPortrayal2D.	
+	Slight speed tweak to Schedule.Key.compareTo() which considers the more
+		common possibilities first.  Hope that didn't break anything.
+	Added PDFEncoder.java.  Ultimately we'll use this to make nice PDF
+		output of 2D displays.

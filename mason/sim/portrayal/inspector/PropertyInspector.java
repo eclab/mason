@@ -38,7 +38,11 @@ import java.awt.event.*;
     </ol>
 
     Like any inspector, your PropertyInspector will be asked to update and refresh itself to reflect new data whenevever
-    <code>public void updateInspector()</code> is called.  This Stoppable is not provided immediately on PropertyInspector
+    <code>public void updateInspector()</code> is called.  
+	
+	<p>Similarly, your PropertyInspector will be provided a Stoppable which it can use to stop MASON from continuing to
+	send update requests.  For example, if your PropertyInspector has a cancel button and the user has just clicked it,
+	you might wish to call stop() on that Stoppable.  This Stoppable is not provided immediately on PropertyInspector
     construction, but later when the system has built the Stoppable and is ready to go.  When it does so, it will call the
     method <code>public void setStopper(Stoppable stopper)</code> to provide you with the Stoppable.  You may override
     this method to determine what the Stoppable is; but be sure to call <code>super.setStopper(stopper)</code>.  Note that
@@ -57,7 +61,7 @@ public abstract class PropertyInspector extends Inspector
     protected boolean validInspector = false;
     Stoppable stopper;
         
-    protected void setStopper(Stoppable stopper)
+    public void setStopper(Stoppable stopper)
         {
         this.stopper = stopper;
         }
