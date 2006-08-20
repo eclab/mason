@@ -1164,3 +1164,5 @@ Version 12
 		common possibilities first.  Hope that didn't break anything.
 	Added PDFEncoder.java.  Ultimately we'll use this to make nice PDF
 		output of 2D displays.
+	Fixed bug in ChartGenerator.setDomainAxisLabel (wasn't setting the
+		value right).

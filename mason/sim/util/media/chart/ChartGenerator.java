@@ -171,7 +171,7 @@ public abstract class ChartGenerator extends JPanel
     public void setDomainAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
-        xyplot.getDomainAxis().setLabel(xLabel.getText());
+        xyplot.getDomainAxis().setLabel(val);
         xyplot.axisChanged(new AxisChangeEvent(xyplot.getDomainAxis()));
         xLabel.setText(val);
         }
