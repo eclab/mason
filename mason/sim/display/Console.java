@@ -94,7 +94,7 @@ public class Console extends JFrame implements Controller
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
                                               getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { }
+        catch (Exception e) { e.printStackTrace(); }
 
         try  // now we try to set certain properties if the security permits it
             {
@@ -1287,67 +1287,6 @@ public class Console extends JFrame implements Controller
         return tabPane;
         }
     
-
-    static final int MAX_ERROR_WIDTH = 500;  // in pixels
-    static final int MIN_ERROR_WIDTH = 200;
-    static final int MIN_ERROR_HEIGHT = 200;
-    /** Pops up an error dialog box.  error should be the error proper, and errorDescription should
-        be some user-informative item that's shown first (the user must explicitly ask to be shown
-        the raw error itself).  The error is also printed to the console.  */
-    
-    public void informOfError(Throwable error, String errorDescription)
-        {
-        informOfError(error,errorDescription,null);
-        }
-    
-    static void informOfError(Throwable error, String errorDescription, JFrame frame)
-        {
-        error.printStackTrace();
-        Object[] options = { "What Error?", "Okay" };
-        JLabel label = new JLabel();
-        FontMetrics fm = label.getFontMetrics(label.getFont());
-        label.setText("<html><font face=\"" + 
-                      WordWrap.toHTML(label.getFont().getFamily()) + "\">" + 
-                      WordWrap.toHTML(WordWrap.wrap(""+errorDescription,MAX_ERROR_WIDTH,fm)) +
-                      "</font></html>");
-        int n = JOptionPane.showOptionDialog(frame, label, "Error",
-                                             JOptionPane.YES_NO_OPTION,  
-                                             JOptionPane.ERROR_MESSAGE,  
-                                             null,   
-                                             //don't use a custom Icon
-                                             options, //the titles of buttons
-                                             options[1]); //default button title
-        if (n == 0)
-            {
-            label = new JLabel();
-            label.setText("<html><font face=\"" + 
-                          WordWrap.toHTML(label.getFont().getFamily()) + "\">" + 
-                          WordWrap.toHTML(WordWrap.wrap(""+error,MAX_ERROR_WIDTH,fm)) +
-                          "<br></font></html>");
-            StringWriter writer = new StringWriter();
-            PrintWriter pWriter = new PrintWriter(writer);
-            error.printStackTrace(pWriter);
-            pWriter.flush();
-            JTextArea area = new JTextArea(writer.toString());
-            JScrollPane pane = new JScrollPane(area)
-                {
-                public Dimension getPreferredSize()
-                    {
-                    return new Dimension(MIN_ERROR_WIDTH,MIN_ERROR_HEIGHT);
-                    }
-                public Dimension getMinimumSize()
-                    {
-                    return new Dimension(MIN_ERROR_WIDTH,MIN_ERROR_HEIGHT);
-                    }
-                };
-            JPanel panel = new JPanel();
-            panel.setLayout(new BorderLayout());
-            panel.add(label,BorderLayout.NORTH);
-            panel.add(pane,BorderLayout.CENTER);
-            JOptionPane.showMessageDialog(frame, panel);
-            }
-        }
-
     /** Sets the random number generator of the underlying model, pausing it first, then unpausing it after. 
         Updates the randomField. */ 
     void setRandomNumberGenerator(final int val)
@@ -1766,11 +1705,11 @@ public class Console extends JFrame implements Controller
                 }
             catch (NoSuchMethodException e)
                 {
-                informOfError(e, "The simulation does not have a default constructor: " + className, originalFrame);
+                Utilities.informOfError(e, "The simulation does not have a default constructor: " + className, originalFrame);
                 }
             catch (Throwable e)  // Most likely NoClassDefFoundError
                 {
-                informOfError(e, 
+                Utilities.informOfError(e, 
                               "An error occurred while creating the simulation " + className, originalFrame);
                 }
             }
@@ -1803,8 +1742,8 @@ public class Console extends JFrame implements Controller
                 } 
             catch (Exception e) // fail
                 {
-                informOfError(e, 
-                              "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()));
+                Utilities.informOfError(e, 
+                              "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()), null);
                 }
         }
 
@@ -1823,8 +1762,8 @@ public class Console extends JFrame implements Controller
                 }
             catch (Exception e) // fail
                 {
-                informOfError(e, 
-                              "An error occurred while saving the simulation to the file " + simulationFile.getName());
+                Utilities.informOfError(e, 
+                              "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
                 }
         }
 
@@ -1852,7 +1791,7 @@ public class Console extends JFrame implements Controller
         if (originalPlayState == PS_PLAYING) // need to put into paused mode
             pressPause();
                 
-        fd.setVisible(true);;
+        fd.setVisible(true);
         File f = null; // make compiler happy
         if (fd.getFile() != null)
             try
@@ -1871,9 +1810,9 @@ public class Console extends JFrame implements Controller
                 }        
             catch (Throwable e) // fail  -- could be an Error or an Exception
                 {
-                informOfError(e, 
+                Utilities.informOfError(e, 
                               "An error occurred while loading the simulation from the file " + 
-                              (f == null ? fd.getFile(): f.getName()));
+                              (f == null ? fd.getFile(): f.getName()), null);
                 }
                 
         // if we failed, reset play state.  If we were stopped, do nothing (we're still stopped).
@@ -2698,8 +2637,14 @@ public class Console extends JFrame implements Controller
                             });
                         }
                     };
-                Stoppable stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleImmediateRepeat(true,stepper));
-                inspectorStoppables.addElement(stopper);
+                
+				Stoppable stopper = null;
+				try
+					{
+					stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleImmediateRepeat(true,stepper));
+					inspectorStoppables.addElement(stopper);
+					}
+				catch (IllegalArgumentException ex) { /* do nothing -- it's thrown if the user tries to pop up an inspector when the time is over. */ }
 
                 // add the inspector
                 registerInspector((Inspector)(inspectors.objs[x]),stopper);

@@ -39,7 +39,10 @@ import sim.util.*;
    <p>Events at a step are further subdivided and scheduled according to their <i>ordering</i>, an integer.
    Objects for scheduled for lower orderings for a given time will be executed before objects with
    higher orderings for the same time.  If objects are scheduled for the same time and
-   have the same ordering value, their execution will be randomly ordered with respect to one another.
+   have the same ordering value, their execution will be randomly ordered with respect to one another
+   unless (in the very rare case) you have called setShuffling(false);.  Generally speaking, most experiments with
+   good model methodologies will want random shuffling left on, and if you need an explicit ordering, it may be
+   better to rely on Steppable's orderings or to use a Sequence.
    
    <p>Previous versions of Schedule required you to specify the number of orderings when instantiating a Schedule.
    This is no longer the case.  The constructor is still there, but the number of orderings passed in is entirely
@@ -78,6 +81,9 @@ public class Schedule implements java.io.Serializable
     public static final double EPOCH_PLUS_EPSILON = Double.longBitsToDouble(Double.doubleToRawLongBits(EPOCH)+1L);
     public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
 
+	// should we shuffle individuals with the same timestep and ordering?
+	boolean shuffling = true;  // by default, we WANT to shuffle
+
     Heap queue = new Heap();
     
     // the time
@@ -89,8 +95,25 @@ public class Schedule implements java.io.Serializable
     // whether or not the Schedule throws errors when it encounters an exceptional condition
     // on attempting to schedule an item
     boolean throwingScheduleExceptions = true;
-        
-    /** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
+	
+	/** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they
+		have identical orderings and are scheduled for the same time.  If the Steppables are not randomly shuffled,
+		they will be executed in the order in which they were inserted into the schedule.  You should set this to
+		FALSE only under unusual circumstances when you know what you're doing -- in the vast majority of cases you
+		will want it to be TRUE.  */
+	public synchronized void setShuffling(boolean val)
+		{
+		shuffling = val;
+		}
+	
+	/** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
+		and are scheduled for the same time; else returns false. */
+	public synchronized boolean isShuffling()
+		{
+		return shuffling;
+		}
+	
+	/** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
         in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
         exceptions is set to TRUE.  You should change this only if you require backward-compatability. */
     public synchronized void setThrowingScheduleExceptions(boolean val)
@@ -192,6 +215,8 @@ public class Schedule implements java.io.Serializable
                 
         if (!_scheduleComplete())
             {
+			boolean shuffling = this.shuffling;  // a little faster
+
             // figure the current time 
             time = ((Key)(queue.getMinKey())).time;
 
@@ -203,10 +228,14 @@ public class Schedule implements java.io.Serializable
                 if (key == null || key.time != time) break;
                                 
                 // Suck out the contents -- but just the ones in the minimum ordering
-                queue.extractMin(substeps);
+                queue.extractMin(substeps);  // come out in reverse order
 
                 // shuffle
-                if (substeps.numObjs > 1) substeps.shuffle(state.random);
+                if (substeps.numObjs > 1) 
+					{
+					if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
+					else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+					}
                                 
                 // execute
                 int len = substeps.numObjs;

@@ -140,8 +140,12 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     static final int REDRAW_FIVE_SECS = 5;
     static final int REDRAW_TEN_SECS = 6;
     static final int REDRAW_DONT = 7;
+	
+	/** The Global Attributes panel (the top-left panel) of this ChartingPropertyInspector.  Note that this
+	    panel is shared with other inspectors using the same chart. */
     protected GlobalAttributes globalAttributes;
 
+	/** The Global Attributes panel (the top-left panel) of ChartingPropertyInspectors. */
     protected class GlobalAttributes extends JPanel
         {
         public long interval = 1;
@@ -208,6 +212,8 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         }
                 
     Thread timer = null;
+
+	/** Updates the inspector asynchronously after the given milliseconds have transpired. */
     public void updateAfterTime(final long milliseconds)
         {
         if (timer == null)
@@ -265,11 +271,19 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         else return filename + ending;
         }
 
+	boolean updatedOnceAlready = false;  // did we update at the simulation start?
+	
     public void updateInspector()
         {
         double time = simulation.state.schedule.time();
-        if (lastTime < time)
-            {                   
+		// we should only update if we're at a new time that we've not seen yet, or if
+		// we're at the start of inspection and haven't done an update yet.  It's possible
+		// for this second condition to be true while the first one is false: if we're at
+		// simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
+		// still want to update at least one time.
+        if (lastTime < time || !updatedOnceAlready)
+            {              
+			updatedOnceAlready = true;
             updateSeries(time, lastTime);
             lastTime = time;
                         

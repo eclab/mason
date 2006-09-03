@@ -50,7 +50,10 @@ public class NetworkTestWithUI extends GUIState
         {
         // tell the portrayals what to portray and how to portray them
         edgePortrayal.setField( new SpatialNetwork2D( ((NetworkTest)state).environment, ((NetworkTest)state).network ) );
-        edgePortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D(Color.red, Color.black, Color.gray));
+        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, Color.lightGray, Color.black);
+		p.setShape(SimpleEdgePortrayal2D.SHAPE_TRIANGLE);
+		p.setBaseWidth(10);
+		edgePortrayal.setPortrayalForAll(p);
         nodePortrayal.setField( ((NetworkTest)state).environment );
         
         // reschedule the displayer

@@ -33,10 +33,11 @@ import org.jfree.data.general.*;
 
 public class HistogramChartingPropertyInspector extends ChartingPropertyInspector
     {
+	/** The initial number of bins in histograms. */
     public static final int DEFAULT_BINS = 8;
     double[] previousValues = new double[] { 0 };  // sacrificial
     HistogramSeriesAttributes seriesAttributes;
-        
+	
     protected boolean validChartGenerator(ChartGenerator generator) { return generator instanceof HistogramGenerator; }
         
     protected boolean includeAggregationMethodAttributes() { return false; }

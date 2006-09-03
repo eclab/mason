@@ -97,8 +97,16 @@ public abstract class PropertyInspector extends Inspector
             }
         }
     
+	/** A string which defines the task the user performs when constructing this Inspector: such as "Make Histogram" */
     public static String name() { return "Name Not Set"; }
+	
+	/** A list of data types this Inspector is capable of inspecting. */
     public static Class[] types() { return new Class[0]; }
+	
+	/** Create a PropertyInspector for a given property.  The property is element #index in the provided Properties class. Also provided
+	are the simulation and a 
+	'parent' (a Frame which serves as the location where dialog boxes will pop up as part of the PropertyInspector construction
+	process -- it's fine if you provide null for this).   */
 
     public PropertyInspector(Properties properties, int index, Frame parent, GUIState simulation)
         {
@@ -228,8 +236,8 @@ public abstract class PropertyInspector extends Inspector
                             }
                         catch (IllegalArgumentException ex)
                             {
-                            JOptionPane.showMessageDialog(null, "The simulation is over and the item could not be tracked.\n"+
-                                                          "Start the simulation paused, then try again.");
+                            Utilities.inform("The simulation is over and the item will not be tracked further.", 
+											 "If you wanted to track, restart the simulation in paused state, then try tracking the item again.", null);
                             inspector.setStopper(inspector.reviseStopper(new Stoppable() { public void stop(){ } } ));  // does nothing
                             }
                                                         
@@ -240,6 +248,9 @@ public abstract class PropertyInspector extends Inspector
                             JFrame frame = inspector.createFrame(inspector.getStopper());
                             frame.setVisible(true);
                             }
+							
+						// update at least one time
+						inspector.updateInspector();
                         }
                     }
                 });
@@ -250,7 +261,6 @@ public abstract class PropertyInspector extends Inspector
         else return toggleButton;
         }
     
-    // additionally set the title
     public JFrame createFrame(Stoppable stopper)
         {
         JFrame frame = super.createFrame(stopper);

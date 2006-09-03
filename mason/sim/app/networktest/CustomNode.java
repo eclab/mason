@@ -88,7 +88,7 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
 
         graphics.setColor( Color.red );
         graphics.fillOval((int)(info.draw.x-diamx/2),(int)(info.draw.y-diamy/2),(int)(diamx),(int)(diamy));
-        graphics.setFont(nodeFont);
+        graphics.setFont(nodeFont.deriveFont(nodeFont.getSize2D()*(float)info.draw.width));
         graphics.setColor( Color.blue );
         graphics.drawString( id, (int)(info.draw.x-diamx/2), (int)(info.draw.y-diamy/2) );
         }

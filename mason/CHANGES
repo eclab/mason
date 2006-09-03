@@ -1166,3 +1166,18 @@ Version 12
 		output of 2D displays.
 	Fixed bug in ChartGenerator.setDomainAxisLabel (wasn't setting the
 		value right).
+	Fixed slight bug in ChartingPropertyInspector which was preventing us
+		from adding data immediately on popping up a window.
+	Charts now saved with ".pdf" extension, not ".PDF"
+	PDFEncoder.java has been rigged up to allow the user to save 2D
+		screenshots in either PDF or in PNG
+	Adjustments to dialog boxes to make them look better in OS X; don't know
+		if we uglified them in Windows yet.
+	Merged Antialias and Antialias Text together in Display2D's options
+	Charts now draw in color.  We had previously set them to only draw
+		with black lines for printing purposes -- now they're in 
+		color because of people's requests.
+	SimpleEdgePortrayal2D can now draw edges either as lines or as
+		triangles.  May add arrows in a bit.
+	Added the ability to turn off random shuffling in the Schedule, per
+		request from Michael Lees (mhl@cs.nott.ac.uk)

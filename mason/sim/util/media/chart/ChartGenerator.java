@@ -326,7 +326,7 @@ public abstract class ChartGenerator extends JPanel
             public void actionPerformed ( ActionEvent e )
                 {
                 FileDialog fd = new FileDialog(frame,"Choose PDF file...", FileDialog.SAVE);
-                fd.setFile(chart.getTitle().getText() + ".PDF");
+                fd.setFile(chart.getTitle().getText() + ".pdf");
                 fd.setVisible(true);;
                 String fileName = fd.getFile();
                 if (fileName!=null)

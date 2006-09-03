@@ -7,6 +7,7 @@
 package sim.util;
 import java.awt.*;
 import javax.swing.*;
+import java.io.*;
 
 /** Various static utility methods. */
 
@@ -54,4 +55,85 @@ public class Utilities
         thread.start();
         return thread;
         }
+		
+    static final int DIALOG_WIDTH = 400;  // in pixels
+    static final int TRACE_FRAME_WIDTH = 600;
+    static final int TRACE_FRAME_HEIGHT = 400;
+    
+    /** Pops up an error dialog box.  error should be the error proper, and description should
+        be some user-informative item that's shown first (the user must explicitly ask to be shown
+        the raw error itself).  frame is a window on which the error box should be centered: if it
+		is null, the error box will be centered in the screen. The error is also printed to the console.  */
+    
+    public static void informOfError(Throwable error, String description, JFrame frame)
+        {
+        error.printStackTrace();
+        Object[] options = { "Show Trace", "Okay" };
+        JLabel label = new JLabel();
+		Font labelFont = label.getFont();
+		Font boldFont = labelFont.deriveFont(Font.BOLD);
+        FontMetrics boldFontMetrics = label.getFontMetrics(boldFont);
+	    Font smallFont = labelFont.deriveFont(labelFont.getSize2D() - 2.0f);
+        FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
+	
+        label.setText("<html><p style=\"padding-top: 12pt; padding-right: 50pt; font: " + 
+					 boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
+                      WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
+					  "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
+					  smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
+					  error + "</p></html>");
+        int n = JOptionPane.showOptionDialog(frame, label, "Error",
+                                             JOptionPane.YES_NO_OPTION,  
+                                             JOptionPane.ERROR_MESSAGE,  
+                                             null,   
+                                             //don't use a custom Icon
+                                             options, //the titles of buttons
+                                             options[1]); //default button title
+        if (n == 0)
+            {
+            StringWriter writer = new StringWriter();
+            PrintWriter pWriter = new PrintWriter(writer);
+            error.printStackTrace(pWriter);
+            pWriter.flush();
+            JTextArea area = new JTextArea(writer.toString());
+			area.setFont(new Font("Monospaced",Font.PLAIN,12));
+            JScrollPane pane = new JScrollPane(area)
+                {
+                public Dimension getPreferredSize()
+                    {
+                    return new Dimension(TRACE_FRAME_WIDTH,TRACE_FRAME_HEIGHT);
+                    }
+                public Dimension getMinimumSize()
+                    {
+                    return new Dimension(TRACE_FRAME_WIDTH,TRACE_FRAME_HEIGHT);
+                    }
+                };
+            JOptionPane.showMessageDialog(null, pane);
+            }
+        }
+
+    /** Pops up an message dialog box.  frame is a window on which the error box should be centered: if it
+		is null, the error box will be centered in the screen. The error is also printed to the console.  */
+    
+    public static void inform(String description, String subDescription, JFrame frame)
+        {
+        Object[] options = { "Okay" };
+        JLabel label = new JLabel();
+		Font labelFont = label.getFont();
+		Font boldFont = labelFont.deriveFont(Font.BOLD);
+        FontMetrics boldFontMetrics = label.getFontMetrics(boldFont);
+		Font smallFont = labelFont.deriveFont(labelFont.getSize2D() - 2.0f);
+	    FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
+
+        label.setText("<html><p style=\"padding-top: 12pt; padding-right: 50pt; font: " + 
+					 boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
+                      WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
+					  "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
+					  smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
+					  WordWrap.toHTML(WordWrap.wrap(""+subDescription, DIALOG_WIDTH, smallFontMetrics))  + "</p></html>");
+        JOptionPane.showMessageDialog(frame, label, "Error",
+                                             JOptionPane.INFORMATION_MESSAGE);
+        }
+
+
     }
