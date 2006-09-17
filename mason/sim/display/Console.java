@@ -221,6 +221,9 @@ public class Console extends JFrame implements Controller
         {
         super(GUIState.getName(simulation.getClass()));
 
+		final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
+
+
         this.simulation = simulation;
 
         rateFormat = NumberFormat.getInstance();
@@ -244,6 +247,7 @@ public class Console extends JFrame implements Controller
                 }
             });
         playButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		playButton.setBackground(transparentBackground);  // looks better in Windows
         //playButton.setToolTipText("<html><i>When Stopped:</i> Start Simulation<br><i>When Paused:</i> Step Simulation</html>");
         buttonBox.add(playButton);
 
@@ -260,6 +264,7 @@ public class Console extends JFrame implements Controller
             });
         pauseButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         //pauseButton.setToolTipText("<html><i>When Playing:</i> Pause/Resume Simulation<br><i>When Stopped:</i> Start Simulation Paused</html>");
+		pauseButton.setBackground(transparentBackground);  // looks better in Windows
         buttonBox.add(pauseButton);
 
         // create stop button
@@ -276,6 +281,7 @@ public class Console extends JFrame implements Controller
                 }
             });
         stopButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		stopButton.setBackground(transparentBackground);  // looks better in Windows
         buttonBox.add(stopButton);
 
         timeBox = new JComboBox(new Object[] { "Time", "Steps", "Rate", "None" });
@@ -292,7 +298,7 @@ public class Console extends JFrame implements Controller
                 }
             });
         
-        // "float" it vertically so it looks nice in Windows
+        // "float" it vertically so it looks nice in Windows  -- or does this work?
         Box timeBox1 = new Box(BoxLayout.Y_AXIS);
         timeBox1.add(Box.createGlue());
         timeBox1.add(timeBox);
@@ -814,7 +820,7 @@ public class Console extends JFrame implements Controller
                 return insets;
                 }
             };
-        controlScroll.getViewport().setBackground(new JPanel().getBackground());//UIManager.getColor("window"));  // make nice stripes on MacOS X
+        controlScroll.getViewport().setBackground(transparentBackground);//UIManager.getColor("window"));  // make nice stripes on MacOS X
             
         tabPane.addTab("Console", controlScroll);
         tabPane.addTab("Displays", frameListPanel);

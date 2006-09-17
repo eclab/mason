@@ -1181,3 +1181,4 @@ Version 12
 		triangles.  May add arrows in a bit.
 	Added the ability to turn off random shuffling in the Schedule, per
 		request from Michael Lees (mhl@cs.nott.ac.uk)
+	Fixed background errors in buttons in Windows

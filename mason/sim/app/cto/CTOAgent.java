@@ -146,7 +146,10 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
 
     protected int agentState;
     public int getState() { return agentState; }
-    public void setState( final int agentState )
+	
+	// not public so it doesn't appear in the inspector -- if a user changed it in the
+	// inspector, various exceptions would occur.
+	void setState( final int agentState )
         {
         if( agentState != AGENT && agentState != TARGET )
             throw new RuntimeException("Unknown state desired to be set (command ignored!): " + agentState );
