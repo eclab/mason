@@ -94,7 +94,7 @@ public class Console extends JFrame implements Controller
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
                                               getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { e.printStackTrace(); }
+        catch (Exception e) { /* e.printStackTrace(); */ }
 
         try  // now we try to set certain properties if the security permits it
             {
