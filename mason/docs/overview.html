@@ -73,9 +73,25 @@ Utilities for manipulating media.
 
 <p><b>MovieEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating Quicktime movies from BufferedImages using <a href="http://java.sun.com/products/java-media/jmf">Sun's Java Media Framework (JMF).</a>  Written based largely on <a href="http://java.sun.com/products/java-media/jmf/2.1.1/solutions/JpegImagesToMovie.java">code from Sun</a>, portions of which are subject to a mild BSD-like License from Sun.
 
-<p><b>PNGEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating PNG Images.  Used because Sun's image framework is not available on all platforms (and the encoder works just fine).  Distributed with permission from David Eisenberg, under the Artistic License.
+<p><b>PngEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating PNG images.  Used because Sun's image framework is not available on all platforms (and the encoder works just fine).  Distributed with permission from David Eisenberg, under the Artistic License.
 
-<p><b>ChartGenerator</b>&nbsp;&nbsp;&nbsp;A class for generating time-series charts, using the JFreeChart and iText libraries.
+<p><b>PDFEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating PDF files from Graphics2D objects, using iText.
+
+<h3>sim.util.media.chart</h3>
+
+Utilities for creating Charts using JFreeChart.
+
+<p><b>ChartGenerator</b>&nbsp;&nbsp;&nbsp;An abstract JPanel which displays a chart using the JFreeChart library.
+
+<p><b>SeriesAttributes</b>&nbsp;&nbsp;&nbsp;An abstract LabelledList which contains the drawing attributes of a given data series displayed in a ChartGenerator.
+
+<p><b>HistogramChartGenerator</b>&nbsp;&nbsp;&nbsp;A ChartGenerator which displays data series as histograms.
+
+<p><b>HistogramSeriesAttributes</b>&nbsp;&nbsp;&nbsp;A SeriesAttributes designed to provide drawing attributes for histogram data series.
+
+<p><b>TimeSeriesChartGenerator</b>&nbsp;&nbsp;&nbsp;A ChartGenerator which displays data series as time series.
+
+<p><b>TimeSeriesAttributes</b>&nbsp;&nbsp;&nbsp;A SeriesAttributes designed to provide drawing attributes for time series.
 
 <h3>sim.util.gui</h3>
 
@@ -96,6 +112,8 @@ Graphical Interface Widgets.
 <p><b>ColorMap</b>&nbsp;&nbsp;&nbsp;An interface for mapping double or integer values to colors.  
 
 <p><b>SimpleColorMap</b>&nbsp;&nbsp;&nbsp;A basic implementation of the ColorMap interface.
+
+<p><b>ColorWell</b>&nbsp;&nbsp;&nbsp;A widget for displaying and changing a Color.
 
 <p><b>HTMLBrowser</b>&nbsp;&nbsp;&nbsp;A very simple, almost trivial, HTML browser class, used by the Console.
 
@@ -128,6 +146,9 @@ Contains the main simulation superclass, the schedule, and utilities for schedul
 <p><b>Asynchronous</b>&nbsp;&nbsp;&nbsp;A simple interface for creating asynchronous thread Steppable objects.
 
 <p><b>AsynchronousSteppable</b>&nbsp;&nbsp;&nbsp;A basic implementation of the Asynchronous interface.
+
+<p><b>MakesSimState</b>&nbsp;&nbsp;&nbsp;An interface for classes capable of creating SimState subclasses: largely used internally in SimState.
+
 
 <h2>The sim.field Package</h2>
 
@@ -165,6 +186,20 @@ Contains <i>networks</i> (directed graphs) which relate Objects to one another v
 
 <p><b>Network</b>&nbsp;&nbsp;&nbsp;Defines directed graphs and networks between arbitrary objects.  Relationships are defined using <tt>Edge</tt> objects.
 
+<h2>The sim.display Package</h2>
+
+This package holds the main GUI windows in MASON: the Console and Display2D windows.  The Console maintains the simulation and runs the schedule.  The Display2D holds various FieldPortrayal2D objects.
+
+<p><b>Controller</b>&nbsp;&nbsp;&nbsp;The abstract superclass of top-level controllers of a simulation.
+
+<p><b>Console</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images, plus the <i>simulation.classes</i> file).  An elaborate Controller which presents a window allowing the user to start and stop the simulation, change its parameters, and manage its various windows and inspectors.
+
+<p><b>Display2D</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images).  A window which allows the user to scroll, scale, take snapshots of, and make movies of various FieldPortrayal2Ds as they are updated during the course of the simulation run.
+
+<p><b>GUIState</b>&nbsp;&nbsp;&nbsp;The wrapper which allows graphical interface widgets to synchronize with and communicate with an underlying <tt>SimState</tt>.  Packages implementing a graphical interface will need to subclass from this class.
+
+<p><b>SimApplet</b>&nbsp;&nbsp;&nbsp;A simple class for setting up MASON as an applet.
+
 <h2>The sim.portrayal Package</h2>
 
 This package is the most elaborate of any of MASON's packages.  It contains facilities for <i>portraying</i> (drawing, picking via a graphical interface, inspecting) fields and objects/ints/doubles stored in those fields.  Fields are portrayed with <i>field portrayals</i> stored in the <tt>sim.portrayal.grid</tt>, <tt>sim.portrayal.continuous</tt>, and <tt>sim.portrayal.network</tt> packages.  Objects stored within those fields are portrayed using <i>simple portrayals</i>: some useful ones are in the <tt>sim.portrayal.simple</tt> package.
@@ -190,20 +225,6 @@ This package is the most elaborate of any of MASON's packages.  It contains faci
 <p><b>Oriented2D</b>&nbsp;&nbsp;&nbsp;Objects adhering to this interface may be portrayed by <tt>sim.portrayal.simple.OrientedPortrayal2D</tt>.
 
 <p><b>LocationWrapper</b>&nbsp;&nbsp;&nbsp;Relates objects with locations in a field.  Used to by fields to assist in the generation of inspectors</b>&nbsp;&nbsp;&nbsp;
-
-<h2>The sim.display Package</h2>
-
-This package holds the main GUI windows in MASON: the Console and Display2D windows.  The Console maintains the simulation and runs the schedule.  The Display2D holds various FieldPortrayal2D objects.
-
-<p><b>Controller</b>&nbsp;&nbsp;&nbsp;The abstract superclass of top-level controllers of a simulation.
-
-<p><b>Console</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images, plus the <i>simulation.classes</i> file).  An elaborate Controller which presents a window allowing the user to start and stop the simulation, change its parameters, and manage its various windows and inspectors.
-
-<p><b>Display2D</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images).  A window which allows the user to scroll, scale, take snapshots of, and make movies of various FieldPortrayal2Ds as they are updated during the course of the simulation run.
-
-<p><b>GUIState</b>&nbsp;&nbsp;&nbsp;The wrapper which allows graphical interface widgets to synchronize with and communicate with an underlying <tt>SimState</tt>.  Packages implementing a graphical interface will need to subclass from this class.
-
-<p><b>SimApplet</b>&nbsp;&nbsp;&nbsp;A simple class for setting up MASON as an applet.
 
 <h3>The sim.portrayal.grid Package</h3>
 
@@ -237,7 +258,7 @@ Portrayals for networks.
 
 <h3>The sim.portrayal.simple Package</h3>
 
-Various SimplePortrayal2D's for your enjoyment.
+Various SimplePortrayal2Ds for your enjoyment.
 
 <p><b>RectanglePortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as rectangles (usually squares)
 
@@ -258,6 +279,23 @@ Various SimplePortrayal2D's for your enjoyment.
 <p><b>OrientedPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which draws a line (or other shape) over them pointing in a given direction.  The direction is provided by the underlying portrayed object, assuming that it adheres to <tt>Oriented2D</tt>.
 
 <p><b>TransformedPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which draws transforms them according to a provided AffineTransform (rotates, translates, skews them, etc.).
+
+<h3>The sim.portrayal.inspector Package</h3>
+
+Utility inspectors and plug-in property inspectors.
+
+<p><b>TabbedInspector</b>&nbsp;&nbsp;&nbsp;An inspector which can hold multiple subinspectors in a tabbed pane.
+
+<p><b>PropertyInspector</b>&nbsp;&nbsp;&nbsp;The abstract superclass of plug-in inspectors designed to inspect individual properties appearing in the primary inspectors of a simulation.
+
+<p><b>StreamingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A PropertyInspector which can stream a property's values to disk, to a window, to standard out, etc.
+
+<p><b>ChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;An abstract PropertyInspector for creating inspectors which chart a property's values using JFreeChart.
+
+<p><b>TimeSeriesChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A ChartingPropertyInspector which charts a property's values using a time series chart.
+
+<p><b>HistogramChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A ChartingPropertyInspector which charts a property's values using a histogram.  The property's values must be in the form of an array or other list.
+
 
 <h2>The sim.display3d Package</h2>
 
