@@ -402,7 +402,6 @@ public class Display3D extends JPanel implements Steppable
         this.simulation = simulation;
         reset();  // must happen AFTER state is assigned
         
-
         final Color headerBackground = getBackground(); // will change later, see below
         header = new Box(BoxLayout.X_AXIS)
             // bug in Java3D results in header not painting its background in Windows,
@@ -423,6 +422,7 @@ public class Display3D extends JPanel implements Steppable
         togglebutton = new JToggleButton(Display2D.LAYERS_ICON);
         togglebutton.setPressedIcon(Display2D.LAYERS_ICON_P);
         togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		toggleButton.setBackground(headerBackground);    // looks better in Windows
         header.add(togglebutton);
         
         //Create the popup menu.
@@ -449,6 +449,7 @@ public class Display3D extends JPanel implements Steppable
         movieButton = new JButton(Display2D.MOVIE_OFF_ICON);
         movieButton.setPressedIcon(Display2D.MOVIE_OFF_ICON_P);
         movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		movieButton.setBackground(headerBackground);    // looks better in Windows
         movieButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -462,6 +463,7 @@ public class Display3D extends JPanel implements Steppable
         snapshotButton = new JButton(Display2D.CAMERA_ICON);
         snapshotButton.setPressedIcon(Display2D.CAMERA_ICON_P);
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		snapshotButton.setBackground(headerBackground);    // looks better in Windows
         snapshotButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -481,6 +483,7 @@ public class Display3D extends JPanel implements Steppable
         optionButton.setPressedIcon(Display2D.OPTIONS_ICON_P);
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         optionButton.setToolTipText("Options");
+		optionButton.setBackground(headerBackground);    // looks better in Windows
         optionButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)

@@ -1182,3 +1182,7 @@ Version 12
 	Added the ability to turn off random shuffling in the Schedule, per
 		request from Michael Lees (mhl@cs.nott.ac.uk)
 	Fixed background errors in buttons in Windows
+	Charts now update NOW if they're not already waiting to update.  A
+		minor improvement, but which necessitates a change in method
+		name in ChartingPropertyInspector 
+		(updateAfterTime -> updateBefore)

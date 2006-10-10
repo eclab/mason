@@ -126,7 +126,6 @@ public class Display2D extends JComponent implements Steppable
             p.add(b,BorderLayout.CENTER);
             getContentPane().add(p,BorderLayout.CENTER);
             
-
             ActionListener listener = new ActionListener()
                 {
                 public void actionPerformed(ActionEvent e)
@@ -907,6 +906,8 @@ public class Display2D extends JComponent implements Steppable
         
         reset();  // must happen AFTER simulation and interval are assigned
         
+		final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
+
         // create the inner display and put it in a Scroll Panel
         insideDisplay = new InnerDisplay2D(width,height);
         display = new JScrollPane(insideDisplay,
@@ -931,6 +932,7 @@ public class Display2D extends JComponent implements Steppable
         togglebutton.setPressedIcon(LAYERS_ICON_P);
                 
         togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		togglebutton.setBackground(transparentBackground);  // looks better in Windows
         togglebutton.setToolTipText("Show and hide different layers");
         header.add(togglebutton);
         popup = new JPopupMenu();
@@ -980,6 +982,7 @@ public class Display2D extends JComponent implements Steppable
         movieButton = new JButton(MOVIE_OFF_ICON);
         movieButton.setPressedIcon(MOVIE_OFF_ICON_P);
         movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		movieButton.setBackground(transparentBackground);  // looks better in Windows
         movieButton.setToolTipText("Create a Quicktime movie");
         movieButton.addActionListener(new ActionListener()
             {
@@ -1001,6 +1004,7 @@ public class Display2D extends JComponent implements Steppable
         snapshotButton = new JButton(CAMERA_ICON);
         snapshotButton.setPressedIcon(CAMERA_ICON_P);
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+		snapshotButton.setBackground(transparentBackground);  // looks better in Windows
         snapshotButton.setToolTipText("Create a snapshot (as a PNG or PDF file)");
         snapshotButton.addActionListener(new ActionListener()
             {
@@ -1015,6 +1019,7 @@ public class Display2D extends JComponent implements Steppable
         optionButton = new JButton(OPTIONS_ICON);
         optionButton.setPressedIcon(OPTIONS_ICON_P);
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));               
+		optionButton.setBackground(transparentBackground);  // looks better in Windows
         optionButton.setToolTipText("Show the Option Pane");
         optionButton.addActionListener(new ActionListener()
             {

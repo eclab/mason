@@ -194,6 +194,7 @@ public class NumberTextField extends JComponent
         setValues(label,initialValue,multiply,add);
         }
         
+	final static Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
     protected void setValues(String label, double initialValue, double multiply, double add)
         {
         defaultColor = valField.getBackground();
@@ -228,7 +229,8 @@ public class NumberTextField extends JComponent
                         setValue(newValue((getValue() - NumberTextField.this.add) / NumberTextField.this.multiply ));
                         }});
             downButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
-            box.add(downButton);
+			downButton.setBackground(transparentBackground);  // looks better in Windows
+			box.add(downButton);
             bellyButton = new JButton(I_BELLY);
             bellyButton.setPressedIcon(I_BELLY_PRESSED);
             bellyButton.addActionListener(
@@ -238,6 +240,7 @@ public class NumberTextField extends JComponent
                         setValue(newValue(NumberTextField.this.initialValue));
                         }});
             bellyButton.setBorder(BorderFactory.createEmptyBorder(1,0,1,0)); //2,2,2,2));
+			bellyButton.setBackground(transparentBackground);  // looks better in Windows
             box.add(bellyButton);        
             upButton = new JButton(I_UP);
             upButton.setPressedIcon(I_UP_PRESSED);
@@ -248,6 +251,7 @@ public class NumberTextField extends JComponent
                         setValue(newValue(getValue() * NumberTextField.this.multiply + NumberTextField.this.add));
                         }});
             upButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1)); //2,2,2,2));
+			upButton.setBackground(transparentBackground);  // looks better in Windows
             box.add(upButton);
             add(box,BorderLayout.EAST);
             }

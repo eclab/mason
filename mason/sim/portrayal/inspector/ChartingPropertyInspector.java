@@ -214,10 +214,13 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     Thread timer = null;
 
 	/** Updates the inspector asynchronously after the given milliseconds have transpired. */
-    public void updateAfterTime(final long milliseconds)
+    public void updateBefore(final long milliseconds)
         {
         if (timer == null)
             {
+			// do one now for good measure
+			if (generator!=null) generator.update();
+			
             timer= sim.util.Utilities.doLater(milliseconds, new Runnable()
                 {
                 public void run()
@@ -294,22 +297,22 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                     generator.update();
                     break;
                 case REDRAW_TENTH_SEC:
-                    updateAfterTime(100);
+                    updateBefore(100);
                     break;
                 case REDRAW_HALF_SEC:
-                    updateAfterTime(500);
+                    updateBefore(500);
                     break;
                 case REDRAW_ONE_SEC:
-                    updateAfterTime(1000);
+                    updateBefore(1000);
                     break;
                 case REDRAW_TWO_SECS:
-                    updateAfterTime(2000);
+                    updateBefore(2000);
                     break;
                 case REDRAW_FIVE_SECS:
-                    updateAfterTime(5000);
+                    updateBefore(5000);
                     break;
                 case REDRAW_TEN_SECS:
-                    updateAfterTime(10000);
+                    updateBefore(10000);
                     break;
                 case REDRAW_DONT:  // do nothing
                     break;
