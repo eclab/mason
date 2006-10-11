@@ -39,10 +39,10 @@ import java.awt.event.*;
 
     Like any inspector, your PropertyInspector will be asked to update and refresh itself to reflect new data whenevever
     <code>public void updateInspector()</code> is called.  
-	
-	<p>Similarly, your PropertyInspector will be provided a Stoppable which it can use to stop MASON from continuing to
-	send update requests.  For example, if your PropertyInspector has a cancel button and the user has just clicked it,
-	you might wish to call stop() on that Stoppable.  This Stoppable is not provided immediately on PropertyInspector
+        
+    <p>Similarly, your PropertyInspector will be provided a Stoppable which it can use to stop MASON from continuing to
+    send update requests.  For example, if your PropertyInspector has a cancel button and the user has just clicked it,
+    you might wish to call stop() on that Stoppable.  This Stoppable is not provided immediately on PropertyInspector
     construction, but later when the system has built the Stoppable and is ready to go.  When it does so, it will call the
     method <code>public void setStopper(Stoppable stopper)</code> to provide you with the Stoppable.  You may override
     this method to determine what the Stoppable is; but be sure to call <code>super.setStopper(stopper)</code>.  Note that
@@ -97,16 +97,16 @@ public abstract class PropertyInspector extends Inspector
             }
         }
     
-	/** A string which defines the task the user performs when constructing this Inspector: such as "Make Histogram" */
+    /** A string which defines the task the user performs when constructing this Inspector: such as "Make Histogram" */
     public static String name() { return "Name Not Set"; }
-	
-	/** A list of data types this Inspector is capable of inspecting. */
+        
+    /** A list of data types this Inspector is capable of inspecting. */
     public static Class[] types() { return new Class[0]; }
-	
-	/** Create a PropertyInspector for a given property.  The property is element #index in the provided Properties class. Also provided
-	are the simulation and a 
-	'parent' (a Frame which serves as the location where dialog boxes will pop up as part of the PropertyInspector construction
-	process -- it's fine if you provide null for this).   */
+        
+    /** Create a PropertyInspector for a given property.  The property is element #index in the provided Properties class. Also provided
+        are the simulation and a 
+        'parent' (a Frame which serves as the location where dialog boxes will pop up as part of the PropertyInspector construction
+        process -- it's fine if you provide null for this).   */
 
     public PropertyInspector(Properties properties, int index, Frame parent, GUIState simulation)
         {
@@ -188,6 +188,8 @@ public abstract class PropertyInspector extends Inspector
         popup.setLightWeightPopupEnabled(false);
         final JToggleButton toggleButton = new JToggleButton(INSPECT_ICON);
         toggleButton.setPressedIcon(INSPECT_ICON_P);
+        toggleButton.setBorderPainted(false);
+        toggleButton.setContentAreaFilled(false);
         toggleButton.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         toggleButton.setToolTipText("Show Additional Per-Property Inspectors");
         toggleButton.addMouseListener(new MouseAdapter()
@@ -237,7 +239,7 @@ public abstract class PropertyInspector extends Inspector
                         catch (IllegalArgumentException ex)
                             {
                             Utilities.inform("The simulation is over and the item will not be tracked further.", 
-											 "If you wanted to track, restart the simulation in paused state, then try tracking the item again.", null);
+                                             "If you wanted to track, restart the simulation in paused state, then try tracking the item again.", null);
                             inspector.setStopper(inspector.reviseStopper(new Stoppable() { public void stop(){ } } ));  // does nothing
                             }
                                                         
@@ -248,9 +250,9 @@ public abstract class PropertyInspector extends Inspector
                             JFrame frame = inspector.createFrame(inspector.getStopper());
                             frame.setVisible(true);
                             }
-							
-						// update at least one time
-						inspector.updateInspector();
+                                                        
+                        // update at least one time
+                        inspector.updateInspector();
                         }
                     }
                 });

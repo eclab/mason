@@ -906,7 +906,7 @@ public class Display2D extends JComponent implements Steppable
         
         reset();  // must happen AFTER simulation and interval are assigned
         
-		final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
+        final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
 
         // create the inner display and put it in a Scroll Panel
         insideDisplay = new InnerDisplay2D(width,height);
@@ -932,7 +932,9 @@ public class Display2D extends JComponent implements Steppable
         togglebutton.setPressedIcon(LAYERS_ICON_P);
                 
         togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		togglebutton.setBackground(transparentBackground);  // looks better in Windows
+        togglebutton.setBorderPainted(false);
+        togglebutton.setContentAreaFilled(false);
+        //togglebutton.setBackground(transparentBackground);  // looks better in Windows
         togglebutton.setToolTipText("Show and hide different layers");
         header.add(togglebutton);
         popup = new JPopupMenu();
@@ -982,7 +984,9 @@ public class Display2D extends JComponent implements Steppable
         movieButton = new JButton(MOVIE_OFF_ICON);
         movieButton.setPressedIcon(MOVIE_OFF_ICON_P);
         movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		movieButton.setBackground(transparentBackground);  // looks better in Windows
+        movieButton.setBorderPainted(false);
+        movieButton.setContentAreaFilled(false);
+        //movieButton.setBackground(transparentBackground);  // looks better in Windows
         movieButton.setToolTipText("Create a Quicktime movie");
         movieButton.addActionListener(new ActionListener()
             {
@@ -1004,7 +1008,9 @@ public class Display2D extends JComponent implements Steppable
         snapshotButton = new JButton(CAMERA_ICON);
         snapshotButton.setPressedIcon(CAMERA_ICON_P);
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		snapshotButton.setBackground(transparentBackground);  // looks better in Windows
+        snapshotButton.setBorderPainted(false);
+        snapshotButton.setContentAreaFilled(false);
+        //snapshotButton.setBackground(transparentBackground);  // looks better in Windows
         snapshotButton.setToolTipText("Create a snapshot (as a PNG or PDF file)");
         snapshotButton.addActionListener(new ActionListener()
             {
@@ -1019,7 +1025,9 @@ public class Display2D extends JComponent implements Steppable
         optionButton = new JButton(OPTIONS_ICON);
         optionButton.setPressedIcon(OPTIONS_ICON_P);
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));               
-		optionButton.setBackground(transparentBackground);  // looks better in Windows
+        optionButton.setBorderPainted(false);
+        optionButton.setContentAreaFilled(false);
+        //optionButton.setBackground(transparentBackground);  // looks better in Windows
         optionButton.setToolTipText("Show the Option Pane");
         optionButton.addActionListener(new ActionListener()
             {
@@ -1258,82 +1266,82 @@ public class Display2D extends JComponent implements Steppable
     public void takeSnapshot()
         {
         synchronized(Display2D.this.simulation.state.schedule)
-			{
-			if (SimApplet.isApplet)
-				{
-				Object[] options = {"Oops"};
-				JOptionPane.showOptionDialog(
-					this, "You cannot save snapshots from an applet.",
-					"MASON Applet Restriction",
-					JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-					null, options, options[0]);
-				return;
-				}
+            {
+            if (SimApplet.isApplet)
+                {
+                Object[] options = {"Oops"};
+                JOptionPane.showOptionDialog(
+                    this, "You cannot save snapshots from an applet.",
+                    "MASON Applet Restriction",
+                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
+                return;
+                }
 
-			// do we have the PDFEncoder?
-			boolean havePDF = false;
+            // do we have the PDFEncoder?
+            boolean havePDF = false;
 
-			// snap the shot FIRST
-			Graphics g = insideDisplay.getGraphics();
-			BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
-			try
-				{
-				com.lowagie.text.Rectangle rect = new com.lowagie.text.Rectangle(1,1); // sacrificial
-				// if we survived that, then iText is installed and we're good.
-				havePDF = true; 
-				}
-			catch (Exception e)
-				{
-				// oh well...
-				}
-				
-			g.dispose();  // because we got it with getGraphics(), we're responsible for it
-			
-			// Ask what kind of thing we want to save?
-			int result = 0;
-			if (havePDF) 
-				{
-				Object[] options = { "Cancel", "Save to PDF", "Save to PNG Bitmap" };
-				result = JOptionPane.showOptionDialog(getFrame(), "Save window snapshot to what kind of file format?", "Save Format", 
-					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options, options[0]);
-				}
-			
-			if (result == 2)  // PNG
-				{
-				// NOW pop up the save window
-				FileDialog fd = new FileDialog(getFrame(), 
-											   "Save Snapshot as 24-bit PNG...", FileDialog.SAVE);
-				fd.setFile("Untitled.png");
-				fd.setVisible(true);
-				if (fd.getFile()!=null) try
-					{
-					OutputStream stream = new BufferedOutputStream(new FileOutputStream(
-																	   new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"))));
-					PngEncoder tmpEncoder = new
-						PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
-					stream.write(tmpEncoder.pngEncode());
-					stream.close();
-					}
-				catch (Exception e) { e.printStackTrace(); }
-				}
-			else if (result == 1)  // PDF
-				{
-				FileDialog fd = new FileDialog(getFrame(), 
-											   "Save Snapshot as PDF...", FileDialog.SAVE);
-				fd.setFile("Untitled.pdf");
-				fd.setVisible(true);
-				if (fd.getFile()!=null) try
-					{
-					PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
-					}
-				catch (Exception e) { e.printStackTrace(); }
-				}
-			else // (result == 0)  // Cancel
-				{
-				// don't bother
-				}
-			}
+            // snap the shot FIRST
+            Graphics g = insideDisplay.getGraphics();
+            BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
+            try
+                {
+                com.lowagie.text.Rectangle rect = new com.lowagie.text.Rectangle(1,1); // sacrificial
+                // if we survived that, then iText is installed and we're good.
+                havePDF = true; 
+                }
+            catch (Exception e)
+                {
+                // oh well...
+                }
+                                
+            g.dispose();  // because we got it with getGraphics(), we're responsible for it
+                        
+            // Ask what kind of thing we want to save?
+            int result = 0;
+            if (havePDF) 
+                {
+                Object[] options = { "Cancel", "Save to PDF", "Save to PNG Bitmap" };
+                result = JOptionPane.showOptionDialog(getFrame(), "Save window snapshot to what kind of file format?", "Save Format", 
+                                                      JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                                                      null, options, options[0]);
+                }
+                        
+            if (result == 2)  // PNG
+                {
+                // NOW pop up the save window
+                FileDialog fd = new FileDialog(getFrame(), 
+                                               "Save Snapshot as 24-bit PNG...", FileDialog.SAVE);
+                fd.setFile("Untitled.png");
+                fd.setVisible(true);
+                if (fd.getFile()!=null) try
+                    {
+                    OutputStream stream = new BufferedOutputStream(new FileOutputStream(
+                                                                       new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"))));
+                    PngEncoder tmpEncoder = new
+                        PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+                    stream.write(tmpEncoder.pngEncode());
+                    stream.close();
+                    }
+                catch (Exception e) { e.printStackTrace(); }
+                }
+            else if (result == 1)  // PDF
+                {
+                FileDialog fd = new FileDialog(getFrame(), 
+                                               "Save Snapshot as PDF...", FileDialog.SAVE);
+                fd.setFile("Untitled.pdf");
+                fd.setVisible(true);
+                if (fd.getFile()!=null) try
+                    {
+                    PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
+                    }
+                catch (Exception e) { e.printStackTrace(); }
+                }
+            else // (result == 0)  // Cancel
+                {
+                // don't bother
+                }
+            }
         }
 
     /** Starts a Quicktime movie on the given Display2D.  The size of the movie frame will be the size of
@@ -1350,18 +1358,18 @@ public class Display2D extends JComponent implements Steppable
         // isn't doing anything.
         synchronized(Display2D.this.simulation.state.schedule)
             {
-        // can't start a movie if we're in an applet
-        if (SimApplet.isApplet)
-            {
-            Object[] options = {"Oops"};
-            JOptionPane.showOptionDialog(
-                this, "You cannot create movies from an applet.",
-                "MASON Applet Restriction",
-                JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
-            return;
-            }
-			
+            // can't start a movie if we're in an applet
+            if (SimApplet.isApplet)
+                {
+                Object[] options = {"Oops"};
+                JOptionPane.showOptionDialog(
+                    this, "You cannot create movies from an applet.",
+                    "MASON Applet Restriction",
+                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
+                return;
+                }
+                        
             if (movieMaker != null) return;  // already running
             movieMaker = new MovieMaker(getFrame());
             Graphics g = insideDisplay.getGraphics();

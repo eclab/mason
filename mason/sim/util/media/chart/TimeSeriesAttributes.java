@@ -96,10 +96,10 @@ public class TimeSeriesAttributes extends SeriesAttributes
         thickness = 2.0f;
 
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
-		XYItemRenderer renderer = (XYItemRenderer)(getPlot().getRenderer());
-		Paint paint = renderer.getSeriesPaint(getSeriesIndex());
-		strokeColor = (Color)paint;
-		
+        XYItemRenderer renderer = (XYItemRenderer)(getPlot().getRenderer());
+        Paint paint = renderer.getSeriesPaint(getSeriesIndex());
+        strokeColor = (Color)paint;
+                
         ColorWell well = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 

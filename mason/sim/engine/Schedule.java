@@ -81,8 +81,8 @@ public class Schedule implements java.io.Serializable
     public static final double EPOCH_PLUS_EPSILON = Double.longBitsToDouble(Double.doubleToRawLongBits(EPOCH)+1L);
     public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
 
-	// should we shuffle individuals with the same timestep and ordering?
-	boolean shuffling = true;  // by default, we WANT to shuffle
+    // should we shuffle individuals with the same timestep and ordering?
+    boolean shuffling = true;  // by default, we WANT to shuffle
 
     Heap queue = new Heap();
     
@@ -95,25 +95,25 @@ public class Schedule implements java.io.Serializable
     // whether or not the Schedule throws errors when it encounters an exceptional condition
     // on attempting to schedule an item
     boolean throwingScheduleExceptions = true;
-	
-	/** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they
-		have identical orderings and are scheduled for the same time.  If the Steppables are not randomly shuffled,
-		they will be executed in the order in which they were inserted into the schedule.  You should set this to
-		FALSE only under unusual circumstances when you know what you're doing -- in the vast majority of cases you
-		will want it to be TRUE.  */
-	public synchronized void setShuffling(boolean val)
-		{
-		shuffling = val;
-		}
-	
-	/** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
-		and are scheduled for the same time; else returns false. */
-	public synchronized boolean isShuffling()
-		{
-		return shuffling;
-		}
-	
-	/** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
+        
+    /** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they
+        have identical orderings and are scheduled for the same time.  If the Steppables are not randomly shuffled,
+        they will be executed in the order in which they were inserted into the schedule.  You should set this to
+        FALSE only under unusual circumstances when you know what you're doing -- in the vast majority of cases you
+        will want it to be TRUE.  */
+    public synchronized void setShuffling(boolean val)
+        {
+        shuffling = val;
+        }
+        
+    /** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
+        and are scheduled for the same time; else returns false. */
+    public synchronized boolean isShuffling()
+        {
+        return shuffling;
+        }
+        
+    /** Sets the Schedule to either throw exceptions or return false when a Steppable is scheduled
         in an invalid fashion -- an invalid time, or a null Steppable, etc.  By default, throwing
         exceptions is set to TRUE.  You should change this only if you require backward-compatability. */
     public synchronized void setThrowingScheduleExceptions(boolean val)
@@ -215,7 +215,7 @@ public class Schedule implements java.io.Serializable
                 
         if (!_scheduleComplete())
             {
-			boolean shuffling = this.shuffling;  // a little faster
+            boolean shuffling = this.shuffling;  // a little faster
 
             // figure the current time 
             time = ((Key)(queue.getMinKey())).time;
@@ -232,10 +232,10 @@ public class Schedule implements java.io.Serializable
 
                 // shuffle
                 if (substeps.numObjs > 1) 
-					{
-					if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
-					else substeps.reverse();  // they came out in reverse order; we need to flip 'em
-					}
+                    {
+                    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
+                    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+                    }
                                 
                 // execute
                 int len = substeps.numObjs;
@@ -550,15 +550,15 @@ class Key implements Comparable, Serializable
         Key o = (Key)obj;
         double time = this.time;
         double time2 = o.time;
-		if (time == time2)  // the most common situation
-			{
-			int ordering = this.ordering;
-			int ordering2 = o.ordering;
-			if (ordering == ordering2) return 0;  // the most common situation
-			if (ordering < ordering2) return -1;
-			/* if (ordering > ordering2) */ return 1;
-			}
-		// okay, so they're different times
+        if (time == time2)  // the most common situation
+            {
+            int ordering = this.ordering;
+            int ordering2 = o.ordering;
+            if (ordering == ordering2) return 0;  // the most common situation
+            if (ordering < ordering2) return -1;
+            /* if (ordering > ordering2) */ return 1;
+            }
+        // okay, so they're different times
         if (time < time2) return -1;
         /* if (time > time2) */ return 1;
         }

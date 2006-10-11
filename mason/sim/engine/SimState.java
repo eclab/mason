@@ -287,15 +287,15 @@ public class SimState implements java.io.Serializable
         return null;
         }
     
-	long job = 0;
-	long seed = 0;  // considered bad
-	
-	/** Returns the job number set by the doLoop(...) facility.  This number
-		is not incremented by the GUI. */
-	public long job()
-		{
-		return job;
-		}
+    long job = 0;
+    long seed = 0;  // considered bad
+        
+    /** Returns the job number set by the doLoop(...) facility.  This number
+        is not incremented by the GUI. */
+    public long job()
+        {
+        return job;
+        }
 
     /** Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
         SimStates of the provided Class c, using the constructor new <simState>(<random seed>). */
@@ -336,11 +336,11 @@ public class SimState implements java.io.Serializable
                 "                       [-for F] [-time T] [-docheckpoint D] [-checkpoint C] \n\n" +
                 "-help             Shows this message and exits.\n\n" +
                 "-repeat R         Long value > 0: Runs the job R times.  Unless overridden by a\n" +
-				"                  checkpoint recovery (see -checkpoint), the random seed for\n" +
-				"                  each job is the provided -seed plus the job# (starting at 0).\n" +
+                "                  checkpoint recovery (see -checkpoint), the random seed for\n" +
+                "                  each job is the provided -seed plus the job# (starting at 0).\n" +
                 "                  Default: runs once only: job number is 0.\n\n" +
                 "-seed S           Long value not 0: the random number generator seed, unless \n" +
-				"                  overridden by a checkpoint recovery (see -checkpoint).\n" +
+                "                  overridden by a checkpoint recovery (see -checkpoint).\n" +
                 "                  Default: the system time in milliseconds.\n\n" +
                 "-until U          Double value >= 0: the simulation must stop when the\n" +
                 "                  simulation time U has been reached or exceeded.\n" +
@@ -357,19 +357,19 @@ public class SimState implements java.io.Serializable
                 "                  Default: never.\n" +
                 "                  Checkpoint files named\n"+
                 "                  <steps>.<job#>." + 
-					generator.simulationClass().getName().substring(generator.simulationClass().getName().lastIndexOf(".") + 1) + 
-					".checkpoint\n\n" + 
+                generator.simulationClass().getName().substring(generator.simulationClass().getName().lastIndexOf(".") + 1) + 
+                ".checkpoint\n\n" + 
                 "-checkpoint C     String: loads the simulation from file C, recovering the job\n" +
                 "                  number and the seed.  If the checkpointed simulation was begun\n" +
-				"                  on the command line but was passed through the GUI for a while\n" +
-				"                  (even multiply restarted in the GUI) and then recheckpointed,\n" +
-				"                  then the seed and job numbers will be the same as when they\n" +
-				"                  were last on the command line.  If the checkpointed simulation\n" +
-				"                  was begun on the GUI, then the seed will not be recovered and\n"+
-				"                  job will be set to 0. Further jobs and seeds are incremented\n" +
-				"                  from the recovered job and seed.\n" +
-				"                  Default: starts a new simulation rather than loading one, at\n" +
-				"                  job 0 and with the seed given in -seed.\n");
+                "                  on the command line but was passed through the GUI for a while\n" +
+                "                  (even multiply restarted in the GUI) and then recheckpointed,\n" +
+                "                  then the seed and job numbers will be the same as when they\n" +
+                "                  were last on the command line.  If the checkpointed simulation\n" +
+                "                  was begun on the GUI, then the seed will not be recovered and\n"+
+                "                  job will be set to 0. Further jobs and seeds are incremented\n" +
+                "                  from the recovered job and seed.\n" +
+                "                  Default: starts a new simulation rather than loading one, at\n" +
+                "                  job 0 and with the seed given in -seed.\n");
             System.exit(0);
             }
 
@@ -458,7 +458,7 @@ public class SimState implements java.io.Serializable
        
         // okay, now we actually get down to brass tacks
         
-		long job = 0;
+        long job = 0;
         for(long rep = 0 ; rep < repeat; rep++)
             {
             SimState state = null;
@@ -476,30 +476,30 @@ public class SimState implements java.io.Serializable
                     System.err.println("Checkpoint contains some other simulation: " + state + ", should have been of class " + generator.simulationClass());
                     System.exit(1);
                     }
-					
-				job = state.job;
-				if (state.seed != 0) // likely good seed from the command line earlier
-					{
-					seed = state.seed;
-					System.err.println("Recovered job: " + job + " Seed: " + seed);
-					}
-				else System.err.println("Renamed job: " + job + " (unknown seed)");
+                                        
+                job = state.job;
+                if (state.seed != 0) // likely good seed from the command line earlier
+                    {
+                    seed = state.seed;
+                    System.err.println("Recovered job: " + job + " Seed: " + seed);
+                    }
+                else System.err.println("Renamed job: " + job + " (unknown seed)");
                 }
 
             // ...or should we start fresh?
             if (state==null)  // no checkpoint file requested
                 {
                 state = generator.newInstance(seed,args);
-				state.job = job;
-				state.seed = seed;
-				System.err.println("Job: " + job + " Seed: " + seed);
+                state.job = job;
+                state.seed = seed;
+                System.err.println("Job: " + job + " Seed: " + seed);
                 System.err.println("Starting " + state.getClass().getName());
                 state.start();
                 }
             
-			job++;
-			seed++;
-			
+            job++;
+            seed++;
+                        
             NumberFormat rateFormat = NumberFormat.getInstance();
             rateFormat.setMaximumFractionDigits(5);
             rateFormat.setMinimumIntegerDigits(1);

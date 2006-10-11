@@ -1186,3 +1186,5 @@ Version 12
 		minor improvement, but which necessitates a change in method
 		name in ChartingPropertyInspector 
 		(updateAfterTime -> updateBefore)
+	Updated various buttons to have transparent backgrounds so they look
+		proper in Windows.

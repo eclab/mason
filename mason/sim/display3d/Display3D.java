@@ -421,8 +421,10 @@ public class Display3D extends JPanel implements Steppable
 
         togglebutton = new JToggleButton(Display2D.LAYERS_ICON);
         togglebutton.setPressedIcon(Display2D.LAYERS_ICON_P);
+        togglebutton.setBorderPainted(false);
+        togglebutton.setContentAreaFilled(false);
         togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		toggleButton.setBackground(headerBackground);    // looks better in Windows
+        //toggleButton.setBackground(headerBackground);    // looks better in Windows
         header.add(togglebutton);
         
         //Create the popup menu.
@@ -448,8 +450,10 @@ public class Display3D extends JPanel implements Steppable
         
         movieButton = new JButton(Display2D.MOVIE_OFF_ICON);
         movieButton.setPressedIcon(Display2D.MOVIE_OFF_ICON_P);
+        movieButton.setBorderPainted(false);
+        movieButton.setContentAreaFilled(false);
         movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		movieButton.setBackground(headerBackground);    // looks better in Windows
+        //movieButton.setBackground(headerBackground);    // looks better in Windows
         movieButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -463,7 +467,9 @@ public class Display3D extends JPanel implements Steppable
         snapshotButton = new JButton(Display2D.CAMERA_ICON);
         snapshotButton.setPressedIcon(Display2D.CAMERA_ICON_P);
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-		snapshotButton.setBackground(headerBackground);    // looks better in Windows
+        //snapshotButton.setBackground(headerBackground);    // looks better in Windows
+        snapshotButton.setBorderPainted(false);
+        snapshotButton.setContentAreaFilled(false);
         snapshotButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -481,9 +487,11 @@ public class Display3D extends JPanel implements Steppable
 
         optionButton = new JButton(Display2D.OPTIONS_ICON);
         optionButton.setPressedIcon(Display2D.OPTIONS_ICON_P);
+        snapshotButton.setBorderPainted(false);
+        snapshotButton.setContentAreaFilled(false);
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         optionButton.setToolTipText("Options");
-		optionButton.setBackground(headerBackground);    // looks better in Windows
+        //optionButton.setBackground(headerBackground);    // looks better in Windows
         optionButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)

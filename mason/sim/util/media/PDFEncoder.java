@@ -7,11 +7,11 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.*; 
 
 public class PDFEncoder
-	{
+    {
     public static void generatePDF(Component component, File file )
         {
-		int width = component.getWidth();
-		int height = component.getHeight();
+        int width = component.getWidth();
+        int height = component.getHeight();
         try
             {
             Document document = new Document(new com.lowagie.text.Rectangle(width,height));
@@ -32,4 +32,4 @@ public class PDFEncoder
             e.printStackTrace();
             }
         }
-	}
+    }

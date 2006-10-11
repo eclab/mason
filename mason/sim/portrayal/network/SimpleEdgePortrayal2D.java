@@ -35,15 +35,15 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public Font labelFont;
     Font scaledFont;
     int labelScaling = ALWAYS_SCALE;
-	int scaling = ALWAYS_SCALE;
+    int scaling = ALWAYS_SCALE;
     public static final int NEVER_SCALE = 0;
     public static final int SCALE_WHEN_SMALLER = 1;
     public static final int ALWAYS_SCALE = 2;
-	public double baseWidth;
-	
-	public static final int SHAPE_LINE = 0;
-	public static final int SHAPE_TRIANGLE = 1;
-	public int shape;
+    public double baseWidth;
+        
+    public static final int SHAPE_LINE = 0;
+    public static final int SHAPE_TRIANGLE = 1;
+    public int shape;
     
     /** Draws a single-color, undirected black line (or triangle) with no label. */
     public SimpleEdgePortrayal2D()
@@ -72,19 +72,19 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         this.labelFont = labelFont;
         }
     
-	/** Returns the shape of the edge.  At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE). */
-	public int getShape() { return shape; }
-	/** Sets the shape of the edge.   At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE) */
-	public void setShape(int shape) { this.shape = shape; }
-	
-	public double getBaseWidth() { return baseWidth; } 
-	/** Sets the width of the base of the triangle used in drawing the directed edge -- by default, this is 0 (a simple line is drawn).
-		The triangle is drawn with its base at the "from" node and its point at the "to" node. */
-	public void setBaseWidth(double val) { baseWidth = val; }
-	
+    /** Returns the shape of the edge.  At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE). */
+    public int getShape() { return shape; }
+    /** Sets the shape of the edge.   At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE) */
+    public void setShape(int shape) { this.shape = shape; }
+        
+    public double getBaseWidth() { return baseWidth; } 
+    /** Sets the width of the base of the triangle used in drawing the directed edge -- by default, this is 0 (a simple line is drawn).
+        The triangle is drawn with its base at the "from" node and its point at the "to" node. */
+    public void setBaseWidth(double val) { baseWidth = val; }
+        
     public int getScaling() { return labelScaling; }
     public void setScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
-	
+        
     public int getLabelScaling() { return labelScaling; }
     public void setLabelScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
     
@@ -98,18 +98,18 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         return "" + obj;
         }
     
-	int[] xPoints = new int[3];
-	int[] yPoints = new int[3];
+    int[] xPoints = new int[3];
+    int[] yPoints = new int[3];
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         if (!(info instanceof EdgeDrawInfo2D))
             throw new RuntimeException("Expected this to be an EdgeDrawInfo2D: " + info);
         EdgeDrawInfo2D e = (EdgeDrawInfo2D) info;
         
-		double startXd = e.draw.x;
-		double startYd = e.draw.y;
-		final double endXd = e.secondPoint.x;
-		final double endYd = e.secondPoint.y;
+        double startXd = e.draw.x;
+        double startYd = e.draw.y;
+        final double endXd = e.secondPoint.x;
+        final double endYd = e.secondPoint.y;
         final int startX = (int)startXd;
         final int startY = (int)startYd;
         final int endX = (int)endXd;
@@ -118,38 +118,38 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         final int midY = (int)((startYd+endYd) / 2);
         
         // draw lines
-		if (shape == SHAPE_TRIANGLE)
-			{
+        if (shape == SHAPE_TRIANGLE)
+            {
             graphics.setPaint (fromPaint);
-			double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
-			double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
-			double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
-			double scaleWidth = info.draw.width;
-			double scaleHeight = info.draw.height;
-			xPoints[0] = endX;  yPoints[0] = endY;
-			
-			if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
-				{ scaleWidth = 1; scaleHeight = 1; }
-			xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
-			xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
-			graphics.fillPolygon(xPoints,yPoints,3);
-			graphics.drawPolygon(xPoints,yPoints,3);  // when you scale out, fillPolygon stops drawing anything at all.  Stupid.
-			}
+            double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
+            double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
+            double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
+            double scaleWidth = info.draw.width;
+            double scaleHeight = info.draw.height;
+            xPoints[0] = endX;  yPoints[0] = endY;
+                        
+            if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+                { scaleWidth = 1; scaleHeight = 1; }
+            xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
+            xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
+            graphics.fillPolygon(xPoints,yPoints,3);
+            graphics.drawPolygon(xPoints,yPoints,3);  // when you scale out, fillPolygon stops drawing anything at all.  Stupid.
+            }
         else // shape == SHAPE_LINE
-			{
-			if (fromPaint == toPaint)
-				{
-				graphics.setPaint (fromPaint);
-				graphics.drawLine (startX, startY, endX, endY);
-				}
-			else
-				{
-				graphics.setPaint( fromPaint );
-				graphics.drawLine(startX,startY,midX,midY);
-				graphics.setPaint( toPaint );
-				graphics.drawLine(midX,midY,endX,endY);
-				}
-			}
+            {
+            if (fromPaint == toPaint)
+                {
+                graphics.setPaint (fromPaint);
+                graphics.drawLine (startX, startY, endX, endY);
+                }
+            else
+                {
+                graphics.setPaint( fromPaint );
+                graphics.drawLine(startX,startY,midX,midY);
+                graphics.setPaint( toPaint );
+                graphics.drawLine(midX,midY,endX,endY);
+                }
+            }
                 
         // draw label
         if (labelPaint != null)
@@ -188,35 +188,35 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             throw new RuntimeException("Expected this to be an EdgeDrawInfo2D: " + range);
         EdgeDrawInfo2D e = (EdgeDrawInfo2D) range;
 
-		double startXd = e.draw.x;
-		double startYd = e.draw.y;
-		final double endXd = e.secondPoint.x;
-		final double endYd = e.secondPoint.y;
+        double startXd = e.draw.x;
+        double startYd = e.draw.y;
+        final double endXd = e.secondPoint.x;
+        final double endYd = e.secondPoint.y;
         
-		final double SLOP = 5;  // allow some imprecision -- click 6 away from the line
+        final double SLOP = 5;  // allow some imprecision -- click 6 away from the line
         if (baseWidth == 0)
-			{
-			Line2D.Double line = new Line2D.Double( startXd, startYd, endXd, endYd );
-			return (line.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
-			//        return ( line.ptSegDist( range.clip.x, range.clip.y ) < 4 );  // allow some imprecision
-			}
-		else
-			{
+            {
+            Line2D.Double line = new Line2D.Double( startXd, startYd, endXd, endYd );
+            return (line.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
+            //        return ( line.ptSegDist( range.clip.x, range.clip.y ) < 4 );  // allow some imprecision
+            }
+        else
+            {
 
-			double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
-			double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
-			double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
-			double scaleWidth = range.draw.width;
-			double scaleHeight = range.draw.height;
-			xPoints[0] = (int)endXd ;  yPoints[0] = (int)endYd; 
-			
-			if (scaling == SCALE_WHEN_SMALLER && range.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
-				{ scaleWidth = 1; scaleHeight = 1; }
-			xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
-			xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
-			Polygon poly = new Polygon(xPoints,yPoints,3);
-			return (poly.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
-			}
+            double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
+            double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
+            double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
+            double scaleWidth = range.draw.width;
+            double scaleHeight = range.draw.height;
+            xPoints[0] = (int)endXd ;  yPoints[0] = (int)endYd; 
+                        
+            if (scaling == SCALE_WHEN_SMALLER && range.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+                { scaleWidth = 1; scaleHeight = 1; }
+            xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
+            xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
+            Polygon poly = new Polygon(xPoints,yPoints,3);
+            return (poly.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
+            }
         }
             
     public String getName(LocationWrapper wrapper)

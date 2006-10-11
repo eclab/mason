@@ -221,7 +221,7 @@ public class Console extends JFrame implements Controller
         {
         super(GUIState.getName(simulation.getClass()));
 
-		final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
+        final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
 
 
         this.simulation = simulation;
@@ -246,8 +246,10 @@ public class Console extends JFrame implements Controller
                 pressPlay();
                 }
             });
+        playButton.setBorderPainted(false);
+        playButton.setContentAreaFilled(false);
         playButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		playButton.setBackground(transparentBackground);  // looks better in Windows
+        //playButton.setBackground(transparentBackground);  // looks better in Windows
         //playButton.setToolTipText("<html><i>When Stopped:</i> Start Simulation<br><i>When Paused:</i> Step Simulation</html>");
         buttonBox.add(playButton);
 
@@ -262,16 +264,17 @@ public class Console extends JFrame implements Controller
                 pressPause();
                 }
             });
+        pauseButton.setBorderPainted(false);
+        pauseButton.setContentAreaFilled(false);
         pauseButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         //pauseButton.setToolTipText("<html><i>When Playing:</i> Pause/Resume Simulation<br><i>When Stopped:</i> Start Simulation Paused</html>");
-		pauseButton.setBackground(transparentBackground);  // looks better in Windows
+        //pauseButton.setBackground(transparentBackground);  // looks better in Windows
         buttonBox.add(pauseButton);
 
         // create stop button
         stopButton = new JButton(I_STOP_OFF);
         stopButton.setIcon(I_STOP_ON);
         stopButton.setPressedIcon(I_STOP_OFF);
-        //stopButton.setToolTipText("End Simulation");
         
         stopButton.addActionListener(new ActionListener()
             {
@@ -281,7 +284,10 @@ public class Console extends JFrame implements Controller
                 }
             });
         stopButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		stopButton.setBackground(transparentBackground);  // looks better in Windows
+        //stopButton.setBackground(transparentBackground);  // looks better in Windows
+        //stopButton.setToolTipText("End Simulation");
+        stopButton.setBorderPainted(false);
+        stopButton.setContentAreaFilled(false);
         buttonBox.add(stopButton);
 
         timeBox = new JComboBox(new Object[] { "Time", "Steps", "Rate", "None" });
@@ -845,7 +851,7 @@ public class Console extends JFrame implements Controller
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         
-		buildClassList(); // load the simulation class list in case it's not been loaded yet, to determine if we want to have simulations
+        buildClassList(); // load the simulation class list in case it's not been loaded yet, to determine if we want to have simulations
 
         JMenuItem _new = new JMenuItem("New Simulation...");
         if (!allowOtherClassNames && classNames.size() == 0)  // nothing permitted
@@ -1537,82 +1543,82 @@ public class Console extends JFrame implements Controller
                 return counter;
         return -1;
         }
-	
-	static Object classLock = new Object();
-	static boolean classListLoaded = false;
-	static void buildClassList()
-		{
-		// just in case someone crazy tries to load twice
-		synchronized(classLock) { if (classListLoaded) return; else classListLoaded = true; }
-		
-		///////// Build doNew() comboBox
-		allowOtherClassNames = true;
-		try
-			{
-			InputStream s = Console.class.getResourceAsStream("simulation.classes");
-			StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
-			st.resetSyntax();
-			st.wordChars(32,255);
-			st.whitespaceChars(0,31);  // everything but space
-			st.commentChar(35);
-			boolean errout = false;
-			String nextName = null;
-			//st.whitespaceChars(0,32);  // control chars
-			while(st.nextToken()!=StreamTokenizer.TT_EOF)
-				{
-				if (st.sval == null) { } // ignore
-				else if ("ONLY".equalsIgnoreCase(st.sval))
-					allowOtherClassNames = false;
-				else if (st.sval.toUpperCase().startsWith("NAME:"))
-					{
-					//if (shortNames.size() == 0) throw new Exception("The 'NAME:' tag occurred before any class name was declared");
-					//shortNames.set(shortNames.size()-1, st.sval.substring(5).trim());
-					nextName = st.sval.substring(5).trim();
-					}
-				else 
-					{
-					String shortName = null;
-					if (nextName==null)
-						{
-						try
-							{
-							Class c = Class.forName(st.sval);
-							try
-								{ shortName = GUIState.getName(c); }
-							catch (Throwable e)
-								{ shortName = GUIState.getTruncatedName(c); }
-							}
-						catch (Throwable e) 
-							{
-							if (!errout) 
-								System.err.println("Not all classes loaded, due to error: probably no Java3D");
-							errout = true;
-							}
-						}
-					else { shortName = nextName; nextName = null; }
-					// at this point if it's still null we shouldn't list it.
-					if (shortName!=null)
-						{
-						classNames.add(st.sval);
-						shortNames.add(shortName);
-						}
-					}
-				}
-			if (nextName != null) System.err.println("Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
-			s.close();
-			}
-		catch (Exception e)
-			{
-			System.err.println("Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
-			e.printStackTrace();
-			}
-		}
+        
+    static Object classLock = new Object();
+    static boolean classListLoaded = false;
+    static void buildClassList()
+        {
+        // just in case someone crazy tries to load twice
+        synchronized(classLock) { if (classListLoaded) return; else classListLoaded = true; }
+                
+        ///////// Build doNew() comboBox
+        allowOtherClassNames = true;
+        try
+            {
+            InputStream s = Console.class.getResourceAsStream("simulation.classes");
+            StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
+            st.resetSyntax();
+            st.wordChars(32,255);
+            st.whitespaceChars(0,31);  // everything but space
+            st.commentChar(35);
+            boolean errout = false;
+            String nextName = null;
+            //st.whitespaceChars(0,32);  // control chars
+            while(st.nextToken()!=StreamTokenizer.TT_EOF)
+                {
+                if (st.sval == null) { } // ignore
+                else if ("ONLY".equalsIgnoreCase(st.sval))
+                    allowOtherClassNames = false;
+                else if (st.sval.toUpperCase().startsWith("NAME:"))
+                    {
+                    //if (shortNames.size() == 0) throw new Exception("The 'NAME:' tag occurred before any class name was declared");
+                    //shortNames.set(shortNames.size()-1, st.sval.substring(5).trim());
+                    nextName = st.sval.substring(5).trim();
+                    }
+                else 
+                    {
+                    String shortName = null;
+                    if (nextName==null)
+                        {
+                        try
+                            {
+                            Class c = Class.forName(st.sval);
+                            try
+                                { shortName = GUIState.getName(c); }
+                            catch (Throwable e)
+                                { shortName = GUIState.getTruncatedName(c); }
+                            }
+                        catch (Throwable e) 
+                            {
+                            if (!errout) 
+                                System.err.println("Not all classes loaded, due to error: probably no Java3D");
+                            errout = true;
+                            }
+                        }
+                    else { shortName = nextName; nextName = null; }
+                    // at this point if it's still null we shouldn't list it.
+                    if (shortName!=null)
+                        {
+                        classNames.add(st.sval);
+                        shortNames.add(shortName);
+                        }
+                    }
+                }
+            if (nextName != null) System.err.println("Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
+            s.close();
+            }
+        catch (Exception e)
+            {
+            System.err.println("Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+            e.printStackTrace();
+            }
+        }
 
     /** Returns true if a new simulation has been created; false if the user cancelled. */
     static boolean doNew(JFrame originalFrame, boolean startingUp)
         {
-		buildClassList();
-		
+        buildClassList();
+                
         final String defaultText = "<html><body bgcolor='white'><font face='dialog'><br><br><br><br><p align='center'>Select a MASON simulation from the list at left,<br>or type a Java class name below.</p></font></body></html>";
         final String nothingSelectedText = "<html><body bgcolor='white'></body></html>";
                 
@@ -1716,7 +1722,7 @@ public class Console extends JFrame implements Controller
             catch (Throwable e)  // Most likely NoClassDefFoundError
                 {
                 Utilities.informOfError(e, 
-                              "An error occurred while creating the simulation " + className, originalFrame);
+                                        "An error occurred while creating the simulation " + className, originalFrame);
                 }
             }
         }
@@ -1749,7 +1755,7 @@ public class Console extends JFrame implements Controller
             catch (Exception e) // fail
                 {
                 Utilities.informOfError(e, 
-                              "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()), null);
+                                        "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()), null);
                 }
         }
 
@@ -1769,7 +1775,7 @@ public class Console extends JFrame implements Controller
             catch (Exception e) // fail
                 {
                 Utilities.informOfError(e, 
-                              "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
+                                        "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
                 }
         }
 
@@ -1817,8 +1823,8 @@ public class Console extends JFrame implements Controller
             catch (Throwable e) // fail  -- could be an Error or an Exception
                 {
                 Utilities.informOfError(e, 
-                              "An error occurred while loading the simulation from the file " + 
-                              (f == null ? fd.getFile(): f.getName()), null);
+                                        "An error occurred while loading the simulation from the file " + 
+                                        (f == null ? fd.getFile(): f.getName()), null);
                 }
                 
         // if we failed, reset play state.  If we were stopped, do nothing (we're still stopped).
@@ -2288,7 +2294,7 @@ public class Console extends JFrame implements Controller
                        
                         //                      long a = (stephistory[STEPHISTORY - 1] - stephistory[STEPHISTORY - numSteps]);
 
-			// now we do something different instead anyway, so the above bug fix is immaterial
+                        // now we do something different instead anyway, so the above bug fix is immaterial
                         currentSteps++;
                         long l = System.currentTimeMillis();
                         if (l - lastStepTime >= RATE_UPDATE_INTERVAL)
@@ -2644,13 +2650,13 @@ public class Console extends JFrame implements Controller
                         }
                     };
                 
-				Stoppable stopper = null;
-				try
-					{
-					stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleImmediateRepeat(true,stepper));
-					inspectorStoppables.addElement(stopper);
-					}
-				catch (IllegalArgumentException ex) { /* do nothing -- it's thrown if the user tries to pop up an inspector when the time is over. */ }
+                Stoppable stopper = null;
+                try
+                    {
+                    stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleImmediateRepeat(true,stepper));
+                    inspectorStoppables.addElement(stopper);
+                    }
+                catch (IllegalArgumentException ex) { /* do nothing -- it's thrown if the user tries to pop up an inspector when the time is over. */ }
 
                 // add the inspector
                 registerInspector((Inspector)(inspectors.objs[x]),stopper);

@@ -25,7 +25,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
     // a grey oval.  You should provide your own protrayals...
     SimplePortrayal2D defaultPortrayal = new OvalPortrayal2D();
     SimplePortrayal2D defaultNullPortrayal = new SimplePortrayal2D();
-	
+        
     public ObjectGridPortrayal2D()
         {
         super();
@@ -42,11 +42,11 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         {
         return defaultPortrayal;
         }
-		
-	public Portrayal getDefaultNullPortrayal()
-		{
-		return defaultNullPortrayal;
-		}
+                
+    public Portrayal getDefaultNullPortrayal()
+        {
+        return defaultNullPortrayal;
+        }
 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
