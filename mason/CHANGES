@@ -1216,3 +1216,5 @@ Version 12
 		so it gets inlined.  Here's hoping we didn't introduce bugs.
 	Added check to ParallelSequence which looks to see if the sequence
 		is being run nested or in parallel, both no-nos.
+	Revised Tutorial3 to explain anonymous classes to those inexperienced
+		with them.

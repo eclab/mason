@@ -50,7 +50,7 @@ public class Tutorial3 extends SimState
 <p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1"><b>Wherever did you get such a phenominal implementation of Mersenne Twister?</b>
 <p>Thank you!  This implementation is believed to be the fastest Java version available anywhere, and is used fairly widely.  And its author &mdash; who also wrote this tutorial &mdash; is understandably proud of it. :-)  And yes, there's a synchronized java.util.Random subclass version available, though not in the MASON distribution...
 </table>
-Let's start with the random number generator.  MASON uses an implementation of the <b>Mersenne Twister</b> random number genenerator algorithm called <tt>ec.util.<b>MersenneTwisterFast</b></tt>.  Generally speaking, this generator is more "random" than the Knuth Subtractive algorithm found in the Java-standard generator, <tt>java.util.<b>Random</b></tt>, and it has a <i>massive</i> &mdash; for all intents and purposes infinite &mdash; generation period.  The provided Java implementation of Mersenne Twister, which isn't synchronized, is also about 1.5 times the speed of Java's standard generator.
+Let's start with the random number generator.  MASON uses an implementation of the <b>Mersenne Twister</b> random number genenerator algorithm called <tt>ec.util.<b>MersenneTwisterFast</b></tt>.  This generator is <i>far</i> more random than the Java-standard generator, <tt>java.util.<b>Random</b></tt>, and it has a <i>massive</i> &mdash; for all intents and purposes infinite &mdash; generation period.  You should never use java.util.Random for real simulation work: it's very bad.  The provided Java implementation of Mersenne Twister, which isn't synchronized, is also about 1.5 times the speed of Java's standard generator.
 
 <p>The MersenneTwisterFast instance we created is stored in the instance variable <b>random</b>.  Don't worry about having to learn a new class: MersenneTwisterFast has an identical API to java.util.Random.  Just call it like you've always done (for example, <tt>random.nextInt(5);</tt> to get a random integer from 0 to 4 inclusive).  But keep in mind that MersenneTwisterFast isn't threadsafe.
 
@@ -82,7 +82,43 @@ Let's start with the random number generator.  MASON uses an implementation of t
 
 <p>Note the use of <b>Int2D</b>.  This class is essentially the same as <b>java.awt.Point</b>: it holds an x and a y location as ints.  However, <b>Int2D</b> is <i>immutable</i> -- once it is constructed, its values cannot be changed.  SparseGrid2D stores locations as Int2D.  Likewise, <b>SparseGrid3D</b> stores locations as <b>Int3D</b>, and other fields use <b>Double2D</b> or <b>Double3D</b>.
 
-<p>As the agents traverse the world, they will leave trails by setting DoubleGrid2D locations to 1.0.  Let's also create a "decreaser" agent which slowly decreases the DoubleGrid2D values.  
+<p><br clear="both">
+<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>I'm not used to code like this.  Can you really make a Steppable class like that?</b>
+
+<P>Sure you can.  It's called an <b>anonymous class</b>, and it's a construct for creating one-shot classes which exist solely to provide an instance of some superclass or interface.  Without it, you'd need to write something like:
+
+<pre><tt>
+package sim.app.tutorial3;
+import sim.field.grid.*;
+import sim.engine.*;
+public class MyDecreaser implements Steppable
+	{
+	DoubleGrid2D myTrails;
+	public MyDecreaser(DoubleGrid2D tr)
+		{
+		myTrails = tr;
+		}
+
+	public void step(SimState state)
+		{
+		trails.multiply(0.9);
+		}
+	}
+</tt></pre>
+
+And then say... 
+<pre><tt>
+Steppable decreaser = new MyDecreaser(trails);
+schedule.scheduleRepeating(Schedule.EPOCH,2,decreaser,1);
+</tt></pre>
+
+<p>That's an awful lot of typing just for scheduling a Steppable which calls a single function!  Instead, an anonymous class makes for simpler code.  Plus note that inside the anonymous class we can directly access the <b>trails</b> variable, so we don't have to make some complicated constructor nonsense like in the example above.  This is the approximate equivalent to what's known, in modern languages, as a <b>closure</b>.
+
+<p>Note though that in Java we can only reference <b>trails</b> like this if it's an outer instance variable or is a final local variable.  And we have some versioning issues in using anonymous classes, which may or may not mattter to you, as is discussed further below. 
+</font></table>
+
+As the agents traverse the world, they will leave trails by setting DoubleGrid2D locations to 1.0.  Let's also create a "decreaser" agent which slowly decreases the DoubleGrid2D values.  
 
 <pre><tt>
         <font color=gray>// Schedule the decreaser</font>
@@ -99,7 +135,8 @@ Let's start with the random number generator.  MASON uses an implementation of t
 <pre><tt>
                 }
             };
-        schedule.scheduleRepeating(Schedule.EPOCH,2,decreaser,1);
+        schedule.scheduleRepeating(
+            Schedule.EPOCH,2,decreaser,1);
         }
 </tt></pre>
 
