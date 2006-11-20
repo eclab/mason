@@ -383,15 +383,26 @@ Else return the defaultPortrayal (often a gray circle).
 
 <h2>About Serialized Versioning</h2>
 
-<p>The simulator relies on Java's Serialization facility to do its checkpointing.  Serialization relies on "version" numbers, essentially unique IDs for each class.  They don't have to be correct; they just ought to be (but don't need to be) different for different versions of a class.
+<p>The simulator relies on Java's Serialization facility to do its checkpointing.  Serialization writes objects, and all objects they point to (and so on) out to a stream automatically if you obey a few rules.  If you don't obey the rules, you may get an exception such as a NotSerializableException.
 
-<p>But there's a gotcha.  
+<h3>Basic Rules</h3>
+<ul>
+<li>All classes, except for anonymous classes, should be declared to extend the interface <b>Serializable</b>.
+<li>Anonymous classes must subclass from a Serializable class.
+<li>All inner classes, including anonymous classes, must be declared inside an outer class which is Serializable,
+or are declared inside other inner classes which obey this rule.  (Ultimately the outermost class must be Serializable).
+</ul>
+
+<b>If you will only use <i>a single</i> java compiler to compile your code, and reuse those class files regardless of platform, this is sufficient and you can skip the rest of this section.</b>  But if you plan on using different java compilers for your code -- one to compile on your workstation and a different one to compile on your back-end server, say, or different versions of the Java JVM, then you need to be aware of some gotchas.
+
+<h3>First Gotcha</h3>
 
 <p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
 <b>Will Sun ever fix this stupdity?</b>
 <p>Likely not.  This misfeature has been on Sun's bugfix request list for years now.
 </font></td></tr></table>
-Ordinarily, Java generates version numbers using the name of the class, features of its inner classes, and various fields in the class.  Unfortunately, Java compilers are free to give <i>different version numbers</i> for different <b>non-static inner classes</b> or their enclosing classes!  Thus if you compile a class in Linux, and the same class in MacOS X, you may not be able to hand a checkpoint file from one to the other, unless you <b>hard-set the version numbers yourself</b>.
+
+Serialization relies on "version" numbers, essentially unique IDs for each class.  They don't have to be correct; they just ought to be (but don't need to be) different for different versions of a class.  Ordinarily, Java generates version numbers using the name of the class, features of its inner classes, and various fields in the class.  Unfortunately, Java compilers are free to give <i>different version numbers</i> for different <b>non-static inner classes</b> or their enclosing classes!  Thus if you compile a class in Linux, and the same class in MacOS X, you may not be able to hand a checkpoint file from one to the other, unless you <b>hard-set the version numbers yourself</b>.
 
 <p>This only matters if you care about moving a checkpoint file from one platform to another -- for example, running it in Linux and visualizing it on the Mac.  If you don't plan on ever doing this, you can skip the rest of this section.
 
@@ -447,7 +458,17 @@ Steppable decreaser = new Steppable()
 }
 </tt></pre></td></tr></table>
 
+<h3>Second Gotcha</h3> 
+
 <p>Now things should checkpoint and restore on different platforms smoothly.  But there's a <b>further gotcha</b>.  Because we've hard-coded the serialVersionUIDs, if we <i>change</i> the classes in any way, they'll be incompatible with the serialized versions of previous classes but Java won't know that and icky things could happen.  This happens all through the simulator, so: if you change and recompile your code, you should not then try to load an old checkpoint file created using the old code.
+
+<h3>Third Gotcha</h3>
+
+Serialization doesn't work across Java Virtual Machine versions.  For example, don't expect to be able to serialize code in Java 1.3.1 and load it successfully in Java 1.5.
+
+<h3>Fourth and Final Gotcha</h3>
+
+<p>It may be that you have done all the versioning correctly and still it doesn't work across different platforms with different compilers; here you might get a ClassNotFoundException perhaps.  There's one last possibility: <b>the compilers are <i>naming your inner classes differently</i></b>.  This isn't very common, but it's a definite possibility, and unfortunately there's no way around it.  If this occurs, your only recourse is to use the same compiler and just move your .class files over to the other machine.
 
 <br>
 <br>

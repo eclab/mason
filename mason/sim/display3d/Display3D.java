@@ -95,6 +95,10 @@ import com.sun.j3d.utils.geometry.Sphere;
    Portrayal3Ds in the scene.  This Switch turns the Portrayals on and off according the layers menu choice
    the user makes on the button bar.
    
+   <p>The <b>LightSwitch</b>, which resides in a BranchGrouop hanging of the ViewPlatform's TransformGroup node
+	(where the camera is), holds two lights, a PointLight and an AmbientLight, which may be turned on or off by the
+	user.  You can change these lights if you like.
+   
    <p>The right place to add scene graph material, or make other changes to the Java3D environment, is in
    the sceneGraphCreated() hook.  This function is called for your benefit after the Display3D has created
    its scene graph material but just before the renderer has been started -- thus the graph is not yet
@@ -155,6 +159,17 @@ public class Display3D extends JPanel implements Steppable
     static final int AXES_AUX_INDEX = 0;
     static final int BACKGROUND_AUX_INDEX = 1;
     //  static final int FLOOR_AUX_INDEX = 2;
+	
+	// light elements
+
+	/** Holds two lights located at the camera: in slot 0, a white PointLight, and in slot 1, a white AmbientLight.
+	    You may change these lights to different colored lights, but please keep them PointLights and AmbientLights
+		respectively.  These lights are turned on and off by the Options pane. */
+	public Switch lightSwitch = null;
+    BitSet lightSwitchMask = new BitSet(NUM_LIGHT_ELEMENTS);
+	final static int NUM_LIGHT_ELEMENTS = 2;
+	final static int SPOTLIGHT_INDEX = 0;
+	final static int AMBIENT_LIGHT_INDEX = 1;
 
     /** The MovieMaker.  If null, we're not shooting a movie. */
     public MovieMaker movieMaker = null;    
@@ -537,7 +552,7 @@ public class Display3D extends JPanel implements Steppable
         
         // default mask for auxillary objects
         auxillarySwitchMask.clear(AXES_AUX_INDEX);  // turn axes off
-        auxillarySwitchMask.set(BACKGROUND_AUX_INDEX);    // turn background on if it exists
+        auxillarySwitchMask.clear(BACKGROUND_AUX_INDEX);    // turn background off by default
         showBackgroundCheckBox.setSelected(true);
         showBackgroundCheckBox.setEnabled(false);  // disable backdrop checkbox until it's set by the simulation
         
@@ -551,32 +566,35 @@ public class Display3D extends JPanel implements Steppable
     Image backdropImage = null;  // for nonspherical backgrounds
     Color backdropColor = null;  // for nonspherical backgrounds
     
-    /** Clears any backdrop presently being used in the scene */
+    /** Clears any backdrop presently being used in the scene, turns off the backdrop checkbox, and disables the backdrop checkbox. */
     public void clearBackdrop()
         {
         backdropAppearance = null;
         backdropImage = null;
         backdropColor = null;
         showBackgroundCheckBox.setEnabled(false);
+		setShowsBackdrop(false);
         }
     
-    /** Sets a general appearance for a spherical backdrop. */
+    /** Sets a general appearance for a spherical backdrop, turns on the backdrop checkbox,  and enables the backdrop checkbox. */
     public void setBackdrop(Appearance appearance)
         {
         clearBackdrop();
         backdropAppearance = appearance;
         showBackgroundCheckBox.setEnabled(appearance!=null);
+		setShowsBackdrop(true);
         }
         
-    /** Sets the color for a flat backdrop. */
+    /** Sets the color for a flat backdrop, turns on the backdrop checkbox,  and enables the backdrop checkbox. */
     public void setBackdrop(java.awt.Color color)
         {
         clearBackdrop();
         backdropColor = color;
         showBackgroundCheckBox.setEnabled(color != null);
+		setShowsBackdrop(true);
         }
 
-    /** Sets the image for a backdrop (spherical or flat) */
+    /** Sets the image for a backdrop (spherical or flat), turns on the backdrop checkbox,  and enables the backdrop checkbox */
     public void setBackdrop(Image image, boolean spherical)
         {
         clearBackdrop();
@@ -591,6 +609,7 @@ public class Display3D extends JPanel implements Steppable
             backdropImage = image;
             }
         showBackgroundCheckBox.setEnabled(image != null);
+		setShowsBackdrop(true);
         }
         
     /*
@@ -693,12 +712,48 @@ public class Display3D extends JPanel implements Steppable
         auxillarySwitchMask.set(AXES_AUX_INDEX, showAxesCheckBox.isSelected());
         auxillarySwitch.setChildMask(auxillarySwitchMask);
         }
+		
+	public void setShowsAxes(boolean value)
+		{
+		showAxesCheckBox.setSelected(value);
+		toggleAxes();
+		}
 
     void toggleBackdrop()
         {
         auxillarySwitchMask.set(BACKGROUND_AUX_INDEX, showBackgroundCheckBox.isSelected());
         auxillarySwitch.setChildMask(auxillarySwitchMask);
         }
+
+	public void setShowsBackdrop(boolean value)
+		{
+		showBackgroundCheckBox.setSelected(value);
+		toggleBackdrop();
+		}
+
+    void toggleSpotlight()
+        {
+        lightSwitchMask.set(SPOTLIGHT_INDEX, showSpotlightCheckBox.isSelected());
+        lightSwitch.setChildMask(lightSwitchMask);
+        }
+		
+	public void setShowsSpotlight(boolean value)
+		{
+		showSpotlightCheckBox.setSelected(value);
+		toggleSpotlight();
+		}
+
+    void toggleAmbientLight()
+        {
+        lightSwitchMask.set(AMBIENT_LIGHT_INDEX, showAmbientLightCheckBox.isSelected());
+        lightSwitch.setChildMask(lightSwitchMask);
+        }
+		
+	public void setShowsAmbientLight(boolean value)
+		{
+		showAmbientLightCheckBox.setSelected(value);
+		toggleAmbientLight();
+		}
 
     /** The TransformGroup which holds the switch holding the portrayal's scene graph models.   
         A good time to fool around with this is in the sceneGraphCreated() hook. 
@@ -822,12 +877,35 @@ public class Display3D extends JPanel implements Steppable
             add(canvas, BorderLayout.CENTER);
             universe = new SimpleUniverse(canvas);
             universe.getViewingPlatform().setNominalViewingTransform();  //take the viewing point a step back
+       
+			// set up light switch elements
+			lightSwitch = new Switch(Switch.CHILD_MASK);
+			lightSwitch.setCapability(Switch.ALLOW_SWITCH_WRITE);
+			lightSwitch.setCapability(Switch.ALLOW_CHILDREN_READ);
+			lightSwitch.setCapability(Switch.ALLOW_CHILDREN_EXTEND);
+			
+			lightSwitchMask.set(SPOTLIGHT_INDEX);    // turn spotlight on
+			lightSwitchMask.clear(AMBIENT_LIGHT_INDEX);    // turn ambient light off 
+			lightSwitch.setChildMask(lightSwitchMask);
+			PointLight pl = new PointLight(new Color3f(1f,1f,1f),
+											new Point3f(0f,0f,0f),
+											new Point3f(1f,0f,0f));
+			pl.setInfluencingBounds(new BoundingSphere(new Point3d(0,0,0), Double.POSITIVE_INFINITY));
+			lightSwitch.addChild(pl);
+			AmbientLight al = new AmbientLight(new Color3f(1f,1f,1f));
+			al.setInfluencingBounds(new BoundingSphere(new Point3d(0,0,0), Double.POSITIVE_INFINITY));
+			lightSwitch.addChild(al);
+			
+			BranchGroup bg = new BranchGroup();
+			bg.addChild(lightSwitch);
+			universe.getViewingPlatform().getViewPlatformTransform().addChild(bg);
             }
         else // reset the canvas
             {
             // unhook the root from the universe so we can reuse the universe (Hmmmm....)
             
-            universe.getLocale().removeBranchGraph(root); canvas.stopRenderer();
+            universe.getLocale().removeBranchGraph(root);
+			canvas.stopRenderer();
             }
         
         // The root in our universe will be a branchgroup
@@ -910,7 +988,7 @@ public class Display3D extends JPanel implements Steppable
         
         // set up auxillary elements
         rebuildAuxillarySwitch();
-
+		
         // add the ability to rotate, translate, and zoom
         mOrbitBehavior = new OrbitBehavior(canvas, OrbitBehavior.REVERSE_ALL);
         mOrbitBehavior.setRotateEnable(true);
@@ -1282,6 +1360,8 @@ public class Display3D extends JPanel implements Steppable
     JCheckBox showAxesCheckBox = new JCheckBox("Axes");
     JCheckBox showBackgroundCheckBox = new JCheckBox("Backdrop");
     JCheckBox tooltips = new JCheckBox("ToolTips");
+    JCheckBox showSpotlightCheckBox = new JCheckBox("Spotlight");
+    JCheckBox showAmbientLightCheckBox = new JCheckBox("Ambient Light");
         
     //JCheckBox antialiasCheckBox = new JCheckBox("Antialias Graphics");
     //JRadioButton viewPerspective = new JRadioButton("Perspective Projection", true);
@@ -1568,9 +1648,10 @@ public class Display3D extends JPanel implements Steppable
         viewPanel.add(viewParallel);
         */
         
-        Box auxillaryPanel = new Box(BoxLayout.X_AXIS);
+        Box auxillaryPanel = new Box(BoxLayout.Y_AXIS);
+		Box box = new Box(BoxLayout.X_AXIS);
         auxillaryPanel.setBorder(new javax.swing.border.TitledBorder("Auxillary Elements"));
-        auxillaryPanel.add(showAxesCheckBox);
+        box.add(showAxesCheckBox);
         showAxesCheckBox.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1578,7 +1659,7 @@ public class Display3D extends JPanel implements Steppable
                 toggleAxes();
                 }
             });
-        auxillaryPanel.add(showBackgroundCheckBox);
+        box.add(showBackgroundCheckBox);
         showBackgroundCheckBox.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1586,7 +1667,7 @@ public class Display3D extends JPanel implements Steppable
                 toggleBackdrop();
                 }
             });
-        auxillaryPanel.add(tooltips);
+        box.add(tooltips);
         tooltips.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -1596,8 +1677,32 @@ public class Display3D extends JPanel implements Steppable
                     toolTipBehavior.setCanShowToolTips(usingToolTips);
                 }
             });
-        auxillaryPanel.add(Box.createGlue());
-                
+        box.add(Box.createGlue());
+		auxillaryPanel.add(box);
+		
+		// next row
+		box = new Box(BoxLayout.X_AXIS);
+		box.add(showSpotlightCheckBox);
+		showSpotlightCheckBox.setSelected(true);
+		showSpotlightCheckBox.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {       
+                toggleSpotlight();
+                }
+            });
+
+		box.add(showAmbientLightCheckBox);
+		showAmbientLightCheckBox.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {       
+                toggleAmbientLight();
+                }
+            });
+        box.add(Box.createGlue());
+		auxillaryPanel.add(box);
+
         // set up initial design
             
         

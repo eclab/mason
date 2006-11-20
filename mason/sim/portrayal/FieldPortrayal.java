@@ -71,8 +71,8 @@ public abstract class FieldPortrayal
     public Portrayal portrayalForNull;
     public Portrayal portrayalForNonNull;
     public Portrayal portrayalForRemainder;
-    public WeakHashMap portrayals = new WeakHashMap();
-    public WeakHashMap classPortrayals = new WeakHashMap();
+    public WeakHashMap portrayals; // = new WeakHashMap();
+    public WeakHashMap classPortrayals; // = new WeakHashMap();
 
     /** Set the portrayal to null to remove it. */
     public void setPortrayalForAll(Portrayal portrayal)
@@ -122,6 +122,7 @@ public abstract class FieldPortrayal
         to respond to this. Set the portrayal to null to remove it for a given class. */  
     public void setPortrayalForClass(Class cls, Portrayal portrayal)
         {
+		if (classPortrayals == null) classPortrayals = new WeakHashMap();
         if (portrayal==null)
             classPortrayals.remove(cls);
         else classPortrayals.put(cls,portrayal);
@@ -131,6 +132,7 @@ public abstract class FieldPortrayal
         to respond to this. Set the portrayal to null to remove it for a given object. */  
     public void setPortrayalForObject(Object obj, Portrayal portrayal)
         {
+		if (portrayals == null) portrayals = new WeakHashMap();
         if (portrayal==null)
             portrayals.remove(obj);
         else portrayals.put(obj,portrayal);
@@ -159,15 +161,18 @@ public abstract class FieldPortrayal
         if (obj == null)
             {
             if (portrayalForNull != null) return portrayalForNull;
-            if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
+            if ( (portrayals != null /* && !portrayals.isEmpty() */) && // a little efficiency -- avoid making weak keys etc. 
+				((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
             return getDefaultNullPortrayal();
             }
         else
             {
             if (obj instanceof Portrayal) return (Portrayal) obj;
             if (portrayalForNonNull != null) return portrayalForNonNull;
-            if (( tmp = ((Portrayal)(portrayals.get(obj))) ) !=null) return tmp;
-            if ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null) return tmp;
+            if ( (portrayals != null /* && !portrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+				((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
+            if ( (classPortrayals != null /* && !classPortrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+				((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null)) return tmp;
             if (portrayalForRemainder!=null) return portrayalForRemainder;
             return getDefaultPortrayal();
             }

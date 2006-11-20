@@ -21,7 +21,6 @@ public class Balls3DWithUI extends GUIState
 
     NetworkPortrayal3D edgePortrayal = new NetworkPortrayal3D();
     ContinuousPortrayal3D nodePortrayal = new ContinuousPortrayal3D();
-    LightPortrayal3D light; 
 
     public static void main(String[] args)
         {
@@ -34,7 +33,6 @@ public class Balls3DWithUI extends GUIState
     public Balls3DWithUI(SimState state) 
         { 
         super(state); 
-        light = new LightPortrayal3D(Color.white, new sim.util.Double3D(-2,-3,-1)); 
         }
 
     public static String getName() { return "3D Balls and Bands"; }
@@ -85,13 +83,11 @@ public class Balls3DWithUI extends GUIState
 
         Balls3D tut = (Balls3D) state;
 
-        light = new LightPortrayal3D(Color.white, new sim.util.Double3D(-2,-3,-1)); 
-
         // make the displayer
-        display = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this,1);			
+			
         display.attach( edgePortrayal, "Bands" );
         display.attach( nodePortrayal, "Balls" );
-        display.attach( light, "Spotlight" ); 
 
         display.translate(-tut.gridWidth/2,
                           -tut.gridHeight/2,

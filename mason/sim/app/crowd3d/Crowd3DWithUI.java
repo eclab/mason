@@ -79,7 +79,8 @@ public class Crowd3DWithUI extends GUIState
         mDisplay.attach(new LightPortrayal3D(new Color(127,127,255), new Double3D(-1,-1,1)), "Light One");
         mDisplay.attach(new LightPortrayal3D(new Color(127,255,127), new Double3D(1,-1,-1)), "Light Two");
         mDisplay.attach(new LightPortrayal3D(new Color(255,127,127), new Double3D(1,1,-1)), "Light Three");
-                
+		mDisplay.setShowsSpotlight(false);  // we have our own spotlights
+		
         mDisplay.translate(-.5*cState.spaceWidth,-.5*cState.spaceHeight,-0.5*cState.spaceDepth);
         mDisplay.scale(1.0/Math.max(cState.spaceWidth, Math.max(cState.spaceHeight, cState.spaceDepth)));
 

@@ -148,6 +148,28 @@ public /*strictfp*/ class Continuous2D extends SparseField
     public double getHeight() { return height; }
     
     /** Toroidal x */
+	// slight revision for more efficiency
+	public final double tx(double x) 
+        { 
+		final double width = this.width;
+		if (x >= 0 && x < width) return x;  // do clearest case first
+		x = x % width;
+		if (x < 0) x = x + width;
+		return x;
+		}
+	
+    /** Toroidal y */
+	// slight revision for more efficiency
+    public final double ty(double y) 
+        { 
+		final double height = this.height;
+		if (y >= 0 && y < height) return y;  // do clearest case first
+		y = y % height;
+		if (y < 0) y = y + height;
+		return y;
+		}
+
+    /*
     public final double tx(final double x) 
         { 
         final double width = this.width; 
@@ -156,9 +178,9 @@ public /*strictfp*/ class Continuous2D extends SparseField
         if (width2 < width) return width2;
         return 0;
         }
+	*/
     
-    
-    /** Toroidal y */
+    /*
     public final double ty(final double y) 
         { 
         final double height = this.height; 
@@ -167,7 +189,8 @@ public /*strictfp*/ class Continuous2D extends SparseField
         if (height2 < height) return height2;
         return 0;
         }
-        
+	*/
+	
 
     /** Simple [and fast] toroidal x.  Use this if the values you'd pass in never stray
         beyond (-width ... width * 2) not inclusive.  It's a bit faster than the full

@@ -166,7 +166,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     // returns the oscilation vector
     double ond;
     double ondSpeed;
-    public Vector2D niceOndulation( final SimState state )
+    public Vector2D niceUndulation( final SimState state )
         {
         ond += ondSpeed;
         if( ond > 7 )
@@ -219,7 +219,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
             vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
             if( vel.length() <= 1.0 )
                 {
-                vel = vel.add( niceOndulation(bd).amplify(0.5) );
+                vel = vel.add( niceUndulation(bd).amplify(0.5) );
                 vel = vel.add( randomDirection(bd).amplify(0.25) );
                 }
 
@@ -314,10 +314,10 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
         }
 
     /** If drawing area intersects selected area, add last portrayed object to the bag */
-    public void hitObjects(DrawInfo2D info, Bag putInHere)
+    public boolean hitObject(Object object, DrawInfo2D info)
         {
         if( lastPos == null )
-            return;
+            return false;
         for( int i = 0 ; i < numLinks ; i++ )
             if( lastPos[i] != null )
                 {
@@ -328,9 +328,9 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
                     info.draw.height );
                 if( ellipse.intersects( info.clip.x, info.clip.y, info.clip.width, info.clip.height ) )
                     {
-                    putInHere.add( this );
-                    return;
+                    return true;
                     }
                 }
+		return false;
         }
     }

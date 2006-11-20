@@ -34,7 +34,6 @@ public class WoimsDemo3DWithUI extends GUIState
         }
 
     ContinuousPortrayal3D p2;
-    LightPortrayal3D light;
     WireFrameBoxPortrayal3D wireFrameP;
 
     public WoimsDemo3DWithUI(SimState state)
@@ -43,9 +42,6 @@ public class WoimsDemo3DWithUI extends GUIState
         WoimsDemo3D wd = (WoimsDemo3D) state;
         p2 = new ContinuousPortrayal3D();
         p2.setField(wd.environment); 
-        
-        // build the light
-        light= new LightPortrayal3D( java.awt.Color.white, new sim.util.Double3D(-2,-3,-1));
 
         // build the box
         wireFrameP = new WireFrameBoxPortrayal3D(-WoimsDemo3D.EXTRA_SPACE,-WoimsDemo3D.EXTRA_SPACE,-WoimsDemo3D.EXTRA_SPACE,wd.environment.width + 2*WoimsDemo3D.EXTRA_SPACE,wd.environment.height + 2*WoimsDemo3D.EXTRA_SPACE,wd.environment.length + 2*WoimsDemo3D.EXTRA_SPACE);
@@ -78,7 +74,6 @@ public class WoimsDemo3DWithUI extends GUIState
         display = new Display3D(600,600,this,1);
         
         display.attach(p2,"Woims");
-        display.attach(light, "SpotLight");
         display.attach(wireFrameP, "WireFrame");
 
         display.translate(-100,-100,-100);
@@ -90,11 +85,6 @@ public class WoimsDemo3DWithUI extends GUIState
         displayFrame.setVisible(true);
         }
 
-//    private void setDisplayPreferredSize()
-//    {    
-//              display.setPreferredSize(new Dimension(600,600));
-//    } 
-       
     public void quit()
         {
         super.quit();

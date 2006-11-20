@@ -325,9 +325,15 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         throw new IndexOutOfBoundsException(""+index);
         }
                         
-    // does NOT allow the objects to GC
     public void clear()
         {
+		// local variables are faster
+		int len = numObjs;
+		Object[] o = objs;
+		
+		for(int i = 0; i < len; i++)
+			o[i] = null;  // let GC
+			
         numObjs = 0;
         }
         

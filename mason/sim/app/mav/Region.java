@@ -73,16 +73,15 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
 
 
     /** If drawing area intersects selected area, add to the bag */
-    public void hitObjects(DrawInfo2D range, Bag putInHere)
+    public boolean hitObject(Object object, DrawInfo2D range)
         {
         AffineTransform transform = new AffineTransform();
         transform.translate(range.draw.x, range.draw.y);
         transform.scale(range.draw.width, range.draw.height);
         Shape s = transform.createTransformedShape(shape);
                 
-        if (s.intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height))
-            putInHere.add(this);
-        }
+        return (s.intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height));
+		}
         
     // because we're using Areas, and for some bizarre reason Area isn't serializable,
     // if WE want to be serializable or externalizable we need to handle our own read

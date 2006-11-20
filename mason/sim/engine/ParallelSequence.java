@@ -17,9 +17,11 @@ package sim.engine;
     you've set their shouldSynchronize value to true, and elsewhere in your
     embedded steppables you're synchronizing on the random number generator.
     
+<!-- This is false: we're doing wait(), which releases locks held.
     <p>Also, keep in mind that the main thread which fired the ParallelSequence is still
     holding onto the schedule lock; thus inside the ParallelSequence threads you can't
     schedule anything (the Schedule is synchronized).
+-->
 
     <p>ParallelSequences are lightweight: they reuse the same threads
     if stepped repeatedly.  This means that you must never attach a ParallelSequence
@@ -41,6 +43,7 @@ public class ParallelSequence extends Sequence
     Worker[] workers;
     Thread[] threads;
     boolean pleaseDie = false;
+	boolean operating = false;  // checking for circularity
     
     /// Threads are not serializable, so we must manually rebuild here
     private void writeObject(java.io.ObjectOutputStream p)
@@ -106,6 +109,15 @@ public class ParallelSequence extends Sequence
     // steps once (in parallel) through the steppable things
     public void step(final SimState state)
         {
+		// just to be safe, we'll avoid the HIGHLY unlikely race condition of being stepped in parallel or nested here
+		synchronized(workers)  // some random object we own
+			{
+			if (operating) 
+				throw new RuntimeException("ParallelSequence stepped, but it's already in progress.\n" +
+				"Probably you have the same ParallelSequence nested, or the same ParallelSequence being stepped in parallel.\n" +
+				"Either way, it's a bug.");
+			operating = true;
+			}
         for(int x=0;x<steps.length;x++)
             {
             workers[x].step = steps[x];
@@ -114,6 +126,8 @@ public class ParallelSequence extends Sequence
             }
         for(int x=0;x<steps.length;x++)
             semaphore.P();
+		// don't need to synchronize to turn operating off
+		operating = false;
         }
 
     // a small semaphore class

@@ -1967,6 +1967,7 @@ public class Console extends JFrame implements Controller
             playButton.setIcon(I_STEP_OFF);
             playButton.setPressedIcon(I_STEP_ON);
             setPlayState(PS_PAUSED);
+			refresh();  // update displays even if they're skipping
             } 
         else if (getPlayState() == PS_PAUSED) // unpause
             {
@@ -1994,6 +1995,7 @@ public class Console extends JFrame implements Controller
             playButton.setIcon(I_STEP_OFF);
             playButton.setPressedIcon(I_STEP_ON);
             setPlayState(PS_PAUSED);
+			refresh();  // update displays even if they're skipping
             }
 
         repaint();
@@ -2043,6 +2045,7 @@ public class Console extends JFrame implements Controller
                     updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);
                     }
                 }
+			refresh();  // update displays even if they're skipping
             }
         repaint();
         }

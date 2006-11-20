@@ -1188,3 +1188,31 @@ Version 12
 		(updateAfterTime -> updateBefore)
 	Updated various buttons to have transparent backgrounds so they look
 		proper in Windows.
+	Bag.clear() now sets its values to null, allowing them to GC.  This
+		is slower but doesn't leak memory.
+	Slight tweaks to Tutorial3 docs to clarify issues in seralization.
+	Bug fixes in MAV and Woims, which were using the old hitObjects(...)
+		method instead of the new(er) hitObject(...) method, and so
+		couldn't be hit any more.
+	Updates to FieldPortrayal to make object lookup slightly faster.
+		Specifically, the portrayals and classPortrayals
+		WeakHashMaps aren't allocated by default now.  So we check
+		to see if they're non-null before querying them; thus if
+		they were never used, they're skipped entirely and no
+		hash is performed on them.
+	Tweak to Console: pause and step buttons now cause all displays
+		to repaint themselves even if skip is high.
+	Added to Display3D a spotlight behind the camera and an ambient
+		light.  Deleted the custom spotlights in Balls3D and in
+		Woims3D, but retained the three spotlights in Crowd3D
+		as an example.
+	The Backdrop is by default turned *off* now in Display3D, but
+		is auto-turned-on when you set it.
+	Slight modifications to tx(), ty(), and tz() for efficiency.
+		We check to see if the value needs to be wrapped around at all,
+		and if not we can return it rather than doing a %, which
+		is of course expensive, particularly in floating point.  With
+		a little rearranging, we can still do this inside 35 bytes
+		so it gets inlined.  Here's hoping we didn't introduce bugs.
+	Added check to ParallelSequence which looks to see if the sequence
+		is being run nested or in parallel, both no-nos.
