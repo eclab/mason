@@ -33,6 +33,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
 	{
 		this(Color.red, Color.red, null);
 	}
+	
 
 	/** If fromPaint == toPaint, one single color line will be drawn, and if labelPaint is null, no label is drawn. */
 	public SimpleEdgePortrayal3D(Color edgeColor, Color labelColor)
