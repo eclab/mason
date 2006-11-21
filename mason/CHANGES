@@ -1218,3 +1218,19 @@ Version 12
 		is being run nested or in parallel, both no-nos.
 	Revised Tutorial3 to explain anonymous classes to those inexperienced
 		with them.
+	Changed the constructors of SimpleEdgePortrayal3D to match the ones
+		from SimpleEdgePortrayal2D; and just as in SimpleEdgePortrayal2D,
+		one can have the line painted with 2 colors.
+	Changed the insides of Arrow: the hight of the arrow head cone used to 
+		be independent of the arrow length; now we test for the case 
+		when the arrow head gets to be larger than the whole thing and 
+		make the head a fraction of the total length. Also, the components 
+		(the cyclinder tail and cone head) are now accessible.	
+	Created GenericEdgePortrayal3D, that takes any java3D Node and
+		streches it between every pair of vertices where there's an edge.
+	Created subclasses of GenericEdgePortrayal3D:
+		ArrowEdgePortrayal3D, ConeEdgePortrayal3D, CylingerEdgePortrayal3D
+		and Shape3DEdgePortrayal3D.
+
+		
+				

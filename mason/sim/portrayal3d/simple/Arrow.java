@@ -54,7 +54,7 @@ public class Arrow extends TransformGroup
 
 		float arrowLen = (float) v.length();
 		float arrowHeadLen = 5.0f * arrowTailRadius;
-		float arrowHeadDiameter = 2.0f * arrowTailRadius;
+		float arrowHeadMaxRadius = 2.0f * arrowTailRadius;
 		float cylinderLen = arrowLen - arrowHeadLen;
 		if(cylinderLen<0)
 		{
@@ -108,7 +108,7 @@ public class Arrow extends TransformGroup
 		arrowHeadTransform.set(new Vector3f(0, cylinderLen, 0));
 		TransformGroup arrowHeadTransformGroup = new TransformGroup(
 				arrowHeadTransform);
-		this.arrowHead = new Cone(arrowHeadDiameter, arrowHeadLen, 1, caAppearance);
+		this.arrowHead = new Cone(arrowHeadMaxRadius, arrowHeadLen, 1, caAppearance);
 		arrowHeadTransformGroup.addChild(this.arrowHead);
 		this.addChild(arrowHeadTransformGroup);
 
