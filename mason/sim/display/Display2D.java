@@ -387,10 +387,6 @@ public class Display2D extends JComponent implements Steppable
             on Swing from inside this method. */
         public BufferedImage paint(final Graphics g, final boolean buffered)
             {
-            // is it possible we could get interrupted here, maybe from Console.doChangeCode()?
-            // I don't think this is likely, but it's possible -- perhaps we should wrap this
-            // in an interruptedException handler which does a repaint to guarantee that we
-            // get painted, I dunno...
             synchronized(Display2D.this.simulation.state.schedule)
                 {
                 Rectangle2D clip = computeClip();
@@ -524,7 +520,7 @@ public class Display2D extends JComponent implements Steppable
                 }
             }
 
-        /** TO FIX A SUBTLE BUG.  Can't call getViewRect() to get the proper
+        /*  TO FIX A SUBTLE BUG.  Can't call getViewRect() to get the proper
             clipping rect, because getViewRect calls some unknown synchronized gunk
             further up in Swing; thus if I'm in Windoze and splat to the screen from my own
             thread, and at the same time the Swing thread is trying to draw me, we
