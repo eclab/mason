@@ -585,7 +585,8 @@ MASON has a built-in time-series charting facility, but the user must manually c
                double y = Math.sin(state.schedule.getSteps()) * 10;
                
                // now add the data
-               series.add(x, y, true);
+               if (x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
+                   series.add(x, y, true);
                }
            });
        }

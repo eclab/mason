@@ -16,20 +16,20 @@ import com.sun.j3d.utils.geometry.*;
  */
 public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
 {
-	static class MyPickableCylinder extends Cylinder
+	static class PickableCylinder extends Cylinder
 	{
-		public MyPickableCylinder(){super();}
+		public PickableCylinder(){super();}
 		
-		public MyPickableCylinder(float radius)
+		public PickableCylinder(float radius)
 		{
 			super(radius, 2);
 		}
 		
-		public MyPickableCylinder(float radius, Appearance ap)
+		public PickableCylinder(float radius, Appearance ap)
 		{
 			super(radius, 2, ap);
 		}
-		public MyPickableCylinder(Appearance ap)
+		public PickableCylinder(Appearance ap)
 		{
 			super(1, 2, ap);
 		}
@@ -54,27 +54,27 @@ public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
 
 	public CylinderEdgePortrayal3D()
 	{
-		super(new MyPickableCylinder());
+		super(new PickableCylinder());
 	}
 	
 	public CylinderEdgePortrayal3D(float cylinderRadius)
 	{
-		super(new MyPickableCylinder(cylinderRadius));
+		super(new PickableCylinder(cylinderRadius));
 	}
 	
 	public CylinderEdgePortrayal3D(float cylinderRadius, Appearance ap)
 	{
-		super(new MyPickableCylinder(cylinderRadius, ap));
+		super(new PickableCylinder(cylinderRadius, ap));
 	}	
 
 
 	public CylinderEdgePortrayal3D(Color labelColor)
 	{
-		super(new MyPickableCylinder(), labelColor);
+		super(new PickableCylinder(), labelColor);
 	}
 
 	public CylinderEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
 	{
-		super(new MyPickableCylinder(edgeAppearance), labelColor);
+		super(new PickableCylinder(edgeAppearance), labelColor);
 	}
 }

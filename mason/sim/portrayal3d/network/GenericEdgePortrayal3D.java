@@ -37,7 +37,6 @@ import javax.media.j3d.*;
  * At the moment I clone the edgeModel I get in the constructor.
  * Would a factory be better? 
  * 
- * 
  * @author Gabriel Balan with help from Alexandru Balan and Zoran Duric.
  */
 

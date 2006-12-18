@@ -284,7 +284,8 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         // for this second condition to be true while the first one is false: if we're at
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
-        if (lastTime < time || !updatedOnceAlready)
+        if (time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION &&
+			 (lastTime < time || !updatedOnceAlready))  // bug fix 
             {              
             updatedOnceAlready = true;
             updateSeries(time, lastTime);

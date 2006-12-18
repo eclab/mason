@@ -94,7 +94,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     protected void updateSeries(double time, double lastTime)
         {
         double d = 0;
-
+		
         // FIRST, load the aggregate series with the items
         aggregateSeries.add(time, d = valueFor(properties.getValue(index)), false);
         int len = aggregateSeries.getItemCount();

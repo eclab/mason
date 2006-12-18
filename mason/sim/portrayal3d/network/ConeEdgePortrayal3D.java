@@ -17,20 +17,20 @@ import com.sun.j3d.utils.geometry.Cone;
  */
 public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
 {
-	static class MyPickableCone extends Cone
+	static class PickableCone extends Cone
 	{
-		public MyPickableCone(){super();}
+		public PickableCone(){super();}
 		
-		public MyPickableCone(float radius)
+		public PickableCone(float radius)
 		{
 			super(radius, 2);
 		}
 		
-		public MyPickableCone(float radius, Appearance ap)
+		public PickableCone(float radius, Appearance ap)
 		{
 			super(radius, 2, ap);
 		}
-		public MyPickableCone(Appearance ap)
+		public PickableCone(Appearance ap)
 		{
 			super(1, 2, ap);
 		}
@@ -52,27 +52,27 @@ public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
 
 	public ConeEdgePortrayal3D()
 	{
-		super(new MyPickableCone());
+		super(new PickableCone());
 	}
 	
 	public ConeEdgePortrayal3D(float coneBaseRadius)
 	{
-		super(new MyPickableCone(coneBaseRadius));
+		super(new PickableCone(coneBaseRadius));
 	}
 	
 	public ConeEdgePortrayal3D(float coneBaseRadius, Appearance ap)
 	{
-		super(new MyPickableCone(coneBaseRadius, ap));
+		super(new PickableCone(coneBaseRadius, ap));
 	}	
 
 
 	public ConeEdgePortrayal3D(Color labelColor)
 	{
-		super(new MyPickableCone(), labelColor);
+		super(new PickableCone(), labelColor);
 	}
 
 	public ConeEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
 	{
-		super(new MyPickableCone(edgeAppearance), labelColor);
+		super(new PickableCone(edgeAppearance), labelColor);
 	}
 }

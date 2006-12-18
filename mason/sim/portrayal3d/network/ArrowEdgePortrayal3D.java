@@ -20,16 +20,16 @@ import sim.portrayal3d.simple.*;
  */
 public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
 {
-	static class MyPickableArrow extends Arrow
+	static class PickableArrow extends Arrow
 	{
-		public MyPickableArrow(){this(1f);}
-		public MyPickableArrow(Appearance ap){this(1f,ap);}
-		public MyPickableArrow(float radius)
+		public PickableArrow(){this(1f);}
+		public PickableArrow(Appearance ap){this(1f,ap);}
+		public PickableArrow(float radius)
 		{
 			this(radius, null);
 		}
 		
-		public MyPickableArrow(float arrowTailRadius, Appearance appearance)
+		public PickableArrow(float arrowTailRadius, Appearance appearance)
 		{
 			super(arrowTailRadius, 
 				  new Vector3f(0f,-1f,0f),
@@ -58,30 +58,30 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
 
 	public ArrowEdgePortrayal3D()
 	{
-		super(new MyPickableArrow());
+		super(new PickableArrow());
 	}
 	
 	public ArrowEdgePortrayal3D(float radius)
 	{
-		super(new MyPickableArrow(radius));
+		super(new PickableArrow(radius));
 	}
 	
 	public ArrowEdgePortrayal3D(float radius, Appearance ap)
 	{
-		super(new MyPickableArrow(radius, ap));
+		super(new PickableArrow(radius, ap));
 	}	
 
 
 	public ArrowEdgePortrayal3D(Color labelColor)
 	{
-		super(new MyPickableArrow(), labelColor);
+		super(new PickableArrow(), labelColor);
 	}
 
 	public ArrowEdgePortrayal3D(
 		Appearance edgeAppearance,
 		Color labelColor)
 	{
-		super(new MyPickableArrow(edgeAppearance), labelColor);
+		super(new PickableArrow(edgeAppearance), labelColor);
 	}
 
 

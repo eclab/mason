@@ -225,10 +225,12 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
     /** Removes the int at the given index, moving the topmost int into its position. */
     public int remove(final int index)
         {
-        if (index>=numObjs) // || index < 0)
+	int _numObjs = numObjs;
+        if (index>=_numObjs) // || index < 0)
             throwIndexOutOfBoundsException(index);
-        int ret = objs[index];
-        objs[index] = objs[numObjs-1];
+	int[] _objs = this.objs;
+        int ret = _objs[index];
+        _objs[index] = _objs[_numObjs-1];
         numObjs--;
         return ret;
         }

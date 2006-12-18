@@ -1231,6 +1231,6 @@ Version 12
 	Created subclasses of GenericEdgePortrayal3D:
 		ArrowEdgePortrayal3D, ConeEdgePortrayal3D, CylingerEdgePortrayal3D
 		and Shape3DEdgePortrayal3D.
+	When the simulation was stopped, charts would disappear.  (Fixed).
+	Slight speed tweaks to Bag, IntBag, and DoubleBag remove(...).
 
-		
-				
