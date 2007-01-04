@@ -286,8 +286,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
 	/** Removes the object, moving the topmost object into its position. */
     public boolean remove(final Object o)
         {
-		int numObjs = this.numObjs;
-		Object[] objs = this.objs;
+	int numObjs = this.numObjs;
+	Object[] objs = this.objs;
         for(int x=0;x<numObjs;x++)
             if (o==null ?  objs[x]==null :  o==objs[x] || o.equals(objs[x])) 
                 {
@@ -334,13 +334,13 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
                         
     public void clear()
         {
-		// local variables are faster
-		int len = numObjs;
-		Object[] o = objs;
+	// local variables are faster
+	int len = numObjs;
+	Object[] o = objs;
+	
+	for(int i = 0; i < len; i++)
+	    o[i] = null;  // let GC
 		
-		for(int i = 0; i < len; i++)
-			o[i] = null;  // let GC
-			
         numObjs = 0;
         }
         
@@ -350,7 +350,9 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         System.arraycopy(objs,0,o,0,numObjs);
         return o;
         }
-        
+    
+    // ArrayList.toArray(Object[]) generates an error if the array passed in is null.
+    // So I do the same thing.
     public Object[] toArray(Object[] o)
         {
         if (o.length < numObjs)

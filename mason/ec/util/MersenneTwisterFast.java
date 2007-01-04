@@ -4,7 +4,7 @@ import java.util.*;
 
 /** 
  * <h3>MersenneTwister and MersenneTwisterFast</h3>
- * <p><b>Version 14</b>, based on version MT199937(99/10/29)
+ * <p><b>Version 15</b>, based on version MT199937(99/10/29)
  * of the Mersenne Twister algorithm found at 
  * <a href="http://www.math.keio.ac.jp/matumoto/emt.html">
  * The Mersenne Twister Home Page</a>, with the initialization
@@ -41,6 +41,11 @@ import java.util.*;
  * Vol. 8, No. 1, January 1998, pp 3--30.
  *
  * <h3>About this Version</h3>
+ *
+ * <p><b>Changes Since V14:</b> made strictfp, with StrictMath.log and StrictMath.sqrt
+ * in nextGaussian instead of Math.log and Math.sqrt.  This is largely just to be safe,
+ * as it presently makes no difference in the speed, correctness, or results of the
+ * algorithm.
  *
  * <p><b>Changes Since V13:</b> clone() method CloneNotSupportedException removed.  
  *
@@ -142,7 +147,7 @@ import java.util.*;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  *
- @version 14
+ @version 15
 */
 
 // Note: this class is hard-inlined in all of its methods.  This makes some of
@@ -151,7 +156,7 @@ import java.util.*;
 // on the code, I strongly suggest looking at MersenneTwister.java first.
 // -- Sean
 
-public class MersenneTwisterFast implements Serializable, Cloneable
+public strictfp class MersenneTwisterFast implements Serializable, Cloneable
     {
     // Period parameters
     private static final int N = 624;
@@ -1023,7 +1028,7 @@ public class MersenneTwisterFast implements Serializable, Cloneable
                     - 1;
                 s = v1 * v1 + v2 * v2;
                 } while (s >= 1 || s==0);
-            double multiplier = /*Strict*/Math.sqrt(-2 * /*Strict*/Math.log(s)/s);
+            double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
             __nextNextGaussian = v2 * multiplier;
             __haveNextNextGaussian = true;
             return v1 * multiplier;

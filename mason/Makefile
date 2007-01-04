@@ -6,16 +6,12 @@
 #### To switch from jikes to javac:  change the JAVAC variable below
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
+JAVAC = javac ${JAVACFLAGS} 
+#JAVAC = jikes ${JIKESFLAGS}
 
-### If you don't have jikes set up, change to JAVAC = javac
-#JAVAC = javac 
-JAVAC = jikes ${JIKESFLAGS}
-
-# The default flags for javac and jikes
-FLAGS = -g
-
-# Additional flags for jikes
-JIKESFLAGS = -target 1.3 +Pno-shadow
+JAVACFLAGS = -target 1.3 -source 1.3 ${FLAGS}
+JIKESFLAGS = -target 1.3 +Pno-shadow ${FLAGS}
+FLAGS = -g -nowarn
 
 
 # Main java files, not including the 3D stuff
@@ -84,11 +80,11 @@ all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
 	@ echo 
-	${JAVAC} ${FLAGS} ${DIRS}
+	${JAVAC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
 3d:
-	${JAVAC} ${FLAGS} ${DIRS} ${3DDIRS}
+	${JAVAC} ${DIRS} ${3DDIRS}
 
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
@@ -116,7 +112,7 @@ jar: 3d
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes CVS directories
-dist: clean 3d doc
+dist: clean 3d indent doc
 	touch TODO
 	rm TODO
 	touch .cvsignore
@@ -150,9 +146,4 @@ help:
 
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
-	@ echo
-	@ echo MASON uses IBM\'s jikes compiler by default.  You can always use javac instead:
-	@ echo just change the JAVAC variable in the Makefile.  If you\'d like to try jikes
-	@ echo but don\'t have it, you can download it at   http://www.research.ibm.com/jikes/
-	@ echo
 

@@ -1233,4 +1233,7 @@ Version 12
 		and Shape3DEdgePortrayal3D.
 	When the simulation was stopped, charts would disappear.  (Fixed).
 	Slight speed tweaks to Bag, IntBag, and DoubleBag remove(...).
-
+        javac has grown up and jikes has fallen into disrepair.  We move
+                ECJ's default compiler to javac -target 1.3 -source 1.3
+	Updates to MersenneTwisterFast
+	Added indent to make dist
