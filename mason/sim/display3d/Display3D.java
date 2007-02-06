@@ -502,8 +502,8 @@ public class Display3D extends JPanel implements Steppable
         optionButton = new JButton(Display2D.OPTIONS_ICON);
         optionButton.setPressedIcon(Display2D.OPTIONS_ICON_P);
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-        snapshotButton.setBorderPainted(false);
-        snapshotButton.setContentAreaFilled(false);
+        optionButton.setBorderPainted(false);
+        optionButton.setContentAreaFilled(false);
         optionButton.setToolTipText("Options");
         optionButton.addActionListener(new ActionListener()
             {

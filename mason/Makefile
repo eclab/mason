@@ -6,7 +6,7 @@
 #### To switch from jikes to javac:  change the JAVAC variable below
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
-JAVAC = javac ${JAVACFLAGS} 
+JAVAC = javac ${JAVACFLAGS}
 #JAVAC = jikes ${JIKESFLAGS}
 
 JAVACFLAGS = -target 1.3 -source 1.3 ${FLAGS}
