@@ -65,9 +65,9 @@ import java.lang.ref.*;
 public class Console extends JFrame implements Controller
     {
     /** Default width of the Console. */
-    public final static int DEFAULT_WIDTH = 350;
+    public final static int DEFAULT_WIDTH = 380;
     /** Default height of the Console. */
-    public final static int DEFAULT_HEIGHT = 360;
+    public final static int DEFAULT_HEIGHT = 380;
     /** When the Console is laid out to the right of some window, the space allocated between it and the window */
     public final static int DEFAULT_GUTTER = 5;
 

@@ -108,7 +108,10 @@ docs: doc
 # Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
 # files.  you'll probably want to strip this down some.
 jar: 3d
-	jar -cvf mason.jar `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"` sim/display/simulation.classes
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	jar -cvfm mason.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"` sim/display/simulation.classes
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes CVS directories

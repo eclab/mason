@@ -926,12 +926,11 @@ public class Display2D extends JComponent implements Steppable
         //Create the popup menu.
         togglebutton = new JToggleButton(LAYERS_ICON);
         togglebutton.setPressedIcon(LAYERS_ICON_P);
-                
         togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         togglebutton.setBorderPainted(false);
         togglebutton.setContentAreaFilled(false);
-        //togglebutton.setBackground(transparentBackground);  // looks better in Windows
         togglebutton.setToolTipText("Show and hide different layers");
+	
         header.add(togglebutton);
         popup = new JPopupMenu();
         popup.setLightWeightPopupEnabled(false);
@@ -982,7 +981,6 @@ public class Display2D extends JComponent implements Steppable
         movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         movieButton.setBorderPainted(false);
         movieButton.setContentAreaFilled(false);
-        //movieButton.setBackground(transparentBackground);  // looks better in Windows
         movieButton.setToolTipText("Create a Quicktime movie");
         movieButton.addActionListener(new ActionListener()
             {
@@ -1006,7 +1004,6 @@ public class Display2D extends JComponent implements Steppable
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         snapshotButton.setBorderPainted(false);
         snapshotButton.setContentAreaFilled(false);
-        //snapshotButton.setBackground(transparentBackground);  // looks better in Windows
         snapshotButton.setToolTipText("Create a snapshot (as a PNG or PDF file)");
         snapshotButton.addActionListener(new ActionListener()
             {
@@ -1023,7 +1020,6 @@ public class Display2D extends JComponent implements Steppable
         optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));               
         optionButton.setBorderPainted(false);
         optionButton.setContentAreaFilled(false);
-        //optionButton.setBackground(transparentBackground);  // looks better in Windows
         optionButton.setToolTipText("Show the Option Pane");
         optionButton.addActionListener(new ActionListener()
             {
@@ -1259,6 +1255,8 @@ public class Display2D extends JComponent implements Steppable
     // all platforms (notably 1.3.1) and at the time we made the call, it wasn't available on the
     // Mac at all.
 
+    private Object sacrificialObj = null;
+    
     public void takeSnapshot()
         {
         synchronized(Display2D.this.simulation.state.schedule)
@@ -1282,7 +1280,7 @@ public class Display2D extends JComponent implements Steppable
             BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
             try
                 {
-                com.lowagie.text.Rectangle rect = new com.lowagie.text.Rectangle(1,1); // sacrificial
+                sacrificialObj = Class.forName("com.lowagie.text.Cell").newInstance(); // sacrificial
                 // if we survived that, then iText is installed and we're good.
                 havePDF = true; 
                 }
@@ -1294,7 +1292,7 @@ public class Display2D extends JComponent implements Steppable
             g.dispose();  // because we got it with getGraphics(), we're responsible for it
                         
             // Ask what kind of thing we want to save?
-            int result = 0;
+            int result = 2;  // PNG by default
             if (havePDF) 
                 {
                 Object[] options = { "Cancel", "Save to PDF", "Save to PNG Bitmap" };

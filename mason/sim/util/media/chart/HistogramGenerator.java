@@ -64,7 +64,6 @@ public class HistogramGenerator extends ChartGenerator
         }
     ArrayList histogramSeries = new ArrayList();
         
-        
     public AbstractSeriesDataset getSeriesDataset() { return dataset; }
 
     public void removeSeries(int index)

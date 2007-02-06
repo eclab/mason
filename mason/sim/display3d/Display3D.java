@@ -251,7 +251,6 @@ public class Display3D extends JPanel implements Steppable
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this,BorderLayout.CENTER);
         frame.getContentPane().setBackground(Color.yellow);
-        //this.frame = frame;
         frame.setTitle(GUIState.getName(simulation.getClass()) + " Display");
         frame.pack();
         return frame;
@@ -436,10 +435,10 @@ public class Display3D extends JPanel implements Steppable
 
         togglebutton = new JToggleButton(Display2D.LAYERS_ICON);
         togglebutton.setPressedIcon(Display2D.LAYERS_ICON_P);
+        togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         togglebutton.setBorderPainted(false);
         togglebutton.setContentAreaFilled(false);
-        togglebutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-        //toggleButton.setBackground(headerBackground);    // looks better in Windows
+        togglebutton.setToolTipText("Show and hide different layers");
         header.add(togglebutton);
         
         //Create the popup menu.
@@ -465,10 +464,10 @@ public class Display3D extends JPanel implements Steppable
         
         movieButton = new JButton(Display2D.MOVIE_OFF_ICON);
         movieButton.setPressedIcon(Display2D.MOVIE_OFF_ICON_P);
+        movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         movieButton.setBorderPainted(false);
         movieButton.setContentAreaFilled(false);
-        movieButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-        //movieButton.setBackground(headerBackground);    // looks better in Windows
+        movieButton.setToolTipText("Create a Quicktime movie");
         movieButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -482,9 +481,9 @@ public class Display3D extends JPanel implements Steppable
         snapshotButton = new JButton(Display2D.CAMERA_ICON);
         snapshotButton.setPressedIcon(Display2D.CAMERA_ICON_P);
         snapshotButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-        //snapshotButton.setBackground(headerBackground);    // looks better in Windows
         snapshotButton.setBorderPainted(false);
         snapshotButton.setContentAreaFilled(false);
+        snapshotButton.setToolTipText("Create a snapshot (as a PNG file)");
         snapshotButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
@@ -502,11 +501,10 @@ public class Display3D extends JPanel implements Steppable
 
         optionButton = new JButton(Display2D.OPTIONS_ICON);
         optionButton.setPressedIcon(Display2D.OPTIONS_ICON_P);
+        optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         snapshotButton.setBorderPainted(false);
         snapshotButton.setContentAreaFilled(false);
-        optionButton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         optionButton.setToolTipText("Options");
-        //optionButton.setBackground(headerBackground);    // looks better in Windows
         optionButton.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)

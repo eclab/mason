@@ -2,7 +2,7 @@ These are Kawa/Scheme implementations of the Tutorial1 and Tutorial2 MASON
 applications.  To run them:
 
 1. Download and install, and add to your CLASSPATH the very latest 
-   Kawa (1.8.1) from its CVS repository
+   Kawa (at least 1.9.0) from its CVS repository
 	http://www.gnu.org/software/kawa/Getting-Kawa.html
 2. Run as
 	java kawa.repl run1.scm		(tutorial 1)
@@ -139,7 +139,7 @@ Method    (args can be typed):
 Instance variable:
 
 (variablename
-	...optional :type <type>...
-	...optional :init-form: initial-value-expression... )
+	...optional type: <type>...
+	...optional init-form: initial-value-expression... )
 
 
