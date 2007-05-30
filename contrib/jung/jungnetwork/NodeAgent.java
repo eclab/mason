@@ -16,89 +16,89 @@ import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 
 public class NodeAgent extends SparseVertex implements Steppable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Handle to simulation
-	public PreferentialAttachment sim;
+    // Handle to simulation
+    public PreferentialAttachment sim;
 
-	// Number of activations left
-	public int timer;
+    // Number of activations left
+    public int timer;
 
-	// Handle to graph
-	public SparseGraph graph;
+    // Handle to graph
+    public SparseGraph graph;
 
-	public NodeAgent(PreferentialAttachment attachment, int timer) {
-		this.sim = attachment;
-		this.timer = timer;
-		this.graph = (SparseGraph) attachment.graph;
-	}
+    public NodeAgent(PreferentialAttachment attachment, int timer) {
+        this.sim = attachment;
+        this.timer = timer;
+        this.graph = (SparseGraph) attachment.graph;
+    }
 
-	public void step(SimState state) {
+    public void step(SimState state) {
 
-		/*
-		 * Each time the agent is activated, it will either add or drop a single
-		 * connection to other agents. The probability of dropping is increasing
-		 * in number of connections agent already has, equals 1 when agent's
-		 * degree reaches maxDegree cap.
-		 */
+        /*
+         * Each time the agent is activated, it will either add or drop a single
+         * connection to other agents. The probability of dropping is increasing
+         * in number of connections agent already has, equals 1 when agent's
+         * degree reaches maxDegree cap.
+         */
 
-		double rand = sim.random.nextDouble();
+        double rand = sim.random.nextDouble();
 
-		if ((this.degree() / sim.maxDegree) < rand) {
+        if ((this.degree() / sim.maxDegree) < rand) {
 
-			/*
-			 * Decision to establish a new connection has been made. Target node
-			 * will be selected with probability proportional to its degree
-			 * using Boltzmann transformation - implementing preferential
-			 * attachment logic.
-			 */
+            /*
+             * Decision to establish a new connection has been made. Target node
+             * will be selected with probability proportional to its degree
+             * using Boltzmann transformation - implementing preferential
+             * attachment logic.
+             */
 
-			double temperature = sim.temperature;
+            double temperature = sim.temperature;
 
-			SparseVertex gfrom = this;
-			Set graphSet = graph.getVertices();
-			Iterator i = graphSet.iterator();
+            SparseVertex gfrom = this;
+            Set graphSet = graph.getVertices();
+            Iterator i = graphSet.iterator();
 
-			double verSum = 0;
+            double verSum = 0;
 
-			while (i.hasNext()) {
+            while (i.hasNext()) {
 
-				verSum += Math.exp(temperature * ((SparseVertex) i.next()).degree());
+                verSum += Math.exp(temperature * ((SparseVertex) i.next()).degree());
 
-			}
+                }
 
-			double cumSum = 0;
-			rand = state.random.nextDouble();
-			i = graphSet.iterator();
-			SparseVertex nextVertex;
+            double cumSum = 0;
+            rand = state.random.nextDouble();
+            i = graphSet.iterator();
+            SparseVertex nextVertex;
 
-			do {
+            do {
 
-				nextVertex = (SparseVertex) i.next();
-				cumSum += Math.exp(temperature * nextVertex.degree());
+                nextVertex = (SparseVertex) i.next();
+                cumSum += Math.exp(temperature * nextVertex.degree());
 
-			} while (i.hasNext() && (rand > (cumSum / verSum)));
+                } while (i.hasNext() && (rand > (cumSum / verSum)));
 
-			graph.addEdge(new UndirectedSparseEdge(gfrom, nextVertex));
+            graph.addEdge(new UndirectedSparseEdge(gfrom, nextVertex));
 
-		} else {
+            } else {
 
-			// Cognitive capacity exhausted. A random edge will be removed.
+                // Cognitive capacity exhausted. A random edge will be removed.
 
-			UndirectedSparseEdge toRemove = (UndirectedSparseEdge) this.getOutEdges().toArray()[state.random.nextInt(this.degree())];
+                UndirectedSparseEdge toRemove = (UndirectedSparseEdge) this.getOutEdges().toArray()[state.random.nextInt(this.degree())];
 
-			graph.removeEdge(toRemove);
+                graph.removeEdge(toRemove);
 
-		}
+                }
 
-		// Connection operations have been finished. If it is still possible,
-		// agent will register itself on the schedule for next activation.
+        // Connection operations have been finished. If it is still possible,
+        // agent will register itself on the schedule for next activation.
 
-		if (this.timer > 0) {
-			this.timer--;
-			sim.schedule.scheduleOnce(sim.schedule.time() - Math.log(sim.random.nextDouble()), this);
-		}
+        if (this.timer > 0) {
+            this.timer--;
+            sim.schedule.scheduleOnce(sim.schedule.time() - Math.log(sim.random.nextDouble()), this);
+            }
 
-	}
+    }
 
-}
+    }
