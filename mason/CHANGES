@@ -1241,3 +1241,4 @@ Version 12
 		of MASON if double-clicked on.
 	Modified Display2D's checking for iText so it doesn't bomb if iText isn't
 		there!
+	Bug fix so the options button on Display3D appears properly

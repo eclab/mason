@@ -190,20 +190,25 @@ public class HistogramGenerator extends ChartGenerator
 
     public void updateSeries(int index, double[] vals, boolean waitUntilUpdate)
         {
-        updateSeries(index, vals, ((HistogramSeries)(histogramSeries.get(index))).getBins(),waitUntilUpdate);
+	if (histogramSeries.size() > index)
+	    updateSeries(index, vals, ((HistogramSeries)(histogramSeries.get(index))).getBins(),waitUntilUpdate);
         }
                 
     public void updateSeries(int index, int bins, boolean waitUntilUpdate)
         {
-        updateSeries(index, ((HistogramSeries)(histogramSeries.get(index))).getValues(), bins, waitUntilUpdate);
+	if (histogramSeries.size() > index)
+	    updateSeries(index, ((HistogramSeries)(histogramSeries.get(index))).getValues(), bins, waitUntilUpdate);
         }
                     
     public void updateSeries(int index, double[] vals, int bins, boolean waitUntilUpdate)
         {
-        HistogramSeries series = (HistogramSeries)(histogramSeries.get(index));
-        series.setValues(vals);
-        series.setBins(bins);
-        if (!waitUntilUpdate) update();
+	if (histogramSeries.size() > index)
+	    {
+	    HistogramSeries series = (HistogramSeries)(histogramSeries.get(index));
+	    series.setValues(vals);
+	    series.setBins(bins);
+	    if (!waitUntilUpdate) update();
+	    }
         }
 
     public int getNumBins(int index)

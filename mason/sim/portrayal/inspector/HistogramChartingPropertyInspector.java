@@ -89,7 +89,6 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
             };
         }
 
-
     public void updateSeries(double time, double lastTime)
         {
         Object obj = properties.getValue(index);

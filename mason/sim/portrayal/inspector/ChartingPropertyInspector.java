@@ -48,7 +48,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     /** Called when the inspector is being asked to create a new ChartGenerator from scratch. */
     protected abstract ChartGenerator createNewGenerator();
 
-    /** Called from update() to inform the ChartingPropertyInspector that it may want to update its data series
+    /** Called from updateInspector() to inform the ChartingPropertyInspector that it may want to update its data series
         to reflect new data at this time.  The value lastTime indicates the previous timestep when this method was
         called.  It's possible that time == lastTime, that is, the method is called multiple times and nothing has
         changed. */
@@ -218,9 +218,6 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         if (timer == null)
             {
-            // do one now for good measure
-            if (generator!=null) generator.update();
-                        
             timer= sim.util.Utilities.doLater(milliseconds, new Runnable()
                 {
                 public void run()
@@ -290,7 +287,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             updatedOnceAlready = true;
             updateSeries(time, lastTime);
             lastTime = time;
-                        
+		
             // now determine when to update
             switch(globalAttributes.redraw) 
                 {
