@@ -225,7 +225,7 @@ public abstract class PropertyInspector extends Inspector
                         {
                         inspector = PropertyInspector.makeInspector(
                             Class.forName((String)(classes.objs[menuIndex])),
-                            properties, index, (Console)(state.controller), state);
+                            properties, index, (sim.display.Console)(state.controller), state);
                         }
                     catch (ClassNotFoundException error) { }
                     
