@@ -125,7 +125,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         addLabelled("Width",thickitude);
         final JComboBox list = new JComboBox();
         list.setEditable(false);
-        list.setModel(new DefaultComboBoxModel(new Vector(Arrays.asList(
+        list.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(
                                                               new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
                                                                              "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
         list.setSelectedIndex(0);
