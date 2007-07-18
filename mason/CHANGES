@@ -1242,3 +1242,4 @@ Version 12
 	Modified Display2D's checking for iText so it doesn't bomb if iText isn't
 		there!
 	Bug fix so the options button on Display3D appears properly
+	Added log-axes check boxes to ChartGenerator
