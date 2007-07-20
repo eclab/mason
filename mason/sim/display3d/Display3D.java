@@ -12,6 +12,7 @@ import sim.portrayal3d.simple.*;
 import sim.util.*;
 import sim.util.gui.*;
 import sim.util.media.*;
+import sim.display.Console;
 import sim.display.*;
 
 import java.io.*;
