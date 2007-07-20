@@ -1243,3 +1243,5 @@ Version 12
 		there!
 	Bug fix so the options button on Display3D appears properly
 	Added log-axes check boxes to ChartGenerator
+	Fixed import statements in Display3D to eliminate an ambiguity error:
+		[Console: sim.display / java.io]
