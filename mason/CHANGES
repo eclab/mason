@@ -1245,3 +1245,8 @@ Version 12
 	Added log-axes check boxes to ChartGenerator
 	Fixed import statements in Display3D to eliminate an ambiguity error:
 		[Console: sim.display / java.io]
+	HistogramSeriesAttributes: replaced the call to getSeriesPaint() with
+		getItemPaint(), in order to make it work with version 1.0.6 of 
+		jfreechart, while keeping it backward compatible 
+		(tested with version 1.0.1 of jfreechart).
+		

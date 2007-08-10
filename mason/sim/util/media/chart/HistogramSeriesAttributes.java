@@ -19,7 +19,6 @@ import org.jfree.chart.*;
 import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.general.*;
-import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 
@@ -117,8 +116,8 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 		// but that looks bad, cause getItemPaint() seems to be meant for category data).
 		//On the other hand, lookupSeriesPaint() does not show up before 1.0.6, so 
 		// in the interest of backward compatibility:
-		fillColor = (Color) (((AbstractRenderer) getPlot().getRenderer()).getItemPaint(getSeriesIndex(), -1));
-		//second argument does not matter
+		fillColor = (Color) (getPlot().getRenderer().getItemPaint(getSeriesIndex(), -1));
+		// second argument does not matter
 
         fillColor = (Color)(getPlot().getRenderer().getSeriesPaint(getSeriesIndex()));
         ColorWell well = new ColorWell(fillColor)
