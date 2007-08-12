@@ -117,6 +117,14 @@ public class HistogramGenerator extends ChartGenerator
         chartPanel.setMaximumDrawWidth(2000);
         chartHolder.getViewport().setView(chartPanel);
         }
+
+
+	//I need this so I can override this later when going for unit-wide bins
+	//(chose the values for min, max and # bins).
+    protected void addSeriesToDataSet(HistogramSeries series)
+    {
+		dataset.addSeries(series.getName(),series.getValues(), series.getBins());
+    }
     
     public void update()
         {
@@ -126,7 +134,7 @@ public class HistogramGenerator extends ChartGenerator
         for(int i=0; i < histogramSeries.size(); i++)
             {
             HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
-            dataset.addSeries(series.getName(),series.getValues(), series.getBins());
+			addSeriesToDataSet(series);
             }
         xyplot.setDataset(dataset);
         dataset.setType(histogramType);  // It looks like the histograms reset
