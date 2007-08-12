@@ -53,6 +53,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, boolean includeMargin)
         { 
         super(generator, name, index);
+		setName(name);//I need this for the remove series confirmation dialog.
         this.includeMargin = includeMargin;
         }
 

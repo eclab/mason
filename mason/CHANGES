@@ -1255,3 +1255,5 @@ Version 12
 		TimeSeriesAttributes.
 	HistogramGenerator: fixed a bug in removeSeries to preserve the
 		attributes of the remaining series.	
+	HistogramSeriesAttributes: fixed a bug with the series name being null
+		in the remove series confirmation dialog
