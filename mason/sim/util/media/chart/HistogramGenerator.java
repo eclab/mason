@@ -94,9 +94,10 @@ public class HistogramGenerator extends ChartGenerator
         for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
             {
             SeriesAttributes csa = (SeriesAttributes)(c[i]);
-            csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
             if (i >= index) 
                 csa.setSeriesIndex(csa.getSeriesIndex() - 1);
+
+			csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
             }
         revalidate();
         }

@@ -1253,3 +1253,5 @@ Version 12
 		(XYItemRenderer getRenderer()) to allow extensions to handle multiple 
 		renderers.  The change affects HistogramSeriesAttributes and
 		TimeSeriesAttributes.
+	HistogramGenerator: fixed a bug in removeSeries to preserve the
+		attributes of the remaining series.	
