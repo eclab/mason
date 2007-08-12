@@ -1249,4 +1249,7 @@ Version 12
 		getItemPaint(), in order to make it work with version 1.0.6 of 
 		jfreechart, while keeping it backward compatible 
 		(tested with version 1.0.1 of jfreechart).
-		
+	SeriesAttributes: isolated getPlot().getRenderer() in a function
+		(XYItemRenderer getRenderer()) to allow extensions to handle multiple 
+		renderers.  The change affects HistogramSeriesAttributes and
+		TimeSeriesAttributes.

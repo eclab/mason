@@ -66,7 +66,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     public void rebuildGraphicsDefinitions()
         {
-        XYBarRenderer renderer = (XYBarRenderer)(getPlot().getRenderer());
+        XYBarRenderer renderer = (XYBarRenderer)getRenderer();
             
         if (thickness == 0.0)
             renderer.setDrawBarOutline(false);
@@ -106,20 +106,20 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("Bins",numbins);
 
-		// fillColor = (Color)(((AbstractRenderer)getPlot().getRenderer()).getSeriesPaint(getSeriesIndex()));
+		// fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
 		// this returns null, cause getSeriesPaint returns whatever was set through setSeriesPaint;
 		// for the default colors, you need "lookupSeriesPaint()".
-		//fillColor = (Color) (((AbstractRenderer) getPlot().getRenderer()).lookupSeriesPaint(getSeriesIndex()));
+		//fillColor = (Color) (getRenderer().lookupSeriesPaint(getSeriesIndex()));
 		// getRenderer returns an object implementing the XYItemRenderer interface.
 		// either you cast that object to AbstractRenderer, and call lookupSeriesPaint()
 		// or you call getItemPaint() on it directly; all getItemPaint does is call lookupSeriesPaint(),
 		// but that looks bad, cause getItemPaint() seems to be meant for category data).
 		//On the other hand, lookupSeriesPaint() does not show up before 1.0.6, so 
 		// in the interest of backward compatibility:
-		fillColor = (Color) (getPlot().getRenderer().getItemPaint(getSeriesIndex(), -1));
+		fillColor = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
 		// second argument does not matter
 
-        fillColor = (Color)(getPlot().getRenderer().getSeriesPaint(getSeriesIndex()));
+        fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
         ColorWell well = new ColorWell(fillColor)
             {
             public Color changeColor(Color c) 
@@ -145,7 +145,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("",fo);
 
-        strokeColor = Color.black; //(Color)(getPlot().getRenderer().getSeriesOutlinePaint(getSeriesIndex()));
+        strokeColor = Color.black; //(Color)(getRenderer().getSeriesOutlinePaint(getSeriesIndex()));
         well = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 

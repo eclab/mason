@@ -76,7 +76,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
             if (stretch*thickness > 0)
                 newDash[x] = dash[x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
                 
-        XYItemRenderer renderer = (XYItemRenderer)(getPlot().getRenderer());
+        XYItemRenderer renderer = getRenderer();
             
         renderer.setSeriesStroke(getSeriesIndex(),
                                  new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
@@ -96,7 +96,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         thickness = 2.0f;
 
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
-        XYItemRenderer renderer = (XYItemRenderer)(getPlot().getRenderer());
+        XYItemRenderer renderer = getRenderer();
         Paint paint = renderer.getSeriesPaint(getSeriesIndex());
         strokeColor = (Color)paint;
                 

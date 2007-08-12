@@ -70,6 +70,11 @@ public abstract class SeriesAttributes extends LabelledList
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
                 
+    protected XYItemRenderer getRenderer()
+    {
+    	return getPlot().getRenderer();
+    }
+                
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()
         to update the series. */
@@ -84,7 +89,7 @@ public abstract class SeriesAttributes extends LabelledList
             {
             public void actionPerformed(ActionEvent e)
                 {
-                getPlot().getRenderer().setSeriesVisible(getSeriesIndex(),
+                getRenderer().setSeriesVisible(getSeriesIndex(),
                                                          new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
                 }
             });
