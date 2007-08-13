@@ -28,6 +28,7 @@ import org.jfree.chart.plot.*;
 import org.jfree.data.general.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
+import org.jfree.chart.title.*;
 
 // from iText (www.lowagie.com/iText/)
 import com.lowagie.text.*;
@@ -327,8 +328,7 @@ public abstract class ChartGenerator extends JPanel
                 {
                 if (e.getStateChange() == ItemEvent.SELECTED)
                     {
-                    org.jfree.chart.title.LegendTitle title = new org.jfree.chart.title.LegendTitle(
-                        (XYItemRenderer)(chart.getXYPlot().getRenderer()));
+                    LegendTitle title = new LegendTitle(chart.getXYPlot());
                     title.setLegendItemGraphicPadding(new org.jfree.ui.RectangleInsets(0,8,0,4));
                     chart.addLegend(title);
                     }

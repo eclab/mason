@@ -1260,3 +1260,7 @@ Version 12
 	HistogramGenerator: added function addSeriesToDataSet to isolate
 		dataset.addSeries behavior, so it can be changed later (instead of 
 		overriding the entire update() function.
+	ChartGenerator: legend is now build based on the XYPlot, not just its
+		main renderer; series using different renderers will all be included
+		in the legend now.
+	
