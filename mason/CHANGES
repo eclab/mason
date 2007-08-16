@@ -1257,6 +1257,9 @@ Version 12
 		attributes of the remaining series.	
 	HistogramSeriesAttributes: fixed a bug with the series name being null
 		in the remove series confirmation dialog
+	TimeSeriesAttributes: same underlying problem as before: null returned by
+		getSeriesPaint()  (which caused a missmatch between a series' color and the
+		initial color in the color well in the attribute inspector for that series).
 	HistogramGenerator: added function addSeriesToDataSet to isolate
 		dataset.addSeries behavior, so it can be changed later (instead of 
 		overriding the entire update() function.

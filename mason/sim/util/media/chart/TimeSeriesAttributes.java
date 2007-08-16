@@ -67,7 +67,9 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
     public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index)
-        { super(generator, "" + series.getKey(), index); this.series = series; }
+    	{ 
+    	super(generator, "" + series.getKey(), index); this.series = series;
+        }
 
     public void rebuildGraphicsDefinitions()
         {
@@ -97,9 +99,16 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
         XYItemRenderer renderer = getRenderer();
-        Paint paint = renderer.getSeriesPaint(getSeriesIndex());
+        //Paint paint = renderer.getSeriesPaint(getSeriesIndex());
+        
+        //In jfc 1.0.6 getSeriesPaint returns null!!!
+        //You need lookupSeriesPaint(), but that's not backward compatible.
+        //The only thing consistent in all versions is getItemPaint 
+        //(which looks like a gross miss-use, but gets the job done)
+        Paint paint = renderer.getItemPaint(getSeriesIndex(), -1);
+        
         strokeColor = (Color)paint;
-                
+        
         ColorWell well = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 
