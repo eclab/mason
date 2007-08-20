@@ -267,7 +267,7 @@ public abstract class ChartGenerator extends JPanel
         		if(xLog.isSelected())
         		{
         			LogarithmicAxis logAxis = new LogarithmicAxis(xLabel.getText());
-        			logAxis.setAllowNegativesFlag(true);
+        			logAxis.setStrictValuesFlag(false);
         			chart.getXYPlot().setDomainAxis(logAxis);
         		}
         		else
@@ -311,7 +311,7 @@ public abstract class ChartGenerator extends JPanel
         		if(yLog.isSelected())
         		{
         			LogarithmicAxis logAxis = new LogarithmicAxis(yLabel.getText());
-        			logAxis.setAllowNegativesFlag(true);
+        			logAxis.setStrictValuesFlag(false);
         			chart.getXYPlot().setRangeAxis(logAxis);
         		}
         		else
