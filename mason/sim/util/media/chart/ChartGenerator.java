@@ -65,6 +65,12 @@ public abstract class ChartGenerator extends JPanel
     protected Box globalAttributes = Box.createVerticalBox();
     /** A holder for series attributes components */
     protected Box seriesAttributes = Box.createVerticalBox();
+    public SeriesAttributes getSeriesAttributes(int seriesIndex)
+    {
+        Component[] c = seriesAttributes.getComponents();
+        return (SeriesAttributes)c[seriesIndex];
+    }
+    
     /** The chart */
     protected JFreeChart chart;
     /** The panel which holds and draws the chart */
