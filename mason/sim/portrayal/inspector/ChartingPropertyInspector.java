@@ -93,7 +93,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
 	    	this.generator = createNewChart(simulation);
 
 	    globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
-	    validInspector = (generator!=null);//this should always be true.
+	    validInspector = (this.generator!=null);//this should always be true.
 	    }
     
     /** Used to find the global attributes that another inspector has set so I can share it. */
