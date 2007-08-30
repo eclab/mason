@@ -1266,4 +1266,10 @@ Version 12
 	ChartGenerator: legend is now build based on the XYPlot, not just its
 		main renderer; series using different renderers will all be included
 		in the legend now.
+	ChartingPropertyInspector: the ChartGenerator object is available through
+		getGenerator() method
+	ChartingPropertyInspector: new constructor allows one to supply the chart
+		generator.  Matching constructors available in subclasses 
+		(HistogramChartingPropertyInspector, TimeSeriesChartingPropertyInspector)
+		
 	

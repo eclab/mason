@@ -39,6 +39,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     {
     /** The ChartGenerator used by this ChartingPropertyInspector */
     protected ChartGenerator generator;
+    public ChartGenerator getGenerator(){return generator;}
     double lastTime  = Schedule.BEFORE_SIMULATION;
         
     /** Called when the inspector is being asked to use an existing ChartGenerator.  Should return true if the
@@ -74,6 +75,27 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         validInspector = (generator!=null);
         }
 
+    /**
+     * This constructor allows one to set the chart generator programmatically (i.e. no GUI).
+     * If the <code>generator</code> parameter is null, a new chart is used.
+     * If the <code>generator</code> is not valid for this inspector, an exception is thrown.
+     */
+    public ChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+	    {
+	    super(properties,index,parent,simulation);
+	    if(generator!=null)
+	    {
+	    	if(!validChartGenerator(generator))
+	    		throw new RuntimeException("Invalid generator: "+generator);
+	    	this.generator = generator;
+	    }
+	    else
+	    	this.generator = createNewChart(simulation);
+
+	    globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
+	    validInspector = (generator!=null);//this should always be true.
+	    }
+    
     /** Used to find the global attributes that another inspector has set so I can share it. */
     GlobalAttributes findGlobalAttributes()
         {

@@ -56,8 +56,19 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
     public HistogramChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-                
-        if (validInspector)
+        setSeriesAttributes();
+        }
+    
+    public HistogramChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+	    {
+	    super(properties,index,parent,simulation, generator);
+	    setSeriesAttributes();
+	    }
+    
+    //I isolated this code from the constructor into this method because I have two constructors now. 
+    private void setSeriesAttributes()
+    	{
+    	if (validInspector)
             {
             // add our series
             seriesAttributes = ((HistogramGenerator)generator).addSeries(previousValues, DEFAULT_BINS, properties.getName(index), 

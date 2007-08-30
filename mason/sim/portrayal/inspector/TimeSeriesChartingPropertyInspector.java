@@ -50,7 +50,18 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-                
+        setSeriesAttributes();
+        }
+    
+    public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+	    {
+	    super(properties,index,parent,simulation, generator);
+	    setSeriesAttributes();
+	    }
+    
+    //I isolated this code from the constructor into this method because I have two constructors now. 
+    private void setSeriesAttributes()
+       	{            
         if (validInspector)
             {
             chartSeries = new XYSeries( properties.getName(index), false );
