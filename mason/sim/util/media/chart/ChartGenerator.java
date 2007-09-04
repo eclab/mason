@@ -100,6 +100,9 @@ public abstract class ChartGenerator extends JPanel
         
     /** Override this to remove a series from the chart. */
     public abstract void removeSeries(int index);
+    
+    /** Override this to move a series relative to other series. */
+    public abstract void moveSeries(int index, boolean up); 
                 
     /** Override this to construct the appropriate kind of chart.  This is the first thing called from the constructor; so certain
         of your instance variables may not have been set yet and you may need to set them yourself.  */

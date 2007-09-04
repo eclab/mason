@@ -4,7 +4,7 @@ import java.util.*;
 
 /** 
  * <h3>MersenneTwister and MersenneTwisterFast</h3>
- * <p><b>Version 15</b>, based on version MT199937(99/10/29)
+ * <p><b>Version 16</b>, based on version MT199937(99/10/29)
  * of the Mersenne Twister algorithm found at 
  * <a href="http://www.math.keio.ac.jp/matumoto/emt.html">
  * The Mersenne Twister Home Page</a>, with the initialization
@@ -41,6 +41,9 @@ import java.util.*;
  * Vol. 8, No. 1, January 1998, pp 3--30.
  *
  * <h3>About this Version</h3>
+ *
+ * <p><b>Changes Since V15:</b> Added serialVersionUID to quiet compiler warnings
+ * from Sun's overly verbose compilers as of JDK 1.5.
  *
  * <p><b>Changes Since V14:</b> made strictfp, with StrictMath.log and StrictMath.sqrt
  * in nextGaussian instead of Math.log and Math.sqrt.  This is largely just to be safe,
@@ -147,7 +150,7 @@ import java.util.*;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  *
- @version 15
+ @version 16
 */
 
 // Note: this class is hard-inlined in all of its methods.  This makes some of
@@ -158,6 +161,9 @@ import java.util.*;
 
 public strictfp class MersenneTwisterFast implements Serializable, Cloneable
     {
+    // Serialization
+    private static final long serialVersionUID = -8219700664442619525L;  // locked as of Version 15
+    
     // Period parameters
     private static final int N = 624;
     private static final int M = 397;

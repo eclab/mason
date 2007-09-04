@@ -90,6 +90,51 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         revalidate();
         }
                 
+    public void moveSeries(int index, boolean up)
+        {
+	java.util.List allSeries = dataset.getSeries();
+	int count = allSeries.size();
+	
+	if ((index > 0 && !up) || (index < count-1 && up))  // it's not the first or the last given the move
+	    {
+	    // stop the inspector....
+	    Object tmpObj = stoppables.remove(index);
+	    if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
+		((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
+	    
+	    // this requires removing everything from the dataset and resinserting, duh
+	    ArrayList items = new ArrayList(allSeries);
+	    dataset.removeAllSeries();
+	    
+	    // now rearrange
+	    items.add(up ? index - 1 : index + 1, items.remove(index));
+	    
+	    // rebuild the dataset
+	    for(int i = 0; i < count; i++)
+		dataset.addSeries(((XYSeries)(items.get(i))));
+		    
+	    // adjust the seriesAttributes' indices             
+	    Component[] c = seriesAttributes.getComponents();
+	    for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
+		{
+		SeriesAttributes csa = (SeriesAttributes)(c[i]);
+		csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
+		
+		// now rebuild the series index
+		if (i == index && up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
+		else if (i == index && !up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
+		else if (i == index - 1 && up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
+		else if (i == index + 1 && !up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
+		}
+	    revalidate();
+	    }
+	}
+                
+
     protected void buildChart()
         {
         dataset = new XYSeriesCollection();

@@ -456,9 +456,7 @@ public abstract class GUIState
             {
             if (event == null || state.schedule.time() >= Schedule.AFTER_SIMULATION)
                 {
-                if (!state.schedule.isThrowingScheduleExceptions())
-                    return false;
-                else if (event == null)
+		if (event == null)
                     {
                     throw new IllegalArgumentException("The provided Steppable is null");
                     }
@@ -528,9 +526,7 @@ public abstract class GUIState
             {
             if (event == null || state.schedule.time() >= Schedule.AFTER_SIMULATION)
                 {
-                if (!state.schedule.isThrowingScheduleExceptions())
-                    return false;
-                else if (event == null)
+                if (event == null)
                     {
                     throw new IllegalArgumentException("The provided Steppable is null");
                     }

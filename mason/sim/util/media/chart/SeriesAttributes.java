@@ -124,8 +124,29 @@ public abstract class SeriesAttributes extends LabelledList
                     getGenerator().removeSeries(getSeriesIndex());
                 }
             });
+	
+        JButton upButton = new JButton("Up");
+        upButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+		getGenerator().moveSeries(getSeriesIndex(), true);
+                }
+            });
+	
+        JButton downButton = new JButton("Down");
+        downButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+		getGenerator().moveSeries(getSeriesIndex(), false);
+                }
+            });
+	
         Box b = new Box(BoxLayout.X_AXIS);
         b.add(removeButton);
+	b.add(upButton);
+	b.add(downButton);
         b.add(Box.createGlue());
         add(b);
 

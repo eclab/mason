@@ -54,7 +54,7 @@ public abstract class PropertyInspector extends Inspector
     {
     public int index;
     public Properties properties;
-    public Frame parent;
+    /* public Frame parent; */
     public GUIState simulation;
     public static Bag classes = null;
     public static Bag names = null;
@@ -112,7 +112,7 @@ public abstract class PropertyInspector extends Inspector
         {
         this.properties = properties;
         this.index = index;
-        this.parent = parent;
+        /* this.parent = parent; */
         this.simulation = simulation;
         }
 

@@ -510,16 +510,17 @@ public class SimState implements java.io.Serializable
             long steps = 0;
             long clock;
             long oldClock = System.currentTimeMillis();
-            long firstSteps = state.schedule.getSteps();
+	    Schedule schedule = state.schedule;
+            long firstSteps = schedule.getSteps();
             
-            while((_for == -1 || steps < _for) && state.schedule.time() <= until)
+            while((_for == -1 || steps < _for) && schedule.time() <= until)
                 {
-                if (!state.schedule.step(state)) 
+                if (!schedule.step(state)) 
                     {
                     retval=true; 
                     break;
                     }
-                steps = state.schedule.getSteps();
+                steps = schedule.getSteps();
                 if (time < 0)  // don't know how long to make the time yet
                     {
                     if (System.currentTimeMillis() - oldClock > 1000L)  // time to set the time

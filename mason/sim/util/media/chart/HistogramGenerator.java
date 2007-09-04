@@ -102,6 +102,50 @@ public class HistogramGenerator extends ChartGenerator
         revalidate();
         }
                 
+
+    public void moveSeries(int index, boolean up)
+        {
+	if ((index > 0 && !up) || (index < histogramSeries.size()-1 && up))  // it's not the first or the last given the move
+	    {
+	    // stop the inspector....
+	    Object tmpObj = stoppables.remove(index);
+	    if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
+		((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
+
+	    // move
+	    histogramSeries.add(up ? index - 1 : index + 1, histogramSeries.remove(index));
+	    XYPlot xyplot = (XYPlot)(chart.getPlot());
+	    dataset = new HistogramDataset();
+	    for(int i=0; i < histogramSeries.size(); i++)
+		{
+		HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
+		dataset.addSeries(series.getName(),series.getValues(), series.getBins());
+		}
+	    xyplot.setDataset(dataset);
+	    dataset.setType(histogramType);  // It looks like the histograms reset
+		    
+	    // adjust the seriesAttributes' indices             
+	    Component[] c = seriesAttributes.getComponents();
+	    for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
+		{
+		SeriesAttributes csa = (SeriesAttributes)(c[i]);
+		csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
+		
+		// now rebuild the series index
+		if (i == index && up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
+		else if (i == index && !up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
+		else if (i == index - 1 && up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
+		else if (i == index + 1 && !up)
+		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
+		}
+	    revalidate();
+	    }
+        }
+                
+
     protected void buildChart()
         {
         dataset = new HistogramDataset();
