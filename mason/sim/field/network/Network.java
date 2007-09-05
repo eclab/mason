@@ -12,7 +12,7 @@ import java.util.*;
     reasonably rapid dynamic modification.
     
     <p>The nodes of a Network's graph can be any arbitrary, properly hashable object.  The edges of the
-    graph are members of the Edge class.  This class is little more than a wrapper around arbitrary object as well (the Edge's 'info'
+    graph are members of the Edge class.  This class is little more than a wrapper around an arbitrary object as well (the Edge's 'info'
     object).  Thus your graph's nodes and edges can essentially be objects entirely of your choosing.
     
     <p>Edge objects also contain pointers to the Nodes that they are to and from (plus some auxillary index information
@@ -758,7 +758,7 @@ public class Network implements java.io.Serializable
 //      }
 
     /**
-     * Complements the graph: same nodes, no edges were they were, edges where they were not.
+     * Complements the graph: same nodes, no edges where they were, edges where they were not.
      * 
      * An advantage over calling addNode and addEdge n and m times, 
      * is to allocate the Bags the right size the first time.
