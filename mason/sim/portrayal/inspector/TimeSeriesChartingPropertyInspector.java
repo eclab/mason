@@ -53,9 +53,9 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         setSeriesAttributes();
         }
     
-    public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+    public TimeSeriesChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
 	    {
-	    super(properties,index,parent,simulation, generator);
+	    super(properties, index, simulation, generator);
 	    setSeriesAttributes();
 	    }
     

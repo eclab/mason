@@ -59,9 +59,9 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
         setSeriesAttributes();
         }
     
-    public HistogramChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+    public HistogramChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
 	    {
-	    super(properties,index,parent,simulation, generator);
+	    super(properties, index, simulation, generator);
 	    setSeriesAttributes();
 	    }
     

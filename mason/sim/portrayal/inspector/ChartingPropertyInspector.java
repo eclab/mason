@@ -80,9 +80,10 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
      * If the <code>generator</code> parameter is null, a new chart is used.
      * If the <code>generator</code> is not valid for this inspector, an exception is thrown.
      */
-    public ChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation, ChartGenerator generator)
+    public ChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
 	    {
-	    super(properties,index,parent,simulation);
+    	//the parent is ignored in PropertyInspector anyway, so I just sent a null
+	    super(properties,index,null,simulation);
 	    if(generator!=null)
 	    {
 	    	if(!validChartGenerator(generator))
