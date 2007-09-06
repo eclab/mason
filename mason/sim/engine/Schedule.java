@@ -197,7 +197,7 @@ public class Schedule implements java.io.Serializable
 	    }
         }
 
-    // substeps is now private to the step(...) function
+    Bag currentSteps = new Bag();
     Bag substeps = new Bag();
     boolean inStep = false;  // prevens reentrancy
     /** Steps the schedule, gathering and ordering all the items to step on the next time step (skipping
@@ -211,9 +211,11 @@ public class Schedule implements java.io.Serializable
 	    }
 	    
 	inStep = true;
-	Bag substeps = this.substeps;  // a little faster
+	Bag currentSteps = this.currentSteps;  // a little faster
 	boolean shuffling = false; // to load this.shuffling into a local inside the lock
 	
+	int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
+
 	// grab the events as quickly as possible
 	synchronized(lock)
 	    {
@@ -222,32 +224,52 @@ public class Schedule implements java.io.Serializable
 	    
 	    // now change the time
 	    time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
-	    		    
-	    // Suck out the contents -- but just the ones in the minimum ordering
-	    queue.extractMin(substeps);  // come out in reverse order
 
-	    // are we shuffling?
-	    shuffling = this.shuffling;
-	    }
 
-	// shuffle
-	if (substeps.numObjs > 1) 
-	    {
-	    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
-	    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+	    // grab all of the steppables in the right order.  To do this, we employ two Bags:
+	    // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
+	    // 2. Next we either shuffle or reverse the substeps.
+	    // 3. Next we add them all to the end of the currentSteps Bag
+	    // 4. Then we clear the substeps bag, but we don't let them GC yet
+	    // 5. Last, out of the while-loop, we clear the substeps bag "for real", allowing them to GC
+	    while(true)
+		{
+		// Suck out the contents of the next ordering
+		queue.extractMin(substeps);  // come out in reverse order
+
+		// shuffle
+		if (substeps.numObjs > 1) 
+		    {
+		    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
+		    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+		    }
+		    
+		// dump
+		    if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;		
+		    currentSteps.addAll(substeps);
+		    substeps.numObjs = 0;  // temporarily clear
+		
+		// check next key and break if we don't need to go on
+		Key currentKey = (Key)(queue.getMinKey());
+		if (currentKey == null || currentKey.time != time) break;  // looks like no more substeps at this timestamp
+		}
 	    }
+	    
+	// now finally clear out the substeps for real
+	substeps.numObjs = topSubstep;
+	substeps.clear();  // clear for real so everything can GC
 			
 	// execute
-	int len = substeps.numObjs;
-	Object[] objs = substeps.objs;
+	int len = currentSteps.numObjs;
+	Object[] objs = currentSteps.objs;
 	for(int x=0;x<len;x++)  // if we're not being killed...
 	    {
 	    ((Steppable)(objs[x])).step(state);
 	    objs[x] = null;  // let gc even if being killed
 	    }
 
-	// reuse substeps -- all objects should have been released to gc already
-	substeps.numObjs = 0;
+	// reuse currentSteps -- all objects should have been released to gc already, no need to call clear()
+	currentSteps.numObjs = 0;
 	    
 	synchronized(lock) { steps++; }
 	inStep = false;
