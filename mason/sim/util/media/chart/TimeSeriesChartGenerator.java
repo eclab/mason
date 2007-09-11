@@ -95,45 +95,61 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 	java.util.List allSeries = dataset.getSeries();
 	int count = allSeries.size();
 	
-	if ((index > 0 && !up) || (index < count-1 && up))  // it's not the first or the last given the move
+	if ((index > 0 && up) || (index < count-1 && !up))  // it's not the first or the last given the move
 	    {
-	    // stop the inspector....
-	    Object tmpObj = stoppables.remove(index);
-	    if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
-		((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
-	    
 	    // this requires removing everything from the dataset and resinserting, duh
 	    ArrayList items = new ArrayList(allSeries);
 	    dataset.removeAllSeries();
 	    
+	    int delta = up? -1:1;
 	    // now rearrange
-	    items.add(up ? index - 1 : index + 1, items.remove(index));
+	    items.add(index + delta, items.remove(index));
 	    
 	    // rebuild the dataset
 	    for(int i = 0; i < count; i++)
 		dataset.addSeries(((XYSeries)(items.get(i))));
 		    
-	    // adjust the seriesAttributes' indices             
+	    
+	    // adjust the seriesAttributes' indices 
 	    Component[] c = seriesAttributes.getComponents();
-	    for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
-		{
-		SeriesAttributes csa = (SeriesAttributes)(c[i]);
-		csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
-		
-		// now rebuild the series index
-		if (i == index && up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-		else if (i == index && !up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
-		else if (i == index - 1 && up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
-		else if (i == index + 1 && !up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-		}
+	    SeriesAttributes csa;
+	    //the deletion order matters (if I delete 2nd item first, the 3rd items becomes the 2nd)
+	    if(up)
+		    {
+		    seriesAttributes.remove(index);
+			seriesAttributes.remove(index-1);
+			
+			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
+			seriesAttributes.add((SeriesAttributes)(c[index-1]), index);
+			
+			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index-1);
+			csa.rebuildGraphicsDefinitions();
+			(csa = (SeriesAttributes)c[index-1]).setSeriesIndex(index);
+			csa.rebuildGraphicsDefinitions();
+			
+			Object stop = stoppables.remove(index-1);
+			stoppables.add(index, stop);
+		    }
+	    else
+	    	{
+		    seriesAttributes.remove(index+1);
+			seriesAttributes.remove(index);
+			
+			seriesAttributes.add((SeriesAttributes)(c[index+1]), index);
+			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
+			
+			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index+1);
+			csa.rebuildGraphicsDefinitions();
+			(csa = (SeriesAttributes)c[index+1]).setSeriesIndex(index);
+			csa.rebuildGraphicsDefinitions();
+			
+			Object stop = stoppables.remove(index);
+			stoppables.add(index+1, stop);
+	    	}
 	    revalidate();
 	    }
+
 	}
-                
 
     protected void buildChart()
         {
