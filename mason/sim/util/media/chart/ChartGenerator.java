@@ -208,7 +208,11 @@ public abstract class ChartGenerator extends JPanel
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
         split.setBorder(new EmptyBorder(0,0,0,0));
         JScrollPane scroll = new JScrollPane();
-        scroll.getViewport().setView(seriesAttributes);
+        JPanel b = new JPanel();
+        b.setLayout(new BorderLayout());
+        b.add(seriesAttributes, BorderLayout.NORTH);
+        b.add(new JPanel(), BorderLayout.CENTER);
+        scroll.getViewport().setView(b);
         scroll.setBackground(getBackground());
         scroll.getViewport().setBackground(getBackground());
         JPanel p = new JPanel();
