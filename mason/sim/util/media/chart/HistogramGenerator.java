@@ -105,44 +105,60 @@ public class HistogramGenerator extends ChartGenerator
 
     public void moveSeries(int index, boolean up)
         {
-	if ((index > 0 && !up) || (index < histogramSeries.size()-1 && up))  // it's not the first or the last given the move
-	    {
-	    // stop the inspector....
-	    Object tmpObj = stoppables.remove(index);
-	    if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
-		((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
+    	if ((index == 0 && up) || (index == histogramSeries.size()-1 && !up))
+    	//first one can't move up, last one can't move down
+    		return;
 
-	    // move
+	    // move the series
 	    histogramSeries.add(up ? index - 1 : index + 1, histogramSeries.remove(index));
 	    XYPlot xyplot = (XYPlot)(chart.getPlot());
 	    dataset = new HistogramDataset();
 	    for(int i=0; i < histogramSeries.size(); i++)
-		{
-		HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
-		dataset.addSeries(series.getName(),series.getValues(), series.getBins());
-		}
+			{
+			HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
+			dataset.addSeries(series.getName(),series.getValues(), series.getBins());
+			}
 	    xyplot.setDataset(dataset);
 	    dataset.setType(histogramType);  // It looks like the histograms reset
 		    
-	    // adjust the seriesAttributes' indices             
+	    // adjust the seriesAttributes' position and indices
+	    // adjust the stoppables, too).
 	    Component[] c = seriesAttributes.getComponents();
-	    for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
-		{
-		SeriesAttributes csa = (SeriesAttributes)(c[i]);
-		csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
-		
-		// now rebuild the series index
-		if (i == index && up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-		else if (i == index && !up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
-		else if (i == index - 1 && up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() + 1);
-		else if (i == index + 1 && !up)
-		    csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-		}
+	    SeriesAttributes csa;
+	    //the deletion order matters (if I delete 2nd item first, the 3rd items becomes the 2nd)
+	    if(up)
+		    {
+		    seriesAttributes.remove(index);
+			seriesAttributes.remove(index-1);
+			
+			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
+			seriesAttributes.add((SeriesAttributes)(c[index-1]), index);
+			
+			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index-1);
+			csa.rebuildGraphicsDefinitions();
+			(csa = (SeriesAttributes)c[index-1]).setSeriesIndex(index);
+			csa.rebuildGraphicsDefinitions();
+			
+			Object stop = stoppables.remove(index-1);
+			stoppables.add(index, stop);
+		    }
+	    else
+	    	{
+		    seriesAttributes.remove(index+1);
+			seriesAttributes.remove(index);
+			
+			seriesAttributes.add((SeriesAttributes)(c[index+1]), index);
+			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
+			
+			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index+1);
+			csa.rebuildGraphicsDefinitions();
+			(csa = (SeriesAttributes)c[index+1]).setSeriesIndex(index);
+			csa.rebuildGraphicsDefinitions();
+			
+			Object stop = stoppables.remove(index);
+			stoppables.add(index+1, stop);
+	    	}
 	    revalidate();
-	    }
         }
                 
 
