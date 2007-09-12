@@ -74,7 +74,58 @@ public abstract class SeriesAttributes extends LabelledList
     {
     	return getPlot().getRenderer();
     }
-                
+	
+	public Box manipulators;
+	
+	public void setManipulatorsVisible(boolean visible)
+		{
+		manipulators.setVisible(visible);
+		}
+	
+	public void buildManipulators()
+		{
+		JButton removeButton = new JButton("Remove");
+		removeButton.addActionListener(new ActionListener()
+			{
+			public void actionPerformed ( ActionEvent e )
+				{
+				if (JOptionPane.showOptionDialog(
+						null,"Remove the Series " + getSeriesName() + "?","Confirm",
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE,null,
+						new Object[] { "Remove", "Cancel" },
+						null) == 0)  // remove
+					getGenerator().removeSeries(getSeriesIndex());
+				}
+			});
+	
+		JButton upButton = new JButton("Up");
+		upButton.addActionListener(new ActionListener()
+			{
+			public void actionPerformed ( ActionEvent e )
+				{
+		getGenerator().moveSeries(getSeriesIndex(), true);
+				}
+			});
+	
+		JButton downButton = new JButton("Down");
+		downButton.addActionListener(new ActionListener()
+			{
+			public void actionPerformed ( ActionEvent e )
+				{
+		getGenerator().moveSeries(getSeriesIndex(), false);
+				}
+			});
+	
+        manipulators = new Box(BoxLayout.X_AXIS);
+        manipulators.add(removeButton);
+		manipulators.add(upButton);
+		manipulators.add(downButton);
+        manipulators.add(Box.createGlue());
+        add(manipulators);
+		}
+	
+	
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()
         to update the series. */
@@ -109,47 +160,8 @@ public abstract class SeriesAttributes extends LabelledList
         addLabelled("Series",nameF);
                         
         buildAttributes();
-                        
-        JButton removeButton = new JButton("Remove");
-        removeButton.addActionListener(new ActionListener()
-            {
-            public void actionPerformed ( ActionEvent e )
-                {
-                if (JOptionPane.showOptionDialog(
-                        null,"Remove the Series " + getSeriesName() + "?","Confirm",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,null,
-                        new Object[] { "Remove", "Cancel" },
-                        null) == 0)  // remove
-                    getGenerator().removeSeries(getSeriesIndex());
-                }
-            });
-	
-        JButton upButton = new JButton("Up");
-        upButton.addActionListener(new ActionListener()
-            {
-            public void actionPerformed ( ActionEvent e )
-                {
-		getGenerator().moveSeries(getSeriesIndex(), true);
-                }
-            });
-	
-        JButton downButton = new JButton("Down");
-        downButton.addActionListener(new ActionListener()
-            {
-            public void actionPerformed ( ActionEvent e )
-                {
-		getGenerator().moveSeries(getSeriesIndex(), false);
-                }
-            });
-	
-        Box b = new Box(BoxLayout.X_AXIS);
-        b.add(removeButton);
-	b.add(upButton);
-	b.add(downButton);
-        b.add(Box.createGlue());
-        add(b);
-
+		buildManipulators();
+		
         rebuildGraphicsDefinitions();
         }
     }
