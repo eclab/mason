@@ -110,8 +110,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 		dataset.addSeries(((XYSeries)(items.get(i))));
 		    
 	    
-	    // adjust the seriesAttributes' indices 
-	    
+	    // adjust the seriesAttributes' indices 	    
 	    Component[] c = seriesAttributes.getComponents();
 	    SeriesAttributes csa;
 	    (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
@@ -124,6 +123,8 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 	    seriesAttributes.add(csa, index);
 
 	    revalidate();
+	    
+	    // adjust the stoppables, too
 		stoppables.add(index+delta, stoppables.remove(index));
 	    }
 
