@@ -75,6 +75,18 @@ public abstract class SeriesAttributes extends LabelledList
     	return getPlot().getRenderer();
     }
 	
+	public static final ImageIcon I_DOWN = iconFor("DownArrow.png");
+    public static final ImageIcon I_DOWN_PRESSED = iconFor("DownArrowPressed.png");
+    public static final ImageIcon I_CLOSE = iconFor("CloseBox.png");
+    public static final ImageIcon I_CLOSE_PRESSED = iconFor("CloseBoxPressed.png");
+    public static final ImageIcon I_UP = iconFor("UpArrow.png");
+    public static final ImageIcon I_UP_PRESSED = iconFor("UpArrowPressed.png");
+
+    public static ImageIcon iconFor(String name)
+        {
+        return new ImageIcon(SeriesAttributes.class.getResource(name));
+        }
+    	
 	public Box manipulators;
 	
 	public void setManipulatorsVisible(boolean visible)
@@ -84,7 +96,11 @@ public abstract class SeriesAttributes extends LabelledList
 	
 	public void buildManipulators()
 		{
-		JButton removeButton = new JButton("Remove");
+		JButton removeButton = new JButton(I_CLOSE);
+		removeButton.setPressedIcon(I_CLOSE_PRESSED);
+		removeButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+		removeButton.setBorderPainted(false);
+		removeButton.setContentAreaFilled(false);
 		removeButton.addActionListener(new ActionListener()
 			{
 			public void actionPerformed ( ActionEvent e )
@@ -99,7 +115,11 @@ public abstract class SeriesAttributes extends LabelledList
 				}
 			});
 	
-		JButton upButton = new JButton("Up");
+		JButton upButton = new JButton(I_UP);
+		upButton.setPressedIcon(I_UP_PRESSED);
+		upButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+		upButton.setBorderPainted(false);
+		upButton.setContentAreaFilled(false);
 		upButton.addActionListener(new ActionListener()
 			{
 			public void actionPerformed ( ActionEvent e )
@@ -108,7 +128,11 @@ public abstract class SeriesAttributes extends LabelledList
 				}
 			});
 	
-		JButton downButton = new JButton("Down");
+		JButton downButton = new JButton(I_DOWN);
+		downButton.setPressedIcon(I_DOWN_PRESSED);
+		downButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+		downButton.setBorderPainted(false);
+		downButton.setContentAreaFilled(false);
 		downButton.addActionListener(new ActionListener()
 			{
 			public void actionPerformed ( ActionEvent e )
@@ -117,12 +141,9 @@ public abstract class SeriesAttributes extends LabelledList
 				}
 			});
 	
-        manipulators = new Box(BoxLayout.X_AXIS);
         manipulators.add(removeButton);
 		manipulators.add(upButton);
 		manipulators.add(downButton);
-        manipulators.add(Box.createGlue());
-        add(manipulators);
 		}
 	
 	
@@ -144,8 +165,12 @@ public abstract class SeriesAttributes extends LabelledList
                                                          new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
                 }
             });
-            
-        addLabelled("Show", check);
+
+        manipulators = new Box(BoxLayout.X_AXIS);
+		manipulators.add(check);
+        manipulators.add(Box.createGlue());
+		buildManipulators();
+        addLabelled("Show", manipulators);
 
         final JTextField nameF = new JTextField(name);
         nameF.addActionListener(new ActionListener()
@@ -160,8 +185,6 @@ public abstract class SeriesAttributes extends LabelledList
         addLabelled("Series",nameF);
                         
         buildAttributes();
-		buildManipulators();
-		
         rebuildGraphicsDefinitions();
         }
     }
