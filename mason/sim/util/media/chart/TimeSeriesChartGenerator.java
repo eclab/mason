@@ -116,10 +116,10 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 	    //the deletion order matters (if I delete 2nd item first, the 3rd items becomes the 2nd)
 	    if(up)
 		    {
-		    seriesAttributes.remove(index);
+//		    seriesAttributes.remove(index);
 			seriesAttributes.remove(index-1);
 			
-			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
+//			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
 			seriesAttributes.add((SeriesAttributes)(c[index-1]), index);
 			
 			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index-1);
@@ -133,10 +133,10 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 	    else
 	    	{
 		    seriesAttributes.remove(index+1);
-			seriesAttributes.remove(index);
+//			seriesAttributes.remove(index);
 			
 			seriesAttributes.add((SeriesAttributes)(c[index+1]), index);
-			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
+//			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
 			
 			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index+1);
 			csa.rebuildGraphicsDefinitions();
