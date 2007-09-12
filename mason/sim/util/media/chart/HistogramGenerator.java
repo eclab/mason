@@ -108,9 +108,9 @@ public class HistogramGenerator extends ChartGenerator
     	if ((index == 0 && up) || (index == histogramSeries.size()-1 && !up))
     	//first one can't move up, last one can't move down
     		return;
-
+	    int delta = up? -1:1;
 	    // move the series
-	    histogramSeries.add(up ? index - 1 : index + 1, histogramSeries.remove(index));
+	    histogramSeries.add(index + delta, histogramSeries.remove(index));
 	    XYPlot xyplot = (XYPlot)(chart.getPlot());
 	    dataset = new HistogramDataset();
 	    for(int i=0; i < histogramSeries.size(); i++)
@@ -121,44 +121,22 @@ public class HistogramGenerator extends ChartGenerator
 	    xyplot.setDataset(dataset);
 	    dataset.setType(histogramType);  // It looks like the histograms reset
 		    
-	    // adjust the seriesAttributes' position and indices
-	    // adjust the stoppables, too).
+	    // adjust the seriesAttributes' indices 	    
 	    Component[] c = seriesAttributes.getComponents();
 	    SeriesAttributes csa;
-	    //the deletion order matters (if I delete 2nd item first, the 3rd items becomes the 2nd)
-	    if(up)
-		    {
-//		    seriesAttributes.remove(index);
-			seriesAttributes.remove(index-1);
-			
-//			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
-			seriesAttributes.add((SeriesAttributes)(c[index-1]), index);
-			
-			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index-1);
-			csa.rebuildGraphicsDefinitions();
-			(csa = (SeriesAttributes)c[index-1]).setSeriesIndex(index);
-			csa.rebuildGraphicsDefinitions();
-			
-			Object stop = stoppables.remove(index-1);
-			stoppables.add(index, stop);
-		    }
-	    else
-	    	{
-			seriesAttributes.remove(index+1);
-//			seriesAttributes.remove(index);
-			
-			seriesAttributes.add((SeriesAttributes)(c[index+1]), index);
-//			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
-			
-			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index+1);
-			csa.rebuildGraphicsDefinitions();
-			(csa = (SeriesAttributes)c[index+1]).setSeriesIndex(index);
-			csa.rebuildGraphicsDefinitions();
-			
-			Object stop = stoppables.remove(index);
-			stoppables.add(index+1, stop);
-	    	}
+	    (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
+		csa.rebuildGraphicsDefinitions();
+		(csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
+		csa.rebuildGraphicsDefinitions();
+		
+	    seriesAttributes.remove(index+delta);
+		//seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
+	    seriesAttributes.add(csa, index);
+
 	    revalidate();
+	    
+	    // adjust the stoppables, too
+		stoppables.add(index+delta, stoppables.remove(index));
         }
                 
 
