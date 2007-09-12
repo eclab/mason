@@ -167,10 +167,15 @@ public abstract class SeriesAttributes extends LabelledList
             });
 
         manipulators = new Box(BoxLayout.X_AXIS);
-		manipulators.add(check);
-        manipulators.add(Box.createGlue());
 		buildManipulators();
-        addLabelled("Show", manipulators);
+		JLabel spacer = new JLabel("");
+		spacer.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+		Box b = new Box(BoxLayout.X_AXIS);
+		b.add(check);
+		b.add(spacer);
+		b.add(manipulators);
+		b.add(Box.createGlue());
+        addLabelled("Show", b);
 
         final JTextField nameF = new JTextField(name);
         nameF.addActionListener(new ActionListener()
