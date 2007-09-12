@@ -111,42 +111,20 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 		    
 	    
 	    // adjust the seriesAttributes' indices 
+	    
 	    Component[] c = seriesAttributes.getComponents();
 	    SeriesAttributes csa;
-	    //the deletion order matters (if I delete 2nd item first, the 3rd items becomes the 2nd)
-	    if(up)
-		    {
-//		    seriesAttributes.remove(index);
-			seriesAttributes.remove(index-1);
-			
-//			seriesAttributes.add((SeriesAttributes)(c[index]), index-1);
-			seriesAttributes.add((SeriesAttributes)(c[index-1]), index);
-			
-			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index-1);
-			csa.rebuildGraphicsDefinitions();
-			(csa = (SeriesAttributes)c[index-1]).setSeriesIndex(index);
-			csa.rebuildGraphicsDefinitions();
-			
-			Object stop = stoppables.remove(index-1);
-			stoppables.add(index, stop);
-		    }
-	    else
-	    	{
-		    seriesAttributes.remove(index+1);
-//			seriesAttributes.remove(index);
-			
-			seriesAttributes.add((SeriesAttributes)(c[index+1]), index);
-//			seriesAttributes.add((SeriesAttributes)(c[index]), index+1);
-			
-			(csa = (SeriesAttributes)c[index]).setSeriesIndex(index+1);
-			csa.rebuildGraphicsDefinitions();
-			(csa = (SeriesAttributes)c[index+1]).setSeriesIndex(index);
-			csa.rebuildGraphicsDefinitions();
-			
-			Object stop = stoppables.remove(index);
-			stoppables.add(index+1, stop);
-	    	}
+	    (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
+		csa.rebuildGraphicsDefinitions();
+		(csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
+		csa.rebuildGraphicsDefinitions();
+		
+	    seriesAttributes.remove(index+delta);
+		//seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
+	    seriesAttributes.add(csa, index);
+
 	    revalidate();
+		stoppables.add(index+delta, stoppables.remove(index));
 	    }
 
 	}
