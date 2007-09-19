@@ -15,66 +15,66 @@ import com.sun.j3d.utils.geometry.*;
  *
  */
 public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
-{
-	static class PickableCylinder extends Cylinder
-	{
-		public PickableCylinder(){super();}
-		
-		public PickableCylinder(float radius)
-		{
-			super(radius, 2);
-		}
-		
-		public PickableCylinder(float radius, Appearance ap)
-		{
-			super(radius, 2, ap);
-		}
-		public PickableCylinder(Appearance ap)
-		{
-			super(1, 2, ap);
-		}
+    {
+    static class PickableCylinder extends Cylinder
+        {
+        public PickableCylinder(){super();}
+                
+        public PickableCylinder(float radius)
+            {
+            super(radius, 2);
+            }
+                
+        public PickableCylinder(float radius, Appearance ap)
+            {
+            super(radius, 2, ap);
+            }
+        public PickableCylinder(Appearance ap)
+            {
+            super(1, 2, ap);
+            }
 
-		public void setUserData(java.lang.Object userData)
-		{
-			super.setUserData(userData);
-			setup(getShape(Cylinder.BODY), userData);
-			setup(getShape(Cylinder.TOP), userData);
-			setup(getShape(Cylinder.BOTTOM), userData);
-
-
-		}
-		
-		private void setup(Shape3D shape,java.lang.Object userData)
-		{
-			shape.setUserData(userData);
-			setPickableFlags(shape);
-		}
-		
-	}
-
-	public CylinderEdgePortrayal3D()
-	{
-		super(new PickableCylinder());
-	}
-	
-	public CylinderEdgePortrayal3D(float cylinderRadius)
-	{
-		super(new PickableCylinder(cylinderRadius));
-	}
-	
-	public CylinderEdgePortrayal3D(float cylinderRadius, Appearance ap)
-	{
-		super(new PickableCylinder(cylinderRadius, ap));
-	}	
+        public void setUserData(java.lang.Object userData)
+            {
+            super.setUserData(userData);
+            setup(getShape(Cylinder.BODY), userData);
+            setup(getShape(Cylinder.TOP), userData);
+            setup(getShape(Cylinder.BOTTOM), userData);
 
 
-	public CylinderEdgePortrayal3D(Color labelColor)
-	{
-		super(new PickableCylinder(), labelColor);
-	}
+            }
+                
+        private void setup(Shape3D shape,java.lang.Object userData)
+            {
+            shape.setUserData(userData);
+            setPickableFlags(shape);
+            }
+                
+        }
 
-	public CylinderEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
-	{
-		super(new PickableCylinder(edgeAppearance), labelColor);
-	}
-}
+    public CylinderEdgePortrayal3D()
+        {
+        super(new PickableCylinder());
+        }
+        
+    public CylinderEdgePortrayal3D(float cylinderRadius)
+        {
+        super(new PickableCylinder(cylinderRadius));
+        }
+        
+    public CylinderEdgePortrayal3D(float cylinderRadius, Appearance ap)
+        {
+        super(new PickableCylinder(cylinderRadius, ap));
+        }       
+
+
+    public CylinderEdgePortrayal3D(Color labelColor)
+        {
+        super(new PickableCylinder(), labelColor);
+        }
+
+    public CylinderEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
+        {
+        super(new PickableCylinder(edgeAppearance), labelColor);
+        }
+    }

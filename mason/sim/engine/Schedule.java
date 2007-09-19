@@ -113,10 +113,10 @@ public class Schedule implements java.io.Serializable
         will want it to be TRUE.  */
     public void setShuffling(boolean val)
         {
-	synchronized(lock)
-	    {
-	    shuffling = val;
-	    }
+        synchronized(lock)
+            {
+            shuffling = val;
+            }
         }
         
     /** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
@@ -124,9 +124,9 @@ public class Schedule implements java.io.Serializable
     public boolean isShuffling()
         {
         synchronized(lock)
-	    {
-	    return shuffling;
-	    }
+            {
+            return shuffling;
+            }
         }
         
     /** Creates a Schedule. */
@@ -170,10 +170,10 @@ public class Schedule implements java.io.Serializable
     void pushToAfterSimulation()
         {
         synchronized(lock)
-	    {
-	    time = AFTER_SIMULATION;
-	    queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
-	    }
+            {
+            time = AFTER_SIMULATION;
+            queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
+            }
         }
 
     /** Empties out the schedule and resets it to a pristine state BEFORE_SIMULATION, with steps = 0.  If you're
@@ -181,20 +181,20 @@ public class Schedule implements java.io.Serializable
     public void reset()
         {
         synchronized(lock)
-	    {
-	    time = BEFORE_SIMULATION;
-	    steps = 0;
-	    queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
-	    }
+            {
+            time = BEFORE_SIMULATION;
+            steps = 0;
+            queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
+            }
         }
     
     /** Returns true if the schedule has nothing left to do. */
     public boolean scheduleComplete()
         {
-	synchronized(lock)
-	    {
-	    return queue.isEmpty();
-	    }
+        synchronized(lock)
+            {
+            return queue.isEmpty();
+            }
         }
 
     Bag currentSteps = new Bag();
@@ -205,75 +205,75 @@ public class Schedule implements java.io.Serializable
         Returns FALSE if nothing was stepped -- the schedule is exhausted or time has run out. */
     public synchronized boolean step(final SimState state)
         {
-	if (inStep)  // check for reentrant calls and deny
-	    {
-	    throw new RuntimeException("Schedule.step() is not reentrant, yet is being called recursively.");
-	    }
-	    
-	inStep = true;
-	Bag currentSteps = this.currentSteps;  // a little faster
-	boolean shuffling = false; // to load this.shuffling into a local inside the lock
-	
-	int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
+        if (inStep)  // check for reentrant calls and deny
+            {
+            throw new RuntimeException("Schedule.step() is not reentrant, yet is being called recursively.");
+            }
+            
+        inStep = true;
+        Bag currentSteps = this.currentSteps;  // a little faster
+        boolean shuffling = false; // to load this.shuffling into a local inside the lock
+        
+        int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
 
-	// grab the events as quickly as possible
-	synchronized(lock)
-	    {
-	    if (time == AFTER_SIMULATION || queue.isEmpty())
-		{ time = AFTER_SIMULATION; inStep = false; return false; }  // bump the time for the queue.isEmpty() bit
-	    
-	    // now change the time
-	    time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
+        // grab the events as quickly as possible
+        synchronized(lock)
+            {
+            if (time == AFTER_SIMULATION || queue.isEmpty())
+                { time = AFTER_SIMULATION; inStep = false; return false; }  // bump the time for the queue.isEmpty() bit
+            
+            // now change the time
+            time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
 
 
-	    // grab all of the steppables in the right order.  To do this, we employ two Bags:
-	    // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
-	    // 2. Next we either shuffle or reverse the substeps.
-	    // 3. Next we add them all to the end of the currentSteps Bag
-	    // 4. Then we clear the substeps bag, but we don't let them GC yet
-	    // 5. Last, out of the while-loop, we clear the substeps bag "for real", allowing them to GC
-	    while(true)
-		{
-		// Suck out the contents of the next ordering
-		queue.extractMin(substeps);  // come out in reverse order
+            // grab all of the steppables in the right order.  To do this, we employ two Bags:
+            // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
+            // 2. Next we either shuffle or reverse the substeps.
+            // 3. Next we add them all to the end of the currentSteps Bag
+            // 4. Then we clear the substeps bag, but we don't let them GC yet
+            // 5. Last, out of the while-loop, we clear the substeps bag "for real", allowing them to GC
+            while(true)
+                {
+                // Suck out the contents of the next ordering
+                queue.extractMin(substeps);  // come out in reverse order
 
-		// shuffle
-		if (substeps.numObjs > 1) 
-		    {
-		    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
-		    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
-		    }
-		    
-		// dump
-		    if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;		
-		    currentSteps.addAll(substeps);
-		    substeps.numObjs = 0;  // temporarily clear
-		
-		// check next key and break if we don't need to go on
-		Key currentKey = (Key)(queue.getMinKey());
-		if (currentKey == null || currentKey.time != time) break;  // looks like no more substeps at this timestamp
-		}
-	    }
-	    
-	// now finally clear out the substeps for real
-	substeps.numObjs = topSubstep;
-	substeps.clear();  // clear for real so everything can GC
-			
-	// execute
-	int len = currentSteps.numObjs;
-	Object[] objs = currentSteps.objs;
-	for(int x=0;x<len;x++)  // if we're not being killed...
-	    {
-	    ((Steppable)(objs[x])).step(state);
-	    objs[x] = null;  // let gc even if being killed
-	    }
+                // shuffle
+                if (substeps.numObjs > 1) 
+                    {
+                    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
+                    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+                    }
+                    
+                // dump
+                if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;           
+                currentSteps.addAll(substeps);
+                substeps.numObjs = 0;  // temporarily clear
+                
+                // check next key and break if we don't need to go on
+                Key currentKey = (Key)(queue.getMinKey());
+                if (currentKey == null || currentKey.time != time) break;  // looks like no more substeps at this timestamp
+                }
+            }
+            
+        // now finally clear out the substeps for real
+        substeps.numObjs = topSubstep;
+        substeps.clear();  // clear for real so everything can GC
+                        
+        // execute
+        int len = currentSteps.numObjs;
+        Object[] objs = currentSteps.objs;
+        for(int x=0;x<len;x++)  // if we're not being killed...
+            {
+            ((Steppable)(objs[x])).step(state);
+            objs[x] = null;  // let gc even if being killed
+            }
 
-	// reuse currentSteps -- all objects should have been released to gc already, no need to call clear()
-	currentSteps.numObjs = 0;
-	    
-	synchronized(lock) { steps++; }
-	inStep = false;
-	return true;
+        // reuse currentSteps -- all objects should have been released to gc already, no need to call clear()
+        currentSteps.numObjs = 0;
+            
+        synchronized(lock) { steps++; }
+        inStep = false;
+        return true;
         }
         
     /** Schedules the event to occur at getTime() + 1.0, 0 ordering. If this is a valid time
@@ -282,10 +282,10 @@ public class Schedule implements java.io.Serializable
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnce(final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(/*must lock for:*/time +1.0,0),event);
-	    }
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(/*must lock for:*/time +1.0,0),event);
+            }
         }
         
     /** Schedules the event to occur at getTime() + 1.0, 0 ordering. If this is a valid time
@@ -294,10 +294,10 @@ public class Schedule implements java.io.Serializable
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnce(final Steppable event, final int ordering)
         {
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(/*must lock for:*/time +1.0,ordering),event);
-	    }
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(/*must lock for:*/time +1.0,ordering),event);
+            }
         }
 
     /** Schedules the event to occur at the provided time, 0 ordering.  If the getTime() == the provided
@@ -307,10 +307,10 @@ public class Schedule implements java.io.Serializable
     
     public boolean scheduleOnce(double time, final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(time,0),event);
-	    }
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(time,0),event);
+            }
         }
         
     /** Schedules the event to occur at the provided time, and in the ordering provided.  If the getTime() == the provided
@@ -320,20 +320,20 @@ public class Schedule implements java.io.Serializable
     */
     public boolean scheduleOnce(double time, final int ordering, final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(time,ordering),event);
-	    }
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(time,ordering),event);
+            }
         }
     
     /** Schedules an item. */
     public boolean scheduleOnce(Key key, final Steppable event)
-	{
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(key, event);
-	    }
-	}
+        {
+        synchronized(lock)
+            {
+            return _scheduleOnce(key, event);
+            }
+        }
 
     
     /** Schedules an item.  You must synchronize on this.lock before calling this method.   This allows us to avoid synchronizing twice,
@@ -342,7 +342,7 @@ public class Schedule implements java.io.Serializable
         {
         // locals are a teeny bit faster
         double time = 0;
-	time = this.time;
+        time = this.time;
         double t = key.time;
 
         // check to see if we're scheduling for the same exact time -- even if of different orderings, that doesn't matter
@@ -368,7 +368,7 @@ public class Schedule implements java.io.Serializable
                 throw new IllegalArgumentException("The provided Steppable is null");
             }
         
-	queue.add(event, key);
+        queue.add(event, key);
         return true;
         }
 
@@ -385,10 +385,10 @@ public class Schedule implements java.io.Serializable
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
     public Stoppable scheduleRepeating(final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(/*must lock for:*/time +1.0,0,event,1.0);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(/*must lock for:*/time +1.0,0,event,1.0);
+            }
         }
 
     /** Schedules the event to recur at the specified interval starting at getTime() + interval, and at 0 ordering.
@@ -406,10 +406,10 @@ public class Schedule implements java.io.Serializable
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
     public Stoppable scheduleRepeating(final Steppable event, final double interval)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(/*must lock for:*/time +interval,0,event,interval);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(/*must lock for:*/time +interval,0,event,interval);
+            }
         }
 
     /** Schedules the event to recur at the specified interval starting at getTime() + interval, and at the provided ordering.
@@ -427,10 +427,10 @@ public class Schedule implements java.io.Serializable
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
     public Stoppable scheduleRepeating(final Steppable event, final int ordering, final double interval)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(/*must lock for:*/time +interval,ordering,event,interval);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(/*must lock for:*/time +interval,ordering,event,interval);
+            }
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, and at 0 ordering.
@@ -448,10 +448,10 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(time,0,event,1.0);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(time,0,event,1.0);
+            }
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 
@@ -470,10 +470,10 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event, final double interval)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(time,0,event,interval);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(time,0,event,interval);
+            }
         }
 
     /** Schedules the event to recur at an interval of 1.0 starting at the provided time, 
@@ -491,10 +491,10 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event)
         {
-	synchronized(lock)
-	    {
-	    return scheduleRepeating(time,ordering,event,1.0);
-	    }
+        synchronized(lock)
+            {
+            return scheduleRepeating(time,ordering,event,1.0);
+            }
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 
@@ -513,46 +513,46 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
-	Schedule.Key k = new Schedule.Key(time,ordering);
-	Repeat r = new Repeat(event,interval,k);
+        Schedule.Key k = new Schedule.Key(time,ordering);
+        Repeat r = new Repeat(event,interval,k);
 
-	synchronized(lock)
-	    {
-	    if (_scheduleOnce(k,r)) return r; 
-	    else return null;
-	    }
+        synchronized(lock)
+            {
+            if (_scheduleOnce(k,r)) return r; 
+            else return null;
+            }
         }
 
     /** Timestamps stored as keys in the heap.  Comps are comparable by their time first, and their ordering second. */
     public static class Key implements Comparable, Serializable
-	{
-	double time;
-	int ordering;
-	    
-	public Key(double time, int ordering)
-	    {
-	    this.time = time;
-	    this.ordering = ordering;
-	    }
-		    
-	public int compareTo(Object obj)
-	    {
-	    Key o = (Key)obj;
-	    double time = this.time;
-	    double time2 = o.time;
-	    if (time == time2)  // the most common situation
-		{
-		int ordering = this.ordering;
-		int ordering2 = o.ordering;
-		if (ordering == ordering2) return 0;  // the most common situation
-		if (ordering < ordering2) return -1;
-		/* if (ordering > ordering2) */ return 1;
-		}
-	    // okay, so they're different times
-	    if (time < time2) return -1;
-	    /* if (time > time2) */ return 1;
-	    }
-	}
+        {
+        double time;
+        int ordering;
+            
+        public Key(double time, int ordering)
+            {
+            this.time = time;
+            this.ordering = ordering;
+            }
+                    
+        public int compareTo(Object obj)
+            {
+            Key o = (Key)obj;
+            double time = this.time;
+            double time2 = o.time;
+            if (time == time2)  // the most common situation
+                {
+                int ordering = this.ordering;
+                int ordering2 = o.ordering;
+                if (ordering == ordering2) return 0;  // the most common situation
+                if (ordering < ordering2) return -1;
+                /* if (ordering > ordering2) */ return 1;
+                }
+            // okay, so they're different times
+            if (time < time2) return -1;
+            /* if (time > time2) */ return 1;
+            }
+        }
     }
 
 
@@ -573,12 +573,12 @@ class Repeat implements Steppable, Stoppable
         
     public Repeat(final Steppable step, final double interval, final Schedule.Key key)
         {
-	if (interval < 0)
-	    throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-						   "\n\n...the interval provided ("+interval+") is less than zero");
-	else if (interval != interval)  /* NaN */
-	    throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-						   "\n\n...the interval provided ("+interval+") is NaN");
+        if (interval < 0)
+            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+                                               "\n\n...the interval provided ("+interval+") is less than zero");
+        else if (interval != interval)  /* NaN */
+            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+                                               "\n\n...the interval provided ("+interval+") is NaN");
 
         this.step = step;
         this.interval = interval;

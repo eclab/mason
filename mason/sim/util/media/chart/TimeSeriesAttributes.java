@@ -40,7 +40,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     /** Nine dash combinations that the user might find helpful. */
     static final float[][] dashes = 
         { 
-        { DASH, 0.0f }, // --------
+            { DASH, 0.0f }, // --------
             { DASH * 2, SKIP }, 
             { DASH, SKIP } , // -  -  -  
             { DASH, SPACE } , // - - - -
@@ -67,8 +67,8 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
     public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index)
-    	{ 
-    	super(generator, "" + series.getKey(), index); this.series = series;
+        { 
+        super(generator, "" + series.getKey(), index); this.series = series;
         }
 
     public void rebuildGraphicsDefinitions()
@@ -135,8 +135,8 @@ public class TimeSeriesAttributes extends SeriesAttributes
         final JComboBox list = new JComboBox();
         list.setEditable(false);
         list.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(
-                                                              new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
-                                                                             "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
+                                                                        new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
+                                                                                       "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
         list.setSelectedIndex(0);
         list.addActionListener(new ActionListener()
             {

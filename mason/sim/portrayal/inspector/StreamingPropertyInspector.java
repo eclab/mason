@@ -176,7 +176,7 @@ public class StreamingPropertyInspector extends PropertyInspector
         {
         double time = simulation.state.schedule.time();
         if (time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION &&
-			lastTime <= time - interval)
+            lastTime <= time - interval)
             {
             lastTime = time;
             switch(streamingTo)

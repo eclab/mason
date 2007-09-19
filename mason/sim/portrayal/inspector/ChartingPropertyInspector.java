@@ -81,21 +81,21 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
      * If the <code>generator</code> is not valid for this inspector, an exception is thrown.
      */
     public ChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
-	    {
-    	//the parent is ignored in PropertyInspector anyway, so I just sent a null
-	    super(properties,index,null,simulation);
-	    if(generator!=null)
-	    {
-	    	if(!validChartGenerator(generator))
-	    		throw new RuntimeException("Invalid generator: "+generator);
-	    	this.generator = generator;
-	    }
-	    else
-	    	this.generator = createNewChart(simulation);
+        {
+        //the parent is ignored in PropertyInspector anyway, so I just sent a null
+        super(properties,index,null,simulation);
+        if(generator!=null)
+            {
+            if(!validChartGenerator(generator))
+                throw new RuntimeException("Invalid generator: "+generator);
+            this.generator = generator;
+            }
+        else
+            this.generator = createNewChart(simulation);
 
-	    globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
-	    validInspector = (this.generator!=null);//this should always be true.
-	    }
+        globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
+        validInspector = (this.generator!=null);//this should always be true.
+        }
     
     /** Used to find the global attributes that another inspector has set so I can share it. */
     GlobalAttributes findGlobalAttributes()
@@ -305,12 +305,12 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
         if (time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION &&
-			 (lastTime < time || !updatedOnceAlready))  // bug fix 
+            (lastTime < time || !updatedOnceAlready))  // bug fix 
             {              
             updatedOnceAlready = true;
             updateSeries(time, lastTime);
             lastTime = time;
-		
+                
             // now determine when to update
             switch(globalAttributes.redraw) 
                 {

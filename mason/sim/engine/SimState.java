@@ -90,7 +90,7 @@ public class SimState implements java.io.Serializable
     /** A Steppable on the schedule can call this method to cancel the simulation.
         All existing AsynchronousSteppables are stopped, and then the schedule is
         reset.  AsynchronousSteppables, ParallelSteppables, 
-	and non-main threads should not call this method directly -- it will deadlock.
+        and non-main threads should not call this method directly -- it will deadlock.
         Instead, they may kill the simulation by scheduling a Steppable
         for the next timestep which calls state.kill(). */
     public void kill()
@@ -510,7 +510,7 @@ public class SimState implements java.io.Serializable
             long steps = 0;
             long clock;
             long oldClock = System.currentTimeMillis();
-	    Schedule schedule = state.schedule;
+            Schedule schedule = state.schedule;
             long firstSteps = schedule.getSteps();
             
             while((_for == -1 || steps < _for) && schedule.time() <= until)

@@ -331,6 +331,6 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
                     return true;
                     }
                 }
-		return false;
+        return false;
         }
     }

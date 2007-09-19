@@ -226,10 +226,10 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     /** Removes the double at the given index, moving the topmost double into its position. */
     public double remove(final int index)
         {
-	int _numObjs = numObjs;
+        int _numObjs = numObjs;
         if (index>=_numObjs) // || index < 0)
             throwIndexOutOfBoundsException(index);
-	double[] _objs = this.objs;
+        double[] _objs = this.objs;
         double ret = _objs[index];
         _objs[index] = _objs[_numObjs-1];
         numObjs--;

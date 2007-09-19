@@ -92,43 +92,43 @@ public class TimeSeriesChartGenerator extends ChartGenerator
                 
     public void moveSeries(int index, boolean up)
         {
-	java.util.List allSeries = dataset.getSeries();
-	int count = allSeries.size();
-	
-	if ((index > 0 && up) || (index < count-1 && !up))  // it's not the first or the last given the move
-	    {
-	    // this requires removing everything from the dataset and resinserting, duh
-	    ArrayList items = new ArrayList(allSeries);
-	    dataset.removeAllSeries();
-	    
-	    int delta = up? -1:1;
-	    // now rearrange
-	    items.add(index + delta, items.remove(index));
-	    
-	    // rebuild the dataset
-	    for(int i = 0; i < count; i++)
-		dataset.addSeries(((XYSeries)(items.get(i))));
-		    
-	    
-	    // adjust the seriesAttributes' indices 	    
-	    Component[] c = seriesAttributes.getComponents();
-	    SeriesAttributes csa;
-	    (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
-		csa.rebuildGraphicsDefinitions();
-		(csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
-		csa.rebuildGraphicsDefinitions();
-		
-	    seriesAttributes.remove(index+delta);
-		//seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
-	    seriesAttributes.add(csa, index);
+        java.util.List allSeries = dataset.getSeries();
+        int count = allSeries.size();
+        
+        if ((index > 0 && up) || (index < count-1 && !up))  // it's not the first or the last given the move
+            {
+            // this requires removing everything from the dataset and resinserting, duh
+            ArrayList items = new ArrayList(allSeries);
+            dataset.removeAllSeries();
+            
+            int delta = up? -1:1;
+            // now rearrange
+            items.add(index + delta, items.remove(index));
+            
+            // rebuild the dataset
+            for(int i = 0; i < count; i++)
+                dataset.addSeries(((XYSeries)(items.get(i))));
+                    
+            
+            // adjust the seriesAttributes' indices         
+            Component[] c = seriesAttributes.getComponents();
+            SeriesAttributes csa;
+            (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
+            csa.rebuildGraphicsDefinitions();
+            (csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
+            csa.rebuildGraphicsDefinitions();
+                
+            seriesAttributes.remove(index+delta);
+            //seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
+            seriesAttributes.add(csa, index);
 
-	    revalidate();
-	    
-	    // adjust the stoppables, too
-		stoppables.add(index+delta, stoppables.remove(index));
-	    }
+            revalidate();
+            
+            // adjust the stoppables, too
+            stoppables.add(index+delta, stoppables.remove(index));
+            }
 
-	}
+        }
 
     protected void buildChart()
         {

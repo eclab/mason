@@ -71,11 +71,11 @@ public abstract class SeriesAttributes extends LabelledList
                 
                 
     protected XYItemRenderer getRenderer()
-    {
-    	return getPlot().getRenderer();
-    }
-	
-	public static final ImageIcon I_DOWN = iconFor("DownArrow.png");
+        {
+        return getPlot().getRenderer();
+        }
+        
+    public static final ImageIcon I_DOWN = iconFor("DownArrow.png");
     public static final ImageIcon I_DOWN_PRESSED = iconFor("DownArrowPressed.png");
     public static final ImageIcon I_CLOSE = iconFor("CloseBox.png");
     public static final ImageIcon I_CLOSE_PRESSED = iconFor("CloseBoxPressed.png");
@@ -86,67 +86,67 @@ public abstract class SeriesAttributes extends LabelledList
         {
         return new ImageIcon(SeriesAttributes.class.getResource(name));
         }
-    	
-	public Box manipulators;
-	
-	public void setManipulatorsVisible(boolean visible)
-		{
-		manipulators.setVisible(visible);
-		}
-	
-	public void buildManipulators()
-		{
-		JButton removeButton = new JButton(I_CLOSE);
-		removeButton.setPressedIcon(I_CLOSE_PRESSED);
-		removeButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
-		removeButton.setBorderPainted(false);
-		removeButton.setContentAreaFilled(false);
-		removeButton.addActionListener(new ActionListener()
-			{
-			public void actionPerformed ( ActionEvent e )
-				{
-				if (JOptionPane.showOptionDialog(
-						null,"Remove the Series " + getSeriesName() + "?","Confirm",
-						JOptionPane.YES_NO_OPTION,
-						JOptionPane.QUESTION_MESSAGE,null,
-						new Object[] { "Remove", "Cancel" },
-						null) == 0)  // remove
-					getGenerator().removeSeries(getSeriesIndex());
-				}
-			});
-	
-		JButton upButton = new JButton(I_UP);
-		upButton.setPressedIcon(I_UP_PRESSED);
-		upButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
-		upButton.setBorderPainted(false);
-		upButton.setContentAreaFilled(false);
-		upButton.addActionListener(new ActionListener()
-			{
-			public void actionPerformed ( ActionEvent e )
-				{
-		getGenerator().moveSeries(getSeriesIndex(), true);
-				}
-			});
-	
-		JButton downButton = new JButton(I_DOWN);
-		downButton.setPressedIcon(I_DOWN_PRESSED);
-		downButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
-		downButton.setBorderPainted(false);
-		downButton.setContentAreaFilled(false);
-		downButton.addActionListener(new ActionListener()
-			{
-			public void actionPerformed ( ActionEvent e )
-				{
-		getGenerator().moveSeries(getSeriesIndex(), false);
-				}
-			});
-	
+        
+    public Box manipulators;
+        
+    public void setManipulatorsVisible(boolean visible)
+        {
+        manipulators.setVisible(visible);
+        }
+        
+    public void buildManipulators()
+        {
+        JButton removeButton = new JButton(I_CLOSE);
+        removeButton.setPressedIcon(I_CLOSE_PRESSED);
+        removeButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+        removeButton.setBorderPainted(false);
+        removeButton.setContentAreaFilled(false);
+        removeButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+                if (JOptionPane.showOptionDialog(
+                        null,"Remove the Series " + getSeriesName() + "?","Confirm",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,null,
+                        new Object[] { "Remove", "Cancel" },
+                        null) == 0)  // remove
+                    getGenerator().removeSeries(getSeriesIndex());
+                }
+            });
+        
+        JButton upButton = new JButton(I_UP);
+        upButton.setPressedIcon(I_UP_PRESSED);
+        upButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+        upButton.setBorderPainted(false);
+        upButton.setContentAreaFilled(false);
+        upButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+                getGenerator().moveSeries(getSeriesIndex(), true);
+                }
+            });
+        
+        JButton downButton = new JButton(I_DOWN);
+        downButton.setPressedIcon(I_DOWN_PRESSED);
+        downButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
+        downButton.setBorderPainted(false);
+        downButton.setContentAreaFilled(false);
+        downButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+                getGenerator().moveSeries(getSeriesIndex(), false);
+                }
+            });
+        
         manipulators.add(removeButton);
-		manipulators.add(upButton);
-		manipulators.add(downButton);
-		}
-	
-	
+        manipulators.add(upButton);
+        manipulators.add(downButton);
+        }
+        
+        
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()
         to update the series. */
@@ -162,19 +162,19 @@ public abstract class SeriesAttributes extends LabelledList
             public void actionPerformed(ActionEvent e)
                 {
                 getRenderer().setSeriesVisible(getSeriesIndex(),
-                                                         new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
+                                               new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
                 }
             });
 
         manipulators = new Box(BoxLayout.X_AXIS);
-		buildManipulators();
-		JLabel spacer = new JLabel("");
-		spacer.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-		Box b = new Box(BoxLayout.X_AXIS);
-		b.add(check);
-		b.add(spacer);
-		b.add(manipulators);
-		b.add(Box.createGlue());
+        buildManipulators();
+        JLabel spacer = new JLabel("");
+        spacer.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+        Box b = new Box(BoxLayout.X_AXIS);
+        b.add(check);
+        b.add(spacer);
+        b.add(manipulators);
+        b.add(Box.createGlue());
         addLabelled("Show", b);
 
         final JTextField nameF = new JTextField(name);

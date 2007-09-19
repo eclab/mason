@@ -47,9 +47,9 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
         {
         return new Class[]
                 {
-                new byte[0].getClass(), new short[0].getClass(), new int[0].getClass(), new long[0].getClass(),
-                new float[0].getClass(), new double[0].getClass(), new boolean[0].getClass(), new Valuable[0].getClass(),
-                new Number[0].getClass(), IntBag.class, DoubleBag.class
+                    new byte[0].getClass(), new short[0].getClass(), new int[0].getClass(), new long[0].getClass(),
+                    new float[0].getClass(), new double[0].getClass(), new boolean[0].getClass(), new Valuable[0].getClass(),
+                    new Number[0].getClass(), IntBag.class, DoubleBag.class
                 };
         }
 
@@ -60,15 +60,15 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
         }
     
     public HistogramChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
-	    {
-	    super(properties, index, simulation, generator);
-	    setSeriesAttributes();
-	    }
+        {
+        super(properties, index, simulation, generator);
+        setSeriesAttributes();
+        }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
     private void setSeriesAttributes()
-    	{
-    	if (validInspector)
+        {
+        if (validInspector)
             {
             // add our series
             seriesAttributes = ((HistogramGenerator)generator).addSeries(previousValues, DEFAULT_BINS, properties.getName(index), 

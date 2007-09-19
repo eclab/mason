@@ -22,11 +22,11 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
     
     public static final Shape[] shapes = new Shape[]
     {
-    new Ellipse2D.Double(0,0,100,100),
-    AffineTransform.getRotateInstance(35*/*Strict*/Math.PI/180).createTransformedShape(
-        new RoundRectangle2D.Double(0,0,100,100,15,15)),
-    new Font("Serif", 0, 128).createGlyphVector(new FontRenderContext(
-                                                    new AffineTransform(),false,true),"MAV").getOutline()
+        new Ellipse2D.Double(0,0,100,100),
+        AffineTransform.getRotateInstance(35*/*Strict*/Math.PI/180).createTransformedShape(
+            new RoundRectangle2D.Double(0,0,100,100,15,15)),
+        new Font("Serif", 0, 128).createGlyphVector(new FontRenderContext(
+                                                        new AffineTransform(),false,true),"MAV").getOutline()
     };
     
     // the location of the object's origin.
@@ -81,7 +81,7 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
         Shape s = transform.createTransformedShape(shape);
                 
         return (s.intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height));
-		}
+        }
         
     // because we're using Areas, and for some bizarre reason Area isn't serializable,
     // if WE want to be serializable or externalizable we need to handle our own read

@@ -88,10 +88,10 @@ public class ToolTipBehavior extends PickMouseBehavior
         {
         myWakeupCondition = new WakeupOr(new WakeupCriterion[] 
             {
-            new WakeupOnAWTEvent(MouseEvent.MOUSE_MOVED),
-            new WakeupOnAWTEvent(MouseEvent.MOUSE_PRESSED),
-            new WakeupOnAWTEvent(MouseEvent.MOUSE_ENTERED),
-            new WakeupOnAWTEvent(MouseEvent.MOUSE_EXITED)
+                new WakeupOnAWTEvent(MouseEvent.MOUSE_MOVED),
+                new WakeupOnAWTEvent(MouseEvent.MOUSE_PRESSED),
+                new WakeupOnAWTEvent(MouseEvent.MOUSE_ENTERED),
+                new WakeupOnAWTEvent(MouseEvent.MOUSE_EXITED)
             });
         //the first two are standard (that's what wakeupCondition uses)
         //I also need mouse_exitsx [and maybe entered], so here we go.

@@ -28,9 +28,9 @@ public class Tutorial1 extends SimState
     // X XX
     public static final int[][] b_heptomino = new int[][]
     {{0, 1, 1},
-         {1, 1, 0},
-         {0, 1, 1},
-         {0, 0, 1}};
+     {1, 1, 0},
+     {0, 1, 1},
+     {0, 0, 1}};
     
     void seedGrid()
         {

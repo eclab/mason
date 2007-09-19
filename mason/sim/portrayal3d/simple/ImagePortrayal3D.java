@@ -58,10 +58,10 @@ public class ImagePortrayal3D extends SimplePortrayal3D
         // build the vertices using these measurements
         float[] vertices = new float[]
             {
-            width/2, -height/2, 0f,
-            width/2,  height/2,  0f,
-            -width/2,  height/2,  0f,
-            -width/2, -height/2,  0f,
+                width/2, -height/2, 0f,
+                width/2,  height/2,  0f,
+                -width/2,  height/2,  0f,
+                -width/2, -height/2,  0f,
             };
         
         // create an array out of the four vertices

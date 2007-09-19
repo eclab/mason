@@ -35,47 +35,47 @@ public abstract class AbstractGrid2D implements Grid2D
     
     public final int getHeight() { return height; }
     
-	/*
-    public final int tx(final int x) 
-        { 
-        final int width = this.width; 
-        if (x >= 0) return (x % width); 
-        final int width2 = (x % width) + height;
-        if (width2 < width) return width2;
-        return 0;
-        }
-	*/
+    /*
+      public final int tx(final int x) 
+      { 
+      final int width = this.width; 
+      if (x >= 0) return (x % width); 
+      final int width2 = (x % width) + height;
+      if (width2 < width) return width2;
+      return 0;
+      }
+    */
 
-	// slight revision for more efficiency
+    // slight revision for more efficiency
     public final int tx(int x) 
         { 
-		final int width = this.width;
-		if (x >= 0 && x < width) return x;  // do clearest case first
-		x = x % width;
-		if (x < 0) x = x + width;
-		return x;
-		}
-	
-	/*
-    public final int ty(final int y) 
-        { 
-        final int height = this.height; 
-        if (y >= 0) return (y % height); 
-        final int height2 = (y % height) + height;
-        if (height2 < height) return height2;
-        return 0;
+        final int width = this.width;
+        if (x >= 0 && x < width) return x;  // do clearest case first
+        x = x % width;
+        if (x < 0) x = x + width;
+        return x;
         }
-	*/
-	
-	// slight revision for more efficiency
+        
+    /*
+      public final int ty(final int y) 
+      { 
+      final int height = this.height; 
+      if (y >= 0) return (y % height); 
+      final int height2 = (y % height) + height;
+      if (height2 < height) return height2;
+      return 0;
+      }
+    */
+        
+    // slight revision for more efficiency
     public final int ty(int y) 
         { 
-		final int height = this.height;
-		if (y >= 0 && y < height) return y;  // do clearest case first
-		y = y % height;
-		if (y < 0) y = y + height;
-		return y;
-		}
+        final int height = this.height;
+        if (y >= 0 && y < height) return y;  // do clearest case first
+        y = y % height;
+        if (y < 0) y = y + height;
+        return y;
+        }
         
     public final int stx(final int x) 
         { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }

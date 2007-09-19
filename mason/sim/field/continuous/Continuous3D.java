@@ -145,71 +145,71 @@ public /*strictfp*/ class Continuous3D extends SparseField
 
 
     /** Toroidal x */
-	// slight revision for more efficiency
-	public final double tx(double x) 
+    // slight revision for more efficiency
+    public final double tx(double x) 
         { 
-		final double width = this.width;
-		if (x >= 0 && x < width) return x;  // do clearest case first
-		x = x % width;
-		if (x < 0) x = x + width;
-		return x;
-		}
-	
+        final double width = this.width;
+        if (x >= 0 && x < width) return x;  // do clearest case first
+        x = x % width;
+        if (x < 0) x = x + width;
+        return x;
+        }
+        
     /** Toroidal y */
-	// slight revision for more efficiency
+    // slight revision for more efficiency
     public final double ty(double y) 
         { 
-		final double height = this.height;
-		if (y >= 0 && y < height) return y;  // do clearest case first
-		y = y % height;
-		if (y < 0) y = y + height;
-		return y;
-		}
+        final double height = this.height;
+        if (y >= 0 && y < height) return y;  // do clearest case first
+        y = y % height;
+        if (y < 0) y = y + height;
+        return y;
+        }
 
     /** Toroidal z */
-	// slight revision for more efficiency
+    // slight revision for more efficiency
     public final double tz(double z) 
         { 
-		final double length = this.length;
-		if (z >= 0 && z < length) return z;  // do clearest case first
-		z = z % length;
-		if (z < 0) z = z + length;
-		return z;
-		}
+        final double length = this.length;
+        if (z >= 0 && z < length) return z;  // do clearest case first
+        z = z % length;
+        if (z < 0) z = z + length;
+        return z;
+        }
 
     /*
-    public final double tx(final double x) 
-        { 
-        final double width = this.width; 
-        if (x >= 0) return (x % width); 
-        final double width2 = (x % width) + width; 
-        if (width2 < width) return width2;
-        return 0;
-        }
-	*/
-	
+      public final double tx(final double x) 
+      { 
+      final double width = this.width; 
+      if (x >= 0) return (x % width); 
+      final double width2 = (x % width) + width; 
+      if (width2 < width) return width2;
+      return 0;
+      }
+    */
+        
     /*
-    public final double ty(final double y) 
-        { 
-        final double height = this.height; 
-        if (y >= 0) return (y % height); 
-        final double height2 = (y % height) + height;
-        if (height2 < height) return height2;
-        return 0;
-        }
-	*/
-	
+      public final double ty(final double y) 
+      { 
+      final double height = this.height; 
+      if (y >= 0) return (y % height); 
+      final double height2 = (y % height) + height;
+      if (height2 < height) return height2;
+      return 0;
+      }
+    */
+        
     /*
-    public final double tz(final double z) 
-        { 
-        final double length = this.length; 
-        if (z >= 0) return (z % length); 
-        final double length2 = (z % length) + length;
-        if (length2 < length) return length2;
-        return 0;
-        }
-	*/
-	
+      public final double tz(final double z) 
+      { 
+      final double length = this.length; 
+      if (z >= 0) return (z % length); 
+      final double length2 = (z % length) + length;
+      if (length2 < length) return length2;
+      return 0;
+      }
+    */
+        
     /** Simple [and fast] toroidal x.  Use this if the values you'd pass in never stray
         beyond (-width ... width * 2) not inclusive.  It's a bit faster than the full
         toroidal computation as it uses if statements rather than two modulos.

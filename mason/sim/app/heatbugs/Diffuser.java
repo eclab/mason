@@ -27,12 +27,55 @@ public /*strictfp*/ class Diffuser implements Steppable
         // Let's go through some variations of the diffusion portion (dumping the
         // evaporated, diffused stuff into heatbugs.valgrid2), starting with the
         // simplest and slowest, and moving to the fastest variations.
+
+        // We begin with the naive way to do it: double-loop through each of the
+        // grid values.  For each grid value, gather the eight neighbor positions
+        // around that grid value, and compute the average of them.  Note that the
+        // getNeighborsMaxDistance function is set to include toroidal boundaries as well.
+        // Then set (in the new grid 'valgrid2') the new value to include some evaporation,
+        // plus some of this diffused average.
                 
-        // We begin with the obvious way to do it: double-loop through each of the
-        // grid values, and for each grid value, double-loop through its neighbors
-        // to gather diffusion information, then dump into the new cell.  We have
-        // to handle toroidal boundaries as well:
-        
+        //         double average;
+        //         sim.util.IntBag xNeighbors = new sim.util.IntBag(9);
+        //         sim.util.IntBag yNeighbors = new sim.util.IntBag(9);
+                
+        //         for(int x=0;x< heatbugs.valgrid.getWidth();x++)
+        //             for(int y=0;y< heatbugs.valgrid.getHeight();y++)
+        //                 {
+        //                 average = 0.0;
+        //                 // get all the neighbors
+        //                 getNeighborsMaxDistance(x,y,1,true,xNeighbors,yNeighbors);
+                
+        //                 // for each neighbor...
+        //                 for(int i = 0 ; i < xNeighbors.numObjs; i++)
+        //                         {
+        //                         // compute average
+        //                         average += heatbugs.valgrid.get(xNeighbors.get(i), yNeighbors.get(i));
+        //                         }
+        //                 average /= 9.0;
+                
+        //                 // load the new value into HeatBugs.this.valgrid2
+        //                 heatbugs.valgrid2.set(x,y, heatbugs.evaporationRate * 
+        //                     (heatbugs.valgrid.get(x,y) + heatbugs.diffusionRate * 
+        //                      (average - heatbugs.valgrid.get(x,y))));
+        //                 }
+
+
+        // ----------------------------------------------------------------------
+        // It turns out that this is quite slow for a variety of reasons.  First, 
+        // the getNeighborsMaxDistance loads and stores integers into a large array, 
+        // then clears them out, all so we can just do some simple computation with 
+        // them.  Since we already know exactly what locations we want to grab, why 
+        // are we asking the system to do it for us?  We can do it much faster by 
+        // doing a double for-loop over the nine locations directly.  To handle 
+        // toroidal stuff, we use the tx() and ty() functions which perform 
+        // wrap-around computations for us automagically.
+                
+        // Second, we're using get() and set() functions on grids.  This is fine -- 
+        // it's not too slow -- but it's a bit faster to just access the underlying 
+        // arrays directly, which is acceptable in MASON.  So combining these two, 
+        // we'll get a somewhat faster, and slightly less naive, approach:
+                
         //         double average;
                 
         //         for(int x=0;x< heatbugs.valgrid.getWidth();x++)

@@ -41,9 +41,9 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         {
         return new Class[]
                 {
-                Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
-                Integer.TYPE, Long.TYPE, Float.TYPE,
-                Double.TYPE, Valuable.class
+                    Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
+                    Integer.TYPE, Long.TYPE, Float.TYPE,
+                    Double.TYPE, Valuable.class
                 };
         }
 
@@ -54,14 +54,14 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         }
     
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
-	    {
-	    super(properties, index, simulation, generator);
-	    setSeriesAttributes();
-	    }
+        {
+        super(properties, index, simulation, generator);
+        setSeriesAttributes();
+        }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
     private void setSeriesAttributes()
-       	{            
+        {            
         if (validInspector)
             {
             chartSeries = new XYSeries( properties.getName(index), false );
@@ -105,7 +105,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     protected void updateSeries(double time, double lastTime)
         {
         double d = 0;
-		
+                
         // FIRST, load the aggregate series with the items
         aggregateSeries.add(time, d = valueFor(properties.getValue(index)), false);
         int len = aggregateSeries.getItemCount();

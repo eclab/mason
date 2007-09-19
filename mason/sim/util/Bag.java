@@ -283,11 +283,11 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         return ret;
         }
     
-	/** Removes the object, moving the topmost object into its position. */
+    /** Removes the object, moving the topmost object into its position. */
     public boolean remove(final Object o)
         {
-	int numObjs = this.numObjs;
-	Object[] objs = this.objs;
+        int numObjs = this.numObjs;
+        Object[] objs = this.objs;
         for(int x=0;x<numObjs;x++)
             if (o==null ?  objs[x]==null :  o==objs[x] || o.equals(objs[x])) 
                 {
@@ -300,8 +300,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
     /** Removes multiple instantiations of an object */
     public boolean removeMultiply(final Object o)
         {
-		int numObjs = this.numObjs;
-		Object[] objs = this.objs;
+        int numObjs = this.numObjs;
+        Object[] objs = this.objs;
         boolean flag = false;
         for(int x=0;x<numObjs;x++)
             if (o==null ?  objs[x]==null :  o==objs[x] || o.equals(objs[x])) 
@@ -316,10 +316,10 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
     /** Removes the object at the given index, moving the topmost object into its position. */
     public Object remove(final int index)
         {
-	int _numObjs = numObjs;
+        int _numObjs = numObjs;
         if (index >= _numObjs) // || index < 0)
             throwIndexOutOfBoundsException(index);
-	Object[] _objs = this.objs;
+        Object[] _objs = this.objs;
         Object ret = _objs[index];
         _objs[index] = _objs[_numObjs-1];
         _objs[_numObjs-1] = null;  // let GC
@@ -334,13 +334,13 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
                         
     public void clear()
         {
-	// local variables are faster
-	int len = numObjs;
-	Object[] o = objs;
-	
-	for(int i = 0; i < len; i++)
-	    o[i] = null;  // let GC
-		
+        // local variables are faster
+        int len = numObjs;
+        Object[] o = objs;
+        
+        for(int i = 0; i < len; i++)
+            o[i] = null;  // let GC
+                
         numObjs = 0;
         }
         

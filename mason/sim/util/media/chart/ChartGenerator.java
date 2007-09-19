@@ -66,10 +66,10 @@ public abstract class ChartGenerator extends JPanel
     /** A holder for series attributes components */
     protected Box seriesAttributes = Box.createVerticalBox();
     public SeriesAttributes getSeriesAttributes(int seriesIndex)
-    {
+        {
         Component[] c = seriesAttributes.getComponents();
         return (SeriesAttributes)c[seriesIndex];
-    }
+        }
     
     /** The chart */
     protected JFreeChart chart;
@@ -275,18 +275,18 @@ public abstract class ChartGenerator extends JPanel
         
         xLog = new JCheckBox();
         xLog.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent e)
-        	{
-        		if(xLog.isSelected())
-        		{
-        			LogarithmicAxis logAxis = new LogarithmicAxis(xLabel.getText());
-        			logAxis.setStrictValuesFlag(false);
-        			chart.getXYPlot().setDomainAxis(logAxis);
-        		}
-        		else
-        			chart.getXYPlot().setDomainAxis(new NumberAxis(xLabel.getText()));
-        	}
-        });
+            public void stateChanged(ChangeEvent e)
+                {
+                if(xLog.isSelected())
+                    {
+                    LogarithmicAxis logAxis = new LogarithmicAxis(xLabel.getText());
+                    logAxis.setStrictValuesFlag(false);
+                    chart.getXYPlot().setDomainAxis(logAxis);
+                    }
+                else
+                    chart.getXYPlot().setDomainAxis(new NumberAxis(xLabel.getText()));
+                }
+            });
         list.add(new JLabel("Logarithmic X axis"), xLog);
         
 
@@ -319,18 +319,18 @@ public abstract class ChartGenerator extends JPanel
         
         yLog = new JCheckBox();
         yLog.addChangeListener(new ChangeListener(){
-        	public void stateChanged(ChangeEvent e)
-        	{
-        		if(yLog.isSelected())
-        		{
-        			LogarithmicAxis logAxis = new LogarithmicAxis(yLabel.getText());
-        			logAxis.setStrictValuesFlag(false);
-        			chart.getXYPlot().setRangeAxis(logAxis);
-        		}
-        		else
-        			chart.getXYPlot().setRangeAxis(new NumberAxis(yLabel.getText()));
-        	}
-        });
+            public void stateChanged(ChangeEvent e)
+                {
+                if(yLog.isSelected())
+                    {
+                    LogarithmicAxis logAxis = new LogarithmicAxis(yLabel.getText());
+                    logAxis.setStrictValuesFlag(false);
+                    chart.getXYPlot().setRangeAxis(logAxis);
+                    }
+                else
+                    chart.getXYPlot().setRangeAxis(new NumberAxis(yLabel.getText()));
+                }
+            });
         list.add(new JLabel("Logarithmic Y axis"), yLog);
 
         final JCheckBox legendCheck = new JCheckBox();

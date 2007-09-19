@@ -36,26 +36,26 @@ public /*strictfp*/ class ThreadedHexaDiffuser implements Steppable
         this.diffusionRate = diffusionRate;
         diffusers = new ParallelSequence(new Steppable[]
             {
-            new Steppable ()
-                { 
-                public void step(SimState state) 
+                new Steppable ()
+                    { 
+                    public void step(SimState state) 
+                        {
+                        // diffuse top half of field
+                        HexaBugs hexabugs = (HexaBugs)state;
+                        int _gridWidth = hexabugs.valgrid.getWidth();  // read-only, so threadsafe with other one
+                        diffuse(hexabugs, 0, _gridWidth/2);
+                        }
+                    },
+                new Steppable ()
                     {
-                    // diffuse top half of field
-                    HexaBugs hexabugs = (HexaBugs)state;
-                    int _gridWidth = hexabugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                    diffuse(hexabugs, 0, _gridWidth/2);
+                    public void step(SimState state) 
+                        {
+                        // diffuse bottom half of field
+                        HexaBugs hexabugs = (HexaBugs)state;
+                        int _gridWidth = hexabugs.valgrid.getWidth();  // read-only, so threadsafe with other one
+                        diffuse(hexabugs, _gridWidth/2, _gridWidth);
+                        }
                     }
-                },
-            new Steppable ()
-                {
-                public void step(SimState state) 
-                    {
-                    // diffuse bottom half of field
-                    HexaBugs hexabugs = (HexaBugs)state;
-                    int _gridWidth = hexabugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                    diffuse(hexabugs, _gridWidth/2, _gridWidth);
-                    }
-                }
             });
         }
         

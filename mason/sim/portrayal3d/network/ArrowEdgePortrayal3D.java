@@ -19,70 +19,70 @@ import sim.portrayal3d.simple.*;
  *
  */
 public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
-{
-	static class PickableArrow extends Arrow
-	{
-		public PickableArrow(){this(1f);}
-		public PickableArrow(Appearance ap){this(1f,ap);}
-		public PickableArrow(float radius)
-		{
-			this(radius, null);
-		}
-		
-		public PickableArrow(float arrowTailRadius, Appearance appearance)
-		{
-			super(arrowTailRadius, 
-				  new Vector3f(0f,-1f,0f),
-				  new Vector3f(0f,1f,0f),
-				  null, null, appearance);
-		}
+    {
+    static class PickableArrow extends Arrow
+        {
+        public PickableArrow(){this(1f);}
+        public PickableArrow(Appearance ap){this(1f,ap);}
+        public PickableArrow(float radius)
+            {
+            this(radius, null);
+            }
+                
+        public PickableArrow(float arrowTailRadius, Appearance appearance)
+            {
+            super(arrowTailRadius, 
+                  new Vector3f(0f,-1f,0f),
+                  new Vector3f(0f,1f,0f),
+                  null, null, appearance);
+            }
 
-		public void setUserData(java.lang.Object userData)
-		{
-			super.setUserData(userData);
-			setup(arrowHead.getShape(Cylinder.BODY), userData);
-			setup(arrowHead.getShape(Cylinder.TOP), userData);
-			
-			setup(arrowTail.getShape(Cylinder.TOP), userData);
-			setup(arrowTail.getShape(Cylinder.BOTTOM), userData);
-			setup(arrowTail.getShape(Cylinder.BODY), userData);
-		}
-		
-		private void setup(Shape3D shape,java.lang.Object userData)
-		{
-			shape.setUserData(userData);
-			setPickableFlags(shape);
-		}
-		
-	}
+        public void setUserData(java.lang.Object userData)
+            {
+            super.setUserData(userData);
+            setup(arrowHead.getShape(Cylinder.BODY), userData);
+            setup(arrowHead.getShape(Cylinder.TOP), userData);
+                        
+            setup(arrowTail.getShape(Cylinder.TOP), userData);
+            setup(arrowTail.getShape(Cylinder.BOTTOM), userData);
+            setup(arrowTail.getShape(Cylinder.BODY), userData);
+            }
+                
+        private void setup(Shape3D shape,java.lang.Object userData)
+            {
+            shape.setUserData(userData);
+            setPickableFlags(shape);
+            }
+                
+        }
 
-	public ArrowEdgePortrayal3D()
-	{
-		super(new PickableArrow());
-	}
-	
-	public ArrowEdgePortrayal3D(float radius)
-	{
-		super(new PickableArrow(radius));
-	}
-	
-	public ArrowEdgePortrayal3D(float radius, Appearance ap)
-	{
-		super(new PickableArrow(radius, ap));
-	}	
-
-
-	public ArrowEdgePortrayal3D(Color labelColor)
-	{
-		super(new PickableArrow(), labelColor);
-	}
-
-	public ArrowEdgePortrayal3D(
-		Appearance edgeAppearance,
-		Color labelColor)
-	{
-		super(new PickableArrow(edgeAppearance), labelColor);
-	}
+    public ArrowEdgePortrayal3D()
+        {
+        super(new PickableArrow());
+        }
+        
+    public ArrowEdgePortrayal3D(float radius)
+        {
+        super(new PickableArrow(radius));
+        }
+        
+    public ArrowEdgePortrayal3D(float radius, Appearance ap)
+        {
+        super(new PickableArrow(radius, ap));
+        }       
 
 
-}
+    public ArrowEdgePortrayal3D(Color labelColor)
+        {
+        super(new PickableArrow(), labelColor);
+        }
+
+    public ArrowEdgePortrayal3D(
+        Appearance edgeAppearance,
+        Color labelColor)
+        {
+        super(new PickableArrow(edgeAppearance), labelColor);
+        }
+
+
+    }

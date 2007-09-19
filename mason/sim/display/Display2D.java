@@ -930,7 +930,7 @@ public class Display2D extends JComponent implements Steppable
         togglebutton.setBorderPainted(false);
         togglebutton.setContentAreaFilled(false);
         togglebutton.setToolTipText("Show and hide different layers");
-	
+        
         header.add(togglebutton);
         popup = new JPopupMenu();
         popup.setLightWeightPopupEnabled(false);

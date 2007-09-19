@@ -16,63 +16,63 @@ import com.sun.j3d.utils.geometry.Cone;
  *
  */
 public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
-{
-	static class PickableCone extends Cone
-	{
-		public PickableCone(){super();}
-		
-		public PickableCone(float radius)
-		{
-			super(radius, 2);
-		}
-		
-		public PickableCone(float radius, Appearance ap)
-		{
-			super(radius, 2, ap);
-		}
-		public PickableCone(Appearance ap)
-		{
-			super(1, 2, ap);
-		}
+    {
+    static class PickableCone extends Cone
+        {
+        public PickableCone(){super();}
+                
+        public PickableCone(float radius)
+            {
+            super(radius, 2);
+            }
+                
+        public PickableCone(float radius, Appearance ap)
+            {
+            super(radius, 2, ap);
+            }
+        public PickableCone(Appearance ap)
+            {
+            super(1, 2, ap);
+            }
 
-		public void setUserData(java.lang.Object userData)
-		{
-			super.setUserData(userData);
-			setup(getShape(Cone.CAP), userData);
-			setup(getShape(Cone.BODY), userData);
+        public void setUserData(java.lang.Object userData)
+            {
+            super.setUserData(userData);
+            setup(getShape(Cone.CAP), userData);
+            setup(getShape(Cone.BODY), userData);
 
-		}
-		private void setup(Shape3D shape,java.lang.Object userData)
-		{
-			shape.setUserData(userData);
-			setPickableFlags(shape);
-		}
-		
-	}
+            }
+        private void setup(Shape3D shape,java.lang.Object userData)
+            {
+            shape.setUserData(userData);
+            setPickableFlags(shape);
+            }
+                
+        }
 
-	public ConeEdgePortrayal3D()
-	{
-		super(new PickableCone());
-	}
-	
-	public ConeEdgePortrayal3D(float coneBaseRadius)
-	{
-		super(new PickableCone(coneBaseRadius));
-	}
-	
-	public ConeEdgePortrayal3D(float coneBaseRadius, Appearance ap)
-	{
-		super(new PickableCone(coneBaseRadius, ap));
-	}	
+    public ConeEdgePortrayal3D()
+        {
+        super(new PickableCone());
+        }
+        
+    public ConeEdgePortrayal3D(float coneBaseRadius)
+        {
+        super(new PickableCone(coneBaseRadius));
+        }
+        
+    public ConeEdgePortrayal3D(float coneBaseRadius, Appearance ap)
+        {
+        super(new PickableCone(coneBaseRadius, ap));
+        }       
 
 
-	public ConeEdgePortrayal3D(Color labelColor)
-	{
-		super(new PickableCone(), labelColor);
-	}
+    public ConeEdgePortrayal3D(Color labelColor)
+        {
+        super(new PickableCone(), labelColor);
+        }
 
-	public ConeEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
-	{
-		super(new PickableCone(edgeAppearance), labelColor);
-	}
-}
+    public ConeEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
+        {
+        super(new PickableCone(edgeAppearance), labelColor);
+        }
+    }
