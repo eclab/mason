@@ -151,7 +151,7 @@ public /*strictfp*/ class Diffuser implements Steppable
         // are being accessed via instances (like heatbugs.evaporationRate and
         // heatbugs.valgrid.field).  Instance data lookups, even for data in YOUR
         // instance, is always much slower than locals.  Let's make some locals.
-
+		
         //         // locals are faster than instance variables
         //         final DoubleGrid2D _valgrid = heatbugs.valgrid;
         //         final double[][] _valgrid_field = heatbugs.valgrid.field;
@@ -267,8 +267,9 @@ public /*strictfp*/ class Diffuser implements Steppable
         //
         // The resultant code is below.  We could speed this up a bit more, avoiding
         // calls to sty(y+1) and reducing unnecessary calls to stx, but it won't buy
-        // us the giant leaps we're used to by now.
-
+        // us the giant leaps we're used to by now.  We could also replace the stx and sty
+		// with our own functions where we pass in the width and height as local variables,
+		// and that's actually a fair bit faster also, but again, it's not a giant improvement.
 
         // locals are faster than instance variables
         final DoubleGrid2D _valgrid = heatbugs.valgrid;
