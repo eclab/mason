@@ -8,6 +8,7 @@ package sim.engine;
 import java.io.Serializable;
 
 import sim.util.*;
+import ec.util.*;
 
 /**
    Schedule defines a threadsafe scheduling queue in which events can be scheduled to occur
@@ -212,7 +213,6 @@ public class Schedule implements java.io.Serializable
             
         inStep = true;
         Bag currentSteps = this.currentSteps;  // a little faster
-        boolean shuffling = false; // to load this.shuffling into a local inside the lock
         
         int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
 
@@ -225,6 +225,8 @@ public class Schedule implements java.io.Serializable
             // now change the time
             time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
 
+	    final boolean shuffling = this.shuffling; // locals are faster
+	    final MersenneTwisterFast random = state.random; // locals are faster
 
             // grab all of the steppables in the right order.  To do this, we employ two Bags:
             // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
@@ -240,7 +242,7 @@ public class Schedule implements java.io.Serializable
                 // shuffle
                 if (substeps.numObjs > 1) 
                     {
-                    if (shuffling) substeps.shuffle(state.random);  // no need to flip -- we're randomizing
+                    if (shuffling) substeps.shuffle(random);  // no need to flip -- we're randomizing
                     else substeps.reverse();  // they came out in reverse order; we need to flip 'em
                     }
                     
