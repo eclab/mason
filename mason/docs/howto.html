@@ -36,6 +36,7 @@ h1  {
 These are short examples of how to do things in MASON you may have been wondering about.  For more involved examples of extending MASON to use parameterization, etc., see the online <a href="http://cs.gmu.edu/~eclab/projects/mason/">Web Tutorials</a>.
 
 <p><ul>
+<li><a href="#method">How to Schedule Multiple Methods to be Called on the Same Agent
 <li><a href="#inspector">How to Create a Field Portrayal Inspector</a>
 <li><a href="#display2d">How to Draw Directly on the Display2D (or)<br>How to Create a Background Image for the Display2D</a>
 <li><a href="#applet">How to Make an Applet</a>
@@ -50,6 +51,68 @@ These are short examples of how to do things in MASON you may have been wonderin
 <li><a href="#tabbedinspector">How to Create an Inspector Holding Other Inspectors</a>
 <li><a href="#chart">How to Add a Chart Programmatically</a>
 </ul>
+
+<a name="method"></a><h2>How to Schedule Multiple Methods to be Called on the Same Agent</h2>
+
+People have on occasion been mystified by the fact that MASON's Steppable class only has the single class <tt>step(<i>SimState</i>)</tt>.  If an agent subclasses from Steppable, how can we schedule two different methods in the agent?
+
+<p>Tutorial 5 showed an example of how to do this.  But before we go into it in more depth, it's worth explaining some history.  The original Swarm multiagent simulation system was written not in Java but in Objective-C, a preprocessor language for C which added Smalltalk-like messagepassing and a simple object-oriented model.  Strangely, Swarm wasn't targeted for the only major system which ever ran Objective-C, namely NeXTSTEP (later MacOS X).
+
+<p>Objective-C allowed you to send <i>messages</i> to <i>objects</i>.  This was essentially the same thing as calling method on objects in Java, except that in Objective-C, you could make up the message at run-time and send it to the object.  If the object had a method of that name, it'd get called.  If it didn't, then if the object had a method called <tt>forward(<i>message</i>)</tt>, it'd be called.  If there was no method called <tt>forward</tt>, a runtime error would be issued.
+
+<p>This scheme allowed you to schedule events on Swarm's schedule by just providing a message (essentially a string representing the method name) and an object to send the message to.  But in Java you can't make up the method calls at runtime except through reflection.  The compiler requires you to specify the method at compile time for efficiency's sake.
+
+<p>As it attempted to reimplement Swarm in Java, RePast's approach was to copy <tt>Swarm</tt>'s scheduler, including replicating the message-passing notion.  Thus users can schedule a method, by string name, in combination with an object to call the method on.  Using reflection, the method is looked up at runtime and called.  There are several problems with this.  First, depending on the virtual machine used, this can be fairly inefficient.  Second and more importantly, it allows for runtime errors when the method doesn't exist.  This can be profoundly confusing to a Java coder.  And third, it's very much against Java style: it violates all sorts of contracts and guarantees.
+
+<p>Violating Java style is <i>perfectly acceptable</i> if the occasion calls for it.  However as it turns out there is a "Java" way to schedule methods to be called: using an anonymous class.  Let's say your object myObject has the methods <tt>foo()</tt>, <tt>bar()</tt>, and <tt>baz()</tt> and you wish them all to be scheduled for the next time step.  You can do this:
+
+<tt><pre>
+final MyObjectClass obj = myObject;
+schedule.scheduleOnce(new Steppable() { public void step(SimState state) { obj.foo(); } });
+schedule.scheduleOnce(new Steppable() { public void step(SimState state) { obj.bar(); } });
+schedule.scheduleOnce(new Steppable() { public void step(SimState state) { obj.baz(); } });
+</pre></tt>
+
+<P>You only need to make <tt>obj</tt> final if <tt>myObject</tt> is a local variable.  If it's an instance variable, you can just say <tt>myObject.foo()</tt> and skip the <tt>obj = ...</tt> line entirely.
+
+<p>If your method <tt>foo</tt> takes a SimState, you could have written:
+
+<tt><pre>
+final MyObjectClass obj = myObject;
+schedule.scheduleOnce(new Steppable() { public void step(SimState state) { obj.foo(state); } });
+</pre></tt>
+
+<p>You could even create an event-creating method (note that <tt>thingToPrint</tt> is final):
+
+<tt><pre>
+public boolean scheduleAPrinter(final String thingToPrint)
+    {
+    return schedule.scheduleOnce(new Steppable() { 
+        public void step(SimState state) { System.out.println(thingToPrint); } });
+    }
+</pre></tt>
+
+<p>(for fun, try modifying the above into an <a href="http://www.paulgraham.com/accgen.html">accumulator generator</a>, where the accumulators print new values each time they're pulsed by the schedule.  Hint: <tt>final double[] count = new double[]{i};</tt>).
+
+<p>Anyway, using anonymous classes is clean Java and it is fast.  And it provides the full power of Lisp's closures to boot, something a message-target mechanism just can't do.  This gets to the heart of why Steppable has only one method: because beyond subclassing Steppable to create one-method agents, we just make Anonymous Steppables that call our multi-method agent as we see fit.  Steppable has one function only: to specify how the Schedule should call a single method.
+
+<h3>But if you must!</h3>
+
+If you really can't get your head wrapped around Java's anonymous classes, we have a special Steppable subclass, called <b>sim.engine.MethodStep</b>, which provides Objective-C style message-target functionality.  MethodStep allows you to write the same above as:
+
+<tt><pre>
+schedule.scheduleOnce(new MethodStep(myObject, "foo"));
+schedule.scheduleOnce(new MethodStep(myObject, "bar"));
+schedule.scheduleOnce(new MethodStep(myObject, "baz"));
+</pre></tt>
+
+<p>This presumes the three methods here take no arguments.  If you wish to call <tt>foo(<i>SimState</i>)</tt> rather than <tt>foo()</tt>, MethodStep has that option:
+
+<tt><pre>
+schedule.scheduleOnce(new MethodStep(myObject, "foo", true));
+</pre></tt>
+
+Again, this isn't great style.  So feel free to use MethodStep when no one is looking.  But be sure to hide your private shame.
 
 <a name="inspector"></a><h2>How to Create a Field Portrayal Inspector</h2>
 
@@ -283,9 +346,9 @@ public int getYetAnotherProperty() { ... }
 
 <a name="drawfaster"><h2>How to Draw Faster</h2>
 
-<p><b>Use Java 1.3.1 on MacOS X&nbsp;&nbsp;&nbsp;</b> 1.3.1 is hardware accelerated.  1.4.2 and 1.5 <i>are not!</i>  They are exceptionally slow at drawing 2D, and you will be shocked to find how much faster 1.3.1 is (except on Intel Macs, where at present it is extremely slow).  However if you need to do 3D visualization, you have no choice but to use 1.4.2 or 1.5.  MASON's <tt>mason.command</tt> script launches with the default Java (1.4.2 or 1.5), while <tt>mason.1.3.1.command</tt> launches with Java 1.3.1.
+<p><b>Use Java 1.3.1 on MacOS X when Running on PowerPC&nbsp;&nbsp;&nbsp;</b> 1.3.1 is hardware accelerated.  1.4.2 and 1.5 <i>are not!</i>  They are exceptionally slow at drawing 2D, and you will be shocked to find how much faster 1.3.1 is (except on Intel Macs, where at present it is extremely slow -- you must do 1.5 there).  However if you need to do 3D visualization, you have no choice but to use 1.4.2 or 1.5.  MASON's <tt>mason.command</tt> script launches with the default Java (1.4.2 or 1.5), while <tt>mason.1.3.1.command</tt> launches with Java 1.3.1.
 
-<p><b>Use a SparseGrid rather than an ObjectGrid&nbsp;&nbsp;&nbsp;</b>  ObjectGrid portrayals generally work by going through the entire ObjectGrid and drawing each and every grid cell, whether it contains an object or not.  SparseGrid just goes through its collection of objects and draws each one in turn.  Whenever your environment is sparse (you have a large grid but rather few objects inhabiting it), you might try SparseGrid.  The trade-off is that SparseGrid stores its objects' locations in a hash table, and so looking up or changing the location of an object requires one or several hashes, plus some wandering through arrays.  This is typically an O(1) operation but it incurs a significant overhead, so if you have a <i>lot</i> of objects -- your environment isn't very sparse -- then SparseGrid may not buy you anything.  Try and see.
+<p><b>Use a SparseGrid rather than an ObjectGrid&nbsp;&nbsp;&nbsp;</b>  ObjectGrid portrayals generally work by going through the entire ObjectGrid and drawing each and every grid cell, whether it contains an object or not.  SparseGrid just goes through its collection of objects and draws each one in turn.  Whenever your environment is sparse (you have a large grid but rather few objects inhabiting it), you might try SparseGrid.  The trade-off is that SparseGrid stores its objects' locations in a hash table, and so looking up or changing the location of an object requires one or several hashes, plus some wandering through arrays.  This is typically an O(1) operation but it incurs a significant overhead, so if you have a <i>lot</i> of objects -- your environment isn't very sparse -- then SparseGrid will be significantly slower than ObjectGrid.  Try and see.
 
 <p><b>Avoid ObjectGrid3D and ValueGrid3D&nbsp;&nbsp;&nbsp;</b>  Java3D is slow.  Drawing large, non-sparse 3D grids of objects in Java3D is slow to the point of painful, and requires an enormous amount of additional memory.  Avoid it if possible.
 

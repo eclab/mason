@@ -1270,7 +1270,7 @@ Version 13
 	HistogramGenerator: added function addSeriesToDataSet to isolate
 		dataset.addSeries behavior, so it can be changed later (instead
 		of overriding the entire update() function.
-	ChartGenerator: legend is now build based on the XYPlot, not just its
+	ChartGenerator: legend is now built based on the XYPlot, not just its
 		main renderer; series using different renderers will all be 
 		included in the legend now.
 	ChartingPropertyInspector: the ChartGenerator object is available 
@@ -1285,5 +1285,10 @@ Version 13
 	Removed vestigial 'parent' instance variable in PropertyInspector, 
 		which wasn't really being used.	
 	ChartGenerator: swing makeover to prevent series attributes from spreading
-		to cover any vertical space.
-	
+		to cover any vertical space.  Also, added 'up' and 'down' buttons
+		in icon form, plus a close box in icon form, to the series
+		attributes to enable them to move relative to one another.  Right
+		now they're in a suboptimal location: next to the 'show' button.
+		Maybe we can move them later.
+	Added MethodStep and explained its functionality, and MASON's general
+		use of Steppable, in the HowTos
