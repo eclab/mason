@@ -244,7 +244,7 @@ public /*strictfp*/ class Continuous3D extends SparseField
         { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
         
     // some efficiency to avoid width lookups
-    double _stx(final double x, final double width) 
+    double stx(final double x, final double width) 
         { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
 
     /** Minimum toroidal distance between two values in the X dimension. */
@@ -254,14 +254,14 @@ public /*strictfp*/ class Continuous3D extends SparseField
         if (Math.abs(x1-x2) <= width / 2)
             return x1 - x2;  // no wraparounds  -- quick and dirty check
         
-        double dx = _stx(x1,width) - _stx(x2,width);
+        double dx = stx(x1,width) - stx(x2,width);
         if (dx * 2 > width) return dx - width;
         if (dx * 2 < -width) return dx + width;
         return dx;
         }
     
     // some efficiency to avoid height lookups
-    double _sty(final double y, final double height) 
+    double sty(final double y, final double height) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
 
     /** Minimum toroidal distance between two values in the Y dimension. */
@@ -271,13 +271,13 @@ public /*strictfp*/ class Continuous3D extends SparseField
         if (Math.abs(y1-y2) <= height / 2)
             return y1 - y2;  // no wraparounds  -- quick and dirty check
 
-        double dy = _sty(y1,height) - _sty(y2,height);
+        double dy = sty(y1,height) - sty(y2,height);
         if (dy * 2 > height) return dy - height;
         if (dy * 2 < -height) return dy + height;
         return dy;
         }
     
-    double _stz(final double z, final double length) 
+    double stz(final double z, final double length) 
         { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
 
     /** Minimum toroidal distance between two values in the Z dimension. */
@@ -287,7 +287,7 @@ public /*strictfp*/ class Continuous3D extends SparseField
         if (Math.abs(z1-z2) <= length / 2)
             return z1 - z2;  // no wraparounds  -- quick and dirty check
 
-        double dz = _stz(z1,length) - _stz(z2,length);
+        double dz = stz(z1,length) - stz(z2,length);
         if (dz * 2 > length) return dz - length;
         if (dz * 2 < -length) return dz + length;
         return dz;

@@ -243,10 +243,10 @@ public class SparseGrid2D extends SparseField implements Grid2D
                 
             for( int x0 = xmin ; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0);
+                final int x_0 = stx(x0, width);
                 for( int y0 = ymin ; y0 <= ymax ; y0++ )
                     {
-                    final int y_0 = sty(y0);
+                    final int y_0 = sty(y0, height);
                     xPos.add( x_0 );
                     yPos.add( y_0 );
                     }
@@ -300,13 +300,13 @@ public class SparseGrid2D extends SparseField implements Grid2D
             final int xmin = x-dist;
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0);
+                final int x_0 = stx(x0, width);
                 // compute ymin and ymax for the neighborhood; they depend on the curreny x0 value
                 final int ymax = y+(dist-((x0-x>=0)?x0-x:x-x0));
                 final int ymin = y-(dist-((x0-x>=0)?x0-x:x-x0));
                 for( int y0 =  ymin; y0 <= ymax; y0++ )
                     {
-                    final int y_0 = sty(y0);
+                    final int y_0 = sty(y0, height);
                     xPos.add( x_0 );
                     yPos.add( y_0 );
                     }
@@ -363,8 +363,8 @@ public class SparseGrid2D extends SparseField implements Grid2D
             int ymax = y + dist;
             for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x,y0) )
                 {
-                xPos.add( stx(x) );
-                yPos.add( sty(y0) );
+                xPos.add( stx(x, width) );
+                yPos.add( sty(y0, height) );
                 }
             int x0 = x;
             for( int i = 1 ; i <= dist ; i++ )
@@ -375,8 +375,8 @@ public class SparseGrid2D extends SparseField implements Grid2D
                 x0 = dlx( x0, temp_ymin );
                 for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x0,y0) )
                     {
-                    xPos.add( stx(x0) );
-                    yPos.add( sty(y0) );
+                    xPos.add( stx(x0, width) );
+                    yPos.add( sty(y0, height) );
                     }
                 }
             x0 = x;
@@ -390,8 +390,8 @@ public class SparseGrid2D extends SparseField implements Grid2D
                 x0 = drx( x0, temp_ymin );
                 for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x0,y0) )
                     {
-                    xPos.add( stx(x0) );
-                    yPos.add( sty(y0) );
+                    xPos.add( stx(x0, width) );
+                    yPos.add( sty(y0, height) );
                     }
                 }
             }

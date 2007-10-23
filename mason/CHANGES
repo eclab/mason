@@ -1292,3 +1292,8 @@ Version 13
 		Maybe we can move them later.
 	Added MethodStep and explained its functionality, and MASON's general
 		use of Steppable, in the HowTos
+	Slight speed improvements to internal uses of stx/sty/stz where the
+		width/height/length is passed in
+	Changed Schedule's lock variable to a boolean[1], which is Serializable,
+		unlike Object.  Bug fix.  Thanks to Bruno Vandenbossche
+		(bruno.vandenbossche@intec.ugent.be) for noting the bug.

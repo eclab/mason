@@ -83,11 +83,11 @@ public abstract class AbstractGrid2D implements Grid2D
     public final int sty(final int y) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
         
-    // faster version
+    // faster internal version
     final int stx(final int x, final int width) 
         { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
         
-    // faster version
+    // faster internal version
     final int sty(final int y, final int height) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
 

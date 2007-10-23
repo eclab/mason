@@ -105,13 +105,14 @@ public class Schedule implements java.io.Serializable
     
     // time steps lock  -- the objective here is to enable synchronization on a different lock
     // so people can read the time and the steps without having to wait on the general schedule lock
-    protected Object lock = new Object();
+    protected Object lock = new boolean[1];  // an array is a unique, serializable object
     
     /** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they
         have identical orderings and are scheduled for the same time.  If the Steppables are not randomly shuffled,
-        they will be executed in the order in which they were inserted into the schedule.  You should set this to
+        they will be executed in the order in which they were inserted into the schedule, if they have identical
+	orderings.  You should set this to
         FALSE only under unusual circumstances when you know what you're doing -- in the vast majority of cases you
-        will want it to be TRUE.  */
+        will want it to be TRUE (the default).  */
     public void setShuffling(boolean val)
         {
         synchronized(lock)
@@ -121,7 +122,8 @@ public class Schedule implements java.io.Serializable
         }
         
     /** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
-        and are scheduled for the same time; else returns false. */
+        and are scheduled for the same time; else returns false, indicating that Steppables with identical orderings
+	will be executed in the order in which they were inserted into the schedule. */
     public boolean isShuffling()
         {
         synchronized(lock)
@@ -247,7 +249,7 @@ public class Schedule implements java.io.Serializable
                     }
                     
                 // dump
-                if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;           
+                if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;  // remember index of largest substep since we're violating clear()
                 currentSteps.addAll(substeps);
                 substeps.numObjs = 0;  // temporarily clear
                 
@@ -591,9 +593,6 @@ class Repeat implements Steppable, Stoppable
         {
         if (step!=null)
             {
-            // this occurs WITHIN the schedule's synchronized step, so getTime()
-            // and scheduleOnce() will both occur together without the time
-            // changing
             try
                 {
                 // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point

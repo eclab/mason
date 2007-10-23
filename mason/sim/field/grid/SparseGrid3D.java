@@ -256,13 +256,13 @@ public class SparseGrid3D extends SparseField
 
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0);
+                final int x_0 = stx(x0, width);
                 for( int y0 = ymin ; y0 <= ymax ; y0++ )
                     {
-                    final int y_0 = sty(y0);
+                    final int y_0 = sty(y0, height);
                     for( int z0 = zmin ; z0 <= zmax ; z0++ )
                         {
-                        final int z_0 = stz(z0);
+                        final int z_0 = stz(z0, length);
                         if( x_0 != x || y_0 != y || z_0 != z )
                             {
                             xPos.add( x_0 );
@@ -334,18 +334,18 @@ public class SparseGrid3D extends SparseField
             final int xmin = x-dist;
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0);
+                final int x_0 = stx(x0, width);
                 // compute ymin and ymax for the neighborhood; they depend on the curreny x0 value
                 final int ymax = y+(dist-((x0-x>=0)?x0-x:x-x0));
                 final int ymin = y-(dist-((x0-x>=0)?x0-x:x-x0));
                 for( int y0 =  ymin; y0 <= ymax; y0++ )
                     {
-                    final int y_0 = sty(y0);
+                    final int y_0 = sty(y0, height);
                     final int zmax = z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0));
                     final int zmin = z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0));
                     for( int z0 = zmin; z0 <= zmax; z0++ )
                         {
-                        final int z_0 = stz(z0);
+                        final int z_0 = stz(z0, length);
                         if( x_0 != x || y_0 != y || z_0 != z )
                             {
                             xPos.add( x_0 );
