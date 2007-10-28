@@ -1297,3 +1297,4 @@ Version 13
 	Changed Schedule's lock variable to a boolean[1], which is Serializable,
 		unlike Object.  Bug fix.  Thanks to Bruno Vandenbossche
 		(bruno.vandenbossche@intec.ugent.be) for noting the bug.
+	Eliminated Asynchronous interface

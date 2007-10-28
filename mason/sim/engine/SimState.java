@@ -19,7 +19,7 @@ import java.text.*;
 
 <p>SimStates are serializable; if you wish to be able to checkpoint your simulation and read from checkpoints, you should endeavor to make all objects in the simulation serializable as well.  Prior to serializing to a checkpoint, preCheckpoint() is called.  Then after serialization, postCheckpoint() is called.  When a SimState is loaded from a checkpoint, awakeFromCheckpoint() is called to give you a chance to make any adjustments.  SimState also implements several methods which call these methods and then serialize the SimState to files and to streams.
 
-<p>SimState also maintains a private registry of Asynchronous objects (such as AsynchronousSteppable), and handles pausing and resuming
+<p>SimState also maintains a private registry of AsynchronousSteppable objects (such as YoYoYo), and handles pausing and resuming
 them during the checkpointing process, and killing them during finish() in case they had not completed yet.
 
 <p>If you override any of the methods foo() in SimState, should remember to <b>always</b> call super.foo() for any such method foo().
@@ -33,7 +33,7 @@ public class SimState implements java.io.Serializable
     /** SimState's schedule */
     public Schedule schedule;
     
-    // All registered Asynchronous steppables
+    // All registered AsynchronousSteppables
     HashSet asynchronous = new HashSet();
     // Lock for accessing the HashSet
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
@@ -88,8 +88,8 @@ public class SimState implements java.io.Serializable
         }
 
     /** A Steppable on the schedule can call this method to cancel the simulation.
-        All existing AsynchronousSteppables are stopped, and then the schedule is
-        reset.  AsynchronousSteppables, ParallelSteppables, 
+        All existing YoYoYos are stopped, and then the schedule is
+        reset.  YoYoYos, ParallelSteppables, 
         and non-main threads should not call this method directly -- it will deadlock.
         Instead, they may kill the simulation by scheduling a Steppable
         for the next timestep which calls state.kill(). */
@@ -99,16 +99,16 @@ public class SimState implements java.io.Serializable
         schedule.pushToAfterSimulation();
         }
 
-    /** Registers an Asynchronous to get its pause() method called prior to checkpointing,
+    /** Registers an AsynchronousSteppable to get its pause() method called prior to checkpointing,
         its resume() method to be called after checkpointing or recovery, and its stop()
         method to be called at finish() time.  The purpose of the addToCleanup() method is to provide
         the simulation with a way of stopping existing threads which the user has created in the background.
         
-        <P> An Asynchronous cannot be added multiple times
-        to the same registry -- if it's there it's there.  Returns false if the Asynchronous could
+        <P> An AsynchronousSteppable cannot be added multiple times
+        to the same registry -- if it's there it's there.  Returns false if the AsynchronousSteppable could
         not be added, either because the simulation is stopped or in the process of finish()ing.
     */
-    public boolean addToAsynchronousRegistry(Asynchronous stop)
+    public boolean addToAsynchronousRegistry(AsynchronousSteppable stop)
         {
         if (stop==null) return false;
         synchronized(asynchronousLock) 
@@ -120,9 +120,9 @@ public class SimState implements java.io.Serializable
         }
         
     /**
-       Unregisters an Asynchronous from the asynchronous registry.
+       Unregisters an AsynchronousSteppable from the asynchronous registry.
     */
-    public void removeFromAsynchronousRegistry(Asynchronous stop)
+    public void removeFromAsynchronousRegistry(AsynchronousSteppable stop)
         {
         if (stop==null) return;
         synchronized(asynchronousLock) 
@@ -132,16 +132,16 @@ public class SimState implements java.io.Serializable
             }
         }
         
-    /** Returns all the Asynchronous items presently in the registry.  The returned array is not used internally -- you are free to modify it. */
-    public Asynchronous[] asynchronousRegistry()
+    /** Returns all the AsynchronousSteppable items presently in the registry.  The returned array is not used internally -- you are free to modify it. */
+    public AsynchronousSteppable[] asynchronousRegistry()
         {
         synchronized(asynchronousLock)
             {
-            Asynchronous[] b = new Asynchronous[asynchronous.size()];
+            AsynchronousSteppable[] b = new AsynchronousSteppable[asynchronous.size()];
             int x = 0;
             Iterator i = asynchronous.iterator();
             while(i.hasNext())
-                b[x++] = (Asynchronous)(i.next());
+                b[x++] = (AsynchronousSteppable)(i.next());
             return b;
             }
         }
@@ -153,7 +153,7 @@ public class SimState implements java.io.Serializable
     // perhaps use a LinkedHashSet instead of a HashSet?
     void cleanupAsynchronous()
         {
-        Asynchronous[] b = null;
+        AsynchronousSteppable[] b = null;
         synchronized(asynchronousLock)
             {
             b = asynchronousRegistry();
@@ -174,7 +174,7 @@ public class SimState implements java.io.Serializable
         your SimState object appropriately. Be sure to call super.preCheckpoint(). */
     public void preCheckpoint()
         {
-        Asynchronous[] b = asynchronousRegistry();
+        AsynchronousSteppable[] b = asynchronousRegistry();
         final int len = b.length;
         for(int x=0;x<len;x++) b[x].pause();
         }
@@ -184,7 +184,7 @@ public class SimState implements java.io.Serializable
         Be sure to call super.postCheckpoint(). */
     public void postCheckpoint()
         {
-        Asynchronous[] b = asynchronousRegistry();
+        AsynchronousSteppable[] b = asynchronousRegistry();
         final int len = b.length;
         for(int x=0;x<len;x++) b[x].resume();
         }
@@ -194,7 +194,7 @@ public class SimState implements java.io.Serializable
         anything that may no longer exist.  Be sure to call super.awakeFromCheckpoint(). */
     public void awakeFromCheckpoint()
         {
-        Asynchronous[] b = asynchronousRegistry();
+        AsynchronousSteppable[] b = asynchronousRegistry();
         final int len = b.length;
         for(int x=0;x<len;x++) b[x].resume();
         }

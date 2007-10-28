@@ -162,7 +162,8 @@ package sim.engine;
 
 */
 
-public abstract class AsynchronousSteppable implements Asynchronous
+public abstract class AsynchronousSteppable
+// implements Asynchronous
     {
     Thread thread;
     boolean running = false;

@@ -84,10 +84,15 @@ import ec.util.*;
 
 public class Schedule implements java.io.Serializable
     {
+    /** The first possible schedulable time. */
     public static final double EPOCH = 0.0;
+    /** The time which indicates that the Schedule hasn't started yet. Less than EPOCH. */
     public static final double BEFORE_SIMULATION = EPOCH - 1.0;
+    /** The time which indicates that the Schedule is finished.  Equal positive infinity, and thus greater than any schedulable time. */
     public static final double AFTER_SIMULATION = Double.POSITIVE_INFINITY;
+    /** The second possible schedulable time. */
     public static final double EPOCH_PLUS_EPSILON = Double.longBitsToDouble(Double.doubleToRawLongBits(EPOCH)+1L);
+    /** The last time beyond which the schedule is no longer able to precisely maintain integer values due to loss of precision.  That is, MAXIMUM_INTEGER + 1.0 == MAXIMUM_INTEGER. */
     public static final double MAXIMUM_INTEGER = 9.007199254740992E15;
 
     // should we shuffle individuals with the same timestep and ordering?
@@ -95,6 +100,9 @@ public class Schedule implements java.io.Serializable
 
     Heap queue = createHeap();
     
+    /** Returns a Heap to be used by the Schedule.  By default, returns a
+	binary heap.  Override this to provide your own
+        subclass of Heap tuned for your particular problem. */
     protected Heap createHeap() { return new Heap(); }
     
     // the time
