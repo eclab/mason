@@ -161,13 +161,13 @@ public class Schedule implements java.io.Serializable
         return getTimestamp(getTime(), beforeSimulationString, afterSimulationString);
         }
     
-    /** Returns a given time in string format. If the time is BEFORE_SIMULATION, then beforeSimulationString is
+    /** Returns a given time in string format. If the time is earlier than EPOCH (such as BEFORE_SIMULATION), then beforeSimulationString is
         returned.  If the time is AFTER_SIMULATION, then afterSimulationString is returned.  Otherwise a numerical
         representation of the time is returned. */
     // could be static, but why not let it be overridden?
     public String getTimestamp(double time, final String beforeSimulationString, final String afterSimulationString)
         {
-        if (time <= BEFORE_SIMULATION) return beforeSimulationString;
+        if (time < EPOCH) return beforeSimulationString;
         if (time >= AFTER_SIMULATION) return afterSimulationString;
         if (time == (long)time) return Long.toString((long)time);
         return Double.toString(time);

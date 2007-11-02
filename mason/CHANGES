@@ -1299,3 +1299,6 @@ Version 13
 		(bruno.vandenbossche@intec.ugent.be) for noting the bug.
 	Eliminated Asynchronous interface
 	Added CausedRuntimeException for MethodStep
+	Schedule.getTimestamp now defines before-simulation times as being
+		being less than EPOCH.
+
