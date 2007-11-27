@@ -1301,4 +1301,4 @@ Version 13
 	Added CausedRuntimeException for MethodStep
 	Schedule.getTimestamp now defines before-simulation times as being
 		being less than EPOCH.
-
+	Slight bug fixes to MiniHistogram

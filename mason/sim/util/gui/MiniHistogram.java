@@ -162,8 +162,8 @@ public class MiniHistogram extends JPanel
                 
         for(int i=0;i<len;i++)
             {
-            int x0 = bounds.width / len * i;
-            int x1 = bounds.width / len * (i+1);
+            int x0 = (int)(bounds.width / (double)len * i);
+            int x1 = (int)(bounds.width / (double)len * (i+1));
             int y0 = 0;
             int y1;
             if (buckets[i]==Double.POSITIVE_INFINITY) y1 = height;
