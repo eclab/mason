@@ -88,17 +88,19 @@ public class MiniHistogram extends JPanel
         public void mouseMoved(MouseEvent event)
             {
             String s = null;
-            int x = (int)(event.getX() * 
-                          (buckets == null ? 0 : buckets.length) / (double)(getBounds().width));
-            if (labels != null && x < labels.length) 
-                s = "<html><font size=\"-1\" face=\"" + getFont().getFamily() + "\">" +
-                    "Bucket: " + x + "<br>Range: " + labels[x] + "<br>Value: " + buckets[x] +
-                    "</font></html>";
-            else if (buckets != null && buckets.length != 0)
-                s = "<html><font size=\"-1\" face=\"" + getFont().getFamily() + "\">" +
-                    "Bucket: " + x + "<br>>Value: " + buckets[x] +
-                    "</font></html>";
-            else s=null;
+	    if (buckets !=null)
+		{
+		int x = (int)((event.getX() * buckets.length) / (double)(getBounds().width));
+		if (labels != null && x < labels.length) 
+		    s = "<html><font size=\"-1\" face=\"" + getFont().getFamily() + "\">" +
+			"Bucket: " + x + "<br>Range: " + labels[x] + "<br>Value: " + buckets[x] +
+			"</font></html>";
+		else if (buckets != null && buckets.length != 0)
+		    s = "<html><font size=\"-1\" face=\"" + getFont().getFamily() + "\">" +
+			"Bucket: " + x + "<br>>Value: " + buckets[x] +
+			"</font></html>";
+		else s=null;
+		}
                         
             if (!s.equalsIgnoreCase(getToolTipText()))
                 setToolTipText(s);
