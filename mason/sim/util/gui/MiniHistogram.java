@@ -102,7 +102,7 @@ public class MiniHistogram extends JPanel
 		else s=null;
 		}
                         
-            if (!s.equalsIgnoreCase(getToolTipText()))
+            if ((s != null) && !s.equalsIgnoreCase(getToolTipText()))
                 setToolTipText(s);
             }
         };
