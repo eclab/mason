@@ -1302,3 +1302,5 @@ Version 13
 	Schedule.getTimestamp now defines before-simulation times as being
 		being less than EPOCH.
 	Slight bug fixes to MiniHistogram
+	Added new HowTo for hiding the Console, made slight modifications to
+		Display2D and Display3D to accommodate this.

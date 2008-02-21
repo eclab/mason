@@ -50,6 +50,7 @@ These are short examples of how to do things in MASON you may have been wonderin
 <li><a href="#propertyinspector">How to Create a Plug-In Inspector for a Single Property</a>
 <li><a href="#tabbedinspector">How to Create an Inspector Holding Other Inspectors</a>
 <li><a href="#chart">How to Add a Chart Programmatically</a>
+<li><a href="#console">How to Hide the Console</a>
 </ul>
 
 <a name="method"></a><h2>How to Schedule Multiple Methods to be Called on the Same Agent</h2>
@@ -688,6 +689,84 @@ MASON has a built-in time-series charting facility, but the user must manually c
               series.add(x, y, false);  // don't update automatically
               startTimer(1000);  // once a second (1000 milliseconds)
 </tt></pre>
+
+
+<a name="console"><h2>How to Hide the Console</h2>
+
+<p>In the past we've been asked how to hide the Console and only show the Display2D or Display3D -- perhaps to use MASON as a video game, or in a "Kiosk mode" of sorts.  
+
+<p>There are many ways to do this: you could replace the Console with a Controller of a different sort which doesn't display it, for example.  But here we're going to take a simple, if somewhat inefficient, approach: use the Console but not display it.
+
+<p>We'll use <b>HeatBugsWithUI.java</b> as our target example.
+
+<p> The first step is (not surprisingly) to hide the Console.  We do this by commenting out <tt>c.setVisible(true)</tt> in the <b>main()</b> method.  Once we've hidden the Console, we need a way to start the simulation.  We could do this the hard way -- creating thread locking, calling start() on various things, etc., or we could just do it the simple way: manually press the PLAY button on the Console.  We do this by calling <tt>c.pressPlay()</tt> like this:
+
+<pre><tt>
+   public static void main(String[] args)
+       {
+        HeatBugsWithSimpleUI heatbugs = new HeatBugsWithSimpleUI();
+        Console c = new Console(heatbugs);
+        //c.setVisible(true);
+        c.pressPlay();
+        }
+</tt></pre>
+
+<p>Easy enough.  But the user can still access the Console via a menu on the Display2D or Display3D.  This menu option is created with the Display2D/Display3D method <tt>createConsoleMenu()</tt>.  We need to disable this menu.  A straightforward way to do this is in HeatBugsWithUI is to create an anonymous subclass of Display2D which overrides this method. In the <b>init</b> method we change:
+
+<pre><tt>
+        display = new Display2D(400,400,this,1);
+</tt></pre>
+
+...to...
+
+<pre><tt>
+        display = new Display2D(400,400,this,1)
+            {
+            public void createConsoleMenu() { }
+            };
+</tt></pre>
+
+<p>At this point our simulation runs fine.  But if the user clicks on the close button of the Display2D window, the program doesn't quit!  This is because MASON's default behavior is to just hide the Display2D window -- to actually quit a MASON simulation, you click on the Console's close box.  But the user can't see the Console any more, so how do we quit?  We'll do this by changing the behavior of clicking on the Display2D window.  We start by adding the following to the very end of the <b>init</b> method:
+
+<pre><tt>
+        displayFrame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE); 
+</tt></pre>
+
+<p>This tells the window to destroy itself rather than hide itself when closed.  Another option is <tt>EXIT_ON_CLOSE</tt>, which terminates the application.  But doing so doesn't cleanly shut down MASON -- movies don't get flushed out, and the user's simulation shutdown methods aren't properly called.  Instead, we'll tap into the window's machinery called when it is disposed, and use that machinery to quit the program.
+
+<p>Assuming you created your JFrame with <tt>display.createFrame()</tt>, thus allowing the Display2D to make the frame for you, then your JFrame has some dispose machinery built-in.  When such a JFrame is disposed, it first calls <tt>quit</tt> on its underlying Display2D.  We'll hook into this to quit the program cleanly.  There are lots of ways to quit the program, but as long as we're using Console, by far the simplest is to tell the Console that <i>it's</i> close box was clicked on and let it handle things for us.  We do this by extending our anonymous subclass to override the Display2D's <tt>quit()</tt> method:
+
+<pre><tt>
+        display = new Display2D(400,400,this,1)
+            {
+            public void createConsoleMenu() { }
+            public void quit()
+                {
+                super.quit();  // let the Display2D do whatever it was doing before!
+                ((Console)c).doClose();
+                }
+            };
+</tt></pre>
+
+<p>Where did the <b>c</b> variable come from?  It's the parameter passed into the <b>init</b> method in which this code appears.  Java doesn't have proper closures -- all closed variables must be declared final -- so we need to change the signature of the <b>init</b> method as well (no biggie):
+
+<pre><tt>
+    public void init(<b>final</b> Controller c)
+</tt></pre>
+
+<p>Last, you may wish to hide the header bar on the Display2D/Display3D -- the bar which lets the user make movies and snapshots, zoom in and out, change the refresh rate and displayed layers, etc.  We already removed the primary difficulty in this bar (the menu option which calls forth the Console), but we can remove the entire bar as well.  In the <b>init</b> method, just add:
+
+<pre><tt>
+        display.remove(display.header);
+</tt></pre>
+
+<p>A final note: when the user clicks on the window, he can still generate selection events and inspection events, creating inspectors etc.  This isn't a big problem because those inspectors are hidden in the Console and so they don't typically take up a lot of processing power (they're not displayed).  But if we want to eliminate the ability to create them at all, we can do that too.  In Display2D we say:
+
+<pre><tt>
+       display.insideDisplay.removeMouseListeners();
+</tt></pre>
+
+<p>For Display3D, it's somewhat more involved, and we'll get a nicer approach soon.
 
 <br><br><br>
 </body>

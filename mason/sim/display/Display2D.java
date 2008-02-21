@@ -705,17 +705,21 @@ public class Display2D extends JComponent implements Steppable
     /** The simulation proper. */
     GUIState simulation;
     /** The component bar at the top of the Display2D. */
-    Box header;
+    public Box header;
     /** The popup layers menu */
-    JPopupMenu popup;
+    public JPopupMenu popup;
     /** The button which pops up the layers menu */
-    JToggleButton togglebutton;  // for popup
+    public JToggleButton togglebutton;  // for popup
     /** The button which starts or stops a movie */
-    JButton movieButton;
+    public JButton movieButton;
     /** The button which snaps a screenshot */
-    JButton snapshotButton;
+    public JButton snapshotButton;
     /** The button which pops up the option pane */
-    JButton optionButton;
+    public JButton optionButton;
+    /** The field for scaling values */
+    public NumberTextField scaleField;
+    /** The field for skipping frames */
+    public NumberTextField skipField;
         
     /** Scale (zoom value).  1.0 is 1:1.  2.0 is zoomed in 2 times.  Etc. */
     double scale = 1.0;
@@ -864,7 +868,7 @@ public class Display2D extends JComponent implements Steppable
             });
         }
     
-    void createConsoleMenu()
+    public void createConsoleMenu()
         {
         if (simulation != null && simulation.controller != null &&
             simulation.controller instanceof Console)
@@ -880,6 +884,7 @@ public class Display2D extends JComponent implements Steppable
                     }
                 });
             }
+        popup.addSeparator();
         }
         
     /** Detatches all portrayals from the Display2D. */
@@ -888,7 +893,6 @@ public class Display2D extends JComponent implements Steppable
         ArrayList old = portrayals;
         popup.removeAll();
         createConsoleMenu();
-        popup.addSeparator();
         portrayals = new ArrayList();
         return old;
         }
@@ -1033,7 +1037,7 @@ public class Display2D extends JComponent implements Steppable
         header.add(optionButton);
         
         // add the scale field
-        NumberTextField scaleField = new NumberTextField("  Scale: ", 1.0, true)
+        scaleField = new NumberTextField("  Scale: ", 1.0, true)
             {
             public double newValue(double newValue)
                 {
@@ -1051,7 +1055,7 @@ public class Display2D extends JComponent implements Steppable
         header.add(scaleField);
         
         // add the interval (skip) field
-        NumberTextField skipField = new NumberTextField("  Skip: ", 1, false)
+        skipField = new NumberTextField("  Skip: ", 1, false)
             {
             public double newValue(double newValue)
                 {
@@ -1074,7 +1078,6 @@ public class Display2D extends JComponent implements Steppable
         add(display,BorderLayout.CENTER);
 
         createConsoleMenu();
-        popup.addSeparator();
         }
 
     /** Returns LocationWrappers for all the objects which fall within the coordinate rectangle specified by rect.  This 
