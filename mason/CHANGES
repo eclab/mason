@@ -1304,3 +1304,6 @@ Version 13
 	Slight bug fixes to MiniHistogram
 	Added new HowTo for hiding the Console, made slight modifications to
 		Display2D and Display3D to accommodate this.
+	Bug in MutableDouble3D and Double3D's hash value wasn't considering
+		x values as part of the hash.
+	Added some more distance methods to MutableDouble2D and MutableDouble3D

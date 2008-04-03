@@ -137,9 +137,9 @@ public final class Double3D implements java.io.Serializable
         key += ~(key << 27);
         key ^= (key >>> 31);
 
-        // nifty!  Now mix in z
+        // nifty!  Now mix in x
         
-        key ^= Double.doubleToLongBits(z);
+        key ^= Double.doubleToLongBits(x);
         
         // Last we fold on top of each other
         return (int)(key ^ (key >> 32));

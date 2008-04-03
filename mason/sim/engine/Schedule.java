@@ -222,7 +222,8 @@ public class Schedule implements java.io.Serializable
             }
             
         inStep = true;
-        Bag currentSteps = this.currentSteps;  // a little faster
+        Bag currentSteps = this.currentSteps;  // locals are faster
+	    final MersenneTwisterFast random = state.random; // locals are faster
         
         int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
 
@@ -235,8 +236,7 @@ public class Schedule implements java.io.Serializable
             // now change the time
             time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
 
-	    final boolean shuffling = this.shuffling; // locals are faster
-	    final MersenneTwisterFast random = state.random; // locals are faster
+	    final boolean shuffling = this.shuffling; // locals are faster.  This one needs to be synchronized inside lock
 
             // grab all of the steppables in the right order.  To do this, we employ two Bags:
             // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
@@ -362,8 +362,9 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
 
-        if (t < EPOCH || t >= AFTER_SIMULATION || t != t /* NaN */ || t < time || event == null)
-            {
+	// this shouldn't compile to anything more efficient -- we still check all of it -- so I'm taking it out
+        //if (t < EPOCH || t >= AFTER_SIMULATION || t != t /* NaN */ || t < time || event == null)
+        //    {
             if (t < EPOCH)
                 throw new IllegalArgumentException("For the Steppable...\n\n"+event+
                                                    "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
@@ -378,7 +379,7 @@ public class Schedule implements java.io.Serializable
                                                    "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
             else if (event == null)
                 throw new IllegalArgumentException("The provided Steppable is null");
-            }
+        //    }
         
         queue.add(event, key);
         return true;
@@ -460,10 +461,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event)
         {
-        synchronized(lock)
-            {
+	// No need to lock -- we're not grabbing time from the schedule
             return scheduleRepeating(time,0,event,1.0);
-            }
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 
@@ -482,10 +481,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event, final double interval)
         {
-        synchronized(lock)
-            {
+	// No need to lock -- we're not grabbing time from the schedule
             return scheduleRepeating(time,0,event,interval);
-            }
         }
 
     /** Schedules the event to recur at an interval of 1.0 starting at the provided time, 
@@ -503,10 +500,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event)
         {
-        synchronized(lock)
-            {
+	// No need to lock -- we're not grabbing time from the schedule
             return scheduleRepeating(time,ordering,event,1.0);
-            }
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 

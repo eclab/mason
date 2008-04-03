@@ -21,7 +21,7 @@ import java.lang.ref.*;
    </tt>
    <br>
 
-   A WeakStep can also wrap a Stoppable you plan on scheduling repeating.  You'd
+   A WeakStep can also wrap a Steppable you plan on scheduling repeating.  You'd
    do it along these lines:
 
    <tt><br>
@@ -31,7 +31,8 @@ import java.lang.ref.*;
    </tt>
 
    In this case, when the underlying Steppable is garbage-collected, then the
-   schedule will automatically stop repeatedly stepping it.
+   schedule will automatically stop repeatedly stepping it.  Note that the Stoppable
+   is also stored weakly.
 */
 
 public class WeakStep implements Steppable

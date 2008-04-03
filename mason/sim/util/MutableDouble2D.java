@@ -170,6 +170,14 @@ public final class MutableDouble2D implements java.io.Serializable
         return Math.sqrt(dx*dx+dy*dy);
         }
 
+    /** Returns the distance FROM this MutableDouble2D TO the specified point.   */
+    public double distance(final Double2D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        return Math.sqrt(dx*dx+dy*dy);
+        }
+
     /** Returns the distance FROM this MutableDouble2D TO the specified point.    */
     public double distance(final Int2D p)
         {
@@ -199,6 +207,14 @@ public final class MutableDouble2D implements java.io.Serializable
         {
         final double dx = (double)this.x - x;
         final double dy = (double)this.y - y;
+        return (dx*dx+dy*dy);
+        }
+
+    /** Returns the distance FROM this MutableDouble2D TO the specified point.    */
+    public double distanceSq(final Double2D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
         return (dx*dx+dy*dy);
         }
 
@@ -248,14 +264,6 @@ public final class MutableDouble2D implements java.io.Serializable
         this.x += x;
         this.y += y;
         return this;
-        }
-
-    /** Returns the distance FROM this Double2D TO the specified point */
-    public double distanceSq(final Double2D d)
-        {
-        final double dx = (double)this.x - d.getX();
-        final double dy = (double)this.y - d.getY();
-        return (dx*dx+dy*dy);
         }
 
     /** Sets me to the sum of other1 and other2, returning me. */

@@ -154,9 +154,9 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         key += ~(key << 27);
         key ^= (key >>> 31);
 
-        // nifty!  Now mix in z
+        // nifty!  Now mix in x
         
-        key ^= Double.doubleToLongBits(z);
+        key ^= Double.doubleToLongBits(x);
         
         // Last we fold on top of each other
         return (int)(key ^ (key >> 32));
@@ -196,7 +196,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         else return false;
         }
 
-    /** Returns the distance FROM this Double3D TO the specified point */
+    /** Returns the distance FROM this MutableDouble3D TO the specified point */
     public double distance(final double x, final double y, final double z)
         {
         final double dx = (double)this.x - x;
@@ -205,7 +205,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return Math.sqrt(dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the distance FROM this Double3D TO the specified point.   */
+    /** Returns the distance FROM this MutableDouble3D TO the specified point.   */
     public double distance(final Double3D p)
         {
         final double dx = (double)this.x - p.x;
@@ -214,7 +214,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return Math.sqrt(dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the distance FROM this Double3D TO the specified point.    */
+    /** Returns the distance FROM this MutableDouble3D TO the specified point.    */
     public double distance(final Int3D p)
         {
         final double dx = (double)this.x - p.x;
@@ -223,7 +223,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return Math.sqrt(dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the distance FROM this Double3D TO the specified point.    */
+    /** Returns the distance FROM this MutableDouble3D TO the specified point.    */
     public double distance(final MutableInt3D p)
         {
         final double dx = (double)this.x - p.x;
@@ -232,7 +232,16 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return Math.sqrt(dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the squared distance FROM this Double3D TO the specified point */
+    /** Returns the distance FROM this MutableDouble3D TO the specified point.   */
+    public double distance(final MutableDouble3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return Math.sqrt(dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this MutableDouble3D TO the specified point */
     public double distanceSq(final double x, final double y, final double z)
         {
         final double dx = (double)this.x - x;
@@ -241,7 +250,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return (dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    /** Returns the squared distance FROM this MutableDouble3D TO the specified point.    */
     public double distanceSq(final Double3D p)
         {
         final double dx = (double)this.x - p.x;
@@ -250,7 +259,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return (dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    /** Returns the squared distance FROM this MutableDouble3D TO the specified point.    */
     public double distanceSq(final Int3D p)
         {
         final double dx = (double)this.x - p.x;
@@ -259,8 +268,17 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return (dx*dx+dy*dy+dz*dz);
         }
 
-    /** Returns the squared distance FROM this Double3D TO the specified point.    */
+    /** Returns the squared distance FROM this MutableDouble3D TO the specified point.    */
     public double distanceSq(final MutableInt3D p)
+        {
+        final double dx = (double)this.x - p.x;
+        final double dy = (double)this.y - p.y;
+        final double dz = (double)this.z - p.z;
+        return (dx*dx+dy*dy+dz*dz);
+        }
+
+    /** Returns the squared distance FROM this MutableDouble3D TO the specified point.    */
+    public double distanceSq(final MutableDouble3D p)
         {
         final double dx = (double)this.x - p.x;
         final double dy = (double)this.y - p.y;
