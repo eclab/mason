@@ -101,7 +101,7 @@ public class Schedule implements java.io.Serializable
     Heap queue = createHeap();
     
     /** Returns a Heap to be used by the Schedule.  By default, returns a
-	binary heap.  Override this to provide your own
+        binary heap.  Override this to provide your own
         subclass of Heap tuned for your particular problem. */
     protected Heap createHeap() { return new Heap(); }
     
@@ -118,7 +118,7 @@ public class Schedule implements java.io.Serializable
     /** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they
         have identical orderings and are scheduled for the same time.  If the Steppables are not randomly shuffled,
         they will be executed in the order in which they were inserted into the schedule, if they have identical
-	orderings.  You should set this to
+        orderings.  You should set this to
         FALSE only under unusual circumstances when you know what you're doing -- in the vast majority of cases you
         will want it to be TRUE (the default).  */
     public void setShuffling(boolean val)
@@ -131,7 +131,7 @@ public class Schedule implements java.io.Serializable
         
     /** Returns true (the default) if the Steppables' order is randomly shuffled when they have identical orderings
         and are scheduled for the same time; else returns false, indicating that Steppables with identical orderings
-	will be executed in the order in which they were inserted into the schedule. */
+        will be executed in the order in which they were inserted into the schedule. */
     public boolean isShuffling()
         {
         synchronized(lock)
@@ -223,7 +223,7 @@ public class Schedule implements java.io.Serializable
             
         inStep = true;
         Bag currentSteps = this.currentSteps;  // locals are faster
-	    final MersenneTwisterFast random = state.random; // locals are faster
+        final MersenneTwisterFast random = state.random; // locals are faster
         
         int topSubstep = 0;  // we set this as a hack to avoid having to clear all the substeps each time until the very end
 
@@ -236,7 +236,7 @@ public class Schedule implements java.io.Serializable
             // now change the time
             time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
 
-	    final boolean shuffling = this.shuffling; // locals are faster.  This one needs to be synchronized inside lock
+            final boolean shuffling = this.shuffling; // locals are faster.  This one needs to be synchronized inside lock
 
             // grab all of the steppables in the right order.  To do this, we employ two Bags:
             // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
@@ -362,23 +362,23 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
 
-	// this shouldn't compile to anything more efficient -- we still check all of it -- so I'm taking it out
+        // this shouldn't compile to anything more efficient -- we still check all of it -- so I'm taking it out
         //if (t < EPOCH || t >= AFTER_SIMULATION || t != t /* NaN */ || t < time || event == null)
         //    {
-            if (t < EPOCH)
-                throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                                   "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
-            else if (t >= AFTER_SIMULATION)
-                throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                                   "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
-            else if (t != t /* NaN */)
-                throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                                   "\n\n...the time provided ("+t+") is NaN");
-            else if (t < time)
-                throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                                   "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
-            else if (event == null)
-                throw new IllegalArgumentException("The provided Steppable is null");
+        if (t < EPOCH)
+            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+                                               "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
+        else if (t >= AFTER_SIMULATION)
+            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+                                               "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
+        else if (t != t /* NaN */)
+            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+                                               "\n\n...the time provided ("+t+") is NaN");
+        else if (t < time)
+            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+                                               "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
+        else if (event == null)
+            throw new IllegalArgumentException("The provided Steppable is null");
         //    }
         
         queue.add(event, key);
@@ -461,8 +461,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event)
         {
-	// No need to lock -- we're not grabbing time from the schedule
-            return scheduleRepeating(time,0,event,1.0);
+        // No need to lock -- we're not grabbing time from the schedule
+        return scheduleRepeating(time,0,event,1.0);
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 
@@ -481,8 +481,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final Steppable event, final double interval)
         {
-	// No need to lock -- we're not grabbing time from the schedule
-            return scheduleRepeating(time,0,event,interval);
+        // No need to lock -- we're not grabbing time from the schedule
+        return scheduleRepeating(time,0,event,interval);
         }
 
     /** Schedules the event to recur at an interval of 1.0 starting at the provided time, 
@@ -500,8 +500,8 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event)
         {
-	// No need to lock -- we're not grabbing time from the schedule
-            return scheduleRepeating(time,ordering,event,1.0);
+        // No need to lock -- we're not grabbing time from the schedule
+        return scheduleRepeating(time,ordering,event,1.0);
         }
 
     /** Schedules the event to recur at the specified interval starting at the provided time, 

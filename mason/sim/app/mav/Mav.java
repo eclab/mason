@@ -17,38 +17,38 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
     {
     public final static double[] theta = new double[/* 8 */]
     {
-        0*(/*Strict*/Math.PI/180),
-        45*(/*Strict*/Math.PI/180),
-        90*(/*Strict*/Math.PI/180),
-        135*(/*Strict*/Math.PI/180),
-        180*(/*Strict*/Math.PI/180),
-        225*(/*Strict*/Math.PI/180),
-        270*(/*Strict*/Math.PI/180),
-        315*(/*Strict*/Math.PI/180)
+    0*(/*Strict*/Math.PI/180),
+    45*(/*Strict*/Math.PI/180),
+    90*(/*Strict*/Math.PI/180),
+    135*(/*Strict*/Math.PI/180),
+    180*(/*Strict*/Math.PI/180),
+    225*(/*Strict*/Math.PI/180),
+    270*(/*Strict*/Math.PI/180),
+    315*(/*Strict*/Math.PI/180)
     };
         
     public final static double[] xd = new double[/* 8 */]
     {
-        /*Strict*/Math.cos(theta[0]),
-        /*Strict*/Math.cos(theta[1]),
-        /*Strict*/Math.cos(theta[2]),
-        /*Strict*/Math.cos(theta[3]),
-        /*Strict*/Math.cos(theta[4]),
-        /*Strict*/Math.cos(theta[5]),
-        /*Strict*/Math.cos(theta[6]),
-        /*Strict*/Math.cos(theta[7]),
+    /*Strict*/Math.cos(theta[0]),
+    /*Strict*/Math.cos(theta[1]),
+    /*Strict*/Math.cos(theta[2]),
+    /*Strict*/Math.cos(theta[3]),
+    /*Strict*/Math.cos(theta[4]),
+    /*Strict*/Math.cos(theta[5]),
+    /*Strict*/Math.cos(theta[6]),
+    /*Strict*/Math.cos(theta[7]),
     };
         
     public final static double[] yd = new double[/* 8 */]
     {
-        /*Strict*/Math.sin(theta[0]),
-        /*Strict*/Math.sin(theta[1]),
-        /*Strict*/Math.sin(theta[2]),
-        /*Strict*/Math.sin(theta[3]),
-        /*Strict*/Math.sin(theta[4]),
-        /*Strict*/Math.sin(theta[5]),
-        /*Strict*/Math.sin(theta[6]),
-        /*Strict*/Math.sin(theta[7]),
+    /*Strict*/Math.sin(theta[0]),
+    /*Strict*/Math.sin(theta[1]),
+    /*Strict*/Math.sin(theta[2]),
+    /*Strict*/Math.sin(theta[3]),
+    /*Strict*/Math.sin(theta[4]),
+    /*Strict*/Math.sin(theta[5]),
+    /*Strict*/Math.sin(theta[6]),
+    /*Strict*/Math.sin(theta[7]),
     };
 
     public int orientation = 0;

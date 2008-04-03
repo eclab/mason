@@ -24,26 +24,26 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
         {
         diffusers = new ParallelSequence(new Steppable[]
             {
-                new Steppable ()
-                    { 
-                    public void step(SimState state) 
-                        {
-                        // diffuse top half of field
-                        HeatBugs heatbugs = (HeatBugs)state;
-                        int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                        diffuse(heatbugs, 0, _gridWidth/2);
-                        }
-                    },
-                new Steppable ()
+            new Steppable ()
+                { 
+                public void step(SimState state) 
                     {
-                    public void step(SimState state) 
-                        {
-                        // diffuse bottom half of field
-                        HeatBugs heatbugs = (HeatBugs)state;
-                        int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                        diffuse(heatbugs, _gridWidth/2, _gridWidth);
-                        }
+                    // diffuse top half of field
+                    HeatBugs heatbugs = (HeatBugs)state;
+                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
+                    diffuse(heatbugs, 0, _gridWidth/2);
                     }
+                },
+            new Steppable ()
+                {
+                public void step(SimState state) 
+                    {
+                    // diffuse bottom half of field
+                    HeatBugs heatbugs = (HeatBugs)state;
+                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
+                    diffuse(heatbugs, _gridWidth/2, _gridWidth);
+                    }
+                }
             });
         }
         

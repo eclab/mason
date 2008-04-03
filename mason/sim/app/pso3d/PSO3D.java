@@ -65,9 +65,9 @@ public class PSO3D extends SimState
     
     public double[] fitnessFunctionLowerBound = 
         {
-            950,
-            998,
-            200
+        950,
+        998,
+        200
         };
 
     public double successThreshold = 1.0e-8;

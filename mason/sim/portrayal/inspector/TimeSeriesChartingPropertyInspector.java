@@ -41,9 +41,9 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         {
         return new Class[]
                 {
-                    Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
-                    Integer.TYPE, Long.TYPE, Float.TYPE,
-                    Double.TYPE, Valuable.class
+                Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
+                Integer.TYPE, Long.TYPE, Float.TYPE,
+                Double.TYPE, Valuable.class
                 };
         }
 

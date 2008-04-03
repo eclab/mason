@@ -47,9 +47,9 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
         {
         return new Class[]
                 {
-                    new byte[0].getClass(), new short[0].getClass(), new int[0].getClass(), new long[0].getClass(),
-                    new float[0].getClass(), new double[0].getClass(), new boolean[0].getClass(), new Valuable[0].getClass(),
-                    new Number[0].getClass(), IntBag.class, DoubleBag.class
+                new byte[0].getClass(), new short[0].getClass(), new int[0].getClass(), new long[0].getClass(),
+                new float[0].getClass(), new double[0].getClass(), new boolean[0].getClass(), new Valuable[0].getClass(),
+                new Number[0].getClass(), IntBag.class, DoubleBag.class
                 };
         }
 

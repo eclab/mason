@@ -34,12 +34,12 @@ public class WireFrameBoxPortrayal3D extends SimplePortrayal3D
     
     private static final float[] verts = 
         {
-            1f, 0f,  1f,     1f,  1f,  1f,  0f,  1f,  1f,   0f, 0f,  1f,     1f, 0f,  1f,/* front face*/    
-            0f, 0f, 0f,     0f,  1f, 0f,     1f,  1f, 0f,    1f, 0f, 0f,    0f, 0f, 0f,/* back face*/       
-            1f, 0f, 0f,      1f,  1f, 0f,    1f,  1f,  1f,   1f, 0f,  1f,    1f, 0f, 0f,/* right face*/     
-            0f, 0f,  1f,    0f,  1f,  1f,   0f,  1f, 0f,    0f, 0f, 0f,     0f, 0f,  1f,/* left face*/      
-            1f,  1f,  1f,    1f,  1f, 0f,   0f,  1f, 0f,    0f,  1f,  1f,    1f,  1f,  1f,/* top face*/     
-            0f, 0f,  1f,    0f, 0f, 0f,      1f, 0f, 0f,     1f, 0f,  1f,   0f, 0f,  1f /* bottom face*/
+        1f, 0f,  1f,     1f,  1f,  1f,  0f,  1f,  1f,   0f, 0f,  1f,     1f, 0f,  1f,/* front face*/    
+        0f, 0f, 0f,     0f,  1f, 0f,     1f,  1f, 0f,    1f, 0f, 0f,    0f, 0f, 0f,/* back face*/       
+        1f, 0f, 0f,      1f,  1f, 0f,    1f,  1f,  1f,   1f, 0f,  1f,    1f, 0f, 0f,/* right face*/     
+        0f, 0f,  1f,    0f,  1f,  1f,   0f,  1f, 0f,    0f, 0f, 0f,     0f, 0f,  1f,/* left face*/      
+        1f,  1f,  1f,    1f,  1f, 0f,   0f,  1f, 0f,    0f,  1f,  1f,    1f,  1f,  1f,/* top face*/     
+        0f, 0f,  1f,    0f, 0f, 0f,      1f, 0f, 0f,     1f, 0f,  1f,   0f, 0f,  1f /* bottom face*/
         };
         
     float[] scaledVerts = new float[verts.length];

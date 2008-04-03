@@ -24,9 +24,9 @@ public /*strictfp*/ class MavDemo extends SimState
     // shapes on the ground
     public Region[] region = new Region[]
     {
-        new Region(0, 1, 50,50),
-        new Region(1,  2, 200, 200),
-        new Region(2, 3, 200,450)
+    new Region(0, 1, 50,50),
+    new Region(1,  2, 200, 200),
+    new Region(2, 3, 200,450)
     };
     
     public MavDemo(long seed)

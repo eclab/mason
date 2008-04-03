@@ -40,7 +40,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     /** Nine dash combinations that the user might find helpful. */
     static final float[][] dashes = 
         { 
-            { DASH, 0.0f }, // --------
+        { DASH, 0.0f }, // --------
             { DASH * 2, SKIP }, 
             { DASH, SKIP } , // -  -  -  
             { DASH, SPACE } , // - - - -
