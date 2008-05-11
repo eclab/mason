@@ -118,7 +118,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 return c;
                 }
             };
-        addLabelled("Line",well);
+        addLabelled("Color",well);
                         
         NumberTextField thickitude = new NumberTextField(2.0,true)
             {

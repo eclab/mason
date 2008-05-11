@@ -16,6 +16,8 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
     public Double2D lastd = new Double2D(0,0);
     public Continuous2D flockers;
     public Flockers theFlock;
+    public boolean dead = false;
+    
     
     public Bag getNeighbors()
         {
@@ -133,8 +135,6 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
         double l = Math.sqrt(x * x + y * y);
         return new Double2D(0.05*x/l,0.05*y/l);
         }
-    
-    public boolean dead = false;
     
     public void step(SimState state)
         {        

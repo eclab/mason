@@ -56,8 +56,8 @@ public abstract class PropertyInspector extends Inspector
     public Properties properties;
     /* public Frame parent; */
     public GUIState simulation;
-    public static Bag classes = null;
-    public static Bag names = null;
+    
+    static Bag classes = null;
     protected boolean validInspector = false;
     Stoppable stopper;
         
@@ -116,7 +116,7 @@ public abstract class PropertyInspector extends Inspector
         this.simulation = simulation;
         }
 
-    static String nameForClass(String classname)
+public static String getMenuNameForPropertyInspectorClass(String classname)
         {
         try
             {
@@ -127,7 +127,7 @@ public abstract class PropertyInspector extends Inspector
             return null;
             }
         }
-        
+
     static boolean typesForClassCompatable(String classname, Class type)
         {
         try
@@ -141,37 +141,32 @@ public abstract class PropertyInspector extends Inspector
         catch(Throwable e) { }
         return false;
         }
-        
-    static void loadClasses()
+    
+    public static Bag getPropertyInspectorClassNames()
         {
-        if (classes != null) return;    // already loaded
-        classes = new Bag();
-        names = new Bag();
-        
-        try
-            {
-            InputStream s = PropertyInspector.class.getResourceAsStream("propertyinspector.classes");
-            StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
-            st.resetSyntax();
-            st.wordChars(33,255);
-            st.commentChar(35);
-            st.whitespaceChars(0,32);  // control chars
-            while(st.nextToken()!=StreamTokenizer.TT_EOF)
-                {
-                if (st.sval == null) { } // ignore
-                else 
-                    {
-                    classes.add(st.sval);
-                    names.add(nameForClass(st.sval));
-                    }
-                }
-            s.close();
-            }
-        catch (Throwable e)
-            {
-            System.err.println("Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
-            e.printStackTrace();
-            }
+        if (classes == null)
+	    {
+	    classes = new Bag();
+	    
+	    try
+		{
+		InputStream s = PropertyInspector.class.getResourceAsStream("propertyinspector.classes");
+		StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
+		st.resetSyntax();
+		st.wordChars(33,255);
+		st.commentChar(35);
+		st.whitespaceChars(0,32);  // control chars
+		while(st.nextToken()!=StreamTokenizer.TT_EOF)
+		    if (st.sval != null) classes.add(st.sval);  // ignore otherwise
+		s.close();
+		}
+	    catch (Throwable e)
+		{
+		System.err.println("Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+		e.printStackTrace();
+		}
+	    }
+	return classes;
         }
                 
     /** Provides a popup menu attached to a JToggleButton which produces PropertyInspectors for
@@ -179,8 +174,7 @@ public abstract class PropertyInspector extends Inspector
     public static JToggleButton getPopupMenu(final Properties properties, final int index, final GUIState state)
         {
         boolean somethingCompatable = false;
-//        Class propertyClass = properties.getType(index);
-        loadClasses();
+        final Bag classes = getPropertyInspectorClassNames();
         
         // build the popup menu
         
@@ -196,10 +190,7 @@ public abstract class PropertyInspector extends Inspector
             {
             public void mousePressed(MouseEvent e)
                 {
-                popup.show(e.getComponent(),
-                           0, /*toggleButton.getLocation().x,*/
-                           /*toggleButton.getLocation().y+*/
-                           toggleButton.getSize().height);
+                popup.show(e.getComponent(),0,toggleButton.getSize().height);
                 }
             public void mouseReleased(MouseEvent e) 
                 {
@@ -209,7 +200,7 @@ public abstract class PropertyInspector extends Inspector
 
         for(int x = 0; x < classes.numObjs; x++)
             {                                           
-            JMenuItem menu = new JMenuItem((String)(names.objs[x]));
+            JMenuItem menu = new JMenuItem((String)(getMenuNameForPropertyInspectorClass((String)(classes.objs[x]))));
             popup.add(menu);
             if (!typesForClassCompatable((String)(classes.objs[x]),properties.getType(index)))
                 menu.setEnabled(false);
@@ -258,8 +249,7 @@ public abstract class PropertyInspector extends Inspector
                 });
             }
         
-        if (!somethingCompatable)
-            return null;
+        if (!somethingCompatable) return null;
         else return toggleButton;
         }
     

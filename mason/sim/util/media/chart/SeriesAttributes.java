@@ -177,8 +177,16 @@ public abstract class SeriesAttributes extends LabelledList
         b.add(Box.createGlue());
         addLabelled("Show", b);
 
-        final JTextField nameF = new JTextField(name);
-        nameF.addActionListener(new ActionListener()
+        final PropertyField nameF = new PropertyField(name)
+	    {
+	    public String newValue(String newValue)
+		{
+		setSeriesName(newValue);
+                getGenerator().getChartPanel().repaint();
+		return newValue;
+		}
+	    };
+/*        nameF.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
@@ -186,7 +194,8 @@ public abstract class SeriesAttributes extends LabelledList
                 setSeriesName(n);
                 getGenerator().getChartPanel().repaint();
                 }
-            });
+            });*/
+	    
         addLabelled("Series",nameF);
                         
         buildAttributes();

@@ -292,7 +292,19 @@ public class Display2D extends JComponent implements Steppable
                     }
                 }
             }
-        
+	
+	/** Overridden to directly call paintComponent(), rather than doing a background fill first.  This doubles
+	    the frame rate on OS X (at least). */
+	/*
+	public void paintImmediately(int x, int y, int w, int h)
+	    {
+	    if (!isShowing()) return;
+	    Graphics g = getGraphics();
+	    paintComponent(g);
+	    g.dispose();
+	    }
+	*/
+	    
         /** Swing's equivalent of paint(Graphics g).   Called by repaint().  In turn calls
             paintComponent(g,false);   You should not call this method directly.  Instead you probably want to
             call paintComponent(Graphics, buffer).  */
@@ -750,7 +762,9 @@ public class Display2D extends JComponent implements Steppable
         color, which is the color of any area that the simulation doesn't draw on. */
     Paint backdrop = Color.white;  // default.  It'll get changed.
     /** Specify the backdrop color or other paint.  The backdrop is the region behind where the simulation 
-        actually draws.  If set to null, no color/paint is used. */
+        actually draws.  If set to null, no color/paint is used -- and indeed the background you're drawing on
+	is not defined.  Only set to null if you know you're filling the entire background with something else
+	anyway. */
     public void setBackdrop(Paint c) { backdrop = c; }
     /** Returns the backdrop color or paint.  The backdrop is the region behind where the simulation actually draws.
         If set to null, no color/paint is used. */
@@ -944,15 +958,14 @@ public class Display2D extends JComponent implements Steppable
             {
             public void mousePressed(MouseEvent e)
                 {
-                popup.show(e.getComponent(),
-                           togglebutton.getLocation().x,
-                           //togglebutton.getLocation().y+
-                           togglebutton.getSize().height);
+		popup.show(e.getComponent(),
+		       togglebutton.getLocation().x,
+		       togglebutton.getSize().height);
                 }
-            public void mouseReleased(MouseEvent e) 
-                {
-                togglebutton.setSelected(false);
-                }
+	    public void mouseReleased(MouseEvent e)
+		{
+		togglebutton.setSelected(false);
+		}
             });
 
         // add mouse listener for the inspectors
@@ -1255,8 +1268,7 @@ public class Display2D extends JComponent implements Steppable
     // you may need to convert it.  :-(
 
     // We're using our own small PNG package (see sim.util.media) because the JAI isn't standard across
-    // all platforms (notably 1.3.1) and at the time we made the call, it wasn't available on the
-    // Mac at all.
+    // all platforms (notably 1.3.1) and at the time we made the call, it wasn't available on the Mac at all.
 
     private Object sacrificialObj = null;
     
@@ -1432,7 +1444,7 @@ public class Display2D extends JComponent implements Steppable
             {
             if (isMacOSX && movieMaker == null) 
                 {   // macos x should use other method for movie maker and off-screen buffers
-                repaint();
+                insideDisplay.repaint();
                 }
             else  // Windows or X Windows
                 {

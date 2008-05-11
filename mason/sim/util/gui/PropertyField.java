@@ -173,7 +173,7 @@ public class PropertyField extends JComponent
         };
     
     boolean settingList = false;
-    
+	
     /** Sets the value, not filtering it through newValue(val) first. */
     public void setValue(String val)
         {

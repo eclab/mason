@@ -18,6 +18,7 @@ import java.io.*;
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.LabelledList;
 import sim.util.gui.NumberTextField;
+import sim.util.gui.PropertyField;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.data.xy.*;
@@ -80,11 +81,11 @@ public abstract class ChartGenerator extends JPanel
     /** The JFrame which stores the whole chart.  Set in createFrame(), else null. */
     protected JFrame frame;
     /** The global attributes chart title field. */
-    protected JTextField titleField;
+    protected PropertyField titleField;
     /** The global attributes domain axis field. */
-    protected JTextField xLabel;
+    protected PropertyField xLabel;
     /** The global attributes range axis field. */
-    protected  JTextField yLabel;
+    protected  PropertyField yLabel;
     
     /** The global attributes logarithmic range axis check box. */
     protected JCheckBox yLog;
@@ -160,7 +161,7 @@ public abstract class ChartGenerator extends JPanel
         chart.setTitle(title);
         chart.titleChanged(new TitleChangeEvent(new org.jfree.chart.title.TextTitle(title)));
         if (frame!=null) frame.setTitle(title);
-        titleField.setText(title);
+        titleField.setValue(title);
         }
 
     /** Returns the title of the chart */
@@ -175,7 +176,7 @@ public abstract class ChartGenerator extends JPanel
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setLabel(val);
         xyplot.axisChanged(new AxisChangeEvent(xyplot.getRangeAxis()));
-        yLabel.setText(val);
+        yLabel.setValue(val);
         }
                 
     /** Returns the name of the Range Axis Label -- usually this is the Y axis. */
@@ -190,7 +191,7 @@ public abstract class ChartGenerator extends JPanel
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setLabel(val);
         xyplot.axisChanged(new AxisChangeEvent(xyplot.getDomainAxis()));
-        xLabel.setText(val);
+        xLabel.setValue(val);
         }
                 
     /** Returns the name of the Domain Axis label -- usually this is the X axis. */
@@ -218,6 +219,10 @@ public abstract class ChartGenerator extends JPanel
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
 
+        LabelledList list = new LabelledList("Chart");
+        globalAttributes.add(list);
+
+/*
         titleField = new JTextField();
         titleField.setText(chart.getTitle().getText());
         titleField.addKeyListener(new KeyListener()
@@ -241,12 +246,22 @@ public abstract class ChartGenerator extends JPanel
                 setTitle(titleField.getText());
                 }
             });
+*/
 
+	titleField = new PropertyField()
+	    {
+	    public String newValue(String newValue)
+		{
+                setTitle(newValue);
+                getChartPanel().repaint();
+		return newValue;
+		}
+	    };
+        titleField.setValue(chart.getTitle().getText());
 
-        LabelledList list = new LabelledList("Chart");
-        globalAttributes.add(list);
         list.add(new JLabel("Title"), titleField);
 
+/*
         xLabel = new JTextField();
         xLabel.setText(getDomainAxisLabel());
         xLabel.addKeyListener(new KeyListener()
@@ -270,26 +285,21 @@ public abstract class ChartGenerator extends JPanel
                 setDomainAxisLabel(xLabel.getText());
                 }
             });
+*/
+	xLabel = new PropertyField()
+	    {
+	    public String newValue(String newValue)
+		{
+                setDomainAxisLabel(newValue);
+                getChartPanel().repaint();
+		return newValue;
+		}
+	    };
+        xLabel.setValue(getDomainAxisLabel());
 
         list.add(new JLabel("X Label"), xLabel);
         
-        xLog = new JCheckBox();
-        xLog.addChangeListener(new ChangeListener(){
-            public void stateChanged(ChangeEvent e)
-                {
-                if(xLog.isSelected())
-                    {
-                    LogarithmicAxis logAxis = new LogarithmicAxis(xLabel.getText());
-                    logAxis.setStrictValuesFlag(false);
-                    chart.getXYPlot().setDomainAxis(logAxis);
-                    }
-                else
-                    chart.getXYPlot().setDomainAxis(new NumberAxis(xLabel.getText()));
-                }
-            });
-        list.add(new JLabel("Logarithmic X axis"), xLog);
-        
-
+/*
         yLabel = new JTextField();
         yLabel.setText(getRangeAxisLabel());
         yLabel.addKeyListener(new KeyListener()
@@ -313,25 +323,52 @@ public abstract class ChartGenerator extends JPanel
                 setRangeAxisLabel(yLabel.getText());
                 }
             });
+*/
+	yLabel = new PropertyField()
+	    {
+	    public String newValue(String newValue)
+		{
+                setRangeAxisLabel(newValue);
+                getChartPanel().repaint();
+		return newValue;
+		}
+	    };
+        yLabel.setValue(getRangeAxisLabel());
         
-
         list.add(new JLabel("Y Label"), yLabel);
         
+        xLog = new JCheckBox();
+        xLog.addChangeListener(new ChangeListener(){
+            public void stateChanged(ChangeEvent e)
+                {
+                if(xLog.isSelected())
+                    {
+                    LogarithmicAxis logAxis = new LogarithmicAxis(xLabel.getValue());
+                    logAxis.setStrictValuesFlag(false);
+                    chart.getXYPlot().setDomainAxis(logAxis);
+                    }
+                else
+                    chart.getXYPlot().setDomainAxis(new NumberAxis(xLabel.getValue()));
+                }
+            });
+        list.add(new JLabel("Log X axis"), xLog);
+        
+
         yLog = new JCheckBox();
         yLog.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e)
                 {
                 if(yLog.isSelected())
                     {
-                    LogarithmicAxis logAxis = new LogarithmicAxis(yLabel.getText());
+                    LogarithmicAxis logAxis = new LogarithmicAxis(yLabel.getValue());
                     logAxis.setStrictValuesFlag(false);
                     chart.getXYPlot().setRangeAxis(logAxis);
                     }
                 else
-                    chart.getXYPlot().setRangeAxis(new NumberAxis(yLabel.getText()));
+                    chart.getXYPlot().setRangeAxis(new NumberAxis(yLabel.getValue()));
                 }
             });
-        list.add(new JLabel("Logarithmic Y axis"), yLog);
+        list.add(new JLabel("Log Y axis"), yLog);
 
         final JCheckBox legendCheck = new JCheckBox();
         legendCheck.setSelected(false);
