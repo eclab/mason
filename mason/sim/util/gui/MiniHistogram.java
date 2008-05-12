@@ -31,7 +31,7 @@ import java.awt.event.*;
     </pre></tt>
 */
 
-public class MiniHistogram extends JPanel
+public class MiniHistogram extends JComponent
     {
     final static JLabel DEFAULT_SIZE_COMPARISON = new JLabel("X");
     double[] buckets;
@@ -50,6 +50,7 @@ public class MiniHistogram extends JPanel
         this();
         setBucketsAndLabels(buckets,labels);
         setBackground(DEFAULT_SIZE_COMPARISON.getBackground());
+	setOpaque(true);
         }
 
     public Dimension getPreferredSize() 

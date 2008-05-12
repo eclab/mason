@@ -1309,6 +1309,8 @@ Version 13
 	Added some more distance methods to MutableDouble2D and MutableDouble3D
 	Changed all JTextFields in the charting facility to PropertyFields.  This
 		is much cleaner and shorter, and works better too.
-	Added an override of Display2D.paintImmediately which prevents the
-		background from always being drawn.  As a result, many 2D
+	Set Display2D.innerDisplay to be opaque.  As a result, many 2D
 		simulations run at up to twice their previous visualization speed.
+		This necessitated setting the background for the Display2D scroll
+		pane as well.  For good measure, also set the MiniHistogram to be
+		an opaque JComponent instead of a non-opaque JPanel.

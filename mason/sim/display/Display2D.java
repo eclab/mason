@@ -293,18 +293,6 @@ public class Display2D extends JComponent implements Steppable
                 }
             }
 	
-	/** Overridden to directly call paintComponent(), rather than doing a background fill first.  This doubles
-	    the frame rate on OS X (at least). */
-	/*
-	public void paintImmediately(int x, int y, int w, int h)
-	    {
-	    if (!isShowing()) return;
-	    Graphics g = getGraphics();
-	    paintComponent(g);
-	    g.dispose();
-	    }
-	*/
-	    
         /** Swing's equivalent of paint(Graphics g).   Called by repaint().  In turn calls
             paintComponent(g,false);   You should not call this method directly.  Instead you probably want to
             call paintComponent(Graphics, buffer).  */
@@ -933,9 +921,11 @@ public class Display2D extends JComponent implements Steppable
         display.getVerticalScrollBar().setBorder(null);
         port = display.getViewport();
         insideDisplay.setViewRect(port.getViewRect());
-
+	insideDisplay.setOpaque(true);  // radically increases speed in OS X, maybe others
         // Bug in Panther causes this color to be wrong, ARGH
 //        port.setBackground(UIManager.getColor("window"));  // make the nice stripes on MacOS X
+	insideDisplay.setBackground(UIManager.getColor("Panel.background"));
+	display.setBackground(UIManager.getColor("Panel.background")); // this is the one that has any affect
         port.setBackground(UIManager.getColor("Panel.background"));
         
         // create the button bar at the top.
