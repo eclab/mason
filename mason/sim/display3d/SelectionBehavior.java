@@ -90,7 +90,18 @@ public class SelectionBehavior extends PickMouseBehavior
         
         Point3d eyePos = pickCanvas.getStartPosition ();
 
-        pickResults = pickCanvas.pickAll();
+        try
+	    {
+	    pickResults = pickCanvas.pickAll();
+	    }
+	catch (javax.media.j3d.CapabilityNotSetException e)
+	    {
+	    // we need to trap this but we're not sure why it's happening right now.
+	    // it pops up occasionally when we click on 3d edge portrayals.  But they
+	    // all appear to have their geometries set.
+	    e.printStackTrace();
+	    }
+	    
         if(pickResults == null)
             return;
                 
