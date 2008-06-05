@@ -104,6 +104,8 @@ public class HeatBugs3DWithUI extends GUIState
         
     public void setupPortrayals()
         {
+	display.destroySceneGraph();
+
         // determine 
         SimpleColorMap cm = new SimpleColorMap();
         cm.setLevels(0.0,HeatBugs.MAX_HEAT,Color.blue,Color.red);

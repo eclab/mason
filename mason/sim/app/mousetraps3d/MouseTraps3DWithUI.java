@@ -59,6 +59,8 @@ public class MouseTraps3DWithUI extends GUIState
             
     public void setup3DPortrayals()
         {       
+	display.destroySceneGraph();
+
         trapsPortrayal.setField(((MouseTraps)state).trapStateGrid);
         ballPortrayal.setField(((MouseTraps)state).ballSpace);
         ballPortrayal.setPortrayalForAll(new SpherePortrayal3D(Color.green));

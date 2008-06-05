@@ -63,18 +63,19 @@ public class Balls3DWithUI extends GUIState
         
         // tell the portrayals what to portray and how to portray them
         edgePortrayal.setField( new SpatialNetwork3D( tut.balls, tut.bands ) );
-        edgePortrayal.setPortrayalForAll(
-            new CylinderEdgePortrayal3D()
+        SimpleEdgePortrayal3D portrayal = new CylinderEdgePortrayal3D()
                 {
                 public String getLabel(sim.field.network.Edge e)
                     {
                     return strengthFormat.format(e.getWeight());
                     }
-                }); 
-
+                }; 
+	portrayal.setShowLabels(true);
+	
+        edgePortrayal.setPortrayalForAll( portrayal );
         nodePortrayal.setField( tut.balls );
-        nodePortrayal.setPortrayalForAll(new BallPortrayal(5)); 
-                        
+	nodePortrayal.setPortrayalForAll(new BallPortrayal3D(5.0f));
+
         display.createSceneGraph(); 
         display.reset();
         }

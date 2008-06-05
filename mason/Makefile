@@ -9,7 +9,8 @@
 JAVAC = javac ${JAVACFLAGS}
 #JAVAC = jikes ${JIKESFLAGS}
 
-JAVACFLAGS = -target 1.3 -source 1.3 ${FLAGS}
+JAVACFLAGS = ${FLAGS}
+#-target 1.3 -source 1.3 ${FLAGS}
 JIKESFLAGS = -target 1.3 +Pno-shadow ${FLAGS}
 FLAGS = -g -nowarn
 

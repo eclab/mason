@@ -1314,3 +1314,20 @@ Version 13
 		This necessitated setting the background for the Display2D scroll
 		pane as well.  For good measure, also set the MiniHistogram to be
 		an opaque JComponent instead of a non-opaque JPanel.
+	Added a Display3D.destroySceneGraph() method and modified all 3D apps to
+		call this new method prior to creating any portrayals (basically
+		to call it at the beginning of setupPortrayals).  This unhooks
+		the scene graph so any shared Java3D geometry isn't live any more
+		and we don't get any Java3D complaints when we're just making new
+		portrayals.  Updated the tutorials as well to reflect the new
+		arrangement.
+	Made the geometry of SpherePortrayal3D, ConePortrayal3D, and 
+		CylinderPortrayal3D shared.  Previously we were worried this would
+		also share the picked objects or the colors among the nodes, but
+		it doesn't appear to be the case.  Will only work if destroySceneGraph()
+		is properly called first.
+	Fixed bugs in EdgePortrayal3D subclasses: model updating wasn't implemented
+		so if you added or deleted an edge, it wasn't reflected in the
+		scene.  Also we moved the pickability-setting capabilities into the
+		constructors for the Java3D objects because it tickled capability bit
+		problems elsewhere somewhere deep inside Java3D.  
