@@ -30,7 +30,7 @@ import javax.swing.*;
 public class HeatBugs3DWithUI extends GUIState
     {
                 
-    public JFrame mDisplayFrame; 
+    public JFrame displayFrame; 
     public static final int CLASSIC = 0;
     public static final int STACKED = 1;
         
@@ -138,23 +138,23 @@ public class HeatBugs3DWithUI extends GUIState
 
 
         // reschedule the displayer
-        mDisplay.reset();        
+        display.reset();        
 
         // rebuild the scene graph
-        mDisplay.createSceneGraph();
+        display.createSceneGraph();
         }
     
-    public Display3D mDisplay;
+    public Display3D display;
 
     public void init(Controller c)
         {
         super.init(c);
         // Make the Display3D.  We'll have it display stuff later.
-        mDisplay = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this,1);
                 
         // attach the portrayals to the displayer, from bottom to top
-        mDisplay.attach(heatPortrayal,"Heat");
-        mDisplay.attach(bugPortrayal, "Bugs");
+        display.attach(heatPortrayal,"Heat");
+        display.attach(bugPortrayal, "Bugs");
         heatPortrayal.valueName = "Heat";
                 
         HeatBugs hbState = (HeatBugs)state;
@@ -166,24 +166,24 @@ public class HeatBugs3DWithUI extends GUIState
         // the (2,2) and (3,3) grid positions.  To center
         // the origin there, we need to move the graph in the opposite direction.
         // so the general equation for each dimension: (numGridPoints - 1) / -2.0.
-        mDisplay.translate((hbState.gridWidth - 1)/-2.0, (hbState.gridHeight - 1)/-2.0, 0);
+        display.translate((hbState.gridWidth - 1)/-2.0, (hbState.gridHeight - 1)/-2.0, 0);
         
         // now let's scale it so it fits inside a 1x1x1 cube centered at the origin.  We don't
         // have to, but it'll look nicer.
-        mDisplay.scale(1.0/Math.max(hbState.gridWidth,hbState.gridHeight));
+        display.scale(1.0/Math.max(hbState.gridWidth,hbState.gridHeight));
         
-        mDisplayFrame = mDisplay.createFrame(); 
-        c.registerFrame(mDisplayFrame);   // register the frame so it appears in the "Display" list
-        mDisplayFrame.setVisible(true);
+        displayFrame = display.createFrame(); 
+        c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        displayFrame.setVisible(true);
         }
         
     public void quit()
         {
         super.quit();
 
-        if (mDisplayFrame!=null) mDisplayFrame.dispose();
-        mDisplayFrame = null;  
-        mDisplay = null;       
+        if (displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;  
+        display = null;       
         }
 
 

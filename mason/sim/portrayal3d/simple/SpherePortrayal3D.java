@@ -90,7 +90,8 @@ public class SpherePortrayal3D extends SimplePortrayal3D
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
             // make a sphere
-            Sphere sphere = new Sphere(scale/2,Primitive.GEOMETRY_NOT_SHARED | 
+            Sphere sphere = new Sphere(scale/2, 
+					/* Primitive.GEOMETRY_NOT_SHARED | */
                                        (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
                                        (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), 
                                        divisions, appearance);

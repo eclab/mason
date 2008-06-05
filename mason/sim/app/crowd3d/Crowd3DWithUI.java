@@ -6,6 +6,7 @@
 
 package sim.app.crowd3d;
 
+import sim.engine.*;
 import sim.display.*;
 import sim.display3d.*;
 import sim.portrayal3d.*;

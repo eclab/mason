@@ -1047,10 +1047,9 @@ public class Display2D extends JComponent implements Steppable
                 if (newValue <= 0.0) newValue = currentValue;
                 setScale(newValue);
                 port.setView(insideDisplay);
-                //optionPane.xOffsetField.add *= (newValue / currentValue);
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
-                //optionPane.yOffsetField.add *= (newValue / currentValue);
                 optionPane.yOffsetField.setValue(insideDisplay.yOffset * newValue);
+		Display2D.this.repaint();
                 return newValue;
                 }
             };

@@ -20,7 +20,7 @@ import javax.swing.*;
 
 public class MouseTraps3DWithUI extends GUIState
     {
-    public JFrame mDisplayFrame; 
+    public JFrame displayFrame; 
         
     ValueGrid2DPortrayal3D trapsPortrayal = new ValueGrid2DPortrayal3D();
     ContinuousPortrayal3D ballPortrayal = new ContinuousPortrayal3D();
@@ -66,13 +66,13 @@ public class MouseTraps3DWithUI extends GUIState
         ballPortrayal.setPortrayalForAll(new SpherePortrayal3D(Color.green));
 
         // rebuild the scene graph
-        mDisplay.createSceneGraph();
+        display.createSceneGraph();
 
         // reschedule the displayer
-        mDisplay.reset();        
+        display.reset();        
         }
         
-    public Display3D mDisplay;
+    public Display3D display;
         
     public void init(Controller c)
         {
@@ -121,30 +121,30 @@ public class MouseTraps3DWithUI extends GUIState
         wireFrameP = new WireFrameBoxPortrayal3D(0,0,0,sim.spaceWidth, sim.spaceHeight, sim.spaceLength);
 
         // Make the Display3D.  We'll have it display stuff later.
-        mDisplay = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this,1);
                 
         // attach the portrayals to the displayer, from bottom to top
-        mDisplay.attach(trapsPortrayal,"Traps");
-        mDisplay.attach(ballPortrayal, "Balls");
-        mDisplay.attach(wireFrameP, "Fish tank");
+        display.attach(trapsPortrayal,"Traps");
+        display.attach(ballPortrayal, "Balls");
+        display.attach(wireFrameP, "Fish tank");
         
         // translate the whole kit and caboodle into the center
-        mDisplay.translate(-sim.spaceWidth/2, -sim.spaceHeight/2, -sim.spaceLength/2);
+        display.translate(-sim.spaceWidth/2, -sim.spaceHeight/2, -sim.spaceLength/2);
         // scale it down to some reasonable value, say, the maximal dimension of the boxes
-        mDisplay.scale(1/Math.max(sim.spaceHeight, Math.max(sim.spaceWidth, sim.spaceLength)));
+        display.scale(1/Math.max(sim.spaceHeight, Math.max(sim.spaceWidth, sim.spaceLength)));
 
-        mDisplayFrame = mDisplay.createFrame();
-        c.registerFrame(mDisplayFrame);
-        mDisplayFrame.setVisible(true);
+        displayFrame = display.createFrame();
+        c.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
         }
         
     public void quit()
         {
         super.quit();
 
-        if (mDisplayFrame!=null) mDisplayFrame.dispose();
-        mDisplayFrame = null;  
-        mDisplay = null;       
+        if (displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;  
+        display = null;       
         }
         
         

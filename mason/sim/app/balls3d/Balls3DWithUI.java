@@ -74,7 +74,7 @@ public class Balls3DWithUI extends GUIState
 	
         edgePortrayal.setPortrayalForAll( portrayal );
         nodePortrayal.setField( tut.balls );
-	nodePortrayal.setPortrayalForAll(new BallPortrayal3D(5.0f));
+	nodePortrayal.setPortrayalForAll(new BallPortrayal(5.0f));
 
         display.createSceneGraph(); 
         display.reset();

@@ -77,7 +77,7 @@ public class ConePortrayal3D extends SimplePortrayal3D
             
             // make a Cone
             Cone cone = new Cone(scale/2,scale,
-                                 Primitive.GEOMETRY_NOT_SHARED | 
+                                 /* Primitive.GEOMETRY_NOT_SHARED | */
                                  (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
                                  (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), appearance);
             

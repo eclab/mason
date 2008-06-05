@@ -78,7 +78,7 @@ public class CylinderPortrayal3D extends SimplePortrayal3D
             
             // make a cylinder
             Cylinder cylinder = new Cylinder(scale/2,scale,
-                                             Primitive.GEOMETRY_NOT_SHARED | 
+                                             /* Primitive.GEOMETRY_NOT_SHARED | */
                                              (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
                                              (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
             
