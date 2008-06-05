@@ -864,6 +864,14 @@ public class Display3D extends JPanel implements Steppable
         transform(other);
         }
 
+    public void destroySceneGraph()
+	{
+	// unhook the root from the universe so we can reuse the universe (Hmmmm....)
+            
+	universe.getLocale().removeBranchGraph(root);
+	canvas.stopRenderer();
+	}
+
     ToolTipBehavior toolTipBehavior;
     boolean usingToolTips;
         
@@ -909,10 +917,7 @@ public class Display3D extends JPanel implements Steppable
             }
         else // reset the canvas
             {
-            // unhook the root from the universe so we can reuse the universe (Hmmmm....)
-            
-            universe.getLocale().removeBranchGraph(root);
-            canvas.stopRenderer();
+	    destroySceneGraph();
             }
         
         // The root in our universe will be a branchgroup
