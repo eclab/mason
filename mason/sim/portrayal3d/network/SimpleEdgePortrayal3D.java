@@ -94,29 +94,20 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         return "" + obj;
         }
 
-    static Double3D firstPoint = new Double3D();
 
-    static Double3D secondPoint = new Double3D();
-
-    static SpatialNetwork3D field;
-
-    static EdgeWrapper drawInfo = new EdgeWrapper();
-
-    Transform3D trans = new Transform3D();
-
-    static double[] startPoint = new double[3];
-
-    static double[] endPoint = new double[3];
-
-    static double[] middlePoint = new double[3];
-
-    com.sun.j3d.utils.geometry.Text2D tempText;
-
-    // Text3D tempText;
+    double[] startPoint = new double[3];
+    double[] endPoint = new double[3];
+    double[] middlePoint = new double[3];
 
     public TransformGroup getModel(Object object, TransformGroup j3dModel)
         {
-
+        Double3D firstPoint;
+        Double3D secondPoint;
+        SpatialNetwork3D field;
+        EdgeWrapper drawInfo;
+        Transform3D trans = null;
+        com.sun.j3d.utils.geometry.Text2D tempText;
+        
         drawInfo = (EdgeWrapper) object;
         field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
 
@@ -280,14 +271,11 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         // which will cause some flashing...
         MutableDouble val = null;
 
-        public EdgeWrapper()
-            {
-            this(0, 0, 0, null);
-            }
 
-        public EdgeWrapper(int x, int y, int z, FieldPortrayal fieldPortrayal)
+        public EdgeWrapper(int x, int y, int z, FieldPortrayal fieldPortrayal, Edge edge)
             {
             super((Object) null, new Int3D(x, y, z), fieldPortrayal);
+            this.edge = edge;
             }
 
         public String toString()
