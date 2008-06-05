@@ -10,6 +10,9 @@ import java.awt.*;
 import javax.vecmath.*;
 import javax.media.j3d.*;
 
+import sim.portrayal3d.network.SimpleEdgePortrayal3D.EdgeWrapper;
+import sim.util.Double3D;
+
 
 /**
  * An abstract portrayal for edges in a network field:
@@ -65,6 +68,12 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
     public TransformGroup getModel(Object object, TransformGroup j3dModel)
         {
+        Double3D firstPoint;
+        Double3D secondPoint;
+        SpatialNetwork3D field;
+        EdgeWrapper drawInfo;
+        Transform3D trans = null;
+        com.sun.j3d.utils.geometry.Text2D tempText;
 
         drawInfo = (EdgeWrapper) object;
         field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
