@@ -53,6 +53,8 @@ public class Balls3DWithUI extends GUIState
 
     public void setupPortrayals()
         {
+    	display.destroySceneGraph();
+        
         Balls3D tut = (Balls3D) state;
         
         final java.text.NumberFormat strengthFormat = java.text.NumberFormat.getInstance();
