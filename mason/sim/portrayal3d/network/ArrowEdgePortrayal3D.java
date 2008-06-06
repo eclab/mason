@@ -13,6 +13,8 @@ import javax.media.j3d.*;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.*;
+
+import sim.portrayal3d.SimplePortrayal3D;
 import sim.portrayal3d.simple.*;
 /**
  * @author Gabriel Balan
@@ -24,36 +26,25 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         {
         public PickableArrow(){this(1f);}
         public PickableArrow(Appearance ap){this(1f,ap);}
-        public PickableArrow(float radius)
-            {
-            this(radius, null);
-            }
-                
+        public PickableArrow(float radius){this(radius, null);}
         public PickableArrow(float arrowTailRadius, Appearance appearance)
             {
             super(arrowTailRadius, 
                   new Vector3f(0f,-1f,0f),
                   new Vector3f(0f,1f,0f),
                   null, null, appearance);
+            setAllPickableFlags();
             }
 
-        public void setUserData(java.lang.Object userData)
-            {
-            super.setUserData(userData);
-            setup(arrowHead.getShape(Cylinder.BODY), userData);
-            setup(arrowHead.getShape(Cylinder.TOP), userData);
-                        
-            setup(arrowTail.getShape(Cylinder.TOP), userData);
-            setup(arrowTail.getShape(Cylinder.BOTTOM), userData);
-            setup(arrowTail.getShape(Cylinder.BODY), userData);
-            }
-                
-        private void setup(Shape3D shape,java.lang.Object userData)
-            {
-            shape.setUserData(userData);
-            setPickableFlags(shape);
-            }
-                
+        private void setAllPickableFlags()
+	        {
+	    	SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.BODY));
+	    	SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.TOP));
+	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.TOP));
+	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BOTTOM));
+	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BODY));
+	        }
+
         }
 
     public ArrowEdgePortrayal3D()

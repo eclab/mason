@@ -21,31 +21,25 @@ public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
         public PickableCylinder()
         	{
         	super(); 
-        	setPickableFlags(getShape(Cylinder.BODY));
-        	setPickableFlags(getShape(Cylinder.TOP));
-        	setPickableFlags(getShape(Cylinder.BOTTOM));
+            setAllPickableFlags();
         	}
                 
         public PickableCylinder(float radius)
             {
             super(radius, 2);
-            setPickableFlags(getShape(Cylinder.BODY)); 
-            setPickableFlags(getShape(Cylinder.TOP)); 
-            setPickableFlags(getShape(Cylinder.BOTTOM));
+            setAllPickableFlags();
             }
                 
         public PickableCylinder(float radius, Appearance ap)
             {
             super(radius, 2, ap);
-            setPickableFlags(getShape(Cylinder.BODY));
-            setPickableFlags(getShape(Cylinder.TOP));
-            setPickableFlags(getShape(Cylinder.BOTTOM));
+            setAllPickableFlags();
             }
         
         public PickableCylinder(Appearance ap)
             {
             super(1, 2, ap);
-	setPickableFlags(getShape(Cylinder.BODY)); setPickableFlags(getShape(Cylinder.TOP)); setPickableFlags(getShape(Cylinder.BOTTOM));
+            setAllPickableFlags();
             }
 
 	    public void setUserData(java.lang.Object userData)
@@ -54,6 +48,12 @@ public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
 	        getShape(Cylinder.TOP).setUserData(userData);
 	        getShape(Cylinder.BOTTOM).setUserData(userData);
 	        }
+	    public void setAllPickableFlags()
+	    	{
+            setPickableFlags(getShape(Cylinder.BODY));
+            setPickableFlags(getShape(Cylinder.TOP));
+            setPickableFlags(getShape(Cylinder.BOTTOM));
+	    	}
                
         }
     public CylinderEdgePortrayal3D()

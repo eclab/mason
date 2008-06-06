@@ -8,7 +8,8 @@ package sim.portrayal3d.network;
 
 import java.awt.Color;
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Shape3D;
+import sim.portrayal3d.*;
+
 import com.sun.j3d.utils.geometry.Cone;
 
 /**
@@ -19,35 +20,34 @@ public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
     {
     static class PickableCone extends Cone
         {
-        public PickableCone(){super();}
+        public PickableCone()
+        	{
+        	super();
+        	setAllPickableFlags();
+        	}
                 
         public PickableCone(float radius)
             {
             super(radius, 2);
+            setAllPickableFlags();
             }
                 
         public PickableCone(float radius, Appearance ap)
             {
             super(radius, 2, ap);
+            setAllPickableFlags();
             }
         public PickableCone(Appearance ap)
             {
             super(1, 2, ap);
+            setAllPickableFlags();
             }
-
-        public void setUserData(java.lang.Object userData)
+        
+        private void setAllPickableFlags()
             {
-            super.setUserData(userData);
-            setup(getShape(Cone.CAP), userData);
-            setup(getShape(Cone.BODY), userData);
-
-            }
-        private void setup(Shape3D shape,java.lang.Object userData)
-            {
-            shape.setUserData(userData);
-            setPickableFlags(shape);
-            }
-                
+        	SimplePortrayal3D.setPickableFlags(getShape(Cone.CAP));
+        	SimplePortrayal3D.setPickableFlags(getShape(Cone.BODY));
+            }        
         }
 
     public ConeEdgePortrayal3D()
