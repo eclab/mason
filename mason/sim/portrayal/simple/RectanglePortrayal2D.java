@@ -17,15 +17,25 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
     {
     public Paint paint;
     public double scale;
+    public boolean filled = true;
 
     public RectanglePortrayal2D() { this(Color.gray,1.0); }
     public RectanglePortrayal2D(Paint paint) { this(paint,1.0); }
+    public RectanglePortrayal2D(Paint paint, boolean filled) { this(paint, 1.0, filled); }
     public RectanglePortrayal2D(double scale) { this(Color.gray,scale); }
+    public RectanglePortrayal2D(double scale, boolean filled) { this(Color.gray, scale, filled); }
     
     public RectanglePortrayal2D(Paint paint, double scale)
         {
         this.paint = paint;
         this.scale = scale;
+        }
+    
+    public RectanglePortrayal2D(Paint paint, double scale, boolean filled)
+        {
+        this.paint = paint;
+        this.scale = scale;
+        this.filled = filled;
         }
                 
     /** If drawing area intersects selected area, add last portrayed object to the bag */
@@ -51,7 +61,10 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
         final int h = (int)(height);
 
         // draw centered on the origin
-        graphics.fillRect(x,y,w,h);
+        if (filled)
+        	graphics.fillRect(x,y,w,h);
+        else
+        	graphics.drawRect(x,y,w,h);
         }
         
     }
