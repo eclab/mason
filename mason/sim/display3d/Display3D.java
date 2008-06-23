@@ -865,17 +865,17 @@ public class Display3D extends JPanel implements Steppable
         }
 
     /** Eliminates the existing scene graph.  This ought to be called when starting a simulation prior to creating
-	any new Portrayal3Ds.  The reason is simple: if the Portrayal3Ds use shared geometry objects underneath, then
-	creating them may create new shared geometry objects, which isn't permitted if there are existing shared geometry
-	objects in a live scene graph.  So destroy the scene graph, create the new objects, and recreate the scene graph, and you're set.
-	*/
+        any new Portrayal3Ds.  The reason is simple: if the Portrayal3Ds use shared geometry objects underneath, then
+        creating them may create new shared geometry objects, which isn't permitted if there are existing shared geometry
+        objects in a live scene graph.  So destroy the scene graph, create the new objects, and recreate the scene graph, and you're set.
+    */
     public void destroySceneGraph()
-	{
-	// unhook the root from the universe so we can reuse the universe (Hmmmm....)
+        {
+        // unhook the root from the universe so we can reuse the universe (Hmmmm....)
             
-	universe.getLocale().removeBranchGraph(root);
-	canvas.stopRenderer();
-	}
+        universe.getLocale().removeBranchGraph(root);
+        canvas.stopRenderer();
+        }
 
     ToolTipBehavior toolTipBehavior;
     boolean usingToolTips;
@@ -922,7 +922,7 @@ public class Display3D extends JPanel implements Steppable
             }
         else // reset the canvas
             {
-	    destroySceneGraph();
+            destroySceneGraph();
             }
         
         // The root in our universe will be a branchgroup

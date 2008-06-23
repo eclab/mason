@@ -1331,3 +1331,4 @@ Version 13
 		scene.  Also we moved the pickability-setting capabilities into the
 		constructors for the Java3D objects because it tickled capability bit
 		problems elsewhere somewhere deep inside Java3D.  
+	Added propertyinspector.classes to the Makefile's jar builder

@@ -223,116 +223,116 @@ public abstract class ChartGenerator extends JPanel
         globalAttributes.add(list);
 
 /*
-        titleField = new JTextField();
-        titleField.setText(chart.getTitle().getText());
-        titleField.addKeyListener(new KeyListener()
-            {
-            public void keyReleased(KeyEvent keyEvent) {}
-            public void keyTyped(KeyEvent keyEvent) {}
-            public void keyPressed(KeyEvent keyEvent)
-                {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-                    {
-                    setTitle(titleField.getText());
-                    }
-                else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-                    titleField.setText(getTitle());
-                }
-            });
-        titleField.addFocusListener(new FocusAdapter()
-            {
-            public void focusLost ( FocusEvent e )
-                {
-                setTitle(titleField.getText());
-                }
-            });
+  titleField = new JTextField();
+  titleField.setText(chart.getTitle().getText());
+  titleField.addKeyListener(new KeyListener()
+  {
+  public void keyReleased(KeyEvent keyEvent) {}
+  public void keyTyped(KeyEvent keyEvent) {}
+  public void keyPressed(KeyEvent keyEvent)
+  {
+  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
+  {
+  setTitle(titleField.getText());
+  }
+  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
+  titleField.setText(getTitle());
+  }
+  });
+  titleField.addFocusListener(new FocusAdapter()
+  {
+  public void focusLost ( FocusEvent e )
+  {
+  setTitle(titleField.getText());
+  }
+  });
 */
 
-	titleField = new PropertyField()
-	    {
-	    public String newValue(String newValue)
-		{
+        titleField = new PropertyField()
+            {
+            public String newValue(String newValue)
+                {
                 setTitle(newValue);
                 getChartPanel().repaint();
-		return newValue;
-		}
-	    };
+                return newValue;
+                }
+            };
         titleField.setValue(chart.getTitle().getText());
 
         list.add(new JLabel("Title"), titleField);
 
 /*
-        xLabel = new JTextField();
-        xLabel.setText(getDomainAxisLabel());
-        xLabel.addKeyListener(new KeyListener()
-            {
-            public void keyReleased(KeyEvent keyEvent) {}
-            public void keyTyped(KeyEvent keyEvent) {}
-            public void keyPressed(KeyEvent keyEvent)
-                {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-                    {
-                    setDomainAxisLabel(xLabel.getText());
-                    }
-                else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-                    xLabel.setText(getDomainAxisLabel());
-                }
-            });
-        xLabel.addFocusListener(new FocusAdapter()
-            {
-            public void focusLost ( FocusEvent e )
-                {
-                setDomainAxisLabel(xLabel.getText());
-                }
-            });
+  xLabel = new JTextField();
+  xLabel.setText(getDomainAxisLabel());
+  xLabel.addKeyListener(new KeyListener()
+  {
+  public void keyReleased(KeyEvent keyEvent) {}
+  public void keyTyped(KeyEvent keyEvent) {}
+  public void keyPressed(KeyEvent keyEvent)
+  {
+  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
+  {
+  setDomainAxisLabel(xLabel.getText());
+  }
+  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
+  xLabel.setText(getDomainAxisLabel());
+  }
+  });
+  xLabel.addFocusListener(new FocusAdapter()
+  {
+  public void focusLost ( FocusEvent e )
+  {
+  setDomainAxisLabel(xLabel.getText());
+  }
+  });
 */
-	xLabel = new PropertyField()
-	    {
-	    public String newValue(String newValue)
-		{
+        xLabel = new PropertyField()
+            {
+            public String newValue(String newValue)
+                {
                 setDomainAxisLabel(newValue);
                 getChartPanel().repaint();
-		return newValue;
-		}
-	    };
+                return newValue;
+                }
+            };
         xLabel.setValue(getDomainAxisLabel());
 
         list.add(new JLabel("X Label"), xLabel);
         
 /*
-        yLabel = new JTextField();
-        yLabel.setText(getRangeAxisLabel());
-        yLabel.addKeyListener(new KeyListener()
-            {
-            public void keyReleased(KeyEvent keyEvent) {}
-            public void keyTyped(KeyEvent keyEvent) {}
-            public void keyPressed(KeyEvent keyEvent)
-                {
-                if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-                    {
-                    setRangeAxisLabel(yLabel.getText());
-                    }
-                else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-                    yLabel.setText(getRangeAxisLabel());
-                }
-            });
-        yLabel.addFocusListener(new FocusAdapter()
-            {
-            public void focusLost ( FocusEvent e )
-                {
-                setRangeAxisLabel(yLabel.getText());
-                }
-            });
+  yLabel = new JTextField();
+  yLabel.setText(getRangeAxisLabel());
+  yLabel.addKeyListener(new KeyListener()
+  {
+  public void keyReleased(KeyEvent keyEvent) {}
+  public void keyTyped(KeyEvent keyEvent) {}
+  public void keyPressed(KeyEvent keyEvent)
+  {
+  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
+  {
+  setRangeAxisLabel(yLabel.getText());
+  }
+  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
+  yLabel.setText(getRangeAxisLabel());
+  }
+  });
+  yLabel.addFocusListener(new FocusAdapter()
+  {
+  public void focusLost ( FocusEvent e )
+  {
+  setRangeAxisLabel(yLabel.getText());
+  }
+  });
 */
-	yLabel = new PropertyField()
-	    {
-	    public String newValue(String newValue)
-		{
+        yLabel = new PropertyField()
+            {
+            public String newValue(String newValue)
+                {
                 setRangeAxisLabel(newValue);
                 getChartPanel().repaint();
-		return newValue;
-		}
-	    };
+                return newValue;
+                }
+            };
         yLabel.setValue(getRangeAxisLabel());
         
         list.add(new JLabel("Y Label"), yLabel);

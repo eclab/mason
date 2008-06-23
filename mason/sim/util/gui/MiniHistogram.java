@@ -50,7 +50,7 @@ public class MiniHistogram extends JComponent
         this();
         setBucketsAndLabels(buckets,labels);
         setBackground(DEFAULT_SIZE_COMPARISON.getBackground());
-	setOpaque(true);
+        setOpaque(true);
         }
 
     public Dimension getPreferredSize() 

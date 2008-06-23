@@ -116,7 +116,7 @@ public abstract class PropertyInspector extends Inspector
         this.simulation = simulation;
         }
 
-public static String getMenuNameForPropertyInspectorClass(String classname)
+    public static String getMenuNameForPropertyInspectorClass(String classname)
         {
         try
             {
@@ -145,28 +145,28 @@ public static String getMenuNameForPropertyInspectorClass(String classname)
     public static Bag getPropertyInspectorClassNames()
         {
         if (classes == null)
-	    {
-	    classes = new Bag();
-	    
-	    try
-		{
-		InputStream s = PropertyInspector.class.getResourceAsStream("propertyinspector.classes");
-		StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
-		st.resetSyntax();
-		st.wordChars(33,255);
-		st.commentChar(35);
-		st.whitespaceChars(0,32);  // control chars
-		while(st.nextToken()!=StreamTokenizer.TT_EOF)
-		    if (st.sval != null) classes.add(st.sval);  // ignore otherwise
-		s.close();
-		}
-	    catch (Throwable e)
-		{
-		System.err.println("Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
-		e.printStackTrace();
-		}
-	    }
-	return classes;
+            {
+            classes = new Bag();
+            
+            try
+                {
+                InputStream s = PropertyInspector.class.getResourceAsStream("propertyinspector.classes");
+                StreamTokenizer st = new StreamTokenizer(new BufferedReader(new InputStreamReader(s)));
+                st.resetSyntax();
+                st.wordChars(33,255);
+                st.commentChar(35);
+                st.whitespaceChars(0,32);  // control chars
+                while(st.nextToken()!=StreamTokenizer.TT_EOF)
+                    if (st.sval != null) classes.add(st.sval);  // ignore otherwise
+                s.close();
+                }
+            catch (Throwable e)
+                {
+                System.err.println("Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+                e.printStackTrace();
+                }
+            }
+        return classes;
         }
                 
     /** Provides a popup menu attached to a JToggleButton which produces PropertyInspectors for

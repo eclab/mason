@@ -23,7 +23,9 @@ public class ConePortrayal3D extends SimplePortrayal3D
     public Appearance appearance;
     public boolean generateNormals;
     public boolean generateTextureCoordinates;
-        
+    public Cone cone;
+    public TransformGroup group;
+
     /** Constructs a ConePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public ConePortrayal3D()
         {
@@ -45,7 +47,7 @@ public class ConePortrayal3D extends SimplePortrayal3D
     /** Constructs a ConePortrayal3D with a flat opaque appearance of the given color and the given scale. */
     public ConePortrayal3D(java.awt.Color color, float scale)
         {
-        this(appearanceForColor(color),false,false,scale);
+        this(appearanceForColor(color),true,false,scale);
         }
 
     /** Constructs a ConePortrayal3D with the given (opaque) image and a scale of 1.0. */
@@ -66,6 +68,20 @@ public class ConePortrayal3D extends SimplePortrayal3D
         this.generateNormals = generateNormals;
         this.generateTextureCoordinates = generateTextureCoordinates;
         this.appearance = appearance;  this.scale = scale;
+
+        Cone cone = new Cone(0.5f,1f,
+                             /* Primitive.GEOMETRY_NOT_SHARED | */
+                             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
+                             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), appearance);
+            
+        cone.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
+        cone.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
+        cone.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
+        cone.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
+        setPickableFlags(cone.getShape(Cone.BODY));
+        setPickableFlags(cone.getShape(Cone.CAP));
+        group = new TransformGroup();
+        group.addChild(cone);
         }
 
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
@@ -75,24 +91,22 @@ public class ConePortrayal3D extends SimplePortrayal3D
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
-            // make a Cone
-            Cone cone = new Cone(scale/2,scale,
-                                 /* Primitive.GEOMETRY_NOT_SHARED | */
-                                 (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
-                                 (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), appearance);
-            
-            // make all of its shapes pickable
-            setPickableFlags(cone.getShape(Cone.BODY));
-            setPickableFlags(cone.getShape(Cone.CAP));
-            
             // build a LocationWrapper for the object
             LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
             
+            TransformGroup g = (TransformGroup) (group.cloneTree());
+            Transform3D tr = new Transform3D();
+            tr.setScale(scale);
+            g.setTransform(tr);
+            
+            Cone con = (Cone) (g.getChild(0));
+            con.setAppearance(appearance);
+            
             // Store the LocationWrapper in the user data of each shape
-            cone.getShape(Cone.BODY).setUserData(pickI);
-            cone.getShape(Cone.CAP).setUserData(pickI);
+            con.getShape(Cone.BODY).setUserData(pickI);
+            con.getShape(Cone.CAP).setUserData(pickI);
 
-            j3dModel.addChild(cone);
+            j3dModel.addChild(g);
             }
         return j3dModel;
         }

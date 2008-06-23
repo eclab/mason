@@ -64,8 +64,6 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         edgeModel = model;
         }
 
-
-
     public TransformGroup getModel(Object object, TransformGroup j3dModel)
         {
         Double3D firstPoint;
@@ -89,8 +87,6 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         endPoint[1] = secondPoint.y;
         endPoint[2] = secondPoint.z;
 
-
-
         if (showLabels)
             trans = transformForOffset(
                 (float) (firstPoint.x + secondPoint.x) / 2,
@@ -103,15 +99,9 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
             j3dModel = new TransformGroup();
             j3dModel.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 
-
-
-
-
-
             TransformGroup tg = new TransformGroup(getTransform(startPoint, endPoint));
             tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
             tg.addChild(edgeModel.cloneTree());
-
 
             passWrapperToGeometries(drawInfo);
                         
@@ -130,18 +120,8 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                                                           text.getAppearance(),
                                                           OrientedShape3D.ROTATE_ABOUT_POINT,
                                                           new Point3f(0, 0, 0));
-                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need
-                // to change
-                // the
-                // appearance
-                // (see
-                // below)
-                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need
-                // to change
-                // the
-                // geometry
-                // (see
-                // below)
+                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
+                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
 
@@ -170,50 +150,51 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                 tempText.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
                 tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
                 }
-            } else
-                {
-                TransformGroup tg0 = (TransformGroup) j3dModel.getChild(0);
-                tg0.setTransform(getTransform(startPoint, endPoint));
+            } 
+        else
+            {
+            TransformGroup tg0 = (TransformGroup) j3dModel.getChild(0);
+            tg0.setTransform(getTransform(startPoint, endPoint));
                         
 
-                if (showLabels)
+            if (showLabels)
+                {
+                TransformGroup tg = (TransformGroup) j3dModel.getChild(1);
+                String str = getLabel(drawInfo.edge);
+
+                // see if the label has changed?
+                if (!tg.getUserData().equals(str))
                     {
-                    TransformGroup tg = (TransformGroup) j3dModel.getChild(1);
-                    String str = getLabel(drawInfo.edge);
+                    // ugh. This is really slow. Using the Shape3D results in
+                    // huge text, so, the default
+                    // value has to be changed in the constructor.
 
-                    // see if the label has changed?
-                    if (!tg.getUserData().equals(str))
-                        {
-                        // ugh. This is really slow. Using the Shape3D results in
-                        // huge text, so, the default
-                        // value has to be changed in the constructor.
+                    // make the text again
+                    com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
+                        str, new Color3f(labelColor),
+                        labelFont.getFamily(), labelFont.getSize(),
+                        labelFont.getStyle());
+                    text.setRectangleScaleFactor(1.0f / 16.0f);
 
-                        // make the text again
-                        com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
-                            str, new Color3f(labelColor),
-                            labelFont.getFamily(), labelFont.getSize(),
-                            labelFont.getStyle());
-                        text.setRectangleScaleFactor(1.0f / 16.0f);
+                    // Shape3D text = new Shape3D(new Text3D(new
+                    // Font3D(labelFont, new FontExtrusion()), str));
 
-                        // Shape3D text = new Shape3D(new Text3D(new
-                        // Font3D(labelFont, new FontExtrusion()), str));
+                    // Grab the OrientedShape3D
+                    OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 
-                        // Grab the OrientedShape3D
-                        OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
+                    // update its geometry and appearance to reflect the new
+                    // text.
+                    o3d.setGeometry(text.getGeometry());
+                    o3d.setAppearance(text.getAppearance());
 
-                        // update its geometry and appearance to reflect the new
-                        // text.
-                        o3d.setGeometry(text.getGeometry());
-                        o3d.setAppearance(text.getAppearance());
-
-                        // update user data to reflect the new text
-                        tg.setUserData(str);
-                        }
-
-                    // update the position of the text
-                    tg.setTransform(trans);
+                    // update user data to reflect the new text
+                    tg.setUserData(str);
                     }
+
+                // update the position of the text
+                tg.setTransform(trans);
                 }
+            }
 
         return j3dModel;
         }

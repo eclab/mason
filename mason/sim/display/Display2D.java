@@ -292,7 +292,7 @@ public class Display2D extends JComponent implements Steppable
                     }
                 }
             }
-	
+        
         /** Swing's equivalent of paint(Graphics g).   Called by repaint().  In turn calls
             paintComponent(g,false);   You should not call this method directly.  Instead you probably want to
             call paintComponent(Graphics, buffer).  */
@@ -751,8 +751,8 @@ public class Display2D extends JComponent implements Steppable
     Paint backdrop = Color.white;  // default.  It'll get changed.
     /** Specify the backdrop color or other paint.  The backdrop is the region behind where the simulation 
         actually draws.  If set to null, no color/paint is used -- and indeed the background you're drawing on
-	is not defined.  Only set to null if you know you're filling the entire background with something else
-	anyway. */
+        is not defined.  Only set to null if you know you're filling the entire background with something else
+        anyway. */
     public void setBackdrop(Paint c) { backdrop = c; }
     /** Returns the backdrop color or paint.  The backdrop is the region behind where the simulation actually draws.
         If set to null, no color/paint is used. */
@@ -921,11 +921,11 @@ public class Display2D extends JComponent implements Steppable
         display.getVerticalScrollBar().setBorder(null);
         port = display.getViewport();
         insideDisplay.setViewRect(port.getViewRect());
-	insideDisplay.setOpaque(true);  // radically increases speed in OS X, maybe others
+        insideDisplay.setOpaque(true);  // radically increases speed in OS X, maybe others
         // Bug in Panther causes this color to be wrong, ARGH
 //        port.setBackground(UIManager.getColor("window"));  // make the nice stripes on MacOS X
-	insideDisplay.setBackground(UIManager.getColor("Panel.background"));
-	display.setBackground(UIManager.getColor("Panel.background")); // this is the one that has any affect
+        insideDisplay.setBackground(UIManager.getColor("Panel.background"));
+        display.setBackground(UIManager.getColor("Panel.background")); // this is the one that has any affect
         port.setBackground(UIManager.getColor("Panel.background"));
         
         // create the button bar at the top.
@@ -948,14 +948,14 @@ public class Display2D extends JComponent implements Steppable
             {
             public void mousePressed(MouseEvent e)
                 {
-		popup.show(e.getComponent(),
-		       togglebutton.getLocation().x,
-		       togglebutton.getSize().height);
+                popup.show(e.getComponent(),
+                           togglebutton.getLocation().x,
+                           togglebutton.getSize().height);
                 }
-	    public void mouseReleased(MouseEvent e)
-		{
-		togglebutton.setSelected(false);
-		}
+            public void mouseReleased(MouseEvent e)
+                {
+                togglebutton.setSelected(false);
+                }
             });
 
         // add mouse listener for the inspectors
@@ -1049,7 +1049,7 @@ public class Display2D extends JComponent implements Steppable
                 port.setView(insideDisplay);
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
                 optionPane.yOffsetField.setValue(insideDisplay.yOffset * newValue);
-		Display2D.this.repaint();
+                Display2D.this.repaint();
                 return newValue;
                 }
             };

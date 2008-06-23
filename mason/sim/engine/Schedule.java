@@ -305,12 +305,12 @@ public class Schedule implements java.io.Serializable
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnceIn(final double delta, final Steppable event)
-	{
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(/*must lock for:*/ time + delta, 0), event);
-	    }
-	}
+        {
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(/*must lock for:*/ time + delta, 0), event);
+            }
+        }
         
     /** Schedules the event to occur at getTime() + 1.0, and in the ordering provided. If this is a valid time
         and event, schedules the event and returns TRUE, else returns FALSE.  */
@@ -329,12 +329,12 @@ public class Schedule implements java.io.Serializable
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnceIn(final double delta, final Steppable event, final int ordering)
-	{
-	synchronized(lock)
-	    {
-	    return _scheduleOnce(new Key(/*must lock for:*/ time + delta, ordering), event);
-	    }
-	}
+        {
+        synchronized(lock)
+            {
+            return _scheduleOnce(new Key(/*must lock for:*/ time + delta, ordering), event);
+            }
+        }
 
     /** Schedules the event to occur at the provided time, 0 ordering.  If the getTime() == the provided
         time, then the event is instead scheduled to occur at getTime() + epsilon (the minimum possible next

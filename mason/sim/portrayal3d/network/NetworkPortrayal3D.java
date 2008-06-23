@@ -78,8 +78,8 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
 
         Portrayal p = getPortrayalForObject(newinfo);
         if (!(p instanceof SimpleEdgePortrayal3D)) 
-          throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                     edge + " -- expected a SimpleEdgePortrayal3D");
+            throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
+                                       edge + " -- expected a SimpleEdgePortrayal3D");
         SimpleEdgePortrayal3D portrayal = (SimpleEdgePortrayal3D) p; 
         
         TransformGroup localTG = portrayal.getModel(newinfo, null); 
@@ -104,20 +104,20 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
         Network net = field.network;
         Bag nodes = net.getAllNodes();
         for(int n=0;n<nodes.numObjs;n++)
-        {
-        	Bag edges = net.getEdgesOut(nodes.objs[n]);
-            for(int i=0;i<edges.numObjs;i++)
             {
-            	Object edge = edges.objs[i];
+            Bag edges = net.getEdgesOut(nodes.objs[n]);
+            for(int i=0;i<edges.numObjs;i++)
+                {
+                Object edge = edges.objs[i];
                 hm.put(edge,edge);
+                }
             }
-        }
         // update children (edges) if they're still in the field (network),
         // else remove the children if they appear to have left.
         // We use a hashmap to efficiently mark out the children
         // as we delete them and update them
         for(int t= globalTG.numChildren()-1; t>=0; t--)
-        	{
+            {
             BranchGroup localBG = (BranchGroup)globalTG.getChild(t);
             SimpleEdgePortrayal3D.EdgeWrapper infoObj = (SimpleEdgePortrayal3D.EdgeWrapper)localBG.getUserData();
             if(hm.remove(infoObj.edge) != null) // hm.containsKey(edgeObj))  // object still in the field
@@ -128,7 +128,6 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                                                infoObj + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
-
                 
                 TransformGroup localTG2 = p3d.getModel(infoObj, localTG);
 

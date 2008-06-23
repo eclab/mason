@@ -143,3 +143,12 @@ Instance variable:
 	...optional init-form: initial-value-expression... )
 
 
+ACCESSING THIS
+
+(this)
+
+
+TESTING FOR JAVA NULL
+
+(eq? thing-to-compare #!null)
+

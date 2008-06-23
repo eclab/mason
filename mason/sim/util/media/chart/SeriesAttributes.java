@@ -178,24 +178,24 @@ public abstract class SeriesAttributes extends LabelledList
         addLabelled("Show", b);
 
         final PropertyField nameF = new PropertyField(name)
-	    {
-	    public String newValue(String newValue)
-		{
-		setSeriesName(newValue);
-                getGenerator().getChartPanel().repaint();
-		return newValue;
-		}
-	    };
-/*        nameF.addActionListener(new ActionListener()
             {
-            public void actionPerformed(ActionEvent e)
+            public String newValue(String newValue)
                 {
-                String n = nameF.getText();
-                setSeriesName(n);
+                setSeriesName(newValue);
                 getGenerator().getChartPanel().repaint();
+                return newValue;
                 }
-            });*/
-	    
+            };
+/*        nameF.addActionListener(new ActionListener()
+          {
+          public void actionPerformed(ActionEvent e)
+          {
+          String n = nameF.getText();
+          setSeriesName(n);
+          getGenerator().getChartPanel().repaint();
+          }
+          });*/
+            
         addLabelled("Series",nameF);
                         
         buildAttributes();

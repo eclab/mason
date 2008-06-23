@@ -59,7 +59,7 @@ public class MouseTraps3DWithUI extends GUIState
             
     public void setup3DPortrayals()
         {       
-	display.destroySceneGraph();
+        display.destroySceneGraph();
 
         trapsPortrayal.setField(((MouseTraps)state).trapStateGrid);
         ballPortrayal.setField(((MouseTraps)state).ballSpace);

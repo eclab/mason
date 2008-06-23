@@ -46,20 +46,20 @@ public class Crowd3DWithUI extends GUIState
     public static String getName() { return "Crowd Spacing"; }
         
     public void start()
-	{
-	super.start();
-	setupPortrayals();
-	}
+        {
+        super.start();
+        setupPortrayals();
+        }
     
     public void load(SimState state)
-	{
-	super.load(state);
-	setupPortrayals();
-	}
-	
+        {
+        super.load(state);
+        setupPortrayals();
+        }
+        
     public void setupPortrayals()
         {
-	display.destroySceneGraph();
+        display.destroySceneGraph();
 
         boidsP.setField(((CrowdSim)state).boidSpace);
         
