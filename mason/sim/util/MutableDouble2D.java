@@ -251,6 +251,14 @@ public final class MutableDouble2D implements java.io.Serializable
         }
 
     /** Adds other into me, returning me. */
+    public final MutableDouble2D addIn(final Double2D other)
+        {
+        x = other.x + x;
+        y = other.y + y;
+        return this;
+        }
+            
+    /** Adds other into me, returning me. */
     public final MutableDouble2D addIn(final MutableDouble2D other)
         {
         x = other.x + x;
@@ -282,10 +290,18 @@ public final class MutableDouble2D implements java.io.Serializable
 
 
     /** Sets me to me minus other, returning me.  */
+    public final MutableDouble2D subtractIn(Double2D other)
+        {
+        x = x - other.x;
+        y = y - other.y;
+        return this;
+        }
+
+    /** Sets me to me minus other, returning me.  */
     public final MutableDouble2D subtractIn(MutableDouble2D other)
         {
-        x = other.x - x;
-        y = other.y - y;
+        x = x - other.x;
+        y = y - other.y;
         return this;
         }
 

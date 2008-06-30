@@ -1332,3 +1332,7 @@ Version 13
 		constructors for the Java3D objects because it tickled capability bit
 		problems elsewhere somewhere deep inside Java3D.  
 	Added propertyinspector.classes to the Makefile's jar builder
+
+Version 14
+	Fixed bugs in MutableDouble[2|3]D.subtractIn.
+	Added a few MutableDouble[2|3]D.addIn methods.
