@@ -420,9 +420,7 @@ public class Display2D extends JComponent implements Steppable
                 return returnval;
                 }
             }
-         
-
-        
+                 
         /** Draws the image into a buffer, then IF graphics is not null,
             draws the resulting buffer to the graphics.  Returns the buffer,
             which is shared internally, so you need to copy out of it as soon as possible. */

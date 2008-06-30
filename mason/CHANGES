@@ -1336,3 +1336,4 @@ Version 13
 Version 14
 	Fixed bugs in MutableDouble[2|3]D.subtractIn.
 	Added a few MutableDouble[2|3]D.addIn methods.
+	Added DrawInfo2D.equals(...)

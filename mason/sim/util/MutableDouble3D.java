@@ -288,6 +288,15 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
 
 
     /** Adds other into me, returning me. */
+    public final MutableDouble3D addIn(final Double3D other)
+        {
+        x = other.x + x;
+        y = other.y + y;
+        z = other.z + z;
+        return this;
+        }
+            
+    /** Adds other into me, returning me. */
     public final MutableDouble3D addIn(final MutableDouble3D other)
         {
         x = other.x + x;
@@ -305,7 +314,7 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return this;
         }
     
-    /** Adds the x and y values into my x and y values, returning me. */
+    /** Adds the x, y, and z values into my x, y, and z values, returning me. */
     public final MutableDouble3D addIn(final double x, final double y, final double z)
         {
         this.x += x;
@@ -322,11 +331,20 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
 
 
     /** Sets me to me minus other, returning me.  */
+    public final MutableDouble3D subtractIn(Double3D other)
+        {
+        x = x - other.x;
+        y = y - other.y;
+        z = z - other.z;
+        return this;
+        }
+
+    /** Sets me to me minus other, returning me.  */
     public final MutableDouble3D subtractIn(MutableDouble3D other)
         {
-        x = other.x - x;
-        y = other.y - y;
-        z = other.z - z;
+        x = x - other.x;
+        y = y - other.y;
+        z = z - other.z;
         return this;
         }
 

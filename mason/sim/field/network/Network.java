@@ -99,7 +99,7 @@ public class Network implements java.io.Serializable
     public Network(){this(true); }
     
         
-    /** Hashes Network.IndexInOut structures by Node.  These structures
+    /** Hashes Network.IndexOutIn structures by Node.  These structures
         contain the incoming edges of the Node, its outgoing edges, and the index of
         the Node in the allNodes bag. */
     public HashMap indexOutInHash = new HashMap();
