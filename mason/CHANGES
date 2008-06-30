@@ -1334,6 +1334,7 @@ Version 13
 	Added propertyinspector.classes to the Makefile's jar builder
 
 Version 14
-	Fixed bugs in MutableDouble[2|3]D.subtractIn.
+	Fixed bugs in MutableDouble[2|3]D.subtractIn.  Modified Keepaway to work with
+		the bug fixes.
 	Added a few MutableDouble[2|3]D.addIn methods.
 	Added DrawInfo2D.equals(...)

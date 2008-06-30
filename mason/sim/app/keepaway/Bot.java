@@ -62,9 +62,9 @@ public /*strictfp*/ class Bot extends Entity implements Steppable
                     // and kicking is not especially interesting.. its just accelerated impact
                     if(objs.objs[x] instanceof Ball && keepaway.random.nextDouble() < .1)
                         {
-                        tempVector.subtract(loc, ((Entity)objs.objs[x]).loc);
+                        tempVector.subtract(((Entity)objs.objs[x]).loc, loc);
                         tempVector.normalize().multiplyIn(2.0);
-                        ((Entity)objs.objs[x]).velocity.subtractIn(tempVector);
+                        ((Entity)objs.objs[x]).velocity.addIn(tempVector);
                         }
                     else        // else just ram it...
                         {               // shouldnt matter what type of object collision occurrs with
