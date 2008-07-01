@@ -6,6 +6,7 @@
 
 package sim.portrayal.network;
 import sim.portrayal.*;
+import sim.field.continuous.*;
 import sim.field.network.*;
 import sim.util.*;
 import java.awt.*;
@@ -54,7 +55,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
             // if (edges == null) continue;  // no longer necessary
             
             // coordinates of first endpoint
-            if (field.field != null) // it's continuous
+            if (field.field instanceof Continuous2D) // it's continuous
                 {
                 newinfo.draw.x = (info.draw.x + (xScale) * locStart.x);
                 newinfo.draw.y = (info.draw.y + (yScale) * locStart.y);
@@ -78,7 +79,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                 if (locStop == null) continue;
                 
                 // coordinates of second endpoint
-                if (field.field != null) // it's continuous
+                if (field.field instanceof Continuous2D) // it's continuous
                     {
                     newinfo.secondPoint.x = (info.draw.x + (xScale) * locStop.x);
                     newinfo.secondPoint.y = (info.draw.y + (yScale) * locStop.y);
