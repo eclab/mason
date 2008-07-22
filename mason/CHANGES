@@ -1338,3 +1338,44 @@ Version 14
 		the bug fixes.
 	Added a few MutableDouble[2|3]D.addIn methods.
 	Added DrawInfo2D.equals(...)
+	Tweaks to SpatialNetwork2D and NetworkPortrayal2D allow TWO fields to be
+		embedded in a SpatialNetwork2D, to facilitate lines drawing FROM
+		elements in one field TO elements in another field.  This required
+		changing the instance variables, which may break applications which
+		have customized on these classes, but it makes things simpler too.
+	Similar tweaks to SpatialNetwork3D and NetworkPortrayal3D.
+	Removed getPoint() from Int2D.java, which eliminates some inspectability
+		issues.  It was deprecated last year.
+	Tweaks to MutableDouble[2|3]D.setLength() methods with more error checks.
+	Heap.java has been modified to check for heaps of size 1 or 0 and be a
+		little bit faster in those (very common) cases.  Hope we didn't
+		break anything!
+	Modified Display2D so that zooming in maintains the location of what you
+		were looking at.
+	Wrapped the Schedule.step() method in a try { } so it doesn't bomb if the
+		underlying agent throws an exception.
+	Added Double2D.getNearestNeighbors() method.  No guarantees that it works!
+	Added getFrom() and getTo() methods to the Edge object so they can be
+		more easily inspected.
+	Modified FieldPortrayal to make Locations inspectable as well as objects.
+		Because the locations can get large, we included a disclosure
+		triangle which keeps the location small until the user clicks
+		on the triangle to inspect the location.
+	Removed the "View" buttons in various inspected properties.  Now the
+		user does "views" of composite objects by clicking on the magnifying
+		glass.  It looks cleaner and makes more sense to the user, even if
+		the "view" is technicall not popping up a property inspector.
+	Insonsequential changes to SimpleEdgePortrayal2D's constructors.
+	Modified NetworkPortrayal3D and SimpleEdgePortrayal3D to remove some
+		old, uneccessary parameters to constructors.
+	Changed "Appending" option in StreamingPropertyInspector to be more user-readable.
+	Modified SimpleColorMap to more often show the "largest" color -- a more
+		uniform distribution.
+	Modified ChartGenerator to have a white background.  This makes it more
+		ready by default to be exported to PDF for inclusion in publications.
+	Made SimpleEdgePortrayal3D the same as SimpleEdgePortrayal in how it shows
+		the inspectableness of edge locations.
+	Modified ContinuousPortrayal2D and SparseGridPortrayal2D to use new
+		"StaticLocation" objects.  This allows locations to be inspected and
+		charted continuously even though the locations of objects are constantly
+		changing.
