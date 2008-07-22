@@ -1057,15 +1057,11 @@ public class Display2D extends JComponent implements Steppable
 		// scroll to keep the zoomed-in region centered -- this is prettier
 		double centerx = r.x + r.width/2.0;
 		double centery = r.y + r.height/2.0;
-		System.out.println("Top Left " + r.x + " " + r.y + " : " + centerx + " " + centery);
-		System.out.println("Display " + insideDisplay.getBounds());
-		System.out.println("Width " + r.width + " " + r.height);
 		centerx *= (newValue / (double) currentValue);
 		centery *= (newValue / (double) currentValue);
 		Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
 		if (topleft.x < 0) topleft.x = 0;
 		if (topleft.y < 0) topleft.y = 0;
-		System.out.println("New Top Left " + topleft.x + " " + topleft.y + " : " + centerx + " " + centery);
 
 		setScale(newValue);
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
@@ -1077,7 +1073,6 @@ public class Display2D extends JComponent implements Steppable
 		
 		port.setViewPosition(topleft);
                 Display2D.this.repaint();
-		System.out.println("Display Revised " + insideDisplay.getBounds());
                 return newValue;
                 }
             };
