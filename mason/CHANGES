@@ -1361,6 +1361,7 @@ Version 14
 		Because the locations can get large, we included a disclosure
 		triangle which keeps the location small until the user clicks
 		on the triangle to inspect the location.
+	Added DisclosurePanel to enable this.
 	Removed the "View" buttons in various inspected properties.  Now the
 		user does "views" of composite objects by clicking on the magnifying
 		glass.  It looks cleaner and makes more sense to the user, even if
@@ -1378,4 +1379,4 @@ Version 14
 	Modified ContinuousPortrayal2D and SparseGridPortrayal2D to use new
 		"StaticLocation" objects.  This allows locations to be inspected and
 		charted continuously even though the locations of objects are constantly
-		changing.
+		changing.  Added various StaticLocation objects.

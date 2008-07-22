@@ -74,7 +74,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
      **/
     protected BranchGroup wrapModelForNewEdge(Edge edge)
         {
-        SimpleEdgePortrayal3D.EdgeWrapper newinfo = new SimpleEdgePortrayal3D.EdgeWrapper(0,0,0,this, edge); 
+        SimpleEdgePortrayal3D.EdgeWrapper newinfo = new SimpleEdgePortrayal3D.EdgeWrapper(this, edge); 
 
         Portrayal p = getPortrayalForObject(newinfo);
         if (!(p instanceof SimpleEdgePortrayal3D)) 

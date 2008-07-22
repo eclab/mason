@@ -13,6 +13,7 @@ import sim.util.*;
 import java.awt.*;
 import java.util.*;
 import java.awt.geom.*;
+import sim.portrayal.inspector.*;
 
 /**
    Can be used to draw both continuous and descrete sparse fields
@@ -177,19 +178,28 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
     public LocationWrapper getWrapper(Object object)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
+	final StableInt2D w = new StableInt2D(field, object);
         return new LocationWrapper( object, null, this )  // don't care about location
             {
             public Object getLocation()
                 {
-                if (field==null) return null;
+                /*
+		if (field==null) return null;
                 else return field.getObjectLocation(this.object);
+		*/
+		w.update();
+		return w;
                 }
                 
             public String getLocationName()
                 {
+		/*
                 Object loc = getLocation();
                 if (loc == null) return "Gone";
                 else return ((Int2D)loc).toCoordinates();
+		*/
+		w.update();
+		return w.toString();
                 }
             };
         }

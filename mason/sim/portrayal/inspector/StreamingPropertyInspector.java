@@ -53,7 +53,7 @@ public class StreamingPropertyInspector extends PropertyInspector
         super(properties,index,parent,simulation);
                 
         Object[] possibilities = {"A file (overwriting)",
-                                  "Appending (appending)",
+                                  "A file (appending)",
                                   "A window", 
                                   "Standard Out"};
         String s = (String)JOptionPane.showInputDialog(

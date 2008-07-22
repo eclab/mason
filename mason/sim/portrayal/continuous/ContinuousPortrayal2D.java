@@ -12,6 +12,7 @@ import sim.util.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
+import sim.portrayal.inspector.*;
 
 /**
    Portrays Continuous2D fields.  When asked to portray objects, this field computes the buckets
@@ -108,19 +109,28 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
     public LocationWrapper getWrapper(final Object obj)
         {
         final Continuous2D field = (Continuous2D)this.field;
+	final StableDouble2D w = new StableDouble2D(field, obj);
         return new LocationWrapper( obj, null , this)  // don't care about location
             {
             public Object getLocation()
                 {
+		/*
                 if (field==null) return null;
                 else return field.getObjectLocation(object);
+		*/
+		w.update();
+		return w;
                 }
                 
             public String getLocationName()
                 {
+		/*
                 Object loc = getLocation();
                 if (loc == null) return "Gone";
                 return ((Double2D)loc).toCoordinates();
+		*/
+		w.update();
+		return w.toString();
                 }
             };
         }
@@ -151,7 +161,6 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             }
         return true;
         }
-
     }
     
     

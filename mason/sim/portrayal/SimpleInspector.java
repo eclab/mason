@@ -12,6 +12,7 @@ import sim.util.gui.*;
 import sim.util.*;
 import sim.display.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 /**
    A simple inspector class that looks at the "getX" and "setX" method of the object to be investigates
@@ -64,7 +65,36 @@ public class SimpleInspector extends Inspector
         add(header,BorderLayout.NORTH);
         generateProperties(0);
         }
-                
+    
+    /* Creates a JPopupMenu that possibly includes "View" to
+       view the object instead of using the ViewButton.  If not, returns null. */
+    JPopupMenu makePreliminaryPopup(final int index)
+	{
+        Class type = properties.getType(index);
+	if (properties.isComposite(index))
+	    {
+	    JPopupMenu popup = new JPopupMenu();
+	    JMenuItem menu = new JMenuItem("View");
+	    menu.setEnabled(true);
+	    menu.addActionListener(new ActionListener()
+		{
+                public void actionPerformed(ActionEvent e)
+		    {
+		    Properties props = properties;
+		    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
+		    final Stoppable stopper = simpleInspector.reviseStopper(
+			SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
+		    SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
+		    JFrame frame = simpleInspector.createFrame(stopper);
+		    frame.setVisible(true);
+		    }
+		});
+	    popup.add(menu);
+	    return popup;
+	    }
+	else return null;
+	}
+    
     PropertyField makePropertyField(final int index)
         {
         Class type = properties.getType(index);
@@ -74,7 +104,8 @@ public class SimpleInspector extends Inspector
             properties.isReadWrite(index),
             properties.getDomain(index),
             (properties.isComposite(index) ?
-             PropertyField.SHOW_VIEWBUTTON : 
+             //PropertyField.SHOW_VIEWBUTTON : 
+	     PropertyField.SHOW_TEXTFIELD :
              (type == Boolean.TYPE || type == Boolean.class ?
               PropertyField.SHOW_CHECKBOX :
               (properties.getDomain(index) == null ? PropertyField.SHOW_TEXTFIELD :
@@ -100,6 +131,7 @@ public class SimpleInspector extends Inspector
                     return props.betterToString(props.getValue(index));
                     }
                 }
+		/*
             public void viewProperty()
                 {
                 final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
@@ -109,6 +141,7 @@ public class SimpleInspector extends Inspector
                 JFrame frame = simpleInspector.createFrame(stopper);
                 frame.setVisible(true);
                 }
+		*/
             };
         }
     
@@ -181,7 +214,7 @@ public class SimpleInspector extends Inspector
             members[i] = makePropertyField(i);
             propertyList.add(null,
                              new JLabel(properties.getName(i) + " "), 
-                             PropertyInspector.getPopupMenu(properties,i,state), 
+                             PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
                              members[i], 
                              null);
             }

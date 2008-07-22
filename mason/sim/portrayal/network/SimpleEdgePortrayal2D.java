@@ -23,8 +23,8 @@ import java.awt.geom.*;
   to never do so, or to only scale when 'zoomed out' (SCALE_WHEN_SMALLER).  By default it always scales.
   
   <p>You can specify the both a label color and a label font.   If the label color is null, the label will not be drawn.  
-  You can define the label to scale (that is, increase in font size when you zoom in), to never do so, or to only scale when 'zoomed out' (SCALE_WHEN_SMALER). 
-  By default it always scales.
+  You can define the label to scale (that is, increase in font size when you zoom in), to never do so, or to only scale 
+  when 'zoomed out' (SCALE_WHEN_SMALER).  By default it always scales.
 */
 
 public class SimpleEdgePortrayal2D extends SimplePortrayal2D
@@ -48,13 +48,13 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     /** Draws a single-color, undirected black line (or triangle) with no label. */
     public SimpleEdgePortrayal2D()
         {
-        this(Color.black, Color.black, null);
+        this(Color.black, null);
         }
     
     /** One single color line will be drawn, and if labelPaint is null, no label is drawn. */
     public SimpleEdgePortrayal2D(Paint edgePaint, Paint labelPaint)
         {
-        this(edgePaint, edgePaint, labelPaint, new Font("SansSerif", Font.PLAIN, 12));
+	this(edgePaint, edgePaint, labelPaint);
         }
 
     /** If fromPaint == toPaint, one single color line will be drawn, and if labelPaint is null, no label is drawn. */
@@ -168,7 +168,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 scaledFont.getFamily() != labelFont.getFamily() ||
                 scaledFont.getStyle() != labelFont.getStyle())
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
-
+	    
             //Object infoval = ((Edge)object).info;
             String information = getLabel((Edge)object, e);
             if( /* infoval != null && */ information.length() > 0 )
@@ -176,8 +176,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 graphics.setPaint(labelPaint);
                 graphics.setFont(scaledFont);
                 int width = graphics.getFontMetrics().stringWidth(information);
-                graphics.drawString( information, 
-                                     midX - width/2, midY );
+                graphics.drawString( information, midX - width/2, midY );
                 }
             }
         }

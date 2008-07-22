@@ -56,6 +56,7 @@ public class SimpleColorMap implements ColorMap
     public double minLevel = 0;
     public final Color clearColor = new Color(0,0,0,0);
     public Color minColor = clearColor;  // used when minLevel = maxLevel
+    public Color maxColor = clearColor;
     
     public static final int COLOR_DISCRETIZATION = 257;
     
@@ -100,6 +101,7 @@ public class SimpleColorMap implements ColorMap
         maxRed = maxColor.getRed(); maxGreen = maxColor.getGreen(); maxBlue = maxColor.getBlue(); maxAlpha = maxColor.getAlpha();
         this.maxLevel = maxLevel; this.minLevel = minLevel;
         this.minColor = minColor;
+	this.maxColor = maxColor;
 
         // reset cache
         // (the slower cache)
@@ -142,16 +144,22 @@ public class SimpleColorMap implements ColorMap
             if (level > maxLevel) level = maxLevel;
             else if (level < minLevel) level = minLevel;
             if (level == minLevel) return minColor;  // so we don't divide by zero (maxLevel - minLevel)
-            
+            else if (level == maxLevel) return maxColor;  // so we don't overflow
+	    
             final double interpolation = (level - minLevel) / (maxLevel - minLevel);
-                        
+            
+	    // the +1's beow are because the only way you can get the maxColor is if you have EXACTLY the maxLevel --
+	    // that's an incorrect discretization distribution.  Instead we return the maxColor if you have the maxLevel,
+	    // and otherwise we'd like to round it.
+	    // ... hope that's right!  -- Sean
+	    
             // look up color in cache
             // (the slower cache)
-            final int alpha = (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
+            final int alpha = (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha + 1) + minAlpha));
             if (alpha==0) return clearColor;
-            final int red = (maxRed == minRed ? minRed : (int)(interpolation * (maxRed - minRed) + minRed));
-            final int green = (maxGreen == minGreen ? minGreen : (int)(interpolation * (maxGreen - minGreen) + minGreen));
-            final int blue = (maxBlue == minBlue ? minBlue : (int)(interpolation * (maxBlue - minBlue) + minBlue));
+            final int red = (maxRed == minRed ? minRed : (int)(interpolation * (maxRed - minRed + 1) + minRed));
+            final int green = (maxGreen == minGreen ? minGreen : (int)(interpolation * (maxGreen - minGreen + 1) + minGreen));
+            final int blue = (maxBlue == minBlue ? minBlue : (int)(interpolation * (maxBlue - minBlue + 1) + minBlue));
             final int rgb = (alpha << 24) | (red << 16) | (green << 8) | blue;
             Bag colors = colorCache[(int)(interpolation * (COLOR_DISCRETIZATION-1))];
             for(int x=0;x<colors.numObjs;x++)

@@ -381,10 +381,13 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return this;
         }
 
+    static final double infinity = 1.0 / 0.0;
     /** Normalizes me (sets my length to 1.0), returning me.  Throws an error if my previous length was of length 0. */
     public final MutableDouble3D normalize()
         {
         final double invertedlen = 1.0 / Math.sqrt(x * x + y * y + z * z);
+	if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
+	    throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y + z * z) + ", cannot normalize");
         x = x * invertedlen;
         y = y * invertedlen;
         z = z * invertedlen;
@@ -396,14 +399,17 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         {
         if (val < 0)
             throw new IllegalArgumentException("The argument to MutableDouble3D.setLength(...) must be zero or positive");
+	final double len = Math.sqrt(x * x + y * y + z * z);
         if (val == 0) x = y = z = 0;
-        else
-            {
-            final double invertedlen = val / Math.sqrt(x * x + y * y + z * z);
-            x = x * invertedlen;
-            y = y * invertedlen;
-            z = z * invertedlen;
-            }
+	else
+	    {
+	    if (len != len || len == infinity || len == -infinity || len == 0)
+		throw new ArithmeticException("" + this + " length is "+ len + " cannot change its length");
+	    final double invertedlen = val / len;
+	    x = x * invertedlen;
+	    y = y * invertedlen;
+	    z = z * invertedlen;
+	    }
         return this;
         } 
 

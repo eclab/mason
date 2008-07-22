@@ -150,7 +150,7 @@ public class Heap implements java.io.Serializable
         objects[numElem-1] = null;
         numElem--;
         // rebuild heap
-        heapify( 1, numElem );
+        if (numElem > 1) heapify( 1, numElem );    // no need to heapify if there's only zero or one element!
         // return the info with min key (which was also removed from the heap)
         
         // put back
@@ -181,12 +181,16 @@ public class Heap implements java.io.Serializable
             this.keys = keys;
             }
         int i = numElem;
-        while ( i > 1 &&  key.compareTo(keys[i/2-1]) < 0 )    // keys[i/2-1] > key )
-            {
-            objects[i-1] = objects[i/2-1];
-            keys[i-1] = keys[i/2-1];
-            i = i/2;
-            }
+
+	if (i > 1)  // no need to bubble up if there's only zero or one element!
+	    {
+	    while ( i > 1 &&  key.compareTo(keys[i/2-1]) < 0 )    // keys[i/2-1] > key )
+		{
+		objects[i-1] = objects[i/2-1];
+		keys[i-1] = keys[i/2-1];
+		i = i/2;
+		}
+	    }
         keys[i-1] = key;
         objects[i-1] = elem;
         

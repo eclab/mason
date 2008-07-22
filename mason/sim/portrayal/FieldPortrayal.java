@@ -211,10 +211,13 @@ public abstract class FieldPortrayal
     public class CustomInspector extends Inspector
         {
         public JLabel positions = new JLabel();
+	public DisclosurePanel disclosurePanel;
         public LabelledList fieldComponent = new LabelledList("Location");
+	public Inspector locationInspector;
         public Inspector objectInspector;
         public LocationWrapper wrapper;
         public Object lastObject;   // check to see if it's changed
+	public Object lastLocation;
         public GUIState state;
 
         public CustomInspector( final LocationWrapper wrapper,
@@ -227,8 +230,13 @@ public abstract class FieldPortrayal
             this.state = state;
             lastObject = wrapper.getObject();
             setLayout(new BorderLayout());
-            fieldComponent.addLabelled( "", positions );
-            add( fieldComponent, BorderLayout.NORTH);
+	    lastLocation = wrapper.getLocation();
+	    positions.setText(wrapper.getLocationName());
+	    locationInspector = new SimpleInspector(lastLocation, state, null);
+	    disclosurePanel = new DisclosurePanel(positions, locationInspector, "Position");
+//          fieldComponent.addLabelled( "", positions );
+//            add( fieldComponent, BorderLayout.NORTH);
+	    add(disclosurePanel, BorderLayout.NORTH);
             add( objectInspector, BorderLayout.CENTER);
             updateInspector();
             }
@@ -249,8 +257,15 @@ public abstract class FieldPortrayal
                 add(objectInspector,BorderLayout.CENTER);
                 revalidate();
                 }
-            positions.setText(wrapper.getLocationName());
+	    Object location = wrapper.getLocation();
+	    if (location != lastLocation)  // sadly this will happen an awful lot
+		{
+		lastLocation = location;
+		disclosurePanel.setDisclosedComponent(new SimpleInspector(lastLocation, state, null));
+		}
+	    positions.setText(wrapper.getLocationName());
             objectInspector.updateInspector();
+	    locationInspector.updateInspector();
             }
         }
 

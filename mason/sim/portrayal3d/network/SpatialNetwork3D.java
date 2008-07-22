@@ -6,6 +6,7 @@
 
 package sim.portrayal3d.network;
 
+import sim.field.*;
 import sim.field.grid.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
@@ -17,43 +18,72 @@ import sim.util.*;
 
 public class SpatialNetwork3D
     {
-    public Continuous3D field;
-    public SparseGrid3D grid;
+    public SparseField field;
+    public SparseField field2;
     public Network network;
 
     public SpatialNetwork3D( final Continuous3D field, final Network network )
         {
         this.field = field;
+	if (field == null)
+	    throw new RuntimeException("Null Continuous3D.");
         this.network = network;
+	if (network == null)
+	    throw new RuntimeException("Null Network.");
         }
     
     public SpatialNetwork3D( final SparseGrid3D grid, final Network network )
         {
-        this.grid = grid;
+        this.field = field;
+	if (field == null)
+	    throw new RuntimeException("Null SparseGrid3D.");
         this.network = network;
+	if (network == null)
+	    throw new RuntimeException("Null Network.");
         }
+    
+    public void setAuxillaryField( final Continuous3D f)
+	{
+	field2 = f;
+	if (field2 != null && field instanceof SparseGrid3D)
+	    throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
+	}
+
+    public void setAuxillaryField( final SparseGrid3D f)
+	{
+	field2 = f;
+	if (field2 != null && field instanceof Continuous3D)
+	    throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
+	}
 
     public Double3D getObjectLocation(Object node)
         {
-        if (field!=null) return field.getObjectLocation(node);
-        else return new Double3D(grid.getObjectLocation(node));
+	Double3D loc = null;
+	if (field instanceof Continuous3D) loc = ((Continuous3D)field).getObjectLocation(node);
+	else loc = ((SparseGrid3D)field).getObjectLocationAsDouble3D(node);
+	if (loc == null && field2 != null)
+	    {
+	    if (field2 instanceof Continuous3D) loc = ((Continuous3D)field2).getObjectLocation(node);
+	    else loc = ((SparseGrid3D)field2).getObjectLocationAsDouble3D(node);
+	    }
+	return loc;
         }
 
     public double getWidth()
         {
-        if (field!=null) return field.getWidth();
-        else return grid.getWidth();
+        if (field instanceof Continuous3D) return ((Continuous3D)field).getWidth();
+        else return ((SparseGrid3D)field).getWidth();
         }
         
     public double getHeight()
         {
-        if (field!=null) return field.getHeight();
-        else return grid.getHeight();
+        if (field instanceof Continuous3D) return ((Continuous3D)field).getHeight();
+        else return ((SparseGrid3D)field).getHeight();
         }
-
-    public double getLength() 
+	
+    public double getLength()
         {
-        if (field!=null) return field.getLength(); 
-        else return grid.getLength();
+        if (field instanceof Continuous3D) return ((Continuous3D)field).getLength();
+        else return ((SparseGrid3D)field).getLength();
         }
     }

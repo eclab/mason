@@ -208,8 +208,7 @@ public class SparseGrid2D extends SparseField implements Grid2D
         {
         return super.setObjectLocation(obj, location);
         }
-
-
+	
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         // won't work for negative distances

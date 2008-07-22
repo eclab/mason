@@ -293,11 +293,14 @@ public class Display2D extends JComponent implements Steppable
                 }
             }
         
+	boolean paintLock = false;
         /** Swing's equivalent of paint(Graphics g).   Called by repaint().  In turn calls
             paintComponent(g,false);   You should not call this method directly.  Instead you probably want to
             call paintComponent(Graphics, buffer).  */
         public synchronized void paintComponent(final Graphics g)
             {
+	    // Swing gets overreaching when scaling in.  This allows us to temporarily refuse to paint so we don't do so multiple times.
+	    if (paintLock) return; 
             // I'm likely being updated due to scrolling, so change rect
             if (SwingUtilities.isEventDispatchThread())
                 setViewRect(port.getViewRect());
@@ -1043,11 +1046,38 @@ public class Display2D extends JComponent implements Steppable
             public double newValue(double newValue)
                 {
                 if (newValue <= 0.0) newValue = currentValue;
-                setScale(newValue);
-                port.setView(insideDisplay);
+
+		// lock the paint lock so we don't try repainting until we request it.
+		// JScrollView tries to jump the gun, making things flashy.
+		insideDisplay.paintLock = true;
+		
+		// grab the original location
+		Rectangle r = port.getViewRect();
+
+		// scroll to keep the zoomed-in region centered -- this is prettier
+		double centerx = r.x + r.width/2.0;
+		double centery = r.y + r.height/2.0;
+		System.out.println("Top Left " + r.x + " " + r.y + " : " + centerx + " " + centery);
+		System.out.println("Display " + insideDisplay.getBounds());
+		System.out.println("Width " + r.width + " " + r.height);
+		centerx *= (newValue / (double) currentValue);
+		centery *= (newValue / (double) currentValue);
+		Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
+		if (topleft.x < 0) topleft.x = 0;
+		if (topleft.y < 0) topleft.y = 0;
+		System.out.println("New Top Left " + topleft.x + " " + topleft.y + " : " + centerx + " " + centery);
+
+		setScale(newValue);
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
                 optionPane.yOffsetField.setValue(insideDisplay.yOffset * newValue);
+                port.setView(insideDisplay);
+		
+		// now release the paint lock and repaint
+		insideDisplay.paintLock = false;
+		
+		port.setViewPosition(topleft);
                 Display2D.this.repaint();
+		System.out.println("Display Revised " + insideDisplay.getBounds());
                 return newValue;
                 }
             };

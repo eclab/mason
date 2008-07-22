@@ -170,15 +170,17 @@ public abstract class PropertyInspector extends Inspector
         }
                 
     /** Provides a popup menu attached to a JToggleButton which produces PropertyInspectors for
-        a given property index.  Returns null if nothing compatible */
-    public static JToggleButton getPopupMenu(final Properties properties, final int index, final GUIState state)
+        a given property index.  Returns null if nothing compatible.  Provide null for pop if you don't have a JPopupMenu you'd
+	like the PropertyInspector to build off of. */
+    public static JToggleButton getPopupMenu(final Properties properties, final int index, final GUIState state, JPopupMenu pop)
         {
         boolean somethingCompatable = false;
         final Bag classes = getPropertyInspectorClassNames();
         
         // build the popup menu
         
-        final JPopupMenu popup = new JPopupMenu();
+	if (pop == null) pop = new JPopupMenu();
+        final JPopupMenu popup = pop;
         popup.setLightWeightPopupEnabled(false);
         final JToggleButton toggleButton = new JToggleButton(INSPECT_ICON);
         toggleButton.setPressedIcon(INSPECT_ICON_P);

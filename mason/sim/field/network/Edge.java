@@ -50,6 +50,11 @@ public class Edge implements java.io.Serializable
     int indexTo;
     
     /** Returns the "from" object. */
+    public Object getFrom() { return from; }
+    /** Returns the "to" object. */
+    public Object getTo() { return to; }
+    
+    /** Returns the "from" object. */
     public Object from() { return from; }
     /** Returns the "to" object. */
     public Object to() { return to; }
@@ -115,5 +120,4 @@ public class Edge implements java.io.Serializable
         {
         return "Edge[" + from + "->" + to + " / " + indexFrom + "->" + indexTo + "]";
         }
-
     }

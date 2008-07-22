@@ -26,8 +26,7 @@ public final class Int2D implements java.io.Serializable
     public Int2D(final int x, final int y) { this.x = x; this.y = y; }
     public final int getX() { return x; }
     public final int getY() { return y; }
-    /** @deprecated use toPoint instead */
-    public final java.awt.Point getPoint() { return new java.awt.Point(x,y); }
+    /* public final java.awt.Point getPoint() { return new java.awt.Point(x,y); } */
     public final java.awt.Point toPoint() { return new java.awt.Point(x,y); }
     public String toString() { return "Int2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }

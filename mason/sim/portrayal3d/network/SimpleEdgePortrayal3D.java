@@ -109,11 +109,11 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         com.sun.j3d.utils.geometry.Text2D tempText;
         
         drawInfo = (EdgeWrapper) object;
-        field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
+	field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
 
         secondPoint = field.getObjectLocation(drawInfo.edge.to());
         firstPoint = field.getObjectLocation(drawInfo.edge.from());
-
+	
         startPoint[0] = firstPoint.x;
         startPoint[1] = firstPoint.y;
         startPoint[2] = firstPoint.z;
@@ -261,6 +261,12 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         return j3dModel;
         }
 
+    public String getName(LocationWrapper wrapper)
+        {
+        // indicate it's an edge
+        return "Edge: " + super.getName(wrapper);
+        }
+
     public static class EdgeWrapper extends LocationWrapper
         {
         // we keep this around so we don't keep allocating MutableDoubles
@@ -270,14 +276,31 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         // again,
         // which will cause some flashing...
         MutableDouble val = null;
+	SpatialNetwork3D field;
 
-
-        public EdgeWrapper(int x, int y, int z, FieldPortrayal fieldPortrayal, Edge edge)
+        public EdgeWrapper(FieldPortrayal fieldPortrayal, Edge edge)
             {
-            super((Object) null, new Int3D(x, y, z), fieldPortrayal);
+            super(edge.info, edge, fieldPortrayal);
             this.edge = edge;
+	    field = (SpatialNetwork3D)(fieldPortrayal.getField());
             }
 
+	public String getLocationName()
+	    {
+	    Edge edge = (Edge)getLocation();
+	    if (field != null && field.network != null)
+		{  
+		// do I still exist in the field?  Check the from() value
+		Bag b = field.network.getEdgesOut(edge.from());
+		// if (b != null)  // no longer necessary
+		for(int x=0;x<b.numObjs;x++)
+		    if (b.objs[x] == edge)
+			return "" + edge.from() + " --> " + edge.to();
+		}
+	    return "Gone.  Was: " + edge.from() + " --> " + edge.to();
+	    }
+	    
+/*
         public String toString()
             {
             return "" + edge.info;
@@ -285,8 +308,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
 
         public String getLocationName()
             {
-            SpatialNetwork3D field = (SpatialNetwork3D) fieldPortrayal
-                .getField();
+            SpatialNetwork3D field = (SpatialNetwork3D) fieldPortrayal.getField();
             if (field != null && field.network != null)
                 {
                 // do I still exist in the field? Check the from() value
@@ -302,6 +324,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
             {
             return edge;
             }
+*/
 
         public Edge edge;
         }
