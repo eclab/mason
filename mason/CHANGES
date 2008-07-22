@@ -1366,7 +1366,7 @@ Version 14
 		user does "views" of composite objects by clicking on the magnifying
 		glass.  It looks cleaner and makes more sense to the user, even if
 		the "view" is technicall not popping up a property inspector.
-	Insonsequential changes to SimpleEdgePortrayal2D's constructors.
+	Inconsequential changes to SimpleEdgePortrayal2D's constructors.
 	Modified NetworkPortrayal3D and SimpleEdgePortrayal3D to remove some
 		old, uneccessary parameters to constructors.
 	Changed "Appending" option in StreamingPropertyInspector to be more user-readable.
