@@ -267,154 +267,154 @@ public /*strictfp*/ class Continuous2D extends SparseField
     final static int NEAREST_NEIGHBOR_GAIN = 10;  // the ratio of searches before we give up and just hand back the entire allObjects bag.
     
     /**
-	Finds and returns at LEAST the 'atleastThisMany' items closest to a given 'position', plus potentially other items.
-	<b>toroidal must be false -- presently it's not supported.</b>  If objects are non-point and may overlap into another discretization cell,
-	set 'nonPointObjects' to true.  If you want the distance to be cartesian -- that is, the region searched will be a circle centered at the position,
-	set 'cartesian' to true (almost always you want this).  If you want the region searched to be a rectangle centered at the position, set
-	'cartesian' to be false.  Returns a bag of items.  If 'result' is provided, clears that Bag and reuses it.
+       Finds and returns at LEAST the 'atleastThisMany' items closest to a given 'position', plus potentially other items.
+       <b>toroidal must be false -- presently it's not supported.</b>  If objects are non-point and may overlap into another discretization cell,
+       set 'nonPointObjects' to true.  If you want the distance to be cartesian -- that is, the region searched will be a circle centered at the position,
+       set 'cartesian' to true (almost always you want this).  If you want the region searched to be a rectangle centered at the position, set
+       'cartesian' to be false.  Returns a bag of items.  If 'result' is provided, clears that Bag and reuses it.
     */
     public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean cartesian, Bag result)
-	{
-	if (toroidal) throw new InternalError("Toroidal not presently supported in getNearestNeighbors");
-	if (result == null) result = new Bag(atLeastThisMany);
-	else result.clear();
-	int maxSearches = allObjects.numObjs / NEAREST_NEIGHBOR_GAIN;
+        {
+        if (toroidal) throw new InternalError("Toroidal not presently supported in getNearestNeighbors");
+        if (result == null) result = new Bag(atLeastThisMany);
+        else result.clear();
+        int maxSearches = allObjects.numObjs / NEAREST_NEIGHBOR_GAIN;
 
-	if (atLeastThisMany >= allObjects.numObjs)  { result.clear(); result.addAll(allObjects); return result; }
+        if (atLeastThisMany >= allObjects.numObjs)  { result.clear(); result.addAll(allObjects); return result; }
 
-	Int2D d = discretize(position);
-	int x1 = d.x;
-	int x2 = d.x;
-	int y1 = d.y;
-	int y2 = d.y;
-	int searches = 0;
-	
-	MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
+        Int2D d = discretize(position);
+        int x1 = d.x;
+        int x2 = d.x;
+        int y1 = d.y;
+        int y2 = d.y;
+        int searches = 0;
+        
+        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
 
-	// grab the first box
-	    
-	if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-	searches++;
-	speedyMutableInt2D.x = x1; speedyMutableInt2D.y = y1;
-	Bag temp = super.getObjectsAtLocation(speedyMutableInt2D);
-	if (temp!= null) result.addAll(temp);
-	
-	boolean nonPointOneMoreTime = false;
-	// grab onion layers
-	while(true)
-	    {
-	    if (result.numObjs >= atLeastThisMany)
-		{
-		if (nonPointObjects && !nonPointOneMoreTime)  // need to go out one more onion layer
-		    nonPointOneMoreTime = true;
-		else break;
-		}
-		
-	    x1--; y1--; x2++; y2++;
-	    // do top onion layer
-	    speedyMutableInt2D.y = y1;
-	    for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
-		{
-		if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-		searches++;
-		speedyMutableInt2D.x = x;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
-		}
+        // grab the first box
+            
+        if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+        searches++;
+        speedyMutableInt2D.x = x1; speedyMutableInt2D.y = y1;
+        Bag temp = super.getObjectsAtLocation(speedyMutableInt2D);
+        if (temp!= null) result.addAll(temp);
+        
+        boolean nonPointOneMoreTime = false;
+        // grab onion layers
+        while(true)
+            {
+            if (result.numObjs >= atLeastThisMany)
+                {
+                if (nonPointObjects && !nonPointOneMoreTime)  // need to go out one more onion layer
+                    nonPointOneMoreTime = true;
+                else break;
+                }
+                
+            x1--; y1--; x2++; y2++;
+            // do top onion layer
+            speedyMutableInt2D.y = y1;
+            for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
+                {
+                if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+                searches++;
+                speedyMutableInt2D.x = x;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
+                }
 
-	    // do bottom onion layer
-	    speedyMutableInt2D.y = y2;
-	    for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
-		{
-		if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-		searches++;
-		speedyMutableInt2D.x = x;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
-		}
-		
-	    // do left onion layer not including corners
-	    speedyMutableInt2D.x = x1;
-	    for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
-		{
-		if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-		searches++;
-		speedyMutableInt2D.y = y;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
-		}
+            // do bottom onion layer
+            speedyMutableInt2D.y = y2;
+            for(int x = x1 ; x <= x2 /* yes, <= */ ; x++)
+                {
+                if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+                searches++;
+                speedyMutableInt2D.x = x;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
+                }
+                
+            // do left onion layer not including corners
+            speedyMutableInt2D.x = x1;
+            for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
+                {
+                if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+                searches++;
+                speedyMutableInt2D.y = y;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
+                }
 
-	    // do right onion layer not including corners
-	    speedyMutableInt2D.x = x2;
-	    for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
-		{
-		if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-		searches++;
-		speedyMutableInt2D.y = y;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
-		}
-	    }
-	    
-	if (!cartesian) return result;
-	
-	// Now grab some more layers, in a "+" form around the box.  We need enough extension that it includes
-	// the circle which encompasses the box.  To do this we need to compute 'm', the maximum extent of the
-	// extension.  Let 'n' be the width of the box.
-	//
-	// m = sqrt(n^2 + n^2)
-	//
-	// Now we need to subtract m from n, divide by 2, take the floor, and add 1 for good measure.  That's the size of
-	// the extension in any direction:
-	//
-	// e = floor(m-n) + 1
-	// 
-	// this comes to:
-	//
-	// e = floor(n * (sqrt(2) - 1)/2 ) + 1
-	//
-	
-	int n = (x2 - x1 + 1);  // always an odd number
-	int e = (int)(Math.floor(n * SQRT_2_MINUS_1_DIV_2)) + 1;
-	
-	// first determine: is it worth it?
-	int numAdditionalSearches = (x2 - x1 + 1) * e * 4;
-	if (searches + numAdditionalSearches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
-	
-	// okay, let's do the additional searches
-	for(int x = 0 ; x < x2 - x1 + 1 /* yes, <= */ ; x++)
-	    {
-	    for(int y = 0 ; y < e; y++)
-		{
-		// top
-		speedyMutableInt2D.x = x1 + x ;
-		speedyMutableInt2D.y = y1 - e - 1 ;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
+            // do right onion layer not including corners
+            speedyMutableInt2D.x = x2;
+            for(int y = y1 + 1 ; y <= y2 - 1 /* yes, <= */ ; y++)
+                {
+                if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+                searches++;
+                speedyMutableInt2D.y = y;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
+                }
+            }
+            
+        if (!cartesian) return result;
+        
+        // Now grab some more layers, in a "+" form around the box.  We need enough extension that it includes
+        // the circle which encompasses the box.  To do this we need to compute 'm', the maximum extent of the
+        // extension.  Let 'n' be the width of the box.
+        //
+        // m = sqrt(n^2 + n^2)
+        //
+        // Now we need to subtract m from n, divide by 2, take the floor, and add 1 for good measure.  That's the size of
+        // the extension in any direction:
+        //
+        // e = floor(m-n) + 1
+        // 
+        // this comes to:
+        //
+        // e = floor(n * (sqrt(2) - 1)/2 ) + 1
+        //
+        
+        int n = (x2 - x1 + 1);  // always an odd number
+        int e = (int)(Math.floor(n * SQRT_2_MINUS_1_DIV_2)) + 1;
+        
+        // first determine: is it worth it?
+        int numAdditionalSearches = (x2 - x1 + 1) * e * 4;
+        if (searches + numAdditionalSearches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
+        
+        // okay, let's do the additional searches
+        for(int x = 0 ; x < x2 - x1 + 1 /* yes, <= */ ; x++)
+            {
+            for(int y = 0 ; y < e; y++)
+                {
+                // top
+                speedyMutableInt2D.x = x1 + x ;
+                speedyMutableInt2D.y = y1 - e - 1 ;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
 
-		// bottom
-		speedyMutableInt2D.x = x1 + x ;
-		speedyMutableInt2D.y = y2 + e + 1 ;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
+                // bottom
+                speedyMutableInt2D.x = x1 + x ;
+                speedyMutableInt2D.y = y2 + e + 1 ;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
 
-		// left
-		speedyMutableInt2D.x = x1 - e - 1 ;
-		speedyMutableInt2D.y = y1 + x;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
+                // left
+                speedyMutableInt2D.x = x1 - e - 1 ;
+                speedyMutableInt2D.y = y1 + x;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
 
-		// right
-		speedyMutableInt2D.x = x2 + e + 1 ;
-		speedyMutableInt2D.y = y1 + x;
-		temp = getObjectsAtLocation(speedyMutableInt2D);
-		if (temp!=null) result.addAll(temp);
-		}
-	    }
-	    
-	// it better have it now!
-	return result;
-	}
+                // right
+                speedyMutableInt2D.x = x2 + e + 1 ;
+                speedyMutableInt2D.y = y1 + x;
+                temp = getObjectsAtLocation(speedyMutableInt2D);
+                if (temp!=null) result.addAll(temp);
+                }
+            }
+            
+        // it better have it now!
+        return result;
+        }
 
     /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
         specified distance of the specified position.  The bag could include other objects than this.

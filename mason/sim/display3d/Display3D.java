@@ -358,15 +358,15 @@ public class Display3D extends JPanel implements Steppable
         initially visible or not visible.  */
     public void attach(Portrayal3D portrayal, String name, boolean visible)
         {
-	/* In case our attached portrayal was done AFTER the display is live, let's recreate*/
-	destroySceneGraph();
-	
+        /* In case our attached portrayal was done AFTER the display is live, let's recreate*/
+        destroySceneGraph();
+        
         Portrayal3DHolder p = new Portrayal3DHolder(portrayal,name,visible);
         portrayals.add(p);
         popup.add(p.menuItem);
         dirty = true;
-	
-	createSceneGraph();
+        
+        createSceneGraph();
         }
 
     /** A convenience function: creates a popup menu item of the given name which, when selected, will display the

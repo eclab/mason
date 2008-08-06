@@ -101,7 +101,7 @@ public class SimpleColorMap implements ColorMap
         maxRed = maxColor.getRed(); maxGreen = maxColor.getGreen(); maxBlue = maxColor.getBlue(); maxAlpha = maxColor.getAlpha();
         this.maxLevel = maxLevel; this.minLevel = minLevel;
         this.minColor = minColor;
-	this.maxColor = maxColor;
+        this.maxColor = maxColor;
 
         // reset cache
         // (the slower cache)
@@ -145,14 +145,14 @@ public class SimpleColorMap implements ColorMap
             else if (level < minLevel) level = minLevel;
             if (level == minLevel) return minColor;  // so we don't divide by zero (maxLevel - minLevel)
             else if (level == maxLevel) return maxColor;  // so we don't overflow
-	    
+            
             final double interpolation = (level - minLevel) / (maxLevel - minLevel);
             
-	    // the +1's beow are because the only way you can get the maxColor is if you have EXACTLY the maxLevel --
-	    // that's an incorrect discretization distribution.  Instead we return the maxColor if you have the maxLevel,
-	    // and otherwise we'd like to round it.
-	    // ... hope that's right!  -- Sean
-	    
+            // the +1's beow are because the only way you can get the maxColor is if you have EXACTLY the maxLevel --
+            // that's an incorrect discretization distribution.  Instead we return the maxColor if you have the maxLevel,
+            // and otherwise we'd like to round it.
+            // ... hope that's right!  -- Sean
+            
             // look up color in cache
             // (the slower cache)
             final int alpha = (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha + 1) + minAlpha));

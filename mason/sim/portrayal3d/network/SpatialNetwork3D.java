@@ -25,48 +25,48 @@ public class SpatialNetwork3D
     public SpatialNetwork3D( final Continuous3D field, final Network network )
         {
         this.field = field;
-	if (field == null)
-	    throw new RuntimeException("Null Continuous3D.");
+        if (field == null)
+            throw new RuntimeException("Null Continuous3D.");
         this.network = network;
-	if (network == null)
-	    throw new RuntimeException("Null Network.");
+        if (network == null)
+            throw new RuntimeException("Null Network.");
         }
     
     public SpatialNetwork3D( final SparseGrid3D grid, final Network network )
         {
         this.field = field;
-	if (field == null)
-	    throw new RuntimeException("Null SparseGrid3D.");
+        if (field == null)
+            throw new RuntimeException("Null SparseGrid3D.");
         this.network = network;
-	if (network == null)
-	    throw new RuntimeException("Null Network.");
+        if (network == null)
+            throw new RuntimeException("Null Network.");
         }
     
     public void setAuxillaryField( final Continuous3D f)
-	{
-	field2 = f;
-	if (field2 != null && field instanceof SparseGrid3D)
-	    throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
-	}
+        {
+        field2 = f;
+        if (field2 != null && field instanceof SparseGrid3D)
+            throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
+        }
 
     public void setAuxillaryField( final SparseGrid3D f)
-	{
-	field2 = f;
-	if (field2 != null && field instanceof Continuous3D)
-	    throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
-	}
+        {
+        field2 = f;
+        if (field2 != null && field instanceof Continuous3D)
+            throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
+        }
 
     public Double3D getObjectLocation(Object node)
         {
-	Double3D loc = null;
-	if (field instanceof Continuous3D) loc = ((Continuous3D)field).getObjectLocation(node);
-	else loc = ((SparseGrid3D)field).getObjectLocationAsDouble3D(node);
-	if (loc == null && field2 != null)
-	    {
-	    if (field2 instanceof Continuous3D) loc = ((Continuous3D)field2).getObjectLocation(node);
-	    else loc = ((SparseGrid3D)field2).getObjectLocationAsDouble3D(node);
-	    }
-	return loc;
+        Double3D loc = null;
+        if (field instanceof Continuous3D) loc = ((Continuous3D)field).getObjectLocation(node);
+        else loc = ((SparseGrid3D)field).getObjectLocationAsDouble3D(node);
+        if (loc == null && field2 != null)
+            {
+            if (field2 instanceof Continuous3D) loc = ((Continuous3D)field2).getObjectLocation(node);
+            else loc = ((SparseGrid3D)field2).getObjectLocationAsDouble3D(node);
+            }
+        return loc;
         }
 
     public double getWidth()
@@ -80,7 +80,7 @@ public class SpatialNetwork3D
         if (field instanceof Continuous3D) return ((Continuous3D)field).getHeight();
         else return ((SparseGrid3D)field).getHeight();
         }
-	
+        
     public double getLength()
         {
         if (field instanceof Continuous3D) return ((Continuous3D)field).getLength();

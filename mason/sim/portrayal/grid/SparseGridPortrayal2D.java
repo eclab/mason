@@ -48,11 +48,49 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         if (field instanceof SparseGrid2D ) this.field = field;
         else throw new RuntimeException("Invalid field for Sparse2DPortrayal: " + field);
         }
+    
+    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+        {
+        final SparseGrid2D field = (SparseGrid2D) this.field;
+        if (field==null) return null;
+
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
+        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  
+
+        Int2D loc = field.getObjectLocation(object);
+        if (loc == null) return null;
+
+        // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+        newinfo.draw.x = (int)(info.draw.x + (xScale) * loc.x);
+        newinfo.draw.y = (int)(info.draw.y + (yScale) * loc.y);
+        newinfo.draw.width = (int)(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
+        newinfo.draw.height = (int)(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
+        
+        // adjust drawX and drawY to center
+        newinfo.draw.x += newinfo.draw.width / 2.0;
+        newinfo.draw.y += newinfo.draw.height / 2.0;
+
+        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+        }
+        
         
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
         if (field==null) return;
+
+        //System.out.println(getLocation(field.allObjects.objs[0], info));
+                
+        boolean objectSelected = !selectedWrappers.isEmpty();
 
         int maxX = field.getWidth(); 
         int maxY = field.getHeight();
@@ -121,8 +159,16 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         else
                             {
                             // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                            graphics.setClip(clip);
-                            portrayal.draw(portrayedObject, graphics, newinfo);
+                            // graphics.setClip(clip);
+                            if (objectSelected &&  // there's something there
+                                selectedWrappers.get(portrayedObject) != null)
+                                {
+                                LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                                portrayal.setSelected(wrapper,true);
+                                portrayal.draw(portrayedObject, graphics, newinfo);
+                                portrayal.setSelected(wrapper,false);
+                                }
+                            else portrayal.draw(portrayedObject, graphics, newinfo);
                             }
                         }
                     }
@@ -166,8 +212,16 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                     else
                         {
                         // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                        graphics.setClip(clip);
-                        portrayal.draw(portrayedObject, graphics, newinfo);
+                        // graphics.setClip(clip);
+                        if (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null)
+                            {
+                            LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                            portrayal.setSelected(wrapper,true);
+                            portrayal.draw(portrayedObject, graphics, newinfo);
+                            portrayal.setSelected(wrapper,false);
+                            }
+                        else portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }
@@ -178,29 +232,55 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
     public LocationWrapper getWrapper(Object object)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
-	final StableInt2D w = new StableInt2D(field, object);
+        final StableInt2D w = new StableInt2D(field, object);
         return new LocationWrapper( object, null, this )  // don't care about location
             {
             public Object getLocation()
                 {
                 /*
-		if (field==null) return null;
-                else return field.getObjectLocation(this.object);
-		*/
-		w.update();
-		return w;
+                  if (field==null) return null;
+                  else return field.getObjectLocation(this.object);
+                */
+                w.update();
+                return w;
                 }
                 
             public String getLocationName()
                 {
-		/*
-                Object loc = getLocation();
-                if (loc == null) return "Gone";
-                else return ((Int2D)loc).toCoordinates();
-		*/
-		w.update();
-		return w.toString();
+                /*
+                  Object loc = getLocation();
+                  if (loc == null) return "Gone";
+                  else return ((Int2D)loc).toCoordinates();
+                */
+                w.update();
+                return w.toString();
                 }
             };
+        }
+
+    HashMap selectedWrappers = new HashMap();
+    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+        {
+        if (wrapper == null) return true;
+        if (wrapper.getFieldPortrayal() != this) return true;
+
+        Object obj = wrapper.getObject();
+        if (selected)
+            {
+            // first let's determine if the object WANTs to be selected
+            boolean b = getPortrayalForObject(obj).setSelected(wrapper,selected);
+                        
+            // now we turn the selection back to regular
+            getPortrayalForObject(obj).setSelected(wrapper,!selected);
+                        
+            // Okay, now we can tell whether or not to add to the wrapper collection
+            if (b==false) return false;
+            selectedWrappers.put(obj, wrapper);
+            }
+        else
+            {
+            selectedWrappers.remove(obj);
+            }
+        return true;
         }
     }

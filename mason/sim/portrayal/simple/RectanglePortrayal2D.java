@@ -62,9 +62,9 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
 
         // draw centered on the origin
         if (filled)
-        	graphics.fillRect(x,y,w,h);
+            graphics.fillRect(x,y,w,h);
         else
-        	graphics.drawRect(x,y,w,h);
+            graphics.drawRect(x,y,w,h);
         }
         
     }

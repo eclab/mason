@@ -21,10 +21,10 @@ public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
     static class PickableCone extends Cone
         {
         public PickableCone()
-        	{
-        	super();
-        	setAllPickableFlags();
-        	}
+            {
+            super();
+            setAllPickableFlags();
+            }
                 
         public PickableCone(float radius)
             {
@@ -45,8 +45,8 @@ public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
         
         private void setAllPickableFlags()
             {
-        	SimplePortrayal3D.setPickableFlags(getShape(Cone.CAP));
-        	SimplePortrayal3D.setPickableFlags(getShape(Cone.BODY));
+            SimplePortrayal3D.setPickableFlags(getShape(Cone.CAP));
+            SimplePortrayal3D.setPickableFlags(getShape(Cone.BODY));
             }        
         }
 

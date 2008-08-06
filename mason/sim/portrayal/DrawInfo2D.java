@@ -67,18 +67,18 @@ public class DrawInfo2D
         Rectangle2D.Double oclip = other.clip;
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
         }
-	
+        
     public boolean equals(Object obj)
-	{
-	if (obj == this) return true;
-	if (obj == null) return false;
-	if (obj instanceof DrawInfo2D)
-	    {
-	    DrawInfo2D other = (DrawInfo2D) obj;
-	    return (draw.equals(other.draw) && clip.equals(other.clip));
-	    }
-	return false;
-	}
+        {
+        if (obj == this) return true;
+        if (obj == null) return false;
+        if (obj instanceof DrawInfo2D)
+            {
+            DrawInfo2D other = (DrawInfo2D) obj;
+            return (draw.equals(other.draw) && clip.equals(other.clip));
+            }
+        return false;
+        }
         
     public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + "]"; }
     }

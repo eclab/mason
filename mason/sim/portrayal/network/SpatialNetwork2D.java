@@ -17,11 +17,11 @@ import sim.util.*;
     edges connecting those nodes. 
     
     <p>SpatialNetwork2D can also hold an additional location (another Continuous2D/SparseGrid2D) which might
-       hold the nodes if the first location does not.  This allows you to (for example) have the FROM nodes
-       in one field and the TO nodes in another field.  You can set this location with setAuxillaryField.
-       Note that this will only work properly if the fields have exactly the same dimensions with respect to
-       how their field portrayals draw them onscreen.  As a sanity check: you shouldn't have one field be a Continuous2D
-       and the other be a SparseGrid2D.  */
+    hold the nodes if the first location does not.  This allows you to (for example) have the FROM nodes
+    in one field and the TO nodes in another field.  You can set this location with setAuxillaryField.
+    Note that this will only work properly if the fields have exactly the same dimensions with respect to
+    how their field portrayals draw them onscreen.  As a sanity check: you shouldn't have one field be a Continuous2D
+    and the other be a SparseGrid2D.  */
 
 public class SpatialNetwork2D
     {
@@ -32,48 +32,48 @@ public class SpatialNetwork2D
     public SpatialNetwork2D( final Continuous2D field, final Network network )
         {
         this.field = field;
-	if (field == null)
-	    throw new RuntimeException("Null Continuous2D.");
+        if (field == null)
+            throw new RuntimeException("Null Continuous2D.");
         this.network = network;
-	if (network == null)
-	    throw new RuntimeException("Null Network.");
+        if (network == null)
+            throw new RuntimeException("Null Network.");
         }
     
     public SpatialNetwork2D( final SparseGrid2D grid, final Network network )
         {
         this.field = field;
-	if (field == null)
-	    throw new RuntimeException("Null SparseGrid2D.");
+        if (field == null)
+            throw new RuntimeException("Null SparseGrid2D.");
         this.network = network;
-	if (network == null)
-	    throw new RuntimeException("Null Network.");
+        if (network == null)
+            throw new RuntimeException("Null Network.");
         }
     
     public void setAuxillaryField( final Continuous2D f)
-	{
-	field2 = f;
-	if (field2 != null && field instanceof SparseGrid2D)
-	    throw new RuntimeException("The auxillary field of a SpatialNetwork2D should be the same type as the primary field.");
-	}
+        {
+        field2 = f;
+        if (field2 != null && field instanceof SparseGrid2D)
+            throw new RuntimeException("The auxillary field of a SpatialNetwork2D should be the same type as the primary field.");
+        }
 
     public void setAuxillaryField( final SparseGrid2D f)
-	{
-	field2 = f;
-	if (field2 != null && field instanceof Continuous2D)
-	    throw new RuntimeException("The auxillary field of a SpatialNetwork2D should be the same type as the primary field.");
-	}
+        {
+        field2 = f;
+        if (field2 != null && field instanceof Continuous2D)
+            throw new RuntimeException("The auxillary field of a SpatialNetwork2D should be the same type as the primary field.");
+        }
 
     public Double2D getObjectLocation(Object node)
         {
-	Double2D loc = null;
-	if (field instanceof Continuous2D) loc = ((Continuous2D)field).getObjectLocation(node);
-	else loc = ((SparseGrid2D)field).getObjectLocationAsDouble2D(node);
-	if (loc == null && field2 != null)
-	    {
-	    if (field2 instanceof Continuous2D) loc = ((Continuous2D)field2).getObjectLocation(node);
-	    else loc = ((SparseGrid2D)field2).getObjectLocationAsDouble2D(node);
-	    }
-	return loc;
+        Double2D loc = null;
+        if (field instanceof Continuous2D) loc = ((Continuous2D)field).getObjectLocation(node);
+        else loc = ((SparseGrid2D)field).getObjectLocationAsDouble2D(node);
+        if (loc == null && field2 != null)
+            {
+            if (field2 instanceof Continuous2D) loc = ((Continuous2D)field2).getObjectLocation(node);
+            else loc = ((SparseGrid2D)field2).getObjectLocationAsDouble2D(node);
+            }
+        return loc;
         }
 
     public double getWidth()

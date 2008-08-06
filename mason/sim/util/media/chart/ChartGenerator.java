@@ -446,9 +446,9 @@ public abstract class ChartGenerator extends JPanel
         split.setRightComponent(chartHolder);
         setLayout(new BorderLayout());
         add(split,BorderLayout.CENTER);
-	
-	// set the default to be white, which looks good when printed
-	chart.setBackgroundPaint(Color.WHITE);
+        
+        // set the default to be white, which looks good when printed
+        chart.setBackgroundPaint(Color.WHITE);
         }
     
     /** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when

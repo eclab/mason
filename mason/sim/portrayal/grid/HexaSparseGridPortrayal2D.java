@@ -50,10 +50,75 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     /** The ratio of the width of a hexagon to its height: 1 / Sin(60 degrees), otherwise known as 2 / Sqrt(3) */
     public static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
+    
+    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+        {
+        final SparseGrid2D field = (SparseGrid2D) this.field;
+        if (field==null) return null;
+
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+        if (maxX == 0 || maxY == 0) return null;
+
+        final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
+        final double divideByY = (1.0+2.0*maxY);
+
+        final double xScale = info.draw.width / divideByX;
+        final double yScale = info.draw.height / divideByY;
+        int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+        int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+        int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+
+        HexaDrawInfo2D newinfo = new HexaDrawInfo2D(new Rectangle2D.Double(0,0, 
+                                                                           Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
+                                                                           Math.ceil(info.draw.height / (maxY + 0.5))),
+                                                    info.clip, xPoints, yPoints);  // we don't do further clipping 
+
+        Int2D loc = field.getObjectLocation(object);
+        if (loc == null) return null;
+
+        final int x = loc.x;
+        final int y = loc.y;
+
+        getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
+        getxyC( field.ulx(x,y), field.uly(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ul );
+        getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
+        getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
+
+        xPoints[0] = (int)(xyC_ur[0]-0.5*xScale);
+        yPoints[0] = (int)(xyC_ur[1]+yScale);
+        xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
+        yPoints[1] = (int)(xyC_up[1]+yScale);
+        xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
+        yPoints[2] = (int)(xyC_up[1]+yScale);
+        xPoints[3] = (int)(xyC_ul[0]+0.5*xScale);
+        yPoints[3] = (int)(xyC_ul[1]+yScale);
+        xPoints[4] = (int)(xyC[0]-0.5*xScale);
+        yPoints[4] = (int)(xyC[1]+yScale);
+        xPoints[5] = (int)(xyC[0]+0.5*xScale);
+        yPoints[5] = (int)(xyC[1]+yScale);
+
+        // compute the width of the object -- we tried computing the EXACT width each time, but
+        // it results in weird-shaped circles etc, so instead we precomputed a standard width
+        // and height, and just compute the x values here.
+        newinfo.draw.x = xPoints[3];
+        newinfo.draw.y = yPoints[1];
+                    
+        // adjust drawX and drawY to center
+        newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
+        newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
+
+        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+        }
+    
+    
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
         if (field==null) return;
+
+        boolean objectSelected = !selectedWrappers.isEmpty();
 
         int maxX = field.getWidth(); 
         int maxY = field.getHeight();
@@ -172,7 +237,15 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                             {
                             // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                             //                    graphics.setClip(clip);
-                            portrayal.draw(portrayedObject, graphics, newinfo);
+                            if (objectSelected &&  // there's something there
+                                selectedWrappers.get(portrayedObject) != null)
+                                {
+                                LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                                portrayal.setSelected(wrapper,true);
+                                portrayal.draw(portrayedObject, graphics, newinfo);
+                                portrayal.setSelected(wrapper,false);
+                                }
+                            else portrayal.draw(portrayedObject, graphics, newinfo);
                             }
                         }
                     }
@@ -237,7 +310,15 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         {
                         // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                         //                        graphics.setClip(clip);                        
-                        portrayal.draw(portrayedObject, graphics, newinfo);
+                        if (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null)
+                            {
+                            LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                            portrayal.setSelected(wrapper,true);
+                            portrayal.draw(portrayedObject, graphics, newinfo);
+                            portrayal.setSelected(wrapper,false);
+                            }
+                        else portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

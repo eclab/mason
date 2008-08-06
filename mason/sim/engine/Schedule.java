@@ -275,22 +275,22 @@ public class Schedule implements java.io.Serializable
         int len = currentSteps.numObjs;
         Object[] objs = currentSteps.objs;
         try
-	    {
-	    for(int x=0;x<len;x++)  // if we're not being killed...
-		{
-		((Steppable)(objs[x])).step(state);
-		objs[x] = null;  // let gc even if being killed
-		}
-	    }
-	finally
-	    {
-	    // reuse currentSteps -- all objects should have been released to gc already, no need to call clear()
-	    currentSteps.numObjs = 0;
-		
-	    synchronized(lock) { steps++; }
-	    inStep = false;
-	    }
-	return true;
+            {
+            for(int x=0;x<len;x++)  // if we're not being killed...
+                {
+                ((Steppable)(objs[x])).step(state);
+                objs[x] = null;  // let gc even if being killed
+                }
+            }
+        finally
+            {
+            // reuse currentSteps -- all objects should have been released to gc already, no need to call clear()
+            currentSteps.numObjs = 0;
+                
+            synchronized(lock) { steps++; }
+            inStep = false;
+            }
+        return true;
         }
         
     /** Schedules the event to occur at getTime() + 1.0, 0 ordering. If this is a valid time

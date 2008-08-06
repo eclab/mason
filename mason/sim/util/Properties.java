@@ -102,6 +102,9 @@ public abstract class Properties implements java.io.Serializable
         return !(type.isPrimitive() || type == String.class);
         }
 
+    /** Returns true if the class requested that this property be hidden from the user.  By default, false. */
+    public boolean isHidden(int index) { return false; }
+    
     /** Returns the name of the property at the given index. */
     public abstract String getName(int index);
 

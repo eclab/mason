@@ -182,15 +182,15 @@ public class Heap implements java.io.Serializable
             }
         int i = numElem;
 
-	if (i > 1)  // no need to bubble up if there's only zero or one element!
-	    {
-	    while ( i > 1 &&  key.compareTo(keys[i/2-1]) < 0 )    // keys[i/2-1] > key )
-		{
-		objects[i-1] = objects[i/2-1];
-		keys[i-1] = keys[i/2-1];
-		i = i/2;
-		}
-	    }
+        if (i > 1)  // no need to bubble up if there's only zero or one element!
+            {
+            while ( i > 1 &&  key.compareTo(keys[i/2-1]) < 0 )    // keys[i/2-1] > key )
+                {
+                objects[i-1] = objects[i/2-1];
+                keys[i-1] = keys[i/2-1];
+                i = i/2;
+                }
+            }
         keys[i-1] = key;
         objects[i-1] = elem;
         

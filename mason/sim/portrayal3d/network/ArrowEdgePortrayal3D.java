@@ -37,13 +37,13 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
             }
 
         private void setAllPickableFlags()
-	        {
-	    	SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.BODY));
-	    	SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.TOP));
-	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.TOP));
-	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BOTTOM));
-	    	SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BODY));
-	        }
+            {
+            SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.BODY));
+            SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.TOP));
+            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.TOP));
+            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BOTTOM));
+            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BODY));
+            }
 
         }
 

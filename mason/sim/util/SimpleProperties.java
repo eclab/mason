@@ -104,6 +104,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList getMethods = new ArrayList();
     ArrayList setMethods = new ArrayList(); // if no setters, that corresponding spot will be null
     ArrayList domMethods = new ArrayList(); // if no domain, that corresponding spot will be null
+    ArrayList hideMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
     
     /** Gathers all properties for the object, including ones defined in superclasses. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
@@ -163,6 +164,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                             getMethods.add(m[x]);
                             setMethods.add(getWriteProperty(m[x],c));
                             domMethods.add(getDomain(m[x],c,includeDomains));
+                            hideMethods.add(getHidden(m[x], c));
                             }
                         }
                     }
@@ -173,7 +175,32 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             e.printStackTrace();
             }
         }
-        
+    
+    /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
+       whether or not he wants to hide this property.  If there is no such method, we must assume that the property is to be
+       shown. */
+    Method getHidden(Method m, Class c)
+        {
+        try
+            {
+            if (m.getName().startsWith("get"))
+                {
+                Method m2 = c.getMethod("hide" + (m.getName().substring(3)), new Class[] { });
+                if (m2.getReturnType() == Boolean.TYPE) return m2;
+                }
+            else if (m.getName().startsWith("is"))
+                {
+                Method m2 = c.getMethod("hide" + (m.getName().substring(2)), new Class[] { });
+                if (m2.getReturnType() == Boolean.TYPE) return m2;
+                }
+            }
+        catch (Exception e)
+            {
+            // couldn't find a domain
+            }
+        return null;
+        }
+    
     Method getWriteProperty(Method m, Class c)
         {
         try
@@ -298,6 +325,21 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             {
             e.printStackTrace();
             return null;
+            }
+        }
+
+    public boolean isHidden(int index)
+        {
+        if (index < 0 || index > numProperties()) return false;
+        try
+            {
+            if (hideMethods.get(index) == null) return false;
+            return ((Boolean)((Method)(hideMethods.get(index))).invoke(object, new Object[0])).booleanValue();
+            }
+        catch (Exception e)
+            {
+            e.printStackTrace();
+            return false;
             }
         }
     }

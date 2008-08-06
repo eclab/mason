@@ -54,7 +54,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     /** One single color line will be drawn, and if labelPaint is null, no label is drawn. */
     public SimpleEdgePortrayal2D(Paint edgePaint, Paint labelPaint)
         {
-	this(edgePaint, edgePaint, labelPaint);
+        this(edgePaint, edgePaint, labelPaint);
         }
 
     /** If fromPaint == toPaint, one single color line will be drawn, and if labelPaint is null, no label is drawn. */
@@ -168,7 +168,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 scaledFont.getFamily() != labelFont.getFamily() ||
                 scaledFont.getStyle() != labelFont.getStyle())
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
-	    
+            
             //Object infoval = ((Edge)object).info;
             String information = getLabel((Edge)object, e);
             if( /* infoval != null && */ information.length() > 0 )

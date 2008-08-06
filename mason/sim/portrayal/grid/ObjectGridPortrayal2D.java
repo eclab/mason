@@ -11,6 +11,7 @@ import sim.field.grid.*;
 import java.awt.*;
 import java.awt.geom.*;
 import sim.util.*;
+import java.util.*;
 
 /**
    A portrayal for grids containing objects, such as maybe agents or agent bodies.
@@ -48,12 +49,66 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         return defaultNullPortrayal;
         }
 
+
+    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+        {
+        final ObjectGrid2D field = (ObjectGrid2D)(this.field);
+
+        if (field==null) return null;
+        
+        final int maxX = field.getWidth(); 
+        final int maxY = field.getHeight();
+        if (maxX == 0 || maxY == 0) return null;
+        
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
+        //int startx = (int)((info.clip.x - info.draw.x) / xScale);
+        //int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        //int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
+        //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
+                                            info.clip);  // we don't do further clipping 
+
+        //if (endx > maxX) endx = maxX;
+        //if (endy > maxY) endy = maxY;
+        //if( startx < 0 ) startx = 0;
+        //if( starty < 0 ) starty = 0;
+        
+        // find the object.
+        for(int x=0; x < maxX; x++)
+            {
+            Object[] fieldx = field.field[x];
+            for(int y = 0; y < maxY; y++)
+                if (object == fieldx[y])  // found it
+                    {
+                    // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+                    newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+                    newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+                    newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+                    newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+                
+                    // adjust drawX and drawY to center
+                    newinfo.draw.x += newinfo.draw.width / 2.0;
+                    newinfo.draw.y += newinfo.draw.height / 2.0;
+
+                    return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+                    }
+            }
+        return null;  // it wasn't there
+        }
+
+
+
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);
 
         if (field==null) return;
         
+        boolean objectSelected = !selectedWrappers.isEmpty();
+        Object selectedObject = selectedWrapper.getObject();
+
         // Scale graphics to desired shape -- according to p. 90 of Java2D book,
         // this will change the line widths etc. as well.  Maybe that's not what we
         // want.
@@ -111,7 +166,18 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                     {
                     // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                     //                    graphics.setClip(clip);
-                    portrayal.draw(obj, graphics, newinfo);
+                    if (objectSelected &&  // there's something there
+                        (selectedObject==obj || selectedWrappers.get(obj) != null))
+                        {
+                        LocationWrapper wrapper = null;
+                        if (selectedObject == obj) 
+                            wrapper = selectedWrapper;
+                        else wrapper = (LocationWrapper)(selectedWrappers.get(obj));
+                        portrayal.setSelected(wrapper,true);
+                        portrayal.draw(obj, graphics, newinfo);
+                        portrayal.setSelected(wrapper,false);
+                        }
+                    else portrayal.draw(obj, graphics, newinfo);
                     }
                 }
         }
@@ -132,5 +198,34 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 return ((Int2D)this.location).toCoordinates();
                 }
             };
+        }
+
+    LocationWrapper selectedWrapper = null;  // some efficiency: if there's only one non-null object selected, it will be here
+    HashMap selectedWrappers = new HashMap();
+    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+        {
+        if (wrapper == null) return true;
+        if (wrapper.getFieldPortrayal() != this) return true;
+
+        Object obj = wrapper.getObject();
+        if (selected)
+            {
+            // first let's determine if the object WANTs to be selected
+            boolean b = getPortrayalForObject(obj).setSelected(wrapper,selected);
+                        
+            // now we turn the selection back to regular
+            getPortrayalForObject(obj).setSelected(wrapper,!selected);
+                        
+            // Okay, now we can tell whether or not to add to the wrapper collection
+            if (b==false) return false;
+            selectedWrappers.put(obj, wrapper);
+            selectedWrapper = wrapper;
+            }
+        else
+            {
+            selectedWrappers.remove(obj);
+            selectedWrapper = null;
+            }
+        return true;
         }
     }

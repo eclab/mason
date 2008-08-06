@@ -1380,3 +1380,13 @@ Version 14
 		"StaticLocation" objects.  This allows locations to be inspected and
 		charted continuously even though the locations of objects are constantly
 		changing.  Added various StaticLocation objects.
+	Modified Properties and SimpleProperties to allow a new "hideFoo" property
+		element, indicating that the developer doesn't wish the property
+		to be displayed.  SimpleInspector now respects this wish.
+	Added selection code to SparseGridPortrayal2D and HexaSparseGridPortrayal2D,
+		copied mostly from ContinuousPortrayal2D.
+	Removed old setClip code from SparseGrid2D
+	Added getLocation() to ContinuousPortrayal2D, SparseGridPortrayal2D, and
+		HexaSparseGridPortrayal2D.  This code is intended to assist in
+		future object tracking.
+	Added selectability to ObjectGridPortrayal2D

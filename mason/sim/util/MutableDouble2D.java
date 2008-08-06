@@ -346,8 +346,8 @@ public final class MutableDouble2D implements java.io.Serializable
     public final MutableDouble2D normalize()
         {
         final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
-	if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
-	    throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
+        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
+            throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
         x = x * invertedlen;
         y = y * invertedlen;
         return this;
@@ -360,14 +360,14 @@ public final class MutableDouble2D implements java.io.Serializable
             throw new IllegalArgumentException("The argument to MutableDouble2D.setLength(...) must be zero or positive");
         if (val == 0) x = y = 0;
         else
-	    {
-	    final double len = Math.sqrt(x * x + y * y);
-	    if (len != len || len == infinity || len == -infinity || len == 0)
-		throw new ArithmeticException("" + this + " length is "+ len + " cannot change its length");
-	    final double invertedlen = val / len;
-	    x = x * invertedlen;
-	    y = y * invertedlen;
-	    }
+            {
+            final double len = Math.sqrt(x * x + y * y);
+            if (len != len || len == infinity || len == -infinity || len == 0)
+                throw new ArithmeticException("" + this + " length is "+ len + " cannot change its length");
+            final double invertedlen = val / len;
+            x = x * invertedlen;
+            y = y * invertedlen;
+            }
         return this;
         } 
 

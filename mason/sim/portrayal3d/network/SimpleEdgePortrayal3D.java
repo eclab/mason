@@ -109,11 +109,11 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         com.sun.j3d.utils.geometry.Text2D tempText;
         
         drawInfo = (EdgeWrapper) object;
-	field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
+        field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
 
         secondPoint = field.getObjectLocation(drawInfo.edge.to());
         firstPoint = field.getObjectLocation(drawInfo.edge.from());
-	
+        
         startPoint[0] = firstPoint.x;
         startPoint[1] = firstPoint.y;
         startPoint[2] = firstPoint.z;
@@ -276,54 +276,54 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         // again,
         // which will cause some flashing...
         MutableDouble val = null;
-	SpatialNetwork3D field;
+        SpatialNetwork3D field;
 
         public EdgeWrapper(FieldPortrayal fieldPortrayal, Edge edge)
             {
             super(edge.info, edge, fieldPortrayal);
             this.edge = edge;
-	    field = (SpatialNetwork3D)(fieldPortrayal.getField());
-            }
-
-	public String getLocationName()
-	    {
-	    Edge edge = (Edge)getLocation();
-	    if (field != null && field.network != null)
-		{  
-		// do I still exist in the field?  Check the from() value
-		Bag b = field.network.getEdgesOut(edge.from());
-		// if (b != null)  // no longer necessary
-		for(int x=0;x<b.numObjs;x++)
-		    if (b.objs[x] == edge)
-			return "" + edge.from() + " --> " + edge.to();
-		}
-	    return "Gone.  Was: " + edge.from() + " --> " + edge.to();
-	    }
-	    
-/*
-        public String toString()
-            {
-            return "" + edge.info;
+            field = (SpatialNetwork3D)(fieldPortrayal.getField());
             }
 
         public String getLocationName()
             {
-            SpatialNetwork3D field = (SpatialNetwork3D) fieldPortrayal.getField();
+            Edge edge = (Edge)getLocation();
             if (field != null && field.network != null)
-                {
-                // do I still exist in the field? Check the from() value
+                {  
+                // do I still exist in the field?  Check the from() value
                 Bag b = field.network.getEdgesOut(edge.from());
-                for (int x = 0; x < b.numObjs; x++)
+                // if (b != null)  // no longer necessary
+                for(int x=0;x<b.numObjs;x++)
                     if (b.objs[x] == edge)
                         return "" + edge.from() + " --> " + edge.to();
                 }
             return "Gone.  Was: " + edge.from() + " --> " + edge.to();
             }
+            
+/*
+  public String toString()
+  {
+  return "" + edge.info;
+  }
 
-        public Object getObject()
-            {
-            return edge;
-            }
+  public String getLocationName()
+  {
+  SpatialNetwork3D field = (SpatialNetwork3D) fieldPortrayal.getField();
+  if (field != null && field.network != null)
+  {
+  // do I still exist in the field? Check the from() value
+  Bag b = field.network.getEdgesOut(edge.from());
+  for (int x = 0; x < b.numObjs; x++)
+  if (b.objs[x] == edge)
+  return "" + edge.from() + " --> " + edge.to();
+  }
+  return "Gone.  Was: " + edge.from() + " --> " + edge.to();
+  }
+
+  public Object getObject()
+  {
+  return edge;
+  }
 */
 
         public Edge edge;

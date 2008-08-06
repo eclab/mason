@@ -33,7 +33,7 @@ public class SimpleInspector extends Inspector
     public LabelledList propertyList;
     /** The generated object properties -- this may change at any time */
     public Properties properties;
-    /** Each of the property fields in the property list, not all of which may exist at any time */
+    /** Each of the property fields in the property list, not all of which may exist at any time. */
     public PropertyField[] members = new PropertyField[0];
     /** The displayed name of the inspector */
     public String name;
@@ -69,31 +69,31 @@ public class SimpleInspector extends Inspector
     /* Creates a JPopupMenu that possibly includes "View" to
        view the object instead of using the ViewButton.  If not, returns null. */
     JPopupMenu makePreliminaryPopup(final int index)
-	{
+        {
         Class type = properties.getType(index);
-	if (properties.isComposite(index))
-	    {
-	    JPopupMenu popup = new JPopupMenu();
-	    JMenuItem menu = new JMenuItem("View");
-	    menu.setEnabled(true);
-	    menu.addActionListener(new ActionListener()
-		{
+        if (properties.isComposite(index))
+            {
+            JPopupMenu popup = new JPopupMenu();
+            JMenuItem menu = new JMenuItem("View");
+            menu.setEnabled(true);
+            menu.addActionListener(new ActionListener()
+                {
                 public void actionPerformed(ActionEvent e)
-		    {
-		    Properties props = properties;
-		    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
-		    final Stoppable stopper = simpleInspector.reviseStopper(
-			SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
-		    SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
-		    JFrame frame = simpleInspector.createFrame(stopper);
-		    frame.setVisible(true);
-		    }
-		});
-	    popup.add(menu);
-	    return popup;
-	    }
-	else return null;
-	}
+                    {
+                    Properties props = properties;
+                    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
+                    final Stoppable stopper = simpleInspector.reviseStopper(
+                        SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
+                    SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
+                    JFrame frame = simpleInspector.createFrame(stopper);
+                    frame.setVisible(true);
+                    }
+                });
+            popup.add(menu);
+            return popup;
+            }
+        else return null;
+        }
     
     PropertyField makePropertyField(final int index)
         {
@@ -105,7 +105,7 @@ public class SimpleInspector extends Inspector
             properties.getDomain(index),
             (properties.isComposite(index) ?
              //PropertyField.SHOW_VIEWBUTTON : 
-	     PropertyField.SHOW_TEXTFIELD :
+             PropertyField.SHOW_TEXTFIELD :
              (type == Boolean.TYPE || type == Boolean.class ?
               PropertyField.SHOW_CHECKBOX :
               (properties.getDomain(index) == null ? PropertyField.SHOW_TEXTFIELD :
@@ -131,17 +131,17 @@ public class SimpleInspector extends Inspector
                     return props.betterToString(props.getValue(index));
                     }
                 }
-		/*
-            public void viewProperty()
-                {
-                final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
-                final Stoppable stopper = simpleInspector.reviseStopper(
-                    SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
-                SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
-                JFrame frame = simpleInspector.createFrame(stopper);
-                frame.setVisible(true);
-                }
-		*/
+            /*
+              public void viewProperty()
+              {
+              final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
+              final Stoppable stopper = simpleInspector.reviseStopper(
+              SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
+              SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
+              JFrame frame = simpleInspector.createFrame(stopper);
+              frame.setVisible(true);
+              }
+            */
             };
         }
     
@@ -211,12 +211,16 @@ public class SimpleInspector extends Inspector
         count = end - start;
         for( int i = start ; i < end; i++ )
             {
-            members[i] = makePropertyField(i);
-            propertyList.add(null,
-                             new JLabel(properties.getName(i) + " "), 
-                             PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
-                             members[i], 
-                             null);
+            if (!properties.isHidden(i))  // don't show if the user asked that it be hidden
+                {
+                members[i] = makePropertyField(i);
+                propertyList.add(null,
+                                 new JLabel(properties.getName(i) + " "), 
+                                 PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
+                                 members[i], 
+                                 null);
+                }
+            else members[i] = null;
             }
         add(propertyList, BorderLayout.CENTER);
         this.start = start;
@@ -265,8 +269,8 @@ public class SimpleInspector extends Inspector
             doEnsuredRepaint(this);
             }
         else for( int i = start ; i < start+count ; i++ )
-            members[i].setValue( 
-                properties.betterToString(properties.getValue(i)));
+            if (members[i] != null) 
+                members[i].setValue(properties.betterToString(properties.getValue(i)));
         }
 
     // additionally set the title

@@ -13,7 +13,7 @@ package sim.portrayal.inspector;
 */
 
 public interface StableLocation
-	{
-public String toString();
-public void update();
-	}
+    {
+    public String toString();
+    public void update();
+    }

@@ -37,6 +37,32 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         return defaultPortrayal;
         }
         
+
+    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+        {
+        final Continuous2D field = (Continuous2D)this.field;
+        if (field==null) return null;
+                
+        final double xScale = info.draw.width / field.width;
+        final double yScale = info.draw.height / field.height;
+        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)((info.clip.y - info.draw.y) / yScale);
+        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
+                                            info.clip);  // we don't do further clipping 
+
+        Double2D loc = field.getObjectLocation(object);
+        if (loc == null) return null;
+
+        newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
+        newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
+
+        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+        }
+
+
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final Continuous2D field = (Continuous2D)this.field;
@@ -109,28 +135,28 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
     public LocationWrapper getWrapper(final Object obj)
         {
         final Continuous2D field = (Continuous2D)this.field;
-	final StableDouble2D w = new StableDouble2D(field, obj);
+        final StableDouble2D w = new StableDouble2D(field, obj);
         return new LocationWrapper( obj, null , this)  // don't care about location
             {
             public Object getLocation()
                 {
-		/*
-                if (field==null) return null;
-                else return field.getObjectLocation(object);
-		*/
-		w.update();
-		return w;
+                /*
+                  if (field==null) return null;
+                  else return field.getObjectLocation(object);
+                */
+                w.update();
+                return w;
                 }
                 
             public String getLocationName()
                 {
-		/*
-                Object loc = getLocation();
-                if (loc == null) return "Gone";
-                return ((Double2D)loc).toCoordinates();
-		*/
-		w.update();
-		return w.toString();
+                /*
+                  Object loc = getLocation();
+                  if (loc == null) return "Gone";
+                  return ((Double2D)loc).toCoordinates();
+                */
+                w.update();
+                return w.toString();
                 }
             };
         }
