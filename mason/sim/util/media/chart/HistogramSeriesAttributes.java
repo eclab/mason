@@ -42,6 +42,14 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     /** The opacity of the histogram bar.  Sadly this must be separate than the color because
         Sun doesn't have a proper color selector.  */
     double fillOpacity;
+    NumberTextField fillOpacityTextField;
+    public void setFillOpacity(double value)
+    {
+    	fillOpacityTextField.setValue(value);//to update the gui
+    	fillOpacityTextField.newValue(value);//to update the internals of the gui
+    }
+    
+    
     /** The opacity of the histogram bar border.  Sadly this must be separate than the color because
         Sun doesn't have a proper color selector.  */
     double lineOpacity;
@@ -133,7 +141,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
         addLabelled("Fill",well);
 
-        NumberTextField fo = new NumberTextField("Opacity ", fillOpacity,1.0,0.125)
+        fillOpacityTextField = new NumberTextField("Opacity ", fillOpacity,1.0,0.125)
             {
             public double newValue(double newValue) 
                 {
@@ -144,7 +152,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("",fo);
+        addLabelled("",fillOpacityTextField);
 
         strokeColor = Color.black; //(Color)(getRenderer().getSeriesOutlinePaint(getSeriesIndex()));
         well = new ColorWell(strokeColor)
