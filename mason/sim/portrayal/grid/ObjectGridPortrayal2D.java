@@ -107,7 +107,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         if (field==null) return;
         
         boolean objectSelected = !selectedWrappers.isEmpty();
-        Object selectedObject = selectedWrapper.getObject();
+        Object selectedObject = (selectedWrapper == null ? null : selectedWrapper.getObject());
 
         // Scale graphics to desired shape -- according to p. 90 of Java2D book,
         // this will change the line widths etc. as well.  Maybe that's not what we
