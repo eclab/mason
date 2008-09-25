@@ -83,9 +83,14 @@ public class Console extends JFrame implements Controller
     /** Do we only allow the user to type in other classNames? */
     public static boolean allowOtherClassNames;
 
-    static 
+     /** Sets various MacOS X features */
+   static 
         {
-        // Use Quaqua if it exists
+         // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
+        // [this appears to be ignored by MacOS X Java 1.4.1 and 1.4.2.  A bug? ]
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+
+       // Use Quaqua if it exists
         try
             {
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
@@ -98,12 +103,21 @@ public class Console extends JFrame implements Controller
 
         try  // now we try to set certain properties if the security permits it
             {
-            // macOS X 1.4.1 java doesn't show the grow box.  We try to force it here.
-            System.setProperty("apple.awt.showGrowBox", "true");
-            // if we're on a mac, we should move the menu bar to the top
-            // System.setProperty("com.apple.macos.useScreenMenuBar", "true");  // nah, confuses people when switching windows
-            // if we're on a mac, let's make the tabs smaller
-            // System.setProperty("com.apple.macos.smallTabs", "true");  // nah, looks dorky...
+            // turn on hardware acceleration on MacOS X.  As of September 2003, 1.3.1
+            // turns this off by default, which makes 1.3.1 half the speed (and draws
+            // objects wrong to boot).
+            System.setProperty("com.apple.hwaccel","true");  // probably settable as an applet.  D'oh! Looks like it's ignored.
+	    System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
+            // the following are likely not settable
+            // macOS X 1.4.1 java doesn't show the grow box.  We force it here.
+            System.setProperty("apple.awt.showGrowBox","true");
+            // we set this so that macos x application packages appear as files
+            // and not as directories in the file viewer.  Note that this is the 
+            // 1.3.1 version -- Apple gives us an obnoxious warning in 1.4.1 when
+            // we call forth an open/save panel saying we should now use
+            // apple.awt.use-file-dialog-packages instead, as if 1.3.1 isn't also
+            // in common use...
+            System.setProperty("com.apple.macos.use-file-dialog-packages","true");
             }
         catch (Exception e) { }
         }

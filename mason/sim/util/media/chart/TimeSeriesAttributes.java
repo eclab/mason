@@ -36,9 +36,19 @@ public class TimeSeriesAttributes extends SeriesAttributes
     static final float SPACE = 3;
     /** A long space */
     static final float SKIP = DASH;
+
+    static final public int PATTERN_DASH = 0;
+    static final public int PATTERN_DASH_SKIP = 1;
+    static final public int PATTERN_DASH_SPACE = 2;
+    static final public int PATTERN_DASH_SPACE_DASH_SPACE_DOT_SPACE = 3;
+    static final public int PATTERN_DASH_SPACE_DOT_SPACE = 4;
+    static final public int PATTERN_DASH_SPACE_DOT_SPACE_DOT_SPACE = 5;
+    static final public int PATTERN_DOT_SPACE =6;
+    static final public int PATTERN_DOT_SKIP = 7;
+
                 
     /** Nine dash combinations that the user might find helpful. */
-    static final float[][] dashes = 
+    static final float[][] dashPatterns = 
         { 
         { DASH, 0.0f }, // --------
             { DASH * 2, SKIP }, 
@@ -51,15 +61,38 @@ public class TimeSeriesAttributes extends SeriesAttributes
             { DOT, SKIP }   // .  .  .  .  
         };
     
-    /** How much we should stretch the dashes listed above.  1.0 is normal. */
+    /** How much we should stretch the dashPatterns listed above.  1.0 is normal. */
     float stretch;
+    NumberTextField stretchField;
     /** Line thickness. */
     float thickness;
-    /** Line dash pattern (one of the dashes above). */
-    float[] dash;
+    NumberTextField thicknessField;
+    /** Line dash pattern (one of the dashPatterns above). */
+    float[] dashPattern;
+    JComboBox dashPatternList;
     /** Line color. */
     Color strokeColor;
+    ColorWell strokeColorWell;
                 
+    public void setThickness(float value) { thicknessField.setValue(thicknessField.newValue(value));  }
+    public float getThickness() { return (float)(thicknessField.getValue()); }
+
+    public void setStretch(float value) { stretchField.setValue(stretchField.newValue(value));  }
+    public float getStretch() { return (float)(stretchField.getValue()); }
+
+    public void setDashPattern(int value) 
+	{ 
+	if (value >= 0 && value < dashPatterns.length) 
+	    { 
+	    dashPatternList.setSelectedIndex(value);
+	    dashPattern = dashPatterns[value];
+	    }
+	}
+    public float getDashPattern() { return dashPatternList.getSelectedIndex(); }
+
+    public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
+    public Color getStrokeColor() { return strokeColor; }
+
     /** The time series in question.  */
     public XYSeries series;
     public void setSeriesName(String val) { series.setKey(val); }
@@ -73,16 +106,16 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
     public void rebuildGraphicsDefinitions()
         {
-        float[] newDash = new float[dash.length];
-        for(int x=0;x<dash.length;x++)
+        float[] newDashPattern = new float[dashPattern.length];
+        for(int x=0;x<dashPattern.length;x++)
             if (stretch*thickness > 0)
-                newDash[x] = dash[x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
+                newDashPattern[x] = dashPattern[x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
                 
         XYItemRenderer renderer = getRenderer();
             
         renderer.setSeriesStroke(getSeriesIndex(),
                                  new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
-                                                 BasicStroke.JOIN_ROUND,0,newDash,0));
+                                                 BasicStroke.JOIN_ROUND,0,newDashPattern,0));
 
         renderer.setSeriesPaint(getSeriesIndex(),strokeColor);
         repaint();
@@ -93,7 +126,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         // The following three variables aren't defined until AFTER construction if
         // you just define them above.  So we define them below here instead.
                                                 
-        dash = dashes[0];
+        dashPattern = dashPatterns[0];
         stretch = 1.0f;
         thickness = 2.0f;
 
@@ -109,7 +142,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         
         strokeColor = (Color)paint;
         
-        ColorWell well = new ColorWell(strokeColor)
+        strokeColorWell = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 
                 {
@@ -118,9 +151,9 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 return c;
                 }
             };
-        addLabelled("Color",well);
+        addLabelled("Color",strokeColorWell);
                         
-        NumberTextField thickitude = new NumberTextField(2.0,true)
+        thicknessField = new NumberTextField(2.0,true)
             {
             public double newValue(double newValue) 
                 {
@@ -131,23 +164,24 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("Width",thickitude);
-        final JComboBox list = new JComboBox();
-        list.setEditable(false);
-        list.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(
+        addLabelled("Width",thicknessField);
+	
+	dashPatternList = new JComboBox();
+        dashPatternList.setEditable(false);
+        dashPatternList.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(
                                                                         new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
                                                                                        "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
-        list.setSelectedIndex(0);
-        list.addActionListener(new ActionListener()
+        dashPatternList.setSelectedIndex(0);
+        dashPatternList.addActionListener(new ActionListener()
             {
             public void actionPerformed ( ActionEvent e )
                 {
-                dash = dashes[list.getSelectedIndex()];
+                dashPattern = dashPatterns[dashPatternList.getSelectedIndex()];
                 rebuildGraphicsDefinitions();
                 }
             });
-        addLabelled("Dash",list);
-        NumberTextField stretchField = new NumberTextField(1.0,true)
+        addLabelled("Dash",dashPatternList);
+        stretchField = new NumberTextField(1.0,true)
             {
             public double newValue(double newValue) 
                 {

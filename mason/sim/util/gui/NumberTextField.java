@@ -10,7 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 
 /** A simple class that lets you specify a label and validate a numerical value.  NumberTextField assumes access
-    to several image files for the widgets to the right of the text field: a left-arrow button, a right-arrow button, and a "belly button".  The left-arrow button decreases the numerical value, the right-arrow button increases it, and the belly button resets it to its initial default value.  You can also change the value in the text field proper.  Why use this class instead of a slider?  Because it is not ranged: the numbers can be any value.
+    to several image files for the widgets to the right of the text field: a left-arrow button, a right-arrow button, 
+    and a "belly button".  The left-arrow button decreases the numerical value, the right-arrow button increases it, 
+    and the belly button resets it to its initial default value.  You can also change the value in the text field proper.  
+    Why use this class instead of a slider?  Because it is not ranged: the numbers can be any value.
 
     <p>NumberTextField lets users increase values according to a provided formula of the form
     value = value * M + A, and similarly decrease values as value = (value - A) / M. You specify the
@@ -18,7 +21,8 @@ import java.awt.*;
     linearly or geometrically.
 
     <p>You can exercise further control by subclassing the class and overriding the newValue(val) method, which
-    filters all newly user-set values and "corrects" them.  Programmatically set values (by calling setValue(...)) are not filtered through newValue by default.  If you need to filter, you should do setValue(newValue(val));
+    filters all newly user-set values and "corrects" them.  Programmatically set values (by calling setValue(...)) 
+    are not filtered through newValue by default.  If you need to filter, you should do setValue(newValue(val));
 
     <p>NumberTextFields can also be provided with an optional label.
 */

@@ -319,6 +319,14 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         System.arraycopy(objs,0,o,0,numObjs);
         return o;
         }
+	
+    public Double[] toDoubleArray()
+        {
+        Double[] o = new Double[numObjs];
+	for(int i = 0; i < numObjs; i++)
+	    o[i] = new Double(objs[i]);
+	return o;
+        }
 
     public Class componentType()
         {

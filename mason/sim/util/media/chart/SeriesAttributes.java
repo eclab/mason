@@ -66,7 +66,8 @@ public abstract class SeriesAttributes extends LabelledList
                 
     /** Returns the index of the series. */
     public int getSeriesIndex() { return seriesIndex; }
-    /** Sets the index of the series. */
+    /** Sets the index of the series -- Do NOT call this if you want to move the series order; instead call moveSeries
+	in the Generator. */
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
                 

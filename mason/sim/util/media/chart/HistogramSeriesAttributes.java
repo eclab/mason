@@ -32,31 +32,53 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     {
     /** Border thickness */
     float thickness;
+    NumberTextField thicknessField;
+    /** Whether or not to include the margin as a GUI option.  */
+    boolean includeMargin;
     /** The margin: the percentage of available space that a histogram bar will actually take up. 
         Turned off by default. */
     float margin;
+    NumberTextField marginField;
     /** The color of the histogram bar. */
     Color fillColor;
+    ColorWell fillColorWell;
     /** The color of the histogram bar border. */
     Color strokeColor;
+    ColorWell strokeColorWell;
     /** The opacity of the histogram bar.  Sadly this must be separate than the color because
         Sun doesn't have a proper color selector.  */
     double fillOpacity;
-    NumberTextField fillOpacityTextField;
-    public void setFillOpacity(double value)
-    {
-    	fillOpacityTextField.setValue(value);//to update the gui
-    	fillOpacityTextField.newValue(value);//to update the internals of the gui
-    }
-    
+    NumberTextField fillOpacityField;
     
     /** The opacity of the histogram bar border.  Sadly this must be separate than the color because
         Sun doesn't have a proper color selector.  */
     double lineOpacity;
-    /** Whether or not to include the margin as a GUI option.  */
-    boolean includeMargin;
+    NumberTextField lineOpacityField;
+    
+    NumberTextField numBinsField;
                 
-    /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
+    public void setFillOpacity(double value) { fillOpacityField.setValue(fillOpacityField.newValue(value));  }
+    public double getFillOpacity() { return fillOpacityField.getValue(); }
+    
+    public void setLineOpacity(double value) { lineOpacityField.setValue(lineOpacityField.newValue(value));  }
+    public double getLineOpacity() { return lineOpacityField.getValue(); }
+
+    public void setThickness(float value) { thicknessField.setValue(thicknessField.newValue(value));  }
+    public float getThickness() { return (float)(thicknessField.getValue()); }
+
+    public void setMargin(float value) { marginField.setValue(marginField.newValue(value));  }
+    public float getMargin() { return (float)(marginField.getValue()); }
+    
+    public void setNumBins(int value) { numBinsField.setValue(numBinsField.newValue(value));  }
+    public int getNumBins() { return (int)(numBinsField.getValue()); }
+
+    public void setFillColor(Color value) { fillColorWell.changeColor(fillColor = value); }
+    public Color getFillColor() { return fillColor; }
+
+    public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
+    public Color getStrokeColor() { return strokeColor; }
+
+        /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
     public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, boolean includeMargin)
         { 
@@ -101,7 +123,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         fillOpacity = 1.0;
         lineOpacity = 1.0;
 
-        NumberTextField numbins = new NumberTextField("", ((HistogramGenerator)generator).getNumBins(seriesIndex),true)
+        numBinsField = new NumberTextField("", ((HistogramGenerator)generator).getNumBins(seriesIndex),true)
             {
             public double newValue(double newValue) 
                 {
@@ -113,7 +135,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("Bins",numbins);
+        addLabelled("Bins",numBinsField);
 
         // fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
         // this returns null, cause getSeriesPaint returns whatever was set through setSeriesPaint;
@@ -129,7 +151,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         // second argument does not matter
 
         fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
-        ColorWell well = new ColorWell(fillColor)
+	fillColorWell = new ColorWell(fillColor)
             {
             public Color changeColor(Color c) 
                 {
@@ -139,9 +161,9 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 }
             };
 
-        addLabelled("Fill",well);
+        addLabelled("Fill",fillColorWell);
 
-        fillOpacityTextField = new NumberTextField("Opacity ", fillOpacity,1.0,0.125)
+        fillOpacityField = new NumberTextField("Opacity ", fillOpacity,1.0,0.125)
             {
             public double newValue(double newValue) 
                 {
@@ -152,10 +174,10 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("",fillOpacityTextField);
+        addLabelled("",fillOpacityField);
 
         strokeColor = Color.black; //(Color)(getRenderer().getSeriesOutlinePaint(getSeriesIndex()));
-        well = new ColorWell(strokeColor)
+        strokeColorWell = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 
                 {
@@ -165,9 +187,9 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 }
             };
 
-        addLabelled("Line",well);
+        addLabelled("Line",strokeColorWell);
 
-        NumberTextField lo = new NumberTextField("Opacity ", lineOpacity,1.0,0.125)
+        lineOpacityField = new NumberTextField("Opacity ", lineOpacity,1.0,0.125)
             {
             public double newValue(double newValue) 
                 {
@@ -178,9 +200,9 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("",lo);
+        addLabelled("",lineOpacityField);
 
-        NumberTextField thickitude = new NumberTextField(thickness,false)
+        thicknessField = new NumberTextField(thickness,false)
             {
             public double newValue(double newValue) 
                 {
@@ -191,11 +213,11 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("Width",thickitude);
+        addLabelled("Width",thicknessField);
                         
         if (includeMargin)
             {
-            NumberTextField space = new NumberTextField(0.5,1.0,0.125)
+	    marginField = new NumberTextField(0.5,1.0,0.125)
                 {
                 public double newValue(double newValue) 
                     {
@@ -206,7 +228,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                     return newValue;
                     }
                 };
-            addLabelled("Space",space);
+            addLabelled("Space",marginField);
             }
         }
     }

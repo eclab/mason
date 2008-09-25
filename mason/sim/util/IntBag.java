@@ -318,6 +318,30 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         return o;
         }
 
+    public Integer[] toIntegerArray()
+        {
+        Integer[] o = new Integer[numObjs];
+	for(int i = 0; i < numObjs; i++)
+	    o[i] = new Integer(objs[i]);
+	return o;
+        }
+
+    public Long[] toLongArray()
+        {
+        Long[] o = new Long[numObjs];
+	for(int i = 0; i < numObjs; i++)
+	    o[i] = new Long(objs[i]);
+	return o;
+        }
+
+    public Double[] toDoubleArray()
+        {
+        Double[] o = new Double[numObjs];
+	for(int i = 0; i < numObjs; i++)
+	    o[i] = new Double(objs[i]);
+	return o;
+        }
+
     public Class componentType()
         {
         return Integer.TYPE;
