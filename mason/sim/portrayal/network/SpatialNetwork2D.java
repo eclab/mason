@@ -41,7 +41,7 @@ public class SpatialNetwork2D
     
     public SpatialNetwork2D( final SparseGrid2D grid, final Network network )
         {
-        this.field = field;
+        this.field = grid;
         if (field == null)
             throw new RuntimeException("Null SparseGrid2D.");
         this.network = network;

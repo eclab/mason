@@ -1396,3 +1396,4 @@ Version 14
 		setting, and likewise in TimeSeriesAttributes
 	Modified Display[2|3]D.java, Console.java to force the Quartz renderer on Macs.
 		The Sun renderer is awful.
+	Fixed bug in SpatialNetwork2D constructor (field was set to itself, and thus left null)
