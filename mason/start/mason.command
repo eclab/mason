@@ -21,4 +21,4 @@ endif
 
 # Since we want to do Java 1.4.1, let's make sure it's not aliased to 1.3.1
 unalias java
-java -Xmx200M -Xdock:name="MASON" sim.display.Console >& /dev/null&
+java -server -Xmx200M -Xdock:name="MASON" sim.display.Console >& /dev/null&

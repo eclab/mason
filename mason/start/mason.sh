@@ -19,4 +19,4 @@ if ("$jars" != "${MASON_HOME}/\*\.jar") then
         end
 endif
 
-java -Xmx200M sim.display.Console >& /dev/null&
+java -server -Xmx200M sim.display.Console >& /dev/null&

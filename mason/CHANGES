@@ -1396,4 +1396,22 @@ Version 14
 		setting, and likewise in TimeSeriesAttributes
 	Modified Display[2|3]D.java, Console.java to force the Quartz renderer on Macs.
 		The Sun renderer is awful.
+	Added "-server" to all scripts in the 'start' directory.  Hotspot Server is
+		quite a bit faster for MASON than Hotspot client.
+	Added some code to change the unit increment in scroll bars when Display2D is
+		resized.  This makes the scrolling non-ridiculously slow, particularly
+		for the Macs' two-finger gestures.
+	Bug fixes to Display2D: (1) the Movie Maker now writes out step "0" of the
+		simulation (prior to any steps happening) (2) the Movie Maker properly
+		handles starting a new movie when the simulation is stopped -- in this
+		case it starts up a new simulation paused (3) the Movie Maker also
+		pauses the simulation when starting up a simulation fresh (4) now in
+		windows and X Windows, MASON does a repaint() each step rather than
+		doing a direct draw to the screen, because of race conditions discovered
+		by Pelle Evensen (pelle@evensen.org), thanks (5) paintToMovie now takes
+		a Graphics argument (6) paint(...) now always takes three arguments, the
+		two-argument version has been deleted.  All this is likely to be slower
+		for Windows and X Windows but should be thread-tight.
 	Fixed bug in SpatialNetwork2D constructor (field was set to itself, and thus left null)
+	Using TYPE_INT_ARGB now for FastValueGridPortrayal2D to be more compatable with
+		Windows.

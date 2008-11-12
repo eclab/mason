@@ -161,6 +161,10 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
                     // in 1.4.1 -- but in fact it is SLOWER on 1.3.1 by 2/3.  So for the time being we're
                     // going to stay with the orgiginal.
                     // see http://developer.apple.com/documentation/Java/Reference/Java14SysProperties/System_Properties/chapter_2_section_6.html
+		    //
+		    // UPDATE: Running with Quartz and Java 1.6, it doesn't seem that ARGB and ARGB_PRE have
+		    // any really significant difference in speed.  Maybe 5%.  Sticking with ARGB to be more compatible with
+		    // Windows.
                     raster = buffer.getRaster();
                     newBuffer = true;
                     }

@@ -186,9 +186,16 @@ public class Display2D extends JComponent implements Steppable
         public Dimension getMaximumsize()
             { return getPreferredSize(); }
         
-        /** Paints a movie, by writing it to the screen buffered, then
-            encoding the buffer to disk. */
-        public void paintToMovie()
+        /** Paints a movie, by drawing to a buffer, then
+            encoding the buffer to disk, then optionally 
+	    writing the buffer to the provided Graphics2D. 
+	    If the Graphics2D is null, it's just written out to disk.
+	    This method will only write to disk when "appropriate", that is,
+	    if the current schedule has advanced to the point that a new
+	    frame is supposed to be outputted (given the frame rate of the
+	    movie).  In any rate, it'll write to the Graphic2D if
+	    provided. */
+        public void paintToMovie(Graphics g)
             {
             // although presently paintToMovie is called solely from paintComponent,
             // which already has synchronized on the schedule, we do this anyway for
@@ -196,12 +203,18 @@ public class Display2D extends JComponent implements Steppable
             // is important.
             synchronized(Display2D.this.simulation.state.schedule)
                 {
-                Graphics g = getGraphics();
-                final BufferedImage i = paint(g,true,false);
-                g.dispose();  // because we got it with getGraphics(), we're responsible for it
-                Display2D.this.movieMaker.add(i);
+		// only paint if it's appropriate
+	    long steps = Display2D.this.simulation.state.schedule.getSteps();
+	    if (steps > lastEncodedSteps &&
+		steps % getInterval() == 0 &&
+		Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
+		{
+                Display2D.this.movieMaker.add(paint(g,true,false));
+		lastEncodedSteps = steps;
                 }
+	    else paint(g,false,false);
             }
+	    }
         
         /** Hints used to draw objects to the screen or to a buffer */
         public RenderingHints unbufferedHints;
@@ -315,20 +328,8 @@ public class Display2D extends JComponent implements Steppable
             synchronized(Display2D.this.simulation.state.schedule)  // for time()
                 {
                 if (movieMaker!=null)  // we're writing a movie
-                    {
-                    long steps = Display2D.this.simulation.state.schedule.getSteps();
-                    // double-check so we don't duplicate ourselves or draw
-                    // before or after the simulation
-                    if (steps > lastEncodedSteps && 
-                        steps % getInterval() == 0 &&
-                        Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
-                        {
-                        insideDisplay.paintToMovie();
-                        lastEncodedSteps = steps;
-                        }
-                    else paint(g,buffer);
-                    }
-                else paint(g,buffer);
+		    insideDisplay.paintToMovie(g);
+                else paint(g,buffer,true);
                 }
             }
             
@@ -364,8 +365,11 @@ public class Display2D extends JComponent implements Steppable
 
 
         /** Paints an image to the screen either buffered or unbuffered.  If buffered, the
-            buffer is returned for your convenience.   The buffer returned is SHARED, so if
-            you want to hold onto it without it changing, you'll need to make a copy.
+            buffer is returned for your convenience.   If SHARED is true, then the buffer
+	    is shared internally, so if
+            you want to hold onto it without it changing, you'll need to make a copy.  If SHARED
+	    is false, then the buffer is given to you to do as you like and a new buffer is
+	    created next time (less efficient).
             This method is called from Swing
             when the window is resized or scrolled or whatnot, but it's also called as
             a result of the underlying model thread advancing a step so we can see
@@ -388,39 +392,19 @@ public class Display2D extends JComponent implements Steppable
             has pressed the stop button or done some operation in Swing which is blocking
             waiting for the schedule.  Long story short, try not to call a blocking method
             on Swing from inside this method. */
-        public BufferedImage paint(final Graphics g, final boolean buffered)
-            {
-            synchronized(Display2D.this.simulation.state.schedule)
-                {
-                Rectangle2D clip = computeClip();
-                if (!buffered)
-                    {
-                    paintUnbuffered((Graphics2D)g,clip);
-                    return null;
-                    }
-                else
-                    {
-                    return paintBuffered((Graphics2D)g,clip);
-                    }
-                }
-            }
-            
-        /** If shared is true, this is the same as paint(graphics,buffered), and with the same
-            warnings.  But if but if shared is false, then the buffered image returned is 
-            yours to do with as you please -- it is not shared internally.  If you need
-            a buffered image NOW and are doing something with immediately and then throwing
-            it away, just call paint(graphics,buffered), it's better style.  If you need to hold
-            onto your image (you're making a movie or writing to a file, say), you should call
-            paint(graphics,buffered,_false_).
-        */
         public BufferedImage paint(final Graphics graphics, boolean buffered, boolean shared)
             {
             synchronized(Display2D.this.simulation.state.schedule)
                 {
-                BufferedImage returnval = paint(graphics,buffered);
+		BufferedImage result = null;
+                Rectangle2D clip = computeClip();
+                if (!buffered)
+                    paintUnbuffered((Graphics2D)graphics,clip);
+               else
+	            result= paintBuffered((Graphics2D)graphics,clip);
                 if (!shared) buffer = null; // kill it so paintBuffered(graphics,clip) makes a new one next time
-                returnval.flush();  // just in case
-                return returnval;
+                if (result != null) result.flush();  // just in case
+                return result;
                 }
             }
                  
@@ -461,6 +445,8 @@ public class Display2D extends JComponent implements Steppable
             You should probably call paintComponent() instead. */
         void paintUnbuffered(Graphics2D g, Rectangle2D clip)
             {
+	    if (g==null) return;
+	    
             g.setRenderingHints(unbufferedHints);
 
             // dunno if we want this
@@ -697,7 +683,7 @@ public class Display2D extends JComponent implements Steppable
     /** The last steps for a frame that was painted to the screen.  Keeping this
         variable around enables our movie maker to ensure that it doesn't write
         a frame twice to its movie stream. */
-    long lastEncodedSteps = 0;
+    long lastEncodedSteps = -1;  // because we want to encode the start of the simulation prior to any steps.  That's step 0.
     /** Our movie maker, if one is running, else null. */
     public MovieMaker movieMaker;
 
@@ -940,7 +926,7 @@ public class Display2D extends JComponent implements Steppable
         insideDisplay.setBackground(UIManager.getColor("Panel.background"));
         display.setBackground(UIManager.getColor("Panel.background")); // this is the one that has any affect
         port.setBackground(UIManager.getColor("Panel.background"));
-        
+	
         // create the button bar at the top.
         header = new Box(BoxLayout.X_AXIS);
 
@@ -1236,6 +1222,8 @@ public class Display2D extends JComponent implements Steppable
         simulation.controller.setInspectors(inspectors,names);
         }
 
+    final static int SCROLL_BAR_SCROLL_RATIO = 10;
+
     /** Creates a frame holding the Display2D.  This is the best method to create the frame,
         rather than making a frame and putting the Display2D in it.  If you prefer the latter,
         then you need to handle two things.  First, when the frame is disposed, you need to
@@ -1261,6 +1249,8 @@ public class Display2D extends JComponent implements Steppable
             public void componentResized (ComponentEvent e) 
                 {
                 Utilities.doEnsuredRepaint(header);
+		display.getHorizontalScrollBar().setUnitIncrement(display.getViewport().getWidth() / SCROLL_BAR_SCROLL_RATIO);
+		display.getVerticalScrollBar().setUnitIncrement(display.getViewport().getHeight() / SCROLL_BAR_SCROLL_RATIO);
                 }
             });
                                 
@@ -1408,13 +1398,25 @@ public class Display2D extends JComponent implements Steppable
             Graphics g = insideDisplay.getGraphics();
             final BufferedImage typicalImage = insideDisplay.paint(g,true,false);
             g.dispose();
-            
+            	    
             if (!movieMaker.start(typicalImage))
                 movieMaker = null;  // failed
             else 
                 {
                 movieButton.setIcon(MOVIE_ON_ICON);
                 movieButton.setPressedIcon(MOVIE_ON_ICON_P);
+
+		// start up simulation paused if necessary
+		final Console console = (Console)(simulation.controller);
+		if (console.getPlayState() == Console.PS_STOPPED)  // either after simulation or we just started the program
+		    console.pressPause();
+		
+		lastEncodedSteps = -1;
+
+		// capture the currently shown frame (important if we just paused the simulation)
+		insideDisplay.paintToMovie(null);
+		
+		// set ourselves up to quit when stopped
                 simulation.scheduleAtEnd(new Steppable()   // to stop movie when simulation is stopped
                     {
                     public void step(SimState state) { stopMovie(); }
@@ -1462,21 +1464,17 @@ public class Display2D extends JComponent implements Steppable
         {
         long steps = simulation.state.schedule.getSteps();
     
-        if (steps % getInterval() == 0   // time to update!
-            && (insideDisplay.isShowing()    // only draw if we can be seen
-                || movieMaker !=null ))      // OR draw to a movie even if we can't be seen
-            {
-            if (isMacOSX && movieMaker == null) 
-                {   // macos x should use other method for movie maker and off-screen buffers
-                insideDisplay.repaint();
-                }
-            else  // Windows or X Windows
-                {
-                Graphics g = insideDisplay.getGraphics();
-                insideDisplay.paintComponent(g,true);
-                g.dispose();
-                }
-            }
-        insideDisplay.updateToolTips();
+        if (steps % getInterval() == 0)       // time to update!
+	    {
+	    if (insideDisplay.isShowing())
+		{
+		insideDisplay.repaint();
+		}
+	    else if (movieMaker != null)  // we're not being displayed but we still need to output to a movie
+		{
+		insideDisplay.paintToMovie(null);
+		}
+	    insideDisplay.updateToolTips();
+	    }
         }
     }

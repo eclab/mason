@@ -27,7 +27,7 @@ rem adding all jars in the jar directory to the classpath.
 
 
 
-java -Xmx200M sim.display.Console >nul 2>nul 
+java -server -Xmx200M sim.display.Console >nul 2>nul 
 
 rem Restoring the classpath.
 SET CLASSPATH=%OLDCLASSPATH%
