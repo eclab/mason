@@ -1415,3 +1415,10 @@ Version 14
 	Fixed bug in SpatialNetwork2D constructor (field was set to itself, and thus left null)
 	Using TYPE_INT_ARGB now for FastValueGridPortrayal2D to be more compatable with
 		Windows.
+	Added sim.util.Propertied, and the ability for SimpleProperties to be attached
+		to Propertied objects.  This is largely in preparation for providing
+		dynamic properties via scheme.
+	Commented out a chunk of code in MovieEncoder which prevented JMF from creating
+		little jmf.log files.  This code appears to be causing JMF to fail under
+		Java 1.6 on OS X (at least).  :-(  JMF is a pain.  Thanks to Amelia
+		Ritahani (ritahani@cs.york.ac.uk).
