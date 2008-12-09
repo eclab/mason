@@ -77,6 +77,10 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
     Format encodeFormat; // format to encode in
    
     
+    
+    // Presently commented out: in Java 1.6, this code appears to freak JMF out :-(
+    // Not sure why 1.6 would be doing this.   --Sean
+  /*
     static
         {
         // We're going to hack com.sun.media.Log so that it doesn't
@@ -112,6 +116,7 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
         
         com.sun.media.Log.isEnabled = false;
         }
+    */
     
     /** Returns null and prints an error out to stderr if an error occurred while trying to
         get the formats */

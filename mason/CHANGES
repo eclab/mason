@@ -1420,5 +1420,6 @@ Version 14
 		dynamic properties via scheme.
 	Commented out a chunk of code in MovieEncoder which prevented JMF from creating
 		little jmf.log files.  This code appears to be causing JMF to fail under
-		Java 1.6 on OS X (at least).  :-(  JMF is a pain.  Thanks to Amelia
-		Ritahani (ritahani@cs.york.ac.uk).
+		Java 1.6 on OS X (at least).  :-(  JMF is a pain.  If the little JMF poops
+		show up again, we may need to test for 1.6 and not do this code only in
+		that case.  Thanks to Amelia Ritahani (ritahani@cs.york.ac.uk).
