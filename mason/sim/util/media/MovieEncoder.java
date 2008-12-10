@@ -79,7 +79,8 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
     
     
     // Presently commented out: in Java 1.6, this code appears to freak JMF out :-(
-    // Not sure why 1.6 would be doing this.   --Sean
+    // Not sure why 1.6 would be doing this.   Anyway, JMF doesn't appear to be
+    // pooping JMF files out any more, at least under 1.5.  -- Sean
   /*
     static
         {

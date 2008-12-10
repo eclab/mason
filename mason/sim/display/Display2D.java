@@ -1264,7 +1264,7 @@ public class Display2D extends JComponent implements Steppable
     
     /** Returns the frame holding this Component.  If there is NO such frame, an error will
         be generated (probably a ClassCastException). */
-    Frame getFrame()
+    public Frame getFrame()
         {
         Component c = this;
         while(c.getParent() != null)
