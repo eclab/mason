@@ -1423,3 +1423,4 @@ Version 14
 		Java 1.6 on OS X (at least).  :-(  JMF is a pain.  If the little JMF poops
 		show up again, we may need to test for 1.6 and not do this code only in
 		that case.  Thanks to Amelia Ritahani (ritahani@cs.york.ac.uk).
+	Tweak to MovieEncoder to remove a Java 1.6 deprecated method

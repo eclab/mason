@@ -328,8 +328,10 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
         processor.realize();
         if (!waitForState(processor, Processor.Realized))
             throw new RuntimeException("Failed to Realize processor");
-                
-        sink = Manager.createDataSink(processor.getDataOutput(), new MediaLocator(file.toURL()));
+	
+	// note: the file.toURI().toURL() thing is because Java6 has deprecated
+	// use of file.toURL()
+        sink = Manager.createDataSink(processor.getDataOutput(), new MediaLocator(file.toURI().toURL()));
         sink.addDataSinkListener(this);
         sink.open();
         processor.start();
