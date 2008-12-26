@@ -7,6 +7,7 @@
 package sim.portrayal.simple;
 import sim.portrayal.*;
 import java.awt.*;
+import java.awt.geom.*;
 
 /**
    A simple portrayal for 2D visualization of rectangles. It extends the SimplePortrayal2D and
@@ -17,19 +18,14 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
     {
     public Paint paint;
     public double scale;
-    public boolean filled = true;
+    public boolean filled;
 
-    public RectanglePortrayal2D() { this(Color.gray,1.0); }
-    public RectanglePortrayal2D(Paint paint) { this(paint,1.0); }
+    public RectanglePortrayal2D() { this(Color.gray,1.0, true); }
+    public RectanglePortrayal2D(Paint paint) { this(paint,1.0, true); }
+    public RectanglePortrayal2D(double scale) { this(Color.gray,scale, true); }
+    public RectanglePortrayal2D(Paint paint, double scale) { this(paint, scale, true); }
     public RectanglePortrayal2D(Paint paint, boolean filled) { this(paint, 1.0, filled); }
-    public RectanglePortrayal2D(double scale) { this(Color.gray,scale); }
     public RectanglePortrayal2D(double scale, boolean filled) { this(Color.gray, scale, filled); }
-    
-    public RectanglePortrayal2D(Paint paint, double scale)
-        {
-        this.paint = paint;
-        this.scale = scale;
-        }
     
     public RectanglePortrayal2D(Paint paint, double scale, boolean filled)
         {
@@ -49,14 +45,15 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-        final double width = info.draw.width*scale;
-        final double height = info.draw.height*scale;
+	Rectangle2D.Double draw = info.draw;
+        final double width = draw.width*scale;
+        final double height = draw.height*scale;
 
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 
-        final int x = (int)(info.draw.x - width / 2.0);
-        final int y = (int)(info.draw.y - height / 2.0);
+        final int x = (int)(draw.x - width / 2.0);
+        final int y = (int)(draw.y - height / 2.0);
         final int w = (int)(width);
         final int h = (int)(height);
 

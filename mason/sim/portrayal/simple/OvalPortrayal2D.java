@@ -19,35 +19,42 @@ public class OvalPortrayal2D extends SimplePortrayal2D
     {
     public Paint paint;
     public double scale;
-    //boolean drawSmaller = Display2D.isMacOSX && !Display2D.javaVersion.startsWith("1.3"); // fix a bug in OS X
+    public boolean filled;
     
-    public OvalPortrayal2D() { this(Color.gray,1.0); }
-    public OvalPortrayal2D(Paint paint) { this(paint,1.0); }
-    public OvalPortrayal2D(double scale) { this(Color.gray,scale); }
-    
-    public OvalPortrayal2D(Paint paint, double scale)
+    public OvalPortrayal2D() { this(Color.gray,1.0, true); }
+    public OvalPortrayal2D(Paint paint) { this(paint,1.0, true); }
+    public OvalPortrayal2D(double scale) { this(Color.gray,scale, true); }
+    public OvalPortrayal2D(Paint paint, double scale) { this(paint, scale, true); }
+    public OvalPortrayal2D(Paint paint, boolean filled) { this(paint,1.0, filled); }
+    public OvalPortrayal2D(double scale, boolean filled) { this(Color.gray,scale, filled); }
+
+     public OvalPortrayal2D(Paint paint, double scale, boolean filled)
         {
         this.paint = paint;
         this.scale = scale;
+	this.filled = filled;
         }
     
-    // assumes the graphics already has its color set
+   // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-        final double width = info.draw.width*scale;
-        final double height = info.draw.height*scale;
+	Rectangle2D.Double draw = info.draw;
+        final double width = draw.width*scale;
+        final double height = draw.height*scale;
 
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 
-        final int x = (int)(info.draw.x - width / 2.0);
-        final int y = (int)(info.draw.y - height / 2.0);
+        final int x = (int)(draw.x - width / 2.0);
+        final int y = (int)(draw.y - height / 2.0);
         int w = (int)(width);
         int h = (int)(height);
-        //if (drawSmaller) { --w; --h; }
                 
         // draw centered on the origin
-        graphics.fillOval(x,y,w, h);
+        if (filled)
+	    graphics.fillOval(x,y,w,h);
+	else
+	    graphics.drawOval(x,y,w,h);
         }
 
     /** If drawing area intersects selected area, add last portrayed object to the bag */
