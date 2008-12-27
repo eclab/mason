@@ -19,23 +19,39 @@ public class ShapePortrayal2D extends SimplePortrayal2D
     public Paint paint;
     public double scale;
     public Shape shape;
+    public Stroke stroke;
+    public boolean filled;
     AffineTransform transform = new AffineTransform();
 
     double bufferedWidth;
     double bufferedHeight;
     Shape bufferedShape;
     
-    public ShapePortrayal2D(Shape shape) { this(shape,Color.gray,1.0); }
-    public ShapePortrayal2D(Shape shape, Paint paint) { this(shape,paint,1.0); }
-    public ShapePortrayal2D(Shape shape, double scale) { this(shape,Color.gray,scale); }
-    
-    public ShapePortrayal2D(Shape shape, Paint paint, double scale)
+    public ShapePortrayal2D(Shape shape) { this(shape,Color.gray,1.0,true); }
+    public ShapePortrayal2D(Shape shape, Paint paint) { this(shape,paint,1.0,true); }
+    public ShapePortrayal2D(Shape shape, double scale) { this(shape,Color.gray,scale,true); }
+    public ShapePortrayal2D(Shape shape, Paint paint, double scale) { this(shape, Color.gray,scale,true); }
+    public ShapePortrayal2D(Shape shape, boolean filled) { this(shape,Color.gray,1.0,filled); }
+    public ShapePortrayal2D(Shape shape, Paint paint, boolean filled) { this(shape,paint,1.0,filled); }
+    public ShapePortrayal2D(Shape shape, double scale, boolean filled) { this(shape,Color.gray,scale,filled); }
+    public ShapePortrayal2D(Shape shape, Paint paint, double scale, boolean filled)
         {
         this.shape = shape;
         this.paint = paint;
         this.scale = scale;
+	this.filled = filled;
+	setStroke(null);
         }
     
+    public void setStroke(Stroke s)
+	{
+	stroke = s;
+	if (stroke == null)
+	    {
+	    stroke = new BasicStroke();
+	    }
+	}
+	
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
@@ -52,7 +68,15 @@ public class ShapePortrayal2D extends SimplePortrayal2D
 
         // draw centered on the origin
         transform.setToTranslation(info.draw.x,info.draw.y);
-        graphics.fill(transform.createTransformedShape(bufferedShape));
+	if (filled)
+	    {
+	    graphics.fill(transform.createTransformedShape(bufferedShape));
+	    }
+	else
+	    {
+	    graphics.setStroke(stroke);
+	    graphics.draw(transform.createTransformedShape(bufferedShape));
+	    }
         }
 
     public boolean hitObject(Object object, DrawInfo2D range)

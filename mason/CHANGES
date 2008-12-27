@@ -1425,3 +1425,4 @@ Version 14
 		that case.  Thanks to Amelia Ritahani (ritahani@cs.york.ac.uk).
 	Tweak to MovieEncoder to remove a Java 1.6 deprecated method
 	Updated OvalPortrayal2D to have border paint options just like RectanglePortrayal2D
+	Likewise for ShapePortrayal2D.  Also added some stroke functionality.
