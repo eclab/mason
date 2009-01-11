@@ -76,7 +76,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             final int width = this.width = values.width;
             /*final int height =*/ this.height = values.height;
-            field = new int[width][];
+            final int[][] field = this.field = new int[width][];
             for(int x =0 ; x < width; x++)
                 field[x] = (int []) (values.field[x].clone());
             }
