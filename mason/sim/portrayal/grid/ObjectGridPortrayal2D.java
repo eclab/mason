@@ -50,7 +50,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
 
 
-    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);
 

@@ -51,7 +51,28 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     public static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
     
-    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+    public Int2D getLocation(DrawInfo2D info)
+	{
+        final Grid2D field = (Grid2D) this.field;
+        if (field==null) return null;
+
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+        if (maxX == 0 || maxY == 0) return null;
+
+        final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
+        final double divideByY = (1.0+2.0*maxY);
+
+        final double xScale = info.draw.width / divideByX;
+        final double yScale = info.draw.height / divideByY;
+        int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+        int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+
+	return new Int2D(startx, starty);
+	}
+
+
+    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
         if (field==null) return null;

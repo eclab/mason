@@ -459,7 +459,9 @@ public class Display2D extends JComponent implements Steppable
                     g.setPaint(backdrop);
                     g.fillRect((int)clip.getX(),(int)clip.getY(),(int)clip.getWidth(),(int)clip.getHeight());
                     }
-                // get scale
+                
+		/*
+		// get scale
                 final double scale = getScale();
                 // compute WHERE we need to draw
                 int origindx = 0;
@@ -475,19 +477,22 @@ public class Display2D extends JComponent implements Steppable
                 // offset origin as user had requested
                 origindx += (int)(xOffset*scale);
                 origindy += (int)(yOffset*scale);
-                                
+		*/
+		
                 Iterator iter = portrayals.iterator();
                 while (iter.hasNext())
                     {
                     FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
                     if (p.visible)
                         {
-                        Rectangle2D rdraw = new Rectangle2D.Double(
+/*
+			Rectangle2D rdraw = new Rectangle2D.Double(
                             // we floor to an integer because we're dealing with exact pixels at this point
                             (int)(p.bounds.x * scale) + origindx,
                             (int)(p.bounds.y * scale) + origindy,
                             (int)(p.bounds.width * scale),
                             (int)(p.bounds.height * scale));
+*/
 
                         // set buffering if necessary
                         int buf = p.portrayal.getBuffering();
@@ -497,9 +502,13 @@ public class Display2D extends JComponent implements Steppable
                         g.setClip(g.getClip());
                         
                         // do the drawing
+/*
                         p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
                                          g, new DrawInfo2D(rdraw,clip));
-                            
+*/
+			p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
+					g, getDrawInfo2D(p, clip));
+			
                         // reset the buffering if necessary
                         p.portrayal.setBuffering(buf);
                         }
@@ -967,8 +976,7 @@ public class Display2D extends JComponent implements Steppable
                     createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
                                       Display2D.this.simulation );
                 if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
-                    performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
-                                      Display2D.this.simulation );
+                    performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
                 repaint();
                 }
             
@@ -1116,6 +1124,7 @@ public class Display2D extends JComponent implements Steppable
         Bag[] hitObjs = new Bag[portrayals.size()];
         Iterator iter = portrayals.iterator();
         int x=0;
+	/*
         double scale = getScale();
         // compute WHERE we need to draw
         int origindx = 0;
@@ -1131,25 +1140,76 @@ public class Display2D extends JComponent implements Steppable
             origindx = (int)((fullComponent.getWidth() - insideDisplay.width*scale)/2);
         if (fullComponent.getHeight() > (insideDisplay.height*scale))
             origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
-                                
+	*/
+	
         while (iter.hasNext())
             {
             hitObjs[x] = new Bag();
             FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
             if (p.visible)
                 {
-                Rectangle2D.Double region = new Rectangle2D.Double(
+		p.portrayal.hitObjects(getDrawInfo2D(p, rect), hitObjs[x]);
+/*                Rectangle2D.Double region = new Rectangle2D.Double(
                     // we floor to an integer because we're dealing with exact pixels at this point
                     (int)(p.bounds.x * scale) + origindx,
                     (int)(p.bounds.y * scale) + origindy,
                     (int)(p.bounds.width * scale),
                     (int)(p.bounds.height * scale));
                 p.portrayal.hitObjects( new DrawInfo2D(region,rect), hitObjs[x] );
+		*/
                 }
             x++;
             }
         return hitObjs;
         }
+	
+    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
+    public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point)
+	{
+	return getDrawInfo2D(portrayal, new java.awt.geom.Rectangle2D.Double( point.getX(), point.getY(), 1, 1 )); 
+	}
+
+    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
+    public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Rectangle2D clip)
+	{
+	Iterator iter = portrayals.iterator();
+	while(iter.hasNext())
+	    {
+            FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
+	    if (p.portrayal == portrayal) { return getDrawInfo2D(p, clip); }
+	    }
+	return null;
+	}
+	
+	
+    DrawInfo2D getDrawInfo2D(FieldPortrayal2DHolder holder, Rectangle2D clip)
+	{
+ 	if (holder==null) return null;
+	
+	double scale = getScale();
+        // compute WHERE we need to draw
+        int origindx = 0;
+        int origindy = 0;
+
+        // offset according to user's specification
+        origindx += (int)(insideDisplay.xOffset*scale);
+        origindy += (int)(insideDisplay.yOffset*scale);
+
+        // for information on why we use getViewRect, see computeClip()
+        Rectangle2D fullComponent = insideDisplay.getViewRect();
+        if (fullComponent.getWidth() > (insideDisplay.width * scale))
+            origindx = (int)((fullComponent.getWidth() - insideDisplay.width*scale)/2);
+        if (fullComponent.getHeight() > (insideDisplay.height*scale))
+            origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
+                                
+	Rectangle2D.Double region = new Rectangle2D.Double(
+	    // we floor to an integer because we're dealing with exact pixels at this point
+	    (int)(holder.bounds.x * scale) + origindx,
+	    (int)(holder.bounds.y * scale) + origindy,
+	    (int)(holder.bounds.width * scale),
+	    (int)(holder.bounds.height * scale));
+	return new DrawInfo2D(region, clip);
+	}
 
     static final int MAX_TOOLTIP_LINES = 10;
     public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation )
@@ -1176,9 +1236,16 @@ public class Display2D extends JComponent implements Steppable
                 
     /** */
     ArrayList selectedWrappers = new ArrayList();
-        
-    public void performSelection( final Rectangle2D.Double rect, final GUIState simulation )
-        {
+    
+    public void performSelection( LocationWrapper wrapper)
+	{
+	Bag b = new Bag();
+	b.add(wrapper);
+	performSelection(b);
+	}
+    
+    public void performSelection( final Bag locationWrappers )
+	{
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)
             {
@@ -1186,19 +1253,26 @@ public class Display2D extends JComponent implements Steppable
             wrapper.getFieldPortrayal().setSelected(wrapper,false);
             }
         selectedWrappers.clear();
+	
+	if (locationWrappers == null) return;  // deselect everything
+	
+	// add new wrappers
+	for(int x=0;x < locationWrappers.size(); x++)
+	    {
+		LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+                wrapper.getFieldPortrayal().setSelected(wrapper, true);
+                selectedWrappers.add(wrapper);
+	    }
+	}
         
+    public void performSelection( final Rectangle2D.Double rect )
+        {
         // gather objects hit and select them, and put in selectedObjects
         Bag[] hitObjects = objectsHitBy(rect);
+	Bag collection = new Bag();
         for(int x=0;x<hitObjects.length;x++)
-            {
-            FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(portrayals.get(x));
-            for( int i = 0 ; i < hitObjects[x].numObjs ; i++ )
-                {
-                LocationWrapper wrapper = (LocationWrapper) (hitObjects[x].objs[i]);
-                p.portrayal.setSelected(wrapper, true);
-                selectedWrappers.add(wrapper);
-                }
-            }
+	    collection.addAll(hitObjects[x]);
+	performSelection(collection);
         }
 
     /** Determines the inspectors appropriate for the given selection region (rect), and sends

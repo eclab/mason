@@ -49,9 +49,9 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         else throw new RuntimeException("Invalid field for Sparse2DPortrayal: " + field);
         }
     
-    public Point2D.Double getLocation(Object object, DrawInfo2D info)
-        {
-        final SparseGrid2D field = (SparseGrid2D) this.field;
+    public Int2D getLocation(DrawInfo2D info)
+	{
+        final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
         int maxX = field.getWidth(); 
@@ -61,8 +61,19 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final double yScale = info.draw.height / maxY;
         final int startx = (int)((info.clip.x - info.draw.x) / xScale);
         final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
-        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+	return new Int2D(startx, starty);
+	}
+
+    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
+        {
+        final SparseGrid2D field = (SparseGrid2D) this.field;
+        if (field==null) return null;
+
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  
 

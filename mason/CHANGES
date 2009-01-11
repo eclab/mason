@@ -1426,3 +1426,17 @@ Version 14
 	Tweak to MovieEncoder to remove a Java 1.6 deprecated method
 	Updated OvalPortrayal2D to have border paint options just like RectanglePortrayal2D
 	Likewise for ShapePortrayal2D.  Also added some stroke functionality.
+	getLocation(Object,DrawInfo2D) changed to getPositionInFieldPortrayal(...) in
+		Continuous2D, SparseGrid2D, HexaSparseGrid2D, and ObjectGrid2D.  Sorry,
+		it was a bad name and needed to be renamed.  This method returns the
+		location on-screen of an object given the field portrayal's drawinfo2d.
+	Added getLocation(DrawInfo2D) to Continuous2D, SparseGrid2D, and HexaSparseGrid2D.
+		This method returns the location in the field of the point defined by
+		the clip origin in the given DrawInfo2D.
+	Added three methods called getDrawInfo2D to Display2D.  These methods
+		construct a DrawInfo2D given a portrayal and a clip region or
+		hit point.  These methods are suitable for passing into getLocation(...)
+	Changed Display2D.performSelection(Rectangle2D.Double, GUIState) to just
+		Display2D.performSelection(Rectangle2D.Double) -- the GUIState was vestigial --
+		and also added two new performSelection(...) methods as well to make it easier
+		for the common man to select an object.

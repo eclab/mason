@@ -36,28 +36,34 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         {
         return defaultPortrayal;
         }
-        
-
-    public Point2D.Double getLocation(Object object, DrawInfo2D info)
-        {
+    
+    public Double2D getLocation(DrawInfo2D info)
+	{
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
                 
         final double xScale = info.draw.width / field.width;
         final double yScale = info.draw.height / field.height;
-        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)((info.clip.y - info.draw.y) / yScale);
-        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+        final double startx = (info.clip.x - info.draw.x) / xScale;  // notice not (int) like elsewhere.
+        final double starty = (info.clip.y - info.draw.y) / yScale;
+	return new Double2D(startx, starty);
+	}
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-                                            info.clip);  // we don't do further clipping 
+    
+    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D fieldPortrayalInfo)
+        {
+        final Continuous2D field = (Continuous2D)this.field;
+        if (field==null) return null;
+                
+        final double xScale = fieldPortrayalInfo.draw.width / field.width;
+        final double yScale = fieldPortrayalInfo.draw.height / field.height;
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
 
         Double2D loc = field.getObjectLocation(object);
         if (loc == null) return null;
 
-        newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
-        newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
+        newinfo.draw.x = (fieldPortrayalInfo.draw.x + (xScale) * loc.x);
+        newinfo.draw.y = (fieldPortrayalInfo.draw.y + (yScale) * loc.y);
 
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
         }
