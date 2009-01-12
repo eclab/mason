@@ -11,6 +11,8 @@ import sim.portrayal.*;
 import sim.portrayal3d.*;
 import sim.util.*;
 import sim.field.continuous.*;
+import sim.portrayal3d.inspector.*;
+import sim.portrayal.inspector.*;
 
 import com.sun.j3d.utils.picking.*;
 
@@ -53,18 +55,28 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
             
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {
+	final Object field = getField();
+        StableLocation d = null;
+	if (field instanceof Continuous2D) { d = new StableDouble2D((Continuous2D) field, w.getObject()); }
+	else  { d = new StableDouble3D((Continuous3D) field,  w.getObject()); }
+	final StableLocation loc = d;
         return new LocationWrapper( w.getObject(), null, this)  // don't care about location
             {
             public Object getLocation()
                 {
+		/*
                 if(field instanceof Continuous3D)
                     return ((Continuous3D)field).getObjectLocation(object);
                 else
                     return ((Continuous2D)field).getObjectLocation(object);
+		*/
+		loc.update();
+		return loc;
                 }
                 
             public String getLocationName()
                 {
+		/*
                 if(field instanceof Continuous3D)
                     {
                     Double3D loc = ((Continuous3D)field).getObjectLocation(object);
@@ -76,6 +88,9 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
                     if (loc!=null) return loc.toCoordinates();
                     }
                 return null;
+		*/
+		loc.update();
+		return loc.toString();
                 }
             };
         }       

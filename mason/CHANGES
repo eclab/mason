@@ -1440,3 +1440,11 @@ Version 14
 		Display2D.performSelection(Rectangle2D.Double) -- the GUIState was vestigial --
 		and also added two new performSelection(...) methods as well to make it easier
 		for the common man to select an object.
+	Added Stable[Int|Double] classes in addition to StableLocation and Stable[Int|Double]2D.
+		The latter classes originally enabled us to modify the location of continuous
+		and sparse grid objects in 2D space from their inspectors.  The 3D classes
+		now do the same thing for the 3D inspectors.
+	Added selectable LabeledPortryal2D to MAVDemo as an example.
+	Added selectable CircledPortrayal2D to NetworkTest as an example.
+	Added dragging objects to NetworkTest and to HeatBugs as examples.
+	Added HowTos on selecting and on dragging.

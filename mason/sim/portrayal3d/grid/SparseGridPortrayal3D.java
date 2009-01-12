@@ -12,6 +12,8 @@ import sim.portrayal.*;
 import sim.field.grid.*;
 import sim.portrayal3d.*;
 import sim.util.*;
+import sim.portrayal3d.inspector.*;
+import sim.portrayal.inspector.*;
 
 /**
  * Portrays both SparseGrid2D and SparseGrid3D fields.  A (0,0) or (0,0,0) object is centered
@@ -61,18 +63,28 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
         
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)     
         {
+	final Object field = getField();
+        StableLocation d = null;
+	if (field instanceof SparseGrid2D) { d = new StableInt2D((SparseGrid2D) field, w.getObject()); }
+	else  { d = new StableInt3D((SparseGrid3D) field,  w.getObject()); }
+	final StableLocation loc = d;
         return new LocationWrapper( w.getObject(), null , this)  // don't care about location
             {
             public Object getLocation()
                 {
+		/*
                 if(field instanceof SparseGrid3D)
                     return ((SparseGrid3D)field).getObjectLocation(object);
                 else
                     return ((SparseGrid2D)field).getObjectLocation(object);
+		*/
+		loc.update();
+		return loc;
                 }
                 
             public String getLocationName()
                 {
+		/*
                 if(field instanceof SparseGrid3D)
                     {
                     Int3D loc = ((SparseGrid3D)field).getObjectLocation(object);
@@ -84,6 +96,9 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
                     if (loc!=null) return loc.toCoordinates();
                     }
                 return null;
+		*/
+		loc.update();
+		return loc.toString();
                 }
             };
         }

@@ -51,6 +51,8 @@ These are short examples of how to do things in MASON you may have been wonderin
 <li><a href="#tabbedinspector">How to Create an Inspector Holding Other Inspectors</a>
 <li><a href="#chart">How to Add a Chart Programmatically</a>
 <li><a href="#console">How to Hide the Console</a>
+<li><a href="#select">How to Show that an Object Has Been "Selected" by the Mouse</a>
+<li><a href="#move">How to Move an Object in 2D by Dragging It with the Mouse</a>
 </ul>
 
 <a name="method"></a><h2>How to Schedule Multiple Methods to be Called on the Same Agent</h2>
@@ -768,6 +770,46 @@ MASON has a built-in time-series charting facility, but the user must manually c
 
 <p>For Display3D, it's somewhat more involved, and we'll get a nicer approach soon.
 
+
+<a name="select"><h2>How to Show that an Object Has Been "Selected" by the Mouse</h2>
+
+You may not know it, but MASON has a separate facility for registering objects which have been "selected" by the mouse, typically by clicking once on them.  This is different than calling forth inspectors on objects by double-clicking them.
+
+<p>Why would you want to select an object?  Typically to hilight it or change its mode to get some immediate information about it.  Or perhaps to provide some auxillary code to select objects and then do thing swith them (move them around with keystrokes or cut and paste them or whatnot).
+
+<p>MASON's selection facility is primitive: when you click in a location, every item intersecting that location is selected. But you cannot immediately <i>tell</i> as a user that something has been selected.  Instead, MASON provides some special portrayals which change their mode based on whether the object has been selected or not.  For example, <b>CircledPortrayal2D</b> can be set up to only display its "halo" around the object if the object has been selected.  You can register a CircledPortrayal2D instead of the previous SimplePortrayal along the lines of:
+
+<pre><tt>
+    <i>theFieldPortrayal.setPortrayalForAll</i>(new CircledPortrayal2D(<i>theOriginalSimplePortrayal</i>, Color.red, true));
+</tt></pre>
+
+<p>The 'true' means "only display when the underlying portrayal's object has been selected".  If there is no underlying portrayal (the object portrays itself), pass in <i>null</i> for the portrayal.  See <b>NetworkTestWithUI.java</b> for an example of doing this.
+
+<p>You can do a similar thing with <b>LabeledPortrayal2D</b> and other simple "wrapper" portrayals in 2D and 3D.  For example, see <b>MavDemoWithUI.java</b> for an example for using both CircledPortrayal2D and LabeledPortrayal2D together in this context.
+
+<p>Also if you like you can create your own SimplePortrayal which changes its mode based on whether or not it has been selected.  To do this, override the <b>setSelected</b> method along these lines:
+
+<pre><tt>
+    boolean isSelected;
+    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+        {
+        isSelected = selected;
+        return true;  // if I return false, I tell Display2D I reject being selected/deselected
+        }
+</tt></pre>
+
+<p>Now you could change your drawing to reflect whether your <tt>isSelected</tt> variable is currently set.
+
+
+<a name="move"><h2>How to Move an Agent in 2D by Dragging It with the Mouse</h2>
+
+MASON does not have a built-in facility for moving agents: rather, it has hooks to make it relatively easy to get it set up yourself.  The general idea is to add a MouseInputAdapter to the "inner display" of the Display2D, which waits for the mouse to be pressed, dragged, and released.  When the mouse is pressed, we get the objects in our desired FieldPortrayal which were hit by the mouse.  We then grab the one object of interest to us.  As we drag, we calculuate the location in the Field of where the mouse is presently pointing, and move the object to that location, then redisplay.  When we let up the mouse, we forget about the object.
+
+<p>This is all done straightforwardly using certain predefined methods in Display2D.  The <b>HeatBugsWithUI.java</b> file has a chunk of example code which shows how to do it for a SparseGrid2D.
+
+<p>We can make this nicer in two ways.  First off, we don't always click directly on the center of the object, so when we begin dragging, the object will "pop" to center itself at our mouse position.  This is fine for a discrete environment like SparseGrid2D but it looks unnatural if we're using a Continuous2D.  Second, as we drag the object, we may wish to also select it.  The <b>NetworkTestWithUI.java</b> file shows how to add in these two nicer items for a Continuous2D field.
+
 <br><br><br>
 </body>
 </html>
+

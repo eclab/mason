@@ -58,7 +58,14 @@ public class MavDemoWithUI extends GUIState
         // obstacle portrayal needs no setup
         obstaclePortrayal.setField(mavdemo.ground);
         mavPortrayal.setField(mavdemo.mavs);
-        mavPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OrientedPortrayal2D(new OvalPortrayal2D(20),0,20), 0, 20, Color.blue, true));
+        mavPortrayal.setPortrayalForAll(
+	    new CircledPortrayal2D(
+		new LabelledPortrayal2D(
+		    new OrientedPortrayal2D(
+			new OvalPortrayal2D(20),
+		    0,20), 
+		null, Color.blue, true), // 'null' means to display toString() for underlying object, rather than a predefined label
+		0, 20, Color.blue, true));
         
         // reschedule the displayer
         display.reset();

@@ -1124,24 +1124,7 @@ public class Display2D extends JComponent implements Steppable
         Bag[] hitObjs = new Bag[portrayals.size()];
         Iterator iter = portrayals.iterator();
         int x=0;
-	/*
-        double scale = getScale();
-        // compute WHERE we need to draw
-        int origindx = 0;
-        int origindy = 0;
-
-        // offset according to user's specification
-        origindx += (int)(insideDisplay.xOffset*scale);
-        origindy += (int)(insideDisplay.yOffset*scale);
-
-        // for information on why we use getViewRect, see computeClip()
-        Rectangle2D fullComponent = insideDisplay.getViewRect();
-        if (fullComponent.getWidth() > (insideDisplay.width * scale))
-            origindx = (int)((fullComponent.getWidth() - insideDisplay.width*scale)/2);
-        if (fullComponent.getHeight() > (insideDisplay.height*scale))
-            origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
-	*/
-	
+		
         while (iter.hasNext())
             {
             hitObjs[x] = new Bag();
@@ -1149,14 +1132,6 @@ public class Display2D extends JComponent implements Steppable
             if (p.visible)
                 {
 		p.portrayal.hitObjects(getDrawInfo2D(p, rect), hitObjs[x]);
-/*                Rectangle2D.Double region = new Rectangle2D.Double(
-                    // we floor to an integer because we're dealing with exact pixels at this point
-                    (int)(p.bounds.x * scale) + origindx,
-                    (int)(p.bounds.y * scale) + origindy,
-                    (int)(p.bounds.width * scale),
-                    (int)(p.bounds.height * scale));
-                p.portrayal.hitObjects( new DrawInfo2D(region,rect), hitObjs[x] );
-		*/
                 }
             x++;
             }

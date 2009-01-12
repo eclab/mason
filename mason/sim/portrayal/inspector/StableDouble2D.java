@@ -21,7 +21,9 @@ public class StableDouble2D implements StableLocation
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ")"; 
         }
-        
+    
+    protected StableDouble2D() { }
+    
     public StableDouble2D(Continuous2D field, Object object)
         {
         this.field = field;

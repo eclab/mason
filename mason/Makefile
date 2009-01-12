@@ -72,6 +72,7 @@ sim/portrayal3d/grid/*.java \
 sim/portrayal3d/grid/quad/*.java \
 sim/portrayal3d/continuous/*.java \
 sim/portrayal3d/network/*.java \
+sim/portrayal3d/inspector/*.java \
 sim/display3d/*.java \
 
 
