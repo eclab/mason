@@ -19,12 +19,9 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
     public String getID() { return id; }
     public void setID( final String id ) { this.id = id; }
 
-    public Double2D location; 
-
-    public CustomNode( String id, Double2D location )
+    public CustomNode( String id )
         {
         this.id = id;
-        this.location = location;
         }
 
     Double2D desiredLocation = null;
@@ -34,6 +31,7 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
     public void step( final SimState state )
         {
         NetworkTest nt = (NetworkTest)state;
+	Double2D location = nt.environment.getObjectLocation(this);
 
         steps--;
         if( desiredLocation == null || steps <= 0 )
@@ -73,8 +71,7 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
                 }
             else
                 {
-                location = new Double2D(location.x + dx, location.y + dy);
-                nt.environment.setObjectLocation(this,location);
+                nt.environment.setObjectLocation(this, new Double2D(location.x + dx, location.y + dy));
                 }
 
         }
