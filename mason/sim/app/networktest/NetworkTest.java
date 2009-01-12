@@ -37,6 +37,16 @@ public /*strictfp*/ class NetworkTest extends SimState
         return true;
         }
 
+    CustomNode makeNode(String name)
+	{
+	CustomNode node = new CustomNode(name);
+        environment.setObjectLocation(node, new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
+                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
+	network.addNode(node);
+	schedule.scheduleRepeating(node);
+	return node;
+	}
+
     public void start()
         {
         super.start();  // clear out the schedule
@@ -44,60 +54,25 @@ public /*strictfp*/ class NetworkTest extends SimState
         environment = new Continuous2D(16.0, (XMAX-XMIN), (YMAX-YMIN) );
         network = new Network();
 
-        CustomNode[] nodes = new CustomNode[6];
-        nodes[0] = new CustomNode( "node0",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[0]);
-        nodes[1] = new CustomNode( "node1",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[1]);
-        nodes[2] = new CustomNode( "node2",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[2]);
-        nodes[3] = new CustomNode( "node3",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[3]);
-        nodes[4] = new CustomNode( "node4",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[4]);
-        nodes[5] = new CustomNode( "node5",
-                                   new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-        network.addNode(nodes[5]);
-        Edge e01 = new Edge( nodes[0], nodes[1], new EdgeInfo("0-1") );
-        network.addEdge( e01 );
-        Edge e12 = new Edge( nodes[1], nodes[2], new EdgeInfo("1-2") );
-        network.addEdge( e12 );
-        Edge e23 = new Edge( nodes[2], nodes[3], new EdgeInfo("2-3") );
-        network.addEdge( e23 );
-        Edge e34 = new Edge( nodes[3], nodes[4], new EdgeInfo("3-4") );
-        network.addEdge( e34 );
-        Edge e40 = new Edge( nodes[4], nodes[0], new EdgeInfo("4-0") );
-        network.addEdge( e40 );
-        Edge e05 = new Edge( nodes[0], nodes[5], new EdgeInfo("0-5") );
-        network.addEdge( e05 );
-        Edge e15 = new Edge( nodes[1], nodes[5], new EdgeInfo("1-5") );
-        network.addEdge( e15 );
-        Edge e25 = new Edge( nodes[2], nodes[5], new EdgeInfo("2-5") );
-        network.addEdge( e25 );
-        Edge e35 = new Edge( nodes[3], nodes[5], new EdgeInfo("3-5") );
-        network.addEdge( e35 );
-        Edge e45 = new Edge( nodes[4], nodes[5], new EdgeInfo("4-5") );
-        network.addEdge( e45 );
+	CustomNode nodes[] = new CustomNode[6];
+        nodes[0] = makeNode( "node0");
+        nodes[1] = makeNode( "node1");
+        nodes[2] = makeNode( "node2");
+        nodes[3] = makeNode( "node3");
+        nodes[4] = makeNode( "node4");
+        nodes[5] = makeNode( "node5");
 
-        // Schedule the agents -- we could instead use a RandomSequence, which would be faster,
-        // but this is a good test of the scheduler
-        for(int x=0;x<6;x++)
-            {
-            environment.setObjectLocation(nodes[x],nodes[x].location);
-            schedule.scheduleRepeating(nodes[x]);
-            }
-        }
+        network.addEdge( nodes[0], nodes[1], "0-1" );
+        network.addEdge( nodes[1], nodes[2], "1-2" );
+        network.addEdge( nodes[2], nodes[3], "2-3" );
+        network.addEdge( nodes[3], nodes[4], "3-4" );
+        network.addEdge( nodes[4], nodes[0], "4-0" );
+        network.addEdge( nodes[0], nodes[5], "0-5" );
+        network.addEdge( nodes[1], nodes[5], "1-5" );
+        network.addEdge( nodes[2], nodes[5], "2-5" );
+        network.addEdge( nodes[3], nodes[5], "3-5" );
+        network.addEdge( nodes[4], nodes[5], "4-5" );
+	}
 
     public static void main(String[] args)
         {

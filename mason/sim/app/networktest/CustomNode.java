@@ -36,16 +36,8 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
         steps--;
         if( desiredLocation == null || steps <= 0 )
             {
-            desiredLocation = new Double2D((state.random.nextDouble()-0.5)*((NetworkTest.XMAX-NetworkTest.XMIN)/5-NetworkTest.DIAMETER) +
-                                           //NetworkTest.XMIN
-                                           location.x 
-                                           //+NetworkTest.DIAMETER/2
-                                           ,
-                                           (state.random.nextDouble()-0.5)*((NetworkTest.YMAX-NetworkTest.YMIN)/5-NetworkTest.DIAMETER) +
-                                           location.y
-                                           //NetworkTest.YMIN
-                                           //+NetworkTest.DIAMETER/2
-                );
+            desiredLocation = new Double2D((state.random.nextDouble()-0.5)*((NetworkTest.XMAX-NetworkTest.XMIN)/5-NetworkTest.DIAMETER) + location.x,
+                                           (state.random.nextDouble()-0.5)*((NetworkTest.YMAX-NetworkTest.YMIN)/5-NetworkTest.DIAMETER) + location.y);
             steps = 50+state.random.nextInt(50);
             }
 

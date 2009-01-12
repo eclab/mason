@@ -1448,3 +1448,4 @@ Version 14
 	Added selectable CircledPortrayal2D to NetworkTest as an example.
 	Added dragging objects to NetworkTest and to HeatBugs as examples.
 	Added HowTos on selecting and on dragging.
+	Cleanups to NetworkTest
