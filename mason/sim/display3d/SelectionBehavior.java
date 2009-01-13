@@ -12,6 +12,7 @@ package sim.display3d;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.picking.*;
 import com.sun.j3d.utils.picking.behaviors.*;
+import com.sun.j3d.utils.behaviors.mouse.*;
 
 import javax.swing.SwingUtilities;
 import javax.vecmath.*;
@@ -35,59 +36,52 @@ import sim.portrayal3d.*;
  *
  * @author Gabriel Catalin Balan
  */
-public class SelectionBehavior extends PickMouseBehavior
+ 
+public class SelectionBehavior extends MouseBehavior
     {
     GUIState guiState = null;
-
-    /**
-     * Constructor for SelectionBehavior.
-     * @param canvas
-     * @param root
-     * @param bounds
-     */
+    PickCanvas pickCanvas;
+    BranchGroup r;
+    
+    public void setTolerance(float tolerance) { pickCanvas.setTolerance(tolerance); }
+    
+    public void detach()
+	{
+	// the objective here is to remove me from the canvas so that I don't cause leaks
+	try { pickCanvas.getCanvas().removeMouseMotionListener(this); } catch (Exception e) {  }
+	try { pickCanvas.getCanvas().removeMouseListener(this); } catch (Exception e) {  }
+	// for good measure, we'll delete the branch group reference too.
+	}
+	
     public SelectionBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds, GUIState guiState)
         {
-        super(canvas, root, bounds);
-        this.setSchedulingBounds(bounds);
+	super(canvas, 0);
+	pickCanvas = new PickCanvas(canvas, root);
+	setTolerance(2.0f);
+	r = root;
         root.addChild(this);
         pickCanvas.setMode(PickCanvas.GEOMETRY_INTERSECT_INFO);
         this.guiState = guiState;
         }
 
-    /** 
-     * Disregard all stimuli other than Dbl-Click or greater
-     */
     public void processStimulus (Enumeration criteria) 
         {
-        WakeupCriterion wakeup;
-        AWTEvent[] evt = null;
-        
-        while(criteria.hasMoreElements())
-            {
-            wakeup = (WakeupCriterion)criteria.nextElement();
-            if (wakeup instanceof WakeupOnAWTEvent)
-                evt = ((WakeupOnAWTEvent)wakeup).getAWTEvent();
-            }
+	// do nothing -- we'll do it in mouseClicked
+	}
+    
+    public void mouseClicked(java.awt.event.MouseEvent evt)
+	{
+	if (!r.isLive()) return;  // root is dead, so are we.
 
-        if(evt[0] instanceof MouseEvent)
-            {
-            mevent = (MouseEvent) evt[0];
-            if (mevent.getClickCount()>=2)
-                updateScene(mevent.getPoint().x, mevent.getPoint().y);
-            }
-        wakeupOn (wakeupCondition);
-        }
+	int numClicks = evt.getClickCount();
+	int xpos = evt.getPoint().x;
+	int ypos = evt.getPoint().y;
 
-    /**
-     * @see com.sun.j3d.utils.picking.behaviors.PickMouseBehavior#updateScene(int, int)
-     */
-    public void updateScene(int xpos, int ypos)
-        {
         PickResult pickResult = null;
         PickResult pickResults[] = null;
         Shape3D shape = null;
         pickCanvas.setShapeLocation(xpos, ypos);
-        
+	
         Point3d eyePos = pickCanvas.getStartPosition ();
 
         try
@@ -102,14 +96,14 @@ public class SelectionBehavior extends PickMouseBehavior
             e.printStackTrace();
             }
             
-        if(pickResults == null)
-            return;
+        if (pickResults == null) pickResults = new PickResult[0];  // we'll need to deselect, so we need to loop even in zero situations
                 
         // keep all picks to remove duplicates
         LocationWrapper[] picks = new LocationWrapper[pickResults.length];
         
         final Bag inspectors = new Bag(); 
         Bag inspectorPortrayals = new Bag();
+	Bag uniqueWrappers = new Bag();
         final Bag names = new Bag();
         
         int distinctObjectCount = 0;
@@ -159,20 +153,31 @@ public class SelectionBehavior extends PickMouseBehavior
                     else
                         {
                         LocationWrapper filledLW = fPortrayal.completedWrapper(w,pi,pickResult);
-                        inspectors.add(fPortrayal.getInspector(filledLW, guiState));
-                        //
-                        // FieldPortrayal[3D] should declare abstract method getWrapper(obj).
-                        // here i can retrieve it from pinfo.portrayal.
-                        //
-                        inspectorPortrayals.add(fPortrayal);
-                        names.add(fPortrayal.getName(filledLW));
+			
+			if (numClicks >= 1)
+			    {
+			    uniqueWrappers.add(filledLW);
+			    }
+			    
+			if (numClicks >= 2)
+			    {
+			    inspectors.add(fPortrayal.getInspector(filledLW, guiState));
+			    //
+			    // FieldPortrayal[3D] should declare abstract method getWrapper(obj).
+			    // here i can retrieve it from pinfo.portrayal.
+			    //
+			    inspectorPortrayals.add(fPortrayal);
+			    names.add(fPortrayal.getName(filledLW));
+			    }
                         }
                     }
                 }
             }
-            
+
+	if (numClicks >= 1) ((Display3D)(pickCanvas.getCanvas().getParent())).performSelection(uniqueWrappers);
+	
         final GUIState g = guiState;  // in the wild off-chance this is changed
-        if(distinctObjectCount!=0)
+        if(distinctObjectCount!=0 && numClicks >= 2)
             SwingUtilities.invokeLater(new Runnable()
                 {
                 public void run()

@@ -13,6 +13,7 @@ import javax.media.j3d.*;
 import com.sun.j3d.utils.geometry.*;
 import javax.vecmath.*;
 import java.awt.*;
+import java.util.*;
 
 /**
    A wrapper for other Portrayal3Ds which also draws a textual label.  When you create this
@@ -114,6 +115,17 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         child.setParentPortrayal(p);
         }
             
+    HashMap selectedObjects = new HashMap();
+    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+        {
+	boolean selected2 = child.setSelected(wrapper,selected);
+	if (selected && selected2)
+	    selectedObjects.put(wrapper.getObject(), wrapper);
+	else
+	    selectedObjects.remove(wrapper.getObject());
+	return selected2;
+        }
+        
     /** Returns a name appropriate for the object.  By default, this returns
         the label, or if label is null, then returns ("" + object).
         Override this to make a more customized label to display for the object
@@ -124,12 +136,6 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         else return label;
         }
     
-    public boolean setSelected(LocationWrapper wrapper, boolean selected)
-        {
-        isSelected = selected;
-        return child.setSelected(wrapper,selected);
-        }
-        
     /** Overrides all drawing. */
     boolean showLabel = true;
     
@@ -137,8 +143,6 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
     public void setOnlyLabelWhenSelected(boolean val) { onlyLabelWhenSelected = val; }
     public boolean getOnlyLabelWhenSelected() { return onlyLabelWhenSelected; }
     
-    boolean isSelected = false;
-
     public boolean isLabelShowing() { return showLabel; }
     public void setLabelShowing(boolean val) { showLabel = val; }
 
@@ -153,8 +157,10 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             }
         }
         
-    public void updateSwitch(Switch jswitch)
+    public void updateSwitch(Switch jswitch, Object object)
         {
+	boolean isSelected = selectedObjects.containsKey(object);
+
         // we do it this way rather than the obvious if/else
         // statement because it gets inlined this way (32 bytes vs. 36 bytes).
         // no biggie.
@@ -229,7 +235,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             jswitch.addChild(o);    // Add offset TransformGroup to the Switch
             j3dModel.addChild(n);   // Add the underlying model as child 0
             j3dModel.addChild(jswitch);  // Add the switch as child 1
-            updateSwitch(jswitch);       // turn the switch on/off
+            updateSwitch(jswitch, obj);       // turn the switch on/off
             }
         else
             {
@@ -239,7 +245,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             // do we need to make a new label?  Only if the label's changed
             String l = getLabel(obj, t);
             if (!s.getUserData().equals(l)                    // the label text has changed.  Time to rebuild.  Expensive.
-                && showLabel && (isSelected || !onlyLabelWhenSelected))  // only rebuild if we're displaying
+                && showLabel)  // only rebuild if we're displaying.  If we're not selected, we still need to build.
                 {  
                 // make the text again
                 Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
@@ -258,7 +264,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             
             // at any rate... update the child and turn the switch on/off
             getChild(obj).getModel(obj,t);
-            updateSwitch(s);
+            updateSwitch(s, obj);
             }
         return j3dModel;
         }

@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import sim.util.gui.*;
 import sim.display.*;
+import sim.util.*;
 
 /**
    A FieldPortrayal is an object which knows how to portray some kind of Field.
@@ -290,9 +291,20 @@ public abstract class FieldPortrayal
         return getPortrayalForObject(wrapper.getObject()).getStatus(wrapper);
         }
 
+    /**
+       Selects or deselects all of the provided objects. 
+    */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        // by default does nothing
-        return true;
+	return getPortrayalForObject(wrapper.getObject()).setSelected(wrapper, selected);
         }
+
+    public void setSelected(Bag locationWrappers, boolean selected)
+        {
+        for(int x=0;x<locationWrappers.numObjs;x++)
+            {
+            LocationWrapper wrapper = (LocationWrapper)(locationWrappers.objs[x]);
+	    setSelected(wrapper, selected);
+	    }
+	}
     }

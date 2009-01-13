@@ -83,30 +83,6 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         
     public void setField(Object field) { this.field = field; dirtyField = true; }
     
-    /**
-       Adds to the Bag LocationWrappers of all selected objects.
-    */
-    public void getSelectedObjects(Bag putInHere)
-        {
-        }
-        
-    /**
-       Selects or deselects all of the provided objects. 
-    */
-    public void setSelected(Bag locationWrappers, boolean selected)
-        {
-        for(int x=0;x<locationWrappers.numObjs;x++)
-            {
-            LocationWrapper wrapper = (LocationWrapper)(locationWrappers.objs[x]);
-            getPortrayalForObject(wrapper.getObject()).setSelected(wrapper, selected);
-
-            // UNDER CONSTRUCTION -- need to add wrappers to a store for getSelected
-            // Also we need to add equals() to LocationWrapper -- it should work because
-            // LocationWrapper can be redefined as immutable I think.
-
-            }
-        }
-    
     /** Returns the location of the given object were it to be drawn on the screen.  Negative locations are acceptable.
         If null is returned, then the portrayal is unable to determine the location of the object.  The default implementation
         returns null. */

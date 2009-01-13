@@ -14,6 +14,7 @@ import sim.util.gui.*;
 import sim.util.media.*;
 import sim.display.Console;
 import sim.display.*;
+import sim.portrayal.*;
 
 import java.io.*;
 import java.util.*;
@@ -369,6 +370,14 @@ public class Display3D extends JPanel implements Steppable
             if (getInterval() < 1) setInterval(1);  // just in case...
             stopper = simulation.scheduleImmediateRepeat(true,this);
             }
+	    
+        // deselect existing objects
+        for(int x=0;x<selectedWrappers.size();x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
+            wrapper.getFieldPortrayal().setSelected(wrapper,false);
+            }
+        selectedWrappers.clear();
         }
 
 
@@ -910,7 +919,9 @@ public class Display3D extends JPanel implements Steppable
         {
         // unhook the root from the universe so we can reuse the universe (Hmmmm....)
             
-        universe.getLocale().removeBranchGraph(root);
+	mSelectBehavior.detach();
+        root.detach();
+	universe.getLocale().removeBranchGraph(root);
         canvas.stopRenderer();
         }
 
@@ -1822,5 +1833,38 @@ public class Display3D extends JPanel implements Steppable
             }
         }
     
+    
+        /** */
+    ArrayList selectedWrappers = new ArrayList();
+    
+    public void performSelection( LocationWrapper wrapper)
+	{
+	Bag b = new Bag();
+	b.add(wrapper);
+	performSelection(b);
+	}
+    
+    public void performSelection( final Bag locationWrappers )
+	{
+        // deselect existing objects
+        for(int x=0;x<selectedWrappers.size();x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
+            wrapper.getFieldPortrayal().setSelected(wrapper,false);
+            }
+        selectedWrappers.clear();
+	
+	if (locationWrappers == null) return;  // deselect everything
+	
+	// add new wrappers
+	for(int x=0;x < locationWrappers.size(); x++)
+	    {
+		LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+                wrapper.getFieldPortrayal().setSelected(wrapper, true);
+                selectedWrappers.add(wrapper);
+	    }
+	    
+	updateSceneGraph(false);
+	}
     }
     

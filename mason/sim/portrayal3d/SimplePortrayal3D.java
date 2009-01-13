@@ -19,7 +19,7 @@ import java.awt.*;
     providing a basic LabelledList which shows all the portrayed object's 
     object properties (see sim.util.SimpleProperties).  They also respond to inspector
     update requests by updating this same LabelledList.  No polygonAttributes are
-    provided by default, and setSelected always returns false.
+    provided by default, and setSelected always true by default.
     
     <p>SimplePortrayal3Ds have a <i>parentPortrayal</i>, which is the FieldPortrayal3D
     which houses them.  This value can be null if the SimplePortrayal3D was added directly
@@ -110,12 +110,9 @@ public class SimplePortrayal3D implements Portrayal3D
         parentPortrayal = p;
         }
 
-    // COPIED from SimplePortrayal2D
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        // by default, we don't want to be selected
-        if (selected) return false;  // don't want to be selected
-        else return true;            // we'll always be deselected -- doesn't matter
+	return true;
         }
         
     /** Utility method which prepares the given Shape3D to be pickable (for selection and inspection). */

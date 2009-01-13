@@ -11,6 +11,7 @@ import sim.portrayal3d.*;
 import sim.display.*;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.geometry.*;
+import java.util.*;
 
 /**
    A wrapper for other Portrayal3Ds which also draws a big translucent sphere around them -- useful for
@@ -96,11 +97,15 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         child.setParentPortrayal(p);
         }
 
+    HashMap selectedObjects = new HashMap();
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        isSelected = selected;
-        
-        return child.setSelected(wrapper,selected);
+	boolean selected2 = child.setSelected(wrapper,selected);
+	if (selected && selected2)
+	    selectedObjects.put(wrapper.getObject(), wrapper);
+	else
+	    selectedObjects.remove(wrapper.getObject());
+	return selected2;
         }
         
     public SimplePortrayal3D getChild(Object object)
@@ -121,13 +126,13 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     public void setOnlyCircleWhenSelected(boolean val) { onlyCircleWhenSelected = val;   }
     public boolean getOnlyCircleWhenSelected() { return onlyCircleWhenSelected; }
     
-    boolean isSelected = false;
-
     public boolean isCircleShowing() { return showCircle; }
     public void setCircleShowing(boolean val) { showCircle = val;  }
 
-    public void updateSwitch(Switch jswitch)
+    public void updateSwitch(Switch jswitch, Object object)
         {
+	boolean isSelected = selectedObjects.containsKey(object);
+	
         if (showCircle && (isSelected || !onlyCircleWhenSelected))
             jswitch.setWhichChild( Switch.CHILD_ALL );
         else 
@@ -156,13 +161,13 @@ public class CircledPortrayal3D extends SimplePortrayal3D
             j3dModel.addChild(n);  // set at child 0
             jswitch.addChild(sphere);
             j3dModel.addChild(jswitch);  // set at child 1
-            updateSwitch(jswitch);
+            updateSwitch(jswitch, obj);
             }
         else
             {
             TransformGroup t = (TransformGroup)(j3dModel.getChild(0));
             getChild(obj).getModel(obj,t);
-            updateSwitch((Switch)(j3dModel.getChild(1)));
+            updateSwitch((Switch)(j3dModel.getChild(1)), obj);
             }
         return j3dModel;
         }

@@ -1449,3 +1449,20 @@ Version 14
 	Added dragging objects to NetworkTest and to HeatBugs as examples.
 	Added HowTos on selecting and on dragging.
 	Cleanups to NetworkTest
+	Removed FieldPortrayal2D.getSelectedObjects, was vestigial
+	SimplePortrayal3D by default now has setSelected return true
+	Modifications to SelectionBehavior -- it's now a subclass of MouseBehavior rather than
+		PickMouseBehavior.  This allows us to respond to MouseClicked rather than
+		MousePressed (ugh).  And it's a little simpler to grok.  Anyway, now we
+		can properly distinguish selection from dragging (for rotating the image).
+	Added code to Display3D to handle selection.
+	Bug fix in Display3D: we weren't deleting our SelectionBehaviors -- they were staying
+		attached to the Canvas3D and piling up.  Minor leak.
+	Changes to LabelledPortrayal3D and CircledPortrayal3D, which weren't handling
+		display-on-selection properly (because selection wasn't working in 3D until
+		now).  Now they both maintain internal HashMaps of selected objects because
+		they can't query the Display3D to determine selection.  Furthermore, 
+		in 3D, setSelected isn't called immediately prior to drawing the object in
+		question because "drawing" isn't really a concept.  Instead you have to
+		maintain a belief about whether or not you've been selected.
+	setSelected(...) methods have been promoted from FieldPortrayal2D to FieldPortrayal

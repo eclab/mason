@@ -785,7 +785,7 @@ You may not know it, but MASON has a separate facility for registering objects w
 
 <p>The 'true' means "only display when the underlying portrayal's object has been selected".  If there is no underlying portrayal (the object portrays itself), pass in <i>null</i> for the portrayal.  See <b>NetworkTestWithUI.java</b> for an example of doing this.
 
-<p>You can do a similar thing with <b>LabeledPortrayal2D</b> and other simple "wrapper" portrayals in 2D and 3D.  For example, see <b>MavDemoWithUI.java</b> for an example for using both CircledPortrayal2D and LabeledPortrayal2D together in this context.
+<p>You can do a similar thing with <b>LabeledPortrayal2D</b> and other simple "wrapper" portrayals in 2D and 3D.  For example, see <b>MavDemoWithUI.java</b> for an example for using both CircledPortrayal2D and LabeledPortrayal2D together in this context.  Furthermore, <b>Balls3DWithUI.java</b> shows selection using CircledPortrayal3D.
 
 <p>Also if you like you can create your own SimplePortrayal which changes its mode based on whether or not it has been selected.  To do this, override the <b>setSelected</b> method along these lines:
 
