@@ -38,9 +38,6 @@ public class SimplePortrayal2D implements Portrayal2D
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
         return true;
-        // by default, we're fine with being selected
-//              if (selected) return false;  // don't want to be selected
-//        else return true;            // we'll always be deselected -- doesn't matter
         }
 
     public void move(LocationWrapper wrapper, Dimension2D distance)
