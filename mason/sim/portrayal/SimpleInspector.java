@@ -49,6 +49,22 @@ public class SimpleInspector extends Inspector
     public JLabel numElements = new JLabel();
     public Box startField = null;
     
+    
+    boolean fixedProperties = false;
+    public SimpleInspector(Properties properties, GUIState state, String name)
+	{
+        super();
+        setLayout(new BorderLayout());
+        this.object = null;
+        this.state = state;
+        this.name = name;
+	this.properties = properties;
+	this.fixedProperties = true;
+        header.setLayout(new BorderLayout());
+        add(header,BorderLayout.NORTH);
+        generateProperties(0);
+	}
+	
     public SimpleInspector(Object object, GUIState state)
         {
         this(object,state,null);
@@ -131,17 +147,6 @@ public class SimpleInspector extends Inspector
                     return props.betterToString(props.getValue(index));
                     }
                 }
-            /*
-              public void viewProperty()
-              {
-              final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
-              final Stoppable stopper = simpleInspector.reviseStopper(
-              SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
-              SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
-              JFrame frame = simpleInspector.createFrame(stopper);
-              frame.setVisible(true);
-              }
-            */
             };
         }
     
@@ -160,7 +165,8 @@ public class SimpleInspector extends Inspector
 
     void generateProperties(int start)
         {
-        properties = Properties.getProperties(object,true,true,false,true);
+        if (!fixedProperties)
+	    properties = Properties.getProperties(object,true,true,false,true);
         final int len = properties.numProperties();
         if (start < 0) start = 0;
         if (start > len) return;  // failed
@@ -277,7 +283,7 @@ public class SimpleInspector extends Inspector
     public JFrame createFrame(Stoppable stopper)
         {
         JFrame frame = super.createFrame(stopper);
-        frame.setTitle("" + object);
+        frame.setTitle("" + name);
         return frame;
         }
     }

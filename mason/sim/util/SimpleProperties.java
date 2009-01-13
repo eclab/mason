@@ -97,6 +97,11 @@ import java.lang.reflect.*;
  *     }
  * </tt></pre>
  *
+ *  <p>If the object provided to SimpleProperties is sim.util.Propertied, then SimpleProperties will not
+ *  scan the object, but instead query the object for a Properties of its own, using the object's properties()
+ *  method.  All accesses to the SimpleProperties will simply get routed to that Properties object instead.
+ *  This is another filter approach which enables dynamically changing properties, or properties based on
+ *  features other than get... and set... methods.
  */
 
 public class SimpleProperties extends Properties implements java.io.Serializable
@@ -105,6 +110,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList setMethods = new ArrayList(); // if no setters, that corresponding spot will be null
     ArrayList domMethods = new ArrayList(); // if no domain, that corresponding spot will be null
     ArrayList hideMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
+    Properties auxillary = null;  // if non-null, we use this properties instead
     
     /** Gathers all properties for the object, including ones defined in superclasses. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
@@ -121,10 +127,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass)
         {
-        object = o;
-        if (o!=null && o instanceof sim.util.Proxiable)
-            object = ((sim.util.Proxiable)(o)).propertiesProxy();
-        generateProperties(includeSuperclasses,includeGetClass,true);
+	this(o,includeSuperclasses,includeGetClass,true);
         }
     
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
@@ -138,12 +141,14 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         object = o;
         if (o!=null && o instanceof sim.util.Proxiable)
             object = ((sim.util.Proxiable)(o)).propertiesProxy();
-        generateProperties(includeSuperclasses,includeGetClass,includeDomains);
+ 	else if (o!=null && o instanceof sim.util.Propertied)
+	    auxillary = ((sim.util.Propertied)(o)).properties();
+       generateProperties(includeSuperclasses,includeGetClass,includeDomains);
         }
     
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeDomains)
         {
-        if (object != null) try
+        if (object != null && auxillary == null) try
             {
             // generate the properties
             Class c = object.getClass();
@@ -244,11 +249,12 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             }
         }
     
-    public boolean isVolatile() { return false; }
+    public boolean isVolatile() { if (auxillary!=null) return auxillary.isVolatile(); return false; }
 
     /** Returns the number of properties discovered */
     public int numProperties()
         {
+	if (auxillary!=null) return auxillary.numProperties();
         return getMethods.size();
         }
 
@@ -256,6 +262,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns null if the index is out of the range [0 ... numProperties() - 1 ]*/
     public String getName(int index)
         {
+	if (auxillary!=null) return auxillary.getName(index);
         if (index < 0 || index > numProperties()) return null;
         if (((Method)(getMethods.get(index))).getName().startsWith("is"))
             return ((Method)(getMethods.get(index))).getName().substring(2);
@@ -266,6 +273,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns false if the index is out of the range [0 ... numProperties() - 1 ]*/
     public boolean isReadWrite(int index)
         {
+	if (auxillary!=null) return auxillary.isReadWrite(index);
         if (index < 0 || index > numProperties()) return false;
         if (isComposite(index)) return false;
         return (setMethods.get(index)!=null);
@@ -275,6 +283,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns -1 if the index is out of the range [0 ... numProperties() - 1 ]*/
     public Class getType(int index)
         {
+	if (auxillary!=null) return auxillary.getType(index);
         if (index < 0 || index > numProperties()) return null;
         Class returnType = ((Method)(getMethods.get(index))).getReturnType();
 
@@ -286,6 +295,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns null if an error occurs or if the index is out of the range [0 ... numProperties() - 1 ]*/
     public Object getValue(int index)
         {
+	if (auxillary!=null) return auxillary.getValue(index);
         if (index < 0 || index > numProperties()) return null;
         try
             {
@@ -300,6 +310,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     
     protected Object _setValue(int index, Object value)
         {
+	if (auxillary!=null) return auxillary.setValue(index,value);  // I think this is right
         try
             {
             if (setMethods.get(index) == null) return null;
@@ -315,6 +326,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
 
     public Object getDomain(int index)
         {
+	if (auxillary!=null) return auxillary.getDomain(index);
         if (index < 0 || index > numProperties()) return null;
         try
             {
@@ -330,6 +342,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
 
     public boolean isHidden(int index)
         {
+	if (auxillary!=null) return auxillary.isHidden(index);
         if (index < 0 || index > numProperties()) return false;
         try
             {
