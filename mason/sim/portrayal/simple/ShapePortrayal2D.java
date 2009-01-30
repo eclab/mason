@@ -30,7 +30,7 @@ public class ShapePortrayal2D extends SimplePortrayal2D
     public ShapePortrayal2D(Shape shape) { this(shape,Color.gray,1.0,true); }
     public ShapePortrayal2D(Shape shape, Paint paint) { this(shape,paint,1.0,true); }
     public ShapePortrayal2D(Shape shape, double scale) { this(shape,Color.gray,scale,true); }
-    public ShapePortrayal2D(Shape shape, Paint paint, double scale) { this(shape, Color.gray,scale,true); }
+    public ShapePortrayal2D(Shape shape, Paint paint, double scale) { this(shape, paint,scale,true); }
     public ShapePortrayal2D(Shape shape, boolean filled) { this(shape,Color.gray,1.0,filled); }
     public ShapePortrayal2D(Shape shape, Paint paint, boolean filled) { this(shape,paint,1.0,filled); }
     public ShapePortrayal2D(Shape shape, double scale, boolean filled) { this(shape,Color.gray,scale,filled); }
