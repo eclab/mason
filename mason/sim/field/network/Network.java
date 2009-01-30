@@ -480,7 +480,7 @@ public class Network implements java.io.Serializable
                     shiftedEdge.indexFrom = edge.indexFrom;
                 // this second 'if' can be eliminated if we don't have bugs reported in the final 'else'
                 else if (shiftedEdge.indexTo == shiftedIndex &&
-                         shiftedEdge.to.equals(edge.from))
+                    shiftedEdge.to.equals(edge.from))
                     shiftedEdge.indexTo = edge.indexFrom;
                 else throw new InternalError("This shouldn't ever happen: #1");
                 }
@@ -506,7 +506,7 @@ public class Network implements java.io.Serializable
                     shiftedEdge.indexTo = edge.indexTo;
                 // this second 'if' can be eliminated if we don't have bugs reported in the final 'else'
                 else if (shiftedEdge.indexFrom == shiftedIndex &&
-                         shiftedEdge.from.equals(edge.to))
+                    shiftedEdge.from.equals(edge.to))
                     shiftedEdge.indexFrom = edge.indexTo;
                 else throw new InternalError("This shouldn't ever happen: #2");
                 }
@@ -784,9 +784,9 @@ public class Network implements java.io.Serializable
                 new Bag(maxDegree-oldIOI.out.numObjs);
             Bag newInBag = (!directed)? 
                 newOutBag:
-            (oldIOI.in==null?
-             new Bag(maxDegree):
-             new Bag(maxDegree-oldIOI.in.numObjs));
+                (oldIOI.in==null?
+                new Bag(maxDegree):
+                new Bag(maxDegree-oldIOI.in.numObjs));
             Network.IndexOutIn clonedIOI = new Network.IndexOutIn( oldIOI.index, newOutBag, newInBag);
             complement.indexOutInHash.put( allNodes.objs[index], clonedIOI);
             //so far I avoided any resizing.

@@ -84,7 +84,7 @@ public class ImagePortrayal3D extends SimplePortrayal3D
         
         // make the shape
         if (oriented) shape = new OrientedShape3D(geometry, appearance,
-                                                  OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,0,0));
+            OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,0,0));
         else shape = new Shape3D(geometry, appearance);
         }
 

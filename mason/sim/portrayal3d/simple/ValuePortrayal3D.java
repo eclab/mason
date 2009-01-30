@@ -246,14 +246,14 @@ public class ValuePortrayal3D extends SimplePortrayal3D
                 return ((DoubleGrid3D)grid).field[x][y][z];
             else // if (field instanceof DoubleGrid2D)
                 return ((DoubleGrid2D)grid).field[x][y];
-        }
+            }
 
         public void setValue(double val) { 
             if (grid instanceof DoubleGrid3D)
                 ((DoubleGrid3D)grid).field[x][y][z] = val;
             else //if (field instanceof DoubleGrid2D)
                 ((DoubleGrid2D)grid).field[x][y] = val;
-        }
+            }
         // static inner classes don't need serialVersionUIDs
         }
         
@@ -267,14 +267,14 @@ public class ValuePortrayal3D extends SimplePortrayal3D
                 return ((IntGrid3D)grid).field[x][y][z];
             else //if (field instanceof IntGrid2D)
                 return ((IntGrid2D)grid).field[x][y];
-        }
+            }
 
         public void setValue(int val) { 
             if (grid instanceof IntGrid3D)
                 ((IntGrid3D)grid).field[x][y][z] = val;
             else //if (field instanceof IntGrid2D)
                 ((IntGrid2D)grid).field[x][y] = val;
-        }
+            }
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)

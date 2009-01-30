@@ -37,7 +37,7 @@ public class Tutorial3 extends SimState
             p = new Particle(random.nextInt(3) - 1, random.nextInt(3) - 1);  // random direction
             schedule.scheduleRepeating(p);
             particles.setObjectLocation(p,
-                                        new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));  // random location
+                new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));  // random location
             }
         
         // Schedule the decreaser

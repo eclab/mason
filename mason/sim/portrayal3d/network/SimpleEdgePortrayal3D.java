@@ -164,9 +164,9 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
 
                 text.setRectangleScaleFactor(1.0f / 16.0f);
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
-                                                          text.getAppearance(),
-                                                          OrientedShape3D.ROTATE_ABOUT_POINT,
-                                                          new Point3f(0, 0, 0));
+                    text.getAppearance(),
+                    OrientedShape3D.ROTATE_ABOUT_POINT,
+                    new Point3f(0, 0, 0));
                 o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need
                 // to change
                 // the
@@ -198,8 +198,8 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                 j3dModel.addChild(o);
 
                 tempText = new com.sun.j3d.utils.geometry.Text2D("",
-                                                                 new Color3f(labelColor), labelFont.getFamily(),
-                                                                 labelFont.getSize(), labelFont.getStyle());
+                    new Color3f(labelColor), labelFont.getFamily(),
+                    labelFont.getSize(), labelFont.getStyle());
 
                 // tempText = new Text3D(new Font3D(labelFont, new
                 // FontExtrusion()), "");
@@ -208,55 +208,55 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                 tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
                 }
             } else
+            {
+            Shape3D shape = (Shape3D)j3dModel.getChild(0);
+            LineArray geo = (LineArray)shape.getGeometry(); 
+            geo.setCoordinate(0, startPoint); 
+            geo.setCoordinate(1, middlePoint);
+
+            shape = (Shape3D)j3dModel.getChild(1);
+            geo = (LineArray)shape.getGeometry(); 
+            geo.setCoordinate(0, startPoint); 
+            geo.setCoordinate(1, endPoint);
+
+            if (showLabels)
                 {
-                Shape3D shape = (Shape3D)j3dModel.getChild(0);
-                LineArray geo = (LineArray)shape.getGeometry(); 
-                geo.setCoordinate(0, startPoint); 
-                geo.setCoordinate(1, middlePoint);
+                TransformGroup tg = (TransformGroup) j3dModel.getChild(2);
+                String str = getLabel(drawInfo.edge);
 
-                shape = (Shape3D)j3dModel.getChild(1);
-                geo = (LineArray)shape.getGeometry(); 
-                geo.setCoordinate(0, startPoint); 
-                geo.setCoordinate(1, endPoint);
-
-                if (showLabels)
+                // see if the label has changed?
+                if (!tg.getUserData().equals(str))
                     {
-                    TransformGroup tg = (TransformGroup) j3dModel.getChild(2);
-                    String str = getLabel(drawInfo.edge);
+                    // ugh. This is really slow. Using the Shape3D results in
+                    // huge text, so, the default
+                    // value has to be changed in the constructor.
 
-                    // see if the label has changed?
-                    if (!tg.getUserData().equals(str))
-                        {
-                        // ugh. This is really slow. Using the Shape3D results in
-                        // huge text, so, the default
-                        // value has to be changed in the constructor.
+                    // make the text again
+                    com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
+                        str, new Color3f(labelColor),
+                        labelFont.getFamily(), labelFont.getSize(),
+                        labelFont.getStyle());
+                    text.setRectangleScaleFactor(1.0f / 16.0f);
 
-                        // make the text again
-                        com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
-                            str, new Color3f(labelColor),
-                            labelFont.getFamily(), labelFont.getSize(),
-                            labelFont.getStyle());
-                        text.setRectangleScaleFactor(1.0f / 16.0f);
+                    // Shape3D text = new Shape3D(new Text3D(new
+                    // Font3D(labelFont, new FontExtrusion()), str));
 
-                        // Shape3D text = new Shape3D(new Text3D(new
-                        // Font3D(labelFont, new FontExtrusion()), str));
+                    // Grab the OrientedShape3D
+                    OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 
-                        // Grab the OrientedShape3D
-                        OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
+                    // update its geometry and appearance to reflect the new
+                    // text.
+                    o3d.setGeometry(text.getGeometry());
+                    o3d.setAppearance(text.getAppearance());
 
-                        // update its geometry and appearance to reflect the new
-                        // text.
-                        o3d.setGeometry(text.getGeometry());
-                        o3d.setAppearance(text.getAppearance());
-
-                        // update user data to reflect the new text
-                        tg.setUserData(str);
-                        }
-
-                    // update the position of the text
-                    tg.setTransform(trans);
+                    // update user data to reflect the new text
+                    tg.setUserData(str);
                     }
+
+                // update the position of the text
+                tg.setTransform(trans);
                 }
+            }
 
         return j3dModel;
         }

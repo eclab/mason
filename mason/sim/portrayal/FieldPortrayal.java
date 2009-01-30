@@ -163,7 +163,7 @@ public abstract class FieldPortrayal
             {
             if (portrayalForNull != null) return portrayalForNull;
             if ( (portrayals != null /* && !portrayals.isEmpty() */) && // a little efficiency -- avoid making weak keys etc. 
-                 ((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
+                ((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
             return getDefaultNullPortrayal();
             }
         else
@@ -171,9 +171,9 @@ public abstract class FieldPortrayal
             if (obj instanceof Portrayal) return (Portrayal) obj;
             if (portrayalForNonNull != null) return portrayalForNonNull;
             if ( (portrayals != null /* && !portrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
-                 ((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
+                ((tmp = ((Portrayal)(portrayals.get(obj))) ) !=null)) return tmp;
             if ( (classPortrayals != null /* && !classPortrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
-                 ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null)) return tmp;
+                ((tmp = ((Portrayal)(classPortrayals.get(obj.getClass()))) ) !=null)) return tmp;
             if (portrayalForRemainder!=null) return portrayalForRemainder;
             return getDefaultPortrayal();
             }
@@ -222,8 +222,8 @@ public abstract class FieldPortrayal
         public GUIState state;
 
         public CustomInspector( final LocationWrapper wrapper,
-                                final Inspector objectInspector,
-                                final GUIState state )
+            final Inspector objectInspector,
+            final GUIState state )
             {
             this.state = state;
             this.wrapper = wrapper;
@@ -296,7 +296,7 @@ public abstract class FieldPortrayal
     */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-	return getPortrayalForObject(wrapper.getObject()).setSelected(wrapper, selected);
+        return getPortrayalForObject(wrapper.getObject()).setSelected(wrapper, selected);
         }
 
     public void setSelected(Bag locationWrappers, boolean selected)
@@ -304,7 +304,7 @@ public abstract class FieldPortrayal
         for(int x=0;x<locationWrappers.numObjs;x++)
             {
             LocationWrapper wrapper = (LocationWrapper)(locationWrappers.objs[x]);
-	    setSelected(wrapper, selected);
-	    }
-	}
+            setSelected(wrapper, selected);
+            }
+        }
     }

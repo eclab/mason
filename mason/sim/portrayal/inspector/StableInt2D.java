@@ -5,7 +5,7 @@ import sim.field.grid.*;
 import sim.field.continuous.*;
 
 /**
-    StableInt2D is a StableLocation for Int2D.  See StableLocation for more information.
+   StableInt2D is a StableLocation for Int2D.  See StableLocation for more information.
 */
 
 public class StableInt2D implements StableLocation

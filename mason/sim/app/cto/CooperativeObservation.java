@@ -36,9 +36,9 @@ public /*strictfp*/ class CooperativeObservation extends SimState
     boolean conflict( final Object agent1, final Double2D a, final Object agent2, final Double2D b )
         {
         if( ( ( a.x > b.x && a.x < b.x+DIAMETER ) ||
-              ( a.x+DIAMETER > b.x && a.x+DIAMETER < b.x+DIAMETER ) ) &&
-            ( ( a.y > b.y && a.y < b.y+DIAMETER ) ||
-              ( a.y+DIAMETER > b.y && a.y+DIAMETER < b.y+DIAMETER ) ) )
+                ( a.x+DIAMETER > b.x && a.x+DIAMETER < b.x+DIAMETER ) ) &&
+                ( ( a.y > b.y && a.y < b.y+DIAMETER ) ||
+                ( a.y+DIAMETER > b.y && a.y+DIAMETER < b.y+DIAMETER ) ) )
             {
             return true;
             }
@@ -92,7 +92,7 @@ public /*strictfp*/ class CooperativeObservation extends SimState
             do
                 {
                 loc = new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
+                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
                 if( x < NUM_AGENTS )
                     {
                     agent = new CTOAgent( loc, CTOAgent.AGENT, "Agent"+x );

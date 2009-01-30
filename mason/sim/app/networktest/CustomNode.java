@@ -31,40 +31,40 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
     public void step( final SimState state )
         {
         NetworkTest nt = (NetworkTest)state;
-	Double2D location = nt.environment.getObjectLocation(this);
+        Double2D location = nt.environment.getObjectLocation(this);
 
         steps--;
         if( desiredLocation == null || steps <= 0 )
             {
             desiredLocation = new Double2D((state.random.nextDouble()-0.5)*((NetworkTest.XMAX-NetworkTest.XMIN)/5-NetworkTest.DIAMETER) + location.x,
-                                           (state.random.nextDouble()-0.5)*((NetworkTest.YMAX-NetworkTest.YMIN)/5-NetworkTest.DIAMETER) + location.y);
+                (state.random.nextDouble()-0.5)*((NetworkTest.YMAX-NetworkTest.YMIN)/5-NetworkTest.DIAMETER) + location.y);
             steps = 50+state.random.nextInt(50);
             }
 
         double dx = desiredLocation.x - location.x;
         double dy = desiredLocation.y - location.y;
 
-            {
-            double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
-            if( temp < 1 )
                 {
-                steps = 0;
+                double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
+                if( temp < 1 )
+                    {
+                    steps = 0;
+                    }
+                else
+                    {
+                    dx /= temp;
+                    dy /= temp;
+                    }
                 }
-            else
-                {
-                dx /= temp;
-                dy /= temp;
-                }
-            }
 
-            if( ! nt.acceptablePosition( this, new Double2D( location.x + dx, location.y + dy ) ) )
-                {
-                steps = 0;
-                }
-            else
-                {
-                nt.environment.setObjectLocation(this, new Double2D(location.x + dx, location.y + dy));
-                }
+        if( ! nt.acceptablePosition( this, new Double2D( location.x + dx, location.y + dy ) ) )
+            {
+            steps = 0;
+            }
+        else
+            {
+            nt.environment.setObjectLocation(this, new Double2D(location.x + dx, location.y + dy));
+            }
 
         }
 

@@ -49,14 +49,14 @@ public /*strictfp*/ class Human extends Agent
         if( desiredLocation == null || steps <= 0 )
             {
             desiredLocation = new Double2D((state.random.nextDouble()-0.5)*((VirusInfectionDemo.XMAX-VirusInfectionDemo.XMIN)/5-VirusInfectionDemo.DIAMETER) +
-                                           //VirusInfectionDemo.XMIN
-                                           agentLocation.x 
-                                           //+VirusInfectionDemo.DIAMETER/2
-                                           ,
-                                           (state.random.nextDouble()-0.5)*((VirusInfectionDemo.YMAX-VirusInfectionDemo.YMIN)/5-VirusInfectionDemo.DIAMETER) +
-                                           agentLocation.y
-                                           //VirusInfectionDemo.YMIN
-                                           //+VirusInfectionDemo.DIAMETER/2
+                //VirusInfectionDemo.XMIN
+                agentLocation.x 
+                //+VirusInfectionDemo.DIAMETER/2
+                ,
+                (state.random.nextDouble()-0.5)*((VirusInfectionDemo.YMAX-VirusInfectionDemo.YMIN)/5-VirusInfectionDemo.DIAMETER) +
+                agentLocation.y
+                //VirusInfectionDemo.YMIN
+                //+VirusInfectionDemo.DIAMETER/2
                 );
             steps = 50+state.random.nextInt(50);
             }
@@ -64,28 +64,28 @@ public /*strictfp*/ class Human extends Agent
         double dx = desiredLocation.x - agentLocation.x;
         double dy = desiredLocation.y - agentLocation.y;
 
-            {
-            double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
-            if( temp < 1 )
                 {
-                steps = 0;
+                double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
+                if( temp < 1 )
+                    {
+                    steps = 0;
+                    }
+                else
+                    {
+                    dx /= temp;
+                    dy /= temp;
+                    }
                 }
-            else
-                {
-                dx /= temp;
-                dy /= temp;
-                }
-            }
 
-            if( ! hb.acceptablePosition( this, new Double2D( agentLocation.x + dx, agentLocation.y + dy ) ) )
-                {
-                steps = 0;
-                }
-            else
-                {
-                agentLocation = new Double2D(agentLocation.x + dx, agentLocation.y + dy);
-                hb.environment.setObjectLocation(this,agentLocation);
-                }
+        if( ! hb.acceptablePosition( this, new Double2D( agentLocation.x + dx, agentLocation.y + dy ) ) )
+            {
+            steps = 0;
+            }
+        else
+            {
+            agentLocation = new Double2D(agentLocation.x + dx, agentLocation.y + dy);
+            hb.environment.setObjectLocation(this,agentLocation);
+            }
 
         }
 

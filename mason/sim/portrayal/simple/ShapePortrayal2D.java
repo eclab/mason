@@ -39,19 +39,19 @@ public class ShapePortrayal2D extends SimplePortrayal2D
         this.shape = shape;
         this.paint = paint;
         this.scale = scale;
-	this.filled = filled;
-	setStroke(null);
+        this.filled = filled;
+        setStroke(null);
         }
     
     public void setStroke(Stroke s)
-	{
-	stroke = s;
-	if (stroke == null)
-	    {
-	    stroke = new BasicStroke();
-	    }
-	}
-	
+        {
+        stroke = s;
+        if (stroke == null)
+            {
+            stroke = new BasicStroke();
+            }
+        }
+        
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
@@ -68,15 +68,15 @@ public class ShapePortrayal2D extends SimplePortrayal2D
 
         // draw centered on the origin
         transform.setToTranslation(info.draw.x,info.draw.y);
-	if (filled)
-	    {
-	    graphics.fill(transform.createTransformedShape(bufferedShape));
-	    }
-	else
-	    {
-	    graphics.setStroke(stroke);
-	    graphics.draw(transform.createTransformedShape(bufferedShape));
-	    }
+        if (filled)
+            {
+            graphics.fill(transform.createTransformedShape(bufferedShape));
+            }
+        else
+            {
+            graphics.setStroke(stroke);
+            graphics.draw(transform.createTransformedShape(bufferedShape));
+            }
         }
 
     public boolean hitObject(Object object, DrawInfo2D range)

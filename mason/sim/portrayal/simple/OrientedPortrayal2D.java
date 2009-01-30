@@ -121,7 +121,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             {
             final double theta = ((Oriented2D)object).orientation2D();
             final int length = ((int)(or * (info.draw.width < info.draw.height ? 
-                                            info.draw.width : info.draw.height)) + dr);  // fit in smallest dimension
+                        info.draw.width : info.draw.height)) + dr);  // fit in smallest dimension
             
             final double lenx = Math.cos(theta)*length;
             final double leny = Math.sin(theta)*length;
@@ -182,7 +182,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             {
             final double theta = ((Oriented2D)object).orientation2D();
             final int length = ((int)(or * (range.draw.width < range.draw.height ? 
-                                            range.draw.width : range.draw.height)) + dr);  // fit in smallest dimension
+                        range.draw.width : range.draw.height)) + dr);  // fit in smallest dimension
             
             final double lenx = Math.cos(theta)*length;
             final double leny = Math.sin(theta)*length;

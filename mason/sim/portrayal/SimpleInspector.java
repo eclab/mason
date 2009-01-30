@@ -52,19 +52,19 @@ public class SimpleInspector extends Inspector
     
     boolean fixedProperties = false;
     public SimpleInspector(Properties properties, GUIState state, String name)
-	{
+        {
         super();
         setLayout(new BorderLayout());
         this.object = null;
         this.state = state;
         this.name = name;
-	this.properties = properties;
-	this.fixedProperties = true;
+        this.properties = properties;
+        this.fixedProperties = true;
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
         generateProperties(0);
-	}
-	
+        }
+        
     public SimpleInspector(Object object, GUIState state)
         {
         this(object,state,null);
@@ -119,14 +119,14 @@ public class SimpleInspector extends Inspector
             properties.betterToString(properties.getValue(index)),
             properties.isReadWrite(index),
             properties.getDomain(index),
-            (properties.isComposite(index) ?
-             //PropertyField.SHOW_VIEWBUTTON : 
-             PropertyField.SHOW_TEXTFIELD :
-             (type == Boolean.TYPE || type == Boolean.class ?
-              PropertyField.SHOW_CHECKBOX :
-              (properties.getDomain(index) == null ? PropertyField.SHOW_TEXTFIELD :
-               (properties.getDomain(index) instanceof Interval) ? 
-               PropertyField.SHOW_SLIDER : PropertyField.SHOW_LIST ))))
+                (properties.isComposite(index) ?
+                //PropertyField.SHOW_VIEWBUTTON : 
+                PropertyField.SHOW_TEXTFIELD :
+                    (type == Boolean.TYPE || type == Boolean.class ?
+                    PropertyField.SHOW_CHECKBOX :
+                        (properties.getDomain(index) == null ? PropertyField.SHOW_TEXTFIELD :
+                        (properties.getDomain(index) instanceof Interval) ? 
+                        PropertyField.SHOW_SLIDER : PropertyField.SHOW_LIST ))))
             {
             Properties props = properties;
 
@@ -166,7 +166,7 @@ public class SimpleInspector extends Inspector
     void generateProperties(int start)
         {
         if (!fixedProperties)
-	    properties = Properties.getProperties(object,true,true,false,true);
+            properties = Properties.getProperties(object,true,true,false,true);
         final int len = properties.numProperties();
         if (start < 0) start = 0;
         if (start > len) return;  // failed
@@ -221,10 +221,10 @@ public class SimpleInspector extends Inspector
                 {
                 members[i] = makePropertyField(i);
                 propertyList.add(null,
-                                 new JLabel(properties.getName(i) + " "), 
-                                 PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
-                                 members[i], 
-                                 null);
+                    new JLabel(properties.getName(i) + " "), 
+                    PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
+                    members[i], 
+                    null);
                 }
             else members[i] = null;
             }
@@ -275,8 +275,8 @@ public class SimpleInspector extends Inspector
             doEnsuredRepaint(this);
             }
         else for( int i = start ; i < start+count ; i++ )
-            if (members[i] != null) 
-                members[i].setValue(properties.betterToString(properties.getValue(i)));
+                 if (members[i] != null) 
+                     members[i].setValue(properties.betterToString(properties.getValue(i)));
         }
 
     // additionally set the title

@@ -28,7 +28,7 @@ public class Body implements Steppable
             {
             double theta = ((velocity / distanceFromSun) * state.schedule.getSteps())%(2*Math.PI) ;  
             tut.bodies.setObjectLocation(this, 
-                                         new Double2D(distanceFromSun*Math.cos(theta), distanceFromSun*Math.sin(theta)));
+                new Double2D(distanceFromSun*Math.cos(theta), distanceFromSun*Math.sin(theta)));
             }
         }
     }    

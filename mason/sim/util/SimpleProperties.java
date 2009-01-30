@@ -127,7 +127,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass)
         {
-	this(o,includeSuperclasses,includeGetClass,true);
+        this(o,includeSuperclasses,includeGetClass,true);
         }
     
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
@@ -141,44 +141,44 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         object = o;
         if (o!=null && o instanceof sim.util.Proxiable)
             object = ((sim.util.Proxiable)(o)).propertiesProxy();
- 	else if (o!=null && o instanceof sim.util.Propertied)
-	    auxillary = ((sim.util.Propertied)(o)).properties();
-       generateProperties(includeSuperclasses,includeGetClass,includeDomains);
+        else if (o!=null && o instanceof sim.util.Propertied)
+            auxillary = ((sim.util.Propertied)(o)).properties();
+        generateProperties(includeSuperclasses,includeGetClass,includeDomains);
         }
     
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeDomains)
         {
         if (object != null && auxillary == null) try
-            {
-            // generate the properties
-            Class c = object.getClass();
-            Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
-            for(int x = 0 ; x < m.length; x++)
+                                                     {
+                                                     // generate the properties
+                                                     Class c = object.getClass();
+                                                     Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
+                                                     for(int x = 0 ; x < m.length; x++)
+                                                         {
+                                                         if (m[x].getName().startsWith("get") || m[x].getName().startsWith("is")) // corrrect syntax?
+                                                             {
+                                                             int modifier = m[x].getModifiers();
+                                                             if ((includeGetClass || !m[x].getName().equals("getClass")) &&
+                                                                 m[x].getParameterTypes().length == 0 &&
+                                                                 Modifier.isPublic(modifier)) // no arguments, and public, non-abstract?
+                                                                 {
+                                                                 //// Add all properties...
+                                                                 Class returnType = m[x].getReturnType();
+                                                                 if (returnType!= Void.TYPE)
+                                                                     {
+                                                                     getMethods.add(m[x]);
+                                                                     setMethods.add(getWriteProperty(m[x],c));
+                                                                     domMethods.add(getDomain(m[x],c,includeDomains));
+                                                                     hideMethods.add(getHidden(m[x], c));
+                                                                     }
+                                                                 }
+                                                             }
+                                                         }
+                                                     }
+            catch (Exception e)
                 {
-                if (m[x].getName().startsWith("get") || m[x].getName().startsWith("is")) // corrrect syntax?
-                    {
-                    int modifier = m[x].getModifiers();
-                    if ((includeGetClass || !m[x].getName().equals("getClass")) &&
-                        m[x].getParameterTypes().length == 0 &&
-                        Modifier.isPublic(modifier)) // no arguments, and public, non-abstract?
-                        {
-                        //// Add all properties...
-                        Class returnType = m[x].getReturnType();
-                        if (returnType!= Void.TYPE)
-                            {
-                            getMethods.add(m[x]);
-                            setMethods.add(getWriteProperty(m[x],c));
-                            domMethods.add(getDomain(m[x],c,includeDomains));
-                            hideMethods.add(getHidden(m[x], c));
-                            }
-                        }
-                    }
+                e.printStackTrace();
                 }
-            }
-        catch (Exception e)
-            {
-            e.printStackTrace();
-            }
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
@@ -254,7 +254,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     /** Returns the number of properties discovered */
     public int numProperties()
         {
-	if (auxillary!=null) return auxillary.numProperties();
+        if (auxillary!=null) return auxillary.numProperties();
         return getMethods.size();
         }
 
@@ -262,7 +262,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns null if the index is out of the range [0 ... numProperties() - 1 ]*/
     public String getName(int index)
         {
-	if (auxillary!=null) return auxillary.getName(index);
+        if (auxillary!=null) return auxillary.getName(index);
         if (index < 0 || index > numProperties()) return null;
         if (((Method)(getMethods.get(index))).getName().startsWith("is"))
             return ((Method)(getMethods.get(index))).getName().substring(2);
@@ -273,7 +273,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns false if the index is out of the range [0 ... numProperties() - 1 ]*/
     public boolean isReadWrite(int index)
         {
-	if (auxillary!=null) return auxillary.isReadWrite(index);
+        if (auxillary!=null) return auxillary.isReadWrite(index);
         if (index < 0 || index > numProperties()) return false;
         if (isComposite(index)) return false;
         return (setMethods.get(index)!=null);
@@ -283,7 +283,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns -1 if the index is out of the range [0 ... numProperties() - 1 ]*/
     public Class getType(int index)
         {
-	if (auxillary!=null) return auxillary.getType(index);
+        if (auxillary!=null) return auxillary.getType(index);
         if (index < 0 || index > numProperties()) return null;
         Class returnType = ((Method)(getMethods.get(index))).getReturnType();
 
@@ -295,7 +295,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         Returns null if an error occurs or if the index is out of the range [0 ... numProperties() - 1 ]*/
     public Object getValue(int index)
         {
-	if (auxillary!=null) return auxillary.getValue(index);
+        if (auxillary!=null) return auxillary.getValue(index);
         if (index < 0 || index > numProperties()) return null;
         try
             {
@@ -310,7 +310,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     
     protected Object _setValue(int index, Object value)
         {
-	if (auxillary!=null) return auxillary.setValue(index,value);  // I think this is right
+        if (auxillary!=null) return auxillary.setValue(index,value);  // I think this is right
         try
             {
             if (setMethods.get(index) == null) return null;
@@ -326,7 +326,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
 
     public Object getDomain(int index)
         {
-	if (auxillary!=null) return auxillary.getDomain(index);
+        if (auxillary!=null) return auxillary.getDomain(index);
         if (index < 0 || index > numProperties()) return null;
         try
             {
@@ -342,7 +342,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
 
     public boolean isHidden(int index)
         {
-	if (auxillary!=null) return auxillary.isHidden(index);
+        if (auxillary!=null) return auxillary.isHidden(index);
         if (index < 0 || index > numProperties()) return false;
         try
             {

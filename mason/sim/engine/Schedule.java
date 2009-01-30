@@ -396,16 +396,16 @@ public class Schedule implements java.io.Serializable
         //    {
         if (t < EPOCH)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                               "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
+                "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
         else if (t >= AFTER_SIMULATION)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                               "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
+                "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
         else if (t != t /* NaN */)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                               "\n\n...the time provided ("+t+") is NaN");
+                "\n\n...the time provided ("+t+") is NaN");
         else if (t < time)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                                               "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
+                "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
         else if (event == null)
             throw new IllegalArgumentException("The provided Steppable is null");
         //    }
@@ -611,10 +611,10 @@ class Repeat implements Steppable, Stoppable
         {
         if (interval < 0)
             throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                                               "\n\n...the interval provided ("+interval+") is less than zero");
+                "\n\n...the interval provided ("+interval+") is less than zero");
         else if (interval != interval)  /* NaN */
             throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                                               "\n\n...the interval provided ("+interval+") is NaN");
+                "\n\n...the interval provided ("+interval+") is NaN");
 
         this.step = step;
         this.interval = interval;

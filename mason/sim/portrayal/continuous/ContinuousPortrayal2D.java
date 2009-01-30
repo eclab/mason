@@ -38,7 +38,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         }
     
     public Double2D getLocation(DrawInfo2D info)
-	{
+        {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
                 
@@ -46,8 +46,8 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final double yScale = info.draw.height / field.height;
         final double startx = (info.clip.x - info.draw.x) / xScale;  // notice not (int) like elsewhere.
         final double starty = (info.clip.y - info.draw.y) / yScale;
-	return new Double2D(startx, starty);
-	}
+        return new Double2D(startx, starty);
+        }
 
     
     public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D fieldPortrayalInfo)
@@ -88,7 +88,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-                                            info.clip);  // we don't do further clipping 
+            info.clip);  // we don't do further clipping 
 
         // hit/draw the objects one by one -- perhaps for large numbers of objects it would
         // be smarter to grab the objects out of the buckets that specifically are inside
@@ -108,7 +108,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                 Portrayal p = getPortrayalForObject(objects.objs[x]);
                 if (!(p instanceof SimplePortrayal2D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               objects.objs[x] + " -- expected a SimplePortrayal2D");
+                        objects.objs[x] + " -- expected a SimplePortrayal2D");
                 SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                 
                 newinfo.draw.x = (info.draw.x + (xScale) * loc.x);

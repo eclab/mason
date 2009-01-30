@@ -79,7 +79,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
         Portrayal p = getPortrayalForObject(newinfo);
         if (!(p instanceof SimpleEdgePortrayal3D)) 
             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                       edge + " -- expected a SimpleEdgePortrayal3D");
+                edge + " -- expected a SimpleEdgePortrayal3D");
         SimpleEdgePortrayal3D portrayal = (SimpleEdgePortrayal3D) p; 
         
         TransformGroup localTG = portrayal.getModel(newinfo, null); 
@@ -126,7 +126,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
                 Portrayal p = getPortrayalForObject(infoObj);
                 if(! (p instanceof SimplePortrayal3D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               infoObj + " -- expecting a SimplePortrayal3D");
+                        infoObj + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                 
                 TransformGroup localTG2 = p3d.getModel(infoObj, localTG);

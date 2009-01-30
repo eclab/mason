@@ -37,7 +37,7 @@ public class StreamingPropertyInspector extends PropertyInspector
     /** Creates a custom StreamingPropertyInspector which writes to the provided stream, with the associated short name streamName.
         This constructor is intended for people who want to create custom streaming inspectors programmatically. */
     public StreamingPropertyInspector(Properties properties, int index, 
-                                      Frame parent, GUIState simulation, PrintWriter stream, String streamName)
+        Frame parent, GUIState simulation, PrintWriter stream, String streamName)
         {
         super(properties,index,parent,simulation);
         out = stream;
@@ -86,33 +86,33 @@ public class StreamingPropertyInspector extends PropertyInspector
                 streamingTo = FILE;
                                 
                 FileDialog fd = new FileDialog(parent,"Stream the Property " + 
-                                               (s.equals(possibilities[1]) ? "(appending) " : "") + 
-                                               "\"" + properties.getName(index) + "\" to File...", FileDialog.SAVE);
+                    (s.equals(possibilities[1]) ? "(appending) " : "") + 
+                    "\"" + properties.getName(index) + "\" to File...", FileDialog.SAVE);
                 fd.setFile(properties.getName(index)+".out");
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
-                    {
-                    File file = new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".out"));
-                    // we'll make a writer that appends or doesn't append -- note we use
-                    // new FileWriter(String,appends) because new FileWriter(file,appends) 
-                    // is only available in Java 1.4 and up.
-                    out = new PrintWriter(new BufferedWriter(new FileWriter(file.getCanonicalPath(), s.equals(possibilities[1]))));
-                    setLayout(new BorderLayout());
-                    Box b = new Box(BoxLayout.Y_AXIS);
-                    b.add(skipField);
-                    b.add(new JLabel("Streaming to" + 
-                                     (s.equals(possibilities[1]) ? " (appending)" : "") + 
-                                     "..."));
-                    b.add(new JLabel(file.getPath()));
-                    b.add(new JLabel("Format: \"timestamp: value\""));
-                    b.add(Box.createGlue());
-                    add(b,BorderLayout.NORTH);
-                    validInspector = true;
-                    }
-                catch (IOException e)
-                    {
-                    e.printStackTrace();
-                    }
+                                            {
+                                            File file = new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".out"));
+                                            // we'll make a writer that appends or doesn't append -- note we use
+                                            // new FileWriter(String,appends) because new FileWriter(file,appends) 
+                                            // is only available in Java 1.4 and up.
+                                            out = new PrintWriter(new BufferedWriter(new FileWriter(file.getCanonicalPath(), s.equals(possibilities[1]))));
+                                            setLayout(new BorderLayout());
+                                            Box b = new Box(BoxLayout.Y_AXIS);
+                                            b.add(skipField);
+                                            b.add(new JLabel("Streaming to" + 
+                                                    (s.equals(possibilities[1]) ? " (appending)" : "") + 
+                                                    "..."));
+                                            b.add(new JLabel(file.getPath()));
+                                            b.add(new JLabel("Format: \"timestamp: value\""));
+                                            b.add(Box.createGlue());
+                                            add(b,BorderLayout.NORTH);
+                                            validInspector = true;
+                                            }
+                    catch (IOException e)
+                        {
+                        e.printStackTrace();
+                        }
                 }
             else if (s.equals(possibilities[2]))
                 {
@@ -135,19 +135,19 @@ public class StreamingPropertyInspector extends PropertyInspector
                             fd.setFile(properties.getName(index)+".out");
                             fd.setVisible(true);
                             if (fd.getFile()!=null) try
-                                {
-                                File file = new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".out"));
-                                // we'll make a writer that appends or doesn't append -- note we use
-                                // new FileWriter(String,appends) because new FileWriter(file,appends) 
-                                // is only available in Java 1.4 and up.
-                                PrintWriter p = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-                                p.println(area.getText());
-                                p.close();
-                                }
-                            catch (IOException ex)
-                                {
-                                ex.printStackTrace();
-                                }
+                                                        {
+                                                        File file = new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".out"));
+                                                        // we'll make a writer that appends or doesn't append -- note we use
+                                                        // new FileWriter(String,appends) because new FileWriter(file,appends) 
+                                                        // is only available in Java 1.4 and up.
+                                                        PrintWriter p = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+                                                        p.println(area.getText());
+                                                        p.close();
+                                                        }
+                                catch (IOException ex)
+                                    {
+                                    ex.printStackTrace();
+                                    }
                             }
                         }                                       
                     });
@@ -189,7 +189,7 @@ public class StreamingPropertyInspector extends PropertyInspector
                     break;
                 case STDOUT:
                     System.out.println(properties.getObject() + "/" + properties.getName(index) + 
-                                       "/" + time + ": " + properties.getValue(index));
+                        "/" + time + ": " + properties.getValue(index));
                     break;
                 }
             }

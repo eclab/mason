@@ -215,12 +215,12 @@ public class MiniHistogram extends JComponent
             max = Math.log(max);
             for(int x=0;x<s.length;x++)
                 s[x] =  (Math.exp((x/(double)numBuckets)*(max-min) + min) + 
-                         Math.exp(((x+1)/(double)numBuckets)*(max-min) + min)) / 2;
+                    Math.exp(((x+1)/(double)numBuckets)*(max-min) + min)) / 2;
             }
         else
             for(int x=0;x<s.length;x++)
                 s[x] =  (((x/(double)numBuckets)*(max-min) + min) + 
-                         (((x+1)/(double)numBuckets)*(max-min) + min)) / 2;
+                    (((x+1)/(double)numBuckets)*(max-min) + min)) / 2;
         return s;
         }
 

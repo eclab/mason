@@ -38,14 +38,14 @@ public /*strictfp*/ class NetworkTest extends SimState
         }
 
     CustomNode makeNode(String name)
-	{
-	CustomNode node = new CustomNode(name);
+        {
+        CustomNode node = new CustomNode(name);
         environment.setObjectLocation(node, new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
-	network.addNode(node);
-	schedule.scheduleRepeating(node);
-	return node;
-	}
+                random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
+        network.addNode(node);
+        schedule.scheduleRepeating(node);
+        return node;
+        }
 
     public void start()
         {
@@ -54,7 +54,7 @@ public /*strictfp*/ class NetworkTest extends SimState
         environment = new Continuous2D(16.0, (XMAX-XMIN), (YMAX-YMIN) );
         network = new Network();
 
-	CustomNode nodes[] = new CustomNode[6];
+        CustomNode nodes[] = new CustomNode[6];
         nodes[0] = makeNode( "node0");
         nodes[1] = makeNode( "node1");
         nodes[2] = makeNode( "node2");
@@ -72,7 +72,7 @@ public /*strictfp*/ class NetworkTest extends SimState
         network.addEdge( nodes[2], nodes[5], "2-5" );
         network.addEdge( nodes[3], nodes[5], "3-5" );
         network.addEdge( nodes[4], nodes[5], "4-5" );
-	}
+        }
 
     public static void main(String[] args)
         {

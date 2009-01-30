@@ -56,9 +56,9 @@ public class Balls3D extends SimState
             // must be final to be used in the anonymous class below
             final Ball ball = new Ball(0,0,0,random.nextDouble() * (maxMass-minMass) + minMass);
             balls.setObjectLocation(ball,
-                                    new Double3D(random.nextDouble() * gridWidth,
-                                                 random.nextDouble() * gridHeight, 
-                                                 random.nextDouble() * gridLength));
+                new Double3D(random.nextDouble() * gridWidth,
+                    random.nextDouble() * gridHeight, 
+                    random.nextDouble() * gridLength));
             bands.addNode(ball);
             schedule.scheduleRepeating(ball);
      
@@ -79,9 +79,9 @@ public class Balls3D extends SimState
         for(int i=0;i<numBands;i++)
             {
             Band band = new Band(random.nextDouble() * 
-                                 (maxLaxBandDistance - minLaxBandDistance) + minLaxBandDistance,
-                                 random.nextDouble() *
-                                 (maxBandStrength - minBandStrength) + minBandStrength);
+                (maxLaxBandDistance - minLaxBandDistance) + minLaxBandDistance,
+                random.nextDouble() *
+                (maxBandStrength - minBandStrength) + minBandStrength);
             Ball from;
             from = (Ball)(ballObjs.objs[random.nextInt(ballObjs.numObjs)]);
 

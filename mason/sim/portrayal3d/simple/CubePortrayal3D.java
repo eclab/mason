@@ -108,7 +108,7 @@ public class CubePortrayal3D extends SimplePortrayal3D
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
             QuadArray quadArray = new QuadArray(24, QuadArray.COORDINATES |
-                                                (generateTextureCoordinates ? QuadArray.TEXTURE_COORDINATE_2 : 0) ); 
+                (generateTextureCoordinates ? QuadArray.TEXTURE_COORDINATE_2 : 0) ); 
             quadArray.setCoordinates(0, scaledVerts);
 
             // specify the four corners of the image are four vertices (Java3D pretends that the

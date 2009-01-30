@@ -111,7 +111,7 @@ public class CircledPortrayal2D extends SimplePortrayal2D
         if (showCircle && (isSelected || !onlyCircleWhenSelected))
             {
             final int diameter = 2 * ((int)(or * (info.draw.width > info.draw.height ? 
-                                                  info.draw.width : info.draw.height)) + dr);
+                        info.draw.width : info.draw.height)) + dr);
             
             final int x = (int)(info.draw.x - diameter / 2.0);
             final int y = (int)(info.draw.y - diameter / 2.0);

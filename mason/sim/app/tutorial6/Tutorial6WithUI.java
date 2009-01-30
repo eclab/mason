@@ -92,19 +92,19 @@ public class Tutorial6WithUI extends GUIState
 50));
 */
 
-            for(int i=0;i<10;i++)
-                {
-                TransformedPortrayal3D trans =
-                    new TransformedPortrayal3D(new SpherePortrayal3D(loadImage(imageNames[i]),
-                                                                     (float) (Math.log(Tutorial6.DIAMETER[i])*50), 
-                                                                     50));
+     for(int i=0;i<10;i++)
+         {
+         TransformedPortrayal3D trans =
+             new TransformedPortrayal3D(new SpherePortrayal3D(loadImage(imageNames[i]),
+                     (float) (Math.log(Tutorial6.DIAMETER[i])*50), 
+                     50));
             
-                trans.rotateX(90.0); // move pole from Y axis up to Z axis
-                bodyPortrayal.setPortrayalForObject(objs.objs[i], trans);
-                }
+         trans.rotateX(90.0); // move pole from Y axis up to Z axis
+         bodyPortrayal.setPortrayalForObject(objs.objs[i], trans);
+         }
 
-            display.reset();
-            display.createSceneGraph();
+     display.reset();
+     display.createSceneGraph();
         } 
 
     public void init(Controller c)

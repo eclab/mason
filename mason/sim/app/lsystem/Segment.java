@@ -26,9 +26,9 @@ public /*strictfp*/ class Segment extends SimplePortrayal2D
         {
         g.setColor(new Color(0,127,0));
         g.drawLine((int)info.draw.x,
-                   (int)info.draw.y,
-                   (int)(info.draw.x) + (int)(info.draw.width*x2),
-                   (int)(info.draw.y) + (int)(info.draw.height*y2));
+            (int)info.draw.y,
+            (int)(info.draw.x) + (int)(info.draw.width*x2),
+            (int)(info.draw.y) + (int)(info.draw.height*y2));
         }
 
     public void hitObjects(DrawInfo2D range, Bag putInHere)

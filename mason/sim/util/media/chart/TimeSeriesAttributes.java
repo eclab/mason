@@ -81,13 +81,13 @@ public class TimeSeriesAttributes extends SeriesAttributes
     public float getStretch() { return (float)(stretchField.getValue()); }
 
     public void setDashPattern(int value) 
-	{ 
-	if (value >= 0 && value < dashPatterns.length) 
-	    { 
-	    dashPatternList.setSelectedIndex(value);
-	    dashPattern = dashPatterns[value];
-	    }
-	}
+        { 
+        if (value >= 0 && value < dashPatterns.length) 
+            { 
+            dashPatternList.setSelectedIndex(value);
+            dashPattern = dashPatterns[value];
+            }
+        }
     public float getDashPattern() { return dashPatternList.getSelectedIndex(); }
 
     public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
@@ -114,8 +114,8 @@ public class TimeSeriesAttributes extends SeriesAttributes
         XYItemRenderer renderer = getRenderer();
             
         renderer.setSeriesStroke(getSeriesIndex(),
-                                 new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
-                                                 BasicStroke.JOIN_ROUND,0,newDashPattern,0));
+            new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
+                BasicStroke.JOIN_ROUND,0,newDashPattern,0));
 
         renderer.setSeriesPaint(getSeriesIndex(),strokeColor);
         repaint();
@@ -165,12 +165,12 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 }
             };
         addLabelled("Width",thicknessField);
-	
-	dashPatternList = new JComboBox();
+        
+        dashPatternList = new JComboBox();
         dashPatternList.setEditable(false);
         dashPatternList.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(
-                                                                        new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
-                                                                                       "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
+                        new String[] { "Solid", "__  __  __", "_  _  _  _", "_ _ _ _ _", "_ _ . _ _ .", 
+                                       "_ . _ . _ .", "_ . . _ . .", ". . . . . . .", ".  .  .  .  ." }))));
         dashPatternList.setSelectedIndex(0);
         dashPatternList.addActionListener(new ActionListener()
             {

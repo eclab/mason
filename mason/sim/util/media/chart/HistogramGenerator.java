@@ -145,7 +145,7 @@ public class HistogramGenerator extends ChartGenerator
         dataset = new HistogramDataset();
         dataset.setType(HistogramType.FREQUENCY);  // when buildChart() is called, histogramType hasn't been set yet.
         chart = ChartFactory.createHistogram("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
-                                             PlotOrientation.VERTICAL, false, true, false);
+            PlotOrientation.VERTICAL, false, true, false);
         chart.setAntiAlias(false);
         chartPanel = new ChartPanel(chart, true);
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));

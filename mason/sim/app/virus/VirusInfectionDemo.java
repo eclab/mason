@@ -40,9 +40,9 @@ public /*strictfp*/ class VirusInfectionDemo extends SimState
     boolean conflict( final Agent agent1, final Double2D a, final Agent agent2, final Double2D b )
         {
         if( ( ( a.x > b.x && a.x < b.x+DIAMETER ) ||
-              ( a.x+DIAMETER > b.x && a.x+DIAMETER < b.x+DIAMETER ) ) &&
-            ( ( a.y > b.y && a.y < b.y+DIAMETER ) ||
-              ( a.y+DIAMETER > b.y && a.y+DIAMETER < b.y+DIAMETER ) ) )
+                ( a.x+DIAMETER > b.x && a.x+DIAMETER < b.x+DIAMETER ) ) &&
+                ( ( a.y > b.y && a.y < b.y+DIAMETER ) ||
+                ( a.y+DIAMETER > b.y && a.y+DIAMETER < b.y+DIAMETER ) ) )
             {
             return true;
             }
@@ -96,7 +96,7 @@ public /*strictfp*/ class VirusInfectionDemo extends SimState
             do
                 {
                 loc = new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
+                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
                 if( x < NUM_HUMANS )
                     agent = new Human( "Human"+x, loc );
                 else if( x < NUM_HUMANS+NUM_GOODS )

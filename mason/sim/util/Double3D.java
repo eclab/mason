@@ -155,16 +155,16 @@ public final class Double3D implements java.io.Serializable
             Double3D other = (Double3D) obj;
             // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
             return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
-                    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+                Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
             }
         else if (obj instanceof MutableDouble3D)
             {
             MutableDouble3D other = (MutableDouble3D) obj;
             // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
             return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
-                    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+                Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
             }
         else if (obj instanceof Int3D)
             {

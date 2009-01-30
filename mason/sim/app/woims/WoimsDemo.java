@@ -80,16 +80,16 @@ public /*strictfp*/ class WoimsDemo extends SimState
             switch( caz )
                 {
                 case 0: loc = new Double2D( XMIN-EXTRA_SPACE,
-                                            random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
+                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
                     break;
                 case 1: loc = new Double2D( XMAX+EXTRA_SPACE,
-                                            random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
+                    random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 );
                     break;
                 case 2: loc = new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                            YMIN-EXTRA_SPACE );
+                    YMIN-EXTRA_SPACE );
                     break;
                 case 3: loc = new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
-                                            YMAX+EXTRA_SPACE );
+                    YMAX+EXTRA_SPACE );
                     break;
                 }
             woim = new Woim();

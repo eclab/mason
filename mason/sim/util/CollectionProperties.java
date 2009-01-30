@@ -124,7 +124,7 @@ public class CollectionProperties extends Properties
                 public boolean hasNext() { return i.hasNext(); }
                 public Object next() { return ((Map.Entry)(i.next())).getValue(); }
                 public void remove() { throw new UnsupportedOperationException(
-                                           "Cannot remove from a CollectionProperties Iterator"); }
+                        "Cannot remove from a CollectionProperties Iterator"); }
                 };
             }
         }

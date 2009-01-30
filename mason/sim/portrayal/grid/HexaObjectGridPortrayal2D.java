@@ -96,9 +96,9 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         HexaDrawInfo2D newinfo = new HexaDrawInfo2D(new Rectangle2D.Double(0,0, 
-                                                                           Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
-                                                                           Math.ceil(info.draw.height / (maxY + 0.5))),
-                                                    info.clip, xPoints, yPoints);  // we don't do further clipping 
+                Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
+                Math.ceil(info.draw.height / (maxY + 0.5))),
+            info.clip, xPoints, yPoints);  // we don't do further clipping 
 
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
@@ -112,7 +112,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 Portrayal p = getPortrayalForObject(obj);
                 if (!(p instanceof SimplePortrayal2D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               obj + " -- expected a SimplePortrayal2D");
+                        obj + " -- expected a SimplePortrayal2D");
                 SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                 
                 getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );

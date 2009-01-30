@@ -85,7 +85,7 @@ public /*strictfp*/ class KMeansEngine
                 for( int j = 0 ; j < CooperativeObservation.NUM_AGENTS ; j++ )
                     {
                     double currDist = distanceBetweenPointsSQR( co.targetPos[i].x, co.targetPos[i].y,
-                                                                co.agentPos[j].x, co.agentPos[j].y );
+                        co.agentPos[j].x, co.agentPos[j].y );
                     if( distance == -1 || distance > currDist )
                         {
                         min = j;
@@ -104,7 +104,7 @@ public /*strictfp*/ class KMeansEngine
                 if( labels[i] != -1 )
                     {
                     means[labels[i]] = new Double2D( means[labels[i]].x + co.targetPos[i].x,
-                                                     means[labels[i]].y + co.targetPos[i].y );
+                        means[labels[i]].y + co.targetPos[i].y );
                     n[labels[i]]++;
                     }
                 }
@@ -116,7 +116,7 @@ public /*strictfp*/ class KMeansEngine
                         {
                         means[i] = new Double2D( means[i].x/n[i], means[i].y/n[i] );
                         clusterPoints[i] = new Double2D( (1-ALFA)*clusterPoints[i].x + ALFA*means[i].x,
-                                                         (1-ALFA)*clusterPoints[i].y + ALFA*means[i].y );
+                            (1-ALFA)*clusterPoints[i].y + ALFA*means[i].y );
                         usable[i] = Boolean.TRUE;
                         }
                     else

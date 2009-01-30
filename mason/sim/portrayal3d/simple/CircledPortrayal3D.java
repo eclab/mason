@@ -100,12 +100,12 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     HashMap selectedObjects = new HashMap();
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-	boolean selected2 = child.setSelected(wrapper,selected);
-	if (selected && selected2)
-	    selectedObjects.put(wrapper.getObject(), wrapper);
-	else
-	    selectedObjects.remove(wrapper.getObject());
-	return selected2;
+        boolean selected2 = child.setSelected(wrapper,selected);
+        if (selected && selected2)
+            selectedObjects.put(wrapper.getObject(), wrapper);
+        else
+            selectedObjects.remove(wrapper.getObject());
+        return selected2;
         }
         
     public SimplePortrayal3D getChild(Object object)
@@ -131,8 +131,8 @@ public class CircledPortrayal3D extends SimplePortrayal3D
 
     public void updateSwitch(Switch jswitch, Object object)
         {
-	boolean isSelected = selectedObjects.containsKey(object);
-	
+        boolean isSelected = selectedObjects.containsKey(object);
+        
         if (showCircle && (isSelected || !onlyCircleWhenSelected))
             jswitch.setWhichChild( Switch.CHILD_ALL );
         else 

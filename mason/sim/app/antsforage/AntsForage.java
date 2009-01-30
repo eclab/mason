@@ -185,10 +185,10 @@ public /*strictfp*/ class AntsForage extends SimState
                 for(int x=0 ; x<NEW_ANTS_PER_TIME_STEP && numberOfAnts<MAX_ANTS ; x++)
                     {
                     Ant bug = new Ant( random.nextInt(8),
-                                       PHEROMONE_TO_LEAVE_BEHIND,
-                                       MIN_PHEROMONE,
-                                       MAX_PHEROMONE,
-                                       TIME_TO_LIVE ); 
+                        PHEROMONE_TO_LEAVE_BEHIND,
+                        MIN_PHEROMONE,
+                        MAX_PHEROMONE,
+                        TIME_TO_LIVE ); 
                     buggrid.setObjectLocation(bug,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
                     bug.toDiePointer = schedule.scheduleRepeating(bug);
                     numberOfAnts++;
@@ -203,10 +203,10 @@ public /*strictfp*/ class AntsForage extends SimState
         for(int x=0;x<INITIALANTS;x++)
             {
             Ant bug = new Ant(random.nextInt(8),
-                              PHEROMONE_TO_LEAVE_BEHIND,
-                              MIN_PHEROMONE,
-                              MAX_PHEROMONE,
-                              TIME_TO_LIVE ); 
+                PHEROMONE_TO_LEAVE_BEHIND,
+                MIN_PHEROMONE,
+                MAX_PHEROMONE,
+                TIME_TO_LIVE ); 
             buggrid.setObjectLocation(bug,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
             bug.toDiePointer = schedule.scheduleRepeating(bug);
             numberOfAnts++;

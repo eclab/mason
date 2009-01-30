@@ -117,9 +117,9 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
                 text.setRectangleScaleFactor(1.0f / 16.0f);
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
-                                                          text.getAppearance(),
-                                                          OrientedShape3D.ROTATE_ABOUT_POINT,
-                                                          new Point3f(0, 0, 0));
+                    text.getAppearance(),
+                    OrientedShape3D.ROTATE_ABOUT_POINT,
+                    new Point3f(0, 0, 0));
                 o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
                 o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
@@ -141,8 +141,8 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                 j3dModel.addChild(o);
 
                 tempText = new com.sun.j3d.utils.geometry.Text2D("",
-                                                                 new Color3f(labelColor), labelFont.getFamily(),
-                                                                 labelFont.getSize(), labelFont.getStyle());
+                    new Color3f(labelColor), labelFont.getFamily(),
+                    labelFont.getSize(), labelFont.getStyle());
 
                 // tempText = new Text3D(new Font3D(labelFont, new
                 // FontExtrusion()), "");

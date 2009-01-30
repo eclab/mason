@@ -42,29 +42,29 @@ public class AntsForageWithUI extends GUIState
         // tell the portrayals what to portray and how to portray them
         homePheromonePortrayal.setField(af.toHomeGrid);
         homePheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                                          AntsForage.MIN_PHEROMONE,
-                                          AntsForage.MAX_PHEROMONE,
-                                          // home pheromones are beneath all, just make them opaque
-                                          Color.white, //new Color(0,255,0,0),
-                                          new Color(0,255,0,255) ));
+                AntsForage.MIN_PHEROMONE,
+                AntsForage.MAX_PHEROMONE,
+                // home pheromones are beneath all, just make them opaque
+                Color.white, //new Color(0,255,0,0),
+                new Color(0,255,0,255) ));
         foodPheromonePortrayal.setField(af.toFoodGrid);
         foodPheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                                          AntsForage.MIN_PHEROMONE,
-                                          AntsForage.MAX_PHEROMONE,
-                                          new Color(0,0,255,0),
-                                          new Color(0,0,255,255) ));
+                AntsForage.MIN_PHEROMONE,
+                AntsForage.MAX_PHEROMONE,
+                new Color(0,0,255,0),
+                new Color(0,0,255,255) ));
         sitesPortrayal.setField(af.sites);
         sitesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                                  0,
-                                  1,
-                                  new Color(0,0,0,0),
-                                  new Color(255,0,0,255) ));
+                0,
+                1,
+                new Color(0,0,0,0),
+                new Color(255,0,0,255) ));
         obstaclesPortrayal.setField(af.obstacles);
         obstaclesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                                      0,
-                                      1,
-                                      new Color(0,0,0,0),
-                                      new Color(128,64,64,255) ));
+                0,
+                1,
+                new Color(0,0,0,0),
+                new Color(128,64,64,255) ));
         bugPortrayal.setField(af.buggrid);
             
         // make the ants look like cameras!

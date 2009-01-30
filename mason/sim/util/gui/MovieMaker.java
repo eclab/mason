@@ -94,7 +94,7 @@ public class MovieMaker
             
             // ask
             if(JOptionPane.showConfirmDialog(parentForDialogs, p,"Create a Quicktime Movie...",
-                                             JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
+                    JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
                 return false;
      
             // get the selected fps and format
@@ -126,11 +126,11 @@ public class MovieMaker
                 //                                        typicalImage,
                 //                                        (javax.media.Format)f[encodeFormatIndex]);
                 encoder = encoderClass.getConstructor(new Class[]{
-                    Float.TYPE, 
-                    File.class, 
-                    BufferedImage.class, 
-                    Class.forName("javax.media.Format")
-                    }).
+                        Float.TYPE, 
+                        File.class, 
+                        BufferedImage.class, 
+                        Class.forName("javax.media.Format")
+                        }).
                     newInstance(new Object[]{new Float(fps), 
                                              new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".mov")),
                                              typicalImage,
@@ -167,19 +167,19 @@ public class MovieMaker
         {
         if (!isRunning) return false;
         //              ((sim.util.media.MovieEncoder)encoder).add(image);
-            {
-            try  // NOT LIKELY TO HAPPEN
                 {
-                encoderClass.getMethod("add", new Class[]{BufferedImage.class}).
-                    invoke(encoder, new Object[]{image});
+                try  // NOT LIKELY TO HAPPEN
+                    {
+                    encoderClass.getMethod("add", new Class[]{BufferedImage.class}).
+                        invoke(encoder, new Object[]{image});
+                    }
+                catch(Exception ex)
+                    {
+                    ex.printStackTrace();
+                    return false;
+                    }
                 }
-            catch(Exception ex)
-                {
-                ex.printStackTrace();
-                return false;
-                }
-            }
-            return true;
+        return true;
         }
     
     /** End the movie stream, finish up writing to disk, and clean up. */

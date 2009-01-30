@@ -140,7 +140,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal2D))
             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                       valueToPass + " -- expected a SimplePortrayal2D");
+                valueToPass + " -- expected a SimplePortrayal2D");
         SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
 
         if (endx > maxX) endx = maxX;
@@ -182,7 +182,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         {
         final Grid2D field = (Grid2D)this.field;
         return new LocationWrapper( new MutableDouble(val),  // something unique to return for getObject()
-                                    new Int2D(x, y), this )  // it's location
+            new Int2D(x, y), this )  // it's location
             {
             public Object getObject()
                 {

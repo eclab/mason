@@ -188,13 +188,13 @@ public class Display2D extends JComponent implements Steppable
         
         /** Paints a movie, by drawing to a buffer, then
             encoding the buffer to disk, then optionally 
-	    writing the buffer to the provided Graphics2D. 
-	    If the Graphics2D is null, it's just written out to disk.
-	    This method will only write to disk when "appropriate", that is,
-	    if the current schedule has advanced to the point that a new
-	    frame is supposed to be outputted (given the frame rate of the
-	    movie).  In any rate, it'll write to the Graphic2D if
-	    provided. */
+            writing the buffer to the provided Graphics2D. 
+            If the Graphics2D is null, it's just written out to disk.
+            This method will only write to disk when "appropriate", that is,
+            if the current schedule has advanced to the point that a new
+            frame is supposed to be outputted (given the frame rate of the
+            movie).  In any rate, it'll write to the Graphic2D if
+            provided. */
         public void paintToMovie(Graphics g)
             {
             // although presently paintToMovie is called solely from paintComponent,
@@ -203,18 +203,18 @@ public class Display2D extends JComponent implements Steppable
             // is important.
             synchronized(Display2D.this.simulation.state.schedule)
                 {
-		// only paint if it's appropriate
-	    long steps = Display2D.this.simulation.state.schedule.getSteps();
-	    if (steps > lastEncodedSteps &&
-		steps % getInterval() == 0 &&
-		Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
-		{
-                Display2D.this.movieMaker.add(paint(g,true,false));
-		lastEncodedSteps = steps;
+                // only paint if it's appropriate
+                long steps = Display2D.this.simulation.state.schedule.getSteps();
+                if (steps > lastEncodedSteps &&
+                    steps % getInterval() == 0 &&
+                    Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
+                    {
+                    Display2D.this.movieMaker.add(paint(g,true,false));
+                    lastEncodedSteps = steps;
+                    }
+                else paint(g,false,false);
                 }
-	    else paint(g,false,false);
             }
-	    }
         
         /** Hints used to draw objects to the screen or to a buffer */
         public RenderingHints unbufferedHints;
@@ -227,38 +227,38 @@ public class Display2D extends JComponent implements Steppable
             {
             unbufferedHints = new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);  // in general
             unbufferedHints.put(RenderingHints.KEY_INTERPOLATION,
-                                niceInterpolation ? RenderingHints.VALUE_INTERPOLATION_BILINEAR :
-                                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                niceInterpolation ? RenderingHints.VALUE_INTERPOLATION_BILINEAR :
+                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             // dunno what to do here about antialiasing on MacOS X
             // -- if it's on, then circles can get drawn as squares (see woims demo at 1.5 scale)
             // -- but if it's off, then stuff gets antialiased in pictures but not on a screenshot.
             // My inclination is to leave it off. 
             unbufferedHints.put(RenderingHints.KEY_ANTIALIASING, 
-                                antialias ? RenderingHints.VALUE_ANTIALIAS_ON :
-                                RenderingHints.VALUE_ANTIALIAS_OFF);
+                antialias ? RenderingHints.VALUE_ANTIALIAS_ON :
+                RenderingHints.VALUE_ANTIALIAS_OFF);
             unbufferedHints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-                                antialias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
-                                RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+                antialias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             unbufferedHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, 
-                                niceAlphaInterpolation ? 
-                                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY :
-                                RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+                niceAlphaInterpolation ? 
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY :
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
 
             bufferedHints = new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);  // in general
             bufferedHints.put(RenderingHints.KEY_INTERPOLATION,
-                              niceInterpolation ? RenderingHints.VALUE_INTERPOLATION_BILINEAR :
-                              RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                niceInterpolation ? RenderingHints.VALUE_INTERPOLATION_BILINEAR :
+                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
             // similarly
             bufferedHints.put(RenderingHints.KEY_ANTIALIASING, 
-                              antialias ? RenderingHints.VALUE_ANTIALIAS_ON :
-                              RenderingHints.VALUE_ANTIALIAS_OFF);
+                antialias ? RenderingHints.VALUE_ANTIALIAS_ON :
+                RenderingHints.VALUE_ANTIALIAS_OFF);
             bufferedHints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
-                              antialias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
-                              RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+                antialias ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON :
+                RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
             bufferedHints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, 
-                              niceAlphaInterpolation ? 
-                              RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY :
-                              RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+                niceAlphaInterpolation ? 
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY :
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
             }
         
         java.lang.ref.WeakReference toolTip = new java.lang.ref.WeakReference(null);
@@ -328,7 +328,7 @@ public class Display2D extends JComponent implements Steppable
             synchronized(Display2D.this.simulation.state.schedule)  // for time()
                 {
                 if (movieMaker!=null)  // we're writing a movie
-		    insideDisplay.paintToMovie(g);
+                    insideDisplay.paintToMovie(g);
                 else paint(g,buffer,true);
                 }
             }
@@ -366,10 +366,10 @@ public class Display2D extends JComponent implements Steppable
 
         /** Paints an image to the screen either buffered or unbuffered.  If buffered, the
             buffer is returned for your convenience.   If SHARED is true, then the buffer
-	    is shared internally, so if
+            is shared internally, so if
             you want to hold onto it without it changing, you'll need to make a copy.  If SHARED
-	    is false, then the buffer is given to you to do as you like and a new buffer is
-	    created next time (less efficient).
+            is false, then the buffer is given to you to do as you like and a new buffer is
+            created next time (less efficient).
             This method is called from Swing
             when the window is resized or scrolled or whatnot, but it's also called as
             a result of the underlying model thread advancing a step so we can see
@@ -396,12 +396,12 @@ public class Display2D extends JComponent implements Steppable
             {
             synchronized(Display2D.this.simulation.state.schedule)
                 {
-		BufferedImage result = null;
+                BufferedImage result = null;
                 Rectangle2D clip = computeClip();
                 if (!buffered)
                     paintUnbuffered((Graphics2D)graphics,clip);
-               else
-	            result= paintBuffered((Graphics2D)graphics,clip);
+                else
+                    result= paintBuffered((Graphics2D)graphics,clip);
                 if (!shared) buffer = null; // kill it so paintBuffered(graphics,clip) makes a new one next time
                 if (result != null) result.flush();  // just in case
                 return result;
@@ -445,8 +445,8 @@ public class Display2D extends JComponent implements Steppable
             You should probably call paintComponent() instead. */
         void paintUnbuffered(Graphics2D g, Rectangle2D clip)
             {
-	    if (g==null) return;
-	    
+            if (g==null) return;
+            
             g.setRenderingHints(unbufferedHints);
 
             // dunno if we want this
@@ -460,8 +460,8 @@ public class Display2D extends JComponent implements Steppable
                     g.fillRect((int)clip.getX(),(int)clip.getY(),(int)clip.getWidth(),(int)clip.getHeight());
                     }
                 
-		/*
-		// get scale
+                /*
+                // get scale
                 final double scale = getScale();
                 // compute WHERE we need to draw
                 int origindx = 0;
@@ -470,15 +470,15 @@ public class Display2D extends JComponent implements Steppable
                 // for information on why we use getViewRect, see computeClip()
                 Rectangle2D fullComponent = getViewRect();
                 if (fullComponent.getWidth() > (width * scale))
-                    origindx = (int)((fullComponent.getWidth() - width*scale)/2);
+                origindx = (int)((fullComponent.getWidth() - width*scale)/2);
                 if (fullComponent.getHeight() > (height*scale))
-                    origindy = (int)((fullComponent.getHeight() - height*scale)/2);
+                origindy = (int)((fullComponent.getHeight() - height*scale)/2);
                     
                 // offset origin as user had requested
                 origindx += (int)(xOffset*scale);
                 origindy += (int)(yOffset*scale);
-		*/
-		
+                */
+                
                 Iterator iter = portrayals.iterator();
                 while (iter.hasNext())
                     {
@@ -486,12 +486,12 @@ public class Display2D extends JComponent implements Steppable
                     if (p.visible)
                         {
 /*
-			Rectangle2D rdraw = new Rectangle2D.Double(
-                            // we floor to an integer because we're dealing with exact pixels at this point
-                            (int)(p.bounds.x * scale) + origindx,
-                            (int)(p.bounds.y * scale) + origindy,
-                            (int)(p.bounds.width * scale),
-                            (int)(p.bounds.height * scale));
+  Rectangle2D rdraw = new Rectangle2D.Double(
+  // we floor to an integer because we're dealing with exact pixels at this point
+  (int)(p.bounds.x * scale) + origindx,
+  (int)(p.bounds.y * scale) + origindy,
+  (int)(p.bounds.width * scale),
+  (int)(p.bounds.height * scale));
 */
 
                         // set buffering if necessary
@@ -503,12 +503,12 @@ public class Display2D extends JComponent implements Steppable
                         
                         // do the drawing
 /*
-                        p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
-                                         g, new DrawInfo2D(rdraw,clip));
+  p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
+  g, new DrawInfo2D(rdraw,clip));
 */
-			p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
-					g, getDrawInfo2D(p, clip));
-			
+                        p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
+                            g, getDrawInfo2D(p, clip));
+                        
                         // reset the buffering if necessary
                         p.portrayal.setBuffering(buf);
                         }
@@ -644,7 +644,7 @@ public class Display2D extends JComponent implements Steppable
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
-                                              getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
+                    getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
         catch (Exception e) { /* e.printStackTrace(); */ }
 
@@ -654,7 +654,7 @@ public class Display2D extends JComponent implements Steppable
             // turns this off by default, which makes 1.3.1 half the speed (and draws
             // objects wrong to boot).
             System.setProperty("com.apple.hwaccel","true");  // probably settable as an applet.  D'oh! Looks like it's ignored.
-	    System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
+            System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
             // the following are likely not settable
             // macOS X 1.4.1 java doesn't show the grow box.  We force it here.
             System.setProperty("apple.awt.showGrowBox","true");
@@ -852,7 +852,7 @@ public class Display2D extends JComponent implements Steppable
         on-screen in the order that they are attached; thus the "top-most" portrayal
         will be the last one attached.  */
     public void attach(FieldPortrayal2D portrayal, String name, 
-                       Rectangle2D.Double bounds, boolean visible )
+        Rectangle2D.Double bounds, boolean visible )
         {
         FieldPortrayal2DHolder p = new FieldPortrayal2DHolder(portrayal,name,bounds,visible);
         portrayals.add(p);
@@ -921,8 +921,8 @@ public class Display2D extends JComponent implements Steppable
         // create the inner display and put it in a Scroll Panel
         insideDisplay = new InnerDisplay2D(width,height);
         display = new JScrollPane(insideDisplay,
-                                  JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                                  JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+            JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+            JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         display.setMinimumSize(new Dimension(0,0));
         display.setBorder(null);
         display.getHorizontalScrollBar().setBorder(null);
@@ -935,7 +935,7 @@ public class Display2D extends JComponent implements Steppable
         insideDisplay.setBackground(UIManager.getColor("Panel.background"));
         display.setBackground(UIManager.getColor("Panel.background")); // this is the one that has any affect
         port.setBackground(UIManager.getColor("Panel.background"));
-	
+        
         // create the button bar at the top.
         header = new Box(BoxLayout.X_AXIS);
 
@@ -957,8 +957,8 @@ public class Display2D extends JComponent implements Steppable
             public void mousePressed(MouseEvent e)
                 {
                 popup.show(e.getComponent(),
-                           togglebutton.getLocation().x,
-                           togglebutton.getSize().height);
+                    togglebutton.getLocation().x,
+                    togglebutton.getSize().height);
                 }
             public void mouseReleased(MouseEvent e)
                 {
@@ -974,7 +974,7 @@ public class Display2D extends JComponent implements Steppable
                 final Point point = e.getPoint();
                 if( e.getClickCount() == 2 )
                     createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
-                                      Display2D.this.simulation );
+                        Display2D.this.simulation );
                 if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
                     performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
                 repaint();
@@ -1124,44 +1124,44 @@ public class Display2D extends JComponent implements Steppable
         Bag[] hitObjs = new Bag[portrayals.size()];
         Iterator iter = portrayals.iterator();
         int x=0;
-		
+                
         while (iter.hasNext())
             {
             hitObjs[x] = new Bag();
             FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
             if (p.visible)
                 {
-		p.portrayal.hitObjects(getDrawInfo2D(p, rect), hitObjs[x]);
+                p.portrayal.hitObjects(getDrawInfo2D(p, rect), hitObjs[x]);
                 }
             x++;
             }
         return hitObjs;
         }
-	
+        
     /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
     public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point)
-	{
-	return getDrawInfo2D(portrayal, new java.awt.geom.Rectangle2D.Double( point.getX(), point.getY(), 1, 1 )); 
-	}
+        {
+        return getDrawInfo2D(portrayal, new java.awt.geom.Rectangle2D.Double( point.getX(), point.getY(), 1, 1 )); 
+        }
 
     /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
     public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Rectangle2D clip)
-	{
-	Iterator iter = portrayals.iterator();
-	while(iter.hasNext())
-	    {
+        {
+        Iterator iter = portrayals.iterator();
+        while(iter.hasNext())
+            {
             FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
-	    if (p.portrayal == portrayal) { return getDrawInfo2D(p, clip); }
-	    }
-	return null;
-	}
-	
-	
+            if (p.portrayal == portrayal) { return getDrawInfo2D(p, clip); }
+            }
+        return null;
+        }
+        
+        
     DrawInfo2D getDrawInfo2D(FieldPortrayal2DHolder holder, Rectangle2D clip)
-	{
- 	if (holder==null) return null;
-	
-	double scale = getScale();
+        {
+        if (holder==null) return null;
+        
+        double scale = getScale();
         // compute WHERE we need to draw
         int origindx = 0;
         int origindy = 0;
@@ -1177,14 +1177,14 @@ public class Display2D extends JComponent implements Steppable
         if (fullComponent.getHeight() > (insideDisplay.height*scale))
             origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
                                 
-	Rectangle2D.Double region = new Rectangle2D.Double(
-	    // we floor to an integer because we're dealing with exact pixels at this point
-	    (int)(holder.bounds.x * scale) + origindx,
-	    (int)(holder.bounds.y * scale) + origindy,
-	    (int)(holder.bounds.width * scale),
-	    (int)(holder.bounds.height * scale));
-	return new DrawInfo2D(region, clip);
-	}
+        Rectangle2D.Double region = new Rectangle2D.Double(
+            // we floor to an integer because we're dealing with exact pixels at this point
+            (int)(holder.bounds.x * scale) + origindx,
+            (int)(holder.bounds.y * scale) + origindy,
+            (int)(holder.bounds.width * scale),
+            (int)(holder.bounds.height * scale));
+        return new DrawInfo2D(region, clip);
+        }
 
     static final int MAX_TOOLTIP_LINES = 10;
     public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation )
@@ -1213,14 +1213,14 @@ public class Display2D extends JComponent implements Steppable
     ArrayList selectedWrappers = new ArrayList();
     
     public void performSelection( LocationWrapper wrapper)
-	{
-	Bag b = new Bag();
-	b.add(wrapper);
-	performSelection(b);
-	}
+        {
+        Bag b = new Bag();
+        b.add(wrapper);
+        performSelection(b);
+        }
     
     public void performSelection( final Bag locationWrappers )
-	{
+        {
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)
             {
@@ -1228,26 +1228,26 @@ public class Display2D extends JComponent implements Steppable
             wrapper.getFieldPortrayal().setSelected(wrapper,false);
             }
         selectedWrappers.clear();
-	
-	if (locationWrappers == null) return;  // deselect everything
-	
-	// add new wrappers
-	for(int x=0;x < locationWrappers.size(); x++)
-	    {
-		LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
-                wrapper.getFieldPortrayal().setSelected(wrapper, true);
-                selectedWrappers.add(wrapper);
-	    }
-	}
+        
+        if (locationWrappers == null) return;  // deselect everything
+        
+        // add new wrappers
+        for(int x=0;x < locationWrappers.size(); x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+            wrapper.getFieldPortrayal().setSelected(wrapper, true);
+            selectedWrappers.add(wrapper);
+            }
+        }
         
     public void performSelection( final Rectangle2D.Double rect )
         {
         // gather objects hit and select them, and put in selectedObjects
         Bag[] hitObjects = objectsHitBy(rect);
-	Bag collection = new Bag();
+        Bag collection = new Bag();
         for(int x=0;x<hitObjects.length;x++)
-	    collection.addAll(hitObjects[x]);
-	performSelection(collection);
+            collection.addAll(hitObjects[x]);
+        performSelection(collection);
         }
 
     /** Determines the inspectors appropriate for the given selection region (rect), and sends
@@ -1298,8 +1298,8 @@ public class Display2D extends JComponent implements Steppable
             public void componentResized (ComponentEvent e) 
                 {
                 Utilities.doEnsuredRepaint(header);
-		display.getHorizontalScrollBar().setUnitIncrement(display.getViewport().getWidth() / SCROLL_BAR_SCROLL_RATIO);
-		display.getVerticalScrollBar().setUnitIncrement(display.getViewport().getHeight() / SCROLL_BAR_SCROLL_RATIO);
+                display.getHorizontalScrollBar().setUnitIncrement(display.getViewport().getWidth() / SCROLL_BAR_SCROLL_RATIO);
+                display.getVerticalScrollBar().setUnitIncrement(display.getViewport().getHeight() / SCROLL_BAR_SCROLL_RATIO);
                 }
             });
                                 
@@ -1375,39 +1375,39 @@ public class Display2D extends JComponent implements Steppable
                 {
                 Object[] options = { "Cancel", "Save to PDF", "Save to PNG Bitmap" };
                 result = JOptionPane.showOptionDialog(getFrame(), "Save window snapshot to what kind of file format?", "Save Format", 
-                                                      JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                                                      null, options, options[0]);
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
                 }
                         
             if (result == 2)  // PNG
                 {
                 // NOW pop up the save window
                 FileDialog fd = new FileDialog(getFrame(), 
-                                               "Save Snapshot as 24-bit PNG...", FileDialog.SAVE);
+                    "Save Snapshot as 24-bit PNG...", FileDialog.SAVE);
                 fd.setFile("Untitled.png");
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
-                    {
-                    OutputStream stream = new BufferedOutputStream(new FileOutputStream(
-                                                                       new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"))));
-                    PngEncoder tmpEncoder = new
-                        PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
-                    stream.write(tmpEncoder.pngEncode());
-                    stream.close();
-                    }
-                catch (Exception e) { e.printStackTrace(); }
+                                            {
+                                            OutputStream stream = new BufferedOutputStream(new FileOutputStream(
+                                                    new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"))));
+                                            PngEncoder tmpEncoder = new
+                                                PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+                                            stream.write(tmpEncoder.pngEncode());
+                                            stream.close();
+                                            }
+                    catch (Exception e) { e.printStackTrace(); }
                 }
             else if (result == 1)  // PDF
                 {
                 FileDialog fd = new FileDialog(getFrame(), 
-                                               "Save Snapshot as PDF...", FileDialog.SAVE);
+                    "Save Snapshot as PDF...", FileDialog.SAVE);
                 fd.setFile("Untitled.pdf");
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
-                    {
-                    PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
-                    }
-                catch (Exception e) { e.printStackTrace(); }
+                                            {
+                                            PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
+                                            }
+                    catch (Exception e) { e.printStackTrace(); }
                 }
             else // (result == 0)  // Cancel
                 {
@@ -1447,7 +1447,7 @@ public class Display2D extends JComponent implements Steppable
             Graphics g = insideDisplay.getGraphics();
             final BufferedImage typicalImage = insideDisplay.paint(g,true,false);
             g.dispose();
-            	    
+                    
             if (!movieMaker.start(typicalImage))
                 movieMaker = null;  // failed
             else 
@@ -1455,17 +1455,17 @@ public class Display2D extends JComponent implements Steppable
                 movieButton.setIcon(MOVIE_ON_ICON);
                 movieButton.setPressedIcon(MOVIE_ON_ICON_P);
 
-		// start up simulation paused if necessary
-		final Console console = (Console)(simulation.controller);
-		if (console.getPlayState() == Console.PS_STOPPED)  // either after simulation or we just started the program
-		    console.pressPause();
-		
-		lastEncodedSteps = -1;
+                // start up simulation paused if necessary
+                final Console console = (Console)(simulation.controller);
+                if (console.getPlayState() == Console.PS_STOPPED)  // either after simulation or we just started the program
+                    console.pressPause();
+                
+                lastEncodedSteps = -1;
 
-		// capture the currently shown frame (important if we just paused the simulation)
-		insideDisplay.paintToMovie(null);
-		
-		// set ourselves up to quit when stopped
+                // capture the currently shown frame (important if we just paused the simulation)
+                insideDisplay.paintToMovie(null);
+                
+                // set ourselves up to quit when stopped
                 simulation.scheduleAtEnd(new Steppable()   // to stop movie when simulation is stopped
                     {
                     public void step(SimState state) { stopMovie(); }
@@ -1514,16 +1514,16 @@ public class Display2D extends JComponent implements Steppable
         long steps = simulation.state.schedule.getSteps();
     
         if (steps % getInterval() == 0)       // time to update!
-	    {
-	    if (insideDisplay.isShowing())
-		{
-		insideDisplay.repaint();
-		}
-	    else if (movieMaker != null)  // we're not being displayed but we still need to output to a movie
-		{
-		insideDisplay.paintToMovie(null);
-		}
-	    insideDisplay.updateToolTips();
-	    }
+            {
+            if (insideDisplay.isShowing())
+                {
+                insideDisplay.repaint();
+                }
+            else if (movieMaker != null)  // we're not being displayed but we still need to output to a movie
+                {
+                insideDisplay.paintToMovie(null);
+                }
+            insideDisplay.updateToolTips();
+            }
         }
     }

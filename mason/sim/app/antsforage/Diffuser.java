@@ -18,9 +18,9 @@ public /*strictfp*/ class Diffuser implements Steppable
     double diffusionRate;
 
     public Diffuser( final DoubleGrid2D updateGrid,
-                     final DoubleGrid2D tempGrid,
-                     final double evaporationRate,
-                     final double diffusionRate )
+        final DoubleGrid2D tempGrid,
+        final double evaporationRate,
+        final double diffusionRate )
         {
         this.updateGrid = updateGrid;
         this.tempGrid = tempGrid;
@@ -63,13 +63,13 @@ public /*strictfp*/ class Diffuser implements Steppable
                 // go across top
                 yplus1 = _valgrid.sty(y+1);
                 average = (_past[yminus1] + _past[y] + _past[yplus1] +
-                           _current[yminus1] + _current[y] + _current[yplus1] +
-                           _next[yminus1] + _next[y] + _next[yplus1]) / 9.0;
+                    _current[yminus1] + _current[y] + _current[yplus1] +
+                    _next[yminus1] + _next[y] + _next[yplus1]) / 9.0;
 
                 // load the new value into HeatBugs.this.valgrid2
                 _put[y] = (1.0-_evaporationRate) * 
                     (_current[y] + _diffusionRate * 
-                     (average - _current[y]));
+                    (average - _current[y]));
 
                 // set y-1 to what y was "last time around"
                 yminus1 = y;

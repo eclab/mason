@@ -140,7 +140,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                 
         // ask
         if(JOptionPane.showConfirmDialog(parent, p,"Create a New Chart...",
-                                         JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
+                JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION)
             return null;
 
         if( encoding.getSelectedIndex() == 0 )

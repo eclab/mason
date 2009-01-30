@@ -36,9 +36,9 @@ public class CrowdSim extends SimState
         {
         Agent boid = new Agent();
         boidSpace.setObjectLocation(boid,
-                                    new Double3D(       random.nextDouble()*spaceWidth,
-                                                        random.nextDouble()*spaceHeight,
-                                                        random.nextDouble()*spaceDepth));
+            new Double3D(       random.nextDouble()*spaceWidth,
+                random.nextDouble()*spaceHeight,
+                random.nextDouble()*spaceDepth));
         boid.setStopper(schedule.scheduleRepeating(boid));
         boidCount++;
         }

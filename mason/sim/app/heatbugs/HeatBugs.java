@@ -53,7 +53,7 @@ public /*strictfp*/ class HeatBugs extends SimState
             return d;
             }
         catch (Exception e) { return new double[0]; }
-    }
+        }
     
     public double[] getBugYPos() {
         try
@@ -66,7 +66,7 @@ public /*strictfp*/ class HeatBugs extends SimState
             return d;
             }
         catch (Exception e) { return new double[0]; }
-    }
+        }
 
 
     public void setRandomMovementProbability( double t )
@@ -130,8 +130,8 @@ public /*strictfp*/ class HeatBugs extends SimState
         for(int x=0;x<bugCount;x++)
             {
             bugs[x] = new HeatBug(random.nextDouble() * (maxIdealTemp - minIdealTemp) + minIdealTemp,
-                                  random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat,
-                                  randomMovementProbability);
+                random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat,
+                randomMovementProbability);
             buggrid.setObjectLocation(bugs[x],random.nextInt(gridWidth),random.nextInt(gridHeight));
             schedule.scheduleRepeating(bugs[x]);
             }
@@ -159,7 +159,7 @@ public /*strictfp*/ class HeatBugs extends SimState
         {
         Runtime runtime = Runtime.getRuntime();
         try { return ((Integer)runtime.getClass().getMethod("availableProcessors", (Class[])null).
-                      invoke(runtime,(Object[])null)).intValue(); }
+                invoke(runtime,(Object[])null)).intValue(); }
         catch (Exception e) { return 1; }  // a safe but sometimes wrong assumption!
         }
         

@@ -83,10 +83,10 @@ public class SpherePortrayal3D extends SimplePortrayal3D
         this.appearance = appearance;  this.scale = scale; this.divisions = divisions;
 
         Sphere sphere = new Sphere(0.5f, 
-                                   /* Primitive.GEOMETRY_NOT_SHARED | */
-                                   (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
-                                   (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), 
-                                   divisions, appearance);
+            /* Primitive.GEOMETRY_NOT_SHARED | */
+            (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
+            (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), 
+            divisions, appearance);
             
         setPickableFlags(sphere.getShape(Sphere.BODY));
         sphere.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)

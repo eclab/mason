@@ -25,8 +25,8 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public static final double OBSTACLE_FAST_AVOID_COEF = 1.5;
 
     public static final double MAX_DISTANCE = Math.max( CENTROID_DISTANCE,
-                                                        Math.max( AVOID_DISTANCE,
-                                                                  COPY_SPEED_DISTANCE ) );
+        Math.max( AVOID_DISTANCE,
+            COPY_SPEED_DISTANCE ) );
 
     public static final double ADJUSTMENT_RATE = 0.025;
     public static final double MIN_VELOCITY = 0.25;
@@ -149,8 +149,8 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public Vector3D randomDirection( final SimState state )
         {
         Vector3D temp = new Vector3D( 1.0 - 2.0 * state.random.nextDouble(),
-                                      1.0 - 2.0 * state.random.nextDouble(),
-                                      1.0 - 2.0 * state.random.nextDouble() );
+            1.0 - 2.0 * state.random.nextDouble(),
+            1.0 - 2.0 * state.random.nextDouble() );
         return temp.setLength( MIN_VELOCITY + state.random.nextDouble()*(MAX_VELOCITY-MIN_VELOCITY) );
         }
 
@@ -178,8 +178,8 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         for( int i = 0 ; i < info.length ; i++ )
             {
             double dist = Math.sqrt( (woimPosition.x-info[i][1])*(woimPosition.x-info[i][1]) +
-                                     (woimPosition.y-info[i][2])*(woimPosition.y-info[i][2]) +
-                                     (woimPosition.z-info[i][3])*(woimPosition.z-info[i][3]) );
+                (woimPosition.y-info[i][2])*(woimPosition.y-info[i][2]) +
+                (woimPosition.z-info[i][3])*(woimPosition.z-info[i][3]) );
             if( dist <= info[i][0]+AVOID_DISTANCE )
                 {
                 Vector3D temp = woimPosition.subtract( new Vector3D( info[i][1], info[i][2], info[i][3] ) );
@@ -195,37 +195,37 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public void step( final SimState state )
         {
         WoimsDemo3D bd = (WoimsDemo3D)state;
-            {
-            Double3D temp = new Double3D(x,y,z);  //bd.environment.getObjectLocation( this );
-            woimPosition.x = x;
-            woimPosition.y = y;
-            woimPosition.z = z;
-            preprocessWoims( bd, temp, MAX_DISTANCE );
-            }
-            Vector3D vel = new Vector3D( 0, 0, 0 );
-            vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );
-            vel = vel.add( towardsFlockCenterOfMass(bd).amplify(0.5) );
-            vel = vel.add( matchFlockSpeed(bd).amplify(0.5) );
-            vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
-            if( vel.length() <= 1.0 )
                 {
-                vel = vel.add( niceOndulation(bd).amplify(0.5) );
-                vel = vel.add( randomDirection(bd).amplify(0.25) );
+                Double3D temp = new Double3D(x,y,z);  //bd.environment.getObjectLocation( this );
+                woimPosition.x = x;
+                woimPosition.y = y;
+                woimPosition.z = z;
+                preprocessWoims( bd, temp, MAX_DISTANCE );
                 }
+        Vector3D vel = new Vector3D( 0, 0, 0 );
+        vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );
+        vel = vel.add( towardsFlockCenterOfMass(bd).amplify(0.5) );
+        vel = vel.add( matchFlockSpeed(bd).amplify(0.5) );
+        vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
+        if( vel.length() <= 1.0 )
+            {
+            vel = vel.add( niceOndulation(bd).amplify(0.5) );
+            vel = vel.add( randomDirection(bd).amplify(0.25) );
+            }
 
-            double vl = vel.length();
-            if( vl < MIN_VELOCITY )
-                vel = vel.setLength( MIN_VELOCITY );
-            else if( vl > MAX_VELOCITY )
-                vel = vel.setLength( MAX_VELOCITY );
-            vel = new Vector3D( (1-ADJUSTMENT_RATE)*velocity.x + ADJUSTMENT_RATE*vel.x,
-                                (1-ADJUSTMENT_RATE)*velocity.y + ADJUSTMENT_RATE*vel.y,
-                                (1-ADJUSTMENT_RATE)*velocity.z + ADJUSTMENT_RATE*vel.z );
-            velocity = vel;
-            Double3D desiredPosition = new Double3D( woimPosition.x+vel.x*WoimsDemo3D.TIMESTEP,
-                                                     woimPosition.y+vel.y*WoimsDemo3D.TIMESTEP,
-                                                     woimPosition.z+vel.z*WoimsDemo3D.TIMESTEP );
-            bd.setObjectLocation( this, desiredPosition );
+        double vl = vel.length();
+        if( vl < MIN_VELOCITY )
+            vel = vel.setLength( MIN_VELOCITY );
+        else if( vl > MAX_VELOCITY )
+            vel = vel.setLength( MAX_VELOCITY );
+        vel = new Vector3D( (1-ADJUSTMENT_RATE)*velocity.x + ADJUSTMENT_RATE*vel.x,
+            (1-ADJUSTMENT_RATE)*velocity.y + ADJUSTMENT_RATE*vel.y,
+            (1-ADJUSTMENT_RATE)*velocity.z + ADJUSTMENT_RATE*vel.z );
+        velocity = vel;
+        Double3D desiredPosition = new Double3D( woimPosition.x+vel.x*WoimsDemo3D.TIMESTEP,
+            woimPosition.y+vel.y*WoimsDemo3D.TIMESTEP,
+            woimPosition.z+vel.z*WoimsDemo3D.TIMESTEP );
+        bd.setObjectLocation( this, desiredPosition );
         }
 
     public double x;
@@ -281,8 +281,8 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         for( int i = 0 ; i < lastPosRel.length ; i++ )
             {
             lastPosRel[i] = new Vector3d( lastPos[i].x-lastPos[0].x,
-                                          lastPos[i].y-lastPos[0].y,
-                                          lastPos[i].z-lastPos[0].z );
+                lastPos[i].y-lastPos[0].y,
+                lastPos[i].z-lastPos[0].z );
             }
         }
         

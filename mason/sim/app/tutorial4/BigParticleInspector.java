@@ -21,8 +21,8 @@ public class BigParticleInspector extends Inspector
     public Inspector originalInspector;
     
     public BigParticleInspector(Inspector originalInspector,
-                                LocationWrapper wrapper,
-                                GUIState guiState)
+        LocationWrapper wrapper,
+        GUIState guiState)
         {
         this.originalInspector = originalInspector;
         
@@ -58,8 +58,8 @@ public class BigParticleInspector extends Inspector
                     
                     // randomize location
                     grid.setObjectLocation(particle,
-                                           new Int2D(state.random.nextInt(grid.getWidth()),
-                                                     state.random.nextInt(grid.getHeight())));
+                        new Int2D(state.random.nextInt(grid.getWidth()),
+                            state.random.nextInt(grid.getHeight())));
                     
                     // repaint everything: console, inspectors, displays,
                     // everything that might be affected by randomization

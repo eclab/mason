@@ -309,7 +309,7 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         }
         
     /** Removes all numbers in the DoubleBag.  This is done by clearing the internal array but 
-	not replacing it with a new, smaller one. */
+        not replacing it with a new, smaller one. */
     public void clear()
         {
         numObjs = 0;
@@ -321,13 +321,13 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         System.arraycopy(objs,0,o,0,numObjs);
         return o;
         }
-	
+        
     public Double[] toDoubleArray()
         {
         Double[] o = new Double[numObjs];
-	for(int i = 0; i < numObjs; i++)
-	    o[i] = new Double(objs[i]);
-	return o;
+        for(int i = 0; i < numObjs; i++)
+            o[i] = new Double(objs[i]);
+        return o;
         }
 
     public Class componentType()

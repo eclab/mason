@@ -75,7 +75,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
         else if (buffering==DONT_USE_BUFFER) return false;
         else if (sim.display.Display2D.isMacOSX)
             return (graphics.getDeviceConfiguration().
-                    getDevice().getType() != GraphicsDevice.TYPE_IMAGE_BUFFER);
+                getDevice().getType() != GraphicsDevice.TYPE_IMAGE_BUFFER);
         else if (sim.display.Display2D.isWindows)
             return (immutableField && !dirtyField);
         else // it's Linux or Solaris

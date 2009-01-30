@@ -118,7 +118,7 @@ public class PngEncoder extends Object
      * @see java.awt.Image
      */
     public PngEncoder( Image image, boolean encodeAlpha, int whichFilter,
-                       int compLevel)
+        int compLevel)
         {
         this.image = image;
         this.encodeAlpha = encodeAlpha;
@@ -278,7 +278,7 @@ public class PngEncoder extends Object
         int     oldLength = array.length;
 
         System.arraycopy( array, 0, newArray, 0,
-                          Math.min( oldLength, newLength ) );
+            Math.min( oldLength, newLength ) );
         return newArray;
         }
 
@@ -299,7 +299,7 @@ public class PngEncoder extends Object
         if (data.length + offset > pngBytes.length)
             {
             pngBytes = resizeByteArray( pngBytes, pngBytes.length +
-                                        Math.max( 1000, data.length ) );
+                Math.max( 1000, data.length ) );
             }
         System.arraycopy( data, 0, pngBytes, offset, data.length );
         return offset + data.length;
@@ -323,7 +323,7 @@ public class PngEncoder extends Object
         if (nBytes + offset > pngBytes.length)
             {
             pngBytes = resizeByteArray( pngBytes, pngBytes.length +
-                                        Math.max( 1000, nBytes ) );
+                Math.max( 1000, nBytes ) );
             }
         System.arraycopy( data, 0, pngBytes, offset, nBytes );
         return offset + nBytes;
@@ -339,7 +339,7 @@ public class PngEncoder extends Object
     protected int writeInt2( int n, int offset )
         {
         byte[] temp = { (byte)((n >> 8) & 0xff),
-                        (byte) (n & 0xff) };
+            (byte) (n & 0xff) };
         return writeBytes( temp, offset );
         }
 
@@ -353,9 +353,9 @@ public class PngEncoder extends Object
     protected int writeInt4( int n, int offset )
         {
         byte[] temp = { (byte)((n >> 24) & 0xff),
-                        (byte) ((n >> 16) & 0xff ),
-                        (byte) ((n >> 8) & 0xff ),
-                        (byte) ( n & 0xff ) };
+            (byte) ((n >> 16) & 0xff ),
+            (byte) ((n >> 8) & 0xff ),
+            (byte) ( n & 0xff ) };
         return writeBytes( temp, offset );
         }
 
@@ -506,7 +506,7 @@ public class PngEncoder extends Object
                 int[] pixels = new int[width * nRows];
 
                 pg = new PixelGrabber(image, 0, startRow,
-                                      width, nRows, pixels, 0, width);
+                    width, nRows, pixels, 0, width);
                 try {
                     pg.grabPixels();
                     }

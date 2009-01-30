@@ -68,7 +68,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-                                            info.clip);  // we don't do further clipping 
+            info.clip);  // we don't do further clipping 
 
         //if (endx > maxX) endx = maxX;
         //if (endy > maxY) endy = maxY;
@@ -131,7 +131,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-                                            info.clip);  // we don't do further clipping 
+            info.clip);  // we don't do further clipping 
 
         if (endx > maxX) endx = maxX;
         if (endy > maxY) endy = maxY;
@@ -144,7 +144,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 Portrayal p = getPortrayalForObject(obj);
                 if (!(p instanceof SimplePortrayal2D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               obj + " -- expected a SimplePortrayal2D");
+                        obj + " -- expected a SimplePortrayal2D");
                 SimplePortrayal2D portrayal = (SimplePortrayal2D)p;
                 
                 // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object

@@ -31,7 +31,7 @@ public class TilePortrayal extends QuadPortrayal
         
 
     public void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex,
-                        int gridWidth, int gridHeight)
+        int gridWidth, int gridHeight)
         {
         int x = gridCell.x;
         int y = gridCell.y;

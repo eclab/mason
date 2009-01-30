@@ -30,5 +30,5 @@ public class Band extends MutableDouble implements java.io.Serializable
         
     public String toString() { 
         return "" + strength; 
-    }
+        }
     }

@@ -83,21 +83,21 @@ public class Console extends JFrame implements Controller
     /** Do we only allow the user to type in other classNames? */
     public static boolean allowOtherClassNames;
 
-     /** Sets various MacOS X features */
-   static 
+    /** Sets various MacOS X features */
+    static 
         {
-         // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
+        // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
         // [this appears to be ignored by MacOS X Java 1.4.1 and 1.4.2.  A bug? ]
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-       // Use Quaqua if it exists
+        // Use Quaqua if it exists
         try
             {
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
-                                              getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
+                    getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
         catch (Exception e) { /* e.printStackTrace(); */ }
 
@@ -107,7 +107,7 @@ public class Console extends JFrame implements Controller
             // turns this off by default, which makes 1.3.1 half the speed (and draws
             // objects wrong to boot).
             System.setProperty("com.apple.hwaccel","true");  // probably settable as an applet.  D'oh! Looks like it's ignored.
-	    System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
+            System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
             // the following are likely not settable
             // macOS X 1.4.1 java doesn't show the grow box.  We force it here.
             System.setProperty("apple.awt.showGrowBox","true");
@@ -800,7 +800,7 @@ public class Console extends JFrame implements Controller
             
         // Make split pane and the panel which holds the split pane and the button 
         innerInspectorPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true,
-                                             listPane, inspectorSwitcher);
+            listPane, inspectorSwitcher);
         innerInspectorPanel.setDividerLocation(60);  // enough space for about 3 rows at top (roughly 2/3)
         inspectorPanel = new JPanel();
         inspectorPanel.setLayout(new BorderLayout());
@@ -1541,12 +1541,12 @@ public class Console extends JFrame implements Controller
     /** Returns the index of the option selected, or -1 if the user pressed the
         close button on the window instead -- AWT is stupid. */
     static int showOptionDialog(JFrame originalFrame, JComponent component,
-                                String title, Object[] options, boolean resizable)
+        String title, Object[] options, boolean resizable)
         {
         JOptionPane p = new JOptionPane(component, 
-                                        JOptionPane.PLAIN_MESSAGE,
-                                        JOptionPane.OK_CANCEL_OPTION,
-                                        null, options, options[0]);
+            JOptionPane.PLAIN_MESSAGE,
+            JOptionPane.OK_CANCEL_OPTION,
+            null, options, options[0]);
         JDialog d = p.createDialog(originalFrame, title);
         d.pack();
         d.setResizable(resizable);
@@ -1651,12 +1651,12 @@ public class Console extends JFrame implements Controller
                     boolean cellHasFocus) 
                     {
                     JLabel label = (JLabel)(super.getListCellRendererComponent(
-                                                list,value,index,isSelected,cellHasFocus)); 
+                            list,value,index,isSelected,cellHasFocus)); 
                     if (index >= 0)
                         {
                         label.setText("<html><body><font face='dialog'> " + shortNames.get(index) + 
-                                      "<font size='-2' color='#AAAAAA'><br> " + classNames.get(index) +
-                                      "</font></font></body></html>");
+                            "<font size='-2' color='#AAAAAA'><br> " + classNames.get(index) +
+                            "</font></font></body></html>");
                         }
                     return label;
                     }
@@ -1680,15 +1680,15 @@ public class Console extends JFrame implements Controller
                 public void valueChanged(ListSelectionEvent e)
                     {
                     if (!e.getValueIsAdjusting()) try
-                        {
-                        field.setText((String)list.getSelectedValue());
-                        browser.setText(GUIState.getInfo(Class.forName(field.getText())));
-                        }
-                    catch (Throwable ex)
-                        {
-                        field.setText((String)list.getSelectedValue());
-                        browser.setText(nothingSelectedText);
-                        }
+                                                      {
+                                                      field.setText((String)list.getSelectedValue());
+                                                      browser.setText(GUIState.getInfo(Class.forName(field.getText())));
+                                                      }
+                        catch (Throwable ex)
+                            {
+                            field.setText((String)list.getSelectedValue());
+                            browser.setText(nothingSelectedText);
+                            }
                     }
                 });
 
@@ -1736,7 +1736,7 @@ public class Console extends JFrame implements Controller
             catch (Throwable e)  // Most likely NoClassDefFoundError
                 {
                 Utilities.informOfError(e, 
-                                        "An error occurred while creating the simulation " + className, originalFrame);
+                    "An error occurred while creating the simulation " + className, originalFrame);
                 }
             }
         }
@@ -1769,7 +1769,7 @@ public class Console extends JFrame implements Controller
             catch (Exception e) // fail
                 {
                 Utilities.informOfError(e, 
-                                        "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()), null);
+                    "An error occurred while saving the simulation to the file " + (f == null ? " " : f.getName()), null);
                 }
         }
 
@@ -1789,7 +1789,7 @@ public class Console extends JFrame implements Controller
             catch (Exception e) // fail
                 {
                 Utilities.informOfError(e, 
-                                        "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
+                    "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
                 }
         }
 
@@ -1837,8 +1837,8 @@ public class Console extends JFrame implements Controller
             catch (Throwable e) // fail  -- could be an Error or an Exception
                 {
                 Utilities.informOfError(e, 
-                                        "An error occurred while loading the simulation from the file " + 
-                                        (f == null ? fd.getFile(): f.getName()), null);
+                    "An error occurred while loading the simulation from the file " + 
+                    (f == null ? fd.getFile(): f.getName()), null);
                 }
                 
         // if we failed, reset play state.  If we were stopped, do nothing (we're still stopped).
@@ -2128,7 +2128,7 @@ public class Console extends JFrame implements Controller
             {
             case SHOWING_TIME:
                 updateTimeText(simulationExists ? 
-                               simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End") : "");
+                    simulation.state.schedule.getTimestamp(lastTime, "At Start", "At End") : "");
                 break;
             case SHOWING_STEPS:
                 updateTimeText(simulationExists ? "" + lastSteps: "");
@@ -2410,7 +2410,7 @@ public class Console extends JFrame implements Controller
                                 }
                             });
                     else if (simulation.state.schedule.time() >= getWhenShouldPauseTime() ||
-                             simulation.state.schedule.getSteps() >= getWhenShouldPause() )
+                        simulation.state.schedule.getSteps() >= getWhenShouldPause() )
                         SwingUtilities.invokeLater(new Runnable()
                             {
                             public void run()

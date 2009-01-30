@@ -56,8 +56,8 @@ public abstract class Properties implements java.io.Serializable
         Class c = object.getClass();
         if (c.isArray()) return new CollectionProperties(object);
         else if (expandCollections && (Collection.class.isAssignableFrom(c) ||
-                                       Indexed.class.isAssignableFrom(c) ||
-                                       Map.class.isAssignableFrom(c)))
+                Indexed.class.isAssignableFrom(c) ||
+                Map.class.isAssignableFrom(c)))
             return new CollectionProperties(object);
         else return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeDomains);
         }

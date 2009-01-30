@@ -34,20 +34,20 @@ public class Axes extends SimplePortrayal3D
         float length = 1.1f;
         group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         group.addChild(Arrow.createArrow(ArrowDia, 
-                                         new Vector3f(0, 0, 0), 
-                                         new Vector3f(length,0,0),
-                                         (letters? "O": null),
-                                         (letters? "X": null)));
+                new Vector3f(0, 0, 0), 
+                new Vector3f(length,0,0),
+                (letters? "O": null),
+                (letters? "X": null)));
         group.addChild(Arrow.createArrow(ArrowDia, 
-                                         new Vector3f(0, 0, 0), 
-                                         new Vector3f(0,length,0), 
-                                         null, 
-                                         (letters? "Y": null)));
+                new Vector3f(0, 0, 0), 
+                new Vector3f(0,length,0), 
+                null, 
+                (letters? "Y": null)));
         group.addChild(Arrow.createArrow(ArrowDia, 
-                                         new Vector3f(0, 0, 0), 
-                                         new Vector3f(0,0,length), 
-                                         null, 
-                                         (letters? "Z": null)));
+                new Vector3f(0, 0, 0), 
+                new Vector3f(0,0,length), 
+                null, 
+                (letters? "Z": null)));
         }
 
                 

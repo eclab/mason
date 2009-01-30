@@ -68,29 +68,29 @@ public class ValueGridCellInfo {
      */
     /*public interface ValueGrid {public double value(int x, int y, int z);}
     
-    public class IntGrid2DW implements ValueGrid
-    {
-    IntGrid2D ig2;
-    public IntGrid2DW(IntGrid2D g){ ig2 = g;}
-    public double value(int x, int y, int z){return ig2.field[x][y];}
-    }
-    public class DoubleGrid2DW implements ValueGrid
-    {
-    DoubleGrid2D dg2;
-    public DoubleGrid2DW(DoubleGrid2D g){ dg2 = g;}
-    public double value(int x, int y, int z){return dg2.field[x][y];}
-    }
-    public class IntGrid3DW implements ValueGrid
-    {
-    IntGrid3D ig3;
-    public IntGrid3DW(IntGrid3D g){ ig3 = g;}
-    public double value(int x, int y, int z){return ig3.field[x][y][z];}
-    }
-    public class DoubleGrid3DW implements ValueGrid
-    {
-    DoubleGrid3D dg3;
-    public DoubleGrid3DW(DoubleGrid3D g){ dg3 = g;}
-    public double value(int x, int y, int z){return dg3.field[x][y][z];}
-    }
+      public class IntGrid2DW implements ValueGrid
+      {
+      IntGrid2D ig2;
+      public IntGrid2DW(IntGrid2D g){ ig2 = g;}
+      public double value(int x, int y, int z){return ig2.field[x][y];}
+      }
+      public class DoubleGrid2DW implements ValueGrid
+      {
+      DoubleGrid2D dg2;
+      public DoubleGrid2DW(DoubleGrid2D g){ dg2 = g;}
+      public double value(int x, int y, int z){return dg2.field[x][y];}
+      }
+      public class IntGrid3DW implements ValueGrid
+      {
+      IntGrid3D ig3;
+      public IntGrid3DW(IntGrid3D g){ ig3 = g;}
+      public double value(int x, int y, int z){return ig3.field[x][y][z];}
+      }
+      public class DoubleGrid3DW implements ValueGrid
+      {
+      DoubleGrid3D dg3;
+      public DoubleGrid3DW(DoubleGrid3D g){ dg3 = g;}
+      public double value(int x, int y, int z){return dg3.field[x][y][z];}
+      }
     */
     }

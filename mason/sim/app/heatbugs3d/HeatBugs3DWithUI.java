@@ -50,13 +50,13 @@ public class HeatBugs3DWithUI extends GUIState
         {
         HeatBugs3DWithUI heatbugs = 
             new HeatBugs3DWithUI(       new HeatBugs( System.currentTimeMillis(),
-                                                      100,100,100),
-                                        HeatBugs3DWithUI.STACKED, 
+                    100,100,100),
+                HeatBugs3DWithUI.STACKED, 
 //                                      HeatBugs3DWithUI.CLASSIC,
                                          
 //                                      HeatBugs3DWithUI.TILE);
 //                                      HeatBugs3DWithUI.NOZ);
-                                        HeatBugs3DWithUI.MESH);
+                HeatBugs3DWithUI.MESH);
                                                                                                                 
         Console c = new Console(heatbugs);
         c.setVisible(true);        

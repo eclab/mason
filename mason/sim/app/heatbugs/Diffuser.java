@@ -303,13 +303,13 @@ public /*strictfp*/ class Diffuser implements Steppable
                 // go across top
                 yplus1 = _valgrid.sty(y+1);
                 average = (_past[yminus1] + _past[y] + _past[yplus1] +
-                           _current[yminus1] + _current[y] + _current[yplus1] +
-                           _next[yminus1] + _next[y] + _next[yplus1]) / 9.0;
+                    _current[yminus1] + _current[y] + _current[yplus1] +
+                    _next[yminus1] + _next[y] + _next[yplus1]) / 9.0;
 
                 // load the new value into HeatBugs.this.valgrid2
                 _put[y] = _evaporationRate * 
                     (_current[y] + _diffusionRate * 
-                     (average - _current[y]));
+                    (average - _current[y]));
 
                 // set y-1 to what y was "last time around"
                 yminus1 = y;

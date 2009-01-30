@@ -42,7 +42,7 @@ public class MeshPortrayal extends QuadPortrayal
     static final int[] dy = {0, 0, -1, -1};
         
     public void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex, 
-                        int gridWidth, int gridHeight)
+        int gridWidth, int gridHeight)
         {
         // cast the width and height into a mesh form (1- the normal values)
         gridWidth -= 1;

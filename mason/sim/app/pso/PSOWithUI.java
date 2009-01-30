@@ -77,14 +77,14 @@ public class PSOWithUI extends GUIState
             {
             final Particle p = (Particle)(swarm.space.allObjects.objs[x]);
             swarmPortrayal.setPortrayalForObject(p,
-                                                 new RectanglePortrayal2D(Color.green,0.05)
-                                                     {
-                                                     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-                                                         {
-                                                         paint = map.getColor(p.getFitness());
-                                                         super.draw(object,graphics,info);
-                                                         }
-                                                     });
+                new RectanglePortrayal2D(Color.green,0.05)
+                    {
+                    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+                        {
+                        paint = map.getColor(p.getFitness());
+                        super.draw(object,graphics,info);
+                        }
+                    });
             }
         
         // update the size of the display appropriately.
@@ -117,7 +117,7 @@ public class PSOWithUI extends GUIState
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
         display.attach(swarmPortrayal, "Behold the Swarm!", 
-                       (display.insideDisplay.width * 0.5), (display.insideDisplay.height * 0.5), true);
+            (display.insideDisplay.width * 0.5), (display.insideDisplay.height * 0.5), true);
         }
         
     public void quit()

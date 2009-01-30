@@ -109,7 +109,7 @@ public class NumberTextField extends JComponent
                 {
                 setEdited(true);
                 }
-        }
+            }
         };
     
     public FocusAdapter focusAdapter = new FocusAdapter()

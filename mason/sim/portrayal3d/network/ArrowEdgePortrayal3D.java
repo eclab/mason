@@ -30,9 +30,9 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         public PickableArrow(float arrowTailRadius, Appearance appearance)
             {
             super(arrowTailRadius, 
-                  new Vector3f(0f,-1f,0f),
-                  new Vector3f(0f,1f,0f),
-                  null, null, appearance);
+                new Vector3f(0f,-1f,0f),
+                new Vector3f(0f,1f,0f),
+                null, null, appearance);
             setAllPickableFlags();
             }
 

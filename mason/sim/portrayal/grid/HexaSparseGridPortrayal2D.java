@@ -52,7 +52,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     
     
     public Int2D getLocation(DrawInfo2D info)
-	{
+        {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -68,8 +68,8 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
         int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
 
-	return new Int2D(startx, starty);
-	}
+        return new Int2D(startx, starty);
+        }
 
 
     public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
@@ -92,9 +92,9 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
         HexaDrawInfo2D newinfo = new HexaDrawInfo2D(new Rectangle2D.Double(0,0, 
-                                                                           Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
-                                                                           Math.ceil(info.draw.height / (maxY + 0.5))),
-                                                    info.clip, xPoints, yPoints);  // we don't do further clipping 
+                Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
+                Math.ceil(info.draw.height / (maxY + 0.5))),
+            info.clip, xPoints, yPoints);  // we don't do further clipping 
 
         Int2D loc = field.getObjectLocation(object);
         if (loc == null) return null;
@@ -179,9 +179,9 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         HexaDrawInfo2D newinfo = new HexaDrawInfo2D(new Rectangle2D.Double(0,0, 
-                                                                           Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
-                                                                           Math.ceil(info.draw.height / (maxY + 0.5))),
-                                                    info.clip, xPoints, yPoints);  // we don't do further clipping 
+                Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
+                Math.ceil(info.draw.height / (maxY + 0.5))),
+            info.clip, xPoints, yPoints);  // we don't do further clipping 
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
@@ -218,7 +218,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         Portrayal p = getPortrayalForObject(portrayedObject);
                         if (!(p instanceof SimplePortrayal2D))
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                       portrayedObject + " -- expected a SimplePortrayal2D");
+                                portrayedObject + " -- expected a SimplePortrayal2D");
                         SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                         
                         getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
@@ -291,7 +291,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                     Portrayal p = getPortrayalForObject(portrayedObject);
                     if (!(p instanceof SimplePortrayal2D))
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                   portrayedObject + " -- expected a SimplePortrayal2D");
+                            portrayedObject + " -- expected a SimplePortrayal2D");
                     SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                     
                     getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );

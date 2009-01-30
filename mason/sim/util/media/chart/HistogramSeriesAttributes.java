@@ -78,7 +78,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
     public Color getStrokeColor() { return strokeColor; }
 
-        /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
+    /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
     public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, boolean includeMargin)
         { 
@@ -104,7 +104,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         else
             {
             renderer.setSeriesOutlineStroke(getSeriesIndex(),
-                                            new BasicStroke(thickness));
+                new BasicStroke(thickness));
             renderer.setDrawBarOutline(true);
             }
 
@@ -151,7 +151,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         // second argument does not matter
 
         fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
-	fillColorWell = new ColorWell(fillColor)
+        fillColorWell = new ColorWell(fillColor)
             {
             public Color changeColor(Color c) 
                 {
@@ -217,7 +217,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                         
         if (includeMargin)
             {
-	    marginField = new NumberTextField(0.5,1.0,0.125)
+            marginField = new NumberTextField(0.5,1.0,0.125)
                 {
                 public double newValue(double newValue) 
                     {

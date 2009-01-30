@@ -64,10 +64,10 @@ public /*strictfp*/ class Ant extends OvalPortrayal2D implements Steppable
     boolean justCreated;
 
     public Ant( int orientation,
-                double pheromoneToLeaveBehind,
-                double minPheromone,
-                double maxPheromone,
-                int timeToLive ) 
+        double pheromoneToLeaveBehind,
+        double minPheromone,
+        double maxPheromone,
+        int timeToLive ) 
         {
         this.orientation = orientation;
         this.pheromoneToLeaveBehind = pheromoneToLeaveBehind;
@@ -99,7 +99,7 @@ public /*strictfp*/ class Ant extends OvalPortrayal2D implements Steppable
                 return;
             }
         if( ( af.buggrid.getObjectsAtLocation(x,y) == null ||
-              af.buggrid.getObjectsAtLocation(x,y).numObjs < AntsForage.MAX_ANTS_PER_LOCATION ) &&
+                af.buggrid.getObjectsAtLocation(x,y).numObjs < AntsForage.MAX_ANTS_PER_LOCATION ) &&
             af.obstacles.field[x][y] <= 0.5 )
             {
             // toroidal coordinates!
@@ -299,7 +299,7 @@ public /*strictfp*/ class Ant extends OvalPortrayal2D implements Steppable
                     howMany++;
                     }
                 else if( decisionMaker.info[max].foodPheromoneAmount <
-                         decisionMaker.info[i].foodPheromoneAmount )
+                    decisionMaker.info[i].foodPheromoneAmount )
                     {
                     max = i;
                     howMany = 1;
@@ -379,7 +379,7 @@ public /*strictfp*/ class Ant extends OvalPortrayal2D implements Steppable
                     }
                 }
             else if(  ( besty >= AntsForage.FOOD_YMIN ) && ( besty <= AntsForage.FOOD_YMAX ) &&
-                      ( bestx >= AntsForage.FOOD_XMIN ) && ( bestx <= AntsForage.FOOD_XMAX ) )
+                ( bestx >= AntsForage.FOOD_XMIN ) && ( bestx <= AntsForage.FOOD_XMAX ) )
                 {
                 if( !hasFoodItem )
                     {

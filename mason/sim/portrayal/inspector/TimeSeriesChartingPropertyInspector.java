@@ -40,11 +40,11 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     public static Class[] types() 
         {
         return new Class[]
-                {
-                Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
-                Integer.TYPE, Long.TYPE, Float.TYPE,
-                Double.TYPE, Valuable.class
-                };
+            {
+            Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
+            Integer.TYPE, Long.TYPE, Float.TYPE,
+            Double.TYPE, Valuable.class
+            };
         }
 
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
@@ -116,9 +116,9 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         if (!
             // I think these are the three cases for when we may need to update because
             // we've exceeded the next interval
-            (intervalMark == 0 || 
-             (time - lastTime >= interval) ||
-             lastTime % interval > intervalMark))
+                (intervalMark == 0 || 
+                (time - lastTime >= interval) ||
+                lastTime % interval > intervalMark))
             return;  // not yet
                                         
         // THIRD determine how and when to dump stuff into the main series

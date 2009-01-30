@@ -13,16 +13,16 @@ import java.text.*;
 
 /** SimState represents the simulation proper.  Your simulations generally will contain one top-level object which subclasses from SimState.
 
-<p>A SimState contains the random number generator and the simulator's schedule.  You should not change the schedule to another Schedule object.
+    <p>A SimState contains the random number generator and the simulator's schedule.  You should not change the schedule to another Schedule object.
 
-<p>When a simulation is begun, SimState's start() method is called.  Then the schedule is stepped some N times.  Last, the SimState's finish() method is called, and the simulation is over.
+    <p>When a simulation is begun, SimState's start() method is called.  Then the schedule is stepped some N times.  Last, the SimState's finish() method is called, and the simulation is over.
 
-<p>SimStates are serializable; if you wish to be able to checkpoint your simulation and read from checkpoints, you should endeavor to make all objects in the simulation serializable as well.  Prior to serializing to a checkpoint, preCheckpoint() is called.  Then after serialization, postCheckpoint() is called.  When a SimState is loaded from a checkpoint, awakeFromCheckpoint() is called to give you a chance to make any adjustments.  SimState also implements several methods which call these methods and then serialize the SimState to files and to streams.
+    <p>SimStates are serializable; if you wish to be able to checkpoint your simulation and read from checkpoints, you should endeavor to make all objects in the simulation serializable as well.  Prior to serializing to a checkpoint, preCheckpoint() is called.  Then after serialization, postCheckpoint() is called.  When a SimState is loaded from a checkpoint, awakeFromCheckpoint() is called to give you a chance to make any adjustments.  SimState also implements several methods which call these methods and then serialize the SimState to files and to streams.
 
-<p>SimState also maintains a private registry of AsynchronousSteppable objects (such as YoYoYo), and handles pausing and resuming
-them during the checkpointing process, and killing them during finish() in case they had not completed yet.
+    <p>SimState also maintains a private registry of AsynchronousSteppable objects (such as YoYoYo), and handles pausing and resuming
+    them during the checkpointing process, and killing them during finish() in case they had not completed yet.
 
-<p>If you override any of the methods foo() in SimState, should remember to <b>always</b> call super.foo() for any such method foo().
+    <p>If you override any of the methods foo() in SimState, should remember to <b>always</b> call super.foo() for any such method foo().
 */
 
 public class SimState implements java.io.Serializable

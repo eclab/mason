@@ -333,7 +333,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         }
 
     /** Removes all objects in the Bag.  This is done by clearing the internal array but 
-	not replacing it with a new, smaller one. */
+        not replacing it with a new, smaller one. */
     public void clear()
         {
         // local variables are faster

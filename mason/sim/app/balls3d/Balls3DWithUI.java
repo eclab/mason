@@ -93,8 +93,8 @@ public class Balls3DWithUI extends GUIState
         display.attach( nodePortrayal, "Balls" );
 
         display.translate(-tut.gridWidth/2,
-                          -tut.gridHeight/2,
-                          -tut.gridLength/2);
+            -tut.gridHeight/2,
+            -tut.gridLength/2);
         
         display.scale(1.0/tut.gridWidth);
 

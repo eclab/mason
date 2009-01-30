@@ -55,42 +55,42 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
             
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {
-	final Object field = getField();
+        final Object field = getField();
         StableLocation d = null;
-	if (field instanceof Continuous2D) { d = new StableDouble2D((Continuous2D) field, w.getObject()); }
-	else  { d = new StableDouble3D((Continuous3D) field,  w.getObject()); }
-	final StableLocation loc = d;
+        if (field instanceof Continuous2D) { d = new StableDouble2D((Continuous2D) field, w.getObject()); }
+        else  { d = new StableDouble3D((Continuous3D) field,  w.getObject()); }
+        final StableLocation loc = d;
         return new LocationWrapper( w.getObject(), null, this)  // don't care about location
             {
             public Object getLocation()
                 {
-		/*
-                if(field instanceof Continuous3D)
-                    return ((Continuous3D)field).getObjectLocation(object);
-                else
-                    return ((Continuous2D)field).getObjectLocation(object);
-		*/
-		loc.update();
-		return loc;
+                /*
+                  if(field instanceof Continuous3D)
+                  return ((Continuous3D)field).getObjectLocation(object);
+                  else
+                  return ((Continuous2D)field).getObjectLocation(object);
+                */
+                loc.update();
+                return loc;
                 }
                 
             public String getLocationName()
                 {
-		/*
-                if(field instanceof Continuous3D)
-                    {
-                    Double3D loc = ((Continuous3D)field).getObjectLocation(object);
-                    if (loc!=null) return loc.toCoordinates();
-                    }
-                else
-                    {
-                    Double2D loc = ((Continuous2D)field).getObjectLocation(object);
-                    if (loc!=null) return loc.toCoordinates();
-                    }
-                return null;
-		*/
-		loc.update();
-		return loc.toString();
+                /*
+                  if(field instanceof Continuous3D)
+                  {
+                  Double3D loc = ((Continuous3D)field).getObjectLocation(object);
+                  if (loc!=null) return loc.toCoordinates();
+                  }
+                  else
+                  {
+                  Double2D loc = ((Continuous2D)field).getObjectLocation(object);
+                  if (loc!=null) return loc.toCoordinates();
+                  }
+                  return null;
+                */
+                loc.update();
+                return loc.toString();
                 }
             };
         }       

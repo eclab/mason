@@ -39,7 +39,7 @@ public class Particles3D extends SimState
             p = new Particle(random.nextInt(3) - 1, random.nextInt(3) - 1, random.nextInt(3) - 1); 
             schedule.scheduleRepeating(p);
             particles.setObjectLocation(p, new Int3D(random.nextInt(gridWidth), random.nextInt(gridHeight), 
-                                                     random.nextInt(gridLength))); 
+                    random.nextInt(gridLength))); 
             }
         
         // Schedule the decreaser

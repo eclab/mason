@@ -26,7 +26,7 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
     AffineTransform.getRotateInstance(35*/*Strict*/Math.PI/180).createTransformedShape(
         new RoundRectangle2D.Double(0,0,100,100,15,15)),
     new Font("Serif", 0, 128).createGlyphVector(new FontRenderContext(
-                                                    new AffineTransform(),false,true),"MAV").getOutline()
+            new AffineTransform(),false,true),"MAV").getOutline()
     };
     
     // the location of the object's origin.
@@ -40,10 +40,10 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
     public Area area;
     public int surface;
     public Region (int num, int s,
-                   double x,
-                   double y) { shapeNum = num; 
-                   shape = shapes[shapeNum]; surface = s;
-                   area = new Area(shape); originx = x; originy = y; }
+        double x,
+        double y) { shapeNum = num; 
+        shape = shapes[shapeNum]; surface = s;
+        area = new Area(shape); originx = x; originy = y; }
     
     
     // rule 1: don't fool around with graphics' own transforms because they effect its clip, ARGH.

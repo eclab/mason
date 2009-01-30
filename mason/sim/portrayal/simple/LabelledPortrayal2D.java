@@ -156,7 +156,7 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
 
             // build font
             float size = (labelScaling == ALWAYS_SCALE ||
-                          (labelScaling == SCALE_WHEN_SMALLER && info.draw.width < 1)) ?
+                (labelScaling == SCALE_WHEN_SMALLER && info.draw.width < 1)) ?
                 (float)(info.draw.width * labelFont.getSize2D()) :
                 labelFont.getSize2D();
             if (scaledFont == null || 

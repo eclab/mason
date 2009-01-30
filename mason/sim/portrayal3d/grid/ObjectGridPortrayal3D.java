@@ -69,7 +69,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                     Portrayal p = getPortrayalForObject(o);
                     if(! (p instanceof SimplePortrayal3D))
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                   o + " -- expecting a SimplePortrayal3D");
+                            o + " -- expecting a SimplePortrayal3D");
                     SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                     p3d.setParentPortrayal(this);
                     TransformGroup newTransformGroup = p3d.getModel(o, null);
@@ -109,7 +109,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                         Portrayal p = getPortrayalForObject(o);
                         if(! (p instanceof SimplePortrayal3D))
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                       o + " -- expecting a SimplePortrayal3D");
+                                o + " -- expecting a SimplePortrayal3D");
                         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                         p3d.setParentPortrayal(this);
                         TransformGroup newTransformGroup = p3d.getModel(o, null);
@@ -172,7 +172,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                     Portrayal p = getPortrayalForObject(o);
                     if(! (p instanceof SimplePortrayal3D))
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                   o + " -- expecting a SimplePortrayal3D");
+                            o + " -- expecting a SimplePortrayal3D");
                     SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                     p3d.setParentPortrayal(this);
                     BranchGroup bg = (BranchGroup)(global.getChild(count++));
@@ -245,7 +245,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                         Portrayal p = getPortrayalForObject(o);
                         if(! (p instanceof SimplePortrayal3D))
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                       o + " -- expecting a SimplePortrayal3D");
+                                o + " -- expecting a SimplePortrayal3D");
                         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                         p3d.setParentPortrayal(this);
                         BranchGroup bg = (BranchGroup)(global.getChild(count++));

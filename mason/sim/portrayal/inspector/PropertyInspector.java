@@ -77,15 +77,15 @@ public abstract class PropertyInspector extends Inspector
     /** Returns a PropertyInspector ready to go, or null if the user cancelled or some
         other event or error occurred which prevented the PropertyIinspector from being constructed. */
     public static PropertyInspector makeInspector(Class inspectorClass, Properties properties, int index, 
-                                                  Frame parent, GUIState simulation)
+        Frame parent, GUIState simulation)
         {
         synchronized(simulation.state.schedule)
             {
             try
                 {
                 PropertyInspector inspector = (PropertyInspector)(inspectorClass.getConstructor(
-                                                                      new Class[] {Properties.class, Integer.TYPE, Frame.class, GUIState.class}).newInstance(
-                                                                          new Object[] { properties, new Integer(index), parent, simulation}));
+                        new Class[] {Properties.class, Integer.TYPE, Frame.class, GUIState.class}).newInstance(
+                            new Object[] { properties, new Integer(index), parent, simulation}));
                 if (inspector.isValidInspector()) return inspector;
                 else return null;  // failed -- perhaps the user cancelled
                 }
@@ -227,12 +227,12 @@ public abstract class PropertyInspector extends Inspector
                         try
                             {
                             inspector.setStopper(inspector.reviseStopper(state.scheduleImmediateRepeat(
-                                                                             true, inspector.getUpdateSteppable())));
+                                        true, inspector.getUpdateSteppable())));
                             }
                         catch (IllegalArgumentException ex)
                             {
                             Utilities.inform("The simulation is over and the item will not be tracked further.", 
-                                             "If you wanted to track, restart the simulation in paused state, then try tracking the item again.", null);
+                                "If you wanted to track, restart the simulation in paused state, then try tracking the item again.", null);
                             inspector.setStopper(inspector.reviseStopper(new Stoppable() { public void stop(){ } } ));  // does nothing
                             }
                                                         

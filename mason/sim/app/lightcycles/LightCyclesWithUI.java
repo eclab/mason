@@ -71,7 +71,7 @@ public class LightCyclesWithUI extends GUIState
         // just draw the cycles as white ovals
         cycleGridPortrayal.setField(((LightCycles)state).cycleGrid);
         cycleGridPortrayal.setPortrayalForClass(Cycle.class,
-                                                new sim.portrayal.simple.OvalPortrayal2D(Color.white));
+            new sim.portrayal.simple.OvalPortrayal2D(Color.white));
         
         // reschedule the displayer
         display.reset();

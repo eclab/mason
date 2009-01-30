@@ -46,19 +46,19 @@ public class SelectionBehavior extends MouseBehavior
     public void setTolerance(float tolerance) { pickCanvas.setTolerance(tolerance); }
     
     public void detach()
-	{
-	// the objective here is to remove me from the canvas so that I don't cause leaks
-	try { pickCanvas.getCanvas().removeMouseMotionListener(this); } catch (Exception e) {  }
-	try { pickCanvas.getCanvas().removeMouseListener(this); } catch (Exception e) {  }
-	// for good measure, we'll delete the branch group reference too.
-	}
-	
+        {
+        // the objective here is to remove me from the canvas so that I don't cause leaks
+        try { pickCanvas.getCanvas().removeMouseMotionListener(this); } catch (Exception e) {  }
+        try { pickCanvas.getCanvas().removeMouseListener(this); } catch (Exception e) {  }
+        // for good measure, we'll delete the branch group reference too.
+        }
+        
     public SelectionBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds, GUIState guiState)
         {
-	super(canvas, 0);
-	pickCanvas = new PickCanvas(canvas, root);
-	setTolerance(2.0f);
-	r = root;
+        super(canvas, 0);
+        pickCanvas = new PickCanvas(canvas, root);
+        setTolerance(2.0f);
+        r = root;
         root.addChild(this);
         pickCanvas.setMode(PickCanvas.GEOMETRY_INTERSECT_INFO);
         this.guiState = guiState;
@@ -66,22 +66,22 @@ public class SelectionBehavior extends MouseBehavior
 
     public void processStimulus (Enumeration criteria) 
         {
-	// do nothing -- we'll do it in mouseClicked
-	}
+        // do nothing -- we'll do it in mouseClicked
+        }
     
     public void mouseClicked(java.awt.event.MouseEvent evt)
-	{
-	if (!r.isLive()) return;  // root is dead, so are we.
+        {
+        if (!r.isLive()) return;  // root is dead, so are we.
 
-	int numClicks = evt.getClickCount();
-	int xpos = evt.getPoint().x;
-	int ypos = evt.getPoint().y;
+        int numClicks = evt.getClickCount();
+        int xpos = evt.getPoint().x;
+        int ypos = evt.getPoint().y;
 
         PickResult pickResult = null;
         PickResult pickResults[] = null;
         Shape3D shape = null;
         pickCanvas.setShapeLocation(xpos, ypos);
-	
+        
         Point3d eyePos = pickCanvas.getStartPosition ();
 
         try
@@ -103,7 +103,7 @@ public class SelectionBehavior extends MouseBehavior
         
         final Bag inspectors = new Bag(); 
         Bag inspectorPortrayals = new Bag();
-	Bag uniqueWrappers = new Bag();
+        Bag uniqueWrappers = new Bag();
         final Bag names = new Bag();
         
         int distinctObjectCount = 0;
@@ -153,29 +153,29 @@ public class SelectionBehavior extends MouseBehavior
                     else
                         {
                         LocationWrapper filledLW = fPortrayal.completedWrapper(w,pi,pickResult);
-			
-			if (numClicks >= 1)
-			    {
-			    uniqueWrappers.add(filledLW);
-			    }
-			    
-			if (numClicks >= 2)
-			    {
-			    inspectors.add(fPortrayal.getInspector(filledLW, guiState));
-			    //
-			    // FieldPortrayal[3D] should declare abstract method getWrapper(obj).
-			    // here i can retrieve it from pinfo.portrayal.
-			    //
-			    inspectorPortrayals.add(fPortrayal);
-			    names.add(fPortrayal.getName(filledLW));
-			    }
+                        
+                        if (numClicks >= 1)
+                            {
+                            uniqueWrappers.add(filledLW);
+                            }
+                            
+                        if (numClicks >= 2)
+                            {
+                            inspectors.add(fPortrayal.getInspector(filledLW, guiState));
+                            //
+                            // FieldPortrayal[3D] should declare abstract method getWrapper(obj).
+                            // here i can retrieve it from pinfo.portrayal.
+                            //
+                            inspectorPortrayals.add(fPortrayal);
+                            names.add(fPortrayal.getName(filledLW));
+                            }
                         }
                     }
                 }
             }
 
-	if (numClicks >= 1) ((Display3D)(pickCanvas.getCanvas().getParent())).performSelection(uniqueWrappers);
-	
+        if (numClicks >= 1) ((Display3D)(pickCanvas.getCanvas().getParent())).performSelection(uniqueWrappers);
+        
         final GUIState g = guiState;  // in the wild off-chance this is changed
         if(distinctObjectCount!=0 && numClicks >= 2)
             SwingUtilities.invokeLater(new Runnable()

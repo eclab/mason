@@ -21,9 +21,9 @@ public /*strictfp*/ class HexaDiffuser implements Steppable
     double diffusionRate;
 
     public HexaDiffuser( final DoubleGrid2D updateGrid,
-                         final DoubleGrid2D tempGrid,
-                         final double evaporationRate,
-                         final double diffusionRate )
+        final DoubleGrid2D tempGrid,
+        final double evaporationRate,
+        final double diffusionRate )
         {
         this.updateGrid = updateGrid;
         this.tempGrid = tempGrid;
@@ -175,7 +175,7 @@ public /*strictfp*/ class HexaDiffuser implements Steppable
                 // load the new value into HeatBugs.this.valgrid2
                 _put[y] = _evaporationRate * 
                     (_current[y] + _diffusionRate * 
-                     (average - _current[y]));
+                    (average - _current[y]));
 
                 // set y-1 to what y was "last time around"
                 yminus1 = y;

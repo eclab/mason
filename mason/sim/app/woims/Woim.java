@@ -23,8 +23,8 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     public static final double OBSTACLE_FAST_AVOID_COEF = 1.5;
 
     public static final double MAX_DISTANCE = /*Strict*/Math.max( CENTROID_DISTANCE,
-                                                                  /*Strict*/Math.max( AVOID_DISTANCE,
-                                                                                      COPY_SPEED_DISTANCE ) );
+        /*Strict*/Math.max( AVOID_DISTANCE,
+            COPY_SPEED_DISTANCE ) );
 
     public static final double ADJUSTMENT_RATE = 0.025;
     public static final double MIN_VELOCITY = 0.25;
@@ -159,7 +159,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     public Vector2D randomDirection( final SimState state )
         {
         Vector2D temp = new Vector2D( 1.0 - 2.0 * state.random.nextDouble(),
-                                      1.0 - 2.0 * state.random.nextDouble() );
+            1.0 - 2.0 * state.random.nextDouble() );
         return temp.setLength( MIN_VELOCITY + state.random.nextDouble()*(MAX_VELOCITY-MIN_VELOCITY) );
         }
 
@@ -189,7 +189,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
         for( int i = 0 ; i < info.length ; i++ )
             {
             double dist = /*Strict*/Math.sqrt( (woimPosition.x-info[i][1])*(woimPosition.x-info[i][1]) +
-                                               (woimPosition.y-info[i][2])*(woimPosition.y-info[i][2]) );
+                (woimPosition.y-info[i][2])*(woimPosition.y-info[i][2]) );
             if( dist <= info[i][0]+AVOID_DISTANCE )
                 {
                 Vector2D temp = woimPosition.subtract( new Vector2D( info[i][1], info[i][2] ) );
@@ -205,36 +205,36 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     public void step( final SimState state )
         {
         WoimsDemo bd = (WoimsDemo)state;
-            {
-            Double2D temp = new Double2D(x,y);  //bd.environment.getObjectLocation( this );
-            woimPosition.x = x;
-            woimPosition.y = y;
-            preprocessWoims( bd, temp, MAX_DISTANCE );
-            }
-
-            Vector2D vel = new Vector2D( 0, 0 );
-            vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );
-            vel = vel.add( towardsFlockCenterOfMass(bd).amplify(0.5) );
-            vel = vel.add( matchFlockSpeed(bd).amplify(0.5) );
-            vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
-            if( vel.length() <= 1.0 )
                 {
-                vel = vel.add( niceUndulation(bd).amplify(0.5) );
-                vel = vel.add( randomDirection(bd).amplify(0.25) );
+                Double2D temp = new Double2D(x,y);  //bd.environment.getObjectLocation( this );
+                woimPosition.x = x;
+                woimPosition.y = y;
+                preprocessWoims( bd, temp, MAX_DISTANCE );
                 }
 
-            double vl = vel.length();
-            if( vl < MIN_VELOCITY )
-                vel = vel.setLength( MIN_VELOCITY );
-            else if( vl > MAX_VELOCITY )
-                vel = vel.setLength( MAX_VELOCITY );
-            vel = new Vector2D( (1-ADJUSTMENT_RATE)*velocity.x + ADJUSTMENT_RATE*vel.x,
-                                (1-ADJUSTMENT_RATE)*velocity.y + ADJUSTMENT_RATE*vel.y );
-            velocity = vel;
-            Double2D desiredPosition = new Double2D( woimPosition.x+vel.x*WoimsDemo.TIMESTEP,
-                                                     woimPosition.y+vel.y*WoimsDemo.TIMESTEP );
-            bd.setObjectLocation( this, desiredPosition );
-            updateLinkPosition();
+        Vector2D vel = new Vector2D( 0, 0 );
+        vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );
+        vel = vel.add( towardsFlockCenterOfMass(bd).amplify(0.5) );
+        vel = vel.add( matchFlockSpeed(bd).amplify(0.5) );
+        vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
+        if( vel.length() <= 1.0 )
+            {
+            vel = vel.add( niceUndulation(bd).amplify(0.5) );
+            vel = vel.add( randomDirection(bd).amplify(0.25) );
+            }
+
+        double vl = vel.length();
+        if( vl < MIN_VELOCITY )
+            vel = vel.setLength( MIN_VELOCITY );
+        else if( vl > MAX_VELOCITY )
+            vel = vel.setLength( MAX_VELOCITY );
+        vel = new Vector2D( (1-ADJUSTMENT_RATE)*velocity.x + ADJUSTMENT_RATE*vel.x,
+            (1-ADJUSTMENT_RATE)*velocity.y + ADJUSTMENT_RATE*vel.y );
+        velocity = vel;
+        Double2D desiredPosition = new Double2D( woimPosition.x+vel.x*WoimsDemo.TIMESTEP,
+            woimPosition.y+vel.y*WoimsDemo.TIMESTEP );
+        bd.setObjectLocation( this, desiredPosition );
+        updateLinkPosition();
         }
 
     public double x;
@@ -306,11 +306,11 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
         for( int i = 0 ; i < numLinks ; i++ )
             if( lastPos[i] != null )
                 drawLink( graphics,
-                          info.draw.x+info.draw.width*(lastPos[i].x-lastPos[0].x),
-                          info.draw.y+info.draw.height*(lastPos[i].y-lastPos[0].y),
-                          info.draw.width,
-                          info.draw.height,
-                          colors[i] );
+                    info.draw.x+info.draw.width*(lastPos[i].x-lastPos[0].x),
+                    info.draw.y+info.draw.height*(lastPos[i].y-lastPos[0].y),
+                    info.draw.width,
+                    info.draw.height,
+                    colors[i] );
         }
 
     /** If drawing area intersects selected area, add last portrayed object to the bag */

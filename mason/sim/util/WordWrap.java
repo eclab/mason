@@ -111,8 +111,8 @@ public class WordWrap implements java.io.Serializable
                 {
                 int top = e;
                 while(top < buf.length() - 1 &&  // not last character
-                      Character.isWhitespace(buf.charAt(top)) &&  // it's whitespace
-                      buf.charAt(top) != '\n')  // but it's not an '\n'
+                    Character.isWhitespace(buf.charAt(top)) &&  // it's whitespace
+                    buf.charAt(top) != '\n')  // but it's not an '\n'
                     top++;
                 buf.delete(e,top);  // yank out all whitespace to the next value
                 if (buf.charAt(e)!='\n') // not already a \n, need to add one
@@ -123,7 +123,7 @@ public class WordWrap implements java.io.Serializable
                 {
                 int l = e;
                 while(l > s && // don't back beyond s
-                      !Character.isWhitespace(buf.charAt(l)))  // not a whitespace char
+                    !Character.isWhitespace(buf.charAt(l)))  // not a whitespace char
                     l--;
                 if (l==s && !Character.isWhitespace(buf.charAt(l))) // oops, all non-whitespace, must split
                     {

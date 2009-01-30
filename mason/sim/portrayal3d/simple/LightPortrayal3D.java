@@ -73,7 +73,7 @@ public class LightPortrayal3D extends SimplePortrayal3D
 
     /** Point Light.  If you don't know what to provide for attenutation, you can't go wrong with 1,0,0. */
     public LightPortrayal3D(java.awt.Color color, Double3D position, 
-                            float constantAttenuation, float linearAttenuation, float quadraticAttenuation)
+        float constantAttenuation, float linearAttenuation, float quadraticAttenuation)
         {
         PointLight p = new PointLight();
         p.setAttenuation(constantAttenuation, linearAttenuation, quadraticAttenuation);

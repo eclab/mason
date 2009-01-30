@@ -81,42 +81,42 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
     // Presently commented out: in Java 1.6, this code appears to freak JMF out :-(
     // Not sure why 1.6 would be doing this.   Anyway, JMF doesn't appear to be
     // pooping JMF files out any more, at least under 1.5.  -- Sean
-  /*
-    static
-        {
-        // We're going to hack com.sun.media.Log so that it doesn't
-        // create the jmf.log poops.  These poops are made by Log.static{}
-        // when the Log class is loaded.  Here's the trick.  
-        // The method first checks for the current security by calling 
-        // com.sun.media.JMFSecurityManager.getJMFSecurity(), which
-        // just returns a single object created at static initialize time.
-        // We do that here by calling the method ourselves.
+    /*
+      static
+      {
+      // We're going to hack com.sun.media.Log so that it doesn't
+      // create the jmf.log poops.  These poops are made by Log.static{}
+      // when the Log class is loaded.  Here's the trick.  
+      // The method first checks for the current security by calling 
+      // com.sun.media.JMFSecurityManager.getJMFSecurity(), which
+      // just returns a single object created at static initialize time.
+      // We do that here by calling the method ourselves.
             
-        com.sun.media.JMFSecurityManager.getJMFSecurity();
+      com.sun.media.JMFSecurityManager.getJMFSecurity();
             
-        // That'll do the job.  Now the next thing the Log.static{} 
-        // does is create the filename by calling System.getProperty("user.dir"),
-        // and tacking on a file separator and the infamous "jmf.log" string
-        // after that.  It then makes the file and more or less exits.
-        // We'll mess things up by deleting the System's properties
-        // temporarily.
+      // That'll do the job.  Now the next thing the Log.static{} 
+      // does is create the filename by calling System.getProperty("user.dir"),
+      // and tacking on a file separator and the infamous "jmf.log" string
+      // after that.  It then makes the file and more or less exits.
+      // We'll mess things up by deleting the System's properties
+      // temporarily.
 
-        java.util.Properties p = System.getProperties();
-        System.setProperties(new java.util.Properties());
+      java.util.Properties p = System.getProperties();
+      System.setProperties(new java.util.Properties());
 
-        // now we call something which causes Log.static{} to load.
+      // now we call something which causes Log.static{} to load.
         
-        try
-            {
-            com.sun.media.Log.getIndent();
-            }
-        catch (Exception e) { }
+      try
+      {
+      com.sun.media.Log.getIndent();
+      }
+      catch (Exception e) { }
         
-        // restore the properties and tell the Log never to try to write to the file.
-        System.setProperties(p);
+      // restore the properties and tell the Log never to try to write to the file.
+      System.setProperties(p);
         
-        com.sun.media.Log.isEnabled = false;
-        }
+      com.sun.media.Log.isEnabled = false;
+      }
     */
     
     /** Returns null and prints an error out to stderr if an error occurred while trying to
@@ -204,7 +204,7 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
                 } catch (Exception e) {}
             }
         return stateTransitionOK;
-    }
+        }
     /**
      * Controller Listener.
      */
@@ -217,37 +217,37 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
                 waitSync.notifyAll();
                 }
             } else if (evt instanceof ResourceUnavailableEvent) {
-                synchronized (waitSync) {
+            synchronized (waitSync) {
+                stateTransitionOK = false;
+                waitSync.notifyAll();
+                }
+            } else if (evt instanceof EndOfMediaEvent) {
+            evt.getSourceController().stop();  // no need to check for null stopper, as null is not an instance of any class
+            // sometimes Java gives us an error on this one.  So we need to wrap it
+            // and hope for the best -- Sean
+            try
+                { evt.getSourceController().close(); }
+            catch (Exception e) 
+                {
+                System.err.println("Spurious Sun JMF Error?\n\n"); e.printStackTrace(); 
+                    
+                // system sometimes gives no further event updates, so the waiter hangs, 
+                // and I'm not sure why -- so here we make it fail.  I wonder if this will work -- Sean
+                synchronized (waitSync) 
+                    {
                     stateTransitionOK = false;
                     waitSync.notifyAll();
                     }
-                } else if (evt instanceof EndOfMediaEvent) {
-                    evt.getSourceController().stop();  // no need to check for null stopper, as null is not an instance of any class
-                    // sometimes Java gives us an error on this one.  So we need to wrap it
-                    // and hope for the best -- Sean
-                    try
-                        { evt.getSourceController().close(); }
-                    catch (Exception e) 
-                        {
-                        System.err.println("Spurious Sun JMF Error?\n\n"); e.printStackTrace(); 
-                    
-                        // system sometimes gives no further event updates, so the waiter hangs, 
-                        // and I'm not sure why -- so here we make it fail.  I wonder if this will work -- Sean
-                        synchronized (waitSync) 
-                            {
-                            stateTransitionOK = false;
-                            waitSync.notifyAll();
-                            }
-                        synchronized (waitFileSync) 
-                            {
-                            fileSuccess = false;
-                            fileDone = true;
-                            waitFileSync.notifyAll();
-                            }
-                        // end weird mods
-                        }
+                synchronized (waitFileSync) 
+                    {
+                    fileSuccess = false;
+                    fileDone = true;
+                    waitFileSync.notifyAll();
                     }
-    }
+                // end weird mods
+                }
+            }
+        }
 
 
     final Object waitFileSync = new Object();
@@ -265,7 +265,7 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
                 } catch (Exception e) {}
             }
         return fileSuccess;
-    }
+        }
 
 
     /**
@@ -279,13 +279,13 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
                 waitFileSync.notifyAll();
                 }
             } else if (evt instanceof DataSinkErrorEvent) {
-                synchronized (waitFileSync) {
-                    fileDone = true;
-                    fileSuccess = false;
-                    waitFileSync.notifyAll();
-                    }
+            synchronized (waitFileSync) {
+                fileDone = true;
+                fileSuccess = false;
+                waitFileSync.notifyAll();
                 }
-    }
+            }
+        }
 
 
 
@@ -328,9 +328,9 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
         processor.realize();
         if (!waitForState(processor, Processor.Realized))
             throw new RuntimeException("Failed to Realize processor");
-	
-	// note: the file.toURI().toURL() thing is because Java6 has deprecated
-	// use of file.toURL()
+        
+        // note: the file.toURI().toURL() thing is because Java6 has deprecated
+        // use of file.toURL()
         sink = Manager.createDataSink(processor.getDataOutput(), new MediaLocator(file.toURI().toURL()));
         sink.addDataSinkListener(this);
         sink.open();

@@ -53,7 +53,7 @@ public class SwarmGame extends SimState
             {
             Agent agent = new Agent();
             agents.setObjectLocation(agent, 
-                                     new Double2D(random.nextDouble()*width, random.nextDouble() * height));
+                new Double2D(random.nextDouble()*width, random.nextDouble() * height));
             schedule.scheduleRepeating(agent);
             }
                 

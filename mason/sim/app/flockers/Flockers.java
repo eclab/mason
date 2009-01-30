@@ -65,7 +65,7 @@ public class Flockers extends SimState
         // make a bunch of flockers and schedule 'em.  A few will be dead
         for(int x=0;x<numFlockers;x++)
             {
-	    Double2D location = new Double2D(random.nextDouble()*width, random.nextDouble() * height);
+            Double2D location = new Double2D(random.nextDouble()*width, random.nextDouble() * height);
             Flocker flocker = new Flocker(location);
             if (random.nextBoolean(deadFlockerProbability)) flocker.dead = true;
             flockers.setObjectLocation(flocker, location);

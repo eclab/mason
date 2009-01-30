@@ -77,18 +77,18 @@ public class Utilities
         FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
         
         label.setText("<html><p style=\"padding-top: 12pt; padding-right: 50pt; font: " + 
-                      boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
-                      WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
-                      "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
-                      smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
-                      error + "</p></html>");
+            boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
+            WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
+            "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
+            smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
+            error + "</p></html>");
         int n = JOptionPane.showOptionDialog(frame, label, "Error",
-                                             JOptionPane.YES_NO_OPTION,  
-                                             JOptionPane.ERROR_MESSAGE,  
-                                             null,   
-                                             //don't use a custom Icon
-                                             options, //the titles of buttons
-                                             options[1]); //default button title
+            JOptionPane.YES_NO_OPTION,  
+            JOptionPane.ERROR_MESSAGE,  
+            null,   
+            //don't use a custom Icon
+            options, //the titles of buttons
+            options[1]); //default button title
         if (n == 0)
             {
             StringWriter writer = new StringWriter();
@@ -126,13 +126,13 @@ public class Utilities
         FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
 
         label.setText("<html><p style=\"padding-top: 12pt; padding-right: 50pt; font: " + 
-                      boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
-                      WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
-                      "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
-                      smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
-                      WordWrap.toHTML(WordWrap.wrap(""+subDescription, DIALOG_WIDTH, smallFontMetrics))  + "</p></html>");
+            boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
+            WordWrap.toHTML(WordWrap.wrap(""+description, DIALOG_WIDTH, boldFontMetrics)) + "</b></p>" + 
+            "<p style=\"padding-top: 12pt; padding-right: 50pt; padding-bottom: 12pt; font: " + 
+            smallFont.getSize() + "pt " + smallFont.getFamily() + ";\">" +
+            WordWrap.toHTML(WordWrap.wrap(""+subDescription, DIALOG_WIDTH, smallFontMetrics))  + "</p></html>");
         JOptionPane.showMessageDialog(frame, label, "Error",
-                                      JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.INFORMATION_MESSAGE);
         }
 
     }

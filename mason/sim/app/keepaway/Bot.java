@@ -31,9 +31,9 @@ public /*strictfp*/ class Bot extends Entity implements Steppable
         g.setColor(Color.white);
         double d = velocity.angle();
         g.drawLine((int)info.draw.x,
-                   (int)info.draw.y,
-                   (int)(info.draw.x) + (int)(width/2 * /*Strict*/Math.cos(d)),
-                   (int)(info.draw.y) + (int)(height/2 * /*Strict*/Math.sin(d)));
+            (int)info.draw.y,
+            (int)(info.draw.x) + (int)(width/2 * /*Strict*/Math.cos(d)),
+            (int)(info.draw.y) + (int)(height/2 * /*Strict*/Math.sin(d)));
         }
 
 

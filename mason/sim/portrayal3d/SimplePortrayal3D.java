@@ -112,7 +112,7 @@ public class SimplePortrayal3D implements Portrayal3D
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-	return true;
+        return true;
         }
         
     /** Utility method which prepares the given Shape3D to be pickable (for selection and inspection). */

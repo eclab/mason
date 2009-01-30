@@ -375,9 +375,9 @@ public abstract class SparseField implements java.io.Serializable
         int index;
         Bag otherObjectsAtLocation;
         
-	public Object getLocation() { return location; }
-	public int getIndex() { return index; }
-	
+        public Object getLocation() { return location; }
+        public int getIndex() { return index; }
+        
         public LocationAndIndex(final Object location, final int index)
             {
             this.location = location;

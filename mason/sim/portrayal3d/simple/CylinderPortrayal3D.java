@@ -70,9 +70,9 @@ public class CylinderPortrayal3D extends SimplePortrayal3D
         this.appearance = appearance;  this.scale = scale;
 
         cylinder = new Cylinder(0.5f,1f,
-                                /* Primitive.GEOMETRY_NOT_SHARED | */
-                                (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
-                                (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
+            /* Primitive.GEOMETRY_NOT_SHARED | */
+            (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
+            (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
         cylinder.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
         cylinder.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
         cylinder.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);

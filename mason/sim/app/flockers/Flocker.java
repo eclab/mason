@@ -55,10 +55,10 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
                 {
                 double dx = flockers.tdx(loc.x,other.loc.x);
                 double dy = flockers.tdy(loc.y,other.loc.y);
-                    Double2D m = ((Flocker)b.objs[i]).momentum();
-		    count++;
-                    x += m.x;
-                    y += m.y;
+                Double2D m = ((Flocker)b.objs[i]).momentum();
+                count++;
+                x += m.x;
+                y += m.y;
                 }
             }
         if (count > 0) { x /= count; y /= count; }
@@ -81,13 +81,13 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
                 {
                 double dx = flockers.tdx(loc.x,other.loc.x);
                 double dy = flockers.tdy(loc.y,other.loc.y);
-		count++;
-		x += dx;
-		y += dy;
+                count++;
+                x += dx;
+                y += dy;
                 }
             }
         if (count > 0) { x /= count; y /= count; }
-       return new Double2D(-x/10,-y/10);
+        return new Double2D(-x/10,-y/10);
         }
  
     public Double2D avoidance(Bag b, Continuous2D flockers)
@@ -108,8 +108,8 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
                 double dy = flockers.tdy(loc.y,other.loc.y);
                 double lensquared = dx*dx+dy*dy;
                 count++;
-		x += dx/(lensquared*lensquared + 1);
-		y += dy/(lensquared*lensquared + 1);
+                x += dx/(lensquared*lensquared + 1);
+                y += dy/(lensquared*lensquared + 1);
                 }
             }
         if (count > 0) { x /= count; y /= count; }

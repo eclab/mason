@@ -131,14 +131,14 @@ public final class MutableDouble2D implements java.io.Serializable
             Double2D other = (Double2D) obj;
             // can't just do other.x == x && other.y == y because we need to check for NaN
             return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y));
+                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y));
             }
         if (obj instanceof MutableDouble2D)
             {
             MutableDouble2D other = (MutableDouble2D) obj;
             // can't just do other.x == x && other.y == y because we need to check for NaN
             return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y));
+                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y));
             }
         else if (obj instanceof Int2D)
             {

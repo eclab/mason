@@ -26,12 +26,12 @@ public class HexaDrawInfo2D extends DrawInfo2D
         }
         
     public String toString() { return "HexaDrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Points: {"+
-                                   " (" + xPoints[0] + "," + yPoints[0] + ") " +
-                                   "(" + xPoints[1] + "," + yPoints[1] + ") " +
-                                   "(" + xPoints[2] + "," + yPoints[2] + ") " +
-                                   "(" + xPoints[3] + "," + yPoints[3] + ") " +
-                                   "(" + xPoints[4] + "," + yPoints[4] + ") " +
-                                   "(" + xPoints[5] + "," + yPoints[5] + ") " +
-                                   "} ]"; }
+            " (" + xPoints[0] + "," + yPoints[0] + ") " +
+            "(" + xPoints[1] + "," + yPoints[1] + ") " +
+            "(" + xPoints[2] + "," + yPoints[2] + ") " +
+            "(" + xPoints[3] + "," + yPoints[3] + ") " +
+            "(" + xPoints[4] + "," + yPoints[4] + ") " +
+            "(" + xPoints[5] + "," + yPoints[5] + ") " +
+            "} ]"; }
     }
     

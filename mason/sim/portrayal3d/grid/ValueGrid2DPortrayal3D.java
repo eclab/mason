@@ -180,17 +180,17 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         GeometryArray ga;
         if(!useTriangles)
             ga = new QuadArray(4*field.getWidth()*field.getHeight(), 
-                               QuadArray.COORDINATES | QuadArray.COLOR_3 | // 3 color values -- alpha transparency doesn't work here :-(
-                               (image != null ? QuadArray.TEXTURE_COORDINATE_2 : 0));
+                QuadArray.COORDINATES | QuadArray.COLOR_3 | // 3 color values -- alpha transparency doesn't work here :-(
+                (image != null ? QuadArray.TEXTURE_COORDINATE_2 : 0));
         else
             {
             int[] lengths = new int[field.getWidth()*field.getHeight()];                       
             for(int i=0; i<lengths.length;i++)
                 lengths[i]=4;
             ga = new TriangleFanArray(      4*lengths.length, 
-                                            TriangleFanArray.COORDINATES | TriangleFanArray.COLOR_3 | // 3 color values -- alpha transparency doesn't work here :-(
-                                            (image != null ? QuadArray.TEXTURE_COORDINATE_2 : 0),
-                                            lengths);
+                TriangleFanArray.COORDINATES | TriangleFanArray.COLOR_3 | // 3 color values -- alpha transparency doesn't work here :-(
+                (image != null ? QuadArray.TEXTURE_COORDINATE_2 : 0),
+                lengths);
             }
 
         ga.setCapability(QuadArray.ALLOW_COLOR_WRITE);
@@ -334,8 +334,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {
         return new LocationWrapper( new ValueGridCellInfo(field), 
-                                    ((QuadPortrayal)getPortrayalForObject(tmpGCI)).getCellForIntersection(pi,field),
-                                    this ) 
+            ((QuadPortrayal)getPortrayalForObject(tmpGCI)).getCellForIntersection(pi,field),
+            this ) 
             {
             // we keep this around so we don't keep allocating MutableDoubles
             // every time getObject is called -- that's wasteful, but more importantly,

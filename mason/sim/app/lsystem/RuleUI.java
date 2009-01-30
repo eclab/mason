@@ -85,8 +85,8 @@ public class RuleUI extends JPanel
                 // and both not zero length
                 if(((String)(ruleTable.getValueAt(r,0))).length() > 0 && ((String)(ruleTable.getValueAt(r,0))).length() > 0)
                     ls.l.rules.add( new Rule( (byte)(((String)(ruleTable.getValueAt(r,0))).
-                                                     substring(0,1).charAt(0)), (String)ruleTable.
-                                              getValueAt(r,1)) );
+                                substring(0,1).charAt(0)), (String)ruleTable.
+                            getValueAt(r,1)) );
             }
         
         // set # of expansions
@@ -291,12 +291,12 @@ public class RuleUI extends JPanel
                     {
 
                     JOptionPane.showMessageDialog( getFrame(), 
-                                                   "<html>IF you have changed the settings since the last time you calculated the L-system,<br>"+
-                                                   "the L-system you save will be the one last calculated--not the current data!</html>" );
+                        "<html>IF you have changed the settings since the last time you calculated the L-system,<br>"+
+                        "the L-system you save will be the one last calculated--not the current data!</html>" );
                     
                     // show save dialog
                     FileDialog fd = new FileDialog(getFrame(), 
-                                                   "Save Current L-System Settings As", FileDialog.SAVE);
+                        "Save Current L-System Settings As", FileDialog.SAVE);
                     fd.setFile("Untitled.lss");
                     fd.setVisible(true);;
                     
@@ -338,7 +338,7 @@ public class RuleUI extends JPanel
                     {
                     // show load dialog
                     FileDialog fd = new FileDialog(getFrame(), 
-                                                   "Open L-System Settings File (.lss)", FileDialog.LOAD);
+                        "Open L-System Settings File (.lss)", FileDialog.LOAD);
                     fd.setFile("*.lss");
                     fd.setVisible(true);;
                     

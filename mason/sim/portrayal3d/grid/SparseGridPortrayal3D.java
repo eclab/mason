@@ -63,42 +63,42 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
         
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)     
         {
-	final Object field = getField();
+        final Object field = getField();
         StableLocation d = null;
-	if (field instanceof SparseGrid2D) { d = new StableInt2D((SparseGrid2D) field, w.getObject()); }
-	else  { d = new StableInt3D((SparseGrid3D) field,  w.getObject()); }
-	final StableLocation loc = d;
+        if (field instanceof SparseGrid2D) { d = new StableInt2D((SparseGrid2D) field, w.getObject()); }
+        else  { d = new StableInt3D((SparseGrid3D) field,  w.getObject()); }
+        final StableLocation loc = d;
         return new LocationWrapper( w.getObject(), null , this)  // don't care about location
             {
             public Object getLocation()
                 {
-		/*
-                if(field instanceof SparseGrid3D)
-                    return ((SparseGrid3D)field).getObjectLocation(object);
-                else
-                    return ((SparseGrid2D)field).getObjectLocation(object);
-		*/
-		loc.update();
-		return loc;
+                /*
+                  if(field instanceof SparseGrid3D)
+                  return ((SparseGrid3D)field).getObjectLocation(object);
+                  else
+                  return ((SparseGrid2D)field).getObjectLocation(object);
+                */
+                loc.update();
+                return loc;
                 }
                 
             public String getLocationName()
                 {
-		/*
-                if(field instanceof SparseGrid3D)
-                    {
-                    Int3D loc = ((SparseGrid3D)field).getObjectLocation(object);
-                    if (loc!=null) return loc.toCoordinates();
-                    }
-                else
-                    {
-                    Int2D loc = ((SparseGrid2D)field).getObjectLocation(object);
-                    if (loc!=null) return loc.toCoordinates();
-                    }
-                return null;
-		*/
-		loc.update();
-		return loc.toString();
+                /*
+                  if(field instanceof SparseGrid3D)
+                  {
+                  Int3D loc = ((SparseGrid3D)field).getObjectLocation(object);
+                  if (loc!=null) return loc.toCoordinates();
+                  }
+                  else
+                  {
+                  Int2D loc = ((SparseGrid2D)field).getObjectLocation(object);
+                  if (loc!=null) return loc.toCoordinates();
+                  }
+                  return null;
+                */
+                loc.update();
+                return loc.toString();
                 }
             };
         }

@@ -5,7 +5,7 @@ import sim.field.grid.*;
 import sim.field.continuous.*;
 
 /**
-    StableDouble2D is a StableLocation for Double2D.  See StableLocation for more information.
+   StableDouble2D is a StableLocation for Double2D.  See StableLocation for more information.
 */
 
 public class StableDouble2D implements StableLocation

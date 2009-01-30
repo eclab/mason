@@ -188,21 +188,21 @@ public class Display3D extends JPanel implements Steppable
     /** The button which pops up the layers menu */
     public JToggleButton togglebutton;  // for popup
 
-     /** Sets various MacOS X features */
-   static 
+    /** Sets various MacOS X features */
+    static 
         {
-         // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
+        // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
         // [this appears to be ignored by MacOS X Java 1.4.1 and 1.4.2.  A bug? ]
         ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
-       // Use Quaqua if it exists
+        // Use Quaqua if it exists
         try
             {
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
-                                              getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
+                    getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
         catch (Exception e) { /* e.printStackTrace(); */ }
 
@@ -212,7 +212,7 @@ public class Display3D extends JPanel implements Steppable
             // turns this off by default, which makes 1.3.1 half the speed (and draws
             // objects wrong to boot).
             System.setProperty("com.apple.hwaccel","true");  // probably settable as an applet.  D'oh! Looks like it's ignored.
-	    System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
+            System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
             // the following are likely not settable
             // macOS X 1.4.1 java doesn't show the grow box.  We force it here.
             System.setProperty("apple.awt.showGrowBox","true");
@@ -370,7 +370,7 @@ public class Display3D extends JPanel implements Steppable
             if (getInterval() < 1) setInterval(1);  // just in case...
             stopper = simulation.scheduleImmediateRepeat(true,this);
             }
-	    
+            
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)
             {
@@ -507,9 +507,9 @@ public class Display3D extends JPanel implements Steppable
             public void mousePressed(MouseEvent e)
                 {
                 popup.show(e.getComponent(),
-                           togglebutton.getLocation().x,
-                           //togglebutton.getLocation().y+
-                           togglebutton.getSize().height);
+                    togglebutton.getLocation().x,
+                    //togglebutton.getLocation().y+
+                    togglebutton.getSize().height);
                 }
             public void mouseReleased(MouseEvent e) 
                 {
@@ -693,15 +693,15 @@ public class Display3D extends JPanel implements Steppable
             {
             Background background = new Background();
             background.setApplicationBounds(new BoundingSphere(
-                                                new Point3d(0,0,0), Double.MAX_VALUE));
+                    new Point3d(0,0,0), Double.MAX_VALUE));
             
             if (backdropAppearance!=null)
                 {
                 BranchGroup backgroundBG = new BranchGroup();
                 Sphere sphere = new Sphere(1.0f, 
-                                           Sphere.GENERATE_TEXTURE_COORDS | 
-                                           Sphere.GENERATE_NORMALS | 
-                                           Sphere.GENERATE_NORMALS_INWARD, 45, backdropAppearance);
+                    Sphere.GENERATE_TEXTURE_COORDS | 
+                    Sphere.GENERATE_NORMALS | 
+                    Sphere.GENERATE_NORMALS_INWARD, 45, backdropAppearance);
                 // sphere lies along y axis.  Move it to Z axis
                 Transform3D strans = new Transform3D();
                 strans.rotX(-Math.PI/2);
@@ -919,9 +919,9 @@ public class Display3D extends JPanel implements Steppable
         {
         // unhook the root from the universe so we can reuse the universe (Hmmmm....)
             
-	mSelectBehavior.detach();
+        mSelectBehavior.detach();
         root.detach();
-	universe.getLocale().removeBranchGraph(root);
+        universe.getLocale().removeBranchGraph(root);
         canvas.stopRenderer();
         }
 
@@ -956,8 +956,8 @@ public class Display3D extends JPanel implements Steppable
             lightSwitchMask.clear(AMBIENT_LIGHT_INDEX);    // turn ambient light off 
             lightSwitch.setChildMask(lightSwitchMask);
             PointLight pl = new PointLight(new Color3f(1f,1f,1f),
-                                           new Point3f(0f,0f,0f),
-                                           new Point3f(1f,0f,0f));
+                new Point3f(0f,0f,0f),
+                new Point3f(1f,0f,0f));
             pl.setInfluencingBounds(new BoundingSphere(new Point3d(0,0,0), Double.POSITIVE_INFINITY));
             lightSwitch.addChild(pl);
             AmbientLight al = new AmbientLight(new Color3f(1f,1f,1f));
@@ -1159,8 +1159,8 @@ public class Display3D extends JPanel implements Steppable
         long steps = state.schedule.getSteps();
         if (steps % getInterval() == 0 &&   // time to update!
             state.schedule.time() < Schedule.AFTER_SIMULATION &&  // don't update if we're done
-            (canvas.isShowing()    // only draw if we can be seen
-             || movieMaker !=null ))      // OR draw to a movie even if we can't be seen
+                (canvas.isShowing()    // only draw if we can be seen
+                || movieMaker !=null ))      // OR draw to a movie even if we can't be seen
             {
             updateSceneGraph(true);
             }
@@ -1287,8 +1287,8 @@ public class Display3D extends JPanel implements Steppable
         
         // NOW pop up the save window
         FileDialog fd = new FileDialog(getFrame(), 
-                                       "Save Snapshot as 24-bit PNG...", 
-                                       FileDialog.SAVE);
+            "Save Snapshot as 24-bit PNG...", 
+            FileDialog.SAVE);
         fd.setFile("Untitled.png");
         fd.setVisible(true);;
         if (fd.getFile()!=null)
@@ -1834,18 +1834,18 @@ public class Display3D extends JPanel implements Steppable
         }
     
     
-        /** */
+    /** */
     ArrayList selectedWrappers = new ArrayList();
     
     public void performSelection( LocationWrapper wrapper)
-	{
-	Bag b = new Bag();
-	b.add(wrapper);
-	performSelection(b);
-	}
+        {
+        Bag b = new Bag();
+        b.add(wrapper);
+        performSelection(b);
+        }
     
     public void performSelection( final Bag locationWrappers )
-	{
+        {
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)
             {
@@ -1853,18 +1853,18 @@ public class Display3D extends JPanel implements Steppable
             wrapper.getFieldPortrayal().setSelected(wrapper,false);
             }
         selectedWrappers.clear();
-	
-	if (locationWrappers == null) return;  // deselect everything
-	
-	// add new wrappers
-	for(int x=0;x < locationWrappers.size(); x++)
-	    {
-		LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
-                wrapper.getFieldPortrayal().setSelected(wrapper, true);
-                selectedWrappers.add(wrapper);
-	    }
-	    
-	updateSceneGraph(false);
-	}
+        
+        if (locationWrappers == null) return;  // deselect everything
+        
+        // add new wrappers
+        for(int x=0;x < locationWrappers.size(); x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+            wrapper.getFieldPortrayal().setSelected(wrapper, true);
+            selectedWrappers.add(wrapper);
+            }
+            
+        updateSceneGraph(false);
+        }
     }
     

@@ -108,7 +108,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         Portrayal p = getPortrayalForObject(new ValuePortrayal3D.ValueWrapper(0,0,0,0,this));
         if (!(p instanceof SimplePortrayal3D))
             throw new RuntimeException("Unexpected Portrayal " + p + "for object " +
-                                       valueToPass + " -- expected a SimplePortrayal3D");
+                valueToPass + " -- expected a SimplePortrayal3D");
         
         SimplePortrayal3D portrayal = (SimplePortrayal3D) p;
         portrayal.setParentPortrayal(this);
@@ -156,7 +156,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal3D))
             throw new RuntimeException("Unexpected Portrayal " + p + "for object " +
-                                       valueToPass + " -- expected a SimplePortrayal3D");
+                valueToPass + " -- expected a SimplePortrayal3D");
         
         SimplePortrayal3D portrayal = (SimplePortrayal3D) p;
         portrayal.setParentPortrayal(this);

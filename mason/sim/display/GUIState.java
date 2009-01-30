@@ -200,11 +200,11 @@ public abstract class GUIState
         }
         
     /** Override this to provide a custom Properties object for your simuation.  This should be
-	very rare: by default returns null.*/
+        very rare: by default returns null.*/
     public sim.util.Properties getSimulationProperties()
-	{
-	return null;
-	}
+        {
+        return null;
+        }
 
     /** By default returns a non-volatile Inspector which wraps around
         getSimulationInspectedObject(); if getSimulationInspectedObject() returns null, then getInspector()
@@ -213,19 +213,19 @@ public abstract class GUIState
         {
         Object object = getSimulationInspectedObject();
         if (object != null)
-	    {
-	    Inspector i = new SimpleInspector(object, this);
-	    i.setVolatile(false);
-	    return i;
-	    }
-	sim.util.Properties prop = getSimulationProperties();
-	if (prop != null)
-	    {
-	    Inspector i = new SimpleInspector(prop, this, "");
-	    i.setVolatile(true);  // dynamic properties like this are likely volatile
-	    return i;
-	    }
-	return null;
+            {
+            Inspector i = new SimpleInspector(object, this);
+            i.setVolatile(false);
+            return i;
+            }
+        sim.util.Properties prop = getSimulationProperties();
+        if (prop != null)
+            {
+            Inspector i = new SimpleInspector(prop, this, "");
+            i.setVolatile(true);  // dynamic properties like this are likely volatile
+            return i;
+            }
+        return null;
         }
     
     /** Returns an object with various property methods (getFoo(...), isFoo(...), setFoo(...)) whose

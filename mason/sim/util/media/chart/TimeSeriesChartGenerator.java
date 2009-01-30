@@ -134,7 +134,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         {
         dataset = new XYSeriesCollection();
         chart = ChartFactory.createXYLineChart("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
-                                               PlotOrientation.VERTICAL, false, true, false);
+            PlotOrientation.VERTICAL, false, true, false);
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
 
         chart.setAntiAlias(false);

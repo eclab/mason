@@ -92,8 +92,8 @@ public /*strictfp*/ class HexaBugs extends SimState
         for(int x=0;x<bugCount;x++)
             {
             bugs[x] = new HexaBug(random.nextDouble() * (maxIdealTemp - minIdealTemp) + minIdealTemp,
-                                  random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat, 
-                                  MAX_HEAT, randomMovementProbability);
+                random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat, 
+                MAX_HEAT, randomMovementProbability);
             buggrid.setObjectLocation(bugs[x],random.nextInt(gridWidth),random.nextInt(gridHeight));
             schedule.scheduleRepeating(bugs[x]);
             }
@@ -109,7 +109,7 @@ public /*strictfp*/ class HexaBugs extends SimState
         {
         Runtime runtime = Runtime.getRuntime();
         try { return ((Integer)runtime.getClass().getMethod("availableProcessors", (Class[])null).
-                      invoke(runtime,(Object[])null)).intValue(); }
+                invoke(runtime,(Object[])null)).intValue(); }
         catch (Exception e) { return 1; }  // a safe but sometimes wrong assumption!
         }
 

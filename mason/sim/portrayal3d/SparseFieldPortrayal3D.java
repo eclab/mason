@@ -70,7 +70,7 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
         Portrayal p = getPortrayalForObject(o);
         if(! (p instanceof SimplePortrayal3D))
             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                       o + " -- expecting a SimplePortrayal3D");
+                o + " -- expecting a SimplePortrayal3D");
         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
 
         p3d.setParentPortrayal(this);
@@ -115,7 +115,7 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
                 Portrayal p = getPortrayalForObject(fieldObj);
                 if(! (p instanceof SimplePortrayal3D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               fieldObj + " -- expecting a SimplePortrayal3D");
+                        fieldObj + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
 
                 TransformGroup localTG2 = p3d.getModel(fieldObj, localTG);

@@ -45,7 +45,7 @@ public abstract class QuadPortrayal implements Portrayal
     public ColorMap colorDispenser;
 
     public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex,
-                                 int gridWidth, int gridHeight);
+        int gridWidth, int gridHeight);
     
     public QuadPortrayal(ColorMap colorDispenser, float zScale)
         {

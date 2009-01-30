@@ -87,7 +87,7 @@ public class Crowd3DWithUI extends GUIState
         m.setShininess(64f);
         appearance.setMaterial(m);
         boidsP.setPortrayalForAll(new Shape3DPortrayal3D(new GullCG(),
-                                                         appearance)); //new GullPortrayal3D());
+                appearance)); //new GullPortrayal3D());
                         
         display.attach(boidsP, "boids");
         display.attach(new LightPortrayal3D(new Color(127,127,255), new Double3D(-1,-1,1)), "Light One");

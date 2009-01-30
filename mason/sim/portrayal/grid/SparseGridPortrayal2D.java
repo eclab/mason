@@ -50,7 +50,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         }
     
     public Int2D getLocation(DrawInfo2D info)
-	{
+        {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -61,8 +61,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final double yScale = info.draw.height / maxY;
         final int startx = (int)((info.clip.x - info.draw.x) / xScale);
         final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
-	return new Int2D(startx, starty);
-	}
+        return new Int2D(startx, starty);
+        }
 
     public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
         {
@@ -116,7 +116,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-                                            info.clip);  // we don't do further clipping 
+            info.clip);  // we don't do further clipping 
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
@@ -149,7 +149,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         Portrayal p = getPortrayalForObject(portrayedObject);
                         if (!(p instanceof SimplePortrayal2D))
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                       portrayedObject + " -- expected a SimplePortrayal2D");
+                                portrayedObject + " -- expected a SimplePortrayal2D");
                         SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                         
                         // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
@@ -202,7 +202,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                     Portrayal p = getPortrayalForObject(portrayedObject);
                     if (!(p instanceof SimplePortrayal2D))
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                                   portrayedObject + " -- expected a SimplePortrayal2D");
+                            portrayedObject + " -- expected a SimplePortrayal2D");
                     SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                 
                     // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object

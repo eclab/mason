@@ -93,7 +93,7 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
                 if( steps <= 0 )
                     {
                     desiredLocation = new Double2D( state.random.nextDouble()*(CooperativeObservation.XMAX-CooperativeObservation.XMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.XMIN+CooperativeObservation.DIAMETER/2,
-                                                    state.random.nextDouble()*(CooperativeObservation.YMAX-CooperativeObservation.YMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.YMIN+CooperativeObservation.DIAMETER/2 );
+                        state.random.nextDouble()*(CooperativeObservation.YMAX-CooperativeObservation.YMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.YMIN+CooperativeObservation.DIAMETER/2 );
                     steps = 100;
                     }
                 }
@@ -104,7 +104,7 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
             if( desiredLocation == null || steps <= 0 )
                 {
                 desiredLocation = new Double2D( state.random.nextDouble()*(CooperativeObservation.XMAX-CooperativeObservation.XMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.XMIN+CooperativeObservation.DIAMETER/2,
-                                                state.random.nextDouble()*(CooperativeObservation.YMAX-CooperativeObservation.YMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.YMIN+CooperativeObservation.DIAMETER/2 );
+                    state.random.nextDouble()*(CooperativeObservation.YMAX-CooperativeObservation.YMIN-CooperativeObservation.DIAMETER)+CooperativeObservation.YMIN+CooperativeObservation.DIAMETER/2 );
                 steps = 100;
                 }
             }

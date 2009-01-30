@@ -87,14 +87,14 @@ public /*strictfp*/ class Evil extends Agent
             if(  steps <= 0 )
                 {
                 suggestedLocation = new Double2D((state.random.nextDouble()-0.5)*((VirusInfectionDemo.XMAX-VirusInfectionDemo.XMIN)/5-VirusInfectionDemo.DIAMETER) +
-                                                 //VirusInfectionDemo.XMIN
-                                                 agentLocation.x 
-                                                 //+VirusInfectionDemo.DIAMETER/2
-                                                 ,
-                                                 (state.random.nextDouble()-0.5)*((VirusInfectionDemo.YMAX-VirusInfectionDemo.YMIN)/5-VirusInfectionDemo.DIAMETER) +
-                                                 agentLocation.y
-                                                 //VirusInfectionDemo.YMIN
-                                                 //+VirusInfectionDemo.DIAMETER/2
+                    //VirusInfectionDemo.XMIN
+                    agentLocation.x 
+                    //+VirusInfectionDemo.DIAMETER/2
+                    ,
+                    (state.random.nextDouble()-0.5)*((VirusInfectionDemo.YMAX-VirusInfectionDemo.YMIN)/5-VirusInfectionDemo.DIAMETER) +
+                    agentLocation.y
+                    //VirusInfectionDemo.YMIN
+                    //+VirusInfectionDemo.DIAMETER/2
                     );
                 steps = 100;
                 }
@@ -104,28 +104,28 @@ public /*strictfp*/ class Evil extends Agent
         double dx = desiredLocation.x - agentLocation.x;
         double dy = desiredLocation.y - agentLocation.y;
 
-            {
-            double temp = 0.5 * /*Strict*/Math.sqrt(dx*dx+dy*dy);
-            if( temp < 1 )
                 {
-                steps = 0;
+                double temp = 0.5 * /*Strict*/Math.sqrt(dx*dx+dy*dy);
+                if( temp < 1 )
+                    {
+                    steps = 0;
+                    }
+                else
+                    {
+                    dx /= temp;
+                    dy /= temp;
+                    }
                 }
-            else
-                {
-                dx /= temp;
-                dy /= temp;
-                }
-            }
 
-            if( ! hb.acceptablePosition( this, new Double2D(agentLocation.x + dx, agentLocation.y + dy) ) )
-                {
-                steps = 0;
-                }
-            else
-                {
-                agentLocation = new Double2D(agentLocation.x + dx, agentLocation.y + dy);
-                hb.environment.setObjectLocation(this,agentLocation);
-                }
+        if( ! hb.acceptablePosition( this, new Double2D(agentLocation.x + dx, agentLocation.y + dy) ) )
+            {
+            steps = 0;
+            }
+        else
+            {
+            agentLocation = new Double2D(agentLocation.x + dx, agentLocation.y + dy);
+            hb.environment.setObjectLocation(this,agentLocation);
+            }
         }
 
     protected Color evilColor = new Color(255,0,0);

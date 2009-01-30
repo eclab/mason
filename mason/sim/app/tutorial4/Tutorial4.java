@@ -47,13 +47,13 @@ public class Tutorial4 extends SimState
             p = new Particle(random.nextInt(3) - 1, random.nextInt(3) - 1);  // random direction
             schedule.scheduleRepeating(p);
             particles.setObjectLocation(p,
-                                        new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));  // random location
+                new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));  // random location
             }
         
         // Schedule the "Big Particle"
         BigParticle b = new BigParticle(random.nextInt(3) - 1, random.nextInt(3) - 1);
         particles.setObjectLocation(b,
-                                    new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));
+            new Int2D(random.nextInt(gridWidth),random.nextInt(gridHeight)));
         schedule.scheduleRepeating(Schedule.EPOCH,1,b,5);
         
         // Schedule the decreaser

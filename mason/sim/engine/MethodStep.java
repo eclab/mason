@@ -113,7 +113,7 @@ public class MethodStep implements Steppable
               throw t;
             */
             throw new CausedRuntimeException(ex, "On calling \"" + method + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass() + 
-                                             ", an Exception was raised in the called method.");
+                ", an Exception was raised in the called method.");
             }
         catch (NullPointerException ex)
             {

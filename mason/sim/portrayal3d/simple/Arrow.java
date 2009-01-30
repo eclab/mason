@@ -23,10 +23,10 @@ import javax.vecmath.*;
 public class Arrow extends TransformGroup
     {
     public static final Color3f defaultArrowColor = new Color3f(0.5f, 0.5f,
-                                                                0.5f);
+        0.5f);
 
     public static final Font3D f3d = new Font3D(new Font(null, Font.PLAIN, 1),
-                                                null);
+        null);
 
     public Cone arrowHead;
 
@@ -38,13 +38,13 @@ public class Arrow extends TransformGroup
      * at the appropriate end.
      */
     public static Arrow createArrow(float arrowTailRadius, Vector3f stPt,
-                                    Vector3f endPt, String stLabel, String endLabel)
+        Vector3f endPt, String stLabel, String endLabel)
         {
         return new Arrow(arrowTailRadius, stPt, endPt, stLabel, endLabel, null);
         }
 
     public Arrow(float arrowTailRadius, Vector3f stPt, Vector3f endPt, String stLabel,
-                 String endLabel, Appearance appearance)
+        String endLabel, Appearance appearance)
         {
 
         Vector3d v = new Vector3d(stPt);
@@ -88,7 +88,7 @@ public class Arrow extends TransformGroup
             {
             //TODO I should use rodrigues formula here
             caTransform.setRotation(new AxisAngle4d(axis, Math.asin(axis.length()
-                                                                    / v.length())));
+                        / v.length())));
             // axis.length() must be v.length() both doubles or floats, otherwise
             // you might get something bigger than 1.
             }
@@ -116,7 +116,7 @@ public class Arrow extends TransformGroup
             {
             Text3D txt = new Text3D(f3d, stLabel);
             OrientedShape3D os3d = new OrientedShape3D(txt, caAppearance,
-                                                       OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0, 0, 0));
+                OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0, 0, 0));
 
             Transform3D t = new Transform3D();
             t.setScale(5 * arrowTailRadius);
@@ -131,8 +131,8 @@ public class Arrow extends TransformGroup
             {
             Text3D txt = new Text3D(f3d, endLabel);
             OrientedShape3D os3d = new OrientedShape3D(txt, caAppearance,
-                                                       OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,
-                                                                                                       arrowLen, 0));
+                OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,
+                    arrowLen, 0));
 
             Transform3D t = new Transform3D();
             t.setScale(5 * arrowTailRadius);

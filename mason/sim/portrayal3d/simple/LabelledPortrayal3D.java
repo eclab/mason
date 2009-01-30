@@ -75,17 +75,17 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
     public LabelledPortrayal3D(SimplePortrayal3D child, String label, Color color, boolean onlyLabelWhenSelected)
         {
         this(child,DEFAULT_LABEL_OFFSET,new Font("SansSerif",Font.PLAIN, 24),
-             label,color,1.0f,onlyLabelWhenSelected);
+            label,color,1.0f,onlyLabelWhenSelected);
         }
     
     public LabelledPortrayal3D(SimplePortrayal3D child, float offsetx, float offsety, float offsetz, 
-                               Font font, String label, Color color, float scale, boolean onlyLabelWhenSelected)
+        Font font, String label, Color color, float scale, boolean onlyLabelWhenSelected)
         {
         this(child,transformForOffset(offsetx,offsety,offsetz),font,label,color,scale,onlyLabelWhenSelected);
         }        
         
     public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,
-                               float scale, boolean onlyLabelWhenSelected)
+        float scale, boolean onlyLabelWhenSelected)
         {
         this.child = child;
         this.color = color; this.offset = offset;
@@ -118,12 +118,12 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
     HashMap selectedObjects = new HashMap();
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-	boolean selected2 = child.setSelected(wrapper,selected);
-	if (selected && selected2)
-	    selectedObjects.put(wrapper.getObject(), wrapper);
-	else
-	    selectedObjects.remove(wrapper.getObject());
-	return selected2;
+        boolean selected2 = child.setSelected(wrapper,selected);
+        if (selected && selected2)
+            selectedObjects.put(wrapper.getObject(), wrapper);
+        else
+            selectedObjects.remove(wrapper.getObject());
+        return selected2;
         }
         
     /** Returns a name appropriate for the object.  By default, this returns
@@ -159,7 +159,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         
     public void updateSwitch(Switch jswitch, Object object)
         {
-	boolean isSelected = selectedObjects.containsKey(object);
+        boolean isSelected = selectedObjects.containsKey(object);
 
         // we do it this way rather than the obvious if/else
         // statement because it gets inlined this way (32 bytes vs. 36 bytes).
@@ -216,7 +216,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             // We want the Text2D to always be facing forwards.  So we dump its
             // geometry and appearance into an OrientedShape3D and use that instead.
             OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(), text.getAppearance(),
-                                                      OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,0,0));
+                OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,0,0));
             o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);  // may need to change the appearance (see below)
             o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);  // may need to change the geometry (see below)
             o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);

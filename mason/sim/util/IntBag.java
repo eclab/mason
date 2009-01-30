@@ -307,7 +307,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         }
         
     /** Removes all numbers in the IntBag.  This is done by clearing the internal array but 
-	not replacing it with a new, smaller one. */
+        not replacing it with a new, smaller one. */
     public void clear()
         {
         numObjs = 0;
@@ -323,25 +323,25 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
     public Integer[] toIntegerArray()
         {
         Integer[] o = new Integer[numObjs];
-	for(int i = 0; i < numObjs; i++)
-	    o[i] = new Integer(objs[i]);
-	return o;
+        for(int i = 0; i < numObjs; i++)
+            o[i] = new Integer(objs[i]);
+        return o;
         }
 
     public Long[] toLongArray()
         {
         Long[] o = new Long[numObjs];
-	for(int i = 0; i < numObjs; i++)
-	    o[i] = new Long(objs[i]);
-	return o;
+        for(int i = 0; i < numObjs; i++)
+            o[i] = new Long(objs[i]);
+        return o;
         }
 
     public Double[] toDoubleArray()
         {
         Double[] o = new Double[numObjs];
-	for(int i = 0; i < numObjs; i++)
-	    o[i] = new Double(objs[i]);
-	return o;
+        for(int i = 0; i < numObjs; i++)
+            o[i] = new Double(objs[i]);
+        return o;
         }
 
     public Class componentType()

@@ -114,8 +114,8 @@ public class ParallelSequence extends Sequence
             {
             if (operating) 
                 throw new RuntimeException("ParallelSequence stepped, but it's already in progress.\n" +
-                                           "Probably you have the same ParallelSequence nested, or the same ParallelSequence being stepped in parallel.\n" +
-                                           "Either way, it's a bug.");
+                    "Probably you have the same ParallelSequence nested, or the same ParallelSequence being stepped in parallel.\n" +
+                    "Either way, it's a bug.");
             operating = true;
             }
         for(int x=0;x<steps.length;x++)

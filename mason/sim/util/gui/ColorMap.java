@@ -26,13 +26,13 @@ public interface ColorMap
     public int getRGB(double level);
     /** Returns the alpha value for a color for the given level.  This could be simply written as 
                 
-    <p><code>return getRGB(level) >>> 24 ; </code>
+        <p><code>return getRGB(level) >>> 24 ; </code>
                 
-    <p>...or it could be written as:
+        <p>...or it could be written as:
                 
-    <p><code>return getColor(level).getAlpha() </code>
+        <p><code>return getColor(level).getAlpha() </code>
                 
-    <p>...however it's likely that it thie method could be written more efficiently than either of these.
+        <p>...however it's likely that it thie method could be written more efficiently than either of these.
     */
     public int getAlpha(double level);
     /** Returns true if a level is "valid" (it provides a meaningful color) */

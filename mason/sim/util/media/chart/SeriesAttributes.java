@@ -67,7 +67,7 @@ public abstract class SeriesAttributes extends LabelledList
     /** Returns the index of the series. */
     public int getSeriesIndex() { return seriesIndex; }
     /** Sets the index of the series -- Do NOT call this if you want to move the series order; instead call moveSeries
-	in the Generator. */
+        in the Generator. */
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
                 
@@ -163,7 +163,7 @@ public abstract class SeriesAttributes extends LabelledList
             public void actionPerformed(ActionEvent e)
                 {
                 getRenderer().setSeriesVisible(getSeriesIndex(),
-                                               new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
+                    new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
                 }
             });
 

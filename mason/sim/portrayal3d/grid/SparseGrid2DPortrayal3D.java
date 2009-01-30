@@ -109,7 +109,7 @@ public class SparseGrid2DPortrayal3D extends SparseGridPortrayal3D
                 Portrayal p = getPortrayalForObject(fieldObj);
                 if(! (p instanceof SimplePortrayal3D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                               fieldObj + " -- expecting a SimplePortrayal3D");
+                        fieldObj + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                 TransformGroup localTG2 = p3d.getModel(fieldObj, localTG);
         

@@ -75,12 +75,12 @@ public class MouseTraps extends SimState
         oneOverSpaceLength = 1.0/spaceLength;
         }
     public MouseTraps(  long seed, 
-                        double initialVelocity, 
-                        int trapsX, 
-                        int trapsY,
-                        double width, 
-                        double height, 
-                        boolean toroidal)
+        double initialVelocity, 
+        int trapsX, 
+        int trapsY,
+        double width, 
+        double height, 
+        boolean toroidal)
         {
         super(new MersenneTwisterFast(seed));
         this.initialVelocity = initialVelocity;
@@ -240,7 +240,7 @@ public class MouseTraps extends SimState
                 double landing_dy = vy* landing_time;
 
                 schedule.scheduleOnce(  schedule.time()+landing_time ,
-                                        new MouseTrap(discretizeX(landing_dx, posx),discretizeY(landing_dy, posy)));
+                    new MouseTrap(discretizeX(landing_dx, posx),discretizeY(landing_dy, posy)));
                 }
             else
                 {
