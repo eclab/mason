@@ -308,6 +308,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         throw new IndexOutOfBoundsException(""+index);
         }
         
+    /** Removes all numbers in the DoubleBag.  This is done by clearing the internal array but 
+	not replacing it with a new, smaller one. */
     public void clear()
         {
         numObjs = 0;
