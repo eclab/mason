@@ -18,10 +18,11 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
     public Flockers theFlock;
     public boolean dead = false;
     
+    public Flocker(Double2D location) { loc = location; }
     
     public Bag getNeighbors()
         {
-        return flockers.getObjectsWithinDistance(loc, theFlock.neighborhood, true);
+        return flockers.getObjectsExactlyWithinDistance(loc, theFlock.neighborhood, true);
         }
     
     public double getOrientation() { return orientation2D(); }
@@ -38,7 +39,7 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
         {
         return lastd;
         }
-        
+
     public Double2D consistency(Bag b, Continuous2D flockers)
         {
         if (b==null || b.numObjs == 0) return new Double2D(0,0);
@@ -46,6 +47,7 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
         double x = 0; 
         double y= 0;
         int i =0;
+        int count = 0;
         for(i=0;i<b.numObjs;i++)
             {
             Flocker other = (Flocker)(b.objs[i]);
@@ -53,17 +55,13 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
                 {
                 double dx = flockers.tdx(loc.x,other.loc.x);
                 double dy = flockers.tdy(loc.y,other.loc.y);
-                double lensquared = dx*dx+dy*dy;
-                if (lensquared <= theFlock.neighborhood * theFlock.neighborhood)
-                    {
                     Double2D m = ((Flocker)b.objs[i]).momentum();
+		    count++;
                     x += m.x;
                     y += m.y;
-                    }
                 }
             }
-        x /= b.numObjs;
-        y /= b.numObjs;
+        if (count > 0) { x /= count; y /= count; }
         return new Double2D(x,y);
         }
     
@@ -74,6 +72,7 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
         double x = 0; 
         double y= 0;        
 
+        int count = 0;
         int i =0;
         for(i=0;i<b.numObjs;i++)
             {
@@ -82,19 +81,15 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
                 {
                 double dx = flockers.tdx(loc.x,other.loc.x);
                 double dy = flockers.tdy(loc.y,other.loc.y);
-                double lensquared = dx*dx+dy*dy;
-                if (lensquared <= theFlock.neighborhood * theFlock.neighborhood)
-                    {
-                    x += dx;
-                    y += dy;
-                    }
+		count++;
+		x += dx;
+		y += dy;
                 }
             }
-        x /= b.numObjs;
-        y /= b.numObjs;
-        return new Double2D(-x/10,-y/10);
+        if (count > 0) { x /= count; y /= count; }
+       return new Double2D(-x/10,-y/10);
         }
-    
+ 
     public Double2D avoidance(Bag b, Continuous2D flockers)
         {
         if (b==null || b.numObjs == 0) return new Double2D(0,0);
@@ -109,22 +104,15 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
             Flocker other = (Flocker)(b.objs[i]);
             if (other != this )
                 {
-                count++;
                 double dx = flockers.tdx(loc.x,other.loc.x);
                 double dy = flockers.tdy(loc.y,other.loc.y);
                 double lensquared = dx*dx+dy*dy;
-                if (lensquared <= theFlock.neighborhood * theFlock.neighborhood)
-                    {
-                    x += dx/(lensquared*lensquared + 1);
-                    y += dy/(lensquared*lensquared + 1);
-                    }
+                count++;
+		x += dx/(lensquared*lensquared + 1);
+		y += dy/(lensquared*lensquared + 1);
                 }
             }
-        if (count>0)
-            {
-            x /= count;
-            y /= count;
-            }
+        if (count > 0) { x /= count; y /= count; }
         return new Double2D(400*x,400*y);      
         }
         
@@ -143,7 +131,7 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
 
         if (dead) return;
         
-        Bag b = flockers.getObjectsWithinDistance(loc, theFlock.neighborhood, true);
+        Bag b = getNeighbors();
             
         Double2D avoid = avoidance(b,flock.flockers);
         Double2D cohe = cohesion(b,flock.flockers);

@@ -1466,3 +1466,17 @@ Version 14
 		question because "drawing" isn't really a concept.  Instead you have to
 		maintain a belief about whether or not you've been selected.
 	setSelected(...) methods have been promoted from FieldPortrayal2D to FieldPortrayal
+	Updates to Properties and Inspector objects to enable dynamic properties for 
+		scheme code
+	Bugfix in ShapePortrayal2D: sometimes drawing gray rather than the desired color.
+	Added Continuous[2|3]D.getObjectsExactlyWithinDistance(...) which does the dirty
+		work of extracting precisely the objects within a given distance from
+		the continuous field.  The radial distance option has been bugfixed and
+		is known to work well.  The square distance option hasn't been tested
+		much.
+	Modified Flockers to use the new getObjectsExactlyWithinDistance to simply
+		things a little.  The result will be different because the order of the
+		neighbors processed will be different, and this effects the numerical
+		rounding in the doubles.  I've verified that if the order were the same,
+		the results are identical.  Also fixed a few minor bugs in Flockers.
+	Bug fixes in Tutorial 5 documentation.  Thanks to Mark Coletti <mcoletti@gmail.com>

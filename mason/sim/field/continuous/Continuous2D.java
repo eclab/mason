@@ -416,6 +416,72 @@ public /*strictfp*/ class Continuous2D extends SparseField
         return result;
         }
 
+
+     /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+	using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.  */
+
+   public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance)
+	{
+	return getObjectsExactlyWithinDistance(position, distance, false, true, true, null);
+	}
+
+     /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+	using a circle of radius 'distance' around the given position.  If 'toroidal' is true, then the
+	distance is measured assuming the environment is toroidal.  Assumes point objects.  */
+
+   public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
+	{
+	return getObjectsExactlyWithinDistance(position, distance, toroidal, true, true, null);
+	}
+
+    /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
+	then the distance is measured using a circle around the position, else the distance is meaured using a square around
+	the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
+	exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
+	distance is measured assuming the environment is toroidal.  If the Bag 'result' is provided, it will be cleared and objects
+	placed in it and it will be returned, else if it is null, then this method will create a new Bag and use that instead. 
+	Assumes point objects. */
+
+    public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal, 
+	final boolean radial, final boolean inclusive, Bag result)
+	{
+	result = getObjectsWithinDistance(position, distance, toroidal, false, result);
+	int numObjs = result.numObjs;
+	Object[] objs = result.objs;
+	double distsq = distance*distance;
+	if (radial) for(int i=0;i<numObjs;i++)
+	    {
+	    double d = 0;
+	    Double2D loc = getObjectLocation(objs[i]);
+	    if (toroidal) d = tds(position, loc);
+	    else d = position.distanceSq(loc);
+	    if (d > distsq || (!inclusive && d >= distsq)) 
+		{ result.remove(i); i--; numObjs--; }
+	    }
+	else for(int i=0;i<numObjs;i++)
+	    {
+	    Double2D loc = getObjectLocation(objs[i]);
+	    double minx = 0;
+	    double miny = 0;
+	    if (toroidal)
+		{
+		minx = tdx(loc.x, position.x);
+		miny = tdy(loc.y, position.y);
+		}
+	    else
+		{
+		minx = loc.x - position.x;
+		miny = loc.y - position.y;
+		}
+	    if (minx < 0) minx = -minx;
+	    if (miny < 0) miny = -miny;
+	    if ((minx > distance || miny > distance) ||
+		(!inclusive && ( minx >= distance || miny >= distance)))
+		{ result.remove(i); i--;  numObjs--; }
+	    }
+	return result;
+	}
+
     /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
         specified distance of the specified position.  The bag could include other objects than this.
         In this case we include the object if

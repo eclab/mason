@@ -311,7 +311,7 @@ public class Ball implements Steppable
         Bag in = bands.getEdgesIn(this);
         Bag out = bands.getEdgesOut(this);
         if (in!=null)
-            for(int x=0;x<in.numObjs;x++)
+            for(int x=0;x&lt;in.numObjs;x++)
                 {
                 Edge e = (Edge)(in.objs[x]);
                 Band b = (Band) (e.info);
@@ -320,7 +320,7 @@ public class Ball implements Steppable
                 addForce(him,me,b);
                 }
         if (out!=null)
-            for(int x=0;x<out.numObjs;x++)
+            for(int x=0;x&lt;out.numObjs;x++)
                 {
                 Edge e = (Edge)(out.objs[x]);
                 Band b = (Band) (e.info);

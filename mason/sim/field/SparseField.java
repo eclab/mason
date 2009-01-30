@@ -371,10 +371,13 @@ public abstract class SparseField implements java.io.Serializable
         the objects in the allObjects bag. */
     public static class LocationAndIndex implements java.io.Serializable
         {
-        public Object location;
-        public int index;
-        public Bag otherObjectsAtLocation;
+        Object location;
+        int index;
+        Bag otherObjectsAtLocation;
         
+	public Object getLocation() { return location; }
+	public int getIndex() { return index; }
+	
         public LocationAndIndex(final Object location, final int index)
             {
             this.location = location;
