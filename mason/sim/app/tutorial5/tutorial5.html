@@ -221,25 +221,14 @@ public class Ball implements Steppable
 
 <p> Our balls have a mass, a velocity in x and y, a current force in x and y, a diameter to display (determined by the mass), and a flag indicating whether or not they've collided on this pass.  When a Ball is stepped, it will apply its current forces, adjusting its velocity and moving one step accordingly.  It will also determine if it's collided with other objects.
 
-<p>We'll start with the collision computation.  What we'll do is grab all the balls within the "collision distance" from the Continuous2D field using <b>getObjectsWithinDistance(...)</b>.  This method is liberal and may return objects that are well outside the desired distance (it's just using the discretized buckets to return objects).  We then examine the objects one by one to see if they're within the distance, and if so, set collision flags in them and in us.  You get the location of a given object in the field, as expected, with <b>getObjectLocation(...)</b>.
+<p>We'll start with the collision computation.  What we'll do is grab all the balls within the "collision distance" from the Continuous2D field using <b>getObjectsExactlyWithinDistance(...)</b>.  This method provides the objects a certain radial distance from a given location.  There are other functions available as well: toroidal distance, rectangular rather than radial, and also "liberal" functions (like <b>getObjectsWithinDistance()</b>) which are more efficient but provide more objects than requested (they're just using the discretized buckets to return objects).  We then examine the objects one by one to see if they're within the distance, and if so, set collision flags in them and in us.  You get the location of a given object in the field, as expected, with <b>getObjectLocation(...)</b>.
 
 <pre><tt>
     public void computeCollision(Tutorial5 tut)
         {
-        collision = false;
-        Double2D me = tut.balls.getObjectLocation(this);
-        Bag b = tut.balls.getObjectsWithinDistance(me,Tutorial5.collisionDistance);
-        for(int x=0;x&lt;b.numObjs;x++)
-            if( this != b.objs[x] )
-                {
-                Double2D loc = tut.balls.getObjectLocation(b.objs[x]);
-                if ((loc.x-me.x)*(loc.x-me.x) + (loc.y-me.y)*(loc.y-me.y) 
-                    &lt;= Tutorial5.collisionDistance * Tutorial5.collisionDistance)
-                        {
-                        collision = true;
-                        ((Ball)(b.objs[x])).collision = true;
-                        }
-                }
+	Double2D me = tut.balls.getObjectLocation(this);
+        Bag b = tut.balls.getObjectsExactlyWithinDistance(me,Tutorial5.collisionDistance);
+	collision = b.numObjs > 1;  // other than myself of course
         }
 </tt></pre>
 

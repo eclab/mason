@@ -1480,3 +1480,4 @@ Version 14
 		rounding in the doubles.  I've verified that if the order were the same,
 		the results are identical.  Also fixed a few minor bugs in Flockers.
 	Bug fixes in Tutorial 5 documentation.  Thanks to Mark Coletti <mcoletti@gmail.com>
+	Updated Tutorial5 to use the new distance function

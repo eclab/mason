@@ -50,6 +50,9 @@ public class Ball extends SimplePortrayal2D implements Steppable
 
     public void computeCollision(Tutorial5 tut)
         {
+	/*
+	// old previous code
+	
         collision = false;
         Double2D me = tut.balls.getObjectLocation(this);
         Bag b = tut.balls.getObjectsWithinDistance(me,Tutorial5.collisionDistance);
@@ -64,6 +67,11 @@ public class Ball extends SimplePortrayal2D implements Steppable
                     ((Ball)(b.objs[x])).collision = true;
                     }
                 }
+	*/
+		
+	Double2D me = tut.balls.getObjectLocation(this);
+        Bag b = tut.balls.getObjectsExactlyWithinDistance(me,Tutorial5.collisionDistance);
+	collision = b.numObjs > 1;  // other than myself of course
         }
     
     public void addForce(Double2D otherBallLoc, Double2D myLoc, Band band)
