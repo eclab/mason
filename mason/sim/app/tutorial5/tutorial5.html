@@ -510,11 +510,11 @@ public class BandPortrayal2D extends SimpleEdgePortrayal2D
     <font color=gray>// how our strength should look</font>
     java.text.NumberFormat strengthFormat;
     public BandPortrayal2D()
-        {
-        strengthFormat = NumberFormat.newInstance();
-        strengthFormat.setMinimumIntegerDigits(1);
-        strengthFormat.setMaximumFractionDigits(2);
-        }
+      {
+      strengthFormat = java.text.NumberFormat.getInstance();
+      strengthFormat.setMinimumIntegerDigits(1);
+      strengthFormat.setMaximumFractionDigits(2);
+      }
 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
