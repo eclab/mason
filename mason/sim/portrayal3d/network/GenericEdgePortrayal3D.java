@@ -6,11 +6,8 @@
 package sim.portrayal3d.network;
 
 import java.awt.*;
-
 import javax.vecmath.*;
 import javax.media.j3d.*;
-
-import sim.portrayal3d.network.SimpleEdgePortrayal3D.EdgeWrapper;
 import sim.util.Double3D;
 
 
@@ -227,55 +224,117 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
      *                      = [Vz/V, 0, -Vx/V].
      * w = [Vz/Vxz, 0, -Vx/Vxz].
      * 
-     *              |0   -w3  w2|   |0                      Vx/Vxz  0               |
-     * W =  |w3  0   -w1| = |-Vx/Vxz        0               -Vz/Vxz |
-     *              |-w2 w1  0  |   |0                      Vz/Vxz  0               |
+     * Now it's possible Vxz=0 (if V is parallel to Oy). Sure, w is gets NaN components (0/0), and things go downhill from there. 
+     * (thanks to Nicolas Payette for pointing it out).
+     * Note that it's not the case that there's no rotation axis, but there are more than 1. 
+     * (any line in the Oxz plane is a valid axis if it contains O)
+     * If V (parallel to Oy) points towards the positive end of Oy, then alpha=0 and
+     * no rotation is actually needed; it's possible, however, that V points the other
+     * way, so you need any rotation that flips V: alpha=pi, and the axis is ... say ... Ox (i.e. w = [1,0,0])
+     * 
+     * if the edge portrayal is not a roation surface, you get different results if you use a different w, e.g. [0,0,1]
      * 
      * 
-     *              |-w3^2-w2^2             w1w2                    w1w3            |
-     * W^2= |w1w2                   -w3^2-w1^2              w2w3            |
-     *              |w1w3                   w2w3                    -w2^2-w1^2      |
+     *      |0   -w3  w2|   |0        Vx/Vxz  0       |
+     * W =  |w3  0   -w1| = |-Vx/Vxz  0       -Vz/Vxz |
+     *      |-w2 w1  0  |   |0        Vz/Vxz  0       |
+     *      
+     *      |-w3^2-w2^2    w1w2          w1w3       |
+     * W^2= |w1w2          -w3^2-w1^2    w2w3       |
+     *      |w1w3          w2w3          -w2^2-w1^2 |
      * 
-     *              |-Vx^2/Vxz^2    0       -VxVz/Vxz^2     |
-     * W^2= |0                              -1      0                       |
-     *              |-VxVz/Vxz^2    0       -Vz^2/Vxz^2     |
+     *      |-Vx^2/Vxz^2    0       -VxVz/Vxz^2 |
+     * W^2= |0              -1      0           |
+     *      |-VxVz/Vxz^2    0       -Vz^2/Vxz^2 |
+     * 
+     * <br>
+     * --------------------------------------------------------------------------
+     * <br>
+     * 
+     *                  |0      Vx/V    0       |
+     * W sin(alpha) =   |-Vx/V  0       -Vz/V   |
+     *                  |0      Vz/V    0       |
+     * 
+     *                      |-Vx^2(V-Vy)/VVxz^2     0               -VxVz(V-Vy)/VVxz^2  |
+     * W^2(1- cos(alpha)) = |0                      -(V-Vy)/V       0                   |
+     *                      |-VxVz(V-Vy)/VVxz^2     0               -Vz^2(V-Vy)/VVxz^2  |
+     * 
+     * 
+     *      |1 - Vx^2(V-Vy) /[V Vxz^2]      Vx/V            -VxVz(V-Vy) / [V Vxz^2]       0|
+     * R =  |-Vx/V                          1-(V-Vy)/V      -Vz/V                         0|      
+     *      |- VxVz(V-Vy)   /[V Vxz^2]      Vz/V            1-Vz^2(V-Vy) / [V Vxz^2]      0|
+     *      |0                              0               0                             1|
+     * 
+     *      |1 - Vx^2(V-Vy) /[V Vxz^2]      Vx/V            -VxVz(V-Vy) / [V Vxz^2]       0|
+     * R =  |-Vx/V                          Vy/V            -Vz/V                         0|      
+     *      |- VxVz(V-Vy)   /[V Vxz^2]      Vz/V            1-Vz^2(V-Vy) / [V Vxz^2]      0|
+     *      |0                              0               0                             1|
+     *      
+     *      
+     *      
+     *      
+     * 
+     *      |1   0     0   0|          |1   0   0   Fx |          |1   0   0   0|
+     * S =  |0   V/2   0   0|      T = |0   1   0   Fy |    T' =  |0   1   0   1|
+     *      |0   0     1   0|          |0   0   1   Fz |          |0   0   1   0|
+     *      |0   0     0   1|          |0   0   0   1  |          |0   0   0   1|
+     * 
+     * 
+     *             |1 - Vx^2(V-Vy) /[V Vxz^2]   Vx/2   -VxVz(V-Vy) / [V Vxz^2]   Fx+Vx/2|
+     * T*R*S*T' =  |-Vx/V                       Vy/2   -Vz/V                     Fy+Vy/2|       
+     *             |- VxVz(V-Vy)   /[V Vxz^2]   Vz/2   1-Vz^2(V-Vy) / [V Vxz^2]  Fz+Vz/2|
+     *             |0                           0      0                         1      |
      * 
      * <br>
      * =======================================================================
+     * <p>alpha=0 (V||Oy, and going the same way), 
+     * then no rotation needed
+     *           |1   0     0   Fx     |   |1   Vx/2  0   Fx+Vx/2|
+     * T*S*T' =  |0   V/2   0   Fy+V/2 | = |0   Vy/2  0   Fy+Vy/2|
+     *           |0   0     1   Fz     |   |0   Vz/2  1   Fz+Vz/2|
+     *           |0   0     0   1      |   |0   0     0   1      |
+     *           
      * <br>
-     * 
-     *                                      |0              Vx/V    0               |
-     * W sin(alpha) =       |-Vx/V  0               -Vz/V   |
-     *                                      |0              Vz/V    0               |
-     * 
-     *                                              |-Vx^2(V-Vy)/VVxz^2     0                       -VxVz(V-Vy)/VVxz^2      |
-     * W^2(1- cos(alpha)) = |0                                      -(V-Vy)/V       0                                       |
-     *                                              |-VxVz(V-Vy)/VVxz^2     0                       -Vz^2(V-Vy)/VVxz^2      |
+     * =======================================================================
+     * <p> alpha=pi (V||Oy, and going the other way) Vx=Vz=0, Vy<0
+     * sin(pi)=0, cos(pi)=-1.
+     * R= I + W*sin(alpha) + W^2 (1-cos(alpha) = I+2W^2
      * 
      * 
-     *              |1 - Vx^2(V-Vy) /[V Vxz^2]      Vx/V                    -VxVz(V-Vy) / [V Vxz^2]         0|
-     * R =  |-Vx/V                                          1-(V-Vy)/V              -Vz/V                                           0|      
-     *              |- VxVz(V-Vy)   /[V Vxz^2]      Vz/V                    1-Vz^2(V-Vy) / [V Vxz^2]        0|
-     *              |0                              0                       0                               0                                                       1|
-     * 
-     *              |1 - Vx^2(V-Vy) /[V Vxz^2]      Vx/V                    -VxVz(V-Vy) / [V Vxz^2]         0|
-     * R =  |-Vx/V                                          Vy/V            -Vz/V                                           0|      
-     *              |- VxVz(V-Vy)   /[V Vxz^2]      Vz/V                    1-Vz^2(V-Vy) / [V Vxz^2]        0|
-     *              |0                              0                       0                               0                                                       1|
+     *      |0   -w3  w2|   |0   0   0 |
+     * W =  |w3  0   -w1| = |0   0   -1|
+     *      |-w2 w1  0  |   |0   1   0 |
+     *      
+     *      |0   0    0 |
+     * W^2= |0   -1   0 |
+     *      |0   0    -1|
 
-     * 
-     *              |1      0       0       0|              |1      0       0       Fx      |               |1      0       0       0|
-     * S =  |0      V/2     0       0|      T = |0  1       0       Fy      | T' =  |0      1       0       1|
-     *              |0      0       1       0|              |0      0       1       Fz      |               |0      0       1       0|
-     *              |0      0       0       1|              |0      0       0       1       |               |0      0       0       1|
-     * 
-     * 
-     *                              |1 - Vx^2(V-Vy) /[V Vxz^2]      Vx/2            -VxVz(V-Vy) / [V Vxz^2]         Fx+Vx/2 |
-     * T*R*S*T' =   |-Vx/V                                          Vy/2            -Vz/V                                           Fy+Vy/2 |       
-     *                              |- VxVz(V-Vy)   /[V Vxz^2]      Vz/2            1-Vz^2(V-Vy) / [V Vxz^2]        Fz+Vz/2 |
-     *                              |0                              0                       0                       0                                                       1               |
-     * 
-     * 
+     *    |1   0   0   0|
+     * R= |0   -1  0   0|
+     *    |0   0   -1  0|
+     *    |0   0   0   1|
+     *    
+     *             |1   0     0   Fx     |   |1   Vx/2  0   Fx+Vx/2|
+     * T*R*S*T' =  |0   -V/2  0   Fy-V/2 | = |0   Vy/2  0   Fy+Vy/2|
+     *             |0   0     -1  Fz     |   |0   Vz/2  -1  Fz+Vz/2|
+     *             |0   0     0   1      |   |0   0     0   1      |
+     *            
+     * if w=[0,0,1],
+     *    |0   -1   0|          |-1   0   0|
+     * W= |1   0    0|    W^2 = |0   -1   0|
+     *    |0   0    0|          |0    0   0|
+     *    
+     *     |-1   0   0   0|
+     * R = |0   -1   0   0|
+     *     |0    0   1   0|
+     *     
+     *             |-1  0     0   Fx     |   |-1  Vx/2  0   Fx+Vx/2|
+     * T*R*S*T' =  |0   -V/2  0   Fy-V/2 | = |0   Vy/2  0   Fy+Vy/2|
+     *             |0   0     1   Fz     |   |0   Vz/2  1   Fz+Vz/2|
+     *             |0   0     0   1      |   |0   0     0   1      |
+     *            
+     * =======================================================================
+     * <p> V=[000]
      */
     protected Transform3D getTransform(double[] from, double[] to)
         {
@@ -293,9 +352,8 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
         final double vxz2 = vx2+vz2;
         final double v2   = vxz2+vy2;
-                
-//              final double vxz = Math.sqrt(vxz2);             
-        final double v  = Math.sqrt(v2);
+                             
+        final double v  = (vxz2==0)? Math.abs(vy): Math.sqrt(v2);
                 
         double halfVx = transformData[1]  = vx/2;
         double halfVy = transformData[5]  = vy/2;
@@ -308,13 +366,22 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         transformData[4]  = -vx/v;
         transformData[6]  = -vz/v;
                 
-        final double vxz2v = v*vxz2;
-        final double vxvz = vx*vz;
-        final double a = (v-vy)/vxz2v;
-
-        transformData[0]  = 1 - vx2*a;
-        transformData[10] = 1 - vz2*a;
-        transformData[8] = transformData[2] = -vxvz*a;
+        if(vxz2!=0)
+        {
+	        final double vxz2v = v*vxz2;
+	        final double vxvz = vx*vz;
+	        final double a = (v-vy)/vxz2v;
+	
+	        transformData[0]  = 1 - vx2*a;
+	        transformData[10] = 1 - vz2*a;
+	        transformData[8] = transformData[2] = -vxvz*a;
+        }
+        else
+        {
+	        transformData[8] = transformData[2] = 0;
+	        transformData[0]  = 1;
+	        transformData[10] = vy>0? 1: -1;
+        }
                 
         transform.set(transformData);
         return transform;

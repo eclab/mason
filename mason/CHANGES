@@ -1481,3 +1481,5 @@ Version 14
 		the results are identical.  Also fixed a few minor bugs in Flockers.
 	Bug fixes in Tutorial 5 documentation.  Thanks to Mark Coletti <mcoletti@gmail.com>
 	Updated Tutorial5 to use the new distance function
+	Bugfix in GenericEdgePortrayal3D when the edge should end up parallel to Oy.
+		Thanks to Nicolas Payette (nicolaspayette@gmail.com).
