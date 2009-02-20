@@ -293,6 +293,8 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
      * T*S*T' =  |0   V/2   0   Fy+V/2 | = |0   Vy/2  0   Fy+Vy/2|
      *           |0   0     1   Fz     |   |0   Vz/2  1   Fz+Vz/2|
      *           |0   0     0   1      |   |0   0     0   1      |
+     * 
+     * <br>I use this formula for the case V=0, too. 
      *           
      * <br>
      * =======================================================================
@@ -334,7 +336,7 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
      *             |0   0     0   1      |   |0   0     0   1      |
      *            
      * =======================================================================
-     * <p> V=[000]
+     * 
      */
     protected Transform3D getTransform(double[] from, double[] to)
         {
@@ -363,12 +365,12 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         transformData[7]  = fy + halfVy;
         transformData[11] = fz + halfVz;                
 
-        transformData[4]  = -vx/v;
-        transformData[6]  = -vz/v;
-                
+               
         if(vxz2!=0)
         {
-	        final double vxz2v = v*vxz2;
+            transformData[4]  = -vx/v;
+            transformData[6]  = -vz/v;
+            final double vxz2v = v*vxz2;
 	        final double vxvz = vx*vz;
 	        final double a = (v-vy)/vxz2v;
 	
@@ -378,9 +380,11 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         }
         else
         {
-	        transformData[8] = transformData[2] = 0;
+            transformData[4]  = 0;
+            transformData[6]  = 0;
+        	transformData[8] = transformData[2] = 0;
 	        transformData[0]  = 1;
-	        transformData[10] = vy>0? 1: -1;
+	        transformData[10] = vy>=0? 1: -1;
         }
                 
         transform.set(transformData);
