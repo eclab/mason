@@ -41,7 +41,7 @@ public class RandomSequence extends Sequence
         final boolean shouldSynchronize = this.shouldSynchronize;
         // shuffle steps first
         Steppable temp;
-        for(int x=steps.length-1; x>1 ; x--)
+        for(int x=steps.length-1; x>=1 ; x--)
             {
             int i = (shouldSynchronize ? nextInt(state,x+1) : state.random.nextInt(x+1));
             temp = steps[i];

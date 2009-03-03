@@ -1481,5 +1481,37 @@ Version 14
 		the results are identical.  Also fixed a few minor bugs in Flockers.
 	Bug fixes in Tutorial 5 documentation.  Thanks to Mark Coletti <mcoletti@gmail.com>
 	Updated Tutorial5 to use the new distance function
-	Bugfix in GenericEdgePortrayal3D when the edge should end up parallel to Oy.
+	Added precise drawing capabilities to OvalPortrayal2D and RectanglePortrayal2D
+		and their subclasses.  If the 'precise' flag is turned on in the DrawInfo2D,
+		these classes will draw using real-valued arithmetic rather than java.awt's
+		integer methods.  Basically this looks better when doing screenshots to
+		PDF.
+	Tweaks to LabelledPortrayal2D.  Instead of "or" and "dr" we now have the better
+		named "scale" and "offset".  We've also added some new constructors.
+		"offset" is now a double, though it presently really makes little
+		difference because we use drawString which requires ints anyway.  But
+		if we make LabelledPortrayal able to handle precise drawing, it'll be
+		easier to do it that way.
+	Significant change to CircledPortrayal2D: "or" and "dr" have changed to "scale"
+		and "offset", and "scale" is now twice what it used to be.  This will
+		require you to double your values that you pass in for that.  This change
+		makes the class consistent with CircledPortrayal3D and enables us to easily
+		arrange it to be a subclass of OvalPortrayal2D; thus it inherits the new
+		precise drawing features of that superclass.
+	Modifications to ShapePortrayal2D.  It now handles precise drawing just like
+		OvalPortrayal2D etc.  It also allows you to provide double-valued polygons
+		in the form of arrays of x/y coordinates, as well as Shapes.
+	Changes to HexagonalPortrayal2D.  This class is now a subclass of
+		ShapePortrayal2D and so inherits its precise drawing.  We've also changed
+		the constructor features of this class -- no longer can you "also" draw
+		the frame in addition to the shape.  It's either stroke the frame or
+		fill the object, you pick, just like OvalPortrayal2D and RectanglePortrayal2D
+		etc.
+	Added precise drawing to ImagePortrayal2D
+	Bugfix in GenericEdgePortrayal3D when the edge should end up parallel to O_y.
 		Thanks to Nicolas Payette (nicolaspayette@gmail.com).
+        Bug fix to shuffling algorithm used in MASON. We stopped one element too early,
+                so for small arrays the shuffling is non-uniform (and for size-two arrays
+                there was no shuffling at all).  Gagh.  For shuffling large numbers of items,
+                the effect was minimal.  This affects Bag.shuffle(), IntBag.shuffle(),
+                DoubleBag.shuffle(), Schedule, and RandomSequence.

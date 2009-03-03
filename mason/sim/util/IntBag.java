@@ -258,7 +258,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         int obj;
         int rand;
         
-        for(int x=numObjs-1; x > 1 ; x--)
+        for(int x=numObjs-1; x >= 1 ; x--)
             {
             rand = random.nextInt(x+1);
             obj = objs[x];
@@ -276,7 +276,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         int obj;
         int rand;
         
-        for(int x=numObjs-1; x > 1 ; x--)
+        for(int x=numObjs-1; x >= 1 ; x--)
             {
             rand = random.nextInt(x+1);
             obj = objs[x];
