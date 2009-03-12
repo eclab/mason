@@ -34,7 +34,7 @@ public class SpatialNetwork3D
     
     public SpatialNetwork3D( final SparseGrid3D grid, final Network network )
         {
-        this.field = field;
+        this.field = grid;
         if (field == null)
             throw new RuntimeException("Null SparseGrid3D.");
         this.network = network;
