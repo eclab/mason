@@ -22,7 +22,14 @@ public interface ColorMap
     {
     /** Returns a color for the given level */
     public Color getColor(double level);
-    /** Returns the RGB values, plus alpha, for a color for the given level.  The byte ordering should be in the same fashion that Color.getRGB() is provided. */
+    /** Returns the RGB values, plus alpha, for a color for the given level.  
+        The byte ordering should be in the same fashion that Color.getRGB() is provided. This could
+	be simply written as
+	
+	<p><code return getColor(level).getRGB() </code>
+	
+	... however it's likely that this method could be written more efficiently than this.
+    */
     public int getRGB(double level);
     /** Returns the alpha value for a color for the given level.  This could be simply written as 
                 
@@ -32,7 +39,7 @@ public interface ColorMap
                 
         <p><code>return getColor(level).getAlpha() </code>
                 
-        <p>...however it's likely that it thie method could be written more efficiently than either of these.
+        <p>...however it's likely that it this method could be written more efficiently than either of these.
     */
     public int getAlpha(double level);
     /** Returns true if a level is "valid" (it provides a meaningful color) */

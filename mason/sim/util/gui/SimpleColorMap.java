@@ -68,22 +68,50 @@ public class SimpleColorMap implements ColorMap
 
     //      (The faster cache)
     //      Color[] colorCache2 = new Color[COLOR_DISCRETIZATION];  
-        
-    public SimpleColorMap()
+    
+    /** Constructs a ColorMap that gradiates from 0.0 -> black to 1.0 -> white.  
+	Values higher than 1.0 are mapped to white.  
+	Values less than 0.0 are mapped to black. 
+	Values from 0.0 through 1.0 are considered valid levels by validLevel(...). 
+	The default value is 0.0 (for defaultValue() ).
+	*/
+	public SimpleColorMap()
         {
         setLevels(0,1,Color.black,Color.white);
         }
     
+    /** Constructs a ColorMap that gradiates from minLevel -> minColor to maxLevel -> maxColor.  
+	Values higher than maxLevel are mapped to maxColor.  
+	Values less than minLevel are mapped to minColor. 
+	Values from minLevel through maxLevel are considered valid levels by validLevel(...). 
+	The default value is minLevel (for defaultValue() ).
+	*/
     public SimpleColorMap(double minLevel, double maxLevel, Color minColor, Color maxColor)
         {
         setLevels(minLevel,maxLevel,minColor,maxColor);
         }
     
+    /** Given an array of size n, constructs a ColorMap that maps integers from 0 to n-1 to the colors in the array.
+	Any real-valued number x, for 0 <= x < n, is converted into an integer (with floor()) and then mapped to an array color.
+	For all other values, black is returned. 
+	Values from x through n, not including n, are considered valid levels by validLevel(...).
+	The default value is 0 (for defaultValue() ).
+	*/
     public SimpleColorMap(Color[] colorTable)
         {
         setColorTable(colorTable);
         }
         
+    /** Given an array of size n, constructs a ColorMap that maps integers from 0 to n-1 to the colors in the array,
+	and gradiates from minLevel -> minColor to maxLevel -> maxColor for certain other values.
+	Any real-valued number x, for 0 <= x < n, is converted into an integer (with floor()) and then mapped to an array color.
+	Outside this range, gradiation occurs for minLevel <= x <= maxLevel.
+	For any other value of x, values higher than maxLevel are mapped to maxColor,
+	and values less than minLevel are mapped to minColor.
+	Values from x through n, not including n, and additionally values from minLevel through maxLevel,
+	are considered valid levels by validLevel(...)
+	The default value is 0 (for defaultValue() ).
+	*/
     public SimpleColorMap(Color[] colorTable, double minLevel, double maxLevel, Color minColor, Color maxColor)
         {
         setColorTable(colorTable);
