@@ -177,7 +177,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     	LabelledList globalAttribList = (LabelledList) getGlobalAttribute(-2);
         useCullingCheckBox = new JCheckBox();
         
-        globalAttribList.add(new JLabel("Cull data"), useCullingCheckBox);
+        globalAttribList.add(new JLabel("Cull Data"), useCullingCheckBox);
         maxPointsPerSeriesTextField = new NumberTextField(1000)
         	{
             public double newValue(final double val)
@@ -190,7 +190,8 @@ public class TimeSeriesChartGenerator extends ChartGenerator
                 }
             };
         useCullingCheckBox.setSelected(true);
-        globalAttribList.add(new JLabel("Max points/series"),maxPointsPerSeriesTextField);
+        globalAttribList.add(new JLabel("... Over"),maxPointsPerSeriesTextField);
+        maxPointsPerSeriesTextField.setToolTipText("The maximum number of data points in a series before data culling gets triggered.");
 
         dataCuller = new MinGapDataCuller((int)maxPointsPerSeriesTextField.getValue());
 
