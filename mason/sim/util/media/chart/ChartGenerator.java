@@ -221,6 +221,14 @@ public abstract class ChartGenerator extends JPanel
 
         LabelledList list = new LabelledList("Chart");
         globalAttributes.add(list);
+        
+        JLabel j = new JLabel("Right-Click or Control-Click");
+        j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
+        list.add(j);
+        j = new JLabel("on Chart for More Options");
+        j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
+        list.add(j);
+
 
 /*
   titleField = new JTextField();
@@ -402,12 +410,6 @@ public abstract class ChartGenerator extends JPanel
             };
         aliasCheck.addItemListener(il);
         list.add(new JLabel("Antialias"), aliasCheck);
-        JLabel j = new JLabel("Right-Click or Control-Click");
-        j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
-        list.add(j);
-        j = new JLabel("on Chart for More Options");
-        j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
-        list.add(j);
 
         JPanel pdfButtonPanel = new JPanel();
         pdfButtonPanel.setLayout(new BorderLayout());
