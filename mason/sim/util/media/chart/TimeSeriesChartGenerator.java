@@ -15,6 +15,7 @@ import javax.swing.border.*;
 import java.io.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
+import sim.util.datacull.*;
 import sim.util.gui.LabelledList;
 import sim.util.gui.NumberTextField;
 
@@ -162,5 +163,56 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         return i;
         }
         
+    
+    
+    protected JCheckBox useCullingCheckBox;
+    protected NumberTextField maxPointsPerSeriesTextField;
+    protected DataCuller  dataCuller;
+    public DataCuller getDataCuller(){return dataCuller;}
+    public void setDataCuller(DataCuller dataCuller){this.dataCuller = dataCuller;}
+    
+    public TimeSeriesChartGenerator()
+    	{
+    	super();
+    	LabelledList globalAttribList = (LabelledList) getGlobalAttribute(-2);
+        useCullingCheckBox = new JCheckBox();
+        
+        globalAttribList.add(new JLabel("Cull data"), useCullingCheckBox);
+        maxPointsPerSeriesTextField = new NumberTextField(1000)
+        	{
+            public double newValue(final double val)
+                {
+            		int max = (int)val;
+            		if(val<2)
+            			return (int)getValue();
+            		dataCuller = new MinGapDataCuller(max);
+            		return max;
+                }
+            };
+        useCullingCheckBox.setSelected(true);
+        globalAttribList.add(new JLabel("Max points/series"),maxPointsPerSeriesTextField);
+
+        dataCuller = new MinGapDataCuller((int)maxPointsPerSeriesTextField.getValue());
+
+        
+        useCullingCheckBox.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent event)
+                {
+            	if(useCullingCheckBox.isSelected())
+	            	{
+        			maxPointsPerSeriesTextField.setEnabled(true);
+        			int maxPoints = (int)maxPointsPerSeriesTextField.getValue();
+        			dataCuller = new MinGapDataCuller(maxPoints);
+	            	}
+            	else
+	            	{
+            		maxPointsPerSeriesTextField.setEnabled(false);
+        			dataCuller = null;
+	            	}
+                }
+            }); 
+
+    	}
 
     }

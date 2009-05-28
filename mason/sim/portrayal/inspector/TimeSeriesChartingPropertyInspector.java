@@ -6,12 +6,11 @@
 
 package sim.portrayal.inspector;
 import java.awt.*;
-import java.awt.event.*;
+import java.util.Iterator;
 import sim.util.*;
 import sim.display.*;
 import sim.engine.*;
-import javax.swing.*;
-import sim.util.gui.*;
+import sim.util.datacull.DataCuller;
 import sim.util.media.chart.*;
 import org.jfree.data.xy.*;
 import org.jfree.data.general.*;
@@ -28,7 +27,7 @@ import org.jfree.data.general.*;
         
     <p>TimeSeriesChartingPropertyInspector registers itself with the property menu option "Chart".
 */
-
+	
 public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspector
     {
     XYSeries chartSeries = null;
@@ -40,11 +39,11 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     public static Class[] types() 
         {
         return new Class[]
-            {
-            Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
-            Integer.TYPE, Long.TYPE, Float.TYPE,
-            Double.TYPE, Valuable.class
-            };
+                {
+                Number.class, Boolean.TYPE, Byte.TYPE, Short.TYPE,
+                Integer.TYPE, Long.TYPE, Float.TYPE,
+                Double.TYPE, Valuable.class
+                };
         }
 
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
@@ -101,6 +100,78 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
             return ((Boolean)o).booleanValue() ? 1 : 0;
         else return Double.NaN;  // unknown
         }
+    
+//	public DataCuller dataCuller = null;	//null means no culling
+    public void addToMainSeries(double x, double y, boolean notify)
+    {
+    	chartSeries.add(x, y, false);
+    	//I postpone <code>fireSeriesChanged</code> till after  
+    	//the culling decision to save a repaint.
+    	
+    	DataCuller dataCuller = ((TimeSeriesChartGenerator)generator).getDataCuller();
+    	if(dataCuller!=null && dataCuller.tooManyPoints(chartSeries.getItemCount()))
+    		deleteItems(dataCuller.cull(getXValues(), true));
+    	else
+    		//no chage to chartSeries other then the add(), so
+    		if(notify)
+    			chartSeries.fireSeriesChanged();
+    }
+//    public void setDataCuller(DataCuller dc)
+//    {
+//    	dataCuller = dc;
+//    }
+    static Bag tmpBag = new Bag();
+    void deleteItems(IntBag items)
+    {
+    	if(items.numObjs==0)
+    		return;
+//    	//I would sure hate to to do this (O(n^2), plus each remove causes a SeriesChangeEvent):
+//    	for(int i=items.numObjs-1;i>=0;i--)
+//    		chartSeries.remove(items.objs[i]);
+    	//here's the O(n) version (and just 2 SeriesChangeEvents)
+
+    	tmpBag.clear();
+    	int currentTabooIndex = 0;
+    	int currentTaboo = items.objs[0];
+    	Iterator iter = chartSeries.getItems().iterator();
+    	int index=0;
+    	while(iter.hasNext())
+    	{
+    		Object o = iter.next();
+    		if(index==currentTaboo)
+    		{
+    			//skip the copy, let's move on to next taboo index
+    			if(currentTabooIndex<items.numObjs-1)
+    			{
+        			currentTabooIndex++;
+        			currentTaboo = items.objs[currentTabooIndex];
+    			}
+    			else
+    				currentTaboo=-1;//no more taboos
+    		}
+    		else//save o
+    			tmpBag.add(o);
+    		index++;
+    	}
+    	//now we clear the chartSeries and then put back the saved objects only.
+    	chartSeries.clear();
+    	//In my test this did not cause the chart to flicker.
+    	//But if it does, one could do an update for the part the will be refill and 
+    	//only clear the rest using delete(start, end).
+    	for(int i=0;i<tmpBag.numObjs;i++)
+    		chartSeries.add((XYDataItem)tmpBag.objs[i], false);//no notifying just yet.
+    	tmpBag.clear();
+    	//it doesn't matter that I clear this twice in a row 
+    	//(once here, once at next time through this fn), the second time is O(1).
+    	chartSeries.fireSeriesChanged();
+    }
+    double[] getXValues()
+    {
+    	double[] xValues = new double[chartSeries.getItemCount()];
+    	for(int i=0;i<xValues.length;i++)
+    		xValues[i]=chartSeries.getX(i).doubleValue();
+    	return xValues;
+    }
 
     protected void updateSeries(double time, double lastTime)
         {
@@ -116,9 +187,9 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         if (!
             // I think these are the three cases for when we may need to update because
             // we've exceeded the next interval
-                (intervalMark == 0 || 
-                (time - lastTime >= interval) ||
-                lastTime % interval > intervalMark))
+            (intervalMark == 0 || 
+             (time - lastTime >= interval) ||
+             lastTime % interval > intervalMark))
             return;  // not yet
                                         
         // THIRD determine how and when to dump stuff into the main series
@@ -127,7 +198,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         switch(globalAttributes.aggregationMethod)
             {
             case AGGREGATIONMETHOD_CURRENT:  // in this case the aggregateSeries is sort of worthless
-                chartSeries.add(time, d, false);
+                addToMainSeries(time, d, false);
                 break;
             case AGGREGATIONMETHOD_MAX:
                 double maxX = 0;
@@ -138,7 +209,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                     temp = item.getX().doubleValue();
                     if( maxX < temp || i==0) maxX = temp;
                     }
-                chartSeries.add( maxX, y, false );
+                addToMainSeries( maxX, y, false );
                 break;
             case AGGREGATIONMETHOD_MIN:
                 double minX = 0;
@@ -149,7 +220,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                     temp = item.getX().doubleValue();
                     if( minX > temp || i==0) minX = temp;
                     }
-                chartSeries.add( minX, y, false );
+                addToMainSeries( minX, y, false );
                 break;
             case AGGREGATIONMETHOD_MEAN:
                 double sumX = 0;
@@ -163,7 +234,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                     }
                 if (n == 0)
                     System.err.println( "No element????" );
-                else chartSeries.add(sumX / n, y, false);
+                else addToMainSeries(sumX / n, y, false);
                 break;
             default:
                 System.err.println( "There are only four aggregation method implemented" );
