@@ -1516,4 +1516,11 @@ Version 14
             the effect was minimal.  This affects Bag.shuffle(), IntBag.shuffle(),
             DoubleBag.shuffle(), Schedule, and RandomSequence.
 	Bugfix in constructor SpatialNetwork3D(final SparseGrid3D grid, final Network network)
+	Added data cullig functionality to time series charts, both programmatically and
+		from the GUI. Affected classes:
+			TimeSeriesChartingPropertyInspector
+			TimeSeriesChartingGenerator, and
+			ChartGenerator (minor reordering of properties).
 		
+		
+	
