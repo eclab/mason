@@ -49,24 +49,24 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-        setSeriesAttributes();
+        setupSeriesAttributes();
         }
     
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
         {
         super(properties, index, simulation, generator);
-        setSeriesAttributes();
+        setupSeriesAttributes();
         }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
-    private void setSeriesAttributes()
+    private void setupSeriesAttributes()
         {            
         if (validInspector)
             {
             chartSeries = new XYSeries( properties.getName(index), false );
 
             // add our series
-            ((TimeSeriesChartGenerator)generator).addSeries(chartSeries, new SeriesChangeListener()
+            seriesAttributes = ((TimeSeriesChartGenerator)generator).addSeries(chartSeries, new SeriesChangeListener()
                 {
                 public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
                 });

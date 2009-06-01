@@ -36,7 +36,6 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
     /** The initial number of bins in histograms. */
     public static final int DEFAULT_BINS = 8;
     double[] previousValues = new double[] { 0 };  // sacrificial
-    HistogramSeriesAttributes seriesAttributes;
         
     protected boolean validChartGenerator(ChartGenerator generator) { return generator instanceof HistogramGenerator; }
         
@@ -56,17 +55,17 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
     public HistogramChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-        setSeriesAttributes();
+        setupSeriesAttributes();
         }
     
     public HistogramChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
         {
         super(properties, index, simulation, generator);
-        setSeriesAttributes();
+        setupSeriesAttributes();
         }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
-    private void setSeriesAttributes()
+    private void setupSeriesAttributes()
         {
         if (validInspector)
             {
@@ -82,7 +81,7 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
             repaint();
             }
         }
-
+		
     protected ChartGenerator createNewGenerator()
         {
         return new HistogramGenerator()

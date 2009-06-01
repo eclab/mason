@@ -49,7 +49,8 @@ public class HistogramGenerator extends ChartGenerator
     ArrayList stoppables = new ArrayList();
     HistogramType histogramType = HistogramType.FREQUENCY;
                 
-    public class HistogramSeries {
+    public class HistogramSeries 
+	{
         double[] values; 
         int bins;
         String name;
@@ -62,6 +63,7 @@ public class HistogramGenerator extends ChartGenerator
         public String getName() { return name; }
         public void setName(String val) { name = val; }
         }
+		
     ArrayList histogramSeries = new ArrayList();
         
     public AbstractSeriesDataset getSeriesDataset() { return dataset; }
@@ -221,7 +223,7 @@ public class HistogramGenerator extends ChartGenerator
         but not in the chart: the expectation is that you will then do an update() which will load the series properly.  This is a hack
         to get around the fact that you HAVE to provide values to a series even if you don't know what they are yet because JFreeChart dies
         on a series of length 0.
-        Returns the series index number. */
+        Returns the series attributes. */
     public HistogramSeriesAttributes addSeries(double[] values, int bins, String name, final org.jfree.data.general.SeriesChangeListener stopper)
         {
         int i = dataset.getSeriesCount();

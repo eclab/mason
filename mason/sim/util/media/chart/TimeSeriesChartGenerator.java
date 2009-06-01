@@ -151,16 +151,16 @@ public class TimeSeriesChartGenerator extends ChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user.  The series should have a key
-        in the form of a String.  Returns the series index number. */
-    public int addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
+        in the form of a String.  Returns the series attributes. */
+    public TimeSeriesAttributes addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
         {
         int i = dataset.getSeriesCount();
         dataset.addSeries(series);
-        SeriesAttributes csa = new TimeSeriesAttributes(this, series, i); 
+        TimeSeriesAttributes csa = new TimeSeriesAttributes(this, series, i); 
         seriesAttributes.add(csa);
         stoppables.add( stopper );
         revalidate();
-        return i;
+        return csa;
         }
         
     
