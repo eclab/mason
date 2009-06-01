@@ -1521,6 +1521,6 @@ Version 14
 			TimeSeriesChartingPropertyInspector
 			TimeSeriesChartingGenerator, and
 			ChartGenerator (minor reordering of properties).
-		
+	ChartGenerator offers getters/setters for using log scale on either axis.
 		
 	

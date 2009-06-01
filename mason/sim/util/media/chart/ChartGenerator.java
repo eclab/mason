@@ -92,6 +92,11 @@ public abstract class ChartGenerator extends JPanel
     /** The global attributes logarithmic domain axis check box. */
     protected JCheckBox xLog;
     
+    public void setXAxisLogScaled(boolean isLogScaled){xLog.setSelected(isLogScaled);}
+    public boolean isXAxisLogScaled(){return xLog.isSelected();}
+    public void setYAxisLogScaled(boolean isLogScaled){yLog.setSelected(isLogScaled);}
+    public boolean isYAxisLogScaled(){return yLog.isSelected();}
+    
     /** Override this to return the JFreeChart data set used by your Chart.  For example, time series charts
         might return the XYSeriesCollection. */ 
     public abstract AbstractSeriesDataset getSeriesDataset();
