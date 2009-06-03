@@ -7,7 +7,6 @@
 package sim.app.mav;
 
 import sim.portrayal.*;
-import sim.util.*;
 import java.awt.geom.*;
 import java.awt.*;
 import java.io.*;
