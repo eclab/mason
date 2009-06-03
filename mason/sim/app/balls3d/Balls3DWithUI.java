@@ -7,12 +7,10 @@
 package sim.app.balls3d;
 import sim.portrayal3d.network.*;
 import sim.portrayal3d.continuous.*;
-import sim.portrayal3d.simple.*; 
 import sim.display3d.*;
 import sim.engine.*;
 import sim.display.*;
 import javax.swing.*;
-import java.awt.*;
 
 public class Balls3DWithUI extends GUIState
     {
