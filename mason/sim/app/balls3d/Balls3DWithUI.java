@@ -11,6 +11,7 @@ import sim.display3d.*;
 import sim.engine.*;
 import sim.display.*;
 import javax.swing.*;
+import sim.portrayal3d.simple.CircledPortrayal3D;
 
 public class Balls3DWithUI extends GUIState
     {
