@@ -156,13 +156,13 @@ public class MinGapDataCuller implements DataCuller
 		Record leftRecord, rightRecord;
 		int heapPosition;//actually, it's the index in 1based counting.
 		
-		public String toString()
-		{
-			return "R{xi="+xValueIndex+" hp="+heapPosition+" lg="+leftGap+" rg="+rightGap+
-			" lr="+(leftRecord==null?leftRecord:"R"+leftRecord.xValueIndex)+
-			" rr="+(rightRecord==null?rightRecord:"R"+rightRecord.xValueIndex)+
-			"}";
-		}
+//		public String toString()
+//		{
+//			return "R{xi="+xValueIndex+" hp="+heapPosition+" lg="+leftGap+" rg="+rightGap+
+//			" lr="+(leftRecord==null?leftRecord:"R"+leftRecord.xValueIndex)+
+//			" rr="+(rightRecord==null?rightRecord:"R"+rightRecord.xValueIndex)+
+//			"}";
+//		}
 		public Record(int xValueIndex, double leftGap, double rightGap, int heapPosition)
 		{
 			this.xValueIndex = xValueIndex;
