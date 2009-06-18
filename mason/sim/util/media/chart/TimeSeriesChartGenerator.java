@@ -15,7 +15,6 @@ import javax.swing.border.*;
 import java.io.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
-import sim.util.datacull.*;
 import sim.util.gui.LabelledList;
 import sim.util.gui.NumberTextField;
 

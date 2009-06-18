@@ -10,7 +10,6 @@ import java.util.Iterator;
 import sim.util.*;
 import sim.display.*;
 import sim.engine.*;
-import sim.util.datacull.DataCuller;
 import sim.util.media.chart.*;
 import org.jfree.data.xy.*;
 import org.jfree.data.general.*;
