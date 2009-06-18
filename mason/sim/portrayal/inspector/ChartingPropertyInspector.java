@@ -65,7 +65,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     protected boolean includeAggregationMethodAttributes() { return true; }
 	
 	/** Returns the SeriesAttributes used in the ChartGenerator for the series defined by this inspector.  */
-	SeriesAttributes getSeriesAttributes() { return seriesAttributes; }
+	public SeriesAttributes getSeriesAttributes() { return seriesAttributes; }
 
     /** Produces a ChartingPropertyInspector which tracks property number index from the given properties list,
         stored in the provided parent frame, and applied in the given simulation.  This constructor will give the
