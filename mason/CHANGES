@@ -1527,4 +1527,5 @@ Version 14
 		to return the SeriesAttributes used in the ChartGenerator for the series defined by that inspector;
 		now you can programmatically set the number of bins in a HistogramChartingPropertyInspector
 		(after you cast it to HistogramSeriesAttributes, of course).
+	Bugfix in TimeSeriesAttributes.setStrokeColor(Color): the ColorWell would not update its color, just the series itself
 	

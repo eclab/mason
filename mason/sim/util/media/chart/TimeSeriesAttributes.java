@@ -90,7 +90,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         }
     public float getDashPattern() { return dashPatternList.getSelectedIndex(); }
 
-    public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
+    public void setStrokeColor(Color value) { strokeColorWell.setColor(strokeColor = value);}
     public Color getStrokeColor() { return strokeColor; }
 
     /** The time series in question.  */
