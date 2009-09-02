@@ -16,7 +16,7 @@ import java.awt.geom.*;
 import sim.portrayal.inspector.*;
 
 /**
-   Can be used to draw both continuous and descrete sparse fields
+   Can be used to draw both continuous and discrete sparse fields
 */
 
 public class SparseGridPortrayal2D extends FieldPortrayal2D
@@ -99,8 +99,6 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final SparseGrid2D field = (SparseGrid2D) this.field;
         if (field==null) return;
 
-        //System.out.println(getLocation(field.allObjects.objs[0], info));
-                
         boolean objectSelected = !selectedWrappers.isEmpty();
 
         int maxX = field.getWidth(); 
@@ -121,7 +119,9 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
         // (yuck -- possibly expensive, have to search through empty locations).
-        if (policy != null)
+		//
+		// We never use the policy to determine hitting.  hence this only works if graphics != null
+        if (policy != null && graphics != null)
             {
             Bag policyBag = new Bag();
             Iterator iterator = field.locationBagIterator();
@@ -129,12 +129,13 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                 {
                 Bag objects = (Bag)(iterator.next());
                 
+				if (objects == null) continue;
+				
                 // restrict the number of objects to draw
                 policyBag.clear();  // fast
-                boolean val = policy.objectToDraw(objects,policyBag);
-                if (val == DrawPolicy.DONE)
-                    objects = policyBag;
-
+                if (policy.objectToDraw(objects,policyBag))  // if this function returns FALSE, we should use objects as is, else use the policy bag.
+					objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
+					
                 // draw 'em
                 for(int x=0;x<objects.numObjs;x++)
                     {
@@ -162,25 +163,15 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         newinfo.draw.x += newinfo.draw.width / 2.0;
                         newinfo.draw.y += newinfo.draw.height / 2.0;
 
-                        if (graphics == null)
-                            {
-                            if (portrayal.hitObject(portrayedObject, newinfo))
-                                putInHere.add(getWrapper(portrayedObject));
-                            }
-                        else
-                            {
-                            // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                            // graphics.setClip(clip);
-                            if (objectSelected &&  // there's something there
-                                selectedWrappers.get(portrayedObject) != null)
-                                {
-                                LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                                portrayal.setSelected(wrapper,true);
-                                portrayal.draw(portrayedObject, graphics, newinfo);
-                                portrayal.setSelected(wrapper,false);
-                                }
-                            else portrayal.draw(portrayedObject, graphics, newinfo);
-                            }
+						if (objectSelected &&  // there's something there
+							selectedWrappers.get(portrayedObject) != null)
+							{
+							LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+							portrayal.setSelected(wrapper,true);
+							portrayal.draw(portrayedObject, graphics, newinfo);
+							portrayal.setSelected(wrapper,false);
+							}
+						else portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }
@@ -248,21 +239,12 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
             {
             public Object getLocation()
                 {
-                /*
-                  if (field==null) return null;
-                  else return field.getObjectLocation(this.object);
-                */
                 w.update();
                 return w;
                 }
                 
             public String getLocationName()
                 {
-                /*
-                  Object loc = getLocation();
-                  if (loc == null) return "Gone";
-                  else return ((Int2D)loc).toCoordinates();
-                */
                 w.update();
                 return w.toString();
                 }

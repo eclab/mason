@@ -28,7 +28,8 @@ import sim.display.*;
    origin and with the radius:
 
    <pre><tt>
-   radius:     (int)(or * max(info.draw.width,info.draw.height)) + dr;
+   x diameter:     (int)(scale * info.draw.width + offset);
+   y diameter:     (int)(scale * info.draw.height + offset);
    </tt></pre>
 
    <p>... that is, or is a value which scales when you zoom in, and dr adds 
@@ -42,27 +43,16 @@ import sim.display.*;
    could be on-screen at the time!  C'est la vie.
 */
 
-public class CircledPortrayal2D extends SimplePortrayal2D
+public class CircledPortrayal2D extends OvalPortrayal2D
     {
-    public static final double DEFAULT_OR = 1.0;
-    public static final int DEFAULT_DR = 0;
-    
-    /** The pre-scaling radius */
-    public double or;
-    
-    /** The post-scaling radius offset */   
-    public int dr;
-    
-    /** The Paint or Color of the circle */
-    public Paint paint;
+    public static final double DEFAULT_SCALE = 2.0;
+    public static final double DEFAULT_OFFSET = 0.0;
     
     public SimplePortrayal2D child;
     
     /** Overrides all drawing. */
     boolean showCircle = true;
-    
     boolean onlyCircleWhenSelected;
-    
     boolean isSelected = false;
     
     public void setOnlyCircleWhenSelected(boolean val) { onlyCircleWhenSelected = val; }
@@ -73,24 +63,26 @@ public class CircledPortrayal2D extends SimplePortrayal2D
     
     /** If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
-    public CircledPortrayal2D(SimplePortrayal2D child, int dr, double or, Paint paint, boolean onlyCircleWhenSelected)
+    public CircledPortrayal2D(SimplePortrayal2D child, double offset, double scale, 
+        Paint paint, boolean onlyCircleWhenSelected)
         {
-        this.dr = dr; this.or = or; this.child = child;
+        super(paint, scale, false);  // the scale will be twice what the user requests
+        this.offset = offset; this.child = child;
         this.paint = paint;  this.onlyCircleWhenSelected = onlyCircleWhenSelected;
         }
     
-    /** Draw a circle of radius or = 1.0, dr = 0, in blue.  Draw the circle regardless of selection.
+    /** Draw a circle of radius scale = 2.0, dr = 0, in blue.  Draw the circle regardless of selection.
         If child is null, then the underlying model object is presumed to be a Portrayal2D and will be used. */
     public CircledPortrayal2D(SimplePortrayal2D child)
         {
         this(child, Color.blue, false);
         }
         
-    /** Draw a circle of radius or = 1.0, dr = 0.
+    /** Draw a circle of radius or = 2.0, dr = 0.
         If child is null, then the underlying model object is presumed to be a Portrayal2D and will be used. */
     public CircledPortrayal2D(SimplePortrayal2D child, Paint paint, boolean onlyCircleWhenSelected)
         {
-        this(child, DEFAULT_DR, DEFAULT_OR, paint, onlyCircleWhenSelected);
+        this(child, DEFAULT_OFFSET, DEFAULT_SCALE, paint, onlyCircleWhenSelected);
         }
 
     public SimplePortrayal2D getChild(Object object)
@@ -107,19 +99,8 @@ public class CircledPortrayal2D extends SimplePortrayal2D
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         getChild(object).draw(object,graphics,info);
-
         if (showCircle && (isSelected || !onlyCircleWhenSelected))
-            {
-            final int diameter = 2 * ((int)(or * (info.draw.width > info.draw.height ? 
-                        info.draw.width : info.draw.height)) + dr);
-            
-            final int x = (int)(info.draw.x - diameter / 2.0);
-            final int y = (int)(info.draw.y - diameter / 2.0);
-            final int d = (int)(diameter);
-
-            graphics.setPaint(paint);
-            graphics.drawOval(x,y,d,d);
-            }
+            super.draw(object, graphics, info);
         }
         
     public boolean hitObject(Object object, DrawInfo2D range)

@@ -48,38 +48,42 @@ public final class Double3D implements java.io.Serializable
 
     public int hashCode()
         {
+		double x = this.x;
+		double y = this.y;
+		double z = this.z;
+		
         // so we hash to the same value as Int2D does, if we're ints
         if ((((int)x) == x) && (((int)y) == y) && (((int)z) == z))
             //  return Int3D.hashCodeFor((int)x,(int)y,(int)z);
         
             {
-            int y = (int)this.y;
-            int x = (int)this.x;
-            int z = (int)this.z;
+            int y_ = (int)y;
+            int x_ = (int)x;
+            int z_ = (int)z;
             
             // copied from Int3D and inserted here because hashCodeFor can't be
             // inlined and this saves us a fair chunk on some hash-heavy applications
                         
-            z += ~(z << 15);
-            z ^=  (z >>> 10);
-            z +=  (z << 3);
-            z ^=  (z >>> 6);
-            z += ~(z << 11);
-            z ^=  (z >>> 16);
+            z_ += ~(z_ << 15);
+            z_ ^=  (z_ >>> 10);
+            z_ +=  (z_ << 3);
+            z_ ^=  (z_ >>> 6);
+            z_ += ~(z_ << 11);
+            z_ ^=  (z_ >>> 16);
             
-            z ^= y;
-            z += 17;    // a little prime number shifting -- waving a dead chicken?  dunno
+            z_ ^= y_;
+            z_ += 17;    // a little prime number shifting -- waving a dead chicken?  dunno
             
-            z += ~(z << 15);
-            z ^=  (z >>> 10);
-            z +=  (z << 3);
-            z ^=  (z >>> 6);
-            z += ~(z << 11);
-            z ^=  (z >>> 16);
+            z_ += ~(z_ << 15);
+            z_ ^=  (z_ >>> 10);
+            z_ +=  (z_ << 3);
+            z_ ^=  (z_ >>> 6);
+            z_ += ~(z_ << 11);
+            z_ ^=  (z_ >>> 16);
 
             // nifty!  Now mix in x
             
-            return x ^ z;
+            return x_ ^ z_;
             }
             
 

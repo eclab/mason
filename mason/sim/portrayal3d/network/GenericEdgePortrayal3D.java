@@ -367,25 +367,25 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
                
         if(vxz2!=0)
-        {
+            {
             transformData[4]  = -vx/v;
             transformData[6]  = -vz/v;
             final double vxz2v = v*vxz2;
-	        final double vxvz = vx*vz;
-	        final double a = (v-vy)/vxz2v;
-	
-	        transformData[0]  = 1 - vx2*a;
-	        transformData[10] = 1 - vz2*a;
-	        transformData[8] = transformData[2] = -vxvz*a;
-        }
+            final double vxvz = vx*vz;
+            final double a = (v-vy)/vxz2v;
+        
+            transformData[0]  = 1 - vx2*a;
+            transformData[10] = 1 - vz2*a;
+            transformData[8] = transformData[2] = -vxvz*a;
+            }
         else
-        {
+            {
             transformData[4]  = 0;
             transformData[6]  = 0;
-        	transformData[8] = transformData[2] = 0;
-	        transformData[0]  = 1;
-	        transformData[10] = vy>=0? 1: -1;
-        }
+            transformData[8] = transformData[2] = 0;
+            transformData[0]  = 1;
+            transformData[10] = vy>=0? 1: -1;
+            }
                 
         transform.set(transformData);
         return transform;

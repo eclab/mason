@@ -42,13 +42,22 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
         return( range.clip.intersects( range.draw.x-width/2, range.draw.y-height/2, width, height ) );
         }
 
+    Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-	Rectangle2D.Double draw = info.draw;
+        Rectangle2D.Double draw = info.draw;
         final double width = draw.width*scale;
         final double height = draw.height*scale;
 
+        if (info.precise)
+            {
+            preciseRectangle.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
+            if (filled) graphics.fill(preciseRectangle);
+            else graphics.draw(preciseRectangle);
+            return;
+            }
+            
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 

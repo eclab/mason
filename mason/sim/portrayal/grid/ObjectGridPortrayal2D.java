@@ -62,19 +62,10 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        //int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        //int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
-        //int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
-        //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
 
-        //if (endx > maxX) endx = maxX;
-        //if (endy > maxY) endy = maxY;
-        //if( startx < 0 ) startx = 0;
-        //if( starty < 0 ) starty = 0;
-        
         // find the object.
         for(int x=0; x < maxX; x++)
             {
@@ -128,8 +119,6 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-//        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
-
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
 
@@ -160,12 +149,10 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 if (graphics == null)
                     {
                     if (obj != null && portrayal.hitObject(obj, newinfo))
-                        putInHere.add(getWrapper(new Int2D(x,y)));
+                        putInHere.add(getWrapper(obj, new Int2D(x,y)));
                     }
                 else
                     {
-                    // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                    //                    graphics.setClip(clip);
                     if (objectSelected &&  // there's something there
                         (selectedObject==obj || selectedWrappers.get(obj) != null))
                         {
@@ -182,6 +169,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 }
         }
 
+/*
     public LocationWrapper getWrapper(Int2D location)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);
@@ -193,10 +181,68 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 return field.field[loc.x][loc.y];
                 }
             
-            public String getLocationName()
+           public String getLocationName()
                 {
                 return ((Int2D)this.location).toCoordinates();
                 }
+            };
+        }
+*/
+
+	// searches for an object within a short distance of a location
+	final int SEARCH_DISTANCE = 3;
+	IntBag xPos = new IntBag(49);
+	IntBag yPos = new IntBag(49);
+	
+	Int2D searchForObject(Object object, Int2D loc)
+		{
+        ObjectGrid2D field = (ObjectGrid2D)(this.field);
+		Object[][] grid = field.field;
+		if (grid[loc.x][loc.y] == object)
+			return new Int2D(loc.x, loc.y);
+		field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+		for(int i=0;i<xPos.numObjs;i++)
+			if (grid[xPos.get(i)][yPos.get(i)] == object) return new Int2D(xPos.get(i), yPos.get(i));
+		return null;
+		}
+		
+		
+
+	final MessageLocation unknown = new MessageLocation("It's too costly to figure out where the object went.");
+    public LocationWrapper getWrapper(Object object, Int2D location)
+        {
+        final ObjectGrid2D field = (ObjectGrid2D)(this.field);
+        return new LocationWrapper(object, location, this)
+            {
+            public Object getLocation()
+                { 
+				Int2D loc = (Int2D) super.getLocation();
+                if (field.field[loc.x][loc.y] == getObject())  // it's still there!
+					{
+					return loc;
+					}
+				else
+					{
+					Int2D result = searchForObject(object, loc);
+					if (result != null)  // found it nearby
+						{
+						location = result;
+						return result;
+						}
+					else 	// it's moved on!
+						{
+						return unknown;
+						}
+					}
+                }
+            
+           public String getLocationName()
+                {
+				Object loc = getLocation();
+				if (loc instanceof Int2D)
+					return ((Int2D)this.location).toCoordinates();
+				else return "Location Unknown";
+				}
             };
         }
 

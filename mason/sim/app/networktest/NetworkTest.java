@@ -40,7 +40,8 @@ public /*strictfp*/ class NetworkTest extends SimState
     CustomNode makeNode(String name)
         {
         CustomNode node = new CustomNode(name);
-        environment.setObjectLocation(node, new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
+        environment.setObjectLocation(node, new Double2D( 
+                random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
                 random.nextDouble()*(YMAX-YMIN-DIAMETER)+YMIN+DIAMETER/2 ) );
         network.addNode(node);
         schedule.scheduleRepeating(node);

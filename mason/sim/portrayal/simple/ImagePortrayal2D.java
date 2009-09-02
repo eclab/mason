@@ -32,6 +32,8 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
     {
     public Image image;
     
+    java.awt.geom.AffineTransform preciseTransform = new java.awt.geom.AffineTransform();
+    
     public ImagePortrayal2D(Image image)  { this(image,1.0); }
     public ImagePortrayal2D(Image image, double scale)  
         { 
@@ -62,13 +64,17 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
             width = (iw * height)/ih;  // iw/ih = width/height
             }
 
-        final int x = (int)(info.draw.x - width / 2.0);
-        final int y = (int)(info.draw.y - height / 2.0);
-        final int w = (int)(width);
-        final int h = (int)(height);
+        final double x = (info.draw.x - width / 2.0);
+        final double y = (info.draw.y - height / 2.0);
 
         // draw centered on the origin
-        graphics.drawImage(image,x,y,w,h,null);
+        if (info.precise)
+            {
+            preciseTransform.setToScale(width, height);
+            preciseTransform.translate(x, y);
+            graphics.drawImage(image, preciseTransform, null);
+            }
+        else graphics.drawImage(image,(int)x,(int)y,(int)width,(int)height,null);
         }
         
     }

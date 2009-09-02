@@ -88,6 +88,10 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public int getLabelScaling() { return labelScaling; }
     public void setLabelScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
     
+    
+    Line2D.Double preciseLine = new Line2D.Double();
+    GeneralPath precisePoly = new GeneralPath();
+    
     /** Returns a name appropriate for the edge.  By default, this returns 
         (edge.info == null ? "" : "" + edge.info).
         Override this to make a more customized label to display for the edge on-screen. */
@@ -110,12 +114,14 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         double startYd = e.draw.y;
         final double endXd = e.secondPoint.x;
         final double endYd = e.secondPoint.y;
+        final double midXd = ((startXd+endXd) / 2);
+        final double midYd = ((startYd+endYd) / 2);     
         final int startX = (int)startXd;
         final int startY = (int)startYd;
         final int endX = (int)endXd;
         final int endY = (int)endYd;
-        final int midX = (int)((startXd+endXd) / 2);
-        final int midY = (int)((startYd+endYd) / 2);
+        final int midX = (int)midXd;
+        final int midY = (int)midYd;
         
         // draw lines
         if (shape == SHAPE_TRIANGLE)
@@ -130,24 +136,49 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                         
             if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                 { scaleWidth = 1; scaleHeight = 1; }
-            xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
-            xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
-            graphics.fillPolygon(xPoints,yPoints,3);
-            graphics.drawPolygon(xPoints,yPoints,3);  // when you scale out, fillPolygon stops drawing anything at all.  Stupid.
+            if (info.precise)
+                {
+                precisePoly.reset();
+                precisePoly.moveTo((float)endXd, (float)endYd);
+                precisePoly.lineTo((float)(startXd + (vecY)*scaleWidth), (float)(startYd + (-vecX)*scaleHeight));
+                precisePoly.lineTo((float)(startXd + (-vecY)*scaleWidth), (float)(startYd + (vecX)*scaleHeight));
+                precisePoly.lineTo((float)endXd, (float)endYd);
+                graphics.fill(precisePoly);
+                }
+            else
+                {
+                xPoints[1] = (int)(startXd + (vecY)*scaleWidth); yPoints[1] = (int)(startYd + (-vecX)*scaleHeight);
+                xPoints[2] = (int)(startXd + (-vecY)*scaleWidth); yPoints[2] = (int)(startYd + (vecX)*scaleHeight); // rotate 180 degrees
+                graphics.fillPolygon(xPoints,yPoints,3);
+                graphics.drawPolygon(xPoints,yPoints,3);  // when you scale out, fillPolygon stops drawing anything at all.  Stupid.
+                }
             }
         else // shape == SHAPE_LINE
             {
             if (fromPaint == toPaint)
                 {
                 graphics.setPaint (fromPaint);
-                graphics.drawLine (startX, startY, endX, endY);
+                if (info.precise)
+                    { preciseLine.setLine(startXd, startYd, endXd, endYd); graphics.draw(preciseLine); }
+                else graphics.drawLine (startX, startY, endX, endY);
                 }
             else
                 {
                 graphics.setPaint( fromPaint );
-                graphics.drawLine(startX,startY,midX,midY);
-                graphics.setPaint( toPaint );
-                graphics.drawLine(midX,midY,endX,endY);
+                if (info.precise)
+                    { 
+                    preciseLine.setLine(startXd, startYd, midXd, midYd); 
+                    graphics.draw(preciseLine); 
+                    graphics.setPaint(toPaint);
+                    preciseLine.setLine(midXd, midYd, endXd, endYd); 
+                    graphics.draw(preciseLine); 
+                    }
+                else
+                    {
+                    graphics.drawLine(startX,startY,midX,midY);
+                    graphics.setPaint( toPaint );
+                    graphics.drawLine(midX,midY,endX,endY);
+                    }
                 }
             }
                 
@@ -201,7 +232,6 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             }
         else
             {
-
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
             double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
             double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;

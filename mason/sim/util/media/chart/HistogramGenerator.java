@@ -50,7 +50,7 @@ public class HistogramGenerator extends ChartGenerator
     HistogramType histogramType = HistogramType.FREQUENCY;
                 
     public class HistogramSeries 
-	{
+        {
         double[] values; 
         int bins;
         String name;
@@ -63,7 +63,7 @@ public class HistogramGenerator extends ChartGenerator
         public String getName() { return name; }
         public void setName(String val) { name = val; }
         }
-		
+                
     ArrayList histogramSeries = new ArrayList();
         
     public AbstractSeriesDataset getSeriesDataset() { return dataset; }

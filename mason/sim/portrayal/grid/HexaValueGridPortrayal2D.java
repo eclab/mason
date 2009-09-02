@@ -91,10 +91,6 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         for(int y=starty;y<endy;y++)
             for(int x=startx;x<endx;x++)
                 {
-                Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
-                if (c.getAlpha() == 0) continue;
-                graphics.setColor(c);
-
                 //getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
                 //getxyC( field.ulx(x,y), field.uly(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ul );
                 //getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
@@ -146,6 +142,10 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
                     }
                 else
                     {                    
+                    Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
+                    if (c.getAlpha() == 0) continue;
+                    graphics.setColor(c);
+
                     // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                     //                    graphics.setClip(clip);
                     graphics.fillPolygon(xPoints,yPoints,6);

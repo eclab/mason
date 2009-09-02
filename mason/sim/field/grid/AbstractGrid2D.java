@@ -20,6 +20,9 @@ import sim.util.IntBag;
 
    AbstractGrid2D bar = ...;
    bar.tx(4);  // WILL get inlined
+   
+   ObjectGrid2D baz = ...;  // (assuming we're an ObjectGrid2D)
+   baz.tx(4);   // WILL get inlined
    </tt></pre>
 
 */

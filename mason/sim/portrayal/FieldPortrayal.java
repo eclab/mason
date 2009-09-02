@@ -261,10 +261,10 @@ public abstract class FieldPortrayal
             Object location = wrapper.getLocation();
             if (location != lastLocation)  // sadly this will happen an awful lot
                 {
+                disclosurePanel.setDisclosedComponent(new SimpleInspector(location, state, null));
                 lastLocation = location;
-                disclosurePanel.setDisclosedComponent(new SimpleInspector(lastLocation, state, null));
                 }
-            positions.setText(wrapper.getLocationName());
+			positions.setText(wrapper.getLocationName());
             objectInspector.updateInspector();
             locationInspector.updateInspector();
             }

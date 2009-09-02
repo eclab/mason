@@ -67,7 +67,7 @@ public class NetworkTestWithUI extends GUIState
         // Set the nodes in the node portrayal to show a 20-pixel non-scaling 
         // circle around them only when they're being selected (the 'true').
         // the 'null' means "Assume the underlying object is its own portrayal". 
-        nodePortrayal.setPortrayalForAll(new sim.portrayal.simple.CircledPortrayal2D(null, 20, 1.0, Color.green, true));
+        nodePortrayal.setPortrayalForAll(new sim.portrayal.simple.CircledPortrayal2D(null, 20, 10, Color.green, true));
 
         // reschedule the displayer
         display.reset();

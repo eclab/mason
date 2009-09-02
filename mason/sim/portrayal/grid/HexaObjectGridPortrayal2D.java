@@ -95,10 +95,10 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
-        HexaDrawInfo2D newinfo = new HexaDrawInfo2D(new Rectangle2D.Double(0,0, 
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
-            info.clip, xPoints, yPoints);  // we don't do further clipping 
+            info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
 
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
@@ -121,17 +121,17 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
                 xPoints[0] = (int)(xyC_ur[0]-0.5*xScale);
-                yPoints[0] = (int)(xyC_ur[1]+yScale);
-                xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
+                //yPoints[0] = (int)(xyC_ur[1]+yScale);
+                //xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
                 yPoints[1] = (int)(xyC_up[1]+yScale);
-                xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
-                yPoints[2] = (int)(xyC_up[1]+yScale);
+                //xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
+                //yPoints[2] = (int)(xyC_up[1]+yScale);
                 xPoints[3] = (int)(xyC_ul[0]+0.5*xScale);
-                yPoints[3] = (int)(xyC_ul[1]+yScale);
-                xPoints[4] = (int)(xyC[0]-0.5*xScale);
+                //yPoints[3] = (int)(xyC_ul[1]+yScale);
+                //xPoints[4] = (int)(xyC[0]-0.5*xScale);
                 yPoints[4] = (int)(xyC[1]+yScale);
-                xPoints[5] = (int)(xyC[0]+0.5*xScale);
-                yPoints[5] = (int)(xyC[1]+yScale);
+                //xPoints[5] = (int)(xyC[0]+0.5*xScale);
+                //yPoints[5] = (int)(xyC[1]+yScale);
 
                 // compute the width of the object -- we tried computing the EXACT width each time, but
                 // it results in weird-shaped circles etc, so instead we precomputed a standard width
@@ -146,7 +146,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 if (graphics == null)
                     {
                     if (portrayal.hitObject(obj, newinfo))
-                        putInHere.add(getWrapper(new Int2D(x,y)));
+                        putInHere.add(getWrapper(obj, new Int2D(x,y)));
                     }
                 else
                     {

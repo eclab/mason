@@ -41,7 +41,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     protected ChartGenerator generator;
     public ChartGenerator getGenerator(){return generator;}
     double lastTime  = Schedule.BEFORE_SIMULATION;
-	SeriesAttributes seriesAttributes;
+    SeriesAttributes seriesAttributes;
 
     /** Called when the inspector is being asked to use an existing ChartGenerator.  Should return true if the
         ChartGenerator is compatable with this inspector. */
@@ -63,7 +63,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         the mean).   The aggregation interval -- how much time you should wait for before dumping the aggregated
         results into the time series -- will be stored in globalAttriutes.interval. */
     protected boolean includeAggregationMethodAttributes() { return true; }
-	
+
 	/** Returns the SeriesAttributes used in the ChartGenerator for the series defined by this inspector.  */
 	public SeriesAttributes getSeriesAttributes() { return seriesAttributes; }
 

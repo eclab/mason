@@ -171,21 +171,21 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     public void setDataCuller(DataCuller dataCuller){this.dataCuller = dataCuller;}
     
     public TimeSeriesChartGenerator()
-    	{
-    	super();
-    	LabelledList globalAttribList = (LabelledList) getGlobalAttribute(-2);
+        {
+        super();
+        LabelledList globalAttribList = (LabelledList) getGlobalAttribute(-2);
         useCullingCheckBox = new JCheckBox();
         
         globalAttribList.add(new JLabel("Cull Data"), useCullingCheckBox);
         maxPointsPerSeriesTextField = new NumberTextField(1000)
-        	{
+            {
             public double newValue(final double val)
                 {
-            		int max = (int)val;
-            		if(val<2)
-            			return (int)getValue();
-            		dataCuller = new MinGapDataCuller(max);
-            		return max;
+                int max = (int)val;
+                if(val<2)
+                    return (int)getValue();
+                dataCuller = new MinGapDataCuller(max);
+                return max;
                 }
             };
         useCullingCheckBox.setSelected(true);
@@ -199,20 +199,20 @@ public class TimeSeriesChartGenerator extends ChartGenerator
             {
             public void actionPerformed(ActionEvent event)
                 {
-            	if(useCullingCheckBox.isSelected())
-	            	{
-        			maxPointsPerSeriesTextField.setEnabled(true);
-        			int maxPoints = (int)maxPointsPerSeriesTextField.getValue();
-        			dataCuller = new MinGapDataCuller(maxPoints);
-	            	}
-            	else
-	            	{
-            		maxPointsPerSeriesTextField.setEnabled(false);
-        			dataCuller = null;
-	            	}
+                if(useCullingCheckBox.isSelected())
+                    {
+                    maxPointsPerSeriesTextField.setEnabled(true);
+                    int maxPoints = (int)maxPointsPerSeriesTextField.getValue();
+                    dataCuller = new MinGapDataCuller(maxPoints);
+                    }
+                else
+                    {
+                    maxPointsPerSeriesTextField.setEnabled(false);
+                    dataCuller = null;
+                    }
                 }
             }); 
 
-    	}
+        }
 
     }

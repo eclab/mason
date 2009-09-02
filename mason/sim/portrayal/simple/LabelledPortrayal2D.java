@@ -33,13 +33,13 @@ import sim.display.*;
    <p>The label is drawn at:
 
    <pre><tt>   
-   x:     (int)(info.draw.x + ox * info.draw.width) + dx;
-   y:     (int)(info.draw.y + oy * info.draw.height) + dy;
+   x:     (int)(info.draw.x + scalex * info.draw.width + offsetx);
+   y:     (int)(info.draw.y + scaley * info.draw.height + offsety);
    </tt></pre>
 
-   <p>... that is, ox and oy are values which scale when you zoom in, and
-   dx and dy are values which add additional fixed pixels.  The default
-   is ox = 0, oy = 0.5, dx = 0, dy = 20.  This draws the label twenty
+   <p>... that is, scalex and scaley are values which scale when you zoom in, and
+   offsetx and offsety are values which add additional fixed pixels.  The default
+   is scalex = 0, scaley = 0.5, offsetx = 0, offsety = 10.  This draws the label ten
    pixels below the outer rectangular edge of the bounds rect for the
    portrayal.
    
@@ -54,25 +54,25 @@ import sim.display.*;
 
 public class LabelledPortrayal2D extends SimplePortrayal2D
     {
-    public static final double DEFAULT_OX = 0.0;
-    public static final double DEFAULT_OY = 0.5;
-    public static final int DEFAULT_DX = 0;
-    public static final int DEFAULT_DY = 20;
+    public static final double DEFAULT_SCALE_X = 0;
+    public static final double DEFAULT_SCALE_Y = 0.5;
+    public static final double DEFAULT_OFFSET_X = 0;
+    public static final double DEFAULT_OFFSET_Y = 10;
     public static final int ALIGN_CENTER = 0;
     public static final int ALIGN_LEFT = 1;
     public static final int ALIGN_RIGHT = -1;
     
     /** The pre-scaling offset from the object's origin. */
-    public double ox;
+    public double scalex;
     
     /** The pre-scaling offset from the object's origin. */
-    public double oy;
+    public double scaley;
     
     /** The post-scaling offset from the object's origin. */
-    public int dx;
+    public double offsetx;
     
     /** The post-scaling offset from the object's origin. */
-    public int dy;
+    public double offsety;
     
     /** One of ALIGN_CENTER, ALIGN_LEFT, or ALIGN_RIGHT */
     public int align;
@@ -104,16 +104,19 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     public int getLabelScaling() { return labelScaling; }
     public void setLabelScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
 
-    /** If child is null, then the underlying model object 
+    /** Draws [x=offsetx, y=offsety] pixels away from the [dx=scalex, dy=scaley] prescaled position of the Portrayal2D, 
+        using the SansSerif 10pt font, blue, and left alignment.  If label is null, 
+        then object.toString() is used. Labelling occurs if onlyLabelWhenSelected is true.  
+        If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
-    public LabelledPortrayal2D(SimplePortrayal2D child, int dx, int dy, double ox, double oy, Font font, int align, String label, Paint paint, boolean onlyLabelWhenSelected)
+    public LabelledPortrayal2D(SimplePortrayal2D child, double offsetx, double offsety, double scalex, double scaley, Font font, int align, String label, Paint paint, boolean onlyLabelWhenSelected)
         {
-        this.dx = dx; this.dy = dy; this.ox = ox; this.oy = oy;
+        this.offsetx = offsetx; this.offsety = offsety; this.scalex = scalex; this.scaley = scaley;
         this.font = font; this.align = align; this.label = label; this.child = child;
         this.paint = paint;  this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         }
-    
-    /** Draws 20 pixels down from the [0,0.5] prescaled position of the Portrayal2D, 
+
+    /** Draws 10 pixels down from the [dx=0, dy=0.5] prescaled position of the Portrayal2D, 
         using the SansSerif 10pt font, blue, and left alignment.  If label is null, 
         then object.toString() is used. Labelling will always occur.  
         If child is null, then the underlying model object 
@@ -122,15 +125,25 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
         {
         this(child, label, Color.blue, false);
         }
+
+    /** Draws 10 pixels down from the [dx=0, dy=scale] prescaled position of the Portrayal2D, 
+        using the SansSerif 10pt font, blue, and left alignment.  If label is null, 
+        then object.toString() is used. Labelling occurs if onlyLabelWhenSelected is true.    
+        If child is null, then the underlying model object 
+        is presumed to be a Portrayal2D and will be used. */
+    public LabelledPortrayal2D(SimplePortrayal2D child, double scale, String label, Paint paint, boolean onlyLabelWhenSelected)
+        {
+        this(child, DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y , DEFAULT_SCALE_X, scale, new Font("SansSerif",Font.PLAIN, 10), ALIGN_LEFT, label, paint, onlyLabelWhenSelected);
+        }
         
-    /** Draws 20 pixels down from the [0,1] prescaled position of the Portrayal2D, 
+    /** Draws 10 pixels down from the [dx=0, dy=0.5] prescaled position of the Portrayal2D, 
         using the SansSerif 10pt font, and left alignment.  If label is null, 
-        then object.toString() is used. 
+        then object.toString() is used. Labelling occurs if onlyLabelWhenSelected is true.  
         If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
     public LabelledPortrayal2D(SimplePortrayal2D child, String label, Paint paint, boolean onlyLabelWhenSelected)
         {
-        this(child, DEFAULT_DX, DEFAULT_DY, DEFAULT_OX, DEFAULT_OY, new Font("SansSerif",Font.PLAIN, 10), ALIGN_LEFT, label, paint, onlyLabelWhenSelected);
+        this(child, DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y, DEFAULT_SCALE_X, DEFAULT_SCALE_Y, new Font("SansSerif",Font.PLAIN, 10), ALIGN_LEFT, label, paint, onlyLabelWhenSelected);
         }
 
     public SimplePortrayal2D getChild(Object object)
@@ -166,10 +179,8 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
 
             String s = getLabel(object,info);
-            double width = info.draw.width;
-            double height = info.draw.height;
-            int x = (int)(info.draw.x + ox * width) + dx;
-            int y = (int)(info.draw.y + oy * height) + dy;
+            int x = (int)(info.draw.x + scalex * info.draw.width + offsetx);
+            int y = (int)(info.draw.y + scaley * info.draw.height + offsety);
             graphics.setPaint(paint);
             graphics.setFont(scaledFont);
     

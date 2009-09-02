@@ -1474,7 +1474,7 @@ Version 14
 		the continuous field.  The radial distance option has been bugfixed and
 		is known to work well.  The square distance option hasn't been tested
 		much.
-	Modified Flockers to use the new getObjectsExactlyWithinDistance to simply
+	Modified Flockers to use the new getObjectsExactlyWithinDistance to simplfy
 		things a little.  The result will be different because the order of the
 		neighbors processed will be different, and this effects the numerical
 		rounding in the doubles.  I've verified that if the order were the same,
@@ -1510,9 +1510,9 @@ Version 14
 	Added precise drawing to ImagePortrayal2D
 	Bugfix in GenericEdgePortrayal3D when the edge should end up parallel to O_y.
 		Thanks to Nicolas Payette (nicolaspayette@gmail.com).
-    Bugfix to shuffling algorithm used in MASON. We stopped one element too early,
+    	Bugfix to shuffling algorithm used in MASON. We stopped one element too early,
             so for small arrays the shuffling is non-uniform (and for size-two arrays
-            there was no shuffling at all).  Gagh.  For shuffling large numbers of items,
+            there was no shuffling at all).  For shuffling large numbers of items,
             the effect was minimal.  This affects Bag.shuffle(), IntBag.shuffle(),
             DoubleBag.shuffle(), Schedule, and RandomSequence.
 	Bugfix in constructor SpatialNetwork3D(final SparseGrid3D grid, final Network network)
@@ -1521,11 +1521,49 @@ Version 14
 			TimeSeriesChartingPropertyInspector
 			TimeSeriesChartingGenerator, and
 			ChartGenerator (minor reordering of properties).
-	The data culling code resides in sim.util.media.chart; 	the original location (sim.util.datacull) was deleted.			
+	The data culling code resides in sim.util.media.chart; 	the original location 
+		(sim.util.datacull) was deleted.			
 	ChartGenerator offers getters/setters for using log scale on either axis.
+	Modified TimeSeriesChartGenerator.addSeries to return the series attributes rather than
+		the index.  This makes it consistent with HistogramGenerator and more useful
+		as well.
+	Bumped seriesAttributes up to ChartingPropertyInspector, added getSeriesAttributes().
+	Slight tweaks to [Mutable]Double[2|3]D to do slightly faster hashcode generation
+	Tweak to Network documentation.  Thanks to Paul Wiegand (wiegand@ist.ucf.edu)
 	ChartingPropertyInspector offers "public getSeriesAttributes()"
-		to return the SeriesAttributes used in the ChartGenerator for the series defined by that inspector;
-		now you can programmatically set the number of bins in a HistogramChartingPropertyInspector
-		(after you cast it to HistogramSeriesAttributes, of course).
-	Bugfix in TimeSeriesAttributes.setStrokeColor(Color): the ColorWell would not update its color, just the series itself
-	
+		to return the SeriesAttributes used in the ChartGenerator for the series 
+		defined by that inspector; now you can programmatically set the number of 
+		bins in a HistogramChartingPropertyInspector (after you cast it to 
+		HistogramSeriesAttributes, of course).
+	Bugfix in TimeSeriesAttributes.setStrokeColor(Color): the ColorWell would not update
+		its color, just the series itself
+	Documentation updates to AbstractGrid2D
+	Cleanups to Edge and Network
+	Modifications to how DisclosurePanel works with regard to locations in inspectors.
+		Ideally we'd like inspectors to always track objects rather than fixate on
+		locations.  The problem is that the locations of ObjectGrid2D objects 
+		can't be looked up -- you have to scan through the entire grid to find them.
+		So if an inspected object in an ObjectGrid2D wanders off, it's quite
+		expensive to update the location of the object.  We've changed it as
+		follows: we still track the object rather than fixate on a location.  When
+		an object wanders, we first try to see if it's somewhere nearby (right now
+		within a 7x7 toroidal square of where it used to be).  If it's there, we
+		update the location.  Otherwise we set the location to "Location Unknown".
+		To handle this, we've updated FieldPortrayal2D to properly update the 
+		DisclosurePanel's internal labelled list, and have also changed some
+		workings of the getWrapper() function in ObjectGridPortrayal2D.  Also
+		updated ObjectGridPortrayal3D similarly, but haven't tested it.  Should
+		automagically handle Fast... and Hexa... as well.
+	Cleanups to ContinuousPortrayal2D
+	Simplification of DrawPolicy's sole method.  This will change how people handle
+		draw policies, so watch out for this one.
+	HexaObjectGrid and HexaSparseGrid both updated to eliminate certain array manipulation
+		code which wasn't used later.
+	Cleanups to ObjectGridPortrayal2D
+	Added precise drawing to SimpleEdgePortrayal2D
+	Made HexagonalPortrayal2D consistent in constructors with other similar portrayals
+	Minor hash improvements to [Mutable]Double[2|3]D
+
+ADD MESSAGELOCATIOn
+ADD DENSEGRID2D and DENSEPORTRAYAL2D MAYBE
+

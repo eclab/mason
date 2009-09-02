@@ -50,28 +50,28 @@ public class Ball extends SimplePortrayal2D implements Steppable
 
     public void computeCollision(Tutorial5 tut)
         {
-	/*
-	// old previous code
-	
+        /*
+        // old previous code
+        
         collision = false;
         Double2D me = tut.balls.getObjectLocation(this);
         Bag b = tut.balls.getObjectsWithinDistance(me,Tutorial5.collisionDistance);
         for(int x=0;x<b.numObjs;x++)
-            if( this != b.objs[x] )
-                {
-                Double2D loc = tut.balls.getObjectLocation(b.objs[x]);
-                if ((loc.x-me.x)*(loc.x-me.x) + (loc.y-me.y)*(loc.y-me.y) 
-                    <= Tutorial5.collisionDistance * Tutorial5.collisionDistance)
-                    {
-                    collision = true;
-                    ((Ball)(b.objs[x])).collision = true;
-                    }
-                }
-	*/
-		
-	Double2D me = tut.balls.getObjectLocation(this);
+        if( this != b.objs[x] )
+        {
+        Double2D loc = tut.balls.getObjectLocation(b.objs[x]);
+        if ((loc.x-me.x)*(loc.x-me.x) + (loc.y-me.y)*(loc.y-me.y) 
+        <= Tutorial5.collisionDistance * Tutorial5.collisionDistance)
+        {
+        collision = true;
+        ((Ball)(b.objs[x])).collision = true;
+        }
+        }
+        */
+                
+        Double2D me = tut.balls.getObjectLocation(this);
         Bag b = tut.balls.getObjectsExactlyWithinDistance(me,Tutorial5.collisionDistance);
-	collision = b.numObjs > 1;  // other than myself of course
+        collision = b.numObjs > 1;  // other than myself of course
         }
     
     public void addForce(Double2D otherBallLoc, Double2D myLoc, Band band)

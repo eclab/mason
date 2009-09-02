@@ -258,63 +258,6 @@ public class Network implements java.io.Serializable
         
     static Edge[] emptyEdgeArray = new Edge[0];
 
-//TODO do I want to use this? (ask liviu too)
-//    /** Same as <code>getMultigraphAdjacencyMatrix</code>, but it makes two passes 
-//     * through the graph:
-//     * 1. it counts the edges between every node, so it can allocate the right size of arrays
-//     * 2. it fills the arrays.
-//     * 
-//     * This replaces the "array copy"s with a bunch of hash-table look-ups
-//     * 
-//     * @see getMultigraphAdjacencyMatrix
-//     */ 
-//    public Edge[][][] getMultigraphAdjacencyMatrix_II()
-//        {
-//        final int n = allNodes.numObjs;
-//        final Edge[][][] matrix = new Edge[n][n][]; //I assume it filled with nulls?
-//        int[][] counts = new int[n][n];
-//
-//        //phase 1: counting
-//        for(int x=0;x<n;x++)
-//            {
-//            int[] counts_x = counts[x];
-//            Object sourceNode = allNodes.objs[x]; 
-//            final Bag edges =  getEdgesOut(sourceNode);
-//                                                        
-//            for(int i=0;i<edges.numObjs;i++)
-//                counts_x[((IndexOutIn)indexOutInHash.get(((Edge)edges.objs[i]).getOtherNode(sourceNode))).index]++;
-//            }
-//                                
-//        //phase 2: memory allocation
-//        for(int x=0;x<n;x++)
-//            {
-//            int[] counts_x = counts[x];
-//            Edge[][] edges_x = matrix[x];
-//            for(int y=0;y<n;y++)
-//                {
-//                int count_xy= counts_x[y];
-//                edges_x[y]=(count_xy==0)? emptyEdgeArray: new Edge[count_xy];
-//                }
-//            }
-//                
-//        //phase 3: copy the data
-//        for(int x=0;x<n;x++)
-//            {
-//            int[] counts_x = counts[x];
-//            Edge[][] edges_x = matrix[x];
-//            Object fromNode =  allNodes.objs[x];
-//            final Bag edges =  getEdgesOut(fromNode);
-//                                                        
-//            for(int i=0;i<edges.numObjs;i++)
-//                {
-//                Edge e = (Edge)edges.objs[i];
-//                int y = ((IndexOutIn)indexOutInHash.get(e.getOtherNode(fromNode))).index;
-//                edges_x[y][--counts_x[y]]=e;
-//                }
-//            }
-//                                
-//        return matrix;
-//        }
 
     /** Get all edges that leave a node.  Do NOT modify this Bag -- it is used internally. */
     // this bizarre construction puts us just at 32 bytes so we can be inlined
@@ -444,6 +387,22 @@ public class Network implements java.io.Serializable
         inNode.in.add( edge );
         edge.indexTo = inNode.in.numObjs-1;
         }
+
+	/** Removes the given edge, then changes its from, to, and info values to the provided ones,
+		then adds the edge to the network again.  Ordinarily you wouldn't need to do this -- you can
+		just remove an edge and add a new one.  But in the case that you want to reuse an edge (to track
+		it in an inspector, for example), this function might be helpful given that Edge specifically
+		denies you the ability to change its to and from values.  */
+	public Edge updateEdge( Edge edge, final Object from, final Object to, final Object info)
+		{
+		edge = removeEdge(edge);
+		if (edge != null)
+			{
+			edge.setTo(from, to, info, -1, -1);
+			addEdge(edge);
+			}
+		return edge;
+		}
 
     /** Removes an edge and returns it.  The edge will still retain its info, to, and from fields, so you can
         add it again with addEdge.   Returns null if the edge is null or if there is no such 
@@ -611,7 +570,7 @@ public class Network implements java.io.Serializable
         }
 
     /*
-      Returns the index of a node.
+      Returns the index of a node.  If the node does not exist in the Network, a runtime exception is thrown. 
     */
     public int getNodeIndex( final Object node )
         {
@@ -707,55 +666,8 @@ public class Network implements java.io.Serializable
             }
         return clone;
         }
-//    /**
-//     * Probably slightly faster than clone().reverseAllEdges()
-//     */
-//      public static Network getDualNetwork(final Network network)
-//      {
-//              if(!network.directed) return network.cloneGraph();
-//              Network dual = new Network(true);
-//              int n = network.allNodes.numObjs;
-//              for(int k=0;k<n;k++)
-//                      dual.addNode(network.allNodes.objs[k]);
-//              Iterator i = network.indexOutInHash.values().iterator();
-//              for(int k=0;k<n;k++)
-//              {
-//                      Network.IndexOutIn ioi= (Network.IndexOutIn)i.next();
-//                      Bag out =ioi.out;
-//                      if(out==null) 
-//                              continue;
-//                      for(int j=0;j<out.numObjs;j++)
-//                      {
-//                              Edge e = (Edge)out.objs[j];
-//                              dual.addEdge(new Edge(e.to, e.from, e.info));
-//                      }
-//              }
-//              return dual;
-//      }
-//      public static void compareDual(final Network net)
-//      {
-//              int iterations = 500000;
-//              long t0 = System.currentTimeMillis();
-//              for(int i=0;i<iterations;i++)
-//                      getDualNetwork(net);
-//              System.out.println("getDualNetwork = "+(System.currentTimeMillis() -t0));
-//      
-//              t0 = System.currentTimeMillis();
-//              for(int i=0;i<iterations;i++)
-//              {
-//                      net.reverseAllEdges();
-//                      
-//                      net.reverseAllEdges();
-//              }               
-//              System.out.println("reverseAllEdges x2 =  "+(System.currentTimeMillis() -t0));
-//      
-//              t0 = System.currentTimeMillis();
-//              for(int i=0;i<iterations;i++)
-//              {
-//                      net.cloneGraph().reverseAllEdges();
-//              }               
-//              System.out.println("clone + reverseAllEdges =  "+(System.currentTimeMillis() -t0));
-//      }
+
+
 
     /**
      * Complements the graph: same nodes, no edges where they were, edges where they were not.

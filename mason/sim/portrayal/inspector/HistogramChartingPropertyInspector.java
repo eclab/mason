@@ -81,7 +81,7 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
             repaint();
             }
         }
-		
+                
     protected ChartGenerator createNewGenerator()
         {
         return new HistogramGenerator()

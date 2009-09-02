@@ -146,21 +146,12 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             {
             public Object getLocation()
                 {
-                /*
-                  if (field==null) return null;
-                  else return field.getObjectLocation(object);
-                */
                 w.update();
                 return w;
                 }
                 
             public String getLocationName()
                 {
-                /*
-                  Object loc = getLocation();
-                  if (loc == null) return "Gone";
-                  return ((Double2D)loc).toCoordinates();
-                */
                 w.update();
                 return w.toString();
                 }

@@ -69,15 +69,16 @@ public class Edge implements java.io.Serializable
 
     public Edge( final Edge e )
         {
-        this( e.from, e.to, e.info, e.indexFrom, e.indexTo );
+        setTo( e.from, e.to, e.info, e.indexFrom, e.indexTo );
         }
 
     public Edge( final Object from, final Object to, final Object info )
         {
-        this( from, to, info, -1, -1 );
+        setTo( from, to, info, -1, -1 );
         }
 
-    Edge( final Object from, final Object to, final Object info, final int indexFrom, final int indexTo )
+	// internal package-level function to set various valoues.  Don't play with this.
+    void setTo( final Object from, final Object to, final Object info, final int indexFrom, final int indexTo )
         {
         this.from = from;
         this.to = to;

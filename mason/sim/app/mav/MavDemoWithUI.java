@@ -64,8 +64,8 @@ public class MavDemoWithUI extends GUIState
                     new OrientedPortrayal2D(
                         new OvalPortrayal2D(20),
                         0,20), 
-                    null, Color.blue, true), // 'null' means to display toString() for underlying object, rather than a predefined label
-                0, 20, Color.blue, true));
+                    20.0, null, Color.blue, true), // 'null' means to display toString() for underlying object, rather than a predefined label
+                0, 30.0, Color.blue, true));
         
         // reschedule the displayer
         display.reset();

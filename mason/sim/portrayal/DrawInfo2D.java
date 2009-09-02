@@ -34,22 +34,28 @@ import java.awt.geom.*;
    <p>Why provide this clip rectangle?  Because to my knowledge there's no standard way to
    tell objects that only part of them needs to be updated in Java2D and Swing -- a failure
    of the system design.
+   
+   <p>The <i>precise</i> flag hints to the underlying portrayals that the drawing should be
+   done precisely rather than rapidly: this is primarily for generating PDF images.  It may
+   be ignored.
 */
 
 public class DrawInfo2D
     {
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
+    public boolean precise;
     
     public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
         {
-        this.draw = draw; this.clip = clip;
+        this.draw = draw; this.clip = clip; precise = false;
         }
         
     public DrawInfo2D(Rectangle draw, Rectangle clip)
         {
         this.draw = new Rectangle2D.Double(draw.x, draw.y, draw.width, draw.height);
         this.clip = new Rectangle2D.Double(clip.x, clip.y, clip.width, clip.height);
+        precise = false;
         } 
 
     public DrawInfo2D(RectangularShape draw, RectangularShape clip)
@@ -58,6 +64,7 @@ public class DrawInfo2D
         this.draw.setRect(draw.getFrame());
         this.clip = new Rectangle2D.Double();
         this.clip.setRect(clip.getFrame());
+        precise = false;
         }
         
     public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)
@@ -75,12 +82,12 @@ public class DrawInfo2D
         if (obj instanceof DrawInfo2D)
             {
             DrawInfo2D other = (DrawInfo2D) obj;
-            return (draw.equals(other.draw) && clip.equals(other.clip));
+            return (draw.equals(other.draw) && clip.equals(other.clip) && other.precise==precise);
             }
         return false;
         }
         
-    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + "]"; }
+    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + "]"; }
     }
     
     
