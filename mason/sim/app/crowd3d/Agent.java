@@ -7,7 +7,6 @@
 package sim.app.crowd3d;
 import sim.util.*;
 import sim.engine.*;
-import javax.vecmath.*;
 
 public class Agent implements Steppable, Stoppable
     {
@@ -18,11 +17,11 @@ public class Agent implements Steppable, Stoppable
     public static double MAX_FN_VAL;
     public static double FORCE_MIN_THRESHOLD = 0.75;
         
-    Vector3d direction = new Vector3d();
-    static      Vector3d tmpSumOfCrowdForces = new Vector3d();
-    static      Vector3d tmpSumOfWallForces = new Vector3d();
-    static      Vector3d tmpSumOfForces = new Vector3d();
-    static      Vector3d tmpMyPosition = new Vector3d();
+    MutableDouble3D direction = new MutableDouble3D();
+    static      MutableDouble3D tmpSumOfCrowdForces = new MutableDouble3D();
+    static      MutableDouble3D tmpSumOfWallForces = new MutableDouble3D();
+    static      MutableDouble3D tmpSumOfForces = new MutableDouble3D();
+    static      MutableDouble3D tmpMyPosition = new MutableDouble3D();
         
     public void step( final SimState state )
         {
@@ -46,7 +45,7 @@ public class Agent implements Steppable, Stoppable
             tmpSumOfCrowdForces.y +=    fn(myPositionD3D.y-nPosition.y);
             tmpSumOfCrowdForces.z +=    fn(myPositionD3D.z-nPosition.z);
             }       
-        tmpSumOfCrowdForces.scale(CROWD_AVERSION);
+        tmpSumOfCrowdForces.multiplyIn(CROWD_AVERSION);
             
             
         if(myPositionD3D.x < SIGHT/*+0*/)
@@ -63,7 +62,7 @@ public class Agent implements Steppable, Stoppable
             tmpSumOfWallForces.z +=     fn(myPositionD3D.z/*-0*/);
         if(myPositionD3D.z> hb.spaceDepth-SIGHT)
             tmpSumOfWallForces.z -=     fn(hb.spaceDepth-myPositionD3D.z);
-        tmpSumOfWallForces.scale(WALL_AVERSION);
+        tmpSumOfWallForces.multiplyIn(WALL_AVERSION);
 
 
 
@@ -72,8 +71,8 @@ public class Agent implements Steppable, Stoppable
         if(tmpSumOfForces.length()>FORCE_MIN_THRESHOLD)
             {
             tmpSumOfForces.normalize();
-            tmpSumOfForces.scale(SPEED);
-            tmpMyPosition.add(tmpSumOfForces);
+            tmpSumOfForces.multiplyIn(SPEED);
+            tmpMyPosition.addIn(tmpSumOfForces);
                         
             clamp(tmpMyPosition, hb);
                         
@@ -83,7 +82,7 @@ public class Agent implements Steppable, Stoppable
             }
         }
         
-    private void clamp(Vector3d position, CrowdSim hb)
+    private void clamp(MutableDouble3D position, CrowdSim hb)
         {
         position.x = Math.min(Math.max(position.x, 0), hb.spaceWidth);
         position.y = Math.min(Math.max(position.y, 0), hb.spaceHeight);

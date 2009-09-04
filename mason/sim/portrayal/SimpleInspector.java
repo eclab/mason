@@ -278,12 +278,9 @@ public class SimpleInspector extends Inspector
                  if (members[i] != null) 
                      members[i].setValue(properties.betterToString(properties.getValue(i)));
         }
-
-    // additionally set the title
-    public JFrame createFrame(Stoppable stopper)
-        {
-        JFrame frame = super.createFrame(stopper);
-        frame.setTitle("" + name);
-        return frame;
-        }
+		
+	public String getTitle()
+		{
+		return "" + object;
+		}
     }

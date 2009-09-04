@@ -17,15 +17,8 @@ import javax.media.j3d.*;
  * The axis of the cone runs along the Y axis, and the point of the cone is pointing towards positive Y.
  * Objects portrayed by this portrayal are selectable.
  */
-public class ConePortrayal3D extends SimplePortrayal3D
+public class ConePortrayal3D extends PrimitivePortrayal3D
     {
-    public float scale = 1f;
-    public Appearance appearance;
-    public boolean generateNormals;
-    public boolean generateTextureCoordinates;
-    public Cone cone;
-    public TransformGroup group;
-
     /** Constructs a ConePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public ConePortrayal3D()
         {
@@ -65,25 +58,26 @@ public class ConePortrayal3D extends SimplePortrayal3D
     /** Constructs a ConePortrayal3D with the given appearance and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed. */
     public ConePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
         {
-        this.generateNormals = generateNormals;
-        this.generateTextureCoordinates = generateTextureCoordinates;
-        this.appearance = appearance;  this.scale = scale;
+        this.appearance = appearance;  
+		setScale(null, scale);
 
         Cone cone = new Cone(0.5f,1f,
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), appearance);
-            
-        cone.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
-        cone.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
-        cone.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
-        cone.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
-        setPickableFlags(cone.getShape(Cone.BODY));
-        setPickableFlags(cone.getShape(Cone.CAP));
+
+ 		setShape3DFlags(cone.getShape(Cone.BODY));
+ 		setShape3DFlags(cone.getShape(Cone.CAP));
+
         group = new TransformGroup();
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(cone);
         }
 
+	protected int numShapes() { return 2; }
+
+/*
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
         {
         if(j3dModel==null)
@@ -110,4 +104,5 @@ public class ConePortrayal3D extends SimplePortrayal3D
             }
         return j3dModel;
         }
+*/
     }

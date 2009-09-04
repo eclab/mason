@@ -22,12 +22,6 @@ public class CubePortrayal3D extends SimplePortrayal3D
     public Appearance appearance;
     public boolean generateNormals;
     public boolean generateTextureCoordinates;
-    /*
-      public boolean useTriangles=false; 
-
-      public boolean getUseTriangles() { return useTriangles; } 
-      public void setUseTriangles(boolean val) { useTriangles = val; }
-    */
     
     /** Constructs a CubePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public CubePortrayal3D()

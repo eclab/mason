@@ -16,16 +16,9 @@ import com.sun.j3d.utils.geometry.*;
  * which fills the region from (-0.5*scale,-0.5*scale,-0.5*scale) to (0.5*scale,0.5*scale,0.5*scale).
  * Objects portrayed by this portrayal are selectable.
  */
-public class SpherePortrayal3D extends SimplePortrayal3D
+public class SpherePortrayal3D extends PrimitivePortrayal3D
     {
-    public float scale = 1f;
-    public Appearance appearance;
     public static final int DEFAULT_DIVISIONS = 15;  // the default number of divisions in Java3D spheres according to the docs
-    public int divisions;  
-    public boolean generateNormals;
-    public boolean generateTextureCoordinates;
-    public Sphere sphere;
-    public TransformGroup group;
 
     /** Constructs a SpherePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public SpherePortrayal3D()
@@ -78,50 +71,22 @@ public class SpherePortrayal3D extends SimplePortrayal3D
     /** Constructs a SpherePortrayal3D with the given appearance, divisions, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
     public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale, int divisions)
         {
-        this.generateNormals = generateNormals;
-        this.generateTextureCoordinates = generateTextureCoordinates;
-        this.appearance = appearance;  this.scale = scale; this.divisions = divisions;
+        this.appearance = appearance;  
+		setScale(null, scale); 
 
         Sphere sphere = new Sphere(0.5f, 
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), 
             divisions, appearance);
-            
-        setPickableFlags(sphere.getShape(Sphere.BODY));
-        sphere.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
-        sphere.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
-        sphere.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
-        sphere.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
-        setPickableFlags(sphere.getShape(Sphere.BODY));
+		
+ 		setShape3DFlags(sphere.getShape(Sphere.BODY));
+
         group = new TransformGroup();
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(sphere);
         }
 
-
-    public TransformGroup getModel(Object obj, TransformGroup j3dModel)
-        {
-        if (j3dModel==null)
-            {
-            j3dModel = new TransformGroup();
-            j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
-            
-            // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
-
-            TransformGroup g = (TransformGroup) (group.cloneTree());
-            Transform3D tr = new Transform3D();
-            tr.setScale(scale);
-            g.setTransform(tr);
-            
-            Sphere sph = (Sphere) (g.getChild(0));
-            sph.setAppearance(appearance);
-            
-            // Store the LocationWrapper in the user data of each shape
-            sph.getShape(Sphere.BODY).setUserData(pickI);
-
-            j3dModel.addChild(g);
-            }
-        return j3dModel;
-        }
+	protected int numShapes() { return 1; }
     }

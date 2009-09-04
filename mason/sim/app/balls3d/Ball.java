@@ -32,6 +32,9 @@ public class Ball implements Steppable
     // did the Ball collide?
     public boolean collision;
     
+    // Old collision -- for Java3D to know the collision has changed
+    public boolean oldCollision;
+    
     // for drawing: always sqrt of mass
     public double diameter;
         
@@ -57,21 +60,11 @@ public class Ball implements Steppable
     Bag myBag = new Bag();
     public void computeCollision(Balls3D tut)
         {
-        collision = false;
         Double3D me = tut.balls.getObjectLocation(this);
-        Bag b = tut.balls.getObjectsWithinDistance(me,Balls3D.collisionDistance,false, false, myBag);
-        for(int x=0;x<b.numObjs;x++)
-            if( this != b.objs[x] )
-                {
-                Double3D loc = tut.balls.getObjectLocation(b.objs[x]);
-                if ((loc.x-me.x)*(loc.x-me.x) + (loc.y-me.y)*(loc.y-me.y) + (loc.z-me.z)*(loc.z-me.z)
-                    <= Balls3D.collisionDistance * Balls3D.collisionDistance)
-                    {
-                    collision = true;
-                    ((Ball)(b.objs[x])).collision = true;
-                    }
-                }
+        Bag b = tut.balls.getObjectsExactlyWithinDistance(me,Balls3D.collisionDistance);
+        collision = b.numObjs > 1;  // other than myself of course
         }
+
                 
     public void addForce(Double3D otherBallLoc, Double3D myLoc, Band band)
         {

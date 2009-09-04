@@ -151,7 +151,16 @@ Now we'll create the balls.  Each ball will be its own agent.  When its step() m
             
             bands.addEdge(from,to,band);
             }
-        }
+</tt></pre>
+
+<p>If we stopped here, it'd work fine except that the very first time we display the Balls and Bands (timestep 0) they'd not display their collision information.  Just to make the Balls prettier in a while, let's force them to determine, right here and now, whether they're "close" to one another.  This will make more sense in a while when we get to the computeCollision() method.  Suffice it to say, this little piece of code just makes the visualization prettier.
+
+<pre><tt>
+            <font color=gray>// To make the initial screenshot pretty, let's have all the balls do an initial collision check</font>
+            ballObjs = balls.getAllObjects();
+            for(int i = 0; i &lt; ballObjs.numObjs; i++)
+                ((Ball)(ballObjs.objs[i])).computeCollision(this);
+            }
 </tt></pre>
 
 <p>Finish up with a boilerplate <b>main()</b> which we won't use anyway -- this Tutorial is for visualization.  Plus some serial UID stuff.

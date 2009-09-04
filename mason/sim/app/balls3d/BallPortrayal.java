@@ -12,36 +12,35 @@ import sim.portrayal3d.simple.*;
  
 public class BallPortrayal extends SpherePortrayal3D
     {
-    final static Color3f obstacleColor = new Color3f(0,255f/255,0); 
+	final static java.awt.Color obColor = java.awt.Color.green;
+	final static java.awt.Color colColor = java.awt.Color.red;
     float multiply;
         
     public BallPortrayal( double diam )
         {
         multiply = (float) diam;
-        generateNormals = true;
         }
  
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
         {               
-        if(j3dModel==null || ((Ball)obj).oldMass != ((Ball)obj).mass)
-            {
-            // change the scale to reflect the desired diameter
-            scale = multiply * (float)(((Ball)obj).diameter) / 2;
-                        
-            // change the appearance
-            appearance = new Appearance();
-            appearance.setColoringAttributes(new ColoringAttributes(obstacleColor, ColoringAttributes.SHADE_GOURAUD));
-            Material m= new Material();
-            m.setAmbientColor(obstacleColor);
-            m.setEmissiveColor(0f,0f,0f);
-            m.setDiffuseColor(obstacleColor);
-            m.setSpecularColor(1f,1f,1f);
-            m.setShininess(128f);
-            appearance.setMaterial(m);
-                        
-            // force a re-build
-            return super.getModel(obj, null);
-            }
-        else return super.getModel(obj, j3dModel);
+		if (j3dModel==null || ((Ball)obj).oldCollision != ((Ball)obj).collision)  // either the first time or when it changes
+			{
+			((Ball)obj).oldCollision = ((Ball)obj).collision;  // reset it
+
+			if (((Ball)obj).collision)
+				setAppearance(j3dModel, appearanceForColors(
+					colColor, colColor, null, colColor, null, 1.0f, 1.0f));
+			else setAppearance(j3dModel, appearanceForColors(
+					obColor, obColor, null, obColor, null, 1.0f, 1.0f));
+			}
+
+		if (j3dModel==null || ((Ball)obj).oldMass != ((Ball)obj).mass)  // likewise
+			{
+			((Ball)obj).oldMass = ((Ball)obj).mass;  // reset it
+			
+			setScale(j3dModel, multiply * (float)(((Ball)obj).diameter) / 2.0f);
+			}
+			
+		return super.getModel(obj, j3dModel);
         }
     }

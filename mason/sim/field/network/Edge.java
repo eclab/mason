@@ -119,6 +119,6 @@ public class Edge implements java.io.Serializable
 
     public String toString()
         {
-        return "Edge[" + from + "->" + to + " / " + indexFrom + "->" + indexTo + "]";
-        }
+        return "Edge[" + from + "->" + to + ": " + info + "]";
+		}
     }

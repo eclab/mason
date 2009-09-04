@@ -207,8 +207,17 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 		}
 		
 		
+	public static class Message
+			{
+			String message;
+			public Message(String message) { this.message = message; }
+			public String getSorry()
+					{
+					return message;
+					}
+			}
 
-	final MessageLocation unknown = new MessageLocation("It's too costly to figure out where the object went.");
+	final Message unknown = new Message("It's too costly to figure out where the object went.");
     public LocationWrapper getWrapper(Object object, Int2D location)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);

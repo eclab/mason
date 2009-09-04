@@ -16,15 +16,8 @@ import javax.media.j3d.*;
  * which fills the region from (-0.5*scale,-0.5*scale,-0.5*scale) to (0.5*scale,0.5*scale,0.5*scale).
  * The axis of the cylinder runs along the Y axis. Objects portrayed by this portrayal are selectable.
  */
-public class CylinderPortrayal3D extends SimplePortrayal3D
-    {
-    public float scale = 1f;
-    public Appearance appearance;
-    public boolean generateNormals;
-    public boolean generateTextureCoordinates;
-    public Cylinder cylinder;
-    public TransformGroup group;
-    
+public class CylinderPortrayal3D extends PrimitivePortrayal3D
+    {    
     /** Constructs a CylinderPortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public CylinderPortrayal3D()
         {
@@ -65,50 +58,23 @@ public class CylinderPortrayal3D extends SimplePortrayal3D
     /** Constructs a CylinderPortrayal3D with the given appearance and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed. */
     public CylinderPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
         {
-        this.generateNormals = generateNormals;
-        this.generateTextureCoordinates = generateTextureCoordinates;
-        this.appearance = appearance;  this.scale = scale;
-
-        cylinder = new Cylinder(0.5f,1f,
+        this.appearance = appearance;
+		setScale(null, scale);
+		
+        Cylinder cylinder = new Cylinder(0.5f,1f,
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
-        cylinder.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
-        cylinder.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
-        cylinder.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
-        cylinder.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
-        setPickableFlags(cylinder.getShape(Cylinder.BODY));
-        setPickableFlags(cylinder.getShape(Cylinder.TOP));
-        setPickableFlags(cylinder.getShape(Cylinder.BOTTOM));
-        group = new TransformGroup();
+			
+ 		setShape3DFlags(cylinder.getShape(Cylinder.BODY));
+ 		setShape3DFlags(cylinder.getShape(Cylinder.TOP));
+ 		setShape3DFlags(cylinder.getShape(Cylinder.BOTTOM));
+
+		group = new TransformGroup();
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(cylinder);
         }
 
-    public TransformGroup getModel(Object obj, TransformGroup j3dModel)
-        {
-        if(j3dModel==null)
-            {
-            j3dModel = new TransformGroup();
-            j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
-            
-            // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
-            
-            TransformGroup g = (TransformGroup) (group.cloneTree());
-            Transform3D tr = new Transform3D();
-            tr.setScale(scale);
-            g.setTransform(tr);
-            
-            Cylinder cyl = (Cylinder) (g.getChild(0));
-            cyl.setAppearance(appearance);
-            
-            // Store the LocationWrapper in the user data of each shape
-            cyl.getShape(Cylinder.BODY).setUserData(pickI);
-            cyl.getShape(Cylinder.TOP).setUserData(pickI);
-            cyl.getShape(Cylinder.BOTTOM).setUserData(pickI);
-
-            j3dModel.addChild(g);
-            }
-        return j3dModel;
-        }
+	protected int numShapes() { return 3; }
     }

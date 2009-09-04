@@ -235,14 +235,17 @@ public abstract class FieldPortrayal
             positions.setText(wrapper.getLocationName());
             locationInspector = new SimpleInspector(lastLocation, state, null);
             disclosurePanel = new DisclosurePanel(positions, locationInspector, "Position");
-//          fieldComponent.addLabelled( "", positions );
-//            add( fieldComponent, BorderLayout.NORTH);
             add(disclosurePanel, BorderLayout.NORTH);
             add( objectInspector, BorderLayout.CENTER);
             updateInspector();
             }
 
-        public void updateInspector()
+		public String getTitle()
+			{
+			return objectInspector.getTitle();
+			}
+		
+       public void updateInspector()
             {
             Object newObject = wrapper.getObject();
             if (newObject != lastObject)  // a new object!  Get new inspector just in case

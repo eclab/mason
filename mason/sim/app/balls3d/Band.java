@@ -27,8 +27,4 @@ public class Band extends MutableDouble implements java.io.Serializable
     // ... this is here to output the appropriate value on the band's label
     // how our strength should look
     java.text.DecimalFormat strengthFormat = new java.text.DecimalFormat("#0.##");
-        
-    public String toString() { 
-        return "" + strength; 
-        }
     }

@@ -48,7 +48,7 @@ public class StableDouble3D implements StableLocation
             pos = ((Continuous3D)field).getObjectLocation(object);
         
         if (pos == null) { exists = false; }  // purposely don't update x and y and z so they stay the same
-        else { x = pos.x; y = pos.y; exists = true; }
+        else { x = pos.x; y = pos.y; z = pos.z; exists = true; }
         }
 
     /* For some reason, the order of the parameters in the MASON windows will be Z, Exists, Y, X.  Oh well! */

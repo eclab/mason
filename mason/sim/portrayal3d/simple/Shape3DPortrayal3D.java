@@ -23,13 +23,9 @@ import sim.portrayal.*;
    "Primitives": bundles of shapes.  No, we don't understand why either.
 */
 
-public class Shape3DPortrayal3D extends SimplePortrayal3D
+public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     {
-    public Shape3D shape;
-    public Appearance appearance;
-    public boolean pickable = false;
-    
-    /** Constructs a Shape3DPortrayal3D with the given shape and a default (flat opaque white) appearance. */
+	/** Constructs a Shape3DPortrayal3D with the given shape and a default (flat opaque white) appearance. */
     public Shape3DPortrayal3D(Shape3D shape)
         {
         this(shape,java.awt.Color.white);
@@ -51,11 +47,19 @@ public class Shape3DPortrayal3D extends SimplePortrayal3D
     public Shape3DPortrayal3D(Shape3D shape, Appearance appearance)
         {
         this.appearance = appearance;
-        this.shape = shape;
-        Geometry g = this.shape.getGeometry();
+		shape = (Shape3D)(shape.cloneNode(true));  // force a true copy
+		
+        Geometry g = shape.getGeometry();
         if (g instanceof CompressedGeometry)
             ((CompressedGeometry)g).setCapability(CompressedGeometry.ALLOW_GEOMETRY_READ);
-        }
+
+		setShape3DFlags(shape);
+
+        group = new TransformGroup();
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        group.addChild(shape);
+		}
 
     /** Constructs a Shape3DPortrayal3D with the given geometry and a default (flat opaque white) appearance. */
     public Shape3DPortrayal3D(Geometry geometry)
@@ -80,9 +84,18 @@ public class Shape3DPortrayal3D extends SimplePortrayal3D
         {
         this(new Shape3D(geometry), appearance);
         }
-                
-    public void setPickable(boolean val) { pickable = val; }
-        
+              
+	protected int numShapes() { return 1; }
+	
+	// we always just return the shape no matter what
+	protected Shape3D getShape(TransformGroup j3dModel, int shapeNumber)
+		{
+		TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
+		Shape3D p = (Shape3D)(g.getChild(0));
+		return p;
+		}
+
+	/*
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
         {
         if(j3dModel==null)
@@ -90,6 +103,14 @@ public class Shape3DPortrayal3D extends SimplePortrayal3D
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
+			// build a LocationWrapper for the object
+            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+
+			TransformGroup g = (TransformGroup) (group.cloneTree());
+            g.setTransform(transform);
+			g.setCapability(Group.ALLOW_CHILDREN_READ);
+			j3dModel.addChild(g);
+
             // make a shape
             Shape3D s = (Shape3D)(shape.cloneNode(pickable));  // can't share geometries if pickable
             s.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
@@ -105,10 +126,10 @@ public class Shape3DPortrayal3D extends SimplePortrayal3D
                 s.setUserData(pickI);
                 }
             else clearPickableFlags(s);
-                        
 
             j3dModel.addChild(s);
             }
         return j3dModel;
         }
+	*/
     }

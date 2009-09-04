@@ -11,6 +11,7 @@ import sim.display.*;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.image.*;
 import java.awt.*;
+import javax.vecmath.*;
 
 /** The superclass of all 3D Simple Portrayals which by default adds nothing to the 3D
     scene.  Since nothing is added to the scene, nothing is shown and you cannot
@@ -42,16 +43,78 @@ public class SimplePortrayal3D implements Portrayal3D
     /** Flat white opaque. */
     public static final Appearance DEFAULT_APPEARANCE = appearanceForColor(Color.white);
 
-    /** Creates an Appearance equivalent to a flat opaque surface of the provided color, needing no lighting. */
-    public static Appearance appearanceForColor(java.awt.Color color)
+    /** Creates an Appearance equivalent to a flat opaque surface of the provided color, needing no lighting.
+		Opacity is determined by the opacity of the unlit color.  */
+    public static Appearance appearanceForColor(java.awt.Color unlitColor)
         {
-        Appearance appearance = new Appearance();
-        float[] c = color.getRGBComponents(null);
+        return appearanceForColor(unlitColor, null);
+        }
+
+    /** Creates an Appearance equivalent to a flat opaque surface of the provided color, needing no lighting.
+		Opacity is determined by the opacity of the unlit color.  */
+    public static Appearance appearanceForColor(java.awt.Color unlitColor, Appearance setThisAppearance)
+        {
+		Appearance appearance;
+        if (setThisAppearance == null) appearance = new Appearance();
+		else appearance = setThisAppearance;
+		
+		setAppearanceFlags(appearance);
+        float[] c = unlitColor.getRGBComponents(null);
         appearance.setColoringAttributes(
             new ColoringAttributes( c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT));
         if (c[3] < 1.0)  // partially transparent
             appearance.setTransparencyAttributes(
                 new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]));  // duh, alpha's backwards
+        return appearance;
+        }
+
+   /** Creates an Appearance with the provided lit and unlit colors. 
+		shininess and opacity both from 0.0 to 1.0.  The default for all the colors is Black except for specularColor and unlitColor, which are white.*/
+    public static Appearance appearanceForColors(java.awt.Color unlitColor, java.awt.Color ambientColor, 
+												java.awt.Color emissiveColor, java.awt.Color diffuseColor, 
+												java.awt.Color specularColor, float shininess, float opacity)
+        {
+        return appearanceForColors(unlitColor, ambientColor, emissiveColor, diffuseColor, specularColor, shininess, opacity, null);
+        }
+
+   /** Creates an Appearance with the provided lit and unlit colors. 
+		shininess and opacity both from 0.0 to 1.0.    The default for all the colors is Black except for specularColor and unlitColor, which are white.*/
+    public static Appearance appearanceForColors(java.awt.Color unlitColor, java.awt.Color ambientColor, 
+												java.awt.Color emissiveColor, java.awt.Color diffuseColor, 
+												java.awt.Color specularColor, float shininess, float opacity, Appearance setThisAppearance)
+        {
+		Appearance appearance;
+        if (setThisAppearance == null) appearance = new Appearance();
+		else appearance = setThisAppearance;
+
+		if (unlitColor == null) unlitColor = Color.white;
+		if (ambientColor == null) ambientColor = Color.black;
+		if (emissiveColor == null) emissiveColor = Color.black;
+		if (diffuseColor == null) diffuseColor = Color.black;
+		if (specularColor == null) specularColor = Color.white;
+
+		setAppearanceFlags(appearance);
+		appearance.setColoringAttributes(new ColoringAttributes(new Color3f(unlitColor), ColoringAttributes.SHADE_GOURAUD));
+
+		if (opacity > 1.0f) opacity = 1.0f;
+		if (opacity < 0.0f) opacity = 0.0f;
+		if (shininess > 1.0f) shininess = 1.0f;
+		if (shininess < 0.0f) shininess = 0.0f;
+		shininess = shininess * 63.0f + 1.0f;  // to go between 1.0 and 64.0
+
+		Material m = new Material();
+		m.setCapability(Material.ALLOW_COMPONENT_READ);
+		m.setCapability(Material.ALLOW_COMPONENT_WRITE);
+		if (ambientColor != null) m.setAmbientColor(new Color3f(ambientColor));
+		if (emissiveColor != null) m.setEmissiveColor(new Color3f(emissiveColor));
+		if (diffuseColor != null) m.setDiffuseColor(new Color3f(diffuseColor));
+		if (specularColor != null) m.setSpecularColor(new Color3f(specularColor));
+
+		m.setShininess(shininess);
+		appearance.setMaterial(m);
+        if (opacity < 1.0f)  // partially transparent
+            appearance.setTransparencyAttributes(
+                new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity));  // duh, alpha's backwards
         return appearance;
         }
 
@@ -62,9 +125,20 @@ public class SimplePortrayal3D implements Portrayal3D
         may appear to be in the front. */
     public static Appearance appearanceForImage(java.awt.Image image, boolean opaque)
         {
+		return appearanceForImage(image, opaque, null);
+        }
+
+    /** Creates an Appearance using the provided image.  If the image should be entirely opaque, you
+        should definitely set <tt>opaque</tt> to true.  If you want to use the image's built-in transparency information,
+        you should set <tt>opaque</tt> to false.  Beware that there are bugs in Java3D's handling of transparent 
+        textures: multiple such objects often will not draw in the correct order; thus objects in the back
+        may appear to be in the front. */
+    public static Appearance appearanceForImage(java.awt.Image image, boolean opaque, Appearance setThisAppearance)
+        {
         // build an appearance which is transparent except for the texture.
-        Appearance appearance = appearanceForColor(java.awt.Color.red);
-        if (!opaque)
+		Appearance appearance = appearanceForColor(java.awt.Color.red, setThisAppearance);
+  		setAppearanceFlags(appearance);
+		if (!opaque)
             appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.BLENDED,1.0f));
         appearance.setTexture(new TextureLoader(image, TextureLoader.BY_REFERENCE, null).getTexture());
         TextureAttributes ta = new TextureAttributes();
@@ -114,7 +188,38 @@ public class SimplePortrayal3D implements Portrayal3D
         {
         return true;
         }
-        
+	
+	/** Sets a variety of flags on an Appearance so that its features can be modified
+		when the scene is live.  This method cannot be called on an Appearance presently
+		used in a live scene.  */
+	public static void setAppearanceFlags(Appearance a)
+		{
+		a.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
+		a.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+		a.setCapability(Appearance.ALLOW_MATERIAL_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_READ);
+		a.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_WRITE);
+		a.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_READ);
+		a.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+		a.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
+		a.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+		a.setCapability(Appearance.ALLOW_TEXTURE_ATTRIBUTES_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_READ);
+		a.setCapability(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
+		a.setCapability(Appearance.ALLOW_TEXTURE_READ);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_READ);
+		a.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+		a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_WRITE);
+		}
+	
     /** Utility method which prepares the given Shape3D to be pickable (for selection and inspection). */
     public static void setPickableFlags(Shape3D s3d)
         {

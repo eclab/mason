@@ -89,6 +89,11 @@ public abstract class Inspector extends JPanel
     /** Called by the system to inform the Inspector that it needs to update itself to reflect any
         changed in the underlying data. */
     public abstract void updateInspector();
+	
+	/** Called by the system to come up with an appropriate title for a free-floating inspector window.
+	    Often this is toString() on the underlying object.  Some inspectors never become free-floating
+		and so don't need to override this method.  By default this method returns an empty String. */
+	public String getTitle() { return ""; } 
     
     /**
        Called whenever the system needs to get a Steppable which, when stepped, will update the inspector and
@@ -188,6 +193,7 @@ public abstract class Inspector extends JPanel
                 }
             };
 
+        frame.setTitle(getTitle());
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(scroller, BorderLayout.CENTER);

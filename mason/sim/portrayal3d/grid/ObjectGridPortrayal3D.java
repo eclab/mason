@@ -7,6 +7,7 @@
 package sim.portrayal3d.grid;
 import sim.portrayal3d.*;
 import sim.portrayal.*;
+import sim.portrayal.grid.*;
 import sim.field.grid.*;
 import sim.util.*;
 import java.util.*;
@@ -339,7 +340,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
 		}
 
 
-	final MessageLocation unknown = new MessageLocation("It's too costly to figure out where the object went.");
+	final ObjectGridPortrayal2D.Message unknown = new ObjectGridPortrayal2D.Message("It's too costly to figure out where the object went.");
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)     
         {
         // find the global transform group.

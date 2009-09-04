@@ -1563,7 +1563,25 @@ Version 14
 	Added precise drawing to SimpleEdgePortrayal2D
 	Made HexagonalPortrayal2D consistent in constructors with other similar portrayals
 	Minor hash improvements to [Mutable]Double[2|3]D
+	Bug fix in StableDouble3D: it wasn't copying z properly.
+	Edge now indicates its info in its toString() method.
+	New method called getTitle() added to Inspector, intended to be overridden by inspectors
+		which are in free-floating windows.  makeFrame() is reduced to just Inspector.
+		This is all intended to make most inspectors properly display their titles
+		when free-floating.
+	Cleared Vector3d out of Agent.java in crowd3d; using Mutable3D instead
+	Major modifications to Shape3D/Sphere/Cone/CylinderPortrayal3D.  We've moved them
+		all under a new superclass called PrimitivePortrayal3D and have completely
+		cleaned them out and made them consistent.  A new facility has been created
+		with a lot of helpful methods to make it easy to transform (rotate, scale)
+		them and change their appearance dynamically.  Thanks to Joerg Hoehne
+		(hoehne@gmail.com) for the nudging.  Further modification of other classes
+		will follow (like CubePortrayal3D and the various edge classes).
+	Balls3D's BallPortrayal class has been radically simplified and can do cool things
+		now to show off the modifications in the various shapes above.
+	Updated Tutorial5 and balls3d to both force collision checks when the balls are
+		being created so the initial screenshot is prettier (has proper colors in it).
 
 ADD MESSAGELOCATIOn
 ADD DENSEGRID2D and DENSEPORTRAYAL2D MAYBE
-
+NEED TO FIX DEFAJLT COLORS IN APPEARANCEFORCOLORS

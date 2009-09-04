@@ -90,56 +90,12 @@ public class Balls3D extends SimState
                 to = (Ball)(ballObjs.objs[random.nextInt(ballObjs.numObjs)]);
             bands.addEdge(from,to,band);
             } 
-        
-//        schedule.scheduleRepeating(Schedule.EPOCH,2,new Steppable()
-//        {
-//              public void step(SimState state)
-//              {
-//                      Bag ballObjs = balls.getAllObjects();
-//                      Ball from;
-//                      int x,y=-1;
-//                from = (Ball)(ballObjs.objs[x=random.nextInt(ballObjs.numObjs)]);
-//
-//                Ball to = from;
-//                while(to == from)
-//                    to = (Ball)(ballObjs.objs[y=random.nextInt(ballObjs.numObjs)]);
-//                //I got a random pair of nodes.
-//                //If there's a band between them, I delete it
-//                //It there isn't, I add one.
-//                Bag edgesFromFrom = bands.getEdgesOut(from);
-//                for(int i=0;i<edgesFromFrom.numObjs;i++)
-//                {
-//                      Edge e = (Edge)edgesFromFrom.objs[i];
-//                      if(e.to()==to)
-//                      {
-//                              System.out.println("Removing edge ("+x+"->"+y+").");
-//                              bands.removeEdge(e);
-//                              return;
-//                      }
-//                }
-//                Bag edgesToFrom = bands.getEdgesIn(from);
-//                for(int i=0;i<edgesToFrom.numObjs;i++)
-//                {
-//                      Edge e = (Edge)edgesToFrom.objs[i];
-//                      if(e.from()==to)
-//                      {
-//                              System.out.println("Removing edge ("+x+"<-"+y+").");
-//                              bands.removeEdge(e);
-//                              return;
-//                      }
-//                }
-//
-//                //I'm still here, that means I found no edge. I'm adding one
-//                      System.out.println("Adding edge "+x+"->"+y);
-//                Band band = new Band(random.nextDouble() * 
-//                        (maxLaxBandDistance - minLaxBandDistance) + minLaxBandDistance,
-//                        random.nextDouble() *
-//                        (maxBandStrength - minBandStrength) + minBandStrength);
-//                bands.addEdge(from,to,band);
-//              }
-//        },1);
-        
-        }
+ 
+		// To make the initial screenshot pretty, let's have all the balls do a collision check
+		ballObjs = balls.getAllObjects();
+		for(int i = 0; i < ballObjs.numObjs; i++)
+			((Ball)(ballObjs.objs[i])).computeCollision(this);
+		}
 
     public static void main(String[] args)
         {
