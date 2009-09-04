@@ -1577,6 +1577,7 @@ Version 14
 		them and change their appearance dynamically.  Thanks to Joerg Hoehne
 		(hoehne@gmail.com) for the nudging.  Further modification of other classes
 		will follow (like CubePortrayal3D and the various edge classes).
+	Added a brand new BoxPortrayal3D (based on java3d's Box), extending PrimitivePortrayal3D.
 	Balls3D's BallPortrayal class has been radically simplified and can do cool things
 		now to show off the modifications in the various shapes above.
 	Updated Tutorial5 and balls3d to both force collision checks when the balls are

@@ -6,13 +6,9 @@
 
 package sim.portrayal3d.simple;
 
-import sim.portrayal3d.*;
-import javax.vecmath.*;
-import sim.portrayal.*;
 import javax.media.j3d.*;
 
-import com.sun.j3d.utils.geometry.Box;
-import com.sun.j3d.utils.geometry.Primitive;
+import com.sun.j3d.utils.geometry.*;
 
 /**
  * Portrays objects as a cube of the specified color or appearance (flat opaque white by default)
