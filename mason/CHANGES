@@ -1510,11 +1510,11 @@ Version 14
 	Added precise drawing to ImagePortrayal2D
 	Bugfix in GenericEdgePortrayal3D when the edge should end up parallel to O_y.
 		Thanks to Nicolas Payette (nicolaspayette@gmail.com).
-    	Bugfix to shuffling algorithm used in MASON. We stopped one element too early,
-            so for small arrays the shuffling is non-uniform (and for size-two arrays
-            there was no shuffling at all).  For shuffling large numbers of items,
-            the effect was minimal.  This affects Bag.shuffle(), IntBag.shuffle(),
-            DoubleBag.shuffle(), Schedule, and RandomSequence.
+	Bugfix to shuffling algorithm used in MASON. We stopped one element too early,
+        so for small arrays the shuffling is non-uniform (and for size-two arrays
+        there was no shuffling at all).  For shuffling large numbers of items,
+        the effect was minimal.  This affects Bag.shuffle(), IntBag.shuffle(),
+        DoubleBag.shuffle(), Schedule, and RandomSequence.
 	Bugfix in constructor SpatialNetwork3D(final SparseGrid3D grid, final Network network)
 	Added data cullig functionality to time series charts, both programmatically and
 		from the GUI. Affected classes:
