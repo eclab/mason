@@ -48,10 +48,10 @@ public final class Double3D implements java.io.Serializable
 
     public int hashCode()
         {
-		double x = this.x;
-		double y = this.y;
-		double z = this.z;
-		
+        double x = this.x;
+        double y = this.y;
+        double z = this.z;
+                
         // so we hash to the same value as Int2D does, if we're ints
         if ((((int)x) == x) && (((int)y) == y) && (((int)z) == z))
             //  return Int3D.hashCodeFor((int)x,(int)y,(int)z);

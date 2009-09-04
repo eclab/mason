@@ -72,21 +72,21 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
     public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale, int divisions)
         {
         this.appearance = appearance;  
-		setScale(null, scale); 
+        setScale(null, scale); 
 
         Sphere sphere = new Sphere(0.5f, 
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), 
             divisions, appearance);
-		
- 		setShape3DFlags(sphere.getShape(Sphere.BODY));
+                
+        setShape3DFlags(sphere.getShape(Sphere.BODY));
 
         group = new TransformGroup();
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(sphere);
         }
 
-	protected int numShapes() { return 1; }
+    protected int numShapes() { return 1; }
     }

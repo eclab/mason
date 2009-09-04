@@ -240,12 +240,12 @@ public abstract class FieldPortrayal
             updateInspector();
             }
 
-		public String getTitle()
-			{
-			return objectInspector.getTitle();
-			}
-		
-       public void updateInspector()
+        public String getTitle()
+            {
+            return objectInspector.getTitle();
+            }
+                
+        public void updateInspector()
             {
             Object newObject = wrapper.getObject();
             if (newObject != lastObject)  // a new object!  Get new inspector just in case
@@ -267,7 +267,7 @@ public abstract class FieldPortrayal
                 disclosurePanel.setDisclosedComponent(new SimpleInspector(location, state, null));
                 lastLocation = location;
                 }
-			positions.setText(wrapper.getLocationName());
+            positions.setText(wrapper.getLocationName());
             objectInspector.updateInspector();
             locationInspector.updateInspector();
             }

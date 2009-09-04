@@ -59,22 +59,22 @@ public class CylinderPortrayal3D extends PrimitivePortrayal3D
     public CylinderPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
         {
         this.appearance = appearance;
-		setScale(null, scale);
-		
+        setScale(null, scale);
+                
         Cylinder cylinder = new Cylinder(0.5f,1f,
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
-			
- 		setShape3DFlags(cylinder.getShape(Cylinder.BODY));
- 		setShape3DFlags(cylinder.getShape(Cylinder.TOP));
- 		setShape3DFlags(cylinder.getShape(Cylinder.BOTTOM));
+                        
+        setShape3DFlags(cylinder.getShape(Cylinder.BODY));
+        setShape3DFlags(cylinder.getShape(Cylinder.TOP));
+        setShape3DFlags(cylinder.getShape(Cylinder.BOTTOM));
 
-		group = new TransformGroup();
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        group = new TransformGroup();
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(cylinder);
         }
 
-	protected int numShapes() { return 3; }
+    protected int numShapes() { return 3; }
     }

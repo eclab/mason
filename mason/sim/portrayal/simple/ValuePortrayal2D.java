@@ -52,16 +52,16 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
         int x;
         int y;
         ValueGridPortrayal2D fieldPortrayal;
-		String name;
+        String name;
         public Filter(LocationWrapper wrapper)
             {
             fieldPortrayal = (ValueGridPortrayal2D)(wrapper.getFieldPortrayal());
             Int2D loc = (Int2D)(wrapper.getLocation());
             x = loc.x;
             y = loc.y;
-			name = fieldPortrayal.getValueName() + " at " + wrapper.getLocationName();
+            name = fieldPortrayal.getValueName() + " at " + wrapper.getLocationName();
             }
-		public String toString() { return name; }
+        public String toString() { return name; }
         }
 
     // the only reason for these two subclasses is that they differ in the data

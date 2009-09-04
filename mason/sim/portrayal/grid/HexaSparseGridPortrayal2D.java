@@ -186,8 +186,8 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
         // (yuck -- possibly expensive, have to search through empty locations).
-		//
-		// We never use the policy to determine hitting.  hence this only works if graphics != null
+        //
+        // We never use the policy to determine hitting.  hence this only works if graphics != null
         if (policy != null && graphics != null)
             {
             Bag policyBag = new Bag();
@@ -199,7 +199,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                 // restrict the number of objects to draw
                 policyBag.clear();  // fast
                 if (policy.objectToDraw(objects,policyBag))  // if this function returns FALSE, we should use objects as is, else use the policy bag.
-					objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
+                    objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
 
                 // draw 'em
                 for(int xO=0;xO<objects.numObjs;xO++)

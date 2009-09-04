@@ -278,9 +278,9 @@ public class SimpleInspector extends Inspector
                  if (members[i] != null) 
                      members[i].setValue(properties.betterToString(properties.getValue(i)));
         }
-		
-	public String getTitle()
-		{
-		return "" + object;
-		}
+                
+    public String getTitle()
+        {
+        return "" + object;
+        }
     }

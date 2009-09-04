@@ -59,50 +59,50 @@ public class ConePortrayal3D extends PrimitivePortrayal3D
     public ConePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
         {
         this.appearance = appearance;  
-		setScale(null, scale);
+        setScale(null, scale);
 
         Cone cone = new Cone(0.5f,1f,
             /* Primitive.GEOMETRY_NOT_SHARED | */
             (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
             (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0), appearance);
 
- 		setShape3DFlags(cone.getShape(Cone.BODY));
- 		setShape3DFlags(cone.getShape(Cone.CAP));
+        setShape3DFlags(cone.getShape(Cone.BODY));
+        setShape3DFlags(cone.getShape(Cone.CAP));
 
         group = new TransformGroup();
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+        group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(cone);
         }
 
-	protected int numShapes() { return 2; }
+    protected int numShapes() { return 2; }
 
 /*
-    public TransformGroup getModel(Object obj, TransformGroup j3dModel)
-        {
-        if(j3dModel==null)
-            {
-            j3dModel = new TransformGroup();
-            j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
+  public TransformGroup getModel(Object obj, TransformGroup j3dModel)
+  {
+  if(j3dModel==null)
+  {
+  j3dModel = new TransformGroup();
+  j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
-            // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+  // build a LocationWrapper for the object
+  LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
             
-            TransformGroup g = (TransformGroup) (group.cloneTree());
-            Transform3D tr = new Transform3D();
-            tr.setScale(scale);
-            g.setTransform(tr);
+  TransformGroup g = (TransformGroup) (group.cloneTree());
+  Transform3D tr = new Transform3D();
+  tr.setScale(scale);
+  g.setTransform(tr);
             
-            Cone con = (Cone) (g.getChild(0));
-            con.setAppearance(appearance);
+  Cone con = (Cone) (g.getChild(0));
+  con.setAppearance(appearance);
             
-            // Store the LocationWrapper in the user data of each shape
-            con.getShape(Cone.BODY).setUserData(pickI);
-            con.getShape(Cone.CAP).setUserData(pickI);
+  // Store the LocationWrapper in the user data of each shape
+  con.getShape(Cone.BODY).setUserData(pickI);
+  con.getShape(Cone.CAP).setUserData(pickI);
 
-            j3dModel.addChild(g);
-            }
-        return j3dModel;
-        }
+  j3dModel.addChild(g);
+  }
+  return j3dModel;
+  }
 */
     }

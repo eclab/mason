@@ -45,9 +45,9 @@ public final class MutableDouble2D implements java.io.Serializable
     // identical to Double2D
     public final int hashCode()
         {
-		double x = this.x;
-		double y = this.y;
-		
+        double x = this.x;
+        double y = this.y;
+                
         // so we hash to the same value as Int2D does, if we're ints.
         if ((((int)x) == x) && ((int)y) == y)
             //return Int2D.hashCodeFor((int)x,(int)y);

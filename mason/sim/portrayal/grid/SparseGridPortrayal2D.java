@@ -119,8 +119,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
         // (yuck -- possibly expensive, have to search through empty locations).
-		//
-		// We never use the policy to determine hitting.  hence this only works if graphics != null
+        //
+        // We never use the policy to determine hitting.  hence this only works if graphics != null
         if (policy != null && graphics != null)
             {
             Bag policyBag = new Bag();
@@ -129,13 +129,13 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                 {
                 Bag objects = (Bag)(iterator.next());
                 
-				if (objects == null) continue;
-				
+                if (objects == null) continue;
+                                
                 // restrict the number of objects to draw
                 policyBag.clear();  // fast
                 if (policy.objectToDraw(objects,policyBag))  // if this function returns FALSE, we should use objects as is, else use the policy bag.
-					objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
-					
+                    objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
+                                        
                 // draw 'em
                 for(int x=0;x<objects.numObjs;x++)
                     {
@@ -163,15 +163,15 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         newinfo.draw.x += newinfo.draw.width / 2.0;
                         newinfo.draw.y += newinfo.draw.height / 2.0;
 
-						if (objectSelected &&  // there's something there
-							selectedWrappers.get(portrayedObject) != null)
-							{
-							LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-							portrayal.setSelected(wrapper,true);
-							portrayal.draw(portrayedObject, graphics, newinfo);
-							portrayal.setSelected(wrapper,false);
-							}
-						else portrayal.draw(portrayedObject, graphics, newinfo);
+                        if (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null)
+                            {
+                            LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                            portrayal.setSelected(wrapper,true);
+                            portrayal.draw(portrayedObject, graphics, newinfo);
+                            portrayal.setSelected(wrapper,false);
+                            }
+                        else portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

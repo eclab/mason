@@ -1582,7 +1582,4 @@ Version 14
 		now to show off the modifications in the various shapes above.
 	Updated Tutorial5 and balls3d to both force collision checks when the balls are
 		being created so the initial screenshot is prettier (has proper colors in it).
-
-ADD MESSAGELOCATIOn
-ADD DENSEGRID2D and DENSEPORTRAYAL2D MAYBE
-NEED TO FIX DEFAJLT COLORS IN APPEARANCEFORCOLORS
+	Reindented

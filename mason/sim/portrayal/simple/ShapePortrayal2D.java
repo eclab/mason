@@ -121,7 +121,7 @@ public class ShapePortrayal2D extends SimplePortrayal2D
                 graphics.draw(transform.createTransformedShape(bufferedShape));
                 }
             }
-        else   // faster by far		// NOTE:  Not any more.  On the Mac it's about 1% faster, not enough to worry about.
+        else   // faster by far         // NOTE:  Not any more.  On the Mac it's about 1% faster, not enough to worry about.
             {
             int len = xPoints.length;
             double[] scaledXPoints = this.scaledXPoints;

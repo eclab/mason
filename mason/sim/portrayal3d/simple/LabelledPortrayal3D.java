@@ -115,15 +115,11 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         child.setParentPortrayal(p);
         }
             
-    HashMap selectedObjects = new HashMap();
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        boolean selected2 = child.setSelected(wrapper,selected);
-        if (selected && selected2)
-            selectedObjects.put(wrapper.getObject(), wrapper);
-        else
-            selectedObjects.remove(wrapper.getObject());
-        return selected2;
+        if (child.setSelected(wrapper,selected))
+			return super.setSelected(wrapper, selected);
+		else return false;  // which will bypass the selection procedure entirely.
         }
         
     /** Returns a name appropriate for the object.  By default, this returns
@@ -159,13 +155,11 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         
     public void updateSwitch(Switch jswitch, Object object)
         {
-        boolean isSelected = selectedObjects.containsKey(object);
-
         // we do it this way rather than the obvious if/else
         // statement because it gets inlined this way (32 bytes vs. 36 bytes).
         // no biggie.
         jswitch.setWhichChild(
-            (showLabel && (isSelected || !onlyLabelWhenSelected)) ?
+            (showLabel && (isSelected(object) || !onlyLabelWhenSelected)) ?
             Switch.CHILD_ALL : Switch.CHILD_NONE );
         }
 

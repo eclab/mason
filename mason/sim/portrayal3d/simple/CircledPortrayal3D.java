@@ -11,7 +11,6 @@ import sim.portrayal3d.*;
 import sim.display.*;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.geometry.*;
-import java.util.*;
 
 /**
    A wrapper for other Portrayal3Ds which also draws a big translucent sphere around them -- useful for
@@ -97,15 +96,11 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         child.setParentPortrayal(p);
         }
 
-    HashMap selectedObjects = new HashMap();
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        boolean selected2 = child.setSelected(wrapper,selected);
-        if (selected && selected2)
-            selectedObjects.put(wrapper.getObject(), wrapper);
-        else
-            selectedObjects.remove(wrapper.getObject());
-        return selected2;
+        if (child.setSelected(wrapper,selected))
+			return super.setSelected(wrapper, selected);
+		else return false;  // which will bypass the selection procedure entirely.
         }
         
     public SimplePortrayal3D getChild(Object object)
@@ -131,9 +126,7 @@ public class CircledPortrayal3D extends SimplePortrayal3D
 
     public void updateSwitch(Switch jswitch, Object object)
         {
-        boolean isSelected = selectedObjects.containsKey(object);
-        
-        if (showCircle && (isSelected || !onlyCircleWhenSelected))
+        if (showCircle && (isSelected(object) || !onlyCircleWhenSelected))
             jswitch.setWhichChild( Switch.CHILD_ALL );
         else 
             jswitch.setWhichChild( Switch.CHILD_NONE );

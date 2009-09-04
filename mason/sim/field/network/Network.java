@@ -388,21 +388,21 @@ public class Network implements java.io.Serializable
         edge.indexTo = inNode.in.numObjs-1;
         }
 
-	/** Removes the given edge, then changes its from, to, and info values to the provided ones,
-		then adds the edge to the network again.  Ordinarily you wouldn't need to do this -- you can
-		just remove an edge and add a new one.  But in the case that you want to reuse an edge (to track
-		it in an inspector, for example), this function might be helpful given that Edge specifically
-		denies you the ability to change its to and from values.  */
-	public Edge updateEdge( Edge edge, final Object from, final Object to, final Object info)
-		{
-		edge = removeEdge(edge);
-		if (edge != null)
-			{
-			edge.setTo(from, to, info, -1, -1);
-			addEdge(edge);
-			}
-		return edge;
-		}
+    /** Removes the given edge, then changes its from, to, and info values to the provided ones,
+        then adds the edge to the network again.  Ordinarily you wouldn't need to do this -- you can
+        just remove an edge and add a new one.  But in the case that you want to reuse an edge (to track
+        it in an inspector, for example), this function might be helpful given that Edge specifically
+        denies you the ability to change its to and from values.  */
+    public Edge updateEdge( Edge edge, final Object from, final Object to, final Object info)
+        {
+        edge = removeEdge(edge);
+        if (edge != null)
+            {
+            edge.setTo(from, to, info, -1, -1);
+            addEdge(edge);
+            }
+        return edge;
+        }
 
     /** Removes an edge and returns it.  The edge will still retain its info, to, and from fields, so you can
         add it again with addEdge.   Returns null if the edge is null or if there is no such 

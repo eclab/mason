@@ -142,7 +142,7 @@ public class SparseGrid2DPortrayal3D extends SparseGridPortrayal3D
                     newlocalBG.addChild(localTG2);
                                                 
                     globalTG.setChild(newlocalBG, t);
-					}
+                    }
                 }
             else  // object is no longer in the field -- remove it from the scenegraph
                 globalTG.removeChild(t);

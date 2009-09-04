@@ -170,54 +170,54 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
 
 /*
-    public LocationWrapper getWrapper(Int2D location)
-        {
-        final ObjectGrid2D field = (ObjectGrid2D)(this.field);
-        return new LocationWrapper(null, location, this)
-            {
-            Int2D loc = (Int2D) this.location;
-            public Object getObject()
-                { 
-                return field.field[loc.x][loc.y];
-                }
+  public LocationWrapper getWrapper(Int2D location)
+  {
+  final ObjectGrid2D field = (ObjectGrid2D)(this.field);
+  return new LocationWrapper(null, location, this)
+  {
+  Int2D loc = (Int2D) this.location;
+  public Object getObject()
+  { 
+  return field.field[loc.x][loc.y];
+  }
             
-           public String getLocationName()
-                {
-                return ((Int2D)this.location).toCoordinates();
-                }
-            };
-        }
+  public String getLocationName()
+  {
+  return ((Int2D)this.location).toCoordinates();
+  }
+  };
+  }
 */
 
-	// searches for an object within a short distance of a location
-	final int SEARCH_DISTANCE = 3;
-	IntBag xPos = new IntBag(49);
-	IntBag yPos = new IntBag(49);
-	
-	Int2D searchForObject(Object object, Int2D loc)
-		{
+    // searches for an object within a short distance of a location
+    final int SEARCH_DISTANCE = 3;
+    IntBag xPos = new IntBag(49);
+    IntBag yPos = new IntBag(49);
+        
+    Int2D searchForObject(Object object, Int2D loc)
+        {
         ObjectGrid2D field = (ObjectGrid2D)(this.field);
-		Object[][] grid = field.field;
-		if (grid[loc.x][loc.y] == object)
-			return new Int2D(loc.x, loc.y);
-		field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
-		for(int i=0;i<xPos.numObjs;i++)
-			if (grid[xPos.get(i)][yPos.get(i)] == object) return new Int2D(xPos.get(i), yPos.get(i));
-		return null;
-		}
-		
-		
-	public static class Message
-			{
-			String message;
-			public Message(String message) { this.message = message; }
-			public String getSorry()
-					{
-					return message;
-					}
-			}
+        Object[][] grid = field.field;
+        if (grid[loc.x][loc.y] == object)
+            return new Int2D(loc.x, loc.y);
+        field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+        for(int i=0;i<xPos.numObjs;i++)
+            if (grid[xPos.get(i)][yPos.get(i)] == object) return new Int2D(xPos.get(i), yPos.get(i));
+        return null;
+        }
+                
+                
+    public static class Message
+        {
+        String message;
+        public Message(String message) { this.message = message; }
+        public String getSorry()
+            {
+            return message;
+            }
+        }
 
-	final Message unknown = new Message("It's too costly to figure out where the object went.");
+    final Message unknown = new Message("It's too costly to figure out where the object went.");
     public LocationWrapper getWrapper(Object object, Int2D location)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);
@@ -225,33 +225,33 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
             {
             public Object getLocation()
                 { 
-				Int2D loc = (Int2D) super.getLocation();
+                Int2D loc = (Int2D) super.getLocation();
                 if (field.field[loc.x][loc.y] == getObject())  // it's still there!
-					{
-					return loc;
-					}
-				else
-					{
-					Int2D result = searchForObject(object, loc);
-					if (result != null)  // found it nearby
-						{
-						location = result;
-						return result;
-						}
-					else 	// it's moved on!
-						{
-						return unknown;
-						}
-					}
+                    {
+                    return loc;
+                    }
+                else
+                    {
+                    Int2D result = searchForObject(object, loc);
+                    if (result != null)  // found it nearby
+                        {
+                        location = result;
+                        return result;
+                        }
+                    else    // it's moved on!
+                        {
+                        return unknown;
+                        }
+                    }
                 }
             
-           public String getLocationName()
+            public String getLocationName()
                 {
-				Object loc = getLocation();
-				if (loc instanceof Int2D)
-					return ((Int2D)this.location).toCoordinates();
-				else return "Location Unknown";
-				}
+                Object loc = getLocation();
+                if (loc instanceof Int2D)
+                    return ((Int2D)this.location).toCoordinates();
+                else return "Location Unknown";
+                }
             };
         }
 

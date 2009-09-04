@@ -77,7 +77,7 @@ public class Edge implements java.io.Serializable
         setTo( from, to, info, -1, -1 );
         }
 
-	// internal package-level function to set various valoues.  Don't play with this.
+    // internal package-level function to set various valoues.  Don't play with this.
     void setTo( final Object from, final Object to, final Object info, final int indexFrom, final int indexTo )
         {
         this.from = from;
@@ -120,5 +120,5 @@ public class Edge implements java.io.Serializable
     public String toString()
         {
         return "Edge[" + from + "->" + to + ": " + info + "]";
-		}
+        }
     }

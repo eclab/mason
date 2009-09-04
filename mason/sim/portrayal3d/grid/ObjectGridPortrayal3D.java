@@ -321,26 +321,26 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
 
 
 
-	// searches for an object within a short distance of a location
-	final int SEARCH_DISTANCE = 2;
-	IntBag xPos = new IntBag(49);
-	IntBag yPos = new IntBag(49);
-	IntBag zPos = new IntBag(49);
-	
-	Int3D searchForObject(Object object, Int3D loc)
-		{
+    // searches for an object within a short distance of a location
+    final int SEARCH_DISTANCE = 2;
+    IntBag xPos = new IntBag(49);
+    IntBag yPos = new IntBag(49);
+    IntBag zPos = new IntBag(49);
+        
+    Int3D searchForObject(Object object, Int3D loc)
+        {
         ObjectGrid3D field = (ObjectGrid3D)(this.field);
-		Object[][][] grid = field.field;
-		if (grid[loc.x][loc.y][loc.z] == object)
-			return new Int3D(loc.x, loc.y, loc.z);
-		field.getNeighborsMaxDistance(loc.x, loc.y, loc.z, SEARCH_DISTANCE, true, xPos, yPos, zPos);
-		for(int i=0;i<xPos.numObjs;i++)
-			if (grid[xPos.get(i)][yPos.get(i)][zPos.get(i)] == object) return new Int3D(xPos.get(i), yPos.get(i), zPos.get(i));
-		return null;
-		}
+        Object[][][] grid = field.field;
+        if (grid[loc.x][loc.y][loc.z] == object)
+            return new Int3D(loc.x, loc.y, loc.z);
+        field.getNeighborsMaxDistance(loc.x, loc.y, loc.z, SEARCH_DISTANCE, true, xPos, yPos, zPos);
+        for(int i=0;i<xPos.numObjs;i++)
+            if (grid[xPos.get(i)][yPos.get(i)][zPos.get(i)] == object) return new Int3D(xPos.get(i), yPos.get(i), zPos.get(i));
+        return null;
+        }
 
 
-	final ObjectGridPortrayal2D.Message unknown = new ObjectGridPortrayal2D.Message("It's too costly to figure out where the object went.");
+    final ObjectGridPortrayal2D.Message unknown = new ObjectGridPortrayal2D.Message("It's too costly to figure out where the object went.");
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)     
         {
         // find the global transform group.
@@ -363,63 +363,63 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
         
         Object location = path.getNode(i+2).getUserData();  // back off to the TransformGroup
         
-	   final ObjectGrid3D field = (ObjectGrid3D)(this.field);
-       return new LocationWrapper(w.getObject(), location, this)
+        final ObjectGrid3D field = (ObjectGrid3D)(this.field);
+        return new LocationWrapper(w.getObject(), location, this)
             {
             public Object getLocation()
                 { 
-				Int3D loc = (Int3D) super.getLocation();
+                Int3D loc = (Int3D) super.getLocation();
                 if (field.field[loc.x][loc.y][loc.z] == getObject())  // it's still there!
-					{
-					return loc;
-					}
-				else
-					{
-					Int3D result = searchForObject(object, loc);
-					if (result != null)  // found it nearby
-						{
-						location = result;
-						return result;
-						}
-					else 	// it's moved on!
-						{
-						return unknown;
-						}
-					}
-                }
-            
-           public String getLocationName()
-                {
-				Object loc = getLocation();
-				if (loc instanceof Int3D)
-					return ((Int3D)this.location).toCoordinates();
-				else return "Location Unknown";
-				}
-
-
-            /*
-			public Object getObject()
-                { 
-                if (this.location instanceof Int3D)
                     {
-                    Int3D loc = (Int3D)this.location;
-                    return ((ObjectGrid3D)field).field[loc.x][loc.y][loc.z];
+                    return loc;
                     }
                 else
                     {
-                    Int2D loc = (Int2D)this.location;
-                    return ((ObjectGrid2D)field).field[loc.x][loc.y];
+                    Int3D result = searchForObject(object, loc);
+                    if (result != null)  // found it nearby
+                        {
+                        location = result;
+                        return result;
+                        }
+                    else    // it's moved on!
+                        {
+                        return unknown;
+                        }
                     }
                 }
             
             public String getLocationName()
                 {
-                if (this.location == null) return null;
-                if (this.location instanceof Int3D)
+                Object loc = getLocation();
+                if (loc instanceof Int3D)
                     return ((Int3D)this.location).toCoordinates();
-                else return ((Int2D)this.location).toCoordinates();
+                else return "Location Unknown";
                 }
-			*/
+
+
+            /*
+              public Object getObject()
+              { 
+              if (this.location instanceof Int3D)
+              {
+              Int3D loc = (Int3D)this.location;
+              return ((ObjectGrid3D)field).field[loc.x][loc.y][loc.z];
+              }
+              else
+              {
+              Int2D loc = (Int2D)this.location;
+              return ((ObjectGrid2D)field).field[loc.x][loc.y];
+              }
+              }
+            
+              public String getLocationName()
+              {
+              if (this.location == null) return null;
+              if (this.location instanceof Int3D)
+              return ((Int3D)this.location).toCoordinates();
+              else return ((Int2D)this.location).toCoordinates();
+              }
+            */
             };
         }
     }

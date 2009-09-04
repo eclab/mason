@@ -88,10 +88,10 @@ public class Tutorial5 extends SimState
             bands.addEdge(from,to,band);
             }
 
-		// To make the initial screenshot pretty, let's have all the balls do an initial collision check
-		ballObjs = balls.getAllObjects();
-		for(int i = 0; i < ballObjs.numObjs; i++)
-			((Ball)(ballObjs.objs[i])).computeCollision(this);
+        // To make the initial screenshot pretty, let's have all the balls do an initial collision check
+        ballObjs = balls.getAllObjects();
+        for(int i = 0; i < ballObjs.numObjs; i++)
+            ((Ball)(ballObjs.objs[i])).computeCollision(this);
         }
 
     public static void main(String[] args)
