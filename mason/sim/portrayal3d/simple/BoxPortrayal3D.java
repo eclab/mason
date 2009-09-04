@@ -63,7 +63,7 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
         this.appearance = appearance;
 		setScale(null, scale);
 
-        Box box = new Box(1f,1f,1f,
+        Box box = new Box(.5f,.5f,.5f,
                 /* Primitive.GEOMETRY_NOT_SHARED | */
                 (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
                 (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
