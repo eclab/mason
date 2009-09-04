@@ -42,7 +42,7 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
     /** Constructs a BoxPortrayal3D with a flat opaque appearance of the given color and the given scale. */
     public BoxPortrayal3D(java.awt.Color color, float scale)
         {
-        this(appearanceForColor(color),false,false,scale);
+        this(appearanceForColor(color),true,false,scale);
         }
 
     /** Constructs a BoxPortrayal3D with the given (opaque) image and a scale of 1.0. */
