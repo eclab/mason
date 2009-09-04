@@ -154,7 +154,7 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
             // build a LocationWrapper for the object
             LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
 
-            TransformGroup g = (TransformGroup) (group.cloneTree());
+            TransformGroup g = (TransformGroup) (group.cloneTree(true));
             if (transform != null) g.setTransform(transform);
             g.setCapability(Group.ALLOW_CHILDREN_READ);
             j3dModel.addChild(g);
