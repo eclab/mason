@@ -1583,3 +1583,7 @@ Version 14
 	Updated Tutorial5 and balls3d to both force collision checks when the balls are
 		being created so the initial screenshot is prettier (has proper colors in it).
 	Reindented
+	Changed calls to cloneNode() into calls to cloneTree() in certain 3D portrayals;
+		cloneNode() is supposedly pseudoprivate.
+	Slightly revised setSelected() procedure for 3D objects.  Still suboptimal though.
+		See documentation on the method in SimplePortrayal3D.

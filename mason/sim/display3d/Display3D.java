@@ -1846,7 +1846,7 @@ public class Display3D extends JPanel implements Steppable
     
     public void performSelection( final Bag locationWrappers )
         {
-        // deselect existing objects
+        // deselect existing objects first before selecting new ones
         for(int x=0;x<selectedWrappers.size();x++)
             {
             LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));

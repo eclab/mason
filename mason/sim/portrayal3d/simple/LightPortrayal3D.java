@@ -95,7 +95,7 @@ public class LightPortrayal3D extends SimplePortrayal3D
             {
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
-            Light l = (Light)(light.cloneNode(false));
+            Light l = (Light)(light.cloneTree(false));
             clearPickableFlags(l);  // make un-pickable.  How do you catch a moonbeam in your hand?
             j3dModel.addChild(l);
             }

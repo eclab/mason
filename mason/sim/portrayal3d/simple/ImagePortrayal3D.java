@@ -96,7 +96,7 @@ public class ImagePortrayal3D extends SimplePortrayal3D
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
             // copy the shape
-            Shape3D s = (Shape3D)(shape.cloneNode(false));  // I think we can share geometries
+            Shape3D s = (Shape3D)(shape.cloneTree(false));  // I think we can share geometries
 
             // make it pickable
             setPickableFlags(s);

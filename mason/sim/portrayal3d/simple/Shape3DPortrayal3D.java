@@ -47,7 +47,7 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     public Shape3DPortrayal3D(Shape3D shape, Appearance appearance)
         {
         this.appearance = appearance;
-        shape = (Shape3D)(shape.cloneNode(true));  // force a true copy
+        shape = (Shape3D)(shape.cloneTree(true));  // force a true copy
                 
         Geometry g = shape.getGeometry();
         if (g instanceof CompressedGeometry)
@@ -112,7 +112,7 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
       j3dModel.addChild(g);
 
       // make a shape
-      Shape3D s = (Shape3D)(shape.cloneNode(pickable));  // can't share geometries if pickable
+      Shape3D s = (Shape3D)(shape.cloneTree(pickable));  // can't share geometries if pickable
       s.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
       s.setAppearance(appearance);
 

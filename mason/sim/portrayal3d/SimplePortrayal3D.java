@@ -190,12 +190,37 @@ public class SimplePortrayal3D implements Portrayal3D
 		
 	public boolean isSelected(Object obj)
 		{
-		return selectedObjects.containsKey(obj);
+		return selectedObjects != null && selectedObjects.containsKey(obj);
 		}
 
-    HashMap selectedObjects = new HashMap(1);
+    HashMap selectedObjects = null;
+		
+	/** If the object is selected, adds it to a hash table of selected objects for which
+		this SimplePortrayal3D's isSelected() method will return TRUE.  If the object is
+		deselected, removes it from the hash table.  Always returns TRUE.  The hash table
+		doesn't exist until this method is first called.
+		
+		<p>There are two implications to this approach.  First, it means that after you've
+		selected an object, there's a hash table attached to its portrayal.  If you're using
+		the same portrayal for lots of stuff, that's no big deal.  But if you've got per-object
+		portrayals and a lot of objects (or if the objects are themselves SimplePortrayal3D 
+		subclasses) then that's a fair number of hash tables.  This is a minor memory issue but
+		if you don't care about testing for whether you've been selected or not, you could
+		just override this method to always return TRUE (and don't call super.selected(...) ) 
+		and the hash table will never be created.  Note that isSelected will always return
+		FALSE for your portrayal in this situation.
+		
+		<p>Second, though you can test for selection with the isSelected() method, if you want
+		to, say, change the look of your portrayal based on whether or not it's selected, you
+		will need to test isSelected() each time getModel() is called and modify the model
+		accordingly.  This could be a bit expensive.  We're working on an approach for you to
+		be able to test if the object was RECENTLY selected or deselected so you could only test
+		then, but it's nontrivial to do without using up a lot of memory.
+	*/
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
+		if (selectedObjects == null)
+			selectedObjects = new HashMap(1);  // be conservative
         if (selected)
             selectedObjects.put(wrapper.getObject(), wrapper);
         else
