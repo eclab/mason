@@ -54,6 +54,7 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
             ((CompressedGeometry)g).setCapability(CompressedGeometry.ALLOW_GEOMETRY_READ);
 
         setShape3DFlags(shape);
+		shape.setAppearance(appearance);
 
         group = new TransformGroup();
         group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);

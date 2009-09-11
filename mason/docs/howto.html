@@ -53,6 +53,7 @@ These are short examples of how to do things in MASON you may have been wonderin
 <li><a href="#console">How to Hide the Console</a>
 <li><a href="#select">How to Show that an Object Has Been "Selected" by the Mouse</a>
 <li><a href="#move">How to Move an Object in 2D by Dragging It with the Mouse</a>
+<li><a href="#paint">How to Change the Look of a Provided SimplePortrayal2D Dynamically Based on the Object Status</a>
 </ul>
 
 <a name="method"></a><h2>How to Schedule Multiple Methods to be Called on the Same Agent</h2>
@@ -808,6 +809,26 @@ MASON does not have a built-in facility for moving agents: rather, it has hooks 
 <p>This is all done straightforwardly using certain predefined methods in Display2D.  The <b>HeatBugsWithUI.java</b> file has a chunk of example code which shows how to do it for a SparseGrid2D.
 
 <p>We can make this nicer in two ways.  First off, we don't always click directly on the center of the object, so when we begin dragging, the object will "pop" to center itself at our mouse position.  This is fine for a discrete environment like SparseGrid2D but it looks unnatural if we're using a Continuous2D.  Second, as we drag the object, we may wish to also select it.  The <b>NetworkTestWithUI.java</b> file shows how to add in these two nicer items for a Continuous2D field.
+
+<a name="paint"><h2>How to Change the Look of a Provided SimplePortrayal2D Dynamically Based on the Object Status</h2>
+
+Many of the standard provided SimplePortrayal2D objects have a <b>paint</b> variable (holding the Paint of the portrayal) and a <b>scale</b> variable (indicating how much to scale the object by).  Let's say you are representing objects with an OvalPortrayal2D.  But you'd like the oval to change color and size based on two instance variables in your object, <b>angriness</b> and <b>irritation</b>.  It's actually quite easy.  Instead of registering an OvalPortrayal2D with the FieldPortrayal, instead register an anonymous subclass which overrides the <b>draw</b> method like this:
+
+<pre><tt>
+    OvalPortrayal2D oval = new OvalPortrayal2D()
+        {
+        public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+            {
+            MyObject myobject = (MyObject)object;
+            int a = myobject.angriness;  // let's say it goes from 0 to 255
+            paint = new java.awt.Color(a, 20, 20);
+            double i = myobject.irritation;  // let's say it goes from 0 to 3 
+            scale = i + 1;  // range from 1x size to 4x size
+            super.draw(object, graphics, info);  // it'll use the new paint and scale values
+            }
+        };
+</tt></pre>
+
 
 <br><br><br>
 </body>

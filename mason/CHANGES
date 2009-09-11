@@ -1587,3 +1587,5 @@ Version 14
 		cloneNode() is supposedly pseudoprivate.
 	Slightly revised setSelected() procedure for 3D objects.  Still suboptimal though.
 		See documentation on the method in SimplePortrayal3D.
+	Added a HowTo
+	Bug fix to Shape3D: added an appearance now
