@@ -111,14 +111,10 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
             TransformGroup tg = new TransformGroup(getTransform(startPoint, endPoint));
             
-            tg.setUserData("endpoint TG");
-            
             tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
             tg.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
             Node edgeModelClone = edgeModelPrototype.cloneTree(true);
             tg.addChild(edgeModelClone);
-
-            edgeModelClone.setUserData("edgeModelClone");
             
             j3dModel.addChild(tg);
             
@@ -211,7 +207,6 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                 tg.setTransform(trans);
                 }
             }
-        j3dModel.setUserData("j3dModel");
         
         return j3dModel;
         }
