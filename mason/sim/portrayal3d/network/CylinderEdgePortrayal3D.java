@@ -8,77 +8,40 @@ package sim.portrayal3d.network;
 
 import java.awt.Color;
 import javax.media.j3d.*;
+
+import sim.portrayal3d.simple.PrimitivePortrayal3D;
+
 import com.sun.j3d.utils.geometry.*;
 
 /**
  * @author Gabriel Balan
  *
  */
-public class CylinderEdgePortrayal3D extends GenericEdgePortrayal3D
+public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
-    static class PickableCylinder extends Cylinder
-        {
-        public PickableCylinder()
-            {
-            super(); 
-            setAllPickableFlags();
-            }
-                
-        public PickableCylinder(float radius)
-            {
-            super(radius, 2);
-            setAllPickableFlags();
-            }
-                
-        public PickableCylinder(float radius, Appearance ap)
-            {
-            super(radius, 2, ap);
-            setAllPickableFlags();
-            }
-        
-        public PickableCylinder(Appearance ap)
-            {
-            super(1, 2, ap);
-            setAllPickableFlags();
-            }
-
-        public void setUserData(java.lang.Object userData)
-            {
-            getShape(Cylinder.BODY).setUserData(userData);
-            getShape(Cylinder.TOP).setUserData(userData);
-            getShape(Cylinder.BOTTOM).setUserData(userData);
-            }
-        public void setAllPickableFlags()
-            {
-            setPickableFlags(getShape(Cylinder.BODY));
-            setPickableFlags(getShape(Cylinder.TOP));
-            setPickableFlags(getShape(Cylinder.BOTTOM));
-            }
-               
-        }
     public CylinderEdgePortrayal3D()
         {
-        super(new PickableCylinder());
+        super(new Cylinder());
         }
         
     public CylinderEdgePortrayal3D(float cylinderRadius)
         {
-        super(new PickableCylinder(cylinderRadius));
+        super(new Cylinder(cylinderRadius, 2));
         }
-        
-    public CylinderEdgePortrayal3D(float cylinderRadius, Appearance ap)
-        {
-        super(new PickableCylinder(cylinderRadius, ap));
-        }       
-
 
     public CylinderEdgePortrayal3D(Color labelColor)
         {
-        super(new PickableCylinder(), labelColor);
+        super(new Cylinder(), labelColor);
         }
 
-    public CylinderEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
-        {
-        super(new PickableCylinder(edgeAppearance), labelColor);
-        }
+    protected void init(Node edgeModel)
+    {
+    	super.init(edgeModel);
+    	Cylinder c = (Cylinder)edgeModel;    	
+    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BODY));
+    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.TOP));
+    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BOTTOM));
+    }
+    //top, botton, body.
+    protected int numShapes(){return 3;}
     }

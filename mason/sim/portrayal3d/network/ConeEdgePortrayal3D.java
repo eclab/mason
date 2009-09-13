@@ -7,72 +7,41 @@
 package sim.portrayal3d.network;
 
 import java.awt.Color;
-import javax.media.j3d.Appearance;
-import sim.portrayal3d.*;
 
-import com.sun.j3d.utils.geometry.Cone;
+import javax.media.j3d.*;
+
+import sim.portrayal3d.simple.PrimitivePortrayal3D;
+
+import com.sun.j3d.utils.geometry.*;
 
 /**
  * @author Gabriel Balan
  *
  */
-public class ConeEdgePortrayal3D extends GenericEdgePortrayal3D
+public class ConeEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
-    static class PickableCone extends Cone
-        {
-        public PickableCone()
-            {
-            super();
-            setAllPickableFlags();
-            }
-                
-        public PickableCone(float radius)
-            {
-            super(radius, 2);
-            setAllPickableFlags();
-            }
-                
-        public PickableCone(float radius, Appearance ap)
-            {
-            super(radius, 2, ap);
-            setAllPickableFlags();
-            }
-        public PickableCone(Appearance ap)
-            {
-            super(1, 2, ap);
-            setAllPickableFlags();
-            }
-        
-        private void setAllPickableFlags()
-            {
-            SimplePortrayal3D.setPickableFlags(getShape(Cone.CAP));
-            SimplePortrayal3D.setPickableFlags(getShape(Cone.BODY));
-            }        
-        }
-
     public ConeEdgePortrayal3D()
         {
-        super(new PickableCone());
+        super(new Cone());
         }
         
     public ConeEdgePortrayal3D(float coneBaseRadius)
         {
-        super(new PickableCone(coneBaseRadius));
+        super(new Cone(coneBaseRadius, 2));
         }
         
-    public ConeEdgePortrayal3D(float coneBaseRadius, Appearance ap)
-        {
-        super(new PickableCone(coneBaseRadius, ap));
-        }       
-
-
     public ConeEdgePortrayal3D(Color labelColor)
         {
-        super(new PickableCone(), labelColor);
+        super(new Cone(), labelColor);
         }
+    protected void init(Node edgeModel)
+    {
+    	super.init(edgeModel);
+    	Cone c = (Cone)edgeModel;    	
+    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.BODY));
+    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.CAP));
+    }
 
-    public ConeEdgePortrayal3D(Appearance edgeAppearance, Color labelColor)
-        {
-        super(new PickableCone(edgeAppearance), labelColor);
-        }
+    //cap, body.
+    protected int numShapes(){return 2;}
     }

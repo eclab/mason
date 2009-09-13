@@ -8,6 +8,10 @@ package sim.portrayal3d.network;
 import java.awt.*;
 import javax.vecmath.*;
 import javax.media.j3d.*;
+
+import com.sun.j3d.utils.geometry.Primitive;
+
+import sim.portrayal3d.simple.PrimitivePortrayal3D;
 import sim.util.Double3D;
 
 
@@ -29,38 +33,46 @@ import sim.util.Double3D;
  * cilinder and cone are aligned with the Oy axis.
  * 
  * 
- *  This is abstract so people won't forget that 
- * the locationWrapper stored in the model's userData should
- * be stored in ALL geometries of the model. IT'S A 
- * PICKING THING!!!
- * 
  * At the moment I clone the edgeModel I get in the constructor.
  * Would a factory be better? 
+ * 
+ * 
+ * This class allows you to change the appearance.  This part is actually adapted 
+ * from Sean Luke's PrimitivePortrayal3D, but I won't let you change the transform 
+ * or the scale, since the java3d model HAS to be streched between the end-points of the edge.
  * 
  * @author Gabriel Balan with help from Alexandru Balan and Zoran Duric.
  */
 
 public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
     {
-    Node edgeModel;
+    Node edgeModelPrototype;
     public GenericEdgePortrayal3D(Node model)
         {
         super();
-        edgeModel = model;
+        init(model);
         }
 
     public GenericEdgePortrayal3D(Node model, Color labelColor)
         {
         super((Color)null, (Color)null, labelColor);
-        edgeModel = model;
+        init(model);
         }
 
     public GenericEdgePortrayal3D(Node model, Color labelColor, Font labelFont)
         {
         super(((Color)null), ((Color)null), labelColor, labelFont);
-        edgeModel = model;
+        init(model);
         }
 
+    
+    //take this opportunity to call PrimitivePortrayal3D.setShape3DFlags()
+    //on each of the shapes of the model    
+    protected void init(Node model)
+    {
+    	edgeModelPrototype = model;
+    }
+    
     public TransformGroup getModel(Object object, TransformGroup j3dModel)
         {
         Double3D firstPoint;
@@ -95,14 +107,22 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
             // build the whole model from scratch
             j3dModel = new TransformGroup();
             j3dModel.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+            j3dModel.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
 
             TransformGroup tg = new TransformGroup(getTransform(startPoint, endPoint));
+            
+            tg.setUserData("endpoint TG");
+            
             tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-            tg.addChild(edgeModel.cloneTree());
+            tg.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
+            Node edgeModelClone = edgeModelPrototype.cloneTree(true);
+            tg.addChild(edgeModelClone);
 
-            passWrapperToGeometries(drawInfo);
-                        
+            edgeModelClone.setUserData("edgeModelClone");
+            
             j3dModel.addChild(tg);
+            
+            passWrapperToShapes(j3dModel, drawInfo);
 
             // draw the edge labels if the user wants
             if (showLabels)
@@ -152,7 +172,6 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
             {
             TransformGroup tg0 = (TransformGroup) j3dModel.getChild(0);
             tg0.setTransform(getTransform(startPoint, endPoint));
-                        
 
             if (showLabels)
                 {
@@ -192,7 +211,8 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                 tg.setTransform(trans);
                 }
             }
-
+        j3dModel.setUserData("j3dModel");
+        
         return j3dModel;
         }
         
@@ -391,13 +411,97 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         return transform;
         }
         
-    protected void passWrapperToGeometries(Object drawInfo)
+    
+    
+    // When the coder calls setAppearance(...), and the model doesn't exist yet,
+    // this is set instead, so that when the model DOES exist, getModel() will use it.
+    Appearance appearance;
+        
+    // This is the shape index by getAppearance to fetch an appearance from.  It's usually
+    // the 'body'.
+    int DEFAULT_SHAPE = 0;
+        
+    // indicates whether newly created models should be made pickable or not.
+    boolean pickable = true;
+
+    /** Sets common Shape3D flags to make its appearance and geometry easy to modify. */
+    public static void setShape3DFlags(Shape3D shape)
         {
-        /*
-         *One should extend <code>edgeModel</code>'s 
-         *<code>setUserData</code> method to set the wrapper
-         *as userData for all geometries in it.
-         */
-        edgeModel.setUserData(drawInfo);        
+        shape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
+        shape.setCapability(Shape3D.ALLOW_APPEARANCE_READ);
+        shape.setCapability(Shape3D.ALLOW_GEOMETRY_READ); // may need to change the geometry (see below)
+        shape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
+        shape.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_READ);
+        shape.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
+        shape.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_READ);
+        shape.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
+        }
+
+
+    /** Returns an appearance object suitable to set in setAppearance(...). If the j3DModel 
+        is null, a brand new Appearance will be created and returned; otherwise the Appearance
+        (not a copy) will be extracted from the j3DModel and provided to you.  It's good
+        practice to call setAppearance(...) anyway afterwards.  Only call this method within
+        getModel().  */
+    protected Appearance getAppearance(TransformGroup j3dModel)
+        {
+        if (j3dModel == null) 
+            {
+            Appearance a = new Appearance(); 
+            setAppearanceFlags(a);
+            return a;
+            }
+        else return getShape(j3dModel, DEFAULT_SHAPE).getAppearance();
+        }       
+
+        
+        
+    /** Sets the Appearance of the portrayal.  If the j3DModel isn't null, its transform
+        is set directly.  If the j3DModel is null (probably because
+        the model hasn't been built yet), an underlying appearance will be set and then used
+        when the model is built.  Only call this method within getModel(). */
+    protected void setAppearance(TransformGroup j3dModel, Appearance app)
+        {
+        if (j3dModel == null) 
+            {
+            appearance = app;
+            }
+        else
+            {
+            int numShapes = numShapes();
+            for(int i = 0; i < numShapes; i++)
+                getShape(j3dModel, i).setAppearance(app);
+            }
+        }
+        
+    /** Returns the number of shapes handled by this primitive or Shape3D.  
+        Shape3D objects only have a single shape.  Cylinder has three shapes
+        (BODY=0, TOP=1, BOTTOM=2), while Cone has two shapes (BODY=0, CAP=1) and
+        Sphere has a single shape (BODY=0).  */
+    protected abstract int numShapes();
+    protected abstract Shape3D getShape(TransformGroup j3dModel, int shapeIndex);
+
+    /* Sets objects as pickable or not.  If you call setPickable prior to the model
+       being built in getModel(), then the model will be pickable or not as you specify. */
+    public void setPickable(boolean val) { pickable = val; }
+
+    
+    
+    protected void passWrapperToShapes(TransformGroup j3dModel, Object drawInfo)
+        {
+        if (j3dModel!= null) 
+	        {
+	        int numShapes = numShapes();
+	        for(int i = 0; i < numShapes; i++)
+	        	{
+	            Shape3D s = getShape(j3dModel, i);
+	            if(pickable)
+	            	PrimitiveEdgePortrayal3D.setPickableFlags(s);
+	            else
+	            	PrimitiveEdgePortrayal3D.clearPickableFlags(s);
+	            s.setUserData(drawInfo);
+	            
+	        	}
+	        }
         }
     }

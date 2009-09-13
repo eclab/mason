@@ -1591,3 +1591,10 @@ Version 14
 	Bug fix to Shape3D: added an appearance now
 	Bug fix to CubePortrayal3D on pickability. 
 		(although we might soon replace the class with BoxPortrayal3D).
+	GenericEdgePortrayal3D lets you change the appearace and turn picking on/off. 
+		-(i.e. some of the functionality of PrimitivePortrayal3D is offered here, too).
+		-fixed previous bug in picking edge-portrayals extending GenericEdgePortrayal3D.
+		-The classes extended GenericEdgePortrayal3D were refactored.
+		-For using non-Primitive edge portrayal constructs, see ArrowEdgePortrayal3D.
+		
+		
