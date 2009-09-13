@@ -1589,3 +1589,5 @@ Version 14
 		See documentation on the method in SimplePortrayal3D.
 	Added a HowTo
 	Bug fix to Shape3D: added an appearance now
+	Bug fix to CubePortrayal3D on pickability. 
+		(although we might soon replace the class with BoxPortrayal3D).

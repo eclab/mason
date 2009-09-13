@@ -44,8 +44,18 @@ public class CubePortrayal3D extends SimplePortrayal3D
     /** Constructs a CubePortrayal3D with a flat opaque appearance of the given color and the given scale. */
     public CubePortrayal3D(java.awt.Color color, float scale)
         {
-        this(appearanceForColor(color),false,false,scale);
+        this(appearanceForColor(color),scale);
         }
+    public CubePortrayal3D(Appearance appearence)
+	    {
+	    this(appearence,1f);
+	    }
+
+    public CubePortrayal3D(Appearance appearence, float scale)
+	    {
+	    this(appearence,false,false,scale);
+	    }
+
 
     /** Constructs a CubePortrayal3D with the given (opaque) image and a scale of 1.0. */
     public CubePortrayal3D(java.awt.Image image)
@@ -120,7 +130,10 @@ public class CubePortrayal3D extends SimplePortrayal3D
 
             PolygonAttributes pa = new PolygonAttributes();
             pa.setCullFace(PolygonAttributes.CULL_BACK);
+            if(!appearance.isLive())
+            	appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
             appearance.setPolygonAttributes(pa);
+
 
             Shape3D localShape = new Shape3D(quadArray,appearance); 
             localShape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); 
