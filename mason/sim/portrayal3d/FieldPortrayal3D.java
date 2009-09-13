@@ -138,17 +138,18 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
     
     public FieldPortrayal3D(Transform3D transform)
         {
-        setTransform(transform);
+		defaultPortrayal = new SpherePortrayal3D();
+		setTransform(transform);
         }
 
     /** 
-     * Nice simple white cube as default portrayal
+     * White sphere as default portrayal
      * for objects that do not have any other specified to them
      * 
      * Note that it is not final, so it can be replaced. It
      * was chosen for its low triangle-count.
      */
-    protected SimplePortrayal3D defaultPortrayal = new CubePortrayal3D();
+    protected SimplePortrayal3D defaultPortrayal;
         
     public Portrayal getDefaultPortrayal()
         {

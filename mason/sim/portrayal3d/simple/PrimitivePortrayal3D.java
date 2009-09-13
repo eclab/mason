@@ -81,11 +81,12 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         else return getShape(j3dModel, DEFAULT_SHAPE).getAppearance();
         }       
 
-    /** Sets the Transform3D of the portrayal.  If the j3DModel isn't null, its transform
+    /** Sets the Transform3D of the portrayal, if there is one (in some cases, such as ValuePortrayal3D, there won't be any).
+		Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
         is set directly.  If the j3DModel is null (probably because
         the model hasn't been built yet), an underlying transform will be set and then used
         when the model is built.  Only call this method within getModel(). */
-    protected void setTransform(TransformGroup j3dModel, Transform3D transform)
+    protected boolean setTransform(TransformGroup j3dModel, Transform3D transform)
         {
         if (j3dModel == null)   // just update the scale variable, it'll get set in getModel
             {
@@ -96,17 +97,19 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
             TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
             g.setTransform(transform);
             }
+		return true;
         }
         
-    /** Sets the Transform3D of the portrayal to a given scaling value.  If the j3DModel isn't null, its transform
+    /** Sets the Transform3D of the portrayal to a given scaling value, if there *is* a transform (in some cases, such as ValuePortrayal3D, there won't be any).  
+		Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
         is set directly.  If the j3DModel is null (probably because
         the model hasn't been built yet), an underlying transform will be set and then used
         when the model is built.  Only call this method within getModel(). */
-    protected void setScale(TransformGroup j3dModel, float val)
+    protected boolean setScale(TransformGroup j3dModel, float val)
         {
         Transform3D tr = new Transform3D();
         tr.setScale(val);
-        setTransform(j3dModel, tr);
+        return setTransform(j3dModel, tr);
         }
         
         

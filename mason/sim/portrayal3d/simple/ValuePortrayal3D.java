@@ -13,24 +13,21 @@ import javax.media.j3d.*;
 import sim.portrayal.*;
 import sim.util.*;
 
-public class ValuePortrayal3D extends SimplePortrayal3D
-    {
-    public static int SHAPE_CUBE = 0;
-    public static int SHAPE_SQUARE = 1;
-    
-    public int shape;
-    public ValuePortrayal3D()
-        {
-        super();
-        shape = SHAPE_CUBE;
-        }
+/** ValuePortrayal3D defines a cube or square whose color and transparency can be changed, 
+	and is really intended soleley for use in ValueGridPortrayal3D.  Note that although
+	ValuePortrayal3D is a subclass of Shape3DPortrayal3D, it does not include a Transform3D
+	and so cannot be scaled or rotated.  This is mostly for speed reasons.
+	
+	<p>ValuePortrayal3D has settable polygon attributes: so you can have it display with
+	faces, as a wireframe, or as corner dots (just change the desired value in the options
+	panel of the Display3D when running).
+*/
 
-    public ValuePortrayal3D(int shape)
-        {
-        super();
-        this.shape = shape;
-        }
-        
+public class ValuePortrayal3D extends Shape3DPortrayal3D
+    {
+    public static final int SHAPE_CUBE = 0;
+    public static final int SHAPE_SQUARE = 1;
+    
     static final float[] verts_cube = {
         // front face
         0.5f, -0.5f,  0.5f,                             0.5f,  0.5f,  0.5f,
@@ -57,21 +54,52 @@ public class ValuePortrayal3D extends SimplePortrayal3D
         -0.5f,  0.5f,  0.0f,                            -0.5f, -0.5f,  0.0f
         };
 
-    public boolean usesTriangles=false; 
-    public boolean getUsesTriangles() { return usesTriangles; } 
-    public void setUsesTriangles(boolean val) { usesTriangles = val; }
-
-    public sim.util.gui.ColorMap map;
-    float[] tempColorComponents = new float[4];
-        
-    public void setParentPortrayal(FieldPortrayal3D p)
+	/** Creates a ValuePortrayal3D with a cube shape. */
+    public ValuePortrayal3D()
         {
-        super.setParentPortrayal(p);
-        map = ((ValueGridPortrayal3D)p).map;
+		this(SHAPE_CUBE);
         }
 
-    final PolygonAttributes mPolyAttributes = new PolygonAttributes();
+	/** Returns false and does not set the transform (there's nothing to set). */
+	protected boolean setTransform(TransformGroup j3dModel, Transform3D transform)
+		{
+		return false;  // there's no transform for this class
+		}
+	
+	protected Shape3D getShape(TransformGroup j3dModel, int shapeNumber)
         {
+		Shape3D p = null;
+		if (j3dModel.getChild(0) instanceof TransformGroup)
+			{
+			TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
+			p = (Shape3D)(g.getChild(0));
+			}
+		else
+			{
+			p = (Shape3D)(j3dModel.getChild(0));
+			}
+        return p;
+        }
+
+	static GeometryArray processArray(int shape)  // must be static or else we can't call super() below
+		{
+		float[] verts = (shape == SHAPE_CUBE ? verts_cube : verts_square);
+		GeometryArray ga = new QuadArray(verts.length/3, QuadArray.COORDINATES);
+		ga.setCoordinates(0, verts);
+		return ga;
+		}
+		
+	PolygonAttributes mPolyAttributes;
+	static final java.awt.Color SEMITRANSPARENT = new java.awt.Color(64, 64, 64, 64);
+
+
+	/** Creates a ValuePortrayal3D with a cube (SHAPE_CUBE) or square (SHAPE_SQUARE) shape. */
+    public ValuePortrayal3D(int shape)
+        {
+		// Java's requirements for super() to be first are irritating and stupid
+		super(processArray(shape), SEMITRANSPARENT);  // we provide a semitransparent color to force transparency attributes to be created in appearanceForColor  
+			
+		mPolyAttributes = new PolygonAttributes();
         mPolyAttributes.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
         mPolyAttributes.clearCapabilityIsFrequent(PolygonAttributes.ALLOW_MODE_WRITE);
         if (shape == SHAPE_SQUARE) 
@@ -81,95 +109,70 @@ public class ValuePortrayal3D extends SimplePortrayal3D
             }
         else 
             mPolyAttributes.setCullFace(PolygonAttributes.CULL_BACK);
-        }
-
+       }
+	
     public PolygonAttributes polygonAttributes()
         {
         return mPolyAttributes;
         }
-        
-    // set up the geometry array
-    GeometryArray ga; 
-
-    /** Builds a model, but obj is expected to be a ValuePortrayal3D.ValueWrapper. */
+	
+	
+    /* Builds a model, but obj is expected to be a ValuePortrayal3D.ValueWrapper. */
     public TransformGroup getModel(Object obj, TransformGroup j3dModel) 
         {
-        // extract color to use
-        double val = ((ValueWrapper)obj).lastVal; 
-        int color = map.getRGB(val);
-        float[] c = tempColorComponents;
-        c[0] = ((float) (color & 255)) / 255;
-        color >>>= 8;
-        c[1] = ((float) (color & 255)) / 255;
-        color >>>= 8;
-        c[2] = ((float) (color & 255)) / 255;
-        color >>>= 8;
-        c[3] = ((float) (color & 255)) / 255;
+		float[] c = ((ValueGridPortrayal3D)parentPortrayal).map.getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
 
-        // build model if necessary
+        // make sure the polygon attributes are set
         if(j3dModel==null) 
             {
-            j3dModel = new TransformGroup();
+			j3dModel = super.getModel(obj, j3dModel);
+			
+			// We dispense of our TransformGroup: it makes us about 20% faster.
+			
+			Shape3D s = getShape(j3dModel, 0);
+			((TransformGroup)(j3dModel.getChild(0))).removeChild(0);
+			j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
+            j3dModel.addChild(s);
 
-            if (ga==null || ga.isLive() || ga.isCompiled())
-                {
-                float[] verts = null;
-                if (shape == SHAPE_CUBE)
-                    verts = verts_cube;
-                else verts = verts_square;
-                
-                if (usesTriangles) 
-                    { 
-                    int[] lengths = new int[verts.length/12];
-                    for(int i=0; i<lengths.length;i++)
-                        lengths[i]=4;
-                    ga = new TriangleFanArray(4*lengths.length, TriangleFanArray.COORDINATES, lengths);
-                    }
-                else 
-                    {
-                    ga = new QuadArray(verts.length/3, QuadArray.COORDINATES ); 
-                    }
-                ga.setCoordinates(0, verts);
-                }
 
-            // set up an appearance that can be modified
-            Appearance appearance = new Appearance();
-            appearance.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);  
-            appearance.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ); 
-            appearance.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
-            appearance.setPolygonAttributes(polygonAttributes());
+			// Rather than clone the existing appearance, we create a simpler appearance with
+			// fewer attributes set.  This makes us about 40% faster.
+			
+            Appearance app = new Appearance();
+            app.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);  
+            app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ); 
+            app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
+            app.setPolygonAttributes(polygonAttributes());
             ColoringAttributes ca = new ColoringAttributes(c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT);
             ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
-            appearance.setColoringAttributes(ca);
+            app.setColoringAttributes(ca);
             TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]);  // duh, alpha's backwards
             ta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-            appearance.setTransparencyAttributes(ta);
-                
-            // construct the shape
-            Shape3D localShape = new Shape3D(ga, appearance);
-            localShape.setCapability(Shape3D.ALLOW_APPEARANCE_READ); 
-            setPickableFlags(localShape); 
-                        
-            // obj is our ValueWrapper, which is a LocationWrapper already
-            localShape.setUserData(obj);
-                        
-            j3dModel.addChild(localShape); 
-            }
-        else            // just update color and transparency
-            {
-            Shape3D shape = (Shape3D)(j3dModel.getChild(0));
-            Appearance appearance = shape.getAppearance();
-            appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
-            appearance.getTransparencyAttributes().setTransparency(1.0f - c[3]);  // duh, alpha's backwards
-            }
-        return j3dModel;
+            app.setTransparencyAttributes(ta);
+			
+			setAppearance(j3dModel, app);
+
+			// obj is our ValueWrapper, which is a LocationWrapper already
+			getShape(j3dModel, 0).setUserData(obj);  // we only have one Shape, #0
+			}
+		else
+			{
+			j3dModel = super.getModel(obj, j3dModel);
+
+			// extract color to use
+			Appearance appearance = getAppearance(j3dModel);	
+			appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
+			appearance.getTransparencyAttributes().setTransparency(1.0f - c[3]);  // duh, alpha's backwards
+			}
+		return j3dModel;
         }
 
 
-    /* This special LocationWrapper contains a public double holding the last value used
+
+    /** This special LocationWrapper contains a public double holding the last value used
        to display the object. */
-    public static class ValueWrapper extends LocationWrapper
+	public static class ValueWrapper extends LocationWrapper
         {
         // we keep this around so we don't keep allocating MutableDoubles
         // every time getObject is called -- that's wasteful, but more importantly,
@@ -210,10 +213,21 @@ public class ValuePortrayal3D extends SimplePortrayal3D
             return val;
             }
 
-        public double lastVal;
+        public double lastVal;  // the last value used to display the object
         }
 
-    public static abstract class Filter
+
+	// Filter is a simple abstract class which holds the location (x/y/z) associated with
+	// the value being inspected.  There are two concrete subclasses: DoubleFilter and
+	// IntFilter, which have getValue() and setValue() methods and so are inspectable.
+	// We use these Filter objects as the "objects" being inspected by various inspectors. 
+
+    // The only reason for these two subclasses is that they differ in the data
+    // type of their property (double vs int).  This allows us to guarantee that
+    // ints are displayed or set as opposed to doubles in the Inspector.  No
+    // big whoop -- it's more a formatting thing than anything else.
+    
+	static abstract class Filter
         {
         int x;
         int y;
@@ -232,12 +246,7 @@ public class ValuePortrayal3D extends SimplePortrayal3D
             }
         }
 
-    // the only reason for these two subclasses is that they differ in the data
-    // type of their property (double vs int).  This allows us to guarantee that
-    // ints are displayed or set as opposed to doubles in the Inspector.  No
-    // big whoop -- it's more a formatting thing than anything else.
-    
-    public static class DoubleFilter extends Filter
+	static class DoubleFilter extends Filter
         {
         public DoubleFilter(LocationWrapper wrapper) { super(wrapper); }
         
@@ -258,7 +267,7 @@ public class ValuePortrayal3D extends SimplePortrayal3D
         }
         
 
-    public static class IntFilter extends Filter
+	static class IntFilter extends Filter
         {
         public IntFilter(LocationWrapper wrapper) { super(wrapper); }
         
@@ -277,15 +286,19 @@ public class ValuePortrayal3D extends SimplePortrayal3D
             }
         }
 
-    public Inspector getInspector(LocationWrapper wrapper, GUIState state)
+
+	public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
-        if (((ValueGridPortrayal3D)(wrapper.getFieldPortrayal())).getField() instanceof DoubleGrid3D)
+		Object field = ((ValueGridPortrayal3D)(wrapper.getFieldPortrayal())).getField();
+		
+       if (field instanceof DoubleGrid3D || field instanceof DoubleGrid2D)
             return new SimpleInspector(new DoubleFilter(wrapper), state, "Properties");
         else
             return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
         // static inner classes don't need serialVersionUIDs
         }
     
+	
     public String getName(LocationWrapper wrapper)
         {
         ValueGridPortrayal3D portrayal = (ValueGridPortrayal3D)(wrapper.getFieldPortrayal());

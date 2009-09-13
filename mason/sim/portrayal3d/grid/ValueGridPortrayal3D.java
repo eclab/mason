@@ -170,7 +170,14 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                 for (int z=0;z<length;z++) 
                     { 
                     TransformGroup tg = (TransformGroup)localSwitch.getChild(i);
-                    Node shape = (Node)(tg.getChild(0));
+					
+					// ValuePortrayal3D dispenses with its TransformGroup in order to achieve some
+					// additional speed.  We recognize that fact here.
+					
+					// TransformGroup g = (TransformGroup)(g.getChild(0));
+					// Shape3D shape = (Shape3D)(g.getChild(0));
+					Shape3D shape = (Shape3D)(tg.getChild(0));
+
                     ValuePortrayal3D.ValueWrapper wrapper = (ValuePortrayal3D.ValueWrapper)(shape.getUserData());
                     double value = newValue(x,y,z); 
                     double oldValue = wrapper.lastVal;

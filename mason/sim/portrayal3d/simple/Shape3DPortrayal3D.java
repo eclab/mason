@@ -13,14 +13,10 @@ import sim.portrayal.*;
 /**
    A simple portrayal for displaying Shape3D objects.  You can find Shape3D objects,
    or CompressedGeometry objects (which you can make into a Shape3D in its constructor)
-   all over the web.  
+   all over the web.
    
-   <p>By default this portrayal is not pickable, but you can change that.  This is because
-   complex Shape3Ds are somewhat flakey in pick handling.
-
-   <p> Note that this is <i>not</i>
-   the superclass of ConePortrayal, SpherePortrayal, etc.  Those display, in Java3D-speak,
-   "Primitives": bundles of shapes.  No, we don't understand why either.
+   <p><b>Important note: CompressedGeometry cannot have any appearances set: it ignores all of them
+   and only uses what's defined in the geometry itself. That's Java3D for you.</b>
 */
 
 public class Shape3DPortrayal3D extends PrimitivePortrayal3D
@@ -95,42 +91,4 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
         Shape3D p = (Shape3D)(g.getChild(0));
         return p;
         }
-
-    /*
-      public TransformGroup getModel(Object obj, TransformGroup j3dModel)
-      {
-      if(j3dModel==null)
-      {
-      j3dModel = new TransformGroup();
-      j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
-            
-      // build a LocationWrapper for the object
-      LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
-
-      TransformGroup g = (TransformGroup) (group.cloneTree());
-      g.setTransform(transform);
-      g.setCapability(Group.ALLOW_CHILDREN_READ);
-      j3dModel.addChild(g);
-
-      // make a shape
-      Shape3D s = (Shape3D)(shape.cloneTree(pickable));  // can't share geometries if pickable
-      s.setCapability(Shape3D.ALLOW_GEOMETRY_READ);
-      s.setAppearance(appearance);
-
-      if (pickable) 
-      {
-      setPickableFlags(s);
-      // build a LocationWrapper for the object
-      LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
-
-      // Store the LocationWrapper in the user data
-      s.setUserData(pickI);
-      }
-      else clearPickableFlags(s);
-
-      j3dModel.addChild(s);
-      }
-      return j3dModel;
-      }
-    */
     }

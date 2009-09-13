@@ -49,23 +49,20 @@ public class SimplePortrayal3D implements Portrayal3D
     public static Appearance appearanceForColor(java.awt.Color unlitColor)
         {
 		Appearance appearance = new Appearance();
-//        return appearanceForColor(unlitColor, null);
-//        }
-//
-//    public static Appearance appearanceForColor(java.awt.Color unlitColor, Appearance setThisAppearance)
-//        {
-//        Appearance appearance;	
-//        if (setThisAppearance == null) appearance = new Appearance();
-//        else appearance = setThisAppearance;
-//		appearance.setMaterial(null);  // remove material entirely
-                
+
         setAppearanceFlags(appearance);
         float[] c = unlitColor.getRGBComponents(null);
-        appearance.setColoringAttributes(
-            new ColoringAttributes( c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT));
-        if (c[3] < 1.0)  // partially transparent
-            appearance.setTransparencyAttributes(
-                new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]));  // duh, alpha's backwards
+		ColoringAttributes ca = new ColoringAttributes(c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT);
+		ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
+		ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
+        appearance.setColoringAttributes(ca);
+		if (c[3] < 1.0)  // partially transparent
+            {
+			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]); // duh, alpha's backwards
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+			appearance.setTransparencyAttributes(tta);
+			}
         return appearance;
         }
 
@@ -81,19 +78,11 @@ public class SimplePortrayal3D implements Portrayal3D
         {
 		Appearance appearance = new Appearance();
 
-//        return appearanceForColors(ambientColor, emissiveColor, diffuseColor, specularColor, shininess, opacity, null);
-//        }
-//
-//    public static Appearance appearanceForColors(java.awt.Color ambientColor, 
-//        java.awt.Color emissiveColor, java.awt.Color diffuseColor, 
-//        java.awt.Color specularColor, float shininess, float opacity, Appearance setThisAppearance)
-//        {
-//        Appearance appearance;
-//        if (setThisAppearance == null) appearance = new Appearance();
-//        else appearance = setThisAppearance;
-
         setAppearanceFlags(appearance);
-        appearance.setColoringAttributes(new ColoringAttributes(BLACK, ColoringAttributes.SHADE_GOURAUD));
+		ColoringAttributes ca = new ColoringAttributes(BLACK, ColoringAttributes.SHADE_GOURAUD);
+		ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
+		ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
+        appearance.setColoringAttributes(ca);
 
         if (opacity > 1.0f) opacity = 1.0f;
         if (opacity < 0.0f) opacity = 0.0f;
@@ -120,8 +109,12 @@ public class SimplePortrayal3D implements Portrayal3D
         m.setShininess(shininess);
         appearance.setMaterial(m);
         if (opacity < 1.0f)  // partially transparent
-            appearance.setTransparencyAttributes(
-                new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity));  // duh, alpha's backwards
+            {
+			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity); // duh, alpha's backwards
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+			appearance.setTransparencyAttributes(tta);
+			}
         return appearance;
         }
 
@@ -134,16 +127,13 @@ public class SimplePortrayal3D implements Portrayal3D
         {
         Appearance appearance = appearanceForColor(java.awt.Color.black);
 
-//        return appearanceForImage(image, opaque, null);
-//        }
-//
-//    public static Appearance appearanceForImage(java.awt.Image image, boolean opaque, Appearance setThisAppearance)
-//        {
-//        // build an appearance which is transparent except for the texture.
-//        Appearance appearance = appearanceForColor(java.awt.Color.red, setThisAppearance);
-//        setAppearanceFlags(appearance);  // already set!
         if (!opaque)
-            appearance.setTransparencyAttributes(new TransparencyAttributes(TransparencyAttributes.BLENDED,1.0f));
+			{
+			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f); // duh, alpha's backwards
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+			appearance.setTransparencyAttributes(tta);
+			}
         appearance.setTexture(new TextureLoader(image, TextureLoader.BY_REFERENCE, null).getTexture());
         TextureAttributes ta = new TextureAttributes();
         ta.setTextureMode(TextureAttributes.REPLACE);
@@ -274,6 +264,7 @@ public class SimplePortrayal3D implements Portrayal3D
         geom.setCapability(GeometryArray.ALLOW_COUNT_READ);
         geom.setCapability(GeometryArray.ALLOW_FORMAT_READ);
         geom.setCapability(GeometryArray.ALLOW_COORDINATE_READ);
+		
         // these are not going to be common, so we should state that they are infrequent
         geom.clearCapabilityIsFrequent(GeometryArray.ALLOW_COUNT_READ);
         geom.clearCapabilityIsFrequent(GeometryArray.ALLOW_FORMAT_READ);
