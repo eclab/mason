@@ -17,7 +17,6 @@ public class TransformedPortrayal2D extends SimplePortrayal2D
     {
     public SimplePortrayal2D child;
     public AffineTransform transform;
-    boolean orient;
 
     public TransformedPortrayal2D(SimplePortrayal2D child, AffineTransform transform)
         {

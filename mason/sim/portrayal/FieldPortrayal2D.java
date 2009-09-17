@@ -86,7 +86,7 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
     /** Returns the location of the given object were it to be drawn on the screen.  Negative locations are acceptable.
         If null is returned, then the portrayal is unable to determine the location of the object.  The default implementation
         returns null. */
-    public Point2D.Double getLocation(Object object, DrawInfo2D info)
+    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D fieldPortrayalInfo)
         {
         return null;
         }

@@ -1201,7 +1201,8 @@ public class Display2D extends JComponent implements Steppable
                 if (count > 0) s += "<br>";
                 if (count >= MAX_TOOLTIP_LINES) { return s + "...<i>etc.</i></font></html>"; }
                 count++;
-                s += p.portrayal.getStatus((LocationWrapper) (hitObjects[x].objs[i]));
+                String status = p.portrayal.getStatus((LocationWrapper) (hitObjects[x].objs[i]));
+				if (status != null) s += status;  // might return null, sort of meaning "leave me alone"
                 }
             }
         if (count==0) return null;

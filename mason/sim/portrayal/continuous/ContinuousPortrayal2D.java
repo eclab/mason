@@ -48,7 +48,6 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final double starty = (info.clip.y - info.draw.y) / yScale;
         return new Double2D(startx, starty);
         }
-
     
     public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D fieldPortrayalInfo)
         {

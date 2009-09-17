@@ -73,7 +73,13 @@ public class DrawInfo2D
         draw = new Rectangle2D.Double(odraw.x+translateX,odraw.y+translateY,odraw.width,odraw.height);
         Rectangle2D.Double oclip = other.clip;
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
+		precise = other.precise;
         }
+	
+	public DrawInfo2D(DrawInfo2D other)
+        {
+		this(other, 0, 0);
+		}
         
     public boolean equals(Object obj)
         {
