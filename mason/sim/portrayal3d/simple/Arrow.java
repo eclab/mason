@@ -8,9 +8,11 @@ package sim.portrayal3d.simple;
 
 import com.sun.j3d.utils.geometry.*;
 
-import java.awt.Font;
+import java.awt.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
+
+import sim.portrayal3d.SimplePortrayal3D;
 
 /**
  * 
@@ -22,8 +24,7 @@ import javax.vecmath.*;
  */
 public class Arrow extends TransformGroup
     {
-    public static final Color3f defaultArrowColor = new Color3f(0.5f, 0.5f,
-        0.5f);
+	public static final Color defaultArrowColor = Color.gray;
 
     public static final Font3D f3d = new Font3D(new Font(null, Font.PLAIN, 1),
         null);
@@ -68,11 +69,7 @@ public class Arrow extends TransformGroup
         Appearance caAppearance = appearance; 
         if(caAppearance==null)
             {
-            caAppearance =  new Appearance();
-            ColoringAttributes caColor;
-            caColor = new ColoringAttributes();
-            caColor.setColor(defaultArrowColor);
-            caAppearance.setColoringAttributes(caColor);
+        	caAppearance = SimplePortrayal3D.appearanceForColors(defaultArrowColor, null, defaultArrowColor, defaultArrowColor, 1.0f, 1.0f);
             }
 
         // Rotation Matrix for whole arrow (cylinder + cone)

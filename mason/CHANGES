@@ -1598,3 +1598,4 @@ Version 14
 		-For using non-Primitive edge portrayal constructs, see ArrowEdgePortrayal3D.
 	Updated MASON to compile with java 1.4
 	Moved ValuePortrayal3D under ShapePortrayal3D
+	Made changes to Arrow and ArrowEdgePortrayal3D: the default appearance in Arrow is now lit grey.
