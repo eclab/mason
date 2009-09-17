@@ -490,12 +490,11 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 	        for(int i = 0; i < numShapes; i++)
 	        	{
 	            Shape3D s = getShape(j3dModel, i);
+	            if(appearance!=null)
+	            	s.setAppearance(appearance);
 	            if(pickable)
 	            	PrimitiveEdgePortrayal3D.setPickableFlags(s);
-	            else
-	            	PrimitiveEdgePortrayal3D.clearPickableFlags(s);
-	            s.setUserData(drawInfo);
-	            
+	            s.setUserData(drawInfo);	            
 	        	}
 	        }
         }

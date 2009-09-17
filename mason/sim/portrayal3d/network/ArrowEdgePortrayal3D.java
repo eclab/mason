@@ -12,7 +12,6 @@ import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.geometry.*;
 
-import sim.portrayal3d.SimplePortrayal3D;
 import sim.portrayal3d.simple.*;
 /**
  * This implementation of GenericEDgePortrayal3D uses Arrow, 
@@ -23,32 +22,7 @@ import sim.portrayal3d.simple.*;
  * @author Gabriel Balan
  */
 public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
-    {
-	
-//    static class PickableArrow extends Arrow
-//        {
-//        public PickableArrow(){this(1f);}
-//        public PickableArrow(Appearance ap){this(1f,ap);}
-//        public PickableArrow(float radius){this(radius, null);}
-//        public PickableArrow(float arrowTailRadius, Appearance appearance)
-//            {
-//            super(arrowTailRadius, 
-//                new Vector3f(0f,-1f,0f),
-//                new Vector3f(0f,1f,0f),
-//                null, null, appearance);
-//            setAllPickableFlags();
-//            }
-//
-//        private void setAllPickableFlags()
-//            {
-//            SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.BODY));
-//            SimplePortrayal3D.setPickableFlags(arrowHead.getShape(Cylinder.TOP));
-//            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.TOP));
-//            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BOTTOM));
-//            SimplePortrayal3D.setPickableFlags(arrowTail.getShape(Cylinder.BODY));
-//            }
-//
-//        }
+    {	
     private static Vector3f dummyFrom = new Vector3f(0f,-1f,0f);
     private static Vector3f dummyTo = new Vector3f(0f,1f,0f);
     
@@ -59,7 +33,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         
     public ArrowEdgePortrayal3D(float radius)
         {
-        this(radius, appearanceForColors(java.awt.Color.gray, null, java.awt.Color.gray, java.awt.Color.gray, 1.0f, 1.0f));
+        this(radius, null);
         }
         
     public ArrowEdgePortrayal3D(float radius, Appearance ap)
@@ -70,7 +44,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
 
     public ArrowEdgePortrayal3D(Color labelColor)
         {
-    	super(new Arrow(1, dummyFrom, dummyTo, null, null, appearanceForColors(java.awt.Color.gray, null, java.awt.Color.gray, java.awt.Color.gray, 1.0f, 1.0f)), labelColor);
+    	super(new Arrow(1, dummyFrom, dummyTo, null, null, null), labelColor);
         }
 
 
