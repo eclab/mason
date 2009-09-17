@@ -29,8 +29,10 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
     static class PickableArrow extends Arrow
         {
         public PickableArrow(){this(1f);}
-        public PickableArrow(Appearance ap){this(1f,ap);}
-        public PickableArrow(float radius){this(radius, null);}
+        public PickableArrow(Appearance appearance){this(1f,appearance);}
+        public PickableArrow(float radius)
+			{ this(radius, appearanceForColors(java.awt.Color.gray, null, java.awt.Color.gray, java.awt.Color.gray, 1.0f, 1.0f)); }
+		
         public PickableArrow(float arrowTailRadius, Appearance appearance)
             {
             super(arrowTailRadius, 
@@ -60,7 +62,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         
     public ArrowEdgePortrayal3D(float radius)
         {
-        super(new Arrow(radius, dummyFrom, dummyTo, null, null, null));
+        super(new Arrow(radius, dummyFrom, dummyTo, null, null, appearanceForColors(java.awt.Color.gray, null, java.awt.Color.gray, java.awt.Color.gray, 1.0f, 1.0f)));
         }
         
     public ArrowEdgePortrayal3D(float radius, Appearance ap)
@@ -71,7 +73,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
 
     public ArrowEdgePortrayal3D(Color labelColor)
         {
-    	super(new Arrow(1, dummyFrom, dummyTo, null, null, null), labelColor);
+    	super(new Arrow(1, dummyFrom, dummyTo, null, null, appearanceForColors(java.awt.Color.gray, null, java.awt.Color.gray, java.awt.Color.gray, 1.0f, 1.0f)), labelColor);
         }
 
 
