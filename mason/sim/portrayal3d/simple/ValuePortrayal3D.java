@@ -14,7 +14,7 @@ import sim.portrayal.*;
 import sim.util.*;
 
 /** ValuePortrayal3D defines a cube or square whose color and transparency can be changed, 
-	and is really intended soleley for use in ValueGridPortrayal3D.  Note that although
+	and is really intended solely for use in ValueGridPortrayal3D.  Note that although
 	ValuePortrayal3D is a subclass of Shape3DPortrayal3D, it does not include a Transform3D
 	and so cannot be scaled or rotated.  This is mostly for speed reasons.
 	
