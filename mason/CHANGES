@@ -1599,3 +1599,9 @@ Version 14
 	Updated MASON to compile with java 1.4
 	Moved ValuePortrayal3D under ShapePortrayal3D
 	Made changes to Arrow and ArrowEdgePortrayal3D: the default appearance in Arrow is now lit grey.
+	Increased the size of the default font in SimpleEdgePortrayal3D: from 24 to 60.
+		-this change was motivated by the labels in Balls3DWithUI being way to small
+		-this change was tested on mac-os and windows (/w java3D v 1.5)
+		-this change affects GenericEdgePortrayal3D and its subclasses!
+	GenericEdgePortrayal3D: minor housekeeping item, unused object commented out.
+	
