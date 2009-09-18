@@ -32,7 +32,7 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
     // that the outer model TransformGroup (called j3dModel throughout this code) is not owned
     // by us once we create it.  So if we want to rotate or scale the Shape3D or Primitive,
     // we do it by transforming 'group' instead upon creation.
-    TransformGroup group;
+    Node group;
         
     // This is the shape index by getAppearance to fetch an appearance from.  It's usually
     // the 'body'.
@@ -60,8 +60,10 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         in combination with numShapes().  */
     protected Shape3D getShape(TransformGroup j3dModel, int shapeIndex)
         {
-        TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
-        Primitive p = (Primitive)(g.getChild(0));
+		Node n = j3dModel;
+		while(n instanceof TransformGroup)
+			n = ((TransformGroup)n).getChild(0);
+        Primitive p = (Primitive) n;
         return p.getShape(shapeIndex);
         }
 
@@ -92,10 +94,14 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
             {
             this.transform = transform;
             }
-        else                                    // update manually
+        else                                  // update manually
             {
-            TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
-            g.setTransform(transform);
+            Node n = j3dModel.getChild(0);
+			if (n instanceof TransformGroup)   // it's possible to transform
+				{
+				TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
+				g.setTransform(transform);
+				}
             }
 		return true;
         }
@@ -157,10 +163,19 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
             // build a LocationWrapper for the object
             LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
 
-            TransformGroup g = (TransformGroup) (group.cloneTree(true));
-            if (transform != null) g.setTransform(transform);
-            g.setCapability(Group.ALLOW_CHILDREN_READ);
-            j3dModel.addChild(g);
+			Node g = (Node) (group.cloneTree(true));
+
+			if (transform != null)
+				{
+				TransformGroup tg = new TransformGroup();
+				tg.setTransform(transform);
+				tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+				tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+				tg.setCapability(Group.ALLOW_CHILDREN_READ);
+				tg.addChild(g);
+				g = tg;
+				}
+			j3dModel.addChild(g);
 
             int numShapes = numShapes();
             for(int i = 0; i < numShapes; i++)

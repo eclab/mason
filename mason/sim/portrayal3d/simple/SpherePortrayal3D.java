@@ -81,11 +81,13 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
             divisions, appearance);
                 
         setShape3DFlags(sphere.getShape(Sphere.BODY));
-
+/*
         group = new TransformGroup();
         group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
         group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         group.addChild(sphere);
+*/
+		group = sphere;
         }
 
     protected int numShapes() { return 1; }

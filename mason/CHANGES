@@ -1598,10 +1598,13 @@ Version 14
 		-For using non-Primitive edge portrayal constructs, see ArrowEdgePortrayal3D.
 	Updated MASON to compile with java 1.4
 	Moved ValuePortrayal3D under ShapePortrayal3D
+	Removed vestigial 'orient' variable from TransformedPortrayal2D
+	added new Constructor and a missing copy of 'precise' variable in DrawInfo2D
+	Bug fix in FieldPortrayal2D: getLocation -> getPositionInFieldPortrayal
+	2D tooltips now only list objects whose status (name) is non-null
 	Made changes to Arrow and ArrowEdgePortrayal3D: the default appearance in Arrow is now lit grey.
 	Increased the size of the default font in SimpleEdgePortrayal3D: from 24 to 60.
 		-this change was motivated by the labels in Balls3DWithUI being way to small
 		-this change was tested on mac-os and windows (/w java3D v 1.5)
 		-this change affects GenericEdgePortrayal3D and its subclasses!
 	GenericEdgePortrayal3D: minor housekeeping item, unused object commented out.
-	

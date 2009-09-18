@@ -77,11 +77,13 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
      		setShape3DFlags(box.getShape(Box.TOP));
      		setShape3DFlags(box.getShape(Box.LEFT));
      		setShape3DFlags(box.getShape(Box.RIGHT));
-
+/*
     		group = new TransformGroup();
     		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
     		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
             group.addChild(box);
+*/
+			group = box;
         }
 
 

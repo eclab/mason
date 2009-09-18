@@ -28,7 +28,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
     
     public ArrowEdgePortrayal3D()
         {
-        this(1f);
+        this(0.5f);
         }
         
     public ArrowEdgePortrayal3D(float radius)

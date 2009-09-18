@@ -127,6 +127,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             {
 			j3dModel = super.getModel(obj, j3dModel);
 			
+			/*
 			// We dispense of our TransformGroup: it makes us about 20% faster.
 			
 			Shape3D s = getShape(j3dModel, 0);
@@ -134,7 +135,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
 			j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             j3dModel.addChild(s);
-
+			*/
 
 			// Rather than clone the existing appearance, we create a simpler appearance with
 			// fewer attributes set.  This makes us about 40% faster.
