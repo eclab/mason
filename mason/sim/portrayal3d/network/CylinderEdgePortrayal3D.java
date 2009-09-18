@@ -21,7 +21,7 @@ public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
     public CylinderEdgePortrayal3D()
         {
-        super(new Cylinder());
+        super(new Cylinder(0.5f, 2f));
         }
         
     public CylinderEdgePortrayal3D(float cylinderRadius)

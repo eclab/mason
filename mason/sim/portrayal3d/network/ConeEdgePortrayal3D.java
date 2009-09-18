@@ -22,7 +22,7 @@ public class ConeEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
     public ConeEdgePortrayal3D()
         {
-        super(new Cone());
+        super(new Cone(0.5f, 2f));
         }
         
     public ConeEdgePortrayal3D(float coneBaseRadius)
