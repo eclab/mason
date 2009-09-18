@@ -55,13 +55,14 @@ public class Arrow extends TransformGroup
 
         float arrowLen = (float) v.length();
         float arrowHeadLen = 5.0f * arrowTailRadius;
-        float arrowHeadMaxRadius = 2.0f * arrowTailRadius;
+        float arrowHeadMaxRadius = 3.0f * arrowTailRadius;
         float cylinderLen = arrowLen - arrowHeadLen;
+        
         if(cylinderLen<0)
             {
             //this is a short arrow, 
             //I need a different formula
-            arrowHeadLen = arrowLen/8;
+            arrowHeadLen = arrowLen/16;
             cylinderLen = arrowLen - arrowHeadLen;
             }
 
