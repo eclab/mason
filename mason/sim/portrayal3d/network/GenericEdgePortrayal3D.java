@@ -80,7 +80,7 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
         SpatialNetwork3D field;
         EdgeWrapper drawInfo;
         Transform3D trans = null;
-        com.sun.j3d.utils.geometry.Text2D tempText;
+//        com.sun.j3d.utils.geometry.Text2D tempText;
 
         drawInfo = (EdgeWrapper) object;
         field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
@@ -153,15 +153,15 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
                 o.addChild(o3d); // Add label to the offset TransformGroup
                 j3dModel.addChild(o);
 
-                tempText = new com.sun.j3d.utils.geometry.Text2D("",
-                    new Color3f(labelColor), labelFont.getFamily(),
-                    labelFont.getSize(), labelFont.getStyle());
-
-                // tempText = new Text3D(new Font3D(labelFont, new
-                // FontExtrusion()), "");
-
-                tempText.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-                tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
+//                tempText = new com.sun.j3d.utils.geometry.Text2D("",
+//                    new Color3f(labelColor), labelFont.getFamily(),
+//                    labelFont.getSize(), labelFont.getStyle());
+//
+//                // tempText = new Text3D(new Font3D(labelFont, new
+//                // FontExtrusion()), "");
+//
+//                tempText.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+//                tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
                 }
             } 
         else
