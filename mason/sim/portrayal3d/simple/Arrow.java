@@ -24,7 +24,7 @@ import sim.portrayal3d.SimplePortrayal3D;
  */
 public class Arrow extends TransformGroup
     {
-	public static final Color defaultArrowColor = Color.gray;
+    public static final Color defaultArrowColor = Color.gray;
 
     public static final Font3D f3d = new Font3D(new Font(null, Font.PLAIN, 1),
         null);
@@ -69,7 +69,7 @@ public class Arrow extends TransformGroup
         Appearance caAppearance = appearance; 
         if(caAppearance==null)
             {
-        	caAppearance = SimplePortrayal3D.appearanceForColors(defaultArrowColor, null, defaultArrowColor, defaultArrowColor, 1.0f, 1.0f);
+            caAppearance = SimplePortrayal3D.appearanceForColors(defaultArrowColor, null, defaultArrowColor, defaultArrowColor, 1.0f, 1.0f);
             }
 
         // Rotation Matrix for whole arrow (cylinder + cone)

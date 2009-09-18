@@ -35,13 +35,13 @@ public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
         }
 
     protected void init(Node edgeModel)
-    {
-    	super.init(edgeModel);
-    	Cylinder c = (Cylinder)edgeModel;    	
-    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BODY));
-    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.TOP));
-    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BOTTOM));
-    }
+        {
+        super.init(edgeModel);
+        Cylinder c = (Cylinder)edgeModel;       
+        PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BODY));
+        PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.TOP));
+        PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BOTTOM));
+        }
     //top, botton, body.
     protected int numShapes(){return 3;}
     }

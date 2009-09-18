@@ -72,9 +72,9 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         in combination with numShapes().  */
     protected Shape3D getShape(TransformGroup j3dModel, int shapeIndex)
         {
-		Node n = j3dModel;
-		while(n instanceof TransformGroup)
-			n = ((TransformGroup)n).getChild(0);
+        Node n = j3dModel;
+        while(n instanceof TransformGroup)
+            n = ((TransformGroup)n).getChild(0);
         Primitive p = (Primitive) n;
         return p.getShape(shapeIndex);
         }
@@ -96,7 +96,7 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         }       
 
     /** Sets the Transform3D of the portrayal, if there is one (in some cases, such as ValuePortrayal3D, there won't be any).
-		Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
+        Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
         is set directly.  If the j3DModel is null (probably because
         the model hasn't been built yet), an underlying transform will be set and then used
         when the model is built.  Only call this method within getModel(). */
@@ -109,17 +109,17 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         else                                  // update manually
             {
             Node n = j3dModel.getChild(0);
-			if (n instanceof TransformGroup)   // it's possible to transform
-				{
-				TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
-				g.setTransform(transform);
-				}
+            if (n instanceof TransformGroup)   // it's possible to transform
+                {
+                TransformGroup g = (TransformGroup)(j3dModel.getChild(0));
+                g.setTransform(transform);
+                }
             }
-		return true;
+        return true;
         }
         
     /** Sets the Transform3D of the portrayal to a given scaling value, if there *is* a transform (in some cases, such as ValuePortrayal3D, there won't be any).  
-		Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
+        Returns TRUE if the transform was set.  If the j3DModel isn't null, its transform
         is set directly.  If the j3DModel is null (probably because
         the model hasn't been built yet), an underlying transform will be set and then used
         when the model is built.  Only call this method within getModel(). */
@@ -175,19 +175,19 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
             // build a LocationWrapper for the object
             LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
 
-			Node g = (Node) (group.cloneTree(true));
+            Node g = (Node) (group.cloneTree(true));
 
-			if (transform != null)
-				{
-				TransformGroup tg = new TransformGroup();
-				tg.setTransform(transform);
-				tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-				tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-				tg.setCapability(Group.ALLOW_CHILDREN_READ);
-				tg.addChild(g);
-				g = tg;
-				}
-			j3dModel.addChild(g);
+            if (transform != null)
+                {
+                TransformGroup tg = new TransformGroup();
+                tg.setTransform(transform);
+                tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+                tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+                tg.setCapability(Group.ALLOW_CHILDREN_READ);
+                tg.addChild(g);
+                g = tg;
+                }
+            j3dModel.addChild(g);
 
             int numShapes = numShapes();
             for(int i = 0; i < numShapes; i++)

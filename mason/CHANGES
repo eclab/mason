@@ -1608,3 +1608,4 @@ Version 14
 		-this change was tested on mac-os and windows (/w java3D v 1.5)
 		-this change affects GenericEdgePortrayal3D and its subclasses!
 	GenericEdgePortrayal3D: minor housekeeping item, unused object commented out.
+	Reindented	

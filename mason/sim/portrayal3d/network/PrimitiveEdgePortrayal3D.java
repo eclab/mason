@@ -14,21 +14,21 @@ import com.sun.j3d.utils.geometry.Primitive;
  * @author Gabriel Balan
  */
 public abstract class PrimitiveEdgePortrayal3D extends GenericEdgePortrayal3D
-{
+    {
     public PrimitiveEdgePortrayal3D(Primitive model)
-	    {
-	    super(model);
-	    }
+        {
+        super(model);
+        }
 
-	public PrimitiveEdgePortrayal3D(Primitive model, Color labelColor)
-	    {
-	    super(model, labelColor);
-	    }
+    public PrimitiveEdgePortrayal3D(Primitive model, Color labelColor)
+        {
+        super(model, labelColor);
+        }
 
-	public PrimitiveEdgePortrayal3D(Primitive model, Color labelColor, Font labelFont)
-	    {
-	    super(model, labelColor, labelFont);
-	    }
+    public PrimitiveEdgePortrayal3D(Primitive model, Color labelColor, Font labelFont)
+        {
+        super(model, labelColor, labelFont);
+        }
 
     /** 
      * Returns the shape by the given index.  Cylinder has three shapes
@@ -37,9 +37,9 @@ public abstract class PrimitiveEdgePortrayal3D extends GenericEdgePortrayal3D
      * in combination with numShapes().  
      * 
      * Here's the structure of the j3dModel in this class:
-     * TransformGroup	j3dModel (passed in and out of getModel())
+     * TransformGroup   j3dModel (passed in and out of getModel())
      * TransformGroup   positioning the edge model between the end points.
-     * Primitive		clone of edgeModelPrototype
+     * Primitive                clone of edgeModelPrototype
      **/
     protected Shape3D getShape(TransformGroup j3dModel, int shapeIndex)
         {
@@ -48,4 +48,4 @@ public abstract class PrimitiveEdgePortrayal3D extends GenericEdgePortrayal3D
         return p.getShape(shapeIndex);
         }
 
-}
+    }

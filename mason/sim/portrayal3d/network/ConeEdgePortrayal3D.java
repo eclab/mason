@@ -35,12 +35,12 @@ public class ConeEdgePortrayal3D extends PrimitiveEdgePortrayal3D
         super(new Cone(), labelColor);
         }
     protected void init(Node edgeModel)
-    {
-    	super.init(edgeModel);
-    	Cone c = (Cone)edgeModel;    	
-    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.BODY));
-    	PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.CAP));
-    }
+        {
+        super.init(edgeModel);
+        Cone c = (Cone)edgeModel;       
+        PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.BODY));
+        PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cone.CAP));
+        }
 
     //cap, body.
     protected int numShapes(){return 2;}

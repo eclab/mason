@@ -99,8 +99,8 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
         if (child.setSelected(wrapper,selected))
-			return super.setSelected(wrapper, selected);
-		else return false;  // which will bypass the selection procedure entirely.
+            return super.setSelected(wrapper, selected);
+        else return false;  // which will bypass the selection procedure entirely.
         }
         
     public SimplePortrayal3D getChild(Object object)

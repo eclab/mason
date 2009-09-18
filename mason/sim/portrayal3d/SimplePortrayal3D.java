@@ -48,40 +48,40 @@ public class SimplePortrayal3D implements Portrayal3D
         Opacity is determined by the opacity of the unlit color.  */
     public static Appearance appearanceForColor(java.awt.Color unlitColor)
         {
-		Appearance appearance = new Appearance();
+        Appearance appearance = new Appearance();
 
         setAppearanceFlags(appearance);
         float[] c = unlitColor.getRGBComponents(null);
-		ColoringAttributes ca = new ColoringAttributes(c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT);
-		ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
-		ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
+        ColoringAttributes ca = new ColoringAttributes(c[0], c[1], c[2], ColoringAttributes.SHADE_FLAT);
+        ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
+        ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
         appearance.setColoringAttributes(ca);
-		if (c[3] < 1.0)  // partially transparent
+        if (c[3] < 1.0)  // partially transparent
             {
-			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]); // duh, alpha's backwards
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
-			appearance.setTransparencyAttributes(tta);
-			}
+            TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]); // duh, alpha's backwards
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+            appearance.setTransparencyAttributes(tta);
+            }
         return appearance;
         }
 
-	static final Color3f BLACK = new Color3f(Color.black);
+    static final Color3f BLACK = new Color3f(Color.black);
 
     /** Creates an Appearance with the provided lit colors.  Objects will not appear if the scene is unlit.
         shininess and opacity both from 0.0 to 1.0.  If any color is null, it's assumed to be black.
-		Note that even jet black ambient color will show up as a charcoal gray under the bright white
-		ambient light in MASON.  That's Java3D for you, sorry. */
+        Note that even jet black ambient color will show up as a charcoal gray under the bright white
+        ambient light in MASON.  That's Java3D for you, sorry. */
     public static Appearance appearanceForColors(java.awt.Color ambientColor, 
         java.awt.Color emissiveColor, java.awt.Color diffuseColor, 
         java.awt.Color specularColor, float shininess, float opacity)
         {
-		Appearance appearance = new Appearance();
+        Appearance appearance = new Appearance();
 
         setAppearanceFlags(appearance);
-		ColoringAttributes ca = new ColoringAttributes(BLACK, ColoringAttributes.SHADE_GOURAUD);
-		ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
-		ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
+        ColoringAttributes ca = new ColoringAttributes(BLACK, ColoringAttributes.SHADE_GOURAUD);
+        ca.setCapability(ColoringAttributes.ALLOW_COLOR_WRITE);
+        ca.setCapability(ColoringAttributes.ALLOW_COLOR_READ);
         appearance.setColoringAttributes(ca);
 
         if (opacity > 1.0f) opacity = 1.0f;
@@ -93,28 +93,28 @@ public class SimplePortrayal3D implements Portrayal3D
         Material m = new Material();
         m.setCapability(Material.ALLOW_COMPONENT_READ);
         m.setCapability(Material.ALLOW_COMPONENT_WRITE);
-		
+                
         if (ambientColor != null) m.setAmbientColor(new Color3f(ambientColor));
-		else m.setAmbientColor(BLACK);
-		
+        else m.setAmbientColor(BLACK);
+                
         if (emissiveColor != null) m.setEmissiveColor(new Color3f(emissiveColor));
-		else m.setEmissiveColor(BLACK);
+        else m.setEmissiveColor(BLACK);
 
         if (diffuseColor != null) m.setDiffuseColor(new Color3f(diffuseColor));
-		else m.setDiffuseColor(BLACK);
+        else m.setDiffuseColor(BLACK);
 
         if (specularColor != null) m.setSpecularColor(new Color3f(specularColor));
-		else m.setSpecularColor(BLACK);
+        else m.setSpecularColor(BLACK);
 
         m.setShininess(shininess);
         appearance.setMaterial(m);
         if (opacity < 1.0f)  // partially transparent
             {
-			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity); // duh, alpha's backwards
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
-			appearance.setTransparencyAttributes(tta);
-			}
+            TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity); // duh, alpha's backwards
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+            appearance.setTransparencyAttributes(tta);
+            }
         return appearance;
         }
 
@@ -128,12 +128,12 @@ public class SimplePortrayal3D implements Portrayal3D
         Appearance appearance = appearanceForColor(java.awt.Color.black);
 
         if (!opaque)
-			{
-			TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f); // duh, alpha's backwards
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
-			tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
-			appearance.setTransparencyAttributes(tta);
-			}
+            {
+            TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f); // duh, alpha's backwards
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
+            tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
+            appearance.setTransparencyAttributes(tta);
+            }
         appearance.setTexture(new TextureLoader(image, TextureLoader.BY_REFERENCE, null).getTexture());
         TextureAttributes ta = new TextureAttributes();
         ta.setTextureMode(TextureAttributes.REPLACE);
@@ -177,40 +177,40 @@ public class SimplePortrayal3D implements Portrayal3D
         {
         parentPortrayal = p;
         }
-		
-	public boolean isSelected(Object obj)
-		{
-		return selectedObjects != null && selectedObjects.containsKey(obj);
-		}
+                
+    public boolean isSelected(Object obj)
+        {
+        return selectedObjects != null && selectedObjects.containsKey(obj);
+        }
 
     HashMap selectedObjects = null;
-		
-	/** If the object is selected, adds it to a hash table of selected objects for which
-		this SimplePortrayal3D's isSelected() method will return TRUE.  If the object is
-		deselected, removes it from the hash table.  Always returns TRUE.  The hash table
-		doesn't exist until this method is first called.
-		
-		<p>There are two implications to this approach.  First, it means that after you've
-		selected an object, there's a hash table attached to its portrayal.  If you're using
-		the same portrayal for lots of stuff, that's no big deal.  But if you've got per-object
-		portrayals and a lot of objects (or if the objects are themselves SimplePortrayal3D 
-		subclasses) then that's a fair number of hash tables.  This is a minor memory issue but
-		if you don't care about testing for whether you've been selected or not, you could
-		just override this method to always return TRUE (and don't call super.selected(...) ) 
-		and the hash table will never be created.  Note that isSelected will always return
-		FALSE for your portrayal in this situation.
-		
-		<p>Second, though you can test for selection with the isSelected() method, if you want
-		to, say, change the look of your portrayal based on whether or not it's selected, you
-		will need to test isSelected() each time getModel() is called and modify the model
-		accordingly.  This could be a bit expensive.  We're working on an approach for you to
-		be able to test if the object was RECENTLY selected or deselected so you could only test
-		then, but it's nontrivial to do without using up a lot of memory.
-	*/
+                
+    /** If the object is selected, adds it to a hash table of selected objects for which
+        this SimplePortrayal3D's isSelected() method will return TRUE.  If the object is
+        deselected, removes it from the hash table.  Always returns TRUE.  The hash table
+        doesn't exist until this method is first called.
+                
+        <p>There are two implications to this approach.  First, it means that after you've
+        selected an object, there's a hash table attached to its portrayal.  If you're using
+        the same portrayal for lots of stuff, that's no big deal.  But if you've got per-object
+        portrayals and a lot of objects (or if the objects are themselves SimplePortrayal3D 
+        subclasses) then that's a fair number of hash tables.  This is a minor memory issue but
+        if you don't care about testing for whether you've been selected or not, you could
+        just override this method to always return TRUE (and don't call super.selected(...) ) 
+        and the hash table will never be created.  Note that isSelected will always return
+        FALSE for your portrayal in this situation.
+                
+        <p>Second, though you can test for selection with the isSelected() method, if you want
+        to, say, change the look of your portrayal based on whether or not it's selected, you
+        will need to test isSelected() each time getModel() is called and modify the model
+        accordingly.  This could be a bit expensive.  We're working on an approach for you to
+        be able to test if the object was RECENTLY selected or deselected so you could only test
+        then, but it's nontrivial to do without using up a lot of memory.
+    */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-		if (selectedObjects == null)
-			selectedObjects = new HashMap(1);  // be conservative
+        if (selectedObjects == null)
+            selectedObjects = new HashMap(1);  // be conservative
         if (selected)
             selectedObjects.put(wrapper.getObject(), wrapper);
         else
@@ -227,7 +227,7 @@ public class SimplePortrayal3D implements Portrayal3D
         a.clearCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
         a.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
         a.clearCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-		a.setCapability(Appearance.ALLOW_MATERIAL_READ);
+        a.setCapability(Appearance.ALLOW_MATERIAL_READ);
         a.clearCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_READ);
         a.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
         a.clearCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_WRITE);
@@ -264,7 +264,7 @@ public class SimplePortrayal3D implements Portrayal3D
         geom.setCapability(GeometryArray.ALLOW_COUNT_READ);
         geom.setCapability(GeometryArray.ALLOW_FORMAT_READ);
         geom.setCapability(GeometryArray.ALLOW_COORDINATE_READ);
-		
+                
         // these are not going to be common, so we should state that they are infrequent
         geom.clearCapabilityIsFrequent(GeometryArray.ALLOW_COUNT_READ);
         geom.clearCapabilityIsFrequent(GeometryArray.ALLOW_FORMAT_READ);

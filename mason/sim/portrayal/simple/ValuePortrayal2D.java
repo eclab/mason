@@ -21,8 +21,8 @@ import sim.util.*;
 
 public class ValuePortrayal2D extends RectanglePortrayal2D
     {
-	double level;
-	boolean isTransparent;
+    double level;
+    boolean isTransparent;
     public ValueGridPortrayal2D parent;
     
     public ValuePortrayal2D(ValueGridPortrayal2D parent)
@@ -41,10 +41,10 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
         double levelHere = ((MutableDouble)object).val;
         if (paint==null || level != levelHere)
             {
-			level = levelHere;
+            level = levelHere;
             Color c = parent.getMap().getColor(levelHere);
             if (c.getAlpha() == 0) isTransparent = true;
-			else paint = c;
+            else paint = c;
             }
         if (!isTransparent) super.draw(object, graphics, info);
         }

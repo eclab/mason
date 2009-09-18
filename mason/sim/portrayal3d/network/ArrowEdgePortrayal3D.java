@@ -22,7 +22,7 @@ import sim.portrayal3d.simple.*;
  * @author Gabriel Balan
  */
 public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
-    {	
+    {   
     private static Vector3f dummyFrom = new Vector3f(0f,-1f,0f);
     private static Vector3f dummyTo = new Vector3f(0f,1f,0f);
     
@@ -44,7 +44,7 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
 
     public ArrowEdgePortrayal3D(Color labelColor)
         {
-    	super(new Arrow(1, dummyFrom, dummyTo, null, null, null), labelColor);
+        super(new Arrow(1, dummyFrom, dummyTo, null, null, null), labelColor);
         }
 
 
@@ -55,15 +55,15 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
      * (BODY=0, TOP=1, BOTTOM=2), Cone chape come last (BODY=3, CAP=4) 
      * 
      * Here's the structure of the j3dModel in this class:
-     * TransformGroup			j3dModel (passed in and out of getModel())
-     * ->TransformGroup   		positioning the edge model between the end points.
-     *	->TransformGroup		a clone of the prototypical arrow you pass in the constructor)
-     * 		->TransformGroup	arrowCylinderTransformGroup
-     * 			->Cylinder
-     * 		->TransformGroup	arrowHeadTransformGroup
-     * 			->Cone
-     * 		->TansformGroup		startLable, endLabel TransformGroups
-     * 			
+     * TransformGroup                   j3dModel (passed in and out of getModel())
+     * ->TransformGroup                 positioning the edge model between the end points.
+     *  ->TransformGroup                a clone of the prototypical arrow you pass in the constructor)
+     *          ->TransformGroup        arrowCylinderTransformGroup
+     *                  ->Cylinder
+     *          ->TransformGroup        arrowHeadTransformGroup
+     *                  ->Cone
+     *          ->TansformGroup         startLable, endLabel TransformGroups
+     *                  
      **/
     protected Shape3D getShape(TransformGroup j3dModel, int shapeIndex)
         {
@@ -72,42 +72,42 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         int coneOffset = 3;
         
         if(shapeIndex<coneOffset)//it's the body
-        {       
-        	TransformGroup arrowBody = (TransformGroup)(edgeModelClone.getChild(0));
-        	Cylinder c = (Cylinder)arrowBody.getChild(0);
-        	return c.getShape(shapeIndex);
-        }
-    	TransformGroup arrowHead = (TransformGroup)(edgeModelClone.getChild(1));
-    	Cone c = (Cone)arrowHead.getChild(0);
-    	return c.getShape(shapeIndex-coneOffset);        
+            {       
+            TransformGroup arrowBody = (TransformGroup)(edgeModelClone.getChild(0));
+            Cylinder c = (Cylinder)arrowBody.getChild(0);
+            return c.getShape(shapeIndex);
+            }
+        TransformGroup arrowHead = (TransformGroup)(edgeModelClone.getChild(1));
+        Cone c = (Cone)arrowHead.getChild(0);
+        return c.getShape(shapeIndex-coneOffset);        
         }
     
 //    public TransformGroup getModel(Object object, TransformGroup j3dModel)
 //    {
-//    	boolean j3dModelWasNull = j3dModel == null;
-//    	j3dModel = super.getModel(object, j3dModel);
-//    	if(j3dModelWasNull)
-//    		j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
-//    	return j3dModel;
+//      boolean j3dModelWasNull = j3dModel == null;
+//      j3dModel = super.getModel(object, j3dModel);
+//      if(j3dModelWasNull)
+//              j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
+//      return j3dModel;
 //    }
     
     protected void init(Node edgeModel)
-	    {
-	    	super.init(edgeModel);
-	    	Arrow arrow = (Arrow)edgeModel; 
-	    	arrow.setCapability(Group.ALLOW_CHILDREN_READ);
-	    	//In the future I will want to read the cylinder out of its TransformGroup
-	    	((TransformGroup)arrow.getChild(0)).setCapability(Group.ALLOW_CHILDREN_READ);
-	    	//In the future I will want to read the cone out of its TransformGroup
-	    	((TransformGroup)arrow.getChild(1)).setCapability(Group.ALLOW_CHILDREN_READ);
-	    	
-	    	Cylinder body = arrow.arrowTail;
-	    	PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BODY));
-	    	PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.TOP));
-	    	PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BOTTOM));
-	    	Cone head = arrow.arrowHead;
-	    	PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.BODY));
-	    	PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.CAP));
-	    }
+        {
+        super.init(edgeModel);
+        Arrow arrow = (Arrow)edgeModel; 
+        arrow.setCapability(Group.ALLOW_CHILDREN_READ);
+        //In the future I will want to read the cylinder out of its TransformGroup
+        ((TransformGroup)arrow.getChild(0)).setCapability(Group.ALLOW_CHILDREN_READ);
+        //In the future I will want to read the cone out of its TransformGroup
+        ((TransformGroup)arrow.getChild(1)).setCapability(Group.ALLOW_CHILDREN_READ);
+                
+        Cylinder body = arrow.arrowTail;
+        PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BODY));
+        PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.TOP));
+        PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BOTTOM));
+        Cone head = arrow.arrowHead;
+        PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.BODY));
+        PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.CAP));
+        }
 
     }

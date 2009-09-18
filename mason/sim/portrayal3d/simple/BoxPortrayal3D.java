@@ -45,10 +45,10 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
         this(appearanceForColor(color),scale);
         }
     public BoxPortrayal3D(Appearance appearance, float scale)
-	    {
-	    this(appearance,true,false,scale);
-	    }
-	    /** Constructs a BoxPortrayal3D with the given (opaque) image and a scale of 1.0. */
+        {
+        this(appearance,true,false,scale);
+        }
+    /** Constructs a BoxPortrayal3D with the given (opaque) image and a scale of 1.0. */
     public BoxPortrayal3D(java.awt.Image image)
         {
         this(image,1f);
@@ -64,26 +64,26 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
     public BoxPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
         {
         this.appearance = appearance;
-		setScale(null, scale);
+        setScale(null, scale);
 
         Box box = new Box(.5f,.5f,.5f,
-                /* Primitive.GEOMETRY_NOT_SHARED | */
-                (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
-                (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
-    			
-     		setShape3DFlags(box.getShape(Box.BACK));
-     		setShape3DFlags(box.getShape(Box.FRONT));
-     		setShape3DFlags(box.getShape(Box.BOTTOM));
-     		setShape3DFlags(box.getShape(Box.TOP));
-     		setShape3DFlags(box.getShape(Box.LEFT));
-     		setShape3DFlags(box.getShape(Box.RIGHT));
+            /* Primitive.GEOMETRY_NOT_SHARED | */
+            (generateNormals ? Primitive.GENERATE_NORMALS : 0) | 
+            (generateTextureCoordinates ? Primitive.GENERATE_TEXTURE_COORDS : 0),appearance);
+                        
+        setShape3DFlags(box.getShape(Box.BACK));
+        setShape3DFlags(box.getShape(Box.FRONT));
+        setShape3DFlags(box.getShape(Box.BOTTOM));
+        setShape3DFlags(box.getShape(Box.TOP));
+        setShape3DFlags(box.getShape(Box.LEFT));
+        setShape3DFlags(box.getShape(Box.RIGHT));
 /*
-    		group = new TransformGroup();
-    		group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-    		group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-            group.addChild(box);
+  group = new TransformGroup();
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+  group.addChild(box);
 */
-			group = box;
+        group = box;
         }
 
 

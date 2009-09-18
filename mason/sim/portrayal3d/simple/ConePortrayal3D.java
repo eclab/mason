@@ -69,12 +69,12 @@ public class ConePortrayal3D extends PrimitivePortrayal3D
         setShape3DFlags(cone.getShape(Cone.BODY));
         setShape3DFlags(cone.getShape(Cone.CAP));
 /*
-        group = new TransformGroup();
-        group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        group.addChild(cone);
+  group = new TransformGroup();
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+  group.addChild(cone);
 */
-		group = cone;
+        group = cone;
         }
 
     protected int numShapes() { return 2; }

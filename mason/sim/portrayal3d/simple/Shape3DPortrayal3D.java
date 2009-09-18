@@ -50,14 +50,14 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
             ((CompressedGeometry)g).setCapability(CompressedGeometry.ALLOW_GEOMETRY_READ);
 
         setShape3DFlags(shape);
-		shape.setAppearance(appearance);
+        shape.setAppearance(appearance);
 /*
-        group = new TransformGroup();
-        group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-        group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        group.addChild(shape);
+  group = new TransformGroup();
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+  group.addChild(shape);
 */
-		group = shape;
+        group = shape;
         }
 
     /** Constructs a Shape3DPortrayal3D with the given geometry and a default (flat opaque white) appearance. */
@@ -89,9 +89,9 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     // we always just return the shape no matter what
     protected Shape3D getShape(TransformGroup j3dModel, int shapeNumber)
         {
-		Node n = j3dModel;
-		while(n instanceof TransformGroup)
-			n = ((TransformGroup)n).getChild(0);
+        Node n = j3dModel;
+        while(n instanceof TransformGroup)
+            n = ((TransformGroup)n).getChild(0);
         Shape3D p = (Shape3D)n;
         return p;
         }

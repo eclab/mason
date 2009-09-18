@@ -69,9 +69,9 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
     //take this opportunity to call PrimitivePortrayal3D.setShape3DFlags()
     //on each of the shapes of the model    
     protected void init(Node model)
-    {
-    	edgeModelPrototype = model;
-    }
+        {
+        edgeModelPrototype = model;
+        }
     
     public TransformGroup getModel(Object object, TransformGroup j3dModel)
         {
@@ -485,17 +485,17 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
     protected void passWrapperToShapes(TransformGroup j3dModel, Object drawInfo)
         {
         if (j3dModel!= null) 
-	        {
-	        int numShapes = numShapes();
-	        for(int i = 0; i < numShapes; i++)
-	        	{
-	            Shape3D s = getShape(j3dModel, i);
-	            if(appearance!=null)
-	            	s.setAppearance(appearance);
-	            if(pickable)
-	            	PrimitiveEdgePortrayal3D.setPickableFlags(s);
-	            s.setUserData(drawInfo);	            
-	        	}
-	        }
+            {
+            int numShapes = numShapes();
+            for(int i = 0; i < numShapes; i++)
+                {
+                Shape3D s = getShape(j3dModel, i);
+                if(appearance!=null)
+                    s.setAppearance(appearance);
+                if(pickable)
+                    PrimitiveEdgePortrayal3D.setPickableFlags(s);
+                s.setUserData(drawInfo);                
+                }
+            }
         }
     }

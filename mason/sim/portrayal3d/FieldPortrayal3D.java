@@ -138,8 +138,8 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
     
     public FieldPortrayal3D(Transform3D transform)
         {
-		defaultPortrayal = new SpherePortrayal3D();
-		setTransform(transform);
+        defaultPortrayal = new SpherePortrayal3D();
+        setTransform(transform);
         }
 
     /** 
