@@ -13,9 +13,21 @@ import com.sun.j3d.utils.geometry.*;
 
 /**
  * An abstract superclass for portrayals involving Shape3D or various Primitive (sphere, cone, etc.) objects.
- * which fills the region from (-0.5*scale,-0.5*scale,-0.5*scale) to (0.5*scale,0.5*scale,0.5*scale).
- * Objects portrayed by this portrayal are selectable.
+ * The default size for these objects is to have an approximately 1.0f diameter.
+ *
+ * <p>The objects are pickable by default, though you can change this by calling setPickable().  This must be
+ * called prior to the first call to getModel(...) (or if you override getModel(...), prior to your calling
+ * of super.getModel(...)).
+ *
+ * <p>The objects are can also have an optional internal Transform3D through which they may be rotated or scaled
+ * etc.  Note that adding this Transform3D also adds additonal overhead, slowing down the model by perhaps 25%.
+ * To add this Transform3D, call setTransform() or setScale() at prior to the first call to getModel(...) 
+ * (or if you override getModel(...), prior to your calling of super.getModel(...)).  Once you have done this,
+ * you may change the scaling or transform again with these methods at any time, preferably during getModel(...).
+ *
+ * <p>The objects also have an appearance.  To set the appearance, call setAppearance(). 
  */
+ 
 public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
     {
     // When the coder calls setTransform(...), and the model doesn't exist yet,

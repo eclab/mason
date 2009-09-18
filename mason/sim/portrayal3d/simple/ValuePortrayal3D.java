@@ -137,10 +137,15 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             j3dModel.addChild(s);
 			*/
 
+			Appearance app = appearanceForColor(((ValueGridPortrayal3D)parentPortrayal).map.getColor(((ValueWrapper)obj).lastVal));
+            app.setPolygonAttributes(polygonAttributes());
+
+/*
+			// [not really 40%, maybe about 15%]
 			// Rather than clone the existing appearance, we create a simpler appearance with
 			// fewer attributes set.  This makes us about 40% faster.
-			
-            Appearance app = new Appearance();
+
+			Appearance app = new Appearance();
             app.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);  
             app.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ); 
             app.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
@@ -151,7 +156,8 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             TransparencyAttributes ta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - c[3]);  // duh, alpha's backwards
             ta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
             app.setTransparencyAttributes(ta);
-			
+*/
+
 			setAppearance(j3dModel, app);
 
 			// obj is our ValueWrapper, which is a LocationWrapper already
@@ -228,7 +234,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
     // ints are displayed or set as opposed to doubles in the Inspector.  No
     // big whoop -- it's more a formatting thing than anything else.
     
-	static abstract class Filter
+	public static abstract class Filter  // must be public so it can be accessed by SimpleInspector
         {
         int x;
         int y;
@@ -247,7 +253,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             }
         }
 
-	static class DoubleFilter extends Filter
+	public static class DoubleFilter extends Filter  // must be public so it can be accessed by SimpleInspector
         {
         public DoubleFilter(LocationWrapper wrapper) { super(wrapper); }
         
@@ -268,7 +274,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
         }
         
 
-	static class IntFilter extends Filter
+	public static class IntFilter extends Filter  // must be public so it can be accessed by SimpleInspector
         {
         public IntFilter(LocationWrapper wrapper) { super(wrapper); }
         

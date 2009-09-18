@@ -224,29 +224,29 @@ public class SimplePortrayal3D implements Portrayal3D
     public static void setAppearanceFlags(Appearance a)
         {
         a.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_READ);
         a.setCapability(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
-        a.setCapability(Appearance.ALLOW_MATERIAL_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_COLORING_ATTRIBUTES_WRITE);
+		a.setCapability(Appearance.ALLOW_MATERIAL_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_READ);
         a.setCapability(Appearance.ALLOW_MATERIAL_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_WRITE);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_MATERIAL_WRITE);
         a.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_READ);
         a.setCapability(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_POLYGON_ATTRIBUTES_WRITE);
         a.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_READ);
         a.setCapability(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TRANSPARENCY_ATTRIBUTES_WRITE);
         a.setCapability(Appearance.ALLOW_TEXTURE_ATTRIBUTES_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_READ);
         a.setCapability(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_ATTRIBUTES_WRITE);
         a.setCapability(Appearance.ALLOW_TEXTURE_READ);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_READ);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_READ);
         a.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-        a.setCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_WRITE);
+        a.clearCapabilityIsFrequent(Appearance.ALLOW_TEXTURE_WRITE);
         }
         
     /** Utility method which prepares the given Shape3D to be pickable (for selection and inspection). */
