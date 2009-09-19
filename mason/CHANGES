@@ -1609,6 +1609,7 @@ Version 14
 		-this change affects GenericEdgePortrayal3D and its subclasses!
 	GenericEdgePortrayal3D: minor housekeeping item, unused object commented out.
 	Reindented	
+	Moved ValueGridCellInfo into the quad package
+	Added READMEs
 	Made various edgePortrayal3Ds thinner by default: Cone, Cylinder and Arrow.
 	Arrow: arrow head is wider, and, for short arrows it's also shorter.
-	
