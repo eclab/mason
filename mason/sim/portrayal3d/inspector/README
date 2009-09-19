@@ -1,0 +1,15 @@
+sim/portrayal3d/inspector
+
+This package holds certain auxiliary classes for SparseGrids to do 3D 
+inspection.  The classes are subclasses of StableLocation, located in 
+sim/portrayal/inspector
+
+
+StableInt3D.java
+
+A StableLocation concrete implementation for 3D integer locations.
+
+
+StableDouble3D.java 
+
+A StableLocation concrete implementation for 3D double locations.

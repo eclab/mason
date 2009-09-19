@@ -1,0 +1,42 @@
+sim/portrayal3d/grid
+
+This package holds 3D FieldPortrayals for various 2D and 3D Grid fields.
+
+
+The Subpackages are:
+
+quad		Special portrayals for displaying 2D fields as surfaces
+
+
+
+Classes:
+
+
+ValueGridPortrayal3D.java
+
+A FieldPortrayal for the IntGrid2D, IntGrid3D, DoubleGrid3D, and 
+DoubleGrid2D fields.  For displaying 2D fields you're probably better 
+off using ValueGrid2DPortrayal2D.java instead.
+
+
+ValueGrid2DPortrayal3D.java
+
+A special FieldPortrayal for displaying the IntGrid2D and DoubleGrid2D 
+fields as surfaces.  Uses the quad subpackage to specify the kind of 
+surface.
+
+
+ObjectGridPortrayal3D.java
+
+A FieldPortrayal for the ObjectGrid2D and ObjectGrid3D fields.
+
+
+SparseGridPortrayal2D.java
+
+A FieldPortrayal for the SparseGrid2D and SparseGrid3D fields.
+
+
+SparseGrid2DPortrayal3D.java
+
+A special FieldPortrayal for displaying the SparseGrid2D field as objects
+stacked up in a 2D surface.

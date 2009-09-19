@@ -1,0 +1,41 @@
+sim/portrayal3D
+
+This package holds 3D visualization objects (Portrayals).  See the
+README for sim/portrayal for more information on Portrayals (and read
+the documentation and tutorials!)
+
+All *2D* portrayals are stored in sim/portrayal, not here.
+
+The subpackages are:
+
+grid		FieldPortrayals for 2D and 3D grids
+continuous	FieldPortrayals for 2D and 3D continuous space.
+network		FieldPortrayals for 3D representations of networks
+simple		SimplePortrayals for basic objects of all kinds.
+inspector	Auxillary inspector stuff.
+
+
+Classes:
+
+
+Portrayal3D.java
+
+An interface for all 3D Portrayals, both FieldPortrayals and 
+SimplePortrayals.
+
+
+FieldPortrayal3D.java
+
+An abstract superclass of all 3D FieldPortrayals.
+
+
+SimplePortrayal3D.java
+
+A superclass of all 3D SimplePortrayals.  The default SimplePortrayal3D 
+doesn't portray objects as anything (they're invisible).
+
+
+SparseFieldPortrayal.java
+
+The abstract superclass of all 3D Field Portrayals of Sparse Fields.
+

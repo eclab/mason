@@ -1,0 +1,79 @@
+sim/portrayal/grid
+
+This package holds 2D FieldPortrayals for various 2D Grid fields.
+
+Many of these FieldPortrayals take two versions; a "regular" version, 
+and a "fast" version.  The "regular" version looks up SimplePortrayals 
+for each underlying object and has the SimplePortrayals portray those 
+objects in any custom way you like.  The "fast" versions just draw quick 
+and dirty representations of the objects themselves, entirely ignoring 
+any stored SimplePortrayals.
+
+The FieldPortrayals also have hexagonal versions to display fields which 
+were intended to be hexagonal.
+
+
+ValueGridPortrayal2D.java
+
+A FieldPortrayal for the IntGrid2D and DoubleGrid2D fields.
+
+
+HexaValueGridPortrayal2D.java
+
+A FieldPortrayal for the IntGrid2D and DoubleGrid2D fields which 
+displays the grids in hexagonal form.
+
+
+FastValueGridPortrayal2D.java
+
+A FieldPortrayal for the IntGrid2D and DoubleGrid2D fields which 
+displays the underlying objects as simple colored rectangles in a grid.
+
+
+FastHexaValueGridPortrayal2D.java
+
+A FieldPortrayal for the IntGrid2D and DoubleGrid2D fields which 
+displays the underlying objects as simple colored rectangles or hexagons 
+in a grid.
+
+
+ObjectGridPortrayal2D.java
+
+A FieldPortrayal for the ObjectGrid2D field.
+
+
+HexaObjectGridPortrayal2D.java
+
+A FieldPortrayal for the ObjectGrid2D field which displays grids in 
+hexagonal form.
+
+
+FastObjectGridPortrayal2D.java
+
+A FieldPortrayal for the ObjectGrid2D field which displays the 
+underlying objects as simple colored rectangles in a grid.
+
+
+FastHexaObjectGridPortrayal2D.java
+
+A FieldPortrayal for the ObjectGrid2D field which displays the 
+underlying objects as simple colored rectangles or hexagons in a grid.
+
+
+SparseGridPortrayal2D.java
+
+A FieldPortrayal for the SparseGrid2D field.
+
+
+HexaSparseGridPortrayal2D.java
+
+A FieldPortrayal for the SparseGrid2D field which displays grids in 
+hexagonal form.
+
+
+DrawPolicy.java
+
+A simple class for defining the order that multiple objects should be 
+drawn if they all sit in the same grid location.  Used by 
+SparseGridPortrayal2D, which is presently the only grid which allows 
+multiple objects at the same location.

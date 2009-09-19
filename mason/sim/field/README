@@ -1,0 +1,22 @@
+sim/field
+
+This package holds common representations of space in MASON simulation models.
+This includes 2D and 3D continuous space, 2D and 3D grids of various kinds,
+2D hexagonal grids, and networks.  Such representations of space are called,
+in MASON parlance, 'fields'.
+
+The subpackages are:
+
+grid		2D and 3D grids (square, hexagonal, toroidal, etc.)
+continuous	2D and 3D continuous space
+network		Networks (graphs)
+
+
+Classes:
+
+
+SparseField.java
+
+An abstract superclass of certain fields in which objects are simply associated
+with locations rather than stored in an array etc.  SparseField does this with
+a hash table.

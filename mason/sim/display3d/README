@@ -1,0 +1,30 @@
+sim/display3d
+
+This package holds 3D visualization widgets for the simulation toolkit. 
+
+
+Display3D.java
+
+A 3D visualization widget for displaying 2D and 3D fields and their 
+subsidiary objects.  Works with various 3D Portrayals to display and 
+inspect those objects.  Capable of scrolling and scaling, making movies 
+and pictures, doing all sorts of 3D stuff, etc.
+
+
+SelectionBehavior.java
+
+A Java3D Behavior object which enables the Display3D to pick, select, 
+and inspect various objects in the 3D fields.
+
+
+ToolTipBehavior.java
+
+A Java3D Behavior which adds tooltips to the Display3D.
+
+
+CapturingCanvas3D.java
+
+A special Java3D Canvas3D which adds, among other things, the capability 
+of taking pictures and making movies.
+
+

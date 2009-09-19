@@ -1,0 +1,33 @@
+sim/util/media
+
+This package holds utility classes on which MASON relies to create 
+media: movies, pictures, and charts. All of these classes can be 
+extracted and used for other tasks and don't rely on anything outside of 
+sim/util.
+
+
+The subpackages are:
+
+chart		Utility classes for creating charts
+
+
+Classes:
+
+
+
+MovieEncoder.java
+
+A class which relies on Java Media Framework (JMF) to create movies from 
+collections of snapshots of a widget.  The sim/util/gui/MovieMaker.java 
+class wraps this in a nice GUI and is easier to use.
+
+
+PngEncoder.java
+
+A class, written by J. David Eisenberg, which writes out PNG files.
+
+
+PDFEncoder.java
+
+A class which writes out PDF files.  Uses the iText library to do its magic.
+

@@ -1,0 +1,26 @@
+sim/portrayal3d/grid/quad
+
+This package holds special Simple Portrayals which display 2D field elements
+as surfaces.  Used with ValueGrid2DPortrayal3D (in sim/portrayal3d/grid)
+
+
+QuadPortrayal.java
+
+An abstract superclass for various kinds of surfaces.
+
+
+MeshPortrayal.java
+
+A surface in the form of a simple 2D mesh.
+
+
+TilePortrayal.java
+
+A "surface" of sorts where every value is a square at a certain elevation.
+
+
+ValueGridCellInfo.java
+
+A special object used by ValueGrid2DPortrayal3D to convey to the 
+QuadPortrayal important information about the values being portrayed.
+

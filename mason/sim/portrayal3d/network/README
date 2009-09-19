@@ -1,0 +1,57 @@
+sim/portrayal3D/network
+
+This package holds 3D FieldPortrayals for the Network field and various 
+SimplePortrayals for drawing edges.
+
+
+NetworkPortrayal3D.java
+
+A 3D FieldPortrayal for the Network field.  Actually requires TWO 
+fields: a Network field which contains the nodes and edges in the 
+network, and a Continuous3D or SparseGrid3D which specifies the location 
+in 3D space of the NODES.  The FieldPortrayal then draws the edges by 
+querying the Continuous3D or SparseGrid3D for where the ends of the 
+edges should be located.  The FieldPortrayal does NOT draw any nodes -- 
+you should draw those by using a ContinuousPortrayal3D or 
+SparseGridPortrayal3D on the same fields.
+
+
+SpatialNetwork3D.java
+
+A class which holds both a Network and either a Continuous3D or 
+SparseGrid3D as discussed above.  The SpatialNetwork3D object is the 
+object provided to the NetworkPortrayal3D to "portray".
+
+
+SimpleEdgePortrayal3D.java
+
+A basic class for drawing edges as simple colored lines.
+
+
+GenericEdgePortrayal3D.java
+
+A generic superclass for drawing edges as 3D volumes.  A subclass of 
+SimpleEdgePortryal3D.
+
+
+ArrowEdgePortrayal3D.java
+
+A subclass of GenericEdgePortrayal3D which draws edges as arrows.
+
+
+PrimitiveEdgePortrayal3D.java
+
+A generic superclass for drawing edges with Primitives or Shape3D 
+objects.  A subclass of GenericEdgePortrayal3D.
+
+
+ConeEdgePortrayal3D.java
+
+A subclass of PrimitiveEdgePortrayal3D.java which draws edges as 
+elongated cones.
+
+
+CylinderEdgePortrayal3D.java
+
+A subclass of PrimitiveEdgePortrayal3D.java which draws edges as 
+elongated cylinders.

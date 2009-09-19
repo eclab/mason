@@ -1,0 +1,102 @@
+sim/util/gui
+
+This package holds utility classes on which MASON relies to do GUI 
+tasks, but which don't have anything to do with MASON per se.  All of 
+these classes can be extracted and used for other tasks and don't rely 
+on anything outside of sim/util.
+
+
+Classes:
+
+
+ColorMap.java
+
+An abstract superclass for objects which can map double values to colors.
+
+
+SimpleColorMap.java
+
+A concrete implementation of ColorMap which maps doubles to colors in 
+two ways: either by interpolating them as ranges; or (if they're 
+integers) looking them up in a lookup table.
+
+
+AbstractScrollable.java
+
+An abstract JPanel which implements most of the Scrollable interface, 
+making it easy to create anonymous subclasses which are Scrollable.
+
+
+ColorWell.java
+
+A "Color Well", sort of like MacOS X's color well widget.  And I mean 
+*sort of* -- it's much more rudimentary.  Basically it's a button 
+holding a color and when you click on it the color panel pops up and you 
+can change the color.
+
+
+DialogToolTip.java
+
+A simple class which implements ToolTips using a JDialog.  Used for 
+classes (like Canvas3D) which do not support Swing ToolTips.
+
+
+DisclosurePanel.java
+
+A label with a little "disclosure" button to the left of it (on OS X, 
+it's a small triangle).  Clicking on the button expands the label into a 
+full JPanel, notionally to provide more information.  Clicking again 
+reduces to the basic label.
+
+
+HTMLBrowser.java
+
+A simple HTML browser.
+
+
+LabelledList.java
+
+A grid structure in which elements can be added, one per row, with labels 
+which appear to their left.  (Actually rows with five different things 
+can be added; but usually it's just two or three).
+
+
+MiniHistogram.java
+
+A simple histogram intended to fit within the space of one text row.  
+Presently used only in the SocialNets MASON package.  But it's a cute 
+little class.
+
+
+MovieMaker.java
+
+A GUI wrapper making it easy to create movies from collections of 
+snapshots of a JComponent.  Uses the sim/util/media package to do most 
+of its dirty work.
+
+
+NumberTextField.java
+
+A text field and special widget for storing numbers and incrementing, 
+decrementing, or resetting them.
+
+
+PropertyField.java
+
+A text field which makes it easy to store properties or values and 
+manipulate them.  If they're numbers, uses a widget like 
+NumberTextField.  If they're booleans, appears as a checkbox.  Other 
+data types have their own special features.
+
+
+
+Other Files:
+
+
+BellyButton.png		A "belly button" similar to the one on the Newton
+BellyButtonPressed.png	A "pressed" "belly button"
+LeftArrow.png		A left arrow similar to the up-arrow on the Newton
+LeftArrowPressed.png	A "pressed" left arrow
+RightArrow.png		A right arrow similar to the down-arrow on the Newton
+RightArrowPressed.png	A "pressed" down arrow
+

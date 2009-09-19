@@ -1,0 +1,97 @@
+sim/engine
+
+This package holds the simulation core, consisting of the primary simulation
+object (SimState), the schedule, and various utility objects which make
+scheduling more convenient.
+
+
+SimState.java
+
+The top-level simulation object.  All elements of your model (excepting
+visualization elements) will hang off of this object in one way or another.
+This object can be serialized to disk to 'freeze dry' your entire simulation,
+and unserialized to 'unfreeze' the simulation after you've moved it to,
+for example, another computer.
+
+
+MakesSimState.java 
+
+A simple interface for objects which are capable of creating SimState
+simulation models.  Largely used by the visualization toolkit: it's rare
+that you'd need to use this.
+
+
+Schedule.java
+
+The representation of time in the simulation.  A discrete-event scheduler
+on which you can schedule 'agents' (subclasses of Steppable) to be pulsed
+at a future point in time, either once or repeatedly.
+
+
+Steppable.java
+
+An 'agent' in the simulation.  Subclasses of Steppable can be scheduled
+on the schedule to have their 'step' methods called at future points in time.
+
+
+Stoppable.java
+
+Some agents can be scheduled to be stepped repeatedly for an indefinite
+number of times in the future.  When this happens you'll be handed a
+Stoppable object which enables you to stop an agent from being stepped
+any more.
+
+
+Sequence.java
+
+A Steppable which holds an array of Steppables.  When the Sequence is
+stepped, it iterates through this array and stepps each of the subsidiary
+Steppables in turn.
+
+
+BagSequence.java
+
+A Sequence which holds a Bag (extensible array) rather than fixed-array
+of Steppables.  This allows the number of elements in the BagSequence
+to change over time.
+
+
+RandomSequence.java
+
+A Sequence which shuffles its array prior to iterating through it.
+
+
+ParallelSequence.java
+
+A Sequence which steps each of the Steppables in its array simultaneously
+in separate threads, then waits for them to all complete.
+
+
+MultiStep.java
+
+A Steppable which holds a single subsidiary Steppable.  When stepped,
+MultiStep either steps its subsidiary N times, or steps it only every
+Nth time the MultiStep is stepped.
+
+
+TentativeStep.java
+
+A Steppable which holds a single subsidiary Steppable.  Prior to being
+stepped, you can call stop() on the TentativeStep, which prevents it from
+ever stepping its subsidiary.
+
+
+WeakStep.java
+
+A Steppable which holds a single subsidiary Steppable.  The subsidiary is
+held as a weak reference, so it's free to be garbage collected if necessary,
+in which case it's never stepped (of course).
+
+
+AsynchronousSteppable.java
+
+A Steppable which holds a single subsidiary Steppable.  When stepped, the
+AsynchronousSteppable fires off a new thread in which the subsidiary is
+stepped.  The AsynchronousSteppable doesn't wait for the subsidiary to
+complete but rather immediately returns.  Options are available to block and
+wait for the subsidiary to complete, among other things.

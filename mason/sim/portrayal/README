@@ -1,0 +1,115 @@
+sim/portrayal
+
+This package holds visualization objects (called 'Portrayals') which 
+represent either (1) fields or (2) objects stored in those fields.  
+Portrayals which represent fields are called FieldPortrayals.  
+Portrayals which represent objects are called SimplePortrayals.
+
+The package contains the top-level Portrayal class (Portrayal); plus
+various 2D portrayals, plus inspectors (see below).  3D portrayals are
+stored in the sim/portrayal3D package instead.
+
+When you double-click on a portrayed object in the visualization 
+toolkit, MASON will pop up an Inspector -- a JComponent which lets you 
+examine the inner workings of the object and modify them.  Inspectors 
+come in many flavors, but the primary to are plain Inspectors and 
+PropertyInspectors.  A plain Inspector inspects an object (the most 
+common plain Inspector is SimpleInspector).  A PropertyInspector 
+inspects a single property of an object.  Property inspectors include 
+charting facilities, systems which stream the value of the property out 
+to a file, etc.
+
+Plain Inspectors are stored in this package.  PropertyInspectors are 
+largely stored in the sim/portrayal/inspector packge.
+
+
+The subpackages are:
+
+grid		FieldPortrayals for 2D grids
+continuous	FieldPortrayals for 2D continuous space.
+network		FieldPortrayals for 2D representations of networks
+simple		SimplePortrayals for basic objects of all kinds.
+inspector	PropertyInspectors of various kinds.
+
+
+Classes:
+
+
+Portrayal.java
+
+An interface for all Portrayals, both 2D and 3D.
+
+
+Portrayal2D.java
+
+An interface for all 2D Portrayals, both FieldPortrayals and 
+SimplePortrayals.
+
+
+FieldPortrayal.java
+
+An abstract superclass of all FieldPortrayals.  Contains a mechanism for 
+storing SimplePortrayals and associating them with objects in the Field.  
+When a FieldPortrayal is called upon to draw itself (or certain other 
+tasks), it does so by going through the objects stored in its Field and, 
+for each object, looking up the stored SimplePortrayal responsible for 
+drawing (etc.) that kind of object, then asking the SimplePortrayal to 
+do the task.
+
+
+FieldPortrayal2D.java
+
+An abstract superclass of all 2D FieldPortrayals.
+
+
+SimplePortrayal2D.java
+
+A superclass of all 2D SimplePortrayals.  The default SimplePortrayal 
+doesn't portray objects as anything (they're invisible).
+
+
+Inspector.java
+
+An abstract superclass of widgets designed to "inspect" (view and modify 
+the internals of) objects and fields.  Sometimes called "probes" in 
+simulators like SWARM.
+
+
+SimpleInspector.java
+
+A basic concrete implementation of Inspector which displays all the 
+properties of the object being inspected.
+
+
+LocationWrapper.java
+
+A simple abstract class which stores and provides objects, their names 
+(as Strings), the field portrayals they're stored in, and their 
+locations in those field portrayals.  Most SimplePortrayals create 
+special subclasses of LocationWrappers of their underlying objects and 
+hand those off to SimpleInspector to inspect.  Provides a clean 
+procedure for bundling all the information needed to inspect an object 
+in a field.
+
+
+Oriented2D.java
+
+A simple interface for declaring that an object has an orientation as 
+well as a location.
+
+
+DrawInfo2D.java
+
+A class containing information about where and how to draw portrayals,
+specifically: their location, their scale, and clip rect information (so
+you can determine if you should even bother drawing); and also whether
+the drawing should be done "precisely" (for PDF output, for example).
+Passed to all 2D Portrayals when they're asked to portray their objects.
+
+
+Other Files:
+
+Inspect.png		A spyglass icon for inspecting objects.
+InspectPressed.png	A "pressed" spyglass icon for inspecting objects.
+Update.png 		A "reload" icon for updating objects.
+UpdatePressed.png	A "pressed" "reload" icon for updating objects.

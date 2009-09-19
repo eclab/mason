@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.portrayal3d.grid;
+package sim.portrayal3d.grid.quad;
 import sim.field.grid.*;
 
 /**

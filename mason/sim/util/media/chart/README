@@ -1,0 +1,65 @@
+sim/util/media/chart
+
+This package holds utility classes on which MASON relies to create 
+charts using JFreeChart. All of these classes can be extracted and used 
+for other tasks and don't rely on anything outside of sim/util.
+
+
+Classes:
+
+
+ChartGenerator.java
+
+The abstract superclass of classes which create charts using JFreeChart.
+
+
+SeriesAttributes.java
+
+The abstract superclass of widgets which allow the user to manipulate 
+the attributes of a series on a chart (such as its color).
+
+
+TimeSeriesChartGenerator.java 
+
+A ChartGenerator which creates time series charts.
+
+
+TimeSeriesAttributes.java
+
+A SeriesAttributes for series in time series charts.
+
+
+HistogramGenerator.java
+
+A ChartGenerator which creates histograms.
+
+
+HistogramSeriesAttributes.java
+
+A SeriesAttributes for histogram series.
+
+
+DataCuller.java
+
+An interface for special objects which reduce the total number of 
+elements in a time series to keep it tractable over time.
+
+
+MinGapCuller.java
+
+A DataCuller which does its job by identifying the smallest gap between 
+any two data elements and removing one of the two data elements as a 
+result.
+
+
+
+Other Files:
+
+
+CloseBox.png		A "close box" (X) icon
+CloseBoxPressed.png	A "pressed" "close box" (X) icon
+DownArrow.png		A down arrow icon
+DownArrowPressed.png	A "pressed" down arrow icon
+UpArrow.png		An up arrow icon
+UpArrowPressed.png	A "pressed" up arrow icon
+

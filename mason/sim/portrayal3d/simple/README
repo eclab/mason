@@ -1,0 +1,114 @@
+sim/portrayal3d/simple
+
+This package holds 3D SimplePortrayals for displaying all sorts of 
+objects in various Fields.  Theses SimplePortrayals are registered for 
+various objects in the FieldPortrayals and called upon to portray those 
+objects when asked.
+
+The SimplePortrayals come in two basic forms: "basic" simple portrayals 
+and "wrapper" portrayals.  Wrapper portrayals have (typically) one 
+subsidiary simple portrayal and do some extra functionality, such as 
+labelling the simple portrayal.  Many simple portrayals can be set up to 
+do something special when the object is selected with the mouse: wrapper 
+portrayals in particular are designed to make this easy so (for example) 
+when you click on an object in the window, a label appears under it, 
+then disappears when you click elsewhere.
+
+
+Arrow.java
+
+An auxiliary class used for drawing arrows.  Usually you'd ignore this.
+
+
+Axes.java
+
+An auxiliary class used for drawing axes (by using Arrow.java).  Usually 
+you'd ignore this.
+
+
+PrimitivePortrayal3D.java
+
+The abstract superclass of SimplePortrayals which do their job using 
+Java3D Primitives or Shape3D objects.
+
+
+ConePortrayal3D.java
+
+A PrimitivePortrayal3D subclass which draws Cones.
+
+
+CubePortrayal3D.java
+
+A PrimitivePortrayal3D subclass which draws Cubes.
+
+
+CylinderPortrayal3D.java
+
+A PrimitivePortrayal3D subclass which draws Cylinders.
+
+
+SpherePortrayal3D.java
+
+A PrimitivePortrayal3D subclass which draws Spheres.
+
+
+Shape3DPortrayal3D.java
+
+A PrimitivePortrayal3D subclass which draws arbitrary Shape3D objects.
+
+
+BoxPortrayal3D.java
+
+A SimplePortrayal3D which draws boxes (cubes).  It's faster than 
+CubePortrayal3D but has certain idiosyncracies: it may go away in a 
+while.
+
+
+ImagePortrayal3D.java
+
+A SimplePortrayal3D which draws squares with images on them.
+
+
+LightPortrayal3D.java
+
+A SimplePortrayal3D which represents objects as Java3D light elements.  
+Can be added to a scene without the need of an underlying field or 
+object (and indeed ignores the position of the object).
+
+
+SharedGroupPortrayal3D.java
+
+A SimplePortrayal3D subclass which draws Java3D SharedGroup objects.
+
+
+WireFrameBoxPortrayal3D.java
+
+A SimplePortrayal3D subclass which draws a wireframe box, often used to 
+denote the boundaries of a model.  Can be added to the scene without the 
+need of an underlying field or object (and indeed ignores the position 
+of the object).
+
+
+ValuePortrayal3D.java
+
+A special version of Shape3DPortrayal3D, intended for use only with 
+ValueGridPortrayal3D, which draws "values" (integers, doubles, etc.) as 
+cubes of certain colors.
+
+
+CircledPortrayal3D.java
+
+A wrapper portrayal which can draw a large semitransparent sphere around 
+the object to highlight it.
+
+
+LabelledPortrayal3D.java
+
+A wrapper portrayal which can add a textual label to the object.
+
+
+TransformedPortrayal3D.java
+
+A wrapper portrayal which can transform (scale, rotate, translate) the 
+underlying portrayal as desired.
+
