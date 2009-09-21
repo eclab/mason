@@ -1613,3 +1613,6 @@ Version 14
 	Added READMEs
 	Made various edgePortrayal3Ds thinner by default: Cone, Cylinder and Arrow.
 	Arrow: arrow head is wider, and, for short arrows it's also shorter.
+
+Version 15
+	Added some more READMES

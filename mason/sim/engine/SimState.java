@@ -552,7 +552,7 @@ public class SimState implements java.io.Serializable
     
     public static double version()
         {
-        return 14.0;
+        return 15.0;
         }
     
     // compute how much time per step 

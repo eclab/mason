@@ -1,0 +1,19 @@
+ec/util
+
+This package contains the MersenneTwisterFast random number generator, shared
+with ECJ, our evolutionary computation toolkit.
+
+
+MersenneTwisterFast.java
+
+MersenneTwisterFast is a "fast" implementation of the Mersenne Twister MT199937
+(99/10/29) algorithm with the improved 2002/1/26 initialization algorithm.  This
+is the fastest Java implementation we are aware of and we are proud to say that we
+wrote it ourselves.  The reasons it's fast are threefold: (1) some local
+optimizations, (2) hard-inlining of all methods, and (3 and most important) the
+class isn't synchronized.  Thus MersenneTwisterFast isn't a subclass of Random.java
+even though it implements all of Random's methods.  
+
+BTW, if you'd like a Mersenne Twister  subclass of Random, we have one.  It's also
+much easier to understand as it doesn't have all the hard-coded optimizations inside.
+Take a look at it in the ECJ distribution (http://cs.gmu.edu/~eclab/projects/ecj/)

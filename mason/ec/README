@@ -1,0 +1,7 @@
+ec
+
+In a subpackage, ec/util/, is a single class: the Mersenne Twister random
+number generator.  The reason this is in ec rather than in sim is simple:
+MASON was intended in part to be compatible with ECJ, our evolutionary
+computation toolkit (http://cs.gmu.edu/~eclab/projects/ecj/), and we're
+sharing ECJ's Mersenne Twister class.
