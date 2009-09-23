@@ -1616,3 +1616,12 @@ Version 14
 
 Version 15
 	Added some more READMES
+	Added precision option (finally) to writing PDFs out.  Will probably break things!
+	Made FastValuePortrayal2D precise when writing PDFs
+	Heavily revised foraging ants example (antsforage).  The new version jettisons
+		our old experimental version and replaces it with a version similar to the
+		ones in our papers.  It's much simpler, smaller, far more elegant, and
+		works better too.  Also elimiantes the stupid toroidal bug.
+	Added a filtering function to SimpleColorMap.  This makes it a little slower but
+		we think it's worth it.  See the new AntsForageWithUI.java file for an
+		example of how to use it.

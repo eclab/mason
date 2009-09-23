@@ -1,5 +1,5 @@
 /*
-  Copyright 2006 by Sean Luke and George Mason University
+  Copyright 2009 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
@@ -33,6 +33,9 @@ public class AntsForageWithUI extends GUIState
     public AntsForageWithUI() { super(new AntsForage(System.currentTimeMillis())); }
     public AntsForageWithUI(SimState state) { super(state); }
     
+	// allow the user to inspect the model
+	public Object getSimulationInspectedObject() { return state; }  // non-volatile
+
     public static String getName() { return "Ant Foraging"; }
     
     public void setupPortrayals()
@@ -42,17 +45,19 @@ public class AntsForageWithUI extends GUIState
         // tell the portrayals what to portray and how to portray them
         homePheromonePortrayal.setField(af.toHomeGrid);
         homePheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                AntsForage.MIN_PHEROMONE,
-                AntsForage.MAX_PHEROMONE,
+                0,
+                AntsForage.LIKELY_MAX_PHEROMONE,
                 // home pheromones are beneath all, just make them opaque
                 Color.white, //new Color(0,255,0,0),
-                new Color(0,255,0,255) ));
+                new Color(0,255,0,255) )
+					{ public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
         foodPheromonePortrayal.setField(af.toFoodGrid);
         foodPheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                AntsForage.MIN_PHEROMONE,
-                AntsForage.MAX_PHEROMONE,
+                0,
+                AntsForage.LIKELY_MAX_PHEROMONE,
                 new Color(0,0,255,0),
-                new Color(0,0,255,255) ));
+                new Color(0,0,255,255) )
+					{ public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
         sitesPortrayal.setField(af.sites);
         sitesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
@@ -67,13 +72,6 @@ public class AntsForageWithUI extends GUIState
                 new Color(128,64,64,255) ));
         bugPortrayal.setField(af.buggrid);
             
-        // make the ants look like cameras!
-        /*
-          bugPortrayal.setPortrayalForAll(
-          new sim.portrayal.simple.ImagePortrayal2D(
-          sim.display.Display2D.CAMERA_ICON.getImage()));
-        */
-        
         // reschedule the displayer
         display.reset();
 
