@@ -25,6 +25,10 @@ website also lists a help email address you can send mail to if you get
 desperate.  The website URL is http://cs.gmu.edu/~eclab/projects/mason/
 Please do NOT mail the developers directly.  Post to the discussion group. 
 
+Note that most of the subdirectories contain README files describing the
+classes and basic files in those directories.  This might or might not be
+useful to you when poking around.
+
 ---------------------------------------------------------------------------
 
 
@@ -99,5 +103,4 @@ Where to go from here?:
 5. Read the how-tos for advanced questions.
 6. If you get stuck, post to the discussion group.
 7. There are various modules for MASON avaialble on the web page: check 'em out!
-
 
