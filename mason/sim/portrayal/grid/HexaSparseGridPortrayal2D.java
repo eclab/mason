@@ -51,7 +51,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     public static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
     
-    public Int2D getLocation(DrawInfo2D info)
+    public Object getClipLocation(DrawInfo2D info)
         {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
@@ -72,9 +72,9 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         }
 
 
-    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
+    public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
-        final SparseGrid2D field = (SparseGrid2D) this.field;
+        final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
         int maxX = field.getWidth(); 
@@ -96,7 +96,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
 
-        Int2D loc = field.getObjectLocation(object);
+        Int2D loc = (Int2D) location;
         if (loc == null) return null;
 
         final int x = loc.x;

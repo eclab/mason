@@ -1625,3 +1625,12 @@ Version 15
 	Added a filtering function to SimpleColorMap.  This makes it a little slower but
 		we think it's worth it.  See the new AntsForageWithUI.java file for an
 		example of how to use it.
+	Bug fix in SimpleEdgePortrayal2D: setScaling and getScaling were setting the wrong
+		values.
+	EdgeDrawInfo2D now has a few more constructors
+	FieldPortrayal2D.getLocation() has been renamed to FieldPortrayal2D.getClipLocation()
+		to avoid confusion.
+	We've added and renamed a lot of methods in FieldPortrayal2D, resulting in the methods
+		getObjectLocation, getLocationPosition, getObjectPosition, and a new method
+		called getRelativeObjectPosition.  This makes the 2D portrayal nonsense a
+		little more consistent and adds some functionality to make it easier to 

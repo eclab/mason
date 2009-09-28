@@ -48,6 +48,8 @@ import sim.util.*;
 
 public class Display2D extends JComponent implements Steppable
     {
+	protected boolean precise = false;
+	
     /** Option pane */
     public class OptionPane extends JFrame
         {
@@ -460,40 +462,12 @@ public class Display2D extends JComponent implements Steppable
                     g.fillRect((int)clip.getX(),(int)clip.getY(),(int)clip.getWidth(),(int)clip.getHeight());
                     }
                 
-                /*
-                // get scale
-                final double scale = getScale();
-                // compute WHERE we need to draw
-                int origindx = 0;
-                int origindy = 0;
-
-                // for information on why we use getViewRect, see computeClip()
-                Rectangle2D fullComponent = getViewRect();
-                if (fullComponent.getWidth() > (width * scale))
-                origindx = (int)((fullComponent.getWidth() - width*scale)/2);
-                if (fullComponent.getHeight() > (height*scale))
-                origindy = (int)((fullComponent.getHeight() - height*scale)/2);
-                    
-                // offset origin as user had requested
-                origindx += (int)(xOffset*scale);
-                origindy += (int)(yOffset*scale);
-                */
-                
                 Iterator iter = portrayals.iterator();
                 while (iter.hasNext())
                     {
                     FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(iter.next());
                     if (p.visible)
                         {
-/*
-  Rectangle2D rdraw = new Rectangle2D.Double(
-  // we floor to an integer because we're dealing with exact pixels at this point
-  (int)(p.bounds.x * scale) + origindx,
-  (int)(p.bounds.y * scale) + origindy,
-  (int)(p.bounds.width * scale),
-  (int)(p.bounds.height * scale));
-*/
-
                         // set buffering if necessary
                         int buf = p.portrayal.getBuffering();
                         p.portrayal.setBuffering(optionPane.buffering);
@@ -502,12 +476,8 @@ public class Display2D extends JComponent implements Steppable
                         g.setClip(g.getClip());
                         
                         // do the drawing
-/*
-  p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
-  g, new DrawInfo2D(rdraw,clip));
-*/
                         p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
-                            g, getDrawInfo2D(p, clip));
+						g, getDrawInfo2D(p, clip));
                         
                         // reset the buffering if necessary
                         p.portrayal.setBuffering(buf);
@@ -1138,13 +1108,13 @@ public class Display2D extends JComponent implements Steppable
         return hitObjs;
         }
         
-    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
+    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals).  Uses the given point as a clip. */
     public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point)
         {
         return getDrawInfo2D(portrayal, new java.awt.geom.Rectangle2D.Double( point.getX(), point.getY(), 1, 1 )); 
         }
 
-    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals). */
+    /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals).   Uses the given clip.*/
     public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Rectangle2D clip)
         {
         Iterator iter = portrayals.iterator();
@@ -1183,7 +1153,9 @@ public class Display2D extends JComponent implements Steppable
             (int)(holder.bounds.y * scale) + origindy,
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
-        return new DrawInfo2D(region, clip);
+        DrawInfo2D d2d = new DrawInfo2D(region, clip);
+		d2d.precise = precise;
+		return d2d;
         }
 
     static final int MAX_TOOLTIP_LINES = 10;
@@ -1406,7 +1378,10 @@ public class Display2D extends JComponent implements Steppable
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
                                             {
+											boolean oldprecise = precise;
+											precise = true;
                                             PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
+											precise = oldprecise;
                                             }
                     catch (Exception e) { e.printStackTrace(); }
                 }

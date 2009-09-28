@@ -9,6 +9,7 @@ import sim.portrayal.*;
 import sim.field.grid.*;
 import java.awt.*;
 import java.awt.image.*;
+import java.awt.geom.*;
 import sim.util.gui.ColorMap;
 import sim.util.*;
 
@@ -109,10 +110,15 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
 
 //        final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / (2*maxY+1);
-        int startx = (int)((info.clip.x - translateWidth - info.draw.x) / scaleWidth);
-        int starty = (int)((info.clip.y - info.draw.y) / (2*yScale)) - 1;
-        int endx = /*startx +*/ (int)((info.clip.x - translateWidth - info.draw.x + info.clip.width) / scaleWidth) + /*2*/ 1;  // with rounding, width may be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / (2*yScale)) + /*2*/ 1;  // with rounding, height may be as much as 1 off
+        double startxd = ((info.clip.x - translateWidth - info.draw.x) / scaleWidth);
+        double startyd = ((info.clip.y - info.draw.y) / (2*yScale)) - 1;
+        double endxd = ((info.clip.x - translateWidth - info.draw.x + info.clip.width) / scaleWidth);
+		double endyd = ((info.clip.y - info.draw.y + info.clip.height) / (2*yScale));
+		
+		int startx = (int)(startxd);
+        int starty = (int)(startyd);
+        int endx = ((int)(endxd)) + /*2*/ 1;  // with rounding, width may be as much as 1 off
+        int endy = ((int)(endyd)) + /*2*/ 1;  // with rounding, height may be as much as 1 off
 
         // next we determine if this is a DoubleGrid2D or an IntGrid2D
         
@@ -254,7 +260,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
             //                    graphics.setClip(clip);
             graphics.drawImage(buffer, (int)(info.draw.x+translateWidth), (int)info.draw.y, (int)(maxX*scaleWidth), (int)info.draw.height,null);
             }
-        else
+        else if (!info.precise)
             {
             buffer = null;  // GC the buffer in case the user had changed his mind
 
@@ -332,6 +338,61 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                             }
                         }
             }
+		else  // precise
+			{
+ 			graphics.setStroke(new BasicStroke(0.0f));
+			Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
+			buffer = null;  // GC the buffer in case the user had changed his mind
+
+            if (endxd > maxX) endxd = maxX;
+            if (endyd > maxY) endyd = maxY;
+            if( startxd < 0 ) startxd = 0;
+            if( startyd < 0 ) startyd = 0;
+
+            double _x = 0;
+            double _y = 0;
+            double _width = 0;
+            double _height = 0;
+
+            // locals are faster...
+            final ColorMap map = this.map;
+            final double infodrawx = info.draw.x;
+            final double infodrawy = info.draw.y;
+ 
+            // 1.3.1 doesn't hoist -- does 1.4.1?
+            if (isDoubleGrid2D)
+                for(double x=startxd;x<endxd;x++)
+                    for(double y=startyd;y<endyd;y++)
+                        {
+                        final Color c = map.getColor(doubleField[(int)x][(int)y]);
+                        if (c.getAlpha() == 0) continue;
+
+                        _x = (translateWidth + infodrawx + scaleWidth * x);
+                        _y = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y:2*y+1));
+                        _width = (translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
+                        _height = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y+2:2*y+3)) - _y;
+                    
+						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        graphics.fill(preciseRectangle);
+                        graphics.draw(preciseRectangle);
+                        }
+            else
+                for(double x=startxd;x<endxd;x++)
+                    for(double y=startyd;y<endyd;y++)
+                        {
+                        final Color c = map.getColor(intField[(int)x][(int)y]);
+                        if (c.getAlpha() == 0) continue;
+
+                        _x = (translateWidth + infodrawx + scaleWidth * x);
+                        _y = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y:2*y+1));
+                        _width = (translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
+                        _height = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y+2:2*y+3)) - _y;
+                    
+						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        graphics.fill(preciseRectangle);
+                        graphics.draw(preciseRectangle);
+                        }
+			}
         // finally, clear dirty flag if we've just drawn (don't clear if we're doing hit testing)
         if (graphics!=null) dirtyField = false;
         }

@@ -49,11 +49,44 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         return defaultNullPortrayal;
         }
 
-
-    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
+    public Object getClipLocation(DrawInfo2D info)
         {
-        final ObjectGrid2D field = (ObjectGrid2D)(this.field);
+        final Grid2D field = (Grid2D) this.field;
+        if (field==null) return null;
 
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
+        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        return new Int2D(startx, starty);
+        }
+
+
+   public Object getObjectLocation(Object object)
+        {
+        final ObjectGrid2D field = (ObjectGrid2D)this.field;
+        if (field==null) return null;
+
+		final int maxX = field.getWidth(); 
+        final int maxY = field.getHeight();
+
+       // find the object.
+        for(int x=0; x < maxX; x++)
+            {
+            Object[] fieldx = field.field[x];
+            for(int y = 0; y < maxY; y++)
+                if (object == fieldx[y])  // found it
+					return new Int2D(x,y);
+            }
+        return null;  // it wasn't there
+		}
+
+    public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
+        {
+        final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
         
         final int maxX = field.getWidth(); 
@@ -66,29 +99,24 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
 
-        // find the object.
-        for(int x=0; x < maxX; x++)
-            {
-            Object[] fieldx = field.field[x];
-            for(int y = 0; y < maxY; y++)
-                if (object == fieldx[y])  // found it
-                    {
-                    // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-                    newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-                    newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-                    newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-                    newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
-                
-                    // adjust drawX and drawY to center
-                    newinfo.draw.x += newinfo.draw.width / 2.0;
-                    newinfo.draw.y += newinfo.draw.height / 2.0;
+		Int2D loc = (Int2D) location;
+		if (location == null) return null;
+		
+		int x = loc.x;
+		int y = loc.y;
 
-                    return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
-                    }
-            }
-        return null;  // it wasn't there
+		// translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+		newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+		newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+		newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+		newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+	
+		// adjust drawX and drawY to center
+		newinfo.draw.x += newinfo.draw.width / 2.0;
+		newinfo.draw.y += newinfo.draw.height / 2.0;
+
+		return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
         }
-
 
 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)

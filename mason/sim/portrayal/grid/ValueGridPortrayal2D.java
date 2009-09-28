@@ -94,6 +94,58 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         else return map.defaultValue();
         }
 
+    public Object getClipLocation(DrawInfo2D info)
+        {
+        final Grid2D field = (Grid2D) this.field;
+        if (field==null) return null;
+
+        int maxX = field.getWidth(); 
+        int maxY = field.getHeight();
+
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
+        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        return new Int2D(startx, starty);
+        }
+
+// there is no getObjectLocation.
+
+    public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
+        {
+        final Grid2D field = (Grid2D) this.field;
+        if (field==null) return null;
+        
+        final int maxX = field.getWidth(); 
+        final int maxY = field.getHeight();
+        if (maxX == 0 || maxY == 0) return null;
+        
+        final double xScale = info.draw.width / maxX;
+        final double yScale = info.draw.height / maxY;
+
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
+            info.clip);  // we don't do further clipping 
+
+		Int2D loc = (Int2D) location;
+		if (location == null) return null;
+		
+		int x = loc.x;
+		int y = loc.y;
+
+		// translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+		newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+		newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+		newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+		newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+	
+		// adjust drawX and drawY to center
+		newinfo.draw.x += newinfo.draw.width / 2.0;
+		newinfo.draw.y += newinfo.draw.height / 2.0;
+
+		return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+        }
+
+
     public Portrayal getDefaultPortrayal()
         {
         return defaultPortrayal;

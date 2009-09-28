@@ -8,6 +8,7 @@ package sim.portrayal.grid;
 import sim.portrayal.*;
 import sim.field.grid.*;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import sim.util.gui.ColorMap;
 
@@ -119,12 +120,19 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
         final int maxY = field.getHeight(); 
         if (maxX == 0 || maxY == 0) return;
 
+		// precise values
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        int starty = (int)((info.clip.y - info.draw.y) / yScale);
-        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width may be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height may be as much as 1 off
+		double startxd = ((info.clip.x - info.draw.x) / xScale);
+        double startyd = ((info.clip.y - info.draw.y) / yScale);
+        double endxd = ((info.clip.x - info.draw.x + info.clip.width) / xScale);
+        double endyd = ((info.clip.y - info.draw.y + info.clip.height) / yScale);
+
+		// converted to ints
+		int startx = (int)startxd;
+		int starty = (int)startyd;
+        int endx = ((int)endxd) + /*2*/ 1;  // with rounding, width may be as much as 1 off
+        int endy = ((int)endyd) + /*2*/ 1;  // with rounding, height may be as much as 1 off
         
         // next we determine if this is a DoubleGrid2D or an IntGrid2D
         
@@ -223,7 +231,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             //                    graphics.setClip(clip);
             graphics.drawImage(buffer, (int)info.draw.x, (int)info.draw.y, (int)info.draw.width, (int)info.draw.height,null);
             }
-        else
+        else if (!info.precise)
             {
             buffer = null;  // GC the buffer in case the user had changed his mind
             
@@ -285,8 +293,66 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
                         graphics.fillRect(_x,_y,_width,_height);
                         }
             }
+		else		// precise
+			{
+			graphics.setStroke(new BasicStroke(0.0f));
+			Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
+            buffer = null;  // GC the buffer in case the user had changed his mind
+            
+            if (endx > maxX) endx = maxX;
+            if (endy > maxY) endy = maxY;
+            if( startx < 0 ) startx = 0;
+            if( starty < 0 ) starty = 0;
+
+            double _x = 0;
+            double _y = 0;
+            double _width = 0;
+            double _height = 0;
+
+            // locals are faster...
+            final ColorMap map = this.map;
+            final double infodrawx = info.draw.x;
+            final double infodrawy = info.draw.y;
+ 
+            // 1.3.1 doesn't hoist -- does 1.4.1?
+            if (isDoubleGrid2D)
+                for(double x=startxd;x<endxd;x++)
+                    for(double y=startyd;y<endyd;y++)
+                        {
+                        final Color c = map.getColor(doubleField[(int)x][(int)y]);
+                        if (c.getAlpha() == 0) continue;
+                        graphics.setColor(c);
+                            
+                        _x = (infodrawx + (xScale) * x);
+                        _y = (infodrawy + (yScale) * y);
+                        _width = (infodrawx + (xScale) * (x+1)) - _x;
+                        _height = (infodrawy + (yScale) * (y+1)) - _y;
+                    
+						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        graphics.fill(preciseRectangle);
+                        graphics.draw(preciseRectangle);
+                        }
+            else
+                for(double x=startxd;x<endxd;x++)
+                    for(double y=startyd;y<endyd;y++)
+                        {
+                        final Color c = map.getColor(intField[(int)x][(int)y]);
+                        if (c.getAlpha() == 0) continue;
+                        graphics.setColor(c);
+                            
+                        _x = (infodrawx + (xScale) * x);
+                        _y = (infodrawy + (yScale) * y);
+                        _width = (infodrawx + (xScale) * (x+1)) - _x;
+                        _height = (infodrawy + (yScale) * (y+1)) - _y;
+                    
+						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        graphics.fill(preciseRectangle);
+                        graphics.draw(preciseRectangle);
+                        }
+			}
 
         // finally, clear dirty flag if we've just drawn (don't clear if we're doing hit testing)
         if (graphics!=null) dirtyField = false;
         }
+		
     }

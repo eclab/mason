@@ -39,7 +39,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public static final int NEVER_SCALE = 0;
     public static final int SCALE_WHEN_SMALLER = 1;
     public static final int ALWAYS_SCALE = 2;
-    public double baseWidth;
+    public double baseWidth = 1.0;
         
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_TRIANGLE = 1;
@@ -82,8 +82,8 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         The triangle is drawn with its base at the "from" node and its point at the "to" node. */
     public void setBaseWidth(double val) { baseWidth = val; }
         
-    public int getScaling() { return labelScaling; }
-    public void setScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
+    public int getScaling() { return scaling; }
+    public void setScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) scaling = val; }
         
     public int getLabelScaling() { return labelScaling; }
     public void setLabelScaling(int val) { if (val>= NEVER_SCALE && val <= ALWAYS_SCALE) labelScaling = val; }
@@ -159,7 +159,10 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 {
                 graphics.setPaint (fromPaint);
                 if (info.precise)
-                    { preciseLine.setLine(startXd, startYd, endXd, endYd); graphics.draw(preciseLine); }
+                    { 
+					preciseLine.setLine(startXd, startYd, endXd, endYd);
+					graphics.draw(preciseLine);
+					}
                 else graphics.drawLine (startX, startY, endX, endY);
                 }
             else

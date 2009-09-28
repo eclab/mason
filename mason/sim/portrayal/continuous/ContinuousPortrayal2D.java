@@ -36,20 +36,42 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         {
         return defaultPortrayal;
         }
-    
-    public Double2D getLocation(DrawInfo2D info)
+    	
+	public Point2D.Double getRelativeObjectPosition(Object location, Object otherObjectLocation, DrawInfo2D otherObjectInfo)
+		{
+        final Continuous2D field = (Continuous2D)this.field;
+        if (field==null) return null;
+
+		Double2D loc = (Double2D) location;
+		Double2D oloc = (Double2D) otherObjectLocation;
+		double dx = loc.x - oloc.x;
+		double dy = loc.y - oloc.y;
+		double xScale = otherObjectInfo.draw.width;
+		double yScale = otherObjectInfo.draw.height;
+		return new Point2D.Double(dx * xScale + otherObjectInfo.draw.x,
+								  dy * yScale + otherObjectInfo.draw.y);
+		}
+	
+    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
                 
-        final double xScale = info.draw.width / field.width;
-        final double yScale = info.draw.height / field.height;
-        final double startx = (info.clip.x - info.draw.x) / xScale;  // notice not (int) like elsewhere.
-        final double starty = (info.clip.y - info.draw.y) / yScale;
+        final double xScale = fieldPortrayalInfo.draw.width / field.width;
+        final double yScale = fieldPortrayalInfo.draw.height / field.height;
+        final double startx = (fieldPortrayalInfo.clip.x - fieldPortrayalInfo.draw.x) / xScale;  // notice not (int) like elsewhere.
+        final double starty = (fieldPortrayalInfo.clip.y - fieldPortrayalInfo.draw.y) / yScale;
         return new Double2D(startx, starty);
         }
-    
-    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D fieldPortrayalInfo)
+
+   public Object getObjectLocation(Object object)
+        {
+        final Continuous2D field = (Continuous2D)this.field;
+        if (field==null) return null;
+		return field.getObjectLocation(object);
+		}
+
+   public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo)
         {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
@@ -58,15 +80,14 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final double yScale = fieldPortrayalInfo.draw.height / field.height;
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
 
-        Double2D loc = field.getObjectLocation(object);
-        if (loc == null) return null;
+        Double2D loc = (Double2D) location;
+		if (loc == null) return null;
 
         newinfo.draw.x = (fieldPortrayalInfo.draw.x + (xScale) * loc.x);
         newinfo.draw.y = (fieldPortrayalInfo.draw.y + (yScale) * loc.y);
 
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
         }
-
 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {

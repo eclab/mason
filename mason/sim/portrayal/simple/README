@@ -67,3 +67,8 @@ Oriented2D interface).  Optionally, OrientedPortrayal2D doesn't need a
 subsidiary portrayal, and can draw various oriented shapes (compasses, 
 kites).
 
+
+TrailPortrayal2D.java
+
+A special wrapper portrayal which draws "trails" following the object
+as it moves around.

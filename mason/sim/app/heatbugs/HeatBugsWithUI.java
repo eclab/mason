@@ -16,6 +16,7 @@ import sim.util.*;
 import javax.swing.event.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import sim.portrayal.simple.*;
 
 public class HeatBugsWithUI extends GUIState
     {
@@ -24,6 +25,7 @@ public class HeatBugsWithUI extends GUIState
 
     FastValueGridPortrayal2D heatPortrayal = new FastValueGridPortrayal2D("Heat");
     SparseGridPortrayal2D bugPortrayal = new SparseGridPortrayal2D();
+/*     SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); */
 
     public static void main(String[] args)
         {
@@ -64,9 +66,19 @@ public class HeatBugsWithUI extends GUIState
         // tell the portrayals what to portray and how to portray them
         heatPortrayal.setMap(new sim.util.gui.SimpleColorMap(0,HeatBugs.MAX_HEAT,Color.black,Color.red));
         bugPortrayal.setPortrayalForAll( new sim.portrayal.simple.OvalPortrayal2D(Color.white) );   // all the heatbugs will be white ovals
-            
+		
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         bugPortrayal.setField(((HeatBugs)state).buggrid);
+		
+/*
+        trailsPortrayal.setField(((HeatBugs)state).buggrid);
+		SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
+		for(int x=0;x<((HeatBugs)state).bugs.length;x++)
+			{
+            trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], 
+				new TrailPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 10));
+			}
+*/
 
         // reschedule the displayer
         display.reset();
@@ -90,6 +102,7 @@ public class HeatBugsWithUI extends GUIState
 
         // attach the portrayals
         display.attach(heatPortrayal,"Heat");
+/*        display.attach( trailsPortrayal, "Trails" ); */
         display.attach(bugPortrayal,"Bugs");
 
         // specify the backdrop color  -- what gets painted behind the displays
@@ -150,7 +163,7 @@ public class HeatBugsWithUI extends GUIState
                 SparseGrid2D field = (SparseGrid2D)(bugPortrayal.getField());
                 if (bug==null || field == null) return;
                 
-                Int2D mouseLoc = bugPortrayal.getLocation(display.getDrawInfo2D(bugPortrayal, point));
+                Int2D mouseLoc = (Int2D)(bugPortrayal.getClipLocation(display.getDrawInfo2D(bugPortrayal, point)));
                 field.setObjectLocation(bug, mouseLoc);
                 c.refresh();                                // get the other displays and inspectors to update their locations
                 // btw: c must be final.

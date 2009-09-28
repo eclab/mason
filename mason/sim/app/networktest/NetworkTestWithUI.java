@@ -146,7 +146,7 @@ public class NetworkTestWithUI extends GUIState
                     display.performSelection(nodeWrapper); 
                         
                     Double2D nodeLoc = (Double2D)(field.getObjectLocation(node));   // where the node is actually located
-                    Double2D mouseLoc = nodePortrayal.getLocation(display.getDrawInfo2D(nodePortrayal, point));  // where the mouse clicked
+                    Double2D mouseLoc = (Double2D)(nodePortrayal.getClipLocation(display.getDrawInfo2D(nodePortrayal, point)));  // where the mouse clicked
                     nodeLocDelta = new Double2D(nodeLoc.x - mouseLoc.x, nodeLoc.y - mouseLoc.y);
                     }
                 c.refresh();                    // get the other displays and inspectors to update their locations
@@ -167,7 +167,7 @@ public class NetworkTestWithUI extends GUIState
                 Continuous2D field = (Continuous2D)(nodePortrayal.getField());
                 if (node==null || field == null) return;
                 
-                Double2D mouseLoc = nodePortrayal.getLocation(display.getDrawInfo2D(nodePortrayal, point));  // where the mouse dragged to
+                Double2D mouseLoc = (Double2D)(nodePortrayal.getClipLocation(display.getDrawInfo2D(nodePortrayal, point)));  // where the mouse dragged to
                 Double2D newBallLoc = new Double2D(nodeLocDelta.x + mouseLoc.x, nodeLocDelta.y + mouseLoc.y);  // add in computed difference
                 field.setObjectLocation(node, newBallLoc); 
                 c.refresh();                                // get the other displays and inspectors to update their locations

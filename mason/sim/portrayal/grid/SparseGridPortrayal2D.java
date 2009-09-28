@@ -49,7 +49,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         else throw new RuntimeException("Invalid field for Sparse2DPortrayal: " + field);
         }
     
-    public Int2D getLocation(DrawInfo2D info)
+    public Object getClipLocation(DrawInfo2D info)
         {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
@@ -64,9 +64,16 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         return new Int2D(startx, starty);
         }
 
-    public Point2D.Double getPositionInFieldPortrayal(Object object, DrawInfo2D info)
+   public Object getObjectLocation(Object object)
         {
-        final SparseGrid2D field = (SparseGrid2D) this.field;
+        final SparseGrid2D field = (SparseGrid2D)this.field;
+        if (field==null) return null;
+		return field.getObjectLocation(object);
+		}
+
+    public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
+        {
+        final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
         int maxX = field.getWidth(); 
@@ -77,7 +84,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  
 
-        Int2D loc = field.getObjectLocation(object);
+        Int2D loc = (Int2D)location;
         if (loc == null) return null;
 
         // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
