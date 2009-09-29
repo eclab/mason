@@ -54,6 +54,7 @@ These are short examples of how to do things in MASON you may have been wonderin
 <li><a href="#select">How to Show that an Object Has Been "Selected" by the Mouse</a>
 <li><a href="#move">How to Move an Object in 2D by Dragging It with the Mouse</a>
 <li><a href="#paint">How to Change the Look of a Provided SimplePortrayal2D Dynamically Based on the Object Status</a>
+<li><a href="#trails">How to Draw "Trails" or "Mouse Tails" Dragging Behind Objects</a>
 </ul>
 
 <a name="method"></a><h2>How to Schedule Multiple Methods to be Called on the Same Agent</h2>
@@ -829,6 +830,9 @@ Many of the standard provided SimplePortrayal2D objects have a <b>paint</b> vari
         };
 </tt></pre>
 
+<a name="trails"><h2>How to Draw "Trails" or "Mouse Tails" Dragging Behind Objects</a>
+
+You may wish to draw trails behind objects as they move about, thus showing where they've been in the past.  MASON has a special SimplePortrayal2D wrapper class which is designed for this purpose: <b>sim.portrayal.simple.TrailedPortrayal2D</b>.  The class comes with a lot of class documentation describing how you use it.  Also the HeatBugsWithUI and FlockersWithUI classes have (commented out) examples of using TrailedPortrayal2D.
 
 <br><br><br>
 </body>

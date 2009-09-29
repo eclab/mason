@@ -25,7 +25,11 @@ public class HeatBugsWithUI extends GUIState
 
     FastValueGridPortrayal2D heatPortrayal = new FastValueGridPortrayal2D("Heat");
     SparseGridPortrayal2D bugPortrayal = new SparseGridPortrayal2D();
-/*     SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); */
+
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
+// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+// its idealTemperature to 0 in the Inspector.
+     SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); 
 
     public static void main(String[] args)
         {
@@ -70,15 +74,16 @@ public class HeatBugsWithUI extends GUIState
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         bugPortrayal.setField(((HeatBugs)state).buggrid);
 		
-/*
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
+// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+// its idealTemperature to 0 in the Inspector.
         trailsPortrayal.setField(((HeatBugs)state).buggrid);
 		SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
 		for(int x=0;x<((HeatBugs)state).bugs.length;x++)
 			{
             trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], 
-				new TrailPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 10));
+				new TrailedPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 10));
 			}
-*/
 
         // reschedule the displayer
         display.reset();
@@ -102,7 +107,12 @@ public class HeatBugsWithUI extends GUIState
 
         // attach the portrayals
         display.attach(heatPortrayal,"Heat");
-/*        display.attach( trailsPortrayal, "Trails" ); */
+
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
+// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+// its idealTemperature to 0 in the Inspector.
+        display.attach( trailsPortrayal, "Trails" ); 
+
         display.attach(bugPortrayal,"Bugs");
 
         // specify the backdrop color  -- what gets painted behind the displays

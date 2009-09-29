@@ -29,11 +29,6 @@ public class SimplePortrayal2D implements Portrayal2D
         {
         return false;
         }
-//        {
-    // by default we return false on being hit
-    //return( range.clip.intersects( range.draw.x-range.draw.width/2, 
-    //                               range.draw.y-range.draw.height/2, range.draw.width, range.draw.height ) );
-//        }
     
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {

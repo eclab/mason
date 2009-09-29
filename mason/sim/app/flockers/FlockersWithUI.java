@@ -28,6 +28,8 @@ public class FlockersWithUI extends GUIState
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
 
     ContinuousPortrayal2D flockersPortrayal = new ContinuousPortrayal2D();
+	
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
 /*    ContinuousPortrayal2D trailsPortrayal = new ContinuousPortrayal2D(); */
     
     public FlockersWithUI()
@@ -59,7 +61,8 @@ public class FlockersWithUI extends GUIState
         Flockers flock = (Flockers)state;
 
         flockersPortrayal.setField(flock.flockers);
- /*       trailsPortrayal.setField(flock.flockers);  */
+ // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
+/*       trailsPortrayal.setField(flock.flockers);  */
         
         // make the flockers random colors and four times their normal size (prettier)
         for(int x=0;x<flock.flockers.allObjects.numObjs;x++)
@@ -71,9 +74,10 @@ public class FlockersWithUI extends GUIState
                     OrientedPortrayal2D.SHAPE_COMPASS);
 
             flockersPortrayal.setPortrayalForObject(flock.flockers.allObjects.objs[x], p);
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
             /* 
 			trailsPortrayal.setPortrayalForObject(flock.flockers.allObjects.objs[x], 
-				new TrailPortrayal2D(this, p, trailsPortrayal, 100));
+				new TrailedPortrayal2D(this, p, trailsPortrayal, 100));
 			*/
 			}
         
@@ -107,7 +111,9 @@ public class FlockersWithUI extends GUIState
         displayFrame.setTitle("Flockers");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
+// uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
         /* display.attach( trailsPortrayal, "Trails" ); */
+		
         display.attach( flockersPortrayal, "Behold the Flock!" );
         }
         
