@@ -1634,3 +1634,6 @@ Version 15
 		getObjectLocation, getLocationPosition, getObjectPosition, and a new method
 		called getRelativeObjectPosition.  This makes the 2D portrayal nonsense a
 		little more consistent and adds some functionality to make it easier to 
+	Bug fix in Console: if you automatically pause after a certain time, then the Console
+		wants to continue pausing, which can be irritating.
+	Added size() method to SparseField

@@ -2422,6 +2422,7 @@ public class Console extends JFrame implements Controller
                                     pauseField.setValue("");
                                     timePauseField.setValue("");
                                     setWhenShouldPause(Long.MAX_VALUE);
+                                    setWhenShouldPauseTime(Schedule.AFTER_SIMULATION);
                                     }                        
                                 catch (Exception e)
                                     {  
