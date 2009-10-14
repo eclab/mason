@@ -2602,7 +2602,7 @@ public class Console extends JFrame implements Controller
         if (currentInspector == -1) return;
         
         inspectorNames.remove(currentInspector);
-        final Stoppable stoppable = (Stoppable)(inspectorStoppables.remove(currentInspector));
+		Stoppable stoppable = (Stoppable)(inspectorStoppables.remove(currentInspector));
         JScrollPane oldInspector = (JScrollPane)(inspectorToolbars.remove(currentInspector));
         Point oldInspectorLocation = oldInspector.getLocationOnScreen();  // set here before inspector goes away
 
@@ -2644,10 +2644,11 @@ public class Console extends JFrame implements Controller
             if (inspectors.objs[x]!=null)  // double-check
                 {
                 final int xx = x; // duh, Java's anonymous classes are awful compared to true closures...
-                Steppable stepper = new Steppable()
+				Steppable stepper = new Steppable()
                     {
                     public void step(final SimState state)
                         {
+						final Steppable foo = this;
                         SwingUtilities.invokeLater(new Runnable()
                             {
                             Inspector inspector = (Inspector)(inspectors.objs[xx]);
@@ -2663,7 +2664,7 @@ public class Console extends JFrame implements Controller
                                         inspector.repaint();
                                         }
                                     }
-                                }
+                                 }
                             });
                         }
                     };
@@ -2703,7 +2704,7 @@ public class Console extends JFrame implements Controller
     */
     public void registerInspector(Inspector inspector, Stoppable stopper)
         {
-        allInspectors.put(inspector, new WeakReference(stopper));  // warning: if no one else refers to stopper, it gets GCed!
+        allInspectors.put(inspector, stopper);  //new WeakReference(stopper));  // warning: if no one else refers to stopper, it gets GCed!
         }
 
     /** Stops all inspectors.  If killDraggedOutWindowsToo is true, then the detatched inspectors are stopped as well. */
@@ -2721,7 +2722,7 @@ public class Console extends JFrame implements Controller
             Iterator i = allInspectors.keySet().iterator();
             while(i.hasNext())
                 {
-                Stoppable stopper = (Stoppable)(((WeakReference)allInspectors.get(i.next())).get());
+                Stoppable stopper = (Stoppable)(allInspectors.get(i.next())); //(Stoppable)(((WeakReference)allInspectors.get(i.next())).get());
                 if (stopper != null) stopper.stop();
                 }
             }
@@ -2748,6 +2749,7 @@ public class Console extends JFrame implements Controller
                 }
             allInspectors = new WeakHashMap();
             }
+		inspectorStoppables = new Vector();
         inspectorNames = new Vector();
         inspectorToolbars = new Vector();
         resetInspectors(-1);

@@ -57,7 +57,7 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
             else graphics.draw(preciseRectangle);
             return;
             }
-            
+		
         graphics.setPaint(paint);
         // we are doing a simple draw, so we ignore the info.clip
 

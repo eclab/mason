@@ -81,6 +81,7 @@ public abstract class ChartGenerator extends JPanel
     protected JScrollPane chartHolder = new JScrollPane();
     /** The JFrame which stores the whole chart.  Set in createFrame(), else null. */
     protected JFrame frame;
+	public JFrame getFrame() { return frame; }
     /** The global attributes chart title field. */
     protected PropertyField titleField;
     /** The global attributes domain axis field. */

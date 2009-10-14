@@ -77,6 +77,19 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator = chartToUse( properties.getName(index), parent, simulation );
         globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
         validInspector = (generator!=null);
+
+		// make sure that when the window is closed, the stopper is stopped
+        WindowListener wl = new WindowListener()
+            {
+            public void windowActivated(WindowEvent e) {}
+            public void windowClosed(WindowEvent e) { if (stopper!=null) stopper.stop(); }
+            public void windowClosing(WindowEvent e) {  }
+            public void windowDeactivated(WindowEvent e) {}
+            public void windowDeiconified(WindowEvent e) {}
+            public void windowIconified(WindowEvent e) {}
+            public void windowOpened(WindowEvent e) {}
+            };
+		generator.getFrame().addWindowListener(wl);
         }
 
     /**
@@ -96,6 +109,19 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             }
         else
             this.generator = createNewChart(simulation);
+
+		// make sure that when the window is closed, the stopper is stopped
+        WindowListener wl = new WindowListener()
+            {
+            public void windowActivated(WindowEvent e) {}
+            public void windowClosed(WindowEvent e) {}
+            public void windowClosing(WindowEvent e) { if (stopper!=null) stopper.stop(); }
+            public void windowDeactivated(WindowEvent e) {}
+            public void windowDeiconified(WindowEvent e) {}
+            public void windowIconified(WindowEvent e) {}
+            public void windowOpened(WindowEvent e) {}
+            };
+        generator.getFrame().addWindowListener(wl);
 
         globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
         validInspector = (this.generator!=null);//this should always be true.
@@ -272,12 +298,13 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         if( simulation.guiObjects == null )
             simulation.guiObjects = new Bag();
         simulation.guiObjects.add( generator );
-        final JFrame f = generator.createFrame(simulation);
+		JFrame f = generator.createFrame(simulation);
+
         WindowListener wl = new WindowListener()
             {
             public void windowActivated(WindowEvent e) {}
             public void windowClosed(WindowEvent e) {}
-            public void windowClosing(WindowEvent e) { generator.quit(); }
+            public void windowClosing(WindowEvent e) { generator.quit();}
             public void windowDeactivated(WindowEvent e) {}
             public void windowDeiconified(WindowEvent e) {}
             public void windowIconified(WindowEvent e) {}
@@ -285,7 +312,6 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             };
         f.addWindowListener(wl);
         f.setVisible(true);
-
         return generator;
         }
 

@@ -59,7 +59,7 @@ public abstract class PropertyInspector extends Inspector
     
     static Bag classes = null;
     protected boolean validInspector = false;
-    Stoppable stopper;
+    protected Stoppable stopper;
         
     public void setStopper(Stoppable stopper)
         {

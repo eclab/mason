@@ -44,7 +44,7 @@ public /*strictfp*/ class Diffuser implements Steppable
         //                 {
         //                 average = 0.0;
         //                 // get all the neighbors
-        //                 getNeighborsMaxDistance(x,y,1,true,xNeighbors,yNeighbors);
+        //                 heatbugs.valgrid.getNeighborsMaxDistance(x,y,1,true,xNeighbors,yNeighbors);
                 
         //                 // for each neighbor...
         //                 for(int i = 0 ; i < xNeighbors.numObjs; i++)

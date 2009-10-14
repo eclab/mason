@@ -770,6 +770,28 @@ MASON has a built-in time-series charting facility, but the user must manually c
        display.insideDisplay.removeMouseListeners();
 </tt></pre>
 
+<p>This method will delete all the MouseListeners, MouseMotionListeners, and (for good measure) KeyListeners registered with the Display2D.
+
+<p>Next you may wish to prevent scrolling and resizing of the window.  To remove the scroll bars, add:
+
+<pre><tt>
+		display.display.setVerticalScrollBarPolicy(display.display.VERTICAL_SCROLLBAR_NEVER);
+		display.display.setHorizontalScrollBarPolicy(display.display.HORIZONTAL_SCROLLBAR_NEVER);
+</tt></pre>	
+
+<p>...and to eliminate resizing of the window, after displayFrame has been created, add:
+
+<pre><tt>
+		displayFrame.setResizable(false);
+</tt></pre>
+
+<p>Last, once you've deleted the header and/or scroll bars, you'll need to repack the window so that it's the right size.
+
+<pre><tt>
+		displayFrame.pack();
+</tt></pre>
+
+
 <p>For Display3D, it's somewhat more involved, and we'll get a nicer approach soon.
 
 

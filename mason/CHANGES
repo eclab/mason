@@ -1637,3 +1637,13 @@ Version 15
 	Bug fix in Console: if you automatically pause after a certain time, then the Console
 		wants to continue pausing, which can be irritating.
 	Added size() method to SparseField
+	Made sure that when a ChartingPropertyInspector's window is closed the underlying
+		inspector is stop()ped.
+	Stomped a bug in Console.java in which inspectors that had been detatched would
+		stop updating themselves when you called forth a new list of inspectors.
+		This was because we weren't deleting the inspectorStoppables code properly.
+	Stoppables are no longer stored as weak references in the WeakHashMap in Console.
+	Bug Fixes in heatbugs documentation
+	Added Display2D.removeListeners()
+	Bug fix in documentation: howto.html's description of how to hide the console
+

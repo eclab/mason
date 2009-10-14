@@ -167,7 +167,21 @@ public class Display2D extends JComponent implements Steppable
         public double xOffset;
         /** y offset */
         public double yOffset;
-                        
+		
+		/** Removes all mouse listeners, mouse motion listeners, and Key listeners from this component.  Mostly used for kiosk mode stuff -- see the Howto */
+		public void removeListeners()
+			{
+			MouseListener[] mls = (MouseListener[])(getListeners(MouseListener.class));
+			for(int x = 0 ; x < mls.length; x++)
+				{ removeMouseListener(mls[x]); }
+			MouseMotionListener[] mmls = (MouseMotionListener[])(getListeners(MouseMotionListener.class));
+			for(int x = 0 ; x < mmls.length; x++)
+				{ removeMouseMotionListener(mmls[x]); }
+			KeyListener[] kls = (KeyListener[])(getListeners(KeyListener.class));
+			for(int x = 0 ; x < kls.length; x++)
+				{ removeKeyListener(kls[x]); }
+			}
+			
         /** Creates an InnerDisplay2D with the provided width and height. */
         public InnerDisplay2D(double width, double height)
             {
@@ -675,7 +689,7 @@ public class Display2D extends JComponent implements Steppable
     /** The list of portrayals the insideDisplay draws.  Each element in this list is a Portrayal2DHolder. */
     ArrayList portrayals = new ArrayList();
     /** The scroll view which holds the insideDisplay. */
-    JScrollPane display;
+    public JScrollPane display;
     /** The scroll view's viewport. */
     JViewport port;
     /** The stoppable for the repeat object which redraws the Display2D in the schedule. */
