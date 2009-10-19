@@ -368,7 +368,7 @@ public class Display3D extends JPanel implements Steppable
             // now reschedule myself
             if (stopper!=null) stopper.stop();
             if (getInterval() < 1) setInterval(1);  // just in case...
-            stopper = simulation.scheduleImmediateRepeat(true,this);
+            stopper = simulation.scheduleRepeatingImmediatelyAfter(this);
             }
             
         // deselect existing objects

@@ -478,6 +478,8 @@ public class SimState implements java.io.Serializable
                     System.exit(1);
                     }
                                         
+				nameThread(state);
+
                 job = state.job;
                 if (state.seed != 0) // likely good seed from the command line earlier
                     {
@@ -491,6 +493,7 @@ public class SimState implements java.io.Serializable
             if (state==null)  // no checkpoint file requested
                 {
                 state = generator.newInstance(seed,args);
+				nameThread(state);
                 state.job = job;
                 state.seed = seed;
                 System.err.println("Job: " + job + " Seed: " + seed);
@@ -550,6 +553,14 @@ public class SimState implements java.io.Serializable
             }
         }
     
+	/** Names the current thread an appropriate name given the SimState */
+	public static void nameThread(SimState state)
+		{
+		// name my thread for the profiler
+		Thread.currentThread().setName("MASON Model: " + state.getClass());
+		}
+
+	
     public static double version()
         {
         return 15.0;

@@ -28,9 +28,7 @@ public class MouseTraps3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        MouseTraps3DWithUI simGUI = new MouseTraps3DWithUI();
-        Console c = new Console(simGUI);
-        c.setVisible(true);        
+        new MouseTraps3DWithUI().createController();
         }
         
     public MouseTraps3DWithUI() 

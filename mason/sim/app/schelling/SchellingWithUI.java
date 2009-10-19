@@ -20,9 +20,7 @@ public class SchellingWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        SchellingWithUI schelling = new SchellingWithUI();
-        Console c = new Console(schelling);
-        c.setVisible(true);
+        new SchellingWithUI().createController();
         }
     
     public SchellingWithUI() { super(new Schelling(System.currentTimeMillis())); }

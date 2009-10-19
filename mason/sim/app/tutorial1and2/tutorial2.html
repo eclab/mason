@@ -151,7 +151,7 @@ The second line tells FastValueGridPortrayal2D or ValueGridPortrayal2D that they
 <p>You can make custom inspectors in a variety of ways; we'll discuss this in a later tutorial.
 </font></td></tr></table>
 
-Before we can test the program, we need to write a new <b>main(String[])</b> function which launches the visualization system.  Add to the file the following:
+Before we can test the program, we need to write a new <b>main(String[])</b> function which launches the visualization system.  If you really wanted, you <i>could</i> do it this way:
 
 <pre><tt>
     public static void main(String[] args)
@@ -162,7 +162,20 @@ Before we can test the program, we need to write a new <b>main(String[])</b> fun
         }
 </tt></pre>
 
-This creates a Tutorial2.  It then creates a <tt>sim.display.<b>Console</b></tt>, which is a Controller that provides a nice graphical interface (the Console is the window with the Play/Stop/Pause buttons).  The Console needs to know what GUIState to launch and run -- we pass it our Tutorial2.  Then we make the Console window visible.
+<p>However, it's better style to instead just call the <b><tt>createController</tt></b> class, which by default does the same thing as those last two lines:
+
+<pre><tt>
+    public static void main(String[] args)
+        {
+        new Tutorial2().createController();
+        }
+</tt></pre>
+
+<p>If you wanted a controller other than a Console, you just override createController() to create and start it.
+
+<p>Why do it this way?  Besides having fewer lines, this also makes it easy for your simulation to be created in other ways than the main() method -- for example by the user choosing "New Simulation" in the Console menu -- because the calling method doesn't need to know whether to create a console or some other controller: your class makes the controller for it.
+
+<p>Anyway, this creates a Tutorial2.  It then creates a <tt>sim.display.<b>Console</b></tt>, which is a Controller that provides a nice graphical interface (the Console is the window with the Play/Stop/Pause buttons).  The Console needs to know what GUIState to launch and run -- we pass it our Tutorial2.  Then we make the Console window visible.
 
 <p>Now we're ready to test.  Save the <b>Tutorial2.java</b> file.  Compile the <b>CA.java</b>, <b>Tutorial1.java</b>, and <b>Tutorial2.java</b> files.  Then run the program as <b>java sim.app.tutorial1and2.Tutorial2</b>
 

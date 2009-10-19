@@ -24,9 +24,7 @@ public class WoimsDemoWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        WoimsDemoWithUI woims = new WoimsDemoWithUI();
-        Console c = new Console(woims);
-        c.setVisible(true);
+        new WoimsDemoWithUI().createController();
         }
 
     public WoimsDemoWithUI() { super(new WoimsDemo( System.currentTimeMillis())); }

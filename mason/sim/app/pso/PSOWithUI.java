@@ -30,9 +30,7 @@ public class PSOWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        PSOWithUI po = new PSOWithUI();  // randomizes by currentTimeMillis
-        Console c = new Console(po);
-        c.setVisible(true);
+        new PSOWithUI().createController();  // randomizes by currentTimeMillis
         }
 
     public Object getSimulationInspectedObject() { return state; }  // non-volatile

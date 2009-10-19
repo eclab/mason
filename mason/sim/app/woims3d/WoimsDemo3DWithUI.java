@@ -23,9 +23,7 @@ public class WoimsDemo3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        WoimsDemo3DWithUI woims = new WoimsDemo3DWithUI(new WoimsDemo3D(System.currentTimeMillis()));
-        Console c = new Console(woims);
-        c.setVisible(true);
+        new WoimsDemo3DWithUI(new WoimsDemo3D(System.currentTimeMillis())).createController();
         }
                 
     public WoimsDemo3DWithUI()

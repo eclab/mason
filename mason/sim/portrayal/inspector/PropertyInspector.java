@@ -226,8 +226,7 @@ public abstract class PropertyInspector extends Inspector
                         {
                         try
                             {
-                            inspector.setStopper(inspector.reviseStopper(state.scheduleImmediateRepeat(
-                                        true, inspector.getUpdateSteppable())));
+                            inspector.setStopper(inspector.reviseStopper(state.scheduleRepeatingImmediatelyAfter(inspector.getUpdateSteppable())));
                             }
                         catch (IllegalArgumentException ex)
                             {

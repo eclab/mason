@@ -1292,7 +1292,7 @@ public class Console extends JFrame implements Controller
                     }
                 };
             if (modelInspector.isVolatile())  // should we update the inspector each time -- expensive
-                simulation.scheduleImmediateRepeat(true, stepper);
+                simulation.scheduleRepeatingImmediatelyAfter(stepper);
             // stepper.step(simulation.state);  // update the model inspector one time at the beginning at any rate
             }
         }
@@ -1725,8 +1725,13 @@ public class Console extends JFrame implements Controller
                 java.lang.reflect.Constructor cons = Class.forName(className).getConstructor(new Class[] {});
                 // okay, we're past that.  Now try to build the instance
                 GUIState state = (GUIState)(Class.forName(className).newInstance());
-                Console c = new Console(state);
+                /*
+				Console c = new Console(state);
                 c.setVisible(true);
+				*/
+				
+				// new method
+				state.createController();
                 return true;
                 }
             catch (NoSuchMethodException e)
@@ -2278,6 +2283,10 @@ public class Console extends JFrame implements Controller
                             {
                             e.printStackTrace();
                             }
+
+					// name the current thread
+					simulation.state.nameThread(simulation.state);
+
                     // start the main loop
 
 //                    int numSteps = 1;
@@ -2672,7 +2681,7 @@ public class Console extends JFrame implements Controller
                 Stoppable stopper = null;
                 try
                     {
-                    stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleImmediateRepeat(true,stepper));
+                    stopper = ((Inspector)(inspectors.objs[x])).reviseStopper(simulation.scheduleRepeatingImmediatelyAfter(stepper));
                     inspectorStoppables.addElement(stopper);
                     }
                 catch (IllegalArgumentException ex) { /* do nothing -- it's thrown if the user tries to pop up an inspector when the time is over. */ }

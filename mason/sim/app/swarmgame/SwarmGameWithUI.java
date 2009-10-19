@@ -19,9 +19,7 @@ public class SwarmGameWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        SwarmGameWithUI mav = new SwarmGameWithUI();  // randomizes by currentTimeMillis
-        Console c = new Console(mav);
-        c.setVisible(true);
+        new SwarmGameWithUI().createController();  // randomizes by currentTimeMillis
         }
 
     public Object getSimulationInspectedObject() { return state; }  // non-volatile

@@ -772,7 +772,7 @@ public class Display2D extends JComponent implements Steppable
         {
         // now reschedule myself
         if (stopper!=null) stopper.stop();
-        stopper = simulation.scheduleImmediateRepeat(true,this);
+        stopper = simulation.scheduleRepeatingImmediatelyAfter(this);
                 
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)

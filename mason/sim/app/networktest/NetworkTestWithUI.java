@@ -32,9 +32,7 @@ public class NetworkTestWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        NetworkTestWithUI vid = new NetworkTestWithUI();
-        Console c = new Console(vid);
-        c.setVisible(true);
+        new NetworkTestWithUI().createController();
         }
 
     public NetworkTestWithUI() { super(new NetworkTest( System.currentTimeMillis())); }

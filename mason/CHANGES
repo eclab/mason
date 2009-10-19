@@ -1665,3 +1665,4 @@ Version 15
 		modified Console and SimApplet to call createController() instead.
 	Added Utilities.iFloor, iCeil, and iRound.  Faster than Math.floor, ceil, and round,
 		but I don't trust them yet so we don't use them in any core code.  Cave Emptor.
+	All generated threads set names for themselves now so you can see them in jvisualvm

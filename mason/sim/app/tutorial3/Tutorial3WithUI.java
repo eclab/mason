@@ -21,9 +21,7 @@ public class Tutorial3WithUI extends GUIState
 
     public static void main(String[] args)
         {
-        Tutorial3WithUI t = new Tutorial3WithUI();
-        Console c = new Console(t);
-        c.setVisible(true);
+        new Tutorial3WithUI().createController();
         }
     
     public Tutorial3WithUI() { super(new Tutorial3(System.currentTimeMillis())); }

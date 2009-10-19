@@ -40,7 +40,7 @@ import sim.util.Bag;
     getInspector() or getSimulationInspectedObject().
     
     <p>GUIState has a wrapper step() method which in turn calls the Schedule's
-    step(state) method.  However, this wrapper provides a hook for objects such as
+    step(state) method.  However, this wrapper lso provides a hook for objects such as
     displays to schedule themselves without using the Schedule.  This hook is the
     scheduleImmediate(...) and scheduleImmediateRepeat(...) methods.  There is also
     a reset() method which resets both the immediates and the underlying Schedule.
@@ -62,7 +62,7 @@ import sim.util.Bag;
     but this leaves the burden on the programmer to check,
     and programmers are forgetful!  We have changed GUIState and Schedule to throw exceptions by default instead.  
     You can change them both back to returning false or null (perhaps if you want to handle the 
-    situations yourself more efficiently than atching an exception, or if you know what you're doing schedule-wise)
+    situations yourself more efficiently than catching an exception, or if you know what you're doing schedule-wise)
     by setting Schedule.setThrowingScheduleExceptions(false).
 */
 
@@ -128,7 +128,18 @@ public abstract class GUIState
             return "Error in retrieving simulation name";
             }
         }
-        
+	
+	/** Creates and returns a controller ready for the user to manipulate.
+		By default this method creates a Console, sets it visible, and
+		returns it.  You can override this to provide some other kind of
+		controller. */
+	public Controller createController()
+		{
+		Console console = new Console(this);
+		console.setVisible(true);
+		return console;
+		}
+	
     /** Override this method in your subclass to provide a descriptive 
         name for your simulation;
         otherwise the default will be used: the short classname (that is,
@@ -456,7 +467,7 @@ public abstract class GUIState
         }
 
 
-    /** Schedules an item to occur (in no particular order) immediately before or immediately after
+    /** Schedules an item to occur (in no particular order) immediately before 
         the schedule is stepped on the next time step (not including blank steps).  
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
@@ -466,7 +477,44 @@ public abstract class GUIState
         in the Schedule itself, so it can be serialized out without them. 
     */
         
-    public boolean scheduleImmediate(boolean immediatelyAfter, Steppable event)
+    public boolean scheduleImmediatelyBefore(Steppable event)
+        {
+		return _scheduleImmediate(false, event);
+        }
+        
+    /** Schedules an item to occur (in no particular order) immediately after
+        the schedule is stepped on the next time step (not including blank steps).  
+        Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
+        pass in TRUE if you want to be immediately AFTER the next time step (the more common
+        situation).  Returns false if the current time is AFTER_SIMULATION or if the event is null.
+        
+        <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
+        in the Schedule itself, so it can be serialized out without them. 
+    */
+        
+    public boolean scheduleImmediatelyAfter(Steppable event)
+        {
+		return _scheduleImmediate(true, event);
+        }
+        
+    /** Schedules an item to occur (in no particular order) immediately before or immediately after
+        the schedule is stepped on the next time step (not including blank steps).  
+        Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
+        pass in TRUE if you want to be immediately AFTER the next time step (the more common
+        situation).  Returns false if the current time is AFTER_SIMULATION or if the event is null.
+        
+        <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
+        in the Schedule itself, so it can be serialized out without them. 
+
+        @deprecated use scheduleImmediatelyBefore and scheduleImmediatelyAfter instead
+    */
+	
+	public boolean scheduleImmediate(boolean immediatelyAfter, Steppable event)
+		{
+		return _scheduleImmediate(immediatelyAfter, event);
+		}
+		
+	boolean _scheduleImmediate(boolean immediatelyAfter, Steppable event)
         {
         synchronized(state.schedule)
             {
@@ -503,7 +551,7 @@ public abstract class GUIState
         return true;
         }
     
-    /** Schedules an item to occur (in no particular order) immediately before or immediately after
+    /** Schedules an item to occur (in no particular order) immediately before
         all future steps the Schedule takes (not including blank steps).  
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
@@ -515,14 +563,55 @@ public abstract class GUIState
         in the Schedule itself, so it can be serialized out without them.
     */
         
+    public Stoppable scheduleRepeatingImmediatelyBefore(Steppable event)
+        {
+		return _scheduleImmediateRepeat(false, event);
+        }
+        
+
+     /** Schedules an item to occur (in no particular order) immediately after
+        all future steps the Schedule takes (not including blank steps).  
+        Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
+        pass in TRUE if you want to be immediately AFTER the next time step (the more common
+        situation).  Returns a Stoppable, or null if the current time is AFTER_SIMULATION or if the event is null.
+        The recurrence will continue until state.schedule.time() >= AFTER_SIMULATION, state.schedule is cleared out,
+        or the Stoppable's stop() method is called, whichever happens first.
+        
+        <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
+        in the Schedule itself, so it can be serialized out without them.
+    */
+        
+    public Stoppable scheduleRepeatingImmediatelyAfter(Steppable event)
+        {
+		return _scheduleImmediateRepeat(true, event);
+        }
+        
+   /** Schedules an item to occur (in no particular order) immediately before or immediately after
+        all future steps the Schedule takes (not including blank steps).  
+        Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
+        pass in TRUE if you want to be immediately AFTER the next time step (the more common
+        situation).  Returns a Stoppable, or null if the current time is AFTER_SIMULATION or if the event is null.
+        The recurrence will continue until state.schedule.time() >= AFTER_SIMULATION, state.schedule is cleared out,
+        or the Stoppable's stop() method is called, whichever happens first.
+        
+        <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
+        in the Schedule itself, so it can be serialized out without them.
+
+        @deprecated use scheduleRepeatingImmediatelyBefore and scheduleRepeatingImmediatelyAfter instead
+    */
+        
     public Stoppable scheduleImmediateRepeat(boolean immediatelyAfter, Steppable event)
         {
-//        if (event == null) return null;   // no need to check because scheduleImmediate does already
+		return _scheduleImmediateRepeat(immediatelyAfter, event);
+        }
+        
+	Stoppable _scheduleImmediateRepeat(boolean immediatelyAfter, Steppable event)
+        {
         Repeat r = new Repeat(immediatelyAfter, event);
         if (scheduleImmediate(immediatelyAfter, r)) return r;
         else return null;
         }
-        
+
     /** Schedules an item to occur when the user starts or stops the simulator, or when it stops on its own accord.
         If atEnd is TRUE, then the item is scheduled to occur when the finish() method is executed.  If
         atEnd is FALSE, then the item is scheduled to occur when the start() method is executed.
@@ -572,7 +661,6 @@ public abstract class GUIState
             }
         return true;
         }
-        
         
     /** Schedules an item to occur when the user starts the simulator (when the start() method is executed) or loads one (when load() is executed).  Identical to scheduleAtExtreme(event,false). Returns true if scheduling succeeded. 
      */

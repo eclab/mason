@@ -99,7 +99,7 @@ public class SimpleInspector extends Inspector
                     Properties props = properties;
                     final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
                     final Stoppable stopper = simpleInspector.reviseStopper(
-                        SimpleInspector.this.state.scheduleImmediateRepeat(true,simpleInspector.getUpdateSteppable()));
+                        SimpleInspector.this.state.scheduleRepeatingImmediatelyAfter(simpleInspector.getUpdateSteppable()));
                     SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
                     JFrame frame = simpleInspector.createFrame(stopper);
                     frame.setVisible(true);

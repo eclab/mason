@@ -23,9 +23,7 @@ public class VirusInfectionDemoWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        VirusInfectionDemoWithUI vid = new VirusInfectionDemoWithUI();
-        Console c = new Console(vid);
-        c.setVisible(true);
+        new VirusInfectionDemoWithUI().createController();
         }
 
     public VirusInfectionDemoWithUI() { super(new VirusInfectionDemo( System.currentTimeMillis())); }
