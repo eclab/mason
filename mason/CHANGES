@@ -1668,3 +1668,4 @@ Version 15
 	All generated threads set names for themselves now so you can see them in jvisualvm
 	Added SimpleController, which for some reason I cannot fathom was not in the previous
 		distro.
+	Added FacetedPortrayal

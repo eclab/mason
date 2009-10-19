@@ -72,3 +72,11 @@ TrailPortrayal2D.java
 
 A special wrapper portrayal which draws "trails" following the object
 as it moves around.
+
+
+FacetedPortrayal2D.java
+
+A wrapper portrayal over several other portrayals which uses one or
+the other based on the integer "value" of the underlying object (if 
+the object is a number, the number is used -- or if the object is
+sim.util.Valuable, its value is used).
