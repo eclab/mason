@@ -20,9 +20,7 @@ public class MavDemoWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        MavDemoWithUI mav = new MavDemoWithUI();  // randomizes by currentTimeMillis
-        Console c = new Console(mav);
-        c.setVisible(true);
+        new MavDemoWithUI().createController();  // randomizes by currentTimeMillis
         }
 
     ContinuousPortrayal2D obstaclePortrayal = new ContinuousPortrayal2D();

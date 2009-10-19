@@ -21,9 +21,7 @@ public class MouseTrapsWithUI extends GUIState
         
     public static void main(String[] args)
         {
-        MouseTrapsWithUI sim = new MouseTrapsWithUI();
-        Console c = new Console(sim);
-        c.setVisible(true);
+        new MouseTrapsWithUI().createController();
         }
         
     public MouseTrapsWithUI() { super(new MouseTraps(System.currentTimeMillis())); }

@@ -29,9 +29,7 @@ public class HexaBugsWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        HexaBugsWithUI hexaBugs = new HexaBugsWithUI();
-        Console c = new Console(hexaBugs);
-        c.setVisible(true);
+        new HexaBugsWithUI().createController();
         }
     
     public HexaBugsWithUI() { super(new HexaBugs(System.currentTimeMillis())); }

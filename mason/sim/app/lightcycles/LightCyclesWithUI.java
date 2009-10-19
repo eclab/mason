@@ -26,9 +26,7 @@ public class LightCyclesWithUI extends GUIState
     
     public static void main(String[] args)
         {
-        LightCyclesWithUI cycles = new LightCyclesWithUI();
-        Console c = new Console(cycles);
-        c.setVisible(true);
+        new LightCyclesWithUI().createController();
         }
     
     public LightCyclesWithUI() { super(new LightCycles(System.currentTimeMillis())); }

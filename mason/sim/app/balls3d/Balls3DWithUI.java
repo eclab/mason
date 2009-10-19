@@ -23,9 +23,7 @@ public class Balls3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        Balls3DWithUI vid = new Balls3DWithUI();
-        Console c = new Console(vid);
-        c.setVisible(true);
+        new Balls3DWithUI().createController();
         }
 
     public Balls3DWithUI() { super(new Balls3D( System.currentTimeMillis())); }

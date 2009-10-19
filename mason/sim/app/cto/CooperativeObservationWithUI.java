@@ -21,9 +21,7 @@ public class CooperativeObservationWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        CooperativeObservationWithUI co = new CooperativeObservationWithUI();
-        Console c = new Console(co);
-        c.setVisible(true);
+        new CooperativeObservationWithUI().createController();
         }
 
     public CooperativeObservationWithUI() { super(new CooperativeObservation( System.currentTimeMillis())); }

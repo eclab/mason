@@ -2,7 +2,7 @@ sim
 
 This package holds most of the MASON simulation toolkit.  The exception 
 is MersenneTwister, which is in the 'ec' package to retain compatibility 
-with MASON's sister class, ECJ.
+with MASON's sister toolkit, ECJ.
 
 If you're looking for the top-level README and documentation, look in the
 'mason' directory, which is the parent directory of this one.

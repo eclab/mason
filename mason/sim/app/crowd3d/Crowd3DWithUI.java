@@ -26,10 +26,7 @@ public class Crowd3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        Crowd3DWithUI boids = new Crowd3DWithUI(new CrowdSim(System.currentTimeMillis()));
-
-        Console c = new Console(boids);
-        c.setVisible(true);        
+        new Crowd3DWithUI().createController();
         }
 
     public Crowd3DWithUI()

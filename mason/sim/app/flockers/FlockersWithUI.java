@@ -20,9 +20,7 @@ public class FlockersWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        FlockersWithUI mav = new FlockersWithUI();  // randomizes by currentTimeMillis
-        Console c = new Console(mav);
-        c.setVisible(true);
+        new FlockersWithUI().createController();  // randomizes by currentTimeMillis
         }
 
     public Object getSimulationInspectedObject() { return state; }  // non-volatile

@@ -1582,7 +1582,6 @@ Version 14
 		now to show off the modifications in the various shapes above.
 	Updated Tutorial5 and balls3d to both force collision checks when the balls are
 		being created so the initial screenshot is prettier (has proper colors in it).
-	Reindented
 	Changed calls to cloneNode() into calls to cloneTree() in certain 3D portrayals;
 		cloneNode() is supposedly pseudoprivate.
 	Slightly revised setSelected() procedure for 3D objects.  Still suboptimal though.
@@ -1646,4 +1645,23 @@ Version 15
 	Bug Fixes in heatbugs documentation
 	Added Display2D.removeListeners()
 	Bug fix in documentation: howto.html's description of how to hide the console
-
+	Removed Schedule.setShuffling and Schedule.isShuffling.  These methods were intended
+		to allow you to turn off the automatic shuffling procedure of the Schedule,
+		notionally to allow Steppables to be stepped in the order in which they
+		were submitted to the Schedule.  But that doesn't happen because a binary
+		heap isn't stable and Schedule is based on binary heaps.  To make sure people
+		don't produce results accidentally with that expectation, we've entirely
+		removed the methods rather than deprecate them or create warnings.
+	Changed GUIState.addImmediately to GUIState.addImmediatelyBefore and 
+		GUIState.addImmediatelyAfter, deprecating the original.
+	Added GUIState.createController(), which encapsulates the process of making a
+		controller (typically a console) and making it visible and ready for the
+		user.  This simplifies the code used in main() of GUIState subclasses
+		and also allows non-Console applications (perhaps SimpleController ones)
+		to be set up via the Console's New Simulation menu.  Generally speaking this
+		change is backward-compatible -- if you want to use the old way it should
+		work without any issues.
+	Modified all standard demo applications and tutorials to use createController(), and
+		modified Console and SimApplet to call createController() instead.
+	Added Utilities.iFloor, iCeil, and iRound.  Faster than Math.floor, ceil, and round,
+		but I don't trust them yet so we don't use them in any core code.  Cave Emptor.

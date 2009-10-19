@@ -21,9 +21,7 @@ public class LSystemWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        LSystemWithUI lsystem = new LSystemWithUI();
-        c = new Console(lsystem);
-        c.setVisible(true);
+        new LSystemWithUI().createController();
         }
     
     public LSystemWithUI() { super(new LSystem(System.currentTimeMillis())); }

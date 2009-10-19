@@ -20,9 +20,7 @@ public class KeepawayWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        KeepawayWithUI botball = new KeepawayWithUI();
-        Console c = new Console(botball);
-        c.setVisible(true);
+		new KeepawayWithUI().createController();
         }
     
     public KeepawayWithUI() { super(new Keepaway(System.currentTimeMillis())); }

@@ -35,9 +35,7 @@ public class HeatBugsWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        HeatBugsWithUI heatbugs = new HeatBugsWithUI();
-        Console c = new Console(heatbugs);
-        c.setVisible(true);
+        new HeatBugsWithUI().createController();
         }
     
     public HeatBugsWithUI() { super(new HeatBugs(System.currentTimeMillis())); }

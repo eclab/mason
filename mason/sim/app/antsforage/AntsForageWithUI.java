@@ -25,9 +25,7 @@ public class AntsForageWithUI extends GUIState
                 
     public static void main(String[] args)
         {
-        AntsForageWithUI antsForage = new AntsForageWithUI();
-        Console c = new Console(antsForage);
-        c.setVisible(true);
+        new AntsForageWithUI().createController();
         }
     
     public AntsForageWithUI() { super(new AntsForage(System.currentTimeMillis())); }
