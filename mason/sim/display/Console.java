@@ -974,8 +974,7 @@ public class Console extends JFrame implements Controller
         //////// Prepare the simulation
         
         // add me to the console list
-        allConsoles.put(this,this);
-        numConsoles++;
+        allControllers.put(this,this);
         
         // Fire up the simulation displays
         simulation.init(this);
@@ -1362,7 +1361,7 @@ public class Console extends JFrame implements Controller
     final static Object isQuittingLock = new Object();
     
     /** Quits the program.  Called by the Quit menu option. */
-    public void doQuit()
+    public static void doQuit()
         {
         synchronized(isQuittingLock)  // quitting causes closing, which in turn causes quitting...
             {
@@ -1370,10 +1369,12 @@ public class Console extends JFrame implements Controller
             else isQuitting = true;
         
             // close all consoles.  We dump into an array because they'll try to remove themselves
-            Object[] entries = allConsoles.entrySet().toArray();
+            Object[] entries = allControllers.entrySet().toArray();
             for(int x=0;x<entries.length;x++)
-                if (entries[x] != null)  // might occur if weak?  dunno
+                if (entries[x] != null && entries[x] instanceof Console)  // might occur if weak?  dunno
                     ((Console)(((Map.Entry)(entries[x])).getKey())).doClose();
+                else if (entries[x] != null && entries[x] instanceof SimpleController)  // might occur if weak?  dunno
+                    ((SimpleController)(((Map.Entry)(entries[x])).getKey())).doClose();
 
             if(!(SimApplet.isApplet))
                 try { System.exit(0); } catch (Exception e) { }
@@ -1384,10 +1385,8 @@ public class Console extends JFrame implements Controller
     // This stuff allows us to fire up multiple consoles (multiple simulations) in the same process,
     // but when we close one of them, it doesn't quit everything. 
     
-    /** A weak container for all current consoles. */
-    static WeakHashMap allConsoles = new WeakHashMap();
-    /** A reference count of open (unclosed) Consoles.  When this reaches 0, the program ends. */
-    static int numConsoles;
+    /** A weak container for all current consoles and other controllers which wish to be there. */
+    public static WeakHashMap allControllers = new WeakHashMap();
     /** Private internal flag which indicates if the program is already in the process of quitting. */    
     boolean isClosing = false;
     /** Private lock used by doClose() to avoid synchronizing on Console. */
@@ -1406,8 +1405,8 @@ public class Console extends JFrame implements Controller
         pressStop();  // stop threads
         simulation.quit();  // clean up simulation
         dispose();
-        allConsoles.remove(this);
-        if (--numConsoles <= 0)  // try to quit if we're all gone
+        allControllers.remove(this);
+        if (allControllers.size() == 0)  // try to quit if we're all gone
             doQuit();
         }
 
@@ -1415,6 +1414,14 @@ public class Console extends JFrame implements Controller
     /** Pops up a window allowing the user to enter in a class name to start a new simulation. */
     public static void main(String[] args)
         {
+		startUI();
+        }
+
+	/** This is the code called by main(...).  It's not in main(...) so we can call it separately
+		in certain rare circumstances. It brings forth then doNew(...) panel with a little cleanup
+		here and there. */
+	public static void startUI()
+		{
         // this line is to fix a stupidity in MacOS X 1.3.1, where if Display2D isn't loaded before
         // windows are created (so its static { } can be executed before the graphics subsystem
         // fires up) the underlying graphics subsystem is messed up.  Apple's fixed this in 1.4.1.
@@ -1422,7 +1429,8 @@ public class Console extends JFrame implements Controller
                 
         // Okay here we go with the real code.
         if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
-        }
+		}
+		
     
     /** Pops up the about box */
     static JFrame aboutFrame = null;

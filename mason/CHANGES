@@ -1669,3 +1669,7 @@ Version 15
 	Added SimpleController, which for some reason I cannot fathom was not in the previous
 		distro.
 	Added FacetedPortrayal
+	Console.doQuit is now static, and Controllers of all types are allowed in the
+		allConsoles object, now public, and now renamed allControllers
+	SimpleController properly registers itself with Console in the allControllers list
+		and quits when doClose is called

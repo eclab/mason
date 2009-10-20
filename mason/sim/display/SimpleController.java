@@ -88,6 +88,9 @@ public class SimpleController implements Controller
 
         // Fire up the simulation displays
         simulation.init(this);
+		
+		// Add us to the Console's Controllers list
+		Console.allControllers.put(this,this);
         }
 
 
@@ -193,6 +196,8 @@ public class SimpleController implements Controller
         {
         pressStop();  // stop threads
         simulation.quit();  // clean up simulation
+		Console.allControllers.remove(this);  // remove us from the Console's controllers list
+		if (Console.allControllers.size() == 0)  Console.doQuit();  // we run doQuit on the console to quit gracefully, as it maintains all the controller lists
         }
     
     
@@ -681,5 +686,11 @@ public class SimpleController implements Controller
             }
         }
 
-    }
+ 	public static void startUI()
+		{
+		// we just use the Console
+		Console.startUI();
+		}
+
+   }
 
