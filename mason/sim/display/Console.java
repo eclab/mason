@@ -1414,14 +1414,6 @@ public class Console extends JFrame implements Controller
     /** Pops up a window allowing the user to enter in a class name to start a new simulation. */
     public static void main(String[] args)
         {
-		startUI();
-        }
-
-	/** This is the code called by main(...).  It's not in main(...) so we can call it separately
-		in certain rare circumstances. It brings forth then doNew(...) panel with a little cleanup
-		here and there. */
-	public static void startUI()
-		{
         // this line is to fix a stupidity in MacOS X 1.3.1, where if Display2D isn't loaded before
         // windows are created (so its static { } can be executed before the graphics subsystem
         // fires up) the underlying graphics subsystem is messed up.  Apple's fixed this in 1.4.1.
@@ -1429,8 +1421,7 @@ public class Console extends JFrame implements Controller
                 
         // Okay here we go with the real code.
         if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
-		}
-		
+        }		
     
     /** Pops up the about box */
     static JFrame aboutFrame = null;
@@ -1721,11 +1712,13 @@ public class Console extends JFrame implements Controller
             p.add(pane,BorderLayout.WEST);
             p.add(fieldp, BorderLayout.SOUTH);
                         
-            int reply = showOptionDialog(null,p, "New Simulation", new Object[] {"Select", 
+            int reply = showOptionDialog(null, p, "New Simulation", new Object[] {"Select", 
                                                                                  startingUp ? "Quit" : "Cancel"}, true);
             if (reply == 1)  // not -1 -- caused by disposing the window, and not 0 -- caused by "Select"
-                return false;
-                                
+                {
+				return false;
+                }
+				                
             String className = field.getText(); // (String)cb.getEditor().getItem();
             try
                 {

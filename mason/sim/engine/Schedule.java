@@ -191,6 +191,18 @@ public class Schedule implements java.io.Serializable
             }
         }
 
+    /** Empties out the schedule but does not reset the time or steps.  If you're
+        looking for a way to kill your simulation from a Steppable, use SimState.kill() instead.  Note that
+		any agents presently at THIS TIME STEP will STILL be stepped -- including possibly reinserting themselves
+		in the schedule.  */
+    public void clear()
+        {
+        synchronized(lock)
+            {
+            queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
+            }
+        }
+
     /** Empties out the schedule and resets it to a pristine state BEFORE_SIMULATION, with steps = 0.  If you're
         looking for a way to kill your simulation from a Steppable, use SimState.kill() instead.  */
     public void reset()
@@ -553,6 +565,7 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
+		if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         Schedule.Key k = new Schedule.Key(time,ordering);
         Repeat r = new Repeat(event,interval,k);
 

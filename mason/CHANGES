@@ -1673,3 +1673,5 @@ Version 15
 		allConsoles object, now public, and now renamed allControllers
 	SimpleController properly registers itself with Console in the allControllers list
 		and quits when doClose is called
+	Schedule now checks for incorrect intervals in scheduleRepeating
+	Added Schedule.clear()

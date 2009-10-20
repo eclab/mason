@@ -686,10 +686,10 @@ public class SimpleController implements Controller
             }
         }
 
- 	public static void startUI()
+	/** Calls forth the "New Simulation" window. */
+ 	public boolean doNew()
 		{
-		// we just use the Console
-		Console.startUI();
+		return Console.doNew(null, false);
 		}
 
    }
