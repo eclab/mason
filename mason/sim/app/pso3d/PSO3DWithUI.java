@@ -28,7 +28,7 @@ public class PSO3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        PSO3DWithUI pso = new PSO3DWithUI().createController(); 
+        new PSO3DWithUI().createController(); 
         }
 
     public Object getSimulationInspectedObject() { return state; }

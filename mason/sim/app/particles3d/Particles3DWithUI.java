@@ -25,7 +25,7 @@ public class Particles3DWithUI extends GUIState
 
     public static void main(String[] args)
         {
-        Particles3DWithUI t = new Particles3DWithUI().createController();
+        new Particles3DWithUI().createController();
         }
     
     public Particles3DWithUI() { super(new Particles3D(System.currentTimeMillis())); }
