@@ -7,6 +7,7 @@
 package sim.portrayal.simple;
 import sim.portrayal.*;
 import java.awt.*;
+import javax.swing.*;
 
 /**
    A simple portrayal for 2D visualization of images. It extends the SimplePortrayal2D and
@@ -34,6 +35,20 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
     
     java.awt.geom.AffineTransform preciseTransform = new java.awt.geom.AffineTransform();
     
+	/** Creates an Image by loading the given resource using getClass().getResource() */
+	public ImagePortrayal2D(Class c, String resourceName, double scale)
+		{
+		super(null, scale);  // don't bother with color
+		this.image = new ImageIcon(c.getResource(resourceName)).getImage();
+		this.scale = scale;
+		}
+
+	/** Creates an Image by loading the given resource using getClass().getResource() */
+	public ImagePortrayal2D(Class c, String resourceName)
+		{
+		this(c, resourceName, 1.0);
+		}
+
     public ImagePortrayal2D(Image image)  { this(image,1.0); }
     public ImagePortrayal2D(Image image, double scale)  
         { 
@@ -41,7 +56,7 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
         this.image = image;
         this.scale = scale;
         }
-        
+	
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {

@@ -153,6 +153,9 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
     // our object to pass to the portrayal
     final MutableDouble valueToPass = new MutableDouble(0);
+
+    // our location to pass to the portrayal
+    final MutableInt2D locationToPass = new MutableInt2D(0,0);
         
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
@@ -188,6 +191,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
         // the drawinfo that the object's portrayal will use -- we fill in the blanks later
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
+		newinfo.location = locationToPass;
 
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal2D))
@@ -214,6 +218,9 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
                 // adjust drawX and drawY to center
                 newinfo.draw.x += newinfo.draw.width / 2.0;
                 newinfo.draw.y += newinfo.draw.height / 2.0;
+
+				locationToPass.x = x;
+				locationToPass.y = y;
                 
                 if (graphics == null)
                     {

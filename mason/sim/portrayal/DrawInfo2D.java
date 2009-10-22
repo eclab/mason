@@ -38,6 +38,11 @@ import java.awt.geom.*;
    <p>The <i>precise</i> flag hints to the underlying portrayals that the drawing should be
    done precisely rather than rapidly: this is primarily for generating PDF images.  It may
    be ignored.
+
+   <p>The <i>location</i> object <i>may</i> store the location of the item in the outer Field.
+   Fields are free to not store anything here if they see fit.  Further, this
+   object may not be the actual kind of object used to store the location (for example,
+   it might be a MutableDouble2D, even though the object is associated with a Double2D). 
 */
 
 public class DrawInfo2D
@@ -45,6 +50,7 @@ public class DrawInfo2D
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
     public boolean precise;
+	public Object location;
     
     public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
         {
@@ -93,7 +99,7 @@ public class DrawInfo2D
         return false;
         }
         
-    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + "]"; }
+    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + "]"; }
     }
     
     
