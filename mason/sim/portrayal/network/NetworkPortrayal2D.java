@@ -13,7 +13,10 @@ import java.awt.*;
 import java.awt.geom.*;
 
 /**
-   Portrays network fields.   Only draws the edges.  To draw the nodes, use a ContinuousPortrayal2D or SparseGridPortrayal2D.
+   Portrays network fields.   Only draws the edges.  To draw the nodes, use a 
+   ContinuousPortrayal2D or SparseGridPortrayal2D.  The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is the Edge itself,
+   while the 'object' passed to the SimplePortryal2D is the Edge's info object. 
 */
 
 public class NetworkPortrayal2D extends FieldPortrayal2D
@@ -106,6 +109,8 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                                 edge + " -- expected a SimpleEdgePortrayal2D");
                         SimpleEdgePortrayal2D portrayal = (SimpleEdgePortrayal2D) p;
                     
+						newinfo.location = edge;
+
                         if (graphics == null)
                             {
                             if (portrayal.hitObject(edge, newinfo))

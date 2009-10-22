@@ -18,6 +18,9 @@ import sim.util.*;
    <p>By default this portrayal describes objects as gray ovals (that's what getDefaultPortrayal() returns)
    and null values as empty regions (that's what getDefaultNullPortrayal() returns).  You may wish to override this
    for your own purposes.
+
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is a MutableInt2D.
 */
 
 public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
@@ -184,6 +187,8 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
 
+		newinfo.location = locationToPass;
+
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
         if (endx > maxX) endx = maxX;
@@ -227,6 +232,9 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
                 newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
             
+				locationToPass.x = x;
+				locationToPass.y = y;
+                
                 if (graphics == null)
                     {
                     if (portrayal.hitObject(obj, newinfo))

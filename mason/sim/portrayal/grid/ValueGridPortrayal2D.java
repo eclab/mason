@@ -41,6 +41,10 @@ import sim.util.gui.*;
    <p>You can also provide your own custom SimplePortrayal2D (use setPortrayalForAll(...) ) to draw elements as you
    see fit rather than as rectangles.  Your SimplePortrayal2D should expect objects passed to its draw method
    to be of type MutableDouble.  Do not hold onto this array -- it will be reused.
+   
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is a MutableInt2D.
+
 */
 
 public class ValueGridPortrayal2D extends FieldPortrayal2D
@@ -152,10 +156,10 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         }
 
     // our object to pass to the portrayal
-    final MutableDouble valueToPass = new MutableDouble(0);
+    protected final MutableDouble valueToPass = new MutableDouble(0);
 
     // our location to pass to the portrayal
-    final MutableInt2D locationToPass = new MutableInt2D(0,0);
+    protected final MutableInt2D locationToPass = new MutableInt2D(0,0);
         
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {

@@ -18,6 +18,9 @@ import sim.portrayal.inspector.*;
    Portrays Continuous2D fields.  When asked to portray objects, this field computes the buckets
    covered by the requested region, then includes an additional boundary of two buckets in each
    direction just in case objects leak over the boundary region.
+   
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is a Double2D.
 */
 
 public class ContinuousPortrayal2D extends FieldPortrayal2D
@@ -133,6 +136,8 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                 
                 newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
                 newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
+
+				newinfo.location = loc;
 
                 final Object portrayedObject = objects.objs[x];
                 if (graphics == null)

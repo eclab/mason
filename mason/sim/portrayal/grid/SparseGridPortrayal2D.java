@@ -16,7 +16,10 @@ import java.awt.geom.*;
 import sim.portrayal.inspector.*;
 
 /**
-   Can be used to draw both continuous and discrete sparse fields
+   Can be used to draw both continuous and discrete sparse fields.
+
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is an Int2D.
 */
 
 public class SparseGridPortrayal2D extends FieldPortrayal2D
@@ -169,6 +172,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         // adjust drawX and drawY to center
                         newinfo.draw.x += newinfo.draw.width / 2.0;
                         newinfo.draw.y += newinfo.draw.height / 2.0;
+
+						newinfo.location = loc;
 
                         if (objectSelected &&  // there's something there
                             selectedWrappers.get(portrayedObject) != null)

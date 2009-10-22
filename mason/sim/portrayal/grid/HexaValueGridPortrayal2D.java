@@ -130,7 +130,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
 
 
     // our object to pass to the portrayal
-    final MutableDouble valueToPass = new MutableDouble(0);
+    //final MutableDouble valueToPass = new MutableDouble(0);
 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {

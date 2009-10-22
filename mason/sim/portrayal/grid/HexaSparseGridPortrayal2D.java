@@ -16,6 +16,9 @@ import java.awt.geom.*;
 /**
    Portrayal for hexagonal grids (each cell has six equally-distanced neighbors). It can draw
    either continuous and descrete sparse fields.
+
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is an Int2D.
 */
 
 public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
@@ -249,6 +252,8 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
                         newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
                         
+						newinfo.location = loc;
+
                         if (graphics == null)
                             {
                             if (portrayal.hitObject(portrayedObject, newinfo))

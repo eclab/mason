@@ -19,6 +19,9 @@ import java.util.*;
    <p>By default this portrayal describes objects as gray ovals (that's what getDefaultPortrayal() returns)
    and null values as empty regions (that's what getDefaultNullPortrayal() returns).  You may wish to override this
    for your own purposes.
+
+   The 'location' passed
+   into the DrawInfo2D handed to the SimplePortryal2D is a MutableInt2D.
 */
 
 public class ObjectGridPortrayal2D extends FieldPortrayal2D
@@ -119,6 +122,9 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
 
 
+    // our location to pass to the portrayal
+    protected final MutableInt2D locationToPass = new MutableInt2D(0,0);
+        
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final ObjectGrid2D field = (ObjectGrid2D)(this.field);
@@ -147,8 +153,8 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
-            info.clip);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+		newinfo.location = locationToPass;
 
         if (endx > maxX) endx = maxX;
         if (endy > maxY) endy = maxY;
@@ -173,6 +179,9 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                 // adjust drawX and drawY to center
                 newinfo.draw.x += newinfo.draw.width / 2.0;
                 newinfo.draw.y += newinfo.draw.height / 2.0;
+                
+				locationToPass.x = x;
+				locationToPass.y = y;
                 
                 if (graphics == null)
                     {

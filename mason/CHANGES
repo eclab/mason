@@ -1675,3 +1675,10 @@ Version 15
 		and quits when doClose is called
 	Schedule now checks for incorrect intervals in scheduleRepeating
 	Added Schedule.clear()
+	Addition to DrawInfo2D which now includes the location of the object, in case
+		SimplePortrayal2Ds need this information in order to draw the object in
+		context properly.  The particular class used to describe the location differs
+		from FieldPortrayal to FieldPortrayal: in NetworkPortrayal2D it's the Edge,
+		in ContinuousPortrayal2D it's a Double2D, in SparsePortrayal2D and
+		HexaSparsePortrayal2D it's an Int2D, and all other relevant Field Portrayals
+		use a MutableInt2D.
