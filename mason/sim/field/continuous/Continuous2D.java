@@ -85,8 +85,8 @@ import java.util.*;
    
    <p><b>Warning about getObjectsAtLocation() and numObjectsAtLocation()</b>  
    Because this class uses its superclass (the SparseField) to store the <i>discretized region</i>,
-   getObjectsAtLocation(...) and numObjectsAtLocation(...) will not work as you might expect.  The Sparse
-   Field is storing Int2Ds (the discretized grid locations), not Double2Ds.  While you could get all the
+   getObjectsAtLocation(...) and numObjectsAtLocation(...) will not work as you might expect.  The Continuous2D
+   is storing Int2Ds (the discretized grid locations), not Double2Ds.  While you could get all the
    objects in the same discretization cell as a given Double2D location with
    getObjectsAtLocation(discretize(theDouble2D)), almost certainly you're going to retain sanity better
    by using the neighborhood functions (getObjectsWithinDistance(...)).  

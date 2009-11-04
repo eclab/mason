@@ -149,7 +149,7 @@ public final class Double2D implements java.io.Serializable
         else return false;
         }
         
-    /** Returns the distance FROM this Double2D TO the specified point */
+   /** Returns the distance FROM this Double2D TO the specified point */
     public double distance(final double x, final double y)
         {
         final double dx = (double)this.x - x;
@@ -229,4 +229,153 @@ public final class Double2D implements java.io.Serializable
         return (dx*dx+dy*dy);
         }
 
-    }
+     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final double x, final double y)
+        {
+        final double dx = Math.abs((double)this.x - x);
+        final double dy = Math.abs((double)this.y - y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final Double2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final Int2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final MutableDouble2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final MutableInt2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+	/** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    public double manhattanDistance(final java.awt.geom.Point2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.getX());
+        final double dy = Math.abs((double)this.y - p.getY());
+        return dx + dy;
+        }
+
+    public final Double2D add(Double2D other)
+        {
+        return new Double2D(x + other.x, y + other.y);
+        }
+
+    /** Subtracts Double2D "other" from current Double2D using 
+     * vector subtraction */
+    public final Double2D subtract(Double2D other)
+        {
+        return new Double2D(x - other.x, y - other.y);
+        }
+        
+    /** Returns the vector length of the Double2D */
+    public final double length()
+        {
+        return Math.sqrt(x * x + y * y);
+        }
+        
+    /** Returns the vector length of the Double2D */
+    public final double lengthSq()
+        {
+        return x*x+y*y;
+        }
+        
+    /** Multiplies each element by scalar "val" */
+    public final Double2D multiply(double val)
+        {
+        return new Double2D(x * val, y * val);
+        }
+
+    /** Scales the vector to length "dist" */
+    public final Double2D resize(double dist)
+        {
+        if(dist == 0)
+            return new Double2D(0, 0);
+        if(x == 0 && y == 0)
+            return new Double2D(0, 0);
+
+        double temp = length();
+        return new Double2D(x * dist / temp, y * dist / temp);
+        }
+
+    /** Normalizes the vector (sets it length to 1) */
+    static final double infinity = 1.0 / 0.0;
+    public final Double2D normalize()
+        {
+/*
+        double len = length();
+        return new Double2D(x / len, y / len);
+*/
+        final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
+        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
+            throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
+        return new Double2D(x * invertedlen,  y * invertedlen);
+        } 
+
+    /** Takes the dot product this Double2D with another */
+    public final double dot(Double2D other)
+        {
+        return other.x * x + other.y * y;
+        }
+
+    /** 2D version of the cross product. Rotates current
+     * Vector2D 90 degrees and takes the dot product of 
+     * the result and Double2D "other" */
+    public double perpDot(Double2D other)
+        {
+        // this is the equivalent of multiplying by a 2x2 rotation
+        // matrix since cos(90) = 0 and sin(90) = 1
+        /*
+		Double2D rotated90 = new Double2D(-this.y, this.x);
+        return rotated90.dotProduct(other);
+		*/
+        return (-this.y) * other.x + this.x * other.y;		
+        }
+
+    /** Returns the negation of this Double2D. */
+    public final Double2D negate()
+	    {
+        return new Double2D(-x, -y);
+        }
+
+    /** Rotates the Double2D by theta radians */
+    public final Double2D rotate(double theta)
+        {
+        /*
+		// Do the equivalent of multiplying by a 2D rotation
+        // matrix without the overhead of converting the Double2D into
+        // a matrix
+        double sinTheta = Math.sin(theta);
+        double cosTheta = Math.cos(theta);
+                
+        return new Double2D(cosTheta * this.x + -sinTheta * this.y, sinTheta * this.x + cosTheta * this.y);
+		*/
+
+        final double sinTheta = Math.sin(theta);
+        final double cosTheta = Math.cos(theta);
+        final double x = this.x;
+        final double y = this.y;
+        return new Double2D(cosTheta * x + -sinTheta * y, sinTheta * x + cosTheta * y);
+        }
+	}

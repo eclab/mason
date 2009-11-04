@@ -1682,3 +1682,12 @@ Version 15
 		in ContinuousPortrayal2D it's a Double2D, in SparsePortrayal2D and
 		HexaSparsePortrayal2D it's an Int2D, and all other relevant Field Portrayals
 		use a MutableInt2D.
+	Added warning in the movie maker about JMF's writing bad format string info out.
+	Added manhattan distance to [Mutable]Double[2|3]D
+	setToMinus, negate, and zero in MutableDouble[2|3]D now all return this
+	Added various methods to Double2D, some borrowed from MutableDouble2D, others
+		borrowed from physics.util.Double2D
+	Added the ability for Display3D to select only one element or to select ALL of them,
+		and similarly for inspection.
+	Added Network.nodeExists(...)
+	Added new demo, Celegans

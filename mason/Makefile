@@ -66,6 +66,7 @@ sim/app/particles3d/*.java \
 sim/app/pso3d/*.java \
 sim/app/tutorial6/*.java \
 sim/app/tutorial7/*.java \
+sim/app/celegans/*.java \
 sim/portrayal3d/*.java \
 sim/portrayal3d/simple/*.java \
 sim/portrayal3d/grid/*.java \

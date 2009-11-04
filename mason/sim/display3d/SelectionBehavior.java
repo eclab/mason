@@ -42,6 +42,8 @@ public class SelectionBehavior extends MouseBehavior
     GUIState guiState = null;
     PickCanvas pickCanvas;
     BranchGroup r;
+	boolean oneClick = true;
+	boolean twoClicks = true;
     
     public void setTolerance(float tolerance) { pickCanvas.setTolerance(tolerance); }
     
@@ -64,6 +66,13 @@ public class SelectionBehavior extends MouseBehavior
         this.guiState = guiState;
         }
 
+	/** Sets whether mouse-clicking results in selecting all picked elements (true) or just the closest one (false).
+		This can be done independently of selection and inspection. */
+	public void setSelectsAll(boolean selection, boolean inspection)
+		{
+		oneClick = selection; twoClicks = inspection;
+		}
+
     public void processStimulus (Enumeration criteria) 
         {
         // do nothing -- we'll do it in mouseClicked
@@ -82,11 +91,20 @@ public class SelectionBehavior extends MouseBehavior
         Shape3D shape = null;
         pickCanvas.setShapeLocation(xpos, ypos);
         
-        Point3d eyePos = pickCanvas.getStartPosition ();
+        Point3d eyePos = pickCanvas.getStartPosition();
 
         try
             {
-            pickResults = pickCanvas.pickAll();
+			if (numClicks == 1 && !oneClick)	// only need one for selection
+				{
+				PickResult p = pickCanvas.pickClosest();
+				if (p != null) pickResults = new PickResult[] { p };
+				else pickResults = new PickResult[0];
+				}
+			else if (numClicks > 1 && !oneClick)  // still need only one for selection, but maybe more for inspection
+				pickResults = pickCanvas.pickAllSorted();
+			else
+				pickResults = pickCanvas.pickAllSorted();  // meh, let's still sort nicely for the inspector window
             }
         catch (javax.media.j3d.CapabilityNotSetException e)
             {
@@ -156,18 +174,21 @@ public class SelectionBehavior extends MouseBehavior
                         
                         if (numClicks >= 1)
                             {
-                            uniqueWrappers.add(filledLW);
+                            if (oneClick || uniqueWrappers.size() == 0) uniqueWrappers.add(filledLW);	 // add more only if the user asked for more than one
                             }
                             
                         if (numClicks >= 2)
                             {
-                            inspectors.add(fPortrayal.getInspector(filledLW, guiState));
-                            //
-                            // FieldPortrayal[3D] should declare abstract method getWrapper(obj).
-                            // here i can retrieve it from pinfo.portrayal.
-                            //
-                            inspectorPortrayals.add(fPortrayal);
-                            names.add(fPortrayal.getName(filledLW));
+							if (twoClicks || inspectors.size() == 0) 	 // add more only if the user asked for more than one
+								{
+								inspectors.add(fPortrayal.getInspector(filledLW, guiState));
+								//
+								// FieldPortrayal[3D] should declare abstract method getWrapper(obj).
+								// here i can retrieve it from pinfo.portrayal.
+								//
+								inspectorPortrayals.add(fPortrayal);
+								names.add(fPortrayal.getName(filledLW));
+								}
                             }
                         }
                     }

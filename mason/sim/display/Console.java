@@ -346,7 +346,23 @@ public class Console extends JFrame implements Controller
         //////// create the "Displays" tab pane
 
         frameList = new Vector();
-        frameListDisplay = new JList(frameList);
+		frameListDisplay = new JList(frameList);
+		
+		frameListDisplay.addMouseListener(new MouseAdapter()
+			{
+			public void mouseClicked(MouseEvent e)
+				{
+				if (e.getClickCount() == 2)
+					{
+					int index = frameListDisplay.locationToIndex(e.getPoint());
+					JFrame frame = (JFrame)(frameListDisplay.getModel().getElementAt(index));
+					/* list.ensureIndexIsVisible(index); */
+					frame.setVisible(!frame.isVisible());
+					frameListDisplay.repaint();
+					}
+				}
+			});
+		
         frameListDisplay.setCellRenderer(new ListCellRenderer()
             {
             // this ListCellRenderer will show the frame titles in black if they're

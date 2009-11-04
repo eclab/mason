@@ -31,7 +31,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
     public void setField(Object field)
         {
         if (field instanceof SpatialNetwork3D ) this.field = (SpatialNetwork3D) field;
-        else throw new RuntimeException("Invalid field for FieldPortrayal3D: " + field);
+        else throw new RuntimeException("Invalid field for FieldPortrayal3D: " + field + ".  You probably wanted a SpatialNetwork3D.");
         }
 
     public Object getField() { return field; } 

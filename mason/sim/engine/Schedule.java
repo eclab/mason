@@ -56,8 +56,8 @@ import ec.util.*;
    given timestamp have completed, and so orderings give you a way of subdividing the interval of time between
    GUI updates.
    
-   <p>You can clear out the entire Schedule by calling reset(), including about-to-be executed Steppables in the
-   current timestep.  However, this does not prevent AsynchronousSteppables from suddenly rescheduling themselves
+   <p>You can clear out the entire Schedule by calling reset().
+   However, this does not prevent AsynchronousSteppables from suddenly rescheduling themselves
    in the queue.  Stopping the simulation from within a Steppable object's step() method is best done by
    calling SimState.kill().  From the main thread, the most straightforward way to stop a simulation is to just
    stop calling schedule.step(...), and proceed directly to SimState.finish().
@@ -646,7 +646,7 @@ class Repeat implements Steppable, Stoppable
                 {
                 // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
                 key.time += interval;
-                state.schedule.scheduleOnce(key,this);
+                if (key.time < Schedule.AFTER_SIMULATION) state.schedule.scheduleOnce(key,this);
                 }
             catch (IllegalArgumentException e) { } // occurs if time has run out
             step.step(state);

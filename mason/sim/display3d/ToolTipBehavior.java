@@ -179,7 +179,7 @@ public class ToolTipBehavior extends PickMouseBehavior
             return;
         // it's too soon for tooltips, the model is not ready yet.
 
-        pickResults = pickCanvas.pickAll();
+        pickResults = pickCanvas.pickAllSorted();
         if (pickResults == null)
             return;
 

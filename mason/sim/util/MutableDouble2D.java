@@ -253,6 +253,54 @@ public final class MutableDouble2D implements java.io.Serializable
         return (dx*dx+dy*dy);
         }
 
+     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final double x, final double y)
+        {
+        final double dx = Math.abs((double)this.x - x);
+        final double dy = Math.abs((double)this.y - y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final Double2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final Int2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final MutableDouble2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final MutableInt2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+        return dx + dy;
+        }
+
+	/** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    public double manhattanDistance(final java.awt.geom.Point2D p)
+        {
+        final double dx = Math.abs((double)this.x - p.getX());
+        final double dy = Math.abs((double)this.y - p.getY());
+        return dx + dy;
+        }
+
     /** Adds other into me, returning me. */
     public final MutableDouble2D addIn(final Double2D other)
         {
@@ -356,8 +404,13 @@ public final class MutableDouble2D implements java.io.Serializable
         return this;
         } 
                 
+    /** Sets my length, which should be >= 0.
+	@deprecated use resize instead [renaming]
+	*/
+    public final MutableDouble2D setLength(double val) { return resize(val); }
+	
     /** Sets my length, which should be >= 0. */
-    public final MutableDouble2D setLength(double val)
+    public final MutableDouble2D resize(double val)
         {
         if (val < 0) 
             throw new IllegalArgumentException("The argument to MutableDouble2D.setLength(...) must be zero or positive");
@@ -402,25 +455,28 @@ public final class MutableDouble2D implements java.io.Serializable
         return (-this.y) * other.x + this.x * other.y;
         }
         
-    /** Sets the values to 0. */
-    public final void zero()                                                                        
+    /** Sets the values to 0 and returns it. */
+    public final MutableDouble2D zero()                                                                        
         {
         this.x = 0; 
         this.y = 0;
+		return this;
         }
 
     /** Sets the values to the negation of the values in the provided MutableDouble2D */
-    public final void setToMinus(final MutableDouble2D b)           
+    public final MutableDouble2D setToMinus(final MutableDouble2D b)           
         {
         x = -b.x; 
         y = -b.y;
+		return this;
         }
                 
-    /** Negates the MutableDouble2D's values */
-    public final void negate()                                                             
+    /** Negates the MutableDouble2D's values and returns it. */
+    public final MutableDouble2D negate()                                                             
         {
         x = -x; 
         y = -y;
+		return this;
         }
         
     /** Returns the square of the length of the MutableDouble2D. */

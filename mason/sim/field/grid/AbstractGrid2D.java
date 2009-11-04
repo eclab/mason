@@ -121,7 +121,7 @@ public abstract class AbstractGrid2D implements Grid2D
     public boolean trb(final int x, final int y) { return ((x + y) & 1) == 1; }
     
     public boolean trt(final int x, final int y) { return ((x + y) & 1) == 0; }
-
+	
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         // won't work for negative distances

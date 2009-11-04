@@ -291,6 +291,51 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         }
 
 
+     /** Returns the manhtattan distance FROM this MutableDouble3D TO the specified point */
+    public double manhattanDistance(final double x, final double y, final double z)
+        {
+        final double dx = Math.abs((double)this.x - x);
+        final double dy = Math.abs((double)this.y - y);
+        final double dz = Math.abs((double)this.z - z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this MutableDouble3D TO the specified point */
+    public double manhattanDistance(final Double3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this MutableDouble3D TO the specified point */
+    public double manhattanDistance(final Int3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this MutableDouble3D TO the specified point */
+    public double manhattanDistance(final MutableDouble3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this MutableDouble3D TO the specified point */
+    public double manhattanDistance(final MutableInt3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
     /** Adds other into me, returning me. */
     public final MutableDouble3D addIn(final Double3D other)
         {
@@ -398,8 +443,13 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         return this;
         }
                 
+    /** Sets my length, which should be >= 0.
+	@deprecated use resize instead [renaming]
+	*/
+    public final MutableDouble3D setLength(double val) { return resize(val); }
+	
     /** Sets my length, which should be >= 0. */
-    public final MutableDouble3D setLength(double val)
+    public final MutableDouble3D resize(double val)
         {
         if (val < 0)
             throw new IllegalArgumentException("The argument to MutableDouble3D.setLength(...) must be zero or positive");
@@ -424,30 +474,33 @@ public final class MutableDouble3D implements java.io.Serializable, Cloneable
         }
 
     /** Sets the values to 0. */
-    public final void zero()                                                                        
+    public final MutableDouble3D zero()                                                                        
         {
         this.x = 0; 
         this.y = 0;
         this.z = 0;
-        }
+ 		return this;
+       }
                 
-    /** Sets the values to the negation of the values in the provided MutableDouble2D */
-    public final void setToMinus(final MutableDouble3D b)          
+    /** Sets the values to the negation of the values in the provided MutableDouble3D */
+    public final MutableDouble3D setToMinus(final MutableDouble3D b)          
         {
         x = -b.x; 
         y = -b.y;
         z = -b.z;
+		return this;
         }
                 
-    /** Negates the MutableDouble2D's values */
-    public final void negate()                                                        
+    /** Negates the MutableDouble3D's values */
+    public final MutableDouble3D negate()                                                        
         {
         x = -x;
         y = -y;
         z = -z;
+		return this;
         }
                 
-    /** Returns the square of the length of the MutableDouble2D. */
+    /** Returns the square of the length of the MutableDouble3D. */
     public final double lengthSq()                                                
         {
         return x*x+y*y+z*z;

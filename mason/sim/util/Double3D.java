@@ -9,7 +9,7 @@ package sim.util;
 /**
    Double3D is more or less the same class as javax.vecmath.Point3d, but it is immutable: once the x and y and z values are set, they cannot be changed (they're final).  Why use this immutable class when you could just use Point3d?  Because Point3d is broken with respect to hash tables.  You use Point3d as a key in a hash table at your own peril.  Try this: hash an object by a Point3d as key.  Then change the x value of the original Point3d.  Ta-da!  The object is lost in the hash table.  Additionally, Point3d is in a nonstandard package (javax.vecmath) that we may or may not distribute with.
 
-   <p>One day in the far future, Double2D should also be HIGHLY efficient; since it is immutable, it can be passed by value rather than by pointer by a smart compiler.  Not today, though.  But it's not bad.
+   <p>One day in the far future, Double3D should also be HIGHLY efficient; since it is immutable, it can be passed by value rather than by pointer by a smart compiler.  Not today, though.  But it's not bad.
 
    <p>This class has an elaborate hash code generation that is much more random than Sun's standard generator, but takes more time.  For very large numbers of objects, this is a good idea, but we may change it to a simpler version in the future.
 
@@ -254,5 +254,50 @@ public final class Double3D implements java.io.Serializable
         final double dy = (double)this.y - p.y;
         final double dz = (double)this.z - p.z;
         return (dx*dx+dy*dy+dz*dz);
+        }
+
+     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    public double manhattanDistance(final double x, final double y, final double z)
+        {
+        final double dx = Math.abs((double)this.x - x);
+        final double dy = Math.abs((double)this.y - y);
+        final double dz = Math.abs((double)this.z - z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    public double manhattanDistance(final Double3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    public double manhattanDistance(final Int3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    public double manhattanDistance(final MutableDouble3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
+        }
+
+     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    public double manhattanDistance(final MutableInt3D p)
+        {
+        final double dx = Math.abs((double)this.x - p.x);
+        final double dy = Math.abs((double)this.y - p.y);
+		final double dz = Math.abs((double)this.z - p.z);
+        return dx + dy + dz;
         }
     }

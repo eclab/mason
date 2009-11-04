@@ -1020,6 +1020,7 @@ public class Display3D extends JPanel implements Steppable
         // add inspection
         BoundingSphere bounds = new BoundingSphere(new Point3d(0.0,0.0,0.0), Double.POSITIVE_INFINITY);
         mSelectBehavior =  new SelectionBehavior(canvas, root, bounds, simulation);
+		mSelectBehavior.setSelectsAll(selectionAll, inspectionAll);
         mSelectBehavior.setEnable(selectBehCheckBox.isSelected());
 
         toolTipBehavior = new ToolTipBehavior(canvas, root, bounds, simulation);
@@ -1145,6 +1146,16 @@ public class Display3D extends JPanel implements Steppable
 
     OrbitBehavior mOrbitBehavior = null;
     public SelectionBehavior mSelectBehavior = null; 
+
+	boolean selectionAll;
+	boolean inspectionAll;
+	/** Sets whether mouse-clicking results in selecting all picked elements (true) or just the closest one (false).
+		This can be done independently of selection and inspection. */
+	public void setSelectsAll(boolean selection, boolean inspection)
+		{
+		selectionAll = selection; inspectionAll = inspection;
+		mSelectBehavior.setSelectsAll(selectionAll, inspectionAll);
+		}
 
     /** Updates the scene graph */
     public synchronized void paintComponent(final Graphics g)
