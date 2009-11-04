@@ -84,29 +84,29 @@ public class MovieMaker
             panel.setLayout(new BorderLayout());
             panel.setBorder(new javax.swing.border.TitledBorder("Frame Rate"));
             panel.add(framerate, BorderLayout.CENTER);
-			
+                        
             JPanel panel2 = new JPanel();
             panel2.setLayout(new BorderLayout());
             panel2.setBorder(new javax.swing.border.TitledBorder("Format"));
             JComboBox encoding = new JComboBox(fmts);
             panel2.add(encoding, BorderLayout.CENTER);
-			
-			// add a warning
-			String text1 = "A bug in Sun's JMF code embeds in the movie a bad format description string.  This breaks some non-Apple movie players.  Additionally, JMF's movies will be extremely large.  " +
-						   "A suggested solution: produce the movie in 16 or 24 bit (32 bit breaks iMovie).  Then load the movie into Quicktime Pro or iMovie, and save out again as H.264.\n\n" + 
-						   "See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
-			int myNumberOfPixels = 600; // our word-wrap pixel length
-			JLabel label = new JLabel();
-			label.setText("<html><br><b>Note</b><br><font size='-2'>" + 
-				sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text1, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
-				//"</font><br><br><b>Suggested Solution</b><br><font size='-2'>" + 
-				//sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text2, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
-				"</font></html>");
+                        
+            // add a warning
+            String text1 = "A bug in Sun's JMF code embeds in the movie a bad format description string.  This breaks some non-Apple movie players.  Additionally, JMF's movies will be extremely large.  " +
+                "A suggested solution: produce the movie in 16 or 24 bit (32 bit breaks iMovie).  Then load the movie into Quicktime Pro or iMovie, and save out again as H.264.\n\n" + 
+                "See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
+            int myNumberOfPixels = 600; // our word-wrap pixel length
+            JLabel label = new JLabel();
+            label.setText("<html><br><b>Note</b><br><font size='-2'>" + 
+                sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text1, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
+                //"</font><br><br><b>Suggested Solution</b><br><font size='-2'>" + 
+                //sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text2, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
+                "</font></html>");
 
-			JPanel panel3 = new JPanel();
+            JPanel panel3 = new JPanel();
             panel3.setLayout(new BorderLayout());
-			panel3.add(panel2, BorderLayout.NORTH);
-			panel3.add(label, BorderLayout.CENTER);
+            panel3.add(panel2, BorderLayout.NORTH);
+            panel3.add(label, BorderLayout.CENTER);
 
             p.add(panel, BorderLayout.NORTH);
             p.add(panel3, BorderLayout.SOUTH);

@@ -187,7 +187,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
 
-		newinfo.location = locationToPass;
+        newinfo.location = locationToPass;
 
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
@@ -232,8 +232,8 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
                 newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
             
-				locationToPass.x = x;
-				locationToPass.y = y;
+                locationToPass.x = x;
+                locationToPass.y = y;
                 
                 if (graphics == null)
                     {

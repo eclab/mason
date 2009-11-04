@@ -346,23 +346,23 @@ public class Console extends JFrame implements Controller
         //////// create the "Displays" tab pane
 
         frameList = new Vector();
-		frameListDisplay = new JList(frameList);
-		
-		frameListDisplay.addMouseListener(new MouseAdapter()
-			{
-			public void mouseClicked(MouseEvent e)
-				{
-				if (e.getClickCount() == 2)
-					{
-					int index = frameListDisplay.locationToIndex(e.getPoint());
-					JFrame frame = (JFrame)(frameListDisplay.getModel().getElementAt(index));
-					/* list.ensureIndexIsVisible(index); */
-					frame.setVisible(!frame.isVisible());
-					frameListDisplay.repaint();
-					}
-				}
-			});
-		
+        frameListDisplay = new JList(frameList);
+                
+        frameListDisplay.addMouseListener(new MouseAdapter()
+            {
+            public void mouseClicked(MouseEvent e)
+                {
+                if (e.getClickCount() == 2)
+                    {
+                    int index = frameListDisplay.locationToIndex(e.getPoint());
+                    JFrame frame = (JFrame)(frameListDisplay.getModel().getElementAt(index));
+                    /* list.ensureIndexIsVisible(index); */
+                    frame.setVisible(!frame.isVisible());
+                    frameListDisplay.repaint();
+                    }
+                }
+            });
+                
         frameListDisplay.setCellRenderer(new ListCellRenderer()
             {
             // this ListCellRenderer will show the frame titles in black if they're
@@ -1437,7 +1437,7 @@ public class Console extends JFrame implements Controller
                 
         // Okay here we go with the real code.
         if (!doNew(null, true) && !SimApplet.isApplet) System.exit(0); // just a dummy JFrame
-        }		
+        }               
     
     /** Pops up the about box */
     static JFrame aboutFrame = null;
@@ -1729,12 +1729,12 @@ public class Console extends JFrame implements Controller
             p.add(fieldp, BorderLayout.SOUTH);
                         
             int reply = showOptionDialog(null, p, "New Simulation", new Object[] {"Select", 
-                                                                                 startingUp ? "Quit" : "Cancel"}, true);
+                                                                                  startingUp ? "Quit" : "Cancel"}, true);
             if (reply == 1)  // not -1 -- caused by disposing the window, and not 0 -- caused by "Select"
                 {
-				return false;
+                return false;
                 }
-				                
+                                                
             String className = field.getText(); // (String)cb.getEditor().getItem();
             try
                 {
@@ -1743,12 +1743,12 @@ public class Console extends JFrame implements Controller
                 // okay, we're past that.  Now try to build the instance
                 GUIState state = (GUIState)(Class.forName(className).newInstance());
                 /*
-				Console c = new Console(state);
-                c.setVisible(true);
-				*/
-				
-				// new method
-				state.createController();
+                  Console c = new Console(state);
+                  c.setVisible(true);
+                */
+                                
+                // new method
+                state.createController();
                 return true;
                 }
             catch (NoSuchMethodException e)
@@ -2301,8 +2301,8 @@ public class Console extends JFrame implements Controller
                             e.printStackTrace();
                             }
 
-					// name the current thread
-					simulation.state.nameThread(simulation.state);
+                    // name the current thread
+                    simulation.state.nameThread(simulation.state);
 
                     // start the main loop
 
@@ -2628,7 +2628,7 @@ public class Console extends JFrame implements Controller
         if (currentInspector == -1) return;
         
         inspectorNames.remove(currentInspector);
-		Stoppable stoppable = (Stoppable)(inspectorStoppables.remove(currentInspector));
+        Stoppable stoppable = (Stoppable)(inspectorStoppables.remove(currentInspector));
         JScrollPane oldInspector = (JScrollPane)(inspectorToolbars.remove(currentInspector));
         Point oldInspectorLocation = oldInspector.getLocationOnScreen();  // set here before inspector goes away
 
@@ -2670,11 +2670,11 @@ public class Console extends JFrame implements Controller
             if (inspectors.objs[x]!=null)  // double-check
                 {
                 final int xx = x; // duh, Java's anonymous classes are awful compared to true closures...
-				Steppable stepper = new Steppable()
+                Steppable stepper = new Steppable()
                     {
                     public void step(final SimState state)
                         {
-						final Steppable foo = this;
+                        final Steppable foo = this;
                         SwingUtilities.invokeLater(new Runnable()
                             {
                             Inspector inspector = (Inspector)(inspectors.objs[xx]);
@@ -2690,7 +2690,7 @@ public class Console extends JFrame implements Controller
                                         inspector.repaint();
                                         }
                                     }
-                                 }
+                                }
                             });
                         }
                     };
@@ -2775,7 +2775,7 @@ public class Console extends JFrame implements Controller
                 }
             allInspectors = new WeakHashMap();
             }
-		inspectorStoppables = new Vector();
+        inspectorStoppables = new Vector();
         inspectorNames = new Vector();
         inspectorToolbars = new Vector();
         resetInspectors(-1);

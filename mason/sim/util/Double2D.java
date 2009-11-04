@@ -149,7 +149,7 @@ public final class Double2D implements java.io.Serializable
         else return false;
         }
         
-   /** Returns the distance FROM this Double2D TO the specified point */
+    /** Returns the distance FROM this Double2D TO the specified point */
     public double distance(final double x, final double y)
         {
         final double dx = (double)this.x - x;
@@ -229,7 +229,7 @@ public final class Double2D implements java.io.Serializable
         return (dx*dx+dy*dy);
         }
 
-     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final double x, final double y)
         {
         final double dx = Math.abs((double)this.x - x);
@@ -237,7 +237,7 @@ public final class Double2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final Double2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -245,7 +245,7 @@ public final class Double2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final Int2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -253,7 +253,7 @@ public final class Double2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final MutableDouble2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -261,7 +261,7 @@ public final class Double2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final MutableInt2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -269,7 +269,7 @@ public final class Double2D implements java.io.Serializable
         return dx + dy;
         }
 
-	/** Returns the manhtattan distance FROM this Double2D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double2D TO the specified point */
     public double manhattanDistance(final java.awt.geom.Point2D p)
         {
         final double dx = Math.abs((double)this.x - p.getX());
@@ -324,8 +324,8 @@ public final class Double2D implements java.io.Serializable
     public final Double2D normalize()
         {
 /*
-        double len = length();
-        return new Double2D(x / len, y / len);
+  double len = length();
+  return new Double2D(x / len, y / len);
 */
         final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
         if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
@@ -347,15 +347,15 @@ public final class Double2D implements java.io.Serializable
         // this is the equivalent of multiplying by a 2x2 rotation
         // matrix since cos(90) = 0 and sin(90) = 1
         /*
-		Double2D rotated90 = new Double2D(-this.y, this.x);
-        return rotated90.dotProduct(other);
-		*/
-        return (-this.y) * other.x + this.x * other.y;		
+          Double2D rotated90 = new Double2D(-this.y, this.x);
+          return rotated90.dotProduct(other);
+        */
+        return (-this.y) * other.x + this.x * other.y;          
         }
 
     /** Returns the negation of this Double2D. */
     public final Double2D negate()
-	    {
+        {
         return new Double2D(-x, -y);
         }
 
@@ -363,14 +363,14 @@ public final class Double2D implements java.io.Serializable
     public final Double2D rotate(double theta)
         {
         /*
-		// Do the equivalent of multiplying by a 2D rotation
+        // Do the equivalent of multiplying by a 2D rotation
         // matrix without the overhead of converting the Double2D into
         // a matrix
         double sinTheta = Math.sin(theta);
         double cosTheta = Math.cos(theta);
                 
         return new Double2D(cosTheta * this.x + -sinTheta * this.y, sinTheta * this.x + cosTheta * this.y);
-		*/
+        */
 
         final double sinTheta = Math.sin(theta);
         final double cosTheta = Math.cos(theta);
@@ -378,4 +378,4 @@ public final class Double2D implements java.io.Serializable
         final double y = this.y;
         return new Double2D(cosTheta * x + -sinTheta * y, sinTheta * x + cosTheta * y);
         }
-	}
+    }

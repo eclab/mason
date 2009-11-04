@@ -19,9 +19,9 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
     {
     int[] xPoints = new int[6];
     int[] yPoints = new int[6];
-	float[] xPointsf = new float[6];
-	float[] yPointsf = new float[6];
-	
+    float[] xPointsf = new float[6];
+    float[] yPointsf = new float[6];
+        
     double[] xyC = new double[2];
     double[] xyC_ul = new double[2];
     double[] xyC_up = new double[2];
@@ -215,47 +215,47 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
                         putInHere.add( getWrapper(valueToPass.val, x, y) );
                         }
                     }
-				else if (info.precise)
-					{
-					xPointsf[0] = (float)(xyC_urx-0.5*xScale);
-					yPointsf[0] = (float)(xyC_ury+yScale);
-					xPointsf[1] = (float)(xyC_upx+0.5*xScale);
-					yPointsf[1] = (float)(xyC_upy+yScale);
-					xPointsf[2] = (float)(xyC_upx-0.5*xScale);
-					yPointsf[2] = (float)(xyC_upy+yScale);
-					xPointsf[3] = (float)(xyC_ulx+0.5*xScale);
-					yPointsf[3] = (float)(xyC_uly+yScale);
-					xPointsf[4] = (float)(xyC_x-0.5*xScale);
-					yPointsf[4] = (float)(xyC_y+yScale);
-					xPointsf[5] = (float)(xyC_x+0.5*xScale);
-					yPointsf[5] = (float)(xyC_y+yScale);
-					
+                else if (info.precise)
+                    {
+                    xPointsf[0] = (float)(xyC_urx-0.5*xScale);
+                    yPointsf[0] = (float)(xyC_ury+yScale);
+                    xPointsf[1] = (float)(xyC_upx+0.5*xScale);
+                    yPointsf[1] = (float)(xyC_upy+yScale);
+                    xPointsf[2] = (float)(xyC_upx-0.5*xScale);
+                    yPointsf[2] = (float)(xyC_upy+yScale);
+                    xPointsf[3] = (float)(xyC_ulx+0.5*xScale);
+                    yPointsf[3] = (float)(xyC_uly+yScale);
+                    xPointsf[4] = (float)(xyC_x-0.5*xScale);
+                    yPointsf[4] = (float)(xyC_y+yScale);
+                    xPointsf[5] = (float)(xyC_x+0.5*xScale);
+                    yPointsf[5] = (float)(xyC_y+yScale);
+                                        
                     Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
                     if (c.getAlpha() == 0) continue;
                     graphics.setColor(c);
-					
+                                        
                     generalPath.reset();
                     generalPath.moveTo( xPointsf[0], yPointsf[0] );
                     for( int i = 1 ; i < 6 ; i++ )
                         generalPath.lineTo( xPointsf[i], yPointsf[i] );
                     generalPath.closePath();
-					graphics.fill(generalPath);
-					}
+                    graphics.fill(generalPath);
+                    }
                 else
                     {                    
-					xPoints[0] = (int)(xyC_urx-0.5*xScale);
-					yPoints[0] = (int)(xyC_ury+yScale);
-					xPoints[1] = (int)(xyC_upx+0.5*xScale);
-					yPoints[1] = (int)(xyC_upy+yScale);
-					xPoints[2] = (int)(xyC_upx-0.5*xScale);
-					yPoints[2] = (int)(xyC_upy+yScale);
-					xPoints[3] = (int)(xyC_ulx+0.5*xScale);
-					yPoints[3] = (int)(xyC_uly+yScale);
-					xPoints[4] = (int)(xyC_x-0.5*xScale);
-					yPoints[4] = (int)(xyC_y+yScale);
-					xPoints[5] = (int)(xyC_x+0.5*xScale);
-					yPoints[5] = (int)(xyC_y+yScale);
-				
+                    xPoints[0] = (int)(xyC_urx-0.5*xScale);
+                    yPoints[0] = (int)(xyC_ury+yScale);
+                    xPoints[1] = (int)(xyC_upx+0.5*xScale);
+                    yPoints[1] = (int)(xyC_upy+yScale);
+                    xPoints[2] = (int)(xyC_upx-0.5*xScale);
+                    yPoints[2] = (int)(xyC_upy+yScale);
+                    xPoints[3] = (int)(xyC_ulx+0.5*xScale);
+                    yPoints[3] = (int)(xyC_uly+yScale);
+                    xPoints[4] = (int)(xyC_x-0.5*xScale);
+                    yPoints[4] = (int)(xyC_y+yScale);
+                    xPoints[5] = (int)(xyC_x+0.5*xScale);
+                    yPoints[5] = (int)(xyC_y+yScale);
+                                
                     Color c = map.getColor(isDoubleGrid2D ?  doubleField[x][y] : intField[x][y]);
                     if (c.getAlpha() == 0) continue;
                     graphics.setColor(c);

@@ -159,7 +159,7 @@ public class ParallelSequence extends Sequence
         {
         Steppable step;
         SimState state;
-		Thread currentThread = null;
+        Thread currentThread = null;
         public Worker()
             {
             super(0);
@@ -170,9 +170,9 @@ public class ParallelSequence extends Sequence
                 {
                 P();
                 if (pleaseDie) return;
-				if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
-				currentThread.setName("Parallel Sequence: " + step);
-				step.step(state);
+                if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
+                currentThread.setName("Parallel Sequence: " + step);
+                step.step(state);
                 semaphore.V();
                 }
             }

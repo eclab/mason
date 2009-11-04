@@ -569,13 +569,13 @@ public class Network implements java.io.Serializable
         // static inner classes don't need serialVersionUIDs
         }
 
-	/*
-	Returns true if the given node is in the network
-	*/
-	public boolean nodeExists(final Object node)
-		{
-		return (IndexOutIn)(indexOutInHash.get(node)) != null;
-		}
+    /*
+      Returns true if the given node is in the network
+    */
+    public boolean nodeExists(final Object node)
+        {
+        return (IndexOutIn)(indexOutInHash.get(node)) != null;
+        }
 
     /*
       Returns the index of a node.  If the node does not exist in the Network, a runtime exception is thrown. 

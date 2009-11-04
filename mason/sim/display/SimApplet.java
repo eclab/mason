@@ -74,10 +74,10 @@ public class SimApplet extends Applet
             {
             GUIState state = (GUIState)(GUIStateClass.newInstance());
             /*
-		Console c = new Console(state);
-            	c.setVisible(true);
-		*/
-	    state.createController();
+              Console c = new Console(state);
+              c.setVisible(true);
+            */
+            state.createController();
             }
         }
     

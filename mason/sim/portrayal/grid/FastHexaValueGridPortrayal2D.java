@@ -113,9 +113,9 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
         double startxd = ((info.clip.x - translateWidth - info.draw.x) / scaleWidth);
         double startyd = ((info.clip.y - info.draw.y) / (2*yScale)) - 1;
         double endxd = ((info.clip.x - translateWidth - info.draw.x + info.clip.width) / scaleWidth);
-		double endyd = ((info.clip.y - info.draw.y + info.clip.height) / (2*yScale));
-		
-		int startx = (int)(startxd);
+        double endyd = ((info.clip.y - info.draw.y + info.clip.height) / (2*yScale));
+                
+        int startx = (int)(startxd);
         int starty = (int)(startyd);
         int endx = ((int)(endxd)) + /*2*/ 1;  // with rounding, width may be as much as 1 off
         int endy = ((int)(endyd)) + /*2*/ 1;  // with rounding, height may be as much as 1 off
@@ -338,11 +338,11 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                             }
                         }
             }
-		else  // precise
-			{
- 			graphics.setStroke(new BasicStroke(0.0f));
-			Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
-			buffer = null;  // GC the buffer in case the user had changed his mind
+        else  // precise
+            {
+            graphics.setStroke(new BasicStroke(0.0f));
+            Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
+            buffer = null;  // GC the buffer in case the user had changed his mind
 
             if (endxd > maxX) endxd = maxX;
             if (endyd > maxY) endyd = maxY;
@@ -372,7 +372,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         _width = (translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
                         _height = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y+2:2*y+3)) - _y;
                     
-						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        preciseRectangle.setFrame(_x, _y, _width, _height);
                         graphics.fill(preciseRectangle);
                         graphics.draw(preciseRectangle);
                         }
@@ -388,11 +388,11 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         _width = (translateWidth + infodrawx + scaleWidth * (x+1)) - _x;
                         _height = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y+2:2*y+3)) - _y;
                     
-						preciseRectangle.setFrame(_x, _y, _width, _height);
+                        preciseRectangle.setFrame(_x, _y, _width, _height);
                         graphics.fill(preciseRectangle);
                         graphics.draw(preciseRectangle);
                         }
-			}
+            }
         // finally, clear dirty flag if we've just drawn (don't clear if we're doing hit testing)
         if (graphics!=null) dirtyField = false;
         }

@@ -67,12 +67,12 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         return new Int2D(startx, starty);
         }
 
-   public Object getObjectLocation(Object object)
+    public Object getObjectLocation(Object object)
         {
         final SparseGrid2D field = (SparseGrid2D)this.field;
         if (field==null) return null;
-		return field.getObjectLocation(object);
-		}
+        return field.getObjectLocation(object);
+        }
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
@@ -173,7 +173,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         newinfo.draw.x += newinfo.draw.width / 2.0;
                         newinfo.draw.y += newinfo.draw.height / 2.0;
 
-						newinfo.location = loc;
+                        newinfo.location = loc;
 
                         if (objectSelected &&  // there's something there
                             selectedWrappers.get(portrayedObject) != null)

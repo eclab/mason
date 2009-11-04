@@ -256,7 +256,7 @@ public final class Double3D implements java.io.Serializable
         return (dx*dx+dy*dy+dz*dz);
         }
 
-     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double3D TO the specified point */
     public double manhattanDistance(final double x, final double y, final double z)
         {
         final double dx = Math.abs((double)this.x - x);
@@ -265,39 +265,39 @@ public final class Double3D implements java.io.Serializable
         return dx + dy + dz;
         }
 
-     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double3D TO the specified point */
     public double manhattanDistance(final Double3D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
         final double dy = Math.abs((double)this.y - p.y);
-		final double dz = Math.abs((double)this.z - p.z);
+        final double dz = Math.abs((double)this.z - p.z);
         return dx + dy + dz;
         }
 
-     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double3D TO the specified point */
     public double manhattanDistance(final Int3D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
         final double dy = Math.abs((double)this.y - p.y);
-		final double dz = Math.abs((double)this.z - p.z);
+        final double dz = Math.abs((double)this.z - p.z);
         return dx + dy + dz;
         }
 
-     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double3D TO the specified point */
     public double manhattanDistance(final MutableDouble3D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
         final double dy = Math.abs((double)this.y - p.y);
-		final double dz = Math.abs((double)this.z - p.z);
+        final double dz = Math.abs((double)this.z - p.z);
         return dx + dy + dz;
         }
 
-     /** Returns the manhtattan distance FROM this Double3D TO the specified point */
+    /** Returns the manhtattan distance FROM this Double3D TO the specified point */
     public double manhattanDistance(final MutableInt3D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
         final double dy = Math.abs((double)this.y - p.y);
-		final double dz = Math.abs((double)this.z - p.z);
+        final double dz = Math.abs((double)this.z - p.z);
         return dx + dy + dz;
         }
     }

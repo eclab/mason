@@ -20,7 +20,7 @@ public class KeepawayWithUI extends GUIState
 
     public static void main(String[] args)
         {
-		new KeepawayWithUI().createController();
+        new KeepawayWithUI().createController();
         }
     
     public KeepawayWithUI() { super(new Keepaway(System.currentTimeMillis())); }

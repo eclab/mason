@@ -59,8 +59,8 @@ public class CelegansWithUI extends GUIState
         Celegans tut = (Celegans) state;
         
         nodePortrayal.setField( tut.cells );
-		//LabelledPortrayal3D l = new LabelledPortrayal3D(new CellPortrayal(50), null);
-		// l.setLabelGoesOnTop(true);		// sadly, doesn't work.  Java3D bugs are a pain.
+        //LabelledPortrayal3D l = new LabelledPortrayal3D(new CellPortrayal(50), null);
+        // l.setLabelGoesOnTop(true);           // sadly, doesn't work.  Java3D bugs are a pain.
         // nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(l, 60f, true));
         nodePortrayal.setPortrayalForAll(new CellPortrayal(50));
 
@@ -84,26 +84,26 @@ public class CelegansWithUI extends GUIState
         display = new Display3D(600, 600,this,1);   
         display.attach( nodePortrayal, "Cells" );
         display.scale(1.0/40.0);
-		
-		// tell the Display3D to inspect everybody, but to only select a single cell.
-		display.setSelectsAll(false, true);
+                
+        // tell the Display3D to inspect everybody, but to only select a single cell.
+        display.setSelectsAll(false, true);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("Embryo");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
 
-//		display.mSelectBehavior.setTolerance(10.0f);
+//              display.mSelectBehavior.setTolerance(10.0f);
 
 
         // make the neuron displayer
         neuronDisplay = new Display3D(400,400,this,1);   
         neuronDisplay.attach( neuronPortrayal, "Neurons" );
-		neuronDisplay.attach( synapsePortrayal, "Synapses" );
-		neuronDisplay.scale(1.0/40.0);
-		
-		// tell the Display3D to inspect everybody, but to only select a single cell.
-		neuronDisplay.setSelectsAll(false, true);
+        neuronDisplay.attach( synapsePortrayal, "Synapses" );
+        neuronDisplay.scale(1.0/40.0);
+                
+        // tell the Display3D to inspect everybody, but to only select a single cell.
+        neuronDisplay.setSelectsAll(false, true);
 
         neuronDisplayFrame = neuronDisplay.createFrame();
         neuronDisplayFrame.setTitle("Synapses");

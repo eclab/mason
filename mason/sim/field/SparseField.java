@@ -130,9 +130,9 @@ public abstract class SparseField implements java.io.Serializable
         return (getRawObjectLocation(obj) != null);
         }
     
-	/** Returns the number of elements in the field */
-	public int size() { return allObjects.size(); }
-	
+    /** Returns the number of elements in the field */
+    public int size() { return allObjects.size(); }
+        
     /** Get the location of the provided object, or null if the object does not exist.  
         Subclasses should create a <b> getObjectLocation(</b><i>Object obj</i><b>) </b> method which 
         returns a location type appropriate for your kind of Sparse Field. */

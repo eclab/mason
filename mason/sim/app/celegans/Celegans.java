@@ -16,8 +16,8 @@ public class Celegans extends SimState
     public Continuous3D cells;
     public Continuous3D neurons;
     public Network synapses;
-	
-	Cells database;
+        
+    Cells database;
 
     public Celegans(long seed)
         {
@@ -27,18 +27,18 @@ public class Celegans extends SimState
     public void start()
         {
         super.start();
-		if (database == null) database = new Cells();  // only load at start() time, and only ONCE
+        if (database == null) database = new Cells();  // only load at start() time, and only ONCE
 
         cells = new Continuous3D(100, 100, 100, 100);
         neurons = new Continuous3D(100, 100, 100, 100);
         synapses = new Network();
         
-		Cell p0 = database.P0;
-		
-		p0.stopper = schedule.scheduleRepeating(p0);
-		p0.step(this);  // have p0 add himself to the continuous3D.  Yes, I know this is unusual, but it's kosher.  Sort of.
-		
-		schedule.scheduleOnce(1000, -1, new Steppable() { public void step(SimState state) { state.kill(); } });   // kill the simulation at around 600, before the cells all die at 1000
+        Cell p0 = database.P0;
+                
+        p0.stopper = schedule.scheduleRepeating(p0);
+        p0.step(this);  // have p0 add himself to the continuous3D.  Yes, I know this is unusual, but it's kosher.  Sort of.
+                
+        schedule.scheduleOnce(1000, -1, new Steppable() { public void step(SimState state) { state.kill(); } });   // kill the simulation at around 600, before the cells all die at 1000
         }
 
     public static void main(String[] args)

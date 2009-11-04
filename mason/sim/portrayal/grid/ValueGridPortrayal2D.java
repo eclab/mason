@@ -130,23 +130,23 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
 
-		Int2D loc = (Int2D) location;
-		if (location == null) return null;
-		
-		int x = loc.x;
-		int y = loc.y;
+        Int2D loc = (Int2D) location;
+        if (location == null) return null;
+                
+        int x = loc.x;
+        int y = loc.y;
 
-		// translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-		newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-		newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-		newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-		newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
-	
-		// adjust drawX and drawY to center
-		newinfo.draw.x += newinfo.draw.width / 2.0;
-		newinfo.draw.y += newinfo.draw.height / 2.0;
+        // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+        newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+        newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+        newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+        newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+        
+        // adjust drawX and drawY to center
+        newinfo.draw.x += newinfo.draw.width / 2.0;
+        newinfo.draw.y += newinfo.draw.height / 2.0;
 
-		return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
         }
 
 
@@ -195,7 +195,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
         // the drawinfo that the object's portrayal will use -- we fill in the blanks later
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
-		newinfo.location = locationToPass;
+        newinfo.location = locationToPass;
 
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal2D))
@@ -223,8 +223,8 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
                 newinfo.draw.x += newinfo.draw.width / 2.0;
                 newinfo.draw.y += newinfo.draw.height / 2.0;
 
-				locationToPass.x = x;
-				locationToPass.y = y;
+                locationToPass.x = x;
+                locationToPass.y = y;
                 
                 if (graphics == null)
                     {

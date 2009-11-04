@@ -128,18 +128,18 @@ public abstract class GUIState
             return "Error in retrieving simulation name";
             }
         }
-	
-	/** Creates and returns a controller ready for the user to manipulate.
-		By default this method creates a Console, sets it visible, and
-		returns it.  You can override this to provide some other kind of
-		controller. */
-	public Controller createController()
-		{
-		Console console = new Console(this);
-		console.setVisible(true);
-		return console;
-		}
-	
+        
+    /** Creates and returns a controller ready for the user to manipulate.
+        By default this method creates a Console, sets it visible, and
+        returns it.  You can override this to provide some other kind of
+        controller. */
+    public Controller createController()
+        {
+        Console console = new Console(this);
+        console.setVisible(true);
+        return console;
+        }
+        
     /** Override this method in your subclass to provide a descriptive 
         name for your simulation;
         otherwise the default will be used: the short classname (that is,
@@ -479,7 +479,7 @@ public abstract class GUIState
         
     public boolean scheduleImmediatelyBefore(Steppable event)
         {
-		return _scheduleImmediate(false, event);
+        return _scheduleImmediate(false, event);
         }
         
     /** Schedules an item to occur (in no particular order) immediately after
@@ -494,7 +494,7 @@ public abstract class GUIState
         
     public boolean scheduleImmediatelyAfter(Steppable event)
         {
-		return _scheduleImmediate(true, event);
+        return _scheduleImmediate(true, event);
         }
         
     /** Schedules an item to occur (in no particular order) immediately before or immediately after
@@ -508,13 +508,13 @@ public abstract class GUIState
 
         @deprecated use scheduleImmediatelyBefore and scheduleImmediatelyAfter instead
     */
-	
-	public boolean scheduleImmediate(boolean immediatelyAfter, Steppable event)
-		{
-		return _scheduleImmediate(immediatelyAfter, event);
-		}
-		
-	boolean _scheduleImmediate(boolean immediatelyAfter, Steppable event)
+        
+    public boolean scheduleImmediate(boolean immediatelyAfter, Steppable event)
+        {
+        return _scheduleImmediate(immediatelyAfter, event);
+        }
+                
+    boolean _scheduleImmediate(boolean immediatelyAfter, Steppable event)
         {
         synchronized(state.schedule)
             {
@@ -565,11 +565,11 @@ public abstract class GUIState
         
     public Stoppable scheduleRepeatingImmediatelyBefore(Steppable event)
         {
-		return _scheduleImmediateRepeat(false, event);
+        return _scheduleImmediateRepeat(false, event);
         }
         
 
-     /** Schedules an item to occur (in no particular order) immediately after
+    /** Schedules an item to occur (in no particular order) immediately after
         all future steps the Schedule takes (not including blank steps).  
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
@@ -583,10 +583,10 @@ public abstract class GUIState
         
     public Stoppable scheduleRepeatingImmediatelyAfter(Steppable event)
         {
-		return _scheduleImmediateRepeat(true, event);
+        return _scheduleImmediateRepeat(true, event);
         }
         
-   /** Schedules an item to occur (in no particular order) immediately before or immediately after
+    /** Schedules an item to occur (in no particular order) immediately before or immediately after
         all future steps the Schedule takes (not including blank steps).  
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
@@ -602,10 +602,10 @@ public abstract class GUIState
         
     public Stoppable scheduleImmediateRepeat(boolean immediatelyAfter, Steppable event)
         {
-		return _scheduleImmediateRepeat(immediatelyAfter, event);
+        return _scheduleImmediateRepeat(immediatelyAfter, event);
         }
         
-	Stoppable _scheduleImmediateRepeat(boolean immediatelyAfter, Steppable event)
+    Stoppable _scheduleImmediateRepeat(boolean immediatelyAfter, Steppable event)
         {
         Repeat r = new Repeat(immediatelyAfter, event);
         if (scheduleImmediate(immediatelyAfter, r)) return r;

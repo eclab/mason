@@ -31,8 +31,8 @@ public class AntsForageWithUI extends GUIState
     public AntsForageWithUI() { super(new AntsForage(System.currentTimeMillis())); }
     public AntsForageWithUI(SimState state) { super(state); }
     
-	// allow the user to inspect the model
-	public Object getSimulationInspectedObject() { return state; }  // non-volatile
+    // allow the user to inspect the model
+    public Object getSimulationInspectedObject() { return state; }  // non-volatile
 
     public static String getName() { return "Ant Foraging"; }
     
@@ -48,14 +48,14 @@ public class AntsForageWithUI extends GUIState
                 // home pheromones are beneath all, just make them opaque
                 Color.white, //new Color(0,255,0,0),
                 new Color(0,255,0,255) )
-					{ public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
+            { public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
         foodPheromonePortrayal.setField(af.toFoodGrid);
         foodPheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
                 AntsForage.LIKELY_MAX_PHEROMONE,
                 new Color(0,0,255,0),
                 new Color(0,0,255,255) )
-					{ public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
+            { public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
         sitesPortrayal.setField(af.sites);
         sitesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,

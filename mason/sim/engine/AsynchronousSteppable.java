@@ -189,7 +189,7 @@ public abstract class AsynchronousSteppable
         this.state = state;
         state.addToAsynchronousRegistry(this);
         thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(false); } });
-		thread.setName("Asynchronous Steppable: " + this);
+        thread.setName("Asynchronous Steppable: " + this);
         thread.start();
         }
     

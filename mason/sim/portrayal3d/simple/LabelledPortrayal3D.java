@@ -95,15 +95,15 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         this.scale = scale;
         }
 
-	/* Warning: does not work right now.  :-(  :-(  */
-	boolean labelGoesOnTop;
-	/*
-	public void setLabelGoesOnTop(boolean val)
-		{
-		labelGoesOnTop = val;
-		}
-	*/
-	
+    /* Warning: does not work right now.  :-(  :-(  */
+    boolean labelGoesOnTop;
+    /*
+      public void setLabelGoesOnTop(boolean val)
+      {
+      labelGoesOnTop = val;
+      }
+    */
+        
     public PolygonAttributes polygonAttributes()
         { 
         return child.polygonAttributes(); 
@@ -237,40 +237,40 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             o.addChild(o3d);         // Add label to the offset TransformGroup
             jswitch.addChild(o);    // Add offset TransformGroup to the Switch
             
-			// is there an explicit ordering?
-			if (labelGoesOnTop)
-				{
-				OrderedGroup g = new OrderedGroup();
-				g.setCapability(OrderedGroup.ALLOW_CHILDREN_READ);
-				g.clearCapabilityIsFrequent(OrderedGroup.ALLOW_CHILDREN_READ);
-				g.addChild(n);
-				g.addChild(jswitch);
-				g.setChildIndexOrder(new int[] { 0, 1 });
-				j3dModel.addChild(g);
-				}
-			else
-				{
-				j3dModel.addChild(n);   // Add the underlying model as child 0
-				j3dModel.addChild(jswitch);  // Add the switch as child 1
-				}
+            // is there an explicit ordering?
+            if (labelGoesOnTop)
+                {
+                OrderedGroup g = new OrderedGroup();
+                g.setCapability(OrderedGroup.ALLOW_CHILDREN_READ);
+                g.clearCapabilityIsFrequent(OrderedGroup.ALLOW_CHILDREN_READ);
+                g.addChild(n);
+                g.addChild(jswitch);
+                g.setChildIndexOrder(new int[] { 0, 1 });
+                j3dModel.addChild(g);
+                }
+            else
+                {
+                j3dModel.addChild(n);   // Add the underlying model as child 0
+                j3dModel.addChild(jswitch);  // Add the switch as child 1
+                }
             updateSwitch(jswitch, obj);       // turn the switch on/off
             }
         else
             {
-			TransformGroup t = null;
-			Switch s = null;
-			
-			if (j3dModel.getChild(0) instanceof OrderedGroup)
-				{
-				OrderedGroup g = (OrderedGroup)(j3dModel.getChild(0));
-				t = (TransformGroup)(g.getChild(0));
-				s = (Switch)(g.getChild(1));
-				}
-			else
-				{
-				t = (TransformGroup)(j3dModel.getChild(0));
-				s = (Switch)(j3dModel.getChild(1));
-				}
+            TransformGroup t = null;
+            Switch s = null;
+                        
+            if (j3dModel.getChild(0) instanceof OrderedGroup)
+                {
+                OrderedGroup g = (OrderedGroup)(j3dModel.getChild(0));
+                t = (TransformGroup)(g.getChild(0));
+                s = (Switch)(g.getChild(1));
+                }
+            else
+                {
+                t = (TransformGroup)(j3dModel.getChild(0));
+                s = (Switch)(j3dModel.getChild(1));
+                }
 
             // do we need to make a new label?  Only if the label's changed
             String l = getLabel(obj, t);

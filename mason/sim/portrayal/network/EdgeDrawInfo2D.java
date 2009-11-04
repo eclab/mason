@@ -22,14 +22,14 @@ public class EdgeDrawInfo2D extends DrawInfo2D
         super(draw,clip);
         this.secondPoint = secondPoint;
         }
-	
-	public EdgeDrawInfo2D(DrawInfo2D other, Point2D.Double secondPoint)
+        
+    public EdgeDrawInfo2D(DrawInfo2D other, Point2D.Double secondPoint)
         {
         super(other);
         this.secondPoint = secondPoint;
         }        
 
-	public EdgeDrawInfo2D(EdgeDrawInfo2D other)
+    public EdgeDrawInfo2D(EdgeDrawInfo2D other)
         {
         super(other);
         this.secondPoint = new Point2D.Double(secondPoint.x, secondPoint.y);

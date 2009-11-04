@@ -50,7 +50,7 @@ public class DrawInfo2D
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
     public boolean precise;
-	public Object location;
+    public Object location;
     
     public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
         {

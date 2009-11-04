@@ -109,7 +109,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                                 edge + " -- expected a SimpleEdgePortrayal2D");
                         SimpleEdgePortrayal2D portrayal = (SimpleEdgePortrayal2D) p;
                     
-						newinfo.location = edge;
+                        newinfo.location = edge;
 
                         if (graphics == null)
                             {

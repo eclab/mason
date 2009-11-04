@@ -37,9 +37,9 @@ import ec.util.*;
    event for time getTime(), then actually this event will occur at time getTime()+epsilon, that is, the
    smallest possible slice of time greater than getTime().
 
-<p><b>IMPORTANT NOTE:</b> we have disabled the setShuffling() procedure by making the methods private.  The reason for this is that although turning off shuffling causes the Steppables to be stepped in a <i>predictable order</i>, they will note necessarily be stepped in <i>the order in which they were submitted</i>, which was the whole point of the methods.  The reason for this is that a binary heap is not "stable": it doesn't break ties by returning elements in the same order in which they appeared.  This potentially could cause bugs in simulations and we want to make it very clear.
+   <p><b>IMPORTANT NOTE:</b> we have disabled the setShuffling() procedure by making the methods private.  The reason for this is that although turning off shuffling causes the Steppables to be stepped in a <i>predictable order</i>, they will note necessarily be stepped in <i>the order in which they were submitted</i>, which was the whole point of the methods.  The reason for this is that a binary heap is not "stable": it doesn't break ties by returning elements in the same order in which they appeared.  This potentially could cause bugs in simulations and we want to make it very clear.
   
-<!-- 
+   <!-- 
    <p>Events at a step are further subdivided and scheduled according to their <i>ordering</i>, an integer.
    Objects for scheduled for lower orderings for a given time will be executed before objects with
    higher orderings for the same time.  If objects are scheduled for the same time and
@@ -47,7 +47,7 @@ import ec.util.*;
    unless (in the very rare case) you have called setShuffling(false);.  Generally speaking, most experiments with
    good model methodologies will want random shuffling left on, and if you need an explicit ordering, it may be
    better to rely on Steppable's orderings or to use a Sequence.
--->
+   -->
    
    <p>You might be wondering: why bother with using orderings?  After all, can't you achieve the same thing by just
    stretching elements out in time?  There are two reasons to use orderings.  First, it allows you to use the getTime()
@@ -193,8 +193,8 @@ public class Schedule implements java.io.Serializable
 
     /** Empties out the schedule but does not reset the time or steps.  If you're
         looking for a way to kill your simulation from a Steppable, use SimState.kill() instead.  Note that
-		any agents presently at THIS TIME STEP will STILL be stepped -- including possibly reinserting themselves
-		in the schedule.  */
+        any agents presently at THIS TIME STEP will STILL be stepped -- including possibly reinserting themselves
+        in the schedule.  */
     public void clear()
         {
         synchronized(lock)
@@ -271,7 +271,7 @@ public class Schedule implements java.io.Serializable
                     if (shuffling) substeps.shuffle(random);  // no need to flip -- we're randomizing
                     else substeps.reverse();  // they came out in reverse order; we need to flip 'em
                     }
-								
+                                                                
                 // dump
                 if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;  // remember index of largest substep since we're violating clear()
                 currentSteps.addAll(substeps);
@@ -565,7 +565,7 @@ public class Schedule implements java.io.Serializable
 
     public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
-		if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
+        if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         Schedule.Key k = new Schedule.Key(time,ordering);
         Repeat r = new Repeat(event,interval,k);
 
@@ -657,7 +657,7 @@ class Repeat implements Steppable, Stoppable
         {
         step = null;
         }
-	
-	public String toString() { return "Repeat[" + step + "]"; }
+        
+    public String toString() { return "Repeat[" + step + "]"; }
     }
 

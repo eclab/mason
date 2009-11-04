@@ -32,7 +32,7 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
         if (field instanceof Continuous2D)
             {
             Double2D locationD2d = ((Continuous2D)field).getObjectLocation(obj);
-			if (locationD2d == null) return null;
+            if (locationD2d == null) return null;
             putInHere.x = locationD2d.x;
             putInHere.y = locationD2d.y;
             putInHere.z = 0;
@@ -40,7 +40,7 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
         else
             {
             Double3D locationD3d = ((Continuous3D)field).getObjectLocation(obj);
-			if (locationD3d == null) return null;
+            if (locationD3d == null) return null;
             putInHere.x = locationD3d.x;
             putInHere.y = locationD3d.y;
             putInHere.z = locationD3d.z;

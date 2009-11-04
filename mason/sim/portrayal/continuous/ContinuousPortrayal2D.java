@@ -39,22 +39,22 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         {
         return defaultPortrayal;
         }
-    	
-	public Point2D.Double getRelativeObjectPosition(Object location, Object otherObjectLocation, DrawInfo2D otherObjectInfo)
-		{
+        
+    public Point2D.Double getRelativeObjectPosition(Object location, Object otherObjectLocation, DrawInfo2D otherObjectInfo)
+        {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
 
-		Double2D loc = (Double2D) location;
-		Double2D oloc = (Double2D) otherObjectLocation;
-		double dx = loc.x - oloc.x;
-		double dy = loc.y - oloc.y;
-		double xScale = otherObjectInfo.draw.width;
-		double yScale = otherObjectInfo.draw.height;
-		return new Point2D.Double(dx * xScale + otherObjectInfo.draw.x,
-								  dy * yScale + otherObjectInfo.draw.y);
-		}
-	
+        Double2D loc = (Double2D) location;
+        Double2D oloc = (Double2D) otherObjectLocation;
+        double dx = loc.x - oloc.x;
+        double dy = loc.y - oloc.y;
+        double xScale = otherObjectInfo.draw.width;
+        double yScale = otherObjectInfo.draw.height;
+        return new Point2D.Double(dx * xScale + otherObjectInfo.draw.x,
+            dy * yScale + otherObjectInfo.draw.y);
+        }
+        
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
         final Continuous2D field = (Continuous2D)this.field;
@@ -67,14 +67,14 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         return new Double2D(startx, starty);
         }
 
-   public Object getObjectLocation(Object object)
+    public Object getObjectLocation(Object object)
         {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
-		return field.getObjectLocation(object);
-		}
+        return field.getObjectLocation(object);
+        }
 
-   public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo)
+    public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo)
         {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
@@ -84,7 +84,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
 
         Double2D loc = (Double2D) location;
-		if (loc == null) return null;
+        if (loc == null) return null;
 
         newinfo.draw.x = (fieldPortrayalInfo.draw.x + (xScale) * loc.x);
         newinfo.draw.y = (fieldPortrayalInfo.draw.y + (yScale) * loc.y);
@@ -137,7 +137,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                 newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
                 newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
 
-				newinfo.location = loc;
+                newinfo.location = loc;
 
                 final Object portrayedObject = objects.objs[x];
                 if (graphics == null)

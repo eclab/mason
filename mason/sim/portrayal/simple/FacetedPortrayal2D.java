@@ -22,87 +22,87 @@ import sim.util.*;
 public class FacetedPortrayal2D extends SimplePortrayal2D
     {
     public SimplePortrayal2D[] children;
-	boolean portrayAllChildren = false;
+    boolean portrayAllChildren = false;
     
     /** If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
     public FacetedPortrayal2D(SimplePortrayal2D[] children, boolean portrayAllChildren)
         {
-		this.children = children;
-		this.portrayAllChildren = portrayAllChildren;
+        this.children = children;
+        this.portrayAllChildren = portrayAllChildren;
         }
     
     /** If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
     public FacetedPortrayal2D(SimplePortrayal2D[] children)
         {
-		this(children, false);
+        this(children, false);
         }
     
-	SimplePortrayal2D getChild(Object object)
-		{
-		int element = 0;
-		if( object instanceof Number )
-			element = (int)(((Number)object).doubleValue());
-		else if (object instanceof Valuable)
-			element = (int)(((Valuable)object).doubleValue());
-		if (element < 0 || element >= children.length)
-			throw new RuntimeException("FacetedPortrayal was given a value that doesn't correspond to any array element.");
-		if (children[element] == null)
-			if (object instanceof SimplePortrayal2D)
-				return (SimplePortrayal2D)object;
-			else throw new RuntimeException("FacetedPortrayal had a null child but the object is not itself a SimplePortrayal2D");
-		else return children[element];
-		}
-	
+    SimplePortrayal2D getChild(Object object)
+        {
+        int element = 0;
+        if( object instanceof Number )
+            element = (int)(((Number)object).doubleValue());
+        else if (object instanceof Valuable)
+            element = (int)(((Valuable)object).doubleValue());
+        if (element < 0 || element >= children.length)
+            throw new RuntimeException("FacetedPortrayal was given a value that doesn't correspond to any array element.");
+        if (children[element] == null)
+            if (object instanceof SimplePortrayal2D)
+                return (SimplePortrayal2D)object;
+            else throw new RuntimeException("FacetedPortrayal had a null child but the object is not itself a SimplePortrayal2D");
+        else return children[element];
+        }
+        
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-		if (portrayAllChildren)
-			for(int i = 0; i < children.length;i++)
-				children[i].draw(object, graphics, info);
-		else
-			getChild(object).draw(object, graphics, info);
+        if (portrayAllChildren)
+            for(int i = 0; i < children.length;i++)
+                children[i].draw(object, graphics, info);
+        else
+            getChild(object).draw(object, graphics, info);
         }
         
     public boolean hitObject(Object object, DrawInfo2D range)
         {
-		if (portrayAllChildren)
-			for(int i = 0; i < children.length;i++)
-				if (children[i].hitObject(object, range))
-					return true;
-		else
-			return getChild(object).hitObject(object,range);
-		return false;
+        if (portrayAllChildren)
+            for(int i = 0; i < children.length;i++)
+                if (children[i].hitObject(object, range))
+                    return true;
+                else
+                    return getChild(object).hitObject(object,range);
+        return false;
         }
 
-	/** If portrayAllChildren, Returns true if any ONE of the children returns true. */
+    /** If portrayAllChildren, Returns true if any ONE of the children returns true. */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-		if (portrayAllChildren)
-			for(int i = 0; i < children.length;i++)
-				if (children[i].setSelected(wrapper, selected))
-					return true;
-		else
-			return getChild(wrapper.getObject()).setSelected(wrapper, selected);
-		return true;
+        if (portrayAllChildren)
+            for(int i = 0; i < children.length;i++)
+                if (children[i].setSelected(wrapper, selected))
+                    return true;
+                else
+                    return getChild(wrapper.getObject()).setSelected(wrapper, selected);
+        return true;
         }
 
-	/** If portrayAllChildren, Calls on the first child to return the inspector. */
-	public Inspector getInspector(LocationWrapper wrapper, GUIState state)
+    /** If portrayAllChildren, Calls on the first child to return the inspector. */
+    public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
-		if (portrayAllChildren)
-			return children[0].getInspector(wrapper,state);
-		else
-			return getChild(wrapper.getObject()).getInspector(wrapper,state);
+        if (portrayAllChildren)
+            return children[0].getInspector(wrapper,state);
+        else
+            return getChild(wrapper.getObject()).getInspector(wrapper,state);
         }
     
-	/** If portrayAllChildren, Calls on the first child to return the name. */
+    /** If portrayAllChildren, Calls on the first child to return the name. */
     public String getName(LocationWrapper wrapper)
         {
-		if (portrayAllChildren)
-			return children[0].getName(wrapper);
-		else
-			return getChild(wrapper.getObject()).getName(wrapper);
+        if (portrayAllChildren)
+            return children[0].getName(wrapper);
+        else
+            return getChild(wrapper.getObject()).getName(wrapper);
         }
     }
     

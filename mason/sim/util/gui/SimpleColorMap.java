@@ -160,9 +160,9 @@ public class SimpleColorMap implements ColorMap
         colors = colorTable;
         return retval;
         }
-	
-	public double filterLevel(double level) { return level; }
-	
+        
+    public double filterLevel(double level) { return level; }
+        
     /** Override this if you'd like to customize the color for values in the portrayal.  The default version
         looks up the value in the colors[] table, else computes the interpolated color and grabs it out of
         a predefined color cache (there can't be more than about 1024 or so interpolated colors, max). 
@@ -176,18 +176,18 @@ public class SimpleColorMap implements ColorMap
             }
         else
             {
-			double minLevel = this.minLevel;
-			double maxLevel = this.maxLevel;
-			// these next two also handle the possibility that maxLevel = minLevel
+            double minLevel = this.minLevel;
+            double maxLevel = this.maxLevel;
+            // these next two also handle the possibility that maxLevel = minLevel
             if (level >= maxLevel) return maxColor;
-			else if (level <= minLevel) return minColor;
-			else 
-				{
-				// now convert to between 0 and 1
-				double interval = maxLevel - minLevel;
-				// finally call the convert() function, then set back to between minLevel and maxLevel
-				level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-				}
+            else if (level <= minLevel) return minColor;
+            else 
+                {
+                // now convert to between 0 and 1
+                double interval = maxLevel - minLevel;
+                // finally call the convert() function, then set back to between minLevel and maxLevel
+                level = filterLevel((level - minLevel) / interval) * interval + minLevel;
+                }
 
             if (level == minLevel) return minColor;  // so we don't divide by zero (maxLevel - minLevel)
             else if (level == maxLevel) return maxColor;  // so we don't overflow
@@ -233,18 +233,18 @@ public class SimpleColorMap implements ColorMap
 
         // else...
             
-		final double minLevel = this.minLevel;
-		final double maxLevel = this.maxLevel;
-		// these next two also handle the possibility that maxLevel = minLevel
-		if (level >= maxLevel) return maxColor.getAlpha();
-		else if (level <= minLevel) return minColor.getAlpha();
-		else 
-			{
-			// now convert to between 0 and 1
-			double interval = maxLevel - minLevel;
-			// finally call the convert() function, then set back to between minLevel and maxLevel
-			level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-			}
+        final double minLevel = this.minLevel;
+        final double maxLevel = this.maxLevel;
+        // these next two also handle the possibility that maxLevel = minLevel
+        if (level >= maxLevel) return maxColor.getAlpha();
+        else if (level <= minLevel) return minColor.getAlpha();
+        else 
+            {
+            // now convert to between 0 and 1
+            double interval = maxLevel - minLevel;
+            // finally call the convert() function, then set back to between minLevel and maxLevel
+            level = filterLevel((level - minLevel) / interval) * interval + minLevel;
+            }
 
         final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 
@@ -263,18 +263,18 @@ public class SimpleColorMap implements ColorMap
             
         // else...
             
-		final double minLevel = this.minLevel;
-		final double maxLevel = this.maxLevel;
-		// these next two also handle the possibility that maxLevel = minLevel
-		if (level >= maxLevel) return maxColor.getRGB();
-		else if (level <= minLevel) return minColor.getRGB();
-		else 
-			{
-			// now convert to between 0 and 1
-			double interval = maxLevel - minLevel;
-			// finally call the convert() function, then set back to between minLevel and maxLevel
-			level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-			}
+        final double minLevel = this.minLevel;
+        final double maxLevel = this.maxLevel;
+        // these next two also handle the possibility that maxLevel = minLevel
+        if (level >= maxLevel) return maxColor.getRGB();
+        else if (level <= minLevel) return minColor.getRGB();
+        else 
+            {
+            // now convert to between 0 and 1
+            double interval = maxLevel - minLevel;
+            // finally call the convert() function, then set back to between minLevel and maxLevel
+            level = filterLevel((level - minLevel) / interval) * interval + minLevel;
+            }
 
         final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 

@@ -253,7 +253,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return (dx*dx+dy*dy);
         }
 
-     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final double x, final double y)
         {
         final double dx = Math.abs((double)this.x - x);
@@ -261,7 +261,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final Double2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -269,7 +269,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final Int2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -277,7 +277,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final MutableDouble2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -285,7 +285,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return dx + dy;
         }
 
-     /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final MutableInt2D p)
         {
         final double dx = Math.abs((double)this.x - p.x);
@@ -293,7 +293,7 @@ public final class MutableDouble2D implements java.io.Serializable
         return dx + dy;
         }
 
-	/** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
+    /** Returns the manhtattan distance FROM this MuableDouble2D TO the specified point */
     public double manhattanDistance(final java.awt.geom.Point2D p)
         {
         final double dx = Math.abs((double)this.x - p.getX());
@@ -405,10 +405,10 @@ public final class MutableDouble2D implements java.io.Serializable
         } 
                 
     /** Sets my length, which should be >= 0.
-	@deprecated use resize instead [renaming]
-	*/
+        @deprecated use resize instead [renaming]
+    */
     public final MutableDouble2D setLength(double val) { return resize(val); }
-	
+        
     /** Sets my length, which should be >= 0. */
     public final MutableDouble2D resize(double val)
         {
@@ -460,7 +460,7 @@ public final class MutableDouble2D implements java.io.Serializable
         {
         this.x = 0; 
         this.y = 0;
-		return this;
+        return this;
         }
 
     /** Sets the values to the negation of the values in the provided MutableDouble2D */
@@ -468,7 +468,7 @@ public final class MutableDouble2D implements java.io.Serializable
         {
         x = -b.x; 
         y = -b.y;
-		return this;
+        return this;
         }
                 
     /** Negates the MutableDouble2D's values and returns it. */
@@ -476,7 +476,7 @@ public final class MutableDouble2D implements java.io.Serializable
         {
         x = -x; 
         y = -y;
-		return this;
+        return this;
         }
         
     /** Returns the square of the length of the MutableDouble2D. */

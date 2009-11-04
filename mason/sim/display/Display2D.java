@@ -48,8 +48,8 @@ import sim.util.*;
 
 public class Display2D extends JComponent implements Steppable
     {
-	protected boolean precise = false;
-	
+    protected boolean precise = false;
+        
     /** Option pane */
     public class OptionPane extends JFrame
         {
@@ -167,21 +167,21 @@ public class Display2D extends JComponent implements Steppable
         public double xOffset;
         /** y offset */
         public double yOffset;
-		
-		/** Removes all mouse listeners, mouse motion listeners, and Key listeners from this component.  Mostly used for kiosk mode stuff -- see the Howto */
-		public void removeListeners()
-			{
-			MouseListener[] mls = (MouseListener[])(getListeners(MouseListener.class));
-			for(int x = 0 ; x < mls.length; x++)
-				{ removeMouseListener(mls[x]); }
-			MouseMotionListener[] mmls = (MouseMotionListener[])(getListeners(MouseMotionListener.class));
-			for(int x = 0 ; x < mmls.length; x++)
-				{ removeMouseMotionListener(mmls[x]); }
-			KeyListener[] kls = (KeyListener[])(getListeners(KeyListener.class));
-			for(int x = 0 ; x < kls.length; x++)
-				{ removeKeyListener(kls[x]); }
-			}
-			
+                
+        /** Removes all mouse listeners, mouse motion listeners, and Key listeners from this component.  Mostly used for kiosk mode stuff -- see the Howto */
+        public void removeListeners()
+            {
+            MouseListener[] mls = (MouseListener[])(getListeners(MouseListener.class));
+            for(int x = 0 ; x < mls.length; x++)
+                { removeMouseListener(mls[x]); }
+            MouseMotionListener[] mmls = (MouseMotionListener[])(getListeners(MouseMotionListener.class));
+            for(int x = 0 ; x < mmls.length; x++)
+                { removeMouseMotionListener(mmls[x]); }
+            KeyListener[] kls = (KeyListener[])(getListeners(KeyListener.class));
+            for(int x = 0 ; x < kls.length; x++)
+                { removeKeyListener(kls[x]); }
+            }
+                        
         /** Creates an InnerDisplay2D with the provided width and height. */
         public InnerDisplay2D(double width, double height)
             {
@@ -491,7 +491,7 @@ public class Display2D extends JComponent implements Steppable
                         
                         // do the drawing
                         p.portrayal.draw(p.portrayal.getField(), // I could have passed null in here too
-						g, getDrawInfo2D(p, clip));
+                            g, getDrawInfo2D(p, clip));
                         
                         // reset the buffering if necessary
                         p.portrayal.setBuffering(buf);
@@ -1168,8 +1168,8 @@ public class Display2D extends JComponent implements Steppable
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
         DrawInfo2D d2d = new DrawInfo2D(region, clip);
-		d2d.precise = precise;
-		return d2d;
+        d2d.precise = precise;
+        return d2d;
         }
 
     static final int MAX_TOOLTIP_LINES = 10;
@@ -1392,10 +1392,10 @@ public class Display2D extends JComponent implements Steppable
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
                                             {
-											boolean oldprecise = precise;
-											precise = true;
+                                            boolean oldprecise = precise;
+                                            precise = true;
                                             PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
-											precise = oldprecise;
+                                            precise = oldprecise;
                                             }
                     catch (Exception e) { e.printStackTrace(); }
                 }

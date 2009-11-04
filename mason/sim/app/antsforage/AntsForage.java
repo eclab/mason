@@ -32,49 +32,49 @@ public /*strictfp*/ class AntsForage extends SimState
     public static final int ONE_LONG_OBSTACLE = 3;
 
     public static final int OBSTACLES = TWO_OBSTACLES;
-	
-	public static final int ALGORITHM_VALUE_ITERATION = 1;
-	public static final int ALGORITHM_TEMPORAL_DIFERENCE = 2;
-	public static final int ALGORITHM = ALGORITHM_VALUE_ITERATION;
-	
-	public static final double IMPOSSIBLY_BAD_PHEROMONE = -1;
-	public static final double LIKELY_MAX_PHEROMONE = 3;
-	
-	public static final int HOME = 1;
-	public static final int FOOD = 2;
-	
-	
-	public int numAnts = 1000;
-	public double evaporationConstant = 0.999;
-	public double reward = 1.0;
-	public double updateCutDown = 0.9;
-	public double diagonalCutDown = computeDiagonalCutDown();
-	public double computeDiagonalCutDown() { return Math.pow(updateCutDown, Math.sqrt(2)); }
-	public double momentumProbability = 0.8;
-	public double randomActionProbability = 0.1;
-	
-	
-	// some properties
-	public int getNumAnts() { return numAnts; }
-	public void setNumAnts(int val) {if (val > 0) numAnts = val; }
-	
-	public double getEvaporationConstant() { return evaporationConstant; }
-	public void setEvaporationConstant(double val) {if (val >= 0 && val <= 1.0) evaporationConstant = val; }
+        
+    public static final int ALGORITHM_VALUE_ITERATION = 1;
+    public static final int ALGORITHM_TEMPORAL_DIFERENCE = 2;
+    public static final int ALGORITHM = ALGORITHM_VALUE_ITERATION;
+        
+    public static final double IMPOSSIBLY_BAD_PHEROMONE = -1;
+    public static final double LIKELY_MAX_PHEROMONE = 3;
+        
+    public static final int HOME = 1;
+    public static final int FOOD = 2;
+        
+        
+    public int numAnts = 1000;
+    public double evaporationConstant = 0.999;
+    public double reward = 1.0;
+    public double updateCutDown = 0.9;
+    public double diagonalCutDown = computeDiagonalCutDown();
+    public double computeDiagonalCutDown() { return Math.pow(updateCutDown, Math.sqrt(2)); }
+    public double momentumProbability = 0.8;
+    public double randomActionProbability = 0.1;
+        
+        
+    // some properties
+    public int getNumAnts() { return numAnts; }
+    public void setNumAnts(int val) {if (val > 0) numAnts = val; }
+        
+    public double getEvaporationConstant() { return evaporationConstant; }
+    public void setEvaporationConstant(double val) {if (val >= 0 && val <= 1.0) evaporationConstant = val; }
 
-	public double getReward() { return reward; }
-	public void setReward(double val) {if (val >= 0) reward = val; }
+    public double getReward() { return reward; }
+    public void setReward(double val) {if (val >= 0) reward = val; }
 
-	public double getCutDown() { return updateCutDown; }
-	public void setCutDown(double val) {if (val >= 0 && val <= 1.0) updateCutDown = val;  diagonalCutDown = computeDiagonalCutDown(); }
-	public Object domCutDown() { return new Interval(0.0, 1.0); }
+    public double getCutDown() { return updateCutDown; }
+    public void setCutDown(double val) {if (val >= 0 && val <= 1.0) updateCutDown = val;  diagonalCutDown = computeDiagonalCutDown(); }
+    public Object domCutDown() { return new Interval(0.0, 1.0); }
 
-	public double getMomentumProbability() { return momentumProbability; }
-	public void setMomentumProbability(double val) {if (val >= 0 && val <= 1.0) momentumProbability = val; }
-	public Object domMomentumProbability() { return new Interval(0.0, 1.0); }
+    public double getMomentumProbability() { return momentumProbability; }
+    public void setMomentumProbability(double val) {if (val >= 0 && val <= 1.0) momentumProbability = val; }
+    public Object domMomentumProbability() { return new Interval(0.0, 1.0); }
 
-	public double getRandomActionProbability() { return randomActionProbability; }
-	public void setRandomActionProbability(double val) {if (val >= 0 && val <= 1.0) randomActionProbability = val; }
-	public Object domRandomActionProbability() { return new Interval(0.0, 1.0); }
+    public double getRandomActionProbability() { return randomActionProbability; }
+    public void setRandomActionProbability(double val) {if (val >= 0 && val <= 1.0) randomActionProbability = val; }
+    public Object domRandomActionProbability() { return new Interval(0.0, 1.0); }
 
 
     public IntGrid2D sites = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
@@ -147,20 +147,20 @@ public /*strictfp*/ class AntsForage extends SimState
             for( int y = FOOD_YMIN ; y <= FOOD_YMAX ; y++ )
                 sites.field[x][y] = FOOD;
 
-		for(int x=0; x < numAnts; x++)
-			{
-			Ant ant = new Ant(reward);
-			buggrid.setObjectLocation(ant,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
-			schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
-			}
+        for(int x=0; x < numAnts; x++)
+            {
+            Ant ant = new Ant(reward);
+            buggrid.setObjectLocation(ant,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
+            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
+            }
 
-		// Schedule evaporation to happen after the ants move and update
-		schedule.scheduleRepeating(Schedule.EPOCH,1, new Steppable()
-			{
-			public void step(SimState state) { toFoodGrid.multiply(evaporationConstant); toHomeGrid.multiply(evaporationConstant); }
-			}, 1);
+        // Schedule evaporation to happen after the ants move and update
+        schedule.scheduleRepeating(Schedule.EPOCH,1, new Steppable()
+            {
+            public void step(SimState state) { toFoodGrid.multiply(evaporationConstant); toHomeGrid.multiply(evaporationConstant); }
+            }, 1);
 
-		}
+        }
 
     public static void main(String[] args)
         {

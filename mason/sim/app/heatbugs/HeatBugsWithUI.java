@@ -30,7 +30,7 @@ public class HeatBugsWithUI extends GUIState
 // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
 // its idealTemperature to 0 in the Inspector.
 /*
-     SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); 
+  SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); 
 */
 
     public static void main(String[] args)
@@ -73,18 +73,18 @@ public class HeatBugsWithUI extends GUIState
 
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         heatPortrayal.setMap(new sim.util.gui.SimpleColorMap(0,HeatBugs.MAX_HEAT,Color.black,Color.red));
-				
+                                
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
 // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
 // its idealTemperature to 0 in the Inspector.
 /*
-        trailsPortrayal.setField(((HeatBugs)state).buggrid);
-		SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
-		for(int x=0;x<((HeatBugs)state).bugs.length;x++)
-			{
-            trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], 
-				new TrailedPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 10));
-			}
+  trailsPortrayal.setField(((HeatBugs)state).buggrid);
+  SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
+  for(int x=0;x<((HeatBugs)state).bugs.length;x++)
+  {
+  trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], 
+  new TrailedPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 10));
+  }
 */
 
         // reschedule the displayer
@@ -114,7 +114,7 @@ public class HeatBugsWithUI extends GUIState
 // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
 // its idealTemperature to 0 in the Inspector.
 /*
-        display.attach( trailsPortrayal, "Trails" ); 
+  display.attach( trailsPortrayal, "Trails" ); 
 */
 
         display.attach(bugPortrayal,"Bugs");

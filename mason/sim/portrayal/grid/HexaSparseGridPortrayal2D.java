@@ -252,7 +252,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
                         newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
                         
-						newinfo.location = loc;
+                        newinfo.location = loc;
 
                         if (graphics == null)
                             {

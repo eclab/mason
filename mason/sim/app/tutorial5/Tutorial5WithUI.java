@@ -23,7 +23,7 @@ public class Tutorial5WithUI extends GUIState
 
     public static void main(String[] args)
         {
-		new Tutorial5WithUI().createController();
+        new Tutorial5WithUI().createController();
         }
 
     public Tutorial5WithUI() { super(new Tutorial5( System.currentTimeMillis())); }

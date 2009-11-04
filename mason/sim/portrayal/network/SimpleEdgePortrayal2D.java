@@ -160,9 +160,9 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 graphics.setPaint (fromPaint);
                 if (info.precise)
                     { 
-					preciseLine.setLine(startXd, startYd, endXd, endYd);
-					graphics.draw(preciseLine);
-					}
+                    preciseLine.setLine(startXd, startYd, endXd, endYd);
+                    graphics.draw(preciseLine);
+                    }
                 else graphics.drawLine (startX, startY, endX, endY);
                 }
             else
