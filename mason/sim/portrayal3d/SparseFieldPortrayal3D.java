@@ -96,7 +96,8 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
         HashMap hm = new HashMap();
         Transform3D tmpLocalT = new Transform3D();
         Vector3d locationV3d = new Vector3d();
-
+		
+		// put all objects into hm
         for(int i=0;i<b.numObjs;i++)
             hm.put(b.objs[i],b.objs[i]);
 
@@ -105,12 +106,23 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
         // We use a hashmap to efficiently mark out the children
         // as we delete them and update them
         
-        for(int t= globalTG.numChildren()-1; t>=0; t--)
+		// build a Bag of children to remove
+		Bag toRemove = new Bag();
+		
+		// for each child in the array...
+        for(int t = 0; t < globalTG.numChildren(); t++)
             {
-            BranchGroup localBG = (BranchGroup)globalTG.getChild(t);
+            BranchGroup localBG = (BranchGroup)(globalTG.getChild(t));
+									
+			// get the object represented by the child
             Object fieldObj = localBG.getUserData();
-            if(hm.remove(fieldObj) != null) // hm.containsKey(fieldObj))  // object still in the field
-                {  // we can pull this off because sparse fields are not allowed to contain null -- Sean
+			
+			// try to remove the object from hm.  Returns null if it wasn't there.
+            if(hm.remove(fieldObj) != null) 
+                {
+				// object still in the field.
+				// Do an update on the child.
+				// we can pull this off because sparse fields are not allowed to contain null -- Sean
                 TransformGroup localTG = (TransformGroup)localBG.getChild(0);
                 Portrayal p = getPortrayalForObject(fieldObj);
                 if(! (p instanceof SimplePortrayal3D))
@@ -139,8 +151,12 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
 
                 }
             else  // object is no longer in the field -- remove it from the scenegraph
-                globalTG.removeChild(t);
+                toRemove.add(localBG);
             }
+
+		// Now remove elements
+		for(int i = 0; i < toRemove.numObjs; i++)	// Ugh, this is truly awful
+			globalTG.removeChild((Node)toRemove.objs[i]);  // O(n), yuck yuck yuck.    But we have to do this because Java3D has no efficient way around it.  Even removeAllChildren just does a for-loop and removes each child in turn (O(n^2)!!  Who are these dufuses?)
         
         // The remaining objects in hm must be new.  We add them to the scenegraph.
         // But first, we should check to see if hm is empty.
@@ -152,7 +168,8 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
                 {
                 Object fieldObj = newObjs.next();
                 locationV3d = getLocationOfObjectAsVector3d(fieldObj, locationV3d);
-                tmpLocalT.setTranslation(locationV3d);
+                if (locationV3d != null) 
+					tmpLocalT.setTranslation(locationV3d);
                 
                 BranchGroup localBG = wrapModelForNewObject(fieldObj, tmpLocalT);                     
                 globalTG.addChild(localBG);

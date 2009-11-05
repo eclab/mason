@@ -1691,3 +1691,15 @@ Version 15
 		and similarly for inspection.
 	Added Network.nodeExists(...)
 	Added new demo, Celegans
+	Modified SparseFieldPortrayal3D's method for culling portrayals for objects no longer
+		in the field.  The existing method had bugs which were hard to pin down; we
+		were trying to be clever in computational complexity, but looking at the
+		Java3D source code shows that no matter how clever we'd be, and how absolutely
+		obvious the Right Way to do things was, Sun's code monkeys managed not to do
+		it.  They've made removing children from Groups O(n) regardless, even if you do
+		removeAllChildren (which they coded -- and I kid you not -- as repeated
+		removeChild() operations, totalling O(n^2)).  It's now quite clear why Sun
+		wound up getting sold to Oracle.  Anyway, due to raw incompetence on part of
+		these cretins, we have to do O(n) removals and so we might as well remove by
+		object rather than by index, which was our Slow and Non-Clever but Safe way
+		in the first place.  Gah.
