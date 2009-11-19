@@ -450,9 +450,8 @@ public class Schedule implements java.io.Serializable
         }
 
     /** Schedules the event to recur at the specified interval starting at getTime() + interval, and at 0 ordering.
-        If this is a valid interval (must be >= 0)
+        If this is a valid interval (must be > 0)
         and event, schedules the event and returns a Stoppable, else returns null.
-        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
 
@@ -471,9 +470,8 @@ public class Schedule implements java.io.Serializable
         }
 
     /** Schedules the event to recur at the specified interval starting at getTime() + interval, and at the provided ordering.
-        If this is a valid interval (must be >=> 0)
+        If this is a valid interval (must be > 0)
         and event, schedules the event and returns a Stoppable, else returns null.
-        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
 
@@ -513,9 +511,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to recur at the specified interval starting at the provided time, 
         in ordering 0.  If the getTime() == the provided
         time, then the first event is instead scheduled to occur at getTime() + epsilon (the minimum possible next
-        timestamp). If this is a valid time, interval (must be >=0), 
+        timestamp). If this is a valid time, interval (must be > 0), 
         and event, schedules the event and returns a Stoppable, else returns null.
-        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     
@@ -552,9 +549,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to recur at the specified interval starting at the provided time, 
         and in the ordering provided.  If the getTime() == the provided
         time, then the first event is instead scheduled to occur at getTime() + epsilon (the minimum possible next
-        timestamp). If this is a valid time, ordering, interval (must be >= 0), 
+        timestamp). If this is a valid time, ordering, interval (must be > 0), 
         and event, schedules the event and returns a Stoppable, else returns null.
-        If interval is 0, then the recurrence will be scheduled at the current time + epsilon.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     

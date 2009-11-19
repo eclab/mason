@@ -37,8 +37,9 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         final SpatialNetwork2D field = (SpatialNetwork2D)this.field;
         if( field == null ) return;
 
-        double xScale = info.draw.width / field.getWidth();
-        double yScale = info.draw.height / field.getHeight();
+		Double2D dimensions = field.getDimensions();
+        double xScale = info.draw.width / dimensions.x;
+        double yScale = info.draw.height / dimensions.y;
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 

@@ -1703,3 +1703,7 @@ Version 15
 		these cretins, we have to do O(n) removals and so we might as well remove by
 		object rather than by index, which was our Slow and Non-Clever but Safe way
 		in the first place.  Gah.
+	Added SparseField2D
+	Modified SpatialNetwork2D to use SparseField2D
+	Updated Schedule documentation regarding intervals in repeated schedules.  Thanks to
+		Paul Wiegand <wiegand@ist.ucf.edu>

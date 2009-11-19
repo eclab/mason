@@ -20,3 +20,8 @@ SparseField.java
 An abstract superclass of certain fields in which objects are simply associated
 with locations rather than stored in an array etc.  SparseField does this with
 a hash table.
+
+
+SparseField2D
+
+A simple interface for Sparse Fields which embody 2D space

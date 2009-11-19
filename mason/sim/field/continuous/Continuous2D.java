@@ -93,7 +93,7 @@ import java.util.*;
    The same goes for getObjectsAtLocationOfObject() and numObjectsAtLocationOfObject().
 */
 
-public /*strictfp*/ class Continuous2D extends SparseField
+public /*strictfp*/ class Continuous2D extends SparseField implements SparseField2D
     {
     /** Where we store the Double2D values hashed by object */
     public HashMap doubleLocationHash = new HashMap();
@@ -116,6 +116,14 @@ public /*strictfp*/ class Continuous2D extends SparseField
         return (Double2D) doubleLocationHash.get(obj);
         }
     
+	/** Synonymous with getObjectLocation, which you should generally use instead. */
+	public final Double2D getObjectLocationAsDouble2D(Object obj)
+		{
+        return (Double2D) doubleLocationHash.get(obj);
+		}
+	
+	public final Double2D getDimensions() { return new Double2D(width, height); }
+	
     public final Int2D discretize(final Double2D location)
         {
         return new Int2D((int)(location.x / discretization), (int)(location.y / discretization));

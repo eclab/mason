@@ -455,7 +455,7 @@ public class Console extends JFrame implements Controller
             public void stateChanged(ChangeEvent e)
                 {
                 int val = slider.getValue();
-                long speed = (long)( 64000.0 / (Math.pow(4,5)-1) * ( Math.pow(4,val/20.0) - 1 ) );
+                long speed = (long)( 512000.0 / (Math.pow(4,5)-1) * ( Math.pow(4,val/20.0) - 1 ) );
                 if (!slider.getValueIsAdjusting())
                     setPlaySleep(speed); // convert to milliseconds
                 sliderText.setText("" + ((double) (speed)) / 1000);
