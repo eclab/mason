@@ -36,7 +36,6 @@ sim/app/tutorial4/*.java \
 sim/app/tutorial5/*.java \
 sim/app/schelling/*.java \
 sim/app/pacman/*.java \
-sim/app/celegans/*.java \
 sim/app/pso/*.java \
 sim/display/*.java \
 sim/engine/*.java \
@@ -64,6 +63,7 @@ sim/app/woims3d/*.java \
 sim/app/mousetraps3d/*.java \
 sim/app/crowd3d/*.java \
 sim/app/balls3d/*.java \
+sim/app/celegans/*.java \
 sim/app/particles3d/*.java \
 sim/app/pso3d/*.java \
 sim/app/tutorial6/*.java \

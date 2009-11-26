@@ -53,8 +53,8 @@ public class IntPBMGrid2D extends IntGrid2D
             // get image size
             line = in.readLine().trim();
             String[] t = line.split("\\s+", 2);
-            w = Integer.valueOf(t[0]);
-            h = Integer.valueOf(t[1]);
+            w = Integer.valueOf(t[0]).intValue();
+            h = Integer.valueOf(t[1]).intValue();
 
             // resize grid
             if (w > 1 && h > 1) {
