@@ -449,13 +449,13 @@ public class Console extends JFrame implements Controller
         // create speed slider
         // Slider:  0   1     2    3   4  5  6 7  8  9
         // speed:   0   1/4  1/2   1   2  4  8 16 32 64 (speed is in seconds per tick, higher is slower)
-        slider = new JSlider(0, 100, 0); // ranges from 0 to 100
+        slider = new JSlider(0, 1000, 0); // ranges from 0 to 1000
         slider.addChangeListener(new ChangeListener()
             {
             public void stateChanged(ChangeEvent e)
                 {
                 int val = slider.getValue();
-                long speed = (long)( 512000.0 / (Math.pow(4,5)-1) * ( Math.pow(4,val/20.0) - 1 ) );
+                long speed = (long)( 512000.0 / (Math.pow(4,5)-1) * ( Math.pow(4,val/1000.0) - 1 ) );
                 if (!slider.getValueIsAdjusting())
                     setPlaySleep(speed); // convert to milliseconds
                 sliderText.setText("" + ((double) (speed)) / 1000);
