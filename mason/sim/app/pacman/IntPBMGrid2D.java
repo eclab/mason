@@ -1,5 +1,5 @@
 /*
-  Copyright 2009 by Brian Hrolenok and Sean Luke
+  Copyright 2009 by Christopher Vo and Sean Luke
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */

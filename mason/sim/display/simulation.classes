@@ -40,6 +40,7 @@ sim.app.mav.MavDemoWithUI
 sim.app.mousetraps.MouseTrapsWithUI
 sim.app.mousetraps3d.MouseTraps3DWithUI
 sim.app.networktest.NetworkTestWithUI
+sim.app.pacman.PacManWithUI
 sim.app.particles3d.Particles3DWithUI
 sim.app.pso.PSOWithUI
 sim.app.pso3d.PSO3DWithUI

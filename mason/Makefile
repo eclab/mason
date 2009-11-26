@@ -35,6 +35,8 @@ sim/app/tutorial3/*.java \
 sim/app/tutorial4/*.java \
 sim/app/tutorial5/*.java \
 sim/app/schelling/*.java \
+sim/app/pacman/*.java \
+sim/app/celegans/*.java \
 sim/app/pso/*.java \
 sim/display/*.java \
 sim/engine/*.java \
