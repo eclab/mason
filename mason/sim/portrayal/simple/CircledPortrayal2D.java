@@ -32,8 +32,8 @@ import sim.display.*;
    y diameter:     (int)(scale * info.draw.height + offset);
    </tt></pre>
 
-   <p>... that is, or is a value which scales when you zoom in, and dr adds 
-   additional fixed pixels.  The default is or = 1.0, dr = 0.  This draws the circle 
+   <p>... that is, scale is a value which scales when you zoom in, and offset adds 
+   additional fixed pixels.  The default is scale = 2.0, offset = 0.  This draws the circle 
    at twice the expected width and height of the object.
 
    <p><b>Note:  </b> One oddity of CircledPortrayal2D is due to the fact that the circle is only

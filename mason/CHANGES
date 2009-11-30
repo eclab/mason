@@ -1709,3 +1709,4 @@ Version 15
 		Paul Wiegand <wiegand@ist.ucf.edu>
 	Tweaks to the Console delay slider to make it more sensitive
 	Added PacMan
+	Documentation fixes to CircledPortrayal2D
