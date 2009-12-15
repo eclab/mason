@@ -955,13 +955,18 @@ public class Display2D extends JComponent implements Steppable
             {
             public void mouseClicked(MouseEvent e) 
                 {
-                final Point point = e.getPoint();
-                if( e.getClickCount() == 2 )
-                    createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
-                        Display2D.this.simulation );
-                if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
-                    performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
-                repaint();
+                // we only care about mouse button 1.  Perhaps in the future we may eliminate some key modifiers as well
+                int modifiers = e.getModifiers();
+                if ((modifiers & e.BUTTON1_MASK) == e.BUTTON1_MASK)
+                    {
+                    final Point point = e.getPoint();
+                    if( e.getClickCount() == 2 )
+                        createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
+                            Display2D.this.simulation );
+                    if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
+                        performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
+                    repaint();
+                    }
                 }
             
             // clear tool-tip updates

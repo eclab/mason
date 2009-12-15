@@ -62,8 +62,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        final int startx = (int)Math.floor((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)Math.floor((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
         return new Int2D(startx, starty);
         }
 
@@ -91,10 +91,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         if (loc == null) return null;
 
         // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-        newinfo.draw.x = (int)(info.draw.x + (xScale) * loc.x);
-        newinfo.draw.y = (int)(info.draw.y + (yScale) * loc.y);
-        newinfo.draw.width = (int)(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
-        newinfo.draw.height = (int)(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
+        newinfo.draw.x = (int)Math.floor(info.draw.x + (xScale) * loc.x);
+        newinfo.draw.y = (int)Math.floor(info.draw.y + (yScale) * loc.y);
+        newinfo.draw.width = (int)Math.floor(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
+        newinfo.draw.height = (int)Math.floor(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
         
         // adjust drawX and drawY to center
         newinfo.draw.x += newinfo.draw.width / 2.0;
@@ -116,10 +116,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
-        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+        final int startx = (int)Math.floor((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)Math.floor((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+        int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
         final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
@@ -164,10 +164,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                         
                         // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-                        newinfo.draw.x = (int)(info.draw.x + (xScale) * loc.x);
-                        newinfo.draw.y = (int)(info.draw.y + (yScale) * loc.y);
-                        newinfo.draw.width = (int)(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
-                        newinfo.draw.height = (int)(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
+                        newinfo.draw.x = (int)Math.floor(info.draw.x + (xScale) * loc.x);
+                        newinfo.draw.y = (int)Math.floor(info.draw.y + (yScale) * loc.y);
+                        newinfo.draw.width = (int)Math.floor(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
+                        newinfo.draw.height = (int)Math.floor(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
                         
                         // adjust drawX and drawY to center
                         newinfo.draw.x += newinfo.draw.width / 2.0;
@@ -209,10 +209,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                     SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
                 
                     // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-                    newinfo.draw.x = (int)(info.draw.x + (xScale) * loc.x);
-                    newinfo.draw.y = (int)(info.draw.y + (yScale) * loc.y);
-                    newinfo.draw.width = (int)(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
-                    newinfo.draw.height = (int)(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
+                    newinfo.draw.x = (int)Math.floor(info.draw.x + (xScale) * loc.x);
+                    newinfo.draw.y = (int)Math.floor(info.draw.y + (yScale) * loc.y);
+                    newinfo.draw.width = (int)Math.floor(info.draw.x + (xScale) * (loc.x+1)) - newinfo.draw.x;
+                    newinfo.draw.height = (int)Math.floor(info.draw.y + (yScale) * (loc.y+1)) - newinfo.draw.y;
                     
                     // adjust drawX and drawY to center
                     newinfo.draw.x += newinfo.draw.width / 2.0;

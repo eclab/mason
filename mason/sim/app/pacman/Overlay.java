@@ -12,7 +12,7 @@ import java.awt.font.*;
 import sim.display.*;
 
 /** A FieldPortrayal2D which has no field, but rather draws some text on the screen.  We use
-	this to draw score information etc. */
+    this to draw score information etc. */
 
 public class Overlay extends FieldPortrayal2D
     {

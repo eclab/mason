@@ -103,10 +103,10 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / field.width;
         final double yScale = info.draw.height / field.height;
-        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)((info.clip.y - info.draw.y) / yScale);
-        int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
+        final int startx = (int)Math.floor((info.clip.x - info.draw.x) / xScale);
+        final int starty = (int)Math.floor((info.clip.y - info.draw.y) / yScale);
+        int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
@@ -125,6 +125,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             // here we only hit/draw the object if it's within our range.  However objects
             // might leak over to other places, so I dunno...  I give them the benefit
             // of the doubt that they might be three times the size they oughta be, hence the -2 and +2's
+			
             if (loc.x >= startx - discretizationOverlap && loc.x < endx + discretizationOverlap &&
                 loc.y >= starty - discretizationOverlap && loc.y < endy + discretizationOverlap)
                 {

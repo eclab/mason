@@ -294,7 +294,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-                pressStop();
+                pressStopMaybe();
                 }
             });
         stopButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -1937,10 +1937,39 @@ public class Console extends JFrame implements Controller
 
 
 
-
+    boolean requiresConfirmationToStop = false;
+    public synchronized void setRequiresConfirmationToStop(boolean val)
+        {
+        requiresConfirmationToStop = val;
+        }
 
     /////////////////////// PLAY/STOP/PAUSE BUTTON FUNCTIONS
 
+
+
+    /** Called when the user pressed the stop button.  This optionally throws up a dialog box to double-check if we
+        really should stop.  */
+    synchronized void pressStopMaybe()
+        {
+        if (requiresConfirmationToStop)
+            {
+            if (getPlayState() != PS_STOPPED)
+                {
+                boolean result = false;
+                // pause the simulation by locking on the schedule
+                synchronized(simulation.state.schedule)
+                    {
+                    // now get the request from the user
+                    result = (JOptionPane.showConfirmDialog(this, "The simulation is running.  Really stop it?", 
+                            "Stop the simulation?", JOptionPane.OK_CANCEL_OPTION) 
+                        == JOptionPane.OK_OPTION);
+                    }
+                // release the lock, else pressStop() won't work right
+                if (result) pressStop();
+                }
+            }
+        else pressStop();
+        }
 
     /** Called when the user presses the stop button.  You can call this as well to simulate the same. */
     public synchronized void pressStop()
@@ -1967,15 +1996,15 @@ public class Console extends JFrame implements Controller
                 randomSeed++;
                 setRandomNumberGenerator(randomSeed);
                 }
-            }
         
-        // now let's start again if the user had stated a desire to repeat the simulation automatically
-        if (getShouldRepeat())
-            {
-            // do this later -- don't just call pressPlay() here because it could
-            // get us in an infinite loop if the user calls pressStop() for some reason
-            // in his start() method.
-            SwingUtilities.invokeLater(new Runnable() { public void run() { pressPlay(); }});
+            // now let's start again if the user had stated a desire to repeat the simulation automatically
+            if (getShouldRepeat())
+                {
+                // do this later -- don't just call pressPlay() here because it could
+                // get us in an infinite loop if the user calls pressStop() for some reason
+                // in his start() method.
+                SwingUtilities.invokeLater(new Runnable() { public void run() { pressPlay(); }});
+                }
             }
         }
         

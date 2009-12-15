@@ -544,7 +544,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         return result;
         }
 
-	public final Double2D getDimensions() { return new Double2D(width, height); }
+    public final Double2D getDimensions() { return new Double2D(width, height); }
     }
 
 

@@ -12,10 +12,10 @@ import sim.field.continuous.*;
 /** PacMan is the model for the game.  The model contains three fields: a Continuous2D for the
     agents, a Continuous2D for the dots, and an IntGrid2D holding the maze (1 is wall, 0 is open space).
     The model holds an array of "actions", one per player, in case we want to make this a multiplayer game.
-	
-	<p>Note that you can easily modify this code to have different kinds of Pacs (internally we have invented
-	AI Pacs.  :-).  Also if you just want one pacman, not two, change the Pacs array to be of size 1 (see the
-	code below).
+        
+    <p>Note that you can easily modify this code to have different kinds of Pacs (internally we have invented
+    AI Pacs.  :-).  Also if you just want one pacman, not two, change the Pacs array to be of size 1 (see the
+    code below).
 */
 
 public class PacMan extends SimState
@@ -111,47 +111,47 @@ public class PacMan extends SimState
                         (best.location.distanceSq(location) > pacs[i].location.distanceSq(location) && ((count=1)==1) ||
                         best.location.distanceSq(location) == pacs[i].location.distanceSq(location) && random.nextBoolean( 1.0 / (++count))))
                     best = pacs[i];
-                    }
                 }
-            return best;
             }
-        
-        
-        /** Puts the agents back to their regular locations, and clears the schedule.  */
-        public void resetAgents()
-            {
-            agents.clear();
-            schedule.clear();
-
-            // make arrays
-            actions = new int[] { Agent.NOTHING , Agent.NOTHING };
-            pacs = new Pac[2];  // set this to Pac[1] to make this one-player
-
-            // add the Pacs
-            if (pacs.length > 1) pacs[1] = new Pac(this,  1);  // schedule pac 1 first so he appears on the bottom initially
-            pacs[0] = new Pac(this,  0);
-
-            // add Blinky
-            Blinky blinky = new Blinky(this);
-
-            // add Pinky
-            Pinky pinky = new Pinky(this);
-
-            // add Inky
-            Inky inky = new Inky(this, blinky);
-
-            // add Clyde
-            Clyde clyde = new Clyde(this);
-            }
-        
-        
-        
-        /** Returns the desired user action.  */
-        public int getNextAction(int tag) { return actions[tag]; }
-
-        public static void main(String[] args)
-            {
-            doLoop(PacMan.class, args);
-            System.exit(0);
-            }    
+        return best;
         }
+        
+        
+    /** Puts the agents back to their regular locations, and clears the schedule.  */
+    public void resetAgents()
+        {
+        agents.clear();
+        schedule.clear();
+
+        // make arrays
+        actions = new int[] { Agent.NOTHING , Agent.NOTHING };
+        pacs = new Pac[2];  // set this to Pac[1] to make this one-player
+
+        // add the Pacs
+        if (pacs.length > 1) pacs[1] = new Pac(this,  1);  // schedule pac 1 first so he appears on the bottom initially
+        pacs[0] = new Pac(this,  0);
+
+        // add Blinky
+        Blinky blinky = new Blinky(this);
+
+        // add Pinky
+        Pinky pinky = new Pinky(this);
+
+        // add Inky
+        Inky inky = new Inky(this, blinky);
+
+        // add Clyde
+        Clyde clyde = new Clyde(this);
+        }
+        
+        
+        
+    /** Returns the desired user action.  */
+    public int getNextAction(int tag) { return actions[tag]; }
+
+    public static void main(String[] args)
+        {
+        doLoop(PacMan.class, args);
+        System.exit(0);
+        }    
+    }

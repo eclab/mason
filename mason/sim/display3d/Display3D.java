@@ -1066,7 +1066,7 @@ public class Display3D extends JPanel implements Steppable
         mOrbitBehavior.setZoomEnable(orbitZoomCheckBox.isSelected());
         mOrbitBehavior.setSchedulingBounds(bounds);
         universe.getViewingPlatform().setViewPlatformBehavior(mOrbitBehavior);
-
+                
         // hook everything up
         globalModelTransformGroup.addChild(portrayalSwitch);
         autoSpinTransformGroup.addChild(globalModelTransformGroup);
@@ -1077,7 +1077,6 @@ public class Display3D extends JPanel implements Steppable
         autoSpin.setTarget(autoSpinTransformGroup);  // reuse
         autoSpinBackground.setTarget(autoSpinBackgroundTransformGroup);  // reuse
         root.addChild(autoSpinTransformGroup);
-        universe.addBranchGraph(root);
 
         // define attributes -- at this point the optionsPanel has been created so it's okay
         setCullingMode(cullingMode);
@@ -1085,6 +1084,9 @@ public class Display3D extends JPanel implements Steppable
 
         // call our hook
         sceneGraphCreated();
+
+        // add the universe
+        universe.addBranchGraph(root);
 
         // fire it up
         canvas.startRenderer();
@@ -1098,8 +1100,8 @@ public class Display3D extends JPanel implements Steppable
     
     /** A hook for people who want to modify the scene graph just after it's been created (when the
         user pressed the start button usually; or if the user dynamicallly attaches or detaches
-        portrayals) but before the canvas has started rendering. Override
-        this as you see fit.  The default does nothing at all. */
+        portrayals) but before the root has been attached to the universe and before the
+        canvas has started rendering. Override  this as you see fit.  The default does nothing at all. */
     protected void sceneGraphCreated()
         {
         }

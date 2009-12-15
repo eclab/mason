@@ -68,8 +68,8 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
-        int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-        int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+        int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+        int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
 
         return new Int2D(startx, starty);
         }
@@ -89,10 +89,10 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
-        int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-        int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
-        int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+        int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+        int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+        int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
@@ -110,18 +110,18 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
         getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
-        xPoints[0] = (int)(xyC_ur[0]-0.5*xScale);
-        //yPoints[0] = (int)(xyC_ur[1]+yScale);
-        //xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
-        yPoints[1] = (int)(xyC_up[1]+yScale);
-        //xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
-        //yPoints[2] = (int)(xyC_up[1]+yScale);
-        xPoints[3] = (int)(xyC_ul[0]+0.5*xScale);
-        //yPoints[3] = (int)(xyC_ul[1]+yScale);
-        //xPoints[4] = (int)(xyC[0]-0.5*xScale);
-        yPoints[4] = (int)(xyC[1]+yScale);
-        //xPoints[5] = (int)(xyC[0]+0.5*xScale);
-        //yPoints[5] = (int)(xyC[1]+yScale);
+        xPoints[0] = (int)Math.floor(xyC_ur[0]-0.5*xScale);
+        //yPoints[0] = (int)Math.floor(xyC_ur[1]+yScale);
+        //xPoints[1] = (int)Math.floor(xyC_up[0]+0.5*xScale);
+        yPoints[1] = (int)Math.floor(xyC_up[1]+yScale);
+        //xPoints[2] = (int)Math.floor(xyC_up[0]-0.5*xScale);
+        //yPoints[2] = (int)Math.floor(xyC_up[1]+yScale);
+        xPoints[3] = (int)Math.floor(xyC_ul[0]+0.5*xScale);
+        //yPoints[3] = (int)Math.floor(xyC_ul[1]+yScale);
+        //xPoints[4] = (int)Math.floor(xyC[0]-0.5*xScale);
+        yPoints[4] = (int)Math.floor(xyC[1]+yScale);
+        //xPoints[5] = (int)Math.floor(xyC[0]+0.5*xScale);
+        //yPoints[5] = (int)Math.floor(xyC[1]+yScale);
 
         // compute the width of the object -- we tried computing the EXACT width each time, but
         // it results in weird-shaped circles etc, so instead we precomputed a standard width
@@ -153,10 +153,10 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
-        int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-        int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
-        int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+        int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+        int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+        int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+        int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
 //        double precomputedWidth = -1;  // see discussion further below
 //        double precomputedHeight = -1;  // see discussion further below
@@ -229,18 +229,18 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
                         getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
-                        xPoints[0] = (int)(xyC_ur[0]-0.5*xScale);
-                        //yPoints[0] = (int)(xyC_ur[1]+yScale);
-                        //xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
-                        yPoints[1] = (int)(xyC_up[1]+yScale);
-                        //xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
-                        //yPoints[2] = (int)(xyC_up[1]+yScale);
-                        xPoints[3] = (int)(xyC_ul[0]+0.5*xScale);
-                        //yPoints[3] = (int)(xyC_ul[1]+yScale);
-                        //xPoints[4] = (int)(xyC[0]-0.5*xScale);
-                        yPoints[4] = (int)(xyC[1]+yScale);
-                        //xPoints[5] = (int)(xyC[0]+0.5*xScale);
-                        //yPoints[5] = (int)(xyC[1]+yScale);
+                        xPoints[0] = (int)Math.floor(xyC_ur[0]-0.5*xScale);
+                        //yPoints[0] = (int)Math.floor(xyC_ur[1]+yScale);
+                        //xPoints[1] = (int)Math.floor(xyC_up[0]+0.5*xScale);
+                        yPoints[1] = (int)Math.floor(xyC_up[1]+yScale);
+                        //xPoints[2] = (int)Math.floor(xyC_up[0]-0.5*xScale);
+                        //yPoints[2] = (int)Math.floor(xyC_up[1]+yScale);
+                        xPoints[3] = (int)Math.floor(xyC_ul[0]+0.5*xScale);
+                        //yPoints[3] = (int)Math.floor(xyC_ul[1]+yScale);
+                        //xPoints[4] = (int)Math.floor(xyC[0]-0.5*xScale);
+                        yPoints[4] = (int)Math.floor(xyC[1]+yScale);
+                        //xPoints[5] = (int)Math.floor(xyC[0]+0.5*xScale);
+                        //yPoints[5] = (int)Math.floor(xyC[1]+yScale);
                         
                         // compute the width of the object -- we tried computing the EXACT width each time, but
                         // it results in weird-shaped circles etc, so instead we precomputed a standard width
@@ -304,18 +304,18 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                     getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
                     getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
-                    xPoints[0] = (int)(xyC_ur[0]-0.5*xScale);
-                    //yPoints[0] = (int)(xyC_ur[1]+yScale);
-                    //xPoints[1] = (int)(xyC_up[0]+0.5*xScale);
-                    yPoints[1] = (int)(xyC_up[1]+yScale);
-                    //xPoints[2] = (int)(xyC_up[0]-0.5*xScale);
-                    //yPoints[2] = (int)(xyC_up[1]+yScale);
-                    xPoints[3] = (int)(xyC_ul[0]+0.5*xScale);
-                    //yPoints[3] = (int)(xyC_ul[1]+yScale);
-                    //xPoints[4] = (int)(xyC[0]-0.5*xScale);
-                    yPoints[4] = (int)(xyC[1]+yScale);
-                    //xPoints[5] = (int)(xyC[0]+0.5*xScale);
-                    //yPoints[5] = (int)(xyC[1]+yScale);
+                    xPoints[0] = (int)Math.floor(xyC_ur[0]-0.5*xScale);
+                    //yPoints[0] = (int)Math.floor(xyC_ur[1]+yScale);
+                    //xPoints[1] = (int)Math.floor(xyC_up[0]+0.5*xScale);
+                    yPoints[1] = (int)Math.floor(xyC_up[1]+yScale);
+                    //xPoints[2] = (int)Math.floor(xyC_up[0]-0.5*xScale);
+                    //yPoints[2] = (int)Math.floor(xyC_up[1]+yScale);
+                    xPoints[3] = (int)Math.floor(xyC_ul[0]+0.5*xScale);
+                    //yPoints[3] = (int)Math.floor(xyC_ul[1]+yScale);
+                    //xPoints[4] = (int)Math.floor(xyC[0]-0.5*xScale);
+                    yPoints[4] = (int)Math.floor(xyC[1]+yScale);
+                    //xPoints[5] = (int)Math.floor(xyC[0]+0.5*xScale);
+                    //yPoints[5] = (int)Math.floor(xyC[1]+yScale);
 
                     // compute the width of the object -- we tried computing the EXACT width each time, but
                     // it results in weird-shaped circles etc, so instead we precomputed a standard width

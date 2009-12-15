@@ -37,7 +37,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         final SpatialNetwork2D field = (SpatialNetwork2D)this.field;
         if( field == null ) return;
 
-		Double2D dimensions = field.getDimensions();
+        Double2D dimensions = field.getDimensions();
         double xScale = info.draw.width / dimensions.x;
         double yScale = info.draw.height / dimensions.y;
 
@@ -66,10 +66,10 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                 }
             else        // it's a grid
                 {
-                newinfo.draw.x = (int)(info.draw.x + (xScale) * locStart.x);
-                newinfo.draw.y = (int)(info.draw.y + (yScale) * locStart.y);
-                double width = (int)(info.draw.x + (xScale) * (locStart.x+1)) - newinfo.draw.x;
-                double height = (int)(info.draw.y + (yScale) * (locStart.y+1)) - newinfo.draw.y;
+                newinfo.draw.x = (int)Math.floor(info.draw.x + (xScale) * locStart.x);
+                newinfo.draw.y = (int)Math.floor(info.draw.y + (yScale) * locStart.y);
+                double width = (int)Math.floor(info.draw.x + (xScale) * (locStart.x+1)) - newinfo.draw.x;
+                double height = (int)Math.floor(info.draw.y + (yScale) * (locStart.y+1)) - newinfo.draw.y;
 
                 // adjust drawX and drawY to center
                 newinfo.draw.x += width / 2.0;
@@ -90,10 +90,10 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                     }
                 else    // it's a grid
                     {
-                    newinfo.secondPoint.x = (int)(info.draw.x + (xScale) * locStop.x);
-                    newinfo.secondPoint.y = (int)(info.draw.y + (yScale) * locStop.y);
-                    double width = (int)(info.draw.x + (xScale) * (locStop.x+1)) - newinfo.secondPoint.x;
-                    double height = (int)(info.draw.y + (yScale) * (locStop.y+1)) - newinfo.secondPoint.y;
+                    newinfo.secondPoint.x = (int)Math.floor(info.draw.x + (xScale) * locStop.x);
+                    newinfo.secondPoint.y = (int)Math.floor(info.draw.y + (yScale) * locStop.y);
+                    double width = (int)Math.floor(info.draw.x + (xScale) * (locStop.x+1)) - newinfo.secondPoint.x;
+                    double height = (int)Math.floor(info.draw.y + (yScale) * (locStop.y+1)) - newinfo.secondPoint.y;
     
                     // adjust drawX and drawY to center
                     newinfo.secondPoint.x += width / 2.0;

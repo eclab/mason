@@ -79,7 +79,7 @@ public class PacManWithUI extends GUIState
         agentPortrayal.setField(pacman.agents);
                 
         // The Pac.  Note that you can have multiple pacs, each with different tags, and set it up like
-		// below to display them with different colors.  For now we've got it set to one pac.
+        // below to display them with different colors.  For now we've got it set to one pac.
         agentPortrayal.setPortrayalForClass(Pac.class, new PacPortrayal(pacman, Color.yellow)
             {
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info)

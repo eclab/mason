@@ -26,7 +26,7 @@ import sim.util.*;
 public class SpatialNetwork2D
     {
     public SparseField2D field;
-	public SparseField2D field2;
+    public SparseField2D field2;
     public Network network;
 
     public SpatialNetwork2D( final SparseField2D field, final Network network )
@@ -54,17 +54,17 @@ public class SpatialNetwork2D
         return loc;
         }
 
-	public Double2D getDimensions() { return field.getDimensions(); }
+    public Double2D getDimensions() { return field.getDimensions(); }
 
-	/** @deprecated use getDimensions() instead */
+    /** @deprecated use getDimensions() instead */
     public double getWidth()
         {
-		return getDimensions().x;
+        return getDimensions().x;
         }
         
-	/** @deprecated use getDimensions() instead */
+    /** @deprecated use getDimensions() instead */
     public double getHeight()
         {
-		return getDimensions().y;
+        return getDimensions().y;
         }
     }

@@ -14,8 +14,8 @@ import ec.util.*;
     His target (see Ghost.java) is four steps ahead of where the Pac is facing.  
     In the real Pac Man there's a bug in Pinky's actions which causes him to
     have a slightly different target when the Pac is facing up.  We do not
-    reproduce this bug.  We compute "four ahead" toroidally.	
-	*/
+    reproduce this bug.  We compute "four ahead" toroidally.    
+*/
         
 public class Pinky extends Ghost
     {

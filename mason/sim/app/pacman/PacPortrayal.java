@@ -13,8 +13,8 @@ import java.awt.geom.*;
 import sim.util.*;
 
 /**
-	PacPortrayal draws the PacMan as an Arc2D which changes its angle
-	depending on the current step of the game.
+   PacPortrayal draws the PacMan as an Arc2D which changes its angle
+   depending on the current step of the game.
 */
 
 public class PacPortrayal extends SimplePortrayal2D
