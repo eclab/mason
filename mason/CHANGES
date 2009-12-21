@@ -1601,7 +1601,8 @@ Version 14
 	added new Constructor and a missing copy of 'precise' variable in DrawInfo2D
 	Bug fix in FieldPortrayal2D: getLocation -> getPositionInFieldPortrayal
 	2D tooltips now only list objects whose status (name) is non-null
-	Made changes to Arrow and ArrowEdgePortrayal3D: the default appearance in Arrow is now lit grey.
+	Made changes to Arrow and ArrowEdgePortrayal3D: the default appearance in Arrow is 
+		now lit grey.
 	Increased the size of the default font in SimpleEdgePortrayal3D: from 24 to 60.
 		-this change was motivated by the labels in Balls3DWithUI being way to small
 		-this change was tested on mac-os and windows (/w java3D v 1.5)
@@ -1710,3 +1711,25 @@ Version 15
 	Tweaks to the Console delay slider to make it more sensitive
 	Added PacMan
 	Documentation fixes to CircledPortrayal2D
+	Added an option to Console.java to allow confirmation for stopping
+	Fixed minor bug in pressStop(): if you pressed stop while stopped, and repeat
+		when stopped was turned on, we'd start playing immediately.
+	Added a check that button 1 was the one being clicked for selecting and inspecting
+		in Display2D.  Makes it easier to use other buttons.
+	Modified when Display.sceneGraphCreated() is called: it's now called prior to
+		the root being added to the universe.  This is necessary because Java3D
+		won't allow additions to the scene graph after it's been hooked to the
+		universe even if the renderer hasn't started up yet.
+	Major modification to ContinuousPortrayal2D, SparsePortrayal2D, HexaSparsePortrayal2D,
+		and NetworkPortrayal2D -- all portrayals which can portray elements at negative
+		locations.  In many places we were pulling real values down to integers for 
+		purposes of discretization.  When we discretized to negative values, this 
+		would fail.  So for those Field Portrayals which can deal with negative 
+		field locations, we've changed discretization by (int)(... to 
+		(int)Math.floor(... to guarantee that the movement is always downwards.
+		This enables (among other things) objects to be selected and inspected when
+		they're located in certain negative regions.  Irritating that this bug 
+		wasn't caught earlier...
+	Fix to PacMan: ghosts who were frightened precisely when the game changed to a new
+		screen stayed frightened (and in their box) indefinitely.  A rare occurrance
+		but a weird one.

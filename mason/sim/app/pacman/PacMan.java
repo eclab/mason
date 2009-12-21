@@ -142,6 +142,9 @@ public class PacMan extends SimState
 
         // add Clyde
         Clyde clyde = new Clyde(this);
+		
+		// ghosts are no longer frightened
+		frightenGhosts = false;
         }
         
         
