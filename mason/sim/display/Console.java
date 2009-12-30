@@ -1500,7 +1500,7 @@ public class Console extends JFrame implements Controller
             spacer.setFont(new Font("Dialog",0,6));
             b.add(spacer);
                         
-            j = new JLabel("MASON is (c) 2005 Sean Luke and George Mason University,");
+            j = new JLabel("MASON is (c) 2005-2009 Sean Luke and George Mason University,");
             j.setFont(small);
             b.add(j);
 
@@ -1970,6 +1970,16 @@ public class Console extends JFrame implements Controller
             }
         else pressStop();
         }
+
+	public void setIncrementSeedOnPlay(boolean val)
+		{
+		incrementSeedOnPlay.setSelected(val);
+		}
+	
+	public boolean getIncrementSeedOnPlay()
+		{
+		return incrementSeedOnPlay.isSelected();
+		}
 
     /** Called when the user presses the stop button.  You can call this as well to simulate the same. */
     public synchronized void pressStop()

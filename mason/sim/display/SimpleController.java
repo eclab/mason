@@ -200,7 +200,18 @@ public class SimpleController implements Controller
         if (Console.allControllers.size() == 0)  Console.doQuit();  // we run doQuit on the console to quit gracefully, as it maintains all the controller lists
         }
     
-    
+    boolean incrementSeedOnPlay = true;
+	public void setIncrementSeedOnPlay(boolean val)
+		{
+		incrementSeedOnPlay = val;
+		}
+	
+	public boolean getIncrementSeedOnPlay()
+		{
+		return incrementSeedOnPlay;
+		}
+
+
     /////////////////////// PLAY/STOP/PAUSE BUTTON FUNCTIONS
 
 
@@ -213,6 +224,13 @@ public class SimpleController implements Controller
             simulation.finish();
             stopAllInspectors(true);                // stop the inspectors, letting them flush themselves out
             setPlayState(PS_STOPPED);
+
+            // increment the random number seed if the user had said to do so
+            if (incrementSeedOnPlay)
+                {
+                randomSeed++;
+                setRandomNumberGenerator(randomSeed);
+                }
             }
         }
         

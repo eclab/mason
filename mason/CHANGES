@@ -1733,3 +1733,12 @@ Version 15
 	Fix to PacMan: ghosts who were frightened precisely when the game changed to a new
 		screen stayed frightened (and in their box) indefinitely.  A rare occurrance
 		but a weird one.
+	Added toroidal displaying to Continuous2D.  It could in theory be added to
+		SparsePortrayal2D as well but is significantly more complex due to (1) the
+		fact that SparsePortrayal2D draws its objects by looking up filled locations
+		rather than looking up each object in turn and (2) the fact that
+		SparsePortrayal2D allows for expicit drawing orders.  Maybe we'll add it later.
+	Added setIncrementSeedOnPlay() and getIncrementSeedOnPlay() to Console and to
+		SimpleController.  SimpleController in particular now has this value by
+		default set to TRUE (Console always had it TRUE by default).
+	Updated copyright information
