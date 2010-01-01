@@ -53,6 +53,12 @@ SimApplet.java
 A simple Applet subclass for setting up MASON as an applet in a web browser.
 
 
+RateAdjuster.java
+
+A Steppable which can be inserted in the Schedule or (more appropriately)
+the GUIState's mini-schedule to slow down a simulation to no faster than
+a given frame rate.  Useful for keeping games feeling smooth despite the
+platform.
 
 
 Other Files:

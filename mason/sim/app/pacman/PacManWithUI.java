@@ -38,6 +38,9 @@ public class PacManWithUI extends GUIState
         super(state);
         }
 
+	/** The desired FPS */
+	public double FRAMES_PER_SECOND = 60;
+	
 
     /** Creates a SimpleController and starts it playing. */
     public Controller createController()
@@ -64,9 +67,6 @@ public class PacManWithUI extends GUIState
     ValueGridPortrayal2D mazePortrayal = new ValueGridPortrayal2D();
     ContinuousPortrayal2D agentPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D dotPortrayal = new ContinuousPortrayal2D();
-        
-    /** The Stoppable for the RateAdjuster.  */
-    public Stoppable stopper = null;
         
     public void setupPortrayals()
         {
@@ -150,8 +150,7 @@ public class PacManWithUI extends GUIState
         mazePortrayal.setField(pacman.maze);
                 
         // add the RateAdjuster
-        if (stopper!=null) stopper.stop();
-        stopper = scheduleRepeatingImmediatelyAfter(new RateAdjuster());
+        scheduleRepeatingImmediatelyAfter(new RateAdjuster(FRAMES_PER_SECOND));
                 
         // reschedule the displayer
         display.reset();

@@ -25,6 +25,7 @@
 # may not necessarily be around.
 
 sim.app.antsforage.AntsForageWithUI
+sim.app.asteroids.AsteroidsWithUI
 sim.app.balls3d.Balls3DWithUI
 sim.app.celegans.CelegansWithUI
 sim.app.crowd3d.Crowd3DWithUI

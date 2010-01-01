@@ -1742,3 +1742,6 @@ Version 15
 		SimpleController.  SimpleController in particular now has this value by
 		default set to TRUE (Console always had it TRUE by default).
 	Updated copyright information
+	Added sim.display.RateAdjuster
+	Removed sim.app.pacman.RateAdjuster (and changed how it works)
+	Added Asteroids
