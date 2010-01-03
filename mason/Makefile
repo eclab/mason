@@ -18,6 +18,7 @@ FLAGS = -g -nowarn
 DIRS = \
 sim/app/heatbugs/*.java\
 sim/app/hexabugs/*.java \
+sim/app/asteroids/*.java \
 sim/app/antsforage/*.java \
 sim/app/virus/*.java \
 sim/app/cto/*.java \
