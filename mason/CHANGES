@@ -1745,3 +1745,5 @@ Version 15
 	Added sim.display.RateAdjuster
 	Removed sim.app.pacman.RateAdjuster (and changed how it works)
 	Added Asteroids
+	Added Asteroids to Makefile (oops)
+	Tweaks to SimpleController so it doesn't go into infinite recursive loops on quitting

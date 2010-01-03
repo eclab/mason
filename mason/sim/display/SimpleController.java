@@ -189,11 +189,21 @@ public class SimpleController implements Controller
 
 
 
-    /** Closes the Console and shuts down the simulation.  Quits the program only if other simulations
+    /** Private internal flag which indicates if the program is already in the process of quitting. */    
+    boolean isClosing = false;
+	/** Private lock to avoid synchronizing on myself. */
+    final Object isClosingLock = new Object();
+
+    /** Closes the Controller and shuts down the simulation.  Quits the program only if other simulations
         are not running in the same program.  Called when the user clicks on the close button of the Console,
         or during a program-wide doQuit() process.  Can also be called programmatically. */
     public void doClose()
         {
+        synchronized(isClosingLock)  // closing can cause quitting, which in turn can cause closing...
+            {
+            if (isClosing) return;  // already in progress...
+            else isClosing = true;
+            }
         pressStop();  // stop threads
         simulation.quit();  // clean up simulation
         Console.allControllers.remove(this);  // remove us from the Console's controllers list
