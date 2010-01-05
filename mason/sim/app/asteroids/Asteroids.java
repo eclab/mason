@@ -93,8 +93,7 @@ public class Asteroids extends SimState
 				for(int j = 0; j < numShips; j++)
 					if (ships[j] != null && field.getObjectLocation(ships[j]).distance(loc) < SAFE_DISTANCE)
 						{ bad = true; break; }
-				if (bad) continue;
-				else break;
+				if (!bad) break;
 				}
 			new Asteroid(this, Asteroid.MAXIMUM_SIZE, new MutableDouble2D(
 							Asteroid.INITIAL_VELOCITY * Math.cos(angle),

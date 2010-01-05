@@ -114,7 +114,7 @@ public class Asteroid extends Element
 			}
 		end(asteroids);
 		asteroids.asteroidCount--;
-		if (asteroids.asteroidCount == 0)
+		if (asteroids.asteroidCount <= 0)
 			{
 			asteroids.schedule.scheduleOnceIn(asteroids.WAIT_PERIOD, new Steppable()
 				{
