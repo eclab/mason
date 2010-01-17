@@ -219,9 +219,22 @@ public class PacManWithUI extends GUIState
         final PacMan pacman = (PacMan)state;
         final SimpleController cont = (SimpleController) controller;
                 
-        // Make us take focus
+        // Make us able to take focus -- this is by default true usually anyway
         display.setFocusable(true);
-        display.requestFocus(false);
+		
+		// Make us request focus whenever our window comes up
+		displayFrame.addWindowListener(new WindowAdapter()
+			{
+			public void windowActivated(WindowEvent e)
+				{
+				System.out.println("Activated!");
+				display.requestFocusInWindow();
+				}
+			});
+			
+		// the display frame has just been set visible so we need to request focus once
+		display.requestFocusInWindow();
+
 
         display.addKeyListener(new KeyAdapter()
             {
@@ -265,8 +278,12 @@ public class PacManWithUI extends GUIState
                         if (cont.getPlayState() != cont.PS_PAUSED)  // pause it!
                             cont.pressPause();
                         cont.doNew();
-                        // focus got broken, not sure why.
-                        display.requestFocus(false);
+
+						// the MASON window belongs to our frame, so Java stupidly doesn't send
+						// us a window activated event when the MASON window is closed and our
+						// frame comes to the fore again.  So we have to manually do request
+						// focus again here.
+						display.requestFocusInWindow();
                         break;
                     }
                 }

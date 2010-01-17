@@ -1747,3 +1747,9 @@ Version 15
 	Added Asteroids
 	Added Asteroids to Makefile (oops)
 	Tweaks to SimpleController so it doesn't go into infinite recursive loops on quitting
+	Fix to ParallelSequence.  When we added thread naming, we accidentally included the
+		current thread as an instance variable, as a bit of efficiency.  But threads
+		aren't serializable, so it broke checkpointing.
+	Fix to Display3D's new ability to select one or many elements with its picker: by default
+		we were selecting only ONE, which is wrong.
+	Fixes to Asteroids's and PacMan's handling of window focus events

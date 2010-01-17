@@ -159,7 +159,8 @@ public class ParallelSequence extends Sequence
         {
         Steppable step;
         SimState state;
-        Thread currentThread = null;
+		
+        // Thread currentThread = null;
         public Worker()
             {
             super(0);
@@ -170,8 +171,10 @@ public class ParallelSequence extends Sequence
                 {
                 P();
                 if (pleaseDie) return;
-                if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
-                currentThread.setName("Parallel Sequence: " + step);
+				// this line was BAD -- because Thread is not serializable.  So I've commented it out 
+				// but left it as a warning for others.  :-)
+                //if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
+                Thread.currentThread().setName("Parallel Sequence: " + step);
                 step.step(state);
                 semaphore.V();
                 }

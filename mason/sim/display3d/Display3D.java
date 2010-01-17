@@ -1149,10 +1149,10 @@ public class Display3D extends JPanel implements Steppable
     OrbitBehavior mOrbitBehavior = null;
     public SelectionBehavior mSelectBehavior = null; 
 
-    boolean selectionAll;
-    boolean inspectionAll;
+    boolean selectionAll = true;
+    boolean inspectionAll = true;
     /** Sets whether mouse-clicking results in selecting all picked elements (true) or just the closest one (false).
-        This can be done independently of selection and inspection. */
+        This can be done independently of selection and inspection.  By default these values are both TRUE. */
     public void setSelectsAll(boolean selection, boolean inspection)
         {
         selectionAll = selection; inspectionAll = inspection;
