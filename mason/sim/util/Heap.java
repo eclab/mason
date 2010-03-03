@@ -7,7 +7,7 @@
 package sim.util;
 
 /* 
- * HeapSort.java
+ * Heap.java
  * 
  * Created: Fri Jan 25 2002
  * By: Liviu Panait

@@ -11,6 +11,7 @@ import sim.portrayal.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import java.awt.*;
+import javax.swing.*;
 
 /**
  * Portrays objects as a thin flat rectangle displaying a provided Image.  The rectangle can be
@@ -35,6 +36,30 @@ public class ImagePortrayal3D extends SimplePortrayal3D
     {
     Shape3D shape;
      
+    /** Constructs a (semi-)transparent, oriented ImagePortrayal3D by loading an Image resource using getClass().getResource() */
+    public ImagePortrayal3D(Class c, String resourceName)
+        {
+        this(new ImageIcon(c.getResource(resourceName)));
+        }
+        
+    /** Constructs a (semi-)transparent, oriented ImagePortrayal3D by loading an Image resource using getClass().getResource() */
+    public ImagePortrayal3D(Class c, String resourceName, boolean oriented, boolean opaque)
+        {
+        this(new ImageIcon(c.getResource(resourceName)), oriented, opaque);
+        }
+        
+    /** Constructs a (semi-)transparent, oriented ImagePortrayal3D using the provided ImageIcon */
+    public ImagePortrayal3D(ImageIcon icon)
+        {
+        this(icon.getImage());
+        }
+        
+    /** Constructs a (semi-)transparent, oriented ImagePortrayal3D using the provided ImageIcon. */
+    public ImagePortrayal3D(ImageIcon icon, boolean oriented, boolean opaque)
+        {
+        this(icon.getImage(), oriented, opaque);
+        }
+        
     /** Constructs a (semi-)transparent, oriented ImagePortrayal3D */
     public ImagePortrayal3D(Image image)
         {

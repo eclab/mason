@@ -35,21 +35,34 @@ public class ImagePortrayal2D extends RectanglePortrayal2D
     
     java.awt.geom.AffineTransform preciseTransform = new java.awt.geom.AffineTransform();
     
-    /** Creates an Image by loading the given resource using getClass().getResource() */
+    /** Creates an ImagePortrayal2D with the image inside the given ImageIcon, and scaled with the given scale. */
+	public ImagePortrayal2D(ImageIcon icon, double scale)
+		{
+		this(icon.getImage(), scale);
+		}
+		
+    /** Creates an ImagePortrayal2D with the image inside the given ImageIcon. */
+	public ImagePortrayal2D(ImageIcon icon)
+		{
+		this(icon, 1.0);
+		}
+	
+    /** Creates an ImagePortrayal2D by loading an Image resource using getClass().getResource(), and scaled with the given scale. */
     public ImagePortrayal2D(Class c, String resourceName, double scale)
         {
-        super(null, scale);  // don't bother with color
-        this.image = new ImageIcon(c.getResource(resourceName)).getImage();
-        this.scale = scale;
+		this(new ImageIcon(c.getResource(resourceName)), scale);
         }
 
-    /** Creates an Image by loading the given resource using getClass().getResource() */
+    /** Creates an ImagePortrayal2D by loading an Image resource using getClass().getResource() */
     public ImagePortrayal2D(Class c, String resourceName)
         {
         this(c, resourceName, 1.0);
         }
 
+    /** Creates an ImagePortrayal2D with the given image. */
     public ImagePortrayal2D(Image image)  { this(image,1.0); }
+
+    /** Creates an ImagePortrayal2D with the given image, and scaled with the given scale.. */
     public ImagePortrayal2D(Image image, double scale)  
         { 
         super(null,scale);  // don't bother with color

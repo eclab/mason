@@ -1753,3 +1753,7 @@ Version 15
 	Fix to Display3D's new ability to select one or many elements with its picker: by default
 		we were selecting only ONE, which is wrong.
 	Fixes to Asteroids's and PacMan's handling of window focus events
+	Scaling when the simulation isn't running no longer throws an exception.		
+	Added ImageIcon loading to ImagePortrayal2D
+	Added ImageIcon and Resource loading to ImagePortrayal3D
+	Updated LabelledPortrayal3D to use 1/16 scaling since we're now using Text3D
