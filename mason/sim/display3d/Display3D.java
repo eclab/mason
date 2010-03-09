@@ -131,6 +131,8 @@ public class Display3D extends JPanel implements Steppable
     public NumberTextField scaleField;
     /** The field for skipping frames */
     public NumberTextField skipField;
+	/** The combo box for skipping frames */
+	public JComboBox skipBox;
         
     long interval = 1;
     Object intervalLock = new Object();
@@ -474,14 +476,21 @@ public class Display3D extends JPanel implements Steppable
         
         final Color headerBackground = getBackground(); // will change later, see below
         header = new Box(BoxLayout.X_AXIS)
+            {
             // bug in Java3D results in header not painting its background in Windows,
             // XWindows, so we force it here.
-            {
             public synchronized void paintComponent(final Graphics g)
                 {
                 g.setColor(headerBackground);
                 g.fillRect(0,0,header.getWidth(),header.getHeight());
                 }
+
+			public Dimension getPreferredSize()  // we want to be as compressible as necessary
+				{
+				Dimension d = super.getPreferredSize();
+				d.width = 0;
+				return d;
+				}
             };
 
         // maybe this will cut down on flashing in Windows, XWindows.
@@ -583,6 +592,7 @@ public class Display3D extends JPanel implements Steppable
         scaleField.setToolTipText("Magnifies the scene.  Not the same as zooming (see the options panel)");
         header.add(scaleField);
 
+/*
         skipField = new NumberTextField("  Skip: ", 1, false)
             {
             public double newValue(double newValue)
@@ -596,7 +606,95 @@ public class Display3D extends JPanel implements Steppable
                 }
             };
         header.add(skipField);
+*/
         
+        // add the interval (skip) field
+		skipBox = new JComboBox(Display2D.REDRAW_OPTIONS);
+		skipBox.setSelectedIndex(updateRule);
+		ActionListener skipListener = new ActionListener()
+			{
+			public void actionPerformed(ActionEvent e)
+				{
+				updateRule = skipBox.getSelectedIndex();
+				if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)
+					{
+					skipField.valField.setText("");
+					skipField.setEnabled(false);
+					}
+				else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+					{
+					skipField.setValue(stepInterval);
+					skipField.setEnabled(true);
+					}
+				else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+					{
+					skipField.setValue(timeInterval);
+					skipField.setEnabled(true);
+					}
+				else // Display2D.UPDATE_RULE_WALLCLOCK_TIME
+					{
+					skipField.setValue((long)(wallInterval / 1000));
+					skipField.setEnabled(true);
+					}
+				}
+			};
+		skipBox.addActionListener(skipListener);
+		
+		// I want right justified text.  This is an ugly way to do it
+		skipBox.setRenderer(new DefaultListCellRenderer()
+			{
+			public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected,  boolean cellHasFocus)
+				{
+				// JLabel is the default
+				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				label.setHorizontalAlignment(SwingConstants.RIGHT);
+				return label;
+				}
+			});
+			
+		header.add(skipBox);
+
+
+        skipField = new NumberTextField(null, 1, false)
+            {
+            public double newValue(double newValue)
+                {
+				double val;
+				if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)  // shouldn't have happened
+					{
+					val = 0;
+					}
+				else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+					{
+					val = (long) newValue;
+					if (val < 1) val = stepInterval;
+					stepInterval = (long) val;
+					}
+				else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
+					{
+					val = newValue;
+					if (val < 0) val = wallInterval / 1000;
+					wallInterval = (long) (newValue * 1000);
+					}
+				else // if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+					{
+					val = newValue;
+					if (newValue < 0) newValue = timeInterval;
+					timeInterval = val;
+					}
+                        
+                // reset with a new interval
+                reset();
+                        
+                return val;
+                }
+            };
+        skipField.setToolTipText("Specify the interval between screen updates");
+        header.add(skipField);
+
+		skipListener.actionPerformed(null);  // have it update the text field accordingly
+
+
         setPreferredSize(new Dimension((int)width,(int)height));
         
         setLayout(new BorderLayout());
@@ -1165,15 +1263,55 @@ public class Display3D extends JPanel implements Steppable
         SwingUtilities.invokeLater(new Runnable(){ public void run(){ updateSceneGraph(false);}});
         } 
 
+
+	int updateRule = Display2D.UPDATE_RULE_ALWAYS;
+	long stepInterval = 1;
+	double timeInterval = 0;
+	long wallInterval = 0;
+	long lastStep = -1;
+	double lastTime = Schedule.BEFORE_SIMULATION;
+	long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
+	
+	/** Returns whether it's time to update. */
+	public boolean shouldUpdate()
+		{
+		boolean val = false;
+		
+		if (updateRule == Display2D.UPDATE_RULE_ALWAYS)
+			val = true;
+		else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+			{
+			long step = simulation.state.schedule.getSteps();
+			val = (lastStep < 0 || stepInterval == 0 || step - lastStep >= stepInterval || // clearly need to update
+				lastStep % stepInterval >= step % stepInterval);  // on opposite sides of a tick
+			if (val) lastStep = step;
+			}
+		else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
+			{
+			long wall = System.currentTimeMillis();
+			val = (lastWall == 0 || wallInterval == 0 || wall - lastWall >= wallInterval || // clearly need to update
+				lastWall % wallInterval >= wall % wallInterval);  // on opposite sides of a tick
+			if (val) lastWall = wall;
+			}
+		else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+			{
+			double time = simulation.state.schedule.getTime();
+			val = (lastTime == 0 || timeInterval == 0 || time - lastTime >= timeInterval || // clearly need to update
+				lastTime % timeInterval >= time % timeInterval);  // on opposite sides of a tick
+			if (val) lastTime = time;
+			}
+		// else val = false;
+		
+		return val;
+		}
+
     /** Steps the Display3D in the GUIState schedule.  Every <i>interval</i> steps,
         this results in updating the scen graph. */
     public void step(final SimState state)
         {
-        long steps = state.schedule.getSteps();
-        if (steps % getInterval() == 0 &&   // time to update!
-            state.schedule.time() < Schedule.AFTER_SIMULATION &&  // don't update if we're done
+        if (shouldUpdate() &&
                 (canvas.isShowing()    // only draw if we can be seen
-                || movieMaker !=null ))      // OR draw to a movie even if we can't be seen
+                || movieMaker != null ))      // OR draw to a movie even if we can't be seen
             {
             updateSceneGraph(true);
             }
@@ -1185,7 +1323,7 @@ public class Display3D extends JPanel implements Steppable
     */
     public void updateSceneGraph(boolean waitForRenderer)
         {
-        /* 
+		/* 
          * So far, the Canvas3D is not rendering off-screen, so new frames are not
          * produced when the display is hidden. Therefore, no point in copying the
          * same old frame over and over into the movie.

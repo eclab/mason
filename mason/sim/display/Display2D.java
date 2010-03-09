@@ -49,7 +49,7 @@ import sim.util.*;
 public class Display2D extends JComponent implements Steppable
     {
     protected boolean precise = false;
-        
+
     /** Option pane */
     public class OptionPane extends JFrame
         {
@@ -222,7 +222,7 @@ public class Display2D extends JComponent implements Steppable
                 // only paint if it's appropriate
                 long steps = Display2D.this.simulation.state.schedule.getSteps();
                 if (steps > lastEncodedSteps &&
-                    steps % getInterval() == 0 &&
+                    shouldUpdate() &&
                     Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
                     {
                     Display2D.this.movieMaker.add(paint(g,true,false));
@@ -670,6 +670,8 @@ public class Display2D extends JComponent implements Steppable
     public static final ImageIcon OPTIONS_ICON = iconFor("Options.png");
     public static final ImageIcon OPTIONS_ICON_P = iconFor("OptionsPressed.png");
     
+	public static final Object[] REDRAW_OPTIONS = new Object[] { "Steps/Redraw", "Model Secs/Redraw", "Real Secs/Redraw", "Always Redraw", "Never Redraw" };
+
     /** Use tool tips? */
     public boolean useTooltips;
 
@@ -712,6 +714,8 @@ public class Display2D extends JComponent implements Steppable
     public NumberTextField scaleField;
     /** The field for skipping frames */
     public NumberTextField skipField;
+	/** The combo box for skipping frames */
+	public JComboBox skipBox;
         
     /** Scale (zoom value).  1.0 is 1:1.  2.0 is zoomed in 2 times.  Etc. */
     double scale = 1.0;
@@ -725,9 +729,9 @@ public class Display2D extends JComponent implements Steppable
     long interval = 1;
     Object intervalLock = new Object();  // interval lock
     /** Sets how many steps are skipped before the display updates itself. */
-    public void setInterval(long i) { synchronized(intervalLock) { if (i > 0) interval = i; } }
+    // public void setInterval(long i) { synchronized(intervalLock) { if (i > 0) interval = i; } }
     /** Gets how many steps are skipped before the display updates itself. */
-    public long getInterval() { synchronized(intervalLock) { return interval; } }
+    // public long getInterval() { synchronized(intervalLock) { return interval; } }
     
     /** Whether or not we're clipping */
     boolean clipping = true;
@@ -772,7 +776,8 @@ public class Display2D extends JComponent implements Steppable
         {
         // now reschedule myself
         if (stopper!=null) stopper.stop();
-        stopper = simulation.scheduleRepeatingImmediatelyAfter(this);
+        try { stopper = simulation.scheduleRepeatingImmediatelyAfter(this); }
+		catch (IllegalArgumentException e) { } // if the simulation is over, we can't schedule.  Don't worry about it.
                 
         // deselect existing objects
         for(int x=0;x<selectedWrappers.size();x++)
@@ -895,7 +900,7 @@ public class Display2D extends JComponent implements Steppable
         attached to the provided simulation, and displaying itself with the given interval (which must be > 0). */
     public Display2D(final double width, final double height, GUIState simulation, long interval)
         {
-        setInterval(interval);
+        // setInterval(interval);
         this.simulation = simulation;
         
         reset();  // must happen AFTER simulation and interval are assigned
@@ -921,7 +926,15 @@ public class Display2D extends JComponent implements Steppable
         port.setBackground(UIManager.getColor("Panel.background"));
         
         // create the button bar at the top.
-        header = new Box(BoxLayout.X_AXIS);
+        header = new Box(BoxLayout.X_AXIS)
+			{
+			public Dimension getPreferredSize()  // we want to be as compressible as necessary
+				{
+				Dimension d = super.getPreferredSize();
+				d.width = 0;
+				return d;
+				}
+			};
 
         //Create the popup menu.
         togglebutton = new JToggleButton(LAYERS_ICON);
@@ -1075,22 +1088,90 @@ public class Display2D extends JComponent implements Steppable
         header.add(scaleField);
         
         // add the interval (skip) field
-        skipField = new NumberTextField("  Skip: ", 1, false)
+		skipBox = new JComboBox(REDRAW_OPTIONS);
+		skipBox.setSelectedIndex(updateRule);
+		ActionListener skipListener = new ActionListener()
+			{
+			public void actionPerformed(ActionEvent e)
+				{
+				updateRule = skipBox.getSelectedIndex();
+				if (updateRule == UPDATE_RULE_ALWAYS || updateRule == UPDATE_RULE_NEVER)
+					{
+					skipField.valField.setText("");
+					skipField.setEnabled(false);
+					}
+				else if (updateRule == UPDATE_RULE_STEPS)
+					{
+					skipField.setValue(stepInterval);
+					skipField.setEnabled(true);
+					}
+				else if (updateRule == UPDATE_RULE_INTERNAL_TIME)
+					{
+					skipField.setValue(timeInterval);
+					skipField.setEnabled(true);
+					}
+				else // UPDATE_RULE_WALLCLOCK_TIME
+					{
+					skipField.setValue((long)(wallInterval / 1000));
+					skipField.setEnabled(true);
+					}
+				}
+			};
+		skipBox.addActionListener(skipListener);
+		
+		// I want right justified text.  This is an ugly way to do it
+		skipBox.setRenderer(new DefaultListCellRenderer()
+			{
+			public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected,  boolean cellHasFocus)
+				{
+				// JLabel is the default
+				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				label.setHorizontalAlignment(SwingConstants.RIGHT);
+				return label;
+				}
+			});
+			
+		header.add(skipBox);
+
+
+        skipField = new NumberTextField(null, 1, false)
             {
             public double newValue(double newValue)
                 {
-                int val = (int) newValue;
-                if (val < 1) val = (int)currentValue;
+				double val;
+				if (updateRule == UPDATE_RULE_ALWAYS || updateRule == UPDATE_RULE_NEVER)  // shouldn't have happened
+					{
+					val = 0;
+					}
+				else if (updateRule == UPDATE_RULE_STEPS)
+					{
+					val = (long) newValue;
+					if (val < 1) val = stepInterval;
+					stepInterval = (long) val;
+					}
+				else if (updateRule == UPDATE_RULE_WALLCLOCK_TIME)
+					{
+					val = newValue;
+					if (val < 0) val = wallInterval / 1000;
+					wallInterval = (long) (newValue * 1000);
+					}
+				else // if (updateRule == UPDATE_RULE_INTERNAL_TIME)
+					{
+					val = newValue;
+					if (newValue < 0) newValue = timeInterval;
+					timeInterval = val;
+					}
                         
                 // reset with a new interval
-                setInterval(val);
                 reset();
                         
                 return val;
                 }
             };
-        skipField.setToolTipText("Specify the number of steps between screen updates");
+        skipField.setToolTipText("Specify the interval between screen updates");
         header.add(skipField);
+
+		skipListener.actionPerformed(null);  // have it update the text field accordingly
 
         // put everything together
         setLayout(new BorderLayout());
@@ -1499,6 +1580,52 @@ public class Display2D extends JComponent implements Steppable
                 }
             }
         }
+	
+	public final static int UPDATE_RULE_STEPS = 0;
+	public final static int UPDATE_RULE_INTERNAL_TIME = 1;
+	public final static int UPDATE_RULE_WALLCLOCK_TIME = 2;
+	public final static int UPDATE_RULE_ALWAYS = 3;
+	public final static int UPDATE_RULE_NEVER = 4;
+	int updateRule = UPDATE_RULE_ALWAYS;
+	long stepInterval = 1;
+	double timeInterval = 0;
+	long wallInterval = 0;
+	long lastStep = -1;
+	double lastTime = Schedule.BEFORE_SIMULATION;
+	long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
+	
+	/** Returns whether it's time to update. */
+	public boolean shouldUpdate()
+		{
+		boolean val = false;
+		
+		if (updateRule == UPDATE_RULE_ALWAYS)
+			val = true;
+		else if (updateRule == UPDATE_RULE_STEPS)
+			{
+			long step = simulation.state.schedule.getSteps();
+			val = (lastStep < 0 || stepInterval == 0 || step - lastStep >= stepInterval || // clearly need to update
+				lastStep % stepInterval >= step % stepInterval);  // on opposite sides of a tick
+			if (val) lastStep = step;
+			}
+		else if (updateRule == UPDATE_RULE_WALLCLOCK_TIME)
+			{
+			long wall = System.currentTimeMillis();
+			val = (lastWall == 0 || wallInterval == 0 || wall - lastWall >= wallInterval || // clearly need to update
+				lastWall % wallInterval >= wall % wallInterval);  // on opposite sides of a tick
+			if (val) lastWall = wall;
+			}
+		else if (updateRule == UPDATE_RULE_INTERNAL_TIME)
+			{
+			double time = simulation.state.schedule.getTime();
+			val = (lastTime == 0 || timeInterval == 0 || time - lastTime >= timeInterval || // clearly need to update
+				lastTime % timeInterval >= time % timeInterval);  // on opposite sides of a tick
+			if (val) lastTime = time;
+			}
+		// else val = false;
+		
+		return val;
+		}
 
     /** Steps the Display2D in the GUIState schedule.  If we're in MacOS X, this results in a repaint()
         request generated.  If we're in Windows or X Windows, this results in a direct call to
@@ -1506,9 +1633,7 @@ public class Display2D extends JComponent implements Steppable
         draw faster in different ways. */
     public void step(final SimState state)
         {
-        long steps = simulation.state.schedule.getSteps();
-    
-        if (steps % getInterval() == 0)       // time to update!
+        if (shouldUpdate())       // time to update!
             {
             if (insideDisplay.isShowing())
                 {

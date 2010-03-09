@@ -1757,3 +1757,10 @@ Version 15
 	Added ImageIcon loading to ImagePortrayal2D
 	Added ImageIcon and Resource loading to ImagePortrayal3D
 	Updated LabelledPortrayal3D to use 1/16 scaling since we're now using Text3D
+	Added more options for stepping the Display2D and Display3D drawing.  One odd bug in
+		the Display3D drawing: if a component has focus and causes the I-bar to blink,
+		this will cause the Display3D to redraw whenever the blink occurs regardless
+		of how often the user requested the redraw to happen. It's just a stupidity
+		in Display3D but is fairly harmless.
+	Updated howto.html with better instructions for creating a background image.  Thanks to
+		Matthew Hendrey <mhendrey@gmu.edu>

@@ -142,12 +142,14 @@ There are two different "kinds" of drawing on the Display2D you might want:
 
 <pre><tt>
 myContinuousPortrayal2D.setField(theContinuousField);
-myContinuousPortrayal2D.setPortrayalForAll(new ImagePortrayal2D(
-    new ImageIcon(getClass().getResource("MyPicture.gif")).getImage()),theContinuousField.width);
+MyImageIcon imageIcon = new ImageIcon("MyPicture.gif");
+Image image = imageIcon.getImage();
+int dimension = (int)Math.min(theContinuousField.width, theContinuousField.height);
+myContinuousPortrayal2D.setPortrayalForAll(new ImagePortrayal2D(image, dimension));
 myDisplay.attach(myContinuousPortrayal2D, "Overlay");
 </tt></pre>
 
-<p>If the image is taller than wide, change <tt>theContinuousField.width</tt> to <tt>theContinuousField.height</tt>.  If you're filling the entire background, remember to set Display2D's backdrop to null so it doesn't bother drawing it.
+<p>You want to pass in the smaller of the field's width and height.  If you're filling the entire background, remember to set Display2D's backdrop to null so it doesn't bother drawing it.
 
 <h3>Scale-Independent</h3>
 
