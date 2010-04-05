@@ -7,7 +7,7 @@
 # If you put the word 'ONLY' (no quotes) all by itself on
 # a line in this file, it will tell MASON to not allow the
 # user to type in his own classes: he will *only* be able
-# to chose from this list.
+# to choose from this list.
 
 # If immediately BEFORE a class you put a line starting 
 # with 'NAME:' (no quotes), # followed by some text, this

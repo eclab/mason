@@ -160,7 +160,7 @@ public class HistogramGenerator extends ChartGenerator
 
 
     //I need this so I can override this later when going for unit-wide bins
-    //(chose the values for min, max and # bins).
+    //(choose the values for min, max and # bins).
     protected void addSeriesToDataSet(HistogramSeries series)
         {
         dataset.addSeries(series.getName(),series.getValues(), series.getBins());

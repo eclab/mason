@@ -23,21 +23,21 @@ import sim.util.Double3D;
  * set it to your heart's desire.
  * 
  * 
- * The edge model is transformed through whatever transformation 
+ * <p>The edge model is transformed through whatever transformation 
  * maps the unit vector [0,-1,0]->[0,1,0] into [Fx,Fy,Fz]->[Tx,Ty,Tz]
  * ([Fx,Fy,Fz] is the "from" node, [Tx,Ty,Tz] is the "to" node).
  * V = [Fx,Fy,Fz]-[Tx,Ty,Tz] = [Vx,Vy,Vz].
  * 
- * I chose [0,-1,0]->[0,1,0] cause the java3d primitives come
+ * <p>I chose [0,-1,0]->[0,1,0] cause the java3d primitives come
  * by default in the -1,-1,-1->1,1,1 bounding box, and 
- * cilinder and cone are aligned with the Oy axis.
+ * cylinder and cone are aligned with the Oy axis.
  * 
  * 
- * At the moment I clone the edgeModel I get in the constructor.
+ * <p>At the moment I clone the edgeModel I get in the constructor.
  * Would a factory be better? 
  * 
  * 
- * This class allows you to change the appearance.  This part is actually adapted 
+ * <p>This class allows you to change the appearance.  This part is actually adapted 
  * from Sean Luke's PrimitivePortrayal3D, but I won't let you change the transform 
  * or the scale, since the java3d model HAS to be streched between the end-points of the edge.
  * 
