@@ -1,7 +1,7 @@
 /*
  * GeomPortryal.java
  *
- * $Id: GeomPortrayal.java,v 1.1 2010-04-02 17:12:36 mcoletti Exp $
+ * $Id: GeomPortrayal.java,v 1.2 2010-04-07 16:05:27 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -15,6 +15,7 @@ import java.awt.Paint;
 import java.awt.geom.*; 
 import sim.portrayal.*; 
 import sim.display.*; 
+import sim.util.geo.*; 
 
 /** 
  A simple portrayal for visualizing 2D GeomField geometries.  Currently, we can draw Point, LineString, 
@@ -60,13 +61,14 @@ public class GeomPortrayal extends SimplePortrayal2D {
 	 */ 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
-        Geometry geometry = (Geometry)object;
+		GeomWrapper gm = (GeomWrapper)object; 
+        Geometry geometry = gm.fetchGeometry(); 
 		if (geometry.isEmpty()) return; 
 
-        if (this.paint != null)
-        {
-            graphics.setPaint(paint); // <-- this overrides the color set by value
-        }
+        if (gm.paint != null)
+            graphics.setPaint(gm.paint); 
+		else if (paint != null) 
+			graphics.setPaint(paint); 
 								
 		if (geometry instanceof Point)
 		{

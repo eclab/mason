@@ -4,13 +4,9 @@ DIRS=sim/field/geo/*.java\
 sim/io/geo/*.java\
 sim/portrayal/geo/*.java\
 sim/util/geo/*.java\
-sim/app/geo/gridfollow/*.java\
-sim/app/geo/guitest1/*.java\
-sim/app/geo/ogrtest1/*.java\
-sim/app/geo/ogrtest2/*.java\
-sim/app/geo/ogrtest3/*.java\
-sim/app/geo/coverworld/*.java\
-sim/app/geo/routefollow/*.java
+sim/app/geo/campusworld/*.java \
+sim/app/geo/nearbyworld/*.java \
+sim/app/geo/networkworld/*.java \
 
 all: 
 	@ echo This makes the Geometry/GIS code. 

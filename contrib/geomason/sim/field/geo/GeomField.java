@@ -17,6 +17,7 @@ import java.util.*;
  objects, and should not be modified after constrution as this will have undefined consequences 
  for inspection.  
  */
+
 public class GeomField implements java.io.Serializable {
 
     /**  Contains the minimum bounding rectangle of all the stored geometries. */
@@ -28,12 +29,12 @@ public class GeomField implements java.io.Serializable {
 	/** The convex hull of all the geometries in this field */ 
 	private Geometry convexHull; 
 	
-	GeometryFactory geomFactory; 
+	/** Helper factory for computing the union or convex hull */
+	private GeometryFactory geomFactory; 
 
 	/** Defines the outer shell of all the geometries within this field */ 
-	Geometry globalUnion; 
+	private Geometry globalUnion; 
 
-	
 	/** Default constructor, which resets all internal data structures.  */ 
     public GeomField()
     {
@@ -102,7 +103,7 @@ public class GeomField implements java.io.Serializable {
 		}
 	}
 	
-	/** Determine if the Coordinate is withing the bounding Geometry of the fields 
+	/** Determine if the Coordinate is within the bounding Geometry of the field's 
 	 geometries.  Call computeUnion first. 
 	 */ 
 	public boolean isInsideUnion(final Coordinate point)
@@ -172,8 +173,7 @@ public class GeomField implements java.io.Serializable {
         return coveringObjects;
     }
 
-    /** Return geometries that are covered by the given object
-     *
+    /** Return geometries that are covered by the given Geometry
      */
     public final Bag getCoveredObjects(final Geometry g)
     {
@@ -193,7 +193,7 @@ public class GeomField implements java.io.Serializable {
     }
 
     
-    /** Returns geometries that touch the given object.
+    /** Returns geometries that touch the given Geometry.
      *
      * @param g Geometry for which we want to find touching objects
      * @returns Bag containing any geometries touching g
@@ -218,7 +218,7 @@ public class GeomField implements java.io.Serializable {
     
 
     /** 
-	 Returns true if the given object is covered by any geometry in the field.
+	 Returns true if the given Geometry is covered by any geometry in the field.
 	 Cover here includes points in the boundaries.  
 	 
 	 @see #isCovered(com.vividsolutions.jts.geom.Coordinate)     

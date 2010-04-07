@@ -1,7 +1,7 @@
 /*
  * GeomFieldPortrayal.java
  *
- * $Id: GeomFieldPortrayal.java,v 1.1 2010-04-02 17:12:36 mcoletti Exp $
+ * $Id: GeomFieldPortrayal.java,v 1.2 2010-04-07 16:05:26 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -131,11 +131,11 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
 					putInHere.add(new LocationWrapper(gm, null, this));
 			}
 			else { 
-				Paint color = lookupColor(gm);
-                if (color != null) graphics.setPaint(color);
+				//Paint color = lookupColor(gm);
+                //if (color != null) graphics.setPaint(color);
 				
 				if (portrayal instanceof GeomPortrayal)
-					portrayal.draw(geom, graphics, info);
+					portrayal.draw(gm, graphics, info);
 			
 				else  {		// have a SimplePortrayal2D, so move info.draw to the centroid of the geometry
 					Point pt = geom.getCentroid(); 
