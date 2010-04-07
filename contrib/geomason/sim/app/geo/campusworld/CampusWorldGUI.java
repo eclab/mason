@@ -1,7 +1,7 @@
 /*
  * CampusWorldGUI
  *
- * $Id: CampusWorldGUI.java,v 1.1 2010-04-05 17:27:19 mcoletti Exp $
+ * $Id: CampusWorldGUI.java,v 1.2 2010-04-07 15:51:07 kemsulli Exp $
  */
 
 package sim.app.geo.campusworld;
@@ -73,15 +73,12 @@ public class CampusWorldGUI extends GUIState {
 
         walkwaysPortrayal.setField(world.walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
-        //walkwaysPortrayal.setImmutableField(true); 
 
         buildingPortrayal.setField(world.buildings);
         buildingPortrayal.setPortrayalForAll(new GeomPortrayal(Color.DARK_GRAY,true));
-        //buildingPortrayal.setImmutableField(true); 
 
         roadsPortrayal.setField(world.roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
-       // roadsPortrayal.setImmutableField(true); 
 
         agentPortrayal.setField(world.agents);
         agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
