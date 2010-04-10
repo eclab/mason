@@ -4,7 +4,7 @@
  * The agent that will be moving around the GeomField.  It will report
  * all other objects that are within a certain distance.
  *
- * $Id: Agent.java,v 1.1 2010-04-05 17:19:26 mcoletti Exp $
+ * $Id: Agent.java,v 1.2 2010-04-10 18:20:04 kemsulli Exp $
  */
 
 package sim.app.geo.networkworld;
@@ -72,10 +72,10 @@ public class Agent implements Steppable {
         // If we have a negative move rate the agent is moving from the end to
         // the start, else the agent is moving in the opposite direction.
         if ( (moveRate > 0 && currentIndex >= endIndex) ||
-            (moveRate < 0 && currentIndex <= startIndex) )
-        {
-            return true;
-        }
+             (moveRate < 0 && currentIndex <= startIndex) )
+            {
+                return true;
+            }
 
         return false;
     }
@@ -103,43 +103,43 @@ public class Agent implements Steppable {
         Node currentJunction = geoTest.network.findNode(location.getCoordinate());
         
         if (currentJunction != null)
-        {
-            DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
-            Object[] edges = directedEdgeStar.getEdges().toArray();
-
-            if (edges.length > 0)
             {
-                // pick one randomly
-                int i = geoTest.random.nextInt(edges.length);
-                NetworkDirectedEdge directedEdge = (NetworkDirectedEdge) edges[i];
-                NetworkEdge edge = (NetworkEdge) directedEdge.getEdge();
+                DirectedEdgeStar directedEdgeStar = currentJunction.getOutEdges();
+                Object[] edges = directedEdgeStar.getEdges().toArray();
 
-                // and start moving along it
-                LineString newRoute = edge.getLine();
-                Point startPoint = newRoute.getStartPoint();
-                Point endPoint = newRoute.getEndPoint();
-
-                if (startPoint.equals(location))
-                {
-                    setNewRoute(newRoute, true);
-                }
-                else
-                {
-                    if (endPoint.equals(location))
+                if (edges.length > 0)
                     {
-                        setNewRoute(newRoute, false);
+                        // pick one randomly
+                        int i = geoTest.random.nextInt(edges.length);
+                        NetworkDirectedEdge directedEdge = (NetworkDirectedEdge) edges[i];
+                        NetworkEdge edge = (NetworkEdge) directedEdge.getEdge();
+
+                        // and start moving along it
+                        LineString newRoute = edge.getLine();
+                        Point startPoint = newRoute.getStartPoint();
+                        Point endPoint = newRoute.getEndPoint();
+
+                        if (startPoint.equals(location))
+                            {
+                                setNewRoute(newRoute, true);
+                            }
+                        else
+                            {
+                                if (endPoint.equals(location))
+                                    {
+                                        setNewRoute(newRoute, false);
+                                    }
+                                else // some how the agent is neither at the beginning or
+                                    { // the end of the selected line segment
+                                        System.err.println("Where the hell am I?");
+                                    }
+                            }
                     }
-                    else // some how the agent is neither at the beginning or
-                    { // the end of the selected line segment
-                        System.err.println("Where the hell am I?");
-                    }
-                }
             }
-        }
         else
-        {
-            System.err.println("Cannot find node nearest to " + location);
-        }
+            {
+                System.err.println("Cannot find node nearest to " + location);
+            }
     }
 
     
@@ -159,17 +159,17 @@ public class Agent implements Steppable {
         Coordinate startCoord = null;
 
         if ( start )
-        {
-            startCoord = segment.extractPoint(startIndex);
-            currentIndex = startIndex;
-            moveRate = 1.0; // ensure we move forward along segment
-        }
+            {
+                startCoord = segment.extractPoint(startIndex);
+                currentIndex = startIndex;
+                moveRate = 1.0; // ensure we move forward along segment
+            }
         else
-        {
-            startCoord = segment.extractPoint(endIndex);
-            currentIndex = endIndex;
-            moveRate = -1.0; // ensure we move backward along segment
-        }
+            {
+                startCoord = segment.extractPoint(endIndex);
+                currentIndex = endIndex;
+                moveRate = -1.0; // ensure we move backward along segment
+            }
 
         moveTo(startCoord);
     }

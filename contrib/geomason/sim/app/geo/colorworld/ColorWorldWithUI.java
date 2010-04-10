@@ -7,7 +7,7 @@
  *   step is into water, randomly choose a new cardinal direction.  This
  *   has the effect of having the agents "bounce" around the main island.
  *
- * $Id: ColorWorldWithUI.java,v 1.1 2010-04-05 17:21:53 mcoletti Exp $
+ * $Id: ColorWorldWithUI.java,v 1.2 2010-04-10 18:17:17 kemsulli Exp $
  * 
  */
 
@@ -46,8 +46,8 @@ public class ColorWorldWithUI extends GUIState {
         super(new ColorWorld(System.currentTimeMillis()));
     }
 
-	public static String getName() { return "Color World Demonstration"; }
-	public Object getSimulationInspectedObject() { return state; }
+    public static String getName() { return "Color World Demonstration"; }
+    public Object getSimulationInspectedObject() { return state; }
 
     public void init(Controller controller)
     {
@@ -63,14 +63,14 @@ public class ColorWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
-	public void quit()
-	{
+    public void quit()
+    {
         super.quit();
         
         if (displayFrame!=null) displayFrame.dispose();
         displayFrame = null;
         display = null;
-	}
+    }
 
     public void start()
     {
@@ -82,19 +82,19 @@ public class ColorWorldWithUI extends GUIState {
     {
         ColorWorld world = (ColorWorld)state;
 
-		// we use a GeomPortrayal for the agents also, since GeomPortrayal 
-		// handles the translation between screen and map coordinates gracefully
-		agentPortrayal.setField(world.agents);
-//        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.PINK,10.0,true));
+        // we use a GeomPortrayal for the agents also, since GeomPortrayal 
+        // handles the translation between screen and map coordinates gracefully
+        agentPortrayal.setField(world.agents);
+        //        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.PINK,10.0,true));
         agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
-		
+                
         countyPortrayal.setField(world.county);
         countyPortrayal.setPortrayalForAll(new GeomPortrayal(true));
         countyPortrayal.setImmutableField(false);
         countyPortrayal.setMap(new SimpleColorMap(0.0, world.NUM_AGENTS, Color.WHITE, Color.BLUE));
         
         display.reset();
-//        display.setBackdrop(Color.GRAY);
+        //        display.setBackdrop(Color.GRAY);
 
         display.repaint();
     }
@@ -102,7 +102,7 @@ public class ColorWorldWithUI extends GUIState {
     public static void main(String[] args)
     {
         ColorWorldWithUI worldGUI = new ColorWorldWithUI();
-		Console console = new Console(worldGUI);
+        Console console = new Console(worldGUI);
         console.setVisible(true);
     }
     

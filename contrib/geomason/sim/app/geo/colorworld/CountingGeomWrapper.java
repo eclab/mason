@@ -1,7 +1,7 @@
 /*
  * CountingGeomWrapper.java
  *
- * $Id: CountingGeomWrapper.java,v 1.1 2010-04-05 17:21:53 mcoletti Exp $
+ * $Id: CountingGeomWrapper.java,v 1.2 2010-04-10 18:17:17 kemsulli Exp $
  */
 
 package sim.app.geo.colorworld;
@@ -53,10 +53,10 @@ public class CountingGeomWrapper extends GeomWrapper {
      */
     public double doubleValue()
     {
-		// Grind through all the agents and find out how many are inside our
+        // Grind through all the agents and find out how many are inside our
         // polygon
         Bag coveredAgents = agents.getCoveredObjects(geometry);
-		return coveredAgents.numObjs; 
+        return coveredAgents.numObjs; 
     }
 
 }
