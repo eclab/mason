@@ -4,7 +4,7 @@
  * The agent that will be moving around the GeomField.  It will report
  * all other objects that are within a certain distance.
  *
- * $Id: Agent.java,v 1.2 2010-04-10 18:20:04 kemsulli Exp $
+ * $Id: Agent.java,v 1.3 2010-04-10 18:20:55 kemsulli Exp $
  */
 
 package sim.app.geo.networkworld;
@@ -85,7 +85,7 @@ public class Agent implements Steppable {
      *
      * @param state
      */
-    public void start(GeoTest state)
+    public void start(NetworkWorld state)
     {
         // Find the first line segment and set our position over the start coordinate.
 
@@ -95,12 +95,12 @@ public class Agent implements Steppable {
 
     /** randomly selects an adjacent route to traverse
      *
-     * @param geoTest contains the network topology used to find route
+     * @param NetworkWorld contains the network topology used to find route
      */
-    private void findNewPath(GeoTest geoTest)
+    private void findNewPath(NetworkWorld NetworkWorld)
     {
         // find all the adjacent junctions
-        Node currentJunction = geoTest.network.findNode(location.getCoordinate());
+        Node currentJunction = NetworkWorld.network.findNode(location.getCoordinate());
         
         if (currentJunction != null)
             {
@@ -110,7 +110,7 @@ public class Agent implements Steppable {
                 if (edges.length > 0)
                     {
                         // pick one randomly
-                        int i = geoTest.random.nextInt(edges.length);
+                        int i = NetworkWorld.random.nextInt(edges.length);
                         NetworkDirectedEdge directedEdge = (NetworkDirectedEdge) edges[i];
                         NetworkEdge edge = (NetworkEdge) directedEdge.getEdge();
 
@@ -187,24 +187,24 @@ public class Agent implements Steppable {
 
     public void step(SimState state)
     {
-        move((GeoTest) state);
+        move((NetworkWorld) state);
     }
 
 
     /** moves the agent along the grid
      *
-     * @param geoTest handle on the base SimState
+     * @param NetworkWorld handle on the base SimState
      *
      * The agent will randomly select an adjacent junction and then move
      * along the line segment to it.  Then it will repeat.
      */
-    private void move(GeoTest geoTest)
+    private void move(NetworkWorld NetworkWorld)
     {
         // if we're not at a junction move along the current segment
         if ( ! arrived() )
             moveAlongPath();
         else
-            findNewPath(geoTest);
+            findNewPath(NetworkWorld);
     }
 
     /** move agent along current line segment

@@ -1,5 +1,5 @@
 /*
- * GeoTestGUI
+ * NetworkWorldWithUI
  */
 
 package sim.app.geo.networkworld;
@@ -23,7 +23,7 @@ import sim.portrayal.geo.GeomPortrayal;
  *
  * @author mcoletti
  */
-public class GeoTestGUI extends GUIState {
+public class NetworkWorldWithUI extends GUIState {
 
     private Display2D display;
     private JFrame displayFrame;
@@ -33,10 +33,10 @@ public class GeoTestGUI extends GUIState {
     private GeomFieldPortrayal agentPortrayal = new GeomFieldPortrayal();
 
     
-    public GeoTestGUI(SimState state) { super(state); }
-    public GeoTestGUI() throws ParseException { super(new GeoTest(System.currentTimeMillis())); }
+    public NetworkWorldWithUI(SimState state) { super(state); }
+    public NetworkWorldWithUI() throws ParseException { super(new NetworkWorld(System.currentTimeMillis())); }
     
-	public void init(Controller controller)
+    public void init(Controller controller)
     {
         super.init(controller);
 
@@ -50,7 +50,7 @@ public class GeoTestGUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
-	public void start()
+    public void start()
     {
         super.start();
         setupPortrayals();
@@ -59,7 +59,7 @@ public class GeoTestGUI extends GUIState {
 
     private void setupPortrayals()
     {
-        GeoTest world = (GeoTest)state;
+        NetworkWorld world = (NetworkWorld)state;
 
         geometryPortrayal.setField(world.world);
 
@@ -80,7 +80,7 @@ public class GeoTestGUI extends GUIState {
      */
     void syncMBRs()
     {
-        GeoTest world = (GeoTest) state;
+        NetworkWorld world = (NetworkWorld) state;
 
         Envelope mbr = world.world.getMBR();
 
@@ -94,16 +94,16 @@ public class GeoTestGUI extends GUIState {
 
     public static void main(String[] args)
     {
-        GeoTestGUI worldGUI = null;
+        NetworkWorldWithUI worldGUI = null;
         
         try
-        {
-            worldGUI = new GeoTestGUI();
-        }
+            {
+                worldGUI = new NetworkWorldWithUI();
+            }
         catch (ParseException ex)
-        {
-            Logger.getLogger(GeoTestGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            {
+                Logger.getLogger(NetworkWorldWithUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         Console console = new Console(worldGUI);
         console.setVisible(true);

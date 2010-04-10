@@ -1,7 +1,7 @@
 /*
- * GeoTest.java
+ * NetworkWorld.java
  *
- * $Id: GeoTest.java,v 1.1 2010-04-05 17:19:26 mcoletti Exp $
+ * $Id: NetworkWorld.java,v 1.1 2010-04-10 18:20:05 kemsulli Exp $
  */
 package sim.app.geo.networkworld;
 
@@ -23,7 +23,7 @@ import sim.util.geo.GeomWrapper;
  *
  * @author mcoletti
  */
-public class GeoTest extends SimState
+public class NetworkWorld extends SimState
 {
 
     public GeomField world = new GeomField(); // contains road network
@@ -36,7 +36,7 @@ public class GeoTest extends SimState
     // Agent that moves around the world
     Agent a = new Agent();
 
-    public GeoTest(long seed) throws ParseException
+    public NetworkWorld(long seed) throws ParseException
     {
         super(seed);
 
@@ -46,38 +46,38 @@ public class GeoTest extends SimState
         LineString line = null;
 
         try
-        {
-            line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
-            world.addGeometry(new GeomWrapper(line, null));
+            {
+                line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
+                world.addGeometry(new GeomWrapper(line, null));
 
-            line = (LineString) (rdr.read("LINESTRING (20 50, 30 50)"));
-            world.addGeometry(new GeomWrapper(line, null));
+                line = (LineString) (rdr.read("LINESTRING (20 50, 30 50)"));
+                world.addGeometry(new GeomWrapper(line, null));
 
-            line = (LineString) (rdr.read("LINESTRING (30 50, 40 50)"));
-            world.addGeometry(new GeomWrapper(line, null));
+                line = (LineString) (rdr.read("LINESTRING (30 50, 40 50)"));
+                world.addGeometry(new GeomWrapper(line, null));
 
-            line = (LineString) (rdr.read("LINESTRING (20 50, 20 10, 30 10)"));
-            world.addGeometry(new GeomWrapper(line, null));
+                line = (LineString) (rdr.read("LINESTRING (20 50, 20 10, 30 10)"));
+                world.addGeometry(new GeomWrapper(line, null));
 
-            line = (LineString) (rdr.read("LINESTRING (30 50, 30 20, 40 20)"));
-            world.addGeometry(new GeomWrapper(line, null));
+                line = (LineString) (rdr.read("LINESTRING (30 50, 30 20, 40 20)"));
+                world.addGeometry(new GeomWrapper(line, null));
             
-            // zoom out to see all of line
-            Envelope mbr = world.getMBR();
-            mbr.expandToInclude(0.0, 0.0);
+                // zoom out to see all of line
+                Envelope mbr = world.getMBR();
+                mbr.expandToInclude(0.0, 0.0);
 
-            agents.addGeometry(new GeomWrapper(a.getGeometry(), null));
-            mbr.expandToInclude(agents.getMBR());
+                agents.addGeometry(new GeomWrapper(a.getGeometry(), null));
+                mbr.expandToInclude(agents.getMBR());
 
-            mbr.expandBy(20.0); // fluff it out so we can see everything
+                mbr.expandBy(20.0); // fluff it out so we can see everything
 
-            agents.setMBR(mbr);
-            world.setMBR(mbr);
-        }
+                agents.setMBR(mbr);
+                world.setMBR(mbr);
+            }
         catch (ParseException parseException)
-        {
-            System.out.println("Bogus line string");
-        }
+            {
+                System.out.println("Bogus line string");
+            }
 
         network.createFromGeomField(world);
         addIntersectionNodes( network.nodeIterator(), junctions) ;
@@ -98,13 +98,13 @@ public class GeoTest extends SimState
         Point point = null;
 
         while (nodeIterator.hasNext())
-        {
-            Node node = (Node) nodeIterator.next();
-            System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
-            coord = node.getCoordinate();
-            point = fact.createPoint(coord);
-            junctions.addGeometry(new GeomWrapper(point, null));
-        }
+            {
+                Node node = (Node) nodeIterator.next();
+                System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
+                coord = node.getCoordinate();
+                point = fact.createPoint(coord);
+                junctions.addGeometry(new GeomWrapper(point, null));
+            }
     }
 
     public void start()
@@ -124,7 +124,7 @@ public class GeoTest extends SimState
 
     public static void main(String[] args)
     {
-        doLoop(GeoTest.class, args);
+        doLoop(NetworkWorld.class, args);
         System.exit(0);
     }
 }
