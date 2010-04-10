@@ -1,7 +1,7 @@
 /*
  * NetworkDirectedEdge.java
  *
- * $Id: NetworkDirectedEdge.java,v 1.1 2010-04-02 16:53:54 mcoletti Exp $
+ * $Id: NetworkDirectedEdge.java,v 1.2 2010-04-10 18:27:37 kemsulli Exp $
  */
 
 package sim.util.geo;
@@ -17,8 +17,8 @@ import com.vividsolutions.jts.planargraph.Node;
 public class NetworkDirectedEdge extends DirectedEdge {
 
     public
-    NetworkDirectedEdge(Node from, Node to, Coordinate directionPt,
-                        boolean edgeDirection)
+        NetworkDirectedEdge(Node from, Node to, Coordinate directionPt,
+                            boolean edgeDirection)
     {
         super(from, to, directionPt, edgeDirection);
     }

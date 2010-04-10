@@ -1,7 +1,7 @@
 /*
  * NetworkEdge.java
  *
- * $Id: NetworkEdge.java,v 1.1 2010-04-02 16:53:54 mcoletti Exp $
+ * $Id: NetworkEdge.java,v 1.2 2010-04-10 18:27:38 kemsulli Exp $
  */
 
 package sim.util.geo;
@@ -15,12 +15,12 @@ import com.vividsolutions.jts.planargraph.Edge;
  */
 public class NetworkEdge extends Edge {
 
-  private LineString line; // line that corresponds to this edge
+    private LineString line; // line that corresponds to this edge
 
-  public NetworkEdge(LineString line)
-  {
-    this.line = line;
-  }
+    public NetworkEdge(LineString line)
+    {
+        this.line = line;
+    }
   
-  public LineString getLine() { return line; }
+    public LineString getLine() { return line; }
 }

@@ -1,7 +1,7 @@
 /*
  * GeomValuedFieldPortrayal.java
  *
- * $Id: GeomValuedFieldPortrayal.java,v 1.1 2010-04-02 17:12:37 mcoletti Exp $
+ * $Id: GeomValuedFieldPortrayal.java,v 1.2 2010-04-10 18:27:34 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -34,7 +34,7 @@ public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
     }
 
     /** compute color based on color LUT computed from gw.getValue()
-	 *
+     *
      * @param gw 
      * @return Color mapped from gw.doubleValue() as dictated by color table
      */
@@ -44,7 +44,7 @@ public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
                             // color table lookup of its double value
 
         double value = gw.doubleValue();
-		
+                
         if (this.colorMap.validLevel(value))
             color = this.colorMap.getColor(value);
         else

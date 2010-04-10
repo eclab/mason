@@ -1,7 +1,7 @@
 /**
  *  PointMoveTo.java
  *
- * $Id: PointMoveTo.java,v 1.1 2010-04-02 16:53:54 mcoletti Exp $
+ * $Id: PointMoveTo.java,v 1.2 2010-04-10 18:27:38 kemsulli Exp $
  */
 
 package sim.util.geo;
@@ -35,13 +35,13 @@ public class PointMoveTo implements CoordinateSequenceFilter
     }
 
     public
-    void setCoordinate(Coordinate newValue_)
+        void setCoordinate(Coordinate newValue_)
     {
         this.newValue_ = newValue_;
     }
 
     public
-    void filter(CoordinateSequence coords, int pos)
+        void filter(CoordinateSequence coords, int pos)
     {
         coords.setOrdinate(pos, 0, newValue_.x);
         coords.setOrdinate(pos, 1, newValue_.y);
@@ -50,13 +50,13 @@ public class PointMoveTo implements CoordinateSequenceFilter
     }
 
     public
-    boolean isDone()
+        boolean isDone()
     {
         return isDone_;
     }
 
     public
-    boolean isGeometryChanged()
+        boolean isGeometryChanged()
     {
         return geometryChanged_;
     }

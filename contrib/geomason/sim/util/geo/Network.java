@@ -1,7 +1,7 @@
 /*
  * Network.java
  *
- * $Id: Network.java,v 1.1 2010-04-02 16:53:54 mcoletti Exp $
+ * $Id: Network.java,v 1.2 2010-04-10 18:27:36 kemsulli Exp $
  */
 package sim.util.geo;
 
@@ -39,14 +39,14 @@ public class Network extends PlanarGraph
         Bag geometries = field.getGeometry();
 
         for (int i = 0; i < geometries.numObjs; i++)
-        {
-            if (((GeomWrapper)geometries.get(i)).geometry instanceof LineString)
             {
-                LineString lineString = (LineString) ((GeomWrapper)geometries.get(i)).geometry;
+                if (((GeomWrapper)geometries.get(i)).geometry instanceof LineString)
+                    {
+                        LineString lineString = (LineString) ((GeomWrapper)geometries.get(i)).geometry;
 
-                addLineString(lineString);
+                        addLineString(lineString);
+                    }
             }
-        }
 
     }
 
@@ -60,16 +60,16 @@ public class Network extends PlanarGraph
     private void addLineString(LineString line)
     {
         if (line.isEmpty())
-        {
-            return;
-        }
+            {
+                return;
+            }
 
         Coordinate[] linePts = CoordinateArrays.removeRepeatedPoints(line.getCoordinates());
 
         if (linePts.length < 2)
-        {
-            return;
-        }
+            {
+                return;
+            }
 
         Coordinate startPt = linePts[0];
         Coordinate endPt = linePts[linePts.length - 1];
@@ -102,11 +102,11 @@ public class Network extends PlanarGraph
     {
         Node node = findNode(pt);
         if (node == null)
-        {
-            node = new Node(pt);
-            // ensure node is only added once to graph
-            add(node);
-        }
+            {
+                node = new Node(pt);
+                // ensure node is only added once to graph
+                add(node);
+            }
         return node;
     }
 

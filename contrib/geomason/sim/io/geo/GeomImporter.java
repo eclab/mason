@@ -8,8 +8,8 @@ import sim.util.Bag;
 import sim.util.geo.GeomWrapper;
 
 /** 
- A GeomImportor reads a file for geometric info and adds new objects to the GeomField.  
-  */
+    A GeomImportor reads a file for geometric info and adds new objects to the GeomField.  
+*/
 
 public abstract class GeomImporter {
 
@@ -25,13 +25,13 @@ public abstract class GeomImporter {
     private java.lang.Class geomWrapperClass = null;
 
     public
-    Class getGeomWrapperClass()
+        Class getGeomWrapperClass()
     {
         return geomWrapperClass;
     }
 
     public
-    void setGeomWrapperClass(Class geomWrapperClass)
+        void setGeomWrapperClass(Class geomWrapperClass)
     {
         this.geomWrapperClass = geomWrapperClass;
     }
@@ -61,34 +61,34 @@ public abstract class GeomImporter {
     protected GeomWrapper makeGeomWrapper(Geometry g, GeometryInfo gi)
     {
         if (this.geomWrapperClass == null)
-        {
-            return new GeomWrapper(g,gi);
-        }
+            {
+                return new GeomWrapper(g,gi);
+            }
 
         GeomWrapper geomWrapper = null;
 
         try
-        {
-            geomWrapper = (GeomWrapper) geomWrapperClass.newInstance();
-            geomWrapper.geometry = g;
-            geomWrapper.geoInfo = gi;
-        }
+            {
+                geomWrapper = (GeomWrapper) geomWrapperClass.newInstance();
+                geomWrapper.geometry = g;
+                geomWrapper.geoInfo = gi;
+            }
         catch (InstantiationException ex)
-        {
-            Logger.getLogger(GeomImporter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            {
+                Logger.getLogger(GeomImporter.class.getName()).log(Level.SEVERE, null, ex);
+            }
         catch (IllegalAccessException ex)
-        {
-            Logger.getLogger(GeomImporter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            {
+                Logger.getLogger(GeomImporter.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         return geomWrapper;
     }
 
     /** 
-	 Read geospatial data into the GeomField.  The Bag contains only the 
-	 fields to display in the Inspector, set masked to null to display 
-	 all fields contained in the GIS metadata. 
-     */
-   public abstract void ingest(String input, GeomField field, Bag masked) throws FileNotFoundException;
+        Read geospatial data into the GeomField.  The Bag contains only the 
+        fields to display in the Inspector, set masked to null to display 
+        all fields contained in the GIS metadata. 
+    */
+    public abstract void ingest(String input, GeomField field, Bag masked) throws FileNotFoundException;
 }

@@ -1,7 +1,7 @@
 /*
  * CampusWorld.java
  *
- * $Id: CampusWorld.java,v 1.1 2010-04-05 17:27:19 mcoletti Exp $
+ * $Id: CampusWorld.java,v 1.2 2010-04-10 18:27:27 kemsulli Exp $
  */
 package sim.app.geo.campusworld;
 
@@ -29,10 +29,8 @@ import sim.util.geo.GeomWrapper;
 public class CampusWorld extends SimState
 {
     public int numAgents = 1000;
-//    public int numAgents = 1;
 
-//	private static final String dataDirectory = "../../../../../data/";
-    private static final String dataDirectory = "./data/";
+    private static final String dataDirectory = "../../data/";
 
     // where all the stream geometry lives
     public GeomField walkways = new GeomField();
@@ -42,121 +40,105 @@ public class CampusWorld extends SimState
     // where all the agents live
     public GeomField agents = new GeomField();
 
-    // Open simple Shape file of stream.
-	//OGRImporter importer = new OGRImporter();
-	//GeoToolsImporter importer = new GeoToolsImporter(); 
-	ShapeFileImporter importer = new ShapeFileImporter();
+    // The Importer is responsible for reading in the GIS files.
+    //OGRImporter importer = new OGRImporter();
+    //GeoToolsImporter importer = new GeoToolsImporter(); 
+    ShapeFileImporter importer = new ShapeFileImporter();
     
-	
-	//OGRExporter exporter = new OGRExporter();
-	ShapeFileExporter exporter = new ShapeFileExporter();
-	//GeoToolsExporter exporter = new GeoToolsExporter(); 
-	
+        
     // Stores transportation network connections
     public Network network = new Network();
     public GeomField junctions = new GeomField(); // nodes for intersections
 
+   
     public CampusWorld(long seed)
     {
         super(seed);
 
     }
 
-    public 
-    int getNumAgents()
+    public int getNumAgents()
     {
         return numAgents;
     }
 
-    public
-    void setNumAgents(int n)
+    public void setNumAgents(int n)
     {
         numAgents = n;
     }
-
-
-
 
     /** add agents to the simulation
      */
     private void addAgents()
     {
         for (int i = 0; i < numAgents; i++)
-        {
-            Agent a = new Agent();
-			agents.addGeometry(new GeomWrapper(a.getGeometry(), null));
-            a.start(this);
-            schedule.scheduleRepeating(a);
-        }
+            {
+                Agent a = new Agent();
+                agents.addGeometry(new GeomWrapper(a.getGeometry(), null));
+                a.start(this);
+                schedule.scheduleRepeating(a);
+            }
     }
     
-	public static boolean testing = false; 
-	
-	
-	public void finish()
-	{
-		/*if (!testing) { 
-			try { 
-				exporter.write("testing", "ESRI Shapefile", buildings); 
-			} catch (IOException e) { e.printStackTrace(); } 
-		}  */
-		
-		agents.clear(); 
-	}
-	
+        
+        
+    public void finish()
+    {
+        super.finish(); 
+        agents.clear(); 
+    }
+        
     
     public void start()
     {
         super.start();
         try
-        {
-            // We want to save the MBR so that we can ensure that all GeomFields
-            // cover identical area.
-            System.out.println("reading buildings layer");
-			Bag masked = new Bag(); 
-			masked.add("NAME"); 
-			//masked.add("FLOORS"); 
-			masked.add("ADDR_NUM"); 
-			
-			//if (!testing)
-				importer.ingest(dataDirectory + "bldg.shp", buildings, null);
-			//else 
-			//	importer.ingest("./testing.shp", buildings, null); 
-			
-			//exporter.write("testing", "ESRI Shapefile", buildings); 
-			//System.exit(-1); 
-			
-			
-            Envelope MBR = buildings.getMBR();
+            {
+            
+                System.out.println("reading buildings layer");
+                        
+                // this Bag lets us only display certain fields in the Inspector, the non-masked fields 
+                // are not associated with the object at all 
+                Bag masked = new Bag(); 
+                masked.add("NAME"); 
+                masked.add("FLOORS"); 
+                masked.add("ADDR_NUM"); 
+                        
+                importer.ingest(dataDirectory + "bldg.shp", buildings, null);
+                        
 
-            System.out.println("reading roads layer");
-            importer.ingest(dataDirectory + "roads.shp", roads, null);
+                // We want to save the MBR so that we can ensure that all GeomFields
+                // cover identical area.
+                Envelope MBR = buildings.getMBR();
 
-            MBR.expandToInclude(roads.getMBR());
+                System.out.println("reading roads layer");
+                importer.ingest(dataDirectory + "roads.shp", roads, null);
 
-            System.out.println("reading walkways layer");
-            importer.ingest(dataDirectory + "walk_ways.shp", walkways, null);
+                MBR.expandToInclude(roads.getMBR());
 
-            MBR.expandToInclude(walkways.getMBR());
+                System.out.println("reading walkways layer");
+                importer.ingest(dataDirectory + "walk_ways.shp", walkways, null);
 
-            System.out.println("Done reading data");
+                MBR.expandToInclude(walkways.getMBR());
 
-            // Now synchronize the MBR for all GeomFields to ensure they cover the same area
-            buildings.setMBR(MBR);
-            roads.setMBR(MBR);
-            walkways.setMBR(MBR);
+                System.out.println("Done reading data");
 
-            network.createFromGeomField(walkways);
+                // Now synchronize the MBR for all GeomFields to ensure they cover the same area
+                buildings.setMBR(MBR);
+                roads.setMBR(MBR);
+                walkways.setMBR(MBR);
 
-            addIntersectionNodes( network.nodeIterator(), junctions ) ;
-            addAgents();
-            agents.setMBR(MBR);
-			 
-        }
+                network.createFromGeomField(walkways);
+
+                addIntersectionNodes( network.nodeIterator(), junctions ) ;
+                addAgents();
+                agents.setMBR(MBR);
+                         
+            }
         catch (FileNotFoundException ex)
-        {
-            Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            {
+                Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
     
 
@@ -176,20 +158,20 @@ public class CampusWorld extends SimState
         int counter = 0;
 
         while (nodeIterator.hasNext())
-        {
-            Node node = (Node) nodeIterator.next();
+            {
+                Node node = (Node) nodeIterator.next();
 
-            if ( counter % 10 == 0 )
-                System.out.print(".");
+                if ( counter % 10 == 0 )
+                    System.out.print(".");
 
-            coord = node.getCoordinate();
-            point = fact.createPoint(coord);
+                coord = node.getCoordinate();
+                point = fact.createPoint(coord);
 
-            junctions.addGeometry(new GeomWrapper(point, null));
-            counter++;
-        }
+                junctions.addGeometry(new GeomWrapper(point, null));
+                counter++;
+            }
     }
-	
+        
     public static void main(String[] args)
     {
         doLoop(CampusWorld.class, args);
