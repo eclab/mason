@@ -4,7 +4,7 @@
  * The agent that will be moving around the GeomField.  It will report
  * all other objects that are within a certain distance.
  *
- * $Id: Agent.java,v 1.1 2010-04-05 17:07:10 mcoletti Exp $
+ * $Id: Agent.java,v 1.2 2010-04-10 17:55:01 kemsulli Exp $
  */
 
 package sim.app.geo.nearbyworld;
@@ -58,18 +58,18 @@ public class Agent implements Steppable {
         move(state.random);
 
         // Now determine if we're covered by something in the world or not.
-        GeomField world = ((GeoGuiTest)state).world;
+        GeomField world = ((NearbyWorld)state).world;
 
         Bag nearbyObjects = world.getObjectsWithinDistance(location, Agent.distance);
 
         if (nearbyObjects.isEmpty())
             System.out.println("Nothing nearby");
         else
-        {
-            System.out.println("# nearby objects: " + nearbyObjects.numObjs);
-            for (int i = 0; i < nearbyObjects.numObjs; i++)
-                System.out.println(nearbyObjects.objs[i] + " is near me");
-        }
+            {
+                System.out.println("# nearby objects: " + nearbyObjects.numObjs);
+                for (int i = 0; i < nearbyObjects.numObjs; i++)
+                    System.out.println(nearbyObjects.objs[i] + " is near me");
+            }
     }
 
     /** returns false if the given point is outside the bounds, else true
@@ -80,9 +80,9 @@ public class Agent implements Steppable {
         // XXX Uses magic numbers.  :(
         if (c.x < 0.0 || c.x > 100.0 ||
             c.y < 0.0 || c.y > 100.0)
-        {
-            return false;
-        }
+            {
+                return false;
+            }
 
         return true;
     }
@@ -99,7 +99,7 @@ public class Agent implements Steppable {
         AffineTransformation translate = null;
 
         switch (direction)
-        {
+            {
             case 0 : // move up
                 translate = AffineTransformation.translationInstance(0.0, moveRate);
                 coord.y += Agent.moveRate;
@@ -138,12 +138,12 @@ public class Agent implements Steppable {
                 break;
             default : // Ummm, what?
                 break;
-        }
+            }
 
         if (isValidMove(coord))
-        {
-            location.apply(translate);
-            System.out.println("agent:" + location);
-        }        
+            {
+                location.apply(translate);
+                System.out.println("agent:" + location);
+            }        
     }
 }

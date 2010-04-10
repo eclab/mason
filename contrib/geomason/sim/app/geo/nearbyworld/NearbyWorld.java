@@ -1,10 +1,10 @@
 /*
- * GeoGuiTest.java
+ * NearbyWorld.java
  *
  * This creates a simulation with two lines and a polygon.  And agent then
  * moves randomly through this space reporting which objects it is close to.
  *
- * $Id: GeoGuiTest.java,v 1.1 2010-04-05 17:07:11 mcoletti Exp $
+ * $Id: NearbyWorld.java,v 1.1 2010-04-10 17:55:02 kemsulli Exp $
  */
 package sim.app.geo.nearbyworld;
 
@@ -24,7 +24,7 @@ import sim.util.geo.GeomWrapper;
  *
  * @author mcoletti
  */
-public class GeoGuiTest extends SimState
+public class NearbyWorld extends SimState
 {
 
     public GeomField world = new GeomField();
@@ -35,7 +35,7 @@ public class GeoGuiTest extends SimState
     Agent a = new Agent();
 
     
-    public GeoGuiTest(long seed) throws ParseException
+    public NearbyWorld(long seed) throws ParseException
     {
         super(seed);
 
@@ -59,21 +59,21 @@ public class GeoGuiTest extends SimState
         Polygon polygon = null;
 
         try
-        {
-            line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
-            world.addGeometry(new GeomWrapper(line, null));
+            {
+                line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
+                world.addGeometry(new GeomWrapper(line, null));
 
-            line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
-			world.addGeometry(new GeomWrapper(line, null));
-			
-            polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
-			world.addGeometry(new GeomWrapper(polygon, null));
-		
-        }
+                line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
+                world.addGeometry(new GeomWrapper(line, null));
+                        
+                polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
+                world.addGeometry(new GeomWrapper(polygon, null));
+                
+            }
         catch (ParseException parseException)
-        {
-            System.out.println("Bogus line string");
-        }
+            {
+                System.out.println("Bogus line string");
+            }
 
         
         // Add the agent
@@ -83,7 +83,7 @@ public class GeoGuiTest extends SimState
         // agent won't show up in the display.
         agent.setMBR(world.getMBR());
     }
-	
+        
     public void start()
     {
         super.start();
@@ -99,7 +99,7 @@ public class GeoGuiTest extends SimState
 
     public static void main(String[] args)
     {
-        doLoop(GeoGuiTest.class, args);
+        doLoop(NearbyWorld.class, args);
         System.exit(0);
     }
 }

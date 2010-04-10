@@ -1,7 +1,7 @@
 /*
- * GeoGuiTestGUI
+ * NearbyWorldWithUI
  *
- * $Id: GeoGuiTestGUI.java,v 1.1 2010-04-05 17:07:11 mcoletti Exp $
+ * $Id: NearbyWorldWithUI.java,v 1.1 2010-04-10 17:55:02 kemsulli Exp $
  * 
  */
 
@@ -21,11 +21,11 @@ import sim.portrayal.geo.GeomFieldPortrayal;
 import sim.portrayal.simple.OvalPortrayal2D;
 
 
-/** MASON GUI wrapper for GeoGuiTestGUI
+/** MASON GUI wrapper for NearbyWorldWithUI
  *
  * @author mcoletti
  */
-public class GeoGuiTestGUI extends GUIState {
+public class NearbyWorldWithUI extends GUIState {
 
     private Display2D display;
     private JFrame displayFrame;
@@ -34,9 +34,9 @@ public class GeoGuiTestGUI extends GUIState {
     private GeomFieldPortrayal agentFieldPortrayal = new GeomFieldPortrayal();
 
     
-    public GeoGuiTestGUI(SimState state) { super(state); }
+    public NearbyWorldWithUI(SimState state) { super(state); }
 
-    public GeoGuiTestGUI() throws ParseException { super(new GeoGuiTest(System.currentTimeMillis())); }
+    public NearbyWorldWithUI() throws ParseException { super(new NearbyWorld(System.currentTimeMillis())); }
 
 
     public void init(Controller controller)
@@ -60,7 +60,7 @@ public class GeoGuiTestGUI extends GUIState {
 
     private void setupPortrayals()
     {
-        GeoGuiTest world = (GeoGuiTest)state;
+        NearbyWorld world = (NearbyWorld)state;
 
         worldFieldPortrayal.setField(world.world);
 
@@ -77,18 +77,18 @@ public class GeoGuiTestGUI extends GUIState {
         display.repaint();
     }
 
-	public static void main(String[] args)
+    public static void main(String[] args)
     {
-        GeoGuiTestGUI worldGUI = null;
+        NearbyWorldWithUI worldGUI = null;
         
         try
-        {
-            worldGUI = new GeoGuiTestGUI();
-        }
+            {
+                worldGUI = new NearbyWorldWithUI();
+            }
         catch (ParseException ex)
-        {
-            Logger.getLogger(GeoGuiTestGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            {
+                Logger.getLogger(NearbyWorldWithUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         Console console = new Console(worldGUI);
         console.setVisible(true);
