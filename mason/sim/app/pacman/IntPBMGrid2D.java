@@ -14,6 +14,17 @@ import sim.field.grid.*;
         
 public class IntPBMGrid2D extends IntGrid2D
     {
+    public IntPBMGrid2D(InputStream in)
+        {
+		this(new InputStreamReader(in));
+        }
+                
+    public IntPBMGrid2D(Reader reader)
+        {
+        super(0, 0);
+        read(new BufferedReader(reader));
+        }
+                
     public IntPBMGrid2D(String filename)
         {
         super(0, 0);
@@ -37,7 +48,9 @@ public class IntPBMGrid2D extends IntGrid2D
         try { read(new BufferedReader(new FileReader(file))); }
         catch (IOException e) { throw new RuntimeException("Whoops!"); }
         }
-                
+			
+	public void read(InputStream in) { read(new BufferedReader(new InputStreamReader(in))); }
+	
     public void read(BufferedReader in) {
         try {
             int w = 0, h = 0, tmp = 0;

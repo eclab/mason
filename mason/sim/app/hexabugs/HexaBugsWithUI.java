@@ -8,6 +8,7 @@ package sim.app.hexabugs;
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.grid.*;
+import sim.portrayal.simple.*;
 import java.awt.*;
 import javax.swing.*;
 import sim.util.gui.*;
@@ -165,8 +166,8 @@ public class HexaBugsWithUI extends GUIState
         heatPortrayal2.setMap(map);
         
         bugPortrayal.setField(((HexaBugs)state).buggrid);
-        bugPortrayal.setPortrayalForAll(
-            new sim.portrayal.simple.OvalPortrayal2D(Color.white));   // all the HexaBugs will be white ovals
+        bugPortrayal.setPortrayalForAll(new MovablePortrayal2D(
+            new sim.portrayal.simple.OvalPortrayal2D(Color.white)));   // all the HexaBugs will be white ovals
             
         // reschedule the displayer
         display.reset();

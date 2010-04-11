@@ -8,6 +8,7 @@ package sim.app.pacman;
 import sim.engine.*;
 import sim.util.*;
 import sim.field.continuous.*;
+import java.io.*;
 
 /** PacMan is the model for the game.  The model contains three fields: a Continuous2D for the
     agents, a Continuous2D for the dots, and an IntGrid2D holding the maze (1 is wall, 0 is open space).
@@ -62,8 +63,9 @@ public class PacMan extends SimState
         level = 1;
         score = 0;
                 
-        String mazefile = PacMan.class.getResource("images/maze0.pbm").getPath();
-        maze = new IntPBMGrid2D(mazefile);
+        // String mazefile = PacMan.class.getResource("images/maze0.pbm").getPath();
+        // maze = new IntPBMGrid2D(mazefile);
+		maze = new IntPBMGrid2D(PacMan.class.getResourceAsStream("images/maze0.pbm"));
         agents = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
         dots = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
 
@@ -77,8 +79,9 @@ public class PacMan extends SimState
         {
         dots.clear();
                 
-        String mazefile = PacMan.class.getResource("images/maze" + (level - 1) % MAX_MAZES + ".pbm").getPath();
-        maze.read(mazefile);
+        //String mazefile = PacMan.class.getResource("images/maze" + (level - 1) % MAX_MAZES + ".pbm").getPath();
+        //maze.read(mazefile);
+		maze.read(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"));
 
         // add energizers
         dots.setObjectLocation(new Energizer(), new Double2D(1, 5));

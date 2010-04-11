@@ -57,15 +57,42 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
+		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        }
+		
+	public Double2D getScale(DrawInfo2D info)
+		{
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
-                
-        final double xScale = fieldPortrayalInfo.draw.width / field.width;
-        final double yScale = fieldPortrayalInfo.draw.height / field.height;
-        final double startx = (fieldPortrayalInfo.clip.x - fieldPortrayalInfo.draw.x) / xScale;  // notice not (int) like elsewhere.
-        final double starty = (fieldPortrayalInfo.clip.y - fieldPortrayalInfo.draw.y) / yScale;
-        return new Double2D(startx, starty);
-        }
+		
+        final double xScale = info.draw.width / field.width;
+        final double yScale = info.draw.height / field.height;
+		return new Double2D(xScale, yScale);
+		}
+		
+	public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+		{
+		Double2D scale = getScale(fieldPortrayalInfo);
+		double xScale = scale.x;
+		double yScale = scale.y;
+		
+        final double x = (position.getX() - fieldPortrayalInfo.draw.x) / xScale;  // notice not (int) like elsewhere.
+        final double y = (position.getY() - fieldPortrayalInfo.draw.y) / yScale;
+		return new Double2D(x,y);
+		}
+
+    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+		{
+        final Continuous2D field = (Continuous2D)this.field;
+        if (field==null) return;
+		if (field.getObjectLocation(object) == null) return;
+		Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
+		if (location != null)
+			{
+			if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
+			field.setObjectLocation(object, location);
+			}
+		}
 
     public Object getObjectLocation(Object object)
         {
@@ -180,15 +207,15 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 						{
 						// MacOS X 10.3 Panther has a bug which resets the clip, YUCK
 						//                    graphics.setClip(clip);
-						if (objectSelected &&  // there's something there
-							selectedWrappers.get(portrayedObject) != null)
-							{
+						newinfo.selected = (objectSelected &&  // there's something there
+							selectedWrappers.get(portrayedObject) != null); 
+							/* {
 							LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
 							portrayal.setSelected(wrapper,true);
 							portrayal.draw(portrayedObject, graphics, newinfo);
 							portrayal.setSelected(wrapper,false);
 							}
-						else portrayal.draw(portrayedObject, graphics, newinfo);
+						else */ portrayal.draw(portrayedObject, graphics, newinfo);
 						}
 					}
 				}

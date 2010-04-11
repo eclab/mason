@@ -833,11 +833,18 @@ You may not know it, but MASON has a separate facility for registering objects w
 
 <a name="move"><h2>How to Move an Agent in 2D by Dragging It with the Mouse</h2>
 
+Previous versions of MASON suggested a relatively complex movement mechanism.  This mechanism is still
+plausible (see the commented-out code in HeatBugsWithUI.java or NetworkTestWithUI.java), but instead
+you should try using MovablePortrayal2D, a special wrapper portrayal which enables objects to be easily
+moved in Display2Ds.
+
+<!--
 MASON does not have a built-in facility for moving agents: rather, it has hooks to make it relatively easy to get it set up yourself.  The general idea is to add a MouseInputAdapter to the "inner display" of the Display2D, which waits for the mouse to be pressed, dragged, and released.  When the mouse is pressed, we get the objects in our desired FieldPortrayal which were hit by the mouse.  We then grab the one object of interest to us.  As we drag, we calculuate the location in the Field of where the mouse is presently pointing, and move the object to that location, then redisplay.  When we let up the mouse, we forget about the object.
 
 <p>This is all done straightforwardly using certain predefined methods in Display2D.  The <b>HeatBugsWithUI.java</b> file has a chunk of example code which shows how to do it for a SparseGrid2D.
 
 <p>We can make this nicer in two ways.  First off, we don't always click directly on the center of the object, so when we begin dragging, the object will "pop" to center itself at our mouse position.  This is fine for a discrete environment like SparseGrid2D but it looks unnatural if we're using a Continuous2D.  Second, as we drag the object, we may wish to also select it.  The <b>NetworkTestWithUI.java</b> file shows how to add in these two nicer items for a Continuous2D field.
+-->
 
 <a name="paint"><h2>How to Change the Look of a Provided SimplePortrayal2D Dynamically Based on the Object Status</h2>
 
@@ -858,7 +865,7 @@ Many of the standard provided SimplePortrayal2D objects have a <b>paint</b> vari
         };
 </tt></pre>
 
-<a name="trails"><h2>How to Draw "Trails" or "Mouse Tails" Dragging Behind Objects</a>
+<a name="trails"><h2>How to Draw "Trails" or "Mouse Tails" Dragging Behind Objects</a></h2>
 
 You may wish to draw trails behind objects as they move about, thus showing where they've been in the past.  MASON has a special SimplePortrayal2D wrapper class which is designed for this purpose: <b>sim.portrayal.simple.TrailedPortrayal2D</b>.  The class comes with a lot of class documentation describing how you use it.  Also the HeatBugsWithUI and FlockersWithUI classes have (commented out) examples of using TrailedPortrayal2D.
 

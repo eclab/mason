@@ -8,6 +8,7 @@ package sim.portrayal;
 import java.awt.*;
 import sim.display.*;
 import java.awt.geom.*;
+import java.awt.event.*;
 
 /** The superclass of all 2D Simple Portrayals.  Doesn't draw itself at all.
     Responds to hit testing by intersecting the hit testing rect with a width by
@@ -33,7 +34,7 @@ public class SimplePortrayal2D implements Portrayal2D
         is null.  The location of the object in the field may (and may not) be stored in
         info.location.  The form of that location varies depending on the kind of field used. */
                 
-    public  boolean hitObject(Object object, DrawInfo2D range)
+    public boolean hitObject(Object object, DrawInfo2D range)
         {
         return false;
         }
@@ -43,8 +44,11 @@ public class SimplePortrayal2D implements Portrayal2D
         return true;
         }
 
-    public void move(LocationWrapper wrapper, Dimension2D distance)
+	public static int TYPE_HIT_OBJECT = 0;
+	public static int TYPE_SELECTED_OBJECT = 1;
+    public boolean handleMouseEvent(Display2D display, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
         {
+		return false;
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)

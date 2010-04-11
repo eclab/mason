@@ -65,11 +65,11 @@ public class FlockersWithUI extends GUIState
         // make the flockers random colors and four times their normal size (prettier)
         for(int x=0;x<flock.flockers.allObjects.numObjs;x++)
             {
-            SimplePortrayal2D p = new OrientedPortrayal2D(new SimplePortrayal2D(),0,4.0,
+            SimplePortrayal2D p = new AdjustablePortrayal2D(new MovablePortrayal2D(new OrientedPortrayal2D(new SimplePortrayal2D(),0,4.0,
                 new Color(128 + state.random.nextInt(128),
                     128 + state.random.nextInt(128),
                     128 + state.random.nextInt(128)),
-                OrientedPortrayal2D.SHAPE_COMPASS);
+                OrientedPortrayal2D.SHAPE_COMPASS)));
 
             flockersPortrayal.setPortrayalForObject(flock.flockers.allObjects.objs[x], p);
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)

@@ -98,8 +98,8 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         else return map.defaultValue();
         }
 
-    public Object getClipLocation(DrawInfo2D info)
-        {
+	public Double2D getScale(DrawInfo2D info)
+		{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -108,8 +108,22 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        final int startx = (int)((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+		return new Double2D(xScale, yScale);
+		}
+
+    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
+        {
+		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        }
+		
+	public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
+		{
+		Double2D scale = getScale(info);
+		double xScale = scale.x;
+		double yScale = scale.y;
+		
+        final int startx = (int)((position.getX() - info.draw.x) / xScale);
+        final int starty = (int)((position.getY() - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
         return new Int2D(startx, starty);
         }
 

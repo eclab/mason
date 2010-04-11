@@ -10,7 +10,7 @@ import sim.field.continuous.*;
 import sim.util.*;
 import ec.util.*;
 
-public class Flocker implements Steppable, sim.portrayal.Oriented2D
+public class Flocker implements Steppable, sim.portrayal.Orientable2D
     {
     public Double2D loc = new Double2D(0,0);
     public Double2D lastd = new Double2D(0,0);
@@ -28,6 +28,11 @@ public class Flocker implements Steppable, sim.portrayal.Oriented2D
     public double getOrientation() { return orientation2D(); }
     public boolean isDead() { return dead; }
     public void setDead(boolean val) { dead = val; }
+    
+    public void setOrientation2D(double val)
+        {
+		lastd = new Double2D(Math.cos(val),Math.sin(val));
+		}
     
     public double orientation2D()
         {

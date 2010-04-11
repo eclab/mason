@@ -1764,3 +1764,41 @@ Version 15
 		in Display3D but is fairly harmless.
 	Updated howto.html with better instructions for creating a background image.  Thanks to
 		Matthew Hendrey <mhendrey@gmu.edu>
+	Major change to how setSelected works in 2D.  To tell a SimplePortrayal to draw itself
+		in selected form, FieldPortrayals no longer call setSelected(true), then draw,
+		then call setSelected(false).  Instead, they set a flag in DrawInfo2D called
+		'selected' and draw with that DrawInfo2D.  Various SimplePortrayals which use
+		the setSelected mechanism have been changed accordingly.  Note that when an
+		object is first selected (added to the selected elements list) or when it is
+		deselected (removed from the selected elements list) setSelected(...) is stil
+		called.  This makes much more sense anyway.
+	Deleted the vestigial "move" method in FieldPortrayal2D and SimplePortrayal2D.
+	Fixed an off-by-2 bug in getClipLocation for hex grids
+	Added a new optional method to SimplePortryal2D for handling arbitrary mouse events,
+		called handleMouseEvent.  Most mouse events (except scroll wheel events due
+		to a misfeature in Java) can be handled.  Display2D will first send mouse
+		events to selected objects, then attempt to send them to objects hit by the
+		event coordinate.  If an object returns 'true' from handleMouseEvent the
+		event will not be propagated to any other objects, so basically it's
+		first come first serve.
+	Added two new wrapper portrayal classes which use the handleMouseEvent procedure:
+		MovablePortrayal2D and AdjustingPortrayal2D.  The two new wrapper portrayal 
+		classes can move objects in the field and can adjust their orientation and "scale".
+		Also added three new interfaces to allow these portrayals to communicate with
+		the underlying objects.  First, Orientable2D extends Oriented2D to allow an
+		object to have its orientation changed.  Second, Scalable2D allows an object
+		to have its "scale" changed.  Third, Fixed2D allows an object to determine if
+		it can, at this time, be moved or if it wishes to remain fixed in space (or
+		move itself).
+	Fixed race condition triggered by the new mouse event functions.  When you launch
+		MASON using java sim.display.Console for the very first time, the doNew()
+		method to set up the first simulation is actually done from the main thread
+		rather than the Swing event thread.  But at the same time that field portrayals
+		are being set up by methods called by doNew(), mouse events can be
+		coming into the Display, triggering calls to objectsHitBy(...), which looks
+		up and scans through the current field portrayals.   Thus the race condition.
+		This is fixed by having doNew() check to see if it's running in the Swing event
+		thread, and if so, it just does its normal thing, but if not, it calls its
+		methods inside an invokeAndWait. 
+	Added rotation to Flockers
+	mason.bat no longer includes the -server directive, which breaks Windows 7

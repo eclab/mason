@@ -53,7 +53,7 @@ public class CircledPortrayal2D extends OvalPortrayal2D
     /** Overrides all drawing. */
     boolean showCircle = true;
     boolean onlyCircleWhenSelected;
-    boolean isSelected = false;
+    // boolean isSelected = false;
     
     public void setOnlyCircleWhenSelected(boolean val) { onlyCircleWhenSelected = val; }
     public boolean getOnlyCircleWhenSelected() { return onlyCircleWhenSelected; }
@@ -99,7 +99,7 @@ public class CircledPortrayal2D extends OvalPortrayal2D
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         getChild(object).draw(object,graphics,info);
-        if (showCircle && (isSelected || !onlyCircleWhenSelected))
+        if (showCircle && (info.selected || !onlyCircleWhenSelected))
             super.draw(object, graphics, info);
         }
         
@@ -110,7 +110,7 @@ public class CircledPortrayal2D extends OvalPortrayal2D
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        isSelected = selected;
+        // isSelected = selected;
         return getChild(wrapper.getObject()).setSelected(wrapper, selected);
         }
 

@@ -15,6 +15,7 @@ import java.awt.Color;
 import javax.swing.event.*;
 import java.awt.event.*;
 import sim.portrayal.*;
+import sim.portrayal.simple.*;
 import sim.util.*;
 import java.awt.*;
 import sim.field.continuous.*;
@@ -65,7 +66,7 @@ public class NetworkTestWithUI extends GUIState
         // Set the nodes in the node portrayal to show a 20-pixel non-scaling 
         // circle around them only when they're being selected (the 'true').
         // the 'null' means "Assume the underlying object is its own portrayal". 
-        nodePortrayal.setPortrayalForAll(new sim.portrayal.simple.CircledPortrayal2D(null, 20, 10, Color.green, true));
+        nodePortrayal.setPortrayalForAll(new MovablePortrayal2D(new sim.portrayal.simple.CircledPortrayal2D(null, 20, 10, Color.green, true)));
 
         // reschedule the displayer
         display.reset();
@@ -90,7 +91,7 @@ public class NetworkTestWithUI extends GUIState
         display.attach( nodePortrayal, "Nodes" );
 
 
-
+/*
         ////////// BEGIN OPTIONAL MOVEMENT CODE
 
         // In this code we're showing how to augment MASON to enable moving objects around with
@@ -181,7 +182,7 @@ public class NetworkTestWithUI extends GUIState
         
         ////////// END MOVEMENT CODE
         
-        
+        */
         
 
 

@@ -778,14 +778,8 @@ public class Display2D extends JComponent implements Steppable
         if (stopper!=null) stopper.stop();
         try { stopper = simulation.scheduleRepeatingImmediatelyAfter(this); }
 		catch (IllegalArgumentException e) { } // if the simulation is over, we can't schedule.  Don't worry about it.
-                
-        // deselect existing objects
-        for(int x=0;x<selectedWrappers.size();x++)
-            {
-            LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
-            wrapper.getFieldPortrayal().setSelected(wrapper,false);
-            }
-        selectedWrappers.clear();
+
+		clearSelections();
         }
     
     /** Attaches a portrayal to the Display2D, along with the provided human-readable name for the portrayal.
@@ -968,28 +962,74 @@ public class Display2D extends JComponent implements Steppable
             {
             public void mouseClicked(MouseEvent e) 
                 {
-                // we only care about mouse button 1.  Perhaps in the future we may eliminate some key modifiers as well
-                int modifiers = e.getModifiers();
-                if ((modifiers & e.BUTTON1_MASK) == e.BUTTON1_MASK)
-                    {
-                    final Point point = e.getPoint();
-                    if( e.getClickCount() == 2 )
-                        createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
-                            Display2D.this.simulation );
-                    if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
-                        performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
-                    repaint();
-                    }
+				if (handleMouseEvent(e)) { repaint(); return; }
+				else
+					{
+					// we only care about mouse button 1.  Perhaps in the future we may eliminate some key modifiers as well
+					int modifiers = e.getModifiers();
+					if ((modifiers & e.BUTTON1_MASK) == e.BUTTON1_MASK)
+						{
+						final Point point = e.getPoint();
+						if( e.getClickCount() == 2 )
+							createInspectors( new Rectangle2D.Double( point.x, point.y, 1, 1 ),
+								Display2D.this.simulation );
+						if (e.getClickCount() == 1 || e.getClickCount() == 2)  // in both situations
+							performSelection( new Rectangle2D.Double( point.x, point.y, 1, 1 ));
+						repaint();
+						}
+					}
                 }
             
             // clear tool-tip updates
-            public void mouseExited(MouseEvent event)
+            public void mouseExited(MouseEvent e)
                 {
-                insideDisplay.lastToolTipEvent = null;
+                insideDisplay.lastToolTipEvent = null;  // do this no matter what
+				if (handleMouseEvent(e)) { repaint(); return; }
                 }
-            });
-            
-        insideDisplay.setToolTipText("Display");  // sacrificial
+
+            public void mouseEntered(MouseEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+ 
+			public void mousePressed(MouseEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+
+			public void mouseReleased(MouseEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+           });
+		
+		insideDisplay.addMouseMotionListener(new MouseMotionAdapter()
+			{
+			public void mouseDragged(MouseEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+
+			public void mouseMoved(MouseEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+			});
+		
+		
+		// can't add this because Java thinks I no longer want to scroll
+		// the window via the scroll wheel, oops.  
+ 		/*
+		insideDisplay.addMouseWheelListener(new MouseWheelListener()
+			{
+			public void mouseWheelMoved(MouseWheelEvent e)
+                {
+				if (handleMouseEvent(e)) { repaint(); return; }
+                }
+			});
+		*/
+
+       insideDisplay.setToolTipText("Display");  // sacrificial
                 
         // add the movie button
         movieButton = new JButton(MOVIE_OFF_ICON);
@@ -1208,6 +1248,19 @@ public class Display2D extends JComponent implements Steppable
         return hitObjs;
         }
         
+    /** Returns LocationWrappers for all the objects which overlap with the point specified by 'point'.  This 
+        point is in the coordinate system of the (InnerDisplay2D) component inside the scroll
+        view of the Display2D class.  The return value is an array of Bags.  For each FieldPortrayal
+        attached to the Display2D, one Bag is returned holding all the LocationWrappers for objects overlapping with the point
+		which are associated with that FieldPortrayal's portrayed field.  The order of
+        the Bags in the array is the same as the order of the FieldPortrayals in the Display2D's
+        <code>portrayals</code> list.
+    */
+    public Bag[] objectsHitBy( final Point2D point )
+        {
+		return objectsHitBy(new Rectangle2D.Double(point.getX(), point.getY(), 1, 1));
+		}
+
     /** Constructs a DrawInfo2D for the given portrayal, or null if failed.  O(num portrayals).  Uses the given point as a clip. */
     public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point)
         {
@@ -1292,16 +1345,20 @@ public class Display2D extends JComponent implements Steppable
         performSelection(b);
         }
     
-    public void performSelection( final Bag locationWrappers )
-        {
-        // deselect existing objects
+	public void clearSelections()
+		{
         for(int x=0;x<selectedWrappers.size();x++)
             {
             LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
             wrapper.getFieldPortrayal().setSelected(wrapper,false);
             }
         selectedWrappers.clear();
-        
+		}
+	
+    public void performSelection( final Bag locationWrappers )
+        {
+		clearSelections();
+		
         if (locationWrappers == null) return;  // deselect everything
         
         // add new wrappers
@@ -1625,6 +1682,47 @@ public class Display2D extends JComponent implements Steppable
 		// else val = false;
 		
 		return val;
+		}
+
+	public boolean handleMouseEvent(MouseEvent event)
+		{
+		// first, let's propagate the event to selected objects
+		
+		Point2D.Double p = new Point2D.Double(event.getX(), event.getY());
+        for(int x=0;x<selectedWrappers.size();x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
+			FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
+			Object obj = wrapper.getObject();
+			SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+            if (portrayal.handleMouseEvent(this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
+				{
+				simulation.controller.refresh();
+				return true;
+				}
+            }
+			
+		// next, let' propagate the event to any objects which have been hit.
+		// We go backwards through the bag list so top elements are selected first
+		
+        Bag[] hitObjects = objectsHitBy(p);
+        for(int x=hitObjects.length - 1; x >= 0; x--)
+			for(int i = 0; i < hitObjects[x].numObjs; i++)
+				{
+				LocationWrapper wrapper = (LocationWrapper)(hitObjects[x].objs[i]);
+				FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
+				Object obj = wrapper.getObject();
+				SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+				if (portrayal.handleMouseEvent(this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_HIT_OBJECT))
+					{
+					simulation.controller.refresh();
+					return true;
+					}
+				}
+			
+		// at this point, nobody consumed the event so we ignore it
+
+		return false;
 		}
 
     /** Steps the Display2D in the GUIState schedule.  If we're in MacOS X, this results in a repaint()

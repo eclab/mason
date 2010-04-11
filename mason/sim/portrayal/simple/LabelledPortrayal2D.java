@@ -90,7 +90,7 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     
     public boolean onlyLabelWhenSelected;
     
-    boolean isSelected = false;
+    // boolean isSelected = false;
         
     public boolean isLabelShowing() { return showLabel; }
     public void setLabelShowing(boolean val) { showLabel = val; }
@@ -161,7 +161,7 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
         {
         getChild(object).draw(object,graphics,info);
 
-        if (showLabel && (isSelected || !onlyLabelWhenSelected))
+        if (showLabel && (info.selected || !onlyLabelWhenSelected))
             {
             // some locals
             Font labelFont = this.font;
@@ -203,7 +203,7 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        isSelected = selected;
+        // isSelected = selected;
         return getChild(wrapper.getObject()).setSelected(wrapper, selected);
         }
 

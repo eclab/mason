@@ -98,6 +98,25 @@ A simple interface for declaring that an object has an orientation as
 well as a location.
 
 
+Orientable2D.java
+
+An extension of Oriented2D which allows objects to have their orientation
+changed.  Typically used by AdjustablePortrayal2D.
+
+
+Scalable2D.java
+
+A simple interface for reading and modifying the "scale" (notionally
+size) of an object.  Typically used by AdjustablePortrayal2D.
+
+
+Fixed2D.java
+
+A simple interface for denying MovablePortrayal2D the ability to move
+a certain object, or for intercepting the movement to have the object
+move itself instead.
+
+
 DrawInfo2D.java
 
 A class containing information about where and how to draw portrayals,
@@ -105,6 +124,9 @@ specifically: their location, their scale, and clip rect information (so
 you can determine if you should even bother drawing); and also whether
 the drawing should be done "precisely" (for PDF output, for example).
 Passed to all 2D Portrayals when they're asked to portray their objects.
+
+
+
 
 
 Other Files:

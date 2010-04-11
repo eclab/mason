@@ -52,8 +52,13 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         else throw new RuntimeException("Invalid field for Sparse2DPortrayal: " + field);
         }
     
-    public Object getClipLocation(DrawInfo2D info)
+    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
+		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        }
+		
+	public Double2D getScale(DrawInfo2D info)
+		{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -62,10 +67,32 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-        final int startx = (int)Math.floor((info.clip.x - info.draw.x) / xScale);
-        final int starty = (int)Math.floor((info.clip.y - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
+		return new Double2D(xScale, yScale);
+		}
+
+	public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
+        {
+		Double2D scale = getScale(info);
+		double xScale = scale.x;
+		double yScale = scale.y;
+		
+        final int startx = (int)Math.floor((position.getX() - info.draw.x) / xScale);
+        final int starty = (int)Math.floor((position.getY() - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
         return new Int2D(startx, starty);
         }
+
+    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+		{
+        final SparseGrid2D field = (SparseGrid2D)this.field;
+        if (field==null) return;
+		if (field.getObjectLocation(object) == null) return;
+		Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
+		if (location != null)
+			{
+			if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
+			field.setObjectLocation(object, location);
+			}
+		}
 
     public Object getObjectLocation(Object object)
         {
@@ -175,15 +202,17 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
                         newinfo.location = loc;
 
-                        if (objectSelected &&  // there's something there
-                            selectedWrappers.get(portrayedObject) != null)
-                            {
+                        newinfo.selected = (objectSelected &&  // there's something there
+								selectedWrappers.get(portrayedObject) != null);
+                            /*
+							{
                             LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
                             portrayal.setSelected(wrapper,true);
                             portrayal.draw(portrayedObject, graphics, newinfo);
                             portrayal.setSelected(wrapper,false);
                             }
-                        else portrayal.draw(portrayedObject, graphics, newinfo);
+                        else */ 
+						portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

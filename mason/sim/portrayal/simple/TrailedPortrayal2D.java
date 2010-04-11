@@ -102,7 +102,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         }
         
     // is the object selected?
-    boolean isSelected = false;
+    // boolean isSelected = false;
 
     boolean growTrailOnlyWhenSelected = false;
     /** Set this to grow the trail only after the objet has been selected, and delete it when the object has been deselected.  By default this is FALSE.
@@ -240,7 +240,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         Object currentObjectLocation = fieldPortrayal.getObjectLocation(object);
                 
         // Add in new timestamp if appropriate
-        if (isSelected || !growTrailOnlyWhenSelected)
+        if (info.selected || !growTrailOnlyWhenSelected)
             {
             if (size == 0 && currentTime > Schedule.BEFORE_SIMULATION && currentTime < Schedule.AFTER_SIMULATION)  // first time!
                 {
@@ -273,7 +273,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                 lastPlace = null;
                 }
             // now break out if we're not selected -- at this stage we've removed everything relevant anyway
-            else if (!isSelected && onlyShowTrailWhenSelected)
+            else if (!info.selected && onlyShowTrailWhenSelected)
                 break;
             // else draw if we see fit
             else
@@ -335,7 +335,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        isSelected = selected;
+        // isSelected = selected;
         return true;
         }
 

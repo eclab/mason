@@ -39,6 +39,9 @@ import java.awt.geom.*;
    done precisely rather than rapidly: this is primarily for generating PDF images.  It may
    be ignored.
 
+   <p>The <i>selected</i> flag indicates to the underlying portrayals that the object in question
+   is in selected mode.  This flag is only set by FieldPortrayals.
+   
    <p>The <i>location</i> object <i>may</i> store the location of the item in the outer Field.
    Fields are free to not store anything here if they see fit.  Further, this
    object may not be the actual kind of object used to store the location (for example,
@@ -49,6 +52,7 @@ public class DrawInfo2D
     {
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
+	public boolean selected;
     public boolean precise;
     public Object location;
     

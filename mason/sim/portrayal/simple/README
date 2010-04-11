@@ -68,7 +68,7 @@ subsidiary portrayal, and can draw various oriented shapes (compasses,
 kites).
 
 
-TrailPortrayal2D.java
+TrailedPortrayal2D.java
 
 A special wrapper portrayal which draws "trails" following the object
 as it moves around.
@@ -80,3 +80,18 @@ A wrapper portrayal over several other portrayals which uses one or
 the other based on the integer "value" of the underlying object (if 
 the object is a number, the number is used -- or if the object is
 sim.util.Valuable, its value is used).
+
+
+MovablePortrayal2D.java
+
+A wrapper portrayal which enables the user to move certain objects
+by dragging them with the mouse.
+
+
+AdjustablePortrayal2D.java
+
+A wrapper portrayal which displays the orientation of certain objects,
+and/or enables the user to change their orientation using the mouse,
+and/or enables the user to change their "scale" (notionally size)
+using the mouse.
+

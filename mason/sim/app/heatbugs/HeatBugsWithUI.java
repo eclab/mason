@@ -69,7 +69,7 @@ public class HeatBugsWithUI extends GUIState
         {
         // tell the portrayals what to portray and how to portray them
         bugPortrayal.setField(((HeatBugs)state).buggrid);
-        bugPortrayal.setPortrayalForAll( new sim.portrayal.simple.OvalPortrayal2D(Color.white) );   // all the heatbugs will be white ovals
+        bugPortrayal.setPortrayalForAll( new MovablePortrayal2D(new sim.portrayal.simple.OvalPortrayal2D(Color.white)));   // all the heatbugs will be white ovals
 
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         heatPortrayal.setMap(new sim.util.gui.SimpleColorMap(0,HeatBugs.MAX_HEAT,Color.black,Color.red));
@@ -123,7 +123,7 @@ public class HeatBugsWithUI extends GUIState
         display.setBackdrop(Color.black);
 
 
-
+/*
         ////////// BEGIN OPTIONAL MOVEMENT CODE
 
         // In this code we're showing how to augment MASON to enable moving objects around with
@@ -190,7 +190,7 @@ public class HeatBugsWithUI extends GUIState
         display.insideDisplay.addMouseMotionListener(adapter);
 
         ////////// END MOVEMENT CODE
-
+*/
 
         }
         

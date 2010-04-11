@@ -1741,14 +1741,18 @@ public class Console extends JFrame implements Controller
                 // check first for a default constructor
                 java.lang.reflect.Constructor cons = Class.forName(className).getConstructor(new Class[] {});
                 // okay, we're past that.  Now try to build the instance
-                GUIState state = (GUIState)(Class.forName(className).newInstance());
-                /*
-                  Console c = new Console(state);
-                  c.setVisible(true);
-                */
+                final GUIState state = (GUIState)(Class.forName(className).newInstance());
                                 
-                // new method
-                state.createController();
+                // Now we create the controller, which calls init on the state.  If we were just started up,
+				// doNew() is being called from main(), and thus from the main thread rather than the dispatch
+				// thread.  This creates weird bugs if mouse events get tangled up when adding new portrayals
+				// because the mouse events try to check to see how many portrayals there are (for hitObjects()),
+				// creating race conditions.  So we'll check for that condition and call invokeAndWait if so.
+				// Otherwise we'll just call it directly.
+				
+				if (SwingUtilities.isEventDispatchThread())
+					state.createController();
+				else SwingUtilities.invokeAndWait(new Runnable() { public void run() { state.createController(); } });
                 return true;
                 }
             catch (NoSuchMethodException e)

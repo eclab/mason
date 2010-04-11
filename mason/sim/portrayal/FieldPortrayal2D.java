@@ -113,11 +113,21 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
     public void setField(Object field) { this.field = field; dirtyField = true; }
     
     /** Returns an object representing the location in the field of the origin of the clip of the DrawInfo2D. 
-        By default, returns null, but many subclasses override this*/
+        This method calls getPositionLocation, which may or may not be implemented by the FieldPortrayal2D.
+		You'd typically not override this method, but rather getPositionLocation. */
     public Object getClipLocation(DrawInfo2D info)
         {
-        return null;
+		return getPositionLocation(new Point2D.Double(info.clip.x, info.clip.y), info);
         }
+
+	/** Returns the Location, in the parlance of the underlying Field, of the given position.
+		If there is no such Location, then null is returned.  By default null is returned except
+		where overridden.
+		*/
+	public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+		{
+		return null;
+		}
 
     /** Returns the first location in the underlying field of the given object, if such a thing
         is reasonable.  Largely used for getPositionOfObject(...).
@@ -147,22 +157,21 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         return getLocationPosition(location, fieldPortrayalInfo);
         }
         
-    /**
-       Moves the Bag of LocationWrappers by the provided amount.
-    */
-    // Hmmm, Point2D has a Point, Point2D.Float, and Point2D.Double.
-    // Rectangle2D has a Rectangle, Rectangle2D.Float, and Rectangle2D.Double.
-    // But Dimension2D *only* has a Dimension (int).  You have to make your
-    // own Dimension2D double subclass!!
-    public void move(Bag locationWrappers, Dimension2D distance)
+    /** Moves (or tries to move) the object to an internal location equivalent to the given position on-screen of the
+		provided object, assuming that the object exists within the underlying field and that this
+		location is acceptable.  The default implementation does nothing.  */
+    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
-        for(int x=0;x<locationWrappers.numObjs;x++)
-            {
-            LocationWrapper wrapper = (LocationWrapper)(locationWrappers.objs[x]);
-            ((SimplePortrayal2D)(getPortrayalForObject(wrapper.getObject()))).move(wrapper, distance);
-            }
+		return;
         }
-
+        
+	/** Returns the width and height, in pixels, of 1.0 x 1.0 units in the underlying field.
+		The default version thows an error if called. */
+	public Double2D getScale(DrawInfo2D fieldPortrayalInfo)
+		{
+		throw new RuntimeException("getScale not implemented in " + this.getClass());
+		}
+		
     /** Default buffering: let the program decide on its own (typically in a platform-dependent fashion) */
     public static final int DEFAULT = 0;
     /** Use a buffer */
