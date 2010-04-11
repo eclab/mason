@@ -1802,3 +1802,4 @@ Version 15
 		methods inside an invokeAndWait. 
 	Added rotation to Flockers
 	mason.bat no longer includes the -server directive, which breaks Windows 7
+	Deprecated getClipLocation
