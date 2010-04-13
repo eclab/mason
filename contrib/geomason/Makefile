@@ -1,22 +1,29 @@
+# $Id: Makefile,v 1.4 2010-04-13 19:24:52 mcoletti Exp $
+#
+# Note that you will have to uncomment the GeoTools and/or OGR support
+# in the jar file rule if you want support for those importers.
+#
 
-# All the Geometry/GIS java files
-DIRS=sim/field/geo/*.java \
-sim/io/geo/*.java \
-sim/portrayal/geo/*.java \
-sim/util/geo/*.java \
-sim/app/geo/campusworld/*.java \
-sim/app/geo/nearbyworld/*.java \
-sim/app/geo/networkworld/*.java \
+JAVAC = javac
+
+#FLAGS=-verbose
+FLAGS=
+
+all: jar demos
+
+
+DEMOS = sim/app/geo/campusworld/*.java			\
+sim/app/geo/nearbyworld/*.java					\
+sim/app/geo/networkworld/*.java					\
 sim/app/geo/touchingworld/*.java
 
-all:
-	@ echo This makes the Geometry/GIS code.
-	@ echo Type 'make help' for more options
-	@echo
-	javac $(DIRS)
+demos : geomason.jar
+	$(JAVAC) $(FLAGS) $(DEMOS)
 
-# Delete all the classfiles, checkpoints, and other various garbage
+
+# Delete all the class files, checkpoints, and other various garbage
 clean:
+	rm -f geomason.jar
 	find . -name "*.class" -exec rm -f {} \;
 	find . -name "jmf.log" -exec rm -f {} \;
 	find . -name ".DS_Store" -exec rm -f {} \;
@@ -37,15 +44,51 @@ indent:
 	touch ${HOME}/.emacs
 	find . -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
 
-jar:
 
+# All the main GeoMason source files
+BASE_FILES = sim/util/geo/Network.java			\
+sim/util/geo/AttributeField.java				\
+sim/util/geo/GeometricProperties.java			\
+sim/util/geo/PointMoveTo.java					\
+sim/util/geo/NetworkEdge.java					\
+sim/util/geo/GeomWrapper.java					\
+sim/util/geo/NetworkDirectedEdge.java			\
+sim/io/geo/ShapeFileInfo.java					\
+sim/io/geo/GeomExporter.java					\
+sim/io/geo/GeomImporter.java					\
+sim/io/geo/ShapeFileImporter.java				\
+sim/io/geo/ShapeFileExporter.java				\
+sim/io/geo/GeometryInfo.java					\
+sim/portrayal/geo/GeomFieldPortrayal.java		\
+sim/portrayal/geo/GeomPortrayal.java			\
+sim/portrayal/geo/GeometryInspector.java		\
+sim/portrayal/geo/GeomValuedFieldPortrayal.java
+
+# Optional GeoTool based importer
+GEOTOOL_FILES = sim/io/geo/GeoToolsInfo.java	\
+sim/io/geo/GeoToolsImporter.java				\
+
+# Optional GDAL/OGR based importer
+OGR_FILES = sim/io/geo/OGRImporter.java			\
+sim/io/geo/OGRInfo.java
+
+
+# Add GEOTOOL_FILES and/or OGR_FILES if you want support for those
+geomason.jar : $(BASE_FILES) # $(GEOTOOL_FILES) $(OGR_FILES)
+	javac $(FLAGS) $^
+	jar -cvf $@ `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"`
+
+
+jar : geomason.jar
 
 #Print a help message
 help:
 	@echo MASON Geometry/GIS Module Makefile Options
 	@echo
-	@echo "make		Builds the code and examples"
+	@echo "make		Builds the code, jar file, and examples"
 	@echo "make all		Same thing"
+	@echo "make jar	    creates geomason.jar"
+	@echo "make demos	Builds the GeoMason examples"
 	@echo "make docs	Builds the documentation"
 	@echo "make doc 	Same thing"
 	@echo "make clean	Cleans various gunk"
