@@ -1,0 +1,18 @@
+GeoMason has a dependency on the Java Topology Suite (JTS).  Building
+GeoMason presumes that you have a JTS jar file in your java class
+path.
+
+The JTS main web site is http://tsusiatsoftware.net/jts/main.html.
+
+Also, GeoMason has optional dependencies on GeoTools and GDAL/OGR for
+their respective importers.  GeoTools can be downloaded from
+http://geotools.org and OGR can be downloaded from http://gdal.org/.
+Note that in OGR's case you will not only have to include the jar file
+in the class path but also ensure that the shared libraries are
+properly installed as well as the corresponding JNI file.
+
+If you wish to enable GeoTools or OGR GeoMason support, then uncomment
+the corresponding make file variable in the "jar" rule.
+
+And, GeoMason obviously has a dependency on Mason, so please ensure
+that it is included in your class path, too.
