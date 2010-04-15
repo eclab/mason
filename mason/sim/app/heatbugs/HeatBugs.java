@@ -117,6 +117,8 @@ public /*strictfp*/ class HeatBugs extends SimState
         buggrid = new SparseGrid2D(gridWidth, gridHeight);      
         }
     
+	ThreadedDiffuser diffuser = null;
+	
     /** Resets and starts a simulation */
     public void start()
         {
@@ -144,10 +146,20 @@ public /*strictfp*/ class HeatBugs extends SimState
                             
         // Schedule the diffuser to happen after the heatbugs
         if (HeatBugs.availableProcessors() >  1)  // yay, multi-processor!
-            schedule.scheduleRepeating(Schedule.EPOCH,1,new ThreadedDiffuser(),1);
+			{
+			// store away the ThreadedHexaDiffuser so we can call cleanup() on it later in our stop() method.
+            diffuser = new ThreadedDiffuser();
+			schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
+			}
         else
             schedule.scheduleRepeating(Schedule.EPOCH,1,new Diffuser(),1);
-        }
+		}
+    
+	public void stop()
+		{
+		if (diffuser != null) diffuser.cleanup();
+		diffuser = null;
+		}
     
     /** This little function calls Runtime.getRuntime().availableProcessors() if it's available,
         else returns 1.  That function is nonexistent in Java 1.3.1, but it exists in 1.4.x.

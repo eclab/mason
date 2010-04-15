@@ -68,7 +68,14 @@ public /*strictfp*/ class ThreadedHexaDiffuser implements Steppable
         HexaBugs hexabugs = (HexaBugs)state;
         hexabugs.valgrid.setTo(hexabugs.valgrid2);
         }
-        
+	
+	/** We'll have Hexabugs call this in its stop() method to give US a chance to
+		call cleanup on our underlying ParallelSequence so we don't leak threads. */
+	public void cleanup()
+		{
+		diffusers.cleanup();
+		}
+		
         
     /** Diffuse hexabugs.valgrid.field[start...end] not including end */
         

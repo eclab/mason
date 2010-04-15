@@ -59,7 +59,8 @@ public class SimplePortrayal2D implements Portrayal2D
 		If still no one has handled the event, then the Display2D will route the event to built-in mechanisms such selecting
 		the object or inspecting it.
 	*/
-    public boolean handleMouseEvent(Display2D display, LocationWrapper wrapper, MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+    public boolean handleMouseEvent(Display2D display, LocationWrapper wrapper,
+									MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
         {
 		return false;
         }

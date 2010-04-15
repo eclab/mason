@@ -1803,3 +1803,9 @@ Version 15
 	Added rotation to Flockers
 	mason.bat no longer includes the -server directive, which breaks Windows 7
 	Deprecated getClipLocation
+	Made ParallelSequence and AsynchronousSteppable's threads daemon
+	Added the cleanup() method to ParallelSequence and added documentation explaining why
+		and how you should use this method. 
+	Added the destroysThreads flags to ParallelSequence and added documentation explaining
+		why and how you should use this method.
+	Tweaked HeatBugs and HexaBugs so that they call cleanup() on their ParallelSequences

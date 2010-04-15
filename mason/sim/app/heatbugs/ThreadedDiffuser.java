@@ -58,6 +58,13 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
         }
         
         
+	/** We'll have HeatBugs call this in its stop() method to give US a chance to
+		call cleanup on our underlying ParallelSequence so we don't leak threads. */
+	public void cleanup()
+		{
+		diffusers.cleanup();
+		}
+		
     /** Diffuse heatbugs.valgrid.field[start...end] not including end */
         
     // this code is confusing.  See Diffuser.java for other less confusing examples
