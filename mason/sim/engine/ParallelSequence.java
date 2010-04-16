@@ -106,6 +106,7 @@ public class ParallelSequence extends Sequence
         for(int x=0;x<steps.length;x++)
             try { threads[x].join(); }  
             catch (InterruptedException e) { /* shouldn't happen */ }
+		pleaseDie = false;
         threads = null;
         }
 		
@@ -139,8 +140,6 @@ public class ParallelSequence extends Sequence
     // steps once (in parallel) through the steppable things
     public void step(final SimState state)
         {
-		if (threads == null) buildThreads();
-		
         // just to be safe, we'll avoid the HIGHLY unlikely race condition of being stepped in parallel or nested here
         synchronized(workers)  // some random object we own
             {
@@ -150,6 +149,10 @@ public class ParallelSequence extends Sequence
                     "Either way, it's a bug.");
             operating = true;
             }
+
+		if (threads == null)
+			buildThreads();
+		
         for(int x=0;x<steps.length;x++)
             {
             workers[x].step = steps[x];
@@ -158,11 +161,13 @@ public class ParallelSequence extends Sequence
             }
         for(int x=0;x<steps.length;x++)
             semaphore.P();
+
+		if (destroysThreads)
+			cleanup();
+
         // don't need to synchronize to turn operating off
         operating = false;
-		
-		if (destroysThreads) cleanup();
-        }
+		}
 
     // a small semaphore class
     static class Semaphore implements java.io.Serializable
