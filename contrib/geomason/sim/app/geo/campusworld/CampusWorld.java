@@ -1,7 +1,7 @@
 /*
  * CampusWorld.java
  *
- * $Id: CampusWorld.java,v 1.2 2010-04-10 18:27:27 kemsulli Exp $
+ * $Id: CampusWorld.java,v 1.3 2010-04-21 20:04:29 mcoletti Exp $
  */
 package sim.app.geo.campusworld;
 
@@ -11,7 +11,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 import java.io.*;
-import java.util.*; 
+import java.util.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,7 +19,7 @@ import sim.engine.SimState;
 import sim.field.geo.GeomField;
 import sim.io.geo.*;
 import sim.util.geo.Network;
-import sim.util.*; 
+import sim.util.*;
 import sim.util.geo.GeomWrapper;
 
 /** Set up a GeoField with a number of points and a corresponding portrayal.
@@ -30,7 +30,7 @@ public class CampusWorld extends SimState
 {
     public int numAgents = 1000;
 
-    private static final String dataDirectory = "../../data/";
+    private static final String dataDirectory = "sim/app/data/";
 
     // where all the stream geometry lives
     public GeomField walkways = new GeomField();
@@ -42,15 +42,15 @@ public class CampusWorld extends SimState
 
     // The Importer is responsible for reading in the GIS files.
     //OGRImporter importer = new OGRImporter();
-    //GeoToolsImporter importer = new GeoToolsImporter(); 
+    //GeoToolsImporter importer = new GeoToolsImporter();
     ShapeFileImporter importer = new ShapeFileImporter();
-    
-        
+
+
     // Stores transportation network connections
     public Network network = new Network();
     public GeomField junctions = new GeomField(); // nodes for intersections
 
-   
+
     public CampusWorld(long seed)
     {
         super(seed);
@@ -79,33 +79,33 @@ public class CampusWorld extends SimState
                 schedule.scheduleRepeating(a);
             }
     }
-    
-        
-        
+
+
+
     public void finish()
     {
-        super.finish(); 
-        agents.clear(); 
+        super.finish();
+        agents.clear();
     }
-        
-    
+
+
     public void start()
     {
         super.start();
         try
             {
-            
+
                 System.out.println("reading buildings layer");
-                        
-                // this Bag lets us only display certain fields in the Inspector, the non-masked fields 
-                // are not associated with the object at all 
-                Bag masked = new Bag(); 
-                masked.add("NAME"); 
-                masked.add("FLOORS"); 
-                masked.add("ADDR_NUM"); 
-                        
+
+                // this Bag lets us only display certain fields in the Inspector, the non-masked fields
+                // are not associated with the object at all
+                Bag masked = new Bag();
+                masked.add("NAME");
+                masked.add("FLOORS");
+                masked.add("ADDR_NUM");
+
                 importer.ingest(dataDirectory + "bldg.shp", buildings, null);
-                        
+
 
                 // We want to save the MBR so that we can ensure that all GeomFields
                 // cover identical area.
@@ -133,14 +133,14 @@ public class CampusWorld extends SimState
                 addIntersectionNodes( network.nodeIterator(), junctions ) ;
                 addAgents();
                 agents.setMBR(MBR);
-                         
+
             }
         catch (FileNotFoundException ex)
             {
                 Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
-    
+
 
 
     /** adds nodes corresponding to road intersections to GeomField
@@ -171,7 +171,7 @@ public class CampusWorld extends SimState
                 counter++;
             }
     }
-        
+
     public static void main(String[] args)
     {
         doLoop(CampusWorld.class, args);
