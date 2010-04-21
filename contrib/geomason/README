@@ -16,3 +16,18 @@ the corresponding make file variable in the "jar" rule.
 
 And, GeoMason obviously has a dependency on Mason, so please ensure
 that it is included in your class path, too.
+
+                                 ###
+
+To run demos:
+
+java sim.app.geo.colorworld.ColorWorldWithUI
+
+java sim.app.geo.touchingworld.TouchingWorldWithUI
+
+java sim.app.geo.networkworld.NetworkWorldWithUI
+
+java sim.app.geo.nearbyworld.NearbyWorldWithUI
+
+java sim.app.geo.campusworld.CampusWorldWithGUI
+
