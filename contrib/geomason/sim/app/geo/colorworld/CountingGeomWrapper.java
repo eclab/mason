@@ -1,7 +1,7 @@
 /*
  * CountingGeomWrapper.java
  *
- * $Id: CountingGeomWrapper.java,v 1.2 2010-04-10 18:17:17 kemsulli Exp $
+ * $Id: CountingGeomWrapper.java,v 1.3 2010-04-23 21:39:12 mcoletti Exp $
  */
 
 package sim.app.geo.colorworld;
@@ -11,7 +11,7 @@ import sim.field.geo.GeomField;
 import sim.io.geo.GeometryInfo;
 import sim.util.Bag;
 import sim.util.geo.GeomWrapper;
-import com.vividsolutions.jts.algorithm.locate.*; 
+import com.vividsolutions.jts.algorithm.locate.*;
 
 
 /** Maintains count of population to be used in color LUT
@@ -24,27 +24,11 @@ import com.vividsolutions.jts.algorithm.locate.*;
 public class CountingGeomWrapper extends GeomWrapper {
 
     // We need to access this to count agents in our district
-    private GeomField agents;
+    public GeomField agents; // refers to encompassing GeomField
 
-    public CountingGeomWrapper(GeomField agents, Geometry g)
+    public CountingGeomWrapper()
     {
-        super(g);
-
-        this.agents = agents;
-    }
-
-    public CountingGeomWrapper(GeomField agents, Geometry g, GeometryInfo gi)
-    {
-        super(g, gi);
-
-        this.agents = agents;
-    }
-
-    public CountingGeomWrapper(GeomField agents, GeomWrapper gw)
-    {
-        super(gw.geometry,gw.fetchGeometryInfo());
-
-        this.agents = agents;
+        super();
     }
 
     /** Returned value corresponds to number of agents in associated region
@@ -56,7 +40,7 @@ public class CountingGeomWrapper extends GeomWrapper {
         // Grind through all the agents and find out how many are inside our
         // polygon
         Bag coveredAgents = agents.getCoveredObjects(geometry);
-        return coveredAgents.numObjs; 
+        return coveredAgents.numObjs;
     }
 
 }

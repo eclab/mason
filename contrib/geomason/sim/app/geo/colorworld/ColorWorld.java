@@ -1,15 +1,15 @@
 /*
  * ColorWorld.java
  *
- * $Id: ColorWorld.java,v 1.2 2010-04-10 18:17:16 kemsulli Exp $
+ * $Id: ColorWorld.java,v 1.3 2010-04-23 21:39:12 mcoletti Exp $
  */
 package sim.app.geo.colorworld;
 
 import com.vividsolutions.jts.geom.Polygon;
-import java.io.*; 
-import sim.engine.*; 
-import sim.io.geo.*; 
-import sim.field.geo.*; 
+import java.io.*;
+import sim.engine.*;
+import sim.io.geo.*;
+import sim.field.geo.*;
 import sim.util.Bag;
 import sim.util.geo.GeomWrapper;
 
@@ -28,25 +28,21 @@ public class ColorWorld extends SimState
     // where all the agents live
     public GeomField agents = new GeomField();
 
-    // Open simple Shape file of county.
-    //OGRImporter importer = new OGRImporter(); // alternative importer
-    //    GeoToolsImporter importer = new GeoToolsImporter(); // another alternative importer
-    ShapeFileImporter importer = new ShapeFileImporter(); // native MASON Shape file importer
-        
-    private static final String dataDirectory = "../../data/";
-    
-        
-    // getters and setters for inspectors 
-    public int getNumAgents() { return NUM_AGENTS; } 
+
+    private static final String dataDirectory = "sim/app/data/";
+
+
+    // getters and setters for inspectors
+    public int getNumAgents() { return NUM_AGENTS; }
     public void setNumAgents(int a) { if (a > 0) NUM_AGENTS = a; }
-        
+
     public ColorWorld(long seed)
     {
         super(seed);
     }
 
     private void addAgents()
-    {    
+    {
         Agent a = null;
 
         for (int i = 0; i < NUM_AGENTS; i++)
@@ -61,63 +57,64 @@ public class ColorWorld extends SimState
                     }
                 Polygon region = (Polygon) ((GeomWrapper)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
 
-                // give each agent a random direction to initially move in 
+                // give each agent a random direction to initially move in
                 a = new Agent(random.nextInt(8), region);
-                        
+
                 // set each agent in the center of corresponding region
                 a.setLocation(region.getCentroid());
-                        
+
                 // place the agents in the GeomField
                 agents.addGeometry(new GeomWrapper(a.getGeometry()));
-                        
-                // add the new agent the schedule 
+
+                // add the new agent the schedule
                 schedule.scheduleRepeating(a);
             }
     }
 
-    
-    
+
+
     public void start()
     {
         super.start();
         try
             {
-                // read in the shape file
+                // Open simple Shape file of county.
 
-                // XXX note that this uses GeomWrapper, which we'll later convert
-                // laboriously to CountingGeomWrapper.  Maybe better mechanism?
+                // Optional, alternative importer implementations:
+                //    OGRImporter importer = new OGRImporter(); // alternative importer
+                //    GeoToolsImporter importer = new GeoToolsImporter(); // another alternative importer
+                ShapeFileImporter importer =
+                    new ShapeFileImporter(CountingGeomWrapper.class); // native MASON Shape file importer
+
                 importer.ingest( dataDirectory + "pol.shp", county, null);
             }
         catch (FileNotFoundException ex)
             {
                 System.out.println("Error opening shapefile!" + ex);
-                System.exit(-1); 
+                System.exit(-1);
             }
 
-        // We need to convert the GeomWrapper objects to CountingGeomWrapper
-
-        // XXX I suppose this could have been done in-place.  :P
-
-        GeomField tmpGeomField = new GeomField();
+        // We need to link the GeomField "agents" to all the
+        // GeomWrappers so that they can update their counts of
+        // occupying agents.
 
         Bag geometry = county.getGeometry();
 
         for (int i = 0; i < geometry.size(); i++)
             {
-                tmpGeomField.addGeometry(new CountingGeomWrapper(this.agents,(GeomWrapper)geometry.objs[i]));
+                ((CountingGeomWrapper)geometry.objs[i]).agents = this.agents;
             }
 
-        county = tmpGeomField;
-        county.computeConvexHull(); 
-        county.computeUnion(); 
-                
-        // add agents to the simulation 
+        county.computeConvexHull();
+        county.computeUnion();
+
+        // add agents to the simulation
         addAgents();
-                
+
         // ensure both GeomFields Color same area
         agents.setMBR(county.getMBR());
     }
-    
+
     public static void main(String[] args)
     {
         doLoop(ColorWorld.class, args);
