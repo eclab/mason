@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2010-04-13 19:24:52 mcoletti Exp $
+# $Id: Makefile,v 1.5 2010-04-27 18:34:06 mcoletti Exp $
 #
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
@@ -13,6 +13,7 @@ all: jar demos
 
 
 DEMOS = sim/app/geo/campusworld/*.java			\
+sim/app/geo/colorworld/*.java					\
 sim/app/geo/nearbyworld/*.java					\
 sim/app/geo/networkworld/*.java					\
 sim/app/geo/touchingworld/*.java
