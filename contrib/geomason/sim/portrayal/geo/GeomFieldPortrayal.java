@@ -1,7 +1,7 @@
 /*
  * GeomFieldPortrayal.java
  *
- * $Id: GeomFieldPortrayal.java,v 1.3 2010-04-10 18:27:33 kemsulli Exp $
+ * $Id: GeomFieldPortrayal.java,v 1.4 2010-04-27 20:35:09 mcoletti Exp $
  */
 
 package sim.portrayal.geo;
@@ -65,8 +65,14 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
     {
         return gw.paint;
     }
-        
-    BufferedImage buffer = null; 
+
+    /** used to cache immutable images
+     *
+     * If the associated field is immutable, then this is used to cache
+     * the field image.  It is updated in hitOrDraw().
+     *
+     */
+    private BufferedImage buffer = null;
         
     /** Handles hit-testing and drawing of the underlying geometry objects.  */ 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
@@ -77,8 +83,10 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
         final int maxX = (int)info.draw.width;
         final int maxY = (int)info.draw.height;
         if (maxX == 0 || maxY == 0) return; 
-                
-        if (immutableField) {  
+
+        // If we're drawing (and not inspecting), re-fresh the buffer if the
+        // associated field is immutable.
+        if (graphics != null && immutableField) {
             if (buffer == null || buffer.getWidth() != maxX || buffer.getHeight() != maxY)  { 
                 if (buffer != null) buffer.flush(); 
                 buffer = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_ARGB);                      
