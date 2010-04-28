@@ -1,7 +1,7 @@
 /*
  * GeomFieldPortrayal.java
  *
- * $Id: GeomFieldPortrayal.java,v 1.4 2010-04-27 20:35:09 mcoletti Exp $
+ * $Id: GeomFieldPortrayal.java,v 1.5 2010-04-28 19:33:50 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -139,8 +139,8 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
                         putInHere.add(new LocationWrapper(gm, null, this));
                 }
                 else { 
-                    //Paint color = lookupColor(gm);
-                    //if (color != null) graphics.setPaint(color);
+                    Paint color = lookupColor(gm);
+                    if (color != null) gm.paint = color; //graphics.setPaint(color);
                                 
                     if (portrayal instanceof GeomPortrayal)
                         portrayal.draw(gm, graphics, info);

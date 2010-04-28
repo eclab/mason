@@ -1,7 +1,7 @@
 /*
  * GeomValuedFieldPortrayal.java
  *
- * $Id: GeomValuedFieldPortrayal.java,v 1.2 2010-04-10 18:27:34 kemsulli Exp $
+ * $Id: GeomValuedFieldPortrayal.java,v 1.3 2010-04-28 19:33:50 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -40,6 +40,7 @@ public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
      */
     protected Color lookupColor(GeomWrapper gw)
     {        
+    
         Color color = null; // Color of current rendered geometry based on
                             // color table lookup of its double value
 
