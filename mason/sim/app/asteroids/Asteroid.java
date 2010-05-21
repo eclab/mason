@@ -45,7 +45,6 @@ public class Asteroid extends Element
 		{
 		this.size = size;
 		this.velocity = velocity;
-		this.orientation = orientation;
 		stopper = asteroids.schedule.scheduleRepeating(this);
 		shape = shapes[size][asteroids.random.nextInt(shapes[size].length)];
 		rotationalVelocity = asteroids.random.nextDouble() * MAXIMUM_ROTATIONAL_VELOCITY *
