@@ -1,7 +1,7 @@
 /*
  * CampusWorld.java
  *
- * $Id: CampusWorld.java,v 1.3 2010-04-21 20:04:29 mcoletti Exp $
+ * $Id: CampusWorld.java,v 1.4 2010-06-17 19:17:13 mcoletti Exp $
  */
 package sim.app.geo.campusworld;
 
@@ -104,6 +104,8 @@ public class CampusWorld extends SimState
                 masked.add("FLOORS");
                 masked.add("ADDR_NUM");
 
+//                String curDir = System.getProperty("user.dir");
+                
                 importer.ingest(dataDirectory + "bldg.shp", buildings, null);
 
 
