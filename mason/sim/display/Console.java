@@ -18,6 +18,8 @@ import sim.util.*;
 import sim.util.gui.*;
 import sim.portrayal.*;
 import java.lang.ref.*;
+import java.lang.reflect.*;
+import java.util.prefs.*;
 
 /**
    Console is an elaborate Controller which provides a variety of GUI niceties to control the basics
@@ -606,7 +608,7 @@ public class Console extends JFrame implements Controller
                 }
             };
         b.add(timeEndField);
-        controlPanel.addLabelled("Automatically Stop After Time ", b);
+        controlPanel.addLabelled("Automatically Stop after Time ", b);
 
 
         // Create the Pause text field
@@ -737,7 +739,6 @@ public class Console extends JFrame implements Controller
         b.add(incrementSeedOnPlay);
         controlPanel.addLabelled("Increment Seed on Stop ", b);
 
-        
         // Create the repeatButton checkbox
         b = new Box(BoxLayout.X_AXIS)
             {
@@ -760,9 +761,39 @@ public class Console extends JFrame implements Controller
         b.add(repeatButton);
         controlPanel.addLabelled("Repeat Play on Stop ", b);
         
-
-
-
+		
+		///////// Create the Save as Defaults buttons
+		
+		Box defaults = new Box(BoxLayout.X_AXIS);
+		defaults.add(new JLabel(" Save as Defaults for "));
+		JButton appPreferences = new JButton("Simulation");
+		JButton systemPreferences = new JButton("MASON");
+		defaults.add(appPreferences);
+		defaults.add(systemPreferences);
+		defaults.add(Box.createGlue());
+		
+		systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+		systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+		systemPreferences.addActionListener(new ActionListener()
+			{
+			public void actionPerformed(ActionEvent e)
+				{
+				savePreferences(Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY));
+				
+				// if we're setting the system preferences, remove the local preferences to avoid confusion
+				Prefs.removeAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+				}
+			});
+		
+		appPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+		appPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+		appPreferences.addActionListener(new ActionListener()
+			{
+			public void actionPerformed(ActionEvent e)
+				{
+				savePreferences(Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY));
+				}
+			});
 
 
         //////// Create the "Inspectors" tab panel  
@@ -857,8 +888,17 @@ public class Console extends JFrame implements Controller
                 }
             };
         controlScroll.getViewport().setBackground(transparentBackground);//UIManager.getColor("window"));  // make nice stripes on MacOS X
-            
-        tabPane.addTab("Console", controlScroll);
+		
+		JPanel upperPane = new JPanel();
+		upperPane.setLayout(new BorderLayout());
+		upperPane.setBorder(BorderFactory.createMatteBorder(0,0,1,0, new Color(0,0,0,64)));  // new Color(0,0,0,255)));
+		upperPane.add(controlScroll, BorderLayout.CENTER);
+		JPanel outerPane = new JPanel();
+		outerPane.setLayout(new BorderLayout());
+		outerPane.add(upperPane, BorderLayout.CENTER);
+		outerPane.add(defaults, BorderLayout.SOUTH);
+		
+        tabPane.addTab("Console", outerPane);
         tabPane.addTab("Displays", frameListPanel);
         tabPane.addTab("Inspectors", inspectorPanel);
         // add an optional pane if the GUIState has an inspector
@@ -992,9 +1032,12 @@ public class Console extends JFrame implements Controller
         // add me to the console list
         allControllers.put(this,this);
         
-        // Fire up the simulation displays
-        simulation.init(this);
-
+        // Fire up the simulation displays.
+		// We force this to be in the Swing event thread because the user's
+		// init method often has all sorts of non-threadsafe swing setup
+		// gizmos.  This SHOULD be fine to force.  {I hope!}  This fixes
+		// some ConcurrentModificationException bugs we were seeing.
+		invokeInSwing(new Runnable() { public void run() { simulation.init(Console.this); } });
 
         // Set the location of the console if it hasn't already
         // been set by the user
@@ -1013,7 +1056,23 @@ public class Console extends JFrame implements Controller
                 setLocation(bounds.width + DEFAULT_GUTTER,defLoc.y);
             else setLocation(defLoc);
             }
+
+		// update preferences
+		invokeInSwing(new Runnable() { public void run() { resetToPreferences(); }});
         }
+
+	/** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
+	void invokeInSwing(Runnable runnable)
+		{
+		if (SwingUtilities.isEventDispatchThread()) runnable.run();
+		else try
+			{
+			SwingUtilities.invokeAndWait(runnable);
+			}
+		catch (InterruptedException e) { }
+		catch (InvocationTargetException e) { }
+		}
+
 
     /** Throws out the old model inspector, if any, and creates a new model inspector, if any. */
     void buildModelInspector()
@@ -1040,6 +1099,54 @@ public class Console extends JFrame implements Controller
             }
         tabPane.revalidate();
         }
+
+
+    /////////////////////// PREFERENCES MANIPULATION
+	
+		public String DEFAULT_PREFERENCES_KEY = "Console";
+		public String DELAY_KEY = "Delay";
+		public String THREAD_PRIORITY_KEY = "Thread Priority";
+		public String STEPS_KEY = "Steps";
+		public String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
+		public String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
+		public String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Stop at Step";
+		public String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Stop after Time";
+//		public String SEED_KEY = "Seed";
+		public String INCREMENT_KEY = "Increment";
+		public String REPEAT_KEY = "Repeat";
+		
+		public void savePreferences(Preferences prefs)
+			{
+			prefs.putInt(DELAY_KEY,slider.getValue());
+			prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
+			prefs.putInt(STEPS_KEY, stepSlider.getValue());
+			prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
+			prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
+			prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
+			prefs.put(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue());
+//			prefs.put(SEED_KEY, randomField.getValue());
+			prefs.putBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected());
+			prefs.putBoolean(REPEAT_KEY, repeatButton.isSelected());
+			
+			if (!Prefs.save(prefs))
+				Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+			}
+					
+		public void resetToPreferences()
+			{
+			Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
+			Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+			slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
+			prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
+			stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
+			endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
+			timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
+			pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
+			timePauseField.setValue(timePauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, systemPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue()))));
+//			randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
+			incrementSeedOnPlay.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected())));
+			repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
+			}
 
 
 

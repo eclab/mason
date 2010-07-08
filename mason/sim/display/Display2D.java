@@ -18,6 +18,7 @@ import java.io.*;
 import sim.util.gui.*;
 import sim.util.media.*;
 import sim.util.*;
+import java.util.prefs.*;
 
 /**
    Display2D holds, displays, and manipulates 2D Portrayal objects, allowing the user to scale them,
@@ -46,9 +47,23 @@ import sim.util.*;
    SwingUtilities.invokeLater().
 */
 
-public class Display2D extends JComponent implements Steppable
+public class Display2D extends JComponent implements Steppable, Manipulating2D
     {
     protected boolean precise = false;
+	
+	public String DEFAULT_PREFERENCES_KEY = "Display2D";
+	String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
+	/** If you have more than one Display2D in your simulation and you want them to have
+		different preferences, set each to a different key value.    The default value is DEFAULT_PREFERENCES_KEY.
+		You may not have a key which ends in a forward slash (/) when trimmed  
+		Key may be set to null (the default).   */
+	public void setPreferencesKey(String s)
+		{
+		if (s.trim().endsWith("/"))
+			throw new RuntimeException("Key ends with '/', which is not allowed");
+		else preferencesKey = s;
+		}
+	public String getPreferencesKey() { return preferencesKey; }
 
     /** Option pane */
     public class OptionPane extends JFrame
@@ -66,6 +81,9 @@ public class Display2D extends JComponent implements Steppable
         public JCheckBox interpolation = new JCheckBox("Bilinear Interpolation of Images");
         public JCheckBox tooltips = new JCheckBox("Tool Tips");
         
+		public JButton systemPreferences = new JButton("MASON");
+		public JButton appPreferences = new JButton("Simulation");
+		
         public NumberTextField xOffsetField = new NumberTextField(0,1,50)
             {
             public double newValue(final double val)
@@ -88,10 +106,12 @@ public class Display2D extends JComponent implements Steppable
                 }
             };
 
+		ActionListener listener = null;
+		
         public OptionPane(String title)
             {
             super(title);
-            useDefault.setSelected(true);
+			useDefault.setSelected(true);
             useNoBuffer.setToolTipText("<html>When not using transparency on Windows/XWindows,<br>this method is often (but not always) faster</html>");
             usageGroup.add(useNoBuffer);
             usageGroup.add(useBuffer);
@@ -128,7 +148,7 @@ public class Display2D extends JComponent implements Steppable
             p.add(b,BorderLayout.CENTER);
             getContentPane().add(p,BorderLayout.CENTER);
             
-            ActionListener listener = new ActionListener()
+			listener = new ActionListener()
                 {
                 public void actionPerformed(ActionEvent e)
                     {
@@ -149,9 +169,103 @@ public class Display2D extends JComponent implements Steppable
             alphaInterpolation.addActionListener(listener);
             interpolation.addActionListener(listener);
             tooltips.addActionListener(listener);
+
+	// add preferences
+			
+			b = new Box(BoxLayout.X_AXIS);
+			b.add(new JLabel(" Save as Defaults for "));
+			b.add(appPreferences);
+			b.add(systemPreferences);
+			getContentPane().add(b, BorderLayout.SOUTH);
+
+			systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+			systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+			systemPreferences.addActionListener(new ActionListener()
+				{
+				public void actionPerformed(ActionEvent e)
+					{
+					String key = getPreferencesKey();
+					savePreferences(Prefs.getGlobalPreferences(key));
+					
+					// if we're setting the system preferences, remove the local preferences to avoid confusion
+					Prefs.removeAppPreferences(simulation, key);
+					}
+				});
+			
+			appPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+			appPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+			appPreferences.addActionListener(new ActionListener()
+				{
+				public void actionPerformed(ActionEvent e)
+					{
+					String key = getPreferencesKey();
+					savePreferences(Prefs.getAppPreferences(simulation, key));
+					}
+				});
+
+			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			setResizable(false);
             pack();
-            }
+
+       }
+		
+		/** Saves the Option Pane Preferences to a given Preferences Node */
+		public void savePreferences(Preferences prefs)
+			{
+			prefs.putInt(DRAW_GRIDS_KEY,
+									useNoBuffer.isSelected() ? 0 : 
+									useBuffer.isSelected() ? 1 : 2);
+			prefs.putDouble(X_OFFSET_KEY, xOffsetField.getValue());
+			prefs.putDouble(Y_OFFSET_KEY, yOffsetField.getValue());
+			prefs.putBoolean(ANTIALIAS_KEY, antialias.isSelected());
+			prefs.putBoolean(BETTER_TRANSPARENCY_KEY, alphaInterpolation.isSelected());
+			prefs.putBoolean(INTERPOLATION_KEY, interpolation.isSelected());
+			prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+			
+			if (!Prefs.save(prefs))
+				Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+			}
+			
+			
+		static final String DRAW_GRIDS_KEY = "Draw Grids";
+		static final String X_OFFSET_KEY = "X Offset";
+		static final String Y_OFFSET_KEY = "Y Offset";
+		static final String ANTIALIAS_KEY = "Antialias";
+		static final String BETTER_TRANSPARENCY_KEY = "Better Transparency";
+		static final String INTERPOLATION_KEY = "Bilinear Interpolation";
+		static final String TOOLTIPS_KEY = "Tool Tips";
+		
+		/** Resets the Option Pane Preferences by loading from the preference database */
+		public void resetToPreferences()
+			{
+			Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
+			Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
+			int val = appPrefs.getInt(DRAW_GRIDS_KEY, 
+									systemPrefs.getInt(DRAW_GRIDS_KEY,
+										useNoBuffer.isSelected() ? 0 : 
+										useBuffer.isSelected() ? 1 : 2));
+			if (val == 0) useNoBuffer.setSelected(true);
+			else if (val == 1) useBuffer.setSelected(true);
+			else // (val == 0) 
+				useDefault.setSelected(true);
+			xOffsetField.setValue(xOffsetField.newValue(appPrefs.getDouble(X_OFFSET_KEY,
+											systemPrefs.getDouble(X_OFFSET_KEY, 0))));
+			yOffsetField.setValue(yOffsetField.newValue(appPrefs.getDouble(Y_OFFSET_KEY,
+										systemPrefs.getDouble(Y_OFFSET_KEY, 0))));
+			antialias.setSelected(appPrefs.getBoolean(ANTIALIAS_KEY,
+									systemPrefs.getBoolean(ANTIALIAS_KEY, false)));
+			alphaInterpolation.setSelected(appPrefs.getBoolean(BETTER_TRANSPARENCY_KEY,
+									systemPrefs.getBoolean(BETTER_TRANSPARENCY_KEY, false)));
+			interpolation.setSelected(appPrefs.getBoolean(INTERPOLATION_KEY,
+									systemPrefs.getBoolean(INTERPOLATION_KEY, false)));
+			tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
+									systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+			// trigger resets by calling the listener.  Don't bother with an event
+			listener.actionPerformed(null);
+			}
         }
+		
+		
     
     /** The object which actually does all the drawing.  Perhaps we should move this out. */
     public class InnerDisplay2D extends JComponent
@@ -1219,6 +1333,9 @@ public class Display2D extends JComponent implements Steppable
         add(display,BorderLayout.CENTER);
 
         createConsoleMenu();
+		
+		// update preferences
+		optionPane.resetToPreferences();
         }
 
     /** Returns LocationWrappers for all the objects which fall within the coordinate rectangle specified by rect.  This 

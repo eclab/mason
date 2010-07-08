@@ -61,6 +61,14 @@ a given frame rate.  Useful for keeping games feeling smooth despite the
 platform.
 
 
+Manipulating2D.java
+
+A simple interface for Display2D to implement.  This interface is passed
+to SimplePortrayal2D classes in their handleMouseEvent(...) method rather
+than the Display2D itself.  This interface may grow as additional methods
+are required by these classes.
+
+
 Other Files:
 
 

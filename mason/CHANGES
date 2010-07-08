@@ -1809,3 +1809,10 @@ Version 15
 	Added the destroysThreads flags to ParallelSequence and added documentation explaining
 		why and how you should use this method.
 	Tweaked HeatBugs and HexaBugs so that they call cleanup() on their ParallelSequences
+	Added the Manipulating2D interface to avoid passing Display2D directly to
+		SimplePortrayal2D subclasses.
+	Added preferences to SimplePortrayal2D
+	Console and SimpleController possibly call init(...) inside an invokeAndWait to 
+		guarantee it happens on the Swing Event Thread.
+	Additions to ChartGenerator.  Thanks to Paul Smaldino <paul.smaldino@gmail.com> and
+		Joey Harrison <jharri@gmu.edu>

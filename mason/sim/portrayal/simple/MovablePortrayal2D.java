@@ -62,7 +62,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
 	Point2D originalMousePosition = null;
 	Point2D originalObjectPosition = null;
 	
-	public boolean handleMouseEvent(Display2D display, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
+	public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
 		{
 		int id = event.getID();
 		if (id == MouseEvent.MOUSE_PRESSED)
@@ -74,7 +74,8 @@ public class MovablePortrayal2D extends SimplePortrayal2D
 			DrawInfo2D hitRange = new DrawInfo2D(range);
 			Double2D scale = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getScale(range);
 
-			// this magic basically creates a 
+			// this magic basically creates a rectangle representing the hittable region of the object
+			// and a small pixel where the mouse clicked.
 			hitRange.draw.x = originalObjectPosition.getX();
 			hitRange.draw.y = originalObjectPosition.getY();
 			hitRange.draw.width = scale.x;
@@ -87,7 +88,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
 			if (hitObject(wrapper.getObject(), hitRange))
 				{
 				if (originalObjectPosition != null)
-					display.performSelection(wrapper);  // make sure we're selected, so we're called again
+					manipulating.performSelection(wrapper);  // make sure we're selected, so we're called again
 				return true;  // will cause a refresh
 				}
 			else { originalMousePosition = originalObjectPosition = null; }  // clean up
@@ -110,7 +111,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
 			originalMousePosition = null;
 			originalObjectPosition = null;
 			}
-		return getChild(wrapper.getObject()).handleMouseEvent(display, wrapper, event, range, type);  // let someone else have it
+		return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let someone else have it
 		}
 	
     public boolean hitObject(Object object, DrawInfo2D range)

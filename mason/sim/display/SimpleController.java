@@ -18,7 +18,7 @@ import sim.util.*;
 import sim.util.gui.*;
 import sim.portrayal.*;
 import java.lang.ref.*;
-
+import java.lang.reflect.*;
 
 /*
   SimpleController is a Controller with no GUI.  It implements all of the Controller interface,
@@ -87,11 +87,24 @@ public class SimpleController implements Controller
         this.simulation = simulation;
 
         // Fire up the simulation displays
-        simulation.init(this);
+        invokeInSwing(new Runnable() { public void run() { simulation.init(SimpleController.this); } });
                 
         // Add us to the Console's Controllers list
         Console.allControllers.put(this,this);
         }
+
+
+	/** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
+	void invokeInSwing(Runnable runnable)
+		{
+		if (SwingUtilities.isEventDispatchThread()) runnable.run();
+		else try
+			{
+			SwingUtilities.invokeAndWait(runnable);
+			}
+		catch (InterruptedException e) { }
+		catch (InvocationTargetException e) { }
+		}
 
 
     /** The thread that actually goes through the steps */

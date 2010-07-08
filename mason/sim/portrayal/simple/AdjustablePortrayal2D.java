@@ -95,12 +95,12 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
 	double adjustingInitialScale = 1.0;
 	Point2D.Double adjustingInitialPosition = null;
 	
-	public boolean handleMouseEvent(Display2D display, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
+	public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
 		{
 		Point2D.Double myPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
 		Object object = wrapper.getObject();
 		if (adjusting && adjustingObject != object)  // we're not portraying the relevant object
-			return getChild(wrapper.getObject()).handleMouseEvent(display, wrapper, event, range, type);  // let any lower portrayals have it
+			return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let any lower portrayals have it
 		
 		double orientation = 0.0;
 		if (object instanceof Oriented2D)
@@ -152,7 +152,7 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
 			adjustingInitialScale = 1.0;
 			adjustingInitialPosition = null;
 			}
-		return getChild(wrapper.getObject()).handleMouseEvent(display, wrapper, event, range, type);  // let any lower portrayals have it, else false
+		return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let any lower portrayals have it, else false
 		}
 	
     public boolean hitObject(Object object, DrawInfo2D range)

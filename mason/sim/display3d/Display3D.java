@@ -32,6 +32,8 @@ import com.sun.j3d.utils.behaviors.vp.*;
 import com.sun.j3d.utils.image.*;
 import com.sun.j3d.utils.geometry.Sphere;
 
+import java.util.prefs.*;
+
 
 /**
    Display3D holds, displays, and manipulates 3D Portrayal objects, allowing the user to scale them,
@@ -116,6 +118,21 @@ import com.sun.j3d.utils.geometry.Sphere;
 **/
 public class Display3D extends JPanel implements Steppable
     {
+	public String DEFAULT_PREFERENCES_KEY = "Display3D";
+	String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
+	/** If you have more than one Display3D in your simulation and you want them to have
+		different preferences, set each to a different key value.    The default value is DEFAULT_PREFERENCES_KEY.
+		You may not have a key which ends in a forward slash (/) when trimmed  
+		Key may be set to null (the default).   */
+	public void setPreferencesKey(String s)
+		{
+		if (s.trim().endsWith("/"))
+			throw new RuntimeException("Key ends with '/', which is not allowed");
+		else preferencesKey = s;
+		}
+	public String getPreferencesKey() { return preferencesKey; }
+
+
     ArrayList portrayals = new ArrayList();
     Stoppable stopper;
     GUIState simulation;
@@ -152,8 +169,6 @@ public class Display3D extends JPanel implements Steppable
         in the sceneGraphCreated() hook. */
     public BranchGroup root = null;
 
-    
-    
     // these really don't need to be public...
 
     // switch and mask for the portrayals themselves
@@ -538,7 +553,7 @@ public class Display3D extends JPanel implements Steppable
             public void actionPerformed(ActionEvent e)
                 {
                 if (movieMaker==null) startMovie();
-                else                        stopMovie();
+                else stopMovie();
                 }
             });
         header.add(movieButton);
@@ -574,7 +589,7 @@ public class Display3D extends JPanel implements Steppable
             {
             public void actionPerformed(ActionEvent e)
                 {
-                optionsFrame.setVisible(true);
+                optionPane.setVisible(true);
                 }
             });
         header.add(optionButton);
@@ -699,14 +714,11 @@ public class Display3D extends JPanel implements Steppable
         
         setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
-        
-        createOptionsPanel();
-        
+                
         // default mask for auxillary objects
         auxillarySwitchMask.clear(AXES_AUX_INDEX);  // turn axes off
         auxillarySwitchMask.clear(BACKGROUND_AUX_INDEX);    // turn background off by default
         showBackgroundCheckBox.setSelected(true);
-        showBackgroundCheckBox.setEnabled(false);  // disable backdrop checkbox until it's set by the simulation
         
         createSceneGraph();
 
@@ -723,7 +735,6 @@ public class Display3D extends JPanel implements Steppable
         backdropAppearance = null;
         backdropImage = null;
         backdropColor = null;
-        showBackgroundCheckBox.setEnabled(false);
         setShowsBackdrop(false);
         }
     
@@ -732,7 +743,6 @@ public class Display3D extends JPanel implements Steppable
         {
         clearBackdrop();
         backdropAppearance = appearance;
-        showBackgroundCheckBox.setEnabled(appearance!=null);
         setShowsBackdrop(true);
         }
         
@@ -741,7 +751,6 @@ public class Display3D extends JPanel implements Steppable
         {
         clearBackdrop();
         backdropColor = color;
-        showBackgroundCheckBox.setEnabled(color != null);
         setShowsBackdrop(true);
         }
 
@@ -759,7 +768,6 @@ public class Display3D extends JPanel implements Steppable
             {
             backdropImage = image;
             }
-        showBackgroundCheckBox.setEnabled(image != null);
         setShowsBackdrop(true);
         }
         
@@ -857,11 +865,13 @@ public class Display3D extends JPanel implements Steppable
         bogusMover.setCoordinate(0,bogusPosition);
         }
     
-    
     void toggleAxes()
         {
-        auxillarySwitchMask.set(AXES_AUX_INDEX, showAxesCheckBox.isSelected());
-        auxillarySwitch.setChildMask(auxillarySwitchMask);
+        if (auxillarySwitch != null)
+			{
+			auxillarySwitchMask.set(AXES_AUX_INDEX, showAxesCheckBox.isSelected());
+			auxillarySwitch.setChildMask(auxillarySwitchMask);
+			}
         }
                 
     public void setShowsAxes(boolean value)
@@ -872,8 +882,11 @@ public class Display3D extends JPanel implements Steppable
 
     void toggleBackdrop()
         {
-        auxillarySwitchMask.set(BACKGROUND_AUX_INDEX, showBackgroundCheckBox.isSelected());
-        auxillarySwitch.setChildMask(auxillarySwitchMask);
+        if (auxillarySwitch != null)
+			{
+			auxillarySwitchMask.set(BACKGROUND_AUX_INDEX, showBackgroundCheckBox.isSelected());
+			auxillarySwitch.setChildMask(auxillarySwitchMask);
+			}
         }
 
     public void setShowsBackdrop(boolean value)
@@ -884,8 +897,11 @@ public class Display3D extends JPanel implements Steppable
 
     void toggleSpotlight()
         {
-        lightSwitchMask.set(SPOTLIGHT_INDEX, showSpotlightCheckBox.isSelected());
-        lightSwitch.setChildMask(lightSwitchMask);
+        if (lightSwitch != null)
+			{
+			lightSwitchMask.set(SPOTLIGHT_INDEX, showSpotlightCheckBox.isSelected());
+			lightSwitch.setChildMask(lightSwitchMask);
+			}
         }
                 
     public void setShowsSpotlight(boolean value)
@@ -896,8 +912,11 @@ public class Display3D extends JPanel implements Steppable
 
     void toggleAmbientLight()
         {
-        lightSwitchMask.set(AMBIENT_LIGHT_INDEX, showAmbientLightCheckBox.isSelected());
-        lightSwitch.setChildMask(lightSwitchMask);
+        if (lightSwitch != null)
+			{
+			lightSwitchMask.set(AMBIENT_LIGHT_INDEX, showAmbientLightCheckBox.isSelected());
+			lightSwitch.setChildMask(lightSwitchMask);
+			}
         }
                 
     public void setShowsAmbientLight(boolean value)
@@ -1582,7 +1601,6 @@ public class Display3D extends JPanel implements Steppable
     //JCheckBox antialiasCheckBox = new JCheckBox("Antialias Graphics");
     //JRadioButton viewPerspective = new JRadioButton("Perspective Projection", true);
     //JRadioButton viewParallel = new JRadioButton("Parallel Projection", false);
-    JFrame optionsFrame;
         
     void setSpinningEnabled(boolean value)
         {
@@ -1681,262 +1699,6 @@ public class Display3D extends JPanel implements Steppable
             }
         };    
 
-    void createOptionsPanel()
-        {
-        // set some tool tips
-        orbitRotateXCheckBox.setToolTipText("Rotates the scene left or right. Drag the left mouse button.");
-        orbitRotateYCheckBox.setToolTipText("Rotates the scene up or down. Drag the left mouse button.");
-        orbitTranslateXCheckBox.setToolTipText("Move the scene left or right.  Drag the middle mouse button.");
-        orbitTranslateYCheckBox.setToolTipText("Move the scene up or down.  Drag the middle mouse button.");
-        orbitZoomCheckBox.setToolTipText("Moves the eye towards/away from scene.  Not the same as scaling.  Drag the right mouse button.");
-        selectBehCheckBox.setToolTipText("Selects objects.  Double-click the left mouse button.");
-
-        // Mouse Behaviors
-        Box outerBehaviorsPanel = new Box(BoxLayout.X_AXIS);
-        outerBehaviorsPanel.setBorder(new javax.swing.border.TitledBorder("Mouse Actions"));
-        
-        // add rotateX, translateX, zoom, select to left panel
-        Box leftBehaviors = new Box(BoxLayout.Y_AXIS);
-        leftBehaviors.add(orbitRotateXCheckBox);
-        orbitRotateXCheckBox.setSelected(true);
-        leftBehaviors.add(orbitTranslateXCheckBox);
-        orbitTranslateXCheckBox.setSelected(true);
-        leftBehaviors.add(orbitZoomCheckBox);
-        orbitZoomCheckBox.setSelected(true);
-        leftBehaviors.add(selectBehCheckBox);
-        selectBehCheckBox.setSelected(true);
-        leftBehaviors.add(Box.createGlue());
-
-        // add rotateY, translateY, reset to right panel
-        Box rightBehaviors = new Box(BoxLayout.Y_AXIS);
-        rightBehaviors.add(orbitRotateYCheckBox);
-        orbitRotateYCheckBox.setSelected(true);
-        rightBehaviors.add(orbitTranslateYCheckBox);
-        orbitTranslateYCheckBox.setSelected(true);
-        rightBehaviors.add(Box.createGlue());
-        JButton resetButton = new JButton("Reset");
-        resetButton.setToolTipText("Resets display to original rotation, translation, and zoom.");
-        rightBehaviors.add(resetButton);
-
-        outerBehaviorsPanel.add(leftBehaviors);
-        outerBehaviorsPanel.add(rightBehaviors);
-        outerBehaviorsPanel.add(Box.createGlue());
-               
-        resetButton.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {
-                canvas.stopRenderer();
-                // reset scale field
-                scaleField.setValue(1);
-                setScale(1);
-                
-                universe.getViewingPlatform().setNominalViewingTransform(); // reset translations/rotations
-                autoSpinTransformGroup.setTransform(new Transform3D());
-                // reset background spin too
-                autoSpinBackgroundTransformGroup.setTransform(new Transform3D());
-                canvas.startRenderer();
-                } 
-            });
-        
-        orbitRotateXCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {
-                if (mOrbitBehavior!=null) mOrbitBehavior.setRotXFactor(orbitRotateXCheckBox.isSelected() ? 1.0 : 0.0); }
-            });
-        orbitRotateYCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {
-                if (mOrbitBehavior!=null) mOrbitBehavior.setRotYFactor(orbitRotateYCheckBox.isSelected() ? 1.0 : 0.0); }
-            });
-        orbitTranslateXCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {
-                if (mOrbitBehavior!=null) mOrbitBehavior.setTransXFactor(orbitTranslateXCheckBox.isSelected() ? 1.0 : 0.0); }
-            });
-        orbitTranslateYCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {
-                if (mOrbitBehavior!=null) mOrbitBehavior.setTransYFactor(orbitTranslateYCheckBox.isSelected() ? 1.0 : 0.0); }
-            });
-        orbitZoomCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {       if (mOrbitBehavior!=null) mOrbitBehavior.setZoomEnable(orbitZoomCheckBox.isSelected()); }
-            });         
-        selectBehCheckBox.addItemListener(new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {       if (mSelectBehavior!=null) mSelectBehavior.setEnable(selectBehCheckBox.isSelected()); }
-            });         
-
-        // Auto-Orbiting
-        LabelledList rotatePanel = new LabelledList("Auto-Rotate About <X,Y,Z> Axis");
-        rotatePanel.addLabelled("X", rotAxis_X);
-        rotatePanel.addLabelled("Y", rotAxis_Y);
-        rotatePanel.addLabelled("Z", rotAxis_Z);
-        rotatePanel.addLabelled("Rotations/Sec", spinDuration);
-                
-        Box polyPanel = new Box(BoxLayout.X_AXIS);
-        polyPanel.setBorder(new javax.swing.border.TitledBorder("Polygon Attributes"));
-        ButtonGroup polyLineGroup = new ButtonGroup();
-        polyLineGroup.add(polyPoint);
-        polyLineGroup.add(polyLine);
-        polyLineGroup.add(polyFill);
-        ButtonGroup polyCullingGroup = new ButtonGroup();
-        polyCullingGroup.add(polyCullNone);
-        polyCullingGroup.add(polyCullFront);
-        polyCullingGroup.add(polyCullBack);
-                
-        Box polyLinebox = Box.createVerticalBox();
-        polyLinebox.add(Box.createGlue());
-        polyLinebox.add (new JLabel ("Draw Polygons As..."));
-        polyLinebox.add (polyPoint);
-        polyPoint.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_POINT);} 
-            });
-        polyLinebox.add (polyLine);
-        polyLine.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_LINE);} 
-            });
-        polyLinebox.add (polyFill);
-        polyFill.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_FILL);} 
-            });
-        polyLinebox.add(Box.createGlue());
-        polyLinebox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
-        polyPanel.add(polyLinebox);
-        Box polyCullbox = Box.createVerticalBox();
-        polyCullbox.add(Box.createGlue());
-        polyCullbox.add (new JLabel ("Draw Faces As..."));
-        polyCullbox.add (polyCullNone);
-        polyCullNone.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_NONE);} 
-            });
-        polyCullbox.add (polyCullBack);
-        polyCullBack.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_BACK);} 
-            });
-        polyCullbox.add (polyCullFront);
-        polyCullFront.addActionListener(new ActionListener()
-            { 
-            public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_FRONT);} 
-            });
-        polyCullbox.add(Box.createGlue());
-        polyCullbox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
-        polyPanel.add(polyCullbox);
-        polyPanel.add(Box.createGlue());
-        /*
-        // These aren't very helpful
-        
-        Box viewPanel = new Box(BoxLayout.Y_AXIS);
-        viewPanel.setBorder(new javax.swing.border.TitledBorder("Viewing Attributes"));
-        antialiasCheckBox.setSelected(false);
-        antialiasCheckBox.addItemListener(new ItemListener()
-        {
-        public void itemStateChanged(ItemEvent e)
-        {       canvas.getView().setSceneAntialiasingEnable(antialiasCheckBox.isSelected());    }
-        });
-        viewPanel.add(antialiasCheckBox);
-        ButtonGroup viewProjectionGroup = new ButtonGroup();
-        viewProjectionGroup.add(viewPerspective);
-        viewProjectionGroup.add(viewParallel);
-        viewPerspective.addActionListener(new ActionListener()
-        { 
-        public void actionPerformed(ActionEvent e)
-        {       canvas.getView().setProjectionPolicy(canvas.getView().PERSPECTIVE_PROJECTION);}
-        });
-        viewParallel.addActionListener(new ActionListener()
-        { 
-        public void actionPerformed(ActionEvent e)
-        {       canvas.getView().setProjectionPolicy(canvas.getView().PARALLEL_PROJECTION);}
-        });
-        viewPanel.add(viewPerspective);
-        viewPanel.add(viewParallel);
-        */
-        
-        Box auxillaryPanel = new Box(BoxLayout.Y_AXIS);
-        Box box = new Box(BoxLayout.X_AXIS);
-        auxillaryPanel.setBorder(new javax.swing.border.TitledBorder("Auxillary Elements"));
-        box.add(showAxesCheckBox);
-        showAxesCheckBox.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {       
-                toggleAxes();
-                }
-            });
-        box.add(showBackgroundCheckBox);
-        showBackgroundCheckBox.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {       
-                toggleBackdrop();
-                }
-            });
-        box.add(tooltips);
-        tooltips.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {
-                usingToolTips = tooltips.isSelected();
-                if (toolTipBehavior != null)
-                    toolTipBehavior.setCanShowToolTips(usingToolTips);
-                }
-            });
-        box.add(Box.createGlue());
-        auxillaryPanel.add(box);
-                
-        // next row
-        box = new Box(BoxLayout.X_AXIS);
-        box.add(showSpotlightCheckBox);
-        showSpotlightCheckBox.setSelected(true);
-        showSpotlightCheckBox.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {       
-                toggleSpotlight();
-                }
-            });
-
-        box.add(showAmbientLightCheckBox);
-        showAmbientLightCheckBox.addActionListener(new ActionListener()
-            {
-            public void actionPerformed(ActionEvent e)
-                {       
-                toggleAmbientLight();
-                }
-            });
-        box.add(Box.createGlue());
-        auxillaryPanel.add(box);
-
-        // set up initial design
-            
-        
-        Box optionsPanel = new Box(BoxLayout.Y_AXIS);
-        optionsPanel.add(outerBehaviorsPanel);
-        optionsPanel.add(rotatePanel);
-        optionsPanel.add(auxillaryPanel);
-        optionsPanel.add(polyPanel);
-        //optionsPanel.add(viewPanel);
-
-        optionsFrame = new JFrame("3D Options");
-        optionsFrame.getContentPane().add(optionsPanel);
-        optionsFrame.pack();
-        optionsFrame.setResizable(false);
-        optionsFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        } 
-
-
     /** Sets the rasterization mode for configurable polygon portrayals. 
         Mode can be PolygonAttributes.POLYGON_FILL, PolygonAttributes.POLYGON_LINE, 
         or PolygonAttributes.POLYGON_POINT. */
@@ -2017,5 +1779,427 @@ public class Display3D extends JPanel implements Steppable
             
         updateSceneGraph(false);
         }
+
+
+
+
+	public JButton systemPreferences = new JButton("MASON");
+	public JButton appPreferences = new JButton("Simulation");
+	public class OptionPane3D extends JFrame
+		{
+		public OptionPane3D(String label)
+			{
+			super(label);
+			
+			// set some tool tips
+			orbitRotateXCheckBox.setToolTipText("Rotates the scene left or right. Drag the left mouse button.");
+			orbitRotateYCheckBox.setToolTipText("Rotates the scene up or down. Drag the left mouse button.");
+			orbitTranslateXCheckBox.setToolTipText("Move the scene left or right.  Drag the middle mouse button.");
+			orbitTranslateYCheckBox.setToolTipText("Move the scene up or down.  Drag the middle mouse button.");
+			orbitZoomCheckBox.setToolTipText("Moves the eye towards/away from scene.  Not the same as scaling.  Drag the right mouse button.");
+			selectBehCheckBox.setToolTipText("Selects objects.  Double-click the left mouse button.");
+
+			// Mouse Behaviors
+			Box outerBehaviorsPanel = new Box(BoxLayout.X_AXIS);
+			outerBehaviorsPanel.setBorder(new javax.swing.border.TitledBorder("Mouse Actions"));
+			
+			// add rotateX, translateX, zoom, select to left panel
+			Box leftBehaviors = new Box(BoxLayout.Y_AXIS);
+			leftBehaviors.add(orbitRotateXCheckBox);
+			orbitRotateXCheckBox.setSelected(true);
+			leftBehaviors.add(orbitTranslateXCheckBox);
+			orbitTranslateXCheckBox.setSelected(true);
+			leftBehaviors.add(orbitZoomCheckBox);
+			orbitZoomCheckBox.setSelected(true);
+			leftBehaviors.add(Box.createGlue());
+
+			// add rotateY, translateY, reset to right panel
+			Box rightBehaviors = new Box(BoxLayout.Y_AXIS);
+			rightBehaviors.add(orbitRotateYCheckBox);
+			orbitRotateYCheckBox.setSelected(true);
+			rightBehaviors.add(orbitTranslateYCheckBox);
+			orbitTranslateYCheckBox.setSelected(true);
+			rightBehaviors.add(selectBehCheckBox);
+			selectBehCheckBox.setSelected(true);
+			rightBehaviors.add(Box.createGlue());
+
+			outerBehaviorsPanel.add(leftBehaviors);
+			outerBehaviorsPanel.add(rightBehaviors);
+			outerBehaviorsPanel.add(Box.createGlue());
+			
+			
+			Box resetBox = new Box(BoxLayout.X_AXIS);
+			resetBox.setBorder(new javax.swing.border.TitledBorder("Viewpoint"));
+			JButton resetButton = new JButton("Reset Viewpoint");
+			resetButton.setToolTipText("Resets display to original rotation, translation, and zoom.");
+			resetBox.add(resetButton);
+			resetBox.add(Box.createGlue());
+
+			resetButton.addActionListener(new ActionListener()
+				{
+				public void actionPerformed(ActionEvent e)
+					{
+					canvas.stopRenderer();
+					// reset scale field
+					scaleField.setValue(1);
+					setScale(1);
+					
+					universe.getViewingPlatform().setNominalViewingTransform(); // reset translations/rotations
+					autoSpinTransformGroup.setTransform(new Transform3D());
+					// reset background spin too
+					autoSpinBackgroundTransformGroup.setTransform(new Transform3D());
+					canvas.startRenderer();
+					} 
+				});
+			
+			orbitRotateXCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{
+					if (mOrbitBehavior!=null) mOrbitBehavior.setRotXFactor(orbitRotateXCheckBox.isSelected() ? 1.0 : 0.0); }
+				});
+			orbitRotateYCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{
+					if (mOrbitBehavior!=null) mOrbitBehavior.setRotYFactor(orbitRotateYCheckBox.isSelected() ? 1.0 : 0.0); }
+				});
+			orbitTranslateXCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{
+					if (mOrbitBehavior!=null) mOrbitBehavior.setTransXFactor(orbitTranslateXCheckBox.isSelected() ? 1.0 : 0.0); }
+				});
+			orbitTranslateYCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{
+					if (mOrbitBehavior!=null) mOrbitBehavior.setTransYFactor(orbitTranslateYCheckBox.isSelected() ? 1.0 : 0.0); }
+				});
+			orbitZoomCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       if (mOrbitBehavior!=null) mOrbitBehavior.setZoomEnable(orbitZoomCheckBox.isSelected()); }
+				});         
+			selectBehCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       if (mSelectBehavior!=null) mSelectBehavior.setEnable(selectBehCheckBox.isSelected()); }
+				});         
+
+			// Auto-Orbiting
+			LabelledList rotatePanel = new LabelledList("Auto-Rotate About <X,Y,Z> Axis");
+			rotatePanel.addLabelled("X", rotAxis_X);
+			rotatePanel.addLabelled("Y", rotAxis_Y);
+			rotatePanel.addLabelled("Z", rotAxis_Z);
+			rotatePanel.addLabelled("Rotations/Sec", spinDuration);
+					
+			Box polyPanel = new Box(BoxLayout.X_AXIS);
+			polyPanel.setBorder(new javax.swing.border.TitledBorder("Polygon Attributes"));
+			ButtonGroup polyLineGroup = new ButtonGroup();
+			polyLineGroup.add(polyPoint);
+			polyLineGroup.add(polyLine);
+			polyLineGroup.add(polyFill);
+			ButtonGroup polyCullingGroup = new ButtonGroup();
+			polyCullingGroup.add(polyCullNone);
+			polyCullingGroup.add(polyCullFront);
+			polyCullingGroup.add(polyCullBack);
+					
+			Box polyLinebox = Box.createVerticalBox();
+			polyLinebox.add(Box.createGlue());
+			polyLinebox.add (new JLabel ("Draw Polygons As..."));
+			polyLinebox.add (polyPoint);
+			polyPoint.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_POINT);} 
+				});
+			polyLinebox.add (polyLine);
+			polyLine.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_LINE);} 
+				});
+			polyLinebox.add (polyFill);
+			polyFill.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_FILL);} 
+				});
+			polyLinebox.add(Box.createGlue());
+			polyLinebox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
+			polyPanel.add(polyLinebox);
+			Box polyCullbox = Box.createVerticalBox();
+			polyCullbox.add(Box.createGlue());
+			polyCullbox.add (new JLabel ("Draw Faces As..."));
+			polyCullbox.add (polyCullNone);
+			polyCullNone.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_NONE);} 
+				});
+			polyCullbox.add (polyCullBack);
+			polyCullBack.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_BACK);} 
+				});
+			polyCullbox.add (polyCullFront);
+			polyCullFront.addActionListener(new ActionListener()
+				{ 
+				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_FRONT);} 
+				});
+			polyCullbox.add(Box.createGlue());
+			polyCullbox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
+			polyPanel.add(polyCullbox);
+			polyPanel.add(Box.createGlue());
+			/*
+			// These aren't very helpful
+			
+			Box viewPanel = new Box(BoxLayout.Y_AXIS);
+			viewPanel.setBorder(new javax.swing.border.TitledBorder("Viewing Attributes"));
+			antialiasCheckBox.setSelected(false);
+			antialiasCheckBox.addItemListener(new ItemListener()
+			{
+			public void itemStateChanged(ItemEvent e)
+			{       canvas.getView().setSceneAntialiasingEnable(antialiasCheckBox.isSelected());    }
+			});
+			viewPanel.add(antialiasCheckBox);
+			ButtonGroup viewProjectionGroup = new ButtonGroup();
+			viewProjectionGroup.add(viewPerspective);
+			viewProjectionGroup.add(viewParallel);
+			viewPerspective.addActionListener(new ActionListener()
+			{ 
+			public void actionPerformed(ActionEvent e)
+			{       canvas.getView().setProjectionPolicy(canvas.getView().PERSPECTIVE_PROJECTION);}
+			});
+			viewParallel.addActionListener(new ActionListener()
+			{ 
+			public void actionPerformed(ActionEvent e)
+			{       canvas.getView().setProjectionPolicy(canvas.getView().PARALLEL_PROJECTION);}
+			});
+			viewPanel.add(viewPerspective);
+			viewPanel.add(viewParallel);
+			*/
+			
+			Box auxillaryPanel = new Box(BoxLayout.Y_AXIS);
+			Box box = new Box(BoxLayout.X_AXIS);
+			auxillaryPanel.setBorder(new javax.swing.border.TitledBorder("Auxillary Elements"));
+			box.add(showAxesCheckBox);
+			showAxesCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       
+					toggleAxes();
+					}
+				});
+			box.add(showBackgroundCheckBox);
+			showBackgroundCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       
+					toggleBackdrop();
+					}
+				});
+			box.add(tooltips);
+			tooltips.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{
+					usingToolTips = tooltips.isSelected();
+					if (toolTipBehavior != null)
+						toolTipBehavior.setCanShowToolTips(usingToolTips);
+					}
+				});
+			box.add(Box.createGlue());
+			auxillaryPanel.add(box);
+					
+			// next row
+			box = new Box(BoxLayout.X_AXIS);
+			box.add(showSpotlightCheckBox);
+			showSpotlightCheckBox.setSelected(true);
+			showSpotlightCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       
+					toggleSpotlight();
+					}
+				});
+
+			box.add(showAmbientLightCheckBox);
+			showAmbientLightCheckBox.addItemListener(new ItemListener()
+				{
+				public void itemStateChanged(ItemEvent e)
+					{       
+					toggleAmbientLight();
+					}
+				});
+			box.add(Box.createGlue());
+			auxillaryPanel.add(box);
+
+			// set up initial design
+				
+			
+			Box optionsPanel = new Box(BoxLayout.Y_AXIS);
+			optionsPanel.add(outerBehaviorsPanel);
+			optionsPanel.add(rotatePanel);
+			optionsPanel.add(auxillaryPanel);
+			optionsPanel.add(polyPanel);
+			optionsPanel.add(resetBox);
+			//optionsPanel.add(viewPanel);
+
+			getContentPane().add(optionsPanel);
+			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+			
+			
+		// add preferences
+				
+			Box b = new Box(BoxLayout.X_AXIS);
+			b.add(new JLabel(" Save as Defaults for "));
+			b.add(appPreferences);
+			b.add(systemPreferences);
+			getContentPane().add(b, BorderLayout.SOUTH);
+
+			systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+			systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+			systemPreferences.addActionListener(new ActionListener()
+				{
+				public void actionPerformed(ActionEvent e)
+					{
+					String key = getPreferencesKey();
+					savePreferences(Prefs.getGlobalPreferences(key));
+					
+					// if we're setting the system preferences, remove the local preferences to avoid confusion
+					Prefs.removeAppPreferences(simulation, key);
+					}
+				});
+			
+			appPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+			appPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+			appPreferences.addActionListener(new ActionListener()
+				{
+				public void actionPerformed(ActionEvent e)
+					{
+					String key = getPreferencesKey();
+					savePreferences(Prefs.getAppPreferences(simulation, key));
+					}
+				});
+
+			pack();
+			setResizable(false);
+			} 
+
+
+		/** Saves the Option Pane Preferences to a given Preferences Node */
+		public void savePreferences(Preferences prefs)
+			{
+			prefs.putBoolean(ROTATE_LEFT_RIGHT_KEY, orbitRotateXCheckBox.isSelected());
+			prefs.putBoolean(ROTATE_UP_DOWN_KEY, orbitRotateYCheckBox.isSelected());
+			prefs.putBoolean(TRANSLATE_LEFT_RIGHT_KEY, orbitTranslateXCheckBox.isSelected());
+			prefs.putBoolean(TRANSLATE_UP_DOWN_KEY, orbitTranslateYCheckBox.isSelected());
+			prefs.putBoolean(MOVE_TOWARDS_AWAY_KEY, orbitZoomCheckBox.isSelected());
+			prefs.putBoolean(SELECT_KEY, selectBehCheckBox.isSelected());
+
+			prefs.putDouble(AUTO_ROTATE_X_KEY, rotAxis_X.getValue());
+			prefs.putDouble(AUTO_ROTATE_Y_KEY, rotAxis_Y.getValue());
+			prefs.putDouble(AUTO_ROTATE_Z_KEY, rotAxis_Z.getValue());
+			prefs.putDouble(AUTO_ROTATE_RATE_KEY, spinDuration.getValue());
+			
+			prefs.putBoolean(AXES_KEY, showAxesCheckBox.isSelected());
+			prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+			prefs.putBoolean(SPOTLIGHT_KEY, showSpotlightCheckBox.isSelected());
+			prefs.putBoolean(AMBIENT_LIGHT_KEY, showAmbientLightCheckBox.isSelected());
+			prefs.putBoolean(BACKDROP_KEY, showBackgroundCheckBox.isSelected());
+			
+			prefs.putInt(DRAW_POLYGONS_KEY,
+									polyPoint.isSelected() ? 0 : 
+									polyLine.isSelected() ? 1 : 2);
+			prefs.putInt(DRAW_FACES_KEY,
+									polyCullNone.isSelected() ? 0 : 
+									polyCullBack.isSelected() ? 1 : 2);
+
+			if (!Prefs.save(prefs))
+				Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+			}
+			
+			
+		static final String ROTATE_LEFT_RIGHT_KEY = "Rotate Left Right";
+		static final String TRANSLATE_LEFT_RIGHT_KEY = "Translate Left Right";
+		static final String MOVE_TOWARDS_AWAY_KEY = "Move Towards Away";
+		static final String ROTATE_UP_DOWN_KEY = "Rotate Up Down";
+		static final String TRANSLATE_UP_DOWN_KEY = "Translate Up Down";
+		static final String SELECT_KEY = "Select";
+		static final String AUTO_ROTATE_X_KEY = "Auto Rotate X";
+		static final String AUTO_ROTATE_Y_KEY = "Auto Rotate Y";
+		static final String AUTO_ROTATE_Z_KEY = "Auto Rotate Z";
+		static final String AUTO_ROTATE_RATE_KEY = "Auto Rotate Rate";
+		static final String AXES_KEY = "Axes";
+		static final String TOOLTIPS_KEY = "Tooltips";
+		static final String SPOTLIGHT_KEY = "Spotlight";
+		static final String AMBIENT_LIGHT_KEY = "Ambient Light";
+		static final String BACKDROP_KEY = "Backdrop";
+		static final String DRAW_POLYGONS_KEY = "Draw Polygons";
+		static final String DRAW_FACES_KEY = "Draw Faces";
+		
+		/** Resets the Option Pane Preferences by loading from the preference database */
+		public void resetToPreferences()
+			{
+			Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
+			Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
+			
+			orbitRotateXCheckBox.setSelected(appPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY,
+									systemPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY, true)));
+			orbitRotateYCheckBox.setSelected(appPrefs.getBoolean(ROTATE_UP_DOWN_KEY,
+									systemPrefs.getBoolean(ROTATE_UP_DOWN_KEY, true)));
+			orbitTranslateXCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY,
+									systemPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY, true)));
+			orbitTranslateYCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY,
+									systemPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY, true)));
+			selectBehCheckBox.setSelected(appPrefs.getBoolean(SELECT_KEY,
+									systemPrefs.getBoolean(SELECT_KEY, true)));
+
+			rotAxis_X.setValue(rotAxis_X.newValue(appPrefs.getDouble(AUTO_ROTATE_X_KEY,
+											systemPrefs.getDouble(AUTO_ROTATE_X_KEY, 0))));
+			rotAxis_Y.setValue(rotAxis_Y.newValue(appPrefs.getDouble(AUTO_ROTATE_Y_KEY,
+											systemPrefs.getDouble(AUTO_ROTATE_Y_KEY, 0))));
+			rotAxis_Z.setValue(rotAxis_Z.newValue(appPrefs.getDouble(AUTO_ROTATE_Z_KEY,
+											systemPrefs.getDouble(AUTO_ROTATE_Z_KEY, 0))));
+			spinDuration.setValue(spinDuration.newValue(appPrefs.getDouble(AUTO_ROTATE_RATE_KEY,
+											systemPrefs.getDouble(AUTO_ROTATE_RATE_KEY, 0))));
+
+			showAxesCheckBox.setSelected(appPrefs.getBoolean(AXES_KEY,
+									systemPrefs.getBoolean(AXES_KEY, false)));
+			tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
+									systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+			showSpotlightCheckBox.setSelected(appPrefs.getBoolean(SPOTLIGHT_KEY,
+									systemPrefs.getBoolean(SPOTLIGHT_KEY, true)));
+			showAmbientLightCheckBox.setSelected(appPrefs.getBoolean(AMBIENT_LIGHT_KEY,
+									systemPrefs.getBoolean(AMBIENT_LIGHT_KEY, false)));
+			showBackgroundCheckBox.setSelected(appPrefs.getBoolean(BACKDROP_KEY,
+									systemPrefs.getBoolean(BACKDROP_KEY, true)));
+
+			int val = appPrefs.getInt(DRAW_POLYGONS_KEY, 
+									systemPrefs.getInt(DRAW_POLYGONS_KEY,
+										polyPoint.isSelected() ? 0 : 
+										polyLine.isSelected() ? 1 : 2));
+			if (val == 0) polyPoint.setSelected(true);
+			else if (val == 1) polyLine.setSelected(true);
+			else // (val == 0) 
+				polyFill.setSelected(true);
+				
+			val = appPrefs.getInt(DRAW_FACES_KEY, 
+									systemPrefs.getInt(DRAW_FACES_KEY,
+										polyCullNone.isSelected() ? 0 : 
+										polyCullBack.isSelected() ? 1 : 2));
+			if (val == 0) polyCullNone.setSelected(true);
+			else if (val == 1) polyCullBack.setSelected(true);
+			else // (val == 0) 
+				polyCullFront.setSelected(true);
+			}
+
+
+		}
+
+// must be after all other declared widgets because its constructor relies on them existing
+    public OptionPane3D optionPane = new OptionPane3D("3D Options");    
+    
+
+
+
     }
     
