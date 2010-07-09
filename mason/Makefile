@@ -126,6 +126,7 @@ dist: clean 3d indent doc
 	touch .cvsignore
 	rm .cvsignore
 	find . -name "CVS" -exec rm -rf {} \;
+	rm -rf sim/util/datacull/
 	@ echo "If there were CVS directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
 

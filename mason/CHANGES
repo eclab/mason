@@ -1816,3 +1816,5 @@ Version 15
 		guarantee it happens on the Swing Event Thread.
 	Additions to ChartGenerator.  Thanks to Paul Smaldino <paul.smaldino@gmail.com> and
 		Joey Harrison <jharri@gmu.edu>
+	Set up make dist to automatically remove sim/util/datacul
+	Added the sim/util/distribution package
