@@ -1109,14 +1109,15 @@ public class Console extends JFrame implements Controller
 		public String STEPS_KEY = "Steps";
 		public String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
 		public String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
-		public String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Stop at Step";
-		public String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Stop after Time";
+		public String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Pause at Step";
+		public String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
 //		public String SEED_KEY = "Seed";
 		public String INCREMENT_KEY = "Increment";
 		public String REPEAT_KEY = "Repeat";
 		
 		public void savePreferences(Preferences prefs)
 			{
+			System.err.println(prefs);
 			prefs.putInt(DELAY_KEY,slider.getValue());
 			prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
 			prefs.putInt(STEPS_KEY, stepSlider.getValue());
@@ -1136,6 +1137,7 @@ public class Console extends JFrame implements Controller
 			{
 			Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
 			Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+			System.err.println(systemPrefs);
 			slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
 			prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
 			stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));

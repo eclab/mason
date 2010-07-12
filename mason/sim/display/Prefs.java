@@ -35,14 +35,14 @@ public class Prefs
 	/** Returns the global preferences for MASON, with the given additional prefix as a subpath. */
 	public static Preferences getGlobalPreferences(String postfix)
 		{
-		System.err.println("Getting " + MASON_PREFERENCES + postfix);
+//		System.err.println("Getting " + MASON_PREFERENCES + postfix);
 		return Preferences.userRoot().node(MASON_PREFERENCES + postfix);
 		}
 
 	/** Returns app-specific preferences for MASON, with the given additional prefix as a subpath. */
 	public static Preferences getAppPreferences(GUIState simulation, String postfix)
 		{
-		System.err.println("Getting " + APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + postfix);
+//		System.err.println("Getting " + APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + postfix);
 		return Preferences.userRoot().node(
 			APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + postfix); 
 		}
