@@ -69,6 +69,12 @@ than the Display2D itself.  This interface may grow as additional methods
 are required by these classes.
 
 
+Prefs.java
+
+A simple cover function for Java's preferences facility meant to make it
+easy to retrieve, save, and delete MASON- or app-specific preferences.
+
+
 Other Files:
 
 

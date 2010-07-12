@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.util;
+package sim.display;
 
 import java.util.prefs.*;
 
