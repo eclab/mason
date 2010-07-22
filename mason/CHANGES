@@ -1819,3 +1819,13 @@ Version 15
 	Set up make dist to automatically remove sim/util/datacul
 	Added the sim/util/distribution package
 	Added Prefs class -- oops
+	Added a 'seed' variable to SimState -- basically retaining the seed used to construct
+		the random number generator.  This is only used for the GUI to know what the
+		seed was so it can display it in the Console.  Also modified the Console so
+		that startSimulation() doesn't replace the generator.  The generator is only
+		replaced if the user changes the number if the field or if the stop() button
+		is pressed thus incrementing the field.  This allows easy visualization of
+		a simulation with a specific predefined random number generator seed.  All you
+		have to do is change the constructor of your GUIState subclass so that it
+		creates the model with a fixed seed and the visualization will see it also.
+		For example, public FlockersWithUI() { super(new Flockers(15)); }

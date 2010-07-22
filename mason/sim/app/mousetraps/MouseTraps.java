@@ -74,6 +74,7 @@ public class MouseTraps extends SimState
         oneOverSpaceWidth  = 1.0/spaceWidth;
         oneOverSpaceLength = 1.0/spaceLength;
         }
+		
     public MouseTraps(  long seed, 
         double initialVelocity, 
         int trapsX, 
