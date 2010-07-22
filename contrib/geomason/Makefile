@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.5 2010-04-27 18:34:06 mcoletti Exp $
+# $Id: Makefile,v 1.6 2010-07-22 19:45:33 mcoletti Exp $
 #
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
@@ -12,14 +12,14 @@ FLAGS=
 all: jar demos
 
 
-DEMOS = sim/app/geo/campusworld/*.java			\
-sim/app/geo/colorworld/*.java					\
-sim/app/geo/nearbyworld/*.java					\
-sim/app/geo/networkworld/*.java					\
+DEMOS = sim/app/geo/campusworld/*.java		\
+sim/app/geo/colorworld/*.java			\
+sim/app/geo/nearbyworld/*.java			\
+sim/app/geo/networkworld/*.java			\
 sim/app/geo/touchingworld/*.java
 
 demos : geomason.jar
-	$(JAVAC) $(FLAGS) $(DEMOS)
+	$(JAVAC) -cp $(CLASSPATH):geomason.jar $(FLAGS) $(DEMOS)
 
 
 # Delete all the class files, checkpoints, and other various garbage
@@ -47,30 +47,33 @@ indent:
 
 
 # All the main GeoMason source files
-BASE_FILES = sim/util/geo/Network.java			\
-sim/util/geo/AttributeField.java				\
-sim/util/geo/GeometricProperties.java			\
-sim/util/geo/PointMoveTo.java					\
-sim/util/geo/NetworkEdge.java					\
-sim/util/geo/GeomWrapper.java					\
-sim/util/geo/NetworkDirectedEdge.java			\
-sim/io/geo/ShapeFileInfo.java					\
-sim/io/geo/GeomExporter.java					\
-sim/io/geo/GeomImporter.java					\
-sim/io/geo/ShapeFileImporter.java				\
-sim/io/geo/ShapeFileExporter.java				\
-sim/io/geo/GeometryInfo.java					\
-sim/portrayal/geo/GeomFieldPortrayal.java		\
-sim/portrayal/geo/GeomPortrayal.java			\
-sim/portrayal/geo/GeometryInspector.java		\
-sim/portrayal/geo/GeomValuedFieldPortrayal.java
+BASE_FILES = sim/util/geo/GeomPlanarGraph.java	\
+sim/util/geo/AttributeField.java		\
+sim/util/geo/GeometricProperties.java		\
+sim/util/geo/PointMoveTo.java			\
+sim/util/geo/GeomPlanarGraphEdge.java		\
+sim/util/geo/GeomWrapper.java			\
+sim/util/geo/GeomPlanarGraphDirectedEdge.java	\
+sim/io/geo/ShapeFileInfo.java			\
+sim/io/geo/GeomExporter.java			\
+sim/io/geo/GeomImporter.java			\
+sim/io/geo/ShapeFileImporter.java		\
+sim/io/geo/ShapeFileExporter.java		\
+sim/io/geo/GeometryInfo.java			\
+sim/portrayal/geo/GeomFieldPortrayal.java	\
+sim/portrayal/geo/GeomPortrayal.java		\
+sim/portrayal/geo/GeometryInspector.java	\
+sim/portrayal/geo/GeomValuedFieldPortrayal.java	\
+sim/field/geo/GeomField.java			\
+sim/field/geo/GeomGridField.java		\
+sim/field/geo/GeomVectorField.java
 
 # Optional GeoTool based importer
 GEOTOOL_FILES = sim/io/geo/GeoToolsInfo.java	\
-sim/io/geo/GeoToolsImporter.java				\
+sim/io/geo/GeoToolsImporter.java
 
 # Optional GDAL/OGR based importer
-OGR_FILES = sim/io/geo/OGRImporter.java			\
+OGR_FILES = sim/io/geo/OGRImporter.java		\
 sim/io/geo/OGRInfo.java
 
 
