@@ -218,7 +218,7 @@ public class Console extends JFrame implements Controller
     JComboBox timeBox;
 
     /** Random number generator seed */
-    int randomSeed = (int) System.currentTimeMillis();
+    long randomSeed = 0; // it'll change.... /* (long) System.currentTimeMillis(); */
 
     /** how many steps we should take on one press of the "step" button.  As this is only relevant
         when there is NO underlying play thread (stepping happens inside the event loop, with the
@@ -239,8 +239,8 @@ public class Console extends JFrame implements Controller
 
         final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
 
-
         this.simulation = simulation;
+		randomSeed = simulation.state.seed();
 
         rateFormat = NumberFormat.getInstance();
         rateFormat.setMaximumFractionDigits(3);
@@ -557,7 +557,7 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        endField.valField.setColumns(19);  // make enough space
+        endField.valField.setColumns(20);  // make enough space
         endField.setMaximumSize(endField.valField.getPreferredSize());
         endField.setPreferredSize(endField.valField.getPreferredSize());
 
@@ -595,7 +595,7 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        timeEndField.valField.setColumns(19);  // make enough space
+        timeEndField.valField.setColumns(20);  // make enough space
         timeEndField.setMaximumSize(endField.valField.getPreferredSize());
         timeEndField.setPreferredSize(endField.valField.getPreferredSize());
 
@@ -635,7 +635,7 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        pauseField.valField.setColumns(19);  // make enough space
+        pauseField.valField.setColumns(20);  // make enough space
         pauseField.setMaximumSize(pauseField.valField.getPreferredSize());
         pauseField.setPreferredSize(pauseField.valField.getPreferredSize());
 
@@ -675,7 +675,7 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        timePauseField.valField.setColumns(19);  // make enough space
+        timePauseField.valField.setColumns(20);  // make enough space
         timePauseField.setMaximumSize(pauseField.valField.getPreferredSize());
         timePauseField.setPreferredSize(pauseField.valField.getPreferredSize());
 
@@ -693,22 +693,33 @@ public class Console extends JFrame implements Controller
         // Create the Random text field
         randomField = new PropertyField("")
             {
+			boolean lock = false;  // repaints will cause this to be called recursively.  It's tickled by Utilities.inform below, so we just block it out here.
             public String newValue(String value)
                 {
+				if (lock) return value;  // blocked out
+				lock = true;
                 try
                     {
-                    int l = Integer.parseInt(value);
+                    long l = Long.parseLong(value);
+					if (l > Integer.MAX_VALUE || l < Integer.MIN_VALUE)  // outside of int range
+						Utilities.inform("Seed Will Be Truncated",
+							"The random number generator only uses 32 bits of a given seed.  You've specified a longer seed than this." + 
+							"Not all the bits of this seed will be used.", Console.this);		
                     randomSeed = l;
                     setRandomNumberGenerator(randomSeed);
+					lock = false;
                     return "" + l;
                     } 
                 catch (NumberFormatException num)
-                    { 
+                    {
+					lock = false;
                     return getValue();
                     }
                 }
             };
-        randomField.valField.setColumns(10);  // make enough space
+			
+		// need space for -9223372036854775808
+        randomField.valField.setColumns(20);  // make enough space
         randomField.setMaximumSize(randomField.valField.getPreferredSize());
         randomField.setPreferredSize(randomField.valField.getPreferredSize());
         randomField.setValue("" + randomSeed);  // so the user can see the initial seed value
@@ -1382,7 +1393,7 @@ public class Console extends JFrame implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-        setRandomNumberGenerator(randomSeed);
+        // setRandomNumberGenerator(randomSeed);
         simulation.start();
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);
         //setTime(simulation.state.schedule.time());
@@ -1437,9 +1448,10 @@ public class Console extends JFrame implements Controller
         return tabPane;
         }
     
+	
     /** Sets the random number generator of the underlying model, pausing it first, then unpausing it after. 
         Updates the randomField. */ 
-    void setRandomNumberGenerator(final int val)
+    void setRandomNumberGenerator(final long val)
         {
         doChangeCode(new Runnable()
             {
@@ -2115,10 +2127,8 @@ public class Console extends JFrame implements Controller
 
             // increment the random number seed if the user had said to do so
             if (incrementSeedOnPlay.isSelected())
-                {
                 randomSeed++;
-                setRandomNumberGenerator(randomSeed);
-                }
+			setRandomNumberGenerator(randomSeed);
         
             // now let's start again if the user had stated a desire to repeat the simulation automatically
             if (getShouldRepeat())

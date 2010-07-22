@@ -45,6 +45,7 @@ public class SimState implements java.io.Serializable
     public SimState(long seed)
         {
         this(new MersenneTwisterFast(seed));
+		this.seed = seed;  // for GUIs later on if they want to know...
         }
     
     /** Creates a SimState with a new, empty Schedule and the provided random number generator. */
@@ -289,7 +290,14 @@ public class SimState implements java.io.Serializable
         }
     
     long job = 0;
-    long seed = 0;  // considered bad
+    long seed = 0;  // considered bad value
+	
+	/** Returns the seed set by the doLoop(...) facility and by the constructor.
+		Only to be used for GUIs to display possible seed values.  */
+	public long seed()
+		{
+		return seed;
+		}
         
     /** Returns the job number set by the doLoop(...) facility.  This number
         is not incremented by the GUI. */
@@ -312,7 +320,7 @@ public class SimState implements java.io.Serializable
                     }
                 catch (Exception e)
                     {
-                    throw new RuntimeException("Exception occurred while trying to construct the simulation: " + e);
+                    throw new RuntimeException("Exception occurred while trying to construct the simulation " + c + "\n" + e);
                     }
                 }
             public Class simulationClass() { return c; }
@@ -480,13 +488,13 @@ public class SimState implements java.io.Serializable
                                         
                 nameThread(state);
 
-                job = state.job;
-                if (state.seed != 0) // likely good seed from the command line earlier
+                job = state.job();
+                if (state.seed() != 0) // likely good seed from the command line earlier
                     {
-                    seed = state.seed;
-                    System.err.println("Recovered job: " + job + " Seed: " + seed);
+                    seed = state.seed();
+                    System.err.println("Recovered job: " + state.job() + " Seed: " + state.seed());
                     }
-                else System.err.println("Renamed job: " + job + " (unknown seed)");
+                else System.err.println("Renamed job: " + state.job() + " (unknown seed)");
                 }
 
             // ...or should we start fresh?
@@ -496,7 +504,7 @@ public class SimState implements java.io.Serializable
                 nameThread(state);
                 state.job = job;
                 state.seed = seed;
-                System.err.println("Job: " + job + " Seed: " + seed);
+                System.err.println("Job: " + state.job() + " Seed: " + state.seed());
                 System.err.println("Starting " + state.getClass().getName());
                 state.start();
                 }
@@ -540,7 +548,7 @@ public class SimState implements java.io.Serializable
                     }
                 if (cmod > 0 && steps % cmod == 0)
                     {
-                    String s = "" + steps + "." + state.job +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
+                    String s = "" + steps + "." + state.job() +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
                     System.err.println("Checkpointing to file: " + s);
                     state.writeToCheckpoint(new File(s));
                     }
