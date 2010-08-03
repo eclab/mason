@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.6 2010-07-22 19:45:33 mcoletti Exp $
+# $Id: Makefile,v 1.7 2010-08-03 19:06:53 mcoletti Exp $
 #
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
@@ -52,6 +52,7 @@ sim/util/geo/AttributeField.java		\
 sim/util/geo/GeometricProperties.java		\
 sim/util/geo/PointMoveTo.java			\
 sim/util/geo/GeomPlanarGraphEdge.java		\
+sim/util/geo/GeomPlanarGraph.java		\
 sim/util/geo/GeomWrapper.java			\
 sim/util/geo/GeomPlanarGraphDirectedEdge.java	\
 sim/io/geo/ShapeFileInfo.java			\
