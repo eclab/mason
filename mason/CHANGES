@@ -1831,3 +1831,5 @@ Version 15
 		For example, public FlockersWithUI() { super(new Flockers(15)); }
 	Modified the seed field in the Console to accept a long, but warn the user that
 		a long seed was provided.
+	Bug fixes to Bag.toArray(Object[]), which was returning null incorrectly.  Thanks to
+		Matt Miller <matt.miller@gmail.com>

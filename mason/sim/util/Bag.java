@@ -6,6 +6,7 @@
 
 package sim.util;
 import java.util.*;
+import java.lang.reflect.*;
 
 /** Maintains a simple array (objs) of Objects and the number of objects (numObjs) in the array
     (the array can be bigger than this number).  Unlike Vector or ArrayList, Bag is designed
@@ -353,20 +354,19 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         return o;
         }
     
-    // ArrayList.toArray(Object[]) generates an error if the array passed in is null.
-    // So I do the same thing.
-    public Object[] toArray(Object[] o)
-        {
-        if (o.length < numObjs)
-            // make a new array of same type
-            o = (Object[]) java.lang.reflect.Array.newInstance(o.getClass().getComponentType(), numObjs);
-        // load it up
-        System.arraycopy(objs,0,o,0,numObjs);
-        // insert null if we need it
-        if (o.length > numObjs)
-            o[numObjs] = null;
-        return null;
-        }
+	// revised for new Java protocol requirements: returned array must be same component
+	// type as the passed in array; passed in array is not used if it is too small;
+	// null pointer exception is thrown.  
+	public Object[] toArray(Object[] o)
+		{
+		if (o.length < numObjs)  // will throw a null pointer exception (properly) if o is null
+			o = (Object[])(Array.newInstance(o.getClass().getComponentType(), numObjs));
+		else if (o.length > numObjs)
+			o[numObjs] = null;
+		System.arraycopy(objs,0,o,0,numObjs);
+		return o;
+		}
+
 
     /** NOT fail-fast.  Use this method only if you're
         concerned about accessing numObjs and objs directly.  */
