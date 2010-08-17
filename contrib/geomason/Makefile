@@ -1,4 +1,3 @@
-# $Id: Makefile,v 1.7 2010-08-03 19:06:53 mcoletti Exp $
 #
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
@@ -47,36 +46,26 @@ indent:
 
 
 # All the main GeoMason source files
-BASE_FILES = sim/util/geo/GeomPlanarGraph.java	\
-sim/util/geo/AttributeField.java		\
-sim/util/geo/GeometricProperties.java		\
-sim/util/geo/PointMoveTo.java			\
-sim/util/geo/GeomPlanarGraphEdge.java		\
-sim/util/geo/GeomPlanarGraph.java		\
-sim/util/geo/GeomWrapper.java			\
-sim/util/geo/GeomPlanarGraphDirectedEdge.java	\
-sim/io/geo/ShapeFileInfo.java			\
-sim/io/geo/GeomExporter.java			\
-sim/io/geo/GeomImporter.java			\
-sim/io/geo/ShapeFileImporter.java		\
-sim/io/geo/ShapeFileExporter.java		\
-sim/io/geo/GeometryInfo.java			\
-sim/portrayal/geo/GeomFieldPortrayal.java	\
-sim/portrayal/geo/GeomPortrayal.java		\
-sim/portrayal/geo/GeometryInspector.java	\
-sim/portrayal/geo/GeomValuedFieldPortrayal.java	\
-sim/field/geo/GeomField.java			\
-sim/field/geo/GeomGridField.java		\
-sim/field/geo/GeomVectorField.java
+BASE_FILES = sim/util/geo/Network.java			\
+sim/util/geo/AttributeField.java				\
+sim/util/geo/GeometryProperties.java			\
+sim/util/geo/PointMoveTo.java					\
+sim/util/geo/NetworkEdge.java					\
+sim/util/geo/MasonGeometry.java					\
+sim/util/geo/NetworkDirectedEdge.java			\
+sim/io/geo/GeomExporter.java					\
+sim/io/geo/GeomImporter.java					\
+sim/io/geo/ShapeFileImporter.java				\
+sim/io/geo/ShapeFileExporter.java				\
+sim/portrayal/geo/GeomFieldPortrayal.java		\
+sim/portrayal/geo/GeomPortrayal.java			\
+sim/portrayal/geo/GeomValuedFieldPortrayal.java
 
 # Optional GeoTool based importer
-GEOTOOL_FILES = sim/io/geo/GeoToolsInfo.java	\
-sim/io/geo/GeoToolsImporter.java
+GEOTOOL_FILES = sim/io/geo/GeoToolsImporter.java
 
 # Optional GDAL/OGR based importer
-OGR_FILES = sim/io/geo/OGRImporter.java		\
-sim/io/geo/OGRInfo.java
-
+OGR_FILES = sim/io/geo/OGRImporter.java	
 
 # Add GEOTOOL_FILES and/or OGR_FILES if you want support for those
 geomason.jar : $(BASE_FILES) # $(GEOTOOL_FILES) $(OGR_FILES)
