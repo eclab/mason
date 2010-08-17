@@ -1,9 +1,3 @@
-/*
- * GeomPortryal.java
- *
- * $Id: GeomPortrayal.java,v 1.3 2010-04-10 18:27:33 kemsulli Exp $
- */
-
 package sim.portrayal.geo;
 
 // we can't do a mass import of java.awt.* since java.awt.Polygon and 
@@ -13,17 +7,25 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.*; 
+import java.util.ArrayList;
+
 import sim.portrayal.*; 
 import sim.display.*; 
 import sim.util.geo.*; 
+import sim.portrayal.inspector.*;
 
 /** 
-    A simple portrayal for visualizing 2D GeomField geometries.  Currently, we can draw Point, LineString, 
-    Polygon, MultiLineString and MultiPolygon objects.  
+    The portrayal for MasonGeometry objects.  The class draws the JTS geometry object (currently, we can draw Point, LineString, 
+    Polygon, MultiLineString and MultiPolygon objects), and sets up the inspectors for the MasonGeometry object.  The inspector is 
+    TabbedInspector with at most three tabs: the first tab shows various information about the JTS geometry, the second tab
+    shows the associated attribute information, and the third tab shows information about the MasonGeometry userData field, which 
+    can be any Java object.    
 */
 public class GeomPortrayal extends SimplePortrayal2D {
         
-    /** How to paint each object*/ 
+    private static final long serialVersionUID = 472960663330467429L;
+
+	/** How to paint each object*/ 
     public Paint paint;
         
     /** Scale for each object */ 
@@ -32,7 +34,7 @@ public class GeomPortrayal extends SimplePortrayal2D {
     /** Should objects be filled when painting? */ 
     public boolean filled;
         
-    /** Default constructor creates filled, gray circles with a scale of 1.0 */ 
+    /** Default constructor creates filled, gray objects with a scale of 1.0 */ 
     public GeomPortrayal() { this(Color.GRAY, 1.0, true); }
     public GeomPortrayal(Paint paint) { this(paint, 1.0, true); }
     public GeomPortrayal(double scale) { this(Color.GRAY, scale, true); }
@@ -48,26 +50,55 @@ public class GeomPortrayal extends SimplePortrayal2D {
         this.filled = filled;
     }
         
-    /** Use our custom Inspector. If wrapper is null, then return null.  Otherwise, return a GeometryInspector.  
-        @see GeometryInspector 
+    /** Use our custom Inspector. We create a TabbedInspector for each object that allows inspection of 
+     * the JTS geometry, attribute information, and the MasonGeometry userData field. 
     */ 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state) 
     {
         if (wrapper ==null) return null; 
-        return new GeometryInspector(wrapper.getObject(), state, "Geometry Properties"); 
+        TabbedInspector inspector = new TabbedInspector(); 
+        
+        // for basic geometry information such as area, perimeter, etc. 
+        inspector.addInspector(new SimpleInspector(wrapper.getObject(), state, null), "Geometry"); 
+
+        Object o = wrapper.getObject(); 
+        if (o instanceof MasonGeometry) { 
+        	MasonGeometry gw = (MasonGeometry)o; 
+        	
+        	if (gw.geometry.getUserData() instanceof ArrayList<?>) { 
+        		@SuppressWarnings("unchecked")
+        		ArrayList<AttributeField> aList = (ArrayList<AttributeField>)gw.geometry.getUserData();
+        		
+        		boolean showAttrs = false; 
+        		for (int i=0; i < aList.size(); i++)  { 
+        			if (!aList.get(i).hidden) {
+        				showAttrs = true; 
+        				break; 
+        			}
+        		}
+        				
+        		if (showAttrs) {  // only add attributes tag if JTS geometry has attributes 
+        			GeometryProperties properties = new GeometryProperties(aList);
+        			inspector.addInspector(new SimpleInspector(properties, state, null), "Attributes"); 
+        		}
+        	
+        		if (gw.userData != null) // only add userData inspector if there is actually userdata 
+        			inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data"); 
+        	}
+        }
+        return inspector; 
     } 
         
-    /** Draw a JTS geometry object.    
+    /** Draw a JTS geometry object.  The JTS geometries are converted to Java general path 
+     * objects, which are then drawn using the native Graphics2D methods.      
      */ 
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
-        GeomWrapper gm = (GeomWrapper)object; 
-        Geometry geometry = gm.fetchGeometry(); 
+        MasonGeometry gm = (MasonGeometry)object; 
+        Geometry geometry = gm.getGeometry(); 
         if (geometry.isEmpty()) return; 
 
-        if (gm.paint != null)
-            graphics.setPaint(gm.paint); 
-        else if (paint != null) 
+		if (paint != null) 
             graphics.setPaint(paint); 
                                                                 
         if (geometry instanceof Point)
@@ -85,42 +116,35 @@ public class GeomPortrayal extends SimplePortrayal2D {
         else if (geometry instanceof LineString)
             drawGeometry(geometry, graphics, false); 
         else if (geometry instanceof Polygon)
-            {
                 drawPolygon((Polygon) geometry, graphics, filled);
-            }
         else if (geometry instanceof MultiLineString) 
             {
+        		// draw each LineString individually 
                 MultiLineString multiLine = (MultiLineString)geometry; 
                 for (int i=0; i < multiLine.getNumGeometries(); i++) 
                     drawGeometry(multiLine.getGeometryN(i), graphics, false); 
             }
         else if (geometry instanceof MultiPolygon)
             {
+        		// draw each Polygon individually 
                 MultiPolygon multiPolygon = (MultiPolygon) geometry;
-                        
                 for (int i = 0; i < multiPolygon.getNumGeometries(); i++)
                     drawPolygon((Polygon) multiPolygon.getGeometryN(i), graphics, filled);
             }
-        else { 
-            System.out.println("Geometry is unsupported: " + geometry); 
-            throw new UnsupportedOperationException("Unsupported JTS type for draw()");
-        }
+        else 
+            throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
     }
 
 
-    /** Helper function for drawing a JTS polygon
-     *
-     * @param polygon
-     * @param graphics
-     * @param fill
-     */
-    private void drawPolygon(Polygon polygon, Graphics2D graphics, boolean fill)
+    /** Helper function for drawing a JTS polygon.  
+     * 
+     * <p> Polygons have two sets of coordinates; one for the outer ring, and
+           optionally another for internal ring coordinates.  Draw the outer
+           ring first, and then draw each internal ring, if they exist.
+     * */
+    void drawPolygon(Polygon polygon, Graphics2D graphics, boolean fill)
     {
-        // Polygons have two sets of coordinates; one for the outer ring, and
-        // optionally another for internal ring coordinates.  Draw the outer
-        // ring first, and then draw each internal ring, if they exist.
-
-        drawGeometry(polygon.getExteriorRing(), graphics, fill);
+    	drawGeometry(polygon.getExteriorRing(), graphics, fill);
 
         for (int i = 0; i < polygon.getNumInteriorRing(); i++)
             {   // fill for internal rings will always be false as they are literally
@@ -130,14 +154,13 @@ public class GeomPortrayal extends SimplePortrayal2D {
     }
 
 
-    /** Helper function to draw a JTS geometry object.  Uses the native Java GeneralPath to 
-        draw the object.  */ 
-    private void drawGeometry(Geometry geom, Graphics2D graphics, boolean fill)
+    /** Helper function to draw a JTS geometry object.  The coordinates of the JTS geometry are converted 
+     * to a native Java GeneralPath which is used to draw the object.    */ 
+    void drawGeometry(Geometry geom, Graphics2D graphics, boolean fill)
     {
         GeneralPath path = new GeneralPath(); 
         Coordinate coords[] = geom.getCoordinates(); 
         path.moveTo((float)coords[0].x, (float)coords[0].y);
-                
                 
         for (int i=1; i < coords.length; i++) { 
             path.lineTo((float)coords[i].x, (float)coords[i].y); 
@@ -148,10 +171,7 @@ public class GeomPortrayal extends SimplePortrayal2D {
         else 
             graphics.draw(path); 
     }
-        
-    /** Used to create new geometries for hit testing.  */ 
-    GeometryFactory geomFactory = new GeometryFactory(); 
-        
+             
     /** Determine if the object was hit or not.   */ 
     public boolean hitObject(Object object, DrawInfo2D range)
     {
@@ -160,7 +180,6 @@ public class GeomPortrayal extends SimplePortrayal2D {
         final Rectangle2D.Double rect = range.clip; 
         Envelope e = new Envelope(rect.x-SLOP, rect.x + rect.width + SLOP, 
                                   rect.y - SLOP, rect.y + rect.height + SLOP); 
-        Geometry g = geomFactory.toGeometry(e);
-        return geom.intersects(g); 
+        return e.intersects(geom.getEnvelopeInternal());
     }
 }

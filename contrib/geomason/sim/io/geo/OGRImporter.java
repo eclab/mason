@@ -1,32 +1,25 @@
 
 package sim.io.geo;
-import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.FileNotFoundException;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.gdal.ogr.*; 
+
 import sim.field.geo.GeomField;
 import sim.util.Bag;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.AttributeField;
+import sim.util.geo.MasonGeometry;
 import com.vividsolutions.jts.geom.GeometryCollection; 
+import org.opengis.feature.simple.*; 
+
 
 /** 
     OGRImportor uses the OGR JNI interface to read geospatial data into the GeomField.  
 */
-public class OGRImporter extends GeomImporter {
-
-    public OGRImporter()
-    {
-        super();
-    }
-
-    public OGRImporter(java.lang.Class wrapper)
-    {
-        super(wrapper);
-    }
-
-    
+public class OGRImporter implements GeomImporter {
+   
     /**  */
     public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
     {
@@ -88,19 +81,20 @@ public class OGRImporter extends GeomImporter {
                 wktString = ogrGeometry.ExportToWkt();
                 try
                     {
-                        OGRInfo geoInfo = new OGRInfo(feature, masked); 
+                		TreeMap attributeInfo = readAttributes(feature, masked);
                         geometry = rdr.read(wktString);
                                                         
                         if (geometry instanceof GeometryCollection) {
                             GeometryCollection gc = (GeometryCollection) geometry; 
                             for (int i=0; i < gc.getNumGeometries(); i++) { 
-                                GeomWrapper mg = makeGeomWrapper(gc.getGeometryN(i), geoInfo);
-                                field.addGeometry(mg);
+                            	com.vividsolutions.jts.geom.Geometry geom = gc.getGeometryN(i); 
+                            	geom.setUserData(attributeInfo); 
+                                field.addGeometry(new MasonGeometry(geom)); ;
                             }
                         }
                         else { 
-                            GeomWrapper mg = makeGeomWrapper(geometry, geoInfo);
-                            field.addGeometry(mg);
+                        	geometry.setUserData(attributeInfo);
+                            field.addGeometry(new MasonGeometry(geometry));
                         }
                     }
                 catch (Exception ex)
@@ -112,4 +106,39 @@ public class OGRImporter extends GeomImporter {
                 feature = layer.GetNextFeature();
             }
     }
+    
+    public TreeMap readAttributes(SimpleFeature feature, Bag masked)
+    {
+	    String  key=""; 
+	    Object val; 
+	    TreeMap fields = new TreeMap();
+	    for (int i=0 ; i < feature.GetFieldCount(); i++) { 
+	        FieldDefn fieldDef = feature.GetFieldDefnRef(i); 
+	        key = fieldDef.GetNameRef(); 
+	        if (masked == null || masked.contains(key)) { 
+	                            
+	            val = null; 
+	            char type; 
+	            int fieldType = fieldDef.GetFieldType(); 
+	            if (fieldType == ogrConstants.OFTString) { 
+	                type = 'C'; 
+	                val = new String(feature.GetFieldAsString(i)); 
+	            }
+	            else if (fieldType == ogrConstants.OFTInteger) { 
+	                type = 'N'; 
+	                val = new Integer(feature.GetFieldAsInteger(i)); 
+	            }
+	            else { //fieldType == ogrConstants.OFTReal 
+	                type = 'N'; 
+	                val = new Double(feature.GetFieldAsDouble(i)); 
+	            }
+	                                                                            
+	            AttributeField attr = new AttributeField(key, type, fieldDef.GetWidth()); 
+	            attr.value = val; 
+	            fields.put(key, attr); 
+	        }
+	    }
+	    return fields; 
+    }
+    
 }

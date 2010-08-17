@@ -1,13 +1,7 @@
-/*
- * GeomFieldPortrayal.java
- *
- * $Id: GeomFieldPortrayal.java,v 1.5 2010-04-28 19:33:50 kemsulli Exp $
- */
-
 package sim.portrayal.geo;
 
 import com.vividsolutions.jts.geom.*;
-import java.awt.Paint; 
+
 import java.awt.Graphics2D;
 import java.awt.geom.*;
 import sim.field.geo.GeomField;
@@ -17,23 +11,24 @@ import sim.util.geo.*;
 import java.awt.image.*;
 
 /** 
-    GeomFieldPortrayal handles the hit testing and drawing for all geometry objects.    
+    Portrayal for MasonGeometry objects.  The portrayal handles drawing and hit-testing (for inspectors).    
  
-    @see GeomPortrayal
 */
 public class GeomFieldPortrayal extends FieldPortrayal2D {
         
+    private static final long serialVersionUID = 8409421628913847667L;
+	
     /** The underlying portrayal */ 
     GeomPortrayal defaultPortrayal = new GeomPortrayal();
         
-        
+    /** Default constructor */     
     public GeomFieldPortrayal()
     {
         super(); 
         setImmutableField(false);
     }
 
-        
+    /** Constructor which sets the field's immutable flag */     
     public GeomFieldPortrayal(boolean immutableField)
     {
         super(); 
@@ -43,66 +38,80 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
     /** Return the underlying portrayal */ 
     public Portrayal getDefaultPortrayal() { return defaultPortrayal; }
 
-    /** Determine the color based on some value
-     *
-     * The intent is to override this in a subclass such that there will be
-     * some mapping between some value calculated from the GeomWrapper to a
-     * color. GeomValuedFieldPortrayal will use GeomValuedWrapper.getValue().
-     * Novel subclasses could presumably map attribute values to specific
-     * Color instances.
-     *
-     * This default implementation returns null signaling that hitOrDraw()
-     * should use its graphics parameter color.
-     *
-     * XXX Yes, this adds some overhead though it significantly reduces code
-     * complexity in GeomValuedFieldPortrayal and any other subclasses.  The
-     * overhead should (hopefully) be optimized away.
-     *
-     * @param gw Contains the value
-     * @return color associated with the value
-     */
-    protected Paint lookupColor(GeomWrapper gw)
-    {
-        return gw.paint;
-    }
-
-    /** used to cache immutable images
-     *
-     * If the associated field is immutable, then this is used to cache
-     * the field image.  It is updated in hitOrDraw().
-     *
-     */
-    private BufferedImage buffer = null;
+    /** Caches immutable fields.  */
+    BufferedImage buffer = null;
         
     /** Handles hit-testing and drawing of the underlying geometry objects.  */ 
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
     {
         if (field == null) return; 
-                
-        // first question: determine the range in which we need to draw.
-        final int maxX = (int)info.draw.width;
-        final int maxY = (int)info.draw.height;
-        if (maxX == 0 || maxY == 0) return; 
-
+				
         // If we're drawing (and not inspecting), re-fresh the buffer if the
         // associated field is immutable.
-        if (graphics != null && immutableField) {
-            if (buffer == null || buffer.getWidth() != maxX || buffer.getHeight() != maxY)  { 
-                if (buffer != null) buffer.flush(); 
-                buffer = new BufferedImage(maxX,maxY,BufferedImage.TYPE_INT_ARGB);                      
-                Graphics2D newGraphics = (Graphics2D)buffer.getGraphics(); 
-                hitOrDraw2(newGraphics, info, putInHere); 
+        if (graphics != null && immutableField && !info.precise) {
+        	
+        	GeomField geomField = (GeomField)field; 
+        	double x = info.clip.x; 
+        	double y = info.clip.y; 
+        	boolean dirty = false;
+        	
+        	// make a new buffer? or did the user change the zoom? 
+        	if (buffer == null || buffer.getWidth() != info.clip.width || buffer.getHeight() != info.clip.height)
+        		{
+        		buffer = new BufferedImage((int)info.clip.width,(int)info.clip.height,BufferedImage.TYPE_INT_ARGB);   
+        		dirty = true;
+        		}
+        	
+        	// handles the case for scrolling
+            if (geomField.drawX != x || geomField.drawY != y)
+            	{
+            	dirty = true;
+            	}
+
+            // save the origin of the drawn region for later
+        	geomField.drawX = x; 
+        	geomField.drawY = y;        	
+
+        	// re-draw into the buffer 
+            if (dirty)
+            { 
+            	clearBufferedImage(buffer); 
+                Graphics2D newGraphics = (Graphics2D)buffer.getGraphics();
+                hitOrDraw2(newGraphics, new DrawInfo2D(info, -x, -y), putInHere); 
                 newGraphics.dispose(); 
             }
-            graphics.drawImage(buffer, (int)info.draw.x, (int)info.draw.y, (int)info.draw.width, (int)info.draw.height,null);
+            
+            // draw buffer on screen 
+            graphics.drawImage(buffer, (int)x, (int)y, null); 
         }
-        else
+        else  {  // do regular MASON-style drawing
+        	buffer = null; 
             hitOrDraw2(graphics, info, putInHere);
+        }
     }
-        
-    void hitOrDraw2(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
+   
+    /** Clears the BufferedImage by setting all the pixels to RGB(0,0,0,0) */ 
+    void clearBufferedImage(BufferedImage image)
+    {
+    	int len = image.getHeight()*image.getWidth();
+    	WritableRaster raster = image.getRaster();
+    	int[] data = new int[len];
+    	for (int i=0; i < len; i++)
+    		data[i] = 0; 
+    	raster.setDataElements(0, 0, image.getWidth(), image.getHeight(), data);
+    }
+    
+    /** 
+     *  Helper function which performs the actual hit-testing and drawing for both 
+     *  immutable fields and non-immutable fields.  
+     *  
+     *  <p> The objects in the field can either use GeomPortrayal or any SimplePortrayal2D for drawing.  
+     * 
+     */
+     void hitOrDraw2(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
     {
         GeomField geomField = (GeomField)field;
+		if (geomField == null) return ;
         AffineTransform savedTransform=null;
                 
         // compute the transform between world and screen coordinates, and 
@@ -117,13 +126,30 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
             savedTransform = graphics.getTransform(); // save transform
             graphics.transform(worldToScreen); // using setTransform instead causes problems with SWING!  
         }
-                
-        Bag geometries = geomField.getGeometry();
-                
+               
+		// code taken from GeoTools and hacked on
+		AffineTransform screenToWorld = null;
+		try {
+			screenToWorld = worldToScreen.createInverse(); 
+		} catch (Exception e) {
+			System.out.println(e); 
+			System.exit(-1); 
+		}
+
+		Point2D p1 = new Point2D.Double();
+		Point2D p2 = new Point2D.Double();
+		screenToWorld.transform(new Point2D.Double(info.clip.x, info.clip.y), p1);
+		screenToWorld.transform(new Point2D.Double(info.clip.x + info.clip.width, info.clip.y + info.clip.height), p2);
+		
+		Envelope clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
+		
+		// get all the geometries that *might* be visible in the current clip 
+		Bag geometries = geomField.queryField(clipEnvelope);
+		
         for (int i = 0; i < geometries.numObjs; i++)
             {
-                GeomWrapper gm = (GeomWrapper)geometries.objs[i];
-                Geometry geom = gm.fetchGeometry();
+                MasonGeometry gm = (MasonGeometry)geometries.objs[i];
+                Geometry geom = gm.getGeometry();
                 Portrayal p = getPortrayalForObject(gm);
                 if (!(p instanceof SimplePortrayal2D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + geom + 
@@ -136,24 +162,18 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
                     g.apply(a); 
                     g.geometryChanged();
                     if (portrayal.hitObject(g, info))
-                        putInHere.add(new LocationWrapper(gm, null, this));
+                        putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
                 }
                 else { 
-                    Paint color = lookupColor(gm);
-                    if (color != null) gm.paint = color; //graphics.setPaint(color);
-                                
-                    if (portrayal instanceof GeomPortrayal)
-                        portrayal.draw(gm, graphics, info);
-                        
-                    else  {         // have a SimplePortrayal2D, so move info.draw to the centroid of the geometry
-                        Point pt = geom.getCentroid(); 
-                        info.draw.x = pt.getX(); 
-                        info.draw.y = pt.getY(); 
-                        portrayal.draw(geom, graphics, info);
-                    }
-                }
-                        
-                         
+                       if (portrayal instanceof GeomPortrayal) 
+							portrayal.draw(gm, graphics, info); 
+						else  {         // have a SimplePortrayal2D, so move info.draw to the centroid of the geometry
+							Point pt = geom.getCentroid(); 
+							info.draw.x = pt.getX(); 
+							info.draw.y = pt.getY(); 
+							portrayal.draw(geom, graphics, info);
+						}
+                }  
             }
                 
         if (graphics != null) 
@@ -170,16 +190,10 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
     }
         
         
-    /** Sets up the affine transform
-     *
-     * @param mapExtent
-     *            the map extent
-     * @param paintArea
-     *            the size of the rendering output area
-     * @return a transform that maps from real world coordinates to the screen
-     * @note Ganked from GeoTools RenderUtilities.java and hacked on
+    /** Determines the affine transform which converts world coordinates into screen 
+     * coordinates.  Modified from GeoTools RenderUtilities.java. 
      */
-    protected AffineTransform worldToScreenTransform(Envelope mapExtent, DrawInfo2D info) {
+     AffineTransform worldToScreenTransform(Envelope mapExtent, DrawInfo2D info) {
         double scaleX = info.draw.width / mapExtent.getWidth();
         double scaleY = info.draw.height / mapExtent.getHeight();
                 

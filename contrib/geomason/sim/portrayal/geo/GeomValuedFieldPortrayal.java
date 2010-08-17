@@ -1,13 +1,13 @@
 /*
  * GeomValuedFieldPortrayal.java
  *
- * $Id: GeomValuedFieldPortrayal.java,v 1.3 2010-04-28 19:33:50 kemsulli Exp $
+ * $Id: GeomValuedFieldPortrayal.java,v 1.4 2010-08-17 14:44:30 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
 
 import java.awt.Color;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.MasonGeometry;
 import sim.util.gui.ColorMap;
 import sim.util.gui.SimpleColorMap;
 
@@ -20,7 +20,8 @@ import sim.util.gui.SimpleColorMap;
  */
 public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
     
-    public ColorMap colorMap = new SimpleColorMap();
+    private static final long serialVersionUID = 5411087803615050974L;
+	public ColorMap colorMap = new SimpleColorMap();
     
     public ColorMap getMap() { return colorMap; }
     public void setMap(ColorMap m) { colorMap = m; }
@@ -38,7 +39,7 @@ public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
      * @param gw 
      * @return Color mapped from gw.doubleValue() as dictated by color table
      */
-    protected Color lookupColor(GeomWrapper gw)
+    protected Color lookupColor(MasonGeometry gw)
     {        
     
         Color color = null; // Color of current rendered geometry based on

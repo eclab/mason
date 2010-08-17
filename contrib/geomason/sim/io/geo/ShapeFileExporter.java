@@ -7,12 +7,11 @@ import com.vividsolutions.jts.geom.*;
 import sim.util.Bag; 
 import sim.util.geo.*; 
 import java.nio.*; 
-import java.nio.channels.*; 
 import java.io.*; 
 import java.util.*; 
 import java.text.*; 
 
-public class ShapeFileExporter implements GeomExporter {
+public class ShapeFileExporter extends GeomExporter {
 
     public void write(String output, String driver, GeomField field) throws FileNotFoundException
     {
@@ -89,12 +88,12 @@ public class ShapeFileExporter implements GeomExporter {
                         
             int fileSize = 100; 
                         
-            Bag geometries = field.getGeometry(); 
-            TreeSet uniqueAttributes = new TreeSet(); 
+            Bag geometries = field.getGeometries(); 
+            TreeSet<String> uniqueAttributes = new TreeSet<String>(); 
             for (int i=0; i < geometries.size(); i++) { 
-                GeomWrapper wrapper = (GeomWrapper) geometries.objs[i]; 
-                String geomType = wrapper.getType(); 
-                TreeMap attributes = wrapper.geoInfo.fields; 
+                MasonGeometry wrapper = (MasonGeometry) geometries.objs[i]; 
+                String geomType = wrapper.toString();
+                TreeMap attributes = (TreeMap)wrapper.geometry.getUserData();  
                 Set keys = attributes.keySet(); 
                 Iterator iter = keys.iterator();
                 while (iter.hasNext()) { 
@@ -114,15 +113,15 @@ public class ShapeFileExporter implements GeomExporter {
                 // content size, 48 is from p8 of the ESRI shapefile spec
                 int size = 20; 
                 if (geomType == "LineString") { 
-                    LineString line = (LineString) wrapper.fetchGeometry();
+                    LineString line = (LineString) wrapper.getGeometry();
                     size = line.getCoordinates().length * 16 + 48;
                 }
                 else if (geomType == "Polygon") { 
-                    Polygon poly = (Polygon) wrapper.fetchGeometry();
+                    Polygon poly = (Polygon) wrapper.getGeometry();
                     size = poly.getCoordinates().length * 16 + 48; 
                 }
                 else if (geomType == "MultiPolygon") { 
-                    MultiPolygon poly = (MultiPolygon)wrapper.fetchGeometry(); 
+                    MultiPolygon poly = (MultiPolygon)wrapper.getGeometry(); 
                     size = poly.getCoordinates().length * 16 + 48; 
                 }
                                 
@@ -141,14 +140,14 @@ public class ShapeFileExporter implements GeomExporter {
                     // type of record
                     pointBufferLittle.putInt(1);
                                         
-                    Point p = (Point)wrapper.fetchGeometry(); 
+                    Point p = (Point)wrapper.getGeometry(); 
                     pointBufferLittle.putDouble(p.getX()); 
                     pointBufferLittle.putDouble(p.getY()); 
                                         
                     shpFile.write(pointBufferLittle.array()); 
                 }
                 else { 
-                    Geometry g = wrapper.fetchGeometry(); 
+                    Geometry g = wrapper.getGeometry(); 
                     Coordinate coords[] = g.getCoordinates();  
                     Envelope en = g.getEnvelopeInternal(); 
                                         
@@ -224,16 +223,13 @@ public class ShapeFileExporter implements GeomExporter {
             dataBuff.putShort((short)(32 + uniqueAttributes.size()*32 + 1)); 
                                                 
             // length of individual records 
-            GeomWrapper w = (GeomWrapper)geometries.objs[0]; 
-            TreeMap attr = w.geoInfo.fields; 
-            Set kys = attr.keySet(); 
-            Iterator it = kys.iterator();
+            MasonGeometry w = (MasonGeometry)geometries.objs[0]; 
+            ArrayList<AttributeField> attrs = (ArrayList<AttributeField>)w.geometry.getUserData(); 
+            
             int recordSize=0; 
-            while (it.hasNext()) { 
-                AttributeField f = (AttributeField)attr.get(it.next());
-                recordSize += f.size; 
-            }
-                        
+            for (int i=0; i < attrs.size(); i++) 
+            	recordSize += getBytes(attrs.get(i)).length; 
+          
             dataBuff.putShort((short)(1 + recordSize)); 
                         
             // resevered 
@@ -262,10 +258,10 @@ public class ShapeFileExporter implements GeomExporter {
                                         
             attrFile.write(dataBuff.array()); 
                         
-            Iterator iter = uniqueAttributes.iterator(); 
+            Iterator<String> iter = uniqueAttributes.iterator(); 
             while (iter.hasNext()) { 
                 ByteBuffer fieldBuff = ByteBuffer.allocate(32); 
-                String key = (String)iter.next(); 
+                String key = iter.next(); 
                                                                 
                 for (int i=0; i < 11; i++) { 
                     if (i >= key.length()) 
@@ -275,17 +271,24 @@ public class ShapeFileExporter implements GeomExporter {
                 }
                                 
                 // field type 
-                w = (GeomWrapper)geometries.objs[0]; 
-                attr = w.geoInfo.fields; 
+                w = (MasonGeometry)geometries.objs[0]; 
+                ArrayList<AttributeField> attr= (ArrayList<AttributeField>) w.geometry.getUserData(); 
 
                 AttributeField f = (AttributeField)attr.get(key); 
-                fieldBuff.put((byte)f.type); 
-                                
+                
+                if (f.value instanceof String) 
+                	fieldBuff.put((byte)'C'); 
+                else if (f.value instanceof Integer || f.value instanceof Double)
+                	fieldBuff.put((byte)'N'); 
+                else if (f.value instanceof Boolean) 
+                	fieldBuff.put((byte)'L'); 
+                
+                
                 // field data address 
                 fieldBuff.putInt((byte)0); 
                                 
                 //field length 
-                fieldBuff.put((byte)f.size); 
+                fieldBuff.put((byte)getBytes(f.value).length); 
                                 
                 // decimal count 
                 fieldBuff.put((byte)0); 
@@ -325,16 +328,17 @@ public class ShapeFileExporter implements GeomExporter {
             // now write the individual records 
         
             for (int j=0; j < geometries.size(); j++) { 
-                GeomWrapper wrapper = (GeomWrapper)geometries.objs[j]; 
-                TreeMap attributes = wrapper.geoInfo.fields; 
-                Set keys = attributes.keySet(); 
-                Iterator iter1 = keys.iterator();
+                MasonGeometry wrapper = (MasonGeometry)geometries.objs[j]; 
+                
                 ByteBuffer recordBuff = ByteBuffer.allocate(1+recordSize); 
                 recordBuff.put((byte)0x20);
-                                                                
-                while (iter1.hasNext()) { 
-                    AttributeField f = (AttributeField)attributes.get(iter1.next()); 
+                
+                ArrayList<AttributeField> attributes = (ArrayList<AttributeField>)wrapper.geometry.getUserData(); 
+                
+                for (int i=0; i < attrs.size(); i++) { 
+                    AttributeField f = (AttributeField)attributes.get(i); 
                     StringBuffer value = new StringBuffer(String.valueOf(f.value)); 
+                    
                     int add = f.size - value.length(); 
                     for (int i=0; i < add; i++) 
                         value.insert(0, ' '); 

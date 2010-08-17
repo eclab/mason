@@ -1,11 +1,3 @@
-/*
- * Agent.java
- *
- * The agent that will be moving around the walkways.
- *
- * $Id: Agent.java,v 1.2 2010-04-10 18:27:27 kemsulli Exp $
- */
-
 package sim.app.geo.campusworld;
 
 import sim.util.geo.*; 
@@ -23,8 +15,6 @@ import com.vividsolutions.jts.planargraph.Node;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
-import sim.io.geo.*; 
-
 /** Agent that moves through GeomField
  *
  * Agent moves back and forth across a line segment.
@@ -33,7 +23,9 @@ import sim.io.geo.*;
  */
 public class Agent implements Steppable {
 
-    // point that denotes agent's position
+    private static final long serialVersionUID = -1113018274619047013L;
+
+	// point that denotes agent's position
     private Point location;
 
     // The base speed of the agent.
@@ -102,10 +94,10 @@ public class Agent implements Steppable {
         // XXX Not sure if this is the best place to be selecting road segments
         // but this has the advantage of ensuring that the roads are all loaded.
 
-        int walkway = state.random.nextInt(state.walkways.getGeometry().numObjs);
+        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
 
-        GeomWrapper mg = (GeomWrapper)state.walkways.getGeometry().objs[walkway];
-        setNewRoute((LineString) mg.fetchGeometry(), true);
+        MasonGeometry mg = (MasonGeometry)state.walkways.getGeometries().objs[walkway];
+        setNewRoute((LineString) mg.getGeometry(), true);
     }
 
 
@@ -195,7 +187,9 @@ public class Agent implements Steppable {
     public
         void step(SimState state)
     {
-        move((CampusWorld) state);
+    	CampusWorld campState = (CampusWorld)state; 
+        move(campState);
+        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);         
     }
 
 
