@@ -18,8 +18,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
-import org.opengis.feature.simple.SimpleFeature; 
-
 
 import com.vividsolutions.jts.geom.Geometry; 
 
@@ -30,7 +28,7 @@ import sim.util.geo.MasonGeometry;
     Use the GeoTools Java API to read geospatial data into the GeomField.
 */ 
 
-public class GeoToolsImporter implements GeomImporter {
+public class GeoToolsImporter extends GeomImporter {
 
     public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
     {
@@ -60,7 +58,7 @@ public class GeoToolsImporter implements GeomImporter {
             try {
                 while (iterator.hasNext()) {
                     SimpleFeature feature = iterator.next();
-                    TreeMap attrs = readAttributes(feature, masked); 
+                    TreeMap<?,?> attrs = readAttributes(feature, masked); 
                     Geometry geometry = (Geometry) feature.getDefaultGeometry();
                     geometry.setUserData(attrs); 
                     field.addGeometry(new MasonGeometry(geometry)); 
@@ -74,10 +72,10 @@ public class GeoToolsImporter implements GeomImporter {
     }
     
     
-    public TreeMap readAttributes(SimpleFeature feature, Bag masked)
+    public TreeMap<String, AttributeField> readAttributes(SimpleFeature feature, Bag masked)
     {
-    	TreeMap fields = new TreeMap(); 
-    	 String key=""; //, val=""; 
+    	TreeMap<String, AttributeField> fields = new TreeMap<String, AttributeField>(); 
+    	 String key=""; 
          SimpleFeatureType type = feature.getFeatureType(); 
                  
          for (int i=0; i < feature.getAttributeCount(); i++) { 
@@ -87,8 +85,7 @@ public class GeoToolsImporter implements GeomImporter {
                          
              if (masked == null || masked.contains(key)) {
                  AttributeType attrType = desc.getType(); 
-                 Class binding = attrType.getBinding(); 
-                 String className = binding.getName(); 
+                 String className = attrType.getBinding().getName(); 
                                  
                  char t='C'; 
                  if (className.indexOf("String") != -1)
@@ -98,11 +95,11 @@ public class GeoToolsImporter implements GeomImporter {
                  else if (className.indexOf("Integer") != -1) 
                      t = 'N'; 
                                  
-                 List l = attrType.getRestrictions(); 
-                 Iterator iter = l.iterator(); 
+                 List<Filter> l = attrType.getRestrictions(); 
+                 Iterator<Filter> iter = l.iterator(); 
                  int len = 20;
                  while (iter.hasNext()) { 
-                     Filter f = (Filter)iter.next(); 
+                     Filter f = iter.next(); 
                      if (f instanceof BinaryComparisonOperator) { 
                          BinaryComparisonOperator b = (BinaryComparisonOperator) f; 
                          String ex1 = b.getExpression1().toString(); 
@@ -114,7 +111,7 @@ public class GeoToolsImporter implements GeomImporter {
                      }
                  }
                                  
-                 AttributeField attrField = new AttributeField(key, t, len);
+                 AttributeField attrField = new AttributeField(key, t, len, false);
                  attrField.value = feature.getAttribute(i); 
                  fields.put(key, attrField); 
              }

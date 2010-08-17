@@ -8,8 +8,8 @@ public abstract class GeomExporter {
 
     /**
        Writes the information stored in the GeomField to disk.  Don't include the file extension in 
-       the outout arguement, as the implementing exporter will handle that.  Depending on the GeomExporter
-       used, the driver arguement determines the file type.  
+       the output argument, as the implementing exporter will handle that.  Depending on the GeomExporter
+       used, the driver argument determines the file type.  
     */
         
     public void write(String output, String driver, GeomField field) throws FileNotFoundException {}

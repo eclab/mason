@@ -1,7 +1,7 @@
 /*
  * Network.java
  *
- * $Id: Network.java,v 1.2 2010-04-10 18:27:36 kemsulli Exp $
+ * $Id: Network.java,v 1.3 2010-08-17 19:32:30 kemsulli Exp $
  */
 package sim.util.geo;
 
@@ -36,13 +36,13 @@ public class Network extends PlanarGraph
      */
     public void createFromGeomField(GeomField field)
     {
-        Bag geometries = field.getGeometry();
+        Bag geometries = field.getGeometries();
 
         for (int i = 0; i < geometries.numObjs; i++)
             {
-                if (((GeomWrapper)geometries.get(i)).geometry instanceof LineString)
+                if (((MasonGeometry)geometries.get(i)).geometry instanceof LineString)
                     {
-                        LineString lineString = (LineString) ((GeomWrapper)geometries.get(i)).geometry;
+                        LineString lineString = (LineString) ((MasonGeometry)geometries.get(i)).geometry;
 
                         addLineString(lineString);
                     }

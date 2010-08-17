@@ -12,13 +12,12 @@ import sim.util.Bag;
 import sim.util.geo.AttributeField;
 import sim.util.geo.MasonGeometry;
 import com.vividsolutions.jts.geom.GeometryCollection; 
-import org.opengis.feature.simple.*; 
 
 
 /** 
     OGRImportor uses the OGR JNI interface to read geospatial data into the GeomField.  
 */
-public class OGRImporter implements GeomImporter {
+public class OGRImporter extends GeomImporter {
    
     /**  */
     public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
@@ -81,7 +80,7 @@ public class OGRImporter implements GeomImporter {
                 wktString = ogrGeometry.ExportToWkt();
                 try
                     {
-                		TreeMap attributeInfo = readAttributes(feature, masked);
+                		TreeMap<String, AttributeField> attributeInfo = readAttributes(feature, masked);
                         geometry = rdr.read(wktString);
                                                         
                         if (geometry instanceof GeometryCollection) {
@@ -107,11 +106,11 @@ public class OGRImporter implements GeomImporter {
             }
     }
     
-    public TreeMap readAttributes(SimpleFeature feature, Bag masked)
+    public TreeMap<String, AttributeField> readAttributes(Feature feature, Bag masked)
     {
 	    String  key=""; 
 	    Object val; 
-	    TreeMap fields = new TreeMap();
+	    TreeMap<String, AttributeField> fields = new TreeMap<String, AttributeField>();
 	    for (int i=0 ; i < feature.GetFieldCount(); i++) { 
 	        FieldDefn fieldDef = feature.GetFieldDefnRef(i); 
 	        key = fieldDef.GetNameRef(); 
@@ -133,7 +132,7 @@ public class OGRImporter implements GeomImporter {
 	                val = new Double(feature.GetFieldAsDouble(i)); 
 	            }
 	                                                                            
-	            AttributeField attr = new AttributeField(key, type, fieldDef.GetWidth()); 
+	            AttributeField attr = new AttributeField(key, type, fieldDef.GetWidth(), false); 
 	            attr.value = val; 
 	            fields.put(key, attr); 
 	        }

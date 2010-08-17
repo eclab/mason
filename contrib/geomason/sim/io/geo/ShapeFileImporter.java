@@ -49,7 +49,6 @@ public class ShapeFileImporter extends GeomImporter {
                         
             byte c[] = new byte[32];
             char type[] = new char[fieldCnt];
-            int sizes[] = new int[fieldCnt];
             int length;
             for (int i=0; i < fieldCnt; i++) {
                 inFile.readFully(c, 0, 11); 
@@ -66,7 +65,7 @@ public class ShapeFileImporter extends GeomImporter {
                 if (b > 0) length = (int)b; 
                 else length = 256 + (int)b; 
                 
-                sizes[i] = length; 
+                fields[i].fieldSize = length; 
                 inFile.skipBytes(15); 
             }
                                                 
@@ -119,7 +118,7 @@ public class ShapeFileImporter extends GeomImporter {
                 
                 for (int k=0; k < fieldCnt; k++) { 
                     
-                        String str = new String(r, start1, sizes[k]); 
+                        String str = new String(r, start1, fields[k].fieldSize); 
                         str = str.trim(); 
                         Object o  = str;  // fields[k].type == 'C'
                                                                         
@@ -143,7 +142,7 @@ public class ShapeFileImporter extends GeomImporter {
                         
                         attributeInfo.add(fld); 
                     
-                    start1 += sizes[k]; 
+                    start1 += fields[k].fieldSize;
                 }
                 
                 Geometry geom = null; 
@@ -176,7 +175,11 @@ public class ShapeFileImporter extends GeomImporter {
                 if (geom != null) { 
                 	Collections.sort(attributeInfo, attrFieldCompartor); 
                 	geom.setUserData(attributeInfo); 
-                	field.addGeometry(new MasonGeometry(geom));
+                	try { 
+                		MasonGeometry g = (MasonGeometry)masonGeometryClass.newInstance(); 
+                		g.geometry = geom; 
+                		field.addGeometry(g);
+                	} catch (Exception e) { e.printStackTrace(); } 
                 }
                 
             }

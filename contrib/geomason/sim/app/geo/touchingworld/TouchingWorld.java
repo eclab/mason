@@ -1,14 +1,13 @@
 /*
  * TouchingWorld.java
  *
- * $Id: TouchingWorld.java,v 1.1 2010-04-12 20:32:40 mcoletti Exp $
+ * $Id: TouchingWorld.java,v 1.2 2010-08-17 19:32:29 kemsulli Exp $
  */
 package sim.app.geo.touchingworld;
 
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.*; 
@@ -21,12 +20,14 @@ import sim.util.geo.*;
  */
 public class TouchingWorld extends SimState
 {
-    // where all the shapes geometry lives
+    private static final long serialVersionUID = 7508584126243256514L;
+
+	// where all the shapes geometry lives
     public GeomField shapes = new GeomField();
 
     // currently selected shape
 //    public GeomField selectedShape = new GeomField();
-    public GeomWrapper selectedShape = null;
+    public MasonGeometry selectedShape = null;
 
     // responsible for changing selected shape
     public Mover mover = new Mover();
@@ -50,9 +51,7 @@ public class TouchingWorld extends SimState
         this.shapes.getMBR().expandBy(5.0);
 
         // Randomly select a district as "current"
-//        GeomWrapper district = (GeomWrapper) shapes.getGeometry().objs[random.nextInt(shapes.getGeometry().size())];
-        this.selectedShape = (GeomWrapper) shapes.getGeometry().objs[random.nextInt(shapes.getGeometry().size())];
-        this.selectedShape.paint = Color.RED;
+        this.selectedShape = (MasonGeometry) shapes.getGeometries().objs[random.nextInt(shapes.getGeometries().size())];
 
 //        mover.setCurrentShape((Polygon) district.geometry);
 //        selectedShape.addGeometry(district);
@@ -78,22 +77,22 @@ public class TouchingWorld extends SimState
             Polygon polygon = null;
             
             polygon = (Polygon) (rdr.read("POLYGON ((0 20, 10 30, 10 20, 0 20))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
 
             polygon = (Polygon) (rdr.read("POLYGON ((10 10, 10 30, 15 30, 15 10, 10 10))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
 
             polygon = (Polygon) (rdr.read("POLYGON ((15 10, 15 15, 30 15, 30 10, 15 10))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
 
             polygon = (Polygon) (rdr.read("POLYGON ((15 10, 30 10, 25 5, 15 10))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
 
             polygon = (Polygon) (rdr.read("POLYGON ((25 15, 25 25, 30 15, 25 15))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
 
             polygon = (Polygon) (rdr.read("POLYGON ((30 15, 25 25, 30 25, 30 15))"));
-            this.shapes.addGeometry(new GeomWrapper(polygon));
+            this.shapes.addGeometry(new MasonGeometry(polygon));
         }
         catch (ParseException ex)
         {
@@ -102,17 +101,15 @@ public class TouchingWorld extends SimState
 
     }
 
-    public void selectShape(GeomWrapper shape)
+    public void selectShape(MasonGeometry shape)
     {
         unSelectShape(this.selectedShape);
         
         this.selectedShape = shape;
-        this.selectedShape.paint = Color.RED;
     }
 
-    public void unSelectShape(GeomWrapper shape)
+    public void unSelectShape(MasonGeometry shape)
     {
-        this.selectedShape.paint = Color.BLUE;
         this.selectedShape = null;
     }
 

@@ -1,8 +1,3 @@
-/*
- * NetworkWorld.java
- *
- * $Id: NetworkWorld.java,v 1.1 2010-04-10 18:20:05 kemsulli Exp $
- */
 package sim.app.geo.networkworld;
 
 import sim.util.geo.Network;
@@ -17,7 +12,7 @@ import com.vividsolutions.jts.planargraph.Node;
 import java.util.Iterator;
 import sim.engine.SimState;
 import sim.field.geo.GeomField;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.*;
 
 /** Set up a GeoField with a number of points and a corresponding portrayal.
  *
@@ -26,7 +21,8 @@ import sim.util.geo.GeomWrapper;
 public class NetworkWorld extends SimState
 {
 
-    public GeomField world = new GeomField(); // contains road network
+    private static final long serialVersionUID = 2025934565604118804L;
+	public GeomField world = new GeomField(); // contains road network
     public GeomField junctions = new GeomField(); // nodes for intersections
     public GeomField agents = new GeomField(); // agents moving through network
 
@@ -48,25 +44,25 @@ public class NetworkWorld extends SimState
         try
             {
                 line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
 
                 line = (LineString) (rdr.read("LINESTRING (20 50, 30 50)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
 
                 line = (LineString) (rdr.read("LINESTRING (30 50, 40 50)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
 
                 line = (LineString) (rdr.read("LINESTRING (20 50, 20 10, 30 10)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
 
                 line = (LineString) (rdr.read("LINESTRING (30 50, 30 20, 40 20)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
             
                 // zoom out to see all of line
                 Envelope mbr = world.getMBR();
                 mbr.expandToInclude(0.0, 0.0);
 
-                agents.addGeometry(new GeomWrapper(a.getGeometry(), null));
+                agents.addGeometry(new MasonGeometry(a.getGeometry()));
                 mbr.expandToInclude(agents.getMBR());
 
                 mbr.expandBy(20.0); // fluff it out so we can see everything
@@ -91,7 +87,7 @@ public class NetworkWorld extends SimState
      *
      * Nodes will belong to a planar graph populated from LineString network.
      */
-    private void addIntersectionNodes(Iterator nodeIterator, GeomField intersections)
+    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomField intersections)
     {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;
@@ -103,7 +99,7 @@ public class NetworkWorld extends SimState
                 System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
                 coord = node.getCoordinate();
                 point = fact.createPoint(coord);
-                junctions.addGeometry(new GeomWrapper(point, null));
+                junctions.addGeometry(new MasonGeometry(point));
             }
     }
 
@@ -119,7 +115,7 @@ public class NetworkWorld extends SimState
     {
         GeometryFactory fact = new GeometryFactory(); // XXX consider making this static member
         Point location = fact.createPoint(new Coordinate(x, y));
-        world.addGeometry(new GeomWrapper(location, null));
+        world.addGeometry(new MasonGeometry(location));
     }
 
     public static void main(String[] args)

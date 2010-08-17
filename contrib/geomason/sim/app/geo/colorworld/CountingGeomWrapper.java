@@ -1,17 +1,8 @@
-/*
- * CountingGeomWrapper.java
- *
- * $Id: CountingGeomWrapper.java,v 1.3 2010-04-23 21:39:12 mcoletti Exp $
- */
-
 package sim.app.geo.colorworld;
 
-import com.vividsolutions.jts.geom.*;
 import sim.field.geo.GeomField;
-import sim.io.geo.GeometryInfo;
 import sim.util.Bag;
-import sim.util.geo.GeomWrapper;
-import com.vividsolutions.jts.algorithm.locate.*;
+import sim.util.geo.*;
 
 
 /** Maintains count of population to be used in color LUT
@@ -21,7 +12,7 @@ import com.vividsolutions.jts.algorithm.locate.*;
  *
  * @author mcoletti
  */
-public class CountingGeomWrapper extends GeomWrapper {
+public class CountingGeomWrapper extends MasonGeometry {
 
     // We need to access this to count agents in our district
     public GeomField agents; // refers to encompassing GeomField

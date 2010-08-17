@@ -1,16 +1,8 @@
-/*
- * Mover.java
- *
- * An agent that will be moving within a shapes world
- *
- * $Id: Mover.java,v 1.1 2010-04-12 20:32:40 mcoletti Exp $
- */
-
 package sim.app.geo.touchingworld;
 
 import sim.engine.*;
 import sim.util.Bag;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.MasonGeometry;
 
 /** Randomly selects currently highlighted shape
  *
@@ -22,11 +14,11 @@ import sim.util.geo.GeomWrapper;
 public class Mover implements Steppable {
 
 
-    public Mover()
-    {
-    }
-	
+    private static final long serialVersionUID = 5456255360842258779L;
 
+
+	public Mover() {}
+   
     public void step(SimState state)
     {
         TouchingWorld world = (TouchingWorld)state;
@@ -51,15 +43,15 @@ public class Mover implements Steppable {
         }
 
         // Pick one randomly
-        GeomWrapper nextShape = null;
+        MasonGeometry nextShape = null;
 
         if ( 1 == adjacentShapes.size() )
         {
-            nextShape = (GeomWrapper) adjacentShapes.objs[0];
+            nextShape = (MasonGeometry) adjacentShapes.objs[0];
         }
         else
         {
-            nextShape = (GeomWrapper) adjacentShapes.objs[state.random.nextInt(adjacentShapes.size())];
+            nextShape = (MasonGeometry) adjacentShapes.objs[state.random.nextInt(adjacentShapes.size())];
         }
 
         System.out.println("\tselected " + nextShape);

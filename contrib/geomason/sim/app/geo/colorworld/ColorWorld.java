@@ -1,8 +1,3 @@
-/*
- * ColorWorld.java
- *
- * $Id: ColorWorld.java,v 1.3 2010-04-23 21:39:12 mcoletti Exp $
- */
 package sim.app.geo.colorworld;
 
 import com.vividsolutions.jts.geom.Polygon;
@@ -11,15 +6,13 @@ import sim.engine.*;
 import sim.io.geo.*;
 import sim.field.geo.*;
 import sim.util.Bag;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.*;
 
-/** Set up a GeoField with a number of points and a corresponding portrayal.
- *
- * @author mcoletti
- */
 public class ColorWorld extends SimState
 {
-    // number of agents in the simulation
+    private static final long serialVersionUID = -2568637684893865458L;
+
+	// number of agents in the simulation
     public static int NUM_AGENTS = 10;
 
     // where all the county geometry lives
@@ -48,14 +41,14 @@ public class ColorWorld extends SimState
         for (int i = 0; i < NUM_AGENTS; i++)
             {
                 // pick a random political region to plop the agent in
-                Bag allRegions = county.getGeometry();
+                Bag allRegions = county.getGeometries();
 
                 if (allRegions.isEmpty())
                     {
                         // Something went wrong.  We *should* have regions.
                         throw new RuntimeException("No regions found.");
                     }
-                Polygon region = (Polygon) ((GeomWrapper)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
+                Polygon region = (Polygon) ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
 
                 // give each agent a random direction to initially move in
                 a = new Agent(random.nextInt(8), region);
@@ -64,7 +57,7 @@ public class ColorWorld extends SimState
                 a.setLocation(region.getCentroid());
 
                 // place the agents in the GeomField
-                agents.addGeometry(new GeomWrapper(a.getGeometry()));
+                agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
                 // add the new agent the schedule
                 schedule.scheduleRepeating(a);
@@ -79,13 +72,9 @@ public class ColorWorld extends SimState
         try
             {
                 // Open simple Shape file of county.
-
-                // Optional, alternative importer implementations:
-                //    OGRImporter importer = new OGRImporter(); // alternative importer
-                //    GeoToolsImporter importer = new GeoToolsImporter(); // another alternative importer
-                ShapeFileImporter importer =
-                    new ShapeFileImporter(CountingGeomWrapper.class); // native MASON Shape file importer
-
+                ShapeFileImporter importer = new ShapeFileImporter(); 
+                importer.masonGeometryClass = CountingGeomWrapper.class; 
+                
                 importer.ingest( dataDirectory + "pol.shp", county, null);
             }
         catch (FileNotFoundException ex)
@@ -98,7 +87,7 @@ public class ColorWorld extends SimState
         // GeomWrappers so that they can update their counts of
         // occupying agents.
 
-        Bag geometry = county.getGeometry();
+        Bag geometry = county.getGeometries();
 
         for (int i = 0; i < geometry.size(); i++)
             {

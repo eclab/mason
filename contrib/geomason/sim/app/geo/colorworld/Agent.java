@@ -1,11 +1,3 @@
-/*
- * Agent.java
- *
- * An agent that will be moving within a county political region
- *
- * $Id: Agent.java,v 1.2 2010-04-10 18:17:16 kemsulli Exp $
- */
-
 package sim.app.geo.colorworld;
 
 import com.vividsolutions.jts.geom.*;
@@ -13,15 +5,11 @@ import com.vividsolutions.jts.geom.util.*;
 import sim.engine.*;
 import sim.field.geo.*;
 
-/** Agent that moves through GeomField
- *
- * It will move randomly within a bounds.
- *
- * @author mcoletti
- */
+
 public class Agent implements Steppable {
 
-    // possible directions of movement
+    private static final long serialVersionUID = -5318720825474063385L;
+	// possible directions of movement
     final int N  = 0; 
     final int NW = 1; 
     final int W  = 2;
@@ -42,12 +30,7 @@ public class Agent implements Steppable {
 
     // How much to move the agent by in each step()
     double moveRate = 100.0;
-
-    // We reuse this geometry factory to convert coordinates to points
-    //      GeometryFactory geometryFactory = new GeometryFactory();
-
-
-        
+     
     public Agent(int d, Polygon r)
     {
         direction = d;

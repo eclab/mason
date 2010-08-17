@@ -13,7 +13,8 @@ import java.text.*;
 
 public class ShapeFileExporter extends GeomExporter {
 
-    public void write(String output, String driver, GeomField field) throws FileNotFoundException
+    @SuppressWarnings("unchecked")
+	public void write(String output, String driver, GeomField field) throws FileNotFoundException
     {
         try { 
                 
@@ -93,15 +94,12 @@ public class ShapeFileExporter extends GeomExporter {
             for (int i=0; i < geometries.size(); i++) { 
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i]; 
                 String geomType = wrapper.toString();
-                TreeMap attributes = (TreeMap)wrapper.geometry.getUserData();  
-                Set keys = attributes.keySet(); 
-                Iterator iter = keys.iterator();
-                while (iter.hasNext()) { 
-                    String key = (String) iter.next(); 
-                    uniqueAttributes.add(key); 
-                }
-                                
-                                
+                
+                ArrayList<AttributeField> attributes = (ArrayList<AttributeField>)wrapper.geometry.getUserData(); 
+                
+                for (int j=0; j < attributes.size(); j++) 
+                	uniqueAttributes.add(attributes.get(j).name); 
+                
                 /////////
                 // first store the record header, in big-endian format
                 ByteBuffer recordHeader = ByteBuffer.allocate(8); 
@@ -232,7 +230,7 @@ public class ShapeFileExporter extends GeomExporter {
           
             dataBuff.putShort((short)(1 + recordSize)); 
                         
-            // resevered 
+            // reserved
             dataBuff.putShort((byte)0); 
                         
             // incomplete transaction 
@@ -274,7 +272,12 @@ public class ShapeFileExporter extends GeomExporter {
                 w = (MasonGeometry)geometries.objs[0]; 
                 ArrayList<AttributeField> attr= (ArrayList<AttributeField>) w.geometry.getUserData(); 
 
-                AttributeField f = (AttributeField)attr.get(key); 
+                AttributeField f=null; 
+                for (int i=0; i < attr.size(); i++) { 
+                	f = attr.get(i); 
+                	if (f.name.equals(key))
+                		break; 
+                }
                 
                 if (f.value instanceof String) 
                 	fieldBuff.put((byte)'C'); 
@@ -336,23 +339,22 @@ public class ShapeFileExporter extends GeomExporter {
                 ArrayList<AttributeField> attributes = (ArrayList<AttributeField>)wrapper.geometry.getUserData(); 
                 
                 for (int i=0; i < attrs.size(); i++) { 
-                    AttributeField f = (AttributeField)attributes.get(i); 
+                    AttributeField f = attributes.get(i); 
                     StringBuffer value = new StringBuffer(String.valueOf(f.value)); 
                     
-                    int add = f.size - value.length(); 
-                    for (int i=0; i < add; i++) 
+                    int add = f.fieldSize - value.length(); 
+                    for (int k=0; k < add; k++) 
                         value.insert(0, ' '); 
                                         
-                    for (int i=0; i < f.size; i++ ) 
-                        recordBuff.put((byte)value.charAt(i));
+                    for (int k=0; k < f.fieldSize; k++ ) 
+                        recordBuff.put((byte)value.charAt(k));
                 }
                 attrFile.write(recordBuff.array()); 
             }
             attrFile.close(); 
-                        
-                         
+            
         } catch (Exception ex) { 
-            System.out.println("Error in MasonExporter:write: "); 
+            System.out.println("Error in ShapeFileExporter:write: "); 
             ex.printStackTrace(); 
         } 
     }

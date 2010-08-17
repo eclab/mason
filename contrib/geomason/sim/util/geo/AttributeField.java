@@ -1,8 +1,11 @@
 package sim.util.geo; 
 
 /**
- * A utility class to hold information about each attribute of a JTS geometry. 
- *
+ * A utility class to hold information about each attribute of a JTS geometry.  Attributes consist of a name, value, 
+ * whether to display this attribute in the inspector or not, and the number of bytes needed to store the value.  We store 
+ * the number of bytes since the attributes are formatted similar to a relational database table where each column has a 
+ * fixed width (not necessarily the same width as the data) defined by the user.  The number of bytes is used to pad the data
+ * when writing to disk.  
  */
 
 public class AttributeField { 
@@ -16,25 +19,31 @@ public class AttributeField {
     /** Whether the attribute is displayed in the inspector or not */
     public boolean hidden;  
         
-    public AttributeField(String n) { this (n, null, false); }
-    public AttributeField(String n, Object v) { this(n, v, false); }
-    public AttributeField(String n, Object v, boolean h)
+    /** Attributes are stored in format similar to a relational database table, so we 
+     * need to save the size of the field for exporting.  
+     */
+    public int fieldSize; 
+    
+    public AttributeField(String n) { this (n, null, 0, false); }
+    public AttributeField(String n, Object v) { this(n, v, 0, false); }
+    public AttributeField(String n, Object v, int f, boolean h)
     {
         name = n; 
         value = v;  
         hidden = h;
+        fieldSize = f; 
     }
         
     /** Human readable form */ 
     public String toString()
     {
-        return "Name: " + name +  " Value: " + value + "Hidden: " + hidden; 
+        return "Name: " + name +  " Value: " + value + " Field size: " + fieldSize + " Hidden: " + hidden; 
     }
         
     /** Simple, shallow clone */ 
     public Object clone()
     {
-        AttributeField a = new AttributeField(name, value, hidden); 
+        AttributeField a = new AttributeField(name, value, fieldSize, hidden); 
         return a; 
     }
 }

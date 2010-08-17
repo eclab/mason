@@ -81,7 +81,11 @@ public class GeomField implements java.io.Serializable {
                 pts.add(c[j]); 
         }
                 
-        ConvexHull hull = new ConvexHull((Coordinate[])pts.toArray(), geomFactory); 
+		Coordinate[] coords = new Coordinate[pts.size()] ;
+		for (int i=0;  i< pts.size(); i++)
+			coords[i] = pts.get(i); 
+		
+        ConvexHull hull = new ConvexHull(coords, geomFactory); 
         convexHull = hull.getConvexHull(); 
     }
         
@@ -148,7 +152,7 @@ public class GeomField implements java.io.Serializable {
     /** 
         Returns all the field's geometry objects.  Do not modify the Bag, 
         nor the Geometries inside the bag, as this will have undefined 
-        consequences for drawing and inspecting the geometries. 
+        consequences for drawing and inspecting. 
     */
 	public Bag getGeometries() { 
 		Bag geometries = new Bag(); 

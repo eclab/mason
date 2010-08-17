@@ -1,12 +1,3 @@
-/*
- * Agent.java
- *
- * The agent that will be moving around the GeomField.  It will report
- * all other objects that are within a certain distance.
- *
- * $Id: Agent.java,v 1.3 2010-04-10 18:20:55 kemsulli Exp $
- */
-
 package sim.app.geo.networkworld;
 
 import sim.util.geo.NetworkDirectedEdge;
@@ -22,17 +13,13 @@ import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.*;
 
-/** Agent that moves through GeomField
- *
- * Agent moves back and forth across a line segment.
- *
- * @author mcoletti
- */
 public class Agent implements Steppable {
 
-    // point that denotes agent's position
+    private static final long serialVersionUID = -7060584745540577823L;
+
+	// point that denotes agent's position
     private Point location;
 
     // How much to move the agent by in each step(); may become negative if
@@ -89,7 +76,7 @@ public class Agent implements Steppable {
     {
         // Find the first line segment and set our position over the start coordinate.
 
-        GeomWrapper line = (GeomWrapper) state.world.getGeometry().objs[0];
+    	MasonGeometry line = (MasonGeometry) state.world.getGeometries().objs[0];
         setNewRoute((LineString) line.geometry, true);
     }
 

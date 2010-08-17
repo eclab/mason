@@ -1,11 +1,3 @@
-/*
- * NearbyWorld.java
- *
- * This creates a simulation with two lines and a polygon.  And agent then
- * moves randomly through this space reporting which objects it is close to.
- *
- * $Id: NearbyWorld.java,v 1.1 2010-04-10 17:55:02 kemsulli Exp $
- */
 package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -17,20 +9,19 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import sim.engine.SimState;
 import sim.field.geo.GeomField;
-import sim.util.geo.GeomWrapper;
+import sim.util.geo.*; 
 
-/** Set up a GeoField with two lines and a polygon; then add a randomly
- * moving agent.
- *
- * @author mcoletti
+/** This creates a simulation with two lines and a polygon.  And agent then
+ * moves randomly through this space reporting which objects it is close to.
  */
 public class NearbyWorld extends SimState
 {
 
-    public GeomField world = new GeomField();
+    private static final long serialVersionUID = 752764560336956655L;
+    
+	public GeomField world = new GeomField();
     public GeomField agent = new GeomField();
 
-    
     // Agent that moves around the world
     Agent a = new Agent();
 
@@ -61,13 +52,13 @@ public class NearbyWorld extends SimState
         try
             {
                 line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
 
                 line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
-                world.addGeometry(new GeomWrapper(line, null));
+                world.addGeometry(new MasonGeometry(line));
                         
                 polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
-                world.addGeometry(new GeomWrapper(polygon, null));
+                world.addGeometry(new MasonGeometry(polygon));
                 
             }
         catch (ParseException parseException)
@@ -77,7 +68,7 @@ public class NearbyWorld extends SimState
 
         
         // Add the agent
-        agent.addGeometry(new GeomWrapper(a.getGeometry(), null));
+        agent.addGeometry(new MasonGeometry(a.getGeometry()));
 
         // Ensure that both GeomField layers cover the same area otherwise the
         // agent won't show up in the display.
@@ -94,7 +85,7 @@ public class NearbyWorld extends SimState
     {
         GeometryFactory fact = new GeometryFactory(); // XXX consider making this static member
         Point location = fact.createPoint(new Coordinate(x, y));
-        world.addGeometry(new GeomWrapper(location, null));
+        world.addGeometry(new MasonGeometry(location));
     }
 
     public static void main(String[] args)
