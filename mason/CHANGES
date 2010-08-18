@@ -1833,3 +1833,5 @@ Version 15
 		a long seed was provided.
 	Bug fixes to Bag.toArray(Object[]), which was returning null incorrectly.  Thanks to
 		Matt Miller <matt.miller@gmail.com>
+	Made all distribution classes serializable and removed their clone methods, which
+		were not safe.  Who made these clonable in the first place?  

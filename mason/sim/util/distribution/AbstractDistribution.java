@@ -43,7 +43,7 @@ import ec.util.MersenneTwisterFast;
  * @author wolfgang.hoschek@cern.ch
  * @version 1.0, 09/24/99
  */
-public abstract class AbstractDistribution implements java.io.Serializable, Cloneable{
+public abstract class AbstractDistribution implements java.io.Serializable {
 	protected MersenneTwisterFast randomGenerator;
 /**
  * Makes this class non instantiable, but still let's others inherit from it.
@@ -63,12 +63,13 @@ This has the effect that distributions can now be used as function objects, retu
 public int apply(int dummy) {
 	return nextInt();
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+ /*
 public Object clone() {
 	AbstractDistribution copy = null;
 	try { copy = (AbstractDistribution) super.clone(); } catch (CloneNotSupportedException e) { }
@@ -76,6 +77,7 @@ public Object clone() {
 	//if (this.randomGenerator != null) copy.randomGenerator = (MersenneTwisterFast) this.randomGenerator.clone();
 	return copy;
 }
+*/
 /**
  * Returns the used uniform random number generator;
  */
