@@ -31,8 +31,8 @@ public class Flocker implements Steppable, sim.portrayal.Orientable2D
     
     public void setOrientation2D(double val)
         {
-		lastd = new Double2D(Math.cos(val),Math.sin(val));
-		}
+        lastd = new Double2D(Math.cos(val),Math.sin(val));
+        }
     
     public double orientation2D()
         {

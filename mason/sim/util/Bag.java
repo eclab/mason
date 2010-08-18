@@ -354,18 +354,18 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         return o;
         }
     
-	// revised for new Java protocol requirements: returned array must be same component
-	// type as the passed in array; passed in array is not used if it is too small;
-	// null pointer exception is thrown.  
-	public Object[] toArray(Object[] o)
-		{
-		if (o.length < numObjs)  // will throw a null pointer exception (properly) if o is null
-			o = (Object[])(Array.newInstance(o.getClass().getComponentType(), numObjs));
-		else if (o.length > numObjs)
-			o[numObjs] = null;
-		System.arraycopy(objs,0,o,0,numObjs);
-		return o;
-		}
+    // revised for new Java protocol requirements: returned array must be same component
+    // type as the passed in array; passed in array is not used if it is too small;
+    // null pointer exception is thrown.  
+    public Object[] toArray(Object[] o)
+        {
+        if (o.length < numObjs)  // will throw a null pointer exception (properly) if o is null
+            o = (Object[])(Array.newInstance(o.getClass().getComponentType(), numObjs));
+        else if (o.length > numObjs)
+            o[numObjs] = null;
+        System.arraycopy(objs,0,o,0,numObjs);
+        return o;
+        }
 
 
     /** NOT fail-fast.  Use this method only if you're

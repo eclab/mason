@@ -19,7 +19,7 @@ public class Overlay extends FieldPortrayal2D
     AsteroidsWithUI ui;
     public static final int GUTTER = 48;
     public static final int BORDER = 8;
-	public static final int FONTSIZE = 20;
+    public static final int FONTSIZE = 20;
     Font font = new Font("SansSerif", Font.BOLD, FONTSIZE);
     Color color = new Color(255,255,255,64);
 
@@ -43,42 +43,42 @@ public class Overlay extends FieldPortrayal2D
             {
             bounds = new TextLayout("Paused", font,  graphics.getFontRenderContext()).getBounds();
             graphics.setColor(Color.white);
-			graphics.drawString("Paused", (int)((info.clip.width - bounds.getWidth()) / 2), (int)((info.clip.height - bounds.getHeight()) / 2));
+            graphics.drawString("Paused", (int)((info.clip.width - bounds.getWidth()) / 2), (int)((info.clip.height - bounds.getHeight()) / 2));
             }
         
-		// show scores at top
-		graphics.setColor(color);
-		String text = "Deaths: " + asteroids.deaths;
-		drawOutline(graphics, text, BORDER, firstTimeScoreY);
-		text = "Level: " + asteroids.level;
-		drawOutline(graphics, text, BORDER, firstTimeScoreY + FONTSIZE  * 1.5 );
-		text = "Score: " + asteroids.score;
-		drawOutline(graphics, text, BORDER, firstTimeScoreY + FONTSIZE  * 3 );
+        // show scores at top
+        graphics.setColor(color);
+        String text = "Deaths: " + asteroids.deaths;
+        drawOutline(graphics, text, BORDER, firstTimeScoreY);
+        text = "Level: " + asteroids.level;
+        drawOutline(graphics, text, BORDER, firstTimeScoreY + FONTSIZE  * 1.5 );
+        text = "Score: " + asteroids.score;
+        drawOutline(graphics, text, BORDER, firstTimeScoreY + FONTSIZE  * 3 );
 
         // show the text at bottom
-		text = "M: MASON";
-		drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY - FONTSIZE * 4.5);
-		text = "P: Pause";
-		drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY- FONTSIZE * 3);
-		text = "R: Reset";
-		drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY- FONTSIZE * 1.5);
-		text = "\u2190\u2192\u2191\u2193 space";
-		drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY);
+        text = "M: MASON";
+        drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY - FONTSIZE * 4.5);
+        text = "P: Pause";
+        drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY- FONTSIZE * 3);
+        text = "R: Reset";
+        drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY- FONTSIZE * 1.5);
+        text = "\u2190\u2192\u2191\u2193 space";
+        drawOutline(graphics, text, BORDER, info.clip.height - GUTTER + firstTimeScoreY);
 
         }
-		
-	
-	public void drawOutline(Graphics2D graphics, String text, double x, double y)
-		{
+                
+        
+    public void drawOutline(Graphics2D graphics, String text, double x, double y)
+        {
         TextLayout textlo = new TextLayout(text, font,  graphics.getFontRenderContext());
-		Shape outline = textlo.getOutline(null);
-		AffineTransform transform = graphics.getTransform();
-		AffineTransform oldTransform = graphics.getTransform();
-		transform.translate(x,y);
-		graphics.transform(transform);
-		graphics.draw(outline);
-		graphics.setTransform(oldTransform);
-		}
-	
-	
+        Shape outline = textlo.getOutline(null);
+        AffineTransform transform = graphics.getTransform();
+        AffineTransform oldTransform = graphics.getTransform();
+        transform.translate(x,y);
+        graphics.transform(transform);
+        graphics.draw(outline);
+        graphics.setTransform(oldTransform);
+        }
+        
+        
     }

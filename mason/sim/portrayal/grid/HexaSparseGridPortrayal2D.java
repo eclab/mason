@@ -55,25 +55,25 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     
     
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-		{
+        {
         final SparseGrid2D field = (SparseGrid2D)this.field;
         if (field==null) return;
-		if (field.getObjectLocation(object) == null) return;
-		Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
-		if (location != null)
-			{
-			if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
-			field.setObjectLocation(object, location);
-			}
-		}
+        if (field.getObjectLocation(object) == null) return;
+        Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
+        if (location != null)
+            {
+            if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
+            field.setObjectLocation(object, location);
+            }
+        }
 
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
-		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
         }
-	
-	public Double2D getScale(DrawInfo2D info)
-		{
+        
+    public Double2D getScale(DrawInfo2D info)
+        {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -86,16 +86,16 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
-		return new Double2D(xScale, yScale);
-		}
-		
-		
-	public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
+        return new Double2D(xScale, yScale);
+        }
+                
+                
+    public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
-		Double2D scale = getScale(info);
-		double xScale = scale.x;
-		double yScale = scale.y;
-		
+        Double2D scale = getScale(info);
+        double xScale = scale.x;
+        double yScale = scale.y;
+                
         int startx = (int)Math.floor(((position.getX() - info.draw.x)/xScale-0.5)/1.5);
         int starty = (int)Math.floor((position.getY() - info.draw.y)/(yScale*2.0));
 
@@ -293,14 +293,14 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                             //                    graphics.setClip(clip);
                             newinfo.selected = (objectSelected &&  // there's something there
                                 selectedWrappers.get(portrayedObject) != null);
-								
-                                /* {
-                                LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                                portrayal.setSelected(wrapper,true);
-                                portrayal.draw(portrayedObject, graphics, newinfo);
-                                portrayal.setSelected(wrapper,false);
-                                }
-                            else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                                                                
+                            /* {
+                               LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                               portrayal.setSelected(wrapper,true);
+                               portrayal.draw(portrayedObject, graphics, newinfo);
+                               portrayal.setSelected(wrapper,false);
+                               }
+                               else */ portrayal.draw(portrayedObject, graphics, newinfo);
                             }
                         }
                     }

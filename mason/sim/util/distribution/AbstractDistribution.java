@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
@@ -44,61 +44,61 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public abstract class AbstractDistribution implements java.io.Serializable {
-	protected MersenneTwisterFast randomGenerator;
+    protected MersenneTwisterFast randomGenerator;
 /**
  * Makes this class non instantiable, but still let's others inherit from it.
  */
-protected AbstractDistribution() {}
+    protected AbstractDistribution() {}
 /**
-Equivalent to <tt>nextDouble()</tt>.
-This has the effect that distributions can now be used as function objects, returning a random number upon function evaluation.
+   Equivalent to <tt>nextDouble()</tt>.
+   This has the effect that distributions can now be used as function objects, returning a random number upon function evaluation.
 */
-public double apply(double dummy) {
-	return nextDouble();
-}
+    public double apply(double dummy) {
+        return nextDouble();
+        }
 /**
-Equivalent to <tt>nextInt()</tt>.
-This has the effect that distributions can now be used as function objects, returning a random number upon function evaluation.
+   Equivalent to <tt>nextInt()</tt>.
+   This has the effect that distributions can now be used as function objects, returning a random number upon function evaluation.
 */
-public int apply(int dummy) {
-	return nextInt();
-}
+    public int apply(int dummy) {
+        return nextInt();
+        }
 /*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
- /*
-public Object clone() {
-	AbstractDistribution copy = null;
-	try { copy = (AbstractDistribution) super.clone(); } catch (CloneNotSupportedException e) { }
-	// BAD -- Sean
-	//if (this.randomGenerator != null) copy.randomGenerator = (MersenneTwisterFast) this.randomGenerator.clone();
-	return copy;
-}
-*/
+    /*
+      public Object clone() {
+      AbstractDistribution copy = null;
+      try { copy = (AbstractDistribution) super.clone(); } catch (CloneNotSupportedException e) { }
+      // BAD -- Sean
+      //if (this.randomGenerator != null) copy.randomGenerator = (MersenneTwisterFast) this.randomGenerator.clone();
+      return copy;
+      }
+    */
 /**
  * Returns the used uniform random number generator;
  */
-protected MersenneTwisterFast getRandomGenerator() {
-	return randomGenerator;
-}
+    protected MersenneTwisterFast getRandomGenerator() {
+        return randomGenerator;
+        }
 /**
  * Returns a random number from the distribution.
  */
-public abstract double nextDouble();
+    public abstract double nextDouble();
 /**
  * Returns a random number from the distribution; returns <tt>(int) Math.round(nextDouble())</tt>.
  * Override this method if necessary.
  */
-public int nextInt() {
-	return (int) Math.round(nextDouble());
-}
+    public int nextInt() {
+        return (int) Math.round(nextDouble());
+        }
 /**
  * Sets the uniform random generator internally used.
  */
-protected void setRandomGenerator(MersenneTwisterFast randomGenerator) {
-	this.randomGenerator = randomGenerator;
-}
-}
+    protected void setRandomGenerator(MersenneTwisterFast randomGenerator) {
+        this.randomGenerator = randomGenerator;
+        }
+    }

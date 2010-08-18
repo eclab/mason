@@ -65,7 +65,7 @@ public class PacMan extends SimState
                 
         // String mazefile = PacMan.class.getResource("images/maze0.pbm").getPath();
         // maze = new IntPBMGrid2D(mazefile);
-		maze = new IntPBMGrid2D(PacMan.class.getResourceAsStream("images/maze0.pbm"));
+        maze = new IntPBMGrid2D(PacMan.class.getResourceAsStream("images/maze0.pbm"));
         agents = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
         dots = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
 
@@ -81,7 +81,7 @@ public class PacMan extends SimState
                 
         //String mazefile = PacMan.class.getResource("images/maze" + (level - 1) % MAX_MAZES + ".pbm").getPath();
         //maze.read(mazefile);
-		maze.read(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"));
+        maze.read(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"));
 
         // add energizers
         dots.setObjectLocation(new Energizer(), new Double2D(1, 5));
@@ -145,9 +145,9 @@ public class PacMan extends SimState
 
         // add Clyde
         Clyde clyde = new Clyde(this);
-		
-		// ghosts are no longer frightened
-		frightenGhosts = false;
+                
+        // ghosts are no longer frightened
+        frightenGhosts = false;
         }
         
         

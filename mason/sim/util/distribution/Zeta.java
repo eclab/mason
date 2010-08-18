@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 
@@ -35,24 +35,24 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class Zeta extends AbstractDiscreteDistribution {
-	protected double ro;
-	protected double pk;
+    protected double ro;
+    protected double pk;
 
-	// cached values (for performance)
-	protected double c,d,ro_prev = -1.0,pk_prev = -1.0;
-	protected double maxlongint = Long.MAX_VALUE - 1.5;
+    // cached values (for performance)
+    protected double c,d,ro_prev = -1.0,pk_prev = -1.0;
+    protected double maxlongint = Long.MAX_VALUE - 1.5;
 
 /**
  * Constructs a Zeta distribution.
  */
-public Zeta(double ro, double pk, MersenneTwisterFast randomGenerator) {
-	setRandomGenerator(randomGenerator);
-	setState(ro,pk);
-}
+    public Zeta(double ro, double pk, MersenneTwisterFast randomGenerator) {
+        setRandomGenerator(randomGenerator);
+        setState(ro,pk);
+        }
 /**
  * Returns a zeta distributed random number.
  */
-protected long generateZeta(double ro, double pk, MersenneTwisterFast randomGenerator) {
+    protected long generateZeta(double ro, double pk, MersenneTwisterFast randomGenerator) {
 /******************************************************************
  *                                                                *
  *            Zeta Distribution - Acceptance Rejection            *
@@ -91,53 +91,53 @@ protected long generateZeta(double ro, double pk, MersenneTwisterFast randomGene
  *                Variate  Generation, Clarendon Press, Oxford.   *
  *                                                                *
  ******************************************************************/
-	double u,v,e,x;
-	long k;
+        double u,v,e,x;
+        long k;
 
-	if (ro != ro_prev || pk != pk_prev) {                   // Set-up 
-		ro_prev = ro;
-		pk_prev = pk;
-		if (ro<pk) {
-			c = pk-0.5;
-			d = 0;
-		}
-		else {
-			c = ro-0.5;
-			d = (1.0+ro)*Math.log((1.0+pk)/(1.0+ro));
-		}
-	}
-	do {
-		do {
-			u=randomGenerator.nextDouble();
-			v=randomGenerator.nextDouble();
-			x = (c+0.5)*Math.exp(-Math.log(u)/ro) - c;
-		} while (x<=0.5 || x>=maxlongint);
-		
-		k = (int) (x+0.5);
-		e = -Math.log(v);
-	} while ( e < (1.0+ro)*Math.log((k+pk)/(x+c)) - d );
-	
-	return k;
-}
+        if (ro != ro_prev || pk != pk_prev) {                   // Set-up 
+            ro_prev = ro;
+            pk_prev = pk;
+            if (ro<pk) {
+                c = pk-0.5;
+                d = 0;
+                }
+            else {
+                c = ro-0.5;
+                d = (1.0+ro)*Math.log((1.0+pk)/(1.0+ro));
+                }
+            }
+        do {
+            do {
+                u=randomGenerator.nextDouble();
+                v=randomGenerator.nextDouble();
+                x = (c+0.5)*Math.exp(-Math.log(u)/ro) - c;
+                } while (x<=0.5 || x>=maxlongint);
+                
+            k = (int) (x+0.5);
+            e = -Math.log(v);
+            } while ( e < (1.0+ro)*Math.log((k+pk)/(x+c)) - d );
+        
+        return k;
+        }
 /**
  * Returns a random number from the distribution.
  */
-public int nextInt() {
-	return (int) generateZeta(ro, pk, randomGenerator); 
-}
+    public int nextInt() {
+        return (int) generateZeta(ro, pk, randomGenerator); 
+        }
 /**
  * Sets the parameters.
  */
-public void setState(double ro, double pk) {
-	this.ro = ro;
-	this.pk = pk;
-}
+    public void setState(double ro, double pk) {
+        this.ro = ro;
+        this.pk = pk;
+        }
 
 /**
  * Returns a String representation of the receiver.
  */
-public String toString() {
-	return this.getClass().getName()+"("+ro+","+pk+")";
-}
+    public String toString() {
+        return this.getClass().getName()+"("+ro+","+pk+")";
+        }
 
-}
+    }

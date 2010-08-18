@@ -47,11 +47,11 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
         
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
-		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
         }
-		
-	public Double2D getScale(DrawInfo2D info)
-		{
+                
+    public Double2D getScale(DrawInfo2D info)
+        {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -64,16 +64,16 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
 
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
-		return new Double2D(xScale, yScale);
-		}
+        return new Double2D(xScale, yScale);
+        }
 
 
-	public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
+    public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
-		Double2D scale = getScale(info);
-		double xScale = scale.x;
-		double yScale = scale.y;
-		
+        Double2D scale = getScale(info);
+        double xScale = scale.x;
+        double yScale = scale.y;
+                
         int startx = (int)(((position.getX() - info.draw.x)/xScale-0.5)/1.5);
         int starty = (int)((position.getY() - info.draw.y)/(yScale*2.0));
 

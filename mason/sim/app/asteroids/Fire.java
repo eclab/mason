@@ -16,18 +16,18 @@ import sim.portrayal.*;
 /** Fire is a simple Element which draws thrusting fire.  Used by Ship only.  */
 public class Fire extends Element
     {
-	/** Creates a Fire. */
+    /** Creates a Fire. */
     public Fire()
-		{
-		GeneralPath gp = new GeneralPath();
-		gp.moveTo(-1,0);
-		gp.lineTo(-3,1);
-		gp.lineTo(-5,0);
-		gp.lineTo(-3,-1);
-		gp.closePath();
-		shape = gp;
-		}
-	
-	/** Fire is red. */
-	public Color getColor() { return Color.red; }
-	}
+        {
+        GeneralPath gp = new GeneralPath();
+        gp.moveTo(-1,0);
+        gp.lineTo(-3,1);
+        gp.lineTo(-5,0);
+        gp.lineTo(-3,-1);
+        gp.closePath();
+        shape = gp;
+        }
+        
+    /** Fire is red. */
+    public Color getColor() { return Color.red; }
+    }

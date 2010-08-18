@@ -229,8 +229,8 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             TransformGroup o = new TransformGroup();
             o.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
             o.clearCapabilityIsFrequent(TransformGroup.ALLOW_CHILDREN_READ);
-			offset.setScale(scale/16.0f);
-			o.setTransform(offset);
+            offset.setScale(scale/16.0f);
+            o.setTransform(offset);
 
             // the label shouldn't be pickable -- we'll turn this off in the TransformGroup
             clearPickableFlags(o);

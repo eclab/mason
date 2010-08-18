@@ -18,12 +18,12 @@ package sim.portrayal;
 
 public interface Fixed2D
     {
-	/** Returns true if the object permits you to change its location in the field.
-		Else returns false.  This can be used in one of two common ways.  First,
-		the object may wish to simply deny you the ability to move it at certain times.
-		Second, the object may wish to move ITSELF rather than have the field move it.
-		In the second case, the object could, during canSetLocation(...), move itself
-		in the field, then return FALSE, denying you the ability to ask the field
-		to move the object again. */
+    /** Returns true if the object permits you to change its location in the field.
+        Else returns false.  This can be used in one of two common ways.  First,
+        the object may wish to simply deny you the ability to move it at certain times.
+        Second, the object may wish to move ITSELF rather than have the field move it.
+        In the second case, the object could, during canSetLocation(...), move itself
+        in the field, then return FALSE, denying you the ability to ask the field
+        to move the object again. */
     public boolean maySetLocation(Object field, Object location);
     }

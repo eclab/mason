@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
@@ -31,28 +31,28 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class Logarithmic extends AbstractContinousDistribution {
-	protected double my_p;
+    protected double my_p;
 
-	// cached vars for method nextDouble(a) (for performance only)
- 	private double t,h,a_prev = -1.0;
+    // cached vars for method nextDouble(a) (for performance only)
+    private double t,h,a_prev = -1.0;
 
 /**
  * Constructs a Logarithmic distribution.
  */
-public Logarithmic(double p, MersenneTwisterFast randomGenerator) {
-	setRandomGenerator(randomGenerator);
-	setState(p);
-}
+    public Logarithmic(double p, MersenneTwisterFast randomGenerator) {
+        setRandomGenerator(randomGenerator);
+        setState(p);
+        }
 /**
  * Returns a random number from the distribution.
  */
-public double nextDouble() {
-	return nextDouble(this.my_p);
-}
+    public double nextDouble() {
+        return nextDouble(this.my_p);
+        }
 /**
  * Returns a random number from the distribution; bypasses the internal state.
  */
-public double nextDouble(double a) {
+    public double nextDouble(double a) {
 /******************************************************************
  *                                                                *
  *      Logarithmic Distribution - Inversion/Transformation       *
@@ -86,49 +86,49 @@ public double nextDouble(double a) {
  *                unsigned long integer *seed.                    *
  *                                                                *
  ******************************************************************/
-	double u,v,p,q;
-	int k;
+        double u,v,p,q;
+        int k;
 
-	if (a != a_prev) {                   // Set-up
-		a_prev = a;
-		if (a<0.97) t = -a / Math.log(1.0 - a);
-		else h=Math.log(1.0 - a);
-	}
+        if (a != a_prev) {                   // Set-up
+            a_prev = a;
+            if (a<0.97) t = -a / Math.log(1.0 - a);
+            else h=Math.log(1.0 - a);
+            }
 
-	u=randomGenerator.nextDouble();
-	if (a<0.97) {                        // Inversion/Chop-down 
-		k = 1;
-		p = t;
-		while (u > p) {
-			//System.out.println("u="+u+", p="+p);
-			u -= p;
-			k++;
-			p *= a * (k-1.0)/(double)k;
-		}
-		return k;
-	}
+        u=randomGenerator.nextDouble();
+        if (a<0.97) {                        // Inversion/Chop-down 
+            k = 1;
+            p = t;
+            while (u > p) {
+                //System.out.println("u="+u+", p="+p);
+                u -= p;
+                k++;
+                p *= a * (k-1.0)/(double)k;
+                }
+            return k;
+            }
 
-	if (u > a) return 1;                 // Transformation
-	u=randomGenerator.nextDouble();
-	v = u;
-	q = 1.0 - Math.exp(v * h);
-	if ( u <= q * q) {
-		k = (int) (1 + Math.log(u) / Math.log(q));
-		return k;
-	}
-	if (u > q) return 1;
-	return 2;
-}
+        if (u > a) return 1;                 // Transformation
+        u=randomGenerator.nextDouble();
+        v = u;
+        q = 1.0 - Math.exp(v * h);
+        if ( u <= q * q) {
+            k = (int) (1 + Math.log(u) / Math.log(q));
+            return k;
+            }
+        if (u > q) return 1;
+        return 2;
+        }
 /**
  * Sets the distribution parameter.
  */
-public void setState(double p) {
-	this.my_p = p;
-}
+    public void setState(double p) {
+        this.my_p = p;
+        }
 /**
  * Returns a String representation of the receiver.
  */
-public String toString() {
-	return this.getClass().getName()+"("+my_p+")";
-}
-}
+    public String toString() {
+        return this.getClass().getName()+"("+my_p+")";
+        }
+    }

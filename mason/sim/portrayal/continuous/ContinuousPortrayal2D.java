@@ -57,42 +57,42 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
-		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
         }
-		
-	public Double2D getScale(DrawInfo2D info)
-		{
+                
+    public Double2D getScale(DrawInfo2D info)
+        {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return null;
-		
+                
         final double xScale = info.draw.width / field.width;
         final double yScale = info.draw.height / field.height;
-		return new Double2D(xScale, yScale);
-		}
-		
-	public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-		{
-		Double2D scale = getScale(fieldPortrayalInfo);
-		double xScale = scale.x;
-		double yScale = scale.y;
-		
+        return new Double2D(xScale, yScale);
+        }
+                
+    public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+        {
+        Double2D scale = getScale(fieldPortrayalInfo);
+        double xScale = scale.x;
+        double yScale = scale.y;
+                
         final double x = (position.getX() - fieldPortrayalInfo.draw.x) / xScale;  // notice not (int) like elsewhere.
         final double y = (position.getY() - fieldPortrayalInfo.draw.y) / yScale;
-		return new Double2D(x,y);
-		}
+        return new Double2D(x,y);
+        }
 
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-		{
+        {
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return;
-		if (field.getObjectLocation(object) == null) return;
-		Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
-		if (location != null)
-			{
-			if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
-			field.setObjectLocation(object, location);
-			}
-		}
+        if (field.getObjectLocation(object) == null) return;
+        Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
+        if (location != null)
+            {
+            if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
+            field.setObjectLocation(object, location);
+            }
+        }
 
     public Object getObjectLocation(Object object)
         {
@@ -119,21 +119,21 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
         }
 
-	// values to multiply width or height by to add to a location to shift for toroidal drawing
-	static final int[] toroidalX = new int[] { 0, 1, -1, 0, 1, -1, 0, 1, -1 };
-	static final int[] toroidalY = new int[] { 0, 0, 0, 1, 1, 1, -1, -1, -1 };
+    // values to multiply width or height by to add to a location to shift for toroidal drawing
+    static final int[] toroidalX = new int[] { 0, 1, -1, 0, 1, -1, 0, 1, -1 };
+    static final int[] toroidalY = new int[] { 0, 0, 0, 1, 1, 1, -1, -1, -1 };
 
-	boolean displayingToroidally = false;
-	
-	/** Set this to TRUE to cause the portrayal to display objects multiply (in a toroidal fashion)
-		if they overlap on the edges of the field.  Note that this incurs a slight constant overhead.
-		By default this setting is FALSE. */
-	public void setDisplayingToroidally(boolean val) { displayingToroidally = val; }
+    boolean displayingToroidally = false;
+        
+    /** Set this to TRUE to cause the portrayal to display objects multiply (in a toroidal fashion)
+        if they overlap on the edges of the field.  Note that this incurs a slight constant overhead.
+        By default this setting is FALSE. */
+    public void setDisplayingToroidally(boolean val) { displayingToroidally = val; }
 
-	/** Returns TRUE if the portrayal is displaying objects multiply (in a toroidal fashion)
-		if they overlap on the edges of the field. */
-	public boolean isDisplayingToroidally() { return displayingToroidally; }
-	
+    /** Returns TRUE if the portrayal is displaying objects multiply (in a toroidal fashion)
+        if they overlap on the edges of the field. */
+    public boolean isDisplayingToroidally() { return displayingToroidally; }
+        
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final Continuous2D field = (Continuous2D)this.field;
@@ -162,63 +162,63 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final double discretizationOverlap = field.discretization;
         for(int x=0;x<objects.numObjs;x++)
             {
-			Object object = (objects.objs[x]);
+            Object object = (objects.objs[x]);
             Double2D objectLoc = field.getObjectLocation(object);
-			
-			if (displayingToroidally)
-				objectLoc = new Double2D(field.tx(objectLoc.x), field.tx(objectLoc.y));
-						
-			for(int i = 0; i < toroidalX.length; i++) 
-				{
-				Double2D loc = null;
-				if (i == 0)
-					loc = objectLoc;
-				else if (displayingToroidally)  // and i > 0
-					loc = new Double2D(objectLoc.x + field.width * toroidalX[i],
-									   objectLoc.y + field.height * toroidalY[i]);
-				else
-					break; // no toroidal function
-				
-				// here we only hit/draw the object if it's within our range.  However objects
-				// might leak over to other places, so I dunno...  I give them the benefit
-				// of the doubt that they might be three times the size they oughta be, hence the -2 and +2's
-				
-				if (loc.x >= startx - discretizationOverlap && loc.x < endx + discretizationOverlap &&
-					loc.y >= starty - discretizationOverlap && loc.y < endy + discretizationOverlap)
-					{
-					Portrayal p = getPortrayalForObject(object);
-					if (!(p instanceof SimplePortrayal2D))
-						throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-							objects.objs[x] + " -- expected a SimplePortrayal2D");
-					SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
-					
-					newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
-					newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
+                        
+            if (displayingToroidally)
+                objectLoc = new Double2D(field.tx(objectLoc.x), field.tx(objectLoc.y));
+                                                
+            for(int i = 0; i < toroidalX.length; i++) 
+                {
+                Double2D loc = null;
+                if (i == 0)
+                    loc = objectLoc;
+                else if (displayingToroidally)  // and i > 0
+                    loc = new Double2D(objectLoc.x + field.width * toroidalX[i],
+                        objectLoc.y + field.height * toroidalY[i]);
+                else
+                    break; // no toroidal function
+                                
+                // here we only hit/draw the object if it's within our range.  However objects
+                // might leak over to other places, so I dunno...  I give them the benefit
+                // of the doubt that they might be three times the size they oughta be, hence the -2 and +2's
+                                
+                if (loc.x >= startx - discretizationOverlap && loc.x < endx + discretizationOverlap &&
+                    loc.y >= starty - discretizationOverlap && loc.y < endy + discretizationOverlap)
+                    {
+                    Portrayal p = getPortrayalForObject(object);
+                    if (!(p instanceof SimplePortrayal2D))
+                        throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
+                            objects.objs[x] + " -- expected a SimplePortrayal2D");
+                    SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
+                                        
+                    newinfo.draw.x = (info.draw.x + (xScale) * loc.x);
+                    newinfo.draw.y = (info.draw.y + (yScale) * loc.y);
 
-					newinfo.location = loc;
+                    newinfo.location = loc;
 
-					final Object portrayedObject = object;
-					if (graphics == null)
-						{
-						if (portrayal.hitObject(portrayedObject, newinfo))
-							putInHere.add(getWrapper(portrayedObject));
-						}
-					else
-						{
-						// MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-						//                    graphics.setClip(clip);
-						newinfo.selected = (objectSelected &&  // there's something there
-							selectedWrappers.get(portrayedObject) != null); 
-							/* {
-							LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-							portrayal.setSelected(wrapper,true);
-							portrayal.draw(portrayedObject, graphics, newinfo);
-							portrayal.setSelected(wrapper,false);
-							}
-						else */ portrayal.draw(portrayedObject, graphics, newinfo);
-						}
-					}
-				}
+                    final Object portrayedObject = object;
+                    if (graphics == null)
+                        {
+                        if (portrayal.hitObject(portrayedObject, newinfo))
+                            putInHere.add(getWrapper(portrayedObject));
+                        }
+                    else
+                        {
+                        // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                        //                    graphics.setClip(clip);
+                        newinfo.selected = (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null); 
+                        /* {
+                           LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                           portrayal.setSelected(wrapper,true);
+                           portrayal.draw(portrayedObject, graphics, newinfo);
+                           portrayal.setSelected(wrapper,false);
+                           }
+                           else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                        }
+                    }
+                }
             }
         }
 

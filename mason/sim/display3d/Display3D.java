@@ -118,19 +118,19 @@ import java.util.prefs.*;
 **/
 public class Display3D extends JPanel implements Steppable
     {
-	public String DEFAULT_PREFERENCES_KEY = "Display3D";
-	String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
-	/** If you have more than one Display3D in your simulation and you want them to have
-		different preferences, set each to a different key value.    The default value is DEFAULT_PREFERENCES_KEY.
-		You may not have a key which ends in a forward slash (/) when trimmed  
-		Key may be set to null (the default).   */
-	public void setPreferencesKey(String s)
-		{
-		if (s.trim().endsWith("/"))
-			throw new RuntimeException("Key ends with '/', which is not allowed");
-		else preferencesKey = s;
-		}
-	public String getPreferencesKey() { return preferencesKey; }
+    public String DEFAULT_PREFERENCES_KEY = "Display3D";
+    String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
+    /** If you have more than one Display3D in your simulation and you want them to have
+        different preferences, set each to a different key value.    The default value is DEFAULT_PREFERENCES_KEY.
+        You may not have a key which ends in a forward slash (/) when trimmed  
+        Key may be set to null (the default).   */
+    public void setPreferencesKey(String s)
+        {
+        if (s.trim().endsWith("/"))
+            throw new RuntimeException("Key ends with '/', which is not allowed");
+        else preferencesKey = s;
+        }
+    public String getPreferencesKey() { return preferencesKey; }
 
 
     ArrayList portrayals = new ArrayList();
@@ -148,8 +148,8 @@ public class Display3D extends JPanel implements Steppable
     public NumberTextField scaleField;
     /** The field for skipping frames */
     public NumberTextField skipField;
-	/** The combo box for skipping frames */
-	public JComboBox skipBox;
+    /** The combo box for skipping frames */
+    public JComboBox skipBox;
         
     long interval = 1;
     Object intervalLock = new Object();
@@ -500,12 +500,12 @@ public class Display3D extends JPanel implements Steppable
                 g.fillRect(0,0,header.getWidth(),header.getHeight());
                 }
 
-			public Dimension getPreferredSize()  // we want to be as compressible as necessary
-				{
-				Dimension d = super.getPreferredSize();
-				d.width = 0;
-				return d;
-				}
+            public Dimension getPreferredSize()  // we want to be as compressible as necessary
+                {
+                Dimension d = super.getPreferredSize();
+                d.width = 0;
+                return d;
+                }
             };
 
         // maybe this will cut down on flashing in Windows, XWindows.
@@ -608,95 +608,95 @@ public class Display3D extends JPanel implements Steppable
         header.add(scaleField);
 
 /*
-        skipField = new NumberTextField("  Skip: ", 1, false)
-            {
-            public double newValue(double newValue)
-                {
-                int val = (int) newValue;
-                if (val < 1) val = 1;
-                // reset with a new interval
-                setInterval(val);
-                reset();                        
-                return val;
-                }
-            };
-        header.add(skipField);
+  skipField = new NumberTextField("  Skip: ", 1, false)
+  {
+  public double newValue(double newValue)
+  {
+  int val = (int) newValue;
+  if (val < 1) val = 1;
+  // reset with a new interval
+  setInterval(val);
+  reset();                        
+  return val;
+  }
+  };
+  header.add(skipField);
 */
         
         // add the interval (skip) field
-		skipBox = new JComboBox(Display2D.REDRAW_OPTIONS);
-		skipBox.setSelectedIndex(updateRule);
-		ActionListener skipListener = new ActionListener()
-			{
-			public void actionPerformed(ActionEvent e)
-				{
-				updateRule = skipBox.getSelectedIndex();
-				if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)
-					{
-					skipField.valField.setText("");
-					skipField.setEnabled(false);
-					}
-				else if (updateRule == Display2D.UPDATE_RULE_STEPS)
-					{
-					skipField.setValue(stepInterval);
-					skipField.setEnabled(true);
-					}
-				else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
-					{
-					skipField.setValue(timeInterval);
-					skipField.setEnabled(true);
-					}
-				else // Display2D.UPDATE_RULE_WALLCLOCK_TIME
-					{
-					skipField.setValue((long)(wallInterval / 1000));
-					skipField.setEnabled(true);
-					}
-				}
-			};
-		skipBox.addActionListener(skipListener);
-		
-		// I want right justified text.  This is an ugly way to do it
-		skipBox.setRenderer(new DefaultListCellRenderer()
-			{
-			public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected,  boolean cellHasFocus)
-				{
-				// JLabel is the default
-				JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				label.setHorizontalAlignment(SwingConstants.RIGHT);
-				return label;
-				}
-			});
-			
-		header.add(skipBox);
+        skipBox = new JComboBox(Display2D.REDRAW_OPTIONS);
+        skipBox.setSelectedIndex(updateRule);
+        ActionListener skipListener = new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                updateRule = skipBox.getSelectedIndex();
+                if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)
+                    {
+                    skipField.valField.setText("");
+                    skipField.setEnabled(false);
+                    }
+                else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+                    {
+                    skipField.setValue(stepInterval);
+                    skipField.setEnabled(true);
+                    }
+                else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+                    {
+                    skipField.setValue(timeInterval);
+                    skipField.setEnabled(true);
+                    }
+                else // Display2D.UPDATE_RULE_WALLCLOCK_TIME
+                    {
+                    skipField.setValue((long)(wallInterval / 1000));
+                    skipField.setEnabled(true);
+                    }
+                }
+            };
+        skipBox.addActionListener(skipListener);
+                
+        // I want right justified text.  This is an ugly way to do it
+        skipBox.setRenderer(new DefaultListCellRenderer()
+            {
+            public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected,  boolean cellHasFocus)
+                {
+                // JLabel is the default
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                return label;
+                }
+            });
+                        
+        header.add(skipBox);
 
 
         skipField = new NumberTextField(null, 1, false)
             {
             public double newValue(double newValue)
                 {
-				double val;
-				if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)  // shouldn't have happened
-					{
-					val = 0;
-					}
-				else if (updateRule == Display2D.UPDATE_RULE_STEPS)
-					{
-					val = (long) newValue;
-					if (val < 1) val = stepInterval;
-					stepInterval = (long) val;
-					}
-				else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
-					{
-					val = newValue;
-					if (val < 0) val = wallInterval / 1000;
-					wallInterval = (long) (newValue * 1000);
-					}
-				else // if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
-					{
-					val = newValue;
-					if (newValue < 0) newValue = timeInterval;
-					timeInterval = val;
-					}
+                double val;
+                if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)  // shouldn't have happened
+                    {
+                    val = 0;
+                    }
+                else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+                    {
+                    val = (long) newValue;
+                    if (val < 1) val = stepInterval;
+                    stepInterval = (long) val;
+                    }
+                else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
+                    {
+                    val = newValue;
+                    if (val < 0) val = wallInterval / 1000;
+                    wallInterval = (long) (newValue * 1000);
+                    }
+                else // if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+                    {
+                    val = newValue;
+                    if (newValue < 0) newValue = timeInterval;
+                    timeInterval = val;
+                    }
                         
                 // reset with a new interval
                 reset();
@@ -707,7 +707,7 @@ public class Display3D extends JPanel implements Steppable
         skipField.setToolTipText("Specify the interval between screen updates");
         header.add(skipField);
 
-		skipListener.actionPerformed(null);  // have it update the text field accordingly
+        skipListener.actionPerformed(null);  // have it update the text field accordingly
 
 
         setPreferredSize(new Dimension((int)width,(int)height));
@@ -868,10 +868,10 @@ public class Display3D extends JPanel implements Steppable
     void toggleAxes()
         {
         if (auxillarySwitch != null)
-			{
-			auxillarySwitchMask.set(AXES_AUX_INDEX, showAxesCheckBox.isSelected());
-			auxillarySwitch.setChildMask(auxillarySwitchMask);
-			}
+            {
+            auxillarySwitchMask.set(AXES_AUX_INDEX, showAxesCheckBox.isSelected());
+            auxillarySwitch.setChildMask(auxillarySwitchMask);
+            }
         }
                 
     public void setShowsAxes(boolean value)
@@ -883,10 +883,10 @@ public class Display3D extends JPanel implements Steppable
     void toggleBackdrop()
         {
         if (auxillarySwitch != null)
-			{
-			auxillarySwitchMask.set(BACKGROUND_AUX_INDEX, showBackgroundCheckBox.isSelected());
-			auxillarySwitch.setChildMask(auxillarySwitchMask);
-			}
+            {
+            auxillarySwitchMask.set(BACKGROUND_AUX_INDEX, showBackgroundCheckBox.isSelected());
+            auxillarySwitch.setChildMask(auxillarySwitchMask);
+            }
         }
 
     public void setShowsBackdrop(boolean value)
@@ -898,10 +898,10 @@ public class Display3D extends JPanel implements Steppable
     void toggleSpotlight()
         {
         if (lightSwitch != null)
-			{
-			lightSwitchMask.set(SPOTLIGHT_INDEX, showSpotlightCheckBox.isSelected());
-			lightSwitch.setChildMask(lightSwitchMask);
-			}
+            {
+            lightSwitchMask.set(SPOTLIGHT_INDEX, showSpotlightCheckBox.isSelected());
+            lightSwitch.setChildMask(lightSwitchMask);
+            }
         }
                 
     public void setShowsSpotlight(boolean value)
@@ -913,10 +913,10 @@ public class Display3D extends JPanel implements Steppable
     void toggleAmbientLight()
         {
         if (lightSwitch != null)
-			{
-			lightSwitchMask.set(AMBIENT_LIGHT_INDEX, showAmbientLightCheckBox.isSelected());
-			lightSwitch.setChildMask(lightSwitchMask);
-			}
+            {
+            lightSwitchMask.set(AMBIENT_LIGHT_INDEX, showAmbientLightCheckBox.isSelected());
+            lightSwitch.setChildMask(lightSwitchMask);
+            }
         }
                 
     public void setShowsAmbientLight(boolean value)
@@ -1283,46 +1283,46 @@ public class Display3D extends JPanel implements Steppable
         } 
 
 
-	int updateRule = Display2D.UPDATE_RULE_ALWAYS;
-	long stepInterval = 1;
-	double timeInterval = 0;
-	long wallInterval = 0;
-	long lastStep = -1;
-	double lastTime = Schedule.BEFORE_SIMULATION;
-	long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
-	
-	/** Returns whether it's time to update. */
-	public boolean shouldUpdate()
-		{
-		boolean val = false;
-		
-		if (updateRule == Display2D.UPDATE_RULE_ALWAYS)
-			val = true;
-		else if (updateRule == Display2D.UPDATE_RULE_STEPS)
-			{
-			long step = simulation.state.schedule.getSteps();
-			val = (lastStep < 0 || stepInterval == 0 || step - lastStep >= stepInterval || // clearly need to update
-				lastStep % stepInterval >= step % stepInterval);  // on opposite sides of a tick
-			if (val) lastStep = step;
-			}
-		else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
-			{
-			long wall = System.currentTimeMillis();
-			val = (lastWall == 0 || wallInterval == 0 || wall - lastWall >= wallInterval || // clearly need to update
-				lastWall % wallInterval >= wall % wallInterval);  // on opposite sides of a tick
-			if (val) lastWall = wall;
-			}
-		else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
-			{
-			double time = simulation.state.schedule.getTime();
-			val = (lastTime == 0 || timeInterval == 0 || time - lastTime >= timeInterval || // clearly need to update
-				lastTime % timeInterval >= time % timeInterval);  // on opposite sides of a tick
-			if (val) lastTime = time;
-			}
-		// else val = false;
-		
-		return val;
-		}
+    int updateRule = Display2D.UPDATE_RULE_ALWAYS;
+    long stepInterval = 1;
+    double timeInterval = 0;
+    long wallInterval = 0;
+    long lastStep = -1;
+    double lastTime = Schedule.BEFORE_SIMULATION;
+    long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
+        
+    /** Returns whether it's time to update. */
+    public boolean shouldUpdate()
+        {
+        boolean val = false;
+                
+        if (updateRule == Display2D.UPDATE_RULE_ALWAYS)
+            val = true;
+        else if (updateRule == Display2D.UPDATE_RULE_STEPS)
+            {
+            long step = simulation.state.schedule.getSteps();
+            val = (lastStep < 0 || stepInterval == 0 || step - lastStep >= stepInterval || // clearly need to update
+                lastStep % stepInterval >= step % stepInterval);  // on opposite sides of a tick
+            if (val) lastStep = step;
+            }
+        else if (updateRule == Display2D.UPDATE_RULE_WALLCLOCK_TIME)
+            {
+            long wall = System.currentTimeMillis();
+            val = (lastWall == 0 || wallInterval == 0 || wall - lastWall >= wallInterval || // clearly need to update
+                lastWall % wallInterval >= wall % wallInterval);  // on opposite sides of a tick
+            if (val) lastWall = wall;
+            }
+        else if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
+            {
+            double time = simulation.state.schedule.getTime();
+            val = (lastTime == 0 || timeInterval == 0 || time - lastTime >= timeInterval || // clearly need to update
+                lastTime % timeInterval >= time % timeInterval);  // on opposite sides of a tick
+            if (val) lastTime = time;
+            }
+        // else val = false;
+                
+        return val;
+        }
 
     /** Steps the Display3D in the GUIState schedule.  Every <i>interval</i> steps,
         this results in updating the scen graph. */
@@ -1342,7 +1342,7 @@ public class Display3D extends JPanel implements Steppable
     */
     public void updateSceneGraph(boolean waitForRenderer)
         {
-		/* 
+        /* 
          * So far, the Canvas3D is not rendering off-screen, so new frames are not
          * produced when the display is hidden. Therefore, no point in copying the
          * same old frame over and over into the movie.
@@ -1783,417 +1783,417 @@ public class Display3D extends JPanel implements Steppable
 
 
 
-	public JButton systemPreferences = new JButton("MASON");
-	public JButton appPreferences = new JButton("Simulation");
-	public class OptionPane3D extends JFrame
-		{
-		public OptionPane3D(String label)
-			{
-			super(label);
-			
-			// set some tool tips
-			orbitRotateXCheckBox.setToolTipText("Rotates the scene left or right. Drag the left mouse button.");
-			orbitRotateYCheckBox.setToolTipText("Rotates the scene up or down. Drag the left mouse button.");
-			orbitTranslateXCheckBox.setToolTipText("Move the scene left or right.  Drag the middle mouse button.");
-			orbitTranslateYCheckBox.setToolTipText("Move the scene up or down.  Drag the middle mouse button.");
-			orbitZoomCheckBox.setToolTipText("Moves the eye towards/away from scene.  Not the same as scaling.  Drag the right mouse button.");
-			selectBehCheckBox.setToolTipText("Selects objects.  Double-click the left mouse button.");
+    public JButton systemPreferences = new JButton("MASON");
+    public JButton appPreferences = new JButton("Simulation");
+    public class OptionPane3D extends JFrame
+        {
+        public OptionPane3D(String label)
+            {
+            super(label);
+                        
+            // set some tool tips
+            orbitRotateXCheckBox.setToolTipText("Rotates the scene left or right. Drag the left mouse button.");
+            orbitRotateYCheckBox.setToolTipText("Rotates the scene up or down. Drag the left mouse button.");
+            orbitTranslateXCheckBox.setToolTipText("Move the scene left or right.  Drag the middle mouse button.");
+            orbitTranslateYCheckBox.setToolTipText("Move the scene up or down.  Drag the middle mouse button.");
+            orbitZoomCheckBox.setToolTipText("Moves the eye towards/away from scene.  Not the same as scaling.  Drag the right mouse button.");
+            selectBehCheckBox.setToolTipText("Selects objects.  Double-click the left mouse button.");
 
-			// Mouse Behaviors
-			Box outerBehaviorsPanel = new Box(BoxLayout.X_AXIS);
-			outerBehaviorsPanel.setBorder(new javax.swing.border.TitledBorder("Mouse Actions"));
-			
-			// add rotateX, translateX, zoom, select to left panel
-			Box leftBehaviors = new Box(BoxLayout.Y_AXIS);
-			leftBehaviors.add(orbitRotateXCheckBox);
-			orbitRotateXCheckBox.setSelected(true);
-			leftBehaviors.add(orbitTranslateXCheckBox);
-			orbitTranslateXCheckBox.setSelected(true);
-			leftBehaviors.add(orbitZoomCheckBox);
-			orbitZoomCheckBox.setSelected(true);
-			leftBehaviors.add(Box.createGlue());
+            // Mouse Behaviors
+            Box outerBehaviorsPanel = new Box(BoxLayout.X_AXIS);
+            outerBehaviorsPanel.setBorder(new javax.swing.border.TitledBorder("Mouse Actions"));
+                        
+            // add rotateX, translateX, zoom, select to left panel
+            Box leftBehaviors = new Box(BoxLayout.Y_AXIS);
+            leftBehaviors.add(orbitRotateXCheckBox);
+            orbitRotateXCheckBox.setSelected(true);
+            leftBehaviors.add(orbitTranslateXCheckBox);
+            orbitTranslateXCheckBox.setSelected(true);
+            leftBehaviors.add(orbitZoomCheckBox);
+            orbitZoomCheckBox.setSelected(true);
+            leftBehaviors.add(Box.createGlue());
 
-			// add rotateY, translateY, reset to right panel
-			Box rightBehaviors = new Box(BoxLayout.Y_AXIS);
-			rightBehaviors.add(orbitRotateYCheckBox);
-			orbitRotateYCheckBox.setSelected(true);
-			rightBehaviors.add(orbitTranslateYCheckBox);
-			orbitTranslateYCheckBox.setSelected(true);
-			rightBehaviors.add(selectBehCheckBox);
-			selectBehCheckBox.setSelected(true);
-			rightBehaviors.add(Box.createGlue());
+            // add rotateY, translateY, reset to right panel
+            Box rightBehaviors = new Box(BoxLayout.Y_AXIS);
+            rightBehaviors.add(orbitRotateYCheckBox);
+            orbitRotateYCheckBox.setSelected(true);
+            rightBehaviors.add(orbitTranslateYCheckBox);
+            orbitTranslateYCheckBox.setSelected(true);
+            rightBehaviors.add(selectBehCheckBox);
+            selectBehCheckBox.setSelected(true);
+            rightBehaviors.add(Box.createGlue());
 
-			outerBehaviorsPanel.add(leftBehaviors);
-			outerBehaviorsPanel.add(rightBehaviors);
-			outerBehaviorsPanel.add(Box.createGlue());
-			
-			
-			Box resetBox = new Box(BoxLayout.X_AXIS);
-			resetBox.setBorder(new javax.swing.border.TitledBorder("Viewpoint"));
-			JButton resetButton = new JButton("Reset Viewpoint");
-			resetButton.setToolTipText("Resets display to original rotation, translation, and zoom.");
-			resetBox.add(resetButton);
-			resetBox.add(Box.createGlue());
+            outerBehaviorsPanel.add(leftBehaviors);
+            outerBehaviorsPanel.add(rightBehaviors);
+            outerBehaviorsPanel.add(Box.createGlue());
+                        
+                        
+            Box resetBox = new Box(BoxLayout.X_AXIS);
+            resetBox.setBorder(new javax.swing.border.TitledBorder("Viewpoint"));
+            JButton resetButton = new JButton("Reset Viewpoint");
+            resetButton.setToolTipText("Resets display to original rotation, translation, and zoom.");
+            resetBox.add(resetButton);
+            resetBox.add(Box.createGlue());
 
-			resetButton.addActionListener(new ActionListener()
-				{
-				public void actionPerformed(ActionEvent e)
-					{
-					canvas.stopRenderer();
-					// reset scale field
-					scaleField.setValue(1);
-					setScale(1);
-					
-					universe.getViewingPlatform().setNominalViewingTransform(); // reset translations/rotations
-					autoSpinTransformGroup.setTransform(new Transform3D());
-					// reset background spin too
-					autoSpinBackgroundTransformGroup.setTransform(new Transform3D());
-					canvas.startRenderer();
-					} 
-				});
-			
-			orbitRotateXCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{
-					if (mOrbitBehavior!=null) mOrbitBehavior.setRotXFactor(orbitRotateXCheckBox.isSelected() ? 1.0 : 0.0); }
-				});
-			orbitRotateYCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{
-					if (mOrbitBehavior!=null) mOrbitBehavior.setRotYFactor(orbitRotateYCheckBox.isSelected() ? 1.0 : 0.0); }
-				});
-			orbitTranslateXCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{
-					if (mOrbitBehavior!=null) mOrbitBehavior.setTransXFactor(orbitTranslateXCheckBox.isSelected() ? 1.0 : 0.0); }
-				});
-			orbitTranslateYCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{
-					if (mOrbitBehavior!=null) mOrbitBehavior.setTransYFactor(orbitTranslateYCheckBox.isSelected() ? 1.0 : 0.0); }
-				});
-			orbitZoomCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       if (mOrbitBehavior!=null) mOrbitBehavior.setZoomEnable(orbitZoomCheckBox.isSelected()); }
-				});         
-			selectBehCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       if (mSelectBehavior!=null) mSelectBehavior.setEnable(selectBehCheckBox.isSelected()); }
-				});         
+            resetButton.addActionListener(new ActionListener()
+                {
+                public void actionPerformed(ActionEvent e)
+                    {
+                    canvas.stopRenderer();
+                    // reset scale field
+                    scaleField.setValue(1);
+                    setScale(1);
+                                        
+                    universe.getViewingPlatform().setNominalViewingTransform(); // reset translations/rotations
+                    autoSpinTransformGroup.setTransform(new Transform3D());
+                    // reset background spin too
+                    autoSpinBackgroundTransformGroup.setTransform(new Transform3D());
+                    canvas.startRenderer();
+                    } 
+                });
+                        
+            orbitRotateXCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {
+                    if (mOrbitBehavior!=null) mOrbitBehavior.setRotXFactor(orbitRotateXCheckBox.isSelected() ? 1.0 : 0.0); }
+                });
+            orbitRotateYCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {
+                    if (mOrbitBehavior!=null) mOrbitBehavior.setRotYFactor(orbitRotateYCheckBox.isSelected() ? 1.0 : 0.0); }
+                });
+            orbitTranslateXCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {
+                    if (mOrbitBehavior!=null) mOrbitBehavior.setTransXFactor(orbitTranslateXCheckBox.isSelected() ? 1.0 : 0.0); }
+                });
+            orbitTranslateYCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {
+                    if (mOrbitBehavior!=null) mOrbitBehavior.setTransYFactor(orbitTranslateYCheckBox.isSelected() ? 1.0 : 0.0); }
+                });
+            orbitZoomCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       if (mOrbitBehavior!=null) mOrbitBehavior.setZoomEnable(orbitZoomCheckBox.isSelected()); }
+                });         
+            selectBehCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       if (mSelectBehavior!=null) mSelectBehavior.setEnable(selectBehCheckBox.isSelected()); }
+                });         
 
-			// Auto-Orbiting
-			LabelledList rotatePanel = new LabelledList("Auto-Rotate About <X,Y,Z> Axis");
-			rotatePanel.addLabelled("X", rotAxis_X);
-			rotatePanel.addLabelled("Y", rotAxis_Y);
-			rotatePanel.addLabelled("Z", rotAxis_Z);
-			rotatePanel.addLabelled("Rotations/Sec", spinDuration);
-					
-			Box polyPanel = new Box(BoxLayout.X_AXIS);
-			polyPanel.setBorder(new javax.swing.border.TitledBorder("Polygon Attributes"));
-			ButtonGroup polyLineGroup = new ButtonGroup();
-			polyLineGroup.add(polyPoint);
-			polyLineGroup.add(polyLine);
-			polyLineGroup.add(polyFill);
-			ButtonGroup polyCullingGroup = new ButtonGroup();
-			polyCullingGroup.add(polyCullNone);
-			polyCullingGroup.add(polyCullFront);
-			polyCullingGroup.add(polyCullBack);
-					
-			Box polyLinebox = Box.createVerticalBox();
-			polyLinebox.add(Box.createGlue());
-			polyLinebox.add (new JLabel ("Draw Polygons As..."));
-			polyLinebox.add (polyPoint);
-			polyPoint.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_POINT);} 
-				});
-			polyLinebox.add (polyLine);
-			polyLine.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_LINE);} 
-				});
-			polyLinebox.add (polyFill);
-			polyFill.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_FILL);} 
-				});
-			polyLinebox.add(Box.createGlue());
-			polyLinebox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
-			polyPanel.add(polyLinebox);
-			Box polyCullbox = Box.createVerticalBox();
-			polyCullbox.add(Box.createGlue());
-			polyCullbox.add (new JLabel ("Draw Faces As..."));
-			polyCullbox.add (polyCullNone);
-			polyCullNone.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_NONE);} 
-				});
-			polyCullbox.add (polyCullBack);
-			polyCullBack.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_BACK);} 
-				});
-			polyCullbox.add (polyCullFront);
-			polyCullFront.addActionListener(new ActionListener()
-				{ 
-				public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_FRONT);} 
-				});
-			polyCullbox.add(Box.createGlue());
-			polyCullbox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
-			polyPanel.add(polyCullbox);
-			polyPanel.add(Box.createGlue());
-			/*
-			// These aren't very helpful
-			
-			Box viewPanel = new Box(BoxLayout.Y_AXIS);
-			viewPanel.setBorder(new javax.swing.border.TitledBorder("Viewing Attributes"));
-			antialiasCheckBox.setSelected(false);
-			antialiasCheckBox.addItemListener(new ItemListener()
-			{
-			public void itemStateChanged(ItemEvent e)
-			{       canvas.getView().setSceneAntialiasingEnable(antialiasCheckBox.isSelected());    }
-			});
-			viewPanel.add(antialiasCheckBox);
-			ButtonGroup viewProjectionGroup = new ButtonGroup();
-			viewProjectionGroup.add(viewPerspective);
-			viewProjectionGroup.add(viewParallel);
-			viewPerspective.addActionListener(new ActionListener()
-			{ 
-			public void actionPerformed(ActionEvent e)
-			{       canvas.getView().setProjectionPolicy(canvas.getView().PERSPECTIVE_PROJECTION);}
-			});
-			viewParallel.addActionListener(new ActionListener()
-			{ 
-			public void actionPerformed(ActionEvent e)
-			{       canvas.getView().setProjectionPolicy(canvas.getView().PARALLEL_PROJECTION);}
-			});
-			viewPanel.add(viewPerspective);
-			viewPanel.add(viewParallel);
-			*/
-			
-			Box auxillaryPanel = new Box(BoxLayout.Y_AXIS);
-			Box box = new Box(BoxLayout.X_AXIS);
-			auxillaryPanel.setBorder(new javax.swing.border.TitledBorder("Auxillary Elements"));
-			box.add(showAxesCheckBox);
-			showAxesCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       
-					toggleAxes();
-					}
-				});
-			box.add(showBackgroundCheckBox);
-			showBackgroundCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       
-					toggleBackdrop();
-					}
-				});
-			box.add(tooltips);
-			tooltips.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{
-					usingToolTips = tooltips.isSelected();
-					if (toolTipBehavior != null)
-						toolTipBehavior.setCanShowToolTips(usingToolTips);
-					}
-				});
-			box.add(Box.createGlue());
-			auxillaryPanel.add(box);
-					
-			// next row
-			box = new Box(BoxLayout.X_AXIS);
-			box.add(showSpotlightCheckBox);
-			showSpotlightCheckBox.setSelected(true);
-			showSpotlightCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       
-					toggleSpotlight();
-					}
-				});
+            // Auto-Orbiting
+            LabelledList rotatePanel = new LabelledList("Auto-Rotate About <X,Y,Z> Axis");
+            rotatePanel.addLabelled("X", rotAxis_X);
+            rotatePanel.addLabelled("Y", rotAxis_Y);
+            rotatePanel.addLabelled("Z", rotAxis_Z);
+            rotatePanel.addLabelled("Rotations/Sec", spinDuration);
+                                        
+            Box polyPanel = new Box(BoxLayout.X_AXIS);
+            polyPanel.setBorder(new javax.swing.border.TitledBorder("Polygon Attributes"));
+            ButtonGroup polyLineGroup = new ButtonGroup();
+            polyLineGroup.add(polyPoint);
+            polyLineGroup.add(polyLine);
+            polyLineGroup.add(polyFill);
+            ButtonGroup polyCullingGroup = new ButtonGroup();
+            polyCullingGroup.add(polyCullNone);
+            polyCullingGroup.add(polyCullFront);
+            polyCullingGroup.add(polyCullBack);
+                                        
+            Box polyLinebox = Box.createVerticalBox();
+            polyLinebox.add(Box.createGlue());
+            polyLinebox.add (new JLabel ("Draw Polygons As..."));
+            polyLinebox.add (polyPoint);
+            polyPoint.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_POINT);} 
+                });
+            polyLinebox.add (polyLine);
+            polyLine.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_LINE);} 
+                });
+            polyLinebox.add (polyFill);
+            polyFill.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setRasterizationMode(PolygonAttributes.POLYGON_FILL);} 
+                });
+            polyLinebox.add(Box.createGlue());
+            polyLinebox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
+            polyPanel.add(polyLinebox);
+            Box polyCullbox = Box.createVerticalBox();
+            polyCullbox.add(Box.createGlue());
+            polyCullbox.add (new JLabel ("Draw Faces As..."));
+            polyCullbox.add (polyCullNone);
+            polyCullNone.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_NONE);} 
+                });
+            polyCullbox.add (polyCullBack);
+            polyCullBack.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_BACK);} 
+                });
+            polyCullbox.add (polyCullFront);
+            polyCullFront.addActionListener(new ActionListener()
+                { 
+                public void actionPerformed(ActionEvent e) {setCullingMode(PolygonAttributes.CULL_FRONT);} 
+                });
+            polyCullbox.add(Box.createGlue());
+            polyCullbox.setBorder(new javax.swing.border.EmptyBorder(0,0,0,20));
+            polyPanel.add(polyCullbox);
+            polyPanel.add(Box.createGlue());
+            /*
+            // These aren't very helpful
+                        
+            Box viewPanel = new Box(BoxLayout.Y_AXIS);
+            viewPanel.setBorder(new javax.swing.border.TitledBorder("Viewing Attributes"));
+            antialiasCheckBox.setSelected(false);
+            antialiasCheckBox.addItemListener(new ItemListener()
+            {
+            public void itemStateChanged(ItemEvent e)
+            {       canvas.getView().setSceneAntialiasingEnable(antialiasCheckBox.isSelected());    }
+            });
+            viewPanel.add(antialiasCheckBox);
+            ButtonGroup viewProjectionGroup = new ButtonGroup();
+            viewProjectionGroup.add(viewPerspective);
+            viewProjectionGroup.add(viewParallel);
+            viewPerspective.addActionListener(new ActionListener()
+            { 
+            public void actionPerformed(ActionEvent e)
+            {       canvas.getView().setProjectionPolicy(canvas.getView().PERSPECTIVE_PROJECTION);}
+            });
+            viewParallel.addActionListener(new ActionListener()
+            { 
+            public void actionPerformed(ActionEvent e)
+            {       canvas.getView().setProjectionPolicy(canvas.getView().PARALLEL_PROJECTION);}
+            });
+            viewPanel.add(viewPerspective);
+            viewPanel.add(viewParallel);
+            */
+                        
+            Box auxillaryPanel = new Box(BoxLayout.Y_AXIS);
+            Box box = new Box(BoxLayout.X_AXIS);
+            auxillaryPanel.setBorder(new javax.swing.border.TitledBorder("Auxillary Elements"));
+            box.add(showAxesCheckBox);
+            showAxesCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       
+                    toggleAxes();
+                    }
+                });
+            box.add(showBackgroundCheckBox);
+            showBackgroundCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       
+                    toggleBackdrop();
+                    }
+                });
+            box.add(tooltips);
+            tooltips.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {
+                    usingToolTips = tooltips.isSelected();
+                    if (toolTipBehavior != null)
+                        toolTipBehavior.setCanShowToolTips(usingToolTips);
+                    }
+                });
+            box.add(Box.createGlue());
+            auxillaryPanel.add(box);
+                                        
+            // next row
+            box = new Box(BoxLayout.X_AXIS);
+            box.add(showSpotlightCheckBox);
+            showSpotlightCheckBox.setSelected(true);
+            showSpotlightCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       
+                    toggleSpotlight();
+                    }
+                });
 
-			box.add(showAmbientLightCheckBox);
-			showAmbientLightCheckBox.addItemListener(new ItemListener()
-				{
-				public void itemStateChanged(ItemEvent e)
-					{       
-					toggleAmbientLight();
-					}
-				});
-			box.add(Box.createGlue());
-			auxillaryPanel.add(box);
+            box.add(showAmbientLightCheckBox);
+            showAmbientLightCheckBox.addItemListener(new ItemListener()
+                {
+                public void itemStateChanged(ItemEvent e)
+                    {       
+                    toggleAmbientLight();
+                    }
+                });
+            box.add(Box.createGlue());
+            auxillaryPanel.add(box);
 
-			// set up initial design
-				
-			
-			Box optionsPanel = new Box(BoxLayout.Y_AXIS);
-			optionsPanel.add(outerBehaviorsPanel);
-			optionsPanel.add(rotatePanel);
-			optionsPanel.add(auxillaryPanel);
-			optionsPanel.add(polyPanel);
-			optionsPanel.add(resetBox);
-			//optionsPanel.add(viewPanel);
+            // set up initial design
+                                
+                        
+            Box optionsPanel = new Box(BoxLayout.Y_AXIS);
+            optionsPanel.add(outerBehaviorsPanel);
+            optionsPanel.add(rotatePanel);
+            optionsPanel.add(auxillaryPanel);
+            optionsPanel.add(polyPanel);
+            optionsPanel.add(resetBox);
+            //optionsPanel.add(viewPanel);
 
-			getContentPane().add(optionsPanel);
-			setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-			
-			
-		// add preferences
-				
-			Box b = new Box(BoxLayout.X_AXIS);
-			b.add(new JLabel(" Save as Defaults for "));
-			b.add(appPreferences);
-			b.add(systemPreferences);
-			getContentPane().add(b, BorderLayout.SOUTH);
+            getContentPane().add(optionsPanel);
+            setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                        
+                        
+            // add preferences
+                                
+            Box b = new Box(BoxLayout.X_AXIS);
+            b.add(new JLabel(" Save as Defaults for "));
+            b.add(appPreferences);
+            b.add(systemPreferences);
+            getContentPane().add(b, BorderLayout.SOUTH);
 
-			systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
-			systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
-			systemPreferences.addActionListener(new ActionListener()
-				{
-				public void actionPerformed(ActionEvent e)
-					{
-					String key = getPreferencesKey();
-					savePreferences(Prefs.getGlobalPreferences(key));
-					
-					// if we're setting the system preferences, remove the local preferences to avoid confusion
-					Prefs.removeAppPreferences(simulation, key);
-					}
-				});
-			
-			appPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
-			appPreferences.putClientProperty( "JButton.buttonType", "bevel" );
-			appPreferences.addActionListener(new ActionListener()
-				{
-				public void actionPerformed(ActionEvent e)
-					{
-					String key = getPreferencesKey();
-					savePreferences(Prefs.getAppPreferences(simulation, key));
-					}
-				});
+            systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+            systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+            systemPreferences.addActionListener(new ActionListener()
+                {
+                public void actionPerformed(ActionEvent e)
+                    {
+                    String key = getPreferencesKey();
+                    savePreferences(Prefs.getGlobalPreferences(key));
+                                        
+                    // if we're setting the system preferences, remove the local preferences to avoid confusion
+                    Prefs.removeAppPreferences(simulation, key);
+                    }
+                });
+                        
+            appPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+            appPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+            appPreferences.addActionListener(new ActionListener()
+                {
+                public void actionPerformed(ActionEvent e)
+                    {
+                    String key = getPreferencesKey();
+                    savePreferences(Prefs.getAppPreferences(simulation, key));
+                    }
+                });
 
-			pack();
-			setResizable(false);
-			} 
-
-
-		/** Saves the Option Pane Preferences to a given Preferences Node */
-		public void savePreferences(Preferences prefs)
-			{
-			prefs.putBoolean(ROTATE_LEFT_RIGHT_KEY, orbitRotateXCheckBox.isSelected());
-			prefs.putBoolean(ROTATE_UP_DOWN_KEY, orbitRotateYCheckBox.isSelected());
-			prefs.putBoolean(TRANSLATE_LEFT_RIGHT_KEY, orbitTranslateXCheckBox.isSelected());
-			prefs.putBoolean(TRANSLATE_UP_DOWN_KEY, orbitTranslateYCheckBox.isSelected());
-			prefs.putBoolean(MOVE_TOWARDS_AWAY_KEY, orbitZoomCheckBox.isSelected());
-			prefs.putBoolean(SELECT_KEY, selectBehCheckBox.isSelected());
-
-			prefs.putDouble(AUTO_ROTATE_X_KEY, rotAxis_X.getValue());
-			prefs.putDouble(AUTO_ROTATE_Y_KEY, rotAxis_Y.getValue());
-			prefs.putDouble(AUTO_ROTATE_Z_KEY, rotAxis_Z.getValue());
-			prefs.putDouble(AUTO_ROTATE_RATE_KEY, spinDuration.getValue());
-			
-			prefs.putBoolean(AXES_KEY, showAxesCheckBox.isSelected());
-			prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
-			prefs.putBoolean(SPOTLIGHT_KEY, showSpotlightCheckBox.isSelected());
-			prefs.putBoolean(AMBIENT_LIGHT_KEY, showAmbientLightCheckBox.isSelected());
-			prefs.putBoolean(BACKDROP_KEY, showBackgroundCheckBox.isSelected());
-			
-			prefs.putInt(DRAW_POLYGONS_KEY,
-									polyPoint.isSelected() ? 0 : 
-									polyLine.isSelected() ? 1 : 2);
-			prefs.putInt(DRAW_FACES_KEY,
-									polyCullNone.isSelected() ? 0 : 
-									polyCullBack.isSelected() ? 1 : 2);
-
-			if (!Prefs.save(prefs))
-				Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
-			}
-			
-			
-		static final String ROTATE_LEFT_RIGHT_KEY = "Rotate Left Right";
-		static final String TRANSLATE_LEFT_RIGHT_KEY = "Translate Left Right";
-		static final String MOVE_TOWARDS_AWAY_KEY = "Move Towards Away";
-		static final String ROTATE_UP_DOWN_KEY = "Rotate Up Down";
-		static final String TRANSLATE_UP_DOWN_KEY = "Translate Up Down";
-		static final String SELECT_KEY = "Select";
-		static final String AUTO_ROTATE_X_KEY = "Auto Rotate X";
-		static final String AUTO_ROTATE_Y_KEY = "Auto Rotate Y";
-		static final String AUTO_ROTATE_Z_KEY = "Auto Rotate Z";
-		static final String AUTO_ROTATE_RATE_KEY = "Auto Rotate Rate";
-		static final String AXES_KEY = "Axes";
-		static final String TOOLTIPS_KEY = "Tooltips";
-		static final String SPOTLIGHT_KEY = "Spotlight";
-		static final String AMBIENT_LIGHT_KEY = "Ambient Light";
-		static final String BACKDROP_KEY = "Backdrop";
-		static final String DRAW_POLYGONS_KEY = "Draw Polygons";
-		static final String DRAW_FACES_KEY = "Draw Faces";
-		
-		/** Resets the Option Pane Preferences by loading from the preference database */
-		public void resetToPreferences()
-			{
-			Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
-			Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
-			
-			orbitRotateXCheckBox.setSelected(appPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY,
-									systemPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY, true)));
-			orbitRotateYCheckBox.setSelected(appPrefs.getBoolean(ROTATE_UP_DOWN_KEY,
-									systemPrefs.getBoolean(ROTATE_UP_DOWN_KEY, true)));
-			orbitTranslateXCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY,
-									systemPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY, true)));
-			orbitTranslateYCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY,
-									systemPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY, true)));
-			selectBehCheckBox.setSelected(appPrefs.getBoolean(SELECT_KEY,
-									systemPrefs.getBoolean(SELECT_KEY, true)));
-
-			rotAxis_X.setValue(rotAxis_X.newValue(appPrefs.getDouble(AUTO_ROTATE_X_KEY,
-											systemPrefs.getDouble(AUTO_ROTATE_X_KEY, 0))));
-			rotAxis_Y.setValue(rotAxis_Y.newValue(appPrefs.getDouble(AUTO_ROTATE_Y_KEY,
-											systemPrefs.getDouble(AUTO_ROTATE_Y_KEY, 0))));
-			rotAxis_Z.setValue(rotAxis_Z.newValue(appPrefs.getDouble(AUTO_ROTATE_Z_KEY,
-											systemPrefs.getDouble(AUTO_ROTATE_Z_KEY, 0))));
-			spinDuration.setValue(spinDuration.newValue(appPrefs.getDouble(AUTO_ROTATE_RATE_KEY,
-											systemPrefs.getDouble(AUTO_ROTATE_RATE_KEY, 0))));
-
-			showAxesCheckBox.setSelected(appPrefs.getBoolean(AXES_KEY,
-									systemPrefs.getBoolean(AXES_KEY, false)));
-			tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
-									systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
-			showSpotlightCheckBox.setSelected(appPrefs.getBoolean(SPOTLIGHT_KEY,
-									systemPrefs.getBoolean(SPOTLIGHT_KEY, true)));
-			showAmbientLightCheckBox.setSelected(appPrefs.getBoolean(AMBIENT_LIGHT_KEY,
-									systemPrefs.getBoolean(AMBIENT_LIGHT_KEY, false)));
-			showBackgroundCheckBox.setSelected(appPrefs.getBoolean(BACKDROP_KEY,
-									systemPrefs.getBoolean(BACKDROP_KEY, true)));
-
-			int val = appPrefs.getInt(DRAW_POLYGONS_KEY, 
-									systemPrefs.getInt(DRAW_POLYGONS_KEY,
-										polyPoint.isSelected() ? 0 : 
-										polyLine.isSelected() ? 1 : 2));
-			if (val == 0) polyPoint.setSelected(true);
-			else if (val == 1) polyLine.setSelected(true);
-			else // (val == 0) 
-				polyFill.setSelected(true);
-				
-			val = appPrefs.getInt(DRAW_FACES_KEY, 
-									systemPrefs.getInt(DRAW_FACES_KEY,
-										polyCullNone.isSelected() ? 0 : 
-										polyCullBack.isSelected() ? 1 : 2));
-			if (val == 0) polyCullNone.setSelected(true);
-			else if (val == 1) polyCullBack.setSelected(true);
-			else // (val == 0) 
-				polyCullFront.setSelected(true);
-			}
+            pack();
+            setResizable(false);
+            } 
 
 
-		}
+        /** Saves the Option Pane Preferences to a given Preferences Node */
+        public void savePreferences(Preferences prefs)
+            {
+            prefs.putBoolean(ROTATE_LEFT_RIGHT_KEY, orbitRotateXCheckBox.isSelected());
+            prefs.putBoolean(ROTATE_UP_DOWN_KEY, orbitRotateYCheckBox.isSelected());
+            prefs.putBoolean(TRANSLATE_LEFT_RIGHT_KEY, orbitTranslateXCheckBox.isSelected());
+            prefs.putBoolean(TRANSLATE_UP_DOWN_KEY, orbitTranslateYCheckBox.isSelected());
+            prefs.putBoolean(MOVE_TOWARDS_AWAY_KEY, orbitZoomCheckBox.isSelected());
+            prefs.putBoolean(SELECT_KEY, selectBehCheckBox.isSelected());
+
+            prefs.putDouble(AUTO_ROTATE_X_KEY, rotAxis_X.getValue());
+            prefs.putDouble(AUTO_ROTATE_Y_KEY, rotAxis_Y.getValue());
+            prefs.putDouble(AUTO_ROTATE_Z_KEY, rotAxis_Z.getValue());
+            prefs.putDouble(AUTO_ROTATE_RATE_KEY, spinDuration.getValue());
+                        
+            prefs.putBoolean(AXES_KEY, showAxesCheckBox.isSelected());
+            prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+            prefs.putBoolean(SPOTLIGHT_KEY, showSpotlightCheckBox.isSelected());
+            prefs.putBoolean(AMBIENT_LIGHT_KEY, showAmbientLightCheckBox.isSelected());
+            prefs.putBoolean(BACKDROP_KEY, showBackgroundCheckBox.isSelected());
+                        
+            prefs.putInt(DRAW_POLYGONS_KEY,
+                polyPoint.isSelected() ? 0 : 
+                polyLine.isSelected() ? 1 : 2);
+            prefs.putInt(DRAW_FACES_KEY,
+                polyCullNone.isSelected() ? 0 : 
+                polyCullBack.isSelected() ? 1 : 2);
+
+            if (!Prefs.save(prefs))
+                Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+            }
+                        
+                        
+        static final String ROTATE_LEFT_RIGHT_KEY = "Rotate Left Right";
+        static final String TRANSLATE_LEFT_RIGHT_KEY = "Translate Left Right";
+        static final String MOVE_TOWARDS_AWAY_KEY = "Move Towards Away";
+        static final String ROTATE_UP_DOWN_KEY = "Rotate Up Down";
+        static final String TRANSLATE_UP_DOWN_KEY = "Translate Up Down";
+        static final String SELECT_KEY = "Select";
+        static final String AUTO_ROTATE_X_KEY = "Auto Rotate X";
+        static final String AUTO_ROTATE_Y_KEY = "Auto Rotate Y";
+        static final String AUTO_ROTATE_Z_KEY = "Auto Rotate Z";
+        static final String AUTO_ROTATE_RATE_KEY = "Auto Rotate Rate";
+        static final String AXES_KEY = "Axes";
+        static final String TOOLTIPS_KEY = "Tooltips";
+        static final String SPOTLIGHT_KEY = "Spotlight";
+        static final String AMBIENT_LIGHT_KEY = "Ambient Light";
+        static final String BACKDROP_KEY = "Backdrop";
+        static final String DRAW_POLYGONS_KEY = "Draw Polygons";
+        static final String DRAW_FACES_KEY = "Draw Faces";
+                
+        /** Resets the Option Pane Preferences by loading from the preference database */
+        public void resetToPreferences()
+            {
+            Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
+            Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
+                        
+            orbitRotateXCheckBox.setSelected(appPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY,
+                    systemPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY, true)));
+            orbitRotateYCheckBox.setSelected(appPrefs.getBoolean(ROTATE_UP_DOWN_KEY,
+                    systemPrefs.getBoolean(ROTATE_UP_DOWN_KEY, true)));
+            orbitTranslateXCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY,
+                    systemPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY, true)));
+            orbitTranslateYCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY,
+                    systemPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY, true)));
+            selectBehCheckBox.setSelected(appPrefs.getBoolean(SELECT_KEY,
+                    systemPrefs.getBoolean(SELECT_KEY, true)));
+
+            rotAxis_X.setValue(rotAxis_X.newValue(appPrefs.getDouble(AUTO_ROTATE_X_KEY,
+                        systemPrefs.getDouble(AUTO_ROTATE_X_KEY, 0))));
+            rotAxis_Y.setValue(rotAxis_Y.newValue(appPrefs.getDouble(AUTO_ROTATE_Y_KEY,
+                        systemPrefs.getDouble(AUTO_ROTATE_Y_KEY, 0))));
+            rotAxis_Z.setValue(rotAxis_Z.newValue(appPrefs.getDouble(AUTO_ROTATE_Z_KEY,
+                        systemPrefs.getDouble(AUTO_ROTATE_Z_KEY, 0))));
+            spinDuration.setValue(spinDuration.newValue(appPrefs.getDouble(AUTO_ROTATE_RATE_KEY,
+                        systemPrefs.getDouble(AUTO_ROTATE_RATE_KEY, 0))));
+
+            showAxesCheckBox.setSelected(appPrefs.getBoolean(AXES_KEY,
+                    systemPrefs.getBoolean(AXES_KEY, false)));
+            tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
+                    systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+            showSpotlightCheckBox.setSelected(appPrefs.getBoolean(SPOTLIGHT_KEY,
+                    systemPrefs.getBoolean(SPOTLIGHT_KEY, true)));
+            showAmbientLightCheckBox.setSelected(appPrefs.getBoolean(AMBIENT_LIGHT_KEY,
+                    systemPrefs.getBoolean(AMBIENT_LIGHT_KEY, false)));
+            showBackgroundCheckBox.setSelected(appPrefs.getBoolean(BACKDROP_KEY,
+                    systemPrefs.getBoolean(BACKDROP_KEY, true)));
+
+            int val = appPrefs.getInt(DRAW_POLYGONS_KEY, 
+                systemPrefs.getInt(DRAW_POLYGONS_KEY,
+                    polyPoint.isSelected() ? 0 : 
+                    polyLine.isSelected() ? 1 : 2));
+            if (val == 0) polyPoint.setSelected(true);
+            else if (val == 1) polyLine.setSelected(true);
+            else // (val == 0) 
+                polyFill.setSelected(true);
+                                
+            val = appPrefs.getInt(DRAW_FACES_KEY, 
+                systemPrefs.getInt(DRAW_FACES_KEY,
+                    polyCullNone.isSelected() ? 0 : 
+                    polyCullBack.isSelected() ? 1 : 2));
+            if (val == 0) polyCullNone.setSelected(true);
+            else if (val == 1) polyCullBack.setSelected(true);
+            else // (val == 0) 
+                polyCullFront.setSelected(true);
+            }
+
+
+        }
 
 // must be after all other declared widgets because its constructor relies on them existing
     public OptionPane3D optionPane = new OptionPane3D("3D Options");    

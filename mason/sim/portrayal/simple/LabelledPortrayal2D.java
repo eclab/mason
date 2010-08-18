@@ -179,23 +179,23 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
 
             String s = getLabel(object,info);
-			if (s != null && !s.equals(""))		// don't bother drawing if the string is empty!
-				{
-				int x = (int)(info.draw.x + scalex * info.draw.width + offsetx);
-				int y = (int)(info.draw.y + scaley * info.draw.height + offsety);
-				graphics.setPaint(paint);
-				graphics.setFont(scaledFont);
-		
-				if (align == ALIGN_CENTER)
-					{
-					x -= graphics.getFontMetrics().stringWidth(s)/2;
-					}
-				else if (align == ALIGN_RIGHT)
-					{
-					x -= graphics.getFontMetrics().stringWidth(s);
-					}
-				graphics.drawString(s,x,y);
-				}
+            if (s != null && !s.equals(""))         // don't bother drawing if the string is empty!
+                {
+                int x = (int)(info.draw.x + scalex * info.draw.width + offsetx);
+                int y = (int)(info.draw.y + scaley * info.draw.height + offsety);
+                graphics.setPaint(paint);
+                graphics.setFont(scaledFont);
+                
+                if (align == ALIGN_CENTER)
+                    {
+                    x -= graphics.getFontMetrics().stringWidth(s)/2;
+                    }
+                else if (align == ALIGN_RIGHT)
+                    {
+                    x -= graphics.getFontMetrics().stringWidth(s);
+                    }
+                graphics.drawString(s,x,y);
+                }
             }
         }
         

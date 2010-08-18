@@ -26,29 +26,29 @@ package sim.engine;
     ever think to use them is if you actually HAVE multiple CPUs on your computer.  Otherwise
     they're almost certainly not the solution to your odd multiple-thread needs.
 
-<!-- This is no longer true: we're now setting the thread to be a daemon thread
+    <!-- This is no longer true: we're now setting the thread to be a daemon thread
     <p><b>Important Note 1:</b>
-	Because ParallelSequences are lightweight, their threads are persistent -- even
+    Because ParallelSequences are lightweight, their threads are persistent -- even
     after your main() loop exits!  So if you use ParallelSequences, you have to remember to call
     System.exit(0); to exit your program instead.
--->
+    -->
 
-	<p><b>Important Note</b>
-	Because ParallelSequences are lightweight, their threads are persistent, even after your step()
-	method has completed (this allows them to be reused for the next step() method.  If the ParallelSequence
-	is garbage collected, we automatically delete all its threads in its finalize() method.  And that's the
-	rub: even if you get rid of your ParallelSequence, it's often the case that its garbage collection is
-	delayed, or even that the VM will <i>never</i> garbage collect it.
-	
-	<p>Thus when you're done with your ParallelSequence and wish to throw it away, you should always
-	call <b>cleanup()</b>, which deletes the threads manually.  Otherwise the thread resources will leak
-	and quickly consume all your available memory.
-	
-	<p>Alternatively you can call <b>setDestroysThreads(true)</b>  on your ParallelSequence.  This will
-	cause the ParallelSequence to destroy its threads every single time the ParallelSequence's step()
-	method completes.  This is expensive but you don't have to keep track of the ParallelSequence
-	at the end of the run to call cleanup() on it.  It's not a bad idea for a ParallelSequence which
-	is one-shot rather than repeating.
+    <p><b>Important Note</b>
+    Because ParallelSequences are lightweight, their threads are persistent, even after your step()
+    method has completed (this allows them to be reused for the next step() method.  If the ParallelSequence
+    is garbage collected, we automatically delete all its threads in its finalize() method.  And that's the
+    rub: even if you get rid of your ParallelSequence, it's often the case that its garbage collection is
+    delayed, or even that the VM will <i>never</i> garbage collect it.
+        
+    <p>Thus when you're done with your ParallelSequence and wish to throw it away, you should always
+    call <b>cleanup()</b>, which deletes the threads manually.  Otherwise the thread resources will leak
+    and quickly consume all your available memory.
+        
+    <p>Alternatively you can call <b>setDestroysThreads(true)</b>  on your ParallelSequence.  This will
+    cause the ParallelSequence to destroy its threads every single time the ParallelSequence's step()
+    method completes.  This is expensive but you don't have to keep track of the ParallelSequence
+    at the end of the run to call cleanup() on it.  It's not a bad idea for a ParallelSequence which
+    is one-shot rather than repeating.
 */
 
 public class ParallelSequence extends Sequence
@@ -60,9 +60,9 @@ public class ParallelSequence extends Sequence
     boolean operating = false;  // checking for circularity
     boolean destroysThreads = false;
 
-	public boolean getDestroysThreads() { return destroysThreads; }
-	public void setDestroysThreads(boolean val) { destroysThreads = val; }
-	
+    public boolean getDestroysThreads() { return destroysThreads; }
+    public void setDestroysThreads(boolean val) { destroysThreads = val; }
+        
     /// Threads are not serializable, so we must manually rebuild here
     private void writeObject(java.io.ObjectOutputStream p)
         throws java.io.IOException
@@ -92,7 +92,7 @@ public class ParallelSequence extends Sequence
         for (int i = 0; i < steps.length; i++)
             {
             threads[i] = new Thread( workers[i] );
-			threads[i].setDaemon(true);
+            threads[i].setDaemon(true);
             threads[i].start();
             }
         }
@@ -106,20 +106,20 @@ public class ParallelSequence extends Sequence
         for(int x=0;x<steps.length;x++)
             try { threads[x].join(); }  
             catch (InterruptedException e) { /* shouldn't happen */ }
-		pleaseDie = false;
+        pleaseDie = false;
         threads = null;
         }
-		
-	/** Call this just before you get rid of a ParallelSequence: for example, one good place is the stop() method of
-		your simulation.  Never call this method inside the ParallelSequence's own step() method.  This method
-		deletes the threads so the ParallelSequence is ready to be thrown away.  We also do this in
-		finalize() but finalize() is not guaranteed to be called at any particular time, which can result in
-		unexpected memory leaks.  Think of this method as the same kind of thing as a Graphics or 
-		Window's dispose() method.  */
-	public void cleanup()
-		{
-		gatherThreads();
-		}
+                
+    /** Call this just before you get rid of a ParallelSequence: for example, one good place is the stop() method of
+        your simulation.  Never call this method inside the ParallelSequence's own step() method.  This method
+        deletes the threads so the ParallelSequence is ready to be thrown away.  We also do this in
+        finalize() but finalize() is not guaranteed to be called at any particular time, which can result in
+        unexpected memory leaks.  Think of this method as the same kind of thing as a Graphics or 
+        Window's dispose() method.  */
+    public void cleanup()
+        {
+        gatherThreads();
+        }
 
     protected void finalize() throws Throwable
         {
@@ -150,9 +150,9 @@ public class ParallelSequence extends Sequence
             operating = true;
             }
 
-		if (threads == null)
-			buildThreads();
-		
+        if (threads == null)
+            buildThreads();
+                
         for(int x=0;x<steps.length;x++)
             {
             workers[x].step = steps[x];
@@ -162,12 +162,12 @@ public class ParallelSequence extends Sequence
         for(int x=0;x<steps.length;x++)
             semaphore.P();
 
-		if (destroysThreads)
-			cleanup();
+        if (destroysThreads)
+            cleanup();
 
         // don't need to synchronize to turn operating off
         operating = false;
-		}
+        }
 
     // a small semaphore class
     static class Semaphore implements java.io.Serializable
@@ -198,7 +198,7 @@ public class ParallelSequence extends Sequence
         {
         Steppable step;
         SimState state;
-		
+                
         // Thread currentThread = null;
         public Worker()
             {
@@ -210,8 +210,8 @@ public class ParallelSequence extends Sequence
                 {
                 P();
                 if (pleaseDie) return;
-				// this line was BAD -- because Thread is not serializable.  So I've commented it out 
-				// but left it as a warning for others.  :-)
+                // this line was BAD -- because Thread is not serializable.  So I've commented it out 
+                // but left it as a warning for others.  :-)
                 //if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
                 Thread.currentThread().setName("Parallel Sequence: " + step);
                 step.step(state);

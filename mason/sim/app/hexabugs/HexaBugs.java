@@ -75,9 +75,9 @@ public /*strictfp*/ class HexaBugs extends SimState
         super(seed);
         bugs = new HexaBug[bugCount];
         }
-	
-	ThreadedHexaDiffuser diffuser = null;
-	
+        
+    ThreadedHexaDiffuser diffuser = null;
+        
     /** Resets and starts a simulation */
     public void start()
         {
@@ -103,19 +103,19 @@ public /*strictfp*/ class HexaBugs extends SimState
         // Schedule the decreaser to happen after the HexaBugs
         if (availableProcessors() >  1)  // yay, multi-processor!
             {
-			// store away the ThreadedHexaDiffuser so we can call cleanup() on it later in our stop() method.
-			diffuser = new ThreadedHexaDiffuser(valgrid,valgrid2,evaporationRate,diffusionRate);
-			schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
-			}
+            // store away the ThreadedHexaDiffuser so we can call cleanup() on it later in our stop() method.
+            diffuser = new ThreadedHexaDiffuser(valgrid,valgrid2,evaporationRate,diffusionRate);
+            schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
+            }
         else
             schedule.scheduleRepeating(Schedule.EPOCH,1,new HexaDiffuser(valgrid,valgrid2,evaporationRate,diffusionRate),1);
         }
-		
-	public void stop()
-		{
-		if (diffuser != null) diffuser.cleanup();
-		diffuser = null;
-		}
+                
+    public void stop()
+        {
+        if (diffuser != null) diffuser.cleanup();
+        diffuser = null;
+        }
     
     public int availableProcessors()
         {

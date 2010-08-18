@@ -209,9 +209,9 @@ public abstract class ChartGenerator extends JPanel
     
     /** Returns the underlying chart. **/
     final public JFreeChart getChart()
-    	{
-    	return chart;
-    	}
+        {
+        return chart;
+        }
 
     /** Generates a new ChartGenerator with a blank chart.  Before anything else, buildChart() is called.  */
     public ChartGenerator()
@@ -546,22 +546,22 @@ public abstract class ChartGenerator extends JPanel
     
     /** Add a legend to the chart unless the chart already has one. **/
     public void addLegend() 
-    	{
-    	if (chart.getLegend() != null)  // don't do anything if there already is one
-    		return;
+        {
+        if (chart.getLegend() != null)  // don't do anything if there already is one
+            return;
 
         LegendTitle title = new LegendTitle(chart.getXYPlot());
         title.setLegendItemGraphicPadding(new org.jfree.ui.RectangleInsets(0,8,0,4));
         chart.addLegend(title);
-    	}
+        }
 
-public void setRangeAxisRange(double lower, double upper)
+    public void setRangeAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setRange(lower, upper);
         }
 
-public void setDomainAxisRange(double lower, double upper)
+    public void setDomainAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setRange(lower, upper);
@@ -569,4 +569,4 @@ public void setDomainAxisRange(double lower, double upper)
 
     }
 
-	
+        

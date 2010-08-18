@@ -44,25 +44,25 @@ public class SimplePortrayal2D implements Portrayal2D
         return true;
         }
 
-	public static int TYPE_SELECTED_OBJECT = 0;
-	public static int TYPE_HIT_OBJECT = 1;
-	
-	/**
-		Optionally handles a mouse event.  At present, events are sent to SimplePortrayal2Ds representing objects which have been either
-		selected or are presently hit by the event coordinates.  The wrapper provides the field portrayal, object location, and object.
-		Also provided are the display, event, the DrawInfo2D for the field portrayal, and the type of mouse event situation
-		(either because the object was SELECTED or because it was HIT).
-		
-		<p>To indicate that the event was handled, return true.  The default blank implementation of this method simply
-		returns false.  Events are first sent to portrayals selected objects, until one of them handles the event.  If none
-		handled the event, then events are sent to portrayals of objects hit by the event, until one of *them* handles the event.
-		If still no one has handled the event, then the Display2D will route the event to built-in mechanisms such selecting
-		the object or inspecting it.
-	*/
+    public static int TYPE_SELECTED_OBJECT = 0;
+    public static int TYPE_HIT_OBJECT = 1;
+        
+    /**
+       Optionally handles a mouse event.  At present, events are sent to SimplePortrayal2Ds representing objects which have been either
+       selected or are presently hit by the event coordinates.  The wrapper provides the field portrayal, object location, and object.
+       Also provided are the display, event, the DrawInfo2D for the field portrayal, and the type of mouse event situation
+       (either because the object was SELECTED or because it was HIT).
+                
+       <p>To indicate that the event was handled, return true.  The default blank implementation of this method simply
+       returns false.  Events are first sent to portrayals selected objects, until one of them handles the event.  If none
+       handled the event, then events are sent to portrayals of objects hit by the event, until one of *them* handles the event.
+       If still no one has handled the event, then the Display2D will route the event to built-in mechanisms such selecting
+       the object or inspecting it.
+    */
     public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper,
-									MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+        MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
         {
-		return false;
+        return false;
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)

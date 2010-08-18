@@ -94,17 +94,17 @@ public class SimpleController implements Controller
         }
 
 
-	/** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
-	void invokeInSwing(Runnable runnable)
-		{
-		if (SwingUtilities.isEventDispatchThread()) runnable.run();
-		else try
-			{
-			SwingUtilities.invokeAndWait(runnable);
-			}
-		catch (InterruptedException e) { }
-		catch (InvocationTargetException e) { }
-		}
+    /** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
+    void invokeInSwing(Runnable runnable)
+        {
+        if (SwingUtilities.isEventDispatchThread()) runnable.run();
+        else try
+                 {
+                 SwingUtilities.invokeAndWait(runnable);
+                 }
+            catch (InterruptedException e) { }
+            catch (InvocationTargetException e) { }
+        }
 
 
     /** The thread that actually goes through the steps */
@@ -204,7 +204,7 @@ public class SimpleController implements Controller
 
     /** Private internal flag which indicates if the program is already in the process of quitting. */    
     boolean isClosing = false;
-	/** Private lock to avoid synchronizing on myself. */
+    /** Private lock to avoid synchronizing on myself. */
     final Object isClosingLock = new Object();
 
     /** Closes the Controller and shuts down the simulation.  Quits the program only if other simulations
@@ -224,15 +224,15 @@ public class SimpleController implements Controller
         }
     
     boolean incrementSeedOnPlay = true;
-	public void setIncrementSeedOnPlay(boolean val)
-		{
-		incrementSeedOnPlay = val;
-		}
-	
-	public boolean getIncrementSeedOnPlay()
-		{
-		return incrementSeedOnPlay;
-		}
+    public void setIncrementSeedOnPlay(boolean val)
+        {
+        incrementSeedOnPlay = val;
+        }
+        
+    public boolean getIncrementSeedOnPlay()
+        {
+        return incrementSeedOnPlay;
+        }
 
 
     /////////////////////// PLAY/STOP/PAUSE BUTTON FUNCTIONS

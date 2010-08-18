@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
@@ -30,78 +30,78 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class ExponentialPower extends AbstractContinousDistribution { 
-	protected double tau;
+    protected double tau;
 
-	// cached vars for method nextDouble(tau) (for performance only)
-	private double s,sm1,tau_set = -1.0;
+    // cached vars for method nextDouble(tau) (for performance only)
+    private double s,sm1,tau_set = -1.0;
 
 /**
  * Constructs an Exponential Power distribution.
  * Example: tau=1.0.
  * @throws IllegalArgumentException if <tt>tau &lt; 1.0</tt>.
  */
-public ExponentialPower(double tau, MersenneTwisterFast randomGenerator) {
-	setRandomGenerator(randomGenerator);
-	setState(tau);
-}
+    public ExponentialPower(double tau, MersenneTwisterFast randomGenerator) {
+        setRandomGenerator(randomGenerator);
+        setState(tau);
+        }
 /**
  * Returns a random number from the distribution.
  */
-public double nextDouble() {
-	return nextDouble(this.tau);
-}
+    public double nextDouble() {
+        return nextDouble(this.tau);
+        }
 /**
  * Returns a random number from the distribution; bypasses the internal state.
  * @throws IllegalArgumentException if <tt>tau &lt; 1.0</tt>.
  */
-public double nextDouble(double tau) {
-	double u,u1,v,x,y;
+    public double nextDouble(double tau) {
+        double u,u1,v,x,y;
 
-	if (tau != tau_set) { // SET-UP 
-		s = 1.0/tau;
-		sm1 = 1.0 - s;
+        if (tau != tau_set) { // SET-UP 
+            s = 1.0/tau;
+            sm1 = 1.0 - s;
 
-		tau_set = tau;
-	}
+            tau_set = tau;
+            }
 
-	// GENERATOR 
-	do {
-		u = randomGenerator.nextDouble();                             // U(0/1)      
-		u = (2.0*u) - 1.0;                                     // U(-1.0/1.0) 
-		u1 = Math.abs(u);                                      // u1=|u|     
-		v = randomGenerator.nextDouble();                             // U(0/1) 
+        // GENERATOR 
+        do {
+            u = randomGenerator.nextDouble();                             // U(0/1)      
+            u = (2.0*u) - 1.0;                                     // U(-1.0/1.0) 
+            u1 = Math.abs(u);                                      // u1=|u|     
+            v = randomGenerator.nextDouble();                             // U(0/1) 
 
-		if (u1 <= sm1) { // Uniform hat-function for x <= (1-1/tau)   
-			x = u1;
-		}
-		else { // Exponential hat-function for x > (1-1/tau) 
-			y = tau*(1.0 - u1);                                // U(0/1) 
-			x = sm1 - s*Math.log(y);
-			v = v*y;
-		}
-	}
+            if (u1 <= sm1) { // Uniform hat-function for x <= (1-1/tau)   
+                x = u1;
+                }
+            else { // Exponential hat-function for x > (1-1/tau) 
+                y = tau*(1.0 - u1);                                // U(0/1) 
+                x = sm1 - s*Math.log(y);
+                v = v*y;
+                }
+            }
 
-	// Acceptance/Rejection
-	while (Math.log(v) > -Math.exp(Math.log(x)*tau));
+        // Acceptance/Rejection
+        while (Math.log(v) > -Math.exp(Math.log(x)*tau));
 
-	// Random sign 
-	if (u < 0.0) 
-		return x;
-	else
-		return -x;
-}
+        // Random sign 
+        if (u < 0.0) 
+            return x;
+        else
+            return -x;
+        }
 /**
  * Sets the distribution parameter.
  * @throws IllegalArgumentException if <tt>tau &lt; 1.0</tt>.
  */
-public void setState(double tau) {
-	if (tau<1.0) throw new IllegalArgumentException();
-	this.tau = tau;
-}
+    public void setState(double tau) {
+        if (tau<1.0) throw new IllegalArgumentException();
+        this.tau = tau;
+        }
 /**
  * Returns a String representation of the receiver.
  */
-public String toString() {
-	return this.getClass().getName()+"("+tau+")";
-}
-}
+    public String toString() {
+        return this.getClass().getName()+"("+tau+")";
+        }
+    }

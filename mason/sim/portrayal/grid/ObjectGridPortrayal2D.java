@@ -52,8 +52,8 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         return defaultNullPortrayal;
         }
 
-	public Double2D getScale(DrawInfo2D info)
-		{
+    public Double2D getScale(DrawInfo2D info)
+        {
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -62,20 +62,20 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
-		return new Double2D(xScale, yScale);
-		}
+        return new Double2D(xScale, yScale);
+        }
 
     public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
         {
-		return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
+        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
         }
-		
-	public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
+                
+    public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
-		Double2D scale = getScale(info);
-		double xScale = scale.x;
-		double yScale = scale.y;
-		
+        Double2D scale = getScale(info);
+        double xScale = scale.x;
+        double yScale = scale.y;
+                
         final int startx = (int)((position.getX() - info.draw.x) / xScale);
         final int starty = (int)((position.getY() - info.draw.y) / yScale); // assume that the X coordinate is proportional -- and yes, it's _width_
         return new Int2D(startx, starty);
@@ -206,16 +206,16 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                     {
                     newinfo.selected = (objectSelected &&  // there's something there
                         (selectedObject==obj || selectedWrappers.get(obj) != null));
-                        /*{
-                        LocationWrapper wrapper = null;
-                        if (selectedObject == obj) 
-                            wrapper = selectedWrapper;
-                        else wrapper = (LocationWrapper)(selectedWrappers.get(obj));
-                        portrayal.setSelected(wrapper,true);
-                        portrayal.draw(obj, graphics, newinfo);
-                        portrayal.setSelected(wrapper,false);
-                        }
-                    else */ portrayal.draw(obj, graphics, newinfo);
+                    /*{
+                      LocationWrapper wrapper = null;
+                      if (selectedObject == obj) 
+                      wrapper = selectedWrapper;
+                      else wrapper = (LocationWrapper)(selectedWrappers.get(obj));
+                      portrayal.setSelected(wrapper,true);
+                      portrayal.draw(obj, graphics, newinfo);
+                      portrayal.setSelected(wrapper,false);
+                      }
+                      else */ portrayal.draw(obj, graphics, newinfo);
                     }
                 }
         }

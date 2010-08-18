@@ -167,7 +167,7 @@ public class HexaBugsWithUI extends GUIState
         
         bugPortrayal.setField(((HexaBugs)state).buggrid);
         bugPortrayal.setPortrayalForAll(new MovablePortrayal2D(
-            new sim.portrayal.simple.OvalPortrayal2D(Color.white)));   // all the HexaBugs will be white ovals
+                new sim.portrayal.simple.OvalPortrayal2D(Color.white)));   // all the HexaBugs will be white ovals
             
         // reschedule the displayer
         display.reset();

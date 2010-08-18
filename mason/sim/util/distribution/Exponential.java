@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
@@ -24,52 +24,52 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class Exponential extends AbstractContinousDistribution { 
-	protected double lambda;
+    protected double lambda;
 
 /**
  * Constructs a Negative Exponential distribution.
  */
-public Exponential(double lambda, MersenneTwisterFast randomGenerator) {
-	setRandomGenerator(randomGenerator);
-	setState(lambda);
-}
+    public Exponential(double lambda, MersenneTwisterFast randomGenerator) {
+        setRandomGenerator(randomGenerator);
+        setState(lambda);
+        }
 /**
  * Returns the cumulative distribution function.
  */
-public double cdf(double x) {
-	if (x <= 0.0) return 0.0;
-	return 1.0 - Math.exp(-x * lambda);
-}
+    public double cdf(double x) {
+        if (x <= 0.0) return 0.0;
+        return 1.0 - Math.exp(-x * lambda);
+        }
 /**
  * Returns a random number from the distribution.
  */
-public double nextDouble() {
-	return nextDouble(lambda);
-}
+    public double nextDouble() {
+        return nextDouble(lambda);
+        }
 /**
  * Returns a random number from the distribution; bypasses the internal state.
  */
-public double nextDouble(double lambda) {
-	return - Math.log(randomGenerator.nextDouble()) / lambda;
-}
+    public double nextDouble(double lambda) {
+        return - Math.log(randomGenerator.nextDouble()) / lambda;
+        }
 /**
  * Returns the probability distribution function.
  */
-public double pdf(double x) {
-	if (x < 0.0) return 0.0;
-	return lambda*Math.exp(-x*lambda);
-}
+    public double pdf(double x) {
+        if (x < 0.0) return 0.0;
+        return lambda*Math.exp(-x*lambda);
+        }
 /**
  * Sets the mean.
  */
-public void setState(double lambda) {
-	this.lambda = lambda;
-}
+    public void setState(double lambda) {
+        this.lambda = lambda;
+        }
 
 /**
  * Returns a String representation of the receiver.
  */
-public String toString() {
-	return this.getClass().getName()+"("+lambda+")";
-}
-}
+    public String toString() {
+        return this.getClass().getName()+"("+lambda+")";
+        }
+    }

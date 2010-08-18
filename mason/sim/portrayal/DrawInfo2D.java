@@ -52,7 +52,7 @@ public class DrawInfo2D
     {
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
-	public boolean selected;
+    public boolean selected;
     public boolean precise;
     public Object location;
     

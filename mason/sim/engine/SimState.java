@@ -45,7 +45,7 @@ public class SimState implements java.io.Serializable
     public SimState(long seed)
         {
         this(new MersenneTwisterFast(seed));
-		this.seed = seed;  // for GUIs later on if they want to know...
+        this.seed = seed;  // for GUIs later on if they want to know...
         }
     
     /** Creates a SimState with a new, empty Schedule and the provided random number generator. */
@@ -291,13 +291,13 @@ public class SimState implements java.io.Serializable
     
     long job = 0;
     long seed = 0;  // considered bad value
-	
-	/** Returns the seed set by the doLoop(...) facility and by the constructor.
-		Only to be used for GUIs to display possible seed values.  */
-	public long seed()
-		{
-		return seed;
-		}
+        
+    /** Returns the seed set by the doLoop(...) facility and by the constructor.
+        Only to be used for GUIs to display possible seed values.  */
+    public long seed()
+        {
+        return seed;
+        }
         
     /** Returns the job number set by the doLoop(...) facility.  This number
         is not incremented by the GUI. */

@@ -1,10 +1,10 @@
 /*
-Copyright � 1999 CERN - European Organization for Nuclear Research.
-Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
-is hereby granted without fee, provided that the above copyright notice appear in all copies and 
-that both that copyright notice and this permission notice appear in supporting documentation. 
-CERN makes no representations about the suitability of this software for any purpose. 
-It is provided "as is" without expressed or implied warranty.
+  Copyright � 1999 CERN - European Organization for Nuclear Research.
+  Permission to use, copy, modify, distribute and sell this software and its documentation for any purpose 
+  is hereby granted without fee, provided that the above copyright notice appear in all copies and 
+  that both that copyright notice and this permission notice appear in supporting documentation. 
+  CERN makes no representations about the suitability of this software for any purpose. 
+  It is provided "as is" without expressed or implied warranty.
 */
 package sim.util.distribution;
 import ec.util.MersenneTwisterFast;
@@ -31,32 +31,32 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class VonMises extends AbstractContinousDistribution {
-	protected double my_k;
+    protected double my_k;
 
-	// cached vars for method nextDouble(a) (for performance only)
-	private double k_set = -1.0;
-	private double tau,rho,r;
+    // cached vars for method nextDouble(a) (for performance only)
+    private double k_set = -1.0;
+    private double tau,rho,r;
 
 /**
  * Constructs a Von Mises distribution.
  * Example: k=1.0.
  * @throws IllegalArgumentException if <tt>k &lt;= 0.0</tt>.
  */
-public VonMises(double freedom, MersenneTwisterFast randomGenerator) {
-	setRandomGenerator(randomGenerator);
-	setState(freedom);
-}
+    public VonMises(double freedom, MersenneTwisterFast randomGenerator) {
+        setRandomGenerator(randomGenerator);
+        setState(freedom);
+        }
 /**
  * Returns a random number from the distribution.
  */
-public double nextDouble() {
-	return nextDouble(this.my_k);
-}
+    public double nextDouble() {
+        return nextDouble(this.my_k);
+        }
 /**
  * Returns a random number from the distribution; bypasses the internal state.
  * @throws IllegalArgumentException if <tt>k &lt;= 0.0</tt>.
  */
-public double nextDouble(double k) {
+    public double nextDouble(double k) {
 /******************************************************************
  *                                                                *
  *         Von Mises Distribution - Acceptance Rejection          *
@@ -75,41 +75,41 @@ public double nextDouble(double k) {
  *                                                                *
  * Implemented by F. Niederl, August 1992                         *
  ******************************************************************/
-	double u,v,w,c,z;
+        double u,v,w,c,z;
 
-	if (k<=0.0) throw new IllegalArgumentException();
-	
-	if (k_set!=k) {                                               // SET-UP
-		tau = 1.0 + Math.sqrt(1.0 + 4.0*k*k);
-		rho = (tau-Math.sqrt(2.0*tau)) / (2.0*k);
-		r = (1.0+rho*rho) / (2.0*rho);
-		k_set = k;
-	}
+        if (k<=0.0) throw new IllegalArgumentException();
+        
+        if (k_set!=k) {                                               // SET-UP
+            tau = 1.0 + Math.sqrt(1.0 + 4.0*k*k);
+            rho = (tau-Math.sqrt(2.0*tau)) / (2.0*k);
+            r = (1.0+rho*rho) / (2.0*rho);
+            k_set = k;
+            }
 
-	// GENERATOR 
-	do {  
-		u = randomGenerator.nextDouble();                                // U(0/1) 
-		v = randomGenerator.nextDouble();                                // U(0/1) 
-		z = Math.cos(Math.PI * u);
-		w = (1.0+r*z) / (r+z);
-		c = k*(r-w);
-	} while ((c*(2.0-c) < v) && (Math.log(c/v)+1.0 < c));         // Acceptance/Rejection 
-		
-	return (randomGenerator.nextDouble() > 0.5)? Math.acos(w): -Math.acos(w);        // Random sign //
-					// 0 <= x <= Pi : -Pi <= x <= 0 //
-}
+        // GENERATOR 
+        do {  
+            u = randomGenerator.nextDouble();                                // U(0/1) 
+            v = randomGenerator.nextDouble();                                // U(0/1) 
+            z = Math.cos(Math.PI * u);
+            w = (1.0+r*z) / (r+z);
+            c = k*(r-w);
+            } while ((c*(2.0-c) < v) && (Math.log(c/v)+1.0 < c));         // Acceptance/Rejection 
+                
+        return (randomGenerator.nextDouble() > 0.5)? Math.acos(w): -Math.acos(w);        // Random sign //
+        // 0 <= x <= Pi : -Pi <= x <= 0 //
+        }
 /**
  * Sets the distribution parameter.
  * @throws IllegalArgumentException if <tt>k &lt;= 0.0</tt>.
  */
-public void setState(double k) {
-	if (k<=0.0) throw new IllegalArgumentException();
-	this.my_k = k;
-}
+    public void setState(double k) {
+        if (k<=0.0) throw new IllegalArgumentException();
+        this.my_k = k;
+        }
 /**
  * Returns a String representation of the receiver.
  */
-public String toString() {
-	return this.getClass().getName()+"("+my_k+")";
-}
-}
+    public String toString() {
+        return this.getClass().getName()+"("+my_k+")";
+        }
+    }
