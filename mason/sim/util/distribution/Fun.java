@@ -18,7 +18,7 @@ import ec.util.MersenneTwisterFast;
  * @author wolfgang.hoschek@cern.ch
  * @version 1.0, 09/24/99
  */
-class Fun {
+class Fun implements java.io.Serializable {
 /**
  * Makes this class non instantiable, but still let's others inherit from it.
  */

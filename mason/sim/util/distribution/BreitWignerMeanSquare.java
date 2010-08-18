@@ -32,17 +32,19 @@ public BreitWignerMeanSquare(double mean, double gamma, double cut, MersenneTwis
 	super(mean,gamma,cut,randomGenerator);
 	this.uniform = new Uniform(randomGenerator);
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+ /*
 public Object clone() {
 	BreitWignerMeanSquare copy = (BreitWignerMeanSquare) super.clone();
 	if (this.uniform != null) copy.uniform = new Uniform(copy.randomGenerator);
 	return copy;
 }
+*/
 /**
  * Returns a mean-squared random number from the distribution; bypasses the internal state.
  * @param cut </tt>cut==Double.NEGATIVE_INFINITY</tt> indicates "don't cut".

@@ -77,17 +77,19 @@ public Poisson(double mean, MersenneTwisterFast randomGenerator) {
 public double cdf(int k) {
 	return Probability.poisson(k,this.mean);
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+ /*
 public Object clone() {
 	Poisson copy = (Poisson) super.clone();
 	if (this.pp != null) copy.pp = (double[]) this.pp.clone();
 	return copy;
 }
+*/
 private static double f(int k, double l_nu, double c_pm) {
 	return  Math.exp(k * l_nu - Arithmetic.logFactorial(k) - c_pm);
 }

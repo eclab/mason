@@ -52,12 +52,13 @@ public NegativeBinomial(int n, double p, MersenneTwisterFast randomGenerator) {
 public double cdf(int k) {
 	return Probability.negativeBinomial(k,n,p);
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+/*
 public Object clone() {
 	NegativeBinomial copy = (NegativeBinomial) super.clone();
 	if (this.poisson != null) copy.poisson = (Poisson) this.poisson.clone();
@@ -66,6 +67,8 @@ public Object clone() {
 	copy.gamma.setRandomGenerator(copy.getRandomGenerator());
 	return copy;
 }
+*/
+
 /**
  * Returns a random number from the distribution.
  */

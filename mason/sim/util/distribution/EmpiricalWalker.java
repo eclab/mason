@@ -177,12 +177,13 @@ public double cdf(int k) {
 	if (k >= cdf.length-1) return 1.0;
 	return cdf[k];
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+/*
 public Object clone() {
 	EmpiricalWalker copy = (EmpiricalWalker) super.clone();
 	if (this.cdf != null) copy.cdf = (double[]) this.cdf.clone();
@@ -190,6 +191,7 @@ public Object clone() {
 	if (this.F != null) copy.F = (double[]) this.F.clone();
 	return copy;
 }
+*/
 /**
  * Returns a random integer <tt>k</tt> with probability <tt>pdf(k)</tt>.
  */

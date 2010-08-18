@@ -65,17 +65,19 @@ public double cdf(int k) {
 	if (k >= cdf.length-1) return 1.0;
 	return cdf[k];
 }
-/**
+/*
  * Returns a deep copy of the receiver; the copy will produce identical sequences.
  * After this call has returned, the copy and the receiver have equal but separate state.
  *
  * @return a copy of the receiver.
  */
+ /*
 public Object clone() {
 	Empirical copy = (Empirical) super.clone();
 	if (this.cdf != null) copy.cdf = (double[]) this.cdf.clone();
 	return copy;
 }
+*/
 /**
  * Returns a random number from the distribution.
  */
