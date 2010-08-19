@@ -10,9 +10,11 @@ import sim.engine.*;
 
 // This is the steppable that interprets the fully expanded l-system
 
-public /*strictfp*/ class LSystemDrawer implements Steppable
+public  class LSystemDrawer implements Steppable
     {
-    // copy the code over so that you can draw while calculating
+    private static final long serialVersionUID = 2107788276155299189L;
+
+	// copy the code over so that you can draw while calculating
     ByteList code;
     
     // draw settings remain local so that no changes are made mid-draw

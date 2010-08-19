@@ -10,9 +10,10 @@ import java.awt.*;
 import sim.portrayal.*;
 import sim.util.*;
 
-public /*strictfp*/ class Segment extends SimplePortrayal2D
+public  class Segment extends SimplePortrayal2D
     {
-    public double x,y,x2,y2;
+    private static final long serialVersionUID = 1519670365452291522L;
+	public double x,y,x2,y2;
     
     public Segment(double x, double y, double dist, double theta)
         {

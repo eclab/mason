@@ -16,9 +16,10 @@ import java.util.*;
 // So, this class holds the data between the time of 
 // calculation and draw setting and the actual drawing.
 
-public /*strictfp*/ class LSystemData implements java.io.Serializable
+public  class LSystemData implements java.io.Serializable
     {
-    // expanded code and rule lists
+    private static final long serialVersionUID = 2491061639713100804L;
+	// expanded code and rule lists
     public ByteList code;
     public ArrayList rules;
     

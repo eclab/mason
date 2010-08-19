@@ -15,7 +15,8 @@ import sim.util.gui.*;
 public class DrawUI extends JPanel
     {
 
-    // components
+    private static final long serialVersionUID = 7502392279728858809L;
+	// components
     JButton buttonSet = new JButton("Set");
     JTextField distField = new JTextField("2", 2);
     JTextField angleField = new JTextField("90", 4);
@@ -73,7 +74,8 @@ public class DrawUI extends JPanel
         //  text   component
         LabelledList list = new LabelledList()
             {
-            Insets insets = new Insets(5, 5, 5, 5);
+            private static final long serialVersionUID = -1043920050611225098L;
+			Insets insets = new Insets(5, 5, 5, 5);
             public Insets getInsets()
                 {
                 return insets;
@@ -89,7 +91,8 @@ public class DrawUI extends JPanel
         
         Box b = new Box(BoxLayout.X_AXIS)
             {
-            Insets insets = new Insets(5, 5, 5, 5);
+            private static final long serialVersionUID = 1868200221063009327L;
+			Insets insets = new Insets(5, 5, 5, 5);
             public Insets getInsets()
                 {
                 return insets;

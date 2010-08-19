@@ -8,9 +8,10 @@ package sim.app.lsystem;
 import sim.engine.*;
 import sim.field.continuous.*;
 
-public /*strictfp*/ class LSystem extends SimState
+public  class LSystem extends SimState
     {
-    /** @todo handle realocation of grids when these two are changed */
+    private static final long serialVersionUID = 1645219613363018777L;
+	/** @todo handle realocation of grids when these two are changed */
     public double xMin = 0;
     public double xMax = 100;
     public double yMin = 0;
