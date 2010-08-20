@@ -1,7 +1,7 @@
 /*
  * NetworkEdge.java
  *
- * $Id: NetworkEdge.java,v 1.2 2010-04-10 18:27:38 kemsulli Exp $
+ * $Id: GeomPlanarGraphEdge.java,v 1.2 2010-08-20 18:28:03 mcoletti Exp $
  */
 
 package sim.util.geo;
@@ -11,13 +11,13 @@ import com.vividsolutions.jts.planargraph.Edge;
 
 /** A planar graph edge that wraps a LineString
  *
- * @author mcoletti
+ * XXX Should consider making this an internal class to GeomPlanarGraph?
  */
-public class NetworkEdge extends Edge {
+public class GeomPlanarGraphEdge extends Edge {
 
     private LineString line; // line that corresponds to this edge
 
-    public NetworkEdge(LineString line)
+    public GeomPlanarGraphEdge(LineString line)
     {
         this.line = line;
     }

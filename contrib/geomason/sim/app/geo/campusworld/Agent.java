@@ -1,9 +1,7 @@
 package sim.app.geo.campusworld;
 
 import sim.util.geo.*; 
-import sim.util.geo.NetworkDirectedEdge;
 import sim.util.geo.PointMoveTo;
-import sim.util.geo.NetworkEdge;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -120,8 +118,8 @@ public class Agent implements Steppable {
                     {
                         // pick one randomly
                         int i = geoTest.random.nextInt(edges.length);
-                        NetworkDirectedEdge directedEdge = (NetworkDirectedEdge) edges[i];
-                        NetworkEdge edge = (NetworkEdge) directedEdge.getEdge();
+                        GeomPlanarGraphDirectedEdge directedEdge = (GeomPlanarGraphDirectedEdge) edges[i];
+                        GeomPlanarGraphEdge edge = (GeomPlanarGraphEdge) directedEdge.getEdge();
 
                         // and start moving along it
                         LineString newRoute = edge.getLine();

@@ -1,6 +1,5 @@
 package sim.app.geo.networkworld;
 
-import sim.util.geo.Network;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -27,7 +26,7 @@ public class NetworkWorld extends SimState
     public GeomVectorField agents = new GeomVectorField(); // agents moving through network
 
     // Stores transportation network connections
-    public Network network = new Network();
+    public GeomPlanarGraph network = new GeomPlanarGraph();
 
     // Agent that moves around the world
     Agent a = new Agent();

@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.*;
-import sim.util.geo.Network;
 import sim.util.*;
+import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
 /** 
@@ -50,7 +50,7 @@ public class CampusWorld extends SimState
 
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows 
     // easy selection of new waypoints for the agents.  
-    public Network network = new Network();
+    public GeomPlanarGraph network = new GeomPlanarGraph();
     public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
 
 
