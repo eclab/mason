@@ -1,11 +1,12 @@
 /*
  * GeomGridField.java
  *
- * $Id: GeomGridField.java,v 1.2 2010-08-20 00:52:38 mcoletti Exp $
+ * $Id: GeomGridField.java,v 1.3 2010-08-20 18:06:41 mcoletti Exp $
  */
 
 package sim.field.geo;
 
+import com.vividsolutions.jts.geom.Envelope;
 import sim.field.grid.Grid2D;
 
 /** A georeferenced area represented by a grid
@@ -36,11 +37,15 @@ public class GeomGridField extends GeomField
 
     /** width of grid point in projection coordinate system
      *
+     * @see GeomGridField.setGrid()
+     * @see GeomGridField.setMBR()
      */
     private double pixelWidth = 0.0;
 
     /** height of grid point in projection coordinate system
      *
+     * @see GeomGridField.setGrid()
+     * @see GeomGridField.setMBR()
      */
     private double pixelHeight = 0.0;
  
@@ -74,12 +79,14 @@ public class GeomGridField extends GeomField
     public void setGrid(Grid2D newGrid)
     {
         grid = newGrid;
+
+        // TODO update pixelWidth and pixelHeight iff MBR set
     }
 
     /**
      * Returns width of grid in pixels.
      * <p>
-     * By contrast, super().getWidth() returns width in spatial reference context.
+     * By contrast, super.getWidth() returns width in spatial reference context.
      *
      * @return Returns width in grid points
      *
@@ -92,7 +99,7 @@ public class GeomGridField extends GeomField
 
 
     /**
-     * By contrast, super().getHeight() returns width in spatial reference context.
+     * By contrast, super.getHeight() returns width in spatial reference context.
      *
      * @return height of grid in pixels
      *
@@ -102,4 +109,27 @@ public class GeomGridField extends GeomField
     {
         return grid.getHeight();
     }
+
+
+
+    @Override
+    public void clear()
+    {
+        super.clear();
+
+        this.grid = null;
+    }
+    
+
+    @Override
+    public void setMBR(Envelope MBR)
+    {
+        super.setMBR(MBR);
+
+        // TODO update pixelWidth and pixelHeight iff grid is set
+    }
+
+
+
+
 }
