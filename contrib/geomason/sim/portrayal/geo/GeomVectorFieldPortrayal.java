@@ -12,10 +12,65 @@ import java.awt.image.*;
 
 /** 
     Portrayal for MasonGeometry objects.  The portrayal handles drawing and hit-testing (for inspectors).    
+	
+	
+	<p>GeomVectorFieldPortrayal overrides getPortrayalForObject to do a different thing than normal FieldPortrayals.  Specifically:
+	
+	<p><ol>
+		<li>The object passed in is expected to be a MasonGeometry.  From this we extract USER, the MASON user data of the geometry,
+			and GEOMETRY, the JTS Geometry object.
+		<li>If there is a portrayalForAll, return it.
+		<li>If user exists and is a Portrayal, return user as the Portrayal.
+		<li>If a portrayal is registered for user, return it.
+		<li>If a portrayal is registered for geometry, return it.
+		<li>If a portrayal is registered for user's class, return it.
+		<li>If a portrayal is registered for the geometry's class, return it.
+		<li>If there is a portrayalForRemainder, return it.
+		<li>Else return the getDefaultPortrayal
+	</ol>
+	
+	<p>Note that nowhere do we return portrayals for null objects: there is no PortrayalForNull and no DefaultNullPortrayal.
+	Indeed, the method setPortrayalForNull will throw an error -- you are not permitted to call it.
  
 */
 public class GeomVectorFieldPortrayal extends FieldPortrayal2D {
+
+    /** Throws an exception.  Do not call this method. */
+    public void setPortrayalForNull(Portrayal portrayal)
+        {
+		// this bad boy throws an exception
+		throw new RuntimeException("setPortrayalForNull(Portrayal) may NOT be called on a GeomVectorFieldPortrayal");
+        }
+
+    /** Returns the appropriate Portrayal.  See the class header for more information on the implementation of this method. */
+    public Portrayal getPortrayalForObject(Object obj)
+        {
+        // return the portrayal-for-all if any
+        if (portrayalForAll != null) return portrayalForAll;
+
+		MasonGeometry mg = (MasonGeometry)obj;
+		Geometry geometry = mg.geometry;
+		Object user = mg.userData;
+		
+        Portrayal tmp;
         
+		// we don't check for null values of obj, so this is simpler than the one in FieldPortrayal
+		
+		if (user != null && user instanceof Portrayal) return (Portrayal) user;
+		if (portrayalForNonNull != null) return portrayalForNonNull;
+		if ( (portrayals != null /* && !portrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+			((tmp = ((Portrayal)(portrayals.get(user))) ) !=null)) return tmp;
+		if ( (portrayals != null /* && !portrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+			((tmp = ((Portrayal)(portrayals.get(geometry))) ) !=null)) return tmp;
+		if ( user != null && (classPortrayals != null /* && !classPortrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+			((tmp = ((Portrayal)(classPortrayals.get(user.getClass()))) ) !=null)) return tmp;
+		if ( geometry != null && (classPortrayals != null /* && !classPortrayals.isEmpty() */) &&  // a little efficiency -- avoid making weak keys etc. 
+			((tmp = ((Portrayal)(classPortrayals.get(geometry.getClass()))) ) !=null)) return tmp;
+		if (portrayalForRemainder!=null) return portrayalForRemainder;
+		return getDefaultPortrayal();
+        }
+
+
     private static final long serialVersionUID = 8409421628913847667L;
 	
     /** The underlying portrayal */ 
