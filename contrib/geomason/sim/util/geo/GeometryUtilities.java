@@ -2,6 +2,8 @@ package sim.util.geo;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Comparator;
+
 import sim.portrayal.DrawInfo2D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -44,5 +46,13 @@ public class GeometryUtilities {
 		screenToWorld.transform(new Point2D.Double(x,y), p);
 		return p; 
      }
+ 
+     /** Comparator to sort and search for AttributeFields by name in a Collection */
+     public static Comparator<AttributeField> attrFieldCompartor = new Comparator<AttributeField>() { 
+     		public int compare(AttributeField af1, AttributeField af2)
+     		{
+     			return af1.name.compareTo(af2.name) ;
+     		}
+     };
      
 }

@@ -3,7 +3,7 @@
  *
  *   After starting the demo you should see
  *
- * $Id: ColorWorldWithUI.java,v 1.3 2010-04-23 21:39:12 mcoletti Exp $
+ * $Id: ColorWorldWithUI.java,v 1.4 2010-08-20 20:30:11 kemsulli Exp $
  *
  */
 
@@ -11,7 +11,7 @@ package sim.app.geo.colorworld;
 
 import sim.display.*;
 import sim.portrayal.simple.*;
-import sim.portrayal.geo.GeomFieldPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.engine.*;
 import java.awt.Color;
 import javax.swing.*;
@@ -30,7 +30,7 @@ public class ColorWorldWithUI extends GUIState {
     private JFrame displayFrame;
 
     private GeomValuedFieldPortrayal countyPortrayal = new GeomValuedFieldPortrayal();
-    private GeomFieldPortrayal agentPortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     public ColorWorldWithUI(SimState state)
     {

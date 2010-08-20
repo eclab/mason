@@ -30,7 +30,7 @@ public class CampusWorld extends SimState
 	public int numAgents = 1000;
 
 	/** Where the GIS files are stored */ 
-    private static final String dataDirectory = "sim/app/data/";
+    private static final String dataDirectory = "contrib/geomason/sim/app/data/";
 
     /** Fields to hold the associated GIS information */ 
     public GeomVectorField walkways = new GeomVectorField();
@@ -70,6 +70,9 @@ public class CampusWorld extends SimState
                 agents.addGeometry(new MasonGeometry(a.getGeometry(), null));
                 a.start(this);
                 schedule.scheduleRepeating(a);
+                
+                if (i == 10) 
+                	buildings.getGeometry("CODE", "JC").setUserData(a); 
             }
     }
 

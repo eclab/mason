@@ -1,14 +1,12 @@
-/**
- * GeomVectorField.java
- *
- * $Id: GeomVectorField.java,v 1.2 2010-08-20 00:52:38 mcoletti Exp $
- */
 package sim.field.geo;
 
 import com.vividsolutions.jts.geom.*;
 
 import com.vividsolutions.jts.algorithm.locate.*; 
 import com.vividsolutions.jts.algorithm.*; 
+
+import sim.util.geo.AttributeField;
+import sim.util.geo.GeometryUtilities;
 import sim.util.geo.MasonGeometry;
 
 import com.vividsolutions.jts.index.quadtree.*; 
@@ -58,7 +56,6 @@ public class GeomVectorField extends GeomField
     }
 
     /** Removes all geometry objects and resets the MBR. */
-    @Override
     public void clear()
     {
         super.clear();
@@ -167,7 +164,7 @@ public class GeomVectorField extends GeomField
 
     /** 
         Returns geometries that cover the given object.  Cover here means completely 
-        cover, including points on the bondaries.  Do not modify the returned Bag. 
+        cover, including points on the boundaries.  Do not modify the returned Bag. 
     */
     public final Bag getCoveringObjects(final Geometry g)
     {
@@ -285,5 +282,27 @@ public class GeomVectorField extends GeomField
 				return g1;
 		}
 		return g; 	
+	 }
+	 
+	 /**
+	  *  Searches the field for the object with attribute <i>name</i> that has value <i>value</i>. 
+	  *  Returns null if no such object exists 
+	  */
+	 @SuppressWarnings("unchecked")
+	public MasonGeometry getGeometry(String name, Object value)
+	 {
+		 AttributeField key = new AttributeField(name); 
+		 List<?> gList = spatialIndex.queryAll(); 
+		 for (int i=0; i < gList.size(); i++) { 
+			 MasonGeometry mg = (MasonGeometry)gList.get(i); 
+			 Geometry g = mg.getGeometry(); 
+			 ArrayList<AttributeField> attrs = (ArrayList<AttributeField>)g.getUserData(); 
+			 int index = Collections.binarySearch(attrs, key, GeometryUtilities.attrFieldCompartor); 
+			 if (index >= 0) { 
+				 if (attrs.get(index).value.equals(value))
+					 return mg; 
+			 }
+		 }
+		 return null; 
 	 }
 }

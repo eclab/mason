@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package sim.field.geo;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -12,8 +8,9 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public abstract class GeomField implements java.io.Serializable
 {
+    private static final long serialVersionUID = 5356444334673155514L;
 
-    /** The minimum bounding rectangle (MBR) of all the stored geometries. */
+	/** The minimum bounding rectangle (MBR) of all the stored geometries. */
     public Envelope MBR;
     
     /** Holds the origin for drawing; used to handle zooming and scrolling */
@@ -22,7 +19,6 @@ public abstract class GeomField implements java.io.Serializable
     public GeomField()
     {
         MBR = new Envelope();
-
         drawX = drawY = 0;
     }
 
@@ -30,7 +26,6 @@ public abstract class GeomField implements java.io.Serializable
     public void clear()
     {
         MBR = new Envelope();
-        
         drawX = drawY = 0;
     }
 
@@ -57,5 +52,4 @@ public abstract class GeomField implements java.io.Serializable
     {
         this.MBR = MBR;
     }
-
 }

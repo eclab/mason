@@ -28,6 +28,10 @@ public class MasonGeometry implements sim.util.Valuable, sim.util.Proxiable, jav
     	userData = o; 
     }
 
+    /** Get and set the userData field */ 
+    public void setUserData(Object o) { userData = o; } 
+    public Object getUserData() { return userData; } 
+    
     /** Returns the type of the internal JTS geometry object (Point, Polygon, Linestring, etc) */ 
     public String toString() { return geometry.getGeometryType();  } 
              

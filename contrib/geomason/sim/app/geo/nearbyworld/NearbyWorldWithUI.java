@@ -1,7 +1,7 @@
 /*
  * NearbyWorldWithUI
  *
- * $Id: NearbyWorldWithUI.java,v 1.1 2010-04-10 17:55:02 kemsulli Exp $
+ * $Id: NearbyWorldWithUI.java,v 1.2 2010-08-20 20:30:11 kemsulli Exp $
  * 
  */
 
@@ -17,7 +17,7 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.geo.GeomFieldPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.simple.OvalPortrayal2D;
 
 
@@ -30,8 +30,8 @@ public class NearbyWorldWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomFieldPortrayal worldFieldPortrayal = new GeomFieldPortrayal();
-    private GeomFieldPortrayal agentFieldPortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal worldFieldPortrayal = new GeomVectorFieldPortrayal();
+    private GeomVectorFieldPortrayal agentFieldPortrayal = new GeomVectorFieldPortrayal();
 
     
     public NearbyWorldWithUI(SimState state) { super(state); }

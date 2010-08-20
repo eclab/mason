@@ -7,14 +7,14 @@
  *   step is into water, randomly choose a new cardinal direction.  This
  *   has the effect of having the agents "bounce" around the main island.
  *
- * $Id: TouchingWorldWithUI.java,v 1.1 2010-04-12 20:32:40 mcoletti Exp $
+ * $Id: TouchingWorldWithUI.java,v 1.2 2010-08-20 20:30:12 kemsulli Exp $
  * 
  */
 
 package sim.app.geo.touchingworld;
 
 import sim.display.*; 
-import sim.portrayal.geo.GeomFieldPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.engine.*; 
 import java.awt.Color; 
 import javax.swing.*; 
@@ -30,7 +30,7 @@ public class TouchingWorldWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomFieldPortrayal shapePortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal shapePortrayal = new GeomVectorFieldPortrayal();
 //    private GeomFieldPortrayal selectedDistrictPortrayal = new GeomFieldPortrayal();
     
     public TouchingWorldWithUI(SimState state)

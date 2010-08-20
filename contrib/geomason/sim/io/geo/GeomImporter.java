@@ -3,9 +3,7 @@ import java.io.FileNotFoundException;
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag; 
 import sim.util.geo.*; 
-
 import java.util.ArrayList;
-import java.util.Comparator;
 
 /** 
     A GeomImportor reads a file for geometric info and adds new objects to the GeomVectorField.  In addition, it sets up the
@@ -30,12 +28,4 @@ public abstract class GeomImporter {
     
     /** Type of MasonGeometry to use.  This allows the user to use custom MasonGeometry objects instead of the default */ 
     public Class<?> masonGeometryClass = MasonGeometry.class; 
-    
-    /** Comparator to sort attribute <name, value> pairs by name */
-    public Comparator<AttributeField> attrFieldCompartor = new Comparator<AttributeField>() { 
-    		public int compare(AttributeField af1, AttributeField af2)
-    		{
-    			return af1.name.compareTo(af2.name) ;
-    		}
-    };
 }

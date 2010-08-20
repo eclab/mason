@@ -15,7 +15,7 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.geo.GeomFieldPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
 
 
@@ -28,9 +28,9 @@ public class NetworkWorldWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomFieldPortrayal geometryPortrayal = new GeomFieldPortrayal();
-    private GeomFieldPortrayal intersectionPortrayal = new GeomFieldPortrayal();
-    private GeomFieldPortrayal agentPortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal geometryPortrayal = new GeomVectorFieldPortrayal();
+    private GeomVectorFieldPortrayal intersectionPortrayal = new GeomVectorFieldPortrayal();
+    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     
     public NetworkWorldWithUI(SimState state) { super(state); }

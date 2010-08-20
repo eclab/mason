@@ -1,9 +1,3 @@
-/*
- * GeomGridField.java
- *
- * $Id: GeomGridField.java,v 1.3 2010-08-20 18:06:41 mcoletti Exp $
- */
-
 package sim.field.geo;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -16,7 +10,9 @@ import sim.field.grid.Grid2D;
  */
 public class GeomGridField extends GeomField
 {
-    /** Grid container
+    private static final long serialVersionUID = 5804948960128647172L;
+
+	/** Grid container
      * 
      * Allows for the user to use an arbitrary grid of integers, doubles, or objects.
      */

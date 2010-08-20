@@ -57,7 +57,7 @@ sim/io/geo/GeomExporter.java					\
 sim/io/geo/GeomImporter.java					\
 sim/io/geo/ShapeFileImporter.java				\
 sim/io/geo/ShapeFileExporter.java				\
-sim/portrayal/geo/GeomFieldPortrayal.java		\
+sim/portrayal/geo/GeomVectorFieldPortrayal.java		\
 sim/portrayal/geo/GeomPortrayal.java			\
 sim/portrayal/geo/GeomValuedFieldPortrayal.java
 

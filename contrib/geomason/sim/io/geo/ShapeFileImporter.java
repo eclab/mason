@@ -173,7 +173,7 @@ public class ShapeFileImporter extends GeomImporter {
                     System.err.println("Unknown shape type in " + input); 
                 
                 if (geom != null) { 
-                	Collections.sort(attributeInfo, attrFieldCompartor); 
+                	Collections.sort(attributeInfo, GeometryUtilities.attrFieldCompartor); 
                 	geom.setUserData(attributeInfo); 
                 	try { 
                 		MasonGeometry g = (MasonGeometry)masonGeometryClass.newInstance(); 
