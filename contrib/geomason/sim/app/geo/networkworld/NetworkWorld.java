@@ -11,7 +11,7 @@ import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.planargraph.Node;
 import java.util.Iterator;
 import sim.engine.SimState;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.geo.*;
 
 /** Set up a GeoField with a number of points and a corresponding portrayal.
@@ -22,9 +22,9 @@ public class NetworkWorld extends SimState
 {
 
     private static final long serialVersionUID = 2025934565604118804L;
-	public GeomField world = new GeomField(); // contains road network
-    public GeomField junctions = new GeomField(); // nodes for intersections
-    public GeomField agents = new GeomField(); // agents moving through network
+	public GeomVectorField world = new GeomVectorField(); // contains road network
+    public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
+    public GeomVectorField agents = new GeomVectorField(); // agents moving through network
 
     // Stores transportation network connections
     public Network network = new Network();
@@ -80,14 +80,14 @@ public class NetworkWorld extends SimState
     }
 
 
-    /** adds nodes corresponding to road intersections to GeomField
+    /** adds nodes corresponding to road intersections to GeomVectorField
      *
      * @param nodeIterator Points to first node
-     * @param intersections GeomField containing intersection geometry
+     * @param intersections GeomVectorField containing intersection geometry
      *
      * Nodes will belong to a planar graph populated from LineString network.
      */
-    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomField intersections)
+    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomVectorField intersections)
     {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;

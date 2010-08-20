@@ -1,18 +1,18 @@
 package sim.io.geo; 
 
 import java.io.FileNotFoundException;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import java.io.*; 
 
 public abstract class GeomExporter { 
 
     /**
-       Writes the information stored in the GeomField to disk.  Don't include the file extension in 
+       Writes the information stored in the GeomVectorField to disk.  Don't include the file extension in
        the output argument, as the implementing exporter will handle that.  Depending on the GeomExporter
        used, the driver argument determines the file type.  
     */
         
-    public void write(String output, String driver, GeomField field) throws FileNotFoundException {}
+    public void write(String output, String driver, GeomVectorField field) throws FileNotFoundException {}
     
     public byte[] getBytes(Object obj) { 
     	try { 

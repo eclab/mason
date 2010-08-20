@@ -1,7 +1,7 @@
 package sim.io.geo; 
 
 import java.io.FileNotFoundException; 
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 
 import com.vividsolutions.jts.geom.*;
 import sim.util.Bag; 
@@ -14,7 +14,7 @@ import java.text.*;
 public class ShapeFileExporter extends GeomExporter {
 
     @SuppressWarnings("unchecked")
-	public void write(String output, String driver, GeomField field) throws FileNotFoundException
+	public void write(String output, String driver, GeomVectorField field) throws FileNotFoundException
     {
         try { 
                 

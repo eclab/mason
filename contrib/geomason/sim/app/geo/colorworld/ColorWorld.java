@@ -16,10 +16,10 @@ public class ColorWorld extends SimState
     public static int NUM_AGENTS = 10;
 
     // where all the county geometry lives
-    public GeomField county = new GeomField();
+    public GeomVectorField county = new GeomVectorField();
 
     // where all the agents live
-    public GeomField agents = new GeomField();
+    public GeomVectorField agents = new GeomVectorField();
 
 
     private static final String dataDirectory = "sim/app/data/";
@@ -56,7 +56,7 @@ public class ColorWorld extends SimState
                 // set each agent in the center of corresponding region
                 a.setLocation(region.getCentroid());
 
-                // place the agents in the GeomField
+                // place the agents in the GeomVectorField
                 agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
                 // add the new agent the schedule
@@ -83,7 +83,7 @@ public class ColorWorld extends SimState
                 System.exit(-1);
             }
 
-        // We need to link the GeomField "agents" to all the
+        // We need to link the GeomVectorField "agents" to all the
         // GeomWrappers so that they can update their counts of
         // occupying agents.
 

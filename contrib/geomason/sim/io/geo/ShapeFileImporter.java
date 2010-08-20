@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /** 
-    A native Java importer to read ERSI shapefile data into the GeomField.  We assume the input file follows the 
+    A native Java importer to read ERSI shapefile data into the GeomVectorField.  We assume the input file follows the
     standard ESRI shapefile format.    
 */ 
 
 public class ShapeFileImporter extends GeomImporter {
  
-    public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
+    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
         try { 
             // open shp file 

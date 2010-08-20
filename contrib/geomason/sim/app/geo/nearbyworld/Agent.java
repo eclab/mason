@@ -1,10 +1,10 @@
 /*
  * Agent.java
  *
- * The agent that will be moving around the GeomField.  It will report
+ * The agent that will be moving around the GeomVectorField.  It will report
  * all other objects that are within a certain distance.
  *
- * $Id: Agent.java,v 1.2 2010-04-10 17:55:01 kemsulli Exp $
+ * $Id: Agent.java,v 1.3 2010-08-20 00:52:36 mcoletti Exp $
  */
 
 package sim.app.geo.nearbyworld;
@@ -17,10 +17,10 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
 import ec.util.MersenneTwisterFast;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 
-/** Agent that moves through GeomField
+/** Agent that moves through GeomVectorField
  *
  * It will move randomly within a bounds.
  *
@@ -58,7 +58,7 @@ public class Agent implements Steppable {
         move(state.random);
 
         // Now determine if we're covered by something in the world or not.
-        GeomField world = ((NearbyWorld)state).world;
+        GeomVectorField world = ((NearbyWorld)state).world;
 
         Bag nearbyObjects = world.getObjectsWithinDistance(location, Agent.distance);
 

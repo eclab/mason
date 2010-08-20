@@ -45,7 +45,7 @@ public class Agent implements Steppable {
     {
         // try to move the agent, keeping the agent inside its political region
                 
-        GeomField world = ((ColorWorld)state).county;
+        GeomVectorField world = ((ColorWorld)state).county;
         Coordinate coord = (Coordinate) location.getCoordinate().clone();
         AffineTransformation translate = null;
 

@@ -1,6 +1,6 @@
 package sim.io.geo; 
 
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 
 import java.io.File;
@@ -25,12 +25,12 @@ import sim.util.geo.AttributeField;
 import sim.util.geo.MasonGeometry;
 
 /** 
-    Use the GeoTools Java API to read geospatial data into the GeomField.
+    Use the GeoTools Java API to read geospatial data into the GeomVectorField.
 */ 
 
 public class GeoToolsImporter extends GeomImporter {
 
-    public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
+    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
         try { 
             File file = new File(input); 

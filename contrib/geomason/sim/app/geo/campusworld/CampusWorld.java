@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.SimState;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.io.geo.*;
 import sim.util.geo.Network;
 import sim.util.*;
@@ -33,12 +33,12 @@ public class CampusWorld extends SimState
     private static final String dataDirectory = "sim/app/data/";
 
     /** Fields to hold the associated GIS information */ 
-    public GeomField walkways = new GeomField();
-    public GeomField roads = new GeomField();
-    public GeomField buildings = new GeomField();
+    public GeomVectorField walkways = new GeomVectorField();
+    public GeomVectorField roads = new GeomVectorField();
+    public GeomVectorField buildings = new GeomVectorField();
 
     // where all the agents live
-    public GeomField agents = new GeomField();
+    public GeomVectorField agents = new GeomVectorField();
 
     // The Importer is responsible for reading in the GIS files.  If you have installed either 
     // GeoTools and/or OGR on your system, you can use those importers.  The ShapeFileImporter does 
@@ -51,7 +51,7 @@ public class CampusWorld extends SimState
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows 
     // easy selection of new waypoints for the agents.  
     public Network network = new Network();
-    public GeomField junctions = new GeomField(); // nodes for intersections
+    public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
 
 
     public CampusWorld(long seed) { super (seed); } 
@@ -60,7 +60,7 @@ public class CampusWorld extends SimState
     public int getNumAgents() { return numAgents; } 
     public void setNumAgents(int n) { if (n > 0) numAgents = n; } 
 
-    /** Add agents to the simulation and to the agent GeomField.  Note that each agent does not have 
+    /** Add agents to the simulation and to the agent GeomVectorField.  Note that each agent does not have
      * any attributes.   */
     void addAgents()
     {
@@ -131,14 +131,14 @@ public class CampusWorld extends SimState
 
 
 
-    /** adds nodes corresponding to road intersections to GeomField
+    /** adds nodes corresponding to road intersections to GeomVectorField
      *
      * @param nodeIterator Points to first node
-     * @param intersections GeomField containing intersection geometry
+     * @param intersections GeomVectorField containing intersection geometry
      *
      * Nodes will belong to a planar graph populated from LineString network.
      */
-    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomField intersections)
+    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomVectorField intersections)
     {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;

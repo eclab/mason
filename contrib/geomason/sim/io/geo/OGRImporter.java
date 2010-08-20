@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.gdal.ogr.*; 
 
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 import sim.util.geo.AttributeField;
 import sim.util.geo.MasonGeometry;
@@ -15,12 +15,12 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 
 
 /** 
-    OGRImportor uses the OGR JNI interface to read geospatial data into the GeomField.  
+    OGRImportor uses the OGR JNI interface to read geospatial data into the GeomVectorField.
 */
 public class OGRImporter extends GeomImporter {
    
     /**  */
-    public void ingest(final String input, GeomField field, Bag masked) throws FileNotFoundException
+    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
         // register all the data format drivers
         ogr.RegisterAll();
@@ -51,7 +51,7 @@ public class OGRImporter extends GeomImporter {
     }
 
   
-    private void ingestLayer(Layer layer, GeomField field, Bag masked)
+    private void ingestLayer(Layer layer, GeomVectorField field, Bag masked)
     {
         FeatureDefn poDefn = layer.GetLayerDefn();
 

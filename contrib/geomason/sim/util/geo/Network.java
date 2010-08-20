@@ -1,7 +1,7 @@
 /*
  * Network.java
  *
- * $Id: Network.java,v 1.3 2010-08-17 19:32:30 kemsulli Exp $
+ * $Id: Network.java,v 1.4 2010-08-20 00:52:38 mcoletti Exp $
  */
 package sim.util.geo;
 
@@ -11,10 +11,10 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.planargraph.Edge;
 import com.vividsolutions.jts.planargraph.Node;
 import com.vividsolutions.jts.planargraph.PlanarGraph;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 
-/** A factory class for create a JTS PlanarGraph from a GeomField
+/** A factory class for create a JTS PlanarGraph from a GeomVectorField
  *
  * @author mcoletti
  */
@@ -25,16 +25,16 @@ public class Network extends PlanarGraph
     {
     }
 
-    /** populate network with lines from a GeomField
+    /** populate network with lines from a GeomVectorField
      *
      * @param field
      *
-     * Assumes that GeomField contains linear objects
+     * Assumes that GeomVectorField contains linear objects
      *
      * @todo May want to use a filter to pull out linear geometry regardless
      * of geometry type.
      */
-    public void createFromGeomField(GeomField field)
+    public void createFromGeomField(GeomVectorField field)
     {
         Bag geometries = field.getGeometries();
 

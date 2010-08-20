@@ -1,6 +1,6 @@
 package sim.app.geo.colorworld;
 
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 import sim.util.geo.*;
 
@@ -15,7 +15,7 @@ import sim.util.geo.*;
 public class CountingGeomWrapper extends MasonGeometry {
 
     // We need to access this to count agents in our district
-    public GeomField agents; // refers to encompassing GeomField
+    public GeomVectorField agents; // refers to encompassing GeomVectorField
 
     public CountingGeomWrapper()
     {

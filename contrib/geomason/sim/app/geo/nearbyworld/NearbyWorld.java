@@ -8,7 +8,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import sim.engine.SimState;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.util.geo.*; 
 
 /** This creates a simulation with two lines and a polygon.  And agent then
@@ -19,8 +19,8 @@ public class NearbyWorld extends SimState
 
     private static final long serialVersionUID = 752764560336956655L;
     
-	public GeomField world = new GeomField();
-    public GeomField agent = new GeomField();
+	public GeomVectorField world = new GeomVectorField();
+    public GeomVectorField agent = new GeomVectorField();
 
     // Agent that moves around the world
     Agent a = new Agent();
@@ -70,7 +70,7 @@ public class NearbyWorld extends SimState
         // Add the agent
         agent.addGeometry(new MasonGeometry(a.getGeometry()));
 
-        // Ensure that both GeomField layers cover the same area otherwise the
+        // Ensure that both GeomVectorField layers cover the same area otherwise the
         // agent won't show up in the display.
         agent.setMBR(world.getMBR());
     }

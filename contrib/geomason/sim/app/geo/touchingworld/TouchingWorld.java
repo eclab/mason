@@ -1,7 +1,7 @@
 /*
  * TouchingWorld.java
  *
- * $Id: TouchingWorld.java,v 1.2 2010-08-17 19:32:29 kemsulli Exp $
+ * $Id: TouchingWorld.java,v 1.3 2010-08-20 00:52:37 mcoletti Exp $
  */
 package sim.app.geo.touchingworld;
 
@@ -23,10 +23,10 @@ public class TouchingWorld extends SimState
     private static final long serialVersionUID = 7508584126243256514L;
 
 	// where all the shapes geometry lives
-    public GeomField shapes = new GeomField();
+    public GeomVectorField shapes = new GeomVectorField();
 
     // currently selected shape
-//    public GeomField selectedShape = new GeomField();
+//    public GeomVectorField selectedShape = new GeomVectorField();
     public MasonGeometry selectedShape = null;
 
     // responsible for changing selected shape

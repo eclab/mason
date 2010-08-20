@@ -4,7 +4,7 @@ import com.vividsolutions.jts.geom.*;
 
 import java.awt.Graphics2D;
 import java.awt.geom.*;
-import sim.field.geo.GeomField;
+import sim.field.geo.GeomVectorField;
 import sim.portrayal.*;
 import sim.util.*; 
 import sim.util.geo.*; 
@@ -50,7 +50,7 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
         // associated field is immutable.
         if (graphics != null && immutableField && !info.precise) {
         	
-        	GeomField geomField = (GeomField)field; 
+        	GeomVectorField geomField = (GeomVectorField)field;
         	double x = info.clip.x; 
         	double y = info.clip.y; 
         	boolean dirty = false;
@@ -110,7 +110,7 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
      */
      void hitOrDraw2(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
     {
-        GeomField geomField = (GeomField)field;
+        GeomVectorField geomField = (GeomVectorField)field;
 		if (geomField == null) return ;
         AffineTransform savedTransform=null;
                 
@@ -180,11 +180,11 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
             graphics.setTransform(savedTransform); // restore y axis & origin
     }
         
-    /** Sets the underlying field, after ensuring its a GeomField. */ 
+    /** Sets the underlying field, after ensuring its a GeomVectorField. */
     public void setField(Object field)
     {
         dirtyField = true;
-        if (field instanceof GeomField)this.field = field;
+        if (field instanceof GeomVectorField)this.field = field;
         else 
             throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
     }
