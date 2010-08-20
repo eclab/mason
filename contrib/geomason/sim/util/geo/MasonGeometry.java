@@ -10,9 +10,11 @@ import com.vividsolutions.jts.geom.*;
    from the inspectors.  
 */
 
-public class MasonGeometry implements sim.util.Valuable, sim.util.Proxiable  {
+public class MasonGeometry implements sim.util.Valuable, sim.util.Proxiable, java.io.Serializable  {
 
-    /** Internal JTS geometry object */ 
+    private static final long serialVersionUID = 6290810736517692387L;
+
+	/** Internal JTS geometry object */ 
     public Geometry geometry; 
         
    /** Arbitrary object set by the user */ 

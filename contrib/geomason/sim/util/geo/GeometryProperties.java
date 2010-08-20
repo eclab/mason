@@ -11,7 +11,7 @@ import java.util.*;
  * 
  */
 
-public class GeometryProperties extends sim.util.Properties {
+public class GeometryProperties extends sim.util.Properties implements java.io.Serializable {
 
 	private static final long serialVersionUID = -8373893417608186127L;
 

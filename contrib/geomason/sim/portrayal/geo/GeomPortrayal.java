@@ -21,7 +21,7 @@ import sim.portrayal.inspector.*;
     shows the associated attribute information, and the third tab shows information about the MasonGeometry userData field, which 
     can be any Java object.    
 */
-public class GeomPortrayal extends SimplePortrayal2D {
+public class GeomPortrayal extends SimplePortrayal2D  {
         
     private static final long serialVersionUID = 472960663330467429L;
 

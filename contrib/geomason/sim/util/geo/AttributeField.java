@@ -8,7 +8,9 @@ package sim.util.geo;
  * when writing to disk.  
  */
 
-public class AttributeField { 
+public class AttributeField implements java.io.Serializable { 
+
+	private static final long serialVersionUID = -2342742107342686581L;
 
 	/** Attribute name */ 
     public String name;  

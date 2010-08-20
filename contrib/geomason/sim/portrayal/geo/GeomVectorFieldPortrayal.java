@@ -14,7 +14,7 @@ import java.awt.image.*;
     Portrayal for MasonGeometry objects.  The portrayal handles drawing and hit-testing (for inspectors).    
  
 */
-public class GeomFieldPortrayal extends FieldPortrayal2D {
+public class GeomVectorFieldPortrayal extends FieldPortrayal2D {
         
     private static final long serialVersionUID = 8409421628913847667L;
 	
@@ -22,14 +22,14 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
     GeomPortrayal defaultPortrayal = new GeomPortrayal();
         
     /** Default constructor */     
-    public GeomFieldPortrayal()
+    public GeomVectorFieldPortrayal()
     {
         super(); 
         setImmutableField(false);
     }
 
     /** Constructor which sets the field's immutable flag */     
-    public GeomFieldPortrayal(boolean immutableField)
+    public GeomVectorFieldPortrayal(boolean immutableField)
     {
         super(); 
         setImmutableField(immutableField);
@@ -117,7 +117,7 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
         // compute the transform between world and screen coordinates, and 
         // also construct a geom.util.AffineTransform for use in hit-testing later
         Envelope MBR = geomField.getMBR();
-        AffineTransform worldToScreen = worldToScreenTransform(MBR, info);
+        AffineTransform worldToScreen = GeometryUtilities.worldToScreenTransform(MBR, info);
         double m[] = new double[6];
         worldToScreen.getMatrix(m); 
         com.vividsolutions.jts.geom.util.AffineTransformation a = new com.vividsolutions.jts.geom.util.AffineTransformation(m[0], m[2], m[4], m[1], m[3], m[5]);
@@ -127,20 +127,10 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
             graphics.transform(worldToScreen); // using setTransform instead causes problems with SWING!  
         }
                
-		// code taken from GeoTools and hacked on
-		AffineTransform screenToWorld = null;
-		try {
-			screenToWorld = worldToScreen.createInverse(); 
-		} catch (Exception e) {
-			System.out.println(e); 
-			System.exit(-1); 
-		}
+		Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y); 
+		Point2D p2 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x + info.clip.width, 
+																			info.clip.y + info.clip.height); 
 
-		Point2D p1 = new Point2D.Double();
-		Point2D p2 = new Point2D.Double();
-		screenToWorld.transform(new Point2D.Double(info.clip.x, info.clip.y), p1);
-		screenToWorld.transform(new Point2D.Double(info.clip.x + info.clip.width, info.clip.y + info.clip.height), p2);
-		
 		Envelope clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
 		
 		// get all the geometries that *might* be visible in the current clip 
@@ -187,23 +177,5 @@ public class GeomFieldPortrayal extends FieldPortrayal2D {
         if (field instanceof GeomVectorField)this.field = field;
         else 
             throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
-    }
-        
-        
-    /** Determines the affine transform which converts world coordinates into screen 
-     * coordinates.  Modified from GeoTools RenderUtilities.java. 
-     */
-     AffineTransform worldToScreenTransform(Envelope mapExtent, DrawInfo2D info) {
-        double scaleX = info.draw.width / mapExtent.getWidth();
-        double scaleY = info.draw.height / mapExtent.getHeight();
-                
-        double tx = -mapExtent.getMinX() * scaleX;
-        double ty = (mapExtent.getMinY() * scaleY) + info.draw.height;
-                
-        AffineTransform at = new AffineTransform(scaleX, 0.0d, 0.0d, -scaleY, tx, ty);
-        AffineTransform originTranslation = AffineTransform.getTranslateInstance(info.draw.x, info.draw.y);
-        originTranslation.concatenate(at);
-                
-        return originTranslation != null ? originTranslation : at;
-    }       
+    }  
 }

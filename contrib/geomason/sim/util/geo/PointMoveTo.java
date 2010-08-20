@@ -1,7 +1,7 @@
 /**
  *  PointMoveTo.java
  *
- * $Id: PointMoveTo.java,v 1.2 2010-04-10 18:27:38 kemsulli Exp $
+ * $Id: PointMoveTo.java,v 1.3 2010-08-20 18:04:36 kemsulli Exp $
  */
 
 package sim.util.geo;
@@ -16,10 +16,11 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
  *
  * @author mcoletti
  */
-public class PointMoveTo implements CoordinateSequenceFilter
+public class PointMoveTo implements CoordinateSequenceFilter, java.io.Serializable
 {
 
-    private Coordinate newValue_ = null;
+    private static final long serialVersionUID = -2029180922944093196L;
+	private Coordinate newValue_ = null;
     private boolean isDone_ = false;
     private boolean geometryChanged_ = false;
     

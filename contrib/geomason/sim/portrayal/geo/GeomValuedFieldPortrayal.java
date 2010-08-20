@@ -1,7 +1,7 @@
 /*
  * GeomValuedFieldPortrayal.java
  *
- * $Id: GeomValuedFieldPortrayal.java,v 1.4 2010-08-17 14:44:30 kemsulli Exp $
+ * $Id: GeomValuedFieldPortrayal.java,v 1.5 2010-08-20 18:09:13 kemsulli Exp $
  */
 
 package sim.portrayal.geo;
@@ -18,7 +18,7 @@ import sim.util.gui.SimpleColorMap;
  *
  * @author mcoletti
  */
-public class GeomValuedFieldPortrayal  extends GeomFieldPortrayal {
+public class GeomValuedFieldPortrayal  extends GeomVectorFieldPortrayal {
     
     private static final long serialVersionUID = 5411087803615050974L;
 	public ColorMap colorMap = new SimpleColorMap();
