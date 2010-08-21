@@ -1835,3 +1835,5 @@ Version 15
 		Matt Miller <matt.miller@gmail.com>
 	Made all distribution classes serializable and removed their clone methods, which
 		were not safe.  Who made these clonable in the first place?  
+	Added sim/util/datacull/README
+	Set the binary flag on certain binary files in the CVS repository, oops
