@@ -14,7 +14,8 @@ import sim.util.geo.*;
  */
 public class CountingGeomWrapper extends MasonGeometry {
 
-    // We need to access this to count agents in our district
+    private static final long serialVersionUID = 3186655744206152969L;
+	// We need to access this to count agents in our district
     public GeomVectorField agents; // refers to encompassing GeomVectorField
 
     public CountingGeomWrapper()
@@ -26,7 +27,7 @@ public class CountingGeomWrapper extends MasonGeometry {
      *
      * @return
      */
-    public double doubleValue()
+    public int numAgentsInGeometry()
     {
         // Grind through all the agents and find out how many are inside our
         // polygon

@@ -3,7 +3,7 @@
  *
  *   After starting the demo you should see
  *
- * $Id: ColorWorldWithUI.java,v 1.4 2010-08-20 20:30:11 kemsulli Exp $
+ * $Id: ColorWorldWithUI.java,v 1.5 2010-08-23 15:57:06 kemsulli Exp $
  *
  */
 
@@ -15,8 +15,6 @@ import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.engine.*;
 import java.awt.Color;
 import javax.swing.*;
-import sim.portrayal.geo.GeomPortrayal;
-import sim.portrayal.geo.GeomValuedFieldPortrayal;
 import sim.util.gui.SimpleColorMap;
 
 
@@ -29,7 +27,7 @@ public class ColorWorldWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomValuedFieldPortrayal countyPortrayal = new GeomValuedFieldPortrayal();
+    private GeomVectorFieldPortrayal countyPortrayal = new GeomVectorFieldPortrayal();
     private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     public ColorWorldWithUI(SimState state)
@@ -82,8 +80,8 @@ public class ColorWorldWithUI extends GUIState {
         agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
 
         countyPortrayal.setField(world.county);
-        countyPortrayal.setPortrayalForAll(new GeomPortrayal(true));
-        countyPortrayal.setMap(new SimpleColorMap(0.0, world.NUM_AGENTS, Color.WHITE, Color.BLUE));
+        countyPortrayal.setPortrayalForAll(new ColorWorldPortrayal(
+        		new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE))); 
 
         display.reset();
 
