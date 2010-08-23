@@ -25,16 +25,12 @@ public class Agent implements Steppable {
     // agent's position
     Point location = null;
 
-    // agent's politcal region
-    Polygon region = null;
-
     // How much to move the agent by in each step()
     double moveRate = 100.0;
      
-    public Agent(int d, Polygon r)
+    public Agent(int d)
     {
         direction = d;
-        region = r;
     }
         
     public void setLocation(Point p) { location = p; }
@@ -90,10 +86,8 @@ public class Agent implements Steppable {
             }
 
         // is the new position still within the county?
-        //if (world.isCovered(coord))
-        //if (world.isInsideConvexHull(coord)) 
-        if (world.isInsideUnion(coord)) 
-            //        if (SimplePointInAreaLocator.containsPointInPolygon(coord, region))
+        //if (world.isInsideUnion(coord)) 
+        if (world.isCovered(coord))
             location.apply(translate);
         else // try randomly moving in different direction if trying to stray
             direction = state.random.nextInt(8);

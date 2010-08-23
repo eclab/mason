@@ -10,7 +10,7 @@ import com.vividsolutions.jts.geom.*;
    from the inspectors.  
 */
 
-public class MasonGeometry implements sim.util.Valuable, sim.util.Proxiable, java.io.Serializable  {
+public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable  {
 
     private static final long serialVersionUID = 6290810736517692387L;
 
@@ -37,10 +37,6 @@ public class MasonGeometry implements sim.util.Valuable, sim.util.Proxiable, jav
              
     /** Returns the JTS geometry object.  */
     public Geometry getGeometry() { return geometry; }
-    
-    /** The returned value is used to handle per region coloring. */ 
-    public double doubleValue() { return 1; }
-	
     
     /** Inner class allows us to prevent certain getXXX and setXXX methods from 
      * appearing in the Inspector

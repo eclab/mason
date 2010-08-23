@@ -12,6 +12,11 @@ import java.util.ArrayList;
 */
 
 public abstract class GeomImporter {
+	
+	final static int POINT = 1; 
+	final static int LINE = 3; 
+	final static int POLYGON = 5; 
+	
     /** 
         Read geospatial data into the GeomVectorField.  The Bag contains a subset of attribute names to display in the
         inspector.  The names must exactly match those in the data file.  If masked is null, then all attributes are 

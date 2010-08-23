@@ -19,8 +19,9 @@ public class ColorWorldPortrayal extends GeomPortrayal {
 	
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
-    	CountingGeomWrapper gm = (CountingGeomWrapper)object; 
-        paint = colorMap.getColor(gm.numAgentsInGeometry());
-        super.draw(object, graphics, info); 
+    	CountingGeomWrapper gm = (CountingGeomWrapper)object;
+    	paint = colorMap.getColor(gm.numAgentsInGeometry());
+        super.draw(object, graphics, info);    
+        
     }
 }

@@ -190,7 +190,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D {
 		
 		// get all the geometries that *might* be visible in the current clip 
 		Bag geometries = geomField.queryField(clipEnvelope);
-		
+			
         for (int i = 0; i < geometries.numObjs; i++)
             {
                 MasonGeometry gm = (MasonGeometry)geometries.objs[i];

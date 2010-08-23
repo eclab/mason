@@ -1,8 +1,8 @@
 package sim.app.geo.colorworld;
 
-import sim.field.geo.GeomVectorField;
+
 import sim.util.Bag;
-import sim.util.geo.*;
+import sim.util.geo.MasonGeometry;
 
 
 /** Maintains count of population to be used in color LUT
@@ -15,13 +15,6 @@ import sim.util.geo.*;
 public class CountingGeomWrapper extends MasonGeometry {
 
     private static final long serialVersionUID = 3186655744206152969L;
-	// We need to access this to count agents in our district
-    public GeomVectorField agents; // refers to encompassing GeomVectorField
-
-    public CountingGeomWrapper()
-    {
-        super();
-    }
 
     /** Returned value corresponds to number of agents in associated region
      *
@@ -29,9 +22,7 @@ public class CountingGeomWrapper extends MasonGeometry {
      */
     public int numAgentsInGeometry()
     {
-        // Grind through all the agents and find out how many are inside our
-        // polygon
-        Bag coveredAgents = agents.getCoveredObjects(geometry);
+        Bag coveredAgents = ColorWorld.agents.getCoveredObjects(geometry);
         return coveredAgents.numObjs;
     }
 

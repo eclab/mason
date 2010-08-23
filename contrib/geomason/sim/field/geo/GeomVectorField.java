@@ -1,8 +1,8 @@
 package sim.field.geo;
 
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*; 
 
-import com.vividsolutions.jts.algorithm.locate.*; 
 import com.vividsolutions.jts.algorithm.*; 
 
 import sim.util.geo.AttributeField;
@@ -30,13 +30,13 @@ public class GeomVectorField extends GeomField
 	public Quadtree spatialIndex;
     
     /** The convex hull of all the geometries in this field */ 
-    public Geometry convexHull; 
+    public PreparedPolygon convexHull; 
         
     /** Helper factory for computing the union or convex hull */
     public GeometryFactory geomFactory; 
 
     /** Defines the outer shell of all the geometries within this field */ 
-    public Geometry globalUnion; 
+    public PreparedPolygon globalUnion; 
     
     /** Default constructor, which resets all internal data structures.  */ 
     public GeomVectorField()
@@ -83,14 +83,15 @@ public class GeomVectorField extends GeomField
 			coords[i] = pts.get(i); 
 		
         ConvexHull hull = new ConvexHull(coords, geomFactory); 
-        convexHull = hull.getConvexHull(); 
+        convexHull = new PreparedPolygon((Polygon)hull.getConvexHull()); 
     }
         
     /**  Determine if the Coordinate is within the convex hull of the field's geometries.  Call 
          computeConvexHull first.  */ 
     public boolean isInsideConvexHull(final Coordinate coord)
     {
-        if (SimplePointInAreaLocator.locate(coord, convexHull) == Location.INTERIOR)
+    	Point p = geomFactory.createPoint(coord);
+        if (convexHull.intersects(p))
             return true;
         return false; 
     }
@@ -99,14 +100,18 @@ public class GeomVectorField extends GeomField
     /** Compute the union of the field's geometries.  The resulting Geometry is the outside points of 
         the field's geometries. Call this method only once.  
     */ 
+        
     public void computeUnion()
     {
-        globalUnion = new Polygon(null, null, geomFactory);		
+        Geometry p = new Polygon(null, null, geomFactory);	
 		List<?> gList = spatialIndex.queryAll();
         for (int i=0; i < gList.size(); i++) {
             Geometry g = ((MasonGeometry)gList.get(i)).getGeometry(); 
-            globalUnion = globalUnion.union(g); 
+            p = p.union(g); 
         }
+        
+        p = p.union();
+        globalUnion = new PreparedPolygon((Polygon)p);
     }
         
     /** Determine if the Coordinate is within the bounding Geometry of the field's 
@@ -114,8 +119,9 @@ public class GeomVectorField extends GeomField
     */ 
     public boolean isInsideUnion(final Coordinate point)
     {
-        if (SimplePointInAreaLocator.locate(point, globalUnion) == Location.INTERIOR)
-            return true; 
+    	Point p = geomFactory.createPoint(point);
+    	if (globalUnion.intersects(p)) 
+    		return true;
         return false; 
     }
         
@@ -186,14 +192,18 @@ public class GeomVectorField extends GeomField
     public final Bag getCoveredObjects(final Geometry g)
     {
 		Bag coveringObjects = new Bag(); 
-		Envelope e = g.getEnvelopeInternal();
-		List<?> gList = spatialIndex.query(e);
+		//Envelope e = g.getEnvelopeInternal();
+		//List<?> gList = spatialIndex.query(e);
+		List<?> gList = spatialIndex.queryAll(); 
+		
+		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
+	
         for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (!g.equals(g1) && g.covers(g1))
-				coveringObjects.add(gm);
+			if (p.covers(g1)) 
+				coveringObjects.add(gm); 
 		}
         return coveringObjects;
 	}
@@ -206,11 +216,12 @@ public class GeomVectorField extends GeomField
 		Bag touchingObjects = new Bag(); 
 		Envelope e = g.getEnvelopeInternal();
 		List<?> gList = spatialIndex.query(e);
+		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
         for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (!g.equals(g1) && g1.touches(g))
+			if (!g.equals(g1) && p.touches(g))
 				touchingObjects.add(gm);
 		}
         return touchingObjects;
@@ -225,9 +236,10 @@ public class GeomVectorField extends GeomField
     {
 		Envelope e = g.getEnvelopeInternal(); 
 		List<?> gList = spatialIndex.query(e);
+		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
         for (int i=0; i < gList.size(); i++) {
 			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry();
-			if (!g.equals(g1) && g1.covers(g))
+			if (!g.equals(g1) && p.covers(g))
 				return true; 
 		}
 		return false; 
@@ -242,10 +254,11 @@ public class GeomVectorField extends GeomField
     {
 		Envelope e = new Envelope(point);
 		List<?> gList = spatialIndex.query(e);
+		PreparedPoint p = new PreparedPoint(geomFactory.createPoint(point));
         for (int i=0; i < gList.size(); i++) {
 			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry();
-                if (SimplePointInAreaLocator.locate(point, g1) == Location.INTERIOR)
-                    return true;
+			if (p.intersects(g1))
+				return true;
             }
         return false; 
     }

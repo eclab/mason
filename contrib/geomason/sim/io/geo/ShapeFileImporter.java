@@ -147,26 +147,37 @@ public class ShapeFileImporter extends GeomImporter {
                 
                 Geometry geom = null; 
                 
-                if (recordType == 1) 
+                if (recordType == POINT) 
                     geom = geomFactory.createPoint(pointsArray[0]); 
-                else if (recordType == 3 || recordType == 5) { 
+                else if (recordType == LINE || recordType == POLYGON) { 
+                	Geometry[] parts = new Geometry[numParts]; 
+
                     for (int i=0; i < numParts; i++) { 
                         int start = partIndicies[i]; 
                         int end = numPoints; 
                         if (i < numParts - 1 ) end = partIndicies[i+1]; 
                         int size = end - start; 
                         Coordinate coords[] = new Coordinate[size]; 
-                                                
-                                                                                                
+                                                                                               
                         for (int j=0; j < size; j++)
                             coords[j] = new Coordinate(pointsArray[start+j]); 
                                                 
-                        if (recordType == 3)
-                            geom = geomFactory.createLineString(coords); 
+                        if (recordType == LINE)                        
+                            parts[i] = geomFactory.createLineString(coords); 
                         else {
                             LinearRing lr = geomFactory.createLinearRing(coords); 
-                            geom = geomFactory.createPolygon(lr, null); 
+                            parts[i] = geomFactory.createPolygon(lr, null); 
                         }
+                    }
+                    if (recordType == LINE) { 
+                    	LineString[] ls = new LineString[numParts]; 
+                    	for (int i=0; i < numParts; i++) ls[i] = (LineString)parts[i]; 
+                    	geom = geomFactory.createMultiLineString(ls); 
+                    }
+                    else {
+                    	Polygon[] poly = new Polygon[numParts]; 
+                    	for (int i=0; i < numParts; i++) poly[i] = (Polygon)parts[i];
+                    	geom = geomFactory.createMultiPolygon(poly); 
                     }
                 }
                 else 

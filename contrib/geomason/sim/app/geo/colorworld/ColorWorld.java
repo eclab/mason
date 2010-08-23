@@ -1,6 +1,6 @@
 package sim.app.geo.colorworld;
 
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.*;
 import sim.engine.*;
 import sim.io.geo.*;
@@ -19,7 +19,7 @@ public class ColorWorld extends SimState
     public GeomVectorField county = new GeomVectorField();
 
     // where all the agents live
-    public GeomVectorField agents = new GeomVectorField();
+    public static GeomVectorField agents = new GeomVectorField();
 
 
     private static final String dataDirectory = "sim/app/data/";
@@ -48,10 +48,10 @@ public class ColorWorld extends SimState
                         // Something went wrong.  We *should* have regions.
                         throw new RuntimeException("No regions found.");
                     }
-                Polygon region = (Polygon) ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
+                Geometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
 
                 // give each agent a random direction to initially move in
-                a = new Agent(random.nextInt(8), region);
+                a = new Agent(random.nextInt(8));
 
                 // set each agent in the center of corresponding region
                 a.setLocation(region.getCentroid());
@@ -81,17 +81,6 @@ public class ColorWorld extends SimState
             {
                 System.out.println("Error opening shapefile!" + ex);
                 System.exit(-1);
-            }
-
-        // We need to link the GeomVectorField "agents" to all the
-        // GeomWrappers so that they can update their counts of
-        // occupying agents.
-
-        Bag geometry = county.getGeometries();
-
-        for (int i = 0; i < geometry.size(); i++)
-            {
-                ((CountingGeomWrapper)geometry.objs[i]).agents = this.agents;
             }
 
         county.computeConvexHull();

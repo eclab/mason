@@ -100,7 +100,7 @@ public class GeomPortrayal extends SimplePortrayal2D  {
 
 		if (paint != null) 
             graphics.setPaint(paint); 
-                                                                
+                    		
         if (geometry instanceof Point)
             {
                 Point point = (Point)geometry;                  
@@ -145,11 +145,11 @@ public class GeomPortrayal extends SimplePortrayal2D  {
     void drawPolygon(Polygon polygon, Graphics2D graphics, boolean fill)
     {
     	drawGeometry(polygon.getExteriorRing(), graphics, fill);
-
+    	
         for (int i = 0; i < polygon.getNumInteriorRing(); i++)
             {   // fill for internal rings will always be false as they are literally
                 // "holes" in the polygon
-                drawGeometry(polygon.getInteriorRingN(i), graphics, false);
+                drawGeometry(polygon.getInteriorRingN(i), graphics, false);                
             }
     }
 

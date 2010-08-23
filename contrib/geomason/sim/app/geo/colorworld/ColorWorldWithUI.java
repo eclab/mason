@@ -3,7 +3,7 @@
  *
  *   After starting the demo you should see
  *
- * $Id: ColorWorldWithUI.java,v 1.5 2010-08-23 15:57:06 kemsulli Exp $
+ * $Id: ColorWorldWithUI.java,v 1.6 2010-08-23 22:42:34 kemsulli Exp $
  *
  */
 
@@ -76,7 +76,7 @@ public class ColorWorldWithUI extends GUIState {
     {
         ColorWorld world = (ColorWorld)state;
 
-        agentPortrayal.setField(world.agents);
+        agentPortrayal.setField(ColorWorld.agents);
         agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
 
         countyPortrayal.setField(world.county);
