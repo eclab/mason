@@ -46,20 +46,19 @@ indent:
 
 
 # All the main GeoMason source files
-BASE_FILES = sim/util/geo/Network.java			\
+BASE_FILES = sim/util/geo/GeomPlanarGraph.java			\
 sim/util/geo/AttributeField.java				\
 sim/util/geo/GeometryProperties.java			\
 sim/util/geo/PointMoveTo.java					\
-sim/util/geo/NetworkEdge.java					\
+sim/util/geo/GeomPlanarGraphEdge.java					\
 sim/util/geo/MasonGeometry.java					\
-sim/util/geo/NetworkDirectedEdge.java			\
+sim/util/geo/GeomPlanarGraphDirectedEdge.java			\
 sim/io/geo/GeomExporter.java					\
 sim/io/geo/GeomImporter.java					\
 sim/io/geo/ShapeFileImporter.java				\
 sim/io/geo/ShapeFileExporter.java				\
 sim/portrayal/geo/GeomVectorFieldPortrayal.java		\
-sim/portrayal/geo/GeomPortrayal.java			\
-sim/portrayal/geo/GeomValuedFieldPortrayal.java
+sim/portrayal/geo/GeomPortrayal.java			
 
 # Optional GeoTool based importer
 GEOTOOL_FILES = sim/io/geo/GeoToolsImporter.java

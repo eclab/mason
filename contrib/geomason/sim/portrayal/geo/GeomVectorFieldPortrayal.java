@@ -49,8 +49,8 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D {
         if (portrayalForAll != null) return portrayalForAll;
 
 		MasonGeometry mg = (MasonGeometry)obj;
-		Geometry geometry = mg.geometry;
-		Object user = mg.userData;
+		Geometry geometry = mg.getGeometry();    
+		Object user = mg.getUserData();
 		
         Portrayal tmp;
         
