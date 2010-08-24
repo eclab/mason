@@ -1,12 +1,3 @@
-/*
- * ColorWorldWithUI
- *
- *   After starting the demo you should see
- *
- * $Id: ColorWorldWithUI.java,v 1.6 2010-08-23 22:42:34 kemsulli Exp $
- *
- */
-
 package sim.app.geo.colorworld;
 
 import sim.display.*;
@@ -18,17 +9,21 @@ import javax.swing.*;
 import sim.util.gui.SimpleColorMap;
 
 
-/** MASON GUI wrapper for ColorWorld
+/**
+ *  The display GUI for the ColorWorld GeoMASON example.  Much of this file is similar to other 
+ *  MASON GUI code.  The only exception is that we use our custom ColorWorldPortrayal for the 
+ *  voting districts to handle the shading.    
  *
- * @author mcoletti
  */
+
 public class ColorWorldWithUI extends GUIState {
 
-    private Display2D display;
-    private JFrame displayFrame;
+    Display2D display;
+    JFrame displayFrame;
 
-    private GeomVectorFieldPortrayal countyPortrayal = new GeomVectorFieldPortrayal();
-    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+    // our data is vector format, not raster.
+    GeomVectorFieldPortrayal countyPortrayal = new GeomVectorFieldPortrayal();
+    GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     public ColorWorldWithUI(SimState state)
     {
@@ -40,7 +35,7 @@ public class ColorWorldWithUI extends GUIState {
         super(new ColorWorld(System.currentTimeMillis()));
     }
 
-    public static String getName() { return "Color World Demonstration"; }
+    public static String getName() { return "GeoMASON: Color World"; }
     public Object getSimulationInspectedObject() { return state; }
 
     public void init(Controller controller)
@@ -79,6 +74,7 @@ public class ColorWorldWithUI extends GUIState {
         agentPortrayal.setField(ColorWorld.agents);
         agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
 
+        // the county portrayal (ie, the voting districts) to use our custom portrayal 
         countyPortrayal.setField(world.county);
         countyPortrayal.setPortrayalForAll(new ColorWorldPortrayal(
         		new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE))); 

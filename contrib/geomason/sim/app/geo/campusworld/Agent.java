@@ -1,23 +1,17 @@
 package sim.app.geo.campusworld;
 
 import sim.util.geo.*; 
-import sim.util.geo.PointMoveTo;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.*; 
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
-/** Agent that moves through GeomField
+/**
+ *  Our simple agent for the CampusWorld GeoMASON example.  The agent randomly wanders around the campus walkways.  When
+ *  the agent reaches an intersection, it chooses a random direction and continues on.   
  *
- * Agent moves back and forth across a line segment.
- *
- * @author mcoletti
  */
 public class Agent implements Steppable {
 
@@ -40,10 +34,8 @@ public class Agent implements Steppable {
     double endIndex = 0.0; // end position of current line
     double currentIndex = 0.0; // current location along line
 
-    /** used to change location_
-     * 
-     */
-    private PointMoveTo pointMoveTo = new PointMoveTo();
+   
+    PointMoveTo pointMoveTo = new PointMoveTo();
 
     public Agent()
     {
@@ -51,21 +43,13 @@ public class Agent implements Steppable {
         location = fact.createPoint(new Coordinate(10,10)); // XXX magic numbers
     }
 
-
-
-    /** return geometry representing agent location
-     * 
-     * @return geometry of location
-     */
+    /** return geometry representing agent location */
     public Geometry getGeometry()
     {
         return location;
     }
 
-    /** 
-     * 
-     * @return true if the agent has arrived at the target intersection
-     */
+    // true if the agent has arrived at the target intersection
     private boolean arrived()
     {
         // If we have a negative move rate the agent is moving from the end to
@@ -80,30 +64,15 @@ public class Agent implements Steppable {
     }
 
 
-
-    /** Used to set up the agent for simulation start
-     *
-     * @param state
-     */
     public void start(CampusWorld state)
     {
         // Find the first line segment and set our position over the start coordinate.
-
-        // XXX Not sure if this is the best place to be selecting road segments
-        // but this has the advantage of ensuring that the roads are all loaded.
-
-        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
-
+    	int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
         MasonGeometry mg = (MasonGeometry)state.walkways.getGeometries().objs[walkway];
         setNewRoute((LineString) mg.getGeometry(), true);
     }
-
-
     
-    /** randomly selects an adjacent route to traverse
-     *
-     * @param geoTest contains the network topology used to find route
-     */
+    // randomly selects an adjacent route to traverse
     private void findNewPath(CampusWorld geoTest)
     {
         // find all the adjacent junctions
@@ -170,10 +139,7 @@ public class Agent implements Steppable {
         moveTo(startCoord);
     }
 
-    /** move the agent to the given coordinates
-     *
-     * @param c position to move the agent to
-     */
+    // move the agent to the given coordinates
     public void moveTo(Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
@@ -182,8 +148,7 @@ public class Agent implements Steppable {
 
     
 
-    public
-        void step(SimState state)
+    public void step(SimState state)
     {
     	CampusWorld campState = (CampusWorld)state; 
         move(campState);
@@ -202,45 +167,73 @@ public class Agent implements Steppable {
     {
         // if we're not at a junction move along the current segment
         if ( ! arrived() )
-            {
-                moveAlongPath();
-            }
+        	moveAlongPath();
         else
-            {
-                findNewPath(geoTest);
-            }
+        	findNewPath(geoTest);
     }
 
     
 
-    /** move agent along current line segment
-     * 
-     */
-    private
-        void moveAlongPath()
+   // move agent along current line segment
+    private void moveAlongPath()
     {
-        this.currentIndex += this.moveRate;
-
-        // TODO: add remaining move balance to move along next line segment.
+        currentIndex += moveRate;
         
         // Truncate movement to end of line segment
-        if ( this.moveRate < 0)
+        if ( moveRate < 0)
             { // moving from endIndex to startIndex
-                if ( this.currentIndex < this.startIndex)
+                if ( currentIndex < startIndex)
                     {
-                        this.currentIndex = this.startIndex;
+                        currentIndex = startIndex;
                     }
             }
         else
             { // moving from startIndex to endIndex
-                if ( this.currentIndex > this.endIndex)
+                if (currentIndex > endIndex)
                     {
-                        this.currentIndex = this.endIndex;
+                        currentIndex = endIndex;
                     }
             }
 
-        Coordinate currentPos = this.segment.extractPoint(this.currentIndex);
+        Coordinate currentPos = segment.extractPoint(currentIndex);
 
         moveTo(currentPos);
     }
+    
+    /** 
+     *  A helper class to move a point to a new Coordinate.  
+     *
+     */
+    public class PointMoveTo implements CoordinateSequenceFilter, java.io.Serializable
+    {
+
+        private static final long serialVersionUID = -2029180922944093196L;
+    	private Coordinate newValue = null;
+        private boolean isDone = false;
+        private boolean geometryChanged = false;
+        
+        public PointMoveTo() { super(); } 
+        public PointMoveTo(Coordinate c)
+        {
+            super();
+            newValue = c;
+        }
+
+        public void setCoordinate(Coordinate newValue)
+        {
+            this.newValue = newValue;
+        }
+
+        public void filter(CoordinateSequence coords, int pos)
+        {
+            coords.setOrdinate(pos, 0, newValue.x);
+            coords.setOrdinate(pos, 1, newValue.y);
+            isDone = true;
+            geometryChanged = true;
+        }
+
+        public boolean isDone() { return isDone; }
+
+        public boolean isGeometryChanged() {  return geometryChanged; } 
+    };
 }

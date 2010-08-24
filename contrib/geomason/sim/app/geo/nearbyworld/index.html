@@ -1,30 +1,19 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <title>Nearby World GeomField Demo</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
+<html> <head></head>
   <body>
+  <table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="nearbyworldthumb.png"><td valign=top>
+<h2>GeoMASON: NearbyWorld</h2> 
+By Mark Coletti and Keith Sullivan
+</table>
+  
+   This example shows how to insert geometries into a GeomVectorField without using 
+   underlying GIS files. The example also shows how to move an agent around in a 
+   GeomVectorField, and have the agents query the field for ojbects within a 
+   specified distance.  
 
-	<table>
-	<tr><td><img src="nearbyworldthumb.png"></td><td><h2>Nearby World GeoMason Demo</h2></td>
-	</tr>
-	</table>
-    
-    The intent of this demo is to do the following:
+	<p> As the agent moves about the environment, it will print out the nearby objects as 
+	well as its current location. 
 
-    <ul>
-        <li>Show how to manually create Geometry objects</li>
-        <li>How to add these objects to a GeomField</li>
-        <li>How to create an Agent that moves in a GeomField</li>
-        <li>How to do basic spatial reasoning; i.e., compute distances between objects</li>
-        <li>How to use a GeomFieldPortrayal to show the objects and agent</li>
-    </ul>
-
-    When you run this demo you should see a couple lines, a filled in box, and
-    a lot of grey dots.  A red dot should be moving around frantically; this
-    represents the Agent.  As the Agent moves through the GeomField it will
-    report to stdout the objects that it is close to as well as its current
-    position.
   </body>
 </html>

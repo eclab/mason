@@ -5,6 +5,11 @@ import com.vividsolutions.jts.geom.util.*;
 import sim.engine.*;
 import sim.field.geo.*;
 
+/**
+ *  Our simple agent for the ColorWorld GeoMASON example.  The agents move in one of the eight cardinal directions 
+ *  until they hit the boundary of Fairfax County.  Then, they choose a random direction, and repeat.   
+ *
+ */
 
 public class Agent implements Steppable {
 
@@ -86,8 +91,8 @@ public class Agent implements Steppable {
             }
 
         // is the new position still within the county?
-        //if (world.isInsideUnion(coord)) 
-        if (world.isCovered(coord))
+        if (world.isInsideUnion(coord)) 
+        //if (world.isCovered(coord))
             location.apply(translate);
         else // try randomly moving in different direction if trying to stray
             direction = state.random.nextInt(8);

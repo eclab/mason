@@ -1,12 +1,3 @@
-/*
- * Agent.java
- *
- * The agent that will be moving around the GeomVectorField.  It will report
- * all other objects that are within a certain distance.
- *
- * $Id: Agent.java,v 1.3 2010-08-20 00:52:36 mcoletti Exp $
- */
-
 package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -20,33 +11,32 @@ import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 
-/** Agent that moves through GeomVectorField
- *
- * It will move randomly within a bounds.
- *
- * @author mcoletti
+/** 
+ * Simple agent for the NearbyWorld GeoMASON example.  The agent wanders randomly around the field, 
+ * and at every step, prints out the all objects that are within <i>distance</i> units.  
+ * 
  */
 public class Agent implements Steppable {
 
-    // point that denotes agent's position
+    private static final long serialVersionUID = -7366623247320036818L;
+
+	// point that denotes agent's position
     private Point location;
 
     // How much to move the agent by in each step()
     private static double moveRate = 1.0;
 
+    // distance for determining if objects are close 
     private static double distance = 10.0;
 
     public Agent()
     {
         GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(25,25)); // XXX magic numbers
+        location = fact.createPoint(new Coordinate(25,25));
         System.out.println("agent: " + location);
     }
 
-    /** return geometry representing agent location
-     * 
-     * @return geometry of location
-     */
+    // return geometry representing agent location
     public Geometry getGeometry()
     {
         return location;
@@ -72,12 +62,10 @@ public class Agent implements Steppable {
             }
     }
 
-    /** returns false if the given point is outside the bounds, else true
-     *
-     */
+    // returns false if the given point is outside the bounds, else true
     private boolean isValidMove(final Coordinate c)
     {
-        // XXX Uses magic numbers.  :(
+        // Uses magic numbers.  :(
         if (c.x < 0.0 || c.x > 100.0 ||
             c.y < 0.0 || c.y > 100.0)
             {
@@ -87,9 +75,7 @@ public class Agent implements Steppable {
         return true;
     }
 
-    /** move the agent in a random direction within a bounds
-     * 
-     */
+    // move the agent in a random direction within a bounds
     private void move(MersenneTwisterFast random)
     {
         Coordinate coord = (Coordinate) location.getCoordinate().clone();

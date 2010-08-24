@@ -18,7 +18,7 @@ import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
 /** 
- * This simple example shows how to setup GeomFields and run agents around the fields.  The simulation has 
+ * This simple example shows how to setup GeomVectorFields and run agents around the fields.  The simulation has 
  * multiple agents following the walkways at George Mason University.  GIS information about the walkways, buildings, 
  * and roads provides the environment for the agents.  During the simulation, the agents wander randomly on the walkways.
  */
@@ -71,6 +71,8 @@ public class CampusWorld extends SimState
                 a.start(this);
                 schedule.scheduleRepeating(a);
                 
+                // we can set the userData field of any MasonGeometry.  If the userData is inspectable, 
+                // then the inspector will show this information 
                 if (i == 10) 
                 	buildings.getGeometry("CODE", "JC").setUserData(a); 
             }
@@ -154,7 +156,7 @@ public class CampusWorld extends SimState
                 coord = node.getCoordinate();
                 point = fact.createPoint(coord);
 
-                junctions.addGeometry(new MasonGeometry(point, null));
+                junctions.addGeometry(new MasonGeometry(point));
                 counter++;
             }
     }

@@ -1,29 +1,21 @@
 package sim.app.geo.colorworld;
 
-
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
-
-/** Maintains count of population to be used in color LUT
- *
- * Is associated with a FFX counting voting district polygon.  It will return
- * the number of agents in that polygon.
- *
- * @author mcoletti
+/**
+ *  Our custom extension of MasonGeometry.  This extension is applied to the districts, not the 
+ *  agents.  All this class does, is add the ability to count the number of agents currently 
+ *  inside the voting district. 
  */
+
 public class CountingGeomWrapper extends MasonGeometry {
 
     private static final long serialVersionUID = 3186655744206152969L;
 
-    /** Returned value corresponds to number of agents in associated region
-     *
-     * @return
-     */
     public int numAgentsInGeometry()
     {
         Bag coveredAgents = ColorWorld.agents.getCoveredObjects(geometry);
         return coveredAgents.numObjs;
     }
-
 }

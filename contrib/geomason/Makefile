@@ -49,7 +49,6 @@ indent:
 BASE_FILES = sim/util/geo/GeomPlanarGraph.java			\
 sim/util/geo/AttributeField.java				\
 sim/util/geo/GeometryProperties.java			\
-sim/util/geo/PointMoveTo.java					\
 sim/util/geo/GeomPlanarGraphEdge.java					\
 sim/util/geo/MasonGeometry.java					\
 sim/util/geo/GeomPlanarGraphDirectedEdge.java			\

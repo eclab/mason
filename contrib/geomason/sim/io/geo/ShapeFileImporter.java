@@ -172,12 +172,18 @@ public class ShapeFileImporter extends GeomImporter {
                     if (recordType == LINE) { 
                     	LineString[] ls = new LineString[numParts]; 
                     	for (int i=0; i < numParts; i++) ls[i] = (LineString)parts[i]; 
-                    	geom = geomFactory.createMultiLineString(ls); 
+                    	if (numParts == 1) 
+                    		geom = parts[0]; 
+                    	else 
+                    		geom = geomFactory.createMultiLineString(ls); 
                     }
                     else {
                     	Polygon[] poly = new Polygon[numParts]; 
                     	for (int i=0; i < numParts; i++) poly[i] = (Polygon)parts[i];
-                    	geom = geomFactory.createMultiPolygon(poly); 
+                    	if (numParts == 1) 
+                    		geom = parts[0]; 
+                    	else 
+                    		geom = geomFactory.createMultiPolygon(poly); 
                     }
                 }
                 else 

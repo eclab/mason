@@ -11,8 +11,13 @@ import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.util.geo.*; 
 
-/** This creates a simulation with two lines and a polygon.  And agent then
- * moves randomly through this space reporting which objects it is close to.
+/** 
+ *  The NearbyWorld GeoMASON example show how to add Geometries to a field, and also how to query 
+ *  the field for the closest objects.  In this simulation, we create severals points, two lines, and 
+ *  a polygon.  An agent then randomly wanders around, reporting the closest objects.  
+ *  
+ *  <p> The agent wanders in a GeomVectorField so that we can use the spatial indexing feature to 
+ *  determine the closest objects. 
  */
 public class NearbyWorld extends SimState
 {
@@ -20,13 +25,13 @@ public class NearbyWorld extends SimState
     private static final long serialVersionUID = 752764560336956655L;
     
 	public GeomVectorField world = new GeomVectorField();
-    public GeomVectorField agent = new GeomVectorField();
+    public GeomVectorField agentField = new GeomVectorField();
 
     // Agent that moves around the world
-    Agent a = new Agent();
+    Agent agent = new Agent();
 
     
-    public NearbyWorld(long seed) throws ParseException
+    public NearbyWorld(long seed) 
     {
         super(seed);
 
@@ -59,31 +64,30 @@ public class NearbyWorld extends SimState
                         
                 polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
                 world.addGeometry(new MasonGeometry(polygon));
-                
             }
         catch (ParseException parseException)
             {
-                System.out.println("Bogus line string");
+                System.out.println("Bogus line string" + parseException);
             }
 
         
         // Add the agent
-        agent.addGeometry(new MasonGeometry(a.getGeometry()));
+        agentField.addGeometry(new MasonGeometry(agent.getGeometry()));
 
         // Ensure that both GeomVectorField layers cover the same area otherwise the
         // agent won't show up in the display.
-        agent.setMBR(world.getMBR());
+        agentField.setMBR(world.getMBR());
     }
         
     public void start()
     {
         super.start();
-        schedule.scheduleRepeating(a);
+        schedule.scheduleRepeating(agent);
     }
     
     void addPoint(final double x, final double y)
     {
-        GeometryFactory fact = new GeometryFactory(); // XXX consider making this static member
+        GeometryFactory fact = new GeometryFactory();
         Point location = fact.createPoint(new Coordinate(x, y));
         world.addGeometry(new MasonGeometry(location));
     }
