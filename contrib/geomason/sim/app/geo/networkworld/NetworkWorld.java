@@ -13,9 +13,10 @@ import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.util.geo.*;
 
-/** Set up a GeoField with a number of points and a corresponding portrayal.
- *
- * @author mcoletti
+/**
+ *  The NetworkWorld GeoMASON example shows how to add geometries into a GeomVectorField as a network.  We add several 
+ *  lines and create intersections at each junction using a JTS PlanarGraph.  Next, we add an agent in, which moves randomly
+ *  along the network, choosing a random direction at each junction.   
  */
 public class NetworkWorld extends SimState
 {
@@ -31,7 +32,7 @@ public class NetworkWorld extends SimState
     // Agent that moves around the world
     Agent a = new Agent();
 
-    public NetworkWorld(long seed) throws ParseException
+    public NetworkWorld(long seed) 
     {
         super(seed);
 
@@ -71,7 +72,7 @@ public class NetworkWorld extends SimState
             }
         catch (ParseException parseException)
             {
-                System.out.println("Bogus line string");
+                System.out.println("Bogus line string" + parseException);
             }
 
         network.createFromGeomField(world);
@@ -112,7 +113,7 @@ public class NetworkWorld extends SimState
 
     void addPoint(final double x, final double y)
     {
-        GeometryFactory fact = new GeometryFactory(); // XXX consider making this static member
+        GeometryFactory fact = new GeometryFactory();
         Point location = fact.createPoint(new Coordinate(x, y));
         world.addGeometry(new MasonGeometry(location));
     }

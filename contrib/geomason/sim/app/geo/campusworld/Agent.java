@@ -40,7 +40,7 @@ public class Agent implements Steppable {
     public Agent()
     {
         GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(10,10)); // XXX magic numbers
+        location = fact.createPoint(new Coordinate(10,10)); // magic numbers
     }
 
     /** return geometry representing agent location */
@@ -199,41 +199,4 @@ public class Agent implements Steppable {
 
         moveTo(currentPos);
     }
-    
-    /** 
-     *  A helper class to move a point to a new Coordinate.  
-     *
-     */
-    public class PointMoveTo implements CoordinateSequenceFilter, java.io.Serializable
-    {
-
-        private static final long serialVersionUID = -2029180922944093196L;
-    	private Coordinate newValue = null;
-        private boolean isDone = false;
-        private boolean geometryChanged = false;
-        
-        public PointMoveTo() { super(); } 
-        public PointMoveTo(Coordinate c)
-        {
-            super();
-            newValue = c;
-        }
-
-        public void setCoordinate(Coordinate newValue)
-        {
-            this.newValue = newValue;
-        }
-
-        public void filter(CoordinateSequence coords, int pos)
-        {
-            coords.setOrdinate(pos, 0, newValue.x);
-            coords.setOrdinate(pos, 1, newValue.y);
-            isDone = true;
-            geometryChanged = true;
-        }
-
-        public boolean isDone() { return isDone; }
-
-        public boolean isGeometryChanged() {  return geometryChanged; } 
-    };
 }

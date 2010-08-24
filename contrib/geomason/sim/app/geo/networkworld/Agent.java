@@ -12,6 +12,11 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.geo.*;
 
+/**
+ *  A simple agent for the NetworkWorld GeoMASON example.  The agent moves randomly along 
+ *  the network, choosing a random direction at each intersection.  
+ */
+
 public class Agent implements Steppable {
 
     private static final long serialVersionUID = -7060584745540577823L;
@@ -30,27 +35,19 @@ public class Agent implements Steppable {
     double endIndex = 0.0; // end position of current line
     double currentIndex = 0.0; // current location along line
 
-    /** used to change location_
-     * 
-     */
+    // used to update location 
     private PointMoveTo pointMoveTo = new PointMoveTo();
 
     public Agent()
     {
         GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(10,10)); // XXX magic numbers
+        location = fact.createPoint(new Coordinate(10,10)); // magic numbers
     }
 
-    /** return geometry representing agent location
-     * 
-     * @return geometry of location
-     */
+    // return geometry representing agent location
     public Geometry getGeometry() { return location; }
 
-    /** 
-     * 
-     * @return true if the agent has arrived at the target intersection
-     */
+    // true if the agent has arrived at the target intersection
     private boolean arrived()
     {
         // If we have a negative move rate the agent is moving from the end to
@@ -64,11 +61,6 @@ public class Agent implements Steppable {
         return false;
     }
 
-
-    /** Used to set up the agent for simulation start
-     *
-     * @param state
-     */
     public void start(NetworkWorld state)
     {
         // Find the first line segment and set our position over the start coordinate.
@@ -77,10 +69,7 @@ public class Agent implements Steppable {
         setNewRoute((LineString) line.geometry, true);
     }
 
-    /** randomly selects an adjacent route to traverse
-     *
-     * @param NetworkWorld contains the network topology used to find route
-     */
+    // randomly selects an adjacent route to traverse
     private void findNewPath(NetworkWorld NetworkWorld)
     {
         // find all the adjacent junctions
@@ -158,42 +147,23 @@ public class Agent implements Steppable {
         moveTo(startCoord);
     }
 
-    /** move the agent to the given coordinates
-     *
-     * @param c position to move the agent to
-     */
+    // move the agent to the given coordinates
     public void moveTo(Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
         location.apply(pointMoveTo);
     }
 
-
     public void step(SimState state)
     {
-        move((NetworkWorld) state);
-    }
-
-
-    /** moves the agent along the grid
-     *
-     * @param NetworkWorld handle on the base SimState
-     *
-     * The agent will randomly select an adjacent junction and then move
-     * along the line segment to it.  Then it will repeat.
-     */
-    private void move(NetworkWorld NetworkWorld)
-    {
-        // if we're not at a junction move along the current segment
+    	// if we're not at a junction move along the current segment
         if ( ! arrived() )
             moveAlongPath();
         else
-            findNewPath(NetworkWorld);
+            findNewPath((NetworkWorld) state);
     }
 
-    /** move agent along current line segment
-     * 
-     */
+    // move agent along current line segment
     private void moveAlongPath()
     {
         currentIndex += moveRate;

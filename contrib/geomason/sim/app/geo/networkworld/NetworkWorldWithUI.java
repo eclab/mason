@@ -1,14 +1,7 @@
-/*
- * NetworkWorldWithUI
- */
-
 package sim.app.geo.networkworld;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.io.ParseException;
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import sim.display.Console;
 import sim.display.Controller;
@@ -19,9 +12,11 @@ import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
 
 
-/** MASON GUI wrapper for GeoOgrTest
- *
- * @author mcoletti
+/** 
+ *  MASON GUI wrapper for the NetworkWorld GeoMASON example.   The only addition to a standard MASON GUIState 
+ *  is the addition of checking the minimum bounding rectangles (MBRs) for each portrayal.  This check ensures that 
+ *  the MBRs defining each field are matched, so that during display, all the fields line up (ie., you actually see
+ *  the agent moving along the network).  
  */
 public class NetworkWorldWithUI extends GUIState {
 
@@ -34,7 +29,7 @@ public class NetworkWorldWithUI extends GUIState {
 
     
     public NetworkWorldWithUI(SimState state) { super(state); }
-    public NetworkWorldWithUI() throws ParseException { super(new NetworkWorld(System.currentTimeMillis())); }
+    public NetworkWorldWithUI()  { super(new NetworkWorld(System.currentTimeMillis())); }
     
     public void init(Controller controller)
     {
@@ -94,17 +89,7 @@ public class NetworkWorldWithUI extends GUIState {
 
     public static void main(String[] args)
     {
-        NetworkWorldWithUI worldGUI = null;
-        
-        try
-            {
-                worldGUI = new NetworkWorldWithUI();
-            }
-        catch (ParseException ex)
-            {
-                Logger.getLogger(NetworkWorldWithUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+        NetworkWorldWithUI worldGUI =  new NetworkWorldWithUI();
         Console console = new Console(worldGUI);
         console.setVisible(true);
     }
