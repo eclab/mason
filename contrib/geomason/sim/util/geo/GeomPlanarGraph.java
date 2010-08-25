@@ -1,7 +1,7 @@
 /*
  * Network.java
  *
- * $Id: GeomPlanarGraph.java,v 1.2 2010-08-20 18:28:04 mcoletti Exp $
+ * $Id: GeomPlanarGraph.java,v 1.3 2010-08-25 20:05:25 mcoletti Exp $
  */
 package sim.util.geo;
 
@@ -16,15 +16,9 @@ import sim.field.geo.GeomVectorField;
 import sim.field.network.Network;
 import sim.util.Bag;
 
-/** A factory class for creating a JTS PlanarGraph from a GeomVectorField
+/** A JTS PlanarGraph
  *
- * This class is used to compute intersections between line segments.
- * <p>
- * That is, a given data set may be comprised of a set of lines that you want to move
- * an agent along.  Presumably some of those line segments will intersect;
- * however, those intersections may not be represented in the original data,
- * so they will have to be computed.  This class can be used to compute those
- * intersections.<p>
+ * Planar graph useful for exploiting network topology.
  *
  * @see sim.app.geo.networkworld and sim.app.geo.campusworld
  *
@@ -39,12 +33,10 @@ public class GeomPlanarGraph extends PlanarGraph
 
     /** populate network with lines from a GeomVectorField
      *
-     * @param field containing line segments that need intersections computed
+     * @param field containing line segments
      *
-     * Assumes that GeomVectorField contains linear objects
+     * Assumes that 'field' contains co-planar linear objects
      *
-     * @todo May want to use a filter to pull out linear geometry regardless
-     * of geometry type.
      */
     public void createFromGeomField(GeomVectorField field)
     {
@@ -59,6 +51,25 @@ public class GeomPlanarGraph extends PlanarGraph
                 addLineString(lineString);
             }
         }
+
+        // Abandoned work on rectifying non-planar data. MAC 8/24/10.
+//        field.clear();
+//
+//        Collection<LineString> lines = lineMerger.getMergedLineStrings();
+//
+//        PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING);
+//
+//        GeometryNoder noder = new GeometryNoder(pm);
+//
+//        Collection<LineString> more_lines = noder.node(lines);
+//
+//        // Now add nodes and edges to graph
+//
+//        for (LineString line : more_lines)
+//        {
+//            addLineString(line);
+//            field.addGeometry(new MasonGeometry(line));
+        //}
 
     }
 
