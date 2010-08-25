@@ -56,6 +56,7 @@ public class GeomVectorField extends GeomField
     }
 
     /** Removes all geometry objects and resets the MBR. */
+    @Override
     public void clear()
     {
         super.clear();
@@ -68,22 +69,28 @@ public class GeomVectorField extends GeomField
     */ 
     public void computeConvexHull()
     {
-        ArrayList<Coordinate> pts = new ArrayList<Coordinate>(); 
-		List<?> gList = spatialIndex.queryAll();
-		
-		for (int i=0; i < gList.size(); i++) {
-            Geometry g = ((MasonGeometry)gList.get(i)).getGeometry(); 
-            Coordinate c[] = g.getCoordinates(); 
-            for (int j=0; j < c.length; j++) 
-                pts.add(c[j]); 
+        ArrayList<Coordinate> pts = new ArrayList<Coordinate>();
+        List<?> gList = spatialIndex.queryAll();
+
+        if (gList.isEmpty())
+        {
+            return;
         }
-                
-		Coordinate[] coords = new Coordinate[pts.size()] ;
-		for (int i=0;  i< pts.size(); i++)
-			coords[i] = pts.get(i); 
-		
-        ConvexHull hull = new ConvexHull(coords, geomFactory); 
-        convexHull = new PreparedPolygon((Polygon)hull.getConvexHull()); 
+
+        // Accumulate all the Coordinates in all the geometry into 'pts'
+        for (int i = 0; i < gList.size(); i++)
+        {
+            Geometry g = ((MasonGeometry) gList.get(i)).getGeometry();
+            Coordinate c[] = g.getCoordinates();
+            pts.addAll(Arrays.asList(c));
+        }
+
+        // ConvexHull expects a vector of Coordinates, so now convert
+        // the array list of Coordinates into a vector
+        Coordinate[] coords = pts.toArray(new Coordinate[pts.size()]);
+        
+        ConvexHull hull = new ConvexHull(coords, geomFactory);
+        this.convexHull = new PreparedPolygon((Polygon) hull.getConvexHull());
     }
         
     /**  Determine if the Coordinate is within the convex hull of the field's geometries.  Call 
@@ -91,6 +98,8 @@ public class GeomVectorField extends GeomField
     public boolean isInsideConvexHull(final Coordinate coord)
     {
     	Point p = geomFactory.createPoint(coord);
+
+        // XXX is intersects() correct? Would covers be appropriate?
         if (convexHull.intersects(p))
             return true;
         return false; 
@@ -105,6 +114,12 @@ public class GeomVectorField extends GeomField
     {
         Geometry p = new Polygon(null, null, geomFactory);	
 		List<?> gList = spatialIndex.queryAll();
+
+        if (gList.isEmpty())
+        {
+            return;
+        }
+        
         for (int i=0; i < gList.size(); i++) {
             Geometry g = ((MasonGeometry)gList.get(i)).getGeometry(); 
             p = p.union(g); 
