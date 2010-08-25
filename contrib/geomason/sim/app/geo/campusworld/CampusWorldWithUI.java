@@ -1,7 +1,7 @@
 /*
  * CampusWorldWithGUI
  *
- * $Id: CampusWorldWithUI.java,v 1.1 2010-08-19 20:58:15 mcoletti Exp $
+ * $Id: CampusWorldWithUI.java,v 1.2 2010-08-25 20:46:49 mcoletti Exp $
  */
 
 package sim.app.geo.campusworld;
@@ -16,7 +16,7 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.geo.GeomFieldPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
 
 
@@ -29,10 +29,10 @@ public class CampusWorldWithUI extends GUIState
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomFieldPortrayal walkwaysPortrayal = new GeomFieldPortrayal(true);
-    private GeomFieldPortrayal buildingPortrayal = new GeomFieldPortrayal(true);
-    private GeomFieldPortrayal roadsPortrayal = new GeomFieldPortrayal(true);
-    private GeomFieldPortrayal agentPortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal(true);
+    private GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal(true);
+    private GeomVectorFieldPortrayal roadsPortrayal = new GeomVectorFieldPortrayal(true);
+    private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
     public CampusWorldWithUI(SimState state)
     {
