@@ -1,3 +1,9 @@
+/**
+ * Agent.java
+ *
+ * $Id: Agent.java,v 1.7 2010-08-25 20:06:51 mcoletti Exp $
+ * 
+ */
 package sim.app.geo.networkworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -17,7 +23,8 @@ import sim.util.geo.*;
  *  the network, choosing a random direction at each intersection.  
  */
 
-public class Agent implements Steppable {
+public class Agent implements Steppable
+{
 
     private static final long serialVersionUID = -7060584745540577823L;
 

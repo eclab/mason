@@ -1,3 +1,9 @@
+/**
+ * NetworkWorld.java
+ *
+ * $Id: NetworkWorld.java,v 1.6 2010-08-25 20:06:50 mcoletti Exp $
+ * 
+ */
 package sim.app.geo.networkworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -22,13 +28,14 @@ public class NetworkWorld extends SimState
 {
 
     private static final long serialVersionUID = 2025934565604118804L;
-	public GeomVectorField world = new GeomVectorField(); // contains road network
+    
+    public GeomVectorField world = new GeomVectorField(); // contains road network
     public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
     public GeomVectorField agents = new GeomVectorField(); // agents moving through network
 
     // Stores transportation network connections
     public GeomPlanarGraph network = new GeomPlanarGraph();
-
+    
     // Agent that moves around the world
     Agent a = new Agent();
 
@@ -76,9 +83,8 @@ public class NetworkWorld extends SimState
             }
 
         network.createFromGeomField(world);
-        addIntersectionNodes( network.nodeIterator(), junctions) ;
+        addIntersectionNodes(network.nodeIterator(), junctions);
     }
-
 
     /** adds nodes corresponding to road intersections to GeomVectorField
      *
@@ -94,22 +100,22 @@ public class NetworkWorld extends SimState
         Point point = null;
 
         while (nodeIterator.hasNext())
-            {
-                Node node = (Node) nodeIterator.next();
-                System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
-                coord = node.getCoordinate();
-                point = fact.createPoint(coord);
-                junctions.addGeometry(new MasonGeometry(point));
-            }
+        {
+            Node node = (Node) nodeIterator.next();
+            System.out.println("node: " + node.getCoordinate() + " " + node.getDegree());
+            coord = node.getCoordinate();
+            point = fact.createPoint(coord);
+            junctions.addGeometry(new MasonGeometry(point));
+        }
     }
 
+    @Override
     public void start()
     {
         super.start();
         a.start(this);
         schedule.scheduleRepeating(a);
     }
-    
 
     void addPoint(final double x, final double y)
     {
@@ -123,4 +129,5 @@ public class NetworkWorld extends SimState
         doLoop(NetworkWorld.class, args);
         System.exit(0);
     }
+
 }
