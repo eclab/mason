@@ -1,39 +1,65 @@
+/**
+ * GeometryUtilities.java
+ *
+ * $Id: GeometryUtilities.java,v 1.4 2010-09-03 22:14:36 mcoletti Exp $
+ * 
+ */
 package sim.util.geo;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D.Double;
 import java.util.Comparator;
 
 import sim.portrayal.DrawInfo2D;
 import com.vividsolutions.jts.geom.Envelope;
+import sim.display.Display2D;
 import sim.field.geo.GeomGridField;
 
-public class GeometryUtilities {
+public class GeometryUtilities
+{
 
-	/** Determines the affine transform which converts world coordinates into screen 
-     * coordinates.  Modified from GeoTools RenderUtilities.java. 
+    /** Determines the affine transform which converts world coordinates into screen
+     * coordinates.  Modified from GeoTools RenderUtilities.java.
+     *
+     * @param mapExtent MBR in world coordinates mapped to viewport defined in 'info'
+     * @param viewport
+     * @return AffineTransform suitable for converting from world to screen coordinates
      */
-     public static AffineTransform worldToScreenTransform(Envelope mapExtent, DrawInfo2D info) {
-        double scaleX = info.draw.width / mapExtent.getWidth();
-        double scaleY = info.draw.height / mapExtent.getHeight();
-                
+    public static AffineTransform worldToScreenTransform(final Envelope mapExtent, final java.awt.geom.Rectangle2D.Double viewport)
+    {
+        double scaleX = viewport.width / mapExtent.getWidth();
+        double scaleY = viewport.height / mapExtent.getHeight();
+
         double tx = -mapExtent.getMinX() * scaleX;
-        double ty = (mapExtent.getMinY() * scaleY) + info.draw.height;
-                
+        double ty = (mapExtent.getMinY() * scaleY) + viewport.height;
+
         AffineTransform at = new AffineTransform(scaleX, 0.0d, 0.0d, -scaleY, tx, ty);
-        AffineTransform originTranslation = AffineTransform.getTranslateInstance(info.draw.x, info.draw.y);
+        AffineTransform originTranslation = AffineTransform.getTranslateInstance(viewport.x, viewport.y);
         originTranslation.concatenate(at);
-                
+
         return originTranslation != null ? originTranslation : at;
-    }     
-	
-     
+    }
+
+
+    /** Determines the affine transform which converts world coordinates into screen
+     * coordinates.  Modified from GeoTools RenderUtilities.java.
+     *
+     * convenience variant of other worldToSceenTransform()
+     *
+     * @param mapExtent MBR in world coordinates mapped to viewport defined in 'info'
+     * @param info defines the viewport dimensions
+     * @return AffineTransform suitable for converting from world to screen coordinates
+     */
+    public static AffineTransform worldToScreenTransform(final Envelope mapExtent, final DrawInfo2D info)
+    {
+        return worldToScreenTransform(mapExtent, info.draw);
+    }
+
      /**
       *  Uses the worldToScreen transform to transform the point (x,y) in screen coordinates 
       *  to world coordinates.  
       */
-     public static Point2D screenToWorldPointTransform(AffineTransform worldToScreen, double x, double y)
+     public static Point2D screenToWorldPointTransform(final AffineTransform worldToScreen, double x, double y)
      {
     	// code taken from GeoTools and hacked on
  		AffineTransform screenToWorld = null;
@@ -58,22 +84,25 @@ public class GeometryUtilities {
      };
 
 
-         /** compute the MBR for the grid field in display coordinates
+    /** compute the MBR for the grid field in display coordinates
      *
      * This is used to determine the display bounds for the grid field for
      * Display2D.attach().
      *
      * @param outer denotes MBR that maps to display window in world coordinates
-     * @param drawInfo describes the view port into which we'll be displaying the grid field
+     * @param display is the display into which the grid will be rendered
      * @param gridField for which we wish to find bounds in display coordinates
      *
-     * @return grid field bounds in display coordinates; will return drawInfo bounds if grid does not intersect given outer MBR
+     * @return grid field bounds in display coordinates; will return viewport if grid does not intersect given outer MBR
      */
-    static public java.awt.geom.Rectangle2D.Double computeBounds(final Envelope outer, final DrawInfo2D drawInfo, final GeomGridField gridField)
+    static public java.awt.geom.Rectangle2D.Double computeBounds(final Envelope outer, final Display2D display, final GeomGridField gridField)
     {
-        java.awt.geom.Rectangle2D.Double bounds = (Double) drawInfo.draw.clone();
+        Display2D.InnerDisplay2D innerDisplay = display.insideDisplay;
 
-        AffineTransform transform = GeometryUtilities.worldToScreenTransform(outer, drawInfo);
+        // Initialize bounds to that of display viewport
+        java.awt.geom.Rectangle2D.Double bounds = new java.awt.geom.Rectangle2D.Double(innerDisplay.xOffset, innerDisplay.yOffset, innerDisplay.width, innerDisplay.height);
+
+        AffineTransform transform = GeometryUtilities.worldToScreenTransform(outer, bounds);
 
         if (outer.contains(gridField.MBR) ||
             gridField.MBR.contains(outer) ||
