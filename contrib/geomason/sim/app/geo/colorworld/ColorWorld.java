@@ -42,10 +42,6 @@ public class ColorWorld extends SimState
     // the GeomVectorField's spatial indexing.  
     public static GeomVectorField agents = new GeomVectorField();
 
-    // directory containing all the shapefiles 
-    private static final String dataDirectory = "sim/app/data/";
-
-
     // getters and setters for inspectors
     public int getNumAgents() { return NUM_AGENTS; }
     public void setNumAgents(int a) { if (a > 0) NUM_AGENTS = a; }
@@ -100,7 +96,7 @@ public class ColorWorld extends SimState
                 // Note: this line MUST occur prior to ingesting the data
                 importer.masonGeometryClass = CountingGeomWrapper.class; 
                 
-                importer.ingest( dataDirectory + "pol.shp", county, null);
+                importer.ingest( "../../data/pol", ColorWorld.class, county, null);
             }
         catch (FileNotFoundException ex)
             {

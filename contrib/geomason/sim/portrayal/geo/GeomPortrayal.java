@@ -165,7 +165,7 @@ public class GeomPortrayal extends SimplePortrayal2D  {
         for (int i=1; i < coords.length; i++) { 
             path.lineTo((float)coords[i].x, (float)coords[i].y); 
         }
-                                
+                  
         if (fill) 
             graphics.fill(path); 
         else 

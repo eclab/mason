@@ -29,9 +29,6 @@ public class CampusWorld extends SimState
     /** How many agents in the simulation */ 
 	public int numAgents = 1000;
 
-	/** Where the GIS files are stored */ 
-    private static final String dataDirectory = "contrib/geomason/sim/app/data/";
-
     /** Fields to hold the associated GIS information */ 
     public GeomVectorField walkways = new GeomVectorField();
     public GeomVectorField roads = new GeomVectorField();
@@ -98,19 +95,19 @@ public class CampusWorld extends SimState
                 masked.add("ADDR_NUM");
 
                 // read in the buildings GIS file 
-                importer.ingest(dataDirectory + "bldg.shp", buildings, null);
+                importer.ingest("../../data/bldg", CampusWorld.class, buildings, null);
 
                 // We want to save the MBR so that we can ensure that all GeomFields
                 // cover identical area.
                 Envelope MBR = buildings.getMBR();
 
                 System.out.println("reading roads layer");
-                importer.ingest(dataDirectory + "roads.shp", roads, null);
+                importer.ingest("../../data/roads", CampusWorld.class, roads, null);
 
                 MBR.expandToInclude(roads.getMBR());
 
                 System.out.println("reading walkways layer");
-                importer.ingest(dataDirectory + "walk_ways.shp", walkways, null);
+                importer.ingest("../../data/walk_ways", CampusWorld.class, walkways, null);
 
                 MBR.expandToInclude(walkways.getMBR());
 

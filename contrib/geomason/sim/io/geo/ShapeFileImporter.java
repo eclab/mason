@@ -1,9 +1,11 @@
 package sim.io.geo; 
 
 import java.io.*; 
+
 import sim.util.*; 
 import sim.util.geo.*; 
 import sim.field.geo.*; 
+
 import java.nio.*; 
 import java.nio.channels.*; 
 import com.vividsolutions.jts.geom.*; 
@@ -17,22 +19,23 @@ import java.util.Collections;
 
 public class ShapeFileImporter extends GeomImporter {
  
-    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
+	public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
+		String shpFilename="", dbfFilename = ""; 
         try { 
-            // open shp file 
-            File file = new File(input); 
-            if (!file.exists()) 
-                throw new FileNotFoundException(file.getAbsolutePath()); 
-                                
-            // open dbf file 
-            String s = input.substring(0, input.length()-4) + ".dbf";                       
-            File dbFile = new File(s);
-            if (!dbFile.exists())
-                throw new FileNotFoundException(dbFile.getAbsolutePath()); 
-                
-                        
-            FileChannel dbChannel = new FileInputStream(dbFile).getChannel(); 
+        	shpFilename = referenceClass.getResource(fileName + ".shp").getPath(); 
+        	dbfFilename = referenceClass.getResource(fileName + ".dbf").getPath(); 
+        	
+        	FileInputStream shpFileInputStream = new FileInputStream(shpFilename); 
+        	
+        		
+        	FileChannel channel = shpFileInputStream.getChannel();
+            ByteBuffer byteBuf = channel.map(FileChannel.MapMode.READ_ONLY, 0, (int)channel.size());
+            channel.close(); 
+        	
+        	FileInputStream dbFileInputStream = new FileInputStream(dbfFilename);
+        	
+        	FileChannel dbChannel = dbFileInputStream.getChannel();
             ByteBuffer dbBuffer = dbChannel.map(FileChannel.MapMode.READ_ONLY, 0, (int)dbChannel.size()); 
             dbChannel.close(); 
                         
@@ -43,7 +46,7 @@ public class ShapeFileImporter extends GeomImporter {
             int fieldCnt = (short) ((headerSize - 1) / 32 - 1);
             AttributeField fields[] = new AttributeField[fieldCnt]; 
                                                 
-            RandomAccessFile inFile = new RandomAccessFile(dbFile, "r"); 
+            RandomAccessFile inFile = new RandomAccessFile(dbfFilename, "r"); 
                         
             inFile.seek(32); 
                         
@@ -72,9 +75,6 @@ public class ShapeFileImporter extends GeomImporter {
             inFile.seek(0); 
             inFile.skipBytes(headerSize); 
                         
-            FileChannel channel = new FileInputStream(file).getChannel();
-            ByteBuffer byteBuf = channel.map(FileChannel.MapMode.READ_ONLY, 0, (int)channel.size());
-            channel.close(); 
                         
             GeometryFactory geomFactory = new GeometryFactory(); 
 
@@ -187,7 +187,7 @@ public class ShapeFileImporter extends GeomImporter {
                     }
                 }
                 else 
-                    System.err.println("Unknown shape type in " + input); 
+                    System.err.println("Unknown shape type in " + fileName); 
                 
                 if (geom != null) { 
                 	Collections.sort(attributeInfo, GeometryUtilities.attrFieldCompartor); 
@@ -200,6 +200,11 @@ public class ShapeFileImporter extends GeomImporter {
                 }
                 
             }
-        } catch (IOException e) { System.out.println("Error in MasonImporter: " + e); }
-    }
+        } catch (IOException e) { 
+        	System.out.println("Error in ShapeFileImporter!!");
+        	System.out.println("SHP filename: " + shpFilename); 
+        	System.out.println("DBF filename: " + dbfFilename); 
+        	e.printStackTrace(); 
+        }
+    }	
 }

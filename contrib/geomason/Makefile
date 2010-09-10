@@ -18,7 +18,8 @@ sim/app/geo/networkworld/*.java			\
 sim/app/geo/touchingworld/*.java
 
 demos : geomason.jar
-	$(JAVAC) -cp $(CLASSPATH):geomason.jar $(FLAGS) $(DEMOS)
+	@echo "Compiling examples..."
+	@$(JAVAC) -cp ${CLASSPATH}:geomason.jar $(FLAGS) $(DEMOS)
 
 
 # Delete all the class files, checkpoints, and other various garbage
@@ -67,8 +68,9 @@ OGR_FILES = sim/io/geo/OGRImporter.java
 
 # Add GEOTOOL_FILES and/or OGR_FILES if you want support for those
 geomason.jar : $(BASE_FILES) # $(GEOTOOL_FILES) $(OGR_FILES)
-	javac $(FLAGS) $^
-	jar -cvf $@ `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"`
+	@echo "Creating geomason.jar..."
+	@javac $(FLAGS) $^
+	@jar -cvf $@ `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"`
 
 
 jar : geomason.jar
