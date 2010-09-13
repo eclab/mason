@@ -1837,3 +1837,4 @@ Version 15
 		were not safe.  Who made these clonable in the first place?  
 	Added sim/util/datacull/README
 	Set the binary flag on certain binary files in the CVS repository, oops
+	exceptions thrown in init() now have their stack traces printed out

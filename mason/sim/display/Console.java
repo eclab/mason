@@ -1048,7 +1048,7 @@ public class Console extends JFrame implements Controller
         // init method often has all sorts of non-threadsafe swing setup
         // gizmos.  This SHOULD be fine to force.  {I hope!}  This fixes
         // some ConcurrentModificationException bugs we were seeing.
-        invokeInSwing(new Runnable() { public void run() { simulation.init(Console.this); } });
+        invokeInSwing(new Runnable() { public void run() { try { simulation.init(Console.this); } catch (Exception e) { e.printStackTrace(); } } });
 
         // Set the location of the console if it hasn't already
         // been set by the user
