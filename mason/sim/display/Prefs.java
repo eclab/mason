@@ -80,7 +80,7 @@ public class Prefs
         {
         try 
             {
-            System.err.println("Saving " + prefs);
+            // System.err.println("Saving " + prefs);
             prefs.flush();
             return true;
             }
