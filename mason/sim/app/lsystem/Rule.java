@@ -13,7 +13,7 @@ public class Rule implements Serializable
     {
     private static final long serialVersionUID = 6750008059574576396L;
 
-	// what to replace
+    // what to replace
     public byte pattern;
     
     // what to replace it with

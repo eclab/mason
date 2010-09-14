@@ -14,7 +14,7 @@ public  class LSystemDrawer implements Steppable
     {
     private static final long serialVersionUID = 2107788276155299189L;
 
-	// copy the code over so that you can draw while calculating
+    // copy the code over so that you can draw while calculating
     ByteList code;
     
     // draw settings remain local so that no changes are made mid-draw

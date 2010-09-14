@@ -18,7 +18,7 @@ import sim.util.gui.*;
 public class RuleUI extends JPanel
     {
     private static final long serialVersionUID = -8650952120231540392L;
-	// components
+    // components
     JButton buttonGo = new JButton("Calculate");
     JButton buttonCancel = new JButton("Cancel");
     JButton buttonSave = new JButton("Save");
@@ -449,7 +449,7 @@ public class RuleUI extends JPanel
         LabelledList list = new LabelledList()
             {
             private static final long serialVersionUID = -2153709747861890863L;
-			Insets insets = new Insets(5, 5, 5, 5);
+            Insets insets = new Insets(5, 5, 5, 5);
             public Insets getInsets()
                 {
                 return insets;
@@ -468,7 +468,7 @@ public class RuleUI extends JPanel
         Box b = new Box(BoxLayout.X_AXIS)
             {
             private static final long serialVersionUID = -869949739122977643L;
-			Insets insets = new Insets(5, 5, 5, 5);
+            Insets insets = new Insets(5, 5, 5, 5);
             public Insets getInsets()
                 {
                 return insets;
@@ -489,7 +489,7 @@ public class RuleUI extends JPanel
         b = new Box(BoxLayout.X_AXIS)
             {
             private static final long serialVersionUID = -2124038237393174259L;
-			Insets insets = new Insets(5, 5, 5, 5);
+            Insets insets = new Insets(5, 5, 5, 5);
             public Insets getInsets()
                 {
                 return insets;
@@ -510,7 +510,7 @@ public class RuleUI extends JPanel
             {
             private static final long serialVersionUID = -6638838065039609876L;
 
-			NamedTableModel(int rows, int cols)
+            NamedTableModel(int rows, int cols)
                 {
                 super(rows, cols);
                 }
