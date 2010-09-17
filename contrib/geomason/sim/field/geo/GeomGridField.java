@@ -15,6 +15,10 @@ public class GeomGridField extends GeomField
 	/** Grid container
      * 
      * Allows for the user to use an arbitrary grid of integers, doubles, or objects.
+     *
+     * XXX Maybe consider Abstract2DGrid instead? But that would eliminate possibly
+     * using Sparse2DGrid.
+     * 
      */
     private Grid2D grid = null;
 
@@ -76,7 +80,8 @@ public class GeomGridField extends GeomField
     {
         grid = newGrid;
 
-        // TODO update pixelWidth and pixelHeight iff MBR set
+        setPixelWidth(grid.getWidth());
+        setPixelHeight(grid.getHeight());
     }
 
     /**
