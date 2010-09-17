@@ -1,17 +1,25 @@
+/**
+ * GeomImporter.java
+ *
+ * $Id: GeomImporter.java,v 1.9 2010-09-17 22:20:06 mcoletti Exp $
+ */
+
 package sim.io.geo;
+
 import java.io.FileNotFoundException;
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag; 
 import sim.util.geo.*; 
 import java.util.ArrayList;
+import sim.field.geo.GeomGridField;
 
 /** 
     A GeomImportor reads a file for geometric info and adds new objects to the GeomVectorField.  In addition, it sets up the
     attribute information for inspection.  The attributes are sorted alphabetically by name.  Currently, attributes must be 
     either integer, decimal, string or boolean data types.   
 */
-
-public abstract class GeomImporter {
+public abstract class GeomImporter
+{
 	
 	final static int POINT = 1; 
 	final static int LINE = 3; 
@@ -39,11 +47,29 @@ public abstract class GeomImporter {
 		ingest(fileName, referenceClass, field, new Bag()); 
 	}
 
-	
+
+    /**
+     * Used to determine the GeomGridField storage type.
+     *
+     * @see ingest()
+     */
+    public enum GridDataType {INTEGER, DOUBLE}
+
+	/** Read geospatial grid data from inputFile into field
+     *
+     * This only reads the first band of data.
+     *
+     * @param inputFile is file name of data file
+     * @param type denotes the base type as either integer or double-based
+     * @param field is field to populate
+     * @throws FileNotFoundException if 'inputFile' not found
+     * @thrown RuntimeException if unable to read data
+     */
+    public void ingest(String fileName, GridDataType type, GeomGridField field) throws FileNotFoundException {}
+
     /** Holds attribute information from the underlying GIS files */
     public ArrayList<AttributeField> attributeInfo = new ArrayList<AttributeField>(); 
     
-    
-    /** Type of MasonGeometry to use.  This allows the user to use custom MasonGeometry objects instead of the default */ 
+    /** GridDataType of MasonGeometry to use.  This allows the user to use custom MasonGeometry objects instead of the default */
     public Class<?> masonGeometryClass = MasonGeometry.class; 
 }
