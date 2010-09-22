@@ -1,7 +1,7 @@
 /**
  * GeomImporter.java
  *
- * $Id: GeomImporter.java,v 1.9 2010-09-17 22:20:06 mcoletti Exp $
+ * $Id: GeomImporter.java,v 1.10 2010-09-22 01:20:08 mcoletti Exp $
  */
 
 package sim.io.geo;
@@ -25,19 +25,34 @@ public abstract class GeomImporter
 	final static int LINE = 3; 
 	final static int POLYGON = 5; 
 	
-    /** 
-        Read geospatial data into the GeomVectorField.  
+    /** Read geospatial data into the GeomVectorField.  
 
-		@param fileName The filename of the shape file to be opened, <b>without</b> the extension, and 
-		  			relative to the calling class.  
-		@param referenceClass The class from which ingest is called.  The fileName should be relative to this class's 
+		@param fileName The filename of the shape file to be opened and relative to the calling class.
+		@param referenceClass The class from which this is called.  The fileName should be relative to this class's
 				location in the filesystem.  
 		@param field The GeomVectorField to store the GIS information in 
 		@param masked  The Bag contains a subset of attribute names to display in the
         inspector.  The names must exactly match those in the data file.  If masked is null, then all attributes are 
         displayed, and if masked is an empty Bag, then no attributes are displayed.  
     */
-	public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException {}
+    public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
+    {
+        String filePath = referenceClass.getResource(fileName).getPath();
+
+        ingest(filePath, field, masked);
+    }
+
+
+    /** Read geospatial data into the given field.
+     *
+     * @param fileName is name of the data file
+     * @param field into which the data is read
+     * @param masked contains subset of attribute names to read and must match those in the datafile.  If null then all
+     * attributes are read.  If the bag is empty then no attributes are read.
+     * @throws FileNotFoundException
+     */
+	public void ingest(String fileName, GeomVectorField field, Bag masked) throws FileNotFoundException {}
+    
     
     /** This version does not display any attribute information in the inspector.  See 
       {@link #ingest(String, Class, GeomVectorField, Bag)} for more details. 
@@ -70,6 +85,6 @@ public abstract class GeomImporter
     /** Holds attribute information from the underlying GIS files */
     public ArrayList<AttributeField> attributeInfo = new ArrayList<AttributeField>(); 
     
-    /** GridDataType of MasonGeometry to use.  This allows the user to use custom MasonGeometry objects instead of the default */
+    /** Type of MasonGeometry to use.  This allows the user to use custom MasonGeometry objects instead of the default */
     public Class<?> masonGeometryClass = MasonGeometry.class; 
 }

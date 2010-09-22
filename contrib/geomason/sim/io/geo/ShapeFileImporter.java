@@ -1,3 +1,9 @@
+/**
+ *  ShapeFileImporter.java
+ *
+ * $Id: ShapeFileImporter.java,v 1.10 2010-09-22 01:20:08 mcoletti Exp $
+ */
+
 package sim.io.geo; 
 
 import java.io.*; 
@@ -16,15 +22,61 @@ import java.util.Collections;
     A native Java importer to read ERSI shapefile data into the GeomVectorField.  We assume the input file follows the
     standard ESRI shapefile format.    
 */ 
+public class ShapeFileImporter extends GeomImporter
+{
 
-public class ShapeFileImporter extends GeomImporter {
- 
-	public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
+    /** Read the given shape file into the field.
+     *
+     * Unlike the super().ingest() this will try to get the resource twice; the
+     * first time with the plain file name, and possibly a second with the name
+     * with ".shp" appended.
+     *
+     * @param fileName
+     * @param referenceClass
+     * @param field
+     * @param masked
+     * @throws FileNotFoundException
+     */
+    @Override
+    public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
-		String shpFilename="", dbfFilename = ""; 
-        try { 
-        	shpFilename = referenceClass.getResource(fileName + ".shp").getPath(); 
-        	dbfFilename = referenceClass.getResource(fileName + ".dbf").getPath(); 
+        String filePath = null;
+        
+        try
+        {
+            filePath = referenceClass.getResource(fileName).getPath();
+        } catch (NullPointerException np1)
+        {
+            // getResource() was unable to find the file.  This is probably
+            // because 'fileName' doesn't have a '.shp' extension.  Try again
+            // after adding the '.shp' suffix.
+
+            try
+            {
+                filePath = referenceClass.getResource(fileName + ".shp").getPath();
+            } catch (NullPointerException np2)
+            {
+                throw new FileNotFoundException(fileName);
+            }
+        }
+
+        ingest(filePath, field, masked);
+    }
+
+
+
+    @Override
+	public void ingest(String fileName, GeomVectorField field, Bag masked) throws FileNotFoundException
+    {
+		String shpFilename = "", dbfFilename = "";
+
+        try
+        {
+            // Ensure the shape file name has the proper suffix
+        	shpFilename = fileName.endsWith(".shp") ? fileName : fileName + ".shp";
+
+            // Database file name is same as shape file name, except with '.dbf' extension
+        	dbfFilename = shpFilename.substring(0, shpFilename.lastIndexOf('.')) + ".dbf";
         	
         	FileInputStream shpFileInputStream = new FileInputStream(shpFilename); 
         	

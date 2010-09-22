@@ -1,7 +1,7 @@
 /*
  * GDALImporter.java
  *
- * $Id: GDALImporter.java,v 1.1 2010-09-17 22:20:06 mcoletti Exp $
+ * $Id: GDALImporter.java,v 1.2 2010-09-22 01:20:08 mcoletti Exp $
  */
 package sim.io.geo;
 
@@ -89,7 +89,16 @@ public class GDALImporter extends GeomImporter
     }
 
 
-  
+    /**
+     * Ganked from GDAL/swig/java/apps/GDALtest.java
+     */
+	public void printLastError()
+    {
+		System.out.println("Last error: " + gdal.GetLastErrorMsg());
+		System.out.println("Last error no: " + gdal.GetLastErrorNo());
+		System.out.println("Last error type: " + gdal.GetLastErrorType());
+	}
+
 
     /** Read geospatial grid data from inputFile into field
      *
