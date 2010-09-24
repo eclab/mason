@@ -149,6 +149,27 @@ public class GeomGridField extends GeomField
         return true;
     }
 
+    
+    /**
+     * @param p point
+     * @return x grid coordinate for cell 'p' is in
+     */
+    public int toXCoord(final Point p)
+    {
+        return (int) Math.floor((p.getX() - getMBR().getMinX()) / getPixelWidth());
+    }
+
+
+    /**
+     * @param p point
+     * @return y grid coordinate for cell 'p' is in
+     */
+    public int toYCoord(final Point p)
+    {
+        return (int) Math.floor((p.getY() - getMBR().getMinY()) / getPixelHeight());
+    }
+
+
 
     /** Return a Point corresponding to center of grid cell
      *
