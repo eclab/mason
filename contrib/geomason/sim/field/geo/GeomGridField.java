@@ -1,6 +1,9 @@
 package sim.field.geo;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import sim.field.grid.Grid2D;
 
 /** A georeferenced area represented by a grid
@@ -131,6 +134,41 @@ public class GeomGridField extends GeomField
     }
 
 
+    /** Return a Point corresponding to center of grid cell
+     *
+     * @param x in pixel coordinates
+     * @param y in pixel coordinates
+     * @return Point for center of given grid cell
+     */
+    public Point toPoint(int x, int y)
+    {
+        assert x >= 0 && y >= 0 && x < getGridWidth() && y < getGridHeight() : "x: " + x + "y: " + y;
 
+        if ( x < 0 || y < 0 || x >= getGridWidth() || y >= getGridHeight() )
+        {
+            throw new IndexOutOfBoundsException();
+        }
+
+        Coordinate coordinate = new Coordinate();
+
+        double x_orig = getMBR().getMinX();
+        double y_orig = getMBR().getMinY(); // XXX getMaxY() instead?
+
+        coordinate.x = x_orig + (x * getPixelWidth() + 0.5 * getPixelWidth());
+        // XXX should invert y?
+        coordinate.y = y_orig + (y * getPixelHeight() + 0.5 * getPixelHeight());
+        coordinate.z = 0.0;
+
+        Point point = geometryFactory.createPoint(coordinate);
+
+        return point;
+    }
+    
+
+    /** Used to create geometry as needed
+     *
+     * @see toPoint()
+     */
+    private static GeometryFactory geometryFactory = new GeometryFactory();
 
 }
