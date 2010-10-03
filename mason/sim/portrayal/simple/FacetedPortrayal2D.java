@@ -67,24 +67,28 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
     public boolean hitObject(Object object, DrawInfo2D range)
         {
         if (portrayAllChildren)
+            {
             for(int i = 0; i < children.length;i++)
                 if (children[i].hitObject(object, range))
                     return true;
-                else
-                    return getChild(object).hitObject(object,range);
-        return false;
+            return false;
+            }
+        else
+            return getChild(object).hitObject(object,range);
         }
 
     /** If portrayAllChildren, Returns true if any ONE of the children returns true. */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
         if (portrayAllChildren)
+            {
             for(int i = 0; i < children.length;i++)
                 if (children[i].setSelected(wrapper, selected))
                     return true;
-                else
-                    return getChild(wrapper.getObject()).setSelected(wrapper, selected);
-        return true;
+            return false;
+            }
+        else
+            return getChild(wrapper.getObject()).setSelected(wrapper, selected);
         }
 
     /** If portrayAllChildren, Calls on the first child to return the inspector. */
