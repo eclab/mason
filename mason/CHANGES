@@ -1839,3 +1839,6 @@ Version 15
 	Set the binary flag on certain binary files in the CVS repository, oops
 	exceptions thrown in init() now have their stack traces printed out
 	Fixed bug in FacetedPortrayal, wasn't handling hitObjects and setSelected right
+	Added no-backdrop option to saving to PDF
+	Added initial ParallelSequence revision which allows arbitrary numbers of threads
+		divvying up all the steppables

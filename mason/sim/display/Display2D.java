@@ -1582,6 +1582,30 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
     private Object sacrificialObj = null;
     
+	public static int TYPE_PDF = 1;
+	public static int TYPE_PNG = 2;
+	
+	public void takeSnapshot(File file, int type) throws IOException
+		{
+		if (type == TYPE_PNG)
+			{
+            Graphics g = insideDisplay.getGraphics();
+            BufferedImage img = insideDisplay.paint(g,true,false);
+			g.dispose();
+			OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+			PngEncoder tmpEncoder = new PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+			stream.write(tmpEncoder.pngEncode());
+			stream.close();
+			}
+		else // type == TYPE_PDF
+			{
+			boolean oldprecise = precise;
+			precise = true;
+			PDFEncoder.generatePDF(port, file);
+			precise = oldprecise;
+			}
+		}
+	
     public void takeSnapshot()
         {
         synchronized(Display2D.this.simulation.state.schedule)
@@ -1617,16 +1641,20 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             g.dispose();  // because we got it with getGraphics(), we're responsible for it
                         
             // Ask what kind of thing we want to save?
-            int result = 2;  // PNG by default
+			final int CANCEL_BUTTON = 0;
+			final int PNG_BUTTON = 1;
+			final int PDF_BUTTON = 2;
+			final int PDF_NO_BACKDROP_BUTTON = 3;
+            int result = PNG_BUTTON;  //  default
             if (havePDF) 
                 {
-                Object[] options = { "Cancel", "Save to PDF", "Save to PNG Bitmap" };
+                Object[] options = { "Cancel", "Save to PNG Bitmap", "Save to PDF", "Save to PDF with no Backdrop" };
                 result = JOptionPane.showOptionDialog(getFrame(), "Save window snapshot to what kind of file format?", "Save Format", 
                     JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                     null, options, options[0]);
                 }
                         
-            if (result == 2)  // PNG
+            if (result == PNG_BUTTON) 
                 {
                 // NOW pop up the save window
                 FileDialog fd = new FileDialog(getFrame(), 
@@ -1644,7 +1672,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                                             }
                     catch (Exception e) { e.printStackTrace(); }
                 }
-            else if (result == 1)  // PDF
+            else if (result == PDF_BUTTON || result == PDF_NO_BACKDROP_BUTTON)
                 {
                 FileDialog fd = new FileDialog(getFrame(), 
                     "Save Snapshot as PDF...", FileDialog.SAVE);
@@ -1654,8 +1682,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                                             {
                                             boolean oldprecise = precise;
                                             precise = true;
+											Paint b = getBackdrop();
+											if (result == PDF_NO_BACKDROP_BUTTON)  // temporarily remove backdrop
+												setBackdrop(null);
                                             PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
                                             precise = oldprecise;
+											if (result == PDF_NO_BACKDROP_BUTTON)
+												setBackdrop(b);
                                             }
                     catch (Exception e) { e.printStackTrace(); }
                 }

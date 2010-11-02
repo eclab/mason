@@ -756,7 +756,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
     public final long nextLong(final long n)
         {
         if (n<=0)
-            throw new IllegalArgumentException("n must be positive");
+            throw new IllegalArgumentException("n must be positive, got: " + n);
         
         long bits, val;
         do 
@@ -1089,7 +1089,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
     public final int nextInt(final int n)
         {
         if (n<=0)
-            throw new IllegalArgumentException("n must be positive");
+            throw new IllegalArgumentException("n must be positive, got: " + n);
         
         if ((n & -n) == n)  // i.e., n is a power of 2
             {

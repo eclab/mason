@@ -22,6 +22,7 @@ import java.lang.reflect.*;
  *  also provide a <i>domain</i> in the form of a function called domFoo(), which returns either an array
  *  of Objects or a <tt>sim.util.Interval</tt>.  If no domain function exists, or if the domain function
  *  returns null, then it is assumed the property has no domain (it can take on any value).
+ *  You can also hide a property by creating a boolean method called hideFoo() which returns true.
  *
  *  <p>The idea behind domains is to make it easy to create graphical interfaces (sliders, pop-up menus)
  *  for the user to set properties, where it's often convenient to know beforehand what values the property
