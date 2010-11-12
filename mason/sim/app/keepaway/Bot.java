@@ -93,7 +93,7 @@ public /*strictfp*/ class Bot extends Entity implements Steppable
                     {
                     // if we didn't hit the ball, we want to go towards it
                     tempVector.subtract(((Entity)objs.objs[x]).loc, loc);
-                    tempVector.setLength(0.5);
+                    tempVector.resize(0.5);
                     sumVector.addIn(tempVector);
                     }
                 }

@@ -113,7 +113,7 @@ public abstract /*strictfp*/ class Entity extends OvalPortrayal2D
     public void capVelocity()
         {
         if(velocity.length() > cap)
-            velocity = velocity.setLength(cap);
+            velocity = velocity.resize(cap);
         }
     
     }
