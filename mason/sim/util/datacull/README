@@ -1,5 +1,0 @@
-sim.util.datacull
-
-This is a now-defunct package which has been removed: but CVS on our
-repository won't permit us to remove directories.  Simply delete
-this directory if you see it (README and all).
