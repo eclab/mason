@@ -37,9 +37,12 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public DoubleBag(final DoubleBag other)
         {
         if (other==null) { numObjs = 0; objs = new double[1]; }
-        numObjs = other.numObjs;
-        objs = new double[numObjs];
-        System.arraycopy(other.objs,0,objs,0,numObjs);
+        else
+			{
+			numObjs = other.numObjs;
+			objs = new double[numObjs];
+			System.arraycopy(other.objs,0,objs,0,numObjs);
+			}
         }
     
     public int size()

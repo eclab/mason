@@ -1844,3 +1844,5 @@ Version 15
 		divvying up all the steppables
 	Migrated to SVN on Google Code
 	Deleted datacull directory
+	Fixed bug in copy constructor for Bag, IntBag, and DoubleBag.  Thanks to
+		Chris Hollander <chris.hollander@gmail.com>
