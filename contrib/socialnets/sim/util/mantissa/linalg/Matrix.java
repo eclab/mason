@@ -4,29 +4,29 @@ import java.io.Serializable;
 
 /** This class factor all services common to matrices.
 
-* <p>This class is the base class of all matrix implementations, it
-* is also the base class of the {@link SquareMatrix} class which adds
-* methods specific to square matrices.</p>
+ * <p>This class is the base class of all matrix implementations, it
+ * is also the base class of the {@link SquareMatrix} class which adds
+ * methods specific to square matrices.</p>
 
-* <p>This class both handles the storage of matrix elements and
-* implements the classical operations on matrices (addition,
-* substraction, multiplication, transposition). It relies on two
-* protected methods ({@link #getRangeForRow} and {@link
-* #getRangeForColumn}) to get tight loop bounds for matrices with
-* known structures full of zeros. These methods should be
-* implemented by derived classes to provide information about their
-* specific shape to the general algorithms implemented by this
-* abstract class.</p>
+ * <p>This class both handles the storage of matrix elements and
+ * implements the classical operations on matrices (addition,
+ * substraction, multiplication, transposition). It relies on two
+ * protected methods ({@link #getRangeForRow} and {@link
+ * #getRangeForColumn}) to get tight loop bounds for matrices with
+ * known structures full of zeros. These methods should be
+ * implemented by derived classes to provide information about their
+ * specific shape to the general algorithms implemented by this
+ * abstract class.</p>
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+ <p>This file is from the "Mantissa" Java software package found at
+ <a href="http://www.spaceroots.org/software/mantissa/index.html">
+ http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+ at the end of the source file.
 
-* @version $Id: Matrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+ * @version $Id: Matrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+ * @author L. Maisonobe
 
-*/
+ */
 
 public abstract class Matrix
     implements Serializable {
@@ -39,7 +39,7 @@ public abstract class Matrix
         // sanity check
         if (rows <= 0 || columns <= 0) {
             throw new IllegalArgumentException("cannot build a matrix"
-                                               + " with negative or null dimension");
+                + " with negative or null dimension");
             }
 
         this.rows    = rows;
@@ -49,7 +49,7 @@ public abstract class Matrix
             data[i] = 0.0;
             }
 
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -61,14 +61,14 @@ public abstract class Matrix
         // sanity check
         if (rows <= 0 || columns <= 0) {
             throw new IllegalArgumentException("cannot build a matrix"
-                                               + " with negative or null dimension");
+                + " with negative or null dimension");
             }
 
         this.rows    = rows;
         this.columns = columns;
         this.data    = data;
 
-    }
+        }
 
     /** Copy constructor.
      * @param m matrix to copy
@@ -78,7 +78,7 @@ public abstract class Matrix
         columns = m.columns;
         data    = new double[rows * columns];
         System.arraycopy(m.data, 0, data, 0, m.data.length);
-    }
+        }
 
     /** Polymorphic copy operator.
      * This method build a new object of the same type of the
@@ -95,7 +95,7 @@ public abstract class Matrix
      */
     public int getRows() {
         return rows;
-    }
+        }
 
     /** Get the number of columns of the matrix.
      * @return number of columns
@@ -103,7 +103,7 @@ public abstract class Matrix
      */
     public int getColumns() {
         return columns;
-    }
+        }
 
     /** Get a matrix element.
      * @param i row index, from 0 to rows - 1
@@ -115,12 +115,12 @@ public abstract class Matrix
     public double getElement(int i, int j) {
         if (i < 0 || i >= rows || j < 0 || j >= columns) {
             throw new IllegalArgumentException("cannot get element ("
-                                               + i + ", " + j + ") from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + i + ", " + j + ") from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
         return data[i * columns + j];
-    }
+        }
 
     /** Set a matrix element.
      * @param i row index, from 0 to rows - 1
@@ -132,12 +132,12 @@ public abstract class Matrix
     public void setElement(int i, int j, double value) {
         if (i < 0 || i >= rows || j < 0 || j >= columns) {
             throw new IllegalArgumentException("cannot set element ("
-                                               + i + ", " + j + ") in a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + i + ", " + j + ") in a "
+                + rows + 'x' + columns
+                + " matrix");
             }
         data[i * columns + j] = value;
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It returns a new
@@ -151,10 +151,10 @@ public abstract class Matrix
         // validity check
         if ((rows != m.rows) || (columns != m.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + m.rows + 'x' + m.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + m.rows + 'x' + m.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         double[] resultData    = new double[rows * columns];
@@ -166,7 +166,7 @@ public abstract class Matrix
         for (int i = 0; i < rows; ++i) {
             // compute the indices of the internal loop
             NonNullRange r = NonNullRange.reunion(getRangeForRow(i),
-                                                  m.getRangeForRow(i));
+                m.getRangeForRow(i));
 
             // assign the zeros before the non null range
             int j = 0;
@@ -187,8 +187,8 @@ public abstract class Matrix
                 if (j < i) {
                     ++lowerElements;
                     } else if (i < j) {
-                        ++upperElements;
-                        }
+                    ++upperElements;
+                    }
 
                 ++resultIndex;
                 ++j;
@@ -204,9 +204,9 @@ public abstract class Matrix
             }
 
         return MatrixFactory.buildMatrix(rows, columns, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substracts a matrix from the instance. It returns a new
@@ -220,10 +220,10 @@ public abstract class Matrix
         // validity check
         if ((rows != m.rows) || (columns != m.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + m.rows + 'x' + m.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + m.rows + 'x' + m.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         double[] resultData    = new double[rows * columns];
@@ -235,7 +235,7 @@ public abstract class Matrix
         for (int i = 0; i < rows; ++i) {
             // compute the indices of the internal loop
             NonNullRange r = NonNullRange.reunion(getRangeForRow(i),
-                                                  m.getRangeForRow(i));
+                m.getRangeForRow(i));
 
             // assign the zeros before the non null range
             int j = 0;
@@ -256,8 +256,8 @@ public abstract class Matrix
                 if (j < i) {
                     ++lowerElements;
                     } else if (i < j) {
-                        ++upperElements;
-                        }
+                    ++upperElements;
+                    }
 
                 ++resultIndex;
                 ++j;
@@ -273,9 +273,9 @@ public abstract class Matrix
             }
 
         return MatrixFactory.buildMatrix(rows, columns, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     /** Multiply the instance by a matrix.
      * This method multiplies the instance by a matrix. It returns a new
@@ -289,10 +289,10 @@ public abstract class Matrix
         // validity check
         if (columns != m.rows) {
             throw new IllegalArgumentException("cannot multiply a "
-                                               + rows + 'x' + columns
-                                               + " matrix by a "
-                                               + m.rows + 'x' + m.columns
-                                               + " matrix");
+                + rows + 'x' + columns
+                + " matrix by a "
+                + m.rows + 'x' + m.columns
+                + " matrix");
             }
 
         double[] resultData = new double[rows * m.columns];
@@ -306,7 +306,7 @@ public abstract class Matrix
 
                 // compute the tighter possible indices of the internal loop
                 NonNullRange r = NonNullRange.intersection(getRangeForRow(i),
-                                                           m.getRangeForColumn(j));
+                    m.getRangeForColumn(j));
 
                 if (r.begin < r.end) {
                     int k    = r.begin;
@@ -322,8 +322,8 @@ public abstract class Matrix
                     if (j < i) {
                         ++lowerElements;
                         } else if (i < j) {
-                            ++upperElements;
-                            }
+                        ++upperElements;
+                        }
 
                     }
 
@@ -334,9 +334,9 @@ public abstract class Matrix
             }
 
         return MatrixFactory.buildMatrix(rows, m.columns, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     /** Multiply the instance by a scalar.
      * This method multiplies the instance by a scalar. It returns a new
@@ -349,7 +349,7 @@ public abstract class Matrix
         Matrix copy = duplicate();
         copy.selfMul(a);
         return copy;
-    }
+        }
 
     /** Multiply the instance by a scalar.
      * This method multiplies the instance by a scalar.
@@ -365,7 +365,7 @@ public abstract class Matrix
                 }
             }
 
-    }
+        }
 
     /** Compute the transpose of the instance.
      * This method transposes the instance. It returns a new
@@ -402,8 +402,8 @@ public abstract class Matrix
                 if (j < i) {
                     ++lowerElements;
                     } else if (i < j) {
-                        ++upperElements;
-                        }
+                    ++upperElements;
+                    }
 
                 index += columns;
                 ++resultIndex;
@@ -421,9 +421,9 @@ public abstract class Matrix
             }
 
         return MatrixFactory.buildMatrix(columns, rows, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     /** Set a range to the non null part covered by a row.
      * @param i index of the row
@@ -448,15 +448,15 @@ public abstract class Matrix
                 if (index % columns == 0) {
                     buf.append(separator);
                     } else {
-                        buf.append(' ');
-                        }
+                    buf.append(' ');
+                    }
                 }
             buf.append(Double.toString(data[index]));
             }
 
         return buf.toString();
 
-    }
+        }
 
     /** number of rows of the matrix. */
     protected final int rows;

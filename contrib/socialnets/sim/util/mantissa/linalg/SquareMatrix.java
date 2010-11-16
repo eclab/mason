@@ -4,19 +4,19 @@ import java.io.Serializable;
 
 /** This class factor all services common to square matrices of linear algebra.
 
-* <p>This class is the base class of all square matrix
-* implementations. It extends the {@link Matrix} class with methods
-* specific to square matrices.</p>
+ * <p>This class is the base class of all square matrix
+ * implementations. It extends the {@link Matrix} class with methods
+ * specific to square matrices.</p>
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+ <p>This file is from the "Mantissa" Java software package found at
+ <a href="http://www.spaceroots.org/software/mantissa/index.html">
+ http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+ at the end of the source file.
 
-* @version $Id: SquareMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+ * @version $Id: SquareMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+ * @author L. Maisonobe
 
-*/
+ */
 
 public abstract class SquareMatrix
     extends Matrix
@@ -27,7 +27,7 @@ public abstract class SquareMatrix
      */
     protected SquareMatrix(int order) {
         super(order, order);
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -36,14 +36,14 @@ public abstract class SquareMatrix
      */
     protected SquareMatrix(int order, double[] data) {
         super(order, order, data);
-    }
+        }
 
     /** Copy constructor.
      * @param m matrix to copy
      */
     protected SquareMatrix(SquareMatrix m) {
         super(m);
-    }
+        }
 
     /** Get the determinant of the matrix.
      * @param epsilon threshold on matrix elements below which the
@@ -62,7 +62,7 @@ public abstract class SquareMatrix
     public SquareMatrix getInverse(double epsilon)
         throws SingularMatrixException {
         return (SquareMatrix) solve(new DiagonalMatrix (columns), epsilon);
-    }
+        }
 
 
     /** Solve the <tt>A.X = B</tt> equation.
@@ -85,7 +85,7 @@ public abstract class SquareMatrix
     public SquareMatrix solve(SquareMatrix b, double epsilon)
         throws SingularMatrixException {
         return (SquareMatrix) solve((Matrix) b, epsilon);
-    }
+        }
 
     }
 

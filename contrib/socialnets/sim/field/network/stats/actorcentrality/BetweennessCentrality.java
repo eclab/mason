@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.*;
 import sim.field.network.stats.*;
@@ -26,11 +32,11 @@ public class BetweennessCentrality extends FreemanNodeIndex {
         {
         super(network);
         g3 = NetworkStatistics.getNumberShortestPathsWithIntermediatesMatrix(   network,
-                                                                                UnitEdgeMetric.defaultInstance,
-                                                                                0d);
+            UnitEdgeMetric.defaultInstance,
+            0d);
         g2 = NetworkStatistics.getNumberShortestPathsMatrix(    network, 
-                                                                UnitEdgeMetric.defaultInstance,
-                                                                0d);
+            UnitEdgeMetric.defaultInstance,
+            0d);
         //(since the weights are integer values (hops), precisison is 0)
         }
         
@@ -60,7 +66,7 @@ public class BetweennessCentrality extends FreemanNodeIndex {
                     sum  += ((double)g3_ki[j])/g2_k[j];
                 }               
         return sum;
-    }
+        }
 
 
     public double getMaxCummulativeDifference()

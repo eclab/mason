@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 /** This class implements general square matrices of linear algebra.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: GeneralSquareMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: GeneralSquareMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class GeneralSquareMatrix
     extends SquareMatrix
@@ -28,7 +28,7 @@ public class GeneralSquareMatrix
         evenPermutations = true;
         lower            = null;
         upper            = null;
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -41,7 +41,7 @@ public class GeneralSquareMatrix
         evenPermutations = true;
         lower            = null;
         upper            = null;
-    }
+        }
 
     /** Copy constructor.
      * @param s square matrix to copy
@@ -55,17 +55,17 @@ public class GeneralSquareMatrix
             lower            = new LowerTriangularMatrix(s.lower);
             upper            = new UpperTriangularMatrix(s.upper);
             } else {
-                permutations     = null;
-                evenPermutations = true;
-                lower            = null;
-                upper            = null;
-                }
+            permutations     = null;
+            evenPermutations = true;
+            lower            = null;
+            upper            = null;
+            }
 
-    }
+        }
 
     public Matrix duplicate() {
         return new GeneralSquareMatrix(this);
-    }
+        }
 
     public void setElement(int i, int j, double value) {
         super.setElement(i, j, value);
@@ -73,7 +73,7 @@ public class GeneralSquareMatrix
         evenPermutations = true;
         lower            = null;
         upper            = null;
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It does modify the instance.
@@ -85,10 +85,10 @@ public class GeneralSquareMatrix
         // validity check
         if ((rows != s.rows) || (columns != s.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + s.rows + 'x' + s.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + s.rows + 'x' + s.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // addition loop
@@ -96,7 +96,7 @@ public class GeneralSquareMatrix
             data[index] += s.data[index];
             }
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substracts a matrix from the instance. It does modify the instance.
@@ -108,10 +108,10 @@ public class GeneralSquareMatrix
         // validity check
         if ((rows != s.rows) || (columns != s.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + s.rows + 'x' + s.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + s.rows + 'x' + s.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
       
         // substraction loop
@@ -119,7 +119,7 @@ public class GeneralSquareMatrix
             data[index] -= s.data[index];
             }
 
-    }
+        }
 
     public double getDeterminant(double epsilon) {
         try {
@@ -128,9 +128,9 @@ public class GeneralSquareMatrix
             double d = upper.getDeterminant(epsilon);
             return evenPermutations ? d : -d;
             } catch (SingularMatrixException e) {
-                return 0.0;
-                }
-    }
+            return 0.0;
+            }
+        }
 
     public Matrix solve(Matrix b, double epsilon)
         throws SingularMatrixException {
@@ -157,15 +157,15 @@ public class GeneralSquareMatrix
         // solve the permuted system
         return upper.solve(lower.solve(permB, epsilon), epsilon);
 
-    }
+        }
 
     protected NonNullRange getRangeForRow(int i) {
         return new NonNullRange(0, columns);
-    }
+        }
 
     protected NonNullRange getRangeForColumn(int j) {
         return new NonNullRange(0, rows);
-    }
+        }
 
     private void computeLUFactorization(double epsilon)
         throws SingularMatrixException {
@@ -257,7 +257,7 @@ public class GeneralSquareMatrix
         lower = new LowerTriangularMatrix(rows, lowerData);
         upper = new UpperTriangularMatrix(rows, upperData);
 
-    }
+        }
 
     private int[]                 permutations;
     private boolean               evenPermutations;

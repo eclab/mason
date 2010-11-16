@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @version $Id: NonNullRange.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
  * @author L. Maisonobe
 
-*/
+ */
 class NonNullRange
     implements Serializable, Cloneable {
 
@@ -64,27 +64,27 @@ class NonNullRange
     public NonNullRange(NonNullRange range) {
         begin = range.begin;
         end   = range.end;
-    }
+        }
 
     /** Build the intersection of two ranges.
      * @param first first range to consider
      * @param second second range to consider
      */
     public static NonNullRange intersection(NonNullRange first,
-                                            NonNullRange second) {
+        NonNullRange second) {
         return new NonNullRange(Math.max(first.begin, second.begin),
-                                Math.min(first.end, second.end));
-    }
+            Math.min(first.end, second.end));
+        }
 
     /** Build the reunion of two ranges.
      * @param first first range to consider
      * @param second second range to consider
      */
     public static NonNullRange reunion(NonNullRange first,
-                                       NonNullRange second) {
+        NonNullRange second) {
         return new NonNullRange(Math.min(first.begin, second.begin),
-                                Math.max(first.end, second.end));
-    }
+            Math.max(first.end, second.end));
+        }
 
     }
 

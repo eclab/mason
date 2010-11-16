@@ -2,21 +2,21 @@ package sim.util.mantissa.linalg;
 
 /** This class is a factory for the linear algebra package.
 
-* <p>This class is devoted to building the right type of matrix
-* according to the structure of the non null elements.</p>
+ * <p>This class is devoted to building the right type of matrix
+ * according to the structure of the non null elements.</p>
 
-* <p>This is a utility class, no instance of this class should be
-* built, so the constructor is explicitly made private.</p>
+ * <p>This is a utility class, no instance of this class should be
+ * built, so the constructor is explicitly made private.</p>
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+ <p>This file is from the "Mantissa" Java software package found at
+ <a href="http://www.spaceroots.org/software/mantissa/index.html">
+ http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+ at the end of the source file.
 
-* @version $Id: MatrixFactory.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+ * @version $Id: MatrixFactory.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+ * @author L. Maisonobe
 
-*/
+ */
 
 public class MatrixFactory {
     /** Simple constructor.
@@ -25,7 +25,7 @@ public class MatrixFactory {
      * class.
      */
     private MatrixFactory() {
-    }
+        }
 
     /** Build a matrix of the right subtype.
      * Build the right subtype of matrix according to the structure of
@@ -42,21 +42,21 @@ public class MatrixFactory {
      * @return a matrix containing the instance
      */
     public static Matrix buildMatrix(int rows, int columns, double[] data,
-                                     int lowerElements, int upperElements) {
+        int lowerElements, int upperElements) {
         if (rows == columns) {
             if (lowerElements == 0 && upperElements == 0) {
                 return new DiagonalMatrix(rows, data);
                 } else if (lowerElements == 0) {
-                    return new UpperTriangularMatrix(rows, data);
-                    } else if (upperElements == 0) {
-                        return new LowerTriangularMatrix(rows, data);
-                        } else {
-                            return new GeneralSquareMatrix(rows, data);
-                            }
-            } else {
-                return new GeneralMatrix(rows, columns, data);
+                return new UpperTriangularMatrix(rows, data);
+                } else if (upperElements == 0) {
+                return new LowerTriangularMatrix(rows, data);
+                } else {
+                return new GeneralSquareMatrix(rows, data);
                 }
-    }
+            } else {
+            return new GeneralMatrix(rows, columns, data);
+            }
+        }
 
     /** Build a matrix of the right subtype.
      * Build the right subtype of matrix according to the dimensions.
@@ -69,9 +69,9 @@ public class MatrixFactory {
         if (rows == columns) {
             return new GeneralSquareMatrix(rows, data);
             } else {
-                return new GeneralMatrix(rows, columns, data);
-                }
-    }
+            return new GeneralMatrix(rows, columns, data);
+            }
+        }
 
     }
 

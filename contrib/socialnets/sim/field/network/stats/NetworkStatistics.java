@@ -1,11 +1,20 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats;
 import sim.field.network.*;
 import sim.util.*;
 import java.util.*;
 
+/**
+Contributor:  Martin Pokropp <mapokropp@googlemail.com> 
+*/
+
 public class NetworkStatistics
     {
-
     /**
        Returns the number of nodes in the network.
     */
@@ -397,15 +406,63 @@ public class NetworkStatistics
     */
     public static double getMeanShortestPath( final Network network, final EdgeMetric computer )
         {
-        double result = 0;
-        double[][] paths = getShortestPathsMatrix(network, computer);
-        int N = paths.length;
-        for( int i = 0 ; i < N ; i++ )  
-            for( int j = 0 ; j < N ; j++ )
-                if( i != j )
-                    result += paths[i][j];
-        return result / (double)(N*(N-1));
+        try
+            {
+            double result = 0;
+            double[][] paths = getShortestPathsMatrix(network, computer);
+            int N = paths.length;
+            for( int i = 0 ; i < N ; i++ )  
+                for( int j = 0 ; j < N ; j++ )
+                    if( i != j )
+                        result += paths[i][j];
+            return result / (double)(N*(N-1));
+            }
+        catch (OutOfMemoryException e)
+            {
+            throw new RuntimeException("You ran out of memory!  getMeanShortestPath(...) has large memory requirements and may " +
+                "not be appropriate for big networks.  You should try getLargeNetworkMeanShortestPath(...) instead.", e);
+            }
         }
+
+
+    /**
+       Returns the average length of the shortest path between nodes in the network: memory-constrained version. Ignores self-loops. 
+       This method can be used if your machine does not provide enough heap memory to store the shortest 
+       paths matrix required in NetworkStatistics.getMeanShortestPath above (which is much faster if enough memory 
+       is provided). The problem is likely to occur with very large networks (some > 20k nodes??).
+	   
+	   @author  Martin Pokropp <mapokropp@googlemail.com>
+    */
+    public static double getLargeNetworkMeanShortestPath( final Network network, final EdgeMetric computer )
+        {
+        double result = 0;
+        Bag nodes = network.getAllNodes();
+        int N = nodes.numObjs;
+        if(!network.directed)
+            {
+            for( int i = 0; i < N - 1; i++ )
+                {
+                Object node = (Object) nodes.get(i);
+                double[] paths = getShortestPaths( network, node, computer );
+                for( int j = i + 1 ; j < N ; j++ )
+                    result += paths[j];
+                }
+            return result / ( N * (N - 1) / 2d );
+            }
+        else
+            {
+            for( int i = 0; i < N; i++ )
+                {
+                Object node = (Object) nodes.get(i);
+                double[] paths = getShortestPaths( network, node, computer );
+                for( int j = 0 ; j < N ; j++ )
+                    if( i != j )
+                        result += paths[j];
+                }
+            return result / (double) ( N * (N - 1) );
+            }
+        }
+
 
 
 

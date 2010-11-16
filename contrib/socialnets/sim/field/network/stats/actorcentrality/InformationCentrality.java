@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.stats.*;
 import sim.field.network.*;
@@ -91,9 +97,9 @@ public class InformationCentrality extends NodeIndex
                 }
                         
             }catch(SingularMatrixException ex)
-                {
-                throw new RuntimeException("Singular Matrix");
-                }
+            {
+            throw new RuntimeException("Singular Matrix");
+            }
         double k = (T-2*R)/nonIsolatedN;
         double sum = 0;
         for(int i=0;i<n;i++)
@@ -107,11 +113,11 @@ public class InformationCentrality extends NodeIndex
         
     public double getValue(Object node) {
         return ci[network.getNodeIndex(node)];
-    }
+        }
         
     public double getValue(int nodeIndex) {
         return ci[nodeIndex];
-    }
+        }
         
     /**
      * Sum_{i} getMeasure(i)

@@ -19,7 +19,7 @@ package sim.util.mantissa;
  * @version $Id: MantissaException.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
  * @author L. Maisonobe
 
-*/
+ */
 
 public class MantissaException
     extends Exception {
@@ -29,14 +29,14 @@ public class MantissaException
      */
     public MantissaException() {
         super("mantissa exception");
-    }
+        }
 
     /** Simple constructor.
      * Build an exception with the specified message
      */
     public MantissaException(String message) {
         super(message);
-    }
+        }
 
     /** Simple constructor.
      * Build an exception from a cause
@@ -44,7 +44,7 @@ public class MantissaException
      */
     public MantissaException(Throwable cause) {
         super(cause);
-    }
+        }
 
     /** Simple constructor.
      * Build an exception from a message and a cause
@@ -53,7 +53,7 @@ public class MantissaException
      */
     public MantissaException(String message, Throwable cause) {
         super(message, cause);
-    }
+        }
 
     }
 

@@ -4,18 +4,18 @@ import java.io.Serializable;
 
 /** This class represents matrices of the most general type.
 
-* <p>This class is the basic implementation of matrices to use when
-* nothing special is known about the structure of the matrix.</p>
+ * <p>This class is the basic implementation of matrices to use when
+ * nothing special is known about the structure of the matrix.</p>
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+ <p>This file is from the "Mantissa" Java software package found at
+ <a href="http://www.spaceroots.org/software/mantissa/index.html">
+ http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+ at the end of the source file.
 
-* @version $Id: GeneralMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
-* @author L. Maisonobe
+ * @version $Id: GeneralMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
+ * @author L. Maisonobe
 
-*/
+ */
 
 public class GeneralMatrix
     extends Matrix
@@ -27,7 +27,7 @@ public class GeneralMatrix
      */
     public GeneralMatrix(int rows, int columns) {
         super(rows, columns);
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -37,18 +37,18 @@ public class GeneralMatrix
      */
     public GeneralMatrix(int rows, int columns, double[] data) {
         super(rows, columns, data);
-    }
+        }
 
     /** Copy constructor.
      * @param m matrix to copy
      */
     public GeneralMatrix(Matrix m) {
         super(m);
-    }
+        }
 
     public Matrix duplicate() {
         return new GeneralMatrix(this);
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It does modify the instance.
@@ -60,10 +60,10 @@ public class GeneralMatrix
         // validity check
         if ((rows != m.rows) || (columns != m.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + m.rows + 'x' + m.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + m.rows + 'x' + m.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // addition loop
@@ -71,7 +71,7 @@ public class GeneralMatrix
             data[index] += m.data[index];
             }
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substracts a matrix from the instance. It does modify the instance.
@@ -83,10 +83,10 @@ public class GeneralMatrix
         // validity check
         if ((rows != m.rows) || (columns != m.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + m.rows + 'x' + m.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + m.rows + 'x' + m.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // substraction loop
@@ -94,15 +94,15 @@ public class GeneralMatrix
             data[index] -= m.data[index];
             }
 
-    }
+        }
 
     protected NonNullRange getRangeForRow(int i) {
         return new NonNullRange(0, columns);
-    }
+        }
 
     protected NonNullRange getRangeForColumn(int j) {
         return new NonNullRange(0, rows);
-    }
+        }
 
     }
 

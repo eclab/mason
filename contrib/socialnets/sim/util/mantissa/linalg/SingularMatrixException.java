@@ -4,15 +4,15 @@ import sim.util.mantissa.MantissaException;
 
 /** This class represent exceptions thrown by some matrix operations.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: SingularMatrixException.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: SingularMatrixException.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class SingularMatrixException
     extends MantissaException {
@@ -22,14 +22,14 @@ public class SingularMatrixException
      */
     SingularMatrixException() {
         super("singular matrix");
-    }
+        }
 
     /** Simple constructor.
      * Build an exception with the specified message
      */
     public SingularMatrixException(String message) {
         super(message);
-    }
+        }
 
     }
 

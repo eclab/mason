@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.stats.*;
 import sim.field.network.*;
@@ -71,15 +77,15 @@ public class PowerPrestige extends NodeIndex
                 }
             scalingDenominator = Math.sqrt(sumsq/n);//remember, this will be used to divide the prestige values
             }catch(SingularMatrixException ex)
-                {
-                throw new RuntimeException("Singular Matrix");
-                }
+            {
+            throw new RuntimeException("Singular Matrix");
+            }
         }
 
     public double getValue(final Object node) {
         Network.IndexOutIn inout = (Network.IndexOutIn)network.indexOutInHash.get(node);
         return prestige[inout.index];
-    }
+        }
         
     public double getValue(final int nodeIndex)
         {

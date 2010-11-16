@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 /** This class implements lower triangular matrices of linear algebra.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: LowerTriangularMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: LowerTriangularMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class LowerTriangularMatrix
     extends SquareMatrix
@@ -24,7 +24,7 @@ public class LowerTriangularMatrix
      */
     public LowerTriangularMatrix(int order) {
         super(order);
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -33,27 +33,27 @@ public class LowerTriangularMatrix
      */
     public LowerTriangularMatrix(int order, double[] data) {
         super(order, data);
-    }
+        }
 
     /** Copy constructor.
      * @param l lower triangular matrix to copy
      */
     public LowerTriangularMatrix(LowerTriangularMatrix l) {
         super(l);
-    }
+        }
 
     public Matrix duplicate() {
         return new LowerTriangularMatrix(this);
-    }
+        }
 
     public void setElement(int i, int j, double value) {
         if (i < j) {
             throw new ArrayIndexOutOfBoundsException("cannot set elements"
-                                                     + " above diagonal of a"
-                                                     + " lower triangular matrix");
+                + " above diagonal of a"
+                + " lower triangular matrix");
             }
         super.setElement(i, j, value);
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It does modify the instance.
@@ -65,10 +65,10 @@ public class LowerTriangularMatrix
         // validity check
         if ((rows != l.rows) || (columns != l.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + l.rows + 'x' + l.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + l.rows + 'x' + l.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // addition loop
@@ -78,7 +78,7 @@ public class LowerTriangularMatrix
                 }
             }
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substract a matrix from the instance. It does modify the instance.
@@ -90,10 +90,10 @@ public class LowerTriangularMatrix
         // validity check
         if ((rows != l.rows) || (columns != l.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + l.rows + 'x' + l.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + l.rows + 'x' + l.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // substraction loop
@@ -103,7 +103,7 @@ public class LowerTriangularMatrix
                 }
             }
 
-    }
+        }
 
     public double getDeterminant(double epsilon) {
         double determinant = data[0];
@@ -111,7 +111,7 @@ public class LowerTriangularMatrix
             determinant *= data[index];
             }
         return determinant;
-    }
+        }
 
     public Matrix solve(Matrix b, double epsilon)
         throws SingularMatrixException {
@@ -171,8 +171,8 @@ public class LowerTriangularMatrix
                 if (j < i) {
                     ++lowerElements;
                     } else if (i < j) {
-                        ++upperElements;
-                        }
+                    ++upperElements;
+                    }
 
                 ++bIndex;
                 ++resultIndex;
@@ -189,17 +189,17 @@ public class LowerTriangularMatrix
             }
 
         return MatrixFactory.buildMatrix(bRows, bCols, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     public NonNullRange getRangeForRow(int i) {
         return new NonNullRange(0, i + 1);
-    }
+        }
 
     public NonNullRange getRangeForColumn(int j) {
         return new NonNullRange(j, rows);
-    }
+        }
 
     }
 

@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats;
 import sim.field.network.*;
 import java.util.*;
@@ -132,75 +138,75 @@ public class DyadTriadStatistics {
                                 }
                             break;
                         case 3: if(md==1)
-                            {
-                            //here's how I can tell the 111s apart D has <1,0> and U has <0,1>
-                            //(the other nodes are <1,1> and <1,2> in both cases.
-                            //
-                            //I use the <o,i> notation to say out degree and in-degree of a node. 
+                                {
+                                //here's how I can tell the 111s apart D has <1,0> and U has <0,1>
+                                //(the other nodes are <1,1> and <1,2> in both cases.
+                                //
+                                //I use the <o,i> notation to say out degree and in-degree of a node. 
 
-                            if(c_ij==2)//k is the discriminating node (either <0,1> or <1,0>)
-                                census[(e_ki+e_ki==0)?TRIAD_111U:TRIAD_111D]++;
-                            else if(c_ik==2)//look at j
-                                census[(e_ji+e_jk==0)?TRIAD_111U:TRIAD_111D]++;
-                            else//look and i
-                                census[(e_ij+e_ik==0)?TRIAD_111U:TRIAD_111D]++;                                                                 
-                            }
-                        else                                                            
-                            // I must decide between 030T and 030C
-                            // 030C is all <1,1>, while 030T has a <0,2> and a <2, 0>
-                            // so it;s enough to look at atmost 2 nodes for <1,1>
-                            census[(e_ij+e_ik==1 && e_ji+e_ki==1 && e_ji+e_jk==1 && e_ij+e_kj==1)? TRIAD_030C: TRIAD_030T]++;
+                                if(c_ij==2)//k is the discriminating node (either <0,1> or <1,0>)
+                                    census[(e_ki+e_ki==0)?TRIAD_111U:TRIAD_111D]++;
+                                else if(c_ik==2)//look at j
+                                    census[(e_ji+e_jk==0)?TRIAD_111U:TRIAD_111D]++;
+                                else//look and i
+                                    census[(e_ij+e_ik==0)?TRIAD_111U:TRIAD_111D]++;                                                                 
+                                }
+                            else                                                            
+                                // I must decide between 030T and 030C
+                                // 030C is all <1,1>, while 030T has a <0,2> and a <2, 0>
+                                // so it;s enough to look at atmost 2 nodes for <1,1>
+                                census[(e_ij+e_ik==1 && e_ji+e_ki==1 && e_ji+e_jk==1 && e_ij+e_kj==1)? TRIAD_030C: TRIAD_030T]++;
                             break;
                         case 4: if(md==2)
-                            census[TRIAD_201]++;
-                        else
-                            {
-                            //120: D, C or U?
-                            // <1,1> => C
-                            // <2,0> => D
-                            // <0,2> => U
-                            // they all got <1,2> and <2,1>
-                            int in, out; 
+                                census[TRIAD_201]++;
+                            else
+                                {
+                                //120: D, C or U?
+                                // <1,1> => C
+                                // <2,0> => D
+                                // <0,2> => U
+                                // they all got <1,2> and <2,1>
+                                int in, out; 
                                                                         
-                            out =  e_ij+e_ik; //in of i.
-                            in = e_ji+e_ki; //out of i
-                            if(in+out==2)
-                                {//i is the node
-                                switch(out)
-                                    {
-                                    case 0:  census[TRIAD_120U]++; break;
-                                    case 1:  census[TRIAD_120C]++; break;
-                                    case 2:  census[TRIAD_120D]++; break;
+                                out =  e_ij+e_ik; //in of i.
+                                in = e_ji+e_ki; //out of i
+                                if(in+out==2)
+                                    {//i is the node
+                                    switch(out)
+                                        {
+                                        case 0:  census[TRIAD_120U]++; break;
+                                        case 1:  census[TRIAD_120C]++; break;
+                                        case 2:  census[TRIAD_120D]++; break;
+                                        }
+                                    break;
                                     }
-                                break;
-                                }
                                                                         
-                            in =  e_ij+e_kj; //in of j.
-                            out = e_ji+e_jk; //out of j
-                            if(in+out==2)
-                                {//j is the node
-                                switch(out)
-                                    {
-                                    case 0:  census[TRIAD_120U]++; break;
-                                    case 1:  census[TRIAD_120C]++; break;
-                                    case 2:  census[TRIAD_120D]++; break;
+                                in =  e_ij+e_kj; //in of j.
+                                out = e_ji+e_jk; //out of j
+                                if(in+out==2)
+                                    {//j is the node
+                                    switch(out)
+                                        {
+                                        case 0:  census[TRIAD_120U]++; break;
+                                        case 1:  census[TRIAD_120C]++; break;
+                                        case 2:  census[TRIAD_120D]++; break;
+                                        }
+                                    break;
                                     }
-                                break;
-                                }
                                                                         
-                            in =  e_ik+e_jk; //in of k.
-                            out = e_ki+e_kj; //out of k
-                            if(in+out==2)
-                                {//k is the node
-                                switch(out)
-                                    {
-                                    case 0:  census[TRIAD_120U]++; break;
-                                    case 1:  census[TRIAD_120C]++; break;
-                                    case 2:  census[TRIAD_120D]++; break;
+                                in =  e_ik+e_jk; //in of k.
+                                out = e_ki+e_kj; //out of k
+                                if(in+out==2)
+                                    {//k is the node
+                                    switch(out)
+                                        {
+                                        case 0:  census[TRIAD_120U]++; break;
+                                        case 1:  census[TRIAD_120C]++; break;
+                                        case 2:  census[TRIAD_120D]++; break;
+                                        }
+                                    break;
                                     }
-                                break;
                                 }
-                            }
                             break;
                         case 5: census[TRIAD_210]++;break;
                         case 6: census[TRIAD_300]++;break;

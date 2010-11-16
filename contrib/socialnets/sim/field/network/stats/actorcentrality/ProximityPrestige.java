@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.stats.*;
 import sim.field.network.*;
@@ -36,7 +42,7 @@ public class ProximityPrestige extends NodeIndex {
         //I want to return 1/[Sum_{j!=i} dintance(i,j)] 
         //but the hop distance(i, i) is 0, so I don't bother
         return Ii*Ii/sum/(n-1);
-    }
+        }
         
     public double  getMaxValue()
         {

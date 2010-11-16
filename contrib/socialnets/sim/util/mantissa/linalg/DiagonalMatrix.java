@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 /** This class implements diagonal matrices of linear algebra.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: DiagonalMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: DiagonalMatrix.java,v 1.1 2007-05-30 14:01:29 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class DiagonalMatrix
     extends SquareMatrix
@@ -24,7 +24,7 @@ public class DiagonalMatrix
      */
     public DiagonalMatrix(int order) {
         this(order, 1.0);
-    }
+        }
 
     /** Simple constructor.
      * This constructor builds a diagonal matrix of specified order and
@@ -37,7 +37,7 @@ public class DiagonalMatrix
         for (int index = 0; index < order * order; index += order + 1) {
             data[index] = value;
             }
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -46,27 +46,27 @@ public class DiagonalMatrix
      */
     public DiagonalMatrix(int order, double[] data) {
         super(order, data);
-    }
+        }
 
     /** Copy constructor.
      * @param d diagonal matrix to copy
      */
     public DiagonalMatrix(DiagonalMatrix d) {
         super(d);
-    }
+        }
 
     public Matrix duplicate() {
         return new DiagonalMatrix(this);
-    }
+        }
 
     public void setElement(int i, int j, double value) {
         if (i != j) {
             throw new ArrayIndexOutOfBoundsException("cannot set elements"
-                                                     + " out of diagonal in a"
-                                                     + " diagonal matrix");
+                + " out of diagonal in a"
+                + " diagonal matrix");
             }
         super.setElement(i, j, value);
-    }
+        }
 
     public double getDeterminant(double epsilon) {
         double determinant = data[0];
@@ -74,7 +74,7 @@ public class DiagonalMatrix
             determinant *= data[index];
             }
         return determinant;
-    }
+        }
 
     public SquareMatrix getInverse(double epsilon)
         throws SingularMatrixException {
@@ -90,7 +90,7 @@ public class DiagonalMatrix
 
         return inv;
 
-    }
+        }
 
     public Matrix solve(Matrix b, double epsilon)
         throws SingularMatrixException {
@@ -114,15 +114,15 @@ public class DiagonalMatrix
 
         return result;
 
-    }
+        }
 
     public NonNullRange getRangeForRow(int i) {
         return new NonNullRange(i, i + 1);
-    }
+        }
 
     public NonNullRange getRangeForColumn(int j) {
         return new NonNullRange(j, j + 1);
-    }
+        }
 
     }
 

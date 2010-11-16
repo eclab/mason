@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.stats.*;
 import sim.field.network.*;
@@ -26,7 +32,7 @@ public class ClosenessCentrality extends FreemanNodeIndex {
         //I want to return 1/[Sum_{j!=i} disntance(i,j)] 
         //but the hop distance(i, i) is 0, so I don't bother not adding it
         return 1d/sum;
-    }
+        }
 
     //TODO double check this, I back engineered it from the standardized value on page 186
     //TODO this will not hold for directed graphs (see page 200)

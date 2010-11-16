@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 /** This class implements upper triangular matrices of linear algebra.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: UpperTriangularMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: UpperTriangularMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class UpperTriangularMatrix
     extends SquareMatrix
@@ -24,7 +24,7 @@ public class UpperTriangularMatrix
      */
     public UpperTriangularMatrix(int order) {
         super(order);
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -33,27 +33,27 @@ public class UpperTriangularMatrix
      */
     public UpperTriangularMatrix(int order, double[] data) {
         super(order, data);
-    }
+        }
 
     /** Copy constructor.
      * @param u upper triangular matrix to copy
      */
     public UpperTriangularMatrix(UpperTriangularMatrix u) {
         super(u);
-    }
+        }
 
     public Matrix duplicate() {
         return new UpperTriangularMatrix(this);
-    }
+        }
 
     public void setElement(int i, int j, double value) {
         if (i > j) {
             throw new ArrayIndexOutOfBoundsException("cannot set elements"
-                                                     + " below diagonal of a"
-                                                     + " upper triangular matrix");
+                + " below diagonal of a"
+                + " upper triangular matrix");
             }
         super.setElement(i, j, value);
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It does modify the instance.
@@ -65,10 +65,10 @@ public class UpperTriangularMatrix
         // validity check
         if ((rows != u.rows) || (columns != u.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + u.rows + 'x' + u.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + u.rows + 'x' + u.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // addition loop
@@ -78,7 +78,7 @@ public class UpperTriangularMatrix
                 }
             }
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substract a matrix from the instance. It does modify the instance.
@@ -90,10 +90,10 @@ public class UpperTriangularMatrix
         // validity check
         if ((rows != u.rows) || (columns != u.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + u.rows + 'x' + u.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + u.rows + 'x' + u.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // substraction loop
@@ -103,7 +103,7 @@ public class UpperTriangularMatrix
                 }
             }
 
-    }
+        }
 
     public double getDeterminant(double epsilon) {
         double determinant = data[0];
@@ -111,7 +111,7 @@ public class UpperTriangularMatrix
             determinant *= data[index];
             }
         return determinant;
-    }
+        }
 
     public Matrix solve(Matrix b, double epsilon)
         throws SingularMatrixException {
@@ -171,8 +171,8 @@ public class UpperTriangularMatrix
                 if (j < i) {
                     ++lowerElements;
                     } else if (i < j) {
-                        ++upperElements;
-                        }
+                    ++upperElements;
+                    }
 
                 --bIndex;
                 --resultIndex;
@@ -189,17 +189,17 @@ public class UpperTriangularMatrix
             }
 
         return MatrixFactory.buildMatrix(bRows, bCols, resultData,
-                                         lowerElements, upperElements);
+            lowerElements, upperElements);
 
-    }
+        }
 
     public NonNullRange getRangeForRow(int i) {
         return new NonNullRange (i, columns);
-    }
+        }
 
     public NonNullRange getRangeForColumn(int j) {
         return new NonNullRange (0, j + 1);
-    }
+        }
 
     }
 

@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats;
 import sim.field.network.*;
 
@@ -682,13 +688,13 @@ public class ConnectivityStatistics
         }
 
     static int maxFlowNodeConnectivity( final Network flow,
-                                        final Object source,
-                                        final int sourceIndex,
-                                        final Object sink,
-                                        final int sinkIndex,
-                                        final Object[] w1s,
-                                        final Object[] w2s,
-                                        final Edge[] edgeW12 )
+        final Object source,
+        final int sourceIndex,
+        final Object sink,
+        final int sinkIndex,
+        final Object[] w1s,
+        final Object[] w2s,
+        final Edge[] edgeW12 )
         {
         flow.removeEdge( edgeW12[sourceIndex] );
         flow.removeEdge( edgeW12[sinkIndex] );

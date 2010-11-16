@@ -1,3 +1,9 @@
+/*
+  Copyright 2010 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.field.network.stats.actorcentrality;
 import sim.field.network.*;
 /**
@@ -20,7 +26,7 @@ public class DegreePrestige extends FreemanNodeIndex
     public double getValue(final Object node) {
         Network.IndexOutIn inout = (Network.IndexOutIn)network.indexOutInHash.get(node);
         return inout.in.numObjs;
-    }
+        }
         
     public double getMaxValue()
         {

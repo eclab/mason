@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 /** This class implements symetrical matrices of linear algebra.
 
-<p>This file is from the "Mantissa" Java software package found at
-<a href="http://www.spaceroots.org/software/mantissa/index.html">
-http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
-at the end of the source file.
+    <p>This file is from the "Mantissa" Java software package found at
+    <a href="http://www.spaceroots.org/software/mantissa/index.html">
+    http://www.spaceroots.org/software/mantissa/index.html</a>.  The license is included
+    at the end of the source file.
 
-* @version $Id: SymetricalMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
-* @author L. Maisonobe
+    * @version $Id: SymetricalMatrix.java,v 1.1 2007-05-30 14:01:30 feijai Exp $
+    * @author L. Maisonobe
 
-*/
+    */
 
 public class SymetricalMatrix
     extends GeneralSquareMatrix
@@ -24,7 +24,7 @@ public class SymetricalMatrix
      */
     public SymetricalMatrix(int order) {
         super(order);
-    }
+        }
 
     /** Simple constructor.
      * Build a matrix with specified elements.
@@ -33,14 +33,14 @@ public class SymetricalMatrix
      */
     public SymetricalMatrix(int order, double[] data) {
         super(order, data);
-    }
+        }
 
     /** Copy constructor.
      * @param s square matrix to copy
      */
     public SymetricalMatrix(SymetricalMatrix s) {
         super(s);
-    }
+        }
 
     /** Build the symetrical matrix resulting from the product w.A.At.
      * @param w multiplicative factor (weight)
@@ -64,11 +64,11 @@ public class SymetricalMatrix
                 }
             }
 
-    }
+        }
 
     public Matrix duplicate() {
         return new SymetricalMatrix(this);
-    }
+        }
 
     /** Set a matrix element.
      * On symetrical matrices, setting separately elements outside of
@@ -86,11 +86,11 @@ public class SymetricalMatrix
     public void setElement(int i, int j, double value) {
         if (i != j) {
             throw new ArrayIndexOutOfBoundsException("cannot separately set"
-                                                     + " elements out of diagonal"
-                                                     + " in a symetrical matrix");
+                + " elements out of diagonal"
+                + " in a symetrical matrix");
             }
         super.setElement(i, j, value);
-    }
+        }
 
     /** Set both a matrix element and its symetrical element.
      * @param i row index of first element (column index of second
@@ -107,7 +107,7 @@ public class SymetricalMatrix
         if (i != j) {
             super.setElement(j, i, value);
             }
-    }
+        }
 
     /** Add a matrix to the instance.
      * This method adds a matrix to the instance. It does modify the instance.
@@ -119,10 +119,10 @@ public class SymetricalMatrix
         // validity check
         if ((rows != s.rows) || (columns != s.columns)) {
             throw new IllegalArgumentException("cannot add a "
-                                               + s.rows + 'x' + s.columns
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + s.rows + 'x' + s.columns
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // addition loop
@@ -140,7 +140,7 @@ public class SymetricalMatrix
                 }
             }
 
-    }
+        }
 
     /** Substract a matrix from the instance.
      * This method substracts a matrix from the instance. It does modify the instance.
@@ -152,10 +152,10 @@ public class SymetricalMatrix
         // validity check
         if ((rows != s.rows) || (columns != s.columns)) {
             throw new IllegalArgumentException("cannot substract a "
-                                               + s.rows + 'x' + s.columns
-                                               + " matrix from a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + s.rows + 'x' + s.columns
+                + " matrix from a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         // substraction loop
@@ -173,7 +173,7 @@ public class SymetricalMatrix
                 }
             }
 
-    }
+        }
 
     /** Add the symetrical matrix resulting from the product w.A.At to the instance.
      * This method can be used to build progressively the matrices of
@@ -185,10 +185,10 @@ public class SymetricalMatrix
     public void selfAddWAAt(double w, double[] a) {
         if (rows != a.length) {
             throw new IllegalArgumentException("cannot add a "
-                                               + a.length + 'x' + a.length
-                                               + " matrix to a "
-                                               + rows + 'x' + columns
-                                               + " matrix");
+                + a.length + 'x' + a.length
+                + " matrix to a "
+                + rows + 'x' + columns
+                + " matrix");
             }
 
         for (int i = 0; i < rows; ++i) {
@@ -206,7 +206,7 @@ public class SymetricalMatrix
                 }
             }
 
-    }
+        }
 
     }
 
