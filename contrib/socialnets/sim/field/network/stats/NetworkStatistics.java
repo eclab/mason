@@ -417,7 +417,7 @@ public class NetworkStatistics
                         result += paths[i][j];
             return result / (double)(N*(N-1));
             }
-        catch (OutOfMemoryException e)
+        catch (OutOfMemoryError e)
             {
             throw new RuntimeException("You ran out of memory!  getMeanShortestPath(...) has large memory requirements and may " +
                 "not be appropriate for big networks.  You should try getLargeNetworkMeanShortestPath(...) instead.", e);

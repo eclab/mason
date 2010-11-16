@@ -7,15 +7,12 @@
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
 
-### If you don't have jikes set up, change to JAVAC = javac
-#JAVAC = javac 
-JAVAC = jikes ${JIKESFLAGS}
+JAVAC = javac ${JAVACFLAGS}
+#JAVAC = jikes ${JIKESFLAGS}
 
-# The default flags for javac and jikes
-FLAGS = -g
-
-# Additional flags for jikes
-JIKESFLAGS = -nowarn -target 1.3
+JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
+JIKESFLAGS = -target 1.4 +Pno-shadow ${FLAGS}
+FLAGS = -g -nowarn
 
 
 # Main java files, not including the 3D stuff
