@@ -119,15 +119,12 @@ jar: 3d
 	jar -cvfm mason.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
-# removes CVS directories
+# removes SVN directories
 dist: clean 3d indent doc
 	touch TODO
 	rm TODO
-	touch .cvsignore
-	rm .cvsignore
-	find . -name "CVS" -exec rm -rf {} \;
-	rm -rf sim/util/datacull/
-	@ echo "If there were CVS directories, expect this to end in an error."
+	find . -name ".svn" -exec rm -rf {} \;
+	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
 
 
@@ -149,7 +146,7 @@ help:
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
 	@ echo "make doc        (Same thing)"
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
-	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes CVS dirs"
+	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
 	@ echo "              called mason.jar.  Heavyweight -- all class files included."
 
