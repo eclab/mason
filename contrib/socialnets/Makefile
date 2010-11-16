@@ -53,10 +53,10 @@ doc:
 docs: doc
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
-# removes CVS directories
+# removes SVN directories
 dist: clean all doc
-	find . -name "CVS" -exec rm -rf {} \;
-	@ echo "If there were CVS directories, expect this to end in an error."
+	find . -name ".svn" -exec rm -rf {} \;
+	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
 
 # Indent to your preferred brace format using emacs.  MASON's default
@@ -76,7 +76,7 @@ help:
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
 	@ echo "make doc        (Same thing)"
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
-	@ echo "make dist     Does a make clean, make docs, and make all, then deletes CVS dirs"
+	@ echo "make dist     Does a make clean, make docs, and make all, then deletes SVN dirs"
 
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent java files as you'd prefer"
