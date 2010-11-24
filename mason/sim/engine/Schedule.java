@@ -583,6 +583,18 @@ public class Schedule implements java.io.Serializable
             this.time = time;
             this.ordering = ordering;
             }
+		
+		public boolean equals(Object obj)
+			{
+            Key o = (Key)obj;
+			return (o.time == time && o.ordering == ordering);
+			}
+			
+		public int hashCode()
+			{
+			long l = Double.doubleToLongBits(time);
+			return (int)(l ^ (l >> 32)) ^ ordering;
+			}
                     
         public int compareTo(Object obj)
             {
