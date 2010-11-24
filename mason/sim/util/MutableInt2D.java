@@ -41,7 +41,8 @@ public class MutableInt2D implements java.io.Serializable, Cloneable
     public void setLocation(Int2D p) { x = p.x; y = p.y; }
     /** @deprecated use setTo */
     public void setLocation(MutableInt2D p) { x = p.x; y = p.y; }
-    public java.awt.Point toPoint() { return new java.awt.Point(x,y); }
+	public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
+	public java.awt.Point toPoint() { return new java.awt.Point(x,y); }
     public String toString() { return "MutableInt2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
     public Object clone()

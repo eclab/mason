@@ -42,6 +42,8 @@ public final class MutableDouble2D implements java.io.Serializable
     public String toString() { return "MutableDouble2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
+	public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
+
     // identical to Double2D
     public final int hashCode()
         {

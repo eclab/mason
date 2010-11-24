@@ -35,6 +35,8 @@ public final class Double2D implements java.io.Serializable
     public String toString() { return "Double2D["+x+","+y+"]"; }
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
     
+	public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
+	
     public final int hashCode()
         {
         double x = this.x;
