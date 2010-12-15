@@ -47,18 +47,26 @@ indent:
 
 
 # All the main GeoMason source files
-BASE_FILES = sim/util/geo/GeomPlanarGraph.java			\
-sim/util/geo/AttributeField.java				\
-sim/util/geo/GeometryProperties.java			\
-sim/util/geo/GeomPlanarGraphEdge.java					\
-sim/util/geo/MasonGeometry.java					\
-sim/util/geo/GeomPlanarGraphDirectedEdge.java			\
-sim/io/geo/GeomExporter.java					\
-sim/io/geo/GeomImporter.java					\
-sim/io/geo/ShapeFileImporter.java				\
-sim/io/geo/ShapeFileExporter.java				\
-sim/portrayal/geo/GeomVectorFieldPortrayal.java		\
-sim/portrayal/geo/GeomPortrayal.java			
+BASE_FILES = ./sim/field/geo/GeomField.java		\
+./sim/field/geo/GeomGridField.java			\
+./sim/field/geo/GeomVectorField.java			\
+./sim/io/geo/GeomExporter.java				\
+./sim/io/geo/GeomImporter.java				\
+./sim/io/geo/ShapeFileExporter.java			\
+./sim/io/geo/ShapeFileImporter.java			\
+./sim/portrayal/geo/GeomPortrayal.java			\
+./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
+./sim/util/geo/AttributeField.java			\
+./sim/util/geo/GeometryProperties.java			\
+./sim/util/geo/GeometryUtilities.java			\
+./sim/util/geo/GeomPlanarGraph.java			\
+./sim/util/geo/GeomPlanarGraphDirectedEdge.java		\
+./sim/util/geo/GeomPlanarGraphEdge.java			\
+./sim/util/geo/MasonGeometry.java			\
+./sim/util/geo/PointMoveTo.java
+
+# Optional GDAL based importer
+GDAL_FILES = ./sim/io/geo/GDALImporter.java
 
 # Optional GeoTool based importer
 GEOTOOL_FILES = sim/io/geo/GeoToolsImporter.java
@@ -66,8 +74,8 @@ GEOTOOL_FILES = sim/io/geo/GeoToolsImporter.java
 # Optional GDAL/OGR based importer
 OGR_FILES = sim/io/geo/OGRImporter.java	
 
-# Add GEOTOOL_FILES and/or OGR_FILES if you want support for those
-geomason.jar : $(BASE_FILES) # $(GEOTOOL_FILES) $(OGR_FILES)
+# Add GDAL_FILES, GEOTOOL_FILES and/or OGR_FILES if you want support for those
+geomason.jar : $(BASE_FILES) # $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
 	@echo "Creating geomason.jar..."
 	@javac $(FLAGS) $^
 	@jar -cvf $@ `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"`
