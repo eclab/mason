@@ -1846,3 +1846,8 @@ Version 15
 	Deleted datacull directory
 	Fixed bug in copy constructor for Bag, IntBag, and DoubleBag.  Thanks to
 		Chris Hollander <chris.hollander@gmail.com>
+	When minimizing a window in OS X, Display2D still will write to movies.  Note that
+		due to bugs in Java3D we're having difficulty making the same guarantee
+		of Display3D at this time.
+	Added Schedule.Key.hashCode()
+	Minor tweaks to RateAdjuster

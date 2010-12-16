@@ -22,6 +22,7 @@ public class RateAdjuster implements Steppable
     long totalTics;
     boolean started = false;
     double rate;
+	static final int MAX_POLL_ITERATIONS = 3; // so we don't go into a Zeno's paradox
         
     public RateAdjuster(double targetRate)
         {
@@ -42,17 +43,21 @@ public class RateAdjuster implements Steppable
             totalTics++;
                         
             long expectedTime = (long)(totalTics / rate * 1000);
-            if (time < expectedTime)  // too fast, need to slow down
+			int count = 0;
+            while (time < expectedTime && count++ < MAX_POLL_ITERATIONS )  // too fast, need to slow down
+				{
                 try
                     { 
                     Thread.currentThread().sleep(expectedTime - time); 
                     }
-                catch (InterruptedException e) { } 
-            else    // we lost time, but don't try to make up for it. We do this by resetting the clock
-                {
-                initialTime = currentTime;
-                totalTics = 0;
-                }
+                catch (InterruptedException e) { }
+				currentTime = System.currentTimeMillis();
+				time = currentTime -initialTime;
+				}
+            
+			// At this point time >= expectedTime.  So reset the clock.
+			initialTime = currentTime;
+			totalTics = 0;
             }
         }
     }

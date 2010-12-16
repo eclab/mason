@@ -592,8 +592,25 @@ public class Schedule implements java.io.Serializable
 			
 		public int hashCode()
 			{
-			long l = Double.doubleToLongBits(time);
-			return (int)(l ^ (l >> 32)) ^ ordering;
+			int y = ordering;
+			y += ~(y << 15);
+            y ^=  (y >>> 10);
+            y +=  (y << 3);
+            y ^=  (y >>> 6);
+            y += ~(y << 11);
+            y ^=  (y >>> 16);
+
+			long key = Double.doubleToRawLongBits(time);  // we can't ever be NaN or infinity, so this is okay
+			key += ~(key << 32);
+			key ^= (key >>> 22);
+			key += ~(key << 13);
+			key ^= (key >>> 8);
+			key += (key << 3);
+			key ^= (key >>> 15);
+			key	+= ~(key << 27);
+			key ^= (key >>> 31);
+
+			return (int)(key ^ (key >> 32)) ^ y;
 			}
                     
         public int compareTo(Object obj)

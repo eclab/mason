@@ -1883,7 +1883,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         {
         if (shouldUpdate())       // time to update!
             {
-            if (insideDisplay.isShowing())
+            if (insideDisplay.isShowing() && 
+					(getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)   // not minimized on the Mac
                 {
                 insideDisplay.repaint();
                 }
