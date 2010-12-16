@@ -52,7 +52,7 @@ public class IntPBMGrid2D extends IntGrid2D
     public void read(InputStream in) { read(new BufferedReader(new InputStreamReader(in))); }
         
     public void read(BufferedReader in) 
-	{
+        {
         try {
             int w = 0, h = 0, tmp = 0;
 
@@ -72,7 +72,7 @@ public class IntPBMGrid2D extends IntGrid2D
 
             // resize grid
             if (w > 1 && h > 1) 
-			{
+                {
                 width = w;
                 height = h;
                 field = new int[w][h];
@@ -82,17 +82,17 @@ public class IntPBMGrid2D extends IntGrid2D
 
             // read ints
             for (int y = 0; y < h; y++) 
-			{
+                {
                 for (int x = 0; x < w; x++) 
-				{
+                    {
                     while (((tmp = in.read()) != -1) && tmp != '0' && tmp != '1')
                         /* skip things that are no 0's or 1's */;
                     field[x][y] = (tmp == -1) ? 0 : ((tmp == '0') ? 0 : 1);
                     }
                 }
             }
-			 catch (Exception e) 
-			{
+        catch (Exception e) 
+            {
             // print the exception
             e.printStackTrace();
             // create a 100x100 default grid

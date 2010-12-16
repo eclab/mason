@@ -583,35 +583,35 @@ public class Schedule implements java.io.Serializable
             this.time = time;
             this.ordering = ordering;
             }
-		
-		public boolean equals(Object obj)
-			{
+                
+        public boolean equals(Object obj)
+            {
             Key o = (Key)obj;
-			return (o.time == time && o.ordering == ordering);
-			}
-			
-		public int hashCode()
-			{
-			int y = ordering;
-			y += ~(y << 15);
+            return (o.time == time && o.ordering == ordering);
+            }
+                        
+        public int hashCode()
+            {
+            int y = ordering;
+            y += ~(y << 15);
             y ^=  (y >>> 10);
             y +=  (y << 3);
             y ^=  (y >>> 6);
             y += ~(y << 11);
             y ^=  (y >>> 16);
 
-			long key = Double.doubleToRawLongBits(time);  // we can't ever be NaN or infinity, so this is okay
-			key += ~(key << 32);
-			key ^= (key >>> 22);
-			key += ~(key << 13);
-			key ^= (key >>> 8);
-			key += (key << 3);
-			key ^= (key >>> 15);
-			key	+= ~(key << 27);
-			key ^= (key >>> 31);
+            long key = Double.doubleToRawLongBits(time);  // we can't ever be NaN or infinity, so this is okay
+            key += ~(key << 32);
+            key ^= (key >>> 22);
+            key += ~(key << 13);
+            key ^= (key >>> 8);
+            key += (key << 3);
+            key ^= (key >>> 15);
+            key     += ~(key << 27);
+            key ^= (key >>> 31);
 
-			return (int)(key ^ (key >> 32)) ^ y;
-			}
+            return (int)(key ^ (key >> 32)) ^ y;
+            }
                     
         public int compareTo(Object obj)
             {

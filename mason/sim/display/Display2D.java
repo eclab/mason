@@ -1582,30 +1582,30 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
     private Object sacrificialObj = null;
     
-	public static int TYPE_PDF = 1;
-	public static int TYPE_PNG = 2;
-	
-	public void takeSnapshot(File file, int type) throws IOException
-		{
-		if (type == TYPE_PNG)
-			{
+    public static int TYPE_PDF = 1;
+    public static int TYPE_PNG = 2;
+        
+    public void takeSnapshot(File file, int type) throws IOException
+        {
+        if (type == TYPE_PNG)
+            {
             Graphics g = insideDisplay.getGraphics();
             BufferedImage img = insideDisplay.paint(g,true,false);
-			g.dispose();
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-			PngEncoder tmpEncoder = new PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
-			stream.write(tmpEncoder.pngEncode());
-			stream.close();
-			}
-		else // type == TYPE_PDF
-			{
-			boolean oldprecise = precise;
-			precise = true;
-			PDFEncoder.generatePDF(port, file);
-			precise = oldprecise;
-			}
-		}
-	
+            g.dispose();
+            OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+            PngEncoder tmpEncoder = new PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+            stream.write(tmpEncoder.pngEncode());
+            stream.close();
+            }
+        else // type == TYPE_PDF
+            {
+            boolean oldprecise = precise;
+            precise = true;
+            PDFEncoder.generatePDF(port, file);
+            precise = oldprecise;
+            }
+        }
+        
     public void takeSnapshot()
         {
         synchronized(Display2D.this.simulation.state.schedule)
@@ -1641,10 +1641,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             g.dispose();  // because we got it with getGraphics(), we're responsible for it
                         
             // Ask what kind of thing we want to save?
-			final int CANCEL_BUTTON = 0;
-			final int PNG_BUTTON = 1;
-			final int PDF_BUTTON = 2;
-			final int PDF_NO_BACKDROP_BUTTON = 3;
+            final int CANCEL_BUTTON = 0;
+            final int PNG_BUTTON = 1;
+            final int PDF_BUTTON = 2;
+            final int PDF_NO_BACKDROP_BUTTON = 3;
             int result = PNG_BUTTON;  //  default
             if (havePDF) 
                 {
@@ -1682,13 +1682,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                                             {
                                             boolean oldprecise = precise;
                                             precise = true;
-											Paint b = getBackdrop();
-											if (result == PDF_NO_BACKDROP_BUTTON)  // temporarily remove backdrop
-												setBackdrop(null);
+                                            Paint b = getBackdrop();
+                                            if (result == PDF_NO_BACKDROP_BUTTON)  // temporarily remove backdrop
+                                                setBackdrop(null);
                                             PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
                                             precise = oldprecise;
-											if (result == PDF_NO_BACKDROP_BUTTON)
-												setBackdrop(b);
+                                            if (result == PDF_NO_BACKDROP_BUTTON)
+                                                setBackdrop(b);
                                             }
                     catch (Exception e) { e.printStackTrace(); }
                 }
@@ -1884,7 +1884,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         if (shouldUpdate())       // time to update!
             {
             if (insideDisplay.isShowing() && 
-					(getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)   // not minimized on the Mac
+                (getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)   // not minimized on the Mac
                 {
                 insideDisplay.repaint();
                 }

@@ -38,11 +38,11 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         if (other==null) { numObjs = 0; objs = new int[1]; }
         else
-			{
-			numObjs = other.numObjs;
-			objs = new int[numObjs];
-			System.arraycopy(other.objs,0,objs,0,numObjs);
-			}
+            {
+            numObjs = other.numObjs;
+            objs = new int[numObjs];
+            System.arraycopy(other.objs,0,objs,0,numObjs);
+            }
         }
     
     public int size()

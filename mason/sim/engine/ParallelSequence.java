@@ -127,49 +127,49 @@ public class ParallelSequence extends Sequence
         finally { super.finalize(); }
         }
 
-	static int availableProcessors = Runtime.getRuntime().availableProcessors();
-	
-	/** Indicates that MASON should determine how many threads to use based on the number of CPUs. */ 
-	public static final int CPUS = -1;
-	
-	/** Creates a ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
-		at runtime based on the number of CPUs or cores on the system.  The steppable objects are divided approximately evenly among the
-		various threads. */
+    static int availableProcessors = Runtime.getRuntime().availableProcessors();
+        
+    /** Indicates that MASON should determine how many threads to use based on the number of CPUs. */ 
+    public static final int CPUS = -1;
+        
+    /** Creates a ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
+        at runtime based on the number of CPUs or cores on the system.  The steppable objects are divided approximately evenly among the
+        various threads. */
     public ParallelSequence(Steppable[] sequence, int threads)
         {
-		super(sequence);  // temporarily  -- we may change it later
-		
-		if (threads == CPUS)
-			threads = availableProcessors;
+        super(sequence);  // temporarily  -- we may change it later
+                
+        if (threads == CPUS)
+            threads = availableProcessors;
 
-		if (threads < sequence.length)    // not enough threads, restructure into an array of Sequences
-			{
-			this.steps = new Steppable[threads];
+        if (threads < sequence.length)    // not enough threads, restructure into an array of Sequences
+            {
+            this.steps = new Steppable[threads];
 
-			int len = sequence.length / threads;  // num sequence elts per thread.  Note: integer division
-			for(int i = 0 ; i < this.steps.length; i++)
-				{
-				int start = i * len;
-				if (len > sequence.length - start)  // the last thread may be short
-					len = sequence.length - start;
-				Steppable[] currentSteppable = new Steppable[len];
-				System.arraycopy(this.steps, start, currentSteppable, 0, len);
-				this.steps[i] = new Sequence(currentSteppable);
-				}
-			}
-		
-		// build workers
+            int len = sequence.length / threads;  // num sequence elts per thread.  Note: integer division
+            for(int i = 0 ; i < this.steps.length; i++)
+                {
+                int start = i * len;
+                if (len > sequence.length - start)  // the last thread may be short
+                    len = sequence.length - start;
+                Steppable[] currentSteppable = new Steppable[len];
+                System.arraycopy(this.steps, start, currentSteppable, 0, len);
+                this.steps[i] = new Sequence(currentSteppable);
+                }
+            }
+                
+        // build workers
         workers = new Worker[this.steps.length];
         for( int i = 0 ; i < this.steps.length ; i++ )
             workers[i] = new Worker();
         buildThreads();
-       }
+        }
 
-	/** Creates a ParallelSequence with one thread per steppable. */
+    /** Creates a ParallelSequence with one thread per steppable. */
     // sets up the worker threads. the number of steppable things the ParallelSequence handles cannot be modified after the constructor is called
     public ParallelSequence(Steppable[] steps)
         {
-		this(steps, steps.length);
+        this(steps, steps.length);
         }
 
     // steps once (in parallel) through the steppable things

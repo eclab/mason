@@ -23,8 +23,8 @@ public class MutableDouble extends Number implements Valuable, Cloneable
     public MutableDouble(double val) { this.val = val; }
     public MutableDouble(MutableDouble md) { this.val = md.val; }
 
-	public Double toDouble() { return new Double(val); }
-	
+    public Double toDouble() { return new Double(val); }
+        
     // written to implement the Number abstract class
     public double doubleValue() { return val; }
     public float floatValue() { return (float)val; }
@@ -42,19 +42,19 @@ public class MutableDouble extends Number implements Valuable, Cloneable
             return null; // never happens
             } 
         }
-		
-	public String toString()
-		{
-		return new Double(val).toString();
-		}
+                
+    public String toString()
+        {
+        return new Double(val).toString();
+        }
 
-	public boolean isNaN()
-		{
-		return Double.isNaN(val);
-		}
-		
-	public boolean isInfinite()
-		{
-		return Double.isInfinite(val);
-		}
+    public boolean isNaN()
+        {
+        return Double.isNaN(val);
+        }
+                
+    public boolean isInfinite()
+        {
+        return Double.isInfinite(val);
+        }
     }

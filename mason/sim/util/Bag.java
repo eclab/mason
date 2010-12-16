@@ -52,11 +52,11 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         {
         if (other==null) { numObjs = 0; objs = new Object[1]; }
         else
-			{
-			numObjs = other.numObjs;
-			objs = new Object[numObjs];
-			System.arraycopy(other.objs,0,objs,0,numObjs);
-			}
+            {
+            numObjs = other.numObjs;
+            objs = new Object[numObjs];
+            System.arraycopy(other.objs,0,objs,0,numObjs);
+            }
         }
     
     public int size()
