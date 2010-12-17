@@ -212,18 +212,22 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         /** Saves the Option Pane Preferences to a given Preferences Node */
         public void savePreferences(Preferences prefs)
             {
-            prefs.putInt(DRAW_GRIDS_KEY,
-                useNoBuffer.isSelected() ? 0 : 
-                useBuffer.isSelected() ? 1 : 2);
-            prefs.putDouble(X_OFFSET_KEY, xOffsetField.getValue());
-            prefs.putDouble(Y_OFFSET_KEY, yOffsetField.getValue());
-            prefs.putBoolean(ANTIALIAS_KEY, antialias.isSelected());
-            prefs.putBoolean(BETTER_TRANSPARENCY_KEY, alphaInterpolation.isSelected());
-            prefs.putBoolean(INTERPOLATION_KEY, interpolation.isSelected());
-            prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
-                        
-            if (!Prefs.save(prefs))
-                Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+			try
+				{
+				prefs.putInt(DRAW_GRIDS_KEY,
+					useNoBuffer.isSelected() ? 0 : 
+					useBuffer.isSelected() ? 1 : 2);
+				prefs.putDouble(X_OFFSET_KEY, xOffsetField.getValue());
+				prefs.putDouble(Y_OFFSET_KEY, yOffsetField.getValue());
+				prefs.putBoolean(ANTIALIAS_KEY, antialias.isSelected());
+				prefs.putBoolean(BETTER_TRANSPARENCY_KEY, alphaInterpolation.isSelected());
+				prefs.putBoolean(INTERPOLATION_KEY, interpolation.isSelected());
+				prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+							
+				if (!Prefs.save(prefs))
+					Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+				}
+			catch (java.security.AccessControlException e) { } // it must be an applet
             }
                         
                         
@@ -238,33 +242,36 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         /** Resets the Option Pane Preferences by loading from the preference database */
         public void resetToPreferences()
             {
-            Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
-            Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
-            int val = appPrefs.getInt(DRAW_GRIDS_KEY, 
-                systemPrefs.getInt(DRAW_GRIDS_KEY,
-                    useNoBuffer.isSelected() ? 0 : 
-                    useBuffer.isSelected() ? 1 : 2));
-            if (val == 0) useNoBuffer.setSelected(true);
-            else if (val == 1) useBuffer.setSelected(true);
-            else // (val == 0) 
-                useDefault.setSelected(true);
-            xOffsetField.setValue(xOffsetField.newValue(appPrefs.getDouble(X_OFFSET_KEY,
-                        systemPrefs.getDouble(X_OFFSET_KEY, 0))));
-            yOffsetField.setValue(yOffsetField.newValue(appPrefs.getDouble(Y_OFFSET_KEY,
-                        systemPrefs.getDouble(Y_OFFSET_KEY, 0))));
-            antialias.setSelected(appPrefs.getBoolean(ANTIALIAS_KEY,
-                    systemPrefs.getBoolean(ANTIALIAS_KEY, false)));
-            alphaInterpolation.setSelected(appPrefs.getBoolean(BETTER_TRANSPARENCY_KEY,
-                    systemPrefs.getBoolean(BETTER_TRANSPARENCY_KEY, false)));
-            interpolation.setSelected(appPrefs.getBoolean(INTERPOLATION_KEY,
-                    systemPrefs.getBoolean(INTERPOLATION_KEY, false)));
-            tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
-                    systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
-            // trigger resets by calling the listener.  Don't bother with an event
-            listener.actionPerformed(null);
-            }
-        }
-                
+			try
+				{
+				Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
+				Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
+				int val = appPrefs.getInt(DRAW_GRIDS_KEY, 
+					systemPrefs.getInt(DRAW_GRIDS_KEY,
+						useNoBuffer.isSelected() ? 0 : 
+						useBuffer.isSelected() ? 1 : 2));
+				if (val == 0) useNoBuffer.setSelected(true);
+				else if (val == 1) useBuffer.setSelected(true);
+				else // (val == 0) 
+					useDefault.setSelected(true);
+				xOffsetField.setValue(xOffsetField.newValue(appPrefs.getDouble(X_OFFSET_KEY,
+							systemPrefs.getDouble(X_OFFSET_KEY, 0))));
+				yOffsetField.setValue(yOffsetField.newValue(appPrefs.getDouble(Y_OFFSET_KEY,
+							systemPrefs.getDouble(Y_OFFSET_KEY, 0))));
+				antialias.setSelected(appPrefs.getBoolean(ANTIALIAS_KEY,
+						systemPrefs.getBoolean(ANTIALIAS_KEY, false)));
+				alphaInterpolation.setSelected(appPrefs.getBoolean(BETTER_TRANSPARENCY_KEY,
+						systemPrefs.getBoolean(BETTER_TRANSPARENCY_KEY, false)));
+				interpolation.setSelected(appPrefs.getBoolean(INTERPOLATION_KEY,
+						systemPrefs.getBoolean(INTERPOLATION_KEY, false)));
+				tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
+						systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+				// trigger resets by calling the listener.  Don't bother with an event
+				listener.actionPerformed(null);
+				}
+			catch (java.security.AccessControlException e) { } // it must be an applet
+			}
+		}
                 
     
     /** The object which actually does all the drawing.  Perhaps we should move this out. */
