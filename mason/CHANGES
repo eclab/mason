@@ -1851,3 +1851,23 @@ Version 15
 		of Display3D at this time.
 	Added Schedule.Key.hashCode()
 	Minor tweaks to RateAdjuster
+
+Version 16
+	Fixed a minor bug in PropertyList: when you update the text field that accompanies
+		a slider, the slider doesn't update.  This is because of an exception
+		thrown which is lost, and is in turn due to an unusual bug in Java's
+		anonymous class instance variable declaration (see SimpleInspector code).
+	Documentation bug in Grid2D.java which had the X and Y coordinates of triangular
+		grids mixed up.
+	Fixed a bug in IntGrid3D, which didn't accept null IntBags for its neighborhood
+		lookup.
+	Efficiency improvements to all array-style grid classes' neighborhood distance
+		lookups: the returned bags are guaranteed are resized first before being
+		returned.  Not the case for SparseGrid[2|3]D, which can have arbitrary
+		numbers of neighbors.
+	Added toArray() to all array-style grid classes, and elements() to ObjectArray[2|3]D.
+	Modified SparseField.iterator() and SparseField.locationBagIterator() to fail
+		on remove().
+	[Int|Double|]Bag.add() and .push() code simplified, still under 35 bytes
+	Added constructors to SparseGrid[2|3]D and Continuous[2|3]D, and an abstract
+		constructor to SparseField.

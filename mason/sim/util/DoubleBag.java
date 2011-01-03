@@ -147,22 +147,32 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         want to think of the DoubleBag as a stack. */
     public boolean push(final double obj)
         {
-        // this curious arrangement makes me small enough to be inlined (33 bytes)
+        if (numObjs >= objs.length) doubleCapacityPlusOne();
+        objs[numObjs++] = obj;
+        return true;
+        /*
+        // this curious arrangement makes me small enough to be inlined (35 bytes)
         int numObjs = this.numObjs;
         if (numObjs >= objs.length) doubleCapacityPlusOne();
         objs[numObjs] = obj;
-        this.numObjs = numObjs + 1;
+        this.numObjs = numObjs+1;
         return true;
+        */
         }
         
     public boolean add(final double obj)
         {
-        // this curious arrangement makes me small enough to be inlined (33 bytes)
-        int numObjs = this.numObjs;
-        if (objs.length <= numObjs) doubleCapacityPlusOne();
-        objs[numObjs] = obj;
-        this.numObjs = numObjs + 1;
+        if (numObjs >= objs.length) doubleCapacityPlusOne();
+        objs[numObjs++] = obj;
         return true;
+        /*
+        // this curious arrangement makes me small enough to be inlined (35 bytes)
+        int numObjs = this.numObjs;
+        if (numObjs >= objs.length) doubleCapacityPlusOne();
+        objs[numObjs] = obj;
+        this.numObjs = numObjs+1;
+        return true;
+        */
         }
     
     // private function used by add and push in order to get them below

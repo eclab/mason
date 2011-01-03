@@ -338,8 +338,7 @@ public abstract class GUIState
         }
 
     /** Called by the Console when the user is loading in a new state from a checkpoint.  The
-        new state is passed in as an argument.  The default version simply calls finish(),
-        then sets this.state to the new state.  You should override this, calling super.load(state) first, 
+        new state is passed in as an argument.  You should override this, calling super.load(state) first, 
         to reset your portrayals etc. to reflect the new state.
         state.start() will NOT be called.  Thus anything you handled in start() that needs
         to be reset to accommodate the new state should be handled here.  We recommend that you 

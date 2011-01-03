@@ -56,6 +56,33 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         return field[x][y][z];
         }
 
+    /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
+        Returns the grid. */
+    public final int[] toArray()
+        {
+        int[][][] field = this.field;
+        int[][] fieldx = null;
+        int[] fieldxy = null;
+        final int width = this.width;
+        final int height = this.height;
+        final int length = this.length;
+        int[] vals = new int[width * height * length];
+        int i = 0;
+        for(int x=0;x<width;x++)
+            {
+            fieldx = field[x];
+            for(int y = 0; y<height;y++)
+                {
+                fieldxy = fieldx[y];
+                for(int z=0;z<length;z++)
+                    {
+                    vals[i++] = fieldxy[z];
+                    }
+                }
+            }
+        return vals;
+        }
+        
     /** Returns the maximum value stored in the grid */
     public final int max()
         {
@@ -357,7 +384,11 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
 
         getNeighborsMaxDistance( x, y, z, dist, toroidal, xPos, yPos, zPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new IntBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] );
         }
@@ -385,7 +416,11 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
 
         getNeighborsHamiltonianDistance( x, y, z, dist, toroidal, xPos, yPos, zPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new IntBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] );
         }

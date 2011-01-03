@@ -100,6 +100,15 @@ public /*strictfp*/ class Continuous3D extends SparseField
         this.width = width; this.height = height; this.length = length;
         }
 
+    public Continuous3D(Continuous3D other)
+        {
+        super(other);
+        discretization = other.discretization;
+        width = other.width;
+        height = other.height;
+        length = other.length;
+        }
+
     public final Double3D getObjectLocation(Object obj)
         {
         return (Double3D) doubleLocationHash.get(obj);

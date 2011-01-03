@@ -1128,43 +1128,43 @@ public class Console extends JFrame implements Controller
                 
     public void savePreferences(Preferences prefs)
         {
-		try
-			{
-			prefs.putInt(DELAY_KEY,slider.getValue());
-			prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
-			prefs.putInt(STEPS_KEY, stepSlider.getValue());
-			prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
-			prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
-			prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
-			prefs.put(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue());
-//							prefs.put(SEED_KEY, randomField.getValue());
-			prefs.putBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected());
-			prefs.putBoolean(REPEAT_KEY, repeatButton.isSelected());
+        try
+            {
+            prefs.putInt(DELAY_KEY,slider.getValue());
+            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
+            prefs.putInt(STEPS_KEY, stepSlider.getValue());
+            prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
+            prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
+            prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
+            prefs.put(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue());
+//                                                      prefs.put(SEED_KEY, randomField.getValue());
+            prefs.putBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected());
+            prefs.putBoolean(REPEAT_KEY, repeatButton.isSelected());
                         
-			if (!Prefs.save(prefs))
-				Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
-			}
-		catch (java.security.AccessControlException e) { } // it must be an applet
+            if (!Prefs.save(prefs))
+                Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+            }
+        catch (java.security.AccessControlException e) { } // it must be an applet
         }
                                         
     public void resetToPreferences()
         {
-		try
-			{
-			Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
-			Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
-			slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
-			prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
-			stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
-			endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
-			timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
-			pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
-			timePauseField.setValue(timePauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, systemPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue()))));
-	//                      randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
-			incrementSeedOnPlay.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected())));
-			repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
-			}
-		catch (java.security.AccessControlException e) { } // it must be an applet
+        try
+            {
+            Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
+            Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+            slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
+            prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
+            stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
+            endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
+            timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
+            pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
+            timePauseField.setValue(timePauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, systemPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue()))));
+            //                      randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
+            incrementSeedOnPlay.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected())));
+            repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
+            }
+        catch (java.security.AccessControlException e) { } // it must be an applet
         }
 
 

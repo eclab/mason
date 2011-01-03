@@ -111,6 +111,14 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         this.height = height;
         }
 
+    public Continuous2D(Continuous2D other)
+        {
+        super(other);
+        discretization = other.discretization;
+        width = other.width;
+        height = other.height;
+        }
+
     public final Double2D getObjectLocation(Object obj)
         {
         return (Double2D) doubleLocationHash.get(obj);

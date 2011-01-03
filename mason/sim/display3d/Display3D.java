@@ -2088,37 +2088,37 @@ public class Display3D extends JPanel implements Steppable
         /** Saves the Option Pane Preferences to a given Preferences Node */
         public void savePreferences(Preferences prefs)
             {
-			try
-				{
-				prefs.putBoolean(ROTATE_LEFT_RIGHT_KEY, orbitRotateXCheckBox.isSelected());
-				prefs.putBoolean(ROTATE_UP_DOWN_KEY, orbitRotateYCheckBox.isSelected());
-				prefs.putBoolean(TRANSLATE_LEFT_RIGHT_KEY, orbitTranslateXCheckBox.isSelected());
-				prefs.putBoolean(TRANSLATE_UP_DOWN_KEY, orbitTranslateYCheckBox.isSelected());
-				prefs.putBoolean(MOVE_TOWARDS_AWAY_KEY, orbitZoomCheckBox.isSelected());
-				prefs.putBoolean(SELECT_KEY, selectBehCheckBox.isSelected());
+            try
+                {
+                prefs.putBoolean(ROTATE_LEFT_RIGHT_KEY, orbitRotateXCheckBox.isSelected());
+                prefs.putBoolean(ROTATE_UP_DOWN_KEY, orbitRotateYCheckBox.isSelected());
+                prefs.putBoolean(TRANSLATE_LEFT_RIGHT_KEY, orbitTranslateXCheckBox.isSelected());
+                prefs.putBoolean(TRANSLATE_UP_DOWN_KEY, orbitTranslateYCheckBox.isSelected());
+                prefs.putBoolean(MOVE_TOWARDS_AWAY_KEY, orbitZoomCheckBox.isSelected());
+                prefs.putBoolean(SELECT_KEY, selectBehCheckBox.isSelected());
 
-				prefs.putDouble(AUTO_ROTATE_X_KEY, rotAxis_X.getValue());
-				prefs.putDouble(AUTO_ROTATE_Y_KEY, rotAxis_Y.getValue());
-				prefs.putDouble(AUTO_ROTATE_Z_KEY, rotAxis_Z.getValue());
-				prefs.putDouble(AUTO_ROTATE_RATE_KEY, spinDuration.getValue());
-							
-				prefs.putBoolean(AXES_KEY, showAxesCheckBox.isSelected());
-				prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
-				prefs.putBoolean(SPOTLIGHT_KEY, showSpotlightCheckBox.isSelected());
-				prefs.putBoolean(AMBIENT_LIGHT_KEY, showAmbientLightCheckBox.isSelected());
-				prefs.putBoolean(BACKDROP_KEY, showBackgroundCheckBox.isSelected());
-							
-				prefs.putInt(DRAW_POLYGONS_KEY,
-					polyPoint.isSelected() ? 0 : 
-					polyLine.isSelected() ? 1 : 2);
-				prefs.putInt(DRAW_FACES_KEY,
-					polyCullNone.isSelected() ? 0 : 
-					polyCullBack.isSelected() ? 1 : 2);
+                prefs.putDouble(AUTO_ROTATE_X_KEY, rotAxis_X.getValue());
+                prefs.putDouble(AUTO_ROTATE_Y_KEY, rotAxis_Y.getValue());
+                prefs.putDouble(AUTO_ROTATE_Z_KEY, rotAxis_Z.getValue());
+                prefs.putDouble(AUTO_ROTATE_RATE_KEY, spinDuration.getValue());
+                                                        
+                prefs.putBoolean(AXES_KEY, showAxesCheckBox.isSelected());
+                prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+                prefs.putBoolean(SPOTLIGHT_KEY, showSpotlightCheckBox.isSelected());
+                prefs.putBoolean(AMBIENT_LIGHT_KEY, showAmbientLightCheckBox.isSelected());
+                prefs.putBoolean(BACKDROP_KEY, showBackgroundCheckBox.isSelected());
+                                                        
+                prefs.putInt(DRAW_POLYGONS_KEY,
+                    polyPoint.isSelected() ? 0 : 
+                    polyLine.isSelected() ? 1 : 2);
+                prefs.putInt(DRAW_FACES_KEY,
+                    polyCullNone.isSelected() ? 0 : 
+                    polyCullBack.isSelected() ? 1 : 2);
 
-				if (!Prefs.save(prefs))
-					Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
-				}
-			catch (java.security.AccessControlException e) { } // it must be an applet
+                if (!Prefs.save(prefs))
+                    Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
+                }
+            catch (java.security.AccessControlException e) { } // it must be an applet
             }
                         
                         
@@ -2143,63 +2143,63 @@ public class Display3D extends JPanel implements Steppable
         /** Resets the Option Pane Preferences by loading from the preference database */
         public void resetToPreferences()
             {
-			try
-				{
-				Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
-				Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
-							
-				orbitRotateXCheckBox.setSelected(appPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY,
-						systemPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY, true)));
-				orbitRotateYCheckBox.setSelected(appPrefs.getBoolean(ROTATE_UP_DOWN_KEY,
-						systemPrefs.getBoolean(ROTATE_UP_DOWN_KEY, true)));
-				orbitTranslateXCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY,
-						systemPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY, true)));
-				orbitTranslateYCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY,
-						systemPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY, true)));
-				selectBehCheckBox.setSelected(appPrefs.getBoolean(SELECT_KEY,
-						systemPrefs.getBoolean(SELECT_KEY, true)));
+            try
+                {
+                Preferences systemPrefs = Prefs.getGlobalPreferences(getPreferencesKey());
+                Preferences appPrefs = Prefs.getAppPreferences(simulation, getPreferencesKey());
+                                                        
+                orbitRotateXCheckBox.setSelected(appPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY,
+                        systemPrefs.getBoolean(ROTATE_LEFT_RIGHT_KEY, true)));
+                orbitRotateYCheckBox.setSelected(appPrefs.getBoolean(ROTATE_UP_DOWN_KEY,
+                        systemPrefs.getBoolean(ROTATE_UP_DOWN_KEY, true)));
+                orbitTranslateXCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY,
+                        systemPrefs.getBoolean(TRANSLATE_LEFT_RIGHT_KEY, true)));
+                orbitTranslateYCheckBox.setSelected(appPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY,
+                        systemPrefs.getBoolean(TRANSLATE_UP_DOWN_KEY, true)));
+                selectBehCheckBox.setSelected(appPrefs.getBoolean(SELECT_KEY,
+                        systemPrefs.getBoolean(SELECT_KEY, true)));
 
-				rotAxis_X.setValue(rotAxis_X.newValue(appPrefs.getDouble(AUTO_ROTATE_X_KEY,
-							systemPrefs.getDouble(AUTO_ROTATE_X_KEY, 0))));
-				rotAxis_Y.setValue(rotAxis_Y.newValue(appPrefs.getDouble(AUTO_ROTATE_Y_KEY,
-							systemPrefs.getDouble(AUTO_ROTATE_Y_KEY, 0))));
-				rotAxis_Z.setValue(rotAxis_Z.newValue(appPrefs.getDouble(AUTO_ROTATE_Z_KEY,
-							systemPrefs.getDouble(AUTO_ROTATE_Z_KEY, 0))));
-				spinDuration.setValue(spinDuration.newValue(appPrefs.getDouble(AUTO_ROTATE_RATE_KEY,
-							systemPrefs.getDouble(AUTO_ROTATE_RATE_KEY, 0))));
+                rotAxis_X.setValue(rotAxis_X.newValue(appPrefs.getDouble(AUTO_ROTATE_X_KEY,
+                            systemPrefs.getDouble(AUTO_ROTATE_X_KEY, 0))));
+                rotAxis_Y.setValue(rotAxis_Y.newValue(appPrefs.getDouble(AUTO_ROTATE_Y_KEY,
+                            systemPrefs.getDouble(AUTO_ROTATE_Y_KEY, 0))));
+                rotAxis_Z.setValue(rotAxis_Z.newValue(appPrefs.getDouble(AUTO_ROTATE_Z_KEY,
+                            systemPrefs.getDouble(AUTO_ROTATE_Z_KEY, 0))));
+                spinDuration.setValue(spinDuration.newValue(appPrefs.getDouble(AUTO_ROTATE_RATE_KEY,
+                            systemPrefs.getDouble(AUTO_ROTATE_RATE_KEY, 0))));
 
-				showAxesCheckBox.setSelected(appPrefs.getBoolean(AXES_KEY,
-						systemPrefs.getBoolean(AXES_KEY, false)));
-				tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
-						systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
-				showSpotlightCheckBox.setSelected(appPrefs.getBoolean(SPOTLIGHT_KEY,
-						systemPrefs.getBoolean(SPOTLIGHT_KEY, true)));
-				showAmbientLightCheckBox.setSelected(appPrefs.getBoolean(AMBIENT_LIGHT_KEY,
-						systemPrefs.getBoolean(AMBIENT_LIGHT_KEY, false)));
-				showBackgroundCheckBox.setSelected(appPrefs.getBoolean(BACKDROP_KEY,
-						systemPrefs.getBoolean(BACKDROP_KEY, true)));
+                showAxesCheckBox.setSelected(appPrefs.getBoolean(AXES_KEY,
+                        systemPrefs.getBoolean(AXES_KEY, false)));
+                tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
+                        systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+                showSpotlightCheckBox.setSelected(appPrefs.getBoolean(SPOTLIGHT_KEY,
+                        systemPrefs.getBoolean(SPOTLIGHT_KEY, true)));
+                showAmbientLightCheckBox.setSelected(appPrefs.getBoolean(AMBIENT_LIGHT_KEY,
+                        systemPrefs.getBoolean(AMBIENT_LIGHT_KEY, false)));
+                showBackgroundCheckBox.setSelected(appPrefs.getBoolean(BACKDROP_KEY,
+                        systemPrefs.getBoolean(BACKDROP_KEY, true)));
 
-				int val = appPrefs.getInt(DRAW_POLYGONS_KEY, 
-					systemPrefs.getInt(DRAW_POLYGONS_KEY,
-						polyPoint.isSelected() ? 0 : 
-						polyLine.isSelected() ? 1 : 2));
-				if (val == 0) polyPoint.setSelected(true);
-				else if (val == 1) polyLine.setSelected(true);
-				else // (val == 0) 
-					polyFill.setSelected(true);
-									
-				val = appPrefs.getInt(DRAW_FACES_KEY, 
-					systemPrefs.getInt(DRAW_FACES_KEY,
-						polyCullNone.isSelected() ? 0 : 
-						polyCullBack.isSelected() ? 1 : 2));
-				if (val == 0) polyCullNone.setSelected(true);
-				else if (val == 1) polyCullBack.setSelected(true);
-				else // (val == 0) 
-					polyCullFront.setSelected(true);
-				}
-			catch (java.security.AccessControlException e) { } // it must be an applet
-			}
-			
+                int val = appPrefs.getInt(DRAW_POLYGONS_KEY, 
+                    systemPrefs.getInt(DRAW_POLYGONS_KEY,
+                        polyPoint.isSelected() ? 0 : 
+                        polyLine.isSelected() ? 1 : 2));
+                if (val == 0) polyPoint.setSelected(true);
+                else if (val == 1) polyLine.setSelected(true);
+                else // (val == 0) 
+                    polyFill.setSelected(true);
+                                                                        
+                val = appPrefs.getInt(DRAW_FACES_KEY, 
+                    systemPrefs.getInt(DRAW_FACES_KEY,
+                        polyCullNone.isSelected() ? 0 : 
+                        polyCullBack.isSelected() ? 1 : 2));
+                if (val == 0) polyCullNone.setSelected(true);
+                else if (val == 1) polyCullBack.setSelected(true);
+                else // (val == 0) 
+                    polyCullFront.setSelected(true);
+                }
+            catch (java.security.AccessControlException e) { } // it must be an applet
+            }
+                        
         }
 
 // must be after all other declared widgets because its constructor relies on them existing

@@ -146,22 +146,32 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         want to think of the IntBag as a stack. */
     public boolean push(final int obj)
         {
+        if (numObjs >= objs.length) doubleCapacityPlusOne();
+        objs[numObjs++] = obj;
+        return true;
+        /*
         // this curious arrangement makes me small enough to be inlined (35 bytes)
         int numObjs = this.numObjs;
         if (numObjs >= objs.length) doubleCapacityPlusOne();
         objs[numObjs] = obj;
         this.numObjs = numObjs+1;
         return true;
+        */
         }
         
     public boolean add(final int obj)
         {
+        if (numObjs >= objs.length) doubleCapacityPlusOne();
+        objs[numObjs++] = obj;
+        return true;
+        /*
         // this curious arrangement makes me small enough to be inlined (35 bytes)
         int numObjs = this.numObjs;
         if (numObjs >= objs.length) doubleCapacityPlusOne();
         objs[numObjs] = obj;
         this.numObjs = numObjs+1;
         return true;
+        */
         }
         
     // private function used by add and push in order to get them below

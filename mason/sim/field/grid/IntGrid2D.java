@@ -89,6 +89,27 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         return this;
         }
 
+    /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
+        Returns the grid. */
+    public final int[] toArray()
+        {
+        int[][] field = this.field;
+        int[] fieldx = null;
+        final int width = this.width;
+        final int height = this.height;
+        int[] vals = new int[width * height];
+        int i = 0;
+        for(int x=0;x<width;x++)
+            {
+            fieldx = field[x];
+            for(int y = 0; y<height;y++)
+                {
+                vals[i++] = fieldx[y];
+                }
+            }
+        return vals;
+        }
+        
     /** Returns the maximum value stored in the grid */
     public final int max()
         {
@@ -272,12 +293,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
-        if (result == null)
-            result = new IntBag();
 
         getNeighborsMaxDistance( x, y, dist, toroidal, xPos, yPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new IntBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
         return result;
@@ -300,12 +323,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
-        if (result == null)
-            result = new IntBag();
 
         getNeighborsHamiltonianDistance( x, y, dist, toroidal, xPos, yPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new IntBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
         return result;
@@ -328,12 +353,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
-        if (result == null)
-            result = new IntBag();
 
         getNeighborsHexagonalDistance( x, y, dist, toroidal, xPos, yPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new IntBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
         return result;

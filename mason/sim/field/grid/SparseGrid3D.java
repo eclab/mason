@@ -58,6 +58,14 @@ public class SparseGrid3D extends SparseField
         this.length = length;
         }
         
+    public SparseGrid3D(SparseGrid3D values)
+        {
+        super(values);
+        width = values.width;
+        height = values.height;
+        length = values.length;
+        }
+
     /** Returns the width of the grid */
     public int getWidth() { return width; }
     

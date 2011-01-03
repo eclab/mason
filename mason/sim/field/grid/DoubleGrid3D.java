@@ -58,6 +58,33 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         }
 
 
+    /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
+        Returns the grid. */
+    public final double[] toArray()
+        {
+        double[][][] field = this.field;
+        double[][] fieldx = null;
+        double[] fieldxy = null;
+        final int width = this.width;
+        final int height = this.height;
+        final int length = this.length;
+        double[] vals = new double[width * height * length];
+        int i = 0;
+        for(int x=0;x<width;x++)
+            {
+            fieldx = field[x];
+            for(int y = 0; y<height;y++)
+                {
+                fieldxy = fieldx[y];
+                for(int z=0;z<length;z++)
+                    {
+                    vals[i++] = fieldxy[z];
+                    }
+                }
+            }
+        return vals;
+        }
+        
     /** Returns the maximum value stored in the grid */
     public final double max()
         {
@@ -504,12 +531,14 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
             yPos = new IntBag();
         if( zPos == null )
             zPos = new IntBag();
-        if (result == null)
-            result = new DoubleBag();
 
         getNeighborsMaxDistance( x, y, z, dist, toroidal, xPos, yPos, zPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new DoubleBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] );
         return result;
@@ -535,12 +564,14 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
             yPos = new IntBag();
         if( zPos == null )
             zPos = new IntBag();
-        if (result == null)
-            result = new DoubleBag();
 
         getNeighborsHamiltonianDistance( x, y, z, dist, toroidal, xPos, yPos, zPos );
 
-        result.clear();
+        if (result != null)
+            { result.clear();  result.resize(xPos.size()); }
+        else
+            result = new DoubleBag(xPos.size());
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             result.add( field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] );
         return result;

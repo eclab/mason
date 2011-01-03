@@ -114,6 +114,7 @@ public class SimpleInspector extends Inspector
     PropertyField makePropertyField(final int index)
         {
         Class type = properties.getType(index);
+        final Properties props = properties;            // see UNUSUAL BUG note below
         return new PropertyField(
             null,
             properties.betterToString(properties.getValue(index)),
@@ -128,11 +129,18 @@ public class SimpleInspector extends Inspector
                         (properties.getDomain(index) instanceof Interval) ? 
                         PropertyField.SHOW_SLIDER : PropertyField.SHOW_LIST ))))
             {
-            Properties props = properties;
-
             // The return value should be the value you want the display to show instead.
             public String newValue(final String newValue)
                 {
+                // UNUSUAL BUG: if I say this:
+                // Properties props = properties;
+                // ...or...
+                // Properties props = SimpleInspector.this.properties
+                // ... then sometimes props is set to null even though clearly
+                // properties is non-null above, since it'd be impossible to return a
+                // PropertyField otherwise.  So instead of declaring it as an instance
+                // variable here, we declare it as a final closure variable above.
+                                
                 // the underlying model could still be running, so we need
                 // to do this safely
                 synchronized(SimpleInspector.this.state.state.schedule)

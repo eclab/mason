@@ -116,6 +116,17 @@ public abstract class SparseField implements java.io.Serializable
     /** All the objects in the sparse field.  For fast scans.  Do not rely on this bag always being the same object. */
     public Bag allObjects = new Bag();
     
+    protected SparseField() { }
+        
+    protected SparseField(SparseField other)
+        {
+        removeEmptyBags = other.removeEmptyBags;
+        replaceLargeBags = other.replaceLargeBags;
+        locationAndIndexHash = new HashMap(other.locationAndIndexHash);
+        objectHash = new HashMap(other.objectHash);
+        allObjects = new Bag(other.allObjects);
+        }
+        
     /** Returns the index of the object in the allObjects Bag, if the object exists, else returns -1. */
     public int getObjectIndex(final Object obj)
         {
@@ -363,11 +374,29 @@ public abstract class SparseField implements java.io.Serializable
         <p>... but do NOT modify the allObjects.objs array.
         
     */
-    public Iterator iterator() { return allObjects.iterator(); }
+    public Iterator iterator() 
+        {
+        final Iterator i = allObjects.iterator();
+        return new Iterator()
+            {
+            public boolean hasNext() { return i.hasNext(); }
+            public Object next() { return i.next(); }
+            public void remove() { throw new IllegalStateException("Remove not supported in SparseField.iterator()"); }
+            };
+        }
     
     /** Iterates [somewhat inefficiently] over all bags of objects grouped by location.
         Only used by SparseFieldPortrayal -- generally this should not be interesting to you. */
-    public Iterator locationBagIterator() { return objectHash.values().iterator(); }
+    public Iterator locationBagIterator()
+        {
+        final Iterator i = objectHash.values().iterator();
+        return new Iterator()
+            {
+            public boolean hasNext() { return i.hasNext(); }
+            public Object next() { return i.next(); }
+            public void remove() { throw new IllegalStateException("Remove not supported in SparseField.iterator()"); }
+            };
+        }
 
     /** Objects stored in SparseField's locationAndIndexHash table.  This class contains
         an Object <i>location</i> and an int <i>index</i>.  index is the position of
