@@ -45,11 +45,6 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
         defaultPortrayal = new HexagonalPortrayal2D();
         }
         
-    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
-        {
-        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
-        }
-                
     public Double2D getScale(DrawInfo2D info)
         {
         final Grid2D field = (Grid2D) this.field;

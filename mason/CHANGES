@@ -1871,3 +1871,9 @@ Version 16
 	[Int|Double|]Bag.add() and .push() code simplified, still under 35 bytes
 	Added constructors to SparseGrid[2|3]D and Continuous[2|3]D, and an abstract
 		constructor to SparseField.
+	Tweaks to SparseGridPortrayal2D, HexaSparseGridPortrayal2D, and ContinuousPortrayal2D
+		to double-check that the Oriented2D and Scalable2D interfaces are being
+		used.
+	Update to documentation on Fixed2D.
+	getClipLocation deleted from all FieldPortrayals.  This eliminates certain
+		deprecation warnings.

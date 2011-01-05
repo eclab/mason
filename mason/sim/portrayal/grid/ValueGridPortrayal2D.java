@@ -110,11 +110,6 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         final double yScale = info.draw.height / maxY;
         return new Double2D(xScale, yScale);
         }
-
-    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
-        {
-        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
-        }
                 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {

@@ -7,11 +7,17 @@
 package sim.portrayal;
 
 /**
-   A Fixed2D object has control over how it is moved by a MovablePortrayal2D object.
+   <p>A Fixed2D object has control over how it is moved by a MovablePortrayal2D object.
+   Objects may wish to implement this interface to:
    
-   <p>Objects which implement this interface can force MovablePortrayal2D to NOT move them
-   whenever they wish, or can interrupt the moving to move themselves as they like.
-   
+   <p>
+   <ul>
+   <li>Prevent MovablePortrayal2D from moving them
+   <li>Restrict how or where the MovablePortrayal2D can move them.
+   <li>Stay informed about being moved
+   <li>Update multiple fields as a result of being moved.
+   </ul>
+	
    <p>Objects which do not implement this interface have no say: MovablePortrayal2D will
    go directly to their fields and ask the fields to move them about.
 */
@@ -19,11 +25,24 @@ package sim.portrayal;
 public interface Fixed2D
     {
     /** Returns true if the object permits you to change its location in the field.
-        Else returns false.  This can be used in one of two common ways.  First,
-        the object may wish to simply deny you the ability to move it at certain times.
-        Second, the object may wish to move ITSELF rather than have the field move it.
-        In the second case, the object could, during maySetLocation(...), move itself
-        in the field, then return FALSE, denying you the ability to ask the field
-        to move the object again. */
+        Else returns false.  This can be used for various purposes:
+		
+		<p>
+		<ul>
+		<li>If you don't want to be moved by a MovablePortrayal2D, simply return false.
+		<li>If you're fine being moved, simply return true.
+		<li>If want to be informed of being moved -- for example, to update internal
+			belief about your location -- when this method is called just make the
+			internal updates, then return true.
+		<li>If you want to control where you're being moved, for example to guarantee
+			that you're moved in a straight line, or constrained to be within a certain
+			region, based on the provided location, move the Object itself in the field
+			to a revised location of your choosing, then return false.
+		<li>If you are stored in multiple fields and need to make certain that all of 
+			them are updated properly when the user moves you in one field, when this
+			method is called just make all the appropriate updates in the various fields,
+			then return true.
+		</ul>
+		*/
     public boolean maySetLocation(Object field, Object location);
     }

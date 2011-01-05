@@ -55,11 +55,6 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             dy * yScale + otherObjectInfo.draw.y);
         }
         
-    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
-        {
-        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
-        }
-                
     public Double2D getScale(DrawInfo2D info)
         {
         final Continuous2D field = (Continuous2D)this.field;
@@ -89,8 +84,12 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
         if (location != null)
             {
-            if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
-            field.setObjectLocation(object, location);
+			if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+				return;  // this is deprecated and will be deleted
+            //if (object instanceof Constrained)
+			//	location = (Double2D)((Constrained)object).constrainLocation(field, location);
+			if (location != null)
+				field.setObjectLocation(object, location);
             }
         }
 

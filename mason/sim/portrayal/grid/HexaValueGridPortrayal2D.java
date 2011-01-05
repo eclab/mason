@@ -62,11 +62,6 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         }
 
 
-    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
-        {
-        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
-        }
-                
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
         Double2D scale = getScale(info);

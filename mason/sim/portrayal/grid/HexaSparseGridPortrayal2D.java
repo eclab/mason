@@ -62,16 +62,15 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
         if (location != null)
             {
-            if (object instanceof Fixed2D && !((Fixed2D)object).maySetLocation(field, location)) return;  // can't move him, or maybe he moved himself
-            field.setObjectLocation(object, location);
+			if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+				return;  // this is deprecated and will be deleted
+            //if (object instanceof Constrained)
+			//	location = (Int2D)((Constrained)object).constrainLocation(field, location);
+			if (location != null)
+				field.setObjectLocation(object, location);
             }
         }
 
-    public Object getClipLocation(DrawInfo2D fieldPortrayalInfo)
-        {
-        return getPositionLocation(new Point2D.Double(fieldPortrayalInfo.clip.x, fieldPortrayalInfo.clip.y), fieldPortrayalInfo);
-        }
-        
     public Double2D getScale(DrawInfo2D info)
         {
         final Grid2D field = (Grid2D) this.field;
