@@ -45,6 +45,9 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
             }
         }
     
+    /** Creates an IntBag with the given elements. */
+    public IntBag(int[] other) { this(); addAll(other); }
+
     public int size()
         {
         return numObjs;
@@ -55,6 +58,8 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         return (numObjs<=0);
         }
     
+	public boolean addAll(int[] other) { return addAll(numObjs, other); }
+
     public boolean addAll(final int index, final int[] other)
         {
         // throws NullPointerException if other == null,

@@ -59,6 +59,9 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
             }
         }
     
+    /** Creates a Bag with the given elements. */
+    public Bag(Object[] other) { this(); addAll(other); }
+        
     public int size()
         {
         return numObjs;
@@ -80,6 +83,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         if (other instanceof Bag) return addAll(index, (Bag)other);  // avoid an array build
         return addAll(index, other.toArray());
         }
+
+	public boolean addAll(Object[] other) { return addAll(numObjs, other); }
 
     public boolean addAll(int index, Object[] other)
         {
@@ -400,6 +405,12 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
     public void sort(Comparator c) 
         {
         Arrays.sort(objs, 0, numObjs, c);
+        }
+
+    /** Sorts the bag under the assumption that all objects stored within are Comparable. */
+    public void sort() 
+        {
+        Arrays.sort(objs, 0, numObjs);
         }
 
     /** Replaces all elements in the bag with the provided object. */

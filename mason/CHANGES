@@ -1877,3 +1877,6 @@ Version 16
 	Update to documentation on Fixed2D.
 	getClipLocation deleted from all FieldPortrayals.  This eliminates certain
 		deprecation warnings.
+	Added addAll(...array...) to Bag, IntBag, and DoubleBag, as well as a constructor
+		of the same form.
+	Added Bag.sort().  Thanks to Mike Makowsky <mmakowsky@towson.edu>

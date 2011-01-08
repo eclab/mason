@@ -45,6 +45,9 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
             }
         }
     
+    /** Creates a DoubleBag with the given elements. */
+    public DoubleBag(double[] other) { this(); addAll(other); }
+
     public int size()
         {
         return numObjs;
@@ -55,6 +58,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         return (numObjs<=0);
         }
     
+	public boolean addAll(double[] other) { return addAll(numObjs, other); }
+
     public boolean addAll(final int index, final double[] other)
         {
         // throws NullPointerException if other == null,
