@@ -1,20 +1,18 @@
-<html> <head></head>
-  <body>
-  <table border=0 cellspacing=0 cellpadding=6>
-<tr>
-<td valign=top><img src="campusworldthumb.png"><td valign=top>
-<h2>GeoMASON: CampusWorld</h2> 
-By Mark Coletti and Keith Sullivan
-</table>
-  
-  The CampusWorld GeoMASON example shows how to import GIS data, and how to move agents when they are limited to paths 
-  defined by the GIS data.  
-  
-  <p> The simulation starts by reading GIS data describing the buildings, roads, and walkways of the George Mason 
-  University Fairfax campus.  All the associated attribute data from the GIS files is available through the inspectors. 
-  The simulation then ranomly places 1000 agents on the walkways, and moves them around randomly.  We do this by converting 
-  the walkways into a PlanarGraph, and then move the agents along segements of the graph.  When the agents reach an intersection,
-  they randomly choose a new segment and continue on.  
-   
-  </body>
+<html> <head><title>GeoMason: CampusWorld</title></head>
+    <body>
+        <table border=0 cellspacing=0 cellpadding=6>
+            <tr>
+                <td valign=top><img alt="CampusWorld thumb nail"  src="campusworldthumb.png"><td valign=top>
+                    <h2>GeoMASON: CampusWorld</h2>
+                    By Mark Coletti and Keith Sullivan
+        </table>
+
+        The CampusWorld GeoMASON example shows how to import GIS data, and how to move agents when they are limited to GIS defined paths.
+
+        <p>The simulation starts by reading GIS data describing the buildings, roads, and walkways of the George Mason
+            University Fairfax campus.  All the associated attribute data, such
+            as building names, are available through inspectors.
+            The simulation randomly places agents on the walkways and moves them along. When the agents reach an intersection
+            they arbitrarily select a new walkway line segment to continue on.
+    </body>
 </html>
