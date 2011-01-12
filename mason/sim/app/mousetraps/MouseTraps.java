@@ -83,7 +83,7 @@ public class MouseTraps extends SimState
         double height, 
         boolean toroidal)
         {
-        super(new MersenneTwisterFast(seed));
+        super(seed);
         this.initialVelocity = initialVelocity;
         toroidalWorld = toroidal;
         trapGridWidth = trapsX;

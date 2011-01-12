@@ -44,18 +44,24 @@ public class SimState implements java.io.Serializable
         plus a new, empty schedule. */
     public SimState(long seed)
         {
-        this(new MersenneTwisterFast(seed));
+		this.random = new MersenneTwisterFast(seed);
+		this.schedule = new Schedule();
         this.seed = seed;  // for GUIs later on if they want to know...
         }
     
-    /** Creates a SimState with a new, empty Schedule and the provided random number generator. */
-    public SimState(MersenneTwisterFast random)
+    /** Creates a SimState with a new, empty Schedule and the provided random number generator. 
+		@deprecated Use SimState(seed)
+	*/
+    private SimState(MersenneTwisterFast random)
         {
-        this(random, new Schedule());
+		this.random = random;
+		this.schedule = new Schedule();
         }
         
-    /** Creates a SimState with the provided random number generator and schedule. */
-    public SimState(MersenneTwisterFast random, Schedule schedule)
+    /** Creates a SimState with the provided random number generator and schedule.
+		@deprecated Use SimState(seed) 
+		*/
+	private SimState(MersenneTwisterFast random, Schedule schedule)
         {
         this.random = random;
         this.schedule = schedule;

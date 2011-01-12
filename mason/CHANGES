@@ -1880,3 +1880,8 @@ Version 16
 	Added addAll(...array...) to Bag, IntBag, and DoubleBag, as well as a constructor
 		of the same form.
 	Added Bag.sort().  Thanks to Mike Makowsky <mmakowsky@towson.edu>
+	Deprecated Network.cloneGraph().  Eventually it will be removed.
+	Deprected SimState constructors
+	Major modifications to Continuous2D, Continuous3D, and SparseField to get all the
+		SparseField methods properly set up for continuous values.  Probably broke
+		something!

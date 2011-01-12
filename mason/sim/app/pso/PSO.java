@@ -82,16 +82,6 @@ public class PSO extends SimState
         {
         super(seed);
         }
-
-    public PSO(MersenneTwisterFast random) 
-        {
-        super(random);
-        }
-
-    public PSO(MersenneTwisterFast random, Schedule schedule) 
-        {
-        super(random, schedule);
-        }
         
     public void updateBest(double currVal, double currX, double currY)
         {

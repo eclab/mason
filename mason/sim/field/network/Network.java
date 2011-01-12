@@ -93,12 +93,14 @@ public class Network implements java.io.Serializable
     final public boolean directed;
     
     /** Constructs a directed or undirected graph. */
-    public Network(boolean directed){this.directed = directed;  }
+    public Network(boolean directed) { this.directed = directed; }
 
     /** Constructs a directed graph */
-    public Network(){this(true); }
+    public Network() { this(true); }
     
-        
+    /** Constructs copy of an existing graph. */
+    public Network(Network other) { this(); other.copyTo(this); }
+			
     /** Hashes Network.IndexOutIn structures by Node.  These structures
         contain the incoming edges of the Node, its outgoing edges, and the index of
         the Node in the allNodes bag. */
@@ -631,17 +633,16 @@ public class Network implements java.io.Serializable
     
     
     /**
-     * An advantage over calling addNode and addEdge n and m times, 
-     * is to allocate the Bags the right size the first time.
-     * @return a clone of this graph
-     * 
-     * I cannot use clone() cause it's too shallow.
-     * I don't need the deep clone cause I want to reuse the nodes 
-     * I need a special custom clone
+	 * Makes a duplicate copy of the graph.
+	 * @deprecated
      */
-    public Network cloneGraph()
+	public Network cloneGraph()
         {
-        Network clone = new Network(directed);
+		return copyTo(new Network(directed));
+		}
+		
+	Network copyTo(Network clone)
+		{
         clone.allNodes.addAll(allNodes);
         int n = allNodes.numObjs;
         Iterator ioiIterator = indexOutInHash.values().iterator();
