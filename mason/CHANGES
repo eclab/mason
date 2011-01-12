@@ -1885,3 +1885,22 @@ Version 16
 	Major modifications to Continuous2D, Continuous3D, and SparseField to get all the
 		SparseField methods properly set up for continuous values.  Probably broke
 		something!
+	Added fieldPortrayal to DrawInfo2D
+	Modification to how selection is done in preparation for a fix for TrailedPortrayal2D.
+		When an object is selected, we deselect all the existing selected wrappers,
+		then call setSelected(true) on the object[s].  ContinuousPortrayal2D,
+		SparseGridPortrayal2D, and ObjectGridPortrayal2D then have been modified so
+		that they always pass through setSelected(...) and only then determine if
+		the objects should be put in the "selected wrappers", so its DrawInfo2D
+		has the selected flag set.  setSelected(false) is also called.
+	Fix to TrailedPortrayal2D in conjunction with MovablePortrayal2D.  TrailedPortrayal2D
+		has to know it's been selected, but it's wrapped around a DIFFERENT field
+		portrayal than the object it's trailing.  This is a problem because if it's
+		not selected, it won't hilight the trail.  When would this happen?  If
+		MovablePortrayal2D has moved an object, it just calls select on that object
+		and not on the underlying trail.  The fix is a hack: we make sure that
+		TrailedPortrayal2D wraps both the object in the trail and the object in
+		the main field portrayal (see Flockers for an example), so its setSelected
+		method is called for sure.  Then TrailedPortrayal maintains an internal
+		boolean variable which checks against this, and also double-checks that the
+		underlying field portrayal is the one it's supposed to draw in.
