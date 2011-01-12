@@ -82,16 +82,7 @@ import java.util.*;
    Otherwise, width and height are not used.  If your space is bounded, you should set the width and height to
    those bounds.  If it's unbounded, then you should set the width and height to the bounds you would like
    displayed on-screen.
-   
-   <p><b>Warning about getObjectsAtLocation() and numObjectsAtLocation()</b>  
-   Because this class uses its superclass (the SparseField) to store the <i>discretized region</i>,
-   getObjectsAtLocation(...) and numObjectsAtLocation(...) will not work as you might expect.  The Continuous2D
-   is storing Int2Ds (the discretized grid locations), not Double2Ds.  While you could get all the
-   objects in the same discretization cell as a given Double2D location with
-   getObjectsAtLocation(discretize(theDouble2D)), almost certainly you're going to retain sanity better
-   by using the neighborhood functions (getObjectsWithinDistance(...)).  
-   The same goes for getObjectsAtLocationOfObject() and numObjectsAtLocationOfObject().
-*/
+   */
 
 public /*strictfp*/ class Continuous2D extends SparseField implements SparseField2D
     {
@@ -285,11 +276,11 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
     /**
        Finds and returns at LEAST the 'atleastThisMany' items closest to a given 'position', plus potentially other items.
        <b>toroidal must be false -- presently it's not supported.</b>  If objects are non-point and may overlap into another discretization cell,
-       set 'nonPointObjects' to true.  If you want the distance to be cartesian -- that is, the region searched will be a circle centered at the position,
-       set 'cartesian' to true (almost always you want this).  If you want the region searched to be a rectangle centered at the position, set
-       'cartesian' to be false.  Returns a bag of items.  If 'result' is provided, clears that Bag and reuses it.
+       set 'nonPointObjects' to true.  If you want the distance to be radial -- that is, the region searched will be a circle centered at the position,
+       set 'radial' to true (almost always you want this).  If you want the region searched to be a rectangle centered at the position, set
+       'radial' to be false.  Returns a bag of items.  If 'result' is provided, clears that Bag and reuses it.
     */
-    public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean cartesian, Bag result)
+    public Bag getNearestNeighbors(Double2D position, int atLeastThisMany, final boolean toroidal, final boolean nonPointObjects, boolean radial, Bag result)
         {
         if (toroidal) throw new InternalError("Toroidal not presently supported in getNearestNeighbors");
         if (result == null) result = new Bag(atLeastThisMany);
@@ -312,7 +303,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
         searches++;
         speedyMutableInt2D.x = x1; speedyMutableInt2D.y = y1;
-        Bag temp = super.getObjectsAtLocation(speedyMutableInt2D);
+        Bag temp = getRawObjectsAtLocation(speedyMutableInt2D);
         if (temp!= null) result.addAll(temp);
         
         boolean nonPointOneMoreTime = false;
@@ -334,7 +325,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                 if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
                 searches++;
                 speedyMutableInt2D.x = x;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
                 }
 
@@ -345,7 +336,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                 if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
                 searches++;
                 speedyMutableInt2D.x = x;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
                 }
                 
@@ -356,7 +347,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                 if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
                 searches++;
                 speedyMutableInt2D.y = y;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
                 }
 
@@ -367,12 +358,12 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                 if (searches >= maxSearches) { result.clear(); result.addAll(allObjects); return result; }
                 searches++;
                 speedyMutableInt2D.y = y;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
                 }
             }
             
-        if (!cartesian) return result;
+        if (!radial) return result;
         
         // Now grab some more layers, in a "+" form around the box.  We need enough extension that it includes
         // the circle which encompasses the box.  To do this we need to compute 'm', the maximum extent of the
@@ -405,25 +396,25 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                 // top
                 speedyMutableInt2D.x = x1 + x ;
                 speedyMutableInt2D.y = y1 - e - 1 ;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
 
                 // bottom
                 speedyMutableInt2D.x = x1 + x ;
                 speedyMutableInt2D.y = y2 + e + 1 ;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
 
                 // left
                 speedyMutableInt2D.x = x1 - e - 1 ;
                 speedyMutableInt2D.y = y1 + x;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
 
                 // right
                 speedyMutableInt2D.x = x2 + e + 1 ;
                 speedyMutableInt2D.y = y1 + x;
-                temp = getObjectsAtLocation(speedyMutableInt2D);
+                temp = getRawObjectsAtLocation(speedyMutableInt2D);
                 if (temp!=null) result.addAll(temp);
                 }
             }
@@ -614,7 +605,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                     {
                     // grab location
                     speedyMutableInt2D.x=x; speedyMutableInt2D.y=y;
-                    temp = super.getObjectsAtLocation(speedyMutableInt2D);
+                    temp = getRawObjectsAtLocation(speedyMutableInt2D);
                     if( temp != null && !temp.isEmpty())
                         {
                         // a little efficiency: add if we're 1, addAll if we're > 1, 
@@ -652,7 +643,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                     {
                     // grab location
                     speedyMutableInt2D.x=x; speedyMutableInt2D.y=y;
-                    temp = super.getObjectsAtLocation(speedyMutableInt2D);
+                    temp = getRawObjectsAtLocation(speedyMutableInt2D);
                     if( temp != null && !temp.isEmpty())
                         {
                         // a little efficiency: add if we're 1, addAll if we're > 1, 
@@ -679,6 +670,92 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
 
     MutableInt2D speedyMutableInt2D = new MutableInt2D();
 
+    /** Returns a bag containing all the objects at a given discretized location, or null when there are no objects at the location.
+        You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
+        the Sparse Field object.   If you want to modify the bag, make a copy and modify the copy instead,
+        using something along the lines of <b> new Bag(<i>foo</i>.getObjectsAtLocation(<i>location</i>)) </b>.
+        Furthermore, changing values in the Sparse Field may result in a different bag being used -- so you should
+        not rely on this bag staying valid.  The default implementation of this method simply calls _getObjectsAtLocation(),
+		but you may need to override it for more custom functionality (which is rare).
+    */
+    public Bag getObjectsAtDiscretizedLocation(final Int2D location)
+        {
+		return getRawObjectsAtLocation(location);
+        }
+
+    /** Returns a bag containing all the objects at a given location, 
+        or null if there are no such objects or if location is null.  Unlike other SparseField versions, you may modify this bag.
+	*/
+	public Bag getObjectsAtLocation(Double2D location)
+		{
+		if (location == null) return null;
+		Bag cell = getRawObjectsAtLocation(discretize(location));
+		if (cell == null) return null;
+		Bag result = new Bag();
+		Object[] objs = cell.objs;
+		int numObjs = cell.numObjs;
+		// whittle down
+		for(int i = 0; i < numObjs; i++)
+			{
+			Object loc = getObjectLocation(objs[i]);
+			if (loc.equals(location))
+				result.add(objs[i]);
+			}
+		return result;
+		}
+		
+    /** Returns the number of the objects at a given location, 
+        or 0 if there are no such objects or if location is null.
+	*/
+	public int numObjectsAtLocation(Double2D location)
+		{
+		if (location == null) return 0;
+		Bag cell = getRawObjectsAtLocation(discretize(location));
+		if (cell == null) return 0;
+		int count = 0;
+		Object[] objs = cell.objs;
+		int numObjs = cell.numObjs;
+		// whittle down
+		for(int i = 0; i < numObjs; i++)
+			{
+			Object loc = getObjectLocation(objs[i]);
+			if (loc.equals(location))
+				count++;
+			}
+		return count;
+		}
+
+    /** Returns a bag containing all the objects at the exact same location as a given object, including the object itself, 
+        or null if the object is not in the Field.  Unlike other SparseField versions, you may modify this bag.
+	*/
+	public Bag getObjectsAtLocationOfObject(Object obj)
+		{
+		Object location = getObjectLocation(obj);
+		if (location == null) return null;
+		else return getObjectsAtLocation(location);
+		}
+		
+    /** Returns the number of objects at the exact same location as a given object, including the object itself, 
+        or 0 if the object is not in the Field.
+	*/
+	public int numObjectsAtLocationOfObject(Object obj)
+		{
+		Object location = getObjectLocation(obj);
+		if (location == null) return 0;
+		else return numObjectsAtLocation(location);
+		}
+
+    /** Removes objects at exactly the given location, and returns a bag of them, or null of no objects are at that location.
+        The Bag may be empty, or null, if there were no objects at that location.  You can freely modify this bag. */
+    public Bag removeObjectsAtLocation(final Double2D location)
+		{
+		Bag bag = getObjectsAtLocation(location);		// this bag is a copy so it won't be reduced as I remove objects
+		Object[] objs = bag.objs;
+		int numObjs = bag.numObjs;
+		for(int i = 0; i < bag.numObjs; i++)
+			remove(objs[i]);
+		return bag;
+		}
     }
 
 

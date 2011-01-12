@@ -51,6 +51,12 @@ public final class Double3D implements java.io.Serializable
         double x = this.x;
         double y = this.y;
         double z = this.z;
+		
+		// push -0.0 to 0.0 for purposes of hashing.  Note that equals() has also been modified
+		// to consider -0.0 to be equal to 0.0.  Hopefully cute Java compilers won't try to optimize this out.
+		if (x == -0.0) x = 0.0;
+		if (y == -0.0) y = 0.0;
+		if (z == -0.0) z = 0.0;
                 
         // so we hash to the same value as Int2D does, if we're ints
         if ((((int)x) == x) && (((int)y) == y) && (((int)z) == z))
@@ -157,18 +163,28 @@ public final class Double3D implements java.io.Serializable
         else if (obj instanceof Double3D)  // do Double3D first
             {
             Double3D other = (Double3D) obj;
+            // Note: commented out because it can't handle 0.0 == -0.0, grrr
+			return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
+					(y == other.y || (Double.isNaN(y) && Double.isNaN(other.y))) && // they're the same or they're both NaN
+					(z == other.z || (Double.isNaN(z) && Double.isNaN(other.z)))); // they're the same or they're both NaN
+
             // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
-            return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
-                Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+            // return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
+            //    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+            //    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
             }
         else if (obj instanceof MutableDouble3D)
             {
             MutableDouble3D other = (MutableDouble3D) obj;
+            // Note: commented out because it can't handle 0.0 == -0.0, grrr
+			return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
+					(y == other.y || (Double.isNaN(y) && Double.isNaN(other.y))) && // they're the same or they're both NaN
+					(z == other.z || (Double.isNaN(z) && Double.isNaN(other.z)))); // they're the same or they're both NaN
+
             // can't just do other.x == x && other.y == y && other.z == z because we need to check for NaN
-            return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
-                Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
-                Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
+            // return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
+            //    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y) &&
+            //    Double.doubleToLongBits(other.z) == Double.doubleToLongBits(z));
             }
         else if (obj instanceof Int3D)
             {

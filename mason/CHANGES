@@ -1884,7 +1884,7 @@ Version 16
 	Deprected SimState constructors
 	Major modifications to Continuous2D, Continuous3D, and SparseField to get all the
 		SparseField methods properly set up for continuous values.  Probably broke
-		something!
+		something!  Though initial tests look good.
 	Added fieldPortrayal to DrawInfo2D
 	Modification to how selection is done in preparation for a fix for TrailedPortrayal2D.
 		When an object is selected, we deselect all the existing selected wrappers,
@@ -1904,3 +1904,7 @@ Version 16
 		method is called for sure.  Then TrailedPortrayal maintains an internal
 		boolean variable which checks against this, and also double-checks that the
 		underlying field portrayal is the one it's supposed to draw in.
+	Double2D, Double3D, MutableDouble2D, and MutableDouble3D modified so that, for 
+		purposes of equals() and hashCode(), 0.0 == -0.0, so elements get hashed to
+		the same cell.
+	
