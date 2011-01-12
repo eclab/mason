@@ -101,8 +101,9 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         Place(Object location, double timestamp) { this.location = location; this.timestamp = timestamp; }
         }
         
-    // is the object selected?
-    // boolean isSelected = false;
+    // is the object selected?  We'll use this auxiliary variable in the case that we're using a MovablePortrayal2D
+	// and so we didn't get selected.
+    boolean isSelected = false;
 
     boolean growTrailOnlyWhenSelected = false;
     /** Set this to grow the trail only after the objet has been selected, and delete it when the object has been deselected.  By default this is FALSE.
@@ -124,7 +125,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
     LinkedList places = new LinkedList();
 
     // The default color map used by the default trail SimplePortrayal2D
-    SimpleColorMap defaultMap; 
+    SimpleColorMap defaultMap;
 
     // The default Trail SimplePortrayal2D.  Draws line segements by drawing lines using the default color map.
     class DefaultTrail extends SimpleEdgePortrayal2D
@@ -234,13 +235,24 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
+		// I am probably added to more than one field portrayal, but should only
+		// be drawing in one of them.  So let's first double check that.
+		if (info.fieldPortrayal != fieldPortrayal)
+			{
+			getChild(object).draw(object, graphics, info);
+			return;  // don't draw me.
+			}
+		// else... draw me but not the child
+		
+		
+		// okay, now we return to our regularly scheduled program
         double currentTime = state.state.schedule.time();
         int size = places.size();
                 
         Object currentObjectLocation = fieldPortrayal.getObjectLocation(object);
                 
         // Add in new timestamp if appropriate
-        if (info.selected || !growTrailOnlyWhenSelected)
+        if (info.selected || isSelected || !growTrailOnlyWhenSelected)  // note both ways of detecting selection are on
             {
             if (size == 0 && currentTime > Schedule.BEFORE_SIMULATION && currentTime < Schedule.AFTER_SIMULATION)  // first time!
                 {
@@ -273,7 +285,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                 lastPlace = null;
                 }
             // now break out if we're not selected -- at this stage we've removed everything relevant anyway
-            else if (!info.selected && onlyShowTrailWhenSelected)
+            else if (!info.selected && !isSelected && onlyShowTrailWhenSelected)
                 break;
             // else draw if we see fit
             else
@@ -330,23 +342,35 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         
     public boolean hitObject(Object object, DrawInfo2D range)
         {
+		// always do a hit so I can receive a setSelected call
         return getChild(object).hitObject(object, range);
         }
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        // isSelected = selected;
-        return true;
+		// always do a setSelected if the child is cool with it.
+        Object object = wrapper.getObject();
+		boolean returnval = getChild(object).setSelected(wrapper, selected);
+		isSelected = (selected && returnval);  // sometimes a child will return true regardless: we want to check for that.
+		return returnval;
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
-        return null;
+		// do not return the inspector unless it's not my field portrayal
+        Object object = wrapper.getObject();
+		if (wrapper.getFieldPortrayal() != fieldPortrayal)
+			return getChild(object).getInspector(wrapper, state);
+        else return null;
         }
     
     public String getName(LocationWrapper wrapper)
         {
-        return null;
+		// do not return a name unless it's not my field portrayal
+        Object object = wrapper.getObject();
+		if (wrapper.getFieldPortrayal() != fieldPortrayal)
+			return getChild(object).getName(wrapper);
+        else return null;
         }
     }
     

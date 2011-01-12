@@ -153,6 +153,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
+		newinfo.fieldPortrayal = this;
 
         // hit/draw the objects one by one -- perhaps for large numbers of objects it would
         // be smarter to grab the objects out of the buckets that specifically are inside
@@ -249,17 +250,11 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         if (wrapper.getFieldPortrayal() != this) return true;
 
         Object obj = wrapper.getObject();
+		boolean b = getPortrayalForObject(obj).setSelected(wrapper,selected);
         if (selected)
             {
-            // first let's determine if the object WANTs to be selected
-            boolean b = getPortrayalForObject(obj).setSelected(wrapper,selected);
-                        
-            // now we turn the selection back to regular
-            getPortrayalForObject(obj).setSelected(wrapper,!selected);
-                        
-            // Okay, now we can tell whether or not to add to the wrapper collection
             if (b==false) return false;
-            selectedWrappers.put(obj, wrapper);
+            else selectedWrappers.put(obj, wrapper);
             }
         else
             {

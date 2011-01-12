@@ -111,7 +111,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  
+        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
 
         Int2D loc = (Int2D)location;
         if (loc == null) return null;
@@ -151,6 +151,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
+		newinfo.fieldPortrayal = this;
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
@@ -298,15 +299,9 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         if (wrapper.getFieldPortrayal() != this) return true;
 
         Object obj = wrapper.getObject();
+		boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
         if (selected)
             {
-            // first let's determine if the object WANTs to be selected
-            boolean b = getPortrayalForObject(obj).setSelected(wrapper,selected);
-                        
-            // now we turn the selection back to regular
-            getPortrayalForObject(obj).setSelected(wrapper,!selected);
-                        
-            // Okay, now we can tell whether or not to add to the wrapper collection
             if (b==false) return false;
             selectedWrappers.put(obj, wrapper);
             }

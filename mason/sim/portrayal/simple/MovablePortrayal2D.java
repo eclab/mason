@@ -88,7 +88,9 @@ public class MovablePortrayal2D extends SimplePortrayal2D
             if (hitObject(wrapper.getObject(), hitRange))
                 {
                 if (originalObjectPosition != null)
-                    manipulating.performSelection(wrapper);  // make sure we're selected, so we're called again
+					{
+                    manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
+					}
                 return true;  // will cause a refresh
                 }
             else { originalMousePosition = originalObjectPosition = null; }  // clean up

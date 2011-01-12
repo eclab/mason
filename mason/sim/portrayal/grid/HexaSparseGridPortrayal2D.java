@@ -212,6 +212,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
+		newinfo.fieldPortrayal = this;
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator

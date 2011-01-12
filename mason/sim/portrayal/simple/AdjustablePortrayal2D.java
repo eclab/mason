@@ -69,6 +69,7 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
         {
         SimplePortrayal2D child = getChild(object);
         child.draw(object,graphics,info);
+
         if (info.selected && object!=null && (object instanceof Oriented2D || object instanceof Scalable2D))
             {
             double orientation = 0.0;
@@ -169,7 +170,6 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
         Object object = wrapper.getObject();
         if (!selected && adjusting && object == adjustingObject)
             adjusting = false;  // cancel spurious deselections without a MOUSE_RELEASED
-        // isSelected = selected;
         return getChild(wrapper.getObject()).setSelected(wrapper, selected);
         }
 
