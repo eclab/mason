@@ -1462,6 +1462,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** */
     ArrayList selectedWrappers = new ArrayList();
     
+	/** Selects the following object, deselecting other objects if so asked. */
     public void performSelection( LocationWrapper wrapper)
         {
         Bag b = new Bag();
@@ -1474,7 +1475,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         for(int x=0;x<selectedWrappers.size();x++)
             {
             LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
-            wrapper.getFieldPortrayal().setSelected(wrapper,false);
+            wrapper.getFieldPortrayal().setSelected(wrapper, false);
             }
         selectedWrappers.clear();
         }
@@ -1489,7 +1490,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         for(int x=0;x < locationWrappers.size(); x++)
             {
             LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
-            wrapper.getFieldPortrayal().setSelected(wrapper, true);
+			wrapper.getFieldPortrayal().setSelected(wrapper, true);
             selectedWrappers.add(wrapper);
             }
         }
