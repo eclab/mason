@@ -5,6 +5,7 @@ import sim.field.continuous.*;
 import ec.util.*;
 import sim.physics2D.PhysicsEngine2D;
 import sim.physics2D.util.*;
+import sim.util.Double2D;
 
 public class BeadWire extends SimState
     {
@@ -22,7 +23,7 @@ public class BeadWire extends SimState
         
     public BeadWire(long seed, int width, int height)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         xMax = width; 
         yMax = height;
         createGrids();

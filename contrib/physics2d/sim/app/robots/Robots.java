@@ -5,6 +5,7 @@ import sim.field.continuous.*;
 import ec.util.*;
 import sim.physics2D.util.*;
 import sim.physics2D.constraint.*;
+import sim.util.Double2D;
 
 import java.awt.*;
 
@@ -33,7 +34,7 @@ public class Robots extends SimState
         
     public Robots(long seed, int width, int height)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         xMax = width; 
         yMax = height;
         createGrids();

@@ -5,6 +5,7 @@ import sim.portrayal.*;
 import sim.physics2D.shape.*;
 import sim.physics2D.util.*;
 import sim.physics2D.*;
+import sim.util.Double2D;
 
 /** PhysicalObject2D is an abstract class representing objects that can be
  * operated on by PhysicsEngine2D

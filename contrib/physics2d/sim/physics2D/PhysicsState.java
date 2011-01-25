@@ -4,6 +4,7 @@ import sim.util.Bag;
 import sim.physics2D.util.*;
 import java.util.*;
 import sim.physics2D.physicalObject.*;
+import sim.util.Double2D;
 
 /** PhysicsState holds the state of the physical objects in the system. The state
  * consists of the state vector which holds the positions and velocities for all objects,

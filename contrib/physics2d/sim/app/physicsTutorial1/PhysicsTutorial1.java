@@ -14,7 +14,7 @@ public class PhysicsTutorial1 extends SimState
                         
     public PhysicsTutorial1(long seed)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         createGrids();
         }
                 

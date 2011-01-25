@@ -2,6 +2,7 @@ package sim.physics2D.physicalObject;
 
 import sim.physics2D.util.*;
 import sim.physics2D.shape.*;
+import sim.util.Double2D;
 
 /**
  * MobileObject2D represents a physical object that can move. 
@@ -114,7 +115,7 @@ public abstract class MobileObject2D extends PhysicalObject2D
      */
     public void updatePose(double percent)
         {
-        this.setPose(this.getPosition().add(physicsState.getLastVelocity(this.index).scalarMult(percent)), this.getOrientation().add(physicsState.getLastAngularVelocity(this.index)));
+        this.setPose(this.getPosition().add(physicsState.getLastVelocity(this.index).multiply(percent)), this.getOrientation().add(physicsState.getLastAngularVelocity(this.index)));
         }
         
     /** Move the object back to its previous location */
@@ -208,7 +209,7 @@ public abstract class MobileObject2D extends PhysicalObject2D
             if (velLength > 0)
                 {
                 Double2D velRot = new Double2D(-velocity.x, -velocity.y);
-                this.addForce(velRot.scalarMult(this.getCoefficientOfFriction() * normalForce));
+                this.addForce(velRot.multiply(this.getCoefficientOfFriction() * normalForce));
                 }
             }
         }

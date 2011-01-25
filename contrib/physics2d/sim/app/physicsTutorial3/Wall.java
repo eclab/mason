@@ -3,6 +3,7 @@ package sim.app.physicsTutorial3;
 import java.awt.*;
 import sim.physics2D.physicalObject.*;
 import sim.physics2D.util.*;
+import sim.util.Double2D;
 
 public class Wall extends StationaryObject2D
     {

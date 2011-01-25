@@ -7,6 +7,7 @@ import sim.physics2D.util.*;
 import sim.physics2D.*;
 import sim.physics2D.constraint.*;
 import sim.physics2D.physicalObject.*;
+import sim.util.Double2D;
 
 /** Collision2D does narrow phase collision detection. It loops through a list
  * of pairs of objects that the broad phase collision detector decided could
@@ -86,9 +87,9 @@ class Collision2D
             {
             // normal points from 2 to one
             pair.normal = ray.normalize();
-            pair.relVel = pair.c1.getVelocity().subtract(pair.c2.getVelocity()).dotProduct(pair.normal);
+            pair.relVel = pair.c1.getVelocity().subtract(pair.c2.getVelocity()).dot(pair.normal);
                         
-            pair.colPoint2 = pair.normal.scalarMult(radius2);
+            pair.colPoint2 = pair.normal.multiply(radius2);
             Double2D globalPoint = pair.colPoint2.add(pair.c2.getPosition());
             pair.colPoint1 = globalPoint.subtract(pair.c1.getPosition());
                         
@@ -249,8 +250,8 @@ class Collision2D
         Double2D connector = vertex2.subtract(vertex1);
                 
         // project connector onto the ray
-        double proj1 = leftRay.dotProduct(connector);
-        double proj2 = rightRay.dotProduct(connector);
+        double proj1 = leftRay.dot(connector);
+        double proj2 = rightRay.dot(connector);
                 
         if (inclusive && proj1 >= 0 && proj2 >= 0)
             return true;
@@ -314,7 +315,7 @@ class Collision2D
                                 
                 // EDGE vs. EDGE
                 // first see if the edges are parallel and facing each other
-                double dp = normals1[curFeat1].dotProduct(normals2[curFeat2]);
+                double dp = normals1[curFeat1].dot(normals2[curFeat2]);
                 if (dp >= (-1 - parallelTolerance) && dp <= (-1 + parallelTolerance))
                     {
                     Double2D leftVertex = null; // looking from behind edge1
@@ -322,12 +323,12 @@ class Collision2D
                                                                                 
                     // Find the left collision vertex
                     if (testVR(vertices1[curFeat1], normals1[curFeat1], edges1[curFeat1], vertices2[nextFeat2], true)
-                        && testVR(vertices1[nextFeat1], edges1[curFeat1].scalarMult(-1), normals1[curFeat1], vertices2[nextFeat2], true))
+                        && testVR(vertices1[nextFeat1], edges1[curFeat1].multiply(-1), normals1[curFeat1], vertices2[nextFeat2], true))
                         {
                         leftVertex = vertices2[nextFeat2];
                         }
                     else if (testVR(vertices2[curFeat2], normals2[curFeat2], edges2[curFeat2], vertices1[curFeat1], true)
-                             && testVR(vertices2[nextFeat2], edges2[curFeat2].scalarMult(-1), normals2[curFeat2], vertices1[curFeat1], true))
+                             && testVR(vertices2[nextFeat2], edges2[curFeat2].multiply(-1), normals2[curFeat2], vertices1[curFeat1], true))
                         {
                         leftVertex = vertices1[curFeat1];
                         }
@@ -337,12 +338,12 @@ class Collision2D
                         {
                         // Now find the right vertex
                         if (testVR(vertices2[curFeat2], normals2[curFeat2], edges2[curFeat2], vertices1[nextFeat1], true)
-                            && testVR(vertices2[nextFeat2], edges2[curFeat2].scalarMult(-1), normals2[curFeat2], vertices1[nextFeat1], true))
+                            && testVR(vertices2[nextFeat2], edges2[curFeat2].multiply(-1), normals2[curFeat2], vertices1[nextFeat1], true))
                             {
                             rightVertex = vertices1[nextFeat1];
                             }
                         else if (testVR(vertices1[curFeat1], normals1[curFeat1], edges1[curFeat1], vertices2[curFeat2], true)
-                                 && testVR(vertices1[nextFeat1], edges1[curFeat1].scalarMult(-1), normals1[curFeat1], vertices2[curFeat2], true))
+                                 && testVR(vertices1[nextFeat1], edges1[curFeat1].multiply(-1), normals1[curFeat1], vertices2[curFeat2], true))
                             {
                             rightVertex = vertices2[curFeat2];
                             }
@@ -359,10 +360,10 @@ class Collision2D
                         pair.normal = normals2[curFeat2];
                                                 
                         // Find the distance between the two
-                        dist = vertices1[curFeat1].subtract(vertices2[curFeat2]).dotProduct(pair.normal);
+                        dist = vertices1[curFeat1].subtract(vertices2[curFeat2]).dot(pair.normal);
                                                 
                         // Find the collision points
-                        Double2D colPoint = rightVertex.add((leftVertex.subtract(rightVertex)).scalarDiv(2));
+                        Double2D colPoint = rightVertex.add((leftVertex.subtract(rightVertex)).multiply(0.5));
                         pair.colPoint1 = colPoint.subtract(collidePoly1.getPosition());
                         pair.colPoint2 = colPoint.subtract(collidePoly2.getPosition());
                         }
@@ -398,15 +399,15 @@ class Collision2D
                     // by getting a vector from vertices2[curFeat2] to vertices1[curFeat1]
                     // and projecting it onto edge2
                     Double2D vecOther = vertices1[curFeat1].subtract(vertices2[curFeat2]);
-                    double proj = vecOther.dotProduct(edges2[curFeat2]);
-                    Double2D edgePoint = vertices2[curFeat2].add(edges2[curFeat2].scalarMult(proj));
+                    double proj = vecOther.dot(edges2[curFeat2]);
+                    Double2D edgePoint = vertices2[curFeat2].add(edges2[curFeat2].multiply(proj));
                                         
                     // See if this point lies in vertices1[curFeat1]'s VR
                     if (testVR(vertices1[curFeat1], normals1[prevFeat1], normals1[curFeat1], edgePoint, false))
                         {
                         // Now see if vertices1[curFeat1] lies in edge2's VR
                         if (testVR(vertices2[curFeat2], normals2[curFeat2], edges2[curFeat2], vertices1[curFeat1], true)
-                            && testVR(vertices2[nextFeat2], edges2[curFeat2].scalarMult(-1), normals2[curFeat2], vertices1[curFeat1], true))
+                            && testVR(vertices2[nextFeat2], edges2[curFeat2].multiply(-1), normals2[curFeat2], vertices1[curFeat1], true))
                             {
                             foundFeatures = true;
                             pair.closestFeature1 = new Integer(curFeat1);
@@ -427,15 +428,15 @@ class Collision2D
                     // try vertex2 and edges1[curFeat1] - get a vector from vertices1[curFeat1] to vertex2
                     // and project it onto edge1
                     Double2D vecOther = vertices2[curFeat2].subtract(vertices1[curFeat1]);
-                    double proj = vecOther.dotProduct(edges1[curFeat1]);
-                    Double2D edgePoint = vertices1[curFeat1].add(edges1[curFeat1].scalarMult(proj));
+                    double proj = vecOther.dot(edges1[curFeat1]);
+                    Double2D edgePoint = vertices1[curFeat1].add(edges1[curFeat1].multiply(proj));
                                         
                     // See if this point lies in vertex2's VR
                     if (testVR(vertices2[curFeat2], normals2[prevFeat2], normals2[curFeat2], edgePoint, false))
                         {
                         // Now see if vertex2 lies in edge1's VR
                         if (testVR(vertices1[curFeat1], normals1[curFeat1], edges1[curFeat1], vertices2[curFeat2], true)
-                            && testVR(vertices1[nextFeat1], edges1[curFeat1].scalarMult(-1), normals1[curFeat1], vertices2[curFeat2], true))
+                            && testVR(vertices1[nextFeat1], edges1[curFeat1].multiply(-1), normals1[curFeat1], vertices2[curFeat2], true))
                             {
                             foundFeatures = true;
                             pair.closestFeature1 = new Integer(curFeat1);
@@ -446,7 +447,7 @@ class Collision2D
                             pair.colPoint2 = vertices2[curFeat2].subtract(collidePoly2.getPosition());
                                                         
                             // Normal needs to point from 2 to 1
-                            pair.normal = normals1[curFeat1].scalarMult(-1);
+                            pair.normal = normals1[curFeat1].multiply(-1);
                             }
                         }       
                     }
@@ -462,12 +463,12 @@ class Collision2D
             {       
             // Get the velocities of the collision points
             // vPoint = vBody + angVel * radius rotated by 90 degrees
-            Double2D velPoly1 = collidePoly1.getVelocity().add(pair.colPoint1.rotate(Angle.halfPI).scalarMult(collidePoly1.getAngularVelocity()));
-            Double2D velPoly2 = collidePoly2.getVelocity().add(pair.colPoint2.rotate(Angle.halfPI).scalarMult(collidePoly2.getAngularVelocity()));
+            Double2D velPoly1 = collidePoly1.getVelocity().add(pair.colPoint1.rotate(Angle.halfPI).multiply(collidePoly1.getAngularVelocity()));
+            Double2D velPoly2 = collidePoly2.getVelocity().add(pair.colPoint2.rotate(Angle.halfPI).multiply(collidePoly2.getAngularVelocity()));
 
             // Calculate the relative velocities of the collision points
             Double2D relVel = velPoly1.subtract(velPoly2);
-            double relVelNorm = relVel.dotProduct(pair.normal);
+            double relVelNorm = relVel.dot(pair.normal);
                         
             // make sure objects are separating
             if (relVelNorm <= ZERO_VEL)
@@ -576,12 +577,12 @@ class Collision2D
                 // by getting a vector from vertex2 to vertex1
                 // and projecting it onto edge2
                 Double2D vecOther = collideCircle.getPosition().subtract(vertices[curFeat]);
-                double proj = vecOther.dotProduct(edges[curFeat]);
-                Double2D edgePoint = vertices[curFeat].add(edges[curFeat].scalarMult(proj));
+                double proj = vecOther.dot(edges[curFeat]);
+                Double2D edgePoint = vertices[curFeat].add(edges[curFeat].multiply(proj));
                                 
                 // Now see if the circle lies in the edge's VR
                 if (testVR(vertices[curFeat], normals[curFeat], edges[curFeat], collideCircle.getPosition(), true)
-                    && testVR(vertices[nextFeat], edges[curFeat].scalarMult(-1), normals[curFeat], collideCircle.getPosition(), true))
+                    && testVR(vertices[nextFeat], edges[curFeat].multiply(-1), normals[curFeat], collideCircle.getPosition(), true))
                     {
                     foundFeatures = true;
                     pair.closestFeature1 = new Integer(curFeat);
@@ -610,7 +611,7 @@ class Collision2D
             {
             // Get the velocities of the collision points
             // vPoint = vBody + angVel * radius rotated by 90 degrees
-            Double2D velPoly = collidePoly.getVelocity().add(pair.colPoint1.rotate(Angle.halfPI).scalarMult(collidePoly.getAngularVelocity()));
+            Double2D velPoly = collidePoly.getVelocity().add(pair.colPoint1.rotate(Angle.halfPI).multiply(collidePoly.getAngularVelocity()));
             Double2D velCircle = collideCircle.getVelocity();
 
             // Calculate the relative velocities of the collision points
@@ -622,7 +623,7 @@ class Collision2D
             else
                 relVel = velCircle.subtract(velPoly);
                         
-            relVelNorm = relVel.dotProduct(pair.normal);
+            relVelNorm = relVel.dot(pair.normal);
                         
             // Make sure objects aren't separating
             if (relVelNorm <= ZERO_VEL)

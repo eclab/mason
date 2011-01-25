@@ -4,7 +4,8 @@ package sim.physics2D.constraint;
 import sim.util.matrix.*;
 import sim.physics2D.physicalObject.MobileObject2D;
 import sim.physics2D.physicalObject.PhysicalObject2D;
-import sim.physics2D.util.Double2D;
+//import sim.physics2D.util.Double2D;
+import sim.util.Double2D;
 
 /**
  * Created when a collision is detected between two objects and 
@@ -174,7 +175,7 @@ public class Collision implements ImpulseConstraint
         PhysicalObject2D mobj1 = this.obj1;
         PhysicalObject2D mobj2 = this.obj2;
                 
-        //relVel = colNormal.scalarMult(relVel.dotProduct(colNormal));
+        //relVel = colNormal.multiply(relVel.dotProduct(colNormal));
         // Make the combined coefficient of restitution the product of the two
         // CFs. If sticky is set, make the coefficient 0 to reduce the relative
         // velocity of the two bodies to 0 (for resting contact)
@@ -197,14 +198,14 @@ public class Collision implements ImpulseConstraint
         if (obj1 instanceof MobileObject2D)
             {
             MobileObject2D mobj1 = (MobileObject2D)obj1;
-            mobj1.setVelocity(mobj1.getVelocity().add(R.scalarMult(mobj1.getMassInverse())));
-            mobj1.setAngularVelocity(mobj1.getAngularVelocity() + r1.perpDot(R.scalarMult(mobj1.getMassMomentOfInertiaInverse())));
+            mobj1.setVelocity(mobj1.getVelocity().add(R.multiply(mobj1.getMassInverse())));
+            mobj1.setAngularVelocity(mobj1.getAngularVelocity() + r1.perpDot(R.multiply(mobj1.getMassMomentOfInertiaInverse())));
             }
         if (obj2 instanceof MobileObject2D)
             {                               
             MobileObject2D mobj2 = (MobileObject2D)obj2;
-            mobj2.setVelocity(mobj2.getVelocity().subtract(R.scalarMult(mobj2.getMassInverse())));
-            mobj2.setAngularVelocity(mobj2.getAngularVelocity() - r2.perpDot(R.scalarMult(mobj2.getMassMomentOfInertiaInverse())));
+            mobj2.setVelocity(mobj2.getVelocity().subtract(R.multiply(mobj2.getMassInverse())));
+            mobj2.setAngularVelocity(mobj2.getAngularVelocity() - r2.perpDot(R.multiply(mobj2.getMassMomentOfInertiaInverse())));
             }
         }
     }

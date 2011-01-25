@@ -8,6 +8,7 @@ import sim.physics2D.physicalObject.*;
 import sim.physics2D.collisionDetection.*;
 import sim.physics2D.util.PhysicalObjectPair;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 /** The ConstraintEngine solves for constraint forces and impulses */
 public class ConstraintEngine 

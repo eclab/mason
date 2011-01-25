@@ -5,6 +5,7 @@ import sim.engine.*;
 import sim.physics2D.physicalObject.*;
 import sim.physics2D.forceGenerator.ForceGenerator;
 import sim.physics2D.util.*;
+import sim.util.Double2D;
 
 public class MobileCircle extends MobileObject2D implements Steppable, ForceGenerator
     {

@@ -6,6 +6,7 @@ import sim.portrayal.*;
 import sim.physics2D.*;
 import sim.engine.*;
 import sim.physics2D.physicalObject.*;
+import sim.util.Double2D;
 
 import java.awt.*;
 

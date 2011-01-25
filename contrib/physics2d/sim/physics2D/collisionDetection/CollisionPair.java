@@ -2,8 +2,9 @@
 package sim.physics2D.collisionDetection;
 
 import sim.physics2D.physicalObject.PhysicalObject2D;
-import sim.physics2D.util.Double2D;
+//import sim.physics2D.util.Double2D;
 import sim.physics2D.util.PhysicalObjectPair;
+import sim.util.Double2D;
 
 /** CollisionPair represents a pair of objects that are currently colliding
  */

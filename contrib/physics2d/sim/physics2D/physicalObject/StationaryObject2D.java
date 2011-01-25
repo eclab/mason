@@ -3,6 +3,7 @@ package sim.physics2D.physicalObject;
 import sim.physics2D.util.*;
 import sim.physics2D.shape.*;
 import sim.physics2D.*;
+import sim.util.Double2D;
 
 /**
  * StationaryObject2D represents a physical object that can't move. 

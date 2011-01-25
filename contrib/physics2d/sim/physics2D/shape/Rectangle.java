@@ -3,6 +3,7 @@ package sim.physics2D.shape;
 import java.awt.*;
 import sim.util.matrix.*;
 import sim.physics2D.util.*;
+import sim.util.Double2D;
 
 /** Rectangle implementation of Polygon
  */

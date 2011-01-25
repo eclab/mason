@@ -7,6 +7,7 @@ import sim.physics2D.util.*;
 import java.awt.*;
 import sim.physics2D.constraint.*;
 import sim.physics2D.*;
+import sim.util.Double2D;
 
 public class Collisions extends SimState
     {
@@ -25,7 +26,7 @@ public class Collisions extends SimState
         
     public Collisions(long seed, int width, int height)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         xMax = width; 
         yMax = height;
         createGrids();

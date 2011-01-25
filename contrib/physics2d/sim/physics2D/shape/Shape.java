@@ -4,6 +4,7 @@ import sim.portrayal.*;
 import java.awt.*;
 import sim.physics2D.*;
 import sim.physics2D.util.*;
+import sim.util.Double2D;
 
 /** Each physical object has an associated shape. The type of shape associated
  * with the object determines how it is displayed, when it is colliding with another

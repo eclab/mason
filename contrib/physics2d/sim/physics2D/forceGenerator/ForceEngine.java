@@ -2,8 +2,9 @@ package sim.physics2D.forceGenerator;
 
 import sim.physics2D.physicalObject.MobileObject2D;
 import sim.physics2D.PhysicsState;
-import sim.physics2D.util.Double2D;
+//import sim.physics2D.util.Double2D;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 /** The ForceEngine manages the application of forces and torques to objects. 
  */

@@ -10,6 +10,7 @@ import sim.physics2D.physicalObject.*;
 import sim.physics2D.forceGenerator.ForceGenerator;
 import sim.physics2D.util.*;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 public class Bot extends sim.robot2D.Robot implements Steppable, ForceGenerator
     {

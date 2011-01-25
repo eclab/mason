@@ -5,6 +5,7 @@ import sim.field.continuous.*;
 import ec.util.*;
 import sim.physics2D.util.*;
 import java.awt.*;
+import sim.util.Double2D;
 
 import sim.physics2D.*;
 import sim.physics2D.integrator.*;
@@ -25,7 +26,7 @@ public class Collisions extends SimState
         
     public Collisions(long seed, int width, int height)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         xMax = width; 
         yMax = height;
         createGrids();
@@ -68,11 +69,11 @@ public class Collisions extends SimState
         // WALLS
         // HORIZ
         
-        /*
-          pos = new Double2D(100,wallPos);
-          wall = new Wall(pos, 250, 8);
-          fieldEnvironment.setObjectLocation(wall, new sim.util.Double2D(pos.x, pos.y));
-          objPE.register(wall);
+		/*
+        pos = new Double2D(100,wallPos);
+        wall = new Wall(pos, 250, 8);
+        fieldEnvironment.setObjectLocation(wall, new sim.util.Double2D(pos.x, pos.y));
+        objPE.register(wall);
         */
         
         pos = new Double2D(100,wallPos);
@@ -108,7 +109,7 @@ public class Collisions extends SimState
                 vel = new Double2D(-random.nextDouble(), random.nextDouble());
             else
                 vel = new Double2D(-random.nextDouble(), -random.nextDouble());
-            vel = vel.scalarMult(2);
+            vel = vel.multiply(2);
             rec = new MobilePoly(pos, vel, size, size * 2, Color.red);
             fieldEnvironment.setObjectLocation(rec, new sim.util.Double2D(pos.x, pos.y));
             objPE.register(rec);

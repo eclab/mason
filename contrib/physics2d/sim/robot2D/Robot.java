@@ -1,9 +1,10 @@
 package sim.robot2D;
 
 import sim.physics2D.util.Angle;
-import sim.physics2D.util.Double2D;
+//import sim.physics2D.util.Double2D;
 import sim.util.matrix.*;
 import sim.physics2D.physicalObject.*;
+import sim.util.Double2D;
 
 public class Robot extends MobileObject2D
     {
@@ -116,14 +117,14 @@ public class Robot extends MobileObject2D
             else
                 {
                 double scale = P_pos * localDestination.length() - D_pos * this.getVelocity().length();
-                Double2D force = (new Double2D(1, 0)).rotate(this.getOrientation().radians).scalarMult(scale); 
+                Double2D force = (new Double2D(1, 0)).rotate(this.getOrientation().radians).multiply(scale); 
                 this.addForce(force);
                 }
             }
         else
             {
             // otherwise, hit the breaks
-            this.addForce(this.getVelocity().rotate(Math.PI).scalarMult(10));
+            this.addForce(this.getVelocity().rotate(Math.PI).multiply(10));
             }
         }
         
@@ -132,7 +133,7 @@ public class Robot extends MobileObject2D
         double angularVel = this.getAngularVelocity();
         Double2D vel = this.getVelocity();
                 
-        this.addForce(vel.rotate(Math.PI).scalarMult(10));
+        this.addForce(vel.rotate(Math.PI).multiply(10));
         this.addTorque(-angularVel * 200);
         }
         

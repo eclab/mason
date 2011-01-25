@@ -6,6 +6,7 @@ import ec.util.*;
 import sim.physics2D.util.*;
 import sim.physics2D.constraint.*;
 import sim.physics2D.integrator.ODEEulerSolver;
+import sim.util.Double2D;
 
 import java.awt.*;
 
@@ -27,7 +28,7 @@ public class PendulumSim extends SimState
         
     public PendulumSim(long seed, int width, int height)
         {
-        super(new MersenneTwisterFast(seed), new Schedule(2));
+        super(seed);
         xMax = width; 
         yMax = height;
         createGrids();

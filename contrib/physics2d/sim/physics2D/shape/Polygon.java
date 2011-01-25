@@ -3,8 +3,9 @@ package sim.physics2D.shape;
 import java.awt.Graphics2D;
 
 import sim.portrayal.DrawInfo2D;
-import sim.physics2D.util.Double2D;
+//import sim.physics2D.util.Double2D;
 import sim.util.matrix.*;
+import sim.util.Double2D;
 
 /** Polygons represents any convex multi-sided object. Convex means
  * that every angle measured between the insides of two edges must be
@@ -178,7 +179,7 @@ public abstract class Polygon extends Shape
     /** Returns a DenseMatrix in homogenous coordinates to rotate and translate 
      * a 2 dimensional rigid body given the angle theta (in radians) and a translation vector
      */
-    public static DenseMatrix rotationTranslationMatrix2D(double theta, sim.physics2D.util.Double2D translation)
+    public static DenseMatrix rotationTranslationMatrix2D(double theta, Double2D translation)
         {
         double cosTheta = Math.cos(theta);
         double sinTheta = Math.sin(theta);
