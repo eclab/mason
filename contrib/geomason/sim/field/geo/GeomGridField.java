@@ -159,6 +159,16 @@ public class GeomGridField extends GeomField
         return (int) Math.floor((p.getX() - getMBR().getMinX()) / getPixelWidth());
     }
 
+    /**
+     *
+     * @param x Coordinate in base projection
+     * @return x grid coordinate for cell 'x'
+     */
+    public int toXCoord(final double x)
+    {
+        return (int) Math.floor((x - getMBR().getMinX()) / getPixelWidth());
+    }
+
 
     /**
      * @param p point
@@ -166,7 +176,22 @@ public class GeomGridField extends GeomField
      */
     public int toYCoord(final Point p)
     {
-        return (int) Math.floor((p.getY() - getMBR().getMinY()) / getPixelHeight());
+        // Note that we have to flip the y coordinate because the origin in
+        // Java is in the upper left corner.
+        return (int) Math.floor((getMBR().getMaxY() - p.getY()) / getPixelHeight());
+    }
+
+    /**
+     *
+     * @param y coordinate in base projection
+     * @return y grid coordinate for cell 'y' is in
+     */
+    public int toYCoord(final double y)
+    {
+        // Note that we have to flip the y coordinate because the origin in
+        // Java is in the upper left corner.
+//        return (int) Math.floor((y - getMBR().getMinY()) / getPixelHeight());
+        return (int) Math.floor((getMBR().getMaxY() - y) / getPixelHeight());
     }
 
 
