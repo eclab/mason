@@ -1907,4 +1907,10 @@ Version 16
 	Double2D, Double3D, MutableDouble2D, and MutableDouble3D modified so that, for 
 		purposes of equals() and hashCode(), 0.0 == -0.0, so elements get hashed to
 		the same cell.
-	
+	Deleted private function SimState.indexAfterArgumentForKey
+	SimState.nameThread() no longer static.
+	Added SimState.setSeed() and SimState.setJob()
+	SimState.setRandom() deprecated.  Use setSeed() instead.
+	Deprecated schedule.time().  Use getTime() instead.
+	Made Schedule.scheduleOnce(Key, Steppable) protected
+	RandomSequence now synchronizes on the *Schedule*, not the random number generator.

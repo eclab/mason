@@ -240,14 +240,14 @@ public class MouseTraps extends SimState
                 double landing_dx = vx* landing_time;
                 double landing_dy = vy* landing_time;
 
-                schedule.scheduleOnce(  schedule.time()+landing_time ,
+                schedule.scheduleOnce(  schedule.getTime()+landing_time ,
                     new MouseTrap(discretizeX(landing_dx, posx),discretizeY(landing_dy, posy)));
                 }
             else
                 {
                 Ball b = new Ball(spacePosX,spacePosY,0.0, vx, vy, vz);
                 ballSpace.setObjectLocation(b,new Double3D(     spacePosX,spacePosY,0));
-                schedule.scheduleOnce(schedule.time()+1, b);
+                schedule.scheduleOnce(schedule.getTime()+1, b);
                 }
             }
         }

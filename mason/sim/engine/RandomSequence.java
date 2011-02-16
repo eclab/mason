@@ -8,8 +8,8 @@ package sim.engine;
 
 /**
    RandomSequence is a Sequence which executes its Steppable objects in random order each time.
-   RandomSequence does not ordinarily synchronize on the random number generator -- unless you
-   set shouldSynchronize to true.  This is commonly only necessary if you're running multithreaded
+   RandomSequence does not ordinarily synchronize (on the Schedule) before using the random number generator 
+   -- unless you set shouldSynchronize to true.  This is commonly only necessary if you're running multithreaded
    (you're embedded inside a ParallelSequence for example).
 */
 
@@ -17,7 +17,7 @@ public class RandomSequence extends Sequence
     {
     final boolean shouldSynchronize;
     
-    /** Does not synchronize on the random number generator */
+    /** Does not synchronize before using the random number generator */
     public RandomSequence(Steppable[] steps)
         {
         this(steps,false);
@@ -32,7 +32,7 @@ public class RandomSequence extends Sequence
     
     int nextInt(SimState state, int n) 
         {
-        synchronized (state.random) 
+        synchronized (state.schedule) 
             { return state.random.nextInt(n); }
         }
     

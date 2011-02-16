@@ -71,7 +71,6 @@ public final class Double2D implements java.io.Serializable
             }
             
             
-            
         // I don't like Sun's simplistic approach to random shuffling.  So...
         // basically we need to randomly disperse <double,double> --> int
         // We do this by doing <double,double> -> <long,long> -> long -> int
@@ -163,6 +162,7 @@ public final class Double2D implements java.io.Serializable
             }
         else return false;
         }
+		
         
     /** Returns the distance FROM this Double2D TO the specified point */
     public double distance(final double x, final double y)

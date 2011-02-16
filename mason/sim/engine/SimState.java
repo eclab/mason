@@ -19,7 +19,7 @@ import java.text.*;
 
     <p>SimStates are serializable; if you wish to be able to checkpoint your simulation and read from checkpoints, you should endeavor to make all objects in the simulation serializable as well.  Prior to serializing to a checkpoint, preCheckpoint() is called.  Then after serialization, postCheckpoint() is called.  When a SimState is loaded from a checkpoint, awakeFromCheckpoint() is called to give you a chance to make any adjustments.  SimState also implements several methods which call these methods and then serialize the SimState to files and to streams.
 
-    <p>SimState also maintains a private registry of AsynchronousSteppable objects (such as YoYoYo), and handles pausing and resuming
+    <p>SimState also maintains a private registry of AsynchronousSteppable objects, and handles pausing and resuming
     them during the checkpointing process, and killing them during finish() in case they had not completed yet.
 
     <p>If you override any of the methods foo() in SimState, should remember to <b>always</b> call super.foo() for any such method foo().
@@ -67,10 +67,19 @@ public class SimState implements java.io.Serializable
         this.schedule = schedule;
         }
     
+	public void setSeed(long seed)
+		{
+		random = new MersenneTwisterFast(seed);
+		this.seed= seed;
+		}
+		
+	/** @deprecated use setSeed */
+   /*
     public void setRandom(MersenneTwisterFast random)
         {
         this.random = random;
         }
+	*/
     
     /** Called immediately prior to starting the simulation, or in-between
         simulation runs.  This gives you a chance to set up initially,
@@ -95,8 +104,8 @@ public class SimState implements java.io.Serializable
         }
 
     /** A Steppable on the schedule can call this method to cancel the simulation.
-        All existing YoYoYos are stopped, and then the schedule is
-        reset.  YoYoYos, ParallelSteppables, 
+        All existing AsynchronousSteppables are stopped, and then the schedule is
+        reset.  AsynchronousSteppables, ParallelSequences, 
         and non-main threads should not call this method directly -- it will deadlock.
         Instead, they may kill the simulation by scheduling a Steppable
         for the next timestep which calls state.kill(). */
@@ -210,8 +219,7 @@ public class SimState implements java.io.Serializable
         to the provided stream. Calls preCheckpoint() before and postCheckpoint() afterwards.
         Throws an IOException if the stream becomes invalid (prematurely closes, etc.).  Does not close or flush
         the stream. */
-    public void writeToCheckpoint(OutputStream stream)
-        throws IOException
+    public void writeToCheckpoint(OutputStream stream) throws IOException
         {
         preCheckpoint();
 
@@ -271,6 +279,7 @@ public class SimState implements java.io.Serializable
         return state;
         }
     
+/*
     static int indexAfterArgumentForKey(String key, String[] args, int startingAt)
         {
         for(int x=0;x<args.length-1;x++)  // key can't be the last string
@@ -278,7 +287,7 @@ public class SimState implements java.io.Serializable
                 return x + 2;
         return args.length;
         }
-
+*/
     static boolean keyExists(String key, String[] args, int startingAt)
         {
         for(int x=0;x<args.length;x++)  // key can't be the last string
@@ -304,6 +313,11 @@ public class SimState implements java.io.Serializable
         {
         return seed;
         }
+
+	public void setJob(long job)
+		{
+		this.job = job;
+		}
         
     /** Returns the job number set by the doLoop(...) facility.  This number
         is not incremented by the GUI. */
@@ -492,7 +506,7 @@ public class SimState implements java.io.Serializable
                     System.exit(1);
                     }
                                         
-                nameThread(state);
+                state.nameThread();
 
                 job = state.job();
                 if (state.seed() != 0) // likely good seed from the command line earlier
@@ -507,7 +521,7 @@ public class SimState implements java.io.Serializable
             if (state==null)  // no checkpoint file requested
                 {
                 state = generator.newInstance(seed,args);
-                nameThread(state);
+                state.nameThread();
                 state.job = job;
                 state.seed = seed;
                 System.err.println("Job: " + state.job() + " Seed: " + state.seed());
@@ -530,7 +544,7 @@ public class SimState implements java.io.Serializable
             Schedule schedule = state.schedule;
             long firstSteps = schedule.getSteps();
             
-            while((_for == -1 || steps < _for) && schedule.time() <= until)
+            while((_for == -1 || steps < _for) && schedule.getTime() <= until)
                 {
                 if (!schedule.step(state)) 
                     {
@@ -568,13 +582,13 @@ public class SimState implements java.io.Serializable
         }
     
     /** Names the current thread an appropriate name given the SimState */
-    public static void nameThread(SimState state)
+    public void nameThread()
         {
         // name my thread for the profiler
-        Thread.currentThread().setName("MASON Model: " + state.getClass());
+        Thread.currentThread().setName("MASON Model: " + this.getClass());
         }
 
-        
+	/** Returns MASON's Version */
     public static double version()
         {
         return 15.0;

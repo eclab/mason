@@ -28,7 +28,7 @@ public class Ball implements Steppable
         MouseTraps sim = (MouseTraps)state;
         if(posZ <=0 && velocityZ <=0)
             {
-            sim.schedule.scheduleOnce(sim.schedule.time()+1,new MouseTrap(sim.discretizeX(posX),sim.discretizeY(posY)));
+            sim.schedule.scheduleOnce(sim.schedule.getTime()+1,new MouseTrap(sim.discretizeX(posX),sim.discretizeY(posY)));
             sim.ballSpace.remove(this);
             return;
             }

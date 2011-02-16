@@ -753,7 +753,7 @@ public class Cell extends Object implements Steppable
     public void step(SimState state)
         {
         Celegans celegans = ((Celegans)state);
-        double time = state.schedule.time();
+        double time = state.schedule.getTime();
         if (time >= death_day && time < Schedule.AFTER_SIMULATION)  // time to split!  But hang around if the simulation just ended
             {
             stopper.stop();

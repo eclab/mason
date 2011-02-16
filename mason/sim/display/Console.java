@@ -1401,8 +1401,8 @@ public class Console extends JFrame implements Controller
         removeAllInspectors(true);      // clear inspectors
         // setRandomNumberGenerator(randomSeed);
         simulation.start();
-        updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);
-        //setTime(simulation.state.schedule.time());
+        updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
+        //setTime(simulation.state.schedule.getTime());
         //setStepsPerSecond(-1.0);  // negative value, guarantees nothing is shown
         
         // no need to clear out the global inspector.  It stays.
@@ -1463,7 +1463,7 @@ public class Console extends JFrame implements Controller
             {
             public void run()
                 {
-                simulation.state.setRandom(new MersenneTwisterFast(val));
+                simulation.state.setSeed(val);
                 }
             });
           
@@ -2000,8 +2000,8 @@ public class Console extends JFrame implements Controller
         if (failed && originalPlayState == PS_PLAYING)
             pressPause();  // unpause
 
-        //setTime(simulation.state.schedule.time());
-        updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);        
+        //setTime(simulation.state.schedule.getTime());
+        updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);        
         
         // the random seed is no longer true -- who knows what the orignal seed was -- so we'll
         // set the field to "Unknown"
@@ -2232,21 +2232,21 @@ public class Console extends JFrame implements Controller
             for (int x = 0; x < numStepsPerStepButtonPress; x++)
                 {
                 // at this point we KNOW the play thread doesn't exist
-                if (!simulation.step() || simulation.state.schedule.time() >= getWhenShouldEndTime() ||
+                if (!simulation.step() || simulation.state.schedule.getTime() >= getWhenShouldEndTime() ||
                     simulation.state.schedule.getSteps() >= getWhenShouldEnd() )
                     // end of run! Clean up in next event loop
                     {
                     pressStop();
-                    //setTime(simulation.state.schedule.time());
+                    //setTime(simulation.state.schedule.getTime());
                     //setStepsPerSecond(-1.0); // negative value, guarantees that nothing is shown
-                    updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);
+                    updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
                     break;
                     } 
                 else
                     {
-                    //setTime(simulation.state.schedule.time());
+                    //setTime(simulation.state.schedule.getTime());
                     //setStepsPerSecond(-1.0); // negative value, guarantees that nothing is shown
-                    updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.time(), -1.0);
+                    updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
                     }
                 }
             refresh();  // update displays even if they're skipping
@@ -2470,7 +2470,7 @@ public class Console extends JFrame implements Controller
                             }
 
                     // name the current thread
-                    simulation.state.nameThread(simulation.state);
+                    simulation.state.nameThread();
 
                     // start the main loop
 
@@ -2483,7 +2483,7 @@ public class Console extends JFrame implements Controller
                             break;
 
                         result = simulation.step();
-                        double t = simulation.state.schedule.time();
+                        double t = simulation.state.schedule.getTime();
                         long s = simulation.state.schedule.getSteps();
                         //setTime(t);
 
@@ -2587,7 +2587,7 @@ public class Console extends JFrame implements Controller
                     // system actually ISN'T in a PS_STOPPED state yet -- so that should prevent
                     // us from calling finish() twice accidentally if the user just so happens
                     // to press top at exactly the right time.  I think!
-                    if (!result || simulation.state.schedule.time() >= getWhenShouldEndTime() ||
+                    if (!result || simulation.state.schedule.getTime() >= getWhenShouldEndTime() ||
                         simulation.state.schedule.getSteps() >= getWhenShouldEnd())
                         SwingUtilities.invokeLater(new Runnable()
                             {
@@ -2603,7 +2603,7 @@ public class Console extends JFrame implements Controller
                                     } // On X Windows, if we close the window during an invokeLater, we get a spurious exception
                                 }
                             });
-                    else if (simulation.state.schedule.time() >= getWhenShouldPauseTime() ||
+                    else if (simulation.state.schedule.getTime() >= getWhenShouldPauseTime() ||
                         simulation.state.schedule.getSteps() >= getWhenShouldPause() )
                         SwingUtilities.invokeLater(new Runnable()
                             {

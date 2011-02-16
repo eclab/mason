@@ -584,7 +584,7 @@ public /*strictfp*/ class Continuous3D extends SparseField
         the Sparse Field object.   If you want to modify the bag, make a copy and modify the copy instead,
         using something along the lines of <b> new Bag(<i>foo</i>.getObjectsAtLocation(<i>location</i>)) </b>.
         Furthermore, changing values in the Sparse Field may result in a different bag being used -- so you should
-        not rely on this bag staying valid.  The default implementation of this method simply calls _getObjectsAtLocation(),
+        not rely on this bag staying valid.  The default implementation of this method simply calls getRawObjectsAtLocation(),
 		but you may need to override it for more custom functionality (which is rare).
     */
     public Bag getObjectsAtDiscretizedLocation(final Int3D location)

@@ -55,7 +55,7 @@ import sim.util.Bag;
     <p> Generally speaking, if you have access to a GUIState, you should use GUIstate methods
     start(), finish(), step(), reset(), and readNewStateFromCheckpoint() 
     instead of the underlying methods in the SimState and Controller.  Otherwise, feel free
-    to use the underlying methods (such as Schedule.time()).
+    to use the underlying methods (such as Schedule.getTime()).
     
     <p><b>Exception Handling</b>.  It's a common error to schedule a null event, or one with an invalid time.
     Like Schedule, GUIState previously returned false or null in such situations, 
@@ -517,13 +517,13 @@ public abstract class GUIState
         {
         synchronized(state.schedule)
             {
-            if (event == null || state.schedule.time() >= Schedule.AFTER_SIMULATION)
+            if (event == null || state.schedule.getTime() >= Schedule.AFTER_SIMULATION)
                 {
                 if (event == null)
                     {
                     throw new IllegalArgumentException("The provided Steppable is null");
                     }
-                else if (state.schedule.time() >= Schedule.AFTER_SIMULATION)
+                else if (state.schedule.getTime() >= Schedule.AFTER_SIMULATION)
                     {
                     throw new IllegalArgumentException("The simulation is over and the item cannot be scheduled.");
                     }
@@ -555,7 +555,7 @@ public abstract class GUIState
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
         situation).  Returns a Stoppable, or null if the current time is AFTER_SIMULATION or if the event is null.
-        The recurrence will continue until state.schedule.time() >= AFTER_SIMULATION, state.schedule is cleared out,
+        The recurrence will continue until state.schedule.getTime() >= AFTER_SIMULATION, state.schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
         
         <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
@@ -573,7 +573,7 @@ public abstract class GUIState
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
         situation).  Returns a Stoppable, or null if the current time is AFTER_SIMULATION or if the event is null.
-        The recurrence will continue until state.schedule.time() >= AFTER_SIMULATION, state.schedule is cleared out,
+        The recurrence will continue until state.schedule.getTime() >= AFTER_SIMULATION, state.schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
         
         <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
@@ -590,7 +590,7 @@ public abstract class GUIState
         Pass in FALSE to indicate you want to be immediately BEFORE the next timestep;
         pass in TRUE if you want to be immediately AFTER the next time step (the more common
         situation).  Returns a Stoppable, or null if the current time is AFTER_SIMULATION or if the event is null.
-        The recurrence will continue until state.schedule.time() >= AFTER_SIMULATION, state.schedule is cleared out,
+        The recurrence will continue until state.schedule.getTime() >= AFTER_SIMULATION, state.schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
         
         <p>Why would you use this method?  Primarily to get things scheduled which aren't stored
@@ -628,13 +628,13 @@ public abstract class GUIState
         {
         synchronized(state.schedule)
             {
-            if (event == null || state.schedule.time() >= Schedule.AFTER_SIMULATION)
+            if (event == null || state.schedule.getTime() >= Schedule.AFTER_SIMULATION)
                 {
                 if (event == null)
                     {
                     throw new IllegalArgumentException("The provided Steppable is null");
                     }
-                else if (state.schedule.time() >= Schedule.AFTER_SIMULATION)
+                else if (state.schedule.getTime() >= Schedule.AFTER_SIMULATION)
                     {
                     throw new IllegalArgumentException("The simulation is over and the item cannot be scheduled.");
                     }

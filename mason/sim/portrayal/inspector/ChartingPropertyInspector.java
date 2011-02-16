@@ -328,7 +328,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         
     public void updateInspector()
         {
-        double time = simulation.state.schedule.time();
+        double time = simulation.state.schedule.getTime();
         // we should only update if we're at a new time that we've not seen yet, or if
         // we're at the start of inspection and haven't done an update yet.  It's possible
         // for this second condition to be true while the first one is false: if we're at

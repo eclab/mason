@@ -344,7 +344,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 long steps = Display2D.this.simulation.state.schedule.getSteps();
                 if (steps > lastEncodedSteps &&
                     shouldUpdate() &&
-                    Display2D.this.simulation.state.schedule.time() < Schedule.AFTER_SIMULATION)
+                    Display2D.this.simulation.state.schedule.getTime() < Schedule.AFTER_SIMULATION)
                     {
                     Display2D.this.movieMaker.add(paint(g,true,false));
                     lastEncodedSteps = steps;
@@ -462,7 +462,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             <tt>buffer</tt> determines if we do our ordinary paints buffered or not. */
         public void paintComponent(Graphics g, boolean buffer)
             {
-            synchronized(Display2D.this.simulation.state.schedule)  // for time()
+            synchronized(Display2D.this.simulation.state.schedule)  // for getTime()
                 {
                 if (movieMaker!=null)  // we're writing a movie
                     insideDisplay.paintToMovie(g);

@@ -246,7 +246,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
 		
 		
 		// okay, now we return to our regularly scheduled program
-        double currentTime = state.state.schedule.time();
+        double currentTime = state.state.schedule.getTime();
         int size = places.size();
                 
         Object currentObjectLocation = fieldPortrayal.getObjectLocation(object);

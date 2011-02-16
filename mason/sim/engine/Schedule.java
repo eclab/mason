@@ -151,10 +151,12 @@ public class Schedule implements java.io.Serializable
         steps = 0;
         }
     
-    /** Returns the current timestep */
+    /** Returns the current timestep 
+		@deprecated use getTime()
+		*/
     public double time() { synchronized(lock) { return time; } }
 
-    /** Same as getTime() -- returns the current timestep */
+    /** Returns the current timestep */
     public double getTime() { synchronized(lock) { return time; } }
     
     /** Returns the current time in string format. If the time is BEFORE_SIMULATION, then beforeSimulationString is
@@ -384,7 +386,7 @@ public class Schedule implements java.io.Serializable
         }
     
     /** Schedules an item. */
-    public boolean scheduleOnce(Key key, final Steppable event)
+    protected boolean scheduleOnce(Key key, final Steppable event)
         {
         synchronized(lock)
             {
@@ -573,7 +575,7 @@ public class Schedule implements java.io.Serializable
         }
 
     /** Timestamps stored as keys in the heap.  Comps are comparable by their time first, and their ordering second. */
-    public static class Key implements Comparable, Serializable
+    protected static class Key implements Comparable, Serializable
         {
         double time;
         int ordering;

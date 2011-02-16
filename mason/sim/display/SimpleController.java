@@ -195,7 +195,7 @@ public class SimpleController implements Controller
             {
             public void run()
                 {
-                simulation.state.setRandom(new MersenneTwisterFast(val));
+                simulation.state.setSeed(val);
                 }
             });
         }
@@ -432,7 +432,7 @@ public class SimpleController implements Controller
                             }
 
                     // name the current thread
-                    simulation.state.nameThread(simulation.state);
+                    simulation.state.nameThread();
 
                     // start the main loop
 

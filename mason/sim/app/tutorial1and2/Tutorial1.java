@@ -62,7 +62,7 @@ public class Tutorial1 extends SimState
                 break;
             steps = tutorial1.schedule.getSteps();
             if (steps % 500 == 0)
-                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.time());
+                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.getTime());
             }
         tutorial1.finish();
         System.exit(0);
@@ -115,7 +115,7 @@ public class Tutorial1 extends SimState
             steps = tutorial1.schedule.getSteps();
             if (steps % 500 == 0)
                 {
-                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.time());
+                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.getTime());
                 String s = steps + ".Tutorial1.checkpoint";
                 System.out.println("Checkpointing to file: " + s);
                 tutorial1.writeToCheckpoint(new java.io.File(s));

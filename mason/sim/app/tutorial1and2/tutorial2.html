@@ -246,7 +246,7 @@ Before we can test the program, we need to write a new <b>main(String[])</b> fun
             steps = tutorial1.schedule.getSteps();
             if (steps % 500 == 0)
                 {
-                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.time());
+                System.out.println("Steps: " + steps + " Time: " + tutorial1.schedule.getTime());
                 String s = steps + ".Tutorial1.checkpoint";
                 System.out.println("Checkpointing to file: " + s);
                 tutorial1.writeToCheckpoint(new java.io.File(s));
