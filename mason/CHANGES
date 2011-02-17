@@ -1920,3 +1920,4 @@ Version 16
 		revised (and a new one has been added).
 	AsynchronousSteppable is now officially Stoppable
 	ParallelSequence.cleaner() added
+	DoubleDimension2D eliminated

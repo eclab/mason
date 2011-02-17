@@ -82,16 +82,6 @@ public class PSO3D extends SimState
         super(seed);
         }
 
-    public PSO3D(MersenneTwisterFast random) 
-        {
-        super(random);
-        }
-
-    public PSO3D(MersenneTwisterFast random, Schedule schedule) 
-        {
-        super(random, schedule);
-        }
-        
     public void updateBest(double currVal, double currX, double currY, double currZ)
         {
         if (currVal > bestVal)
