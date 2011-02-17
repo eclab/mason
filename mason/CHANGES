@@ -1919,3 +1919,4 @@ Version 16
 	Documentation template examples in AsynchronousSteppable were wrong and have been
 		revised (and a new one has been added).
 	AsynchronousSteppable is now officially Stoppable
+	ParallelSequence.cleaner() added
