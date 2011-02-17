@@ -1914,3 +1914,8 @@ Version 16
 	Deprecated schedule.time().  Use getTime() instead.
 	Made Schedule.scheduleOnce(Key, Steppable) protected
 	RandomSequence now synchronizes on the *Schedule*, not the random number generator.
+	WeakStep no longer weakly holds its optional Stoppable
+	AsynchronousSteppable.stopper() deprecated
+	Documentation template examples in AsynchronousSteppable were wrong and have been
+		revised (and a new one has been added).
+	AsynchronousSteppable is now officially Stoppable

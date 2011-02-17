@@ -32,13 +32,13 @@ import java.lang.ref.*;
 
    In this case, when the underlying Steppable is garbage-collected, then the
    schedule will automatically stop repeatedly stepping it.  Note that the Stoppable
-   is also stored weakly.
+   is <i>not</i> stored weakly.
 */
 
 public class WeakStep implements Steppable
     {
-    protected WeakReference weakStep;
-    protected WeakReference weakStop;  // will be null unless setStoppable() called
+	WeakReference weakStep;
+	Stoppable stop;  // will be null unless setStoppable() called
     
     // WeakReferences are not serializable -- so we need
     // to unwrap them here.
@@ -46,9 +46,9 @@ public class WeakStep implements Steppable
         throws java.io.IOException
         {
         p.writeObject(weakStep.get());
-        p.writeBoolean(weakStop!=null);
-        if (weakStop != null)
-            p.writeObject(weakStop.get());
+        p.writeBoolean(stop!=null);
+        if (stop != null)
+            p.writeObject(stop);
         }
         
     // WeakReferences are not serializable -- so we need
@@ -58,8 +58,8 @@ public class WeakStep implements Steppable
         {
         weakStep = new WeakReference(p.readObject());
         if (p.readBoolean())  // weakStop != null
-            weakStop = new WeakReference(p.readObject());
-        else weakStop = null;  // just in case
+            stop = (Stoppable)(p.readObject());
+        else stop = null;  // just in case
         }
 
     public WeakStep(Steppable step)
@@ -69,7 +69,7 @@ public class WeakStep implements Steppable
     
     public void setStoppable(Stoppable stop)
         {
-        weakStop = new WeakReference(stop);
+        this.stop = stop;
         }
     
     public void step(SimState state)
@@ -77,11 +77,7 @@ public class WeakStep implements Steppable
         Steppable step = (Steppable)(weakStep.get());
         if (step != null)
             step.step(state);
-        else if (weakStop != null)
-            {
-            Stoppable stop = (Stoppable)(weakStop.get());
-            if (stop != null)
-                stop.stop();
-            }
+        else if (stop != null)
+			stop.stop();
         }
     }

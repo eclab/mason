@@ -110,7 +110,12 @@ public class ParallelSequence extends Sequence
         pleaseDie = false;
         threads = null;
         }
-                
+	
+	public Steppable getCleaner()
+		{
+		return new Steppable() { public void step(SimState state) { gatherThreads(); } };
+		}
+		
     /** Call this just before you get rid of a ParallelSequence: for example, one good place is the stop() method of
         your simulation.  Never call this method inside the ParallelSequence's own step() method.  This method
         deletes the threads so the ParallelSequence is ready to be thrown away.  We also do this in
