@@ -1921,3 +1921,5 @@ Version 16
 	AsynchronousSteppable is now officially Stoppable
 	ParallelSequence.cleaner() added
 	DoubleDimension2D eliminated
+	Modification to Heap's constructor: numElem no longer used.
+	Removed Heap.extractMin(Comparable, Bag), which is confusing and no longer being used.

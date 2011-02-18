@@ -299,10 +299,10 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
             buffer = null;  // GC the buffer in case the user had changed his mind
             
-            if (endx > maxX) endx = maxX;
-            if (endy > maxY) endy = maxY;
-            if( startx < 0 ) startx = 0;
-            if( starty < 0 ) starty = 0;
+            if (endxd > maxX) endxd = maxX;
+            if (endyd > maxY) endyd = maxY;
+            if( startxd < 0 ) startxd = 0;
+            if( startyd < 0 ) startyd = 0;
 
             double _x = 0;
             double _y = 0;

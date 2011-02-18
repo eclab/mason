@@ -366,6 +366,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         {
                         final Color c = map.getColor(doubleField[(int)x][(int)y]);
                         if (c.getAlpha() == 0) continue;
+                        graphics.setColor(c);
 
                         _x = (translateWidth + infodrawx + scaleWidth * x);
                         _y = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y:2*y+1));
@@ -382,6 +383,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         {
                         final Color c = map.getColor(intField[(int)x][(int)y]);
                         if (c.getAlpha() == 0) continue;
+                        graphics.setColor(c);
 
                         _x = (translateWidth + infodrawx + scaleWidth * x);
                         _y = (infodrawy + (yScale) * ((((int)x)&1)==0?2*y:2*y+1));

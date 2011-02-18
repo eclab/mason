@@ -36,17 +36,17 @@ public class Heap implements java.io.Serializable
     // constructs the heap
     public Heap()
         {
-        this(new Comparable[0], new Object[0], 0);
+        this(new Comparable[0], new Object[0]);
         }
 
     // constructs the heap
-    public Heap( Comparable[] keys, Object[] objects, int numElem )
+    public Heap( Comparable[] keys, Object[] objects )
         {
         if (keys.length != objects.length)
             throw new IllegalArgumentException("keys and objects must be of the same length");
         this.keys = keys;
         this.objects = objects;
-        this.numElem = numElem;
+        this.numElem = keys.length;
         buildHeap();
         }
 
@@ -99,10 +99,10 @@ public class Heap implements java.io.Serializable
         return keys[1-1];
         }
         
-    /** Removes elements in order and adds them to a Bag, so long as the provided
+    /* Removes elements in order and adds them to a Bag, so long as the provided
         Comparable object is equal to their keys.  As soon as this is not true, the Bag is returned.
         You may provide a Bag -- putInHere -- to be filled in. */
-    public Bag extractMin(Comparable comparable, Bag putInHere)
+	Bag extractMin(Comparable comparable, Bag putInHere)
         {
         if (putInHere == null) putInHere = new Bag();
         while( true )
@@ -131,7 +131,7 @@ public class Heap implements java.io.Serializable
         return extractMin(min, putInHere);
         }
 
-    /** Removes the minimum element and its key from the heap, and returns the minimum element.  Will return null if the heap is empty */
+    /** Removes the first minimum element and its key from the heap, and returns the minimum element.  Will return null if the heap is empty */
     public Object extractMin()
         {
         // make local
