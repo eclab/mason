@@ -608,7 +608,7 @@ Version 8
 		have to add it again at start() time.
 	FastValueGridPortrayal2D now writes directly to buffers.  This
 		results in a drawing speed improvement of approximately 30%.
-	HexaFastValueGridPortrayal2D also similarly writes to buffers
+	FastHexaValueGridPortrayal2D also similarly writes to buffers
 		(somewhat less efficiently), with a speed improvement of
 		well over 35%.
 	MacOS X 1.4.x has a stupid minimum window size (128x37 -- the docs
@@ -1923,3 +1923,7 @@ Version 16
 	DoubleDimension2D eliminated
 	Modification to Heap's constructor: numElem no longer used.
 	Removed Heap.extractMin(Comparable, Bag), which is confusing and no longer being used.
+	Bugfix to FastValueGridPortrayal2D, which was not handling zommed-out grids properly
+		when writing to high-quality (like PDF).
+	Bugfix to FastHexaValueGridPortrayal2D, which was not setting the color propertly when
+		writing to high-quality (like PDF).
