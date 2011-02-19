@@ -7,10 +7,8 @@
 package sim.util.gui;
 import java.awt.*;
 import javax.swing.*;
-import sim.util.WordWrap;
 import java.io.*;
 import java.awt.image.*;
-import sim.util.Utilities;
 
 
 /**
@@ -98,9 +96,9 @@ public class MovieMaker
             int myNumberOfPixels = 600; // our word-wrap pixel length
             JLabel label = new JLabel();
             label.setText("<html><br><b>Note</b><br><font size='-2'>" + 
-                sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text1, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
+                WordWrap.toHTML(WordWrap.wrap(text1, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
                 //"</font><br><br><b>Suggested Solution</b><br><font size='-2'>" + 
-                //sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(text2, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
+                //WordWrap.toHTML(WordWrap.wrap(text2, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
                 "</font></html>");
 
             JPanel panel3 = new JPanel();

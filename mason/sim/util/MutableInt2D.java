@@ -226,4 +226,10 @@ public class MutableInt2D implements java.io.Serializable, Cloneable
         {
         return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
         }
+		
+    /** Returns the manhattan distance FROM this Int2D TO the specified point.    */
+    public long manhattanDistance(final java.awt.Point p)
+        {
+        return Math.abs((long)this.x-p.x) + Math.abs((long)this.y-p.y);
+        }
     }

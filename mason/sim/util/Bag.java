@@ -61,7 +61,10 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
     
     /** Creates a Bag with the given elements. */
     public Bag(Object[] other) { this(); addAll(other); }
-        
+	
+    /** Creates a Bag with the given elements. */
+	public Bag(Collection other) { this(); addAll(other); }
+	
     public int size()
         {
         return numObjs;

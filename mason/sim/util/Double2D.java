@@ -310,6 +310,12 @@ public final class Double2D implements java.io.Serializable
         return Math.sqrt(x * x + y * y);
         }
         
+    /** Returns the length of the vector between -Pi and Pi. */
+    public final double angle()
+        {
+        return Math.atan2(y,x);
+        }
+
     /** Returns the vector length of the Double2D */
     public final double lengthSq()
         {

@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.util;
+package sim.util.gui;
 import java.awt.*;
 import javax.swing.*;
 import java.io.*;
@@ -13,10 +13,10 @@ import java.io.*;
 
 public class Utilities
     {
-    /** Returns the integer floor of a double, or as close as possible. 
+    /* Returns the integer floor of a double, or as close as possible. 
         The return value of NaN is undefined: it's often zero but doesn't
         have to be.  This is about twice as fast as (int)Math.floor(d) up through at least Java6. */
-    public static int iFloor(double d)
+    private static int iFloor(double d)
         {
         int i = (int) d;
         if (d >= 0) return i;  // positives and zero
@@ -26,10 +26,10 @@ public class Utilities
         else return i - 1;                      // non-integer negatives
         }
         
-    /** Returns the integer ceiling of a double, or as close as possible. 
+    /* Returns the integer ceiling of a double, or as close as possible. 
         The return value of NaN is undefined: it's often zero but doesn't
         have to be.  This is about twice as fast as (int)Math.ceil(d) up through at least Java6.   */
-    public static int iCeil(double d)
+    private static int iCeil(double d)
         {
         int i = (int) d;
         if (d <= 0) return i;  // negatives and zero -- pretty because doubles pushed to ints don't go lower than the min int range
@@ -39,10 +39,10 @@ public class Utilities
         else return (i + 1);            // non-integer positives
         }
         
-    /** Returns the integer floor of a double, or as close as possible. 
+    /* Returns the integer floor of a double, or as close as possible. 
         The return value of NaN is undefined: it's often zero but doesn't
         have to be.  This is about twice as fast as (int)Math.round(d), though it can't get inlined because it's 40 bytes.  :-( */
-    public static int iRound(double d)
+    private static int iRound(double d)
         {
         d += 0.5;               // same protocol as Math.round, see its documentation
         int i = (int) d;

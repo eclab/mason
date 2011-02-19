@@ -14,7 +14,7 @@ package sim.util;
     objects in a hash table by passing in a MutableDouble2D instead.    
 */
 
-public final class MutableDouble2D implements java.io.Serializable
+public final class MutableDouble2D implements java.io.Serializable, Cloneable
     {
     public double x;
     public double y;
@@ -43,6 +43,18 @@ public final class MutableDouble2D implements java.io.Serializable
     public String toCoordinates() { return "(" + x + ", " + y + ")"; }
 
     public java.awt.geom.Point2D.Double toPoint2D() { return new java.awt.geom.Point2D.Double(x,y); }
+
+    public Object clone()
+        { 
+        try 
+            { 
+            return super.clone(); 
+            }
+        catch(CloneNotSupportedException e)
+            { 
+            return null; // never happens
+            } 
+        }
 
     // identical to Double2D
     public final int hashCode()
@@ -385,7 +397,13 @@ public final class MutableDouble2D implements java.io.Serializable
         return Math.sqrt(x * x + y * y);
         }
         
-    /** Returns the length of the vector between -Pi and Pi. */
+     /** Returns the square of the length of the MutableDouble2D. */
+    public final double lengthSq()                                                  
+        {
+        return x*x+y*y;
+        }
+
+   /** Returns the length of the vector between -Pi and Pi. */
     public final double angle()
         {
         return Math.atan2(y,x);
@@ -494,9 +512,4 @@ public final class MutableDouble2D implements java.io.Serializable
         return this;
         }
         
-    /** Returns the square of the length of the MutableDouble2D. */
-    public final double lengthSq()                                                  
-        {
-        return x*x+y*y;
-        }
     }
