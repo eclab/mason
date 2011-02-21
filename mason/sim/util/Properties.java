@@ -26,15 +26,28 @@ import java.util.*;
 
 public abstract class Properties implements java.io.Serializable
     {
+    /** Returns a Properties object for the given object.  If the object is an array, Map, Indexed, or Collection,
+        then it will be treated using CollectionProperties.  Otherwise it will be
+        treated using SimpleProperties.  The returned SimpleProperties will include superclasses properties.
+		The Class property will NOT be included.
+        The domFoo() and hideFoo() property extension methods are respected.
+        Domains will always be produced according to the rules in the comments for getDomain(index) below.
+    */
+    public static Properties getProperties(Object object)
+        {
+        return getProperties(object, true, true, false ,true);
+        }
+
     /** Returns a Properties object for the given object.  
         If expandCollections is true, then if object is a Map, Indexed, or Collection,
         then it will be treated using CollectionProperties.  Otherwise it will be
         treated using SimpleProperties.   Arrays are always treated using CollectionProperties. 
         If includeSuperclasses is true, then any SimpleProperties will include superclasses.
         If includeGetClass is true, then the Class property will be included.
-        No finite domains will be produced (that is, getDomain(index) will return null for
-        all properties).
-    */
+        The domFoo() and hideFoo() property extension methods are respected.
+    
+		@deprecated use the full version
+	*/
     public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass)
         {
         return getProperties(object,expandCollections,includeSuperclasses,includeGetClass,true);
@@ -46,11 +59,9 @@ public abstract class Properties implements java.io.Serializable
         treated using SimpleProperties.   Arrays are always treated using CollectionProperties. 
         If includeSuperclasses is true, then any SimpleProperties will include superclasses.
         If includeGetClass is true, then the Class property will be included.
-        If includeDomains is true (which requires a CollectionProperties), then domains
-        will be produced for properties according to the rules in the comments in getDomain(index)
-        below.  Otherwise all objects will return a null (infinite) domain.
+        The domFoo() and hideFoo() property extension methods are respected if <tt>includeExtensions</tt> is true.
     */
-    public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeDomains)
+    public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         if (object == null) return new SimpleProperties(object, includeSuperclasses, includeGetClass);
         Class c = object.getClass();
@@ -59,7 +70,7 @@ public abstract class Properties implements java.io.Serializable
                 Indexed.class.isAssignableFrom(c) ||
                 Map.class.isAssignableFrom(c)))
             return new CollectionProperties(object);
-        else return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeDomains);
+        else return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions);
         }
 
     protected Object object;

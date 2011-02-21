@@ -1927,3 +1927,12 @@ Version 16
 		when writing to high-quality (like PDF).
 	Bugfix to FastHexaValueGridPortrayal2D, which was not setting the color propertly when
 		writing to high-quality (like PDF).
+	iFloor, iRound, iCeil made private in Utilities.java: they're probably not wise to use.
+	Moved Utilities and WordWrap to sim.util.gui
+	Added [Mutable]Int2D.manhattanDistance(java.awt.Point)
+	Made MutableDouble2D cloneable
+	Added Double2D.angle()
+	Added a new Bag constructor
+	Added a new Properties default factory method.  SimpleInspector now uses it.
+	SimpleProperties default constructor modified so that getClass() is not included, to
+		be consistent with the default Properties factory method.

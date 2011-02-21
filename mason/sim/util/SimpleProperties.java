@@ -115,16 +115,16 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     
     /** Gathers all properties for the object, including ones defined in superclasses. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
-        which define the domain of the property.  See <tt>getDomain(int index)</tt> for a description of
-        the domain format.
+        which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
     */
-    public SimpleProperties(Object o) { this(o,true,true,true); }
+    public SimpleProperties(Object o) { this(o,true,false,true); }
     
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
         If includeGetClass is true, then the Class property will be included. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
-        which define the domain of the property.  See <tt>getDomain(int index)</tt> for a description of
-        the domain format.
+        which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
+		
+		@deprecated Use the full form
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass)
         {
@@ -134,20 +134,20 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
         If includeGetClass is true, then the Class property will be included. If includeDomains is true, then
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
-        which define the domain of the property.  See <tt>getDomain(int index)</tt> for a description of
-        the domain format.
+        which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected
+		if <tt>includeExtensions</tt> is true.
     */
-    public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeDomains)
+    public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         object = o;
         if (o!=null && o instanceof sim.util.Proxiable)
             object = ((sim.util.Proxiable)(o)).propertiesProxy();
         else if (o!=null && o instanceof sim.util.Propertied)
             auxillary = ((sim.util.Propertied)(o)).properties();
-        generateProperties(includeSuperclasses,includeGetClass,includeDomains);
+        generateProperties(includeSuperclasses,includeGetClass,includeExtensions);
         }
     
-    void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeDomains)
+    void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         if (object != null && auxillary == null) try
                                                      {
@@ -169,8 +169,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                                                      {
                                                                      getMethods.add(m[x]);
                                                                      setMethods.add(getWriteProperty(m[x],c));
-                                                                     domMethods.add(getDomain(m[x],c,includeDomains));
-                                                                     hideMethods.add(getHidden(m[x], c));
+                                                                     domMethods.add(getDomain(m[x],c,includeExtensions));
+                                                                     hideMethods.add(getHidden(m[x], c, includeExtensions));
                                                                      }
                                                                  }
                                                              }
@@ -185,25 +185,26 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
        whether or not he wants to hide this property.  If there is no such method, we must assume that the property is to be
        shown. */
-    Method getHidden(Method m, Class c)
+    Method getHidden(Method m, Class c, boolean includeExtensions)
         {
-        try
-            {
-            if (m.getName().startsWith("get"))
-                {
-                Method m2 = c.getMethod("hide" + (m.getName().substring(3)), new Class[] { });
-                if (m2.getReturnType() == Boolean.TYPE) return m2;
-                }
-            else if (m.getName().startsWith("is"))
-                {
-                Method m2 = c.getMethod("hide" + (m.getName().substring(2)), new Class[] { });
-                if (m2.getReturnType() == Boolean.TYPE) return m2;
-                }
-            }
-        catch (Exception e)
-            {
-            // couldn't find a domain
-            }
+        if (!includeExtensions) return null;
+		try
+			{
+			if (m.getName().startsWith("get"))
+				{
+				Method m2 = c.getMethod("hide" + (m.getName().substring(3)), new Class[] { });
+				if (m2.getReturnType() == Boolean.TYPE) return m2;
+				}
+			else if (m.getName().startsWith("is"))
+				{
+				Method m2 = c.getMethod("hide" + (m.getName().substring(2)), new Class[] { });
+				if (m2.getReturnType() == Boolean.TYPE) return m2;
+				}
+			}
+		catch (Exception e)
+			{
+			// couldn't find a domain
+			}
         return null;
         }
     
@@ -228,9 +229,9 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             }
         }
     
-    Method getDomain(Method m, Class c, boolean includeDomains)
+    Method getDomain(Method m, Class c, boolean includeExtensions)
         {
-        if (!includeDomains) return null;
+        if (!includeExtensions) return null;
         try
             {
             if (m.getName().startsWith("get"))

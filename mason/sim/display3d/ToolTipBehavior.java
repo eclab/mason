@@ -246,7 +246,7 @@ public class ToolTipBehavior extends PickMouseBehavior
                 
         if (htmlText != null)
             htmlText = "<html><font size=\"-1\" face=\"" +
-                sim.util.WordWrap.toHTML(canvas.getFont().getFamily()) +
+                WordWrap.toHTML(canvas.getFont().getFamily()) +
                 "\">" + htmlText + "</font></html>";
         DialogToolTip.showToolTip(s, htmlText);
         }

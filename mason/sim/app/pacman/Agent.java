@@ -88,8 +88,8 @@ public abstract class Agent implements Oriented2D
     public void changeLocation(double x, double y)
         {
         // locations can get off a bit because of double floating point error.  This keeps them in check:
-        location.x = ((Utilities.iRound(x * discretization))) / (double) discretization;
-        location.y = ((Utilities.iRound(y * discretization))) / (double) discretization;
+        location.x = (((int)(Math.round(x * discretization)))) / (double) discretization;
+        location.y = (((int)(Math.round(y * discretization)))) / (double) discretization;
         pacman.agents.setObjectLocation(this, new Double2D(location));
         }
 

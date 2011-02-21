@@ -271,7 +271,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         if (timer == null)
             {
-            timer= sim.util.Utilities.doLater(milliseconds, new Runnable()
+            timer= Utilities.doLater(milliseconds, new Runnable()
                 {
                 public void run()
                     {

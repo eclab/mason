@@ -13,6 +13,7 @@ import sim.engine.*;
 import sim.util.*;
 import java.io.*;
 import java.awt.event.*;
+import sim.util.gui.*;
 
 /** PropertyInspector is a subclass of Inspector which is intended for plug-in inspectors of a single property of an object.
     Plug-in inspectors may be associated with a Frame.  To create a PropertyInspector, you need to do several things:

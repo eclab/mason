@@ -174,7 +174,7 @@ public class SimpleInspector extends Inspector
     void generateProperties(int start)
         {
         if (!fixedProperties)
-            properties = Properties.getProperties(object,true,true,false,true);
+            properties = Properties.getProperties(object);
         final int len = properties.numProperties();
         if (start < 0) start = 0;
         if (start > len) return;  // failed
