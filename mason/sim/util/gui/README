@@ -88,6 +88,13 @@ manipulate them.  If they're numbers, uses a widget like
 NumberTextField.  If they're booleans, appears as a checkbox.  Other 
 data types have their own special features.
 
+WordWrap.java
+
+A simple class for doing basic word wrapping in text fields and labels.
+
+Utilities.java
+
+A collection of random utility methods which don't fit anywhere else.
 
 
 Other Files:

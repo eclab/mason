@@ -6,6 +6,8 @@ import java.io.*;
    prints it in a fashion similar to exceptions like InvocationTargetException.
    This exception is largely obviated by the 'cause' mechanism in Java 1.4
    Throwables -- but Java 1.3 doesn't have it and thus we need it.
+
+@deprecated Use standard RuntimeExceptions in Java 1.4 now
 */
 
 

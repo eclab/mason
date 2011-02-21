@@ -112,8 +112,8 @@ public class MethodStep implements Steppable
               t.initCause(ex.getCause());
               throw t;
             */
-            throw new CausedRuntimeException(ex, "On calling \"" + method + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass() + 
-                ", an Exception was raised in the called method.");
+            throw new RuntimeException("On calling \"" + method + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass() + 
+                ", an Exception was raised in the called method.", ex);
             }
         catch (NullPointerException ex)
             {

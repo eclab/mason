@@ -1936,3 +1936,4 @@ Version 16
 	Added a new Properties default factory method.  SimpleInspector now uses it.
 	SimpleProperties default constructor modified so that getClass() is not included, to
 		be consistent with the default Properties factory method.
+	CausedRuntimeException officially deprecated

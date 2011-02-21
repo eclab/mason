@@ -43,7 +43,7 @@ public class Cells extends Object
             r.close();
             postProcess();
             }
-        catch (IOException e) { throw new CausedRuntimeException(e); }
+        catch (IOException e) { throw new RuntimeException(e); }
         }
 
 
