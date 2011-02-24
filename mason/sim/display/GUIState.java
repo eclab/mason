@@ -75,7 +75,7 @@ public abstract class GUIState
         or no controller YET */
     public Controller controller;
 
-    /** A bag of objects containing objects that may be needed at various times */
+    /** A bag of objects containing objects that may be needed at various times. */
     public Bag guiObjects;
 
     /** Override this constructor in your subclass to call <code>super(state)</code> where state is a
@@ -86,7 +86,7 @@ public abstract class GUIState
     
     /** You may optionally override this constructor to call <code>super(state)</code> but you should
         be sure to override the no-argument GUIState() constructor as stipulated. */
-    protected GUIState(SimState state)
+    public GUIState(SimState state)
         {
         this.state = state;
         resetQueues();
@@ -418,8 +418,10 @@ public abstract class GUIState
         
     /** Empties out the schedule and resets it to a pristine state BEFORE_SIMULATION.
         If you're using a GUIState, you should call this version instead of Schedule's
-        version. */
-    public synchronized final void reset(SimState state)
+        version. 
+		@deprecated.  Do not use.
+		*/
+    private synchronized final void reset(SimState state)
         {
         state.schedule.reset();
         resetQueues();

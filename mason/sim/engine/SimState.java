@@ -73,7 +73,7 @@ public class SimState implements java.io.Serializable
 		this.seed= seed;
 		}
 		
-	/** @deprecated use setSeed */
+	/* @deprecated use setSeed */
    /*
     public void setRandom(MersenneTwisterFast random)
         {

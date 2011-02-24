@@ -73,11 +73,12 @@ public class SimpleController implements Controller
         }
 
     /** Random number generator seed */
-    int randomSeed = (int) System.currentTimeMillis();
-
+    long randomSeed = 0;  // it'll change
+	
     public SimpleController(final GUIState simulation)
         {
         this(simulation, true);
+		randomSeed = simulation.state.seed();
         }
 
     boolean displayInspectors;
@@ -174,7 +175,7 @@ public class SimpleController implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-        setRandomNumberGenerator(randomSeed);
+		simulation.state.setSeed(randomSeed);	// reseed the generator
         simulation.start();
         }
 
@@ -187,21 +188,6 @@ public class SimpleController implements Controller
     /////////////////////// UTILITY FUNCTIONS
 
     
-    /** Sets the random number generator of the underlying model, pausing it first, then unpausing it after. 
-        Updates the randomField. */ 
-    void setRandomNumberGenerator(final int val)
-        {
-        doChangeCode(new Runnable()
-            {
-            public void run()
-                {
-                simulation.state.setSeed(val);
-                }
-            });
-        }
-
-
-
     /** Private internal flag which indicates if the program is already in the process of quitting. */    
     boolean isClosing = false;
     /** Private lock to avoid synchronizing on myself. */
@@ -252,7 +238,6 @@ public class SimpleController implements Controller
             if (incrementSeedOnPlay)
                 {
                 randomSeed++;
-                setRandomNumberGenerator(randomSeed);
                 }
             }
         }

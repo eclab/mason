@@ -159,10 +159,10 @@ public class Console extends JFrame implements Controller
     JSlider stepSlider;
     /** The associated text for number of steps per press of the step-button */
     JLabel stepSliderText;
-    /** The slider which controls the thread priority of the underlying model thread */
-    JSlider prioritySlider;
-    /** The associiated text for the thread priority of the underlying model thread */
-    JLabel prioritySliderText;
+    /* The slider which controls the thread priority of the underlying model thread */
+    // JSlider prioritySlider;
+    /* The associiated text for the thread priority of the underlying model thread */
+    // JLabel prioritySliderText;
     /** The checkbox which states whether or not we should give way just a little bit */
     JCheckBox repeatButton;
     //    /** The checkbox which states whether or not we should give way just a little bit */
@@ -478,8 +478,9 @@ public class Console extends JFrame implements Controller
         b.add(sliderText);
         controlPanel.addLabelled("Delay (Sec/Step) ", b);
 
-        // create speed slider
-        prioritySlider = new JSlider(Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY); // ranges from 0 to 100
+		// removed -- this is so rarely used that it's just confusing to users
+        // create priority slider
+        /*prioritySlider = new JSlider(Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY); // ranges from 0 to 100
         prioritySlider.addChangeListener(new ChangeListener()
             {
             public void stateChanged(ChangeEvent e)
@@ -504,6 +505,7 @@ public class Console extends JFrame implements Controller
         prioritySliderText.setPreferredSize(new JLabel("88: norm").getPreferredSize()); // ensure enough space
         b.add(prioritySliderText);
         controlPanel.addLabelled("Thread Priority ", b);
+		*/
 
 
         // Create the step slider
@@ -706,7 +708,7 @@ public class Console extends JFrame implements Controller
                             "The random number generator only uses 32 bits of a given seed.  You've specified a longer seed than this." + 
                             "Not all the bits of this seed will be used.", Console.this);           
                     randomSeed = l;
-                    setRandomNumberGenerator(randomSeed);
+                    // setRandomNumberGenerator(randomSeed);
                     lock = false;
                     return "" + l;
                     } 
@@ -961,13 +963,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-                doChangeCode(new Runnable()
-                    {
-                    public void run()
-                        {
-                        doSave();
-                        }
-                    });
+				synchronized(simulation.state.schedule) { doSave(); }
                 }
             });
         fileMenu.add(save);
@@ -977,13 +973,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-                doChangeCode(new Runnable()
-                    {
-                    public void run()
-                        {
-                        doSaveAs();
-                        }
-                    });
+				synchronized(simulation.state.schedule) { doSaveAs(); }
                 }
             });
         fileMenu.add(saveAs);
@@ -1072,6 +1062,12 @@ public class Console extends JFrame implements Controller
         invokeInSwing(new Runnable() { public void run() { resetToPreferences(); }});
         }
 
+
+
+
+
+
+
     /** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
     void invokeInSwing(Runnable runnable)
         {
@@ -1116,7 +1112,7 @@ public class Console extends JFrame implements Controller
         
     public String DEFAULT_PREFERENCES_KEY = "Console";
     public String DELAY_KEY = "Delay";
-    public String THREAD_PRIORITY_KEY = "Thread Priority";
+//    public String THREAD_PRIORITY_KEY = "Thread Priority";
     public String STEPS_KEY = "Steps";
     public String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
     public String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
@@ -1131,7 +1127,7 @@ public class Console extends JFrame implements Controller
         try
             {
             prefs.putInt(DELAY_KEY,slider.getValue());
-            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
+//            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
             prefs.putInt(STEPS_KEY, stepSlider.getValue());
             prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
             prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
@@ -1154,7 +1150,7 @@ public class Console extends JFrame implements Controller
             Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
             slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
-            prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
+//            prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
             stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
             endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
             timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
@@ -1198,7 +1194,9 @@ public class Console extends JFrame implements Controller
     /** What should the simulation thread priority be?  Don't play with this. */
     int threadPriority = Thread.NORM_PRIORITY;
     
-    /** Set when the simulation should end. */
+    /** Set the thread priority. 
+	@deprecated We may eliminate thread priority as an option
+	*/
     public void setThreadPriority(int val)
         {
         synchronized (playThreadLock)
@@ -1209,7 +1207,9 @@ public class Console extends JFrame implements Controller
             }
         }
     
-    /** Get when the simulation should end.*/
+    /** Gets the thread priority.
+		@deprecated We may eliminate thread priority as an option
+	*/
     public int getThreadPriority()
         {
         synchronized (playThreadLock)
@@ -1311,17 +1311,11 @@ public class Console extends JFrame implements Controller
         thread and give it a new interval. */
     public void setPlaySleep(final long sleep)
         {
-        doChangeCode(new Runnable()
+		synchronized (playThreadLock)
             {
-            public void run()
-                {
-                synchronized (playThreadLock)
-                    {
-                    playSleep = sleep;
-                    }
-                }
-            });
-        }
+			playSleep = sleep;
+            }
+		}
 
     /** Gets how long we should sleep between each step in the play thread (in milliseconds). */
     public long getPlaySleep()
@@ -1399,7 +1393,7 @@ public class Console extends JFrame implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-        // setRandomNumberGenerator(randomSeed);
+		simulation.state.setSeed(randomSeed);	// reseed the generator
         simulation.start();
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
         //setTime(simulation.state.schedule.getTime());
@@ -1455,45 +1449,6 @@ public class Console extends JFrame implements Controller
         }
     
         
-    /** Sets the random number generator of the underlying model, pausing it first, then unpausing it after. 
-        Updates the randomField. */ 
-    void setRandomNumberGenerator(final long val)
-        {
-        doChangeCode(new Runnable()
-            {
-            public void run()
-                {
-                simulation.state.setSeed(val);
-                }
-            });
-          
-        // The following invokeLater wrapper is commented out because we've discovered that
-        // it causes a hang bug.  We're not exactly
-        // sure why, but setRandomNumberGenerator() is called from the Console's constructor,
-        // and this is before Console is shown on-screen.  We think that for some reason the
-        // invokeLater freaks out the text field perhaps when the Console is being put on-screen
-        // with a setVisible(true); clearly some underlying Java conflict.  Anyway, without
-        // the wrapper it seems to work fine, though I'm still concerned about the possibility
-        // that setText() would be called from this method, which is in turn called from methods
-        // like pressStop(), which can be called by underlying threads.  If we see any further
-        // hangs as a result, I will revisit the issue.  -- Sean
-  
-        /*      
-                SwingUtilities.invokeLater(new Runnable()   // just in case, to avoid possible deadlock, though I've not seen it
-                {
-                public void run()
-                { 
-        */
-        randomField.setValue("" + val);
-        /*
-          }
-          }); 
-        */
-        }
-
-
-
-
 
     /////////////////////// MENU FUNCTIONS
     /////////////////////// You probably shouldn't call these methods except from within the event loop
@@ -2002,10 +1957,7 @@ public class Console extends JFrame implements Controller
 
         //setTime(simulation.state.schedule.getTime());
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);        
-        
-        // the random seed is no longer true -- who knows what the orignal seed was -- so we'll
-        // set the field to "Unknown"
-        randomField.setValue("Unknown");
+		randomField.setValue("" + simulation.state.seed());
         }
 
 
@@ -2133,8 +2085,11 @@ public class Console extends JFrame implements Controller
 
             // increment the random number seed if the user had said to do so
             if (incrementSeedOnPlay.isSelected())
-                randomSeed++;
-            setRandomNumberGenerator(randomSeed);
+                {
+				randomSeed++;
+				randomField.setValue("" + randomSeed);
+				}
+//            setRandomNumberGenerator(randomSeed);
         
             // now let's start again if the user had stated a desire to repeat the simulation automatically
             if (getShouldRepeat())

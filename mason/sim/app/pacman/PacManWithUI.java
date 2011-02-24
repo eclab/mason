@@ -227,7 +227,6 @@ public class PacManWithUI extends GUIState
             {
             public void windowActivated(WindowEvent e)
                 {
-                System.out.println("Activated!");
                 display.requestFocusInWindow();
                 }
             });

@@ -105,8 +105,15 @@ public class ParallelSequence extends Sequence
         for(int x=0;x<steps.length;x++)
             workers[x].V();
         for(int x=0;x<steps.length;x++)
+			{
             try { threads[x].join(); }  
-            catch (InterruptedException e) { /* shouldn't happen */ }
+            catch (InterruptedException e) 
+				{
+				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+				// For model consistency, I will refuse to be interrupted.
+				x--;  // retry joining
+				}
+			}
         pleaseDie = false;
         threads = null;
         }

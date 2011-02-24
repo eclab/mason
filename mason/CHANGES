@@ -1937,3 +1937,15 @@ Version 16
 	SimpleProperties default constructor modified so that getClass() is not included, to
 		be consistent with the default Properties factory method.
 	CausedRuntimeException officially deprecated
+	Made GUIState(SimState) constructor public, though it matters little.
+	Made GUIState.reset(...) private and deprecated.
+	Removed ThreadPriority slider in Console.
+	AsynchronousSteppable and ParallelSequence modified so that joins will work regardless
+		of interrupts. Previously they threw errors, which is not consistent.
+	Console methods no longer call doChangeCode, which is deprecated.  Methods such as 
+		Console.get/SetPlaySleep(...) now lock on the playThreadLock
+	Random number seeding in the Console is no longer immediately effective, but now
+		always occurs immediately before playing.
+	Loading from the Console no longer sets the random field to "UNKNOWN", but to the
+		actual seed
+	Made related random number seeding changes in SimpleController

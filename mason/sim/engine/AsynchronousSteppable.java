@@ -229,10 +229,18 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** Requests that the AsynchronousSteppable shut down its thread, and blocks until this occurs. If it's already stopped, nothing happens. */
     public final synchronized void stop()
         {
+		boolean joined = false;
         if (!running) return;
         halt(false);
-        try { thread.join(); }
-        catch (InterruptedException e) { System.err.println("AsynchronousSteppable interrupted while trying to stop its underlying thread.  Thread may never stop now."); }
+        while (!joined)		// force joining regardless of interruptedexceptions
+			{
+			try { thread.join(); joined = true; }
+			catch (InterruptedException e) 
+				{
+				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+				// For model consistency, I will refuse to be interrupted.
+				}
+			}
         state.removeFromAsynchronousRegistry(this);
         running = false;
         }
@@ -240,10 +248,18 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** Requests that the AsynchronousSteppable shut down its thread (temporarily) and blocks until this occurs. If it's already paused or not running, nothing happens.  */
     public final synchronized void pause()
         {
+		boolean joined = false;
         if (paused || !running) return;
         halt(true);
-        try { thread.join(); }
-        catch (InterruptedException e) { System.err.println("AsynchronousSteppable interrupted while trying to stop its underlying thread.  Thread may never stop now."); }
+        while (!joined)		// force joining regardless of interruptedexceptions
+			{
+			try { thread.join(); joined = true; }
+			catch (InterruptedException e)
+				{
+				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+				// For model consistency, I will refuse to be interrupted.
+				}
+			}
         paused = true;
         }
         
