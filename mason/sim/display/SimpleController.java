@@ -209,15 +209,27 @@ public class SimpleController implements Controller
         if (Console.allControllers.size() == 0)  Console.doQuit();  // we run doQuit on the console to quit gracefully, as it maintains all the controller lists
         }
     
-    boolean incrementSeedOnPlay = true;
+	/** @deprecated renamed to setIncrementSeedOnStop */
     public void setIncrementSeedOnPlay(boolean val)
         {
-        incrementSeedOnPlay = val;
+		setIncrementSeedOnStop(val);
         }
         
+	/** @deprecated renamed to getIncrementSeedOnStop */
     public boolean getIncrementSeedOnPlay()
         {
-        return incrementSeedOnPlay;
+		return getIncrementSeedOnStop();
+        }
+
+    boolean incrementSeedOnStop = true;
+    public void setIncrementSeedOnStop(boolean val)
+        {
+        incrementSeedOnStop = val;
+        }
+        
+    public boolean getIncrementSeedOnStop()
+        {
+        return incrementSeedOnStop;
         }
 
 
@@ -235,7 +247,7 @@ public class SimpleController implements Controller
             setPlayState(PS_STOPPED);
 
             // increment the random number seed if the user had said to do so
-            if (incrementSeedOnPlay)
+            if (getIncrementSeedOnStop())
                 {
                 randomSeed++;
                 }

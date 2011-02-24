@@ -1949,3 +1949,4 @@ Version 16
 	Loading from the Console no longer sets the random field to "UNKNOWN", but to the
 		actual seed
 	Made related random number seeding changes in SimpleController
+	In Console and Controller, incrementSeedOnPlay renamed to incrementSeedOnStop

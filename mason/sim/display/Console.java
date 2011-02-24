@@ -197,7 +197,7 @@ public class Console extends JFrame implements Controller
     /** An outer panel which holds the innerInspectorPanel, plus associated buttons */
     JPanel inspectorPanel;
     /** The checkbox for whether or not the random seed should be incremented each play-button press */
-    JCheckBox incrementSeedOnPlay;
+    JCheckBox incrementSeedOnStop;
     /** The list of inspectors at the top of the split pane */
     JList inspectorList;
     /** Holds the inspectors shown at the bottom of the split pane (if any) */
@@ -747,9 +747,9 @@ public class Console extends JFrame implements Controller
                 return insets;
                 }
             };
-        incrementSeedOnPlay = new JCheckBox();
-        incrementSeedOnPlay.setSelected(true);
-        b.add(incrementSeedOnPlay);
+        incrementSeedOnStop = new JCheckBox();
+        incrementSeedOnStop.setSelected(true);
+        b.add(incrementSeedOnStop);
         controlPanel.addLabelled("Increment Seed on Stop ", b);
 
         // Create the repeatButton checkbox
@@ -1134,7 +1134,7 @@ public class Console extends JFrame implements Controller
             prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
             prefs.put(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue());
 //                                                      prefs.put(SEED_KEY, randomField.getValue());
-            prefs.putBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected());
+            prefs.putBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected());
             prefs.putBoolean(REPEAT_KEY, repeatButton.isSelected());
                         
             if (!Prefs.save(prefs))
@@ -1157,7 +1157,7 @@ public class Console extends JFrame implements Controller
             pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
             timePauseField.setValue(timePauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, systemPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue()))));
             //                      randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
-            incrementSeedOnPlay.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnPlay.isSelected())));
+            incrementSeedOnStop.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected())));
             repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
             }
         catch (java.security.AccessControlException e) { } // it must be an applet
@@ -2054,15 +2054,29 @@ public class Console extends JFrame implements Controller
         else pressStop();
         }
 
+	/** @deprecated renamed to setIncrementSeedOnStop */
     public void setIncrementSeedOnPlay(boolean val)
         {
-        incrementSeedOnPlay.setSelected(val);
+		setIncrementSeedOnStop(val);
         }
         
+	/** @deprecated renamed to getIncrementSeedOnStop */
     public boolean getIncrementSeedOnPlay()
         {
-        return incrementSeedOnPlay.isSelected();
+		return getIncrementSeedOnStop();
         }
+
+    public void setIncrementSeedOnStop(boolean val)
+        {
+        incrementSeedOnStop.setSelected(val);
+        }
+        
+    public boolean getIncrementSeedOnStop()
+        {
+        return incrementSeedOnStop.isSelected();
+        }
+
+
 
     /** Called when the user presses the stop button.  You can call this as well to simulate the same. */
     public synchronized void pressStop()
@@ -2084,7 +2098,7 @@ public class Console extends JFrame implements Controller
             repaint();
 
             // increment the random number seed if the user had said to do so
-            if (incrementSeedOnPlay.isSelected())
+            if (incrementSeedOnStop.isSelected())
                 {
 				randomSeed++;
 				randomField.setValue("" + randomSeed);
