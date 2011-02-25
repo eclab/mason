@@ -85,6 +85,9 @@ public class Console extends JFrame implements Controller
     /** Do we only allow the user to type in other classNames? */
     public static boolean allowOtherClassNames;
 
+    /** Keep track of the last inspector selected so it stays selected after user picks a different area. */
+    private int preferredInspectorIndex = 0;
+
     /** Sets various MacOS X features */
     static 
         {
@@ -848,6 +851,7 @@ public class Console extends JFrame implements Controller
                     inspectorList.getSelectedIndex() != -1)
                     {
                     inspectorCardLayout.show(inspectorSwitcher,""+inspectorList.getSelectedIndex());
+                    preferredInspectorIndex = inspectorList.getSelectedIndex();
                     }
                 }
             });
@@ -2849,8 +2853,8 @@ public class Console extends JFrame implements Controller
                 inspectorToolbars.add(scrollInspector);
                 }
             }
-        
-        resetInspectors(0);
+
+        resetInspectors(preferredInspectorIndex);
 
         // switch to the inspector panel and repaint
         try
