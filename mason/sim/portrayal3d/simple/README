@@ -81,6 +81,12 @@ SharedGroupPortrayal3D.java
 A SimplePortrayal3D subclass which draws Java3D SharedGroup objects.
 
 
+BranchGroupPortrayal3D.java
+
+A PrimitivePortrayal3D subclass which loads and displays entire BranchGroups
+from scene files.
+
+
 WireFrameBoxPortrayal3D.java
 
 A SimplePortrayal3D subclass which draws a wireframe box, often used to 
@@ -111,4 +117,5 @@ TransformedPortrayal3D.java
 
 A wrapper portrayal which can transform (scale, rotate, translate) the 
 underlying portrayal as desired.
+
 
