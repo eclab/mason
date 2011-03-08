@@ -11,7 +11,7 @@ import sim.display3d.*;
 import sim.engine.*;
 import sim.display.*;
 import javax.swing.*;
-import sim.portrayal3d.simple.CircledPortrayal3D;
+import sim.portrayal3d.simple.*;
 
 public class Balls3DWithUI extends GUIState
     {
@@ -71,7 +71,14 @@ public class Balls3DWithUI extends GUIState
         
         edgePortrayal.setPortrayalForAll( portrayal );
         nodePortrayal.setField( tut.balls );
-        nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(new BallPortrayal(5.0f), 20f, true));
+        try
+            {
+            nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(
+                    //new BallPortrayal(5.0f),
+                    new BranchGroupPortrayal3D(BranchGroupPortrayal3D.getBranchGroupForURL(BranchGroupPortrayal3D.class.getResource("galleon.obj"))),
+                    20f, true));
+            }
+        catch (Exception e) { throw new RuntimeException("yo", e); }
 
         display.createSceneGraph(); 
         display.reset();

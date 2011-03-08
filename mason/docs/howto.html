@@ -614,7 +614,7 @@ MASON has a built-in time-series charting facility, but the user must manually c
        chart.setDomainAxisLabel("Time");
        JFrame frame = chart.createFrame(this);
        // perhaps you might move the chart to where you like.
-       frame.show();
+       frame.setVisible(true);
        frame.pack();
        c.registerFrame(frame);
        
@@ -641,7 +641,7 @@ MASON has a built-in time-series charting facility, but the user must manually c
             "Put a unique name for this series here so JFreeChart can hash with it",
             false);
         chart.addSeries(series, null);
-        scheduleImmediateRepeat(true, new Steppable()
+        scheduleRepeatingImmediatelyAfter(new Steppable()
             {
             public void step(SimState state)
                {

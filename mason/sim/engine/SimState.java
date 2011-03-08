@@ -44,42 +44,42 @@ public class SimState implements java.io.Serializable
         plus a new, empty schedule. */
     public SimState(long seed)
         {
-		this.random = new MersenneTwisterFast(seed);
-		this.schedule = new Schedule();
+        this.random = new MersenneTwisterFast(seed);
+        this.schedule = new Schedule();
         this.seed = seed;  // for GUIs later on if they want to know...
         }
     
     /** Creates a SimState with a new, empty Schedule and the provided random number generator. 
-		@deprecated Use SimState(seed)
-	*/
+        @deprecated Use SimState(seed)
+    */
     private SimState(MersenneTwisterFast random)
         {
-		this.random = random;
-		this.schedule = new Schedule();
+        this.random = random;
+        this.schedule = new Schedule();
         }
         
     /** Creates a SimState with the provided random number generator and schedule.
-		@deprecated Use SimState(seed) 
-		*/
-	private SimState(MersenneTwisterFast random, Schedule schedule)
+        @deprecated Use SimState(seed) 
+    */
+    private SimState(MersenneTwisterFast random, Schedule schedule)
         {
         this.random = random;
         this.schedule = schedule;
         }
     
-	public void setSeed(long seed)
-		{
-		random = new MersenneTwisterFast(seed);
-		this.seed= seed;
-		}
-		
-	/* @deprecated use setSeed */
-   /*
-    public void setRandom(MersenneTwisterFast random)
+    public void setSeed(long seed)
         {
-        this.random = random;
+        random = new MersenneTwisterFast(seed);
+        this.seed= seed;
         }
-	*/
+                
+    /* @deprecated use setSeed */
+    /*
+      public void setRandom(MersenneTwisterFast random)
+      {
+      this.random = random;
+      }
+    */
     
     /** Called immediately prior to starting the simulation, or in-between
         simulation runs.  This gives you a chance to set up initially,
@@ -280,13 +280,13 @@ public class SimState implements java.io.Serializable
         }
     
 /*
-    static int indexAfterArgumentForKey(String key, String[] args, int startingAt)
-        {
-        for(int x=0;x<args.length-1;x++)  // key can't be the last string
-            if (args[x].equalsIgnoreCase(key))
-                return x + 2;
-        return args.length;
-        }
+  static int indexAfterArgumentForKey(String key, String[] args, int startingAt)
+  {
+  for(int x=0;x<args.length-1;x++)  // key can't be the last string
+  if (args[x].equalsIgnoreCase(key))
+  return x + 2;
+  return args.length;
+  }
 */
     static boolean keyExists(String key, String[] args, int startingAt)
         {
@@ -314,10 +314,10 @@ public class SimState implements java.io.Serializable
         return seed;
         }
 
-	public void setJob(long job)
-		{
-		this.job = job;
-		}
+    public void setJob(long job)
+        {
+        this.job = job;
+        }
         
     /** Returns the job number set by the doLoop(...) facility.  This number
         is not incremented by the GUI. */
@@ -588,7 +588,7 @@ public class SimState implements java.io.Serializable
         Thread.currentThread().setName("MASON Model: " + this.getClass());
         }
 
-	/** Returns MASON's Version */
+    /** Returns MASON's Version */
     public static double version()
         {
         return 15.0;

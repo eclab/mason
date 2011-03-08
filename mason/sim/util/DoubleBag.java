@@ -58,7 +58,7 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         return (numObjs<=0);
         }
     
-	public boolean addAll(double[] other) { return addAll(numObjs, other); }
+    public boolean addAll(double[] other) { return addAll(numObjs, other); }
 
     public boolean addAll(final int index, final double[] other)
         {

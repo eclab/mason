@@ -7,12 +7,9 @@
 package sim.util.media.chart;
 
 import java.awt.*;
-import java.awt.geom.*;
 import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import java.io.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.LabelledList;
@@ -21,15 +18,18 @@ import sim.util.gui.NumberTextField;
 // From JFreeChart (jfreechart.org)
 import org.jfree.data.xy.*;
 import org.jfree.chart.*;
-import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
-import org.jfree.data.general.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 
 // from iText (www.lowagie.com/iText/)
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+
+/*  // looks like we'll have to move to these soon
+    import com.itextpdf.text.*;
+    import com.itextpdf.text.pdf.*;
+*/
 
 /**
    TimeSeriesChartGenerator is a ChartGenerator which displays a time-series chart using the JFreeChart library.

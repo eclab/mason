@@ -117,8 +117,8 @@ public class Edge implements java.io.Serializable
         return from;
         }
 
-	public Object getInfo() { return info; }
-	public void setInfo(Object val) { info = val; }
+    public Object getInfo() { return info; }
+    public void setInfo(Object val) { info = val; }
 
     public String toString()
         {

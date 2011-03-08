@@ -152,8 +152,8 @@ public class Schedule implements java.io.Serializable
         }
     
     /** Returns the current timestep 
-		@deprecated use getTime()
-		*/
+        @deprecated use getTime()
+    */
     public double time() { synchronized(lock) { return time; } }
 
     /** Returns the current timestep */

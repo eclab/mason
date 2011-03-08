@@ -1950,3 +1950,9 @@ Version 16
 		actual seed
 	Made related random number seeding changes in SimpleController
 	In Console and Controller, incrementSeedOnPlay renamed to incrementSeedOnStop
+	Tweaked the HowTos.  
+	Made Console.doAbout() protected
+	Added Console.getRequiresConfirmationToStop()
+	Fixed minor bug where a spurious exception is thrown if you cancel creating a chart.
+		Thanks to Joey Harrison <jharri1@gmu.edu>
+	Bug fix to ParallelSequence constructor

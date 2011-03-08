@@ -30,7 +30,7 @@ public interface Controller
         be done so inside the model's thread.  This is asynchronous (non-blocking), however.
         
         <p>Alternatively, you can synchronize on state.schedule and run your code.  This is synchronous.
-	@deprecated
+        @deprecated
     */
     public void doChangeCode(Runnable r);
     

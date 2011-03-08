@@ -32,12 +32,12 @@ package sim.engine;
     (and when stopped, they unregister themselves).  They're also paused and upaused for checkpoints.
     But if the task is an infinite loop, it's possible you may wish to stop the loop before the simulation
     ends, perhaps at an agreed-upon point in the schedule.  The easiest way to do this is to post a steppable
-	on the Schedule which stops the AsynchronousSteppable, like this:
-	
-	<pre><tt>
+    on the Schedule which stops the AsynchronousSteppable, like this:
+        
+    <pre><tt>
     *   final AsynchronousSteppable s = ...
     *   Steppable stopper = new Steppable() { public void step(SimState state) { s.stop(); } } 
-	*   schedule.scheduleOnce(s....);
+    *   schedule.scheduleOnce(s....);
     *   schedule.scheduleOnce(stopper....);
     </tt></pre>
 
@@ -96,8 +96,8 @@ package sim.engine;
     </tt></pre>
 
     <p>It's possible you may need to distinguish between being started or being restarted (but pausing
-	and quitting are considered the same).  For example, if you were writing to a log and needed to know
-	whether to open the log fresh or to append to it.  You could do something along these lines:
+    and quitting are considered the same).  For example, if you were writing to a log and needed to know
+    whether to open the log fresh or to append to it.  You could do something along these lines:
 
     <pre><tt>
     *   AsynchronousSteppable s = new AsynchronousSteppable()
@@ -109,7 +109,7 @@ package sim.engine;
     *           {
     *           boolean quit = false;
     *           
-	*           if (!resuming)
+    *           if (!resuming)
     *               {
     *               // we're starting fresh -- set up here if you have to
     *               }
@@ -135,7 +135,7 @@ package sim.engine;
     </tt></pre>
 
     <p>Let's say the task also needs to distinguish between being paused and being quit as well.
-	Here's some code for this situation:
+    Here's some code for this situation:
 
     <pre><tt>
     *   AsynchronousSteppable s = new AsynchronousSteppable()
@@ -149,7 +149,7 @@ package sim.engine;
     *           boolean quit = false;
     *           boolean pause = false;
     *           
-	*           if (!resuming)
+    *           if (!resuming)
     *               {
     *               // we're starting fresh -- set up here if you have to
     *               }
@@ -170,12 +170,12 @@ package sim.engine;
     *                   shouldPause = false;
     *                   }
     *               }
-	*
-	*           if (quit)
+    *
+    *           if (quit)
     *               {
     *               // we're quitting -- do cleanup here if you need to
     *               }
-	*           else // if (pause)
+    *           else // if (pause)
     *               {
     *               // we're pausing -- do cleanup here if you need to
     *               }
@@ -184,10 +184,10 @@ package sim.engine;
     *       protected void halt(boolean pausing)
     *           {
     *           synchronized(lock) 
-	*               {
-	*               if (pausing) shouldPause = val;
-	*               else shouldQuit = val;
-	*               }
+    *               {
+    *               if (pausing) shouldPause = val;
+    *               else shouldQuit = val;
+    *               }
     *           }
     *       };
     </tt></pre>
@@ -229,18 +229,18 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** Requests that the AsynchronousSteppable shut down its thread, and blocks until this occurs. If it's already stopped, nothing happens. */
     public final synchronized void stop()
         {
-		boolean joined = false;
+        boolean joined = false;
         if (!running) return;
         halt(false);
-        while (!joined)		// force joining regardless of interruptedexceptions
-			{
-			try { thread.join(); joined = true; }
-			catch (InterruptedException e) 
-				{
-				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
-				// For model consistency, I will refuse to be interrupted.
-				}
-			}
+        while (!joined)         // force joining regardless of interruptedexceptions
+            {
+            try { thread.join(); joined = true; }
+            catch (InterruptedException e) 
+                {
+                // This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+                // For model consistency, I will refuse to be interrupted.
+                }
+            }
         state.removeFromAsynchronousRegistry(this);
         running = false;
         }
@@ -248,18 +248,18 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** Requests that the AsynchronousSteppable shut down its thread (temporarily) and blocks until this occurs. If it's already paused or not running, nothing happens.  */
     public final synchronized void pause()
         {
-		boolean joined = false;
+        boolean joined = false;
         if (paused || !running) return;
         halt(true);
-        while (!joined)		// force joining regardless of interruptedexceptions
-			{
-			try { thread.join(); joined = true; }
-			catch (InterruptedException e)
-				{
-				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
-				// For model consistency, I will refuse to be interrupted.
-				}
-			}
+        while (!joined)         // force joining regardless of interruptedexceptions
+            {
+            try { thread.join(); joined = true; }
+            catch (InterruptedException e)
+                {
+                // This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+                // For model consistency, I will refuse to be interrupted.
+                }
+            }
         paused = true;
         }
         
@@ -300,8 +300,8 @@ public abstract class AsynchronousSteppable implements Stoppable
         
     /** Call this method to get a Steppable, which when called, executes top() on the AsynchornousSteppable.
         You can then schedule this Steppable to occur at some point in the future on a schedule. 
-		@deprecated Will be deleted in the future.
-		*/
+        @deprecated Will be deleted in the future.
+    */
     public final Steppable stopper()
         {
         return new Steppable() { public void step(SimState state) { stop(); } };

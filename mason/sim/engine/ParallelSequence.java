@@ -16,7 +16,7 @@ package sim.engine;
     You should not embed RandomSequences inside a ParallelSequence unless
     you've set their shouldSynchronize value to true, and elsewhere in your
     embedded steppables you're synchronizing on the Schedule first (the Schedule
-	is the basic lock point for MASON's models).
+    is the basic lock point for MASON's models).
     
     <p>ParallelSequences are lightweight: they reuse the same threads
     if stepped repeatedly.  This means that you must never attach a ParallelSequence
@@ -105,24 +105,24 @@ public class ParallelSequence extends Sequence
         for(int x=0;x<steps.length;x++)
             workers[x].V();
         for(int x=0;x<steps.length;x++)
-			{
+            {
             try { threads[x].join(); }  
             catch (InterruptedException e) 
-				{
-				// This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
-				// For model consistency, I will refuse to be interrupted.
-				x--;  // retry joining
-				}
-			}
+                {
+                // This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
+                // For model consistency, I will refuse to be interrupted.
+                x--;  // retry joining
+                }
+            }
         pleaseDie = false;
         threads = null;
         }
-	
-	public Steppable getCleaner()
-		{
-		return new Steppable() { public void step(SimState state) { gatherThreads(); } };
-		}
-		
+        
+    public Steppable getCleaner()
+        {
+        return new Steppable() { public void step(SimState state) { gatherThreads(); } };
+        }
+                
     /** Call this just before you get rid of a ParallelSequence: for example, one good place is the stop() method of
         your simulation.  Never call this method inside the ParallelSequence's own step() method.  This method
         deletes the threads so the ParallelSequence is ready to be thrown away.  We also do this in
@@ -160,13 +160,15 @@ public class ParallelSequence extends Sequence
             this.steps = new Steppable[threads];
 
             int len = sequence.length / threads;  // num sequence elts per thread.  Note: integer division
-            for(int i = 0 ; i < this.steps.length; i++)
+			if (len * threads < sequence.length) len++; // make len a bit bigger
+			
+            for(int i = 0 ; i < threads; i++)
                 {
                 int start = i * len;
                 if (len > sequence.length - start)  // the last thread may be short
                     len = sequence.length - start;
                 Steppable[] currentSteppable = new Steppable[len];
-                System.arraycopy(this.steps, start, currentSteppable, 0, len);
+                System.arraycopy(sequence, start, currentSteppable, 0, len);
                 this.steps[i] = new Sequence(currentSteppable);
                 }
             }

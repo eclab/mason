@@ -74,11 +74,11 @@ public class SimpleController implements Controller
 
     /** Random number generator seed */
     long randomSeed = 0;  // it'll change
-	
+        
     public SimpleController(final GUIState simulation)
         {
         this(simulation, true);
-		randomSeed = simulation.state.seed();
+        randomSeed = simulation.state.seed();
         }
 
     boolean displayInspectors;
@@ -175,7 +175,7 @@ public class SimpleController implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-		simulation.state.setSeed(randomSeed);	// reseed the generator
+        simulation.state.setSeed(randomSeed);   // reseed the generator
         simulation.start();
         }
 
@@ -209,16 +209,16 @@ public class SimpleController implements Controller
         if (Console.allControllers.size() == 0)  Console.doQuit();  // we run doQuit on the console to quit gracefully, as it maintains all the controller lists
         }
     
-	/** @deprecated renamed to setIncrementSeedOnStop */
+    /** @deprecated renamed to setIncrementSeedOnStop */
     public void setIncrementSeedOnPlay(boolean val)
         {
-		setIncrementSeedOnStop(val);
+        setIncrementSeedOnStop(val);
         }
         
-	/** @deprecated renamed to getIncrementSeedOnStop */
+    /** @deprecated renamed to getIncrementSeedOnStop */
     public boolean getIncrementSeedOnPlay()
         {
-		return getIncrementSeedOnStop();
+        return getIncrementSeedOnStop();
         }
 
     boolean incrementSeedOnStop = true;

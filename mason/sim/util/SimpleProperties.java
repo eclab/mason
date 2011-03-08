@@ -123,8 +123,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         If includeGetClass is true, then the Class property will be included. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
         which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
-		
-		@deprecated Use the full form
+                
+        @deprecated Use the full form
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass)
         {
@@ -135,7 +135,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         If includeGetClass is true, then the Class property will be included. If includeDomains is true, then
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
         which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected
-		if <tt>includeExtensions</tt> is true.
+        if <tt>includeExtensions</tt> is true.
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
@@ -188,23 +188,23 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     Method getHidden(Method m, Class c, boolean includeExtensions)
         {
         if (!includeExtensions) return null;
-		try
-			{
-			if (m.getName().startsWith("get"))
-				{
-				Method m2 = c.getMethod("hide" + (m.getName().substring(3)), new Class[] { });
-				if (m2.getReturnType() == Boolean.TYPE) return m2;
-				}
-			else if (m.getName().startsWith("is"))
-				{
-				Method m2 = c.getMethod("hide" + (m.getName().substring(2)), new Class[] { });
-				if (m2.getReturnType() == Boolean.TYPE) return m2;
-				}
-			}
-		catch (Exception e)
-			{
-			// couldn't find a domain
-			}
+        try
+            {
+            if (m.getName().startsWith("get"))
+                {
+                Method m2 = c.getMethod("hide" + (m.getName().substring(3)), new Class[] { });
+                if (m2.getReturnType() == Boolean.TYPE) return m2;
+                }
+            else if (m.getName().startsWith("is"))
+                {
+                Method m2 = c.getMethod("hide" + (m.getName().substring(2)), new Class[] { });
+                if (m2.getReturnType() == Boolean.TYPE) return m2;
+                }
+            }
+        catch (Exception e)
+            {
+            // couldn't find a domain
+            }
         return null;
         }
     

@@ -90,9 +90,9 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
             graphics.fill(knob);
             }
         }
-		
-		
-		
+                
+                
+                
     boolean adjusting = false;
     Object adjustingObject = null;
     double adjustingInitialScale = 1.0;
@@ -102,9 +102,9 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
         {
         Point2D.Double myPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
         Object object = wrapper.getObject();
-        if (object == null ||							// something is very wrong!
-			(adjusting && adjustingObject != object) || // we're not portraying the relevant object
-			!((object instanceof Scalable2D || object instanceof Orientable2D))) // it's neither scalable nor orientable
+        if (object == null ||                                                   // something is very wrong!
+            (adjusting && adjustingObject != object) || // we're not portraying the relevant object
+            !((object instanceof Scalable2D || object instanceof Orientable2D))) // it's neither scalable nor orientable
             return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let any lower portrayals have it
                 
         double orientation = 0.0;

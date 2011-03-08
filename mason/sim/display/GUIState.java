@@ -419,8 +419,8 @@ public abstract class GUIState
     /** Empties out the schedule and resets it to a pristine state BEFORE_SIMULATION.
         If you're using a GUIState, you should call this version instead of Schedule's
         version. 
-		@deprecated.  Do not use.
-		*/
+        @deprecated.  Do not use.
+    */
     private synchronized final void reset(SimState state)
         {
         state.schedule.reset();

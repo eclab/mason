@@ -585,86 +585,86 @@ public /*strictfp*/ class Continuous3D extends SparseField
         using something along the lines of <b> new Bag(<i>foo</i>.getObjectsAtLocation(<i>location</i>)) </b>.
         Furthermore, changing values in the Sparse Field may result in a different bag being used -- so you should
         not rely on this bag staying valid.  The default implementation of this method simply calls getRawObjectsAtLocation(),
-		but you may need to override it for more custom functionality (which is rare).
+        but you may need to override it for more custom functionality (which is rare).
     */
     public Bag getObjectsAtDiscretizedLocation(final Int3D location)
         {
-		return getRawObjectsAtLocation(location);
+        return getRawObjectsAtLocation(location);
         }
 
     /** Returns a bag containing all the objects at a given location, 
         or null if there are no such objects or if location is null.  Unlike other SparseField versions, you may modify this bag.
-	*/
-	public Bag getObjectsAtLocation(Double3D location)
-		{
-		if (location == null) return null;
-		Bag cell = getRawObjectsAtLocation(discretize(location));
-		if (cell == null) return null;
-		Bag result = new Bag();
-		Object[] objs = cell.objs;
-		int numObjs = cell.numObjs;
-		// whittle down
-		for(int i = 0; i < numObjs; i++)
-			{
-			Object loc = getObjectLocation(objs[i]);
-			if (loc.equals(location))
-				result.add(objs[i]);
-			}
-		return result;
-		}
-		
+    */
+    public Bag getObjectsAtLocation(Double3D location)
+        {
+        if (location == null) return null;
+        Bag cell = getRawObjectsAtLocation(discretize(location));
+        if (cell == null) return null;
+        Bag result = new Bag();
+        Object[] objs = cell.objs;
+        int numObjs = cell.numObjs;
+        // whittle down
+        for(int i = 0; i < numObjs; i++)
+            {
+            Object loc = getObjectLocation(objs[i]);
+            if (loc.equals(location))
+                result.add(objs[i]);
+            }
+        return result;
+        }
+                
     /** Returns the number of the objects at a given location, 
         or 0 if there are no such objects or if location is null.
-	*/
-	public int numObjectsAtLocation(Double3D location)
-		{
-		if (location == null) return 0;
-		Bag cell = getRawObjectsAtLocation(discretize(location));
-		if (cell == null) return 0;
-		int count = 0;
-		Object[] objs = cell.objs;
-		int numObjs = cell.numObjs;
-		// whittle down
-		for(int i = 0; i < numObjs; i++)
-			{
-			Object loc = getObjectLocation(objs[i]);
-			if (loc.equals(location))
-				count++;
-			}
-		return count;
-		}
+    */
+    public int numObjectsAtLocation(Double3D location)
+        {
+        if (location == null) return 0;
+        Bag cell = getRawObjectsAtLocation(discretize(location));
+        if (cell == null) return 0;
+        int count = 0;
+        Object[] objs = cell.objs;
+        int numObjs = cell.numObjs;
+        // whittle down
+        for(int i = 0; i < numObjs; i++)
+            {
+            Object loc = getObjectLocation(objs[i]);
+            if (loc.equals(location))
+                count++;
+            }
+        return count;
+        }
 
     /** Returns a bag containing all the objects at the exact same location as a given object, including the object itself, 
         or null if the object is not in the Field.  Unlike other SparseField versions, you may modify this bag.
-	*/
-	public Bag getObjectsAtLocationOfObject(Object obj)
-		{
-		Object location = getObjectLocation(obj);
-		if (location == null) return null;
-		else return getObjectsAtLocation(location);
-		}
-		
+    */
+    public Bag getObjectsAtLocationOfObject(Object obj)
+        {
+        Object location = getObjectLocation(obj);
+        if (location == null) return null;
+        else return getObjectsAtLocation(location);
+        }
+                
     /** Returns the number of objects at the exact same location as a given object, including the object itself, 
         or 0 if the object is not in the Field.
-	*/
-	public int numObjectsAtLocationOfObject(Object obj)
-		{
-		Object location = getObjectLocation(obj);
-		if (location == null) return 0;
-		else return numObjectsAtLocation(location);
-		}
+    */
+    public int numObjectsAtLocationOfObject(Object obj)
+        {
+        Object location = getObjectLocation(obj);
+        if (location == null) return 0;
+        else return numObjectsAtLocation(location);
+        }
 
     /** Removes objects at exactly the given location, and returns a bag of them, or null of no objects are at that location.
         The Bag may be empty, or null, if there were no objects at that location.  You can freely modify this bag. */
     public Bag removeObjectsAtLocation(final Double3D location)
-		{
-		Bag bag = getObjectsAtLocation(location);		// this bag is a copy so it won't be reduced as I remove objects
-		Object[] objs = bag.objs;
-		int numObjs = bag.numObjs;
-		for(int i = 0; i < bag.numObjs; i++)
-			remove(objs[i]);
-		return bag;
-		}
+        {
+        Bag bag = getObjectsAtLocation(location);               // this bag is a copy so it won't be reduced as I remove objects
+        Object[] objs = bag.objs;
+        int numObjs = bag.numObjs;
+        for(int i = 0; i < bag.numObjs; i++)
+            remove(objs[i]);
+        return bag;
+        }
     }
 
 

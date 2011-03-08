@@ -14,6 +14,6 @@ import sim.portrayal.*;
 
 public interface Manipulating2D
     {
-	/** Selects the following object, deselecting other selected objects. */
+    /** Selects the following object, deselecting other selected objects. */
     public void performSelection(LocationWrapper wrapper);
     }

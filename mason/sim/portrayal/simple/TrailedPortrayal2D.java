@@ -102,7 +102,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         }
         
     // is the object selected?  We'll use this auxiliary variable in the case that we're using a MovablePortrayal2D
-	// and so we didn't get selected.
+    // and so we didn't get selected.
     boolean isSelected = false;
 
     boolean growTrailOnlyWhenSelected = false;
@@ -235,17 +235,17 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-		// I am probably added to more than one field portrayal, but should only
-		// be drawing in one of them.  So let's first double check that.
-		if (info.fieldPortrayal != fieldPortrayal)
-			{
-			getChild(object).draw(object, graphics, info);
-			return;  // don't draw me.
-			}
-		// else... draw me but not the child
-		
-		
-		// okay, now we return to our regularly scheduled program
+        // I am probably added to more than one field portrayal, but should only
+        // be drawing in one of them.  So let's first double check that.
+        if (info.fieldPortrayal != fieldPortrayal)
+            {
+            getChild(object).draw(object, graphics, info);
+            return;  // don't draw me.
+            }
+        // else... draw me but not the child
+                
+                
+        // okay, now we return to our regularly scheduled program
         double currentTime = state.state.schedule.getTime();
         int size = places.size();
                 
@@ -342,34 +342,34 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         
     public boolean hitObject(Object object, DrawInfo2D range)
         {
-		// always do a hit so I can receive a setSelected call
+        // always do a hit so I can receive a setSelected call
         return getChild(object).hitObject(object, range);
         }
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-		// always do a setSelected if the child is cool with it.
+        // always do a setSelected if the child is cool with it.
         Object object = wrapper.getObject();
-		boolean returnval = getChild(object).setSelected(wrapper, selected);
-		isSelected = (selected && returnval);  // sometimes a child will return true regardless: we want to check for that.
-		return returnval;
+        boolean returnval = getChild(object).setSelected(wrapper, selected);
+        isSelected = (selected && returnval);  // sometimes a child will return true regardless: we want to check for that.
+        return returnval;
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
-		// do not return the inspector unless it's not my field portrayal
+        // do not return the inspector unless it's not my field portrayal
         Object object = wrapper.getObject();
-		if (wrapper.getFieldPortrayal() != fieldPortrayal)
-			return getChild(object).getInspector(wrapper, state);
+        if (wrapper.getFieldPortrayal() != fieldPortrayal)
+            return getChild(object).getInspector(wrapper, state);
         else return null;
         }
     
     public String getName(LocationWrapper wrapper)
         {
-		// do not return a name unless it's not my field portrayal
+        // do not return a name unless it's not my field portrayal
         Object object = wrapper.getObject();
-		if (wrapper.getFieldPortrayal() != fieldPortrayal)
-			return getChild(object).getName(wrapper);
+        if (wrapper.getFieldPortrayal() != fieldPortrayal)
+            return getChild(object).getName(wrapper);
         else return null;
         }
     }

@@ -62,10 +62,10 @@ public final class MutableDouble2D implements java.io.Serializable, Cloneable
         double x = this.x;
         double y = this.y;
                 
-		// push -0.0 to 0.0 for purposes of hashing.  Note that equals() has also been modified
-		// to consider -0.0 to be equal to 0.0.  Hopefully cute Java compilers won't try to optimize this out.
-		if (x == -0.0) x = 0.0;
-		if (y == -0.0) y = 0.0;
+        // push -0.0 to 0.0 for purposes of hashing.  Note that equals() has also been modified
+        // to consider -0.0 to be equal to 0.0.  Hopefully cute Java compilers won't try to optimize this out.
+        if (x == -0.0) x = 0.0;
+        if (y == -0.0) y = 0.0;
                 
         // so we hash to the same value as Int2D does, if we're ints.
         if ((((int)x) == x) && ((int)y) == y)
@@ -152,10 +152,10 @@ public final class MutableDouble2D implements java.io.Serializable, Cloneable
             {
             Double2D other = (Double2D) obj;
             // Note: commented out because it can't handle 0.0 == -0.0, grrr
-			return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
-					(y == other.y || (Double.isNaN(y) && Double.isNaN(other.y)))); // they're the same or they're both NaN
+            return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
+                (y == other.y || (Double.isNaN(y) && Double.isNaN(other.y)))); // they're the same or they're both NaN
 
-			// can't just do other.x == x && other.y == y because we need to check for NaN
+            // can't just do other.x == x && other.y == y because we need to check for NaN
             // return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
             //    Double.doubleToLongBits(other.y) == Double.doubleToLongBits(y));
             }
@@ -163,8 +163,8 @@ public final class MutableDouble2D implements java.io.Serializable, Cloneable
             {
             MutableDouble2D other = (MutableDouble2D) obj;
             // Note: commented out because it can't handle 0.0 == -0.0, grrr
-			return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
-					(y == other.y || (Double.isNaN(y) && Double.isNaN(other.y)))); // they're the same or they're both NaN
+            return ((x == other.x || (Double.isNaN(x) && Double.isNaN(other.x))) && // they're the same or they're both NaN
+                (y == other.y || (Double.isNaN(y) && Double.isNaN(other.y)))); // they're the same or they're both NaN
 
             // can't just do other.x == x && other.y == y because we need to check for NaN
             // return (Double.doubleToLongBits(other.x) == Double.doubleToLongBits(x) &&
@@ -429,13 +429,13 @@ public final class MutableDouble2D implements java.io.Serializable, Cloneable
         return Math.sqrt(x * x + y * y);
         }
         
-     /** Returns the square of the length of the MutableDouble2D. */
+    /** Returns the square of the length of the MutableDouble2D. */
     public final double lengthSq()                                                  
         {
         return x*x+y*y;
         }
 
-   /** Returns the length of the vector between -Pi and Pi. */
+    /** Returns the length of the vector between -Pi and Pi. */
     public final double angle()
         {
         return Math.atan2(y,x);

@@ -62,12 +62,12 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
         if (location != null)
             {
-			if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-				return;  // this is deprecated and will be deleted
+            if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+                return;  // this is deprecated and will be deleted
             //if (object instanceof Constrained)
-			//	location = (Int2D)((Constrained)object).constrainLocation(field, location);
-			if (location != null)
-				field.setObjectLocation(object, location);
+            //      location = (Int2D)((Constrained)object).constrainLocation(field, location);
+            if (location != null)
+                field.setObjectLocation(object, location);
             }
         }
 
@@ -212,7 +212,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
-		newinfo.fieldPortrayal = this;
+        newinfo.fieldPortrayal = this;
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator

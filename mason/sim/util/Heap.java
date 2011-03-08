@@ -100,9 +100,9 @@ public class Heap implements java.io.Serializable
         }
         
     /* Removes elements in order and adds them to a Bag, so long as the provided
-        Comparable object is equal to their keys.  As soon as this is not true, the Bag is returned.
-        You may provide a Bag -- putInHere -- to be filled in. */
-	Bag extractMin(Comparable comparable, Bag putInHere)
+       Comparable object is equal to their keys.  As soon as this is not true, the Bag is returned.
+       You may provide a Bag -- putInHere -- to be filled in. */
+    Bag extractMin(Comparable comparable, Bag putInHere)
         {
         if (putInHere == null) putInHere = new Bag();
         while( true )

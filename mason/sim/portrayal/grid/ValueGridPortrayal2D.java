@@ -205,7 +205,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         // the drawinfo that the object's portrayal will use -- we fill in the blanks later
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
         newinfo.location = locationToPass;
-		newinfo.fieldPortrayal = this;
+        newinfo.fieldPortrayal = this;
 
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal2D))

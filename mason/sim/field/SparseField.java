@@ -169,16 +169,16 @@ public abstract class SparseField implements java.io.Serializable
         using something along the lines of <b> new Bag(<i>foo</i>.getObjectsAtLocation(<i>location</i>)) </b>.
         Furthermore, changing values in the Sparse Field may result in a different bag being used -- so you should
         not rely on this bag staying valid.  The default implementation of this method simply calls getRawObjectsAtLocation(),
-		but you may need to override it for more custom functionality (which is rare).
+        but you may need to override it for more custom functionality (which is rare).
     */
     public Bag getObjectsAtLocation(final Object location)
         {
-		return getRawObjectsAtLocation(location);
+        return getRawObjectsAtLocation(location);
         }
 
     /** This method is called by getObjectsAtLocation(location) so you can override getObjectsAtLocation() to
-		customize it in certain ways (which is rare).  All internal methods in SparseField instead call getRawObjectsAtLocation().
-		Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
+        customize it in certain ways (which is rare).  All internal methods in SparseField instead call getRawObjectsAtLocation().
+        Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
         the Sparse Field object.   If you want to modify the bag, make a copy and modify the copy instead,
         using something along the lines of <b> new Bag(<i>foo</i>.getObjectsAtLocation(<i>location</i>)) </b>.

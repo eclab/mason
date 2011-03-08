@@ -50,7 +50,7 @@ import java.awt.geom.*;
 
 public class DrawInfo2D
     {
-	public FieldPortrayal2D fieldPortrayal;
+    public FieldPortrayal2D fieldPortrayal;
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
     public boolean selected;

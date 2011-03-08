@@ -84,12 +84,12 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
         if (location != null)
             {
-			if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-				return;  // this is deprecated and will be deleted
+            if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+                return;  // this is deprecated and will be deleted
             //if (object instanceof Constrained)
-			//	location = (Int2D)((Constrained)object).constrainLocation(field, location);
-			if (location != null)
-				field.setObjectLocation(object, location);
+            //      location = (Int2D)((Constrained)object).constrainLocation(field, location);
+            if (location != null)
+                field.setObjectLocation(object, location);
             }
         }
 
@@ -151,7 +151,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
-		newinfo.fieldPortrayal = this;
+        newinfo.fieldPortrayal = this;
 
         // If the person has specified a policy, we have to iterate through the
         // bags.  At present we have to do this by using a hash table iterator
@@ -299,7 +299,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         if (wrapper.getFieldPortrayal() != this) return true;
 
         Object obj = wrapper.getObject();
-		boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
+        boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
         if (selected)
             {
             if (b==false) return false;

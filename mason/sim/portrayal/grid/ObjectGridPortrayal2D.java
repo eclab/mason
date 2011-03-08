@@ -164,7 +164,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
         newinfo.location = locationToPass;
-		newinfo.fieldPortrayal = this;
+        newinfo.fieldPortrayal = this;
 
         if (endx > maxX) endx = maxX;
         if (endy > maxY) endy = maxY;
@@ -310,7 +310,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         if (wrapper.getFieldPortrayal() != this) return true;
 
         Object obj = wrapper.getObject();
-		boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
+        boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
         if (selected)
             {
             if (b==false) return false;

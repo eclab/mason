@@ -29,7 +29,7 @@ public abstract class Properties implements java.io.Serializable
     /** Returns a Properties object for the given object.  If the object is an array, Map, Indexed, or Collection,
         then it will be treated using CollectionProperties.  Otherwise it will be
         treated using SimpleProperties.  The returned SimpleProperties will include superclasses properties.
-		The Class property will NOT be included.
+        The Class property will NOT be included.
         The domFoo() and hideFoo() property extension methods are respected.
         Domains will always be produced according to the rules in the comments for getDomain(index) below.
     */
@@ -46,8 +46,8 @@ public abstract class Properties implements java.io.Serializable
         If includeGetClass is true, then the Class property will be included.
         The domFoo() and hideFoo() property extension methods are respected.
     
-		@deprecated use the full version
-	*/
+        @deprecated use the full version
+    */
     public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass)
         {
         return getProperties(object,expandCollections,includeSuperclasses,includeGetClass,true);

@@ -14,8 +14,8 @@ import java.io.*;
 public class Utilities
     {
     /* Returns the integer floor of a double, or as close as possible. 
-        The return value of NaN is undefined: it's often zero but doesn't
-        have to be.  This is about twice as fast as (int)Math.floor(d) up through at least Java6. */
+       The return value of NaN is undefined: it's often zero but doesn't
+       have to be.  This is about twice as fast as (int)Math.floor(d) up through at least Java6. */
     private static int iFloor(double d)
         {
         int i = (int) d;
@@ -27,8 +27,8 @@ public class Utilities
         }
         
     /* Returns the integer ceiling of a double, or as close as possible. 
-        The return value of NaN is undefined: it's often zero but doesn't
-        have to be.  This is about twice as fast as (int)Math.ceil(d) up through at least Java6.   */
+       The return value of NaN is undefined: it's often zero but doesn't
+       have to be.  This is about twice as fast as (int)Math.ceil(d) up through at least Java6.   */
     private static int iCeil(double d)
         {
         int i = (int) d;
@@ -40,8 +40,8 @@ public class Utilities
         }
         
     /* Returns the integer floor of a double, or as close as possible. 
-        The return value of NaN is undefined: it's often zero but doesn't
-        have to be.  This is about twice as fast as (int)Math.round(d), though it can't get inlined because it's 40 bytes.  :-( */
+       The return value of NaN is undefined: it's often zero but doesn't
+       have to be.  This is about twice as fast as (int)Math.round(d), though it can't get inlined because it's 40 bytes.  :-( */
     private static int iRound(double d)
         {
         d += 0.5;               // same protocol as Math.round, see its documentation

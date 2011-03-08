@@ -37,8 +37,8 @@ import java.lang.ref.*;
 
 public class WeakStep implements Steppable
     {
-	WeakReference weakStep;
-	Stoppable stop;  // will be null unless setStoppable() called
+    WeakReference weakStep;
+    Stoppable stop;  // will be null unless setStoppable() called
     
     // WeakReferences are not serializable -- so we need
     // to unwrap them here.
@@ -78,6 +78,6 @@ public class WeakStep implements Steppable
         if (step != null)
             step.step(state);
         else if (stop != null)
-			stop.stop();
+            stop.stop();
         }
     }

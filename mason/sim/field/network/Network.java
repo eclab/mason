@@ -100,7 +100,7 @@ public class Network implements java.io.Serializable
     
     /** Constructs copy of an existing graph. */
     public Network(Network other) { this(); other.copyTo(this); }
-			
+                        
     /** Hashes Network.IndexOutIn structures by Node.  These structures
         contain the incoming edges of the Node, its outgoing edges, and the index of
         the Node in the allNodes bag. */
@@ -633,16 +633,16 @@ public class Network implements java.io.Serializable
     
     
     /**
-	 * Makes a duplicate copy of the graph.
-	 * @deprecated
+     * Makes a duplicate copy of the graph.
+     * @deprecated
      */
-	public Network cloneGraph()
+    public Network cloneGraph()
         {
-		return copyTo(new Network(directed));
-		}
-		
-	Network copyTo(Network clone)
-		{
+        return copyTo(new Network(directed));
+        }
+                
+    Network copyTo(Network clone)
+        {
         clone.allNodes.addAll(allNodes);
         int n = allNodes.numObjs;
         Iterator ioiIterator = indexOutInHash.values().iterator();
