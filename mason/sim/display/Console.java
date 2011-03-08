@@ -72,6 +72,9 @@ public class Console extends JFrame implements Controller
     public final static int DEFAULT_HEIGHT = 380;
     /** When the Console is laid out to the right of some window, the space allocated between it and the window */
     public final static int DEFAULT_GUTTER = 5;
+        
+    /** Default maximum number of steps in the step slider */
+    public final static int MAXIMUM_STEPS = 20;
 
     /** Our simulation */
     public GUIState simulation;
@@ -481,45 +484,48 @@ public class Console extends JFrame implements Controller
         b.add(sliderText);
         controlPanel.addLabelled("Delay (Sec/Step) ", b);
 
-		// removed -- this is so rarely used that it's just confusing to users
+        // removed -- this is so rarely used that it's just confusing to users
         // create priority slider
         /*prioritySlider = new JSlider(Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY); // ranges from 0 to 100
-        prioritySlider.addChangeListener(new ChangeListener()
-            {
-            public void stateChanged(ChangeEvent e)
-                {
-                int val = prioritySlider.getValue();
-                if (!prioritySlider.getValueIsAdjusting())
-                    { setThreadPriority(val); } 
-                prioritySliderText.setText("" + val + (val==Thread.NORM_PRIORITY ? ": norm" : ""));
-                }
-            });
-        b = new Box(BoxLayout.X_AXIS)
-            {
-            Insets insets = new Insets(2, 4, 2, 4);  // Java jams the widgets too closely for my taste
-            public Insets getInsets()
-                {
-                return insets;
-                }
-            };
-        b.add(prioritySlider);
-        prioritySliderText = new JLabel(Thread.NORM_PRIORITY + ": norm");
-        prioritySliderText.setMinimumSize(new JLabel("88: norm").getMinimumSize()); // ensure enough space
-        prioritySliderText.setPreferredSize(new JLabel("88: norm").getPreferredSize()); // ensure enough space
-        b.add(prioritySliderText);
-        controlPanel.addLabelled("Thread Priority ", b);
-		*/
+          prioritySlider.addChangeListener(new ChangeListener()
+          {
+          public void stateChanged(ChangeEvent e)
+          {
+          int val = prioritySlider.getValue();
+          if (!prioritySlider.getValueIsAdjusting())
+          { setThreadPriority(val); } 
+          prioritySliderText.setText("" + val + (val==Thread.NORM_PRIORITY ? ": norm" : ""));
+          }
+          });
+          b = new Box(BoxLayout.X_AXIS)
+          {
+          Insets insets = new Insets(2, 4, 2, 4);  // Java jams the widgets too closely for my taste
+          public Insets getInsets()
+          {
+          return insets;
+          }
+          };
+          b.add(prioritySlider);
+          prioritySliderText = new JLabel(Thread.NORM_PRIORITY + ": norm");
+          prioritySliderText.setMinimumSize(new JLabel("88: norm").getMinimumSize()); // ensure enough space
+          prioritySliderText.setPreferredSize(new JLabel("88: norm").getPreferredSize()); // ensure enough space
+          b.add(prioritySliderText);
+          controlPanel.addLabelled("Thread Priority ", b);
+        */
 
 
         // Create the step slider
         // the equation is: step = slider
-        stepSlider = new JSlider(1, 20, 1); // ranges from 1 to 20
+        stepSlider = new JSlider(1, MAXIMUM_STEPS, 1); // ranges from 1 to MAXIMUM_STEPS (20)
         stepSlider.addChangeListener(new ChangeListener()
             {
             public void stateChanged(ChangeEvent e)
                 {
-                numStepsPerStepButtonPress = stepSlider.getValue();
-                stepSliderText.setText("" + numStepsPerStepButtonPress);
+                setNumStepsPerStepButtonPress(stepSlider.getValue());
+                /*
+                  numStepsPerStepButtonPress = stepSlider.getValue();
+                  stepSliderText.setText("" + numStepsPerStepButtonPress);
+                */
                 }
             });
         b = new Box(BoxLayout.X_AXIS)
@@ -967,7 +973,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-				synchronized(simulation.state.schedule) { doSave(); }
+                synchronized(simulation.state.schedule) { doSave(); }
                 }
             });
         fileMenu.add(save);
@@ -977,7 +983,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-				synchronized(simulation.state.schedule) { doSaveAs(); }
+                synchronized(simulation.state.schedule) { doSaveAs(); }
                 }
             });
         fileMenu.add(saveAs);
@@ -1199,8 +1205,8 @@ public class Console extends JFrame implements Controller
     int threadPriority = Thread.NORM_PRIORITY;
     
     /** Set the thread priority. 
-	@deprecated We may eliminate thread priority as an option
-	*/
+        @deprecated We may eliminate thread priority as an option
+    */
     public void setThreadPriority(int val)
         {
         synchronized (playThreadLock)
@@ -1212,8 +1218,8 @@ public class Console extends JFrame implements Controller
         }
     
     /** Gets the thread priority.
-		@deprecated We may eliminate thread priority as an option
-	*/
+        @deprecated We may eliminate thread priority as an option
+    */
     public int getThreadPriority()
         {
         synchronized (playThreadLock)
@@ -1315,11 +1321,11 @@ public class Console extends JFrame implements Controller
         thread and give it a new interval. */
     public void setPlaySleep(final long sleep)
         {
-		synchronized (playThreadLock)
+        synchronized (playThreadLock)
             {
-			playSleep = sleep;
+            playSleep = sleep;
             }
-		}
+        }
 
     /** Gets how long we should sleep between each step in the play thread (in milliseconds). */
     public long getPlaySleep()
@@ -1397,7 +1403,7 @@ public class Console extends JFrame implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-		simulation.state.setSeed(randomSeed);	// reseed the generator
+        simulation.state.setSeed(randomSeed);   // reseed the generator
         simulation.start();
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
         //setTime(simulation.state.schedule.getTime());
@@ -1527,7 +1533,7 @@ public class Console extends JFrame implements Controller
     
     /** Pops up the about box */
     static JFrame aboutFrame = null;
-    public void doAbout()
+    protected void doAbout()
         {
         if (aboutFrame == null)
             {
@@ -1961,7 +1967,7 @@ public class Console extends JFrame implements Controller
 
         //setTime(simulation.state.schedule.getTime());
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);        
-		randomField.setValue("" + simulation.state.seed());
+        randomField.setValue("" + simulation.state.seed());
         }
 
 
@@ -2030,6 +2036,11 @@ public class Console extends JFrame implements Controller
         requiresConfirmationToStop = val;
         }
 
+    public synchronized boolean getRequiresConfirmationToStop()
+        {
+        return requiresConfirmationToStop;
+        }
+
     /////////////////////// PLAY/STOP/PAUSE BUTTON FUNCTIONS
 
 
@@ -2058,16 +2069,16 @@ public class Console extends JFrame implements Controller
         else pressStop();
         }
 
-	/** @deprecated renamed to setIncrementSeedOnStop */
+    /** @deprecated renamed to setIncrementSeedOnStop */
     public void setIncrementSeedOnPlay(boolean val)
         {
-		setIncrementSeedOnStop(val);
+        setIncrementSeedOnStop(val);
         }
         
-	/** @deprecated renamed to getIncrementSeedOnStop */
+    /** @deprecated renamed to getIncrementSeedOnStop */
     public boolean getIncrementSeedOnPlay()
         {
-		return getIncrementSeedOnStop();
+        return getIncrementSeedOnStop();
         }
 
     public void setIncrementSeedOnStop(boolean val)
@@ -2104,9 +2115,9 @@ public class Console extends JFrame implements Controller
             // increment the random number seed if the user had said to do so
             if (incrementSeedOnStop.isSelected())
                 {
-				randomSeed++;
-				randomField.setValue("" + randomSeed);
-				}
+                randomSeed++;
+                randomField.setValue("" + randomSeed);
+                }
 //            setRandomNumberGenerator(randomSeed);
         
             // now let's start again if the user had stated a desire to repeat the simulation automatically
@@ -2178,6 +2189,22 @@ public class Console extends JFrame implements Controller
         repaint();
         }
 
+        
+    public int getNumStepsPerStepButtonPress()
+        {
+        return numStepsPerStepButtonPress;
+        }
+        
+    /** Sets the number of steps per stepp button press.  The value must be > 0 */
+    public void setNumStepsPerStepButtonPress(int val)
+        {
+        if (val > 0)
+            {
+            numStepsPerStepButtonPress = val;
+            stepSliderText.setText("" + numStepsPerStepButtonPress);
+            slider.setValue(val);
+            }
+        }
         
     /** Called when the user presses the play button.  You can call this as well to simulate the same.  Keep in mind that play will change to step if pause is down. */
     public synchronized void pressPlay()
