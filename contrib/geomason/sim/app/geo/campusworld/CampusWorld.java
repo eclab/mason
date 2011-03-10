@@ -78,8 +78,10 @@ public class CampusWorld extends SimState
     public void finish()
     {
         super.finish();
-        agents.clear();
+;
     }
+
+    
     public void start()
     {
         super.start();
@@ -121,6 +123,8 @@ public class CampusWorld extends SimState
                 network.createFromGeomField(walkways);
 
                 addIntersectionNodes( network.nodeIterator(), junctions ) ;
+
+                agents.clear(); // clear any existing agents from previous runs
                 addAgents();
                 agents.setMBR(MBR);
 
