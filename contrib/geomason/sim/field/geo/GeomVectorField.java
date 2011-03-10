@@ -37,22 +37,41 @@ public class GeomVectorField extends GeomField
 
     /** Defines the outer shell of all the geometries within this field */ 
     public PreparedPolygon globalUnion; 
-    
+
+
+    public GeomVectorField()
+    {
+        super();
+
+        fieldWidth = fieldHeight = 0;
+        spatialIndex = new Quadtree();
+        geomFactory = new GeometryFactory();
+    }
+
+
     /** Default constructor, which resets all internal data structures.  */ 
     public GeomVectorField(int w, int h)
     {
         super();
         
         fieldWidth = w; 
-        fieldHeight =h; 
+        fieldHeight = h;
 		spatialIndex = new Quadtree();
         geomFactory = new GeometryFactory(); 
     }
-    
+
+    /** The field dimensions
+     *
+     * Used for computing scale.
+     *
+     */
     public int fieldWidth, fieldHeight; 
     
     public int getFieldWidth() { return fieldWidth; } 
-    public int getFieldHeight() { return fieldHeight; } 
+    public int getFieldHeight() { return fieldHeight; }
+
+    public void setFieldWidth(int fw ) { fieldWidth = fw; }
+    public void setFieldHeight(int fh) { fieldHeight = fh; }
     
 
     /** Adds the MasonGeometry to the field and also expands the MBR */
