@@ -24,15 +24,20 @@ public class Agent implements Steppable {
     private Point location;
 
     // How much to move the agent by in each step()
-    private static double moveRate = 1.0;
+    private static double moveRate = 2.0;
 
     // distance for determining if objects are close 
     private static double distance = 10.0;
 
     public Agent()
     {
+    	this(25, 25); 
+    }
+    
+    public Agent(int x, int y)
+    {
         GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(25,25));
+        location = fact.createPoint(new Coordinate(x,y));
         System.out.println("agent: " + location);
     }
 
@@ -66,8 +71,8 @@ public class Agent implements Steppable {
     private boolean isValidMove(final Coordinate c)
     {
         // Uses magic numbers.  :(
-        if (c.x < 0.0 || c.x > 100.0 ||
-            c.y < 0.0 || c.y > 100.0)
+        if (c.x < 0.0 || c.x > NearbyWorld.WIDTH ||
+            c.y < 0.0 || c.y > NearbyWorld.HEIGHT)
             {
                 return false;
             }

@@ -32,7 +32,7 @@ public class NearbyWorldWithUI extends GUIState {
     {
         super.init(controller);
 
-        display = new Display2D(300, 300, this, 1);
+        display = new Display2D(NearbyWorld.WIDTH, NearbyWorld.HEIGHT, this, 1);
         display.attach(worldFieldPortrayal, "World");
         display.attach(agentFieldPortrayal, "Agent");
 
@@ -56,7 +56,7 @@ public class NearbyWorldWithUI extends GUIState {
         agentFieldPortrayal.setField(world.agentField);
         // We want a red dot for the agent.  We also need to specify the scale; if
         // we don't then the default agent dot will cover the entire area.
-        agentFieldPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,0.01));
+        agentFieldPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,5));
 
         display.reset();
         display.setBackdrop(Color.WHITE);

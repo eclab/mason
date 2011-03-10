@@ -24,16 +24,30 @@ public class NearbyWorld extends SimState
 
     private static final long serialVersionUID = 752764560336956655L;
     
-	public GeomVectorField world = new GeomVectorField();
-    public GeomVectorField agentField = new GeomVectorField();
+	public GeomVectorField world = new GeomVectorField(WIDTH, HEIGHT);
+    public GeomVectorField agentField = new GeomVectorField(WIDTH, HEIGHT);
 
     // Agent that moves around the world
-    Agent agent = new Agent();
+    Agent agent;
+
+	// size of the display 
+	public static final int WIDTH=300; 
+	public static final int HEIGHT=300; 
 
     
     public NearbyWorld(long seed) 
     {
         super(seed);
+    }
+        
+    public void start()
+    {
+        super.start();
+        // position the agent at a random starting location 
+	agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT)); 
+
+ 	world = new GeomVectorField(WIDTH, HEIGHT);
+ 	agentField = new GeomVectorField(WIDTH, HEIGHT);
 
         // Add a few points for the agent to move around
 
@@ -77,11 +91,7 @@ public class NearbyWorld extends SimState
         // Ensure that both GeomVectorField layers cover the same area otherwise the
         // agent won't show up in the display.
         agentField.setMBR(world.getMBR());
-    }
         
-    public void start()
-    {
-        super.start();
         schedule.scheduleRepeating(agent);
     }
     
