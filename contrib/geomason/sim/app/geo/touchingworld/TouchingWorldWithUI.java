@@ -1,11 +1,7 @@
 /*
  * TouchingWorldWithUI
  *
- *   After starting the demo you should see [rewrite!].
- *   The agents have the same behavior dictated by two rules.  First keep
- *   moving in one of the eight cardinal directions.  Second, if the next
- *   step is into water, randomly choose a new cardinal direction.  This
- *   has the effect of having the agents "bounce" around the main island.
+ *  
  *
  * $Id: TouchingWorldWithUI.java,v 1.2 2010-08-20 20:30:12 kemsulli Exp $
  * 
@@ -23,7 +19,6 @@ import sim.portrayal.geo.GeomPortrayal;
 
 /** MASON GUI wrapper for TouchingWorld
  *
- * @author mcoletti
  */
 public class TouchingWorldWithUI extends GUIState {
 
@@ -31,7 +26,7 @@ public class TouchingWorldWithUI extends GUIState {
     private JFrame displayFrame;
 
     private GeomVectorFieldPortrayal shapePortrayal = new GeomVectorFieldPortrayal();
-//    private GeomFieldPortrayal selectedDistrictPortrayal = new GeomFieldPortrayal();
+    private GeomVectorFieldPortrayal selectedDistrictPortrayal = new GeomVectorFieldPortrayal();
     
     public TouchingWorldWithUI(SimState state)
     {
@@ -56,7 +51,7 @@ public class TouchingWorldWithUI extends GUIState {
         display = new Display2D(300, 300, this, 1);
 
         display.attach(shapePortrayal, "Shapes");
-//        display.attach(selectedDistrictPortrayal, "Selected shape");
+        display.attach(selectedDistrictPortrayal, "Selected shape");
 
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);
@@ -86,17 +81,13 @@ public class TouchingWorldWithUI extends GUIState {
 
 		// we use a GeomPortrayal for the agents also, since GeomPortrayal 
 		// handles the translation between screen and map coordinates gracefully
-//		selectedDistrictPortrayal.setField(world.selectedShape);
-//        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.PINK,10.0,true));
-//        selectedDistrictPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,true));
+		selectedDistrictPortrayal.setField(world.selectedShape);
+        selectedDistrictPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,false));
 		
         shapePortrayal.setField(world.shapes);
         shapePortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLUE,false));
-//        shapePortrayal.setImmutableField(true);
         
         display.reset();
-//        display.setBackdrop(Color.GRAY);
-
         display.repaint();
     }
 

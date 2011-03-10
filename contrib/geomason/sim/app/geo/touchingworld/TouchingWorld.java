@@ -14,9 +14,8 @@ import sim.engine.*;
 import sim.field.geo.*; 
 import sim.util.geo.*; 
 
-/** Set up a GeoField with a number of points and a corresponding portrayal.
+/** This demonstrates use of touching geometries.
  *
- * @author mcoletti
  */
 public class TouchingWorld extends SimState
 {
@@ -26,8 +25,7 @@ public class TouchingWorld extends SimState
     public GeomVectorField shapes = new GeomVectorField();
 
     // currently selected shape
-//    public GeomVectorField selectedShape = new GeomVectorField();
-    public MasonGeometry selectedShape = null;
+    public GeomVectorField selectedShape = new GeomVectorField();
 
     // responsible for changing selected shape
     public Mover mover = new Mover();
@@ -48,16 +46,14 @@ public class TouchingWorld extends SimState
 
         createWorld();
 
+        // Bump out the main viewport a bit for aesthetics
         this.shapes.getMBR().expandBy(5.0);
 
-        // Randomly select a district as "current"
-        this.selectedShape = (MasonGeometry) shapes.getGeometries().objs[random.nextInt(shapes.getGeometries().size())];
-
-//        mover.setCurrentShape((Polygon) district.geometry);
-//        selectedShape.addGeometry(district);
-        
 		// ensure both GeomFields cover same area
-//		selectedShape.setMBR(shapes.getMBR());
+		selectedShape.setMBR(shapes.getMBR());
+
+        // Randomly select a district as "current"
+        selectShape((MasonGeometry) shapes.getGeometries().objs[random.nextInt(shapes.getGeometries().size())]);
 
         schedule.scheduleRepeating(mover);
     }
@@ -103,14 +99,14 @@ public class TouchingWorld extends SimState
 
     public void selectShape(MasonGeometry shape)
     {
-        unSelectShape(this.selectedShape);
-        
-        this.selectedShape = shape;
-    }
+        selectedShape.clear();
 
-    public void unSelectShape(MasonGeometry shape)
-    {
-        this.selectedShape = null;
+        // selecteShape.clear() will have zeroed the MBR, so we need to resync
+        // selectedShape with the MBR holding all the blue shapes.  Otherwise
+        // the selected shape will take up the entire viewport.
+        selectedShape.setMBR(shapes.getMBR());
+        
+        selectedShape.addGeometry(shape);
     }
 
 }

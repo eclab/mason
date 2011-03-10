@@ -1,5 +1,6 @@
 package sim.app.geo.touchingworld;
 
+import com.vividsolutions.jts.geom.Geometry;
 import sim.engine.*;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
@@ -9,22 +10,26 @@ import sim.util.geo.MasonGeometry;
  * Will randomly swap as selected a district adjacent to the currently
  * selected district.
  *
- * @author mcoletti
  */
-public class Mover implements Steppable {
-
-
+public class Mover implements Steppable
+{
     private static final long serialVersionUID = 5456255360842258779L;
 
 
 	public Mover() {}
-   
+
+    
     public void step(SimState state)
     {
         TouchingWorld world = (TouchingWorld)state;
 
         // Find all shapes touching the current one
-        Bag adjacentShapes = world.shapes.getTouchingObjects(world.selectedShape.geometry);
+
+        // selectedShape will have only one geometry, so just grab the first one
+        MasonGeometry selectedShape = (MasonGeometry) world.selectedShape.getGeometries().objs[0];
+
+        // Find all the objects that touch the currently selected object.
+        Bag adjacentShapes = world.shapes.getTouchingObjects(selectedShape.geometry);
 
         // We have a serious problem if there are no shapes adjacent to the
         // current one.
@@ -34,12 +39,13 @@ public class Mover implements Steppable {
         }
         else
         {
-            System.out.println(world.selectedShape);
-            System.out.println("\t" + adjacentShapes.size() + " adjacent shapes");
-            for (int i = 0; i < adjacentShapes.size(); i++)
-            {
-                System.out.println("\t\t" + adjacentShapes.objs[i]);
-            }
+            // TODO: Sean hates std out; so replace with inspectors, or something.
+//            System.out.println(world.selectedShape);
+//            System.out.println("\t" + adjacentShapes.size() + " adjacent shapes");
+//            for (int i = 0; i < adjacentShapes.size(); i++)
+//            {
+//                System.out.println("\t\t" + adjacentShapes.objs[i]);
+//            }
         }
 
         // Pick one randomly
@@ -54,7 +60,7 @@ public class Mover implements Steppable {
             nextShape = (MasonGeometry) adjacentShapes.objs[state.random.nextInt(adjacentShapes.size())];
         }
 
-        System.out.println("\tselected " + nextShape);
+//        System.out.println("\tselected " + nextShape);
 
         // And then do the swap
         

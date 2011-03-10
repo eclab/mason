@@ -6,31 +6,15 @@
   </head>
   <body>
 	<table>
-	<tr><td><img src="touchingthumb.png"></td><td><h2>Touching World</h2></td>
+        <tr><td><img alt=""  src="touchingthumb.png"></td><td><h2>Touching World</h2></td>
 	</tr>
 	</table>
     
-	
-    
-    This demo shows how to compute geometry that touches other geometry.  A set of arbitrary polygons is displayed.  <em>Unselected</em> polygons are colored blue; one is <em>selected</em>, which is indicated by being red.  With each time step the next selected polygon is chosen from those that are touching the currently selected.
-<p>
-    As the simulation runs it reports to the console the currently selected polygon, those that are touching it, and which one was randomly selected.  A sample is shown below:
-<p>
-<code  style="white-space : pre;">
-POLYGON ((15 10, 15 15, 30 15, 30 10, 15 10))
-        4 adjacent shapes
-                POLYGON ((10 10, 10 30, 15 30, 15 10, 10 10))
-                POLYGON ((15 10, 30 10, 25 5, 15 10))
-                POLYGON ((25 15, 25 25, 30 15, 25 15))
-                POLYGON ((30 15, 25 25, 30 25, 30 15))
-        selected POLYGON ((25 15, 25 25, 30 15, 25 15))
-POLYGON ((25 15, 25 25, 30 15, 25 15))
-        2 adjacent shapes
-                POLYGON ((15 10, 15 15, 30 15, 30 10, 15 10))
-                POLYGON ((30 15, 25 25, 30 25, 30 15))
-        selected POLYGON ((15 10, 15 15, 30 15, 30 10, 15 10))
-</code>
-
+    This demo shows how to compute geometry that touches other geometry.  A set 
+    of arbitrary polygons is displayed.  <em>Unselected</em> polygons are
+    colored blue; one is <em>selected</em>, which is indicated by being red.
+    With each time step the next selected polygon is chosen from those that are
+    touching the currently selected.
 
   </body>
 </html>
