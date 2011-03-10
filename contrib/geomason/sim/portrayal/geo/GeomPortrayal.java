@@ -25,7 +25,7 @@ public class GeomPortrayal extends SimplePortrayal2D  {
         
     private static final long serialVersionUID = 472960663330467429L;
 
-	/** How to paint each object*/ 
+    /** How to paint each object*/ 
     public Paint paint;
         
     /** Scale for each object */ 
@@ -52,7 +52,7 @@ public class GeomPortrayal extends SimplePortrayal2D  {
         
     /** Use our custom Inspector. We create a TabbedInspector for each object that allows inspection of 
      * the JTS geometry, attribute information, and the MasonGeometry userData field. 
-    */ 
+     */ 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state) 
     {
         if (wrapper ==null) return null; 
@@ -63,28 +63,28 @@ public class GeomPortrayal extends SimplePortrayal2D  {
 
         Object o = wrapper.getObject(); 
         if (o instanceof MasonGeometry) { 
-        	MasonGeometry gw = (MasonGeometry)o; 
+	    MasonGeometry gw = (MasonGeometry)o; 
         	
-        	if (gw.geometry.getUserData() instanceof ArrayList<?>) { 
-        		@SuppressWarnings("unchecked")
-        		ArrayList<AttributeField> aList = (ArrayList<AttributeField>)gw.geometry.getUserData();
+	    if (gw.geometry.getUserData() instanceof ArrayList<?>) { 
+		@SuppressWarnings("unchecked")
+		    ArrayList<AttributeField> aList = (ArrayList<AttributeField>)gw.geometry.getUserData();
         		
-        		boolean showAttrs = false; 
-        		for (int i=0; i < aList.size(); i++)  { 
-        			if (!aList.get(i).hidden) {
-        				showAttrs = true; 
-        				break; 
-        			}
-        		}
+		boolean showAttrs = false; 
+		for (int i=0; i < aList.size(); i++)  { 
+		    if (!aList.get(i).hidden) {
+			showAttrs = true; 
+			break; 
+		    }
+		}
         				
-        		if (showAttrs) {  // only add attributes tag if JTS geometry has attributes 
-        			GeometryProperties properties = new GeometryProperties(aList);
-        			inspector.addInspector(new SimpleInspector(properties, state, null), "Attributes"); 
-        		}
+		if (showAttrs) {  // only add attributes tag if JTS geometry has attributes 
+		    GeometryProperties properties = new GeometryProperties(aList);
+		    inspector.addInspector(new SimpleInspector(properties, state, null), "Attributes"); 
+		}
         	
-        		if (gw.userData != null) // only add userData inspector if there is actually userdata 
-        			inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data"); 
-        	}
+		if (gw.userData != null) // only add userData inspector if there is actually userdata 
+		    inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data"); 
+	    }
         }
         return inspector; 
     } 
@@ -98,38 +98,46 @@ public class GeomPortrayal extends SimplePortrayal2D  {
         Geometry geometry = gm.getGeometry(); 
         if (geometry.isEmpty()) return; 
 
-		if (paint != null) 
+	if (paint != null) 
             graphics.setPaint(paint); 
                     		
         if (geometry instanceof Point)
             {
-                Point point = (Point)geometry;                  
+            	Point point = (Point)geometry;                  
                 double offset = 3 * scale / 2.0; // used to center point
-                Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - offset, point.getY() - offset,
+                Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - offset, 
+								point.getY() - offset,
                                                                 3 * scale, 3 * scale);
-                        
-                if (filled)
-                    graphics.fill(ellipse);
-                else
-                    graphics.draw(ellipse);
+                    
+           	if (info instanceof GeomInfo2D) { 
+	    		GeomInfo2D gInfo = (GeomInfo2D)info; 
+	    		GeneralPath path = (GeneralPath)(new GeneralPath(ellipse).createTransformedShape(gInfo.transform));
+	    		graphics.fill(path);
+		}
+		else { 
+               		if (filled)
+                 	   graphics.fill(ellipse);
+                	else
+                 	   graphics.draw(ellipse); 
+                 }
             }
         else if (geometry instanceof LineString)
-            drawGeometry(geometry, graphics, false); 
+            drawGeometry(geometry, graphics, info, false); 
         else if (geometry instanceof Polygon)
-                drawPolygon((Polygon) geometry, graphics, filled);
+	    drawPolygon((Polygon) geometry, graphics, info, filled);
         else if (geometry instanceof MultiLineString) 
             {
-        		// draw each LineString individually 
+		// draw each LineString individually 
                 MultiLineString multiLine = (MultiLineString)geometry; 
                 for (int i=0; i < multiLine.getNumGeometries(); i++) 
-                    drawGeometry(multiLine.getGeometryN(i), graphics, false); 
+                    drawGeometry(multiLine.getGeometryN(i), graphics, info, false); 
             }
         else if (geometry instanceof MultiPolygon)
             {
-        		// draw each Polygon individually 
+		// draw each Polygon individually 
                 MultiPolygon multiPolygon = (MultiPolygon) geometry;
                 for (int i = 0; i < multiPolygon.getNumGeometries(); i++)
-                    drawPolygon((Polygon) multiPolygon.getGeometryN(i), graphics, filled);
+                    drawPolygon((Polygon) multiPolygon.getGeometryN(i), graphics, info, filled);
             }
         else 
             throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
@@ -139,24 +147,24 @@ public class GeomPortrayal extends SimplePortrayal2D  {
     /** Helper function for drawing a JTS polygon.  
      * 
      * <p> Polygons have two sets of coordinates; one for the outer ring, and
-           optionally another for internal ring coordinates.  Draw the outer
-           ring first, and then draw each internal ring, if they exist.
+     optionally another for internal ring coordinates.  Draw the outer
+     ring first, and then draw each internal ring, if they exist.
      * */
-    void drawPolygon(Polygon polygon, Graphics2D graphics, boolean fill)
+    void drawPolygon(Polygon polygon, Graphics2D graphics, DrawInfo2D info, boolean fill)
     {
-    	drawGeometry(polygon.getExteriorRing(), graphics, fill);
+    	drawGeometry(polygon.getExteriorRing(), graphics, info, fill);
     	
         for (int i = 0; i < polygon.getNumInteriorRing(); i++)
             {   // fill for internal rings will always be false as they are literally
                 // "holes" in the polygon
-                drawGeometry(polygon.getInteriorRingN(i), graphics, false);                
+                drawGeometry(polygon.getInteriorRingN(i), graphics, info, false);                
             }
     }
 
 
     /** Helper function to draw a JTS geometry object.  The coordinates of the JTS geometry are converted 
      * to a native Java GeneralPath which is used to draw the object.    */ 
-    void drawGeometry(Geometry geom, Graphics2D graphics, boolean fill)
+    void drawGeometry(Geometry geom, Graphics2D graphics, DrawInfo2D info, boolean fill)
     {
         GeneralPath path = new GeneralPath(); 
         Coordinate coords[] = geom.getCoordinates(); 
@@ -165,6 +173,11 @@ public class GeomPortrayal extends SimplePortrayal2D  {
         for (int i=1; i < coords.length; i++) { 
             path.lineTo((float)coords[i].x, (float)coords[i].y); 
         }
+            
+        if (info instanceof GeomInfo2D) { 
+	    GeomInfo2D gInfo = (GeomInfo2D)info; 
+	    path = (GeneralPath) path.createTransformedShape(gInfo.transform); 
+	}    
                   
         if (fill) 
             graphics.fill(path); 
