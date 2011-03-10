@@ -236,7 +236,7 @@ public class GeomVectorField extends GeomField
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (!g.equals(g1) && p.touches(g))
+			if (!g.equals(g1) && p.touches(g1))
 				touchingObjects.add(gm);
 		}
         return touchingObjects;
