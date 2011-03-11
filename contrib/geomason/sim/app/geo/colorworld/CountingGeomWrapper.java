@@ -15,7 +15,8 @@ public class CountingGeomWrapper extends MasonGeometry {
 
     public int numAgentsInGeometry()
     {
-        Bag coveredAgents = ColorWorld.agents.getCoveredObjects(geometry);
-        return coveredAgents.numObjs;
+        //Bag coveredAgents = ColorWorld.agents.getCoveredObjects(geometry);
+        //return coveredAgents.numObjs;
+    	return 1; 
     }
 }

@@ -29,9 +29,12 @@ public class NetworkWorld extends SimState
 
     private static final long serialVersionUID = 2025934565604118804L;
     
-    public GeomVectorField world = new GeomVectorField(); // contains road network
-    public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
-    public GeomVectorField agents = new GeomVectorField(); // agents moving through network
+    public static final int WIDTH = 300; 
+    public static final int HEIGHT = 300; 
+    
+    public GeomVectorField world = new GeomVectorField(WIDTH, HEIGHT); // contains road network
+    public GeomVectorField junctions = new GeomVectorField(WIDTH, HEIGHT); // nodes for intersections
+    public GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT); // agents moving through network
 
     // Stores transportation network connections
     public GeomPlanarGraph network = new GeomPlanarGraph();

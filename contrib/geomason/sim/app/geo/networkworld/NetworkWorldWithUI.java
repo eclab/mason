@@ -35,7 +35,7 @@ public class NetworkWorldWithUI extends GUIState {
     {
         super.init(controller);
 
-        display = new Display2D(300, 300, this, 1);
+        display = new Display2D(NetworkWorld.WIDTH, NetworkWorld.HEIGHT, this, 1);
         display.attach(geometryPortrayal, "World");
         display.attach(intersectionPortrayal, "Intersections");
         display.attach(agentPortrayal, "Agent");

@@ -1,12 +1,15 @@
 package sim.app.geo.colorworld;
 
+import java.io.FileNotFoundException;
+
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.*;
 import sim.engine.*;
-import sim.io.geo.*;
 import sim.field.geo.*;
+import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.geo.*;
+//import sim.io.geo.*;
+//import java.io.*; 
 
 /**
  *  The ColorWorld example shows how to change the portrayal of individual geometries based on 
@@ -31,16 +34,20 @@ public class ColorWorld extends SimState
 {
     private static final long serialVersionUID = -2568637684893865458L;
 
+
+	public static final int WIDTH = 300; 
+	public static final int HEIGHT = 300; 
+
 	// number of agents in the simulation
     public static int NUM_AGENTS = 10;
 
     // where all the county geometry lives
-    public GeomVectorField county = new GeomVectorField();
+    public GeomVectorField county = new GeomVectorField(WIDTH, HEIGHT);
 
     // where all the agents live.  We use a GeomVectorField since we want to determine how 
     // many agents are inside each district.  The most efficient way to do this is via 
     // the GeomVectorField's spatial indexing.  
-    public static GeomVectorField agents = new GeomVectorField();
+    public  GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT);
 
     // getters and setters for inspectors
     public int getNumAgents() { return NUM_AGENTS; }
@@ -53,7 +60,7 @@ public class ColorWorld extends SimState
 
     private void addAgents()
     {
-        Agent a = null;
+        //Agent a = null;
 
         for (int i = 0; i < NUM_AGENTS; i++)
             {
@@ -68,7 +75,7 @@ public class ColorWorld extends SimState
                 Geometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
 
                 // give each agent a random direction to initially move in
-                a = new Agent(random.nextInt(8));
+                Agent a = new Agent(random.nextInt(8));
 
                 // set each agent in the center of corresponding region
                 a.setLocation(region.getCentroid());
@@ -86,7 +93,11 @@ public class ColorWorld extends SimState
     public void start()
     {
         super.start();
-        try
+        
+        county = new GeomVectorField(WIDTH, HEIGHT);
+        agents = new GeomVectorField(WIDTH, HEIGHT);
+        
+       try
             {
                 // Open simple Shape file of county.
                 ShapeFileImporter importer = new ShapeFileImporter(); 
@@ -103,7 +114,7 @@ public class ColorWorld extends SimState
                 System.out.println("Error opening shapefile!" + ex);
                 System.exit(-1);
             }
-
+ 
         // we use either the ConvexHull or Union to determine if the agents are within 
         // Fairfax county or not 
         county.computeConvexHull();

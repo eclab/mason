@@ -26,16 +26,19 @@ public class CampusWorld extends SimState
 {
     private static final long serialVersionUID = -4554882816749973618L;
 
+    public static final int WIDTH = 300; 
+    public static final int HEIGHT = 300; 
+    
     /** How many agents in the simulation */ 
 	public int numAgents = 1000;
 
     /** Fields to hold the associated GIS information */ 
-    public GeomVectorField walkways = new GeomVectorField();
-    public GeomVectorField roads = new GeomVectorField();
-    public GeomVectorField buildings = new GeomVectorField();
+    public GeomVectorField walkways = new GeomVectorField(WIDTH, HEIGHT);
+    public GeomVectorField roads = new GeomVectorField(WIDTH, HEIGHT);
+    public GeomVectorField buildings = new GeomVectorField(WIDTH,HEIGHT);
 
     // where all the agents live
-    public GeomVectorField agents = new GeomVectorField();
+    public GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT);
 
     // The Importer is responsible for reading in the GIS files.  If you have installed either 
     // GeoTools and/or OGR on your system, you can use those importers.  The ShapeFileImporter does 
@@ -48,7 +51,7 @@ public class CampusWorld extends SimState
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows 
     // easy selection of new waypoints for the agents.  
     public GeomPlanarGraph network = new GeomPlanarGraph();
-    public GeomVectorField junctions = new GeomVectorField(); // nodes for intersections
+    public GeomVectorField junctions = new GeomVectorField(WIDTH, HEIGHT); // nodes for intersections
 
 
     public CampusWorld(long seed) { super (seed); } 

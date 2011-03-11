@@ -42,7 +42,7 @@ public class ColorWorldWithUI extends GUIState {
     {
         super.init(controller);
 
-        display = new Display2D(300, 300, this, 1);
+        display = new Display2D(ColorWorld.WIDTH, ColorWorld.HEIGHT, this, 1);
 
         display.attach(countyPortrayal, "FFX County Politcal Boundaries");
         display.attach(agentPortrayal, "Agents");
@@ -71,8 +71,8 @@ public class ColorWorldWithUI extends GUIState {
     {
         ColorWorld world = (ColorWorld)state;
 
-        agentPortrayal.setField(ColorWorld.agents);
-        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        agentPortrayal.setField(world.agents);
+        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6000.0));
 
         // the county portrayal (ie, the voting districts) to use our custom portrayal 
         countyPortrayal.setField(world.county);
@@ -80,7 +80,7 @@ public class ColorWorldWithUI extends GUIState {
         		new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE))); 
 
         display.reset();
-
+	display.setBackdrop(Color.WHITE); 
         display.repaint();
     }
 

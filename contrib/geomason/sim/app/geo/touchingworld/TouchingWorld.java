@@ -21,11 +21,14 @@ public class TouchingWorld extends SimState
 {
     private static final long serialVersionUID = 7508584126243256514L;
 
+    public static final int WIDTH = 300; 
+    public static final int HEIGHT = 300; 
+    
 	// where all the shapes geometry lives
-    public GeomVectorField shapes = new GeomVectorField();
+    public GeomVectorField shapes = new GeomVectorField(WIDTH, HEIGHT);
 
     // currently selected shape
-    public GeomVectorField selectedShape = new GeomVectorField();
+    public GeomVectorField selectedShape = new GeomVectorField(WIDTH, HEIGHT);
 
     // responsible for changing selected shape
     public Mover mover = new Mover();
