@@ -8,8 +8,8 @@ import sim.field.geo.*;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.geo.*;
-//import sim.io.geo.*;
-//import java.io.*; 
+
+
 
 /**
  *  The ColorWorld example shows how to change the portrayal of individual geometries based on 
@@ -47,7 +47,7 @@ public class ColorWorld extends SimState
     // where all the agents live.  We use a GeomVectorField since we want to determine how 
     // many agents are inside each district.  The most efficient way to do this is via 
     // the GeomVectorField's spatial indexing.  
-    public  GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT);
+    public static GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT);
 
     // getters and setters for inspectors
     public int getNumAgents() { return NUM_AGENTS; }
@@ -56,6 +56,30 @@ public class ColorWorld extends SimState
     public ColorWorld(long seed)
     {
         super(seed);
+
+        try
+            {
+                // Open simple Shape file of county.
+                ShapeFileImporter importer = new ShapeFileImporter();
+
+                // this line allows us to replace the standard MasonGeometry with our
+                // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info.
+                // Note: this line MUST occur prior to ingesting the data
+                importer.masonGeometryClass = CountingGeomWrapper.class;
+
+                importer.ingest( "../../data/pol", ColorWorld.class, county, null);
+            }
+        catch (FileNotFoundException ex)
+            {
+                System.out.println("Error opening shapefile!" + ex);
+                System.exit(-1);
+            }
+
+        // we use either the ConvexHull or Union to determine if the agents are within
+        // Fairfax county or not
+        county.computeConvexHull();
+        county.computeUnion();
+
     }
 
     private void addAgents()
@@ -93,32 +117,8 @@ public class ColorWorld extends SimState
     public void start()
     {
         super.start();
-        
-        county = new GeomVectorField(WIDTH, HEIGHT);
-        agents = new GeomVectorField(WIDTH, HEIGHT);
-        
-       try
-            {
-                // Open simple Shape file of county.
-                ShapeFileImporter importer = new ShapeFileImporter(); 
-                
-                // this line allows us to replace the standard MasonGeometry with our 
-                // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info. 
-                // Note: this line MUST occur prior to ingesting the data
-                importer.masonGeometryClass = CountingGeomWrapper.class; 
-                
-                importer.ingest( "../../data/pol", ColorWorld.class, county, null);
-            }
-        catch (FileNotFoundException ex)
-            {
-                System.out.println("Error opening shapefile!" + ex);
-                System.exit(-1);
-            }
  
-        // we use either the ConvexHull or Union to determine if the agents are within 
-        // Fairfax county or not 
-        county.computeConvexHull();
-        county.computeUnion();
+        agents.clear(); // remove any agents from previous runs
 
         // add agents to the simulation
         addAgents();
