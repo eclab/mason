@@ -211,13 +211,12 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D {
                 else { 
 		    	if (portrayal instanceof GeomPortrayal)
 		    		portrayal.draw(gm, graphics, gInfo); 
-		    	else {  // have a SimplePortrayal2D, so move the drawing region, then let the underlying 
-		    		// portrayal handle the actual drawing 
-		    		
+		    	else {  // have a SimplePortrayal2D, 
 		    		Point pt = geom.getCentroid(); 
+		    		pt.apply(a); 
+		    		pt.geometryChanged();
 		    		newinfo.draw.x =  info.draw.x + xScale * pt.getX(); 
 		    		newinfo.draw.y =  info.draw.y + yScale * pt.getY(); 
-
 		    		portrayal.draw(geom, graphics, newinfo);
 		    	}
                 }  
