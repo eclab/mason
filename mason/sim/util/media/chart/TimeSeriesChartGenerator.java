@@ -12,8 +12,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
-import sim.util.gui.LabelledList;
-import sim.util.gui.NumberTextField;
+import sim.util.gui.*;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.data.xy.*;
@@ -53,7 +52,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     public AbstractSeriesDataset getSeriesDataset() { return dataset; }
 
     DatasetChangeEvent updateEvent;
-    // We issue a datset change event because various changes may have been made by our attributes
+    // We issue a dataset change event because various changes may have been made by our attributes
     // objects and they haven't informed the graph yet.   That way we can bulk up lots of changes
     // before we do a redraw.
     public void update()
@@ -138,7 +137,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
 
         chart.setAntiAlias(false);
-        chartPanel = new ChartPanel(chart, true);
+        chartPanel = new ChartPanel(chart, true);			
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));
         chartPanel.setMinimumDrawHeight(10);
         chartPanel.setMaximumDrawHeight(2000);
@@ -173,7 +172,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     public TimeSeriesChartGenerator()
         {
         super();
-        LabelledList globalAttribList = (LabelledList) getGlobalAttribute(-2);
+        LabelledList globalAttribList = (LabelledList) (((DisclosurePanel)getGlobalAttribute(-2)).getDisclosedComponent());
         useCullingCheckBox = new JCheckBox();
         
         globalAttribList.add(new JLabel("Cull Data"), useCullingCheckBox);

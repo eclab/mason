@@ -41,9 +41,9 @@ import javax.swing.*;
     you want, a JTable?  Sheesh!
 */
 
-public class LabelledList extends JComponent
+public class LabelledList extends JPanel
     {
-    JComponent consolePanel = new JPanel()
+    JPanel consolePanel = new JPanel()
         {
         public Insets getInsets() { return new Insets(0,2,0,2); } // provide some border on each side
         };
@@ -55,7 +55,8 @@ public class LabelledList extends JComponent
     public void setBackground(Color c)
         {
         super.setBackground(c);
-        consolePanel.setBackground(c);
+        //if (consolePanel != null)  // may be null when Quaqua tries to set things up
+		//	consolePanel.setBackground(new Color(0,0,0,0));
         }
     
     public LabelledList()
@@ -64,6 +65,7 @@ public class LabelledList extends JComponent
         consolePanel.setLayout(gridbag);
         super.add(consolePanel, BorderLayout.NORTH);
         gbc.ipady=0; gbc.ipady = 0; gbc.weighty = 0;
+		//consolePanel.setBackground(new Color(0,0,0,0));
         }
     
     /** Creates a Labelled List with a provided border label.  If label is null, just does new LabelledList()*/

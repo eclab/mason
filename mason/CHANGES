@@ -1956,3 +1956,5 @@ Version 16
 	Fixed minor bug where a spurious exception is thrown if you cancel creating a chart.
 		Thanks to Joey Harrison <jharri1@gmu.edu>
 	Bug fix to ParallelSequence constructor
+	Added disclosure triangles to ChartGenerator to reduce the clutter
+	Added movie generation to ChartGenerator

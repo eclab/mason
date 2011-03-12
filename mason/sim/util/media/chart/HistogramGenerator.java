@@ -12,7 +12,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
-import sim.util.gui.LabelledList;
+import sim.util.gui.*;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.chart.*;
@@ -192,6 +192,7 @@ public class HistogramGenerator extends ChartGenerator
         // buildChart is called by super() first
                 
         LabelledList list = new LabelledList("Show Histograms...");
+		DisclosurePanel pan1 = new DisclosurePanel("Show Histogram...", list);
                 
         final HistogramType[] styles = new HistogramType[] 
             { HistogramType.FREQUENCY, HistogramType.RELATIVE_FREQUENCY, HistogramType.SCALE_AREA_TO_1 };
@@ -205,14 +206,14 @@ public class HistogramGenerator extends ChartGenerator
                 }
             });
         list.add(style);
-        addGlobalAttribute(list);
+        addGlobalAttribute(pan1);
         }
 
     /** Changes the name in the histogram but not in the seriesAttributes.  Typically called FROM the seriesAttributes' setName() method. */
     void updateName(int index, String name, boolean waitUntilUpdate)
         {
         ((HistogramSeries)(histogramSeries.get(index))).setName(name);
-        if (!waitUntilUpdate) update();
+        if (!waitUntilUpdate) update(false);
         }
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
@@ -253,7 +254,7 @@ public class HistogramGenerator extends ChartGenerator
             HistogramSeries series = (HistogramSeries)(histogramSeries.get(index));
             series.setValues(vals);
             series.setBins(bins);
-            if (!waitUntilUpdate) update();
+            if (!waitUntilUpdate) update(true);
             }
         }
 

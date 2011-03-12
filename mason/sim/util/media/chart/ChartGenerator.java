@@ -14,9 +14,11 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.io.*;
 
+import java.awt.image.*;
+
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
-import sim.util.gui.LabelledList;
-import sim.util.gui.PropertyField;
+import sim.util.gui.*;
+import sim.display.*;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.chart.*;
@@ -88,12 +90,16 @@ public abstract class ChartGenerator extends JPanel
     protected PropertyField xLabel;
     /** The global attributes range axis field. */
     protected  PropertyField yLabel;
+	
+	JButton movieButton = new JButton("Create Movie");
     
     /** The global attributes logarithmic range axis check box. */
     protected JCheckBox yLog;
     /** The global attributes logarithmic domain axis check box. */
     protected JCheckBox xLog;
     
+	protected BufferedImage buffer;
+	
     public void setXAxisLogScaled(boolean isLogScaled){xLog.setSelected(isLogScaled);}
     public boolean isXAxisLogScaled(){return xLog.isSelected();}
     public void setYAxisLogScaled(boolean isLogScaled){yLog.setSelected(isLogScaled);}
@@ -102,9 +108,41 @@ public abstract class ChartGenerator extends JPanel
     /** Override this to return the JFreeChart data set used by your Chart.  For example, time series charts
         might return the XYSeriesCollection. */ 
     public abstract AbstractSeriesDataset getSeriesDataset();
-        
+	
+	BufferedImage getBufferedImage()
+		{
+		// make a buffer
+		if (buffer == null || buffer.getWidth(null) != chartPanel.getWidth() || buffer.getHeight(null) != chartPanel.getHeight())
+			{
+			buffer = getGraphicsConfiguration().createCompatibleImage((int)chartPanel.getWidth(),(int)chartPanel.getHeight());
+			}
+			
+		// paint to the buffer
+		Graphics2D g = (Graphics2D)(buffer.getGraphics());
+		g.setColor(chartPanel.getBackground());
+		g.fillRect(0,0,buffer.getWidth(null),buffer.getHeight(null));
+		chartPanel.paintComponent(g);
+		g.dispose();
+		return buffer;
+		}
+	
+	MovieMaker movieMaker = null;
+	
+	/** Call this method to update the chart to reflect new data. */
+	public void update(boolean newData)
+		{
+		update();
+		
+		// now possibly write to the movie maker
+		if (newData && movieMaker != null)
+			{
+			// add buffer to the movie maker
+			movieMaker.add(getBufferedImage());
+			}
+		}
+		
     /** Override this to update the chart to reflect new data. */
-    public abstract void update();
+    protected abstract void update();
         
     /** Override this to remove a series from the chart. */
     public abstract void removeSeries(int index);
@@ -116,6 +154,75 @@ public abstract class ChartGenerator extends JPanel
         of your instance variables may not have been set yet and you may need to set them yourself.  */
     protected abstract void buildChart();
     
+
+
+
+
+
+
+    /** Starts a Quicktime movie on the given ChartGenerator.  The size of the movie frame will be the size of
+        the chart at the time this method is called.  This method ought to be called from the main event loop.
+        Most of the default movie formats provided will result in a gigantic movie, which you can
+        re-encode using something smarter (like the Animation or Sorenson codecs) to put to a reasonable size.
+        On the Mac, Quicktime Pro will do this quite elegantly. */
+    public void startMovie()
+        {
+		// can't start a movie if we're in an applet
+		if (SimApplet.isApplet)
+			{
+			Object[] options = {"Oops"};
+			JOptionPane.showOptionDialog(
+				this, "You cannot create movies from an applet.",
+				"MASON Applet Restriction",
+				JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+				null, options, options[0]);
+			return;
+			}
+					
+		if (movieMaker != null) return;  // already running
+		movieMaker = new MovieMaker(getFrame());
+
+		if (!movieMaker.start(getBufferedImage()))
+			movieMaker = null;  // failed
+		else 
+			{
+			movieButton.setText("Stop Movie");
+			
+			// emit an image
+			update(true);
+			}
+        }
+
+
+
+    /** Stops a Quicktime movie and cleans up, flushing the remaining frames out to disk. 
+        This method ought to be called from the main event loop. */
+    public void stopMovie()
+        {
+		if (movieMaker == null) return;  // already stopped
+		if (!movieMaker.stop())
+			{
+			Object[] options = {"Drat"};
+			JOptionPane.showOptionDialog(
+				this, "Your movie did not write to disk\ndue to a spurious JMF movie generation bug.",
+				"JMF Movie Generation Bug",
+				JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE,
+				null, options, options[0]);
+			}
+		movieMaker = null;
+		if (movieButton!=null)  // hasn't been destroyed yet
+			{
+			movieButton.setText("Create Movie");
+			}
+        }
+        
+
+
+
+
+
+
+
     /** Deletes all series from the chart. */
     public void removeAllSeries()
         {
@@ -126,6 +233,7 @@ public abstract class ChartGenerator extends JPanel
     /** Prepares the chart to be garbage collected.  If you override this, be sure to call super.quit() */
     public void quit()
         {
+		if (movieMaker !=null) movieMaker.stop();
         removeAllSeries();
         }
 
@@ -232,8 +340,9 @@ public abstract class ChartGenerator extends JPanel
         JPanel p = new JPanel();
         p.setLayout(new BorderLayout());
 
-        LabelledList list = new LabelledList("Chart");
-        globalAttributes.add(list);
+        LabelledList list = new LabelledList("Chart Properties");
+        DisclosurePanel pan1 = new DisclosurePanel("Chart Properties", list);
+		globalAttributes.add(pan1);
         
         JLabel j = new JLabel("Right-Click or Control-Click");
         j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
@@ -241,33 +350,6 @@ public abstract class ChartGenerator extends JPanel
         j = new JLabel("on Chart for More Options");
         j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
         list.add(j);
-
-
-/*
-  titleField = new JTextField();
-  titleField.setText(chart.getTitle().getText());
-  titleField.addKeyListener(new KeyListener()
-  {
-  public void keyReleased(KeyEvent keyEvent) {}
-  public void keyTyped(KeyEvent keyEvent) {}
-  public void keyPressed(KeyEvent keyEvent)
-  {
-  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-  {
-  setTitle(titleField.getText());
-  }
-  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-  titleField.setText(getTitle());
-  }
-  });
-  titleField.addFocusListener(new FocusAdapter()
-  {
-  public void focusLost ( FocusEvent e )
-  {
-  setTitle(titleField.getText());
-  }
-  });
-*/
 
         titleField = new PropertyField()
             {
@@ -282,31 +364,6 @@ public abstract class ChartGenerator extends JPanel
 
         list.add(new JLabel("Title"), titleField);
 
-/*
-  xLabel = new JTextField();
-  xLabel.setText(getDomainAxisLabel());
-  xLabel.addKeyListener(new KeyListener()
-  {
-  public void keyReleased(KeyEvent keyEvent) {}
-  public void keyTyped(KeyEvent keyEvent) {}
-  public void keyPressed(KeyEvent keyEvent)
-  {
-  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-  {
-  setDomainAxisLabel(xLabel.getText());
-  }
-  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-  xLabel.setText(getDomainAxisLabel());
-  }
-  });
-  xLabel.addFocusListener(new FocusAdapter()
-  {
-  public void focusLost ( FocusEvent e )
-  {
-  setDomainAxisLabel(xLabel.getText());
-  }
-  });
-*/
         xLabel = new PropertyField()
             {
             public String newValue(String newValue)
@@ -320,31 +377,6 @@ public abstract class ChartGenerator extends JPanel
 
         list.add(new JLabel("X Label"), xLabel);
         
-/*
-  yLabel = new JTextField();
-  yLabel.setText(getRangeAxisLabel());
-  yLabel.addKeyListener(new KeyListener()
-  {
-  public void keyReleased(KeyEvent keyEvent) {}
-  public void keyTyped(KeyEvent keyEvent) {}
-  public void keyPressed(KeyEvent keyEvent)
-  {
-  if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER)
-  {
-  setRangeAxisLabel(yLabel.getText());
-  }
-  else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE)
-  yLabel.setText(getRangeAxisLabel());
-  }
-  });
-  yLabel.addFocusListener(new FocusAdapter()
-  {
-  public void focusLost ( FocusEvent e )
-  {
-  setRangeAxisLabel(yLabel.getText());
-  }
-  });
-*/
         yLabel = new PropertyField()
             {
             public String newValue(String newValue)
@@ -425,9 +457,15 @@ public abstract class ChartGenerator extends JPanel
         list.add(new JLabel("Antialias"), aliasCheck);
 
         JPanel pdfButtonPanel = new JPanel();
+		pdfButtonPanel.setBorder(new javax.swing.border.TitledBorder("Chart Output"));
+		DisclosurePanel pan2 = new DisclosurePanel("Chart Output", pdfButtonPanel);
+		
         pdfButtonPanel.setLayout(new BorderLayout());
+		Box pdfbox = new Box(BoxLayout.Y_AXIS);
+		pdfButtonPanel.add(pdfbox,BorderLayout.WEST);
+
         JButton pdfButton = new JButton( "Save as PDF" );
-        pdfButtonPanel.add(pdfButton,BorderLayout.WEST);
+		pdfbox.add(pdfButton);
         pdfButton.addActionListener(new ActionListener()
             {
             public void actionPerformed ( ActionEvent e )
@@ -443,7 +481,20 @@ public abstract class ChartGenerator extends JPanel
                     } 
                 }
             });
-        globalAttributes.add(pdfButtonPanel);
+		movieButton = new JButton( "Create a Movie" );
+		pdfbox.add(movieButton);
+		pdfbox.add(Box.createGlue());
+        movieButton.addActionListener(new ActionListener()
+            {
+            public void actionPerformed ( ActionEvent e )
+                {
+				if (movieMaker == null) startMovie();
+				else stopMovie();
+                }
+            });
+
+        globalAttributes.add(pan2);
+		
                 
         // we add into an outer box so we can later on add more global seriesAttributes
         // as the user instructs and still have glue be last

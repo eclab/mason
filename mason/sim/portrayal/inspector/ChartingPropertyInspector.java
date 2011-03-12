@@ -136,8 +136,15 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         if (generator == null) return null;  // got a problem
         int len = generator.getGlobalAttributeCount();
         for(int i = 0; i < len ; i ++)
-            if ((generator.getGlobalAttribute(i) instanceof GlobalAttributes))
-                return (GlobalAttributes) generator.getGlobalAttribute(i);
+            {
+			// Global Attributes are members of DisclosurePanels
+			if ((generator.getGlobalAttribute(i) instanceof DisclosurePanel))
+				{
+				DisclosurePanel pan = (DisclosurePanel)(generator.getGlobalAttribute(i));
+				if (pan.getDisclosedComponent() instanceof GlobalAttributes)
+					return (GlobalAttributes) (pan.getDisclosedComponent());
+				}
+			}
         return null;
         }
                 
@@ -207,12 +214,14 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         public long interval = 1;
         public int aggregationMethod = AGGREGATIONMETHOD_CURRENT;
         public int redraw = REDRAW_HALF_SEC;
+		String title = "";
 
         public GlobalAttributes()
             {
             setLayout(new BorderLayout());
-            LabelledList list = new LabelledList(
-                includeAggregationMethodAttributes() ? "Add Data..." : "Redraw");
+			
+			title = includeAggregationMethodAttributes() ? "Add Data..." : "Redraw";
+            LabelledList list = new LabelledList(title);
             add(list,BorderLayout.CENTER);
                         
             if (includeAggregationMethodAttributes())
@@ -258,7 +267,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                     public void actionPerformed(ActionEvent e)
                         {
                         redraw = optionsBox2.getSelectedIndex();
-                        generator.update();  // keep up-to-date
+                        generator.update(false);  // keep up-to-date
                         }
                     });
             if (includeAggregationMethodAttributes())
@@ -280,7 +289,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                     {
                     if (generator!=null)
                         {
-                        generator.update();  // keep up-to-date
+                        generator.update(true);  // keep up-to-date
                         }
                     // this is in the Swing thread, so it's okay
                     timer = null;
@@ -294,7 +303,8 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         generator = createNewGenerator();
         globalAttributes = new GlobalAttributes();
-        generator.addGlobalAttribute(globalAttributes);  // it'll be added last
+		DisclosurePanel pan = new DisclosurePanel(globalAttributes.title, globalAttributes);
+        generator.addGlobalAttribute(pan);  // it'll be added last
                 
         // set up the simulation -- need a new name other than guiObjects: and it should be
         // a HashMap rather than a Bag.
@@ -348,7 +358,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             switch(globalAttributes.redraw) 
                 {
                 case REDRAW_ALWAYS:  // do it now
-                    generator.update();
+                    generator.update(true);
                     break;
                 case REDRAW_TENTH_SEC:
                     updateBefore(100);
@@ -381,4 +391,17 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         return false;
         }
 
+    public Stoppable reviseStopper(Stoppable stopper)
+		{
+		final Stoppable newStopper = super.reviseStopper(stopper);
+		return new Stoppable()
+			{
+			public void stop()
+				{
+				if (newStopper!=null) newStopper.stop();  // wraps the stopper
+				// give the movie a chance to write out
+				generator.stopMovie();
+				}
+			};
+		}
     }

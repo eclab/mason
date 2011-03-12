@@ -44,11 +44,11 @@ import java.awt.*;
     <pre><tt>public Stoppable reviseStopper(Stoppable stopper)
     {
     final Stoppable newStopper = super.reviseStopper(stopper);
-    return new Stoppable()
-    {
-    if (newStopper!=null) newStopper.stop();  // wraps the stopper
+    return new Stoppable() { public void stop()
+	{
+	if (newStopper!=null) newStopper.stop();  // wraps the stopper
     System.out.println("Hey, I stopped!");  // do my thing
-    };
+    }};
     }</tt></pre>
                 
     <p>Beware that your stopper may and probably will have its stop() method called multiple times.

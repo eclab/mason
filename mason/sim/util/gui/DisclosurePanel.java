@@ -38,6 +38,29 @@ public class DisclosurePanel extends JPanel
     Component abridgedComponent;
     Component disclosedComponent;
     
+	public DisclosurePanel(String abridgedText, Component disclosedComponent)
+		{
+		this(abridgedText, disclosedComponent, null);
+		}
+		
+	public DisclosurePanel(String abridgedText, Component disclosedComponent, String borderLabel)
+		{
+		this(new JButton(abridgedText), disclosedComponent);
+		JButton button = (JButton)abridgedComponent;
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setRequestFocusEnabled(false);
+        button.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+		button.setHorizontalAlignment(SwingConstants.LEFT);
+		button.addActionListener(new ActionListener()
+			{
+			public void actionPerformed(ActionEvent event)
+				{
+				disclosureToggle.doClick();
+				}
+			});
+		}
+
     public DisclosurePanel(Component abridgedComponent, Component disclosedComponent)
         {
         this(abridgedComponent, disclosedComponent, null);
@@ -45,7 +68,7 @@ public class DisclosurePanel extends JPanel
         
     public DisclosurePanel(Component abridgedComponent, Component disclosedComponent, String borderLabel)
         {
-        disclosureToggle.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+        disclosureToggle.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
         disclosureToggle.setContentAreaFilled(false);
         disclosureToggle.setFocusPainted(false);
         disclosureToggle.setRequestFocusEnabled(false);
@@ -54,9 +77,13 @@ public class DisclosurePanel extends JPanel
         this.abridgedComponent = abridgedComponent;
         this.disclosedComponent = disclosedComponent;
         setLayout(new BorderLayout());
-        Box b = new Box(BoxLayout.Y_AXIS);
+		JPanel b = new JPanel();
+		b.setLayout(new BorderLayout());
+/*        Box b = new Box(BoxLayout.Y_AXIS);
         b.add(disclosureToggle);
         b.add(Box.createGlue());
+*/
+		b.add(disclosureToggle, BorderLayout.NORTH);
         add(b, BorderLayout.WEST);
         add(abridgedComponent, BorderLayout.CENTER);
 
@@ -82,7 +109,17 @@ public class DisclosurePanel extends JPanel
                 }
             });
         }
-        
+	
+	public Component getAbridgedComponent()
+		{
+		return abridgedComponent;
+		}
+		
+	public Component getDisclosedComponent()
+		{
+		return disclosedComponent;
+		}
+		
     public void setAbridgedComponent(Component abridgedComponent)
         {
         if (!disclosureToggle.isSelected())

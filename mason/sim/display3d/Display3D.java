@@ -205,7 +205,10 @@ public class Display3D extends JPanel implements Steppable
     /** The button which pops up the layers menu */
     public JToggleButton togglebutton;  // for popup
 
-    /** Sets various MacOS X features */
+    /* Sets various MacOS X features.  This text is repeated in Console.java, Display2D.java, and Display3D.java
+		The reason for the repeat is that the UseQuartz property must be set a precise time -- for example, we can't
+		just use this static to call a common static method -- it doesn't work :-(  Otherwise we'd have made one
+		static method which did all this stuff, duh.  */
     static 
         {
         // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
@@ -215,6 +218,9 @@ public class Display3D extends JPanel implements Steppable
         // Use Quaqua if it exists
         try
             {
+         //Set includes = new HashSet();
+         //includes.add("ColorChooser");
+         //ch.randelshofer.quaqua.QuaquaManager.setIncludedUIs(includes);
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
@@ -229,7 +235,7 @@ public class Display3D extends JPanel implements Steppable
             // turns this off by default, which makes 1.3.1 half the speed (and draws
             // objects wrong to boot).
             System.setProperty("com.apple.hwaccel","true");  // probably settable as an applet.  D'oh! Looks like it's ignored.
-            System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer
+            System.setProperty("apple.awt.graphics.UseQuartz","true");  // counter the awful effect in OS X's Sun Renderer (though it's a bit faster)
             // the following are likely not settable
             // macOS X 1.4.1 java doesn't show the grow box.  We force it here.
             System.setProperty("apple.awt.showGrowBox","true");
