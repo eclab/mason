@@ -8,8 +8,8 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
 import ec.util.MersenneTwisterFast;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
+import sim.util.geo.MasonGeometry;
 
 /** 
  * Simple agent for the NearbyWorld GeoMASON example.  The agent wanders randomly around the field, 
@@ -50,22 +50,42 @@ public class Agent implements Steppable {
 
     public void step(SimState state)
     {
+        NearbyWorld world = (NearbyWorld) state;
+
+        // Clear out any objects previously identififed as being near
+        world.nearbyField.clear();
+
+        // Move the agent to a random valid location within the field.
         move(state.random);
 
-        // Now determine if we're covered by something in the world or not.
-        GeomVectorField world = ((NearbyWorld)state).world;
-
-        Bag nearbyObjects = world.getObjectsWithinDistance(location, Agent.distance);
+        // Now determine if we're near something in objects
+        Bag nearbyObjects = world.objects.getObjectsWithinDistance(location, Agent.distance);
 
         if (nearbyObjects.isEmpty())
+        {
             System.out.println("Nothing nearby");
+        }
         else
             {
                 System.out.println("# nearby objects: " + nearbyObjects.numObjs);
                 for (int i = 0; i < nearbyObjects.numObjs; i++)
+                {
                     System.out.println(nearbyObjects.objs[i] + " is near me");
+                    world.nearbyField.addGeometry((MasonGeometry) nearbyObjects.objs[i]);
+                }
+
+                // nearbyField.clear() and all the addGeometry() will have reset the MBR
+                // to something that doesn't match the MBR of the other layers;
+                // if we leave it alone then the nearbyField objects won't be
+                // rendered in their proper place in the display.  We must sync
+                // the MBR with that of the other layers.  You can
+                // comment out the following line to see the effect of not
+                // synchronizing the MBR.
+                world.nearbyField.setMBR(world.objects.getMBR());
             }
     }
+
+    
 
     // returns false if the given point is outside the bounds, else true
     private boolean isValidMove(final Coordinate c)

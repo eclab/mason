@@ -1,6 +1,7 @@
 package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
@@ -23,11 +24,17 @@ public class NearbyWorld extends SimState
 {
 
     private static final long serialVersionUID = 752764560336956655L;
-    
-	public GeomVectorField world = new GeomVectorField(WIDTH, HEIGHT);
+
+    // Contains the objects in which the agent will be wandering
+	public GeomVectorField objects = new GeomVectorField(WIDTH, HEIGHT);
+
+    // Field for just the agent
     public GeomVectorField agentField = new GeomVectorField(WIDTH, HEIGHT);
 
-    // Agent that moves around the world
+    // Field that's used to highlight nearby objects
+    public GeomVectorField nearbyField = new GeomVectorField(WIDTH, HEIGHT);
+
+    // Agent that moves around the objects
     Agent agent;
 
 	// size of the display 
@@ -38,17 +45,16 @@ public class NearbyWorld extends SimState
     public NearbyWorld(long seed) 
     {
         super(seed);
+
+        createWorld();
     }
-        
-    public void start()
+
+
+    /** set up the static geometry in the objects
+     *
+     */
+    private void createWorld()
     {
-        super.start();
-        // position the agent at a random starting location 
-	agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT)); 
-
- 	world = new GeomVectorField(WIDTH, HEIGHT);
- 	agentField = new GeomVectorField(WIDTH, HEIGHT);
-
         // Add a few points for the agent to move around
 
         addPoint(0, 0);
@@ -69,38 +75,58 @@ public class NearbyWorld extends SimState
         Polygon polygon = null;
 
         try
-            {
-                line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
-                world.addGeometry(new MasonGeometry(line));
+        {
+            line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
+            objects.addGeometry(new MasonGeometry(line));
 
-                line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
-                world.addGeometry(new MasonGeometry(line));
-                        
-                polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
-                world.addGeometry(new MasonGeometry(polygon));
-            }
-        catch (ParseException parseException)
-            {
-                System.out.println("Bogus line string" + parseException);
-            }
+            line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
+            objects.addGeometry(new MasonGeometry(line));
+
+            polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
+            objects.addGeometry(new MasonGeometry(polygon));
+        } catch (ParseException parseException)
+        {
+            System.out.println("Bogus line string" + parseException);
+        }
+
+        Envelope e = objects.getMBR();
+        e.expandBy(5.0);
+        objects.setMBR(e);
+    }
+
 
         
+    @Override
+    public void start()
+    {
+        super.start();
+
+        agentField.clear(); // remove any agents from previous runs
+        nearbyField.clear();
+
+        // position the agent at a random starting location 
+        agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT));
+
         // Add the agent
         agentField.addGeometry(new MasonGeometry(agent.getGeometry()));
 
         // Ensure that both GeomVectorField layers cover the same area otherwise the
         // agent won't show up in the display.
-        agentField.setMBR(world.getMBR());
-        
+        agentField.setMBR(objects.getMBR());
+        nearbyField.setMBR(objects.getMBR());
+
         schedule.scheduleRepeating(agent);
     }
+
+
     
-    void addPoint(final double x, final double y)
+    private void addPoint(final double x, final double y)
     {
         GeometryFactory fact = new GeometryFactory();
         Point location = fact.createPoint(new Coordinate(x, y));
-        world.addGeometry(new MasonGeometry(location));
+        objects.addGeometry(new MasonGeometry(location));
     }
+
 
     public static void main(String[] args)
     {

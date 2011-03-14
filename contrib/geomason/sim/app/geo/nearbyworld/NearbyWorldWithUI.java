@@ -7,6 +7,7 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
+import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.simple.OvalPortrayal2D;
 
@@ -20,6 +21,7 @@ public class NearbyWorldWithUI extends GUIState {
     private JFrame displayFrame;
 
     private GeomVectorFieldPortrayal worldFieldPortrayal = new GeomVectorFieldPortrayal();
+    private GeomVectorFieldPortrayal nearbyFieldPortrayal = new GeomVectorFieldPortrayal();
     private GeomVectorFieldPortrayal agentFieldPortrayal = new GeomVectorFieldPortrayal();
 
     
@@ -34,6 +36,7 @@ public class NearbyWorldWithUI extends GUIState {
 
         display = new Display2D(NearbyWorld.WIDTH, NearbyWorld.HEIGHT, this, 1);
         display.attach(worldFieldPortrayal, "World");
+        display.attach(nearbyFieldPortrayal, "Near Objects");
         display.attach(agentFieldPortrayal, "Agent");
 
         displayFrame = display.createFrame();
@@ -51,9 +54,15 @@ public class NearbyWorldWithUI extends GUIState {
     {
         NearbyWorld world = (NearbyWorld)state;
 
-        worldFieldPortrayal.setField(world.world);
+        // Since no object portrayal is given, the default GeomPortrayal with
+        // Color.GRAY is used.
+        worldFieldPortrayal.setField(world.objects);
+
+        nearbyFieldPortrayal.setField(world.nearbyField);
+        nearbyFieldPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLUE,true));
 
         agentFieldPortrayal.setField(world.agentField);
+
         // We want a red dot for the agent.  We also need to specify the scale; if
         // we don't then the default agent dot will cover the entire area.
         agentFieldPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,5));
