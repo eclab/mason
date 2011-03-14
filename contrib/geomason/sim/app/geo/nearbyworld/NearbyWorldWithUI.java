@@ -9,6 +9,7 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
+import sim.portrayal.simple.CircledPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 
 
@@ -65,7 +66,8 @@ public class NearbyWorldWithUI extends GUIState {
 
         // We want a red dot for the agent.  We also need to specify the scale; if
         // we don't then the default agent dot will cover the entire area.
-        agentFieldPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,5));
+//        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, Agent.DISTANCE, Color.GREEN, false));
+        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, 50, Color.GREEN, false));
 
         display.reset();
         display.setBackdrop(Color.WHITE);

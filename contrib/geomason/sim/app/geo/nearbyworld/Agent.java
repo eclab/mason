@@ -13,7 +13,7 @@ import sim.util.geo.MasonGeometry;
 
 /** 
  * Simple agent for the NearbyWorld GeoMASON example.  The agent wanders randomly around the field, 
- * and at every step, prints out the all objects that are within <i>distance</i> units.  
+ * and at every step, prints out the all objects that are within <i>DISTANCE</i> units.
  * 
  */
 public class Agent implements Steppable {
@@ -26,8 +26,8 @@ public class Agent implements Steppable {
     // How much to move the agent by in each step()
     private static double moveRate = 2.0;
 
-    // distance for determining if objects are close 
-    private static double distance = 10.0;
+    // DISTANCE for determining if objects are close
+    public static double DISTANCE = 10.0;
 
     public Agent()
     {
@@ -59,7 +59,7 @@ public class Agent implements Steppable {
         move(state.random);
 
         // Now determine if we're near something in objects
-        Bag nearbyObjects = world.objects.getObjectsWithinDistance(location, Agent.distance);
+        Bag nearbyObjects = world.objects.getObjectsWithinDistance(location, Agent.DISTANCE);
 
         if (nearbyObjects.isEmpty())
         {
