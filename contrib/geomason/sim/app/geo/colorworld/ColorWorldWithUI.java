@@ -72,7 +72,7 @@ public class ColorWorldWithUI extends GUIState {
         ColorWorld world = (ColorWorld)state;
 
         agentPortrayal.setField(world.agents);
-        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6000.0));
+        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
 
         // the county portrayal (ie, the voting districts) to use our custom portrayal 
         countyPortrayal.setField(world.county);

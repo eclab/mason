@@ -37,11 +37,12 @@ public class ShapeFileImporter extends GeomImporter
      * @param masked
      * @throws FileNotFoundException
      */
+	
     @Override
     public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
         String filePath = null;
-        
+    
         try
         {
             filePath = referenceClass.getResource(fileName).getPath();
@@ -59,7 +60,7 @@ public class ShapeFileImporter extends GeomImporter
                 throw new FileNotFoundException(fileName);
             }
         }
-
+        
         ingest(filePath, field, masked);
     }
 

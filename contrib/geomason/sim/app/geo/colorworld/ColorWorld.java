@@ -39,7 +39,7 @@ public class ColorWorld extends SimState
 	public static final int HEIGHT = 300; 
 
 	// number of agents in the simulation
-    public static int NUM_AGENTS = 10;
+    public static int NUM_AGENTS = 1;
 
     // where all the county geometry lives
     public GeomVectorField county = new GeomVectorField(WIDTH, HEIGHT);
@@ -109,7 +109,7 @@ public class ColorWorld extends SimState
 
                 // add the new agent the schedule
                 schedule.scheduleRepeating(a);
-            }
+            }        
     }
 
 

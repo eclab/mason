@@ -16,11 +16,30 @@ public abstract class GeomField implements java.io.Serializable
     /** Holds the origin for drawing; used to handle zooming and scrolling */
     public double drawX, drawY;
 
-    public GeomField()
+    public GeomField() { this(0,0); } 
+    
+    public GeomField(int w, int h)
     {
         MBR = new Envelope();
         drawX = drawY = 0;
+        fieldHeight = h; 
+        fieldWidth = w; 
     }
+    
+    /** The field dimensions
+    *
+    * Used for computing scale.
+    *
+    */
+   public int fieldWidth, fieldHeight; 
+   
+   public int getFieldWidth() { return fieldWidth; } 
+   public int getFieldHeight() { return fieldHeight; }
+
+   public void setFieldWidth(int fw ) { fieldWidth = fw; }
+   public void setFieldHeight(int fh) { fieldHeight = fh; }
+   
+    
 
     /** delete contents */
     public void clear()
