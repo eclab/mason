@@ -223,14 +223,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		// later
 		Envelope MBR = geomField.getMBR();
 		AffineTransform worldToScreen = GeometryUtilities.worldToScreenTransform(MBR, info);
-		double m[] = new double[6];
-		worldToScreen.getMatrix(m);
-		com.vividsolutions.jts.geom.util.AffineTransformation a = new com.vividsolutions.jts.geom.util.AffineTransformation(
-				m[0], m[2], m[4], m[1], m[3], m[5]);
-
-		if (MBR.getWidth() < geomField.getFieldWidth() || MBR.getHeight() < geomField.getFieldHeight()) {
-			a = GeometryUtilities.getPortrayalTransform(geomField, info.draw); 
-		}
+		com.vividsolutions.jts.geom.util.AffineTransformation a = GeometryUtilities.getPortrayalTransform(worldToScreen, geomField, info.draw);
 		
 		
 		Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y);
@@ -274,9 +267,8 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 					Point pt = geom.getCentroid();
 					pt.apply(a);
 					pt.geometryChanged();
-					newinfo.draw.x = info.draw.x + pt.getX();
-					newinfo.draw.y = info.draw.y + pt.getY();
-
+					newinfo.draw.x = info.draw.x +  pt.getX();
+					newinfo.draw.y = info.draw.y +  pt.getY();
 					portrayal.draw(geom, graphics, newinfo);
 				}
 			}

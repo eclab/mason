@@ -47,11 +47,15 @@ public class GeometryUtilities
 
 	}
 
-	public static com.vividsolutions.jts.geom.util.AffineTransformation getPortrayalTransform(final GeomField field,
+	public static com.vividsolutions.jts.geom.util.AffineTransformation getPortrayalTransform(final AffineTransform transform, 
+			final GeomField field,
 			final Rectangle2D.Double view)
 	{
-		Envelope e = new Envelope(field.drawX, field.getFieldWidth(), field.drawY, field.getFieldHeight());
-		AffineTransform worldToScreen = worldToScreenTransform(e, view);
+		AffineTransform worldToScreen = transform; 
+		if (worldToScreen.getScaleX() > 1 || worldToScreen.getScaleY() > 1) { 
+			Envelope e = new Envelope(field.drawX, field.getFieldWidth(), field.drawY, field.getFieldHeight());
+			worldToScreen = worldToScreenTransform(e, view);
+		}
 		double m[] = new double[6];
 		worldToScreen.getMatrix(m);
 		return new com.vividsolutions.jts.geom.util.AffineTransformation(m[0], m[2], m[4], m[1], m[3], m[5]);
