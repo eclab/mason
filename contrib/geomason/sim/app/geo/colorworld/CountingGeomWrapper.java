@@ -1,5 +1,6 @@
 package sim.app.geo.colorworld;
 
+
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
@@ -16,6 +17,7 @@ public class CountingGeomWrapper extends MasonGeometry {
     public int numAgentsInGeometry()
     {
         Bag coveredAgents = ColorWorld.agents.getCoveredObjects(geometry);
+    	//Bag coveredAgents = ColorWorld.agents.queryField(geometry.getEnvelopeInternal()); 
         return coveredAgents.numObjs;
     }
 }
