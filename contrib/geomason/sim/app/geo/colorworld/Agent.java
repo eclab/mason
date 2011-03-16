@@ -37,7 +37,7 @@ public class Agent implements Steppable {
     {
         direction = d;
     }
-        
+            
     public void setLocation(Point p) { location = p; }
 
     public Geometry getGeometry() { return location; }
@@ -46,7 +46,8 @@ public class Agent implements Steppable {
     {
         // try to move the agent, keeping the agent inside its political region
                 
-        GeomVectorField world = ((ColorWorld)state).county;
+    	ColorWorld cState = (ColorWorld)state; 
+        GeomVectorField world = cState.county;
         Coordinate coord = (Coordinate) location.getCoordinate().clone();
         AffineTransformation translate = null;
 
@@ -91,9 +92,10 @@ public class Agent implements Steppable {
             }
 
         // is the new position still within the county?
-        if (world.isInsideUnion(coord)) 
-        //if (world.isCovered(coord))
-            location.apply(translate);
+        if (world.isInsideUnion(coord))  { 
+        	//cState.county.updateTree(location, translate); 
+        	location.apply(translate);
+        }
         else // try randomly moving in different direction if trying to stray
             direction = state.random.nextInt(8);
     }

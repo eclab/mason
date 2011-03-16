@@ -218,22 +218,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		if (geomField == null)
 			return;
 
-		// compute the transform between world and screen coordinates, and
-		// also construct a geom.util.AffineTransform for use in hit-testing
-		// later
-		Envelope MBR = geomField.getMBR();
-		AffineTransform worldToScreen = GeometryUtilities.worldToScreenTransform(MBR, info);
-		com.vividsolutions.jts.geom.util.AffineTransformation a = GeometryUtilities.getPortrayalTransform(worldToScreen, geomField, info.draw);
-		
-		
-		Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y);
-		Point2D p2 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x + info.clip.width,
-				info.clip.y + info.clip.height);
-
-		Envelope clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
-		Bag geometries = geomField.queryField(clipEnvelope);
-
-		GeomInfo2D gInfo = new GeomInfo2D(info, worldToScreen);
+		geomField.updateTransform(info); 
+		Bag geometries = geomField.queryField(geomField.clipEnvelope);
+		GeomInfo2D gInfo = new GeomInfo2D(info, geomField.worldToScreen);
 
 		final double xScale = info.draw.width / geomField.getFieldWidth();
 		final double yScale = info.draw.height / geomField.getFieldHeight();
@@ -253,19 +240,19 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			if (graphics == null)
 			{
 				Geometry g = (Geometry) (geom.clone());
-				g.apply(a);
+				g.apply(geomField.jtsTransform);
 				g.geometryChanged();
 				if (portrayal.hitObject(g, info))
 					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
 			}
 			else
 			{
-				if (portrayal instanceof GeomPortrayal)
+				if (portrayal instanceof GeomPortrayal) 
 					portrayal.draw(gm, graphics, gInfo);
 				else
 				{ // have a SimplePortrayal2D,
 					Point pt = geom.getCentroid();
-					pt.apply(a);
+					pt.apply(geomField.jtsTransform);
 					pt.geometryChanged();
 					newinfo.draw.x = info.draw.x +  pt.getX();
 					newinfo.draw.y = info.draw.y +  pt.getY();

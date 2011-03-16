@@ -5,6 +5,7 @@ import com.vividsolutions.jts.geom.prep.*;
 
 import com.vividsolutions.jts.algorithm.*; 
 
+import sim.portrayal.DrawInfo2D;
 import sim.util.geo.AttributeField;
 import sim.util.geo.GeometryUtilities;
 import sim.util.geo.MasonGeometry;
@@ -12,6 +13,9 @@ import sim.util.geo.MasonGeometry;
 import com.vividsolutions.jts.index.quadtree.*; 
 
 import sim.util.*; 
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.util.*;
 
 /** 
@@ -211,20 +215,19 @@ public class GeomVectorField extends GeomField
 
     /** Return geometries that are covered by the given geometry. 
      * Do not modify the returned Bag. */
-    public final Bag getCoveredObjects(final Geometry g)
+    public final Bag getCoveredObjects( MasonGeometry g)
     {
 		Bag coveringObjects = new Bag(); 
-		//Envelope e = g.getEnvelopeInternal();
-		//List<?> gList = spatialIndex.query(e);
 		List<?> gList = spatialIndex.queryAll(); 
 		
-		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
+		if (g.preparedGeometry == null)
+			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry()); 
 	
         for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (p.covers(g1)) 
+			if (g.preparedGeometry.covers(g1)) 
 				coveringObjects.add(gm); 
 		}
         return coveringObjects;
@@ -233,17 +236,19 @@ public class GeomVectorField extends GeomField
     
     /** Returns geometries that touch the given geometry.
      * Do not modify the returned Bag. */
-    public final Bag getTouchingObjects(final Geometry g)
+    public final Bag getTouchingObjects( MasonGeometry g)
     {
 		Bag touchingObjects = new Bag(); 
-		Envelope e = g.getEnvelopeInternal();
+		Envelope e = g.getGeometry().getEnvelopeInternal();
 		List<?> gList = spatialIndex.query(e);
-		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
-        for (int i = 0; i < gList.size(); i++)
+		if (g.preparedGeometry == null)
+			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry()); 
+	
+		for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (!g.equals(g1) && p.touches(g1))
+			if (!g.equals(g1) && g.preparedGeometry.touches(g1))
 				touchingObjects.add(gm);
 		}
         return touchingObjects;
@@ -254,14 +259,16 @@ public class GeomVectorField extends GeomField
         Returns true if the given Geometry is covered by any geometry in the field.
         Cover here includes points in the boundaries.           
     */
-    public boolean isCovered(final Geometry g)
+    public boolean isCovered( MasonGeometry g)
     {
-		Envelope e = g.getEnvelopeInternal(); 
+		Envelope e = g.getGeometry().getEnvelopeInternal(); 
 		List<?> gList = spatialIndex.query(e);
-		PreparedGeometry p = PreparedGeometryFactory.prepare(g); 
-        for (int i=0; i < gList.size(); i++) {
+		if (g.preparedGeometry == null)
+			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+		
+		for (int i=0; i < gList.size(); i++) {
 			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry();
-			if (!g.equals(g1) && p.covers(g))
+			if (!g.equals(g1) && g.preparedGeometry.covers(g1))
 				return true; 
 		}
 		return false; 
@@ -318,7 +325,26 @@ public class GeomVectorField extends GeomField
 		}
 		return g; 	
 	 }
-	 
+
+	 public void updateTree(Geometry g, com.vividsolutions.jts.geom.util.AffineTransformation at)
+	 {
+		MasonGeometry mg = new MasonGeometry(g);
+		if (spatialIndex.remove(g.getEnvelopeInternal(), mg)) { 
+			mg.geometry.apply(at); 
+			addGeometry(mg); 
+		}
+		
+		
+		/* List<?> gList = spatialIndex.query(g.getEnvelopeInternal());
+		 for (int i=0; i < gList.size(); i++) {
+			 Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry(); 
+			 if (g1.equals(g)) { 
+				 g1.apply(at); 
+				 return;
+			 }
+		 } */
+	 }
+
 	 /**
 	  *  Searches the field for the object with attribute <i>name</i> that has value <i>value</i>. 
 	  *  Returns null if no such object exists 
@@ -340,4 +366,30 @@ public class GeomVectorField extends GeomField
 		 }
 		 return null; 
 	 }
+	 
+	 public Envelope clipEnvelope; 
+	 DrawInfo2D myInfo; 
+	 public AffineTransform worldToScreen; 
+	 public com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform; 
+	 
+	 public void updateTransform(DrawInfo2D info) 
+	 {
+		 // need to update the transform 
+		 if (!info.equals(myInfo)) { 
+			 myInfo = info; 
+			 // compute the transform between world and screen coordinates, and
+			 // also construct a geom.util.AffineTransform for use in hit-testing
+			 // later
+			 Envelope MBR = getMBR();
+			 worldToScreen = GeometryUtilities.worldToScreenTransform(MBR, info);
+			 jtsTransform = GeometryUtilities.getPortrayalTransform(worldToScreen, this, info.draw);
+		
+			 Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y);
+			 Point2D p2 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x + info.clip.width,
+				info.clip.y + info.clip.height);
+
+			 clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
+		 }
+	 }
+	 
 }

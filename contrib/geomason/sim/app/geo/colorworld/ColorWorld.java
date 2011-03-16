@@ -1,8 +1,9 @@
 package sim.app.geo.colorworld;
 
 import java.io.FileNotFoundException;
-
+import java.util.WeakHashMap;
 import com.vividsolutions.jts.geom.Geometry;
+
 import sim.engine.*;
 import sim.field.geo.*;
 import sim.io.geo.ShapeFileImporter;
@@ -53,6 +54,9 @@ public class ColorWorld extends SimState
     public int getNumAgents() { return NUM_AGENTS; }
     public void setNumAgents(int a) { if (a > 0) NUM_AGENTS = a; }
 
+    
+    public WeakHashMap<Geometry, Agent> regionCnt = new WeakHashMap<Geometry, Agent>(); 
+    
     public ColorWorld(long seed)
     {
         super(seed);
@@ -96,13 +100,13 @@ public class ColorWorld extends SimState
                         // Something went wrong.  We *should* have regions.
                         throw new RuntimeException("No regions found.");
                     }
-                Geometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]).geometry;
-
+                MasonGeometry region = ((MasonGeometry)allRegions.objs[random.nextInt(allRegions.numObjs)]);
+           
                 // give each agent a random direction to initially move in
                 Agent a = new Agent(random.nextInt(8));
 
                 // set each agent in the center of corresponding region
-                a.setLocation(region.getCentroid());
+                a.setLocation(region.getGeometry().getCentroid());
 
                 // place the agents in the GeomVectorField
                 agents.addGeometry(new MasonGeometry(a.getGeometry()));

@@ -1,6 +1,5 @@
 package sim.app.geo.touchingworld;
 
-import com.vividsolutions.jts.geom.Geometry;
 import sim.engine.*;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
@@ -29,7 +28,7 @@ public class Mover implements Steppable
         MasonGeometry selectedShape = (MasonGeometry) world.selectedShape.getGeometries().objs[0];
 
         // Find all the objects that touch the currently selected object.
-        Bag adjacentShapes = world.shapes.getTouchingObjects(selectedShape.geometry);
+        Bag adjacentShapes = world.shapes.getTouchingObjects(selectedShape);
 
         // We have a serious problem if there are no shapes adjacent to the
         // current one.
