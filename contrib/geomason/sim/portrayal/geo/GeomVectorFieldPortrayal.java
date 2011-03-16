@@ -3,6 +3,7 @@ package sim.portrayal.geo;
 import com.vividsolutions.jts.geom.*;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.*;
 import sim.field.geo.GeomVectorField;
 import sim.portrayal.*;
@@ -140,6 +141,8 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	/** Caches immutable fields. */
 	BufferedImage buffer = null;
 
+	RenderingHints hints = null;
+
 	/** Handles hit-testing and drawing of the underlying geometry objects. */
 	protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
 	{
@@ -156,9 +159,11 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			double y = info.clip.y;
 			boolean dirty = false;
 
-			// make a new buffer? or did the user change the zoom?
-			if (buffer == null || buffer.getWidth() != info.clip.width || buffer.getHeight() != info.clip.height)
+			// make a new buffer? or did the user change the zoom?  Or change the rendering hints?
+			if (buffer == null || buffer.getWidth() != info.clip.width || buffer.getHeight() != info.clip.height || 
+				hints == null || !hints.equals(graphics.getRenderingHints()))
 			{
+				hints = graphics.getRenderingHints();
 				buffer = new BufferedImage((int) info.clip.width, (int) info.clip.height, BufferedImage.TYPE_INT_ARGB);
 				dirty = true;
 			}
@@ -178,6 +183,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			{
 				clearBufferedImage(buffer);
 				Graphics2D newGraphics = (Graphics2D) buffer.getGraphics();
+				newGraphics.setRenderingHints(hints);
 				hitOrDraw2(newGraphics, new DrawInfo2D(info, -x, -y), putInHere);
 				newGraphics.dispose();
 			}
@@ -185,8 +191,13 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			// draw buffer on screen
 			graphics.drawImage(buffer, (int) x, (int) y, null);
 		}
-		else
-		{ // do regular MASON-style drawing
+		else if (graphics == null)  // we're just hitting
+			{
+			hitOrDraw2(graphics, info, putInHere);
+			}
+		else  // might as well clear the buffer -- likely we're doing precise drawing
+		{ 
+			// do regular MASON-style drawing
 			buffer = null;
 			hitOrDraw2(graphics, info, putInHere);
 		}
