@@ -149,7 +149,7 @@ public class CampusWorld extends SimState
      *
      * Nodes will belong to a planar graph populated from LineString network.
      */
-    private void addIntersectionNodes(Iterator<?> nodeIterator, GeomVectorField intersections)
+    private void addIntersectionNodes(Iterator nodeIterator, GeomVectorField intersections)
     {
         GeometryFactory fact = new GeometryFactory();
         Coordinate coord = null;

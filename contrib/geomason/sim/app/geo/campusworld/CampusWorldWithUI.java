@@ -45,7 +45,6 @@ public class CampusWorldWithUI extends GUIState
         super(new CampusWorld(System.currentTimeMillis()));
     }
 
-    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -63,7 +62,6 @@ public class CampusWorldWithUI extends GUIState
     }
 
 
-    @Override
     public void start()
     {
         super.start();
@@ -76,15 +74,12 @@ public class CampusWorldWithUI extends GUIState
 
         walkwaysPortrayal.setField(world.walkways);
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
-        //walkwaysPortrayal.setImmutableField(true);
 
         buildingPortrayal.setField(world.buildings);
         buildingPortrayal.setPortrayalForAll(new GeomPortrayal(Color.DARK_GRAY,true));
-        //buildingPortrayal.setImmutableField(true);
 
         roadsPortrayal.setField(world.roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
-       // roadsPortrayal.setImmutableField(true);
 
         agentPortrayal.setField(world.agents);
         agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));

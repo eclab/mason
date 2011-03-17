@@ -28,7 +28,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable  
     /** Java2D shape corresponding to this Geometry. Used to 
      * speed up drawing.
      */
-    public Path2D shape; 
+    public GeneralPath shape; 
     
     public AffineTransform transform; 
     

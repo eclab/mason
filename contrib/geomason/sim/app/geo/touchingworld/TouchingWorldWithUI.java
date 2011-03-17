@@ -40,10 +40,8 @@ public class TouchingWorldWithUI extends GUIState {
 
 	public static String getName() { return "Touching World Demonstration"; }
 
-    @Override
 	public Object getSimulationInspectedObject() { return state; }
 
-    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -58,7 +56,6 @@ public class TouchingWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
-    @Override
 	public void quit()
 	{
         super.quit();
@@ -68,7 +65,6 @@ public class TouchingWorldWithUI extends GUIState {
         display = null;
 	}
 
-    @Override
     public void start()
     {
         super.start();

@@ -42,7 +42,6 @@ public class TouchingWorld extends SimState
 
     
     
-    @Override
 	public void start()
     {
         super.start();

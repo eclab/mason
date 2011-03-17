@@ -3,10 +3,10 @@
 # in the jar file rule if you want support for those importers.
 #
 
-JAVAC = javac
+JAVAC = javac ${JAVACFLAGS}
 
-#FLAGS=-verbose
-FLAGS=
+JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
+FLAGS = -g -nowarn
 
 all: jar demos
 

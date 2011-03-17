@@ -55,7 +55,8 @@ public class ColorWorld extends SimState
     public void setNumAgents(int a) { if (a > 0) NUM_AGENTS = a; }
 
     
-    public WeakHashMap<Geometry, Agent> regionCnt = new WeakHashMap<Geometry, Agent>(); 
+    //public WeakHashMap<Geometry, Agent> regionCnt = new WeakHashMap<Geometry, Agent>(); 
+    public WeakHashMap regionCnt = new WeakHashMap(); 
     
     public ColorWorld(long seed)
     {
