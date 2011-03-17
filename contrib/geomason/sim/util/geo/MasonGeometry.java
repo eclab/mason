@@ -30,7 +30,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable  
      */
     public GeneralPath shape; 
     
-    public AffineTransform transform; 
+    public AffineTransform transform = new AffineTransform(); 
     
     public boolean equals(Object o) 
     {

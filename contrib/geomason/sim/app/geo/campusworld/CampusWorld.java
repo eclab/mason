@@ -75,8 +75,8 @@ public class CampusWorld extends SimState
                 
                 // we can set the userData field of any MasonGeometry.  If the userData is inspectable, 
                 // then the inspector will show this information 
-                if (i == 10) 
-                	buildings.getGeometry("CODE", "JC").setUserData(a); 
+                //if (i == 10) 
+                //	buildings.getGeometry("CODE", "JC").setUserData(a); 
             }
     }
 
@@ -102,7 +102,7 @@ public class CampusWorld extends SimState
                 masked.add("ADDR_NUM");
 
                 // read in the buildings GIS file 
-                importer.ingest("../../data/bldg", CampusWorld.class, buildings, null);
+                importer.ingest("../../data/bldg", CampusWorld.class, buildings, masked);
 
                 // We want to save the MBR so that we can ensure that all GeomFields
                 // cover identical area.

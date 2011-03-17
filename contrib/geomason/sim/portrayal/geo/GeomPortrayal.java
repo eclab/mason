@@ -4,6 +4,7 @@ package sim.portrayal.geo;
 // com.vividsolutions.jts.geom.Polygon will conflict
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import com.vividsolutions.jts.geom.util.*;
 
 import java.awt.Color;
@@ -124,9 +125,9 @@ public class GeomPortrayal extends SimplePortrayal2D
 		return inspector;
 	}
 
-	//AffineTransform transform = new AffineTransform();
-	//com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform; 
-	
+	// AffineTransform transform = new AffineTransform();
+	// com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform;
+
 	/**
 	 * Draw a JTS geometry object. The JTS geometries are converted to Java
 	 * general path objects, which are then drawn using the native Graphics2D
@@ -134,35 +135,38 @@ public class GeomPortrayal extends SimplePortrayal2D
 	 */
 	public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 	{
-		GeomInfo2D gInfo; 
-		if (info instanceof GeomInfo2D) 
-			gInfo = (GeomInfo2D)info; 
-		else 
-			gInfo = new GeomInfo2D(info, new AffineTransform()); 
-		
-		
+		GeomInfo2D gInfo;
+		if (info instanceof GeomInfo2D)
+			gInfo = (GeomInfo2D) info;
+		else
+			gInfo = new GeomInfo2D(info, new AffineTransform());
+
 		MasonGeometry gm = (MasonGeometry) object;
 		Geometry geometry = gm.getGeometry();
+
 		if (geometry.isEmpty())
 			return;
 
 		if (paint != null)
 			graphics.setPaint(paint);
 
-		// don't have cached shape or the transform changed, so need to build the shape 
-		if ((gm.isMovable) || (gm.shape == null) ||  (!gm.transform.equals(gInfo.transform))) { 
-			gm.transform.setTransform(gInfo.transform); 
+		// don't have cached shape or the transform changed, so need to build
+		// the shape
+		if ((gm.isMovable) || (gm.shape == null) || (!gm.transform.equals(gInfo.transform)))
+		{
+			gm.transform.setTransform(gInfo.transform);
 			if (geometry instanceof Point)
 			{
 				Point point = (Point) geometry;
 				double offset = 3 * scale / 2.0; // used to center point
-				Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - offset, point.getY() - offset, 3 * scale,
-						3 * scale);
-				
+				Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - offset, point.getY() - offset,
+						3 * scale, 3 * scale);
+
 				GeneralPath path = (GeneralPath) (new GeneralPath(ellipse).createTransformedShape(gInfo.transform));
 				gm.shape = path;
 			}
-			else if (geometry instanceof LineString) { 
+			else if (geometry instanceof LineString)
+			{
 				gm.shape = drawGeometry(geometry, gInfo, false);
 				filled = false;
 			}
@@ -172,31 +176,39 @@ public class GeomPortrayal extends SimplePortrayal2D
 			{
 				// draw each LineString individually
 				MultiLineString multiLine = (MultiLineString) geometry;
-				for (int i = 0; i < multiLine.getNumGeometries(); i++) { 
+				for (int i = 0; i < multiLine.getNumGeometries(); i++)
+				{
 					GeneralPath p = drawGeometry(multiLine.getGeometryN(i), gInfo, false);
-					if (i == 0) gm.shape = p; 
-					else gm.shape.append(p, false); 
+					if (i == 0)
+						gm.shape = p;
+					else
+						gm.shape.append(p, false);
 				}
-				filled = false; 
+				filled = false;
 			}
 			else if (geometry instanceof MultiPolygon)
 			{
 				// draw each Polygon individually
 				MultiPolygon multiPolygon = (MultiPolygon) geometry;
-				for (int i = 0; i < multiPolygon.getNumGeometries(); i++) { 
+				for (int i = 0; i < multiPolygon.getNumGeometries(); i++)
+				{
 					GeneralPath p = drawPolygon((Polygon) multiPolygon.getGeometryN(i), gInfo, filled);
-					if (i == 0) gm.shape = p; 
-					else gm.shape.append(p, false); 
+					if (i == 0)
+						gm.shape = p;
+					else
+						gm.shape.append(p, false);
 				}
 			}
 			else
 				throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
 		}
-		
-		// now draw it! 
-		if (filled) graphics.fill(gm.shape);
-		else graphics.draw(gm.shape); 
-		return; 
+
+		// now draw it!
+		if (filled)
+			graphics.fill(gm.shape);
+		else
+			graphics.draw(gm.shape);
+		return;
 
 	}
 
@@ -215,9 +227,9 @@ public class GeomPortrayal extends SimplePortrayal2D
 		for (int i = 0; i < polygon.getNumInteriorRing(); i++)
 		{ // fill for internal rings will always be false as they are literally
 			// "holes" in the polygon
-			p.append(drawGeometry(polygon.getInteriorRingN(i), info, false), false); 
+			p.append(drawGeometry(polygon.getInteriorRingN(i), info, false), false);
 		}
-		return p; 
+		return p;
 	}
 
 	/**
@@ -234,43 +246,19 @@ public class GeomPortrayal extends SimplePortrayal2D
 		for (int i = 1; i < coords.length; i++)
 			path.lineTo((float) coords[i].x, (float) coords[i].y);
 
-		path.transform(info.transform) ;
-		
-		return path; 
+		path.transform(info.transform);
+
+		return path;
 	}
 
-	Ellipse2D.Double preciseEllipse = new Ellipse2D.Double(); 
-	
 	/** Determine if the object was hit or not. */
 	public boolean hitObject(Object object, DrawInfo2D range)
 	{
-		return false; 
-		/*final double SLOP = 1.0;  // need a little extra area to hit objects
-        final double width = range.draw.width*scale;
-        final double height = range.draw.height*scale;
-        preciseEllipse.setFrame( range.draw.x-width/2-SLOP, range.draw.y-height/2-SLOP, width+SLOP*2,height+SLOP*2 );
-        return ( preciseEllipse.intersects( range.clip.x, range.clip.y, range.clip.width, range.clip.height ) );
-      
-		
-		
-	/*	double SLOP = 5.0;
+		double SLOP = 2.0;
 		MasonGeometry geom = (MasonGeometry) object;
-		CoordinateArraySequence seq = new CoordinateArraySequence(4);
-		seq.setOrdinate(0, 0, range.clip.x - SLOP/2); 
-		seq.setOrdinate(0, 1, range.clip.y - SLOP/2);
-		
-		seq.setOrdinate(1, 0, range.clip.x + range.clip.width + SLOP/2); 
-		seq.setOrdinate(1, 1, range.clip.y - SLOP/2);
-		
-		seq.setOrdinate(2, 0, range.clip.x + range.clip.width + SLOP/2); 
-		seq.setOrdinate(2, 1, range.clip.y + range.clip.height + SLOP/2);
-		
-		seq.setOrdinate(3, 0, range.clip.x - SLOP/2); 
-		seq.setOrdinate(3, 1, range.clip.y + range.clip.height + SLOP/2);
-		
-		LineString l = new LineString(seq, new GeometryFactory()); 
 
-		return geom.preparedGeometry.intersects(l); 
-		*/
+		return geom.shape.intersects(range.clip.x - SLOP / 2, range.clip.y - SLOP / 2, range.clip.width + SLOP / 2,
+				range.clip.height + SLOP / 2);
+
 	}
 }

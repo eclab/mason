@@ -31,7 +31,7 @@ public class CampusWorldWithUI extends GUIState
     private JFrame displayFrame;
 
     private GeomVectorFieldPortrayal walkwaysPortrayal = new GeomVectorFieldPortrayal(true);
-    private GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal(true);
+    private GeomVectorFieldPortrayal buildingPortrayal = new GeomVectorFieldPortrayal();
     private GeomVectorFieldPortrayal roadsPortrayal = new GeomVectorFieldPortrayal(true);
     private GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
@@ -76,8 +76,9 @@ public class CampusWorldWithUI extends GUIState
         walkwaysPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN,true));
 
         buildingPortrayal.setField(world.buildings);
-        buildingPortrayal.setPortrayalForAll(new GeomPortrayal(Color.DARK_GRAY,true));
-
+        BuildingLabelPortrayal b = new BuildingLabelPortrayal(new GeomPortrayal(Color.DARK_GRAY,true), Color.BLUE);
+        buildingPortrayal.setPortrayalForAll(b);
+        
         roadsPortrayal.setField(world.roads);
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 

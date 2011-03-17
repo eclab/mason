@@ -13,6 +13,7 @@ import sim.portrayal.*;
 import sim.util.*;
 import sim.util.geo.*;
 import java.awt.image.*;
+import java.util.HashMap;
 
 /**
  * Portrayal for MasonGeometry objects. The portrayal handles drawing and
@@ -152,6 +153,8 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		if (field == null)
 			return;
 
+		
+		
 		// If we're drawing (and not inspecting), re-fresh the buffer if the
 		// associated field is immutable.
 		if (graphics != null && immutableField && !info.precise)
@@ -232,44 +235,18 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		if (geomField == null)
 			return;
 
+		boolean objectSelected = !selectedWrappers.isEmpty();
+
+        
+		
 		geomField.updateTransform(info); 
 		Bag geometries = geomField.queryField(geomField.clipEnvelope);
 		GeomInfo2D gInfo = new GeomInfo2D(info, geomField.worldToScreen);
 
 		final double xScale = info.draw.width / geomField.getFieldWidth();
 		final double yScale = info.draw.height / geomField.getFieldHeight();
-		DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip);
-
-		Point2D p1 = GeometryUtilities.screenToWorldPointTransform(geomField.worldToScreen, info.clip.x, info.clip.y); 
-		Point2D p2 = GeometryUtilities.screenToWorldPointTransform(geomField.worldToScreen, info.clip.x+ info.clip.width, info.clip.y + info.clip.height); 
-		double w = p2.getX() - p1.getX(); 
-		double h = p2.getY() - p1.getY();
-		Rectangle2D.Double rect = new Rectangle2D.Double(p1.getX(), p1.getY(), w, h);
-		DrawInfo2D range = new DrawInfo2D(info.draw, rect); 
-				
-		double SLOP=5.0;
-		rect.x -= SLOP/2;
-		rect.y -= SLOP/2; 
-		rect.width += SLOP/2; 
-		rect.height += SLOP/2; 
-		
-		
-		
-		CoordinateArraySequence seq = new CoordinateArraySequence(4);
-		seq.setOrdinate(0, 0, range.clip.x - SLOP/2); 
-		seq.setOrdinate(0, 1, range.clip.y - SLOP/2);
-		
-		seq.setOrdinate(1, 0, range.clip.x + range.clip.width + SLOP/2); 
-		seq.setOrdinate(1, 1, range.clip.y - SLOP/2);
-		
-		seq.setOrdinate(2, 0, range.clip.x + range.clip.width + SLOP/2); 
-		seq.setOrdinate(2, 1, range.clip.y + range.clip.height + SLOP/2);
-		
-		seq.setOrdinate(3, 0, range.clip.x - SLOP/2); 
-		seq.setOrdinate(3, 1, range.clip.y + range.clip.height + SLOP/2);
-		
-		LineString l = new LineString(seq, new GeometryFactory()); 
-		//PreparedGeometry pg = PreparedGeometryFactory.prepare(l);
+		GeomInfo2D newinfo = new GeomInfo2D(new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip), geomField.worldToScreen);
+		newinfo.fieldPortrayal = this; 
 		
 		for (int i = 0; i < geometries.numObjs; i++)
 		{
@@ -286,19 +263,11 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			{
 				if (portrayal.hitObject(gm, info)) 
 					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
-			
-				/*if (gm.shape != null) { 
-					if (gm.shape.intersects(info.clip))
-						putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
-				}
-				else { 
-				//if (portrayal.hitObject(gm, tmpinfo))
-				if (gm.preparedGeometry.intersects(l))
-					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
-				} */ 
 			}
 			else
-			{
+			{	
+				
+				
 				if (portrayal instanceof GeomPortrayal) 
 					portrayal.draw(gm, graphics, gInfo);
 				else
@@ -306,9 +275,10 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 					Point pt = geom.getCentroid();
 					pt.apply(geomField.jtsTransform);
 					pt.geometryChanged();
+					newinfo.selected = (objectSelected &&  selectedWrappers.get(gm) != null); 
 					newinfo.draw.x = info.draw.x +  pt.getX();
 					newinfo.draw.y = info.draw.y +  pt.getY();
-					portrayal.draw(geom, graphics, newinfo);
+					portrayal.draw(gm, graphics, newinfo);
 				}
 			}
 		}
@@ -323,4 +293,28 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		else
 			throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
 	}
+	
+	 LocationWrapper selectedWrapper = null;  // some efficiency: if there's only one non-null object selected, it will be here
+	    HashMap<Object, LocationWrapper> selectedWrappers = new HashMap<Object, LocationWrapper>();
+	    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+	        {
+	        if (wrapper == null) return true;
+	        if (wrapper.getFieldPortrayal() != this) return true;
+
+	        Object obj = wrapper.getObject();
+	        boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
+	        if (selected)
+	            {
+	            if (b==false) return false;
+	            selectedWrappers.put(obj, wrapper);
+	            selectedWrapper = wrapper;
+	            }
+	        else
+	            {
+	            selectedWrappers.remove(obj);
+	            selectedWrapper = null;
+	            }
+	        return true;
+	        }
+	
 }
