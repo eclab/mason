@@ -78,41 +78,41 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		if (portrayalForNonNull != null)
 			return portrayalForNonNull;
 		if ((portrayals != null /* && !portrayals.isEmpty() */) && // a little
-																	// efficiency
-																	// -- avoid
-																	// making
-																	// weak keys
-																	// etc.
+				// efficiency
+				// -- avoid
+				// making
+				// weak keys
+				// etc.
 				((tmp = ((Portrayal) (portrayals.get(user)))) != null))
 			return tmp;
 		if ((portrayals != null /* && !portrayals.isEmpty() */) && // a little
-																	// efficiency
-																	// -- avoid
-																	// making
-																	// weak keys
-																	// etc.
+				// efficiency
+				// -- avoid
+				// making
+				// weak keys
+				// etc.
 				((tmp = ((Portrayal) (portrayals.get(geometry)))) != null))
 			return tmp;
 		if (user != null && (classPortrayals != null /*
-													 * &&
-													 * !classPortrayals.isEmpty
-													 * ()
-													 */) && // a little
-															// efficiency --
-															// avoid making weak
-															// keys etc.
-				((tmp = ((Portrayal) (classPortrayals.get(user.getClass())))) != null))
+		 * &&
+		 * !classPortrayals.isEmpty
+		 * ()
+		 */) && // a little
+		 // efficiency --
+		 // avoid making weak
+		 // keys etc.
+		 ((tmp = ((Portrayal) (classPortrayals.get(user.getClass())))) != null))
 			return tmp;
 		if (geometry != null && (classPortrayals != null /*
-														 * &&
-														 * !classPortrayals.isEmpty
-														 * ()
-														 */) && // a little
-																// efficiency --
-																// avoid making
-																// weak keys
-																// etc.
-				((tmp = ((Portrayal) (classPortrayals.get(geometry.getClass())))) != null))
+		 * &&
+		 * !classPortrayals.isEmpty
+		 * ()
+		 */) && // a little
+		 // efficiency --
+		 // avoid making
+		 // weak keys
+		 // etc.
+		 ((tmp = ((Portrayal) (classPortrayals.get(geometry.getClass())))) != null))
 			return tmp;
 		if (portrayalForRemainder != null)
 			return portrayalForRemainder;
@@ -153,8 +153,6 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		if (field == null)
 			return;
 
-		
-		
 		// If we're drawing (and not inspecting), re-fresh the buffer if the
 		// associated field is immutable.
 		if (graphics != null && immutableField && !info.precise)
@@ -165,9 +163,10 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			double y = info.clip.y;
 			boolean dirty = false;
 
-			// make a new buffer? or did the user change the zoom?  Or change the rendering hints?
-			if (buffer == null || buffer.getWidth() != info.clip.width || buffer.getHeight() != info.clip.height || 
-				hints == null || !hints.equals(graphics.getRenderingHints()))
+			// make a new buffer? or did the user change the zoom? Or change the
+			// rendering hints?
+			if (buffer == null || buffer.getWidth() != info.clip.width || buffer.getHeight() != info.clip.height
+					|| hints == null || !hints.equals(graphics.getRenderingHints()))
 			{
 				hints = graphics.getRenderingHints();
 				buffer = new BufferedImage((int) info.clip.width, (int) info.clip.height, BufferedImage.TYPE_INT_ARGB);
@@ -197,12 +196,13 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			// draw buffer on screen
 			graphics.drawImage(buffer, (int) x, (int) y, null);
 		}
-		else if (graphics == null)  // we're just hitting
-			{
+		else if (graphics == null) // we're just hitting
+		{
 			hitOrDraw2(graphics, info, putInHere);
-			}
-		else  // might as well clear the buffer -- likely we're doing precise drawing
-		{ 
+		}
+		else
+			// might as well clear the buffer -- likely we're doing precise drawing
+		{
 			// do regular MASON-style drawing
 			buffer = null;
 			hitOrDraw2(graphics, info, putInHere);
@@ -237,17 +237,16 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 		boolean objectSelected = !selectedWrappers.isEmpty();
 
-        
-		
-		geomField.updateTransform(info); 
+		geomField.updateTransform(info);
 		Bag geometries = geomField.queryField(geomField.clipEnvelope);
 		GeomInfo2D gInfo = new GeomInfo2D(info, geomField.worldToScreen);
 
 		final double xScale = info.draw.width / geomField.getFieldWidth();
 		final double yScale = info.draw.height / geomField.getFieldHeight();
-		GeomInfo2D newinfo = new GeomInfo2D(new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip), geomField.worldToScreen);
-		newinfo.fieldPortrayal = this; 
-		
+		GeomInfo2D newinfo = new GeomInfo2D(new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip),
+				geomField.worldToScreen);
+		newinfo.fieldPortrayal = this;
+
 		for (int i = 0; i < geometries.numObjs; i++)
 		{
 			MasonGeometry gm = (MasonGeometry) geometries.objs[i];
@@ -261,23 +260,21 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 			if (graphics == null)
 			{
-				if (portrayal.hitObject(gm, info)) 
+				if (portrayal.hitObject(gm, info))
 					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
 			}
 			else
-			{	
-				
-				
-				if (portrayal instanceof GeomPortrayal) 
+			{
+				if (portrayal instanceof GeomPortrayal)
 					portrayal.draw(gm, graphics, gInfo);
 				else
 				{ // have a SimplePortrayal2D,
 					Point pt = geom.getCentroid();
 					pt.apply(geomField.jtsTransform);
 					pt.geometryChanged();
-					newinfo.selected = (objectSelected &&  selectedWrappers.get(gm) != null); 
-					newinfo.draw.x = info.draw.x +  pt.getX();
-					newinfo.draw.y = info.draw.y +  pt.getY();
+					newinfo.selected = (objectSelected && selectedWrappers.get(gm) != null);
+					newinfo.draw.x =   pt.getX() ;
+					newinfo.draw.y =  pt.getY() ;					
 					portrayal.draw(gm, graphics, newinfo);
 				}
 			}
@@ -293,28 +290,27 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		else
 			throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
 	}
-	
-	 LocationWrapper selectedWrapper = null;  // some efficiency: if there's only one non-null object selected, it will be here
-	    HashMap<Object, LocationWrapper> selectedWrappers = new HashMap<Object, LocationWrapper>();
-	    public boolean setSelected(LocationWrapper wrapper, boolean selected)
-	        {
-	        if (wrapper == null) return true;
-	        if (wrapper.getFieldPortrayal() != this) return true;
 
-	        Object obj = wrapper.getObject();
-	        boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
-	        if (selected)
-	            {
-	            if (b==false) return false;
-	            selectedWrappers.put(obj, wrapper);
-	            selectedWrapper = wrapper;
-	            }
-	        else
-	            {
-	            selectedWrappers.remove(obj);
-	            selectedWrapper = null;
-	            }
-	        return true;
-	        }
-	
+	HashMap<Object, LocationWrapper> selectedWrappers = new HashMap<Object, LocationWrapper>();
+
+	public boolean setSelected(LocationWrapper wrapper, boolean selected)
+	{
+		if (wrapper == null)
+			return true;
+		if (wrapper.getFieldPortrayal() != this)
+			return true;
+
+		Object obj = wrapper.getObject();
+		boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
+		if (selected)
+		{
+			if (b == false)
+				return false;
+			selectedWrappers.put(obj, wrapper);
+		}
+		else
+			selectedWrappers.remove(obj);
+		return true;
+	}
+
 }
