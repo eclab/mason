@@ -67,7 +67,9 @@ public class CampusWorld extends SimState
         for (int i = 0; i < numAgents; i++)
             {
                 Agent a = new Agent();
-                agents.addGeometry(new MasonGeometry(a.getGeometry(), null));
+                MasonGeometry mg = new MasonGeometry(a.getGeometry()); 
+                mg.isMovable = true; 
+                agents.addGeometry(mg);
                 a.start(this);
                 schedule.scheduleRepeating(a);
                 

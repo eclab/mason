@@ -18,6 +18,7 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
+import sim.portrayal.simple.OvalPortrayal2D;
 
 
 /** MASON GUI wrapper for Campus World demo
@@ -87,7 +88,8 @@ public class CampusWorldWithUI extends GUIState
 
         agentPortrayal.setField(world.agents);
         agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
-
+        //agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        
         display.reset();
         display.setBackdrop(Color.WHITE);
 

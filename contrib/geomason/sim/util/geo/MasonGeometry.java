@@ -47,7 +47,9 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable  
     
 	public PreparedGeometry preparedGeometry; 
 
-    
+	/** Does this MasonGeometry move? i.e., dynamically change location */ 
+    public boolean isMovable = false ; 
+	
     /** Default constructors */ 
     public MasonGeometry() { this(null, null); }
     public MasonGeometry(Geometry g) { this(g, null); }

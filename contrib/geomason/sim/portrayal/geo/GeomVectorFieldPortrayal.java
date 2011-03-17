@@ -1,6 +1,9 @@
 package sim.portrayal.geo;
 
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -237,6 +240,37 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		final double yScale = info.draw.height / geomField.getFieldHeight();
 		DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip);
 
+		Point2D p1 = GeometryUtilities.screenToWorldPointTransform(geomField.worldToScreen, info.clip.x, info.clip.y); 
+		Point2D p2 = GeometryUtilities.screenToWorldPointTransform(geomField.worldToScreen, info.clip.x+ info.clip.width, info.clip.y + info.clip.height); 
+		double w = p2.getX() - p1.getX(); 
+		double h = p2.getY() - p1.getY();
+		Rectangle2D.Double rect = new Rectangle2D.Double(p1.getX(), p1.getY(), w, h);
+		DrawInfo2D range = new DrawInfo2D(info.draw, rect); 
+				
+		double SLOP=5.0;
+		rect.x -= SLOP/2;
+		rect.y -= SLOP/2; 
+		rect.width += SLOP/2; 
+		rect.height += SLOP/2; 
+		
+		
+		
+		CoordinateArraySequence seq = new CoordinateArraySequence(4);
+		seq.setOrdinate(0, 0, range.clip.x - SLOP/2); 
+		seq.setOrdinate(0, 1, range.clip.y - SLOP/2);
+		
+		seq.setOrdinate(1, 0, range.clip.x + range.clip.width + SLOP/2); 
+		seq.setOrdinate(1, 1, range.clip.y - SLOP/2);
+		
+		seq.setOrdinate(2, 0, range.clip.x + range.clip.width + SLOP/2); 
+		seq.setOrdinate(2, 1, range.clip.y + range.clip.height + SLOP/2);
+		
+		seq.setOrdinate(3, 0, range.clip.x - SLOP/2); 
+		seq.setOrdinate(3, 1, range.clip.y + range.clip.height + SLOP/2);
+		
+		LineString l = new LineString(seq, new GeometryFactory()); 
+		//PreparedGeometry pg = PreparedGeometryFactory.prepare(l);
+		
 		for (int i = 0; i < geometries.numObjs; i++)
 		{
 			MasonGeometry gm = (MasonGeometry) geometries.objs[i];
@@ -250,11 +284,18 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 			if (graphics == null)
 			{
-				Geometry g = (Geometry) (geom.clone());
-				g.apply(geomField.jtsTransform);
-				g.geometryChanged();
-				if (portrayal.hitObject(g, info))
+				if (portrayal.hitObject(gm, info)) 
 					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+			
+				/*if (gm.shape != null) { 
+					if (gm.shape.intersects(info.clip))
+						putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+				}
+				else { 
+				//if (portrayal.hitObject(gm, tmpinfo))
+				if (gm.preparedGeometry.intersects(l))
+					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+				} */ 
 			}
 			else
 			{
