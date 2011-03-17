@@ -44,7 +44,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable  
     	return geometry.equals(mg.geometry); 
     }
     
-    
+    /** A cached, optimized version of my Geometry.  Used for fast intersection, union, etc. operations */ 
 	public PreparedGeometry preparedGeometry; 
 
 	/** Does this MasonGeometry move? i.e., dynamically change location */ 

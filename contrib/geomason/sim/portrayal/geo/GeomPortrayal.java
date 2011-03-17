@@ -124,8 +124,8 @@ public class GeomPortrayal extends SimplePortrayal2D
 		return inspector;
 	}
 
-	AffineTransform transform = new AffineTransform();
-	com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform; 
+	//AffineTransform transform = new AffineTransform();
+	//com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform; 
 	
 	/**
 	 * Draw a JTS geometry object. The JTS geometries are converted to Java
@@ -134,11 +134,13 @@ public class GeomPortrayal extends SimplePortrayal2D
 	 */
 	public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 	{
-		if (!(info instanceof GeomInfo2D)) { 
-			System.err.println("GeomPortrayal requires a GeomInfo2D object!");
-			System.exit(-1); 
-		}
-		GeomInfo2D gInfo = (GeomInfo2D) info; 
+		GeomInfo2D gInfo; 
+		if (info instanceof GeomInfo2D) 
+			gInfo = (GeomInfo2D)info; 
+		else 
+			gInfo = new GeomInfo2D(info, new AffineTransform()); 
+		
+		
 		MasonGeometry gm = (MasonGeometry) object;
 		Geometry geometry = gm.getGeometry();
 		if (geometry.isEmpty())
@@ -189,13 +191,6 @@ public class GeomPortrayal extends SimplePortrayal2D
 			}
 			else
 				throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
-		}
-		
-		if (!gm.transform.equals(transform))  { 
-			transform.setTransform(gm.transform);
-			double m[] = new double[6];
-			transform.getMatrix(m);
-			jtsTransform = new com.vividsolutions.jts.geom.util.AffineTransformation(m[0], m[2], m[4], m[1], m[3], m[5]);
 		}
 		
 		// now draw it! 
