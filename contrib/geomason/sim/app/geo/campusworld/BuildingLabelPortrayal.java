@@ -31,11 +31,11 @@ public class BuildingLabelPortrayal extends LabelledPortrayal2D
 			MasonGeometry mg = (MasonGeometry) object;
 			AttributeField key = new AttributeField("NAME");
 			Geometry g = mg.getGeometry();
-			ArrayList<AttributeField> attrs = (ArrayList<AttributeField>) g.getUserData();
+			ArrayList attrs = (ArrayList) g.getUserData();
 			int index = Collections.binarySearch(attrs, key, GeometryUtilities.attrFieldCompartor);
 
 			if (index >= 0)
-				label = (String)attrs.get(index).value;
+				label = (String)((AttributeField)(attrs.get(index))).value;
 		}
 		return label;
 
