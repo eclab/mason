@@ -1974,3 +1974,4 @@ Version 16
 		file to reflect the (small) changes that need to be made if you create a chart
 		programmatically.
 	Added Scatter Plots
+	Modified Flockers to include two model elements which show off Scatter Plots
