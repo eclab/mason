@@ -55,7 +55,6 @@ public class TilePortrayal extends QuadPortrayal
         coordinates[offset+9] = x - 0.5f;
         coordinates[offset+10]= y + 0.5f;
         coordinates[offset+11]= value;
-
         }
 
     }

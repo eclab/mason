@@ -75,10 +75,6 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
                     {
                     public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
                     });
-                        
-            // force an update to get it right.  See the documentation for addSeries(...)
-            updateInspector();
-            repaint();
             }
         }
                 
@@ -203,9 +199,7 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
 
         // at this point we're committed to do an update
         previousValues = vals;
-                
-        // I'm worried this will update every time, perhaps very expensive.  It's not clear from the JFreeChart docs.
-        // if this is the case, then we need to delay the update by overloading the update method
-        ((HistogramGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), vals, true); 
+
+        ((HistogramGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), vals); 
         }
     }

@@ -6,6 +6,8 @@
 
 package sim.portrayal3d.grid.quad;
 import sim.field.grid.*;
+import sim.portrayal3d.grid.*;
+import sim.util.*;
 
 /**
  * Used by ValueGrid2DPortrayal3D to send needed value information to
@@ -18,35 +20,31 @@ import sim.field.grid.*;
 public class ValueGridCellInfo {
     /* This could be Grid2D or Grid3D */
     final Object grid;
-    /* this is equivalent to grid instanceof Grid3D, but cached */
-    //    final public boolean is3D;
+	final ValueGrid2DPortrayal3D fieldPortrayal;
+
     public int x = 0;
     public int y = 0;
     public int z = 0;
     
-    public ValueGridCellInfo(Grid2D g)
+    public ValueGridCellInfo(ValueGrid2DPortrayal3D fieldPortrayal, Grid2D g)
         {
         grid = g;
-        /*
-          if(g instanceof IntGrid2D)
-          grid = new IntGrid2DW((IntGrid2D)g);
-          else
-          grid = new DoubleGrid2DW((DoubleGrid2D)g);
-          is3D = false;
-        */
+		this.fieldPortrayal = fieldPortrayal;
         } 
         
-    public ValueGridCellInfo(Grid3D g)
+    public ValueGridCellInfo(ValueGrid2DPortrayal3D fieldPortrayal, Grid3D g)
         {
         grid = g;
-        /*
-          if(g instanceof IntGrid3D)
-          grid = new IntGrid3DW((IntGrid3D)g);
-          else
-          grid = new DoubleGrid3DW((DoubleGrid3D)g);
-          is3D = true;
-        */
+		this.fieldPortrayal = fieldPortrayal;
         } 
+
+    public double doubleValue(Object obj)
+        {
+        if (obj==null) return 0.0;
+        if (obj instanceof Number) return ((Number)(obj)).doubleValue();
+        if (obj instanceof Valuable) return ((Valuable)(obj)).doubleValue();
+        return 1.0;
+        }
 
     public double value()
         {
@@ -58,39 +56,10 @@ public class ValueGridCellInfo {
             { return ((DoubleGrid3D)grid).field[x][y][z]; }
         else if (grid instanceof IntGrid3D)
             { return ((IntGrid3D)grid).field[x][y][z]; }
+        else if (grid instanceof ObjectGrid2D)
+            { return fieldPortrayal.doubleValue(((ObjectGrid2D)grid).field[x][y]); }
+        else if (grid instanceof ObjectGrid3D)
+            { return fieldPortrayal.doubleValue(((ObjectGrid3D)grid).field[x][y][z]); }
         else return 0;  // an error
         }
-        
-    /** 
-     * Interface all grids should implement.
-     * Until that happens, each grid get a 
-     * wrapper that implements it
-     */
-    /*public interface ValueGrid {public double value(int x, int y, int z);}
-    
-      public class IntGrid2DW implements ValueGrid
-      {
-      IntGrid2D ig2;
-      public IntGrid2DW(IntGrid2D g){ ig2 = g;}
-      public double value(int x, int y, int z){return ig2.field[x][y];}
-      }
-      public class DoubleGrid2DW implements ValueGrid
-      {
-      DoubleGrid2D dg2;
-      public DoubleGrid2DW(DoubleGrid2D g){ dg2 = g;}
-      public double value(int x, int y, int z){return dg2.field[x][y];}
-      }
-      public class IntGrid3DW implements ValueGrid
-      {
-      IntGrid3D ig3;
-      public IntGrid3DW(IntGrid3D g){ ig3 = g;}
-      public double value(int x, int y, int z){return ig3.field[x][y][z];}
-      }
-      public class DoubleGrid3DW implements ValueGrid
-      {
-      DoubleGrid3D dg3;
-      public DoubleGrid3DW(DoubleGrid3D g){ dg3 = g;}
-      public double value(int x, int y, int z){return dg3.field[x][y][z];}
-      }
-    */
-    }
+	}

@@ -52,6 +52,13 @@ Intended for properties that are (typically) arrays or other lists of
 doubles.
 
 
+ScatterPlotChartingPropertyInspector.java
+
+A ChartingPropertyInspector which creates scatter plots.
+Intended for properties that are (typically) arrays of Double2D or
+Int2D.
+
+
 StableLocation.java
 
 A superclass of wrappers for 2D integer or 2D double locations.  Needed 

@@ -45,7 +45,7 @@ import java.lang.reflect.*;
 public class SimpleController implements Controller
     {
     /** Our simulation */
-    public GUIState simulation;
+	GUIState simulation;
     
     static 
         {

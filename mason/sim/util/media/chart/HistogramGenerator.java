@@ -19,6 +19,7 @@ import org.jfree.chart.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.general.*;
 import org.jfree.data.statistics.*;
+import org.jfree.chart.renderer.xy.*;
 
 // from iText (www.lowagie.com/iText/)
 import com.lowagie.text.*;
@@ -42,110 +43,30 @@ import com.lowagie.text.pdf.*;
 
 public class HistogramGenerator extends ChartGenerator
     {
-    HistogramDataset dataset;
-    ArrayList stoppables = new ArrayList();
     HistogramType histogramType = HistogramType.FREQUENCY;
-                
-    public class HistogramSeries 
-        {
-        double[] values; 
-        int bins;
-        String name;
-        public HistogramSeries(String name, double[] values, int bins) 
-            { this.name = name; this.values = values; this.bins = bins; }
-        public void setValues(double[] v) { values = v; }
-        public double[] getValues() { return values; }
-        public void setBins(int b) { bins = b; }
-        public int getBins() { return bins; }
-        public String getName() { return name; }
-        public void setName(String val) { name = val; }
-        }
-                
-    ArrayList histogramSeries = new ArrayList();
-        
-    public AbstractSeriesDataset getSeriesDataset() { return dataset; }
 
     public void removeSeries(int index)
         {
-        // stop the inspector....
-        Object tmpObj = stoppables.remove(index);
-        if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
-            ((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
-
-        // remove from the dataset.  This is very hard to do in Histograms, stupid JFreeChart design.  Basicaly
-        // we have to make a new dataset
-        histogramSeries.remove(index);
-        XYPlot xyplot = (XYPlot)(chart.getPlot());
-        dataset = new HistogramDataset();
-        for(int i=0; i < histogramSeries.size(); i++)
-            {
-            HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
-            dataset.addSeries(series.getName(),series.getValues(), series.getBins());
-            }
-        xyplot.setDataset(dataset);
-        dataset.setType(histogramType);  // It looks like the histograms reset
-                
-        // remove the attribute
-        seriesAttributes.remove(index);
-                
-        // shift all the seriesAttributes' indices down so they know where they are             
-        Component[] c = seriesAttributes.getComponents();
-        for(int i = 0; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
-            {
-            SeriesAttributes csa = (SeriesAttributes)(c[i]);
-            if (i >= index) 
-                csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-
-            csa.rebuildGraphicsDefinitions();  // they've ALL just been deleted and changed, must update
-            }
-        revalidate();
+		super.removeSeries(index);
+		update();
         }
                 
 
     public void moveSeries(int index, boolean up)
         {
-        if ((index == 0 && up) || (index == histogramSeries.size()-1 && !up))
-            //first one can't move up, last one can't move down
-            return;
-        int delta = up? -1:1;
-        // move the series
-        histogramSeries.add(index + delta, histogramSeries.remove(index));
-        XYPlot xyplot = (XYPlot)(chart.getPlot());
-        dataset = new HistogramDataset();
-        for(int i=0; i < histogramSeries.size(); i++)
-            {
-            HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
-            dataset.addSeries(series.getName(),series.getValues(), series.getBins());
-            }
-        xyplot.setDataset(dataset);
-        dataset.setType(histogramType);  // It looks like the histograms reset
-                    
-        // adjust the seriesAttributes' indices         
-        Component[] c = seriesAttributes.getComponents();
-        SeriesAttributes csa;
-        (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
-        csa.rebuildGraphicsDefinitions();
-        (csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
-        csa.rebuildGraphicsDefinitions();
-                
-        seriesAttributes.remove(index+delta);
-        //seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
-        seriesAttributes.add(csa, index);
-
-        revalidate();
-            
-        // adjust the stoppables, too
-        stoppables.add(index+delta, stoppables.remove(index));
+		super.moveSeries(index, up);
+		update();
         }
                 
 
     protected void buildChart()
         {
-        dataset = new HistogramDataset();
+        HistogramDataset dataset = new HistogramDataset();
         dataset.setType(HistogramType.FREQUENCY);  // when buildChart() is called, histogramType hasn't been set yet.
+
         chart = ChartFactory.createHistogram("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
             PlotOrientation.VERTICAL, false, true, false);
-        chart.setAntiAlias(false);
+        chart.setAntiAlias(true);
         chartPanel = new ChartPanel(chart, true);
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));
         chartPanel.setMinimumDrawHeight(10);
@@ -153,39 +74,31 @@ public class HistogramGenerator extends ChartGenerator
         chartPanel.setMinimumDrawWidth(20);
         chartPanel.setMaximumDrawWidth(2000);
         chartHolder.getViewport().setView(chartPanel);
-        }
+		((XYBarRenderer)(chart.getXYPlot().getRenderer())).setShadowVisible(false);
+		((XYBarRenderer)(chart.getXYPlot().getRenderer())).setBarPainter(new StandardXYBarPainter());
 
+		// this must come last because the chart must exist for us to set its dataset
+		setSeriesDataset(dataset);
+		}
+ 
+     public void update()
+        {
+		// We have to rebuild the dataset from scratch (deleting and replacing it) because JFreeChart's
+		// histogram facility doesn't have a way to remove or move elements.  Stupid stupid stupid.
 
-    //I need this so I can override this later when going for unit-wide bins
-    //(choose the values for min, max and # bins).
-    protected void addSeriesToDataSet(HistogramSeries series)
-        {
-        dataset.addSeries(series.getName(),series.getValues(), series.getBins());
-        }
-    
-    public void update()
-        {
-        // We have to rebuild the whole stupid dataset.  Dumb design, JFreeCharters!
+		SeriesAttributes[] sa = getSeriesAttributes();
         XYPlot xyplot = (XYPlot)(chart.getPlot());
-        dataset = new HistogramDataset();
-        for(int i=0; i < histogramSeries.size(); i++)
+        HistogramDataset dataset = new HistogramDataset();
+		dataset.setType(histogramType);
+		
+        for(int i=0; i < sa.length; i++)
             {
-            HistogramSeries series = (HistogramSeries)(histogramSeries.get(i));
-            addSeriesToDataSet(series);
+            HistogramSeriesAttributes attributes = (HistogramSeriesAttributes)(sa[i]);
+            dataset.addSeries(attributes.getName(), attributes.getValues(), attributes.getNumBins());
             }
-        xyplot.setDataset(dataset);
-        dataset.setType(histogramType);  // It looks like the histograms reset
-                
-        // tell all the seriesAttributes they need to rebuild, just for a single series.  Stupid.         O(n) when it should be O(1).
-        Component[] c = seriesAttributes.getComponents();
-        for(int i = 0; i < c.length; i++)
-            {
-            SeriesAttributes csa = (SeriesAttributes)(c[i]);
-            csa.rebuildGraphicsDefinitions();
-            }
-        revalidate();
+			
+		setSeriesDataset(dataset);
         }
-
 
     public HistogramGenerator()
         {
@@ -202,75 +115,46 @@ public class HistogramGenerator extends ChartGenerator
             public void actionPerformed(ActionEvent event)
                 {
                 histogramType = styles[style.getSelectedIndex()];
-                dataset.setType(histogramType);
+                HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
+				dataset.setType(histogramType);
                 }
             });
         list.add(style);
         addGlobalAttribute(pan1);
         }
 
-    /** Changes the name in the histogram but not in the seriesAttributes.  Typically called FROM the seriesAttributes' setName() method. */
-    void updateName(int index, String name, boolean waitUntilUpdate)
-        {
-        ((HistogramSeries)(histogramSeries.get(index))).setName(name);
-        if (!waitUntilUpdate) update(false);
-        }
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
-        event if/when the series is deleted from the chart by the user.  If values is null, then the series is added in the seriesAttributes
-        but not in the chart: the expectation is that you will then do an update() which will load the series properly.  This is a hack
-        to get around the fact that you HAVE to provide values to a series even if you don't know what they are yet because JFreeChart dies
-        on a series of length 0.
-        Returns the series attributes. */
-    public HistogramSeriesAttributes addSeries(double[] values, int bins, String name, final org.jfree.data.general.SeriesChangeListener stopper)
+        event if/when the series is deleted from the chart by the user. Returns the series attributes. */
+    public HistogramSeriesAttributes addSeries(double[] vals, int bins, String name, final org.jfree.data.general.SeriesChangeListener stopper)
         {
+		if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
+		HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
         int i = dataset.getSeriesCount();
-        if (values != null)  dataset.addSeries(name, values, bins);
         dataset.setType(histogramType);  // It looks like the histograms reset
-        histogramSeries.add(new HistogramSeries(name,values,bins));  // histogram dataset gives us no way to hold onto these, so we must do so ourselves
-        HistogramSeriesAttributes csa = new HistogramSeriesAttributes(this, name, i, false);
+		dataset.addSeries(name, vals, bins);
+		
+		// need to have added the dataset BEFORE calling this since it'll try to change the name of the series
+        HistogramSeriesAttributes csa = new HistogramSeriesAttributes(this, name, i, vals, bins, stopper);
         seriesAttributes.add(csa);
-        stoppables.add( stopper );
-        revalidate();
+		
+		revalidate();  // display the new series panel
+		update();
+		
+		// won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
+		SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
+		
         return csa;
         }
 
-    public void updateSeries(int index, double[] vals, boolean waitUntilUpdate)
-        {
-        if (histogramSeries.size() > index)
-            updateSeries(index, vals, ((HistogramSeries)(histogramSeries.get(index))).getBins(),waitUntilUpdate);
-        }
-                
-    public void updateSeries(int index, int bins, boolean waitUntilUpdate)
-        {
-        if (histogramSeries.size() > index)
-            updateSeries(index, ((HistogramSeries)(histogramSeries.get(index))).getValues(), bins, waitUntilUpdate);
-        }
-                    
-    public void updateSeries(int index, double[] vals, int bins, boolean waitUntilUpdate)
-        {
-        if (histogramSeries.size() > index)
-            {
-            HistogramSeries series = (HistogramSeries)(histogramSeries.get(index));
-            series.setValues(vals);
-            series.setBins(bins);
-            if (!waitUntilUpdate) update(true);
-            }
-        }
 
-    public int getNumBins(int index)
+    public void updateSeries(int index, double[] vals)
         {
-        return ((HistogramSeries)(histogramSeries.get(index))).getBins();
-        }
+		if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
+			return;
 
-    public String getName(int index)
-        {
-        return ((HistogramSeries)(histogramSeries.get(index))).getName();
+		if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
+		HistogramSeriesAttributes hsa = (HistogramSeriesAttributes)(getSeriesAttribute(index));
+		hsa.setValues(vals);
         }
-
-    public double[] getValues(int index)
-        {
-        return ((HistogramSeries)(histogramSeries.get(index))).getValues();
-        }
-
     }

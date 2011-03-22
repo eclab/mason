@@ -95,13 +95,14 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
     /** The time series in question.  */
     public XYSeries series;
-    public void setSeriesName(String val) { series.setKey(val); }
+    public void setName(String val) { series.setKey(val); }
     public String getSeriesName() { return "" + series.getKey(); }
                 
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
-    public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index)
+    public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, org.jfree.data.general.SeriesChangeListener stoppable)
         { 
-        super(generator, "" + series.getKey(), index); this.series = series;
+        super(generator, "" + series.getKey(), index, stoppable);
+		this.series = series;
         }
 
     public void rebuildGraphicsDefinitions()

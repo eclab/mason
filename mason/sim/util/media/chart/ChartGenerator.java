@@ -27,6 +27,7 @@ import org.jfree.chart.event.*;
 import org.jfree.chart.plot.*;
 import org.jfree.data.general.*;
 import org.jfree.chart.title.*;
+import org.jfree.data.xy.*;
 
 // from iText (www.lowagie.com/iText/)
 import com.lowagie.text.*;
@@ -64,17 +65,14 @@ import com.lowagie.text.pdf.*;
 
 public abstract class ChartGenerator extends JPanel
     {
+    public XYDataset getSeriesDataset() { return ((XYPlot)(chart.getPlot())).getDataset(); }
+    public void setSeriesDataset(XYDataset obj) { ((XYPlot)(chart.getPlot())).setDataset(obj); }
+
     /** A holder for global attributes components */
     protected Box globalAttributes = Box.createVerticalBox();
     /** A holder for series attributes components */
     protected Box seriesAttributes = Box.createVerticalBox();
         
-    public SeriesAttributes getSeriesAttributes(int seriesIndex)
-        {
-        Component[] c = seriesAttributes.getComponents();
-        return (SeriesAttributes)c[seriesIndex];
-        }
-    
     /** The chart */
     protected JFreeChart chart;
     /** The panel which holds and draws the chart */
@@ -104,11 +102,7 @@ public abstract class ChartGenerator extends JPanel
     public boolean isXAxisLogScaled(){return xLog.isSelected();}
     public void setYAxisLogScaled(boolean isLogScaled){yLog.setSelected(isLogScaled);}
     public boolean isYAxisLogScaled(){return yLog.isSelected();}
-    
-    /** Override this to return the JFreeChart data set used by your Chart.  For example, time series charts
-        might return the XYSeriesCollection. */ 
-    public abstract AbstractSeriesDataset getSeriesDataset();
-	
+    	
 	BufferedImage getBufferedImage()
 		{
 		// make a buffer
@@ -128,30 +122,120 @@ public abstract class ChartGenerator extends JPanel
 	
 	MovieMaker movieMaker = null;
 	
-	/** Call this method to update the chart to reflect new data. */
-	public void update(boolean newData)
+	public static final long INITIAL_KEY = -1;
+	public static final long FORCE_KEY = -2;
+	long oldKey = INITIAL_KEY;
+	
+	/** Key must be 0 or higher.  Will update only if the key passed in is different
+		from the previously passed in key or if the key is FORCE_KEY.  
+		If newData is true, then the chart will also be written out to a movie if appropriate. */
+	public void update(long key, boolean newData)
 		{
-		update();
-		
-		// now possibly write to the movie maker
-		if (newData && movieMaker != null)
+		if (key == oldKey && key != FORCE_KEY)  // we already did it
+			return;
+		else
 			{
-			// add buffer to the movie maker
-			movieMaker.add(getBufferedImage());
+			oldKey = key;
+			update();
+			
+			// now possibly write to the movie maker
+			if (newData && movieMaker != null)
+				{
+				// add buffer to the movie maker
+				movieMaker.add(getBufferedImage());
+				}
+			if (newData)
+				chart.getPlot().datasetChanged(new DatasetChangeEvent(chart.getPlot(), null));
 			}
 		}
 		
     /** Override this to update the chart to reflect new data. */
-    protected abstract void update();
+    protected void update() { }
         
-    /** Override this to remove a series from the chart. */
-    public abstract void removeSeries(int index);
+	protected void rebuildAttributeIndices()
+		{
+        SeriesAttributes[] c = getSeriesAttributes();
+        for(int i = 0; i < c.length; i++)
+            {
+			SeriesAttributes csa = c[i];
+			csa.setSeriesIndex(i);
+			csa.rebuildGraphicsDefinitions();
+            }
+        revalidate();
+		}
+	
+	protected SeriesAttributes getSeriesAttribute(int i)
+		{
+		return (SeriesAttributes)(seriesAttributes.getComponent(i));
+		}
+
+	protected SeriesAttributes[] getSeriesAttributes()
+		{
+		Component[] c = seriesAttributes.getComponents();
+		SeriesAttributes[] sa = new SeriesAttributes[c.length];
+		System.arraycopy(c, 0, sa, 0, c.length);
+		return sa;
+		}
+		
+	protected void setSeriesAttributes(SeriesAttributes[] c)
+		{
+		seriesAttributes.removeAll();
+        for(int i = 0; i < c.length; i++)
+			seriesAttributes.add(c[i]);
+		}
+
+    /** Override this to remove a series from the chart.  Be sure to call super(...) first. */
+    public void removeSeries(int index)
+		{
+        // stop the inspector....
+        SeriesAttributes[] c = getSeriesAttributes();
+        SeriesChangeListener tmpObj = c[index].getStoppable();
+		if (tmpObj != null)
+            {
+			tmpObj.seriesChanged(new SeriesChangeEvent(this));
+			}
+        
+		// for good measure, set the index of the component to something crazy just in case a stoppable tries to continue pulsing it
+        Component comp = seriesAttributes.getComponent(index);
+		((SeriesAttributes)comp).setSeriesIndex(-1);
+
+        // remove the attribute and rebuild indices
+		seriesAttributes.remove(index);
+		rebuildAttributeIndices();
+		revalidate();
+		}
+		
     
-    /** Override this to move a series relative to other series. */
-    public abstract void moveSeries(int index, boolean up); 
+    /** Override this to move a series relative to other series.  Be sure to call super(...) first. */
+    public void moveSeries(int index, boolean up)
+		{
+        if ((index > 0 && up) || (index < getSeriesDataset().getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
+			{
+			SeriesAttributes[] c = getSeriesAttributes();
+			
+			if (up)
+				{
+				SeriesAttributes s1 = c[index];
+				SeriesAttributes s2 = c[index-1];
+				c[index] = s2;
+				c[index-1] = s1;
+				}
+			else
+				{
+				SeriesAttributes s1 = c[index];
+				SeriesAttributes s2 = c[index+1];
+				c[index] = s2;
+				c[index+1] = s1;
+				}
+			setSeriesAttributes(c);
+			rebuildAttributeIndices();
+			revalidate();
+			}
+		else { } // ignore -- stupid user
+		}
                 
     /** Override this to construct the appropriate kind of chart.  This is the first thing called from the constructor; so certain
-        of your instance variables may not have been set yet and you may need to set them yourself.  */
+        of your instance variables may not have been set yet and you may need to set them yourself.  You'll need to set the dataset. */
     protected abstract void buildChart();
     
 
@@ -189,7 +273,7 @@ public abstract class ChartGenerator extends JPanel
 			movieButton.setText("Stop Movie");
 			
 			// emit an image
-			update(true);
+			update(FORCE_KEY, true);
 			}
         }
 
@@ -326,6 +410,12 @@ public abstract class ChartGenerator extends JPanel
         {
         // create the chart
         buildChart();
+		chart.getPlot().setBackgroundPaint(Color.WHITE);
+		((XYPlot)(chart.getPlot())).setDomainGridlinesVisible(false);
+		((XYPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
+		((XYPlot)(chart.getPlot())).setDomainGridlinePaint(new Color(200,200,200));
+		((XYPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
+
 
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
         split.setBorder(new EmptyBorder(0,0,0,0));
@@ -423,9 +513,48 @@ public abstract class ChartGenerator extends JPanel
             });
         list.add(new JLabel("Log Y axis"), yLog);
 
+        final JCheckBox xgridlines = new JCheckBox();
+        xgridlines.setSelected(false);
+        ItemListener il = new ItemListener()
+            {
+            public void itemStateChanged(ItemEvent e)
+                {
+                if (e.getStateChange() == ItemEvent.SELECTED)
+                    {
+                    chart.getXYPlot().setDomainGridlinesVisible(true);
+                    }
+                else
+                    {
+                    chart.getXYPlot().setDomainGridlinesVisible(false);
+                    }
+                }
+            };
+        xgridlines.addItemListener(il);
+        list.add(new JLabel("X Grid Lines"), xgridlines);
+
+
+        final JCheckBox ygridlines = new JCheckBox();
+        ygridlines.setSelected(false);
+		il = new ItemListener()
+            {
+            public void itemStateChanged(ItemEvent e)
+                {
+                if (e.getStateChange() == ItemEvent.SELECTED)
+                    {
+                    chart.getXYPlot().setRangeGridlinesVisible(true);
+                    }
+                else
+                    {
+                    chart.getXYPlot().setRangeGridlinesVisible(false);
+                    }
+                }
+            };
+        ygridlines.addItemListener(il);
+        list.add(new JLabel("Y Grid Lines"), ygridlines);
+
         final JCheckBox legendCheck = new JCheckBox();
         legendCheck.setSelected(false);
-        ItemListener il = new ItemListener()
+		il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
                 {
@@ -618,6 +747,24 @@ public abstract class ChartGenerator extends JPanel
         xyplot.getDomainAxis().setRange(lower, upper);
         }
 
+
+    Thread timer = null;
+    /** Updates the inspector asynchronously sometime before the given milliseconds have transpired. */
+    public void updateBefore(final long key, final long milliseconds)
+        {
+        if (timer == null)
+            {
+            timer= Utilities.doLater(milliseconds, new Runnable()
+                {
+                public void run()
+                    {
+					update(key , true);  // keep up-to-date
+                    // this is in the Swing thread, so it's okay
+                    timer = null;
+                    }
+                });
+            }
+        }
     }
 
         

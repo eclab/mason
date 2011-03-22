@@ -10,6 +10,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 import java.util.*;
 import sim.util.gui.*;
 
@@ -30,15 +31,13 @@ import org.jfree.data.general.*;
 
 public class HistogramSeriesAttributes extends SeriesAttributes
     {
+	double[] values; 
+	public double[] getValues() { return values; }
+	public void setValues(double[] vals) { values = vals; }
+		
     /** Border thickness */
     float thickness;
     NumberTextField thicknessField;
-    /** Whether or not to include the margin as a GUI option.  */
-    boolean includeMargin;
-    /** The margin: the percentage of available space that a histogram bar will actually take up. 
-        Turned off by default. */
-    float margin;
-    NumberTextField marginField;
     /** The color of the histogram bar. */
     Color fillColor;
     ColorWell fillColorWell;
@@ -49,7 +48,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         Sun doesn't have a proper color selector.  */
     double fillOpacity;
     NumberTextField fillOpacityField;
-    
+	
     /** The opacity of the histogram bar border.  Sadly this must be separate than the color because
         Sun doesn't have a proper color selector.  */
     double lineOpacity;
@@ -65,13 +64,12 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     public void setThickness(float value) { thicknessField.setValue(thicknessField.newValue(value));  }
     public float getThickness() { return (float)(thicknessField.getValue()); }
-
-    public void setMargin(float value) { marginField.setValue(marginField.newValue(value));  }
-    public float getMargin() { return (float)(marginField.getValue()); }
     
-    public void setNumBins(int value) { numBinsField.setValue(numBinsField.newValue(value));  }
-    public int getNumBins() { return (int)(numBinsField.getValue()); }
-
+	// we need to store numBins here so update() gets it properly, see later
+	int numBins;
+    public void setNumBins(int value) { numBinsField.setValue(numBinsField.newValue(value));  numBins = (int)(numBinsField.getValue()); }
+    public int getNumBins() { return numBins; }
+	
     public void setFillColor(Color value) { fillColorWell.changeColor(fillColor = value); }
     public Color getFillColor() { return fillColor; }
 
@@ -80,20 +78,25 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
-    public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, boolean includeMargin)
+    public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, int bins, org.jfree.data.general.SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
-        super(generator, name, index);
-        setName(name);//I need this for the remove series confirmation dialog.
-        this.includeMargin = includeMargin;
+        super(generator, name, index, stoppable);
+		setValues(values);
+        //setName(name);
+		super.setName(name);  // just set the name, don't update
+        // setNumBins(bins);
+		numBins = bins;
+		numBinsField.setValue(bins);  // otherwise it'd call newValue(), which would in turn try to update the series, which hasn't been made yet
+		numBinsField.initialValue = bins;  // make this the default
         }
 
-    public void setSeriesName(String val) 
+	/** It's very expensive to call this function (O(n)) because JFreeChart has no way of changing the
+		name of a histogram dataset series, and so we must rebuild all of it from scratch. */
+    public void setName(String val) 
         {
-        setName(val);
-        ((HistogramGenerator)generator).updateName(seriesIndex,val,false);
+        super.setName(val); // call this first to set it
+		((HistogramGenerator)generator).update();
         }
-                        
-    public String getSeriesName() { return getName(); }
 
     public void rebuildGraphicsDefinitions()
         {
@@ -110,28 +113,29 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
         renderer.setSeriesPaint(getSeriesIndex(),reviseColor(fillColor, fillOpacity));
         renderer.setSeriesOutlinePaint(getSeriesIndex(),reviseColor(strokeColor, lineOpacity));
-        if (includeMargin) renderer.setMargin(margin);
         repaint();
         }
         
+	static final int DEFAULT_BINS = 8;  // to have enough space  -- it'll get changed soon
     public void buildAttributes()
         {
         // The following three variables aren't defined until AFTER construction if
         // you just define them above.  So we define them below here instead.
         thickness = 2.0f;
-        margin = 0.5f;
         fillOpacity = 1.0;
         lineOpacity = 1.0;
 
-        numBinsField = new NumberTextField("", ((HistogramGenerator)generator).getNumBins(seriesIndex),true)
+        numBinsField = new NumberTextField("", DEFAULT_BINS ,true)
             {
             public double newValue(double newValue) 
                 {
                 newValue = (int)newValue;
                 if (newValue < 1) 
                     newValue = currentValue;
-                ((HistogramGenerator)generator).updateSeries(seriesIndex, (int)newValue, false);
-                rebuildGraphicsDefinitions();  // forces a repaint
+				
+				// we now set the number of bins directly so update() gets it when it calls getNumBins()
+				numBins = (int)newValue;
+				((HistogramGenerator)generator).update();
                 return newValue;
                 }
             };
@@ -214,21 +218,5 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 }
             };
         addLabelled("Width",thicknessField);
-                        
-        if (includeMargin)
-            {
-            marginField = new NumberTextField(0.5,1.0,0.125)
-                {
-                public double newValue(double newValue) 
-                    {
-                    if (newValue < 0.0 || newValue > 1.0) 
-                        newValue = currentValue;
-                    margin = (float)newValue;
-                    rebuildGraphicsDefinitions();
-                    return newValue;
-                    }
-                };
-            addLabelled("Space",marginField);
-            }
         }
     }

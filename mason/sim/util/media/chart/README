@@ -39,6 +39,16 @@ HistogramSeriesAttributes.java
 A SeriesAttributes for histogram series.
 
 
+ScatterPlotGenerator.java
+
+A ChartGenerator which creates scatter plots.
+
+
+ScatterPlotSeriesAttributes.java
+
+A SeriesAttributes for scatter plot series.
+
+
 DataCuller.java
 
 An interface for special objects which reduce the total number of 

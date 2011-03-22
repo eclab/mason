@@ -102,5 +102,7 @@ Recording.png		An icon indicating recording -- UNUSED
 StepOff.png		An icon indicating that the simulation is NOT stepping
 StepOn.png		An icon indicating that the simulation IS stepping
 Stopped.png		An icon indicating that the simulation IS stopped
+Reload.png		A "reload" or "refresh" icon
+ReloadPressed.png	A "pressed" versionof the reload or refresh icon
 
 

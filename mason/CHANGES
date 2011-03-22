@@ -1958,3 +1958,19 @@ Version 16
 	Bug fix to ParallelSequence constructor
 	Added disclosure triangles to ChartGenerator to reduce the clutter
 	Added movie generation to ChartGenerator
+	Fixed bug in handleMouseEvent calls in AdjustablePortrayal2D and MovablePortrayal2D:
+		wasn't locking on model (creating race conditions).
+	ValueGrid2DPortrayal3D should now be able to handle ObjectGrid2D as well (using
+		the Valuable interface).
+	New look for Display2D and Display3D: step field compressed into a single icon, which
+		makes the window work better with small sizes.
+	Updates to ChartGenerator to allow compatibility with newer versions of JFreeChart
+		(which will be distributed with MASON from here on out).  Also added the ability
+		to turn on/off grid lines in ChartGenerator.
+	Fixed the 'ONLY' mechanism in simulation.classes
+	Added methods to Console to enable turning on or off the New Simulation... menu.
+	Major modifications to the Charting facility to clean it up and make it easier to add
+		new charts.  This will modify the API a bit -- we've also modified the howto.html
+		file to reflect the (small) changes that need to be made if you create a chart
+		programmatically.
+	Added Scatter Plots

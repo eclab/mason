@@ -98,66 +98,70 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
     double adjustingInitialScale = 1.0;
     Point2D.Double adjustingInitialPosition = null;
         
-    public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
         {
-        Point2D.Double myPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
-        Object object = wrapper.getObject();
-        if (object == null ||                                                   // something is very wrong!
-            (adjusting && adjustingObject != object) || // we're not portraying the relevant object
-            !((object instanceof Scalable2D || object instanceof Orientable2D))) // it's neither scalable nor orientable
-            return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let any lower portrayals have it
-                
-        double orientation = 0.0;
-        if (object instanceof Oriented2D)
-            { orientation = ((Oriented2D)object).orientation2D(); }
-        double knobX = myPosition.getX() + CIRCLE_RADIUS * Math.cos(orientation);
-        double knobY = myPosition.getY() + CIRCLE_RADIUS * Math.sin(orientation);
-                
-        int id = event.getID();
-        if (id == MouseEvent.MOUSE_PRESSED)
-            {
-            if (adjusting && object == adjustingObject)  // looks spurious.  Better cancel it out just in case
-                {
-                adjusting = false;
-                adjustingObject = null;
-                }
-                        
-            // nah, let's allow the user to grab anywhere on the ring.
-            double dx = event.getX() - myPosition.getX();
-            double dy = event.getY() - myPosition.getY();
-            double distance = Math.sqrt(dx*dx + dy*dy);
-            if (object instanceof Scalable2D)
-                adjustingInitialScale = ((Scalable2D)object).getScale2D();
-            if (Math.abs(distance - CIRCLE_RADIUS) <= SLOP)
-                {
-                adjusting = true;  // time to start adjusting!
-                adjustingObject = object;
-                adjustingInitialPosition = myPosition;
-                // don't let lower-level portrayals have it -- we handled the event
-                return true;
-                }
-            }
-        else if (id == MouseEvent.MOUSE_DRAGGED && adjusting)
-            {
-            double dx = event.getX() - adjustingInitialPosition.getX();
-            double dy = event.getY() - adjustingInitialPosition.getY();
-            double newOrientation = Math.atan2(dy, dx);
-            double newScaleMultiplier = Math.sqrt(dx*dx + dy*dy) / CIRCLE_RADIUS;
-            if (object instanceof Orientable2D)
-                ((Orientable2D)object).setOrientation2D(newOrientation);
-            if (object instanceof Scalable2D)
-                ((Scalable2D)object).setScale2D(adjustingInitialScale * newScaleMultiplier);
-            // don't let lower-level portrayals have it -- we handled the event
-            return true;
-            }
-        else if (id == MouseEvent.MOUSE_RELEASED && adjusting)
-            {
-            adjusting = false;
-            adjustingObject = null;
-            adjustingInitialScale = 1.0;
-            adjustingInitialPosition = null;
-            }
-        return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let any lower portrayals have it, else false
+		synchronized(guistate.state.schedule)
+			{
+			Point2D.Double myPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
+			Object object = wrapper.getObject();
+			if (!	// if any of this stuff is true, just drop out
+				(object == null ||                                                   // something is very wrong!
+					(adjusting && adjustingObject != object) || // we're not portraying the relevant object
+					!((object instanceof Scalable2D || object instanceof Orientable2D)))) // it's neither scalable nor orientable
+				{
+				double orientation = 0.0;
+				if (object instanceof Oriented2D)
+					{ orientation = ((Oriented2D)object).orientation2D(); }
+				double knobX = myPosition.getX() + CIRCLE_RADIUS * Math.cos(orientation);
+				double knobY = myPosition.getY() + CIRCLE_RADIUS * Math.sin(orientation);
+						
+				int id = event.getID();
+				if (id == MouseEvent.MOUSE_PRESSED)
+					{
+					if (adjusting && object == adjustingObject)  // looks spurious.  Better cancel it out just in case
+						{
+						adjusting = false;
+						adjustingObject = null;
+						}
+								
+					// nah, let's allow the user to grab anywhere on the ring.
+					double dx = event.getX() - myPosition.getX();
+					double dy = event.getY() - myPosition.getY();
+					double distance = Math.sqrt(dx*dx + dy*dy);
+					if (object instanceof Scalable2D)
+						adjustingInitialScale = ((Scalable2D)object).getScale2D();
+					if (Math.abs(distance - CIRCLE_RADIUS) <= SLOP)
+						{
+						adjusting = true;  // time to start adjusting!
+						adjustingObject = object;
+						adjustingInitialPosition = myPosition;
+						// don't let lower-level portrayals have it -- we handled the event
+						return true;
+						}
+					}
+				else if (id == MouseEvent.MOUSE_DRAGGED && adjusting)
+					{
+					double dx = event.getX() - adjustingInitialPosition.getX();
+					double dy = event.getY() - adjustingInitialPosition.getY();
+					double newOrientation = Math.atan2(dy, dx);
+					double newScaleMultiplier = Math.sqrt(dx*dx + dy*dy) / CIRCLE_RADIUS;
+					if (object instanceof Orientable2D)
+						((Orientable2D)object).setOrientation2D(newOrientation);
+					if (object instanceof Scalable2D)
+						((Scalable2D)object).setScale2D(adjustingInitialScale * newScaleMultiplier);
+					// don't let lower-level portrayals have it -- we handled the event
+					return true;
+					}
+				else if (id == MouseEvent.MOUSE_RELEASED && adjusting)
+					{
+					adjusting = false;
+					adjustingObject = null;
+					adjustingInitialScale = 1.0;
+					adjustingInitialPosition = null;
+					}
+				}
+			}
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, range, type);  // let any lower portrayals have it, else false
         }
         
     public boolean hitObject(Object object, DrawInfo2D range)

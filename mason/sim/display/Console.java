@@ -77,19 +77,28 @@ public class Console extends JFrame implements Controller
     public final static int MAXIMUM_STEPS = 20;
 
     /** Our simulation */
-    public GUIState simulation;
-    
+	GUIState simulation;
+	
     /** List of fully qualified classnames to include in the Console's "New Simulation" combo box */
-    public static Vector classNames = new Vector();
+	static Vector classNames = new Vector();
     /** List of short descriptive names for the classes in classNames.  If any one of them is null, then the
         name must be fetched using the GUIState.getName(class) method */
-    public static Vector shortNames = new Vector();
+	static Vector shortNames = new Vector();
     
     /** Do we only allow the user to type in other classNames? */
-    public static boolean allowOtherClassNames;
+	static boolean allowOtherClassNames;
 
+	/** Do we only allow the user to choose the 'New Simulation' menu? */
+	boolean newMenuAllowed = true;
+	public void setNewMenuAllowed(boolean val)
+		{
+		newMenuAllowed = val;
+        if (!newMenuAllowed || classNames.size() == 0)  // nothing permitted
+			newMenu.setEnabled(false);
+		}
+	public boolean isNewMenuAllowed() { return newMenuAllowed; }
     /** Keep track of the last inspector selected so it stays selected after user picks a different area. */
-    private int preferredInspectorIndex = 0;
+	int preferredInspectorIndex = 0;
 
     /* Sets various MacOS X features.  This text is repeated in Console.java, Display2D.java, and Display3D.java
 		The reason for the repeat is that the UseQuartz property must be set a precise time -- for example, we can't
@@ -137,19 +146,19 @@ public class Console extends JFrame implements Controller
         }
 
     /** Returns icons for a given filename, such as "NotPlaying.png". A utility function. */
-    public static ImageIcon iconFor(String name)
+	static ImageIcon iconFor(String name)
         {
         return new ImageIcon(Console.class.getResource(name));
         }
     
-    public static final ImageIcon I_PLAY_ON = iconFor("Playing.png");
-    public static final ImageIcon I_PLAY_OFF = iconFor("NotPlaying.png");
-    public static final ImageIcon I_STOP_ON = iconFor("Stopped.png");
-    public static final ImageIcon I_STOP_OFF = iconFor("NotStopped.png");
-    public static final ImageIcon I_PAUSE_ON = iconFor("PauseOn.png");
-    public static final ImageIcon I_PAUSE_OFF = iconFor("PauseOff.png");
-    public static final ImageIcon I_STEP_ON = iconFor("StepOn.png");
-    public static final ImageIcon I_STEP_OFF = iconFor("StepOff.png");
+	static final ImageIcon I_PLAY_ON = iconFor("Playing.png");
+	static final ImageIcon I_PLAY_OFF = iconFor("NotPlaying.png");
+	static final ImageIcon I_STOP_ON = iconFor("Stopped.png");
+	static final ImageIcon I_STOP_OFF = iconFor("NotStopped.png");
+	static final ImageIcon I_PAUSE_ON = iconFor("PauseOn.png");
+	static final ImageIcon I_PAUSE_OFF = iconFor("PauseOff.png");
+	static final ImageIcon I_STEP_ON = iconFor("StepOn.png");
+	static final ImageIcon I_STEP_OFF = iconFor("StepOff.png");
 
     /** The HTML Display pane */
     //public JEditorPane infoPane;
@@ -203,6 +212,8 @@ public class Console extends JFrame implements Controller
     PropertyField randomField;
     /** The Console's menu bar */
     JMenuBar menuBar;
+	/** The 'New Simulation' menu. */
+	JMenuItem newMenu;
     /** The split pane shown under the "Inspectors" tab, holding the list of 
         inspectors at top, and specific inspectors at bottom */
     JSplitPane innerInspectorPanel;
@@ -806,7 +817,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-                savePreferences(Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY));
+                savePreferences(false);
                                 
                 // if we're setting the system preferences, remove the local preferences to avoid confusion
                 Prefs.removeAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
@@ -819,7 +830,7 @@ public class Console extends JFrame implements Controller
             {
             public void actionPerformed(ActionEvent e)
                 {
-                savePreferences(Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY));
+                savePreferences(true);
                 }
             });
 
@@ -954,17 +965,16 @@ public class Console extends JFrame implements Controller
         
         buildClassList(); // load the simulation class list in case it's not been loaded yet, to determine if we want to have simulations
 
-        JMenuItem _new = new JMenuItem("New Simulation...");
-        if (!allowOtherClassNames && classNames.size() == 0)  // nothing permitted
-            _new.setEnabled(false);
-        _new.addActionListener(new ActionListener()
+		newMenu = new JMenuItem("New Simulation...");
+        setNewMenuAllowed(isNewMenuAllowed());			// disables the menu bar if necessary
+		newMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
                 doNew();
                 }
             });
-        fileMenu.add(_new);
+        fileMenu.add(newMenu);
         JMenuItem open = new JMenuItem("Open...");
         if (SimApplet.isApplet) open.setEnabled(false);
         open.addActionListener(new ActionListener()
@@ -1128,22 +1138,28 @@ public class Console extends JFrame implements Controller
 
     /////////////////////// PREFERENCES MANIPULATION
         
-    public String DEFAULT_PREFERENCES_KEY = "Console";
-    public String DELAY_KEY = "Delay";
-//    public String THREAD_PRIORITY_KEY = "Thread Priority";
-    public String STEPS_KEY = "Steps";
-    public String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
-    public String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
-    public String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Pause at Step";
-    public String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
-//              public String SEED_KEY = "Seed";
-    public String INCREMENT_KEY = "Increment";
-    public String REPEAT_KEY = "Repeat";
+	static final String DEFAULT_PREFERENCES_KEY = "Console";
+	static final String DELAY_KEY = "Delay";
+	static final String STEPS_KEY = "Steps";
+	static final String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
+	static final String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
+	static final String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Pause at Step";
+	static final String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
+	static final String INCREMENT_KEY = "Increment";
+	static final String REPEAT_KEY = "Repeat";
+//              public static final String SEED_KEY = "Seed";
+//    public String static final THREAD_PRIORITY_KEY = "Thread Priority";
                 
-    public void savePreferences(Preferences prefs)
+	void savePreferences(boolean appPreferences)
         {
+		Preferences prefs = null;
         try
             {
+			if (appPreferences)
+				prefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+			else
+				prefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
+			
             prefs.putInt(DELAY_KEY,slider.getValue());
 //            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
             prefs.putInt(STEPS_KEY, stepSlider.getValue());
@@ -1161,7 +1177,7 @@ public class Console extends JFrame implements Controller
         catch (java.security.AccessControlException e) { } // it must be an applet
         }
                                         
-    public void resetToPreferences()
+	void resetToPreferences()
         {
         try
             {
@@ -1675,6 +1691,11 @@ public class Console extends JFrame implements Controller
         
     static Object classLock = new Object();
     static boolean classListLoaded = false;
+
+	/** Used in the 'simulation.classes' file to indicate that nonstandard classes may not be accessed. */
+	public static final String ONLY_INDICATOR = "ONLY";
+	/** Used in the 'simulation.classes' file to specify a special name for a simulation. */
+	public static final String NAME_INDICATOR = "NAME:";
     static void buildClassList()
         {
         // just in case someone crazy tries to load twice
@@ -1696,9 +1717,9 @@ public class Console extends JFrame implements Controller
             while(st.nextToken()!=StreamTokenizer.TT_EOF)
                 {
                 if (st.sval == null) { } // ignore
-                else if ("ONLY".equalsIgnoreCase(st.sval))
-                    allowOtherClassNames = false;
-                else if (st.sval.toUpperCase().startsWith("NAME:"))
+                else if (ONLY_INDICATOR.equalsIgnoreCase(st.sval))
+                    allowOtherClassNames = false; 
+                else if (st.sval.toUpperCase().startsWith(NAME_INDICATOR))
                     {
                     //if (shortNames.size() == 0) throw new Exception("The 'NAME:' tag occurred before any class name was declared");
                     //shortNames.set(shortNames.size()-1, st.sval.substring(5).trim());
@@ -1826,7 +1847,7 @@ public class Console extends JFrame implements Controller
             p.setLayout(new BorderLayout());
             p.add(browser, BorderLayout.CENTER);
             p.add(pane,BorderLayout.WEST);
-            p.add(fieldp, BorderLayout.SOUTH);
+            if (allowOtherClassNames) p.add(fieldp, BorderLayout.SOUTH);
                         
             int reply = showOptionDialog(null, p, "New Simulation", new Object[] {"Select", 
                                                                                   startingUp ? "Quit" : "Cancel"}, true);

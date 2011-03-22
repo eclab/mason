@@ -62,58 +62,61 @@ public class MovablePortrayal2D extends SimplePortrayal2D
     Point2D originalMousePosition = null;
     Point2D originalObjectPosition = null;
         
-    public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper, MouseEvent event, DrawInfo2D range, int type)
         {
-        int id = event.getID();
-        if (id == MouseEvent.MOUSE_PRESSED)
-            {
-            originalMousePosition = event.getPoint();       
-            originalObjectPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
+        synchronized(guistate.state.schedule)
+			{
+			int id = event.getID();
+			if (id == MouseEvent.MOUSE_PRESSED)
+				{
+				originalMousePosition = event.getPoint();       
+				originalObjectPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
 
-            // we need to determine if we were actually hit, rather than simply being selected
-            DrawInfo2D hitRange = new DrawInfo2D(range);
-            Double2D scale = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getScale(range);
+				// we need to determine if we were actually hit, rather than simply being selected
+				DrawInfo2D hitRange = new DrawInfo2D(range);
+				Double2D scale = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getScale(range);
 
-            // this magic basically creates a rectangle representing the hittable region of the object
-            // and a small pixel where the mouse clicked.
-            hitRange.draw.x = originalObjectPosition.getX();
-            hitRange.draw.y = originalObjectPosition.getY();
-            hitRange.draw.width = scale.x;
-            hitRange.draw.height = scale.y;
-            hitRange.clip.x = originalMousePosition.getX();
-            hitRange.clip.y = originalMousePosition.getY();
-            hitRange.clip.width = 1;
-            hitRange.clip.height = 1;
-        
-            if (hitObject(wrapper.getObject(), hitRange))
-                {
-                if (originalObjectPosition != null)
-                    {
-                    manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
-                    }
-                return true;  // will cause a refresh
-                }
-            else { originalMousePosition = originalObjectPosition = null; }  // clean up
-            }
-        // moving should only be for selected objects
-        else if (id == MouseEvent.MOUSE_DRAGGED && type == SimplePortrayal2D.TYPE_SELECTED_OBJECT && originalObjectPosition != null)
-            {
-            Point2D currentMousePosition = event.getPoint();        
+				// this magic basically creates a rectangle representing the hittable region of the object
+				// and a small pixel where the mouse clicked.
+				hitRange.draw.x = originalObjectPosition.getX();
+				hitRange.draw.y = originalObjectPosition.getY();
+				hitRange.draw.width = scale.x;
+				hitRange.draw.height = scale.y;
+				hitRange.clip.x = originalMousePosition.getX();
+				hitRange.clip.y = originalMousePosition.getY();
+				hitRange.clip.width = 1;
+				hitRange.clip.height = 1;
+			
+				if (hitObject(wrapper.getObject(), hitRange))
+					{
+					if (originalObjectPosition != null)
+						{
+						manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
+						}
+					return true;  // will cause a refresh
+					}
+				else { originalMousePosition = originalObjectPosition = null; }  // clean up
+				}
+			// moving should only be for selected objects
+			else if (id == MouseEvent.MOUSE_DRAGGED && type == SimplePortrayal2D.TYPE_SELECTED_OBJECT && originalObjectPosition != null)
+				{
+				Point2D currentMousePosition = event.getPoint();        
 
-            // compute delta
-            Point2D.Double d = new Point2D.Double(
-                originalObjectPosition.getX() + (currentMousePosition.getX() - originalMousePosition.getX()),
-                originalObjectPosition.getY() + (currentMousePosition.getY() - originalMousePosition.getY())                            
-                );
-            ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).setObjectPosition(wrapper.getObject(), d, range);
-            return true;
-            }
-        else if (id == MouseEvent.MOUSE_RELEASED)
-            {
-            originalMousePosition = null;
-            originalObjectPosition = null;
-            }
-        return getChild(wrapper.getObject()).handleMouseEvent(manipulating, wrapper, event, range, type);  // let someone else have it
+				// compute delta
+				Point2D.Double d = new Point2D.Double(
+					originalObjectPosition.getX() + (currentMousePosition.getX() - originalMousePosition.getX()),
+					originalObjectPosition.getY() + (currentMousePosition.getY() - originalMousePosition.getY())                            
+					);
+				((FieldPortrayal2D)(wrapper.getFieldPortrayal())).setObjectPosition(wrapper.getObject(), d, range);
+				return true;
+				}
+			else if (id == MouseEvent.MOUSE_RELEASED)
+				{
+				originalMousePosition = null;
+				originalObjectPosition = null;
+				}
+			}
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, range, type);  // let someone else have it
         }
         
     public boolean hitObject(Object object, DrawInfo2D range)

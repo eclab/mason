@@ -84,6 +84,13 @@ public abstract class QuadPortrayal implements Portrayal
             y = loc.y;
             }
         }
+
+    public static class ObjectFilter extends Filter
+        {
+        public ObjectFilter(LocationWrapper wrapper) { super(wrapper); }
+        public double getValue() { return fieldPortrayal.doubleValue(((ObjectGrid2D)fieldPortrayal.field).field[x][y]); }
+        }
+
     public static class DoubleFilter extends Filter
         {
         public DoubleFilter(LocationWrapper wrapper) { super(wrapper); }
@@ -104,9 +111,12 @@ public abstract class QuadPortrayal implements Portrayal
         Grid2D grid = (Grid2D)(((ValueGrid2DPortrayal3D)(wrapper.getFieldPortrayal())).getField());
         if (grid instanceof DoubleGrid2D)
             return new SimpleInspector(new DoubleFilter(wrapper), state, "Properties");
-        else
+        else if (grid instanceof IntGrid2D)
             return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
-        }
+        else if (grid instanceof ObjectGrid2D)
+            return new SimpleInspector(new ObjectFilter(wrapper) ,state, "Properties");
+		else return null; // an error
+		}
         
     public Int2D getCellForIntersection(PickIntersection pi, Grid2D field)
         {

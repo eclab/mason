@@ -42,101 +42,59 @@ import com.lowagie.text.pdf.*;
 
 public class TimeSeriesChartGenerator extends ChartGenerator
     {
-    /** The dataset.  Generated in buildChart(). */
-    protected XYSeriesCollection dataset;
-    /** A list of SeriesChangeListeners, one per element in the dataset, and indexed in the same way.
-        When an element is removed from the dataset and deleted from the chart, its corresponding
-        SeriesChangeListener will be removed and have seriesChanged(...) called. */
-    protected ArrayList stoppables = new ArrayList();
-        
-    public AbstractSeriesDataset getSeriesDataset() { return dataset; }
-
-    DatasetChangeEvent updateEvent;
-    // We issue a dataset change event because various changes may have been made by our attributes
-    // objects and they haven't informed the graph yet.   That way we can bulk up lots of changes
-    // before we do a redraw.
-    public void update()
-        {
-        if (updateEvent == null)
-            updateEvent = new DatasetChangeEvent(chart.getPlot(), null);
-        chart.getPlot().datasetChanged(updateEvent);
-        }
-
     public void removeSeries(int index)
         {
-        // stop the inspector....
-        Object tmpObj = stoppables.remove(index);
-        if( ( tmpObj != null ) && ( tmpObj instanceof SeriesChangeListener ) )
-            ((SeriesChangeListener)tmpObj).seriesChanged(new SeriesChangeEvent(this));
-        
-        // remove from the dataset.  This is easier done in some JFreeChart plots than others, dang coders
-        dataset.removeSeries(index);
-                
-        // remove the attribute
-        seriesAttributes.remove(index);
-                
-        // shift all the seriesAttributes' indices down so they know where they are
-        Component[] c = seriesAttributes.getComponents();
-        for(int i = index; i < c.length; i++)  // do for just the components >= index in the seriesAttributes
-            {
-            if (i >= index) 
-                {
-                SeriesAttributes csa = (SeriesAttributes)(c[i]);
-                csa.setSeriesIndex(csa.getSeriesIndex() - 1);
-                csa.rebuildGraphicsDefinitions();
-                }
-            }
-        revalidate();
+		super.removeSeries(index);
+		XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
+		xysc.removeSeries(index);
         }
                 
     public void moveSeries(int index, boolean up)
         {
-        java.util.List allSeries = dataset.getSeries();
-        int count = allSeries.size();
-        
-        if ((index > 0 && up) || (index < count-1 && !up))  // it's not the first or the last given the move
+		super.moveSeries(index, up);
+		
+        if ((index > 0 && up) || (index < getSeriesDataset().getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
             {
+			XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
             // this requires removing everything from the dataset and resinserting, duh
-            ArrayList items = new ArrayList(allSeries);
-            dataset.removeAllSeries();
+            ArrayList items = new ArrayList(xysc.getSeries());
+            xysc.removeAllSeries();
             
             int delta = up? -1:1;
             // now rearrange
             items.add(index + delta, items.remove(index));
             
             // rebuild the dataset
-            for(int i = 0; i < count; i++)
-                dataset.addSeries(((XYSeries)(items.get(i))));
-                    
-            
-            // adjust the seriesAttributes' indices         
-            Component[] c = seriesAttributes.getComponents();
-            SeriesAttributes csa;
-            (csa = (SeriesAttributes)c[index]).setSeriesIndex(index+delta);
-            csa.rebuildGraphicsDefinitions();
-            (csa = (SeriesAttributes)c[index+delta]).setSeriesIndex(index);
-            csa.rebuildGraphicsDefinitions();
-                
-            seriesAttributes.remove(index+delta);
-            //seriesAttributes.add((SeriesAttributes)(c[index+delta]), index);
-            seriesAttributes.add(csa, index);
-
-            revalidate();
-            
-            // adjust the stoppables, too
-            stoppables.add(index+delta, stoppables.remove(index));
-            }
-
+            for(int i = 0; i < items.size(); i++)
+                xysc.addSeries(((XYSeries)(items.get(i))));
+			}
         }
 
-    protected void buildChart()
+    /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
+        event if/when the series is deleted from the chart by the user.  The series should have a key
+        in the form of a String.  Returns the series attributes. */
+    public TimeSeriesAttributes addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
         {
-        dataset = new XYSeriesCollection();
-        chart = ChartFactory.createXYLineChart("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
+		XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
+
+        int i = xysc.getSeriesCount();
+        xysc.addSeries(series);
+        TimeSeriesAttributes csa = new TimeSeriesAttributes(this, series, i, stopper); 
+        seriesAttributes.add(csa);
+		revalidate();
+        return csa;
+        }
+        
+    
+	protected void buildChart()
+        {
+		XYSeriesCollection collection = new XYSeriesCollection();
+		
+        chart = ChartFactory.createXYLineChart("Untitled Chart","Untitled X Axis","Untitled Y Axis", collection,
             PlotOrientation.VERTICAL, false, true, false);
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
 
-        chart.setAntiAlias(false);
+        chart.setAntiAlias(true);
         chartPanel = new ChartPanel(chart, true);			
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));
         chartPanel.setMinimumDrawHeight(10);
@@ -144,25 +102,12 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         chartPanel.setMinimumDrawWidth(20);
         chartPanel.setMaximumDrawWidth(2000);
         chartHolder.getViewport().setView(chartPanel);
+		
+		// this must come last because the chart must exist for us to set its dataset
+		setSeriesDataset(collection);
         }
 
 
-    /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
-        event if/when the series is deleted from the chart by the user.  The series should have a key
-        in the form of a String.  Returns the series attributes. */
-    public TimeSeriesAttributes addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
-        {
-        int i = dataset.getSeriesCount();
-        dataset.addSeries(series);
-        TimeSeriesAttributes csa = new TimeSeriesAttributes(this, series, i); 
-        seriesAttributes.add(csa);
-        stoppables.add( stopper );
-        revalidate();
-        return csa;
-        }
-        
-    
-    
     protected JCheckBox useCullingCheckBox;
     protected NumberTextField maxPointsPerSeriesTextField;
     protected DataCuller  dataCuller;

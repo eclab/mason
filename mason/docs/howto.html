@@ -671,20 +671,22 @@ MASON has a built-in time-series charting facility, but the user must manually c
 <pre><tt>
 
     Thread timer = null;
-    public void startTimer(final long milliseconds)
+    public void startTimer(final long steps, final long milliseconds)
        {
        if (timer == null)
-           timer= sim.util.Utilities.doLater(milliseconds, new Runnable()
+           timer= sim.util.gui.Utilities.doLater(milliseconds, new Runnable()
               {
               public void run()
                   {
-                  if (chart!=null) chart.update();
+                  if (chart!=null) chart.update(steps, true);
                   timer = null;  // reset the timer
                   }
               });
        }
 
 </tt></pre>
+
+<p>What's the <b>steps</b> variable for?  The update(...) method takes two arguments: a <i>key</i> representing the state of your simulation for which you're asking it to update itself, and a boolean indicating whether the update reflects new data being added (or something else, like the user changing the color).  If the key is the same as the previous key passed to update(...), update(...) will do nothing -- it assumes the chart is the same.  If the boolean is false, then update will redraw the chart (assuming the key test was passed) but will not emit it to a movie as a new frame.
 
 <p>Now you just need to tell the series not to update itself automatically when an item is added, and also to turn on the timer (if it's not already on).  In the start() method, change the line
 
@@ -695,9 +697,10 @@ MASON has a built-in time-series charting facility, but the user must manually c
 <p>To...
 <pre><tt>
               series.add(x, y, false);  // don't update automatically
-              startTimer(1000);  // once a second (1000 milliseconds)
+              startTimer(state.schedule.getSteps(), 1000);  // once a second (1000 milliseconds)
 </tt></pre>
 
+<p>Notice we're using the schedule's current steps as the key -- that's probably the best choice.
 
 <a name="console"><h2>How to Hide the Console</h2>
 

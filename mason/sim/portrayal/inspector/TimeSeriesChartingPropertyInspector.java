@@ -100,7 +100,6 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         else return Double.NaN;  // unknown
         }
     
-//      public DataCuller dataCuller = null;    //null means no culling
     public void addToMainSeries(double x, double y, boolean notify)
         {
         chartSeries.add(x, y, false);
@@ -115,19 +114,11 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
             if(notify)
                 chartSeries.fireSeriesChanged();
         }
-//    public void setDataCuller(DataCuller dc)
-//    {
-//      dataCuller = dc;
-//    }
     static Bag tmpBag = new Bag();
     void deleteItems(IntBag items)
         {
         if(items.numObjs==0)
             return;
-//      //I would sure hate to to do this (O(n^2), plus each remove causes a SeriesChangeEvent):
-//      for(int i=items.numObjs-1;i>=0;i--)
-//              chartSeries.remove(items.objs[i]);
-        //here's the O(n) version (and just 2 SeriesChangeEvents)
 
         tmpBag.clear();
         int currentTabooIndex = 0;

@@ -456,7 +456,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         int numObjs = result.numObjs;
         Object[] objs = result.objs;
         double distsq = distance*distance;
-        if (radial) for(int i=0;i<numObjs;i++)
+        if (radial) 
+			for(int i=0;i<numObjs;i++)
                         {
                         double d = 0;
                         Double2D loc = getObjectLocation(objs[i]);
@@ -465,7 +466,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                         if (d > distsq || (!inclusive && d >= distsq)) 
                             { result.remove(i); i--; numObjs--; }
                         }
-        else for(int i=0;i<numObjs;i++)
+        else 
+			for(int i=0;i<numObjs;i++)
                  {
                  Double2D loc = getObjectLocation(objs[i]);
                  double minx = 0;

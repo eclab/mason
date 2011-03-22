@@ -145,7 +145,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         if (grid instanceof Grid2D) 
             this.field = (Grid2D) grid;
         else throw new RuntimeException("ValueGridPortrayal2D3D cannot portray the object: " + grid);
-        tmpGCI = new ValueGridCellInfo(this.field);
+        tmpGCI = new ValueGridCellInfo(this, this.field);
         coords = new float[field.getWidth()* field.getHeight()*4*3];    // 3 coordinates: x, y, z
         colors = new float[field.getWidth()* field.getHeight()*4*3];    // 3 color values -- alpha transparency doesn't work here :-(
         resetField = true;
@@ -162,6 +162,13 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
      */
     private ValueGridCellInfo tmpGCI;
 
+	public double doubleValue(Object obj)
+		{
+		if (obj==null) return 0.0;
+		if (obj instanceof Number) return ((Number)(obj)).doubleValue();
+		if (obj instanceof Valuable) return ((Valuable)(obj)).doubleValue();
+		return 1.0;
+		}
 
     /**
      * Format is: 
@@ -333,7 +340,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
 
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {
-        return new LocationWrapper( new ValueGridCellInfo(field), 
+        return new LocationWrapper(new ValueGridCellInfo(ValueGrid2DPortrayal3D.this, field), 
             ((QuadPortrayal)getPortrayalForObject(tmpGCI)).getCellForIntersection(pi,field),
             this ) 
             {

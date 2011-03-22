@@ -44,7 +44,32 @@ public class Flockers extends SimState
     public void setNeighborhood(double val) { if (val > 0) neighborhood = val; }
     public double getDeadFlockerProbability() { return deadFlockerProbability; }
     public void setDeadFlockerProbability(double val) { if (val >= 0.0 && val <= 1.0) deadFlockerProbability = val; }
+	
+	public Double2D[] getLocations()
+		{
+		if (flockers == null) return new Double2D[0];
+		Bag b = flockers.getAllObjects();
+		if (b==null) return new Double2D[0];
+		Double2D[] locs = new Double2D[b.numObjs];
+		for(int i =0; i < b.numObjs; i++)
+			locs[i] = flockers.getObjectLocation(b.objs[i]);
+		return locs;
+		}
     
+	public Double2D[] getInvertedLocations()
+		{
+		if (flockers == null) return new Double2D[0];
+		Bag b = flockers.getAllObjects();
+		if (b==null) return new Double2D[0];
+		Double2D[] locs = new Double2D[b.numObjs];
+		for(int i =0; i < b.numObjs; i++)
+			{
+			locs[i] = flockers.getObjectLocation(b.objs[i]);
+			locs[i] = new Double2D(locs[i].y, locs[i].x);
+			}
+		return locs;
+		}
+
     /** Creates a Flockers simulation with the given random number seed. */
     public Flockers(long seed)
         {

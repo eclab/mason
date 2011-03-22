@@ -127,7 +127,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator.getFrame().addWindowListener(wl);
 
         globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
-        validInspector = (this.generator!=null);//this should always be true.
+        validInspector = (this.generator!=null); //this should always be true.
         }
     
     /** Used to find the global attributes that another inspector has set so I can share it. */
@@ -267,7 +267,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                     public void actionPerformed(ActionEvent e)
                         {
                         redraw = optionsBox2.getSelectedIndex();
-                        generator.update(false);  // keep up-to-date
+                        generator.update(ChartGenerator.FORCE_KEY, false);  // keep up-to-date
                         }
                     });
             if (includeAggregationMethodAttributes())
@@ -276,29 +276,6 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             }
         }
                 
-    Thread timer = null;
-
-    /** Updates the inspector asynchronously after the given milliseconds have transpired. */
-    public void updateBefore(final long milliseconds)
-        {
-        if (timer == null)
-            {
-            timer= Utilities.doLater(milliseconds, new Runnable()
-                {
-                public void run()
-                    {
-                    if (generator!=null)
-                        {
-                        generator.update(true);  // keep up-to-date
-                        }
-                    // this is in the Swing thread, so it's okay
-                    timer = null;
-                    }
-                });
-            }
-        }
-
-
     ChartGenerator createNewChart( final GUIState simulation)
         {
         generator = createNewGenerator();
@@ -351,32 +328,34 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             (lastTime < time || !updatedOnceAlready))  // bug fix 
             {              
             updatedOnceAlready = true;
+
+			// update the data
             updateSeries(time, lastTime);
             lastTime = time;
                 
-            // now determine when to update
+            // now determine when to redraw
             switch(globalAttributes.redraw) 
                 {
                 case REDRAW_ALWAYS:  // do it now
-                    generator.update(true);
+                    generator.update(simulation.state.schedule.getSteps(), true);
                     break;
                 case REDRAW_TENTH_SEC:
-                    updateBefore(100);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 100);
                     break;
                 case REDRAW_HALF_SEC:
-                    updateBefore(500);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 500);
                     break;
                 case REDRAW_ONE_SEC:
-                    updateBefore(1000);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 1000);
                     break;
                 case REDRAW_TWO_SECS:
-                    updateBefore(2000);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 2000);
                     break;
                 case REDRAW_FIVE_SECS:
-                    updateBefore(5000);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 5000);
                     break;
                 case REDRAW_TEN_SECS:
-                    updateBefore(10000);
+                    generator.updateBefore(simulation.state.schedule.getSteps(), 10000);
                     break;
                 case REDRAW_DONT:  // do nothing
                     break;

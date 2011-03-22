@@ -44,8 +44,8 @@ public class SimplePortrayal2D implements Portrayal2D
         return true;
         }
 
-    public static int TYPE_SELECTED_OBJECT = 0;
-    public static int TYPE_HIT_OBJECT = 1;
+    public static final int TYPE_SELECTED_OBJECT = 0;
+    public static final int TYPE_HIT_OBJECT = 1;
         
     /**
        Optionally handles a mouse event.  At present, events are sent to SimplePortrayal2Ds representing objects which have been either
@@ -58,8 +58,11 @@ public class SimplePortrayal2D implements Portrayal2D
        handled the event, then events are sent to portrayals of objects hit by the event, until one of *them* handles the event.
        If still no one has handled the event, then the Display2D will route the event to built-in mechanisms such selecting
        the object or inspecting it.
+	   
+	   <p>If you're modifying or querying the model as a result of this event, be sure to lock on guistate.state.schedule before
+		you do so.
     */
-    public boolean handleMouseEvent(Manipulating2D manipulating, LocationWrapper wrapper,
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
         MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
         {
         return false;

@@ -26,20 +26,24 @@ import org.jfree.data.general.*;
     control individual series' features.  SeriesAttributes will be placed in the list at the bottom-left of
     the ChartGenerator window, and series will be assigned a unique SeriesAttributes to control it.
         
-    <p>SeriesAttributes need to override the getSeriesName and setSeriesName methods, as well as the rebuildGraphicsDefinitions
+    <p>SeriesAttributes need to override the getSeriesName and setName methods, as well as the rebuildGraphicsDefinitions
     and buildAttributes methods. */
 
 public abstract class SeriesAttributes extends LabelledList
     {
+	protected SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
+	public SeriesChangeListener getStoppable() { return stoppable; }
+	public void setStoppable(SeriesChangeListener obj) { stoppable = obj; }
+	
     /** The index of the series that this SeriesAttributes is responsible for. */
     protected int seriesIndex;
     /** The ChartGenerator which holds the series that this SeriesAttributes is responsible for. */
     protected ChartGenerator generator;
     
     /** Sets the name of the series. */
-    public abstract void setSeriesName(String val);
+    public void setName(String val) { super.setName(val); }  // this just uses Component's setName
     /** Returns the name of the series. */
-    public abstract String getSeriesName();
+    public String getName() { return super.getName(); } // this just uses Component's getName
                 
     /** Updates features of the series to reflect the current widget settings as specified by the user. */
     public abstract void rebuildGraphicsDefinitions();
@@ -107,7 +111,7 @@ public abstract class SeriesAttributes extends LabelledList
             public void actionPerformed ( ActionEvent e )
                 {
                 if (JOptionPane.showOptionDialog(
-                        null,"Remove the Series " + getSeriesName() + "?","Confirm",
+                        null,"Remove the Series " + getName() + "?","Confirm",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,null,
                         new Object[] { "Remove", "Cancel" },
@@ -151,9 +155,10 @@ public abstract class SeriesAttributes extends LabelledList
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()
         to update the series. */
-    public SeriesAttributes(ChartGenerator generator, String name, int index)
+    public SeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)
         {
         super(name);
+		setStoppable(stoppable);
         this.generator = generator;
         seriesIndex = index;
         final JCheckBox check = new JCheckBox();
@@ -182,21 +187,11 @@ public abstract class SeriesAttributes extends LabelledList
             {
             public String newValue(String newValue)
                 {
-                setSeriesName(newValue);
+                SeriesAttributes.this.setName(newValue);
                 getGenerator().getChartPanel().repaint();
                 return newValue;
                 }
             };
-/*        nameF.addActionListener(new ActionListener()
-          {
-          public void actionPerformed(ActionEvent e)
-          {
-          String n = nameF.getText();
-          setSeriesName(n);
-          getGenerator().getChartPanel().repaint();
-          }
-          });*/
-            
         addLabelled("Series",nameF);
                         
         buildAttributes();
