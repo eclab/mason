@@ -50,12 +50,14 @@ indent:
 BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/field/geo/GeomGridField.java			\
 ./sim/field/geo/GeomVectorField.java			\
+./sim/io/geo/ArcInfoASCGridImporter.java		\
 ./sim/io/geo/GeomExporter.java				\
 ./sim/io/geo/GeomImporter.java				\
 ./sim/io/geo/ShapeFileExporter.java			\
 ./sim/io/geo/ShapeFileImporter.java			\
 ./sim/portrayal/geo/GeomPortrayal.java			\
 ./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
+./sim/portrayal/geo/GeomInfo2D.java			\
 ./sim/util/geo/AttributeField.java			\
 ./sim/util/geo/GeometryProperties.java			\
 ./sim/util/geo/GeometryUtilities.java			\
