@@ -1975,3 +1975,4 @@ Version 16
 		programmatically.
 	Added Scatter Plots
 	Modified Flockers to include two model elements which show off Scatter Plots
+	Added the ability to draw a thin frame around Continuous2D.

@@ -18,9 +18,6 @@ public class FlockersWithUI extends GUIState
     public Display2D display;
     public JFrame displayFrame;
 
-    org.jfree.data.xy.XYSeries series;    // the data series we'll add to
-    sim.util.media.chart.TimeSeriesChartGenerator chart;  // the charting facility
-
     public static void main(String[] args)
         {
         new FlockersWithUI().createController();  // randomizes by currentTimeMillis
@@ -49,39 +46,6 @@ public class FlockersWithUI extends GUIState
         {
         super.start();
         setupPortrayals();
-
-
-
-        chart.removeAllSeries();
-        series = new org.jfree.data.xy.XYSeries(
-            "Put a unique name for this series here so JFreeChart can hash with it",
-            false);
-        chart.addSeries(series, null);
-        scheduleRepeatingImmediatelyAfter(new Steppable()
-            {
-            public void step(SimState state)
-               {
-               // at this stage we're adding data to our chart.  We
-               // need an X value and a Y value.  Typically the X
-               // value is the schedule's timestamp.  The Y value
-               // is whatever data you're extracting from your 
-               // simulation.  For purposes of illustration, let's
-               // extract the number of steps from the schedule and
-               // run it through a sin wave.
-               
-               double x = state.schedule.time(); 
-               double y = Math.sin(state.schedule.getSteps()) * 10;
-               
-               // now add the data
-               if (x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
-					series.add(x, y, false);  // don't update automatically
-					startTimer(state.schedule.getSteps(), 1000);  // once a second (1000 milliseconds)
-               }
-           });
-
-
-
-
         }
 
     public void load(SimState state)
@@ -158,20 +122,6 @@ public class FlockersWithUI extends GUIState
         display.attach( trailsPortrayal, "Trails" );
                 
         display.attach( flockersPortrayal, "Behold the Flock!" );
-
-
-
-       chart = new sim.util.media.chart.TimeSeriesChartGenerator();
-       chart.setTitle("Put the title of your chart here");
-       chart.setRangeAxisLabel("Put the name of your charted series here");
-       chart.setDomainAxisLabel("Time");
-       JFrame frame = chart.createFrame(this);
-       // perhaps you might move the chart to where you like.
-       frame.setVisible(true);
-       frame.pack();
-       c.registerFrame(frame);
-       
-
         }
         
     public void quit()
@@ -182,18 +132,4 @@ public class FlockersWithUI extends GUIState
         displayFrame = null;
         display = null;
         }
-
-    Thread timer = null;
-    public void startTimer(final long steps, final long milliseconds)
-       {
-       if (timer == null)
-           timer= sim.util.gui.Utilities.doLater(milliseconds, new Runnable()
-              {
-              public void run()
-                  {
-                  if (chart!=null) chart.update(steps, true);
-                  timer = null;  // reset the timer
-                  }
-              });
-       }
     }
