@@ -27,56 +27,56 @@ import org.jfree.chart.util.*;
 
 public class ScatterPlotSeriesAttributes extends SeriesAttributes
     {
-	static int shapeCounter = -1;
-	
-	static Shape[] buildShapes()
-		{
-		Shape[] s = new Shape[7];
-		GeneralPath g = null;
-		
-		// Circle
-		s[0] = new Ellipse2D.Double(-3, -3, 6, 6);
+    static int shapeCounter = -1;
+        
+    static Shape[] buildShapes()
+        {
+        Shape[] s = new Shape[7];
+        GeneralPath g = null;
+                
+        // Circle
+        s[0] = new Ellipse2D.Double(-3, -3, 6, 6);
 
-		// Rectangle
-		Rectangle2D.Double r = new Rectangle2D.Double(-3, -3, 6, 6);
-		s[1] = r;
-		 
-		// Diamond
-		s[2] = AffineTransform.getRotateInstance(Math.PI/4.0).createTransformedShape(r);
+        // Rectangle
+        Rectangle2D.Double r = new Rectangle2D.Double(-3, -3, 6, 6);
+        s[1] = r;
+                 
+        // Diamond
+        s[2] = AffineTransform.getRotateInstance(Math.PI/4.0).createTransformedShape(r);
 
-		// Cross +
-		g = new GeneralPath(); 
-		g.moveTo(-0.5f, -3); 
-		g.lineTo(-0.5f, -0.5f); g.lineTo(-3, -0.5f); g.lineTo(-3, 0.5f);
-		g.lineTo(-0.5f, 0.5f); g.lineTo(-0.5f, 3); g.lineTo(0.5f, 3);
-		g.lineTo(0.5f, 0.5f); g.lineTo(3, 0.5f); g.lineTo(3, -0.5f);
-		g.lineTo(0.5f, -0.5f); g.lineTo(0.5f, -3); g.closePath();
-		s[3] = g;
-		
-		// X 
-		s[4] = g.createTransformedShape(AffineTransform.getRotateInstance(Math.PI/4.0));
-		
-		// Up Triangle
-		g = new GeneralPath();
-		g.moveTo(0f, -3); 
-		g.lineTo(-3, 3); g.lineTo(3, 3); g.closePath();
-		s[5] = g;
-		
-		// Down Triangle
-		s[6] = g.createTransformedShape(AffineTransform.getRotateInstance(Math.PI));
-		
-		return s;
-		}
-	
-	final static Shape[] shapes = buildShapes();
-	final static String[] shapeNames = new String[]
-		{
-		"Circle", "Square", "Diamond", "Cross", "X", "Up Triangle", "Down Triangle"
-		};
-		
-	double[][] values; 
-	public double[][] getValues() { return values; }
-	public void setValues(double[][] vals) { values = vals; }
+        // Cross +
+        g = new GeneralPath(); 
+        g.moveTo(-0.5f, -3); 
+        g.lineTo(-0.5f, -0.5f); g.lineTo(-3, -0.5f); g.lineTo(-3, 0.5f);
+        g.lineTo(-0.5f, 0.5f); g.lineTo(-0.5f, 3); g.lineTo(0.5f, 3);
+        g.lineTo(0.5f, 0.5f); g.lineTo(3, 0.5f); g.lineTo(3, -0.5f);
+        g.lineTo(0.5f, -0.5f); g.lineTo(0.5f, -3); g.closePath();
+        s[3] = g;
+                
+        // X 
+        s[4] = g.createTransformedShape(AffineTransform.getRotateInstance(Math.PI/4.0));
+                
+        // Up Triangle
+        g = new GeneralPath();
+        g.moveTo(0f, -3); 
+        g.lineTo(-3, 3); g.lineTo(3, 3); g.closePath();
+        s[5] = g;
+                
+        // Down Triangle
+        s[6] = g.createTransformedShape(AffineTransform.getRotateInstance(Math.PI));
+                
+        return s;
+        }
+        
+    final static Shape[] shapes = buildShapes();
+    final static String[] shapeNames = new String[]
+    {
+    "Circle", "Square", "Diamond", "Cross", "X", "Up Triangle", "Down Triangle"
+    };
+                
+    double[][] values; 
+    public double[][] getValues() { return values; }
+    public void setValues(double[][] vals) { values = vals; }
 
     /** The color of the histogram bar. */
     Color fillColor;
@@ -90,8 +90,8 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
     public void setFillColor(Color value) { fillColorWell.changeColor(fillColor = value); }
     public Color getFillColor() { return fillColor; }
 
-	int shapeNum = 0;
-	Shape shape = shapes[shapeNum];
+    int shapeNum = 0;
+    Shape shape = shapes[shapeNum];
     JComboBox shapeList;
 
     public void setShapeNum(int value) 
@@ -100,35 +100,35 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
             { 
             shapeList.setSelectedIndex(value);
             shapeNum = value;
-			shape = shapes[shapeNum];
+            shape = shapes[shapeNum];
             }
         }
     public int getShapeNum() { return shapeNum; }
-	public Shape getShape() { return shape; }
-	
+    public Shape getShape() { return shape; }
+        
 
     /** Produces a ScatterPlotSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
     public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, org.jfree.data.general.SeriesChangeListener stoppable)
         { 
         super(generator, name, index, stoppable);
-		
-		setValues(values);
+                
+        setValues(values);
         //setName(name);
-		super.setName(name);  // just set the name, don't update
+        super.setName(name);  // just set the name, don't update
 
-		// increment shape counter
-		shapeCounter++;
-		if (shapeCounter >= shapes.length)
-			shapeCounter = 0;
-			
-		// set the shape
-		shapeNum = shapeCounter;
-		shape = shapes[shapeNum];
+        // increment shape counter
+        shapeCounter++;
+        if (shapeCounter >= shapes.length)
+            shapeCounter = 0;
+                        
+        // set the shape
+        shapeNum = shapeCounter;
+        shape = shapes[shapeNum];
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
-		renderer.setSeriesShape(getSeriesIndex(), shape);
-		renderer.setAutoPopulateSeriesShape(false);
-		}
+        renderer.setSeriesShape(getSeriesIndex(), shape);
+        renderer.setAutoPopulateSeriesShape(false);
+        }
 
     public void setName(String val) 
         {
@@ -140,8 +140,8 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         {
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
         renderer.setSeriesPaint(getSeriesIndex(),reviseColor(fillColor, fillOpacity));
-		renderer.setSeriesShape(getSeriesIndex(), shape);
-		renderer.setAutoPopulateSeriesShape(false);
+        renderer.setSeriesShape(getSeriesIndex(), shape);
+        renderer.setAutoPopulateSeriesShape(false);
         repaint();
         }
         
@@ -180,7 +180,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
             };
         addLabelled("",fillOpacityField);
 
-		shapeList = new JComboBox();
+        shapeList = new JComboBox();
         shapeList.setEditable(false);
         shapeList.setModel(new DefaultComboBoxModel(new java.util.Vector(Arrays.asList(shapeNames))));
         shapeList.setSelectedIndex(shapeNum);
@@ -188,8 +188,8 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
             {
             public void actionPerformed ( ActionEvent e )
                 {
-				shapeNum = shapeList.getSelectedIndex();
-				shape = shapes[shapeNum];
+                shapeNum = shapeList.getSelectedIndex();
+                shape = shapes[shapeNum];
                 rebuildGraphicsDefinitions();
                 }
             });

@@ -44,18 +44,18 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     {
     public void removeSeries(int index)
         {
-		super.removeSeries(index);
-		XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
-		xysc.removeSeries(index);
+        super.removeSeries(index);
+        XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
+        xysc.removeSeries(index);
         }
                 
     public void moveSeries(int index, boolean up)
         {
-		super.moveSeries(index, up);
-		
+        super.moveSeries(index, up);
+                
         if ((index > 0 && up) || (index < getSeriesDataset().getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
             {
-			XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
+            XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
             // this requires removing everything from the dataset and resinserting, duh
             ArrayList items = new ArrayList(xysc.getSeries());
             xysc.removeAllSeries();
@@ -67,7 +67,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
             // rebuild the dataset
             for(int i = 0; i < items.size(); i++)
                 xysc.addSeries(((XYSeries)(items.get(i))));
-			}
+            }
         }
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
@@ -75,36 +75,36 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         in the form of a String.  Returns the series attributes. */
     public TimeSeriesAttributes addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
         {
-		XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
+        XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
 
         int i = xysc.getSeriesCount();
         xysc.addSeries(series);
         TimeSeriesAttributes csa = new TimeSeriesAttributes(this, series, i, stopper); 
         seriesAttributes.add(csa);
-		revalidate();
+        revalidate();
         return csa;
         }
         
     
-	protected void buildChart()
+    protected void buildChart()
         {
-		XYSeriesCollection collection = new XYSeriesCollection();
-		
+        XYSeriesCollection collection = new XYSeriesCollection();
+                
         chart = ChartFactory.createXYLineChart("Untitled Chart","Untitled X Axis","Untitled Y Axis", collection,
             PlotOrientation.VERTICAL, false, true, false);
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
 
         chart.setAntiAlias(true);
-        chartPanel = new ChartPanel(chart, true);			
+        chartPanel = new ChartPanel(chart, true);                       
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));
         chartPanel.setMinimumDrawHeight(10);
         chartPanel.setMaximumDrawHeight(2000);
         chartPanel.setMinimumDrawWidth(20);
         chartPanel.setMaximumDrawWidth(2000);
         chartHolder.getViewport().setView(chartPanel);
-		
-		// this must come last because the chart must exist for us to set its dataset
-		setSeriesDataset(collection);
+                
+        // this must come last because the chart must exist for us to set its dataset
+        setSeriesDataset(collection);
         }
 
 

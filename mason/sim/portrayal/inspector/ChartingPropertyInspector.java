@@ -78,21 +78,21 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         validInspector = (generator!=null);
 
         if (validInspector)
-			{
-			globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
-			// make sure that when the window is closed, the stopper is stopped
-			WindowListener wl = new WindowListener()
-				{
-				public void windowActivated(WindowEvent e) {}
-				public void windowClosed(WindowEvent e) { if (stopper!=null) stopper.stop(); }
-				public void windowClosing(WindowEvent e) {  }
-				public void windowDeactivated(WindowEvent e) {}
-				public void windowDeiconified(WindowEvent e) {}
-				public void windowIconified(WindowEvent e) {}
-				public void windowOpened(WindowEvent e) {}
-				};
-			generator.getFrame().addWindowListener(wl);
-			}
+            {
+            globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
+            // make sure that when the window is closed, the stopper is stopped
+            WindowListener wl = new WindowListener()
+                {
+                public void windowActivated(WindowEvent e) {}
+                public void windowClosed(WindowEvent e) { if (stopper!=null) stopper.stop(); }
+                public void windowClosing(WindowEvent e) {  }
+                public void windowDeactivated(WindowEvent e) {}
+                public void windowDeiconified(WindowEvent e) {}
+                public void windowIconified(WindowEvent e) {}
+                public void windowOpened(WindowEvent e) {}
+                };
+            generator.getFrame().addWindowListener(wl);
+            }
         }
 
     /**
@@ -137,14 +137,14 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         int len = generator.getGlobalAttributeCount();
         for(int i = 0; i < len ; i ++)
             {
-			// Global Attributes are members of DisclosurePanels
-			if ((generator.getGlobalAttribute(i) instanceof DisclosurePanel))
-				{
-				DisclosurePanel pan = (DisclosurePanel)(generator.getGlobalAttribute(i));
-				if (pan.getDisclosedComponent() instanceof GlobalAttributes)
-					return (GlobalAttributes) (pan.getDisclosedComponent());
-				}
-			}
+            // Global Attributes are members of DisclosurePanels
+            if ((generator.getGlobalAttribute(i) instanceof DisclosurePanel))
+                {
+                DisclosurePanel pan = (DisclosurePanel)(generator.getGlobalAttribute(i));
+                if (pan.getDisclosedComponent() instanceof GlobalAttributes)
+                    return (GlobalAttributes) (pan.getDisclosedComponent());
+                }
+            }
         return null;
         }
                 
@@ -214,13 +214,13 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         public long interval = 1;
         public int aggregationMethod = AGGREGATIONMETHOD_CURRENT;
         public int redraw = REDRAW_HALF_SEC;
-		String title = "";
+        String title = "";
 
         public GlobalAttributes()
             {
             setLayout(new BorderLayout());
-			
-			title = includeAggregationMethodAttributes() ? "Add Data..." : "Redraw";
+                        
+            title = includeAggregationMethodAttributes() ? "Add Data..." : "Redraw";
             LabelledList list = new LabelledList(title);
             add(list,BorderLayout.CENTER);
                         
@@ -280,7 +280,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         generator = createNewGenerator();
         globalAttributes = new GlobalAttributes();
-		DisclosurePanel pan = new DisclosurePanel(globalAttributes.title, globalAttributes);
+        DisclosurePanel pan = new DisclosurePanel(globalAttributes.title, globalAttributes);
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
         // set up the simulation -- need a new name other than guiObjects: and it should be
@@ -329,7 +329,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             {              
             updatedOnceAlready = true;
 
-			// update the data
+            // update the data
             updateSeries(time, lastTime);
             lastTime = time;
                 
@@ -371,16 +371,16 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         }
 
     public Stoppable reviseStopper(Stoppable stopper)
-		{
-		final Stoppable newStopper = super.reviseStopper(stopper);
-		return new Stoppable()
-			{
-			public void stop()
-				{
-				if (newStopper!=null) newStopper.stop();  // wraps the stopper
-				// give the movie a chance to write out
-				generator.stopMovie();
-				}
-			};
-		}
+        {
+        final Stoppable newStopper = super.reviseStopper(stopper);
+        return new Stoppable()
+            {
+            public void stop()
+                {
+                if (newStopper!=null) newStopper.stop();  // wraps the stopper
+                // give the movie a chance to write out
+                generator.stopMovie();
+                }
+            };
+        }
     }

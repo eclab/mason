@@ -736,9 +736,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
 
     /* Sets various MacOS X features.  This text is repeated in Console.java, Display2D.java, and Display3D.java
-		The reason for the repeat is that the UseQuartz property must be set a precise time -- for example, we can't
-		just use this static to call a common static method -- it doesn't work :-(  Otherwise we'd have made one
-		static method which did all this stuff, duh.  */
+       The reason for the repeat is that the UseQuartz property must be set a precise time -- for example, we can't
+       just use this static to call a common static method -- it doesn't work :-(  Otherwise we'd have made one
+       static method which did all this stuff, duh.  */
     static 
         {
         // use heavyweight tooltips -- otherwise they get obscured by the Canvas3D
@@ -748,9 +748,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // Use Quaqua if it exists
         try
             {
-         //Set includes = new HashSet();
-         //includes.add("ColorChooser");
-         //ch.randelshofer.quaqua.QuaquaManager.setIncludedUIs(includes);
+            //Set includes = new HashSet();
+            //includes.add("ColorChooser");
+            //ch.randelshofer.quaqua.QuaquaManager.setIncludedUIs(includes);
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
@@ -833,8 +833,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public JPopupMenu popup;
     /** The button which pops up the layers menu */
     public JToggleButton layersbutton;  // for popup
-	/** The refresh menu */
-	public JPopupMenu refreshPopup;
+    /** The refresh menu */
+    public JPopupMenu refreshPopup;
     /** The button which pops up the refresh menu */
     public JToggleButton refreshbutton;  // for popup
     /** The button which starts or stops a movie */
@@ -849,9 +849,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public NumberTextField skipField;
     /** The combo box for skipping frames */
     public JComboBox skipBox;
-	/** The frame which holds the skip controls */
-	JFrame skipFrame;
-	
+    /** The frame which holds the skip controls */
+    JFrame skipFrame;
+        
     /** Scale (zoom value).  1.0 is 1:1.  2.0 is zoomed in 2 times.  Etc. */
     double scale = 1.0;
     final Object scaleLock = new Object();  // scale lock
@@ -1093,7 +1093,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             });
 
 
-		//Create the popup menu.
+        //Create the popup menu.
         refreshbutton = new JToggleButton(REFRESH_ICON);
         refreshbutton.setPressedIcon(REFRESH_ICON_P);
         refreshbutton.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
@@ -1110,20 +1110,20 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             {
             public void mousePressed(MouseEvent e)
                 {
-				rebuildRefreshPopup();
+                rebuildRefreshPopup();
                 refreshPopup.show(e.getComponent(),
                     0,
-					//refreshbutton.getLocation().x,
+                    //refreshbutton.getLocation().x,
                     refreshbutton.getSize().height);
                 }
             public void mouseReleased(MouseEvent e)
                 {
                 refreshbutton.setSelected(false);
-				rebuildRefreshPopup();
+                rebuildRefreshPopup();
                 }
             });
 
-		
+                
 
 
 
@@ -1241,7 +1241,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             });
         header.add(snapshotButton);
         
-		
+                
         // add the option button
         optionButton = new JButton(OPTIONS_ICON);
         optionButton.setPressedIcon(OPTIONS_ICON_P);
@@ -1297,12 +1297,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             };
         scaleField.setToolTipText("Zoom in and out");
-		scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
+        scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         header.add(scaleField);
         
-		skipFrame = new JFrame();
-		rebuildSkipFrame();
-		skipFrame.pack();
+        skipFrame = new JFrame();
+        rebuildSkipFrame();
+        skipFrame.pack();
 
 
 
@@ -1855,17 +1855,17 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         return false;
         }
 
-	public void rebuildSkipFrame()
-		{
-		skipFrame.getContentPane().removeAll();
-		skipFrame.getContentPane().invalidate();
-		skipFrame.getContentPane().repaint();
-		skipFrame.getContentPane().setLayout(new BorderLayout());
+    public void rebuildSkipFrame()
+        {
+        skipFrame.getContentPane().removeAll();
+        skipFrame.getContentPane().invalidate();
+        skipFrame.getContentPane().repaint();
+        skipFrame.getContentPane().setLayout(new BorderLayout());
 
-		JPanel skipHeader = new JPanel();
-		skipHeader.setLayout(new BorderLayout());
-		skipFrame.add(skipHeader, BorderLayout.CENTER);
-		
+        JPanel skipHeader = new JPanel();
+        skipHeader.setLayout(new BorderLayout());
+        skipFrame.add(skipHeader, BorderLayout.CENTER);
+                
         // add the interval (skip) field
         skipBox = new JComboBox(REDRAW_OPTIONS);
         skipBox.setSelectedIndex(updateRule);
@@ -1948,141 +1948,141 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             };
         skipField.setToolTipText("Specify the interval between screen updates");
-		skipField.valField.setColumns(10);
+        skipField.valField.setColumns(10);
         skipHeader.add(skipField,BorderLayout.CENTER);
         skipHeader.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         skipListener.actionPerformed(null);  // have it update the text field accordingly
-		}
+        }
 
-	public void rebuildRefreshPopup()
-		{
-		refreshPopup.removeAll();
-		String s = "";
-		switch(updateRule)
-			{
-			case UPDATE_RULE_STEPS:
-				s = (stepInterval == 1 ? "Redrawing each model iteration" :
-						"Redrawing each " + stepInterval +  " model iterations");
-				break;
-			case UPDATE_RULE_INTERNAL_TIME:
-				s = (timeInterval == 1000 ? "Redrawing each unit of model time" :
-						"Redrawing each " + (timeInterval / 1000.0) +  " units of model time");
-				break;
-			case UPDATE_RULE_WALLCLOCK_TIME:
-				s = (wallInterval == 1000 ? "Redrawing each second of real time" :
-						"Redrawing each " + (wallInterval / 1000.0) +  " seconds of real time");
-				break;
-			case UPDATE_RULE_ALWAYS:
-				s = "Redrawing each model iteration";
-				break;
-			case UPDATE_RULE_NEVER:
-				s = "Never redrawing except when the window is redrawn";
-				break;
-			}
-		JMenuItem m = new JMenuItem(s);
-		m.setEnabled(false);
+    public void rebuildRefreshPopup()
+        {
+        refreshPopup.removeAll();
+        String s = "";
+        switch(updateRule)
+            {
+            case UPDATE_RULE_STEPS:
+                s = (stepInterval == 1 ? "Redrawing each model iteration" :
+                    "Redrawing each " + stepInterval +  " model iterations");
+                break;
+            case UPDATE_RULE_INTERNAL_TIME:
+                s = (timeInterval == 1000 ? "Redrawing each unit of model time" :
+                    "Redrawing each " + (timeInterval / 1000.0) +  " units of model time");
+                break;
+            case UPDATE_RULE_WALLCLOCK_TIME:
+                s = (wallInterval == 1000 ? "Redrawing each second of real time" :
+                    "Redrawing each " + (wallInterval / 1000.0) +  " seconds of real time");
+                break;
+            case UPDATE_RULE_ALWAYS:
+                s = "Redrawing each model iteration";
+                break;
+            case UPDATE_RULE_NEVER:
+                s = "Never redrawing except when the window is redrawn";
+                break;
+            }
+        JMenuItem m = new JMenuItem(s);
+        m.setEnabled(false);
         refreshPopup.add(m);
-		
-		refreshPopup.addSeparator();
+                
+        refreshPopup.addSeparator();
 
-		m = new JMenuItem("Always Redraw");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Always Redraw");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_ALWAYS;
-				rebuildSkipFrame();
-				}
-			});
+                {
+                updateRule = UPDATE_RULE_ALWAYS;
+                rebuildSkipFrame();
+                }
+            });
 
-		m = new JMenuItem("Never Redraw");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Never Redraw");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_NEVER;
-				rebuildSkipFrame();
-				}
-			});
+                {
+                updateRule = UPDATE_RULE_NEVER;
+                rebuildSkipFrame();
+                }
+            });
 
-		m = new JMenuItem("Redraw once every 2 iterations");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Redraw once every 2 iterations");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_STEPS;
-				stepInterval = 2;
-				rebuildSkipFrame();
-				}
-			});
+                {
+                updateRule = UPDATE_RULE_STEPS;
+                stepInterval = 2;
+                rebuildSkipFrame();
+                }
+            });
 
-		m = new JMenuItem("Redraw once every 4 iterations");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Redraw once every 4 iterations");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_STEPS;
-				stepInterval = 4;
-				rebuildSkipFrame();
-				}
-			});
+                {
+                updateRule = UPDATE_RULE_STEPS;
+                stepInterval = 4;
+                rebuildSkipFrame();
+                }
+            });
 
-		m = new JMenuItem("Redraw once every 8 iterations");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Redraw once every 8 iterations");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_STEPS;
-				stepInterval = 8;
-				rebuildSkipFrame();
-				}
-			});
+                {
+                updateRule = UPDATE_RULE_STEPS;
+                stepInterval = 8;
+                rebuildSkipFrame();
+                }
+            });
 
-		m = new JMenuItem("Redraw once every 16 iterations");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        m = new JMenuItem("Redraw once every 16 iterations");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_STEPS;
-				stepInterval = 16;
-				rebuildSkipFrame();
-				}
-			});
-			
-		m = new JMenuItem("Redraw once every 32 iterations");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+                {
+                updateRule = UPDATE_RULE_STEPS;
+                stepInterval = 16;
+                rebuildSkipFrame();
+                }
+            });
+                        
+        m = new JMenuItem("Redraw once every 32 iterations");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				updateRule = UPDATE_RULE_STEPS;
-				stepInterval = 16;
-				rebuildSkipFrame();
-				}
-			});
-			
-		refreshPopup.addSeparator();
+                {
+                updateRule = UPDATE_RULE_STEPS;
+                stepInterval = 16;
+                rebuildSkipFrame();
+                }
+            });
+                        
+        refreshPopup.addSeparator();
 
-		// add other menu items
-		m = new JMenuItem("More Options...");
-		refreshPopup.add(m);
-		m.addActionListener(new ActionListener()
+        // add other menu items
+        m = new JMenuItem("More Options...");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
-				{
-				skipFrame.setTitle(getFrame().getTitle() + " Options");
-				skipFrame.setVisible(true);
-				}
-			});
+                {
+                skipFrame.setTitle(getFrame().getTitle() + " Options");
+                skipFrame.setVisible(true);
+                }
+            });
 
-		refreshPopup.revalidate();
-		}
+        refreshPopup.revalidate();
+        }
 
 
 

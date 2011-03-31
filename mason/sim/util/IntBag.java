@@ -33,7 +33,8 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
     public IntBag() { numObjs = 0; objs = new int[1]; }
     
     /** Adds the ints from the other IntBag without copying them.  The size of the
-        new IntBag is the minimum necessary size to hold the ints. */
+        new IntBag is the minimum necessary size to hold the ints. If the Other IntBag is
+        null, a new empty IntBag is created.*/
     public IntBag(final IntBag other)
         {
         if (other==null) { numObjs = 0; objs = new int[1]; }
@@ -45,8 +46,9 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
             }
         }
     
-    /** Creates an IntBag with the given elements. */
-    public IntBag(int[] other) { this(); addAll(other); }
+    /** Creates an IntBag with the given elements. If the Other array is
+        null, a new empty IntBag is created.*/
+    public IntBag(int[] other) { this(); if (other!=null) addAll(other); }
 
     public int size()
         {

@@ -184,7 +184,7 @@ public class Schedule implements java.io.Serializable
 
     // pushes the time to AFTER_SIMULATION and attempts to kill all
     // remaining scheduled items
-    void pushToAfterSimulation()
+    protected void pushToAfterSimulation()
         {
         synchronized(lock)
             {
@@ -609,7 +609,7 @@ public class Schedule implements java.io.Serializable
             key ^= (key >>> 8);
             key += (key << 3);
             key ^= (key >>> 15);
-            key     += ~(key << 27);
+            key += ~(key << 27);
             key ^= (key >>> 31);
 
             return (int)(key ^ (key >> 32)) ^ y;

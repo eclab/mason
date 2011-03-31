@@ -20,6 +20,9 @@ public class Ant extends OvalPortrayal2D implements Steppable
     public boolean hasFoodItem = false;
     double reward = 0;
         
+    int x;
+    int y;
+        
     Int2D last;
         
     public Ant(double initialReward) { reward = initialReward; }

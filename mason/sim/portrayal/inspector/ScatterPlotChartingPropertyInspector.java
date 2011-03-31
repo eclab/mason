@@ -19,7 +19,7 @@ import org.jfree.data.general.*;
 public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspector
     {
     double[][] previousValues = new double[2][0]; // sacrificial
-	    
+            
     protected boolean validChartGenerator(ChartGenerator generator) { return generator instanceof ScatterPlotGenerator; }
         
     protected boolean includeAggregationMethodAttributes() { return false; }
@@ -101,7 +101,7 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
                 for(int i=0;i<array.length;i++)
                     { vals[0][i] = array[i].x; vals[1][i] = array[i].y; }
                 }
-			}
+            }
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

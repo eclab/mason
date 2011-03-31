@@ -1976,3 +1976,6 @@ Version 16
 	Added Scatter Plots
 	Modified Flockers to include two model elements which show off Scatter Plots
 	Added the ability to draw a thin frame around Continuous2D.
+	Bag, DoubleBag, and IntBag can be initialized with null passed in.
+	Added DenseGrid2D, DenseGrid2DPortrayal, and HexaDenseGrid2DPortrayal
+	Reindented

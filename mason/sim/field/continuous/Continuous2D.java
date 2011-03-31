@@ -457,37 +457,37 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         Object[] objs = result.objs;
         double distsq = distance*distance;
         if (radial) 
-			for(int i=0;i<numObjs;i++)
-                        {
-                        double d = 0;
-                        Double2D loc = getObjectLocation(objs[i]);
-                        if (toroidal) d = tds(position, loc);
-                        else d = position.distanceSq(loc);
-                        if (d > distsq || (!inclusive && d >= distsq)) 
-                            { result.remove(i); i--; numObjs--; }
-                        }
+            for(int i=0;i<numObjs;i++)
+                {
+                double d = 0;
+                Double2D loc = getObjectLocation(objs[i]);
+                if (toroidal) d = tds(position, loc);
+                else d = position.distanceSq(loc);
+                if (d > distsq || (!inclusive && d >= distsq)) 
+                    { result.remove(i); i--; numObjs--; }
+                }
         else 
-			for(int i=0;i<numObjs;i++)
-                 {
-                 Double2D loc = getObjectLocation(objs[i]);
-                 double minx = 0;
-                 double miny = 0;
-                 if (toroidal)
-                     {
-                     minx = tdx(loc.x, position.x);
-                     miny = tdy(loc.y, position.y);
-                     }
-                 else
-                     {
-                     minx = loc.x - position.x;
-                     miny = loc.y - position.y;
-                     }
-                 if (minx < 0) minx = -minx;
-                 if (miny < 0) miny = -miny;
-                 if ((minx > distance || miny > distance) ||
-                     (!inclusive && ( minx >= distance || miny >= distance)))
-                     { result.remove(i); i--;  numObjs--; }
-                 }
+            for(int i=0;i<numObjs;i++)
+                {
+                Double2D loc = getObjectLocation(objs[i]);
+                double minx = 0;
+                double miny = 0;
+                if (toroidal)
+                    {
+                    minx = tdx(loc.x, position.x);
+                    miny = tdy(loc.y, position.y);
+                    }
+                else
+                    {
+                    minx = loc.x - position.x;
+                    miny = loc.y - position.y;
+                    }
+                if (minx < 0) minx = -minx;
+                if (miny < 0) miny = -miny;
+                if ((minx > distance || miny > distance) ||
+                    (!inclusive && ( minx >= distance || miny >= distance)))
+                    { result.remove(i); i--;  numObjs--; }
+                }
         return result;
         }
 

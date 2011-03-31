@@ -47,15 +47,15 @@ public class HistogramGenerator extends ChartGenerator
 
     public void removeSeries(int index)
         {
-		super.removeSeries(index);
-		update();
+        super.removeSeries(index);
+        update();
         }
                 
 
     public void moveSeries(int index, boolean up)
         {
-		super.moveSeries(index, up);
-		update();
+        super.moveSeries(index, up);
+        update();
         }
                 
 
@@ -74,30 +74,30 @@ public class HistogramGenerator extends ChartGenerator
         chartPanel.setMinimumDrawWidth(20);
         chartPanel.setMaximumDrawWidth(2000);
         chartHolder.getViewport().setView(chartPanel);
-		((XYBarRenderer)(chart.getXYPlot().getRenderer())).setShadowVisible(false);
-		((XYBarRenderer)(chart.getXYPlot().getRenderer())).setBarPainter(new StandardXYBarPainter());
+        ((XYBarRenderer)(chart.getXYPlot().getRenderer())).setShadowVisible(false);
+        ((XYBarRenderer)(chart.getXYPlot().getRenderer())).setBarPainter(new StandardXYBarPainter());
 
-		// this must come last because the chart must exist for us to set its dataset
-		setSeriesDataset(dataset);
-		}
+        // this must come last because the chart must exist for us to set its dataset
+        setSeriesDataset(dataset);
+        }
  
-     public void update()
+    public void update()
         {
-		// We have to rebuild the dataset from scratch (deleting and replacing it) because JFreeChart's
-		// histogram facility doesn't have a way to remove or move elements.  Stupid stupid stupid.
+        // We have to rebuild the dataset from scratch (deleting and replacing it) because JFreeChart's
+        // histogram facility doesn't have a way to remove or move elements.  Stupid stupid stupid.
 
-		SeriesAttributes[] sa = getSeriesAttributes();
+        SeriesAttributes[] sa = getSeriesAttributes();
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         HistogramDataset dataset = new HistogramDataset();
-		dataset.setType(histogramType);
-		
+        dataset.setType(histogramType);
+                
         for(int i=0; i < sa.length; i++)
             {
             HistogramSeriesAttributes attributes = (HistogramSeriesAttributes)(sa[i]);
             dataset.addSeries(attributes.getName(), attributes.getValues(), attributes.getNumBins());
             }
-			
-		setSeriesDataset(dataset);
+                        
+        setSeriesDataset(dataset);
         }
 
     public HistogramGenerator()
@@ -105,7 +105,7 @@ public class HistogramGenerator extends ChartGenerator
         // buildChart is called by super() first
                 
         LabelledList list = new LabelledList("Show Histograms...");
-		DisclosurePanel pan1 = new DisclosurePanel("Show Histogram...", list);
+        DisclosurePanel pan1 = new DisclosurePanel("Show Histogram...", list);
                 
         final HistogramType[] styles = new HistogramType[] 
             { HistogramType.FREQUENCY, HistogramType.RELATIVE_FREQUENCY, HistogramType.SCALE_AREA_TO_1 };
@@ -116,7 +116,7 @@ public class HistogramGenerator extends ChartGenerator
                 {
                 histogramType = styles[style.getSelectedIndex()];
                 HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
-				dataset.setType(histogramType);
+                dataset.setType(histogramType);
                 }
             });
         list.add(style);
@@ -128,33 +128,33 @@ public class HistogramGenerator extends ChartGenerator
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
     public HistogramSeriesAttributes addSeries(double[] vals, int bins, String name, final org.jfree.data.general.SeriesChangeListener stopper)
         {
-		if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
-		HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
+        if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
+        HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
         int i = dataset.getSeriesCount();
         dataset.setType(histogramType);  // It looks like the histograms reset
-		dataset.addSeries(name, vals, bins);
-		
-		// need to have added the dataset BEFORE calling this since it'll try to change the name of the series
+        dataset.addSeries(name, vals, bins);
+                
+        // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
         HistogramSeriesAttributes csa = new HistogramSeriesAttributes(this, name, i, vals, bins, stopper);
         seriesAttributes.add(csa);
-		
-		revalidate();  // display the new series panel
-		update();
-		
-		// won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
-		SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
-		
+                
+        revalidate();  // display the new series panel
+        update();
+                
+        // won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
+        SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
+                
         return csa;
         }
 
 
     public void updateSeries(int index, double[] vals)
         {
-		if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
-			return;
+        if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
+            return;
 
-		if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
-		HistogramSeriesAttributes hsa = (HistogramSeriesAttributes)(getSeriesAttribute(index));
-		hsa.setValues(vals);
+        if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
+        HistogramSeriesAttributes hsa = (HistogramSeriesAttributes)(getSeriesAttribute(index));
+        hsa.setValues(vals);
         }
     }

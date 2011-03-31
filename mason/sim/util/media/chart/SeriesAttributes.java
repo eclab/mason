@@ -31,10 +31,10 @@ import org.jfree.data.general.*;
 
 public abstract class SeriesAttributes extends LabelledList
     {
-	protected SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
-	public SeriesChangeListener getStoppable() { return stoppable; }
-	public void setStoppable(SeriesChangeListener obj) { stoppable = obj; }
-	
+    protected SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
+    public SeriesChangeListener getStoppable() { return stoppable; }
+    public void setStoppable(SeriesChangeListener obj) { stoppable = obj; }
+        
     /** The index of the series that this SeriesAttributes is responsible for. */
     protected int seriesIndex;
     /** The ChartGenerator which holds the series that this SeriesAttributes is responsible for. */
@@ -158,7 +158,7 @@ public abstract class SeriesAttributes extends LabelledList
     public SeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)
         {
         super(name);
-		setStoppable(stoppable);
+        setStoppable(stoppable);
         this.generator = generator;
         seriesIndex = index;
         final JCheckBox check = new JCheckBox();

@@ -243,315 +243,315 @@ public abstract class AbstractGrid2D implements Grid2D
             }
         }
 
-	/** Returns the bounding box surrounding an arc centered at (0,0), of the given distance,
-		and with the given start angle and angular extent.  Extent and start angle may be 
-		positive (fastest), negative, or zero. If the extent is >= 2PI or &lt;=(-2PI) then the
-		bounding box for the circle is returned.
-	*/
-	/*
-	public Rectangle2D.Double getBoundingBox(double distance, double startAngle, double extent)
-		{
-		if (extent < 0) { startAngle -= extent; extent = -extent; }  // get rid of negative extents
-		if (extent >= 2 * Math.PI)	// full circle or more
-			return new Rectangle2D.Double(-distance,-distance, 2*distance, 2*distance);
+    /** Returns the bounding box surrounding an arc centered at (0,0), of the given distance,
+        and with the given start angle and angular extent.  Extent and start angle may be 
+        positive (fastest), negative, or zero. If the extent is >= 2PI or &lt;=(-2PI) then the
+        bounding box for the circle is returned.
+    */
+    /*
+      public Rectangle2D.Double getBoundingBox(double distance, double startAngle, double extent)
+      {
+      if (extent < 0) { startAngle -= extent; extent = -extent; }  // get rid of negative extents
+      if (extent >= 2 * Math.PI)      // full circle or more
+      return new Rectangle2D.Double(-distance,-distance, 2*distance, 2*distance);
 
-		// move start angle into 0...2PI range
-		if (startAngle >= 2 * Math.PI) startAngle = startAngle % (2 * Math.PI);
-		if (startAngle < 0) startAngle = (startAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-		
-		// compute end angle, will be positive and >= than start angle
-		int endAngle = startAngle + extent;
+      // move start angle into 0...2PI range
+      if (startAngle >= 2 * Math.PI) startAngle = startAngle % (2 * Math.PI);
+      if (startAngle < 0) startAngle = (startAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+                
+      // compute end angle, will be positive and >= than start angle
+      int endAngle = startAngle + extent;
 
-		double minx=0; double maxx=0; double miny=0; double maxy=0;
-	
-		// compute start angle's quadrant
-		int startq = 0;
-		if (startAngle >= 0 && startAngle < Math.PI/2.0)
-			startq = 0;
-		else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
-			startq = 1;
-		else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
-			startq = 2;
-		else
-			startq = 3;
+      double minx=0; double maxx=0; double miny=0; double maxy=0;
+        
+      // compute start angle's quadrant
+      int startq = 0;
+      if (startAngle >= 0 && startAngle < Math.PI/2.0)
+      startq = 0;
+      else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
+      startq = 1;
+      else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
+      startq = 2;
+      else
+      startq = 3;
 
-		// compute end angle's quadrant
-		int endq = 0;
-		if (endAngle >= 0 && endAngle < Math.PI/2.0)
-			endq = 0;
-		else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
-			endq = 1;
-		else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
-			endq = 2;
-		else
-			endq = 3;
+      // compute end angle's quadrant
+      int endq = 0;
+      if (endAngle >= 0 && endAngle < Math.PI/2.0)
+      endq = 0;
+      else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
+      endq = 1;
+      else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
+      endq = 2;
+      else
+      endq = 3;
 
-		// consider all 16 possibilities of quadrant locations
-		if (startq == 0)
-			{
-			maxx = Math.max(maxx, Math.cos(startAngle));
-			if (endq == 0)
-				{
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				maxy = distance;
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				maxy = distance;
-				minx = -distance;
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      // consider all 16 possibilities of quadrant locations
+      if (startq == 0)
+      {
+      maxx = Math.max(maxx, Math.cos(startAngle));
+      if (endq == 0)
+      {
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      maxy = distance;
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      maxy = distance;
+      minx = -distance;
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else if (startq == 1)
-			{
-			maxy = Math.max(maxy, Math.sin(startAngle));			
-			if (endq == 0)
-				{
-				minx = -distance;
-				miny = -distance;
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				minx = -distance;
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else if (startq == 1)
+      {
+      maxy = Math.max(maxy, Math.sin(startAngle));                    
+      if (endq == 0)
+      {
+      minx = -distance;
+      miny = -distance;
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      minx = -distance;
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else if (startq == 2)
-			{
-			minx = Math.min(minx, Math.cos(startAngle));
-			if (endq == 0)
-				{
-				miny = -distance;
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				miny = -distance;
-				maxx = distance;
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else if (startq == 2)
+      {
+      minx = Math.min(minx, Math.cos(startAngle));
+      if (endq == 0)
+      {
+      miny = -distance;
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      miny = -distance;
+      maxx = distance;
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else // if (startq == 3)
-			{
-			miny = Math.min(minY, Math.sin(startAngle));
-			if (endq == 0)
-				{
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				maxx = distance;
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				maxx = distance;
-				maxy = distance;
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else // if (startq == 3)
+      {
+      miny = Math.min(minY, Math.sin(startAngle));
+      if (endq == 0)
+      {
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      maxx = distance;
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      maxx = distance;
+      maxy = distance;
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		// build rectangle
-		return new Rectangle2D(minx, miny, maxx - minx, maxy - miny);
-		}
+      // build rectangle
+      return new Rectangle2D(minx, miny, maxx - minx, maxy - miny);
+      }
 
-	public boolean withinArc(double x, double y, final double distanceSq, double startAngle, double endAngle, int startq, int endq)
-		{
-		// first test for distance
-		if (x*x+y*y > distanceSq) return false;
-		// now test for angle
+      public boolean withinArc(double x, double y, final double distanceSq, double startAngle, double endAngle, int startq, int endq)
+      {
+      // first test for distance
+      if (x*x+y*y > distanceSq) return false;
+      // now test for angle
 
-		// compute start angle's quadrant
-		int startq = 0;
-		if (startAngle >= 0 && startAngle < Math.PI/2.0)
-			startq = 0;
-		else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
-			startq = 1;
-		else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
-			startq = 2;
-		else
-			startq = 3;
+      // compute start angle's quadrant
+      int startq = 0;
+      if (startAngle >= 0 && startAngle < Math.PI/2.0)
+      startq = 0;
+      else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
+      startq = 1;
+      else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
+      startq = 2;
+      else
+      startq = 3;
 
-		// compute end angle's quadrant
-		int endq = 0;
-		if (endAngle >= 0 && endAngle < Math.PI/2.0)
-			endq = 0;
-		else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
-			endq = 1;
-		else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
-			endq = 2;
-		else
-			endq = 3;
+      // compute end angle's quadrant
+      int endq = 0;
+      if (endAngle >= 0 && endAngle < Math.PI/2.0)
+      endq = 0;
+      else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
+      endq = 1;
+      else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
+      endq = 2;
+      else
+      endq = 3;
 
-		// consider all 16 possibilities of quadrant locations
-		if (startq == 0)
-			{
-			maxx = Math.max(maxx, Math.cos(startAngle));
-			if (endq == 0)
-				{
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				maxy = distance;
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				maxy = distance;
-				minx = -distance;
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      // consider all 16 possibilities of quadrant locations
+      if (startq == 0)
+      {
+      maxx = Math.max(maxx, Math.cos(startAngle));
+      if (endq == 0)
+      {
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      maxy = distance;
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      maxy = distance;
+      minx = -distance;
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else if (startq == 1)
-			{
-			maxy = Math.max(maxy, Math.sin(startAngle));			
-			if (endq == 0)
-				{
-				minx = -distance;
-				miny = -distance;
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				minx = -distance;
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else if (startq == 1)
+      {
+      maxy = Math.max(maxy, Math.sin(startAngle));                    
+      if (endq == 0)
+      {
+      minx = -distance;
+      miny = -distance;
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      minx = -distance;
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else if (startq == 2)
-			{
-			minx = Math.min(minx, Math.cos(startAngle));
-			if (endq == 0)
-				{
-				miny = -distance;
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				miny = -distance;
-				maxx = distance;
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				miny = -distance;
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else if (startq == 2)
+      {
+      minx = Math.min(minx, Math.cos(startAngle));
+      if (endq == 0)
+      {
+      miny = -distance;
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      miny = -distance;
+      maxx = distance;
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      miny = -distance;
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
-		else // if (startq == 3)
-			{
-			miny = Math.min(minY, Math.sin(startAngle));
-			if (endq == 0)
-				{
-				maxx = distance;
-				maxy = Math.max(maxy, Math.sin(endAngle));
-				}
-			else if (endq == 1)
-				{
-				maxx = distance;
-				maxy = distance;
-				minx = Math.min(minx, Math.cos(endAngle));
-				}
-			else if (endq == 2)
-				{
-				maxx = distance;
-				maxy = distance;
-				minx = -distance;
-				miny = Math.min(miny, Math.sin(endAngle));
-				}
-			else // if (endq == 3)
-				{
-				maxx = Math.max(maxx, Math.cos(endAngle));
-				}
-			}
+      else // if (startq == 3)
+      {
+      miny = Math.min(minY, Math.sin(startAngle));
+      if (endq == 0)
+      {
+      maxx = distance;
+      maxy = Math.max(maxy, Math.sin(endAngle));
+      }
+      else if (endq == 1)
+      {
+      maxx = distance;
+      maxy = distance;
+      minx = Math.min(minx, Math.cos(endAngle));
+      }
+      else if (endq == 2)
+      {
+      maxx = distance;
+      maxy = distance;
+      minx = -distance;
+      miny = Math.min(miny, Math.sin(endAngle));
+      }
+      else // if (endq == 3)
+      {
+      maxx = Math.max(maxx, Math.cos(endAngle));
+      }
+      }
 
 
-		}
+      }
 
-	public void getNeighborsWithinArc(final double distance, double startAngle, double extent)
-		{
-		// Get bounding box
-		Rectangle2D rect = Arc2D.Double(0,0,distance,distance,startAngle,extent,Arc2D.PIE).getBounds2D();
-		double x = rect.getX();
-		double y = rect.getY();
-		double w = rect.getWidth();
-		double h = rect.getHeight();
-		
-		
-		
-		}
-*/
+      public void getNeighborsWithinArc(final double distance, double startAngle, double extent)
+      {
+      // Get bounding box
+      Rectangle2D rect = Arc2D.Double(0,0,distance,distance,startAngle,extent,Arc2D.PIE).getBounds2D();
+      double x = rect.getX();
+      double y = rect.getY();
+      double w = rect.getWidth();
+      double h = rect.getHeight();
+                
+                
+                
+      }
+    */
 
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {

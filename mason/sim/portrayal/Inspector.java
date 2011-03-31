@@ -45,8 +45,8 @@ import java.awt.*;
     {
     final Stoppable newStopper = super.reviseStopper(stopper);
     return new Stoppable() { public void stop()
-	{
-	if (newStopper!=null) newStopper.stop();  // wraps the stopper
+    {
+    if (newStopper!=null) newStopper.stop();  // wraps the stopper
     System.out.println("Hey, I stopped!");  // do my thing
     }};
     }</tt></pre>

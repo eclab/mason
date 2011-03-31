@@ -88,151 +88,151 @@ public abstract class ChartGenerator extends JPanel
     protected PropertyField xLabel;
     /** The global attributes range axis field. */
     protected  PropertyField yLabel;
-	
-	JButton movieButton = new JButton("Create Movie");
+        
+    JButton movieButton = new JButton("Create Movie");
     
     /** The global attributes logarithmic range axis check box. */
     protected JCheckBox yLog;
     /** The global attributes logarithmic domain axis check box. */
     protected JCheckBox xLog;
     
-	protected BufferedImage buffer;
-	
+    protected BufferedImage buffer;
+        
     public void setXAxisLogScaled(boolean isLogScaled){xLog.setSelected(isLogScaled);}
     public boolean isXAxisLogScaled(){return xLog.isSelected();}
     public void setYAxisLogScaled(boolean isLogScaled){yLog.setSelected(isLogScaled);}
     public boolean isYAxisLogScaled(){return yLog.isSelected();}
-    	
-	BufferedImage getBufferedImage()
-		{
-		// make a buffer
-		if (buffer == null || buffer.getWidth(null) != chartPanel.getWidth() || buffer.getHeight(null) != chartPanel.getHeight())
-			{
-			buffer = getGraphicsConfiguration().createCompatibleImage((int)chartPanel.getWidth(),(int)chartPanel.getHeight());
-			}
-			
-		// paint to the buffer
-		Graphics2D g = (Graphics2D)(buffer.getGraphics());
-		g.setColor(chartPanel.getBackground());
-		g.fillRect(0,0,buffer.getWidth(null),buffer.getHeight(null));
-		chartPanel.paintComponent(g);
-		g.dispose();
-		return buffer;
-		}
-	
-	MovieMaker movieMaker = null;
-	
-	public static final long INITIAL_KEY = -1;
-	public static final long FORCE_KEY = -2;
-	long oldKey = INITIAL_KEY;
-	
-	/** Key must be 0 or higher.  Will update only if the key passed in is different
-		from the previously passed in key or if the key is FORCE_KEY.  
-		If newData is true, then the chart will also be written out to a movie if appropriate. */
-	public void update(long key, boolean newData)
-		{
-		if (key == oldKey && key != FORCE_KEY)  // we already did it
-			return;
-		else
-			{
-			oldKey = key;
-			update();
-			
-			// now possibly write to the movie maker
-			if (newData && movieMaker != null)
-				{
-				// add buffer to the movie maker
-				movieMaker.add(getBufferedImage());
-				}
-			if (newData)
-				chart.getPlot().datasetChanged(new DatasetChangeEvent(chart.getPlot(), null));
-			}
-		}
-		
+        
+    BufferedImage getBufferedImage()
+        {
+        // make a buffer
+        if (buffer == null || buffer.getWidth(null) != chartPanel.getWidth() || buffer.getHeight(null) != chartPanel.getHeight())
+            {
+            buffer = getGraphicsConfiguration().createCompatibleImage((int)chartPanel.getWidth(),(int)chartPanel.getHeight());
+            }
+                        
+        // paint to the buffer
+        Graphics2D g = (Graphics2D)(buffer.getGraphics());
+        g.setColor(chartPanel.getBackground());
+        g.fillRect(0,0,buffer.getWidth(null),buffer.getHeight(null));
+        chartPanel.paintComponent(g);
+        g.dispose();
+        return buffer;
+        }
+        
+    MovieMaker movieMaker = null;
+        
+    public static final long INITIAL_KEY = -1;
+    public static final long FORCE_KEY = -2;
+    long oldKey = INITIAL_KEY;
+        
+    /** Key must be 0 or higher.  Will update only if the key passed in is different
+        from the previously passed in key or if the key is FORCE_KEY.  
+        If newData is true, then the chart will also be written out to a movie if appropriate. */
+    public void update(long key, boolean newData)
+        {
+        if (key == oldKey && key != FORCE_KEY)  // we already did it
+            return;
+        else
+            {
+            oldKey = key;
+            update();
+                        
+            // now possibly write to the movie maker
+            if (newData && movieMaker != null)
+                {
+                // add buffer to the movie maker
+                movieMaker.add(getBufferedImage());
+                }
+            if (newData)
+                chart.getPlot().datasetChanged(new DatasetChangeEvent(chart.getPlot(), null));
+            }
+        }
+                
     /** Override this to update the chart to reflect new data. */
     protected void update() { }
         
-	protected void rebuildAttributeIndices()
-		{
+    protected void rebuildAttributeIndices()
+        {
         SeriesAttributes[] c = getSeriesAttributes();
         for(int i = 0; i < c.length; i++)
             {
-			SeriesAttributes csa = c[i];
-			csa.setSeriesIndex(i);
-			csa.rebuildGraphicsDefinitions();
+            SeriesAttributes csa = c[i];
+            csa.setSeriesIndex(i);
+            csa.rebuildGraphicsDefinitions();
             }
         revalidate();
-		}
-	
-	protected SeriesAttributes getSeriesAttribute(int i)
-		{
-		return (SeriesAttributes)(seriesAttributes.getComponent(i));
-		}
+        }
+        
+    protected SeriesAttributes getSeriesAttribute(int i)
+        {
+        return (SeriesAttributes)(seriesAttributes.getComponent(i));
+        }
 
-	protected SeriesAttributes[] getSeriesAttributes()
-		{
-		Component[] c = seriesAttributes.getComponents();
-		SeriesAttributes[] sa = new SeriesAttributes[c.length];
-		System.arraycopy(c, 0, sa, 0, c.length);
-		return sa;
-		}
-		
-	protected void setSeriesAttributes(SeriesAttributes[] c)
-		{
-		seriesAttributes.removeAll();
+    protected SeriesAttributes[] getSeriesAttributes()
+        {
+        Component[] c = seriesAttributes.getComponents();
+        SeriesAttributes[] sa = new SeriesAttributes[c.length];
+        System.arraycopy(c, 0, sa, 0, c.length);
+        return sa;
+        }
+                
+    protected void setSeriesAttributes(SeriesAttributes[] c)
+        {
+        seriesAttributes.removeAll();
         for(int i = 0; i < c.length; i++)
-			seriesAttributes.add(c[i]);
-		}
+            seriesAttributes.add(c[i]);
+        }
 
     /** Override this to remove a series from the chart.  Be sure to call super(...) first. */
     public void removeSeries(int index)
-		{
+        {
         // stop the inspector....
         SeriesAttributes[] c = getSeriesAttributes();
         SeriesChangeListener tmpObj = c[index].getStoppable();
-		if (tmpObj != null)
+        if (tmpObj != null)
             {
-			tmpObj.seriesChanged(new SeriesChangeEvent(this));
-			}
+            tmpObj.seriesChanged(new SeriesChangeEvent(this));
+            }
         
-		// for good measure, set the index of the component to something crazy just in case a stoppable tries to continue pulsing it
+        // for good measure, set the index of the component to something crazy just in case a stoppable tries to continue pulsing it
         Component comp = seriesAttributes.getComponent(index);
-		((SeriesAttributes)comp).setSeriesIndex(-1);
+        ((SeriesAttributes)comp).setSeriesIndex(-1);
 
         // remove the attribute and rebuild indices
-		seriesAttributes.remove(index);
-		rebuildAttributeIndices();
-		revalidate();
-		}
-		
+        seriesAttributes.remove(index);
+        rebuildAttributeIndices();
+        revalidate();
+        }
+                
     
     /** Override this to move a series relative to other series.  Be sure to call super(...) first. */
     public void moveSeries(int index, boolean up)
-		{
+        {
         if ((index > 0 && up) || (index < getSeriesDataset().getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
-			{
-			SeriesAttributes[] c = getSeriesAttributes();
-			
-			if (up)
-				{
-				SeriesAttributes s1 = c[index];
-				SeriesAttributes s2 = c[index-1];
-				c[index] = s2;
-				c[index-1] = s1;
-				}
-			else
-				{
-				SeriesAttributes s1 = c[index];
-				SeriesAttributes s2 = c[index+1];
-				c[index] = s2;
-				c[index+1] = s1;
-				}
-			setSeriesAttributes(c);
-			rebuildAttributeIndices();
-			revalidate();
-			}
-		else { } // ignore -- stupid user
-		}
+            {
+            SeriesAttributes[] c = getSeriesAttributes();
+                        
+            if (up)
+                {
+                SeriesAttributes s1 = c[index];
+                SeriesAttributes s2 = c[index-1];
+                c[index] = s2;
+                c[index-1] = s1;
+                }
+            else
+                {
+                SeriesAttributes s1 = c[index];
+                SeriesAttributes s2 = c[index+1];
+                c[index] = s2;
+                c[index+1] = s1;
+                }
+            setSeriesAttributes(c);
+            rebuildAttributeIndices();
+            revalidate();
+            }
+        else { } // ignore -- stupid user
+        }
                 
     /** Override this to construct the appropriate kind of chart.  This is the first thing called from the constructor; so certain
         of your instance variables may not have been set yet and you may need to set them yourself.  You'll need to set the dataset. */
@@ -251,30 +251,30 @@ public abstract class ChartGenerator extends JPanel
         On the Mac, Quicktime Pro will do this quite elegantly. */
     public void startMovie()
         {
-		// can't start a movie if we're in an applet
-		if (SimApplet.isApplet)
-			{
-			Object[] options = {"Oops"};
-			JOptionPane.showOptionDialog(
-				this, "You cannot create movies from an applet.",
-				"MASON Applet Restriction",
-				JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
-				null, options, options[0]);
-			return;
-			}
-					
-		if (movieMaker != null) return;  // already running
-		movieMaker = new MovieMaker(getFrame());
+        // can't start a movie if we're in an applet
+        if (SimApplet.isApplet)
+            {
+            Object[] options = {"Oops"};
+            JOptionPane.showOptionDialog(
+                this, "You cannot create movies from an applet.",
+                "MASON Applet Restriction",
+                JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE,
+                null, options, options[0]);
+            return;
+            }
+                                        
+        if (movieMaker != null) return;  // already running
+        movieMaker = new MovieMaker(getFrame());
 
-		if (!movieMaker.start(getBufferedImage()))
-			movieMaker = null;  // failed
-		else 
-			{
-			movieButton.setText("Stop Movie");
-			
-			// emit an image
-			update(FORCE_KEY, true);
-			}
+        if (!movieMaker.start(getBufferedImage()))
+            movieMaker = null;  // failed
+        else 
+            {
+            movieButton.setText("Stop Movie");
+                        
+            // emit an image
+            update(FORCE_KEY, true);
+            }
         }
 
 
@@ -283,21 +283,21 @@ public abstract class ChartGenerator extends JPanel
         This method ought to be called from the main event loop. */
     public void stopMovie()
         {
-		if (movieMaker == null) return;  // already stopped
-		if (!movieMaker.stop())
-			{
-			Object[] options = {"Drat"};
-			JOptionPane.showOptionDialog(
-				this, "Your movie did not write to disk\ndue to a spurious JMF movie generation bug.",
-				"JMF Movie Generation Bug",
-				JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE,
-				null, options, options[0]);
-			}
-		movieMaker = null;
-		if (movieButton!=null)  // hasn't been destroyed yet
-			{
-			movieButton.setText("Create Movie");
-			}
+        if (movieMaker == null) return;  // already stopped
+        if (!movieMaker.stop())
+            {
+            Object[] options = {"Drat"};
+            JOptionPane.showOptionDialog(
+                this, "Your movie did not write to disk\ndue to a spurious JMF movie generation bug.",
+                "JMF Movie Generation Bug",
+                JOptionPane.OK_OPTION, JOptionPane.WARNING_MESSAGE,
+                null, options, options[0]);
+            }
+        movieMaker = null;
+        if (movieButton!=null)  // hasn't been destroyed yet
+            {
+            movieButton.setText("Create Movie");
+            }
         }
         
 
@@ -317,7 +317,7 @@ public abstract class ChartGenerator extends JPanel
     /** Prepares the chart to be garbage collected.  If you override this, be sure to call super.quit() */
     public void quit()
         {
-		if (movieMaker !=null) movieMaker.stop();
+        if (movieMaker !=null) movieMaker.stop();
         removeAllSeries();
         }
 
@@ -410,11 +410,11 @@ public abstract class ChartGenerator extends JPanel
         {
         // create the chart
         buildChart();
-		chart.getPlot().setBackgroundPaint(Color.WHITE);
-		((XYPlot)(chart.getPlot())).setDomainGridlinesVisible(false);
-		((XYPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
-		((XYPlot)(chart.getPlot())).setDomainGridlinePaint(new Color(200,200,200));
-		((XYPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
+        chart.getPlot().setBackgroundPaint(Color.WHITE);
+        ((XYPlot)(chart.getPlot())).setDomainGridlinesVisible(false);
+        ((XYPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
+        ((XYPlot)(chart.getPlot())).setDomainGridlinePaint(new Color(200,200,200));
+        ((XYPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
 
 
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
@@ -432,7 +432,7 @@ public abstract class ChartGenerator extends JPanel
 
         LabelledList list = new LabelledList("Chart Properties");
         DisclosurePanel pan1 = new DisclosurePanel("Chart Properties", list);
-		globalAttributes.add(pan1);
+        globalAttributes.add(pan1);
         
         JLabel j = new JLabel("Right-Click or Control-Click");
         j.setFont(j.getFont().deriveFont(10.0f).deriveFont(java.awt.Font.ITALIC));
@@ -535,7 +535,7 @@ public abstract class ChartGenerator extends JPanel
 
         final JCheckBox ygridlines = new JCheckBox();
         ygridlines.setSelected(false);
-		il = new ItemListener()
+        il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
                 {
@@ -554,7 +554,7 @@ public abstract class ChartGenerator extends JPanel
 
         final JCheckBox legendCheck = new JCheckBox();
         legendCheck.setSelected(false);
-		il = new ItemListener()
+        il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
                 {
@@ -586,15 +586,15 @@ public abstract class ChartGenerator extends JPanel
         list.add(new JLabel("Antialias"), aliasCheck);
 
         JPanel pdfButtonPanel = new JPanel();
-		pdfButtonPanel.setBorder(new javax.swing.border.TitledBorder("Chart Output"));
-		DisclosurePanel pan2 = new DisclosurePanel("Chart Output", pdfButtonPanel);
-		
+        pdfButtonPanel.setBorder(new javax.swing.border.TitledBorder("Chart Output"));
+        DisclosurePanel pan2 = new DisclosurePanel("Chart Output", pdfButtonPanel);
+                
         pdfButtonPanel.setLayout(new BorderLayout());
-		Box pdfbox = new Box(BoxLayout.Y_AXIS);
-		pdfButtonPanel.add(pdfbox,BorderLayout.WEST);
+        Box pdfbox = new Box(BoxLayout.Y_AXIS);
+        pdfButtonPanel.add(pdfbox,BorderLayout.WEST);
 
         JButton pdfButton = new JButton( "Save as PDF" );
-		pdfbox.add(pdfButton);
+        pdfbox.add(pdfButton);
         pdfButton.addActionListener(new ActionListener()
             {
             public void actionPerformed ( ActionEvent e )
@@ -610,20 +610,20 @@ public abstract class ChartGenerator extends JPanel
                     } 
                 }
             });
-		movieButton = new JButton( "Create a Movie" );
-		pdfbox.add(movieButton);
-		pdfbox.add(Box.createGlue());
+        movieButton = new JButton( "Create a Movie" );
+        pdfbox.add(movieButton);
+        pdfbox.add(Box.createGlue());
         movieButton.addActionListener(new ActionListener()
             {
             public void actionPerformed ( ActionEvent e )
                 {
-				if (movieMaker == null) startMovie();
-				else stopMovie();
+                if (movieMaker == null) startMovie();
+                else stopMovie();
                 }
             });
 
         globalAttributes.add(pan2);
-		
+                
                 
         // we add into an outer box so we can later on add more global seriesAttributes
         // as the user instructs and still have glue be last
@@ -758,7 +758,7 @@ public abstract class ChartGenerator extends JPanel
                 {
                 public void run()
                     {
-					update(key , true);  // keep up-to-date
+                    update(key , true);  // keep up-to-date
                     // this is in the Swing thread, so it's okay
                     timer = null;
                     }

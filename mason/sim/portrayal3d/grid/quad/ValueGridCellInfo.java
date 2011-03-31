@@ -20,7 +20,7 @@ import sim.util.*;
 public class ValueGridCellInfo {
     /* This could be Grid2D or Grid3D */
     final Object grid;
-	final ValueGrid2DPortrayal3D fieldPortrayal;
+    final ValueGrid2DPortrayal3D fieldPortrayal;
 
     public int x = 0;
     public int y = 0;
@@ -29,13 +29,13 @@ public class ValueGridCellInfo {
     public ValueGridCellInfo(ValueGrid2DPortrayal3D fieldPortrayal, Grid2D g)
         {
         grid = g;
-		this.fieldPortrayal = fieldPortrayal;
+        this.fieldPortrayal = fieldPortrayal;
         } 
         
     public ValueGridCellInfo(ValueGrid2DPortrayal3D fieldPortrayal, Grid3D g)
         {
         grid = g;
-		this.fieldPortrayal = fieldPortrayal;
+        this.fieldPortrayal = fieldPortrayal;
         } 
 
     public double doubleValue(Object obj)
@@ -62,4 +62,4 @@ public class ValueGridCellInfo {
             { return fieldPortrayal.doubleValue(((ObjectGrid3D)grid).field[x][y][z]); }
         else return 0;  // an error
         }
-	}
+    }

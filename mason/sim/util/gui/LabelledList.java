@@ -56,7 +56,7 @@ public class LabelledList extends JPanel
         {
         super.setBackground(c);
         //if (consolePanel != null)  // may be null when Quaqua tries to set things up
-		//	consolePanel.setBackground(new Color(0,0,0,0));
+        //      consolePanel.setBackground(new Color(0,0,0,0));
         }
     
     public LabelledList()
@@ -65,7 +65,7 @@ public class LabelledList extends JPanel
         consolePanel.setLayout(gridbag);
         super.add(consolePanel, BorderLayout.NORTH);
         gbc.ipady=0; gbc.ipady = 0; gbc.weighty = 0;
-		//consolePanel.setBackground(new Color(0,0,0,0));
+        //consolePanel.setBackground(new Color(0,0,0,0));
         }
     
     /** Creates a Labelled List with a provided border label.  If label is null, just does new LabelledList()*/

@@ -202,46 +202,17 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                     {
                     newinfo.selected = (objectSelected &&  // there's something there
                         (selectedObject==obj || selectedWrappers.get(obj) != null));
-                    /*{
-                      LocationWrapper wrapper = null;
-                      if (selectedObject == obj) 
-                      wrapper = selectedWrapper;
-                      else wrapper = (LocationWrapper)(selectedWrappers.get(obj));
-                      portrayal.setSelected(wrapper,true);
-                      portrayal.draw(obj, graphics, newinfo);
-                      portrayal.setSelected(wrapper,false);
-                      }
-                      else */ portrayal.draw(obj, graphics, newinfo);
+                    portrayal.draw(obj, graphics, newinfo);
                     }
                 }
         }
-
-/*
-  public LocationWrapper getWrapper(Int2D location)
-  {
-  final ObjectGrid2D field = (ObjectGrid2D)(this.field);
-  return new LocationWrapper(null, location, this)
-  {
-  Int2D loc = (Int2D) this.location;
-  public Object getObject()
-  { 
-  return field.field[loc.x][loc.y];
-  }
-            
-  public String getLocationName()
-  {
-  return ((Int2D)this.location).toCoordinates();
-  }
-  };
-  }
-*/
 
     // searches for an object within a short distance of a location
     final int SEARCH_DISTANCE = 3;
     IntBag xPos = new IntBag(49);
     IntBag yPos = new IntBag(49);
         
-    Int2D searchForObject(Object object, Int2D loc)
+    protected Int2D searchForObject(Object object, Int2D loc)
         {
         ObjectGrid2D field = (ObjectGrid2D)(this.field);
         Object[][] grid = field.field;

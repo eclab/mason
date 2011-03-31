@@ -115,8 +115,8 @@ public abstract class QuadPortrayal implements Portrayal
             return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
         else if (grid instanceof ObjectGrid2D)
             return new SimpleInspector(new ObjectFilter(wrapper) ,state, "Properties");
-		else return null; // an error
-		}
+        else return null; // an error
+        }
         
     public Int2D getCellForIntersection(PickIntersection pi, Grid2D field)
         {

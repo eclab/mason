@@ -33,7 +33,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public DoubleBag() { numObjs = 0; objs = new double[1]; }
     
     /** Adds the doubles from the other DoubleBag without copying them.  The size of the
-        new DoubleBag is the minimum necessary size to hold the doubles. */
+        new DoubleBag is the minimum necessary size to hold the doubles.  If the Other DoubleBag is
+        null, a new empty DoubleBag is created. */
     public DoubleBag(final DoubleBag other)
         {
         if (other==null) { numObjs = 0; objs = new double[1]; }
@@ -45,8 +46,9 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
             }
         }
     
-    /** Creates a DoubleBag with the given elements. */
-    public DoubleBag(double[] other) { this(); addAll(other); }
+    /** Creates a DoubleBag with the given elements. If the Other array is
+        null, a new empty DoubleBag is created. */
+    public DoubleBag(double[] other) { this(); if (other!=null) addAll(other); }
 
     public int size()
         {

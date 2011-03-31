@@ -28,13 +28,13 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
     // a grey oval.  You should provide your own protrayals...
     SimplePortrayal2D defaultPortrayal = new OvalPortrayal2D();
 
-	Paint frame = null;
-	/** If you provide a Paint, a thin frame of this paint will be drawn around the (0,0,width,height) space of
-		the field.  This is mostly useful for seeing the frame of the field when clipping is turned off and you're zoomed out. */ 
-	public void setFrame(Paint p)
-		{
-		frame = p;
-		}
+    Paint frame = null;
+    /** If you provide a Paint, a thin frame of this paint will be drawn around the (0,0,width,height) space of
+        the field.  This is mostly useful for seeing the frame of the field when clipping is turned off and you're zoomed out. */ 
+    public void setFrame(Paint p)
+        {
+        frame = p;
+        }
 
     public void setField(Object field)
         {
@@ -228,14 +228,14 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                     }
                 }
             }
-			
-		// finally draw the frame
-		if (frame != null && graphics != null)
-			{
-			graphics.setPaint(frame);
-			Rectangle2D rect = new Rectangle2D.Double(info.draw.x - 1, info.draw.y - 1, info.draw.width + 1, info.draw.height + 1);
-			graphics.draw(rect);
-			}
+                        
+        // finally draw the frame
+        if (frame != null && graphics != null)
+            {
+            graphics.setPaint(frame);
+            Rectangle2D rect = new Rectangle2D.Double(info.draw.x - 1, info.draw.y - 1, info.draw.width + 1, info.draw.height + 1);
+            graphics.draw(rect);
+            }
         }
 
     public LocationWrapper getWrapper(final Object obj)

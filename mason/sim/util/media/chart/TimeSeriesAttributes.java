@@ -102,7 +102,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, org.jfree.data.general.SeriesChangeListener stoppable)
         { 
         super(generator, "" + series.getKey(), index, stoppable);
-		this.series = series;
+        this.series = series;
         }
 
     public void rebuildGraphicsDefinitions()

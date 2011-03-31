@@ -47,7 +47,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
     public Bag(int capacity) { numObjs = 0; objs = new Object[capacity]; }
         
     /** Adds the objects from the other Bag without copying them.  The size of the
-        new Bag is the minimum necessary size to hold the objects. */
+        new Bag is the minimum necessary size to hold the objects. If the Other Bag is
+        null, a new empty Bag is created. */
     public Bag(Bag other)
         {
         if (other==null) { numObjs = 0; objs = new Object[1]; }
@@ -59,11 +60,13 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
             }
         }
     
-    /** Creates a Bag with the given elements. */
-    public Bag(Object[] other) { this(); addAll(other); }
+    /** Creates a Bag with the given elements. If the Other array is
+        null, a new empty Bag is created. */
+    public Bag(Object[] other) { this(); if (other!=null) addAll(other); }
         
-    /** Creates a Bag with the given elements. */
-    public Bag(Collection other) { this(); addAll(other); }
+    /** Creates a Bag with the given elements. If the Other Collection is
+        null, a new empty Bag is created.*/
+    public Bag(Collection other) { this(); if (other!=null) addAll(other); }
         
     public int size()
         {
@@ -76,7 +79,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         }
     
     public boolean addAll(Collection other) 
-        { 
+        {
         if (other instanceof Bag) return addAll((Bag)other);  // avoid an array build
         return addAll(numObjs, other.toArray()); 
         }

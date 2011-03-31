@@ -160,8 +160,8 @@ public class ParallelSequence extends Sequence
             this.steps = new Steppable[threads];
 
             int len = sequence.length / threads;  // num sequence elts per thread.  Note: integer division
-			if (len * threads < sequence.length) len++; // make len a bit bigger
-			
+            if (len * threads < sequence.length) len++; // make len a bit bigger
+                        
             for(int i = 0 ; i < threads; i++)
                 {
                 int start = i * len;
@@ -272,13 +272,13 @@ public class ParallelSequence extends Sequence
         // explicitly state a UID in order to be 'cross-platform' serializable 
         // because we ARE an inner class and compilers come up with all sorts
         // of different UIDs for inner classes and their parents.
-        static final long serialVersionUID = -7832866872102525417L;		// the actual value doesn't really matter -- it could be 1L and make no difference.  But it must be hard-set here.
+        static final long serialVersionUID = -7832866872102525417L;             // the actual value doesn't really matter -- it could be 1L and make no difference.  But it must be hard-set here.
         }
 
     // explicitly state a UID in order to be 'cross-platform' serializable
     // because we contain an inner class and compilers come up with all
     // sorts of different UIDs for inner classes and their parents.
-    static final long serialVersionUID = 2731888904476273479L;		// the actual value doesn't really matter -- it could be 1L and make no difference.  But it must be hard-set here.
+    static final long serialVersionUID = 2731888904476273479L;          // the actual value doesn't really matter -- it could be 1L and make no difference.  But it must be hard-set here.
 
     }
     

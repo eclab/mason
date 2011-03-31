@@ -162,13 +162,13 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
      */
     private ValueGridCellInfo tmpGCI;
 
-	public double doubleValue(Object obj)
-		{
-		if (obj==null) return 0.0;
-		if (obj instanceof Number) return ((Number)(obj)).doubleValue();
-		if (obj instanceof Valuable) return ((Valuable)(obj)).doubleValue();
-		return 1.0;
-		}
+    public double doubleValue(Object obj)
+        {
+        if (obj==null) return 0.0;
+        if (obj instanceof Number) return ((Number)(obj)).doubleValue();
+        if (obj instanceof Valuable) return ((Valuable)(obj)).doubleValue();
+        return 1.0;
+        }
 
     /**
      * Format is: 
