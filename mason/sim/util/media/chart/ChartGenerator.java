@@ -754,7 +754,7 @@ public abstract class ChartGenerator extends JPanel
         {
         if (timer == null)
             {
-            timer= Utilities.doLater(milliseconds, new Runnable()
+            timer= sim.util.gui.Utilities.doLater(milliseconds, new Runnable()
                 {
                 public void run()
                     {
