@@ -103,8 +103,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         // make Bag big enough
         if (numObjs+other.length > objs.length)
             resize(numObjs+other.length);
-        if (index != numObjs)   // make room
-            System.arraycopy(objs,index,objs,index+other.length,other.length);
+        if (index != numObjs)   // scoot over elements if we're inserting in the middle
+            System.arraycopy(objs,index,objs,index+other.length,numObjs - index);
         System.arraycopy(other,0,objs,index,other.length);
         numObjs += other.length;
         return true;
@@ -123,8 +123,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         // make Bag big enough
         if (numObjs+other.numObjs > objs.length)
             resize(numObjs+other.numObjs);
-        if (index != numObjs)    // make room
-            System.arraycopy(objs,index,objs,index+other.numObjs,other.numObjs);
+        if (index != numObjs)    // scoot over elements if we're inserting in the middle
+            System.arraycopy(objs,index,objs,index+other.length,numObjs - index);
         System.arraycopy(other.objs,0,objs,index,other.numObjs);
         numObjs += other.numObjs;
         return true;
