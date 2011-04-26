@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import sim.util.*;
 
@@ -42,6 +43,8 @@ public class PropertyField extends JComponent
         public Dimension getMaximumSize() { return new Dimension(SLIDER_WIDTH, super.getMaximumSize().height); }
         public Dimension getPreferredSize() { return getMaximumSize(); }
         };
+
+    DecimalFormat sliderFormatter = new DecimalFormat();	// to control the slider's number of decimal places
         
     public Border valFieldBorder;
     public Border emptyBorder;
@@ -134,6 +137,20 @@ public class PropertyField extends JComponent
         
 
     boolean sliding = false;
+    
+    /**
+     * Calculate the number of decimal places needed to show the smallest possible change for a slider.
+     * @param low bottom of the range
+     * @param high top of the range
+     * @param ticks number of discrete stops within the range
+     * @return the number of decimal places to show
+     * @author jharrison
+     */
+    private int calcDecimalPlacesForInterval(double low, double high, int ticks)
+    	{
+    	double epsilon = (high - low) / (double)ticks;
+    	return (int)Math.ceil(Math.log10(1/epsilon));
+    	}
       
     public ChangeListener sliderListener = new ChangeListener()
         {
@@ -144,20 +161,24 @@ public class PropertyField extends JComponent
                 double d = 0;
                 Interval domain = (Interval)(PropertyField.this.domain);
                 int i = slider.getValue();
+                String str;
                 if (domain.isDouble())
                     {
                     double min = domain.getMin().doubleValue();
                     double max = domain.getMax().doubleValue();
                     d = (i / (double)SLIDER_MAX) * (max - min) + min;
+                    sliderFormatter.setMinimumFractionDigits(calcDecimalPlacesForInterval(min, max, SLIDER_WIDTH));
+                    str = sliderFormatter.format(d);
                     }
                 else  // long
                     {
                     long min = domain.getMin().longValue();
                     long max = domain.getMax().longValue();
                     d = (double)((long)((i / (double)SLIDER_MAX) * (max - min) + min));  // floor to an integer value
+                    str = String.format("%.0f", d);
                     }
                 sliding = true;
-                setValue(newValue("" + d));
+                setValue(newValue(str));
                 sliding = false;
                 }
             }
@@ -299,7 +320,8 @@ public class PropertyField extends JComponent
         // quaquaify
         viewButton.putClientProperty("Quaqua.Button.style","square");
         
-        
+        sliderFormatter.setGroupingUsed(false);	// no commas
+                
         // set values
         setValues(label, initialValue, isReadWrite, domain, show);
         }
