@@ -1979,3 +1979,6 @@ Version 16
 	Bag, DoubleBag, and IntBag can be initialized with null passed in.
 	Added DenseGrid2D, DenseGrid2DPortrayal, and HexaDenseGrid2DPortrayal
 	Reindented
+	BugFix to [Int|Double|]Bag.addAll method -- inserting in the middle of the Bag wasn't
+		shifting elements over properly.  Thanks to Guoqiang Zhang 
+		<zgqoop_cn@hotmail.com>
