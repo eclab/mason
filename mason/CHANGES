@@ -1982,3 +1982,7 @@ Version 16
 	BugFix to [Int|Double|]Bag.addAll method -- inserting in the middle of the Bag wasn't
 		shifting elements over properly.  Thanks to Guoqiang Zhang 
 		<zgqoop_cn@hotmail.com>
+	Changed the slider so that it prints only a few decimal places when modifying a 
+	double. The number of decimal places is chosen to be the minimum necessary to show a
+	change of size epsilon, which is the smallest increment the user can make by dragging
+	the slider. Epsilon is determined by the range of the slider and its width, in pixels.
