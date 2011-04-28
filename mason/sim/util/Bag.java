@@ -124,7 +124,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         if (numObjs+other.numObjs > objs.length)
             resize(numObjs+other.numObjs);
         if (index != numObjs)    // scoot over elements if we're inserting in the middle
-            System.arraycopy(objs,index,objs,index+other.length,numObjs - index);
+            System.arraycopy(objs,index,objs,index+other.size(),numObjs - index);
         System.arraycopy(other.objs,0,objs,index,other.numObjs);
         numObjs += other.numObjs;
         return true;
