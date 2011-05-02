@@ -144,28 +144,13 @@ public class ShapeFileImporter extends GeomImporter
                 int recordType = byteBuf.getInt(); 
                                                         
                 if (recordType != 1 && recordType != 3 && recordType != 5) continue; 
-                                
-                
-                // advance past four doubles: minX, minY, maxX, maxY
-                byteBuf.position(byteBuf.position() + 32);
-                                
-                int numParts = byteBuf.getInt(); 
-                int numPoints = byteBuf.getInt(); 
-                                
-                // get the array of part indices 
-                int partIndicies[] = new int[numParts]; 
-                for (int i=0; i < numParts ; i++) 
-                    partIndicies[i] = byteBuf.getInt(); 
-                                
-                // get the array of points 
-                Coordinate pointsArray[] = new Coordinate[numPoints]; 
-                for (int i=0; i < numPoints; i++) 
-                    pointsArray[i] = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble()); 
                           
+                // Read the attributes
+                
                 byte r[] = new byte[recordSize]; 
                 inFile.read(r); 
                                 
-                int start1 =1; 
+                int start1 = 1; 
                            
                 attributeInfo  = new ArrayList<AttributeField>(); 
                 
@@ -198,11 +183,31 @@ public class ShapeFileImporter extends GeomImporter
                     start1 += fields[k].fieldSize;
                 }
                 
+                // Read the shape
+                
                 Geometry geom = null; 
                 
-                if (recordType == POINT) 
-                    geom = geomFactory.createPoint(pointsArray[0]); 
+                if (recordType == POINT) {
+                	Coordinate pt = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble());
+                    geom = geomFactory.createPoint(pt); 
+                }
                 else if (recordType == LINE || recordType == POLYGON) { 
+	                // advance past four doubles: minX, minY, maxX, maxY
+	                byteBuf.position(byteBuf.position() + 32);
+	                                
+	                int numParts = byteBuf.getInt(); 
+	                int numPoints = byteBuf.getInt(); 
+	                                
+	                // get the array of part indices 
+	                int partIndicies[] = new int[numParts]; 
+	                for (int i=0; i < numParts ; i++) 
+	                    partIndicies[i] = byteBuf.getInt(); 
+	                                
+	                // get the array of points 
+	                Coordinate pointsArray[] = new Coordinate[numPoints]; 
+	                for (int i=0; i < numPoints; i++) 
+	                    pointsArray[i] = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble()); 
+	                
                 	Geometry[] parts = new Geometry[numParts]; 
 
                     for (int i=0; i < numParts; i++) { 
