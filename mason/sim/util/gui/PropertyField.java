@@ -36,7 +36,8 @@ public class PropertyField extends JComponent
     public JButton viewButton = new JButton("View");  // optionally displayed instead of valField (array or Object)
     public JLabel viewLabel = new JLabel();
     public JLabel optionalLabel = new JLabel();
-    static final int SLIDER_MAX = 800000;
+    //static final int SLIDER_MAX = 800000;
+    static final int SLIDER_MAX = 1000;
     static final int SLIDER_WIDTH = 80;
     public JSlider slider = new JSlider(0,SLIDER_MAX)
         {
@@ -174,7 +175,9 @@ public class PropertyField extends JComponent
                     {
                     long min = domain.getMin().longValue();
                     long max = domain.getMax().longValue();
-                    d = (double)((long)((i / (double)SLIDER_MAX) * (max - min) + min));  // floor to an integer value
+                    //d = (double)((long)((i / (double)SLIDER_MAX) * (max - min) + min));  // floor to an integer value
+                    //d = Math.round((i / (double)SLIDER_MAX) * (max - min) + min);  // round to an integer value
+                    d = i;  // round to an integer value
                     str = String.format("%.0f", d);
                     }
                 sliding = true;
@@ -241,6 +244,8 @@ public class PropertyField extends JComponent
                 double min = domain.getMin().doubleValue();
                 double max = domain.getMax().doubleValue();
                 int i = (int)((d - min) / (max - min) * SLIDER_MAX);
+                if (!domain.isDouble())
+                	i = (int)d;
                 slider.setValue(i);
                 }
             }
@@ -319,6 +324,16 @@ public class PropertyField extends JComponent
         
         // quaquaify
         viewButton.putClientProperty("Quaqua.Button.style","square");
+        
+        if ((domain != null) && (domain instanceof Interval)) {
+        	Interval interval = (Interval)domain;
+        	if (interval.isDouble()) { }
+        	else {
+
+                slider.setMinimum(interval.getMin().intValue());
+                slider.setMaximum(interval.getMax().intValue());
+        	}
+        }
         
         sliderFormatter.setGroupingUsed(false);	// no commas
                 
