@@ -296,8 +296,7 @@ public class ShapeFileImporter extends GeomImporter
                 		g.geometry = geom; 
                 		field.addGeometry(g);
                 	} catch (Exception e) { e.printStackTrace(); } 
-                }
-                
+                }                
             }
         } catch (IOException e) { 
         	System.out.println("Error in ShapeFileImporter!!");
