@@ -233,6 +233,26 @@ public class GeomVectorField extends GeomField
         return coveringObjects;
 	}
 
+
+    /** 
+        Returns geometries that contain the given object. Contain is more exclusive than cover
+        and doesn't include things on the boundary. Do not modify the returned Bag. 
+    */
+    public final Bag getContainingObjects(final Geometry g)
+    {
+		Bag containingObjects = new Bag(); 
+		Envelope e = g.getEnvelopeInternal();
+		List<?> gList = spatialIndex.query(e);
+        for (int i = 0; i < gList.size(); i++)
+		{
+			MasonGeometry gm = (MasonGeometry)gList.get(i); 
+			Geometry g1 = gm.getGeometry();
+			if (!g.equals(g1) && g1.contains(g))
+				containingObjects.add(gm);
+		}
+        return containingObjects;
+    }
+
     
     /** Returns geometries that touch the given geometry.
      * Do not modify the returned Bag. */

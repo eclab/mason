@@ -14,6 +14,8 @@ import sim.field.geo.*;
 
 import java.nio.*; 
 import java.nio.channels.*; 
+
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.*; 
 import java.util.ArrayList; 
 import java.util.Collections;
@@ -64,6 +66,53 @@ public class ShapeFileImporter extends GeomImporter
         ingest(filePath, field, masked);
     }
 
+    /**
+     * Create a polygon from an array of LinearRings. If there is only one ring,
+     * the function will create and return a simple polygon. If there are multiple
+     * rings, the function checks to see if any of them are holes (which are in 
+     * counter-clockwise order) and if so, it creates a polygon with holes.
+     * If there are no holes, it creates and returns a multi-part polygon.
+     */
+    private Geometry createPolygon(LinearRing[] parts) {
+        GeometryFactory geomFactory = new GeometryFactory(); 
+    	
+    	if (parts.length == 1)
+    		return geomFactory.createPolygon(parts[0], null); 
+
+    	ArrayList<LinearRing> shells = new ArrayList<LinearRing>();
+    	ArrayList<LinearRing> holes = new ArrayList<LinearRing>();
+
+    	for (int i = 0; i < parts.length; i++)
+    		if (CGAlgorithms.isCCW(parts[i].getCoordinates()))
+    			holes.add(parts[i]);
+    		else
+    			shells.add(parts[i]);
+    	
+    	if (holes.size() > 0) {
+        	// Create a polygon with holes
+    		LinearRing [] holesArray = new LinearRing[holes.size()];
+    		holes.toArray(holesArray);
+    		return geomFactory.createPolygon(shells.get(0), holesArray);
+    	}
+
+    	// Create multi-polygon
+    	Polygon[] poly = new Polygon[shells.size()]; 
+    	for (int i = 0; i < shells.size(); i++) 
+    		poly[i] = geomFactory.createPolygon(parts[i], null);
+    	return geomFactory.createMultiPolygon(poly); 
+    }
+
+    /**
+     * Wrapper function which creates a new array of LinearRings and calls 
+     * the other function.
+     */
+    private Geometry createPolygon(Geometry[] parts) {
+    	LinearRing[] rings = new LinearRing[parts.length];
+    	for (int i = 0; i < parts.length; i++)
+    		rings[i] = (LinearRing)parts[i];
+    	
+    	return createPolygon(rings);
+    }
 
 
     @Override
@@ -222,10 +271,8 @@ public class ShapeFileImporter extends GeomImporter
                                                 
                         if (recordType == LINE)                        
                             parts[i] = geomFactory.createLineString(coords); 
-                        else {
-                            LinearRing lr = geomFactory.createLinearRing(coords); 
-                            parts[i] = geomFactory.createPolygon(lr, null); 
-                        }
+                        else 
+                        	parts[i] = geomFactory.createLinearRing(coords);
                     }
                     if (recordType == LINE) { 
                     	LineString[] ls = new LineString[numParts]; 
@@ -235,14 +282,8 @@ public class ShapeFileImporter extends GeomImporter
                     	else 
                     		geom = geomFactory.createMultiLineString(ls); 
                     }
-                    else {
-                    	Polygon[] poly = new Polygon[numParts]; 
-                    	for (int i=0; i < numParts; i++) poly[i] = (Polygon)parts[i];
-                    	if (numParts == 1) 
-                    		geom = parts[0]; 
-                    	else 
-                    		geom = geomFactory.createMultiPolygon(poly); 
-                    }
+                    else	// polygon
+                    	geom = createPolygon(parts);
                 }
                 else 
                     System.err.println("Unknown shape type in " + fileName); 
