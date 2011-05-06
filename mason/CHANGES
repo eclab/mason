@@ -1984,7 +1984,9 @@ Version 16
 		<zgqoop_cn@hotmail.com>
 	Made Edge Comparable
 	Changed the slider so that it prints only a few decimal places when modifying a 
-		double. The number of decimal places is chosen to be the minimum necessary to show a
-		change of size epsilon, which is the smallest increment the user can make by dragging
-		the slider. Epsilon is determined by the range of the slider and its width, in pixels.
-
+		double. The number of decimal places is chosen to be the minimum necessary 
+		to show a change of size epsilon, which is the smallest increment the user 
+		can make by dragging the slider. Epsilon is determined by the range of the 
+		slider and its width, in pixels.
+	Modified EdgePortrayal2D to allow the width of the triangle or line to change depending
+		on the value of the Edge.
