@@ -9,6 +9,7 @@ import sim.portrayal.*;
 import java.awt.*;
 import sim.field.network.*;
 import java.awt.geom.*;
+import sim.util.*;
 
 /*
   A simple portrayal for directed and undirected edges in a network field.  The portrayal can draw edges as lines or as thin triangles with their points
@@ -29,9 +30,9 @@ import java.awt.geom.*;
 
 public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     {
-    public Paint fromPaint;
-    public Paint toPaint;
-    public Paint labelPaint;
+    public Paint fromPaint = Color.black;
+    public Paint toPaint = Color.black;
+    public Paint labelPaint = null;  // indicates no label
     public Font labelFont;
     Font scaledFont;
     int labelScaling = ALWAYS_SCALE;
@@ -44,6 +45,8 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_TRIANGLE = 1;
     public int shape;
+	
+	boolean adjustsThickness;
     
     /** Draws a single-color, undirected black line (or triangle) with no label. */
     public SimpleEdgePortrayal2D()
@@ -72,6 +75,9 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         this.labelFont = labelFont;
         }
     
+	public boolean getAdjustsThickness() { return adjustsThickness; }
+	public void setAdjustsThickness(boolean val) { adjustsThickness = val; }
+	
     /** Returns the shape of the edge.  At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE). */
     public int getShape() { return shape; }
     /** Sets the shape of the edge.   At present there are two shapes: a straight line (SHAPE_LINE) and a triangle (SHAPE_TRIANGLE) */
@@ -92,6 +98,22 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     Line2D.Double preciseLine = new Line2D.Double();
     GeneralPath precisePoly = new GeneralPath();
     
+    /** Returns a weight appropriate to scale the edge.  This weight must be >= 0.
+		By default, this returns 1.0 of adjustsThickness() is false or if edge.info
+		cannot be converted into a weight, else converts edge.info and returns the absolute value. */
+    protected double getPositiveWeight(Edge edge, EdgeDrawInfo2D info)
+        {
+		if (getAdjustsThickness())
+			{
+			Object obj = edge.info;
+			if (obj instanceof Number)
+				return Math.abs(((Number)obj).doubleValue());
+			else if (obj instanceof Valuable)
+				return Math.abs(((Valuable)obj).doubleValue());
+			}
+		return 1.0;
+        }
+
     /** Returns a name appropriate for the edge.  By default, this returns 
         (edge.info == null ? "" : "" + edge.info).
         Override this to make a more customized label to display for the edge on-screen. */
@@ -126,10 +148,12 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         // draw lines
         if (shape == SHAPE_TRIANGLE)
             {
+			double weight = getPositiveWeight((Edge)object, e);
+			double width = getBaseWidth();
             graphics.setPaint (fromPaint);
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
-            double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
-            double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
+            double vecX = ((startXd - endXd) * width * 0.5 * weight) / len;
+            double vecY = ((startYd - endYd) * width * 0.5 * weight) / len;
             double scaleWidth = info.draw.width;
             double scaleHeight = info.draw.height;
             xPoints[0] = endX;  yPoints[0] = endY;
@@ -158,23 +182,41 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
             if (fromPaint == toPaint)
                 {
                 graphics.setPaint (fromPaint);
-                if (info.precise)
+				double width = getBaseWidth();
+                if (info.precise || width != 0.0)
                     { 
+					double scale = info.draw.width;
+					if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+						scale = 1;
+
+					Stroke oldstroke = graphics.getStroke();
+					double weight = getPositiveWeight((Edge)object, e);
+					graphics.setStroke(new BasicStroke((float)(width * weight * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, endXd, endYd);
                     graphics.draw(preciseLine);
+					graphics.setStroke(oldstroke);
                     }
                 else graphics.drawLine (startX, startY, endX, endY);
                 }
             else
                 {
                 graphics.setPaint( fromPaint );
-                if (info.precise)
+				double width = getBaseWidth();
+                if (info.precise || width != 0.0)
                     { 
+					double scale = info.draw.width;
+					if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+						scale = 1;
+
+					Stroke oldstroke = graphics.getStroke();
+					double weight = getPositiveWeight((Edge)object, e);
+					graphics.setStroke(new BasicStroke((float)(width * weight * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, midXd, midYd); 
                     graphics.draw(preciseLine); 
                     graphics.setPaint(toPaint);
                     preciseLine.setLine(midXd, midYd, endXd, endYd); 
                     graphics.draw(preciseLine); 
+					graphics.setStroke(oldstroke);
                     }
                 else
                     {
@@ -226,18 +268,28 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         final double endXd = e.secondPoint.x;
         final double endYd = e.secondPoint.y;
         
+		double weight = getPositiveWeight((Edge)object, e);
+		double width = getBaseWidth();
+
         final double SLOP = 5;  // allow some imprecision -- click 6 away from the line
-        if (baseWidth == 0)
+        if (shape == SHAPE_LINE)
             {
+			double scale = range.draw.width;
+			if (scaling == SCALE_WHEN_SMALLER && range.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+				scale = 1;
+
             Line2D.Double line = new Line2D.Double( startXd, startYd, endXd, endYd );
-            return (line.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
-            //        return ( line.ptSegDist( range.clip.x, range.clip.y ) < 4 );  // allow some imprecision
+			if (width == 0)
+				return (line.intersects(range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2));
+			else
+				return new BasicStroke((float)(width * weight * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER).createStrokedShape(line).intersects(
+					range.clip.x - SLOP, range.clip.y - SLOP, range.clip.width + SLOP*2, range.clip.height + SLOP*2);
             }
         else
             {
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
-            double vecX = ((startXd - endXd) * baseWidth * 0.5) / len;
-            double vecY = ((startYd - endYd) * baseWidth * 0.5) / len;
+            double vecX = ((startXd - endXd) * width * 0.5 * weight) / len;
+            double vecY = ((startYd - endYd) * width * 0.5 * weight) / len;
             double scaleWidth = range.draw.width;
             double scaleHeight = range.draw.height;
             xPoints[0] = (int)endXd ;  yPoints[0] = (int)endYd; 

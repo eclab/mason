@@ -21,8 +21,12 @@ import sim.util.*;
    edge.  If your "info" object is a Number or a MutableDouble, or is sim.util.Valuable, then the
    weight of the edge is the doubleValue() of your object.  Else the weight of the edge is a default
    of 1.0.
+   
+   <p>Edges are java.lang.Comparabler as long as their 'info' elements are
+	Numbers or are sim.util.Valuable.  In this case, the comparison is such that lower
+	values sort first.
 */
-public class Edge implements java.io.Serializable
+public class Edge implements java.io.Serializable, Comparable
     {
     // to prevent edges from breaking fields by being stored in two different fields.
     // if null, then no owner -- the Edge is free to be added to a field.
@@ -124,4 +128,60 @@ public class Edge implements java.io.Serializable
         {
         return "Edge[" + from + "->" + to + ": " + info + "]";
         }
+
+
+    public int compareTo(Object obj)
+		{
+		if (info == null || obj == null || !(obj instanceof Edge))
+			{
+			return 0;
+			}
+			
+		Edge other = (Edge)obj;
+
+		if (other.info instanceof Long  && info instanceof Long)
+			{
+			long l = ((Long)(info)).longValue();
+			long l2 = ((Long)(other.info)).longValue();
+			if (l == l2) return 0;
+			else return (l < l2 ? -1 : 1);
+			}
+		else if (info instanceof Number)
+			{
+			double d = ((Number)info).doubleValue();
+			if (other.info instanceof Number)
+				{
+				double d2 = ((Number)(other.info)).doubleValue();
+				if (d == d2) return 0;
+				else return (d < d2 ? -1 : 1);
+				}
+			else if (other.info instanceof Valuable)
+				{
+				double d2 = ((Valuable)(other.info)).doubleValue();
+				if (d == d2) return 0;
+				else return (d < d2 ? -1 : 1);
+				}
+			else return 0;
+			}
+		else if (info instanceof Valuable)
+			{
+			double d = ((Valuable)info).doubleValue();
+			if (other.info instanceof Number)
+				{
+				double d2 = ((Number)(other.info)).doubleValue();
+				if (d == d2) return 0;
+				else return (d < d2 ? -1 : 1);
+				}
+			else if (other.info instanceof Valuable)
+				{
+				double d2 = ((Valuable)(other.info)).doubleValue();
+				if (d == d2) return 0;
+				else return (d < d2 ? -1 : 1);
+				}
+			else return 0;
+			}
+		else return 0;
+		}
+
     }
+	

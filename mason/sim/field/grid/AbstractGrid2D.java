@@ -6,7 +6,7 @@
 
 package sim.field.grid;
 
-import sim.util.IntBag;
+import sim.util.*;
 
 /**
    A concrete implementation of the Grid2D methods; used by several subclasses.
@@ -243,315 +243,277 @@ public abstract class AbstractGrid2D implements Grid2D
             }
         }
 
-    /** Returns the bounding box surrounding an arc centered at (0,0), of the given distance,
-        and with the given start angle and angular extent.  Extent and start angle may be 
-        positive (fastest), negative, or zero. If the extent is >= 2PI or &lt;=(-2PI) then the
-        bounding box for the circle is returned.
-    */
-    /*
-      public Rectangle2D.Double getBoundingBox(double distance, double startAngle, double extent)
-      {
-      if (extent < 0) { startAngle -= extent; extent = -extent; }  // get rid of negative extents
-      if (extent >= 2 * Math.PI)      // full circle or more
-      return new Rectangle2D.Double(-distance,-distance, 2*distance, 2*distance);
-
-      // move start angle into 0...2PI range
-      if (startAngle >= 2 * Math.PI) startAngle = startAngle % (2 * Math.PI);
-      if (startAngle < 0) startAngle = (startAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-                
-      // compute end angle, will be positive and >= than start angle
-      int endAngle = startAngle + extent;
-
-      double minx=0; double maxx=0; double miny=0; double maxy=0;
-        
-      // compute start angle's quadrant
-      int startq = 0;
-      if (startAngle >= 0 && startAngle < Math.PI/2.0)
-      startq = 0;
-      else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
-      startq = 1;
-      else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
-      startq = 2;
-      else
-      startq = 3;
-
-      // compute end angle's quadrant
-      int endq = 0;
-      if (endAngle >= 0 && endAngle < Math.PI/2.0)
-      endq = 0;
-      else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
-      endq = 1;
-      else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
-      endq = 2;
-      else
-      endq = 3;
-
-      // consider all 16 possibilities of quadrant locations
-      if (startq == 0)
-      {
-      maxx = Math.max(maxx, Math.cos(startAngle));
-      if (endq == 0)
-      {
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      maxy = distance;
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      maxy = distance;
-      minx = -distance;
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else if (startq == 1)
-      {
-      maxy = Math.max(maxy, Math.sin(startAngle));                    
-      if (endq == 0)
-      {
-      minx = -distance;
-      miny = -distance;
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      minx = -distance;
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else if (startq == 2)
-      {
-      minx = Math.min(minx, Math.cos(startAngle));
-      if (endq == 0)
-      {
-      miny = -distance;
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      miny = -distance;
-      maxx = distance;
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else // if (startq == 3)
-      {
-      miny = Math.min(minY, Math.sin(startAngle));
-      if (endq == 0)
-      {
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      maxx = distance;
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      maxx = distance;
-      maxy = distance;
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      // build rectangle
-      return new Rectangle2D(minx, miny, maxx - minx, maxy - miny);
-      }
-
-      public boolean withinArc(double x, double y, final double distanceSq, double startAngle, double endAngle, int startq, int endq)
-      {
-      // first test for distance
-      if (x*x+y*y > distanceSq) return false;
-      // now test for angle
-
-      // compute start angle's quadrant
-      int startq = 0;
-      if (startAngle >= 0 && startAngle < Math.PI/2.0)
-      startq = 0;
-      else if (startAngle >= Math.PI/2.0 && startAngle < Math.PI)
-      startq = 1;
-      else if (startAngle >= Math.PI && startAngle < 3 * Math.PI/2.0)
-      startq = 2;
-      else
-      startq = 3;
-
-      // compute end angle's quadrant
-      int endq = 0;
-      if (endAngle >= 0 && endAngle < Math.PI/2.0)
-      endq = 0;
-      else if (endAngle >= Math.PI/2.0 && endAngle < Math.PI)
-      endq = 1;
-      else if (endAngle >= Math.PI && endAngle < 3 * Math.PI/2.0)
-      endq = 2;
-      else
-      endq = 3;
-
-      // consider all 16 possibilities of quadrant locations
-      if (startq == 0)
-      {
-      maxx = Math.max(maxx, Math.cos(startAngle));
-      if (endq == 0)
-      {
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      maxy = distance;
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      maxy = distance;
-      minx = -distance;
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else if (startq == 1)
-      {
-      maxy = Math.max(maxy, Math.sin(startAngle));                    
-      if (endq == 0)
-      {
-      minx = -distance;
-      miny = -distance;
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      minx = -distance;
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else if (startq == 2)
-      {
-      minx = Math.min(minx, Math.cos(startAngle));
-      if (endq == 0)
-      {
-      miny = -distance;
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      miny = -distance;
-      maxx = distance;
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      miny = -distance;
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
-
-      else // if (startq == 3)
-      {
-      miny = Math.min(minY, Math.sin(startAngle));
-      if (endq == 0)
-      {
-      maxx = distance;
-      maxy = Math.max(maxy, Math.sin(endAngle));
-      }
-      else if (endq == 1)
-      {
-      maxx = distance;
-      maxy = distance;
-      minx = Math.min(minx, Math.cos(endAngle));
-      }
-      else if (endq == 2)
-      {
-      maxx = distance;
-      maxy = distance;
-      minx = -distance;
-      miny = Math.min(miny, Math.sin(endAngle));
-      }
-      else // if (endq == 3)
-      {
-      maxx = Math.max(maxx, Math.cos(endAngle));
-      }
-      }
 
 
-      }
 
-      public void getNeighborsWithinArc(final double distance, double startAngle, double extent)
-      {
-      // Get bounding box
-      Rectangle2D rect = Arc2D.Double(0,0,distance,distance,startAngle,extent,Arc2D.PIE).getBounds2D();
-      double x = rect.getX();
-      double y = rect.getY();
-      double w = rect.getWidth();
-      double h = rect.getHeight();
-                
-                
-                
-      }
-    */
+
+
+	double dxForRadius(double dy, double radius)  // may return NaN
+		{
+		return Math.sqrt(radius*radius - dy*dy);
+		}
+
+	// still in real-valued space
+	double dxForAngle(double dy, double xa, double ya)
+		{
+		if (ya == 0 && dy == 0)  // horizontal line, push dx way out to the far edges of space, even if we're not in line with it
+			{ return xa > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY ; }
+		else if ((dy >= 0 && ya >= 0) || (dy <= 0 && ya <= 0))		// same side
+			{
+			// dx : dy :: xa : ya
+			return (xa * dy) / ya;
+			}
+		else return Double.NaN;
+		}
+
+	// a is next to b (<) and c and d are not between them
+	boolean nextTo(double a, double b, double c, double d)
+		{
+		return (a <= b &&
+				!(c >= a && c <= b) &&
+				!(d >= a && d <= b));
+		}
+	
+	int pushLeft(double x, double y, double slope, double radiusSq)
+		{
+		System.err.println("<---- " + x + " " + y + " " + slope);
+		double xa = x;
+		double ya = y;
+		int xi = (int)xa;
+		int yi = (int)ya;
+		
+		while( 
+			((slope >= 0 && xi * slope >= yi) || 
+			(slope < 0 && xi * slope < (yi + 1))) &&
+			xi * xi + (xi * slope) * (xi * slope) < radiusSq)
+			{
+			xi--;
+			}
+		return xi;
+		}
+
+	int pushRight(double x, double y, double slope, double radiusSq)  // radius limits our distance
+		{
+		System.err.println("----> " + x + " " + y + " " + slope);
+		double xa = x;
+		double ya = y;
+		int xi = (int)xa;
+		int yi = (int)ya;
+
+		while(
+			((slope <= 0 && (xi + 1) * slope >= yi) ||
+			 (slope > 0 && (xi + 1) * slope < (yi + 1))) &&
+			(xi + 1) * (xi + 1) * ((xi + 1) * slope) * ((xi + 1) * slope) < radiusSq)
+			{
+			xi++;
+			}
+		return xi;
+		}
+
+	boolean scan(int x, int y, int dy, double radius, double xa, double ya, double xb, double yb, 
+					boolean crossesZero, boolean crossesPi, boolean toroidal, IntBag xPos, IntBag yPos)
+		{
+		// too high?
+		if (dy > radius || dy < -radius) return false;
+
+		double r = dxForRadius(dy, radius);
+		double l = - r;
+		double s = dxForAngle(dy, xa, ya);
+		double e = dxForAngle(dy, xb, yb);
+
+		int min = 0;
+		int max = 0;
+
+		System.err.println("dy=" + dy + " radius=" + radius + " zero=" + crossesZero + " Pi=" + crossesPi);
+		System.err.println("xa " + xa + " ya " + ya + " xb " + xb + " yb " + yb);
+		System.err.println("r " + r + " l " + l + " s " + s + " e " + e);
+		
+		/*if (dy == 0) // special case dy == 0
+			{
+			if (crossesPi) min = (int) Math.round(l);
+			if (crossesZero) max = (int) Math.round(r);
+			System.err.println("MIN " + min + " MAX " + max);
+			if (toroidal)
+				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+			else
+				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+			return true;
+			}
+		else */
+		
+		if ((s==Double.POSITIVE_INFINITY && e == Double.POSITIVE_INFINITY) || (s == Double.NEGATIVE_INFINITY && e==Double.NEGATIVE_INFINITY))  // straight line in the same direction, handle specially
+			{ return false; }
+		else if (dy >= 0) 
+			{
+			if (l!=l)  // NaN, signifies out of bounds
+				return false;
+			// six cases:	(L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
+			if (s == e)  // line
+				{
+				System.err.println("S==E");
+				if (s * s + dy * dy > radius * radius) return false;
+				min = pushLeft(s, dy, ya / xa, radius * radius);
+				max = pushRight(s, dy, ya / xa, radius * radius);
+				}
+			// L S E R
+			else if (l <= s && s <= e && e <= r) 
+				{
+				System.err.println("LSER");
+				// draw first line
+				min = (int)Math.floor(l); max = (int)Math.ceil(s);
+				if (toroidal)
+					for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+				else
+					for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+				// set up second line
+				min = (int)Math.floor(e); max = (int)Math.ceil(r);
+				}
+			// L R
+			else if ((e <= l && l <= r && r <= s) || 
+					(l <= r && r <= s && s <= e))
+			
+//			nextTo(l, r, e, s) && e <= s)  // end must be less than start for this to be valid
+				{
+				System.err.println("LR");
+				min = (int)Math.floor(l); max = (int)Math.ceil(r);
+				}
+			// E S
+			else if //(nextTo(e, s, l, r))
+			(
+				(l <= e && e <= s && s <= r) 
+				//||
+				//(l <= e && e <= s && r <= e) ||
+				//(l >= e && e <= s && r >= e)
+				)
+				{
+				System.err.println("ES");
+				min = (int)Math.floor(e); max = (int)Math.ceil(s);
+				}
+			// E R
+			else if (nextTo(e, r, l, s))
+				{
+				System.err.println("ER");
+				min = (int)Math.floor(e); max = (int)Math.ceil(r);
+				}
+			// L S
+			else if (nextTo(l, s, e, r))
+				{
+				System.err.println("LS");
+				min = (int)Math.floor(l); max = (int)Math.ceil(s);
+				}
+			else return false;
+			
+			System.err.println("MIN " + min + " MAX " + max);
+			// draw line
+			if (toroidal)
+				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+			else
+				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+				
+			return true;
+			}
+		else // (dy < 0) 
+			{
+			if (l!=l)  // out of bounds
+				return false;
+			//double s = dxForAngle(dy, xa, ya);
+			//double e = dxForAngle(dy, xb, yb);
+		
+			// five cases:	(L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
+			// L E S R
+			if (l <= e && e <= s && s <= r) 
+				{
+				// draw first line
+				min = (int)Math.round(l); max = (int)Math.round(e);
+				if (toroidal)
+					for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+				else
+					for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+				// set up second line
+				min = (int)Math.round(s); max = (int)Math.round(r);
+				}
+			// L R
+			else if (nextTo(l, r, e, s) && s <= e)  // end must be greater than start for this to be valid
+				{
+				min = (int)Math.round(l); max = (int)Math.round(r);
+				}
+			// S E
+			else if (nextTo(s, e, l, r))
+				{
+				min = (int)Math.round(s); max = (int)Math.round(e);
+				}
+			// L E
+			else if (nextTo(l, e, r, s))
+				{
+				min = (int)Math.round(l); max = (int)Math.round(e);
+				}
+			// S R
+			else if (nextTo(s, r, l, e))
+				{
+				min = (int)Math.round(s); max = (int)Math.round(r);
+				}
+			else return false;
+			
+			// draw line
+			if (toroidal)
+				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y));  }
+			else
+				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y); }
+				
+			return true;
+			}
+		}
+
+	public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, IntBag xPos, IntBag yPos)
+		{ getNeighborsWithinArc(x,y,radius,startAngle,endAngle,false,xPos,yPos); }
+		
+	public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, boolean toroidal, IntBag xPos, IntBag yPos)
+		{
+		if (radius < 0)
+			throw new RuntimeException("Radius must be positive");
+		xPos.clear();
+		yPos.clear();
+		
+		// move angles into [0...2 PI)
+		if (startAngle < 0) startAngle += Math.PI * 2; 
+		if (startAngle < 0) startAngle = ((startAngle % Math.PI * 2) + Math.PI * 2);
+		if (startAngle >= Math.PI * 2) startAngle = startAngle % Math.PI * 2;
+		
+		if (endAngle < 0) endAngle += Math.PI * 2; 
+		if (endAngle < 0) endAngle = ((endAngle % Math.PI * 2) + Math.PI * 2);
+		if (endAngle >= Math.PI * 2) endAngle = endAngle % Math.PI * 2;
+
+		// compute slopes -- avoid atan2
+		double xa = Math.cos(startAngle);
+		double ya = Math.sin(startAngle);
+		double xb = Math.cos(endAngle);
+		double yb = Math.sin(endAngle);
+		
+		// compute crossings
+		boolean crossesZero = false;
+		boolean crossesPi = false;
+		if (startAngle > endAngle || startAngle == 0 || endAngle == 0)  // crosses zero for sure
+			crossesZero = true;
+		else if (startAngle <= Math.PI && endAngle >= Math.PI)
+			crossesPi = true;
+		
+		// scan up
+		int dy = 0;
+		while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
+			dy++;
+		// scan down (not including zero)
+		dy = -1;
+		while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
+			dy--;
+		}
+
+
+
+
+
+
+
+
 
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
