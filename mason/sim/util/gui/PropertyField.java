@@ -171,15 +171,9 @@ public class PropertyField extends JComponent
                     sliderFormatter.setMinimumFractionDigits(calcDecimalPlacesForInterval(min, max, SLIDER_WIDTH));
                     str = sliderFormatter.format(d);
                     }
-                else  // long
-                    {
-                    long min = domain.getMin().longValue();
-                    long max = domain.getMax().longValue();
-                    //d = (double)((long)((i / (double)SLIDER_MAX) * (max - min) + min));  // floor to an integer value
-                    //d = Math.round((i / (double)SLIDER_MAX) * (max - min) + min);  // round to an integer value
-                    d = i;  // round to an integer value
-                    str = String.format("%.0f", d);
-                    }
+                else  // integer
+                    str = Integer.toString(i);
+                    
                 sliding = true;
                 setValue(newValue(str));
                 sliding = false;
