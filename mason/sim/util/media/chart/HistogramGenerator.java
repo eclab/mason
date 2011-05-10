@@ -157,4 +157,9 @@ public class HistogramGenerator extends ChartGenerator
         HistogramSeriesAttributes hsa = (HistogramSeriesAttributes)(getSeriesAttribute(index));
         hsa.setValues(vals);
         }
+    
+    public void setHistogramType(HistogramType type) 
+		{
+		this.histogramType = type;
+		}
     }
