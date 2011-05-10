@@ -1482,6 +1482,13 @@ public class Console extends JFrame implements Controller
         return tabPane;
         }
     
+    /**
+     * Return the model inspector so simulations can do things like updating the properties.
+     */
+    public synchronized Inspector getModelInspector()
+    	{
+    	return modelInspector;
+    	}
         
 
     /////////////////////// MENU FUNCTIONS
@@ -2854,6 +2861,10 @@ public class Console extends JFrame implements Controller
         These bags must match in size, else an exception will be thrown. */
     public void setInspectors(final Bag inspectors, final Bag names)
         {
+    	Object oldSelectedInspector = null;
+    	if (inspectors.objs.length > preferredInspectorIndex)
+    		oldSelectedInspector = inspectors.objs[preferredInspectorIndex];
+    	
         // clear out old inspectors
         removeAllInspectors(false);
         
@@ -2909,6 +2920,12 @@ public class Console extends JFrame implements Controller
                 inspectorToolbars.add(scrollInspector);
                 }
             }
+        
+        
+//        if (oldInspectedObject != null) {
+//        	if ((inspectors.objs.length > preferredInspectorIndex) && 
+//        			(inspectors.objs[preferredInspectorIndex].getClass())  
+//        }
 
         resetInspectors(preferredInspectorIndex);
 
