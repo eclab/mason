@@ -1992,3 +1992,10 @@ Version 16
 		on the value of the Edge.
 	Documentation fixes to sim.util.Distribution [CERN's not very careful].  Thanks to 
 		Ben Stabile <bennett.stabile@GMAIL.COM>
+	Added sealing to the Schedule, deprecated pushToAfterSimulation, and made SimState.kill()
+		seal the schedule rather than push it.  This allows remaining non-cleared events
+		after kill() to run in the current timestep rather than in AFTER_SIMULATION.
+	Modified the scheduling functions so that they return FALSE when the schedule cannot
+		accept any more events -- it's at AFTER_SIMULATION or is sealed.  Other invalid
+		situations (invalid times, invalid Steppables) still throw an exception.
+

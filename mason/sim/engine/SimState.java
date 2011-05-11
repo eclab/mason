@@ -112,7 +112,8 @@ public class SimState implements java.io.Serializable
     public void kill()
         {
         cleanupAsynchronous();
-        schedule.pushToAfterSimulation();
+		schedule.clear();
+		schedule.seal();
         }
 
     /** Registers an AsynchronousSteppable to get its pause() method called prior to checkpointing,

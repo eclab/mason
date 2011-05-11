@@ -56,7 +56,11 @@ import ec.util.*;
    given timestamp have completed, and so orderings give you a way of subdividing the interval of time between
    GUI updates.
    
-   <p>You can clear out the entire Schedule by calling reset().
+   <p>A schedule may be <i>sealed</i> meaning that it will refuse to accept any further scheduled events
+   even if its time is not yet AFTER_SIMULATION.  This is largely done internally by MASON code: you probably
+   will never want to do this.  Once a schedule is sealed it cannot be unsealed until it is reset().
+   
+   <p>You can clear out the entire Schedule, unseal it, and restart it to BEFORE_SIMULATION by calling reset().
    However, this does not prevent AsynchronousSteppables from suddenly rescheduling themselves
    in the queue.  Stopping the simulation from within a Steppable object's step() method is best done by
    calling SimState.kill().  From the main thread, the most straightforward way to stop a simulation is to just
@@ -114,7 +118,10 @@ public class Schedule implements java.io.Serializable
     
     // the number of times step() has been called on me
     long steps;
-    
+	
+	// is the Schedule sealed?
+	boolean sealed = false;
+		
     // time steps lock  -- the objective here is to enable synchronization on a different lock
     // so people can read the time and the steps without having to wait on the general schedule lock
     protected Object lock = new boolean[1];  // an array is a unique, serializable object
@@ -159,6 +166,11 @@ public class Schedule implements java.io.Serializable
     /** Returns the current timestep */
     public double getTime() { synchronized(lock) { return time; } }
     
+	/** Returns whether or not the schedule is sealed (nothing more can be scheduled, even 
+		if the schedule isn't at AFTER_SIMULATION yet).   Calling reset() will unseal
+		a Schedule, and calling seal() will seal it.  */
+	public boolean isSealed() { synchronized(lock) { return sealed; } }
+	
     /** Returns the current time in string format. If the time is BEFORE_SIMULATION, then beforeSimulationString is
         returned.  If the time is AFTER_SIMULATION, then afterSimulationString is returned.  Otherwise a numerical
         representation of the time is returned. */
@@ -184,7 +196,8 @@ public class Schedule implements java.io.Serializable
 
     // pushes the time to AFTER_SIMULATION and attempts to kill all
     // remaining scheduled items
-    protected void pushToAfterSimulation()
+	// @deprecated don't use this
+    private void pushToAfterSimulation()
         {
         synchronized(lock)
             {
@@ -205,6 +218,17 @@ public class Schedule implements java.io.Serializable
             }
         }
 
+    /** Seals the schedule: after a schedule is sealed, no further Steppables may be scheduled on it. 
+		To unseal a schedule, you must reset() it.  If you're looking for a way to kill your simulation
+		from a Steppable, use SimState.kill() instead.  */
+    public void seal()
+        {
+        synchronized(lock)
+            {
+			sealed = true;
+            }
+        }
+
     /** Empties out the schedule and resets it to a pristine state BEFORE_SIMULATION, with steps = 0.  If you're
         looking for a way to kill your simulation from a Steppable, use SimState.kill() instead.  */
     public void reset()
@@ -214,7 +238,8 @@ public class Schedule implements java.io.Serializable
             time = BEFORE_SIMULATION;
             steps = 0;
             queue = createHeap();  // let 'em GC  -- must be inside the lock so scheduleOnce doesn't try to add more
-            }
+            sealed = false;
+			}
         }
     
     /** Returns true if the schedule has nothing left to do. */
@@ -312,7 +337,10 @@ public class Schedule implements java.io.Serializable
         }
         
     /** Schedules the event to occur at getTime() + 1.0, 0 ordering. If this is a valid time
-        and event, schedules the event and returns TRUE, else returns FALSE.  */
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnce(final Steppable event)
@@ -324,7 +352,10 @@ public class Schedule implements java.io.Serializable
         }
     
     /** Schedules the event to occur at getTime() + delta, 0 ordering. If this is a valid time
-        and event, schedules the event and returns TRUE, else returns FALSE.  */
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnceIn(final double delta, final Steppable event)
@@ -336,7 +367,10 @@ public class Schedule implements java.io.Serializable
         }
         
     /** Schedules the event to occur at getTime() + 1.0, and in the ordering provided. If this is a valid time
-        and event, schedules the event and returns TRUE, else returns FALSE.  */
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnce(final Steppable event, final int ordering)
@@ -348,7 +382,10 @@ public class Schedule implements java.io.Serializable
         }
 
     /** Schedules the event to occur at getTime() + delta, and in the ordering provided. If this is a valid time
-        and event, schedules the event and returns TRUE, else returns FALSE.  */
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
     public boolean scheduleOnceIn(final double delta, final Steppable event, final int ordering)
@@ -362,7 +399,10 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at the provided time, 0 ordering.  If the getTime() == the provided
         time, then the event is instead scheduled to occur at getTime() + epsilon (the minimum possible next
         timestamp). If this is a valid time
-        and event, schedules the event and returns TRUE, else returns FALSE.*/
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     public boolean scheduleOnce(double time, final Steppable event)
         {
@@ -375,7 +415,10 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at the provided time, and in the ordering provided.  If the getTime() == the provided
         time, then the event is instead scheduled to occur at getTime() + epsilon (the minimum possible next
         timestamp). If this is a valid time, ordering,
-        and event, schedules the event and returns TRUE, else returns FALSE.
+        and event, schedules the event and returns TRUE.
+		This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
     */
     public boolean scheduleOnce(double time, final int ordering, final Steppable event)
         {
@@ -385,7 +428,10 @@ public class Schedule implements java.io.Serializable
             }
         }
     
-    /** Schedules an item. */
+    /** Schedules an item. 
+	This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     protected boolean scheduleOnce(Key key, final Steppable event)
         {
         synchronized(lock)
@@ -396,7 +442,9 @@ public class Schedule implements java.io.Serializable
 
     
     /** Schedules an item.  You must synchronize on this.lock before calling this method.   This allows us to avoid synchronizing twice,
-        and incurring any overhead (not sure if that's an issue really).  */
+        and incurring any overhead (not sure if that's an issue really).  This method at present returns FALSE if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     boolean _scheduleOnce(Key key, final Steppable event)
         {
         // locals are a teeny bit faster
@@ -409,33 +457,41 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
 
-        // this shouldn't compile to anything more efficient -- we still check all of it -- so I'm taking it out
-        //if (t < EPOCH || t >= AFTER_SIMULATION || t != t /* NaN */ || t < time || event == null)
-        //    {
-        if (t < EPOCH)
-            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
-        else if (t >= AFTER_SIMULATION)
-            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
-        else if (t != t /* NaN */)
-            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                "\n\n...the time provided ("+t+") is NaN");
-        else if (t < time)
-            throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-                "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
-        else if (event == null)
-            throw new IllegalArgumentException("The provided Steppable is null");
-        //    }
+		if (sealed | t >= AFTER_SIMULATION)		// lighter weight and more common situations, no exception throwing
+			{
+			return false;
+			}
+		else if (t < EPOCH)
+			throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+				"\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
+		//else if (t >= AFTER_SIMULATION)
+		//	throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+		//		"\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
+		else if (t != t /* NaN */)
+			throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+				"\n\n...the time provided ("+t+") is NaN");
+		else if (t < time)
+			throw new IllegalArgumentException("For the Steppable...\n\n"+event+
+				"\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
+		else if (event == null)
+			throw new IllegalArgumentException("The provided Steppable is null");
+		//else if (sealed)
+		//	throw new IllegalArgumentException("The Steppable...\n\n"+event+
+		//		"\n\n...culd not be scheduled because the Schedule has been sealed.");
         
         queue.add(event, key);
         return true;
         }
 
+
     /** Schedules the event to recur at an interval of 1.0 starting at getTime() + 1.0, and at 0 ordering.
         If this is a valid event, schedules the event and returns a Stoppable, else returns null.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
+
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
 
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
@@ -457,6 +513,10 @@ public class Schedule implements java.io.Serializable
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
 
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
+
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
@@ -476,6 +536,10 @@ public class Schedule implements java.io.Serializable
         and event, schedules the event and returns a Stoppable, else returns null.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
+
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
 
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
@@ -499,6 +563,10 @@ public class Schedule implements java.io.Serializable
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
+
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
@@ -518,6 +586,10 @@ public class Schedule implements java.io.Serializable
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
+
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
@@ -537,6 +609,10 @@ public class Schedule implements java.io.Serializable
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
     
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
+
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
@@ -552,9 +628,13 @@ public class Schedule implements java.io.Serializable
         and in the ordering provided.  If the getTime() == the provided
         time, then the first event is instead scheduled to occur at getTime() + epsilon (the minimum possible next
         timestamp). If this is a valid time, ordering, interval (must be > 0), 
-        and event, schedules the event and returns a Stoppable, else returns null.
+        and event, schedules the event and returns a Stoppable.
         The recurrence will continue until getTime() >= AFTER_SIMULATION, the Schedule is cleared out,
         or the Stoppable's stop() method is called, whichever happens first.
+		
+		<p>This method at present returns null if the schedule cannot
+		schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+		throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
     
         <p> Note that calling stop() on the Stoppable
         will not only stop the repeating, but will <i>also</i> make the Schedule completely 
@@ -673,9 +753,13 @@ class Repeat implements Steppable, Stoppable
                 {
                 // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
                 key.time += interval;
-                if (key.time < Schedule.AFTER_SIMULATION) state.schedule.scheduleOnce(key,this);
+                if (key.time < Schedule.AFTER_SIMULATION) 
+					state.schedule.scheduleOnce(key,this);  // may return false if we couldn't schedule, which is fine
                 }
-            catch (IllegalArgumentException e) { } // occurs if time has run out
+            catch (IllegalArgumentException e)
+				{
+				e.printStackTrace(); // something bad happened
+				}
             step.step(state);
             }
         }
