@@ -1990,3 +1990,5 @@ Version 16
 		slider and its width, in pixels.
 	Modified EdgePortrayal2D to allow the width of the triangle or line to change depending
 		on the value of the Edge.
+	Documentation fixes to sim.util.Distribution [CERN's not very careful].  Thanks to 
+		Ben Stabile <bennett.stabile@GMAIL.COM>
