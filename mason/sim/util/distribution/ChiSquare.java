@@ -16,7 +16,7 @@ import ec.util.MersenneTwisterFast;
  * <p>
  * <tt>p(x) = (1/g(f/2)) * (x/2)^(f/2-1) * exp(-x/2)</tt> with <tt>g(a)</tt> being the gamma function and <tt>f</tt> being the degrees of freedom.
  * <p>
- * Valid parameter ranges: <tt>freedom &gt; 0</tt>.
+ * Valid parameter ranges: <tt>freedom >= 0</tt>.
  * <p> 
  * Instance methods operate on a user supplied uniform random number generator; they are unsynchronized.
  * <dt>
