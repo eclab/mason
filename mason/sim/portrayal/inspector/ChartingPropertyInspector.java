@@ -378,7 +378,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             public void stop()
                 {
                 if (newStopper!=null) newStopper.stop();  // wraps the stopper
-                // give the movie a chance to write out
+                // give the movie a chance to write out				
                 generator.stopMovie();
                 }
             };

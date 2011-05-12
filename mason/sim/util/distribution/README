@@ -5,8 +5,8 @@ Most importantly, the package has been set up so that you use
 MersenneTwisterFast as the random number generator behind these distributions.
 
 This stuff is very early and subject to non backward compatible change.  You
-have been warned.  Also I make no claims about the quality of the 
-samples produced by this code: though generally CERN JET/COLT has a fairly
+have been warned.  Also we make no claims about the quality or correctness of 
+the samples produced by this code: though generally CERN JET/COLT has a fairly
 good reputation.
 
 
@@ -24,11 +24,14 @@ for the following distributions:
 
 These classes work by instantiating a distribution with a given
 Mersenne Twister random number generator, then pulling random numbers out
-of the distribution.  I would just make one distribution of a given kind.
-There shouldn't be any reason you couldn't use the same Mersenne Twister
-for various different distributions.  Of course, Uniform and Normal aren't
-very useful since they're provided by the random number generator itself.  
-But there you have it.
+of the distribution.  It'd be best is you just mae one distribution of
+a given kind.  There shouldn't be any reason you couldn't use the same 
+Mersenne Twister for various different distributions, though keep in mind
+that the distributions (and MersenneTwisterFast) are not threadsafe, so
+if you use them in different threads you should lock on the Schedule
+before using the distribution.  Of course, the Uniform and Normal 
+distributions aren't very useful since they're provided by the random 
+number generator itself.  But there you have it.
 
 Additionally, the "Distributions" class provides several additional
 distributions which don't require internal state to compute and so can be

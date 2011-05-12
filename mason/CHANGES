@@ -1998,4 +1998,7 @@ Version 16
 	Modified the scheduling functions so that they return FALSE when the schedule cannot
 		accept any more events -- it's at AFTER_SIMULATION or is sealed.  Other invalid
 		situations (invalid times, invalid Steppables) still throw an exception.
-
+	Modified Console so that it updates inspectors one last time prior to stopping them.
+	Modified ChartGenerator so that the DataSetChangeEvent is fired prior to writing to
+		the movie (so any additional modifications to the chart are reflected in that
+		movie frame).

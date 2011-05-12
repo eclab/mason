@@ -138,14 +138,15 @@ public abstract class ChartGenerator extends JPanel
             oldKey = key;
             update();
                         
+            if (newData)
+                chart.getPlot().datasetChanged(new DatasetChangeEvent(chart.getPlot(), null));
+
             // now possibly write to the movie maker
             if (newData && movieMaker != null)
                 {
                 // add buffer to the movie maker
                 movieMaker.add(getBufferedImage());
                 }
-            if (newData)
-                chart.getPlot().datasetChanged(new DatasetChangeEvent(chart.getPlot(), null));
             }
         }
                 
