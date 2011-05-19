@@ -256,6 +256,9 @@ public class GeomPortrayal extends SimplePortrayal2D
 	{
 		double SLOP = 2.0;
 		MasonGeometry geom = (MasonGeometry) object;
+		
+		if (geom.shape == null)		// if there's no shape, you can't hit it
+			return false;
 
 		return geom.shape.intersects(range.clip.x - SLOP / 2, range.clip.y - SLOP / 2, range.clip.width + SLOP / 2,
 				range.clip.height + SLOP / 2);
