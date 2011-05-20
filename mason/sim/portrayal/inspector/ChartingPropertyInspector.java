@@ -340,22 +340,22 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                     generator.update(simulation.state.schedule.getSteps(), true);
                     break;
                 case REDRAW_TENTH_SEC:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 100);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 100);
                     break;
                 case REDRAW_HALF_SEC:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 500);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 500);
                     break;
                 case REDRAW_ONE_SEC:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 1000);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 1000);
                     break;
                 case REDRAW_TWO_SECS:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 2000);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 2000);
                     break;
                 case REDRAW_FIVE_SECS:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 5000);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 5000);
                     break;
                 case REDRAW_TEN_SECS:
-                    generator.updateBefore(simulation.state.schedule.getSteps(), 10000);
+                    generator.updateChartWithin(simulation.state.schedule.getSteps(), 10000);
                     break;
                 case REDRAW_DONT:  // do nothing
                     break;

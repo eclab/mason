@@ -39,34 +39,48 @@ public class SimState implements java.io.Serializable
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
     // Are we cleaning house and replacing the HashSet?
     public boolean cleaningAsynchronous = false;
-        
+	
+	SimState(long seed, MersenneTwisterFast random, Schedule schedule)
+        {
+        this.random = random;
+        this.schedule = schedule;
+        this.seed = seed;
+        }
+
     /** Creates a SimState with a new random number generator initialized to the given seed,
         plus a new, empty schedule. */
     public SimState(long seed)
         {
-        this.random = new MersenneTwisterFast(seed);
-        this.schedule = new Schedule();
-        this.seed = seed;  // for GUIs later on if they want to know...
+		this(seed, new MersenneTwisterFast(seed), new Schedule());
         }
     
-    /** Creates a SimState with a new, empty Schedule and the provided random number generator. 
-        @deprecated Use SimState(seed)
+    /** Creates a SimState with the given random number generator and schedule, and
+		sets the seed to a bogus value (0).  This should only be used by SimState 
+		subclasses which need to use an existing random number generator and schedule.
     */
-    private SimState(MersenneTwisterFast random)
+    protected SimState(MersenneTwisterFast random, Schedule schedule)
         {
-        this.random = random;
-        this.schedule = new Schedule();
-        }
-        
-    /** Creates a SimState with the provided random number generator and schedule.
-        @deprecated Use SimState(seed) 
+		this(0, random, schedule);  // 0 is a bogus value.  In fact, MT can't have 0 as its seed value.
+		}
+		
+    /** Creates a SimState with the schedule, creating a new random number generator.
+		This should only be used by SimState subclasses which need
+		to use an existing schedule.
     */
-    private SimState(MersenneTwisterFast random, Schedule schedule)
+    protected SimState(long seed, Schedule schedule)
         {
-        this.random = random;
-        this.schedule = schedule;
+		this(seed, new MersenneTwisterFast(seed), schedule);
         }
-    
+
+    /** Creates a SimState with a new schedule, the provided random number generator,
+		and a bogus seed (0).  This should only be used by SimState subclasses which need
+		to use an existing random number generator.
+    */
+    protected SimState(MersenneTwisterFast random)
+        {
+        this(0, random, new Schedule());  // 0 is a bogus value.  In fact, MT can't have 0 as its seed value.
+        }
+
     public void setSeed(long seed)
         {
         random = new MersenneTwisterFast(seed);

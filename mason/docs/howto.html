@@ -586,7 +586,7 @@ life for you.
 <li>Return the TabbedInspector as your inspector.
 </ul>
 
-<a name="chart"><h2>How to Add a Time-Series Chart Programmatically</h2>
+<a name="chart"><h2>How to Add a Chart Programmatically</h2>
 
 MASON has a built-in time-series charting facility, but the user must manually call it up each time he wants to chart something.  If you want a chart to appear as a display, that is, as a permanent window in the simulation (and appearing in the Displays tab), here's how to do it.
 
@@ -625,7 +625,9 @@ MASON has a built-in time-series charting facility, but the user must manually c
        }
 </tt></pre>
 
-<p>Last, in your GUIState's start() method, you'll need to create a new series and add it to the chart, like this
+<p>Next, in your GUIState's start() method, you'll need to create a new series and add it to the chart.
+Then you'll need to schedule an event on the GUIState's minischedule to add data to the chart and update
+it (updating it allows it to do things like emit movies properly).
 
 <pre><tt>
     public void start()
@@ -658,49 +660,60 @@ MASON has a built-in time-series charting facility, but the user must manually c
                
                // now add the data
                if (x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
+                   {
                    series.add(x, y, true);
+
+                   // we're in the model thread right now, so we shouldn't directly
+                   // update the chart.  Instead we request an update to occur the next
+                   // time that control passes back to the Swing event thread.
+                   chart.updateChartLater(state.schedule.getSteps());
+                   }
                }
            });
        }
 </tt></pre>
 
-<p>When you run the simulation, you'll notice that the generator doesn't have all the features of the standard one which pops up with inspectors -- notably you don't have the ability to state how often the chart is updated.  These are features of the inspector code, not the chart generator.  Your programmatic mechanism is updating the chart every time a value is inserted into it.  This is expensive, particularly when you have lots of data points.
+<p>Why are we passing the steps into updateChartLater(...)?  Because it needs to know if it's written out a movie frame already which reflected that timestep.
 
-<p>If you would like the chart to redraw itself once every second of wall-clock time after values have been sent to it (say), you can write a little timer which fires one second after it's called.  Add this to your GUIState subclass:
+<p>Last, you probably want movies to end when the simulation is stopped or finished.
 
 <pre><tt>
+    public void finish()
+        {
+        super.finish();
 
-    Thread timer = null;
-    public void startTimer(final long steps, final long milliseconds)
-       {
-       if (timer == null)
-           timer= sim.util.gui.Utilities.doLater(milliseconds, new Runnable()
-              {
-              public void run()
-                  {
-                  if (chart!=null) chart.update(steps, true);
-                  timer = null;  // reset the timer
-                  }
-              });
-       }
+        [do your finishing code here, then...]
 
+        chart.stopMovie();
+        }
+
+
+    public void quit()
+        {
+        super.quit();
+
+        [do your quitting code here, then...]
+
+        chart.stopMovie();
+        }
 </tt></pre>
 
-<p>What's the <b>steps</b> variable for?  The update(...) method takes two arguments: a <i>key</i> representing the state of your simulation for which you're asking it to update itself, and a boolean indicating whether the update reflects new data being added (or something else, like the user changing the color).  If the key is the same as the previous key passed to update(...), update(...) will do nothing -- it assumes the chart is the same.  If the boolean is false, then update will redraw the chart (assuming the key test was passed) but will not emit it to a movie as a new frame.
+<p>When you run the simulation, you'll notice that the generator doesn't have all the features of the standard one which pops up with inspectors -- notably you don't have the ability to state how often the chart is updated.  These are features of the inspector code, not the chart generator.  Your programmatic mechanism is updating the chart every time a value is inserted into it.  This is expensive, particularly when you have lots of data points.
 
-<p>Now you just need to tell the series not to update itself automatically when an item is added, and also to turn on the timer (if it's not already on).  In the start() method, change the line
+<p>If you would like the chart to redraw itself once every second of wall-clock time after values have been sent to it (say), ChartGenerator has a little timer facility you can use to have it update itself no further than, in this case, one second after you start the timer.  You can replace the updateChartLater method with 
+
+<p>Now you just need to tell the series not to update itself automatically when an item is added, and also to turn on the timer (if it's not already on).  In the start() method, change the lines:
 
 <pre><tt>
               series.add(x, y, true);
+              chart.updateChartLater(state.schedule.getSteps()); 
 </tt></pre>
 
 <p>To...
 <pre><tt>
-              series.add(x, y, false);  // don't update automatically
-              startTimer(state.schedule.getSteps(), 1000);  // once a second (1000 milliseconds)
+              series.add(x, y, false);  // don't immediately redraw on adding data
+              chart.updateChartWithin(state.schedule.getSteps(), 1000);  // update within one second (1000 milliseconds))
 </tt></pre>
-
-<p>Notice we're using the schedule's current steps as the key -- that's probably the best choice.
 
 <a name="console"><h2>How to Hide the Console</h2>
 

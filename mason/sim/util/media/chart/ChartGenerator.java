@@ -750,8 +750,9 @@ public abstract class ChartGenerator extends JPanel
 
 
     Thread timer = null;
-    /** Updates the inspector asynchronously sometime before the given milliseconds have transpired. */
-    public void updateBefore(final long key, final long milliseconds)
+    /** Updates the inspector asynchronously sometime before the given milliseconds have transpired.  Once
+		requested, further calls to request an update via this method will be ignored until the update occurs. */
+    public void updateChartWithin(final long key, final long milliseconds)
         {
         if (timer == null)
             {
@@ -766,6 +767,20 @@ public abstract class ChartGenerator extends JPanel
                 });
             }
         }
+	
+	/** Posts a request to update the chart on the Swing event queue to happen next time repaints etc. happen. */
+	public void updateChartLater(final long key)
+		{
+		repaint();  // make sure a repaint happens first  -- this is probably unnecessary
+
+		javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+			public void run()
+				{
+				update(key, true);
+				}
+			});
+		}
     }
 
         
