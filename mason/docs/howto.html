@@ -600,6 +600,8 @@ MASON has a built-in time-series charting facility, but the user must manually c
 <p>Next, you need to construct the chart in your init method, like so:
 
 <pre><tt>
+    JFrame chartFrame;
+
     public void init(Controller c)
        {
        super.init(c);
@@ -612,11 +614,11 @@ MASON has a built-in time-series charting facility, but the user must manually c
        chart.setTitle("Put the title of your chart here");
        chart.setRangeAxisLabel("Put the name of your charted series here");
        chart.setDomainAxisLabel("Time");
-       JFrame frame = chart.createFrame(this);
+       chartFrame.createFrame(this);
        // perhaps you might move the chart to where you like.
-       frame.setVisible(true);
-       frame.pack();
-       c.registerFrame(frame);
+       chartFrame.setVisible(true);
+       chartFrame.pack();
+       c.registerFrame(chartFrame);
        
        // the console automatically moves itself to the right of all
        // of its registered frames -- you might wish to rearrange the
@@ -675,7 +677,7 @@ it (updating it allows it to do things like emit movies properly).
 
 <p>Why are we passing the steps into updateChartLater(...)?  Because it needs to know if it's written out a movie frame already which reflected that timestep.
 
-<p>Last, you probably want movies to end when the simulation is stopped or finished.
+<p>Last, you probably want movies to end when the simulation is stopped or finished.  And you certainly want to dispose the frame if you're quitting.
 
 <pre><tt>
     public void finish()
@@ -695,6 +697,8 @@ it (updating it allows it to do things like emit movies properly).
         [do your quitting code here, then...]
 
         chart.stopMovie();
+        if (chartFrame != null)	chartFrame.dispose();
+        chartFrame = null;
         }
 </tt></pre>
 
