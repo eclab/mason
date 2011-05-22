@@ -33,13 +33,16 @@ import org.jfree.data.general.*;
     the aggregated data over time), AGGREGATIONMETHOD_MAX (use the maximum), or AGGREGATIONMETHOD_MEAN (use
     the mean).   The aggregation interval -- how much time you should wait for before dumping the aggregated
     results into the time series -- will be stored in globalAttriutes.interval. 
+	
+	<p>The ChartingPropertyInspector maintains a Bag of global charts presently on-screen.  This isn't a static variable, but
+	rather is stored in GUIState.storage under the key chartKey ("sim.portrayal.inspector.ChartingPropertyInspector")
 */
 
 public abstract class ChartingPropertyInspector extends PropertyInspector
     {
     /** The ChartGenerator used by this ChartingPropertyInspector */
     protected ChartGenerator generator;
-    public ChartGenerator getGenerator(){return generator;}
+    public ChartGenerator getGenerator() { return generator; }
     double lastTime  = Schedule.BEFORE_SIMULATION;
     SeriesAttributes seriesAttributes;
 
@@ -147,16 +150,25 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             }
         return null;
         }
-                
+	
+	public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
+
+	/** Returns the global charts Bag which holds all charts on-screen for this simulation instance. */
+	protected Bag getCharts(GUIState simulation)
+		{
+		Bag c = (Bag)(simulation.storage.get(chartKey));
+		if (c == null)
+			{
+			c = new Bag();
+			simulation.storage.put(chartKey, c);
+			}
+		return c;
+		}
+		
     /** Used to find the global attributes that another inspector has set so I can share it. */
     ChartGenerator chartToUse( final String sName, Frame parent, final GUIState simulation )
         {
-        Bag charts = new Bag();
-        if( simulation.guiObjects != null )
-            for( int i = 0 ; i < simulation.guiObjects.numObjs ; i++ )
-                if( simulation.guiObjects.objs[i] instanceof ChartGenerator &&
-                    validChartGenerator((ChartGenerator)(simulation.guiObjects.objs[i])))
-                    charts.add( simulation.guiObjects.objs[i] );
+        Bag charts = getCharts(simulation);
         if( charts.numObjs == 0 )
             return createNewChart(simulation);
 
@@ -283,11 +295,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         DisclosurePanel pan = new DisclosurePanel(globalAttributes.title, globalAttributes);
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
-        // set up the simulation -- need a new name other than guiObjects: and it should be
-        // a HashMap rather than a Bag.
-        if( simulation.guiObjects == null )
-            simulation.guiObjects = new Bag();
-        simulation.guiObjects.add( generator );
+		getCharts(simulation).add( generator );			// put me in the global charts list
         JFrame f = generator.createFrame(simulation);
 
         WindowListener wl = new WindowListener()

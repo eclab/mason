@@ -2007,3 +2007,8 @@ Version 16
 	Revised the SimState constructors -- making deprecated and private constructors protected.
 		This makes it easier to use MASON with other toolkits (such as ECJ) which are
 		in control of the random number generator.
+	Deleted the GUIState.guiObjects variable, created a new variable called 'storage', which
+		stores global elements by key.
+	Charting inspectors now set their chart titles and axis labels to more useful things
+	It's a known bug in JFreeChart: if you have multiple series on a chart, and they're named
+		the same name, then only the first one controls the auto range.  :-(

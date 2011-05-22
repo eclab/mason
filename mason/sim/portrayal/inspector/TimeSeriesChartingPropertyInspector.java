@@ -13,6 +13,8 @@ import sim.engine.*;
 import sim.util.media.chart.*;
 import org.jfree.data.xy.*;
 import org.jfree.data.general.*;
+import org.jfree.chart.plot.*;
+import org.jfree.chart.*;
 
 /** A property inspector which generates time series of data.  Time series are extended in real-time
     as requested by the user.  Data properties for which
@@ -48,18 +50,26 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-        setupSeriesAttributes();
+        setupSeriesAttributes(properties, index);
         }
     
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
         {
         super(properties, index, simulation, generator);
-        setupSeriesAttributes();
+        setupSeriesAttributes(properties, index);
         }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
-    private void setupSeriesAttributes()
-        {            
+    private void setupSeriesAttributes(Properties properties, int index)
+        {
+		if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+			{
+			// take control
+			getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+			getGenerator().setRangeAxisLabel("" + properties.getName(index));
+			getGenerator().setDomainAxisLabel("Time");
+			}
+			
         if (validInspector)
             {
             chartSeries = new XYSeries( properties.getName(index), false );
@@ -82,9 +92,8 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                 Stoppable stopper = getStopper();
                 if (stopper!=null) stopper.stop();
 
-                // remove the chart from the GUIState's guiObjects
-                if( simulation.guiObjects != null )
-                    simulation.guiObjects.remove(this);
+                // remove the chart from the GUIState's charts
+                getCharts(simulation).remove(this);
                 }
             };
         }

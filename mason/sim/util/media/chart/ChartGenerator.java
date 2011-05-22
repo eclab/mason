@@ -169,6 +169,8 @@ public abstract class ChartGenerator extends JPanel
         {
         return (SeriesAttributes)(seriesAttributes.getComponent(i));
         }
+		
+	public int getNumSeriesAttributes() { return seriesAttributes.getComponents().length; }
 
     protected SeriesAttributes[] getSeriesAttributes()
         {

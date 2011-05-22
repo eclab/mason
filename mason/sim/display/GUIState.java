@@ -9,6 +9,7 @@ import sim.engine.*;
 import sim.portrayal.*;
 import java.io.*;
 import sim.util.Bag;
+import java.util.HashMap;
 
 /** A wrapper for SimState and Schedule which provides additional functionality for
     GUI objects. This wrapper extends the functionality of SimState and
@@ -75,8 +76,7 @@ public abstract class GUIState
         or no controller YET */
     public Controller controller;
 
-    /** A bag of objects containing objects that may be needed at various times. */
-    public Bag guiObjects;
+	public HashMap storage = new HashMap();
 
     /** Override this constructor in your subclass to call <code>super(state)</code> where state is a
         properly constructed SimState appropriate to your problem -- do NOT call <code>super()</code>*/

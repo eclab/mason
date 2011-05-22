@@ -36,18 +36,26 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
     public ScatterPlotChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
         super(properties,index,parent,simulation);
-        setupSeriesAttributes();
+        setupSeriesAttributes(properties, index);
         }
     
     public ScatterPlotChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
         {
         super(properties, index, simulation, generator);
-        setupSeriesAttributes();
+        setupSeriesAttributes(properties, index);
         }
     
     //I isolated this code from the constructor into this method because I have two constructors now. 
-    private void setupSeriesAttributes()
+    private void setupSeriesAttributes(Properties properties, int index)
         {
+		if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+			{
+			// take control
+			getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+			getGenerator().setRangeAxisLabel("" + properties.getName(index));
+			getGenerator().setDomainAxisLabel("Time");
+			}
+
         if (validInspector)
             {
             // add our series
@@ -69,9 +77,8 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
                 Stoppable stopper = getStopper();
                 if (stopper!=null) stopper.stop();
 
-                // remove the chart from the GUIState's guiObjects
-                if( simulation.guiObjects != null )
-                    simulation.guiObjects.remove(this);
+                // remove the chart from the GUIState's charts
+                getCharts(simulation).remove(this);
                 }
             };
         }
