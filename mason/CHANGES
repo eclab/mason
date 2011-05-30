@@ -2014,3 +2014,5 @@ Version 16
 		the same name, then only the first one controls the auto range.  :-(
 	Further tweaked Console's update of inspectors when stopping them
 	Modified SimpleController to update inspectors when stopping them just like Console
+	Modified howto.html to show how to propery close and write out movies when finishing
+		or quitting if your movie is from a display.
