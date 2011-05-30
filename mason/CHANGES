@@ -2012,3 +2012,5 @@ Version 16
 	Charting inspectors now set their chart titles and axis labels to more useful things
 	It's a known bug in JFreeChart: if you have multiple series on a chart, and they're named
 		the same name, then only the first one controls the auto range.  :-(
+	Further tweaked Console's update of inspectors when stopping them
+	Modified SimpleController to update inspectors when stopping them just like Console

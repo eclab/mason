@@ -2947,26 +2947,36 @@ public class Console extends JFrame implements Controller
         allInspectors.put(inspector, stopper);  //new WeakReference(stopper));  // warning: if no one else refers to stopper, it gets GCed!
         }
 
-    /** Stops all inspectors.  If killDraggedOutWindowsToo is true, then the detatched inspectors are stopped as well. */
+    /** Stops all inspectors.  If killDraggedOutWindowsToo is true, then the detatched inspectors are stopped as well. 
+		Updaes all inspectors once as well for good measure prior to stopping some.  */
     public void stopAllInspectors(boolean killDraggedOutWindowsToo)
         {
+		// update all the inspectors before we delete some of them, so they get written out
+		// if necessary.
+		Iterator i = allInspectors.keySet().iterator();
+		while(i.hasNext())
+			{
+			Inspector insp = (Inspector)(i.next());
+			insp.updateInspector();  // one last time
+			insp.repaint();
+			}
+
+		// kill all the inspectors in the inspector window for sure
         // inspectors may get stop() called on them multiple times
         for(int x=0;x<inspectorStoppables.size();x++)
             {
-            Stoppable temp = ((Stoppable)(inspectorStoppables.elementAt(x)));
-            if (temp!=null) temp.stop();  // stop all inspectors
+            Stoppable stopper = ((Stoppable)(inspectorStoppables.elementAt(x)));
+            if (stopper!=null) stopper.stop();
             }
 
+		// possibly kill all inspectors detached in their own windows.
         if (killDraggedOutWindowsToo)
             {
-            Iterator i = allInspectors.keySet().iterator();
+			i = allInspectors.keySet().iterator();
             while(i.hasNext())
                 {
-				Inspector insp = (Inspector)(i.next());
-				insp.updateInspector();  // one last time
-				insp.repaint();
-                Stoppable stopper = (Stoppable)(allInspectors.get(insp)); //(Stoppable)(((WeakReference)allInspectors.get(i.next())).get());
-                if (stopper != null) stopper.stop();
+                Stoppable stopper = (Stoppable)(allInspectors.get(insp));
+				if (stopper != null) stopper.stop();
                 }
             }
         }

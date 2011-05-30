@@ -9,17 +9,17 @@ package sim.display;
 import java.util.prefs.*;
 
 /** A simple cover class for Java's preferences system.  MASON has both global and application-specific
-    preferences.  Each Preferences object is associated with a unique subpath hung under the global
+    preferences.  Each Preferences object is associated with a unique namespace hung under the global
     Preferences or under an application-specific preferences.  You are responsible for defining 
-    the subpath for your particular object.  Typically it's a single unique word like "Display2D"
+    the namespace for your particular object.  Typically it's a single unique word like "Display2D"
     or "Bugaboo".  Do not include periods, whitespace, or begin or end with a slash.
         
     <p>Once you have retrieved the Preferences object and modified it, you must save it before MASON is
     terminated.
         
     <p>How this works with Java's Preferences:
-    All preferences start with a certain path and then add a subpath onto it.       
-    Global preferences have a path which starts with "edu/gmu/mason/global/" -- Display2D's subpath is "Display2D", so for example,
+    All preferences start with a certain path and then add a namespace onto it.       
+    Global preferences have a path which starts with "edu/gmu/mason/global/" -- Display2D's namespace is "Display2D", so for example,
     Display2D's global preferences are "edu/gmu/mason/global/Display2D".  App-specific preferences
     also have unique paths.  For example, HeatBugs's preferences path is
     "edu/gmu/mason/app/sim/app/heatbugs/", so Display2D's app preferences, when used with Heatbugs, is
@@ -32,27 +32,27 @@ public class Prefs
     public static final String MASON_PREFERENCES = "edu/gmu/mason/global/";
     public static final String APP_PREFERENCES = "edu/gmu/mason/app/";
 
-    /** Returns the global preferences for MASON, with the given additional prefix as a subpath. */
-    public static Preferences getGlobalPreferences(String postfix)
+    /** Returns the global preferences for MASON, with the given additional prefix as a namespace. */
+    public static Preferences getGlobalPreferences(String namespace)
         {
-//              System.err.println("Getting " + MASON_PREFERENCES + postfix);
-        return Preferences.userRoot().node(MASON_PREFERENCES + postfix);
+//              System.err.println("Getting " + MASON_PREFERENCES + namespace);
+        return Preferences.userRoot().node(MASON_PREFERENCES + namespace);
         }
 
-    /** Returns app-specific preferences for MASON, with the given additional prefix as a subpath. */
-    public static Preferences getAppPreferences(GUIState simulation, String postfix)
+    /** Returns app-specific preferences for MASON, with the given additional prefix as a namespace. */
+    public static Preferences getAppPreferences(GUIState simulation, String namespace)
         {
-//              System.err.println("Getting " + APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + postfix);
+//              System.err.println("Getting " + APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + namespace);
         return Preferences.userRoot().node(
-            APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + postfix); 
+            APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + namespace); 
         }
         
-    /** Deletes certain global preferences for MASON, with the given additional prefix as a subpath. */
-    public static boolean removeGlobalPreferences(String postfix)
+    /** Deletes certain global preferences for MASON, with the given additional prefix as a namespace. */
+    public static boolean removeGlobalPreferences(String namespace)
         {
         try
             {
-            getGlobalPreferences(postfix).removeNode();
+            getGlobalPreferences(namespace).removeNode();
             return true;
             }
         catch (BackingStoreException e)
@@ -61,12 +61,12 @@ public class Prefs
             }
         }
 
-    /** Deletes certain app-specific preferences for MASON, with the given additional prefix as a subpath. */
-    public static boolean removeAppPreferences(GUIState simulation, String postfix)
+    /** Deletes certain app-specific preferences for MASON, with the given additional prefix as a namespace. */
+    public static boolean removeAppPreferences(GUIState simulation, String namespace)
         {
         try
             {
-            getAppPreferences(simulation, postfix).removeNode();
+            getAppPreferences(simulation, namespace).removeNode();
             return true;
             }
         catch (BackingStoreException e)
