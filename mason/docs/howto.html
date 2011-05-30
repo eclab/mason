@@ -677,7 +677,7 @@ it (updating it allows it to do things like emit movies properly).
 
 <p>Why are we passing the steps into updateChartLater(...)?  Because it needs to know if it's written out a movie frame already which reflected that timestep.
 
-<p>Last, you probably want movies to end when the simulation is stopped or finished.  And you certainly want to dispose the frame if you're quitting.
+<p>Last, you probably want movies to end when the simulation is stopped or finished: and to update themselves one last time to write out that last movieframe.  And you certainly want to dispose the JFrame if you're quitting.
 
 <pre><tt>
     public void finish()
@@ -686,6 +686,8 @@ it (updating it allows it to do things like emit movies properly).
 
         [do your finishing code here, then...]
 
+	chart.update(state.schedule.getSteps(), true);
+	chart.repaint();
         chart.stopMovie();
         }
 
@@ -696,6 +698,8 @@ it (updating it allows it to do things like emit movies properly).
 
         [do your quitting code here, then...]
 
+        chart.update(state.schedule.getSteps(), true);
+        chart.repaint();
         chart.stopMovie();
         if (chartFrame != null)	chartFrame.dispose();
         chartFrame = null;
