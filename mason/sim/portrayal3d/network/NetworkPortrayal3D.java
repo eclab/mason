@@ -112,6 +112,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
                 hm.put(edge,edge);
                 }
             }
+			
         // update children (edges) if they're still in the field (network),
         // else remove the children if they appear to have left.
         // We use a hashmap to efficiently mark out the children

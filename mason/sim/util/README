@@ -9,6 +9,8 @@ The subpackages are:
 
 gui		Utility classes for GUI development
 media		Utility classes for media: pictures, movies, charts, etc.
+distribution	Utility classes for selecting random numbers under
+		various distributions, largely cribbed from JET/COLT. 
 
 
 Classes:
