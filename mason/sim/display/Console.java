@@ -2975,6 +2975,7 @@ public class Console extends JFrame implements Controller
 			i = allInspectors.keySet().iterator();
             while(i.hasNext())
                 {
+				Inspector insp = (Inspector)(i.next());
                 Stoppable stopper = (Stoppable)(allInspectors.get(insp));
 				if (stopper != null) stopper.stop();
                 }
