@@ -11,6 +11,7 @@ import sim.field.network.*;
 import sim.util.*;
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.*;
 
 /**
    Portrays network fields.   Only draws the edges.  To draw the nodes, use a 
@@ -52,12 +53,13 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         // draw ALL the edges -- one never knows if an edge will cross into our boundary
         
         Bag nodes = field.network.getAllNodes();
+		HashSet edgeset = new HashSet();	
+		
         for(int x=0;x<nodes.numObjs;x++)
             {
             Bag edges = field.network.getEdgesOut(nodes.objs[x]);
             Double2D locStart = field.getObjectLocation(nodes.objs[x]);
             if (locStart == null) continue;
-            // if (edges == null) continue;  // no longer necessary
             
             // coordinates of first endpoint
             if (field.field instanceof Continuous2D) // it's continuous
@@ -80,6 +82,14 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
             for(int y=0;y<edges.numObjs;y++)
                 {
                 Edge edge = (Edge)edges.objs[y];
+				
+				// only include the edge if we've not included it already.
+				if (field.network.isDirected())
+					{
+					if (edgeset.contains(edge)) continue;
+					edgeset.add(edge);
+					}
+				
                 Double2D locStop = field.getObjectLocation(edge.to());
                 if (locStop == null) continue;
                 

@@ -22,9 +22,11 @@ import sim.util.*;
    weight of the edge is the doubleValue() of your object.  Else the weight of the edge is a default
    of 1.0.
    
-   <p>Edges are java.lang.Comparabler as long as their 'info' elements are
+   <p>Edges are java.lang.Comparable as long as their 'info' elements are
 	Numbers or are sim.util.Valuable.  In this case, the comparison is such that lower
 	values sort first.
+
+	<p>Though Edges are comparable, they hash by reference.  Edges are always considered unique.
 */
 public class Edge implements java.io.Serializable, Comparable
     {

@@ -2016,3 +2016,9 @@ Version 16
 	Modified SimpleController to update inspectors when stopping them just like Console
 	Modified howto.html to show how to propery close and write out movies when finishing
 		or quitting if your movie is from a display.
+	Made network.directed non-final and private.  Created a new method called isDirected()
+		to return direction.   Added network.reset(...) to reset direction. 
+	Bug fix to NetworkPortrayal2D, which was drawing and inspecting edges twice if undirected.
+		The error shouldn't occur in NetworkPortrayal3D which already does edge hashing
+		and so shouldn't have duplicates.
+
