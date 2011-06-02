@@ -60,6 +60,14 @@ public class Edge implements java.io.Serializable, Comparable
     /** Returns the "to" object. */
     public Object getTo() { return to; }
     
+	/** Returns true if the edge is directed or if we don't know our owner */
+	public boolean getDirected() 
+		{
+		Network o = owner;
+		if (o == null) return true; 
+		return o.isDirected();
+		}
+	
     /** Returns the "from" object. */
     public Object from() { return from; }
     /** Returns the "to" object. */
@@ -132,7 +140,7 @@ public class Edge implements java.io.Serializable, Comparable
 			return "Unowned Edge[" + from + "->" + to + ": " + info + "]";
 		else if (owner.isDirected())
 			return "Edge[" + from + "->" + to + ": " + info + "]";
-		else
+		else  // undirected
 			return "Edge[" + from + "<->" + to + ": " + info + "]";
         }
 
