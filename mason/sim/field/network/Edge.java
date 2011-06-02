@@ -128,7 +128,12 @@ public class Edge implements java.io.Serializable, Comparable
 
     public String toString()
         {
-        return "Edge[" + from + "->" + to + ": " + info + "]";
+		if (owner == null)
+			return "Unowned Edge[" + from + "->" + to + ": " + info + "]";
+		else if (owner.isDirected())
+			return "Edge[" + from + "->" + to + ": " + info + "]";
+		else
+			return "Edge[" + from + "<->" + to + ": " + info + "]";
         }
 
 
