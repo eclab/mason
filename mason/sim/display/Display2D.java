@@ -1961,22 +1961,22 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         switch(updateRule)
             {
             case UPDATE_RULE_STEPS:
-                s = (stepInterval == 1 ? "Redrawing each model iteration" :
-                    "Redrawing each " + stepInterval +  " model iterations");
+                s = (stepInterval == 1 ? "Currently redrawing each model iteration" :
+                    "Currently redrawing every " + stepInterval +  " model iterations");
                 break;
             case UPDATE_RULE_INTERNAL_TIME:
-                s = (timeInterval == 1000 ? "Redrawing each unit of model time" :
-                    "Redrawing each " + (timeInterval / 1000.0) +  " units of model time");
+                s = (timeInterval == 1000 ? "Currently redrawing each unit of model time" :
+                    "Currently redrawing every " + (timeInterval / 1000.0) +  " units of model time");
                 break;
             case UPDATE_RULE_WALLCLOCK_TIME:
-                s = (wallInterval == 1000 ? "Redrawing each second of real time" :
-                    "Redrawing each " + (wallInterval / 1000.0) +  " seconds of real time");
+                s = (wallInterval == 1000 ? "Currently redrawing each second of real time" :
+                    "Currently redrawing every " + (wallInterval / 1000.0) +  " seconds of real time");
                 break;
             case UPDATE_RULE_ALWAYS:
-                s = "Redrawing each model iteration";
+                s = "Currently redrawing each model iteration";
                 break;
             case UPDATE_RULE_NEVER:
-                s = "Never redrawing except when the window is redrawn";
+                s = "Currently never redrawing except when the window is redrawn";
                 break;
             }
         JMenuItem m = new JMenuItem(s);
