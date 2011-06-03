@@ -1980,8 +1980,7 @@ Version 16
 	Added DenseGrid2D, DenseGrid2DPortrayal, and HexaDenseGrid2DPortrayal
 	Reindented
 	BugFix to [Int|Double|]Bag.addAll method -- inserting in the middle of the Bag wasn't
-		shifting elements over properly.  Thanks to Guoqiang Zhang 
-		<zgqoop_cn@hotmail.com>
+		shifting elements over properly.  Thanks to Guoqiang Zhang <zgqoop_cn@hotmail.com>
 	Made Edge Comparable
 	Changed the slider so that it prints only a few decimal places when modifying a 
 		double. The number of decimal places is chosen to be the minimum necessary 
