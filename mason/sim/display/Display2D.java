@@ -1965,8 +1965,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     "Currently redrawing every " + stepInterval +  " model iterations");
                 break;
             case UPDATE_RULE_INTERNAL_TIME:
-                s = (timeInterval == 1000 ? "Currently redrawing each unit of model time" :
-                    "Currently redrawing every " + (timeInterval / 1000.0) +  " units of model time");
+                s = (timeInterval == 1 ? "Currently redrawing each unit of model time" :
+                    "Currently redrawing every " + (timeInterval) +  " units of model time");
                 break;
             case UPDATE_RULE_WALLCLOCK_TIME:
                 s = (wallInterval == 1000 ? "Currently redrawing each second of real time" :

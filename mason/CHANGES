@@ -2027,3 +2027,4 @@ Version 16
 	Added Edge.isDirected()
 	Fixed bug in NetworkPortrayal2D() when using undirected edges -- not all edges would
 		be displayed (was using edge.getTo() rather than edge.getOtherNode(...))
+	Bug fixes to GUI description of updates in Display2D and Display3D
