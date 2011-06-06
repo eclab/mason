@@ -411,7 +411,7 @@ We'll finish up with typical methods:
         super.init(c);
 
         <font color=gray>// make the displayer</font>
-        display = new Display2D(600,600,this,1);
+        display = new Display2D(600,600,this);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("Tutorial 5 Display");
@@ -573,9 +573,9 @@ public class BandPortrayal2D extends SimpleEdgePortrayal2D
 <p><table border=1>
 <tr><td align=center><b>FROM...</b></td></tr>
 <tr><td><pre><tt>
-display = new Display2D(600,600,this,1);
+display = new Display2D(600,600,this);
 </tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
-display = new Display2D(600,600,this,1);<font color="blue">
+display = new Display2D(600,600,this);<font color="blue">
 <font color=gray>// turn off clipping</font>
 display.setClipping(false);</font></font>
 </tt></pre></td></tr></table>

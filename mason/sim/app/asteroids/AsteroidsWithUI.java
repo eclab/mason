@@ -106,7 +106,7 @@ public class AsteroidsWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(750,750,this,1)
+        display = new Display2D(750,750,this)
             {
             public void createSimpleControllerMenu() { }                // we don't want the console menu at all
             public void quit()                                          // we close our controller when we die
@@ -133,7 +133,7 @@ public class AsteroidsWithUI extends GUIState
         // delete the header
         display.remove(display.header);
         // delete all listeners
-        display.insideDisplay.removeListeners();
+        display.removeListeners();
         // delete the scroll bars
         display.display.setVerticalScrollBarPolicy(display.display.VERTICAL_SCROLLBAR_NEVER);
         display.display.setHorizontalScrollBarPolicy(display.display.HORIZONTAL_SCROLLBAR_NEVER);

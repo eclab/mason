@@ -3,15 +3,11 @@
 
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
-#### To switch from jikes to javac:  change the JAVAC variable below
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
-JAVAC = javac ${JAVACFLAGS}
-#JAVAC = jikes ${JIKESFLAGS}
+JAVAC = javac ${FLAGS}
 
-JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
-JIKESFLAGS = -target 1.4 +Pno-shadow ${FLAGS}
-FLAGS = -g -nowarn
+FLAGS = -target 1.4 -source 1.4 -g -nowarn -Xlint:deprecation
 
 
 # Main java files, not including the 3D stuff

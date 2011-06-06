@@ -91,7 +91,7 @@ public class Balls3DWithUI extends GUIState
         Balls3D tut = (Balls3D) state;
 
         // make the displayer
-        display = new Display3D(600,600,this,1);                        
+        display = new Display3D(600,600,this);                        
                         
         display.attach( edgePortrayal, "Bands" );
         display.attach( nodePortrayal, "Balls" );

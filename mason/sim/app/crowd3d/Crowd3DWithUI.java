@@ -72,7 +72,7 @@ public class Crowd3DWithUI extends GUIState
         {
         CrowdSim cState = (CrowdSim)state;
         super.init(c);
-        display = new Display3D(500,500,this,1);
+        display = new Display3D(500,500,this);
 
         display.attach(wireFrameP, "Fish tank");
         Appearance appearance = new Appearance();

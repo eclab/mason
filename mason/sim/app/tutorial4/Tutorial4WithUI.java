@@ -107,7 +107,7 @@ public class Tutorial4WithUI extends GUIState
         {
         super.init(c);
         
-        display = new Display2D(400,400,this,1);
+        display = new Display2D(400,400,this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);
         displayFrame.setVisible(true);
@@ -115,7 +115,7 @@ public class Tutorial4WithUI extends GUIState
         display.attach(trailsPortrayal,"Trails");
         display.attach(particlesPortrayal,"Particles");
 
-        display2 = new Display2D(400,600,this,1);
+        display2 = new Display2D(400,600,this);
         displayFrame2 = display2.createFrame();
         displayFrame2.setTitle("The Other Display");
         c.registerFrame(displayFrame2);

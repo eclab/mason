@@ -61,7 +61,7 @@ public class Tutorial2 extends GUIState
         
         // Make the Display2D.  We'll have it display stuff later.
         Tutorial1 tut = (Tutorial1)state;
-        display = new Display2D(tut.gridWidth * 4, tut.gridHeight * 4,this,1);
+        display = new Display2D(tut.gridWidth * 4, tut.gridHeight * 4,this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);

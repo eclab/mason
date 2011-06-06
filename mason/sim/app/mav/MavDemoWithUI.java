@@ -78,7 +78,7 @@ public class MavDemoWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(500,500,this,1);
+        display = new Display2D(500,500,this);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("Mav Demonstration Display");

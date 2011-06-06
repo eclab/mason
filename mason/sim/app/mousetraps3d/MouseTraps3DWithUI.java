@@ -119,7 +119,7 @@ public class MouseTraps3DWithUI extends GUIState
         wireFrameP = new WireFrameBoxPortrayal3D(0,0,0,sim.spaceWidth, sim.spaceHeight, sim.spaceLength);
 
         // Make the Display3D.  We'll have it display stuff later.
-        display = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this);
                 
         // attach the portrayals to the displayer, from bottom to top
         display.attach(trapsPortrayal,"Traps");

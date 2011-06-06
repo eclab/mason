@@ -76,7 +76,7 @@ public class Particles3DWithUI extends GUIState
     public void init(Controller c)
         {
         super.init(c);
-        display = new Display3D(600,600,this,1); 
+        display = new Display3D(600,600,this); 
 
         wireFramePortrayal = new WireFrameBoxPortrayal3D(-0.5,-0.5,-0.5,Particles3D.gridWidth, Particles3D.gridHeight, Particles3D.gridLength, Color.blue); 
         

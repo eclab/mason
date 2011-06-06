@@ -544,6 +544,9 @@ public class SimpleController implements Controller
         return true;
         }
 
+/**
+@deprecated
+*/
     public synchronized void doChangeCode(Runnable r)
         {
         if (playThread != null)

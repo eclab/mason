@@ -48,7 +48,7 @@ public JFrame displayFrame2;
 <p><table border=1>
 <tr><td align=center><b>FROM...</b></td><td align=center><b>CHANGE TO</b></td>
 <tr><td><pre><tt>
-display = new Display2D(400,400,this,1);
+display = new Display2D(400,400,this);
 displayFrame = display.createFrame();
 c.registerFrame(displayFrame);
 displayFrame.setVisible(true);
@@ -56,7 +56,7 @@ display.setBackdrop(Color.black);
 display.attach(trailsPortrayal,"Trails");
 display.attach(particlesPortrayal,"Particles");
 </tt></pre></td><td><pre><tt>
-display = new Display2D(400,400,this,1);
+display = new Display2D(400,400,this);
 displayFrame = display.createFrame();
 c.registerFrame(displayFrame);
 displayFrame.setVisible(true);
@@ -65,7 +65,7 @@ display.attach(trailsPortrayal,"Trails");
 display.attach(particlesPortrayal,"Particles");
 <font color="blue">
 
-display2 = new Display2D(400,600,this,1);
+display2 = new Display2D(400,600,this);
 displayFrame2 = display2.createFrame();
 displayFrame2.setTitle("The Other Display");
 c.registerFrame(displayFrame2);

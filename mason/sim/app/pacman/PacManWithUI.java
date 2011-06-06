@@ -166,7 +166,7 @@ public class PacManWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(448,560,this,1)
+        display = new Display2D(448,560,this)
             {
             public void createConsoleMenu() { }
             public void quit()
@@ -194,7 +194,7 @@ public class PacManWithUI extends GUIState
         // delete the header
         display.remove(display.header);
         // delete all listeners
-        display.insideDisplay.removeListeners();
+        display.removeListeners();
         // delete the scroll bars
         display.display.setVerticalScrollBarPolicy(display.display.VERTICAL_SCROLLBAR_NEVER);
         display.display.setHorizontalScrollBarPolicy(display.display.HORIZONTAL_SCROLLBAR_NEVER);

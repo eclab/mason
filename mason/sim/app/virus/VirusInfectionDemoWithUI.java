@@ -61,7 +61,7 @@ public class VirusInfectionDemoWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(800,600,this,1);
+        display = new Display2D(800,600,this);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("Virus (Dis)Infection Demonstration Display");

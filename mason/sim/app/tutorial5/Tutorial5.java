@@ -43,7 +43,7 @@ public class Tutorial5 extends SimState
         super.start();
 
         balls = new Continuous2D(collisionDistance,100,100);
-        bands = new Network();
+        bands = new Network(false);
         
         Steppable[] s = new Steppable[numBalls];
         

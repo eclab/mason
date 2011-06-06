@@ -124,7 +124,7 @@ The second line tells FastValueGridPortrayal2D or ValueGridPortrayal2D that they
         
         <font color=gray>// Make the Display2D.  We'll have it display stuff later.</font>
         Tutorial1 tut = (Tutorial1)state;
-        display = new Display2D(tut.gridWidth * 4, tut.gridHeight * 4,this,1);
+        display = new Display2D(tut.gridWidth * 4, tut.gridHeight * 4,this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   <font color=gray>// register the frame so it appears in the "Display" list</font>
         displayFrame.setVisible(true);

@@ -70,7 +70,7 @@ public class SwarmGameWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(500,500,this,1);
+        display = new Display2D(500,500,this);
         display.setClipping(false);
 
         displayFrame = display.createFrame();

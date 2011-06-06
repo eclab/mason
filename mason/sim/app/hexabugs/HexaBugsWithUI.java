@@ -199,7 +199,7 @@ public class HexaBugsWithUI extends GUIState
         final int height = (int) ( (n + 0.5) * scale );
         final int width = (int) ( ((m - 1) * 3.0 / 4.0 + 1) * HEXAGONAL_RATIO * scale );
         
-        display = new Display2D(width, height, this, 1);
+        display = new Display2D(width, height, this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);

@@ -61,7 +61,7 @@ public class LSystemWithUI extends GUIState
         super.init(c);
         
         // make the display2d in all of its glory
-        display = new Display2D(400,400,this,1); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(400,400,this); // at 400x400, we've got 4x4 per array position
         
         // No clipping!
         // The effect of this call becomes apparent when the display is zoomed out (zoom factor < 1)

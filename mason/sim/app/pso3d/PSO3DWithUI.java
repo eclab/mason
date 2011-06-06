@@ -97,7 +97,7 @@ public class PSO3DWithUI extends GUIState
 
         double w = 10.24;
 
-        display = new Display3D(600, 600, this, 1);
+        display = new Display3D(600, 600, this);
         display.attach(swarmPortrayal, "Swarm");
 
         display.scale(1.0 / w);

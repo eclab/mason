@@ -396,7 +396,7 @@ Else return the defaultPortrayal (often a gray circle).
     public void init(Controller c)
         {
         super.init(c);
-        display = new Display2D(400,400,this,1);
+        display = new Display2D(400,400,this);
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);
         displayFrame.setVisible(true);

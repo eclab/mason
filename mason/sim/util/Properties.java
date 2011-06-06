@@ -63,7 +63,7 @@ public abstract class Properties implements java.io.Serializable
     */
     public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
-        if (object == null) return new SimpleProperties(object, includeSuperclasses, includeGetClass);
+        if (object == null) return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions);
         Class c = object.getClass();
         if (c.isArray()) return new CollectionProperties(object);
         else if (expandCollections && (Collection.class.isAssignableFrom(c) ||

@@ -110,7 +110,7 @@ public class FlockersWithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(750,750,this,1);
+        display = new Display2D(750,750,this);
         display.setBackdrop(Color.black);
 
 

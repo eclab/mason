@@ -2027,3 +2027,17 @@ Version 16
 	Fixed bug in NetworkPortrayal2D() when using undirected edges -- not all edges would
 		be displayed (was using edge.getTo() rather than edge.getOtherNode(...))
 	Bug fixes to GUI description of updates in Display2D and Display3D
+	Fixed deprecated warnings
+	Deprecated Display2D's and Display3D's standard constructor -- you should use the new
+		constructor now if you can.
+	Modified all tutorials, documentation, and examples to use the new Display2D and Display3D
+		constructors.
+	Deprecated paintComponent(Graphics, buffer).  Eventually we'll delete this method and
+		merge it in with paintComponent(Graphics).
+	Deleted Display2D.getMaximumsize(), which (besides being misspelled) apparently isn't
+		necessary.
+	Moved createToolTipText from the InnerDisplay2D to the Display2D
+	Deprecated InnerDisplay2D.removeListeners() and created an identical version in Display2D
+	Fixed bug in preferences which wasn't setting the 'should repeat on stop' button.  Thanks
+		to Kyle Feuz <kyle.feuz@aggiemail.usu.edu>
+	Simplifications to Makefile

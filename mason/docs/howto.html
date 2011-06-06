@@ -746,13 +746,13 @@ it (updating it allows it to do things like emit movies properly).
 <p>Easy enough.  But the user can still access the Console via a menu on the Display2D or Display3D.  This menu option is created with the Display2D/Display3D method <tt>createConsoleMenu()</tt>.  We need to disable this menu.  A straightforward way to do this is in HeatBugsWithUI is to create an anonymous subclass of Display2D which overrides this method. In the <b>init</b> method we change:
 
 <pre><tt>
-        display = new Display2D(400,400,this,1);
+        display = new Display2D(400,400,this);
 </tt></pre>
 
 ...to...
 
 <pre><tt>
-        display = new Display2D(400,400,this,1)
+        display = new Display2D(400,400,this)
             {
             public void createConsoleMenu() { }
             };
@@ -769,7 +769,7 @@ it (updating it allows it to do things like emit movies properly).
 <p>Assuming you created your JFrame with <tt>display.createFrame()</tt>, thus allowing the Display2D to make the frame for you, then your JFrame has some dispose machinery built-in.  When such a JFrame is disposed, it first calls <tt>quit</tt> on its underlying Display2D.  We'll hook into this to quit the program cleanly.  There are lots of ways to quit the program, but as long as we're using Console, by far the simplest is to tell the Console that <i>it's</i> close box was clicked on and let it handle things for us.  We do this by extending our anonymous subclass to override the Display2D's <tt>quit()</tt> method:
 
 <pre><tt>
-        display = new Display2D(400,400,this,1)
+        display = new Display2D(400,400,this)
             {
             public void createConsoleMenu() { }
             public void quit()

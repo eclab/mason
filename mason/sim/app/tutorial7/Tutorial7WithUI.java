@@ -121,7 +121,7 @@ public class Tutorial7WithUI extends GUIState
         zProjectionPortrayal.setImage(sim.app.tutorial6.Tutorial6WithUI.loadImage("earthmap.jpg"));
 
         // make the display
-        display = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this);
         display.attach(fliesPortrayal,"Flies");
         display.attach(xProjectionPortrayal,"X Projection");
         display.attach(yProjectionPortrayal,"Y Projection");

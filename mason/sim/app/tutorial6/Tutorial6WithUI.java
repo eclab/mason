@@ -112,7 +112,7 @@ public class Tutorial6WithUI extends GUIState
         Tutorial6 tut = (Tutorial6) state;
         bodyPortrayal.setField(tut.bodies);
 
-        display = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this);
         display.attach(bodyPortrayal, "The Solar System");
         display.scale(1.0/(Tutorial6.DISTANCE[Tutorial6.PLUTO]*1.05));  // give a little room (1.05) to see pluto
         

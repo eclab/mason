@@ -96,7 +96,7 @@ public class AntsForageWithUI extends GUIState
         super.init(c);
         
         // Make the Display2D.  We'll have it display stuff later.
-        display = new Display2D(400,400,this,1); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(400,400,this); // at 400x400, we've got 4x4 per array position
         displayFrame = display.createFrame();
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);

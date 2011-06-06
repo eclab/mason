@@ -157,12 +157,12 @@ public class Display3D extends JPanel implements Steppable
     /** The frame which holds the skip controls */
     JFrame skipFrame;
         
-    long interval = 1;
-    Object intervalLock = new Object();
+    //long interval = 1;
+    //Object intervalLock = new Object();
     /** Sets how many steps are skipped before the display updates itself. */
-    public void setInterval(long i) { synchronized(intervalLock) { interval = i; } }
+    //public void setInterval(long i) { synchronized(intervalLock) { interval = i; } }
     /** Gets how many steps are skipped before the display updates itself. */
-    public long getInterval() { synchronized(intervalLock) { return interval; } }
+    //public long getInterval() { synchronized(intervalLock) { return interval; } }
     
     /** The Java3D canvas holding the universe. A good time to fool around with this is
         in the sceneGraphCreated() hook. */
@@ -396,7 +396,7 @@ public class Display3D extends JPanel implements Steppable
             {
             // now reschedule myself
             if (stopper!=null) stopper.stop();
-            if (getInterval() < 1) setInterval(1);  // just in case...
+            //if (getInterval() < 1) setInterval(1);  // just in case...
             stopper = simulation.scheduleRepeatingImmediatelyAfter(this);
             }
             
@@ -492,12 +492,23 @@ public class Display3D extends JPanel implements Steppable
     
     /**
        Creates a Display3D with the provided width and height for its portrayal region, 
-       attached to the provided simulation, and displaying itself with the given interval (which must be > 0).
+       attached to the provided simulation.  The interval is ignored.
+	   @deprecated
     */
     // width and height are actually ints, but we're being consistent with Display2D
     public Display3D(final double width, final double height, GUIState simulation, long interval)
+		{
+		this(width, height, simulation);
+		}
+
+	
+    /**
+       Creates a Display3D with the provided width and height for its portrayal region, 
+       attached to the provided simulation.
+    */
+    public Display3D(final double width, final double height, GUIState simulation)
         {
-        setInterval(interval);
+        // setInterval(interval);
         this.simulation = simulation;
         reset();  // must happen AFTER state is assigned
         

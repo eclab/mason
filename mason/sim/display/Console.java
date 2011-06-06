@@ -1193,7 +1193,8 @@ public class Console extends JFrame implements Controller
             //                      randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
             incrementSeedOnStop.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected())));
             repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
-            }
+            setShouldRepeat(repeatButton.isSelected());
+			}
         catch (java.security.AccessControlException e) { } // it must be an applet
         }
 
@@ -2704,6 +2705,9 @@ public class Console extends JFrame implements Controller
         return true;
         }
 
+/**
+@deprecated
+*/
     public synchronized void doChangeCode(Runnable r)
         {
         if (playThread != null)

@@ -76,7 +76,7 @@ public class Tutorial5WithUI extends GUIState
         super.init(c);
 
         // make the displayer
-        display = new Display2D(600,600,this,1);
+        display = new Display2D(600,600,this);
         // turn off clipping
         display.setClipping(false);
 
