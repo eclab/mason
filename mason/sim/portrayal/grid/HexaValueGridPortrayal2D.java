@@ -222,7 +222,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
                     if( area.intersects( info.clip.x, info.clip.y, info.clip.width, info.clip.height ) )
                         {
                         valueToPass.val = isDoubleGrid2D ?  doubleField[x][y] : intField[x][y];
-                        putInHere.add( getWrapper(valueToPass.val, x, y) );
+                        putInHere.add( getWrapper(valueToPass.val, new Int2D(x, y)) );
                         }
                     }
                 else if (info.precise)

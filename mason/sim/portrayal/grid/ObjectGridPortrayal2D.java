@@ -212,7 +212,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
     IntBag xPos = new IntBag(49);
     IntBag yPos = new IntBag(49);
         
-    protected Int2D searchForObject(Object object, Int2D loc)
+	Int2D searchForObject(Object object, Int2D loc)
         {
         ObjectGrid2D field = (ObjectGrid2D)(this.field);
         Object[][] grid = field.field;
@@ -225,7 +225,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
                 
                 
-    public static class Message
+	public static class Message
         {
         String message;
         public Message(String message) { this.message = message; }

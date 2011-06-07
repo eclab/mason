@@ -137,7 +137,7 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         }
 
     /** Returns the first location in the underlying field of the given object, if such a thing
-        is reasonable.  Largely used for getPositionOfObject(...).     
+        is reasonable.  Largely used for getObjectPosition(...).     
         If null is returned, then the portrayal is unable to determine the position of the field location.
         <b>Optionally overridable</b>.  The default implementation returns null. */
     public Object getObjectLocation(Object object)

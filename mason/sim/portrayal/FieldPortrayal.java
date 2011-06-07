@@ -182,7 +182,7 @@ public abstract class FieldPortrayal
     protected Object field = null;
     protected boolean immutableField = false;
 
-    /** This flag is available for Fields to set and clear as they like: but its
+    /** This flag is available for field portrayals to set and clear as they like: but its
         intended function is to be set during setField(field) to warn drawing that even
         though the field is immutable, it may have changed to another field and needs to be
         redrawn.  Similarly, typically this flag is cleared after drawing.  Initially true.

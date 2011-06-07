@@ -308,7 +308,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         else
                             {
                             if( info.clip.intersects(_x,_y,_width,_height) )
-                                putInHere.add(getWrapper((doubleField[x][y]), x, y));
+                                putInHere.add(getWrapper((doubleField[x][y]), new Int2D(x, y)));
                             }
                         }
             else
@@ -334,7 +334,7 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
                         else
                             {
                             if( info.clip.intersects(_x,_y,_width,_height) )
-                                putInHere.add(getWrapper((intField[x][y]), x, y));
+                                putInHere.add(getWrapper((intField[x][y]), new Int2D(x, y)));
                             }
                         }
             }

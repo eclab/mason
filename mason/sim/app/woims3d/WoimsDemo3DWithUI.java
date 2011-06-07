@@ -70,7 +70,7 @@ public class WoimsDemo3DWithUI extends GUIState
     public void init(Controller c)
         {
         super.init(c);
-        display = new Display3D(600,600,this,1);
+        display = new Display3D(600,600,this);
         
         display.attach(p2,"Woims");
         display.attach(wireFrameP, "WireFrame");

@@ -828,7 +828,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public static final ImageIcon OPTIONS_ICON = iconFor("Options.png");
     public static final ImageIcon OPTIONS_ICON_P = iconFor("OptionsPressed.png");
     
-	static final Object[] REDRAW_OPTIONS = new Object[] { "Steps/Redraw", "Model Secs/Redraw", "Real Secs/Redraw", "Always Redraw", "Never Redraw" };
+	public static final Object[] REDRAW_OPTIONS = new Object[] { "Steps/Redraw", "Model Secs/Redraw", "Real Secs/Redraw", "Always Redraw", "Never Redraw" };
 
     /** Use tool tips? */
 	boolean useTooltips;
@@ -1784,11 +1784,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         }
         
-	final static int UPDATE_RULE_STEPS = 0;
-	final static int UPDATE_RULE_INTERNAL_TIME = 1;
-	final static int UPDATE_RULE_WALLCLOCK_TIME = 2;
-	final static int UPDATE_RULE_ALWAYS = 3;
-	final static int UPDATE_RULE_NEVER = 4;
+	/** Used internally and by Display3D to indicate */
+	public final static int UPDATE_RULE_STEPS = 0;
+	public final static int UPDATE_RULE_INTERNAL_TIME = 1;
+	public final static int UPDATE_RULE_WALLCLOCK_TIME = 2;
+	public final static int UPDATE_RULE_ALWAYS = 3;
+	public final static int UPDATE_RULE_NEVER = 4;
     int updateRule = UPDATE_RULE_ALWAYS;
     long stepInterval = 1;
     double timeInterval = 0;

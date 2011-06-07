@@ -2041,3 +2041,6 @@ Version 16
 	Fixed bug in preferences which wasn't setting the 'should repeat on stop' button.  Thanks
 		to Kyle Feuz <kyle.feuz@aggiemail.usu.edu>
 	Simplifications to Makefile
+	Made ObjectGridPortrayal2D.searchForObject private
+	Deleted the "beep" in ValueGridPortrayal2D
+	Made the ColorMap in ValueGridPortrayal2D private

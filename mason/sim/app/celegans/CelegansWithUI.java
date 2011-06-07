@@ -97,7 +97,7 @@ public class CelegansWithUI extends GUIState
 
 
         // make the neuron displayer
-        neuronDisplay = new Display3D(400,400,this,1);   
+        neuronDisplay = new Display3D(400,400,this);   
         neuronDisplay.attach( neuronPortrayal, "Neurons" );
         neuronDisplay.attach( synapsePortrayal, "Synapses" );
         neuronDisplay.scale(1.0/40.0);

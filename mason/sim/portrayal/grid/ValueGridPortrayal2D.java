@@ -49,7 +49,7 @@ import sim.util.gui.*;
 
 public class ValueGridPortrayal2D extends FieldPortrayal2D
     {
-    public ColorMap map = new SimpleColorMap();
+	ColorMap map = new SimpleColorMap();
     public ColorMap getMap() { return map; }
     public void setMap(ColorMap m) { map = m; }
     
@@ -88,7 +88,6 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         if (map.validLevel(value)) return value;
         
         // at this point we need to reset to current value
-        java.awt.Toolkit.getDefaultToolkit().beep();
         if (field != null)
             {
             if (field instanceof DoubleGrid2D)
@@ -239,7 +238,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
                 if (graphics == null)
                     {
                     if (portrayal.hitObject(valueToPass, newinfo))
-                        putInHere.add(getWrapper(valueToPass.val, x, y));
+                        putInHere.add(getWrapper(valueToPass.val, new Int2D(x, y)));
                     }
                 else
                     {
@@ -251,11 +250,11 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         }
 
     // ValueGridPortrayal2D's objects are instances of MutableDouble
-    public LocationWrapper getWrapper(double val, int x, int y)
+    public LocationWrapper getWrapper(double val, Int2D loc)
         {
         final Grid2D field = (Grid2D)this.field;
         return new LocationWrapper( new MutableDouble(val),  // something unique to return for getObject()
-            new Int2D(x, y), this )  // it's location
+            loc, this )  // it's location
             {
             public Object getObject()
                 {
