@@ -20,10 +20,7 @@ import sim.field.geo.GeomGridField;
 */
 public abstract class GeomImporter
 {
-	
-	final static int POINT = 1; 
-	final static int LINE = 3; 
-	final static int POLYGON = 5; 
+
 	
     /** Read geospatial data into the GeomVectorField.  
 

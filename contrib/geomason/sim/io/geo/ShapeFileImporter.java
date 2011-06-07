@@ -20,12 +20,59 @@ import com.vividsolutions.jts.geom.*;
 import java.util.ArrayList; 
 import java.util.Collections;
 
+
+
+
 /** 
     A native Java importer to read ERSI shapefile data into the GeomVectorField.  We assume the input file follows the
     standard ESRI shapefile format.    
 */ 
 public class ShapeFileImporter extends GeomImporter
 {
+	// Shape types included in ESRI Shapefiles. Not all of these are currently supported.
+	final static int NULL_SHAPE 	= 0; 
+	final static int POINT 			= 1; 
+	final static int POLYLINE 		= 3; 
+	final static int POLYGON 		= 5; 
+	final static int MULTIPOINT 	= 8; 
+	final static int POINTZ 		= 11; 
+	final static int POLYLINEZ 		= 13; 
+	final static int POLYGONZ 		= 15; 
+	final static int MULTIPOINTZ	= 18; 
+	final static int POINTM			= 21; 
+	final static int POLYLINEM		= 23; 
+	final static int POLYGONM		= 25; 	
+	final static int MULTIPOINTM	= 28; 
+	final static int MULTIPATCH		= 31; 
+	
+	public static boolean isSupported(int shapeType) {
+		switch (shapeType) {
+		case POINT:			return true;
+		case POLYLINE:		return true;
+		case POLYGON:		return true;
+		default:			return false;	// no other types are currently supported
+		}
+	}
+	
+	private String typeToString(int shapeType) {
+		switch (shapeType) {
+		case NULL_SHAPE:	return "NULL_SHAPE";
+		case POINT:			return "POINT";
+		case POLYLINE:		return "POLYLINE";
+		case POLYGON:		return "POLYGON";
+		case MULTIPOINT:	return "MULTIPOINT";
+		case POINTZ:		return "POINTZ";
+		case POLYLINEZ:		return "POLYLINEZ";
+		case POLYGONZ:		return "POLYGONZ";
+		case MULTIPOINTZ:	return "MULTIPOINTZ";
+		case POINTM:		return "POINTM";
+		case POLYLINEM:		return "POLYLINEM";
+		case POLYGONM:		return "POLYGONM";
+		case MULTIPOINTM:	return "MULTIPOINTM";
+		case MULTIPATCH:	return "MULTIPATCH";
+		default:			return "UNKNOWN";	
+		}
+	}
 
     /** Read the given shape file into the field.
      *
@@ -191,9 +238,12 @@ public class ShapeFileImporter extends GeomImporter
                 byteBuf.order(ByteOrder.LITTLE_ENDIAN);
                                  
                 int recordType = byteBuf.getInt(); 
-                                                        
-                if (recordType != 1 && recordType != 3 && recordType != 5) continue; 
-                          
+                
+                if (!isSupported(recordType)) {
+                	System.out.println("Error: ShapeFileImporter.ingest(...): ShapeType " + typeToString(recordType) + " not supported.");
+                	return;		// all shapes are the same type so don't bother reading any more
+                }
+                                   
                 // Read the attributes
                 
                 byte r[] = new byte[recordSize]; 
@@ -240,7 +290,7 @@ public class ShapeFileImporter extends GeomImporter
                 	Coordinate pt = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble());
                     geom = geomFactory.createPoint(pt); 
                 }
-                else if (recordType == LINE || recordType == POLYGON) { 
+                else if (recordType == POLYLINE || recordType == POLYGON) { 
 	                // advance past four doubles: minX, minY, maxX, maxY
 	                byteBuf.position(byteBuf.position() + 32);
 	                                
@@ -269,12 +319,12 @@ public class ShapeFileImporter extends GeomImporter
                         for (int j=0; j < size; j++)
                             coords[j] = new Coordinate(pointsArray[start+j]); 
                                                 
-                        if (recordType == LINE)                        
+                        if (recordType == POLYLINE)                        
                             parts[i] = geomFactory.createLineString(coords); 
                         else 
                         	parts[i] = geomFactory.createLinearRing(coords);
                     }
-                    if (recordType == LINE) { 
+                    if (recordType == POLYLINE) { 
                     	LineString[] ls = new LineString[numParts]; 
                     	for (int i=0; i < numParts; i++) ls[i] = (LineString)parts[i]; 
                     	if (numParts == 1) 
