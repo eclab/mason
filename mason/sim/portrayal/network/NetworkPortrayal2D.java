@@ -28,8 +28,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
 
     public void setField(Object field)
         {
-        dirtyField = true;
-        if (field instanceof SpatialNetwork2D ) this.field = field;
+		if (field instanceof SpatialNetwork2D ) super.setField(field);
         else throw new RuntimeException("Invalid field for FieldPortrayal2D: " + field);
         }
         

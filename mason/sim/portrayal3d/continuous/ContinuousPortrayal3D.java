@@ -50,9 +50,8 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
 
     public void setField(Object field)
         {
-        dirtyField = true;
-        if (field instanceof Continuous3D || field instanceof Continuous2D) this.field = field;
-        else throw new RuntimeException("Invalid field for ContinuousPortrayal3D3D: " + field);
+        if (field instanceof Continuous3D || field instanceof Continuous2D) super.setField(field);
+        else throw new RuntimeException("Invalid field for ContinuousPortrayal3D: " + field);
         }
             
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)

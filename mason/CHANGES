@@ -2044,3 +2044,18 @@ Version 16
 	Made ObjectGridPortrayal2D.searchForObject private
 	Deleted the "beep" in ValueGridPortrayal2D
 	Made the ColorMap in ValueGridPortrayal2D private
+	Added getters and setters for DrawPolicy in Sparse and DenseGridPortrayal2D
+	Deprecated certain constructors in Sparse and Dense 2D portrayals
+	Made HEXAGONAL_RATIO private in hexagonal grid portrayals
+	DenseGridPortrayal2D now has exactly the same LocationWrapper mechanism as
+		ObjectGridPortrayal2D
+	Added ContinuousPortrayal2D.getFrame()
+	Added ValueGridPortrayal2D.setValueName(...)
+	In Windows, FastValueGridPortrayal2D and FastHexaValueGridPortrayal2D now only buffer
+		if the field is immutable.  For some reason they were considering whether it 
+		was dirty as part of their calculus.
+	Revised FieldPortrayal, FieldPortrayal[2|3]D, and various subclasses to deprecate the
+		reset() method and create new setters and getters for the 'dirty flag'
+		variable which are synchronized.  Made 'dirtyField' private to guarantee
+		synchronization.  THIS WILL BREAK SOME PEOPLE'S CODE.
+	Eliminated ValueGrid2DPortrayal3D's private Grid2D field variable.

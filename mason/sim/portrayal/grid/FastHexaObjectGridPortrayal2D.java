@@ -69,11 +69,15 @@ public class FastHexaObjectGridPortrayal2D extends HexaObjectGridPortrayal2D
         return 1.0;
         }
     
-    /** Resets the underlying FastHexaValueGridPortrayal2D. */
+    /** @deprecated
+		Resets the underlying FastHexaValueGridPortrayal2D. */
     public void reset()
         {
         valueGridPortrayal.reset();
         }
+
+	public void setDirtyField(boolean val) { valueGridPortrayal.setDirtyField(val); }
+	public boolean isDirtyField() { return valueGridPortrayal.isDirtyField(); }
         
     public ColorMap getMap() { return valueGridPortrayal.getMap(); }
     public void setMap(ColorMap m) { valueGridPortrayal.setMap(m); }

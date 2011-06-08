@@ -39,8 +39,8 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
 
     public void setField(Object field)
         {
-        if (field instanceof IntGrid3D || field instanceof DoubleGrid3D) this.field = (AbstractGrid3D) field;
-        else if (field instanceof IntGrid2D || field instanceof DoubleGrid2D) this.field = (AbstractGrid2D) field;
+        if (field instanceof IntGrid3D || field instanceof DoubleGrid3D ||
+			field instanceof IntGrid2D || field instanceof DoubleGrid2D) super.setField(field);
         else throw new RuntimeException("Invalid field for ValueGridPortrayal3D: " + field);
         }
 

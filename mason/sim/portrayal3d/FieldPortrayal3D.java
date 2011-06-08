@@ -180,12 +180,12 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
         else 
             {
             internalTransformGroup = (TransformGroup)(previousTransformGroup.getChild(0));
-            if (!immutableField || dirtyField) updateModel(internalTransformGroup);
+            if (!immutableField || isDirtyField()) updateModel(internalTransformGroup);
             }
         if (updateInternalTransform)
             internalTransformGroup.setTransform(internalTransform);
-        dirtyField = false;
-        return previousTransformGroup;
+        setDirtyField(false);
+		return previousTransformGroup;
         }
 
     /** Returns a tree structure of the form

@@ -22,6 +22,9 @@ import sim.util.*;
    which is a FieldPortrayal, lets you store Portrayal objects which know how to draw
    the various objects in the SparseGrid2D.
 
+   <p>The default version of the setField(...) method sets the field without checking
+    to see if it's a valid field or not; you'll want to override this to check.
+
    <p>You can associate a Portrayal object with an object stored in the Field in several
    ways.  First, you can specify one Portrayal object to be used for ALL objects stored
    in the field, using <b>setPortrayalForAll</b>.  Second, you can specify a Portrayal
@@ -180,14 +183,22 @@ public abstract class FieldPortrayal
         }
     
     protected Object field = null;
-    protected boolean immutableField = false;
+	protected boolean immutableField = false;
 
     /** This flag is available for field portrayals to set and clear as they like: but its
         intended function is to be set during setField(field) to warn drawing that even
         though the field is immutable, it may have changed to another field and needs to be
         redrawn.  Similarly, typically this flag is cleared after drawing.  Initially true.
     */
-    protected boolean dirtyField=true;
+    boolean dirtyField=true;
+	
+	public synchronized void setDirtyField(boolean val) { dirtyField = val; }
+	public synchronized boolean isDirtyField() { return dirtyField; }
+	
+	/**
+		@deprecated Use setDirtyField(false);
+	*/
+	public synchronized void reset() { dirtyField = true; }
     
     /** Returns true if the underlying field is assumed to be unchanging -- thus
         there's no reason to update once we're created.  Not all FieldPortrayals
@@ -196,8 +207,8 @@ public abstract class FieldPortrayal
     
     /** Specifies that the underlying field is (or is not) to be assumed unchanging --
         thus there's no reason to update once we're created.  Not all FieldPortrayals
-        will care about whether or not a field is immutable.  Sets dirtyField to true. */
-    public void setImmutableField(boolean val) { immutableField = val;  dirtyField = true;}
+        will care about whether or not a field is immutable.  Also sets dirtyField to true regardless. */
+    public void setImmutableField(boolean val) { immutableField = val;  setDirtyField(true);}
 
     /** Returns the field. */
     public Object getField()
@@ -205,9 +216,13 @@ public abstract class FieldPortrayal
         return field;
         }
 
-    /** Sets the field.  Also sets dirtyField = true.  May throw an exception if the field is inappropriate. */
-    public abstract void setField(Object field);
-
+    /** Sets the field, and sets the dirtyField flag to true.  May throw an exception if the field is inappropriate. 
+		The default version just sets the field and sets the dirtyField flag. */
+    public void setField(Object field)
+		{
+		this.field = field;
+		setDirtyField(true);
+		}
 
     public class CustomInspector extends Inspector
         {

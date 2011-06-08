@@ -75,7 +75,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         }
 
 
-    public static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
+    static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {

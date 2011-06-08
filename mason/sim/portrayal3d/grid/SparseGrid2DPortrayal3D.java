@@ -41,8 +41,8 @@ public class SparseGrid2DPortrayal3D extends SparseGridPortrayal3D
     
     public void setField(Object field)
         {
-        if (field instanceof SparseGrid2D) this.field = (SparseGrid2D) field;
-        else throw new RuntimeException("Invalid field for StackedSparse2DPortrayal3D: " + field);
+        if (field instanceof SparseGrid2D) super.setField(field);
+		else throw new RuntimeException("Invalid field for StackedSparse2DPortrayal3D: " + field);
         }
 
     public TransformGroup createModel()

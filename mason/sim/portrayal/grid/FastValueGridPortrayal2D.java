@@ -67,6 +67,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
         this(false);
         }
 
+/*
     public void reset()
         {
         synchronized(this)
@@ -74,6 +75,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             buffer = null;
             }
         }
+*/
 
     // Determines if we should buffer
     boolean shouldBuffer(Graphics2D graphics)
@@ -100,7 +102,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             return (graphics.getDeviceConfiguration().
                 getDevice().getType() != GraphicsDevice.TYPE_IMAGE_BUFFER);
         else if (sim.display.Display2D.isWindows)
-            return (immutableField && !dirtyField);
+            return (immutableField);
         else // it's Linux or Solaris
             return false;
         }
@@ -149,8 +151,8 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             boolean newBuffer = false;
             //BufferedImage _buffer = null;  // make compiler happy
             
-            synchronized(this)
-                {
+//            synchronized(this)
+//                {
                 if (buffer==null || buffer.getWidth() != maxX || buffer.getHeight() != maxY)
                     {
                     // interestingly, this is not quite as fast as just making a BufferedImage directly!
@@ -177,9 +179,9 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
                     newBuffer = true;
                     }
                 //_buffer = buffer;
-                }
+                //}
 
-            if (newBuffer || !immutableField || dirtyField)  // we have to load the buffer
+            if (newBuffer || !immutableField || isDirtyField())  // we have to load the buffer
                 {
                 if (endx > maxX) endx = maxX;
                 if (endy > maxY) endy = maxY;
@@ -352,7 +354,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
             }
 
         // finally, clear dirty flag if we've just drawn (don't clear if we're doing hit testing)
-        if (graphics!=null) dirtyField = false;
-        }
+        if (graphics!=null) setDirtyField(false);
+		}
                 
     }

@@ -14,9 +14,7 @@ import sim.util.*;
     necessary methods, which you should feel free to override (especially portray,
     hit, and draw!).
     
-    <p>The default version of the setField(...) method sets the field without checking
-    to see if it's a valid field or not; you'll want to override this to check.  Also,
-    the default version of getDefaultPortrayal() returns an empty SimplePortrayal: you'll
+    <p>The default version of getDefaultPortrayal() returns an empty SimplePortrayal: you'll
     might want to override that as well.  These defaults enable you to use FieldPortrayal2D
     as an "empty field portrayal" to be attached to a Display2D and draw arbitrary things
     when its draw(...) method is called.  In that case, all you need to do is override
@@ -110,8 +108,6 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         return simple;
         }
         
-    public void setField(Object field) { this.field = field; dirtyField = true; }
-    
     /** Moves (or tries to move) the object to an internal location equivalent to the given position on-screen of the
         provided object, assuming that the object exists within the underlying field and that this
         location is acceptable.  <b>Optionally overridable</b>.  The default implementation does nothing.  */

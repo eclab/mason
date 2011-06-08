@@ -43,6 +43,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         defaultPortrayal = new HexagonalPortrayal2D();
         }
 
+	/** @deprecated Use setDrawPolicy. */
     public HexaSparseGridPortrayal2D (DrawPolicy policy)
         {
         super(policy);
@@ -51,7 +52,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
     
     /** The ratio of the width of a hexagon to its height: 1 / Sin(60 degrees), otherwise known as 2 / Sqrt(3) */
-    public static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
+    static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
     
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)

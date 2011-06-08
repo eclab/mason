@@ -56,8 +56,7 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
 
     public void setField(Object field)
         {
-        dirtyField = true;
-        if (field instanceof SparseGrid3D || field instanceof SparseGrid2D) this.field = field;
+        if (field instanceof SparseGrid3D || field instanceof SparseGrid2D) super.setField(field);
         else throw new RuntimeException("Invalid field for SparseGridPortrayal3D: " + field);
         }
         

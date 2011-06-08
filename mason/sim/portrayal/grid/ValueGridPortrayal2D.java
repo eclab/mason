@@ -55,9 +55,8 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
     
     public void setField(Object field)
         {
-        dirtyField = true;
         if (field instanceof DoubleGrid2D ||
-            field instanceof IntGrid2D ) this.field = field;
+            field instanceof IntGrid2D ) super.setField(field);
         else throw new RuntimeException("Invalid field for ValueGridPortrayal2D: " + field);
         }
         
@@ -66,7 +65,8 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
     public String valueName;
     
     public String getValueName() { return valueName; }
-    
+    public void setValueName(String name) { valueName = name; }
+	
     public ValueGridPortrayal2D()
         {
         this("Value");

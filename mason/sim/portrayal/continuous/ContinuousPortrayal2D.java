@@ -35,11 +35,15 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         {
         frame = p;
         }
+		
+	public Paint getFame()
+		{
+		return frame;
+		}
 
     public void setField(Object field)
         {
-        dirtyField = true;
-        if (field instanceof Continuous2D) this.field = field;
+        if (field instanceof Continuous2D) super.setField(field);
         else throw new RuntimeException("Invalid field for ContinuousPortrayal2D: " + field);
         }
         

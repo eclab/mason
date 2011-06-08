@@ -31,11 +31,22 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         super();
         }
 
+	/** @deprecated Use setDrawPolicy. */
     public SparseGridPortrayal2D (DrawPolicy policy)
         {
         super();
         this.policy = policy;
         }
+		
+	public void setDrawPolicy(DrawPolicy policy)
+		{
+		this.policy = policy;
+		}
+
+	public DrawPolicy getDrawPolicy()
+		{
+		return policy;
+		}
 
     // a grey oval.  You should provide your own protrayals...
     SimplePortrayal2D defaultPortrayal = new OvalPortrayal2D();
@@ -47,8 +58,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
     public void setField(Object field)
         {
-        dirtyField = true;
-        if (field instanceof SparseGrid2D ) this.field = field;
+		if (field instanceof SparseGrid2D ) super.setField(field);
         else throw new RuntimeException("Invalid field for Sparse2DPortrayal: " + field);
         }
     

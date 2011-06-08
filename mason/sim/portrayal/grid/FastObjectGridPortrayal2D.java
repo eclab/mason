@@ -69,11 +69,15 @@ public class FastObjectGridPortrayal2D extends ObjectGridPortrayal2D
         return 1.0;
         }
     
-    /** Resets the underlying FastValueGridPortrayal2D. */
+    /** @deprecated Use setDirtyField(false);
+		Resets the underlying FastValueGridPortrayal2D. */
     public void reset()
         {
         valueGridPortrayal.reset();
         }
+		
+	public void setDirtyField(boolean val) { valueGridPortrayal.setDirtyField(val); }
+	public boolean isDirtyField() { return valueGridPortrayal.isDirtyField(); }
         
     public ColorMap getMap() { return valueGridPortrayal.getMap(); }
     public void setMap(ColorMap m) { valueGridPortrayal.setMap(m); }
