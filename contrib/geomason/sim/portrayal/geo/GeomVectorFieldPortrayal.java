@@ -1,9 +1,6 @@
 package sim.portrayal.geo;
 
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -48,6 +45,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 {
 
 	/** Throws an exception. Do not call this method. */
+    @Override
 	public void setPortrayalForNull(Portrayal portrayal)
 	{
 		// this bad boy throws an exception
@@ -58,6 +56,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	 * Returns the appropriate Portrayal. See the class header for more
 	 * information on the implementation of this method.
 	 */
+    @Override
 	public Portrayal getPortrayalForObject(Object obj)
 	{
 		// return the portrayal-for-all if any
@@ -137,6 +136,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	}
 
 	/** Return the underlying portrayal */
+    @Override
 	public Portrayal getDefaultPortrayal()
 	{
 		return defaultPortrayal;
@@ -148,6 +148,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	RenderingHints hints = null;
 
 	/** Handles hit-testing and drawing of the underlying geometry objects. */
+    @Override
 	protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
 	{
 		if (field == null)
@@ -282,9 +283,10 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	}
 
 	/** Sets the underlying field, after ensuring its a GeomVectorField. */
+    @Override
 	public void setField(Object field)
 	{
-		dirtyField = true;
+		setDirtyField(true);
 		if (field instanceof GeomVectorField)
 			this.field = field;
 		else
@@ -293,6 +295,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 	HashMap<Object, LocationWrapper> selectedWrappers = new HashMap<Object, LocationWrapper>();
 
+    @Override
 	public boolean setSelected(LocationWrapper wrapper, boolean selected)
 	{
 		if (wrapper == null)
