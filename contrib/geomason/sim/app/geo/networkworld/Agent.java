@@ -33,7 +33,7 @@ public class Agent implements Steppable
 
     // How much to move the agent by in each step(); may become negative if
     // agent is moving from the end to the start of current line.
-    private double moveRate = 1.0;
+    private double moveRate = 0.01;
 
     // Used by agent to walk along line segment; assigned in setNewRoute()
     private LengthIndexedLine segment = null;
@@ -142,14 +142,14 @@ public class Agent implements Steppable
             {
                 startCoord = segment.extractPoint(startIndex);
                 currentIndex = startIndex;
-                moveRate = 1.0; // ensure we move forward along segment
-            }
+                moveRate = Math.abs(moveRate); // ensure we move forward along segment
+            }                                  // by using a positive value
         else
             {
                 startCoord = segment.extractPoint(endIndex);
                 currentIndex = endIndex;
-                moveRate = -1.0; // ensure we move backward along segment
-            }
+                moveRate = - Math.abs(moveRate); // ensure we move backward along segment
+            }                                    // by using a negative value
 
         moveTo(startCoord);
     }
@@ -165,16 +165,41 @@ public class Agent implements Steppable
     {
     	// if we're not at a junction move along the current segment
         if ( ! arrived() )
-            moveAlongPath();
+            moveAlongPath((NetworkWorld) state);
         else
             findNewPath((NetworkWorld) state);
     }
 
+    /** Ensure the current position in clipped to the line
+     *
+     * @param currentIndex that's guaranteed to be on the current line
+     */
+    private double clipCurrentIndex(double currentIndex)
+    {
+        // If move rate is positive ensure we're not off the end of the line.
+        if (moveRate > 0)
+        {
+            return Math.min(currentIndex, endIndex);
+        }
+        else // else we're moving backwards from the other end, so ensure
+        {    // we're not going to fall off the front
+            return Math.max(currentIndex, startIndex);
+        }
+    }
+
+
+
     // move agent along current line segment
-    private void moveAlongPath()
+    private void moveAlongPath(NetworkWorld world)
     {
         currentIndex += moveRate;
+
+        currentIndex = clipCurrentIndex(currentIndex);
+        
         Coordinate currentPos = segment.extractPoint(currentIndex);
         moveTo(currentPos);
+
+        world.agents.clear();
+        world.agents.addGeometry(new MasonGeometry(this.location));
     }
 }

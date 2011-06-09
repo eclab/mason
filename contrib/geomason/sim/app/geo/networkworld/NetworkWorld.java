@@ -42,7 +42,7 @@ public class NetworkWorld extends SimState
     // Agent that moves around the world
     Agent a = new Agent();
 
-    public NetworkWorld(long seed) 
+    public NetworkWorld(long seed)
     {
         super(seed);
 
@@ -52,42 +52,49 @@ public class NetworkWorld extends SimState
         LineString line = null;
 
         try
-            {
-                line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
-                world.addGeometry(new MasonGeometry(line));
+        {
+            line = (LineString) (rdr.read("LINESTRING (10 50, 20 50)"));
+            world.addGeometry(new MasonGeometry(line));
 
-                line = (LineString) (rdr.read("LINESTRING (20 50, 30 50)"));
-                world.addGeometry(new MasonGeometry(line));
+            line = (LineString) (rdr.read("LINESTRING (20 50, 30 50)"));
+            world.addGeometry(new MasonGeometry(line));
 
-                line = (LineString) (rdr.read("LINESTRING (30 50, 40 50)"));
-                world.addGeometry(new MasonGeometry(line));
+            line = (LineString) (rdr.read("LINESTRING (30 50, 40 50)"));
+            world.addGeometry(new MasonGeometry(line));
 
-                line = (LineString) (rdr.read("LINESTRING (20 50, 20 10, 30 10)"));
-                world.addGeometry(new MasonGeometry(line));
+            line = (LineString) (rdr.read("LINESTRING (20 50, 20 10, 30 10)"));
+            world.addGeometry(new MasonGeometry(line));
 
-                line = (LineString) (rdr.read("LINESTRING (30 50, 30 20, 40 20)"));
-                world.addGeometry(new MasonGeometry(line));
-            
-                // zoom out to see all of line
-                Envelope mbr = world.getMBR();
-                mbr.expandToInclude(0.0, 0.0);
+            line = (LineString) (rdr.read("LINESTRING (30 50, 30 20, 40 20)"));
+            world.addGeometry(new MasonGeometry(line));
 
-                agents.addGeometry(new MasonGeometry(a.getGeometry()));
-                mbr.expandToInclude(agents.getMBR());
 
-                mbr.expandBy(20.0); // fluff it out so we can see everything
+            agents.addGeometry(new MasonGeometry(a.getGeometry()));
 
-                agents.setMBR(mbr);
-                world.setMBR(mbr);
-            }
-        catch (ParseException parseException)
-            {
-                System.out.println("Bogus line string" + parseException);
-            }
+        } catch (ParseException parseException)
+        {
+            System.out.println("Bogus line string" + parseException);
+        }
 
         network.createFromGeomField(world);
         addIntersectionNodes(network.nodeIterator(), junctions);
+        
+        // Ensure that the minimum bounding rectangles (MBRs) are all in sync,
+        // else the layers won't be properly aligned when rendering
+
+        // zoom out to see all of line
+        Envelope mbr = world.getMBR();
+
+        mbr.expandToInclude(agents.getMBR());
+        mbr.expandToInclude(junctions.getMBR());
+
+        mbr.expandBy(20.0); // fluff it out so we can see everything
+
+        agents.setMBR(mbr);
+        world.setMBR(mbr);
+        junctions.setMBR(mbr);
     }
+    
 
     /** adds nodes corresponding to road intersections to GeomVectorField
      *
@@ -112,6 +119,7 @@ public class NetworkWorld extends SimState
         }
     }
 
+    @Override
     public void start()
     {
         super.start();

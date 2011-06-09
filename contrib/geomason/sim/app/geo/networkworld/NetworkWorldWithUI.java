@@ -10,6 +10,7 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
+import sim.portrayal.simple.OvalPortrayal2D;
 
 
 /** 
@@ -18,7 +19,8 @@ import sim.portrayal.geo.GeomPortrayal;
  *  the MBRs defining each field are matched, so that during display, all the fields line up (ie., you actually see
  *  the agent moving along the network).  
  */
-public class NetworkWorldWithUI extends GUIState {
+public class NetworkWorldWithUI extends GUIState
+{
 
     private Display2D display;
     private JFrame displayFrame;
@@ -31,11 +33,12 @@ public class NetworkWorldWithUI extends GUIState {
     public NetworkWorldWithUI(SimState state) { super(state); }
     public NetworkWorldWithUI()  { super(new NetworkWorld(System.currentTimeMillis())); }
     
+    @Override
     public void init(Controller controller)
     {
         super.init(controller);
 
-        display = new Display2D(NetworkWorld.WIDTH, NetworkWorld.HEIGHT, this, 1);
+        display = new Display2D(NetworkWorld.WIDTH, NetworkWorld.HEIGHT, this);
         display.attach(geometryPortrayal, "World");
         display.attach(intersectionPortrayal, "Intersections");
         display.attach(agentPortrayal, "Agent");
@@ -45,11 +48,11 @@ public class NetworkWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
+    @Override
     public void start()
     {
         super.start();
         setupPortrayals();
-        syncMBRs();
     }
 
     private void setupPortrayals()
@@ -70,22 +73,6 @@ public class NetworkWorldWithUI extends GUIState {
     }
 
 
-    /** Ensure that the MBRs for all GeomFields is the same
-     *
-     */
-    void syncMBRs()
-    {
-        NetworkWorld world = (NetworkWorld) state;
-
-        Envelope mbr = world.world.getMBR();
-
-        mbr.expandToInclude(world.junctions.getMBR());
-        mbr.expandToInclude(world.agents.getMBR());
-
-        world.world.setMBR(mbr);
-        world.junctions.setMBR(mbr);
-        world.agents.setMBR(mbr);
-    }
 
     public static void main(String[] args)
     {
