@@ -19,7 +19,7 @@ public class DegreePrestige extends FreemanNodeIndex
         super(network);
         int n = network.allNodes.numObjs;
         //see page 199 for (n-1)^2.
-        maxCummulDiff = (network.directed)? (n-1)*(n-1):(n-1)*(n-2);
+        maxCummulDiff = (network.isDirected())? (n-1)*(n-1):(n-1)*(n-2);
         //I computed maxCummulDiff here so getMaxCummulativeDifference would inline     
         }
 

@@ -17,7 +17,7 @@ public class ConnectivityStatistics
     */
     public static boolean isStronglyConnected( final Network network )
         {
-        if( network.directed )
+        if( network.isDirected() )
             {
             final Bag bag = getStronglyConnectedComponents(network);
             return( bag.numObjs == 1 );
@@ -32,7 +32,7 @@ public class ConnectivityStatistics
     */
     public static Bag getStronglyConnectedComponents( final Network network )
         {
-        if( !network.directed )
+        if( !network.isDirected() )
             throw new RuntimeException( "Connect.getStronglyConnectedComponents should be called only with directed graphs" );
         Bag result = new Bag();
         final int N = NetworkStatistics.getNumberNodes(network);
@@ -162,7 +162,7 @@ public class ConnectivityStatistics
 
         public Bag getComponents()
             {
-            boolean directed = network.directed;
+            boolean directed = network.isDirected();
             for( int i = 0 ; i < n; i++ )
                 {
                 if(!visited[i])
@@ -180,7 +180,7 @@ public class ConnectivityStatistics
 
         public boolean isConnected()
             {
-            if(network.directed)
+            if(network.isDirected())
                 exploreWD(network.allNodes.objs[0], 0, null);
             else
                 exploreU(network.allNodes.objs[0], 0, null);
@@ -249,7 +249,7 @@ public class ConnectivityStatistics
         Network flow = new Network(true);
         flow.allNodes = new Bag( network.allNodes );
         final int N = NetworkStatistics.getNumberNodes(network);
-        if( network.directed )
+        if( network.isDirected() )
             {
             for( int i = 0 ; i < N ; i++ )
                 {
@@ -399,7 +399,7 @@ public class ConnectivityStatistics
             return NetworkStatistics.getNumberActualEdges(network);
         if( !isConnected(network) )
             return 0;
-        if( network.directed )
+        if( network.isDirected() )
             return getDigraphEdgeConnectivity( network );
         else
             return getGraphEdgeConnectivity( network );
@@ -527,7 +527,7 @@ public class ConnectivityStatistics
             edgeW12[i] = new Edge( w1s[i], w2s[i], new FlowData(0,1) );
             flow.addEdge( edgeW12[i] );
             }
-        if( network.directed )
+        if( network.isDirected() )
             {
             for( int i = 0 ; i < N ; i++ )
                 {
@@ -578,7 +578,7 @@ public class ConnectivityStatistics
         // 2. compute k1 <- min K(u,v) with v in V\{u} and v not adjacent to u
         // NOTE: if the graph is directed, we use both K(u,v) and K(v,u)
         final boolean[] adjacent = new boolean[N];
-        if( network.directed )
+        if( network.isDirected() )
             {
             // compute min K(u,v) for all v where (u,v) does not exist in the graph
             for( int i = 0 ; i < N ; i++ )
@@ -634,7 +634,7 @@ public class ConnectivityStatistics
             }
 
         // 3. compute k2 <- min K(x,y) with x and y adjacent to u and x not adjacent to y
-        if( network.directed )
+        if( network.isDirected() )
             {
             for( int n1 = 0 ; n1 < uIn.numObjs+uOut.numObjs ; n1++ )
                 {

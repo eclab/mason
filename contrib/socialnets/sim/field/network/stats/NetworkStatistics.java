@@ -31,7 +31,7 @@ public class NetworkStatistics
     public static int getNumberPotentialEdges( final Network network )
         {
         int N = getNumberNodes( network );
-        if( network.directed )
+        if( network.isDirected() )
             return N * (N-1);
         else
             return N * (N-1) / 2;
@@ -50,7 +50,7 @@ public class NetworkStatistics
             Bag temp = network.getEdgesOut( network.allNodes.objs[i] );
             actualTies += temp.numObjs;
             }
-        if( network.directed )
+        if( network.isDirected() )
             return actualTies;
         else
             return actualTies / 2;
@@ -278,7 +278,7 @@ public class NetworkStatistics
     */
     public static double getSymmetryCoefficient( final Network network )
         {
-        if( !network.directed )
+        if( !network.isDirected() )
             return 1.0; // if the graph is undirected, it is *very* symmetric
         int totalNumberEdges = 0;
         int symmetricEdges = 0;
@@ -438,7 +438,7 @@ public class NetworkStatistics
         double result = 0;
         Bag nodes = network.getAllNodes();
         int N = nodes.numObjs;
-        if(!network.directed)
+        if(!network.isDirected())
             {
             for( int i = 0; i < N - 1; i++ )
                 {

@@ -47,7 +47,7 @@ public class BetweennessCentrality extends FreemanNodeIndex {
         double sum = 0;
 
 
-        if(network.directed)
+        if(network.isDirected())
             for(int k=0;k<n;k++)
                 {
                 if(k==index) continue;
@@ -73,7 +73,7 @@ public class BetweennessCentrality extends FreemanNodeIndex {
         {
         int n = network.allNodes.numObjs;
         int value = (n-1)*(n-1)*(n-2);
-        if(network.directed)
+        if(network.isDirected())
             return value;
         return .5*value;
         }
@@ -82,7 +82,7 @@ public class BetweennessCentrality extends FreemanNodeIndex {
         {
         int n = network.allNodes.numObjs;
         int value = (n-1)*(n-2);
-        if (network.directed)
+        if (network.isDirected())
             return value;
         return 0.5*value;
         }

@@ -224,7 +224,7 @@ public class DyadTriadStatistics {
      */
     public static int getNumberDirectTriads( final Network network, final Object node1, final Object node2 )
         {
-        if( !network.directed )
+        if( !network.isDirected() )
             throw new RuntimeException( "NetworkStatistics.getNumberDirectTriads should be called only with directed graphs" );
         int result = 0;
         HashSet hash = new HashSet();
