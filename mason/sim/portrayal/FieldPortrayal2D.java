@@ -151,7 +151,7 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         
     /** Returns an object representing the location in the field of the origin of the clip of the DrawInfo2D. 
         This method calls getPositionLocation, which may or may not be implemented by the FieldPortrayal2D.  
-        @deprecated
+        @deprecated use getPositionLocation
     */
     public Object getClipLocation(DrawInfo2D info)
         {

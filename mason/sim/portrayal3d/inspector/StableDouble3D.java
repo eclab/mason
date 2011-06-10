@@ -20,6 +20,7 @@ public class StableDouble3D implements StableLocation
 
     public String toString()
         {
+		update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
@@ -28,17 +29,15 @@ public class StableDouble3D implements StableLocation
         {
         this.field = field;
         this.object = object;
-        update();
         }
         
     public StableDouble3D(Continuous3D field, Object object)
         {
         this.field = field;
         this.object = object;
-        update();
         }
         
-    public void update()
+	void update()
         {
         Double3D pos = null;
         if (field == null) return;
@@ -52,35 +51,37 @@ public class StableDouble3D implements StableLocation
         }
 
     /* For some reason, the order of the parameters in the MASON windows will be Z, Exists, Y, X.  Oh well! */
-    public double getX() { return x; }
-    public double getY() { return y; }
-    public double getZ() { return z; }
-    public boolean getExists() { return exists; }  // what an ugly name
+    public double getX() { update(); return x; }
+    public double getY() { update(); return y; }
+    public double getZ() { update(); return z; }
+    public boolean getExists() { update(); return exists; }  // what an ugly name
 
     public void setX(double val)
         {
-        x = val;
         if (field == null) return;
         if (field instanceof Continuous2D)
-            { ((Continuous2D)field).setObjectLocation(object, new Double2D(x,y));  z = 0; }
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(x,y,z));
+            { ((Continuous2D)field).setObjectLocation(object, new Double2D(val,getY()));  z = 0; }
+        else ((Continuous3D)field).setObjectLocation(object, new Double3D(val,getY(),getZ()));
+        x = val;
+		exists = true;
         }
             
     public void setY(double val)
         {
-        y = val;
         if (field == null) return;
         if (field instanceof Continuous2D)
-            { ((Continuous2D)field).setObjectLocation(object, new Double2D(x,y));  z = 0; }
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(x,y,z));
+            { ((Continuous2D)field).setObjectLocation(object, new Double2D(getX(),val));  z = 0; }
+        else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),val,getZ()));
+        y = val;
+		exists = true;
         }
             
     public void setZ(double val)
         {
-        z = val;
         if (field == null) return;
-        if (field instanceof Continuous2D)
-            { ((Continuous2D)field).setObjectLocation(object, new Double2D(x,y));  z = 0; }
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(x,y,z));
+        if (field instanceof Continuous2D) { z = 0; return; }  // won't set anything anyway
+        else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),getY(),val));
+		z = val;
+		exists = true;
         }
     }

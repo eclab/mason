@@ -250,13 +250,13 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             {
             public Object getLocation()
                 {
-                w.update();
+//                w.update();
                 return w;
                 }
                 
             public String getLocationName()
                 {
-                w.update();
+//                w.update();
                 return w.toString();
                 }
             };

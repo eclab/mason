@@ -77,7 +77,7 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
                   else
                   return ((SparseGrid2D)field).getObjectLocation(object);
                 */
-                loc.update();
+                //loc.update();
                 return loc;
                 }
                 
@@ -96,7 +96,7 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
                   }
                   return null;
                 */
-                loc.update();
+                //loc.update();
                 return loc.toString();
                 }
             };

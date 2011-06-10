@@ -86,7 +86,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
                 hitRange.clip.y = originalMousePosition.getY();
                 hitRange.clip.width = 1;
                 hitRange.clip.height = 1;
-                        
+				                        
                 if (hitObject(wrapper.getObject(), hitRange))
                     {
                     if (originalObjectPosition != null)

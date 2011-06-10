@@ -2059,3 +2059,13 @@ Version 16
 		variable which are synchronized.  Made 'dirtyField' private to guarantee
 		synchronization.  THIS WILL BREAK SOME PEOPLE'S CODE.
 	Eliminated ValueGrid2DPortrayal3D's private Grid2D field variable.
+	Deleted getWidth() and getHeight() from SpatialNetwork2D.  They've been long deprecated.
+	Added setAuxiliaryField to SpatialNetwork2D and deprecated setAuxillaryField, due to
+		misspelling.
+	Wired up auxiliary fields for NetworkPortrayal2D, which for some reason weren't being
+		used.
+	Deprecated SpatialNetwork2D.getObjectLocation(...)
+	Bug fix in EdgeDrawInfo2D(EdgeDrawInfo2D other), which wasn't copying the other second
+		point properly.
+	Updated StableLocation to no longer require update()
+	Bug fix to StableInt3D and StableDouble3D, which were not updating the 'exists' flag.

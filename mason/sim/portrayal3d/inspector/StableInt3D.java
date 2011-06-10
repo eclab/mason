@@ -20,6 +20,7 @@ public class StableInt3D implements StableLocation
         
     public String toString()
         {
+		update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
@@ -28,17 +29,15 @@ public class StableInt3D implements StableLocation
         {
         this.field = field;
         this.object = object;
-        update();
         }
         
     public StableInt3D(SparseGrid3D field, Object object)
         {
         this.field = field;
         this.object = object;
-        update();
         }
         
-    public void update()
+	void update()
         {
         Int3D pos = null;
         if (field == null) return;
@@ -50,36 +49,38 @@ public class StableInt3D implements StableLocation
         else { x = pos.x; y = pos.y; z = pos.z; exists = true; }
         }
             
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getZ() { return z; }
-    public boolean getExists() { return exists; }  // what an ugly name
+    public int getX() { update(); return x; }
+    public int getY() { update(); return y; }
+    public int getZ() { update(); return z; }
+    public boolean getExists() { update(); return exists; }  // what an ugly name
             
     public void setX(int val)
         {
-        x = val;
         if (field == null) return;
         if (field instanceof SparseGrid2D)
-            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(x,y));  z = 0; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(x,y,z));
+            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(val,getY()));  z = 0; }
+        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(val,getY(),getZ()));
+        x = val;
+		exists = true;
         }
 
     public void setY(int val)
         {
-        y = val;
         if (field == null) return;
         if (field instanceof SparseGrid2D)
-            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(x,y));  z = 0; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(x,y,z));
+            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(getX(),val));  z = 0; }
+        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),val,getZ()));
+        y = val;
+		exists = true;
         }
 
     public void setZ(int val)
         {
-        z = val;
         if (field == null) return;
-        if (field instanceof SparseGrid2D)
-            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(x,y));  z = 0; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(x,y,z));
+        if (field instanceof SparseGrid2D) { z = 0; return; }
+        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),getY(),val));
+        z = val;
+		exists = true;
         }
     }
 

@@ -88,21 +88,21 @@ public abstract class QuadPortrayal implements Portrayal
     public static class ObjectFilter extends Filter
         {
         public ObjectFilter(LocationWrapper wrapper) { super(wrapper); }
-        public double getValue() { return fieldPortrayal.doubleValue(((ObjectGrid2D)fieldPortrayal.field).field[x][y]); }
+        public double getValue() { return fieldPortrayal.doubleValue(((ObjectGrid2D)fieldPortrayal.getField()).field[x][y]); }
         }
 
     public static class DoubleFilter extends Filter
         {
         public DoubleFilter(LocationWrapper wrapper) { super(wrapper); }
-        public double getValue() { return ((DoubleGrid2D)fieldPortrayal.field).field[x][y]; }
-        public void setValue(double val) { ((DoubleGrid2D)fieldPortrayal.field).field[x][y] = fieldPortrayal.newValue(x,y,val); }
+        public double getValue() { return ((DoubleGrid2D)fieldPortrayal.getField()).field[x][y]; }
+        public void setValue(double val) { ((DoubleGrid2D)fieldPortrayal.getField()).field[x][y] = fieldPortrayal.newValue(x,y,val); }
         }
         
     public static class IntFilter extends Filter
         {
         public IntFilter(LocationWrapper wrapper) { super(wrapper); }
-        public int getValue() { return ((IntGrid2D)fieldPortrayal.field).field[x][y]; }
-        public void setValue(int val) { ((IntGrid2D)fieldPortrayal.field).field[x][y] = (int)fieldPortrayal.newValue(x,y,val); }
+        public int getValue() { return ((IntGrid2D)fieldPortrayal.getField()).field[x][y]; }
+        public void setValue(int val) { ((IntGrid2D)fieldPortrayal.getField()).field[x][y] = (int)fieldPortrayal.newValue(x,y,val); }
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)

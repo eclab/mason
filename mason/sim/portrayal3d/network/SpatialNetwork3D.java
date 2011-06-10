@@ -42,18 +42,31 @@ public class SpatialNetwork3D
             throw new RuntimeException("Null Network.");
         }
     
-    public void setAuxillaryField( final Continuous3D f)
+	
+    public void setAuxiliaryField( final Continuous3D f)
         {
         field2 = f;
         if (field2 != null && field instanceof SparseGrid3D)
             throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
         }
 
-    public void setAuxillaryField( final SparseGrid3D f)
+    public void setAuxiliaryField( final SparseGrid3D f)
         {
         field2 = f;
         if (field2 != null && field instanceof Continuous3D)
             throw new RuntimeException("The auxillary field of a SpatialNetwork3D should be the same type as the primary field.");
+        }
+
+	/** @deprecated Use setAuxiliaryField */
+    public void setAuxillaryField( final Continuous3D f)
+        {
+		setAuxiliaryField(f);
+        }
+
+	/** @deprecated Use setAuxiliaryField */
+    public void setAuxillaryField( final SparseGrid3D f)
+        {
+		setAuxiliaryField(f);
         }
 
     public Double3D getObjectLocation(Object node)

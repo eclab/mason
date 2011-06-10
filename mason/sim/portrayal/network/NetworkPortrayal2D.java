@@ -8,6 +8,7 @@ package sim.portrayal.network;
 import sim.portrayal.*;
 import sim.field.continuous.*;
 import sim.field.network.*;
+import sim.field.*;
 import sim.util.*;
 import java.awt.*;
 import java.awt.geom.*;
@@ -37,11 +38,13 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         final SpatialNetwork2D field = (SpatialNetwork2D)this.field;
         if( field == null ) return;
 
+		// compute the field for the second endpoint
+		SparseField2D otherField = field.field2;  // do we have an auxiliary field?
+		if (otherField == null) otherField = field.field;  // I guess not, use the main field
+
         Double2D dimensions = field.getDimensions();
         double xScale = info.draw.width / dimensions.x;
         double yScale = info.draw.height / dimensions.y;
-
-//        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         EdgeDrawInfo2D newinfo = new EdgeDrawInfo2D(
             new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replaced
@@ -58,7 +61,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
             {
 			Object node = nodes.objs[x];
             Bag edges = field.network.getEdgesOut(node);
-            Double2D locStart = field.getObjectLocation(node);
+            Double2D locStart = field.field.getObjectLocationAsDouble2D(node);
             if (locStart == null) continue;
 			            
             // coordinates of first endpoint
@@ -83,7 +86,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                 {
                 Edge edge = (Edge)edges.objs[y];
 				
-                Double2D locStop = field.getObjectLocation(edge.getOtherNode(node));
+                Double2D locStop = otherField.getObjectLocationAsDouble2D(edge.getOtherNode(node));
                 if (locStop == null) continue;
 
 				// only include the edge if we've not included it already.
@@ -92,9 +95,9 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
 					if (edgemap.containsKey(edge)) continue;
 					edgemap.put(edge, edge);
 					}
-						
+				
                 // coordinates of second endpoint
-                if (field.field instanceof Continuous2D) // it's continuous
+                if (otherField instanceof Continuous2D) // it's continuous
                     {
                     newinfo.secondPoint.x = (info.draw.x + (xScale) * locStop.x);
                     newinfo.secondPoint.y = (info.draw.y + (yScale) * locStop.y);

@@ -71,7 +71,7 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
                   else
                   return ((Continuous2D)field).getObjectLocation(object);
                 */
-                loc.update();
+                //loc.update();
                 return loc;
                 }
                 
@@ -90,7 +90,7 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
                   }
                   return null;
                 */
-                loc.update();
+                //loc.update();
                 return loc.toString();
                 }
             };

@@ -101,11 +101,12 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     /** Returns a weight appropriate to scale the edge.  This weight must be >= 0.
 		By default, this returns 1.0 of adjustsThickness() is false or if edge.info
 		cannot be converted into a weight, else converts edge.info and returns the absolute value. */
-    protected double getPositiveWeight(Edge edge, EdgeDrawInfo2D info)
+    protected double getPositiveWeight(Object edge, EdgeDrawInfo2D info)
         {
-		if (getAdjustsThickness())
+		if (getAdjustsThickness())		
 			{
-			Object obj = edge.info;
+			Object obj = edge;  		// it's possible for the SimpleEdgePortrayal to be used for non-edges, as in TrailedPortrayal
+			if (edge instanceof Edge) obj = ((Edge)edge).info;
 			if (obj instanceof Number)
 				return Math.abs(((Number)obj).doubleValue());
 			else if (obj instanceof Valuable)
@@ -148,7 +149,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         // draw lines
         if (shape == SHAPE_TRIANGLE)
             {
-			double weight = getPositiveWeight((Edge)object, e);
+			double weight = getPositiveWeight(object, e);
 			double width = getBaseWidth();
             graphics.setPaint (fromPaint);
             double len = Math.sqrt((startXd - endXd)*(startXd - endXd) + (startYd - endYd)*(startYd - endYd));
@@ -190,7 +191,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
 						scale = 1;
 
 					Stroke oldstroke = graphics.getStroke();
-					double weight = getPositiveWeight((Edge)object, e);
+					double weight = getPositiveWeight(object, e);
 					graphics.setStroke(new BasicStroke((float)(width * weight * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, endXd, endYd);
                     graphics.draw(preciseLine);
@@ -209,7 +210,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
 						scale = 1;
 
 					Stroke oldstroke = graphics.getStroke();
-					double weight = getPositiveWeight((Edge)object, e);
+					double weight = getPositiveWeight(object, e);
 					graphics.setStroke(new BasicStroke((float)(width * weight * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, midXd, midYd); 
                     graphics.draw(preciseLine); 
@@ -268,7 +269,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         final double endXd = e.secondPoint.x;
         final double endYd = e.secondPoint.y;
         
-		double weight = getPositiveWeight((Edge)object, e);
+		double weight = getPositiveWeight(object, e);
 		double width = getBaseWidth();
 
         final double SLOP = 5;  // allow some imprecision -- click 6 away from the line
