@@ -1,13 +1,11 @@
 package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.util.geo.*; 
@@ -28,18 +26,26 @@ public class NearbyWorld extends SimState
     // Contains the objects in which the agent will be wandering
 	public GeomVectorField objects = new GeomVectorField(WIDTH, HEIGHT);
 
-    // Field for just the agent
+//    // Field for just the agent
     public GeomVectorField agentField = new GeomVectorField(WIDTH, HEIGHT);
-
-    // Field that's used to highlight nearby objects
+//
+//    // Field that's used to highlight nearby objects
     public GeomVectorField nearbyField = new GeomVectorField(WIDTH, HEIGHT);
-
-    // Agent that moves around the objects
+//
+//    // Agent that moves around the objects
     Agent agent;
 
 	// size of the display 
-	public static final int WIDTH=300; 
-	public static final int HEIGHT=300; 
+	public static final int WIDTH = 300;
+	public static final int HEIGHT = 300;
+    
+    private static final int NUM_POINTS = 40;
+    private static final int NUM_RECTANGLES = 35;
+    public static final int NUM_LINES = 35;
+
+    /** Average number of line segments in randomly generated lines
+     */
+    private static final int NUM_LINE_SEGMENTS = 6;
 
     
     public NearbyWorld(long seed) 
@@ -55,75 +61,135 @@ public class NearbyWorld extends SimState
      */
     private void createWorld()
     {
-        // Add a few points for the agent to move around
-
-        addPoint(0, 0);
-        addPoint(100, 100);
-        addPoint(25, 13);
-        addPoint(7, 8);
-        addPoint(80, 44);
-        addPoint(12, 66);
-        addPoint(19, 19);
-        addPoint(45, 8);
-        addPoint(99, 8);
-
-        // Add a lines and a polygon
-
-        WKTReader rdr = new WKTReader();
-
-        LineString line = null;
-        Polygon polygon = null;
-
-        try
+        for (int i = 0; i < NUM_LINES; i++)
         {
-            line = (LineString) (rdr.read("LINESTRING (0 0, 10 10, 20 20)"));
-            objects.addGeometry(new MasonGeometry(line));
-
-            line = (LineString) (rdr.read("LINESTRING (75 20, 35 19, 50 50, 50 90)"));
-            objects.addGeometry(new MasonGeometry(line));
-
-            polygon = (Polygon) (rdr.read("POLYGON (( 25 45, 25 75, 45 75, 45 45, 25 45 ))"));
-            objects.addGeometry(new MasonGeometry(polygon));
-        } catch (ParseException parseException)
-        {
-            System.out.println("Bogus line string" + parseException);
+            addRandomLine(WIDTH, HEIGHT);
         }
 
-        Envelope e = objects.getMBR();
-        e.expandBy(5.0);
-        objects.setMBR(e);
+        for (int i = 0; i < NUM_RECTANGLES; i++)
+        {
+            addRandomRectangle(WIDTH, HEIGHT);
+        }
+
+        for (int i = 0; i < NUM_POINTS; i++)
+        {
+            addRandomPoint(WIDTH, HEIGHT);
+        }
+
+        agentField.setMBR(objects.getMBR());
+        nearbyField.setMBR(objects.getMBR());
     }
 
 
         
+    @Override
     public void start()
     {
         super.start();
 
-        agentField.clear(); // remove any agents from previous runs
-        nearbyField.clear();
-
-        // position the agent at a random starting location 
+        // position the agent at a random starting location
         agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT));
-
+//
         // Add the agent
         agentField.addGeometry(new MasonGeometry(agent.getGeometry()));
-
-        // Ensure that both GeomVectorField layers cover the same area otherwise the
-        // agent won't show up in the display.
-        agentField.setMBR(objects.getMBR());
-        nearbyField.setMBR(objects.getMBR());
 
         schedule.scheduleRepeating(agent);
     }
 
 
-    
-    private void addPoint(final double x, final double y)
+    /** Used to create JTS geometries
+     *
+     * @see addRandomPoint
+     * @see addRandomRectangle
+     * @see addRandomLine
+     */
+    private GeometryFactory geometryFactory = new GeometryFactory();
+
+
+    /** Add a random point to the objects layer
+     *
+     * @param width of the MBR
+     * @param height of the MBR
+     */
+    private void addRandomPoint(final int width, final int height)
     {
-        GeometryFactory fact = new GeometryFactory();
-        Point location = fact.createPoint(new Coordinate(x, y));
+        Point location = geometryFactory.createPoint(new Coordinate(random.nextInt(width), random.nextInt(height)));
         objects.addGeometry(new MasonGeometry(location));
+    }
+    
+
+    /** Add a rectangle to within the given dimensions
+     *
+     * @param width of the MBR
+     * @param height of the MBR
+     */
+    private void addRandomRectangle(final int width, final int height)
+    {
+        GeometricShapeFactory factory = new GeometricShapeFactory();
+
+        // Randomly establish the lower left corner of the rectangle while
+        // ensuring that the upper right corner doesn't go outside the area.
+        Coordinate lowerLeft = new Coordinate(random.nextDouble() * (width - 5),
+                random.nextDouble() * (height - 5));
+
+        factory.setBase(lowerLeft);
+        factory.setWidth(random.nextDouble() * 15);
+        factory.setHeight(random.nextDouble() * 15);
+
+        Polygon rectangle = factory.createRectangle();
+
+        objects.addGeometry(new MasonGeometry(rectangle));
+
+    }
+
+
+    /** Add a line to within the given dimensions
+     *
+     * @param width of the MBR
+     * @param height of the MBR
+     */
+    private void addRandomLine(final int width, final int height)
+    {
+        // We may have up to five line segments
+        int numSegments = random.nextInt(NUM_LINE_SEGMENTS - 1) + 2;
+
+        Coordinate coordinates[] = new Coordinate[numSegments];
+
+        // Pick location of line start
+
+        coordinates[0] = new Coordinate();
+
+        coordinates[0].x = random.nextDouble() * WIDTH;
+        coordinates[0].y = random.nextDouble() * HEIGHT;
+
+        for (int i = 1; i < coordinates.length; i++)
+        {
+            // regenerate points until we get a point that's inside the boundary
+            do
+            {
+                int goLeftOrRight = random.nextBoolean() ? -1 : 1;
+                int goUpOrDown = random.nextBoolean() ? -1 : 1;
+
+                coordinates[i] = new Coordinate();
+
+                coordinates[i].x = coordinates[i - 1].x + random.nextDouble() * 10 * goLeftOrRight;
+                coordinates[i].y = coordinates[i - 1].y + random.nextDouble() * 10 * goUpOrDown;
+
+            } while (coordinates[i].x > WIDTH - 1 || coordinates[i].y > HEIGHT - 1 ||
+                     coordinates[i].x < 0.0 || coordinates[i].y < 0.0);
+        }
+
+        LineString line = null;
+
+        try
+        {
+            line = geometryFactory.createLineString(coordinates);
+        } catch (Exception e)
+        {
+            System.err.println(e);
+        }
+
+        objects.addGeometry(new MasonGeometry(line));
     }
 
 

@@ -21,7 +21,7 @@ public class NearbyWorldWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
 
-    private GeomVectorFieldPortrayal worldFieldPortrayal = new GeomVectorFieldPortrayal();
+    private GeomVectorFieldPortrayal objectsFieldPortrayal = new GeomVectorFieldPortrayal();
     private GeomVectorFieldPortrayal nearbyFieldPortrayal = new GeomVectorFieldPortrayal();
     private GeomVectorFieldPortrayal agentFieldPortrayal = new GeomVectorFieldPortrayal();
 
@@ -31,12 +31,13 @@ public class NearbyWorldWithUI extends GUIState {
     public NearbyWorldWithUI()  { super(new NearbyWorld(System.currentTimeMillis())); }
 
 
+    @Override
     public void init(Controller controller)
     {
         super.init(controller);
 
-        display = new Display2D(NearbyWorld.WIDTH, NearbyWorld.HEIGHT, this, 1);
-        display.attach(worldFieldPortrayal, "World");
+        display = new Display2D(NearbyWorld.WIDTH, NearbyWorld.HEIGHT, this);
+        display.attach(objectsFieldPortrayal, "World");
         display.attach(nearbyFieldPortrayal, "Near Objects");
         display.attach(agentFieldPortrayal, "Agent");
 
@@ -45,6 +46,7 @@ public class NearbyWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
+    @Override
     public void start()
     {
         super.start();
@@ -57,17 +59,18 @@ public class NearbyWorldWithUI extends GUIState {
 
         // Since no object portrayal is given, the default GeomPortrayal with
         // Color.GRAY is used.
-        worldFieldPortrayal.setField(world.objects);
+        objectsFieldPortrayal.setField(world.objects);
+        objectsFieldPortrayal.setPortrayalForAll(new GeomPortrayal(Color.DARK_GRAY, true));
 
         nearbyFieldPortrayal.setField(world.nearbyField);
-        nearbyFieldPortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLUE,true));
-
+        nearbyFieldPortrayal.setPortrayalForAll(new GeomPortrayal(Color.PINK, true));
+//
         agentFieldPortrayal.setField(world.agentField);
 
         // We want a red dot for the agent.  We also need to specify the scale; if
         // we don't then the default agent dot will cover the entire area.
-//        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, Agent.DISTANCE, Color.GREEN, false));
-        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, 50, Color.GREEN, false));
+        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, Agent.DISTANCE, Color.GREEN, false));
+//        agentFieldPortrayal.setPortrayalForAll(new CircledPortrayal2D(new OvalPortrayal2D(Color.RED,5), 0, 50, Color.GREEN, false));
 
         display.reset();
         display.setBackdrop(Color.WHITE);

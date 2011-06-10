@@ -16,7 +16,8 @@ import sim.util.geo.MasonGeometry;
  * and at every step, prints out the all objects that are within <i>DISTANCE</i> units.
  * 
  */
-public class Agent implements Steppable {
+public class Agent implements Steppable
+{
 
     private static final long serialVersionUID = -7366623247320036818L;
 
@@ -27,7 +28,7 @@ public class Agent implements Steppable {
     private static double moveRate = 2.0;
 
     // DISTANCE for determining if objects are close
-    public static double DISTANCE = 10.0;
+    public static double DISTANCE = 20.0;
 
     public Agent()
     {
@@ -63,26 +64,26 @@ public class Agent implements Steppable {
 
         if (nearbyObjects.isEmpty())
         {
-            System.out.println("Nothing nearby");
-        }
-        else
+//            System.out.println("Nothing nearby");
+        } else
+        {
+//            System.out.println("# nearby objects: " + nearbyObjects.numObjs);
+            
+            for (int i = 0; i < nearbyObjects.size(); i++)
             {
-                System.out.println("# nearby objects: " + nearbyObjects.numObjs);
-                for (int i = 0; i < nearbyObjects.numObjs; i++)
-                {
-                    System.out.println(nearbyObjects.objs[i] + " is near me");
-                    world.nearbyField.addGeometry((MasonGeometry) nearbyObjects.objs[i]);
-                }
-
-                // nearbyField.clear() and all the addGeometry() will have reset the MBR
-                // to something that doesn't match the MBR of the other layers;
-                // if we leave it alone then the nearbyField objects won't be
-                // rendered in their proper place in the display.  We must sync
-                // the MBR with that of the other layers.  You can
-                // comment out the following line to see the effect of not
-                // synchronizing the MBR.
-                world.nearbyField.setMBR(world.objects.getMBR());
+//                System.out.println(nearbyObjects.objs[i] + " is near me");
+                world.nearbyField.addGeometry((MasonGeometry) nearbyObjects.objs[i]);
             }
+
+            // nearbyField.clear() and all the addGeometry() will have reset the MBR
+            // to something that doesn't match the MBR of the other layers;
+            // if we leave it alone then the nearbyField objects won't be
+            // rendered in their proper place in the display.  We must sync
+            // the MBR with that of the other layers.  You can
+            // comment out the following line to see the effect of not
+            // synchronizing the MBR.
+            world.nearbyField.setMBR(world.objects.getMBR());
+        }
     }
 
     
@@ -154,7 +155,7 @@ public class Agent implements Steppable {
         if (isValidMove(coord))
             {
                 location.apply(translate);
-                System.out.println("agent:" + location);
+//                System.out.println("agent:" + location);
             }        
     }
 }
