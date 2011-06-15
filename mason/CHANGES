@@ -2069,3 +2069,15 @@ Version 16
 		point properly.
 	Updated StableLocation to no longer require update()
 	Bug fix to StableInt3D and StableDouble3D, which were not updating the 'exists' flag.
+	ShapePortrayal2D uses a BasicStroke if the stroke has not been set.
+	ValuePortrayal2D no longer has a 'parent' -- various constructors and methods deprecated.
+	Set the default setting of baseWidth in SimpleEdgePortrayal2D to 0.0. If you're drawing
+		triangles, you need to explicitly set the width.  THIS WILL CONFUSE PEOPLE.
+		But it's important.
+	Added to SimpleProperties the ability to interpret String.toString(), 
+		StringBuffer.toString(), Boolean.booleanValue(), Byte.longValue(), 
+		Short.longValue(), Integer.longValue(), Long.longValue(), Double.doubleValue(),
+		Float.doubleValue(), and any other Number.doubleValue() as read-only properties
+		of the name "Value".  This is because these read-only classes (well, except for
+		StringBuffer) don't have appropriate "get" methods.
+	Eliminated "get()" and "is()" and "set()" as valid property names.

@@ -24,6 +24,11 @@ import java.lang.reflect.*;
  *  returns null, then it is assumed the property has no domain (it can take on any value).
  *  You can also hide a property by creating a boolean method called hideFoo() which returns true.
  *
+ *  <p>A few classes have special hard-coded properties because they lack get() and set() methods.  Notably:
+ *  Strings and StringBuffers have toString() considered a property, integer Numbers have longValue() considered
+ *  a property, other Numbers have doubleValue() considered a property, and Booleans have booleanValue() considered
+ *  a property.  In all cases the name of the property is simply "Value" and it is read-only.
+ *
  *  <p>The idea behind domains is to make it easy to create graphical interfaces (sliders, pop-up menus)
  *  for the user to set properties, where it's often convenient to know beforehand what values the property
  *  can be set to in order to construct the GUI widget appropriately.  Here are the domain rules (other than null).
@@ -153,10 +158,53 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                                      {
                                                      // generate the properties
                                                      Class c = object.getClass();
+
+													// handle integers
+													if (object instanceof Long || object instanceof Integer || object instanceof Short || object instanceof Byte)
+														{
+														Method meth = c.getMethod("longValue", new Class[0]);
+														getMethods.add(meth);
+														setMethods.add(null);
+														domMethods.add(null);
+														hideMethods.add(null);
+														}
+														
+													// handle other kinds of numbers
+													else if (object instanceof Number)
+														{
+														Method meth = c.getMethod("doubleValue", new Class[0]);
+														getMethods.add(meth);
+														setMethods.add(null);
+														domMethods.add(null);
+														hideMethods.add(null);
+														}
+														
+													// handle Booleans
+													if (object instanceof Boolean)
+														{
+														Method meth = c.getMethod("booleanValue", new Class[0]);
+														getMethods.add(meth);
+														setMethods.add(null);
+														domMethods.add(null);
+														hideMethods.add(null);
+														}
+														
+													// handle Strings
+													if (object instanceof String || object instanceof StringBuffer)
+														{
+														Method meth = c.getMethod("toString", new Class[0]);
+														getMethods.add(meth);
+														setMethods.add(null);
+														domMethods.add(null);
+														hideMethods.add(null);
+														}
+
+													// handle general properties
                                                      Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
                                                      for(int x = 0 ; x < m.length; x++)
                                                          {
-                                                         if (m[x].getName().startsWith("get") || m[x].getName().startsWith("is")) // corrrect syntax?
+                                                         if (!("get".equals(m[x].getName())) && !("is".equals(m[x].getName())) &&  // "get()" and "is()" aren't properties
+																(m[x].getName().startsWith("get") || m[x].getName().startsWith("is"))) // corrrect syntax?
                                                              {
                                                              int modifier = m[x].getModifiers();
                                                              if ((includeGetClass || !m[x].getName().equals("getClass")) &&
@@ -266,9 +314,18 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         if (auxillary!=null) return auxillary.getName(index);
         if (index < 0 || index > numProperties()) return null;
-        if (((Method)(getMethods.get(index))).getName().startsWith("is"))
-            return ((Method)(getMethods.get(index))).getName().substring(2);
-        else return ((Method)(getMethods.get(index))).getName().substring(3);
+		String name = ((Method)(getMethods.get(index))).getName();
+        if (name.startsWith("is"))
+            return name.substring(2);
+		else if (name.equals("longValue"))   // Integers of various kinds
+			return "Value";
+		else if (name.equals("doubleValue"))   // Other Numbers
+			return "Value";
+		else if (name.equals("booleanValue"))   // Booleans
+			return "Value";
+		else if (name.equals("toString"))   // Strings, StringBuffers
+			return "Value";
+        else return name.substring(3);  // "get", "set"
         }
         
     /** Returns whether or not the property can be written as well as read

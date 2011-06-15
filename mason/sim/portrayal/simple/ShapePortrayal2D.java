@@ -16,6 +16,7 @@ import java.awt.geom.*;
 
 public class ShapePortrayal2D extends SimplePortrayal2D
     {
+	static final Stroke defaultStroke = new BasicStroke();
     public Paint paint;
     public double scale;
     public Shape shape;
@@ -81,23 +82,16 @@ public class ShapePortrayal2D extends SimplePortrayal2D
         setStroke(null);
         }
     
-    boolean strokeSet = false;
     public void setStroke(Stroke s)
         {
         stroke = s;
-        if (stroke == null)
-            {
-            stroke = new BasicStroke();
-            strokeSet = false;
-            }
-        else strokeSet = true;
-        }
+		}
         
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         graphics.setPaint(paint);
-        if (true)//info.precise || xPoints == null || strokeSet)
+        if (true)  //  We turn this off because it's no longer much slower (only 1% slower).     info.precise || xPoints == null || stroke != null)
             {   
             final double width = info.draw.width*scale;
             final double height = info.draw.height*scale;
@@ -117,7 +111,7 @@ public class ShapePortrayal2D extends SimplePortrayal2D
                 }
             else
                 {
-                graphics.setStroke(stroke);
+                graphics.setStroke(stroke == null ? defaultStroke : stroke);
                 graphics.draw(transform.createTransformedShape(bufferedShape));
                 }
             }

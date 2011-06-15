@@ -20,7 +20,11 @@ import sim.util.*;
   color and the other half will be drawn with the other color.
   
   <p>If the portrayal draws edges as thin triangles, the "to" color is ignored.  The baseWidth (a positive value) defines the width
-  of the "base" of the triangle at its "from"-node end.  You can define the triangle to scale (that is, get wider when you zoom in), 
+  of the "base" of the triangle at its "from"-node end.  You must set this value in order to see a triangle: try 1.0.
+  
+  <p>The baseWidth also affects drawing lines: if it's 0.0 a single-pixel thin line is drawn, else a line is drawn of the given thickness.
+  
+  <p>You can also define the triangle or line thickness to scale (that is, get wider when you zoom in), 
   to never do so, or to only scale when 'zoomed out' (SCALE_WHEN_SMALLER).  By default it always scales.
   
   <p>You can specify the both a label color and a label font.   If the label color is null, the label will not be drawn.  
@@ -40,7 +44,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public static final int NEVER_SCALE = 0;
     public static final int SCALE_WHEN_SMALLER = 1;
     public static final int ALWAYS_SCALE = 2;
-    public double baseWidth = 1.0;
+    public double baseWidth = 0.0;
         
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_TRIANGLE = 1;
@@ -85,7 +89,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         
     public double getBaseWidth() { return baseWidth; } 
     /** Sets the width of the base of the triangle used in drawing the directed edge -- by default, this is 0 (a simple line is drawn).
-        The triangle is drawn with its base at the "from" node and its point at the "to" node. */
+        The triangle is drawn with its base at the "from" node and its point at the "to" node.*/
     public void setBaseWidth(double val) { baseWidth = val; }
         
     public int getScaling() { return scaling; }
