@@ -2081,3 +2081,19 @@ Version 16
 		of the name "Value".  This is because these read-only classes (well, except for
 		StringBuffer) don't have appropriate "get" methods.
 	Eliminated "get()" and "is()" and "set()" as valid property names.
+	Added missing setOnlyLabelWhenSelected() and getOnlyLabelWhenSelected() methods to
+		LabelledPortrayal2D
+	OR and DR in OrientedPortrayal2D renamed to SCALE and OFFSET, to be consistent with
+		LabelledPortrayal2D and CircledPortrayal2D
+	Added fill switch to OrientedPortrayal2D.  If filled, then the kite and compass are
+		drawn UNDER the basic object.
+	OrientedPortrayal2D.isLineShowing() and setLineShowing() deprecated and replaced with
+		isOrientationShowing() and setOrientationShowing()
+	OrientedPortrayal2D now can optionally turn off orientation depending on selection
+	FacetedPortrayal2D can now have its child-selecting mechanism overridden
+	Deprecated and renamed TrailedPortrayal2D.setGrowTrailOnlyWhenSelected() and
+		TrailedPortrayal2D.getGrowTrailOnlyWhenSelected()
+	Modifications to TrailedPortrayal2D to more properly draw trails under different
+		circumstances.  Documentation is still wrong.
+	Bug fix to NetworkPortrayal3D which was preventing the field from being displayed.
+		This was due to refactoring of the 'field' variable.

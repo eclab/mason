@@ -89,14 +89,15 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     boolean showLabel = true;
     
     public boolean onlyLabelWhenSelected;
+	
+    public void setOnlyLabelWhenSelected(boolean val) { onlyLabelWhenSelected = val; }
+    public boolean getOnlyLabelWhenSelected() { return onlyLabelWhenSelected; }
     
-    // boolean isSelected = false;
-        
     public boolean isLabelShowing() { return showLabel; }
     public void setLabelShowing(boolean val) { showLabel = val; }
     
     Font scaledFont;
-    int labelScaling;
+    int labelScaling = NEVER_SCALE;
     public static final int NEVER_SCALE = 0;
     public static final int SCALE_WHEN_SMALLER = 1;
     public static final int ALWAYS_SCALE = 2;
@@ -111,9 +112,16 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
         is presumed to be a Portrayal2D and will be used. */
     public LabelledPortrayal2D(SimplePortrayal2D child, double offsetx, double offsety, double scalex, double scaley, Font font, int align, String label, Paint paint, boolean onlyLabelWhenSelected)
         {
-        this.offsetx = offsetx; this.offsety = offsety; this.scalex = scalex; this.scaley = scaley;
-        this.font = font; this.align = align; this.label = label; this.child = child;
-        this.paint = paint;  this.onlyLabelWhenSelected = onlyLabelWhenSelected;
+        this.offsetx = offsetx; 
+		this.offsety = offsety; 
+		this.scalex = scalex; 
+		this.scaley = scaley;
+        this.font = font; 
+		this.align = align; 
+		this.label = label; 
+		this.child = child;
+        this.paint = paint;  
+		this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         }
 
     /** Draws 10 pixels down from the [dx=0, dy=0.5] prescaled position of the Portrayal2D, 
@@ -126,14 +134,14 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
         this(child, label, Color.blue, false);
         }
 
-    /** Draws 10 pixels down from the [dx=0, dy=scale] prescaled position of the Portrayal2D, 
+    /** Draws 10 pixels down from the [dx=0, dy=scaley] prescaled position of the Portrayal2D, 
         using the SansSerif 10pt font, blue, and left alignment.  If label is null, 
         then object.toString() is used. Labelling occurs if onlyLabelWhenSelected is true.    
         If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
-    public LabelledPortrayal2D(SimplePortrayal2D child, double scale, String label, Paint paint, boolean onlyLabelWhenSelected)
+    public LabelledPortrayal2D(SimplePortrayal2D child, double scaley, String label, Paint paint, boolean onlyLabelWhenSelected)
         {
-        this(child, DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y , DEFAULT_SCALE_X, scale, new Font("SansSerif",Font.PLAIN, 10), ALIGN_LEFT, label, paint, onlyLabelWhenSelected);
+        this(child, DEFAULT_OFFSET_X, DEFAULT_OFFSET_Y , DEFAULT_SCALE_X, scaley, new Font("SansSerif",Font.PLAIN, 10), ALIGN_LEFT, label, paint, onlyLabelWhenSelected);
         }
         
     /** Draws 10 pixels down from the [dx=0, dy=0.5] prescaled position of the Portrayal2D, 

@@ -44,5 +44,5 @@ public interface Fixed2D
         then return true.
         </ul>
     */
-    public boolean maySetLocation(Object field, Object location);
+    public boolean maySetLocation(Object field, Object newObjectLocation);
     }

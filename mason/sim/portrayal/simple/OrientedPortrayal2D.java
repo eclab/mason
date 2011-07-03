@@ -12,18 +12,16 @@ import sim.display.*;
 /**
    A wrapper for other Portrayal2Ds which provides some kind of pointing object (typically a line)
    along the object's specified orientation angle. This is a very simple way to show orientation.
-   The underlying Portrayal2D may also be automatically rotated if autoRotate() is turned on (it's off by default,
-   as rotation is expensive.
    
    <p>For the line to be drawn, the underlying object must adhere to the Oriented2D interface,
    which provides the orientation2D() method.  The line starts at the origin and is of length:
 
    <pre><tt>
-   length:     (int)(or * max(info.draw.width,info.draw.height)) + dr;
+   length:     (int)(scale * max(info.draw.width,info.draw.height)) + offset;
    </tt></pre>
 
    <p>... that is, or is a value which scales when you zoom in, and dr adds 
-   additional fixed pixels.  The default is or = 0.5, dr = 0, with a red color.
+   additional fixed pixels.  The default is scale = 0.5, offset = 0, with a red color.
    
    <p>You can specify other shapes than a simple line.  We provide two others: kites and compasses. 
 
@@ -36,8 +34,8 @@ import sim.display.*;
 
 public class OrientedPortrayal2D extends SimplePortrayal2D
     {
-    public static final double DEFAULT_OR = 0.5;
-    public static final int DEFAULT_DR = 0;
+    public static final double DEFAULT_SCALE = 0.5;
+    public static final int DEFAULT_OFFSET = 0;
     
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_KITE = 1;
@@ -47,10 +45,10 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     int shape = SHAPE_LINE;
     
     /** The pre-scaling length */
-    public double or;
+    public double scale;
     
     /** The post-scaling length offset */   
-    public int dr;
+    public int offset;
     
     /** The Paint or Color of the line */
     public Paint paint;
@@ -58,45 +56,62 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     public SimplePortrayal2D child;
     
     /** Overrides all drawing. */
-    boolean showLine = true;
+    boolean showOrientation = true;
     
+	public boolean drawFilled = true;
+	public void setDrawFilled(boolean val) { drawFilled = val; }
+	public boolean isDrawFilled() { return drawFilled; }
+            
     public void setShape(int val) { if (val >= SHAPE_LINE && val <= SHAPE_COMPASS) shape = val; }
     public int getShape() { return shape; }
-    public boolean isLineShowing() { return showLine; }
-    public void setLineShowing(boolean val) { showLine = val; }
+	
+	public boolean isOrientationShowing() { return showOrientation; }
+    public void setOrientationShowing(boolean val) { showOrientation = val; }
+
+	/** @deprecated use isOrientationShowing() */
+    public boolean isLineShowing() { return showOrientation; }
+	
+	/** @deprecated use setOrientationShowing() */
+    public void setLineShowing(boolean val) { showOrientation = val; }
+	
+	
+	boolean onlyDrawWhenSelected = false;
+	
+	public void setOnlyDrawWhenSelected(boolean val) { onlyDrawWhenSelected = val; }
+	public boolean getOnlyDrawWhenSelected() { return onlyDrawWhenSelected; }
     
-    public OrientedPortrayal2D(SimplePortrayal2D child, int dr, double or, Paint paint, int shape)
+    public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, int shape)
         {
-        this.dr = dr; this.or = or; this.child = child;
+        this.offset = offset; this.scale = scale; this.child = child;
         this.paint = paint; this.shape = shape;
         }
     
     /** If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
-    public OrientedPortrayal2D(SimplePortrayal2D child, int dr, double or, Paint paint)
+    public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint)
         {
-        this(child,dr,or,paint,SHAPE_LINE);
+        this(child,offset,scale,paint,SHAPE_LINE);
         }
     
-    /** Draw a line of length or = 0.5 dr = 0, in red.
+    /** Draw a line of length scale = 0.5, offset = 0, in red.
         If child is null, then the underlying model object is presumed to be a Portrayal2D and will be used. */
     public OrientedPortrayal2D(SimplePortrayal2D child)
         {
-        this(child, DEFAULT_DR, DEFAULT_OR, Color.red);
+        this(child, DEFAULT_OFFSET, DEFAULT_SCALE, Color.red);
         }
         
     /** Draw a line of the given length in red.
         If child is null, then the underlying model object is presumed to be a Portrayal2D and will be used. */
-    public OrientedPortrayal2D(SimplePortrayal2D child, int dr, double or)
+    public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale)
         {
-        this(child, dr, or, Color.red);
+        this(child, offset, scale, Color.red);
         }
 
-    /** Draw a line of length or = 0.5, dr = 0.
+    /** Draw a line of length scale = 0.5, offset = 0.
         If child is null, then the underlying model object is presumed to be a Portrayal2D and will be used. */
     public OrientedPortrayal2D(SimplePortrayal2D child, Paint paint)
         {
-        this(child, DEFAULT_DR, DEFAULT_OR, paint);
+        this(child, DEFAULT_OFFSET, DEFAULT_SCALE, paint);
         }
 
     public SimplePortrayal2D getChild(Object object)
@@ -115,13 +130,15 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-        getChild(object).draw(object,graphics,info);
+		// draw the underlying object first?
+        if (shape == SHAPE_LINE || !drawFilled)
+			getChild(object).draw(object,graphics,info);
 
-        if (showLine && (object!=null) && (object instanceof Oriented2D))
+        if (showOrientation && (info.selected || !onlyDrawWhenSelected) && (object!=null) && (object instanceof Oriented2D))
             {
             final double theta = ((Oriented2D)object).orientation2D();
-            final int length = ((int)(or * (info.draw.width < info.draw.height ? 
-                        info.draw.width : info.draw.height)) + dr);  // fit in smallest dimension
+            final int length = ((int)(scale * (info.draw.width < info.draw.height ? 
+                        info.draw.width : info.draw.height)) + offset);  // fit in smallest dimension
             
             final double lenx = Math.cos(theta)*length;
             final double leny = Math.sin(theta)*length;
@@ -146,7 +163,8 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                 simplePolygonY[2] = (int)(info.draw.y + -leny/2);
                 simplePolygonX[3] = (int)(info.draw.x + leny + -lenx);
                 simplePolygonY[3] = (int)(info.draw.y + -lenx + -leny);
-                graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
+                if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
+                else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
                 } break;
                 case SHAPE_COMPASS:
                 {
@@ -158,9 +176,14 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                 simplePolygonY[2] = (int)(info.draw.y + -leny/2);
                 simplePolygonX[3] = (int)(info.draw.x + leny/2);
                 simplePolygonY[3] = (int)(info.draw.y + -lenx/2);
-                graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
-                } break;
+                if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
+                else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
+				} break;
                 }
+
+		// draw the underlying object last?
+        if (shape != SHAPE_LINE && drawFilled)
+			getChild(object).draw(object,graphics,info);
             }
         }
         
@@ -178,11 +201,11 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                 
         // now additionally determine if I was hit
 
-        if (showLine && (object!=null) && (object instanceof Oriented2D))
+        if (showOrientation && (object!=null) && (object instanceof Oriented2D))
             {
             final double theta = ((Oriented2D)object).orientation2D();
-            final int length = ((int)(or * (range.draw.width < range.draw.height ? 
-                        range.draw.width : range.draw.height)) + dr);  // fit in smallest dimension
+            final int length = ((int)(scale * (range.draw.width < range.draw.height ? 
+                        range.draw.width : range.draw.height)) + offset);  // fit in smallest dimension
             
             final double lenx = Math.cos(theta)*length;
             final double leny = Math.sin(theta)*length;

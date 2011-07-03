@@ -21,9 +21,7 @@ import com.sun.j3d.utils.picking.*;
 */
 
 public class NetworkPortrayal3D extends FieldPortrayal3D
-    {
-    public SpatialNetwork3D field;
-    
+    {    
     // a line with a label
     SimpleEdgePortrayal3D defaultPortrayal = new SimpleEdgePortrayal3D();
     public Portrayal getDefaultPortrayal() { return defaultPortrayal; }
@@ -45,9 +43,10 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
         globalTG.setCapability(Group.ALLOW_CHILDREN_EXTEND);
         
         
+		SpatialNetwork3D field = (SpatialNetwork3D)this.field;
+		
         if( field == null ) return globalTG;
         
-
         // draw ALL the edges -- one never knows if an edge will cross into our boundary
 
         Bag nodes = field.network.getAllNodes();
@@ -99,6 +98,8 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
 
     public void updateModel(TransformGroup globalTG) 
         {
+		SpatialNetwork3D field = (SpatialNetwork3D)this.field;
+
         if (field == null) return;      
         HashMap hm = new HashMap();
         Network net = field.network;

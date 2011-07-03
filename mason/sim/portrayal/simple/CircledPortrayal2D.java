@@ -53,8 +53,7 @@ public class CircledPortrayal2D extends OvalPortrayal2D
     /** Overrides all drawing. */
     boolean showCircle = true;
     boolean onlyCircleWhenSelected;
-    // boolean isSelected = false;
-    
+	    
     public void setOnlyCircleWhenSelected(boolean val) { onlyCircleWhenSelected = val; }
     public boolean getOnlyCircleWhenSelected() { return onlyCircleWhenSelected; }
     
@@ -67,8 +66,10 @@ public class CircledPortrayal2D extends OvalPortrayal2D
         Paint paint, boolean onlyCircleWhenSelected)
         {
         super(paint, scale, false);  // the scale will be twice what the user requests
-        this.offset = offset; this.child = child;
-        this.paint = paint;  this.onlyCircleWhenSelected = onlyCircleWhenSelected;
+        this.offset = offset; 
+		this.child = child;
+        this.paint = paint;  
+		this.onlyCircleWhenSelected = onlyCircleWhenSelected;
         }
     
     /** Draw a circle of radius scale = 2.0, dr = 0, in blue.  Draw the circle regardless of selection.
