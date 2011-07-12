@@ -56,7 +56,7 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
 			getGenerator().setDomainAxisLabel("Time");
 			}
 
-        if (validInspector)
+        if (isValidInspector())
             {
             // add our series
             seriesAttributes = ((ScatterPlotGenerator)generator).addSeries(previousValues, properties.getName(index), 

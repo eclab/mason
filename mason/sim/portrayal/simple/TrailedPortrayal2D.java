@@ -87,7 +87,9 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         {
         /** A value from 1.0 to 0.0 indicating how far "back in time" this segment is supposed to be. */
         public double value = 0.0;
-        public TrailDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint) { super(draw, clip, secondPoint); }
+        public TrailDrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint) { super(gui, fieldPortrayal, draw, clip, secondPoint); }
+		public TrailDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double secondPoint) { super(other, translateX, translateY, secondPoint); }
+		//public TrailDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint) { super(draw, clip, secondPoint); }
         public TrailDrawInfo2D(DrawInfo2D other, Point2D.Double secondPoint) { super(other, secondPoint); }
         public TrailDrawInfo2D(EdgeDrawInfo2D other) { super(other); }
         }
@@ -245,7 +247,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
 	boolean locked = false;  // have we settled on a selected object?
 	
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-        {
+        {		
         // I am probably added to more than one field portrayal, but should only
         // be drawing in one of them.  So let's first double check that.
         if (info.fieldPortrayal != fieldPortrayal)
@@ -306,7 +308,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
 			
 			// add new stuff to back
 			int size = places.size();
-			currentObjectLocation = fieldPortrayal.getObjectLocation(object);
+			currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
                 
             if (size == 0 && currentTime > Schedule.BEFORE_SIMULATION && currentTime < Schedule.AFTER_SIMULATION)  // first time!
                 {
@@ -327,13 +329,13 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         if (object == selectedObj || !onlyShowTrailWhenSelected) 
             {
 			if (currentObjectLocation == NO_OBJ) // haven't determined this yet
-				currentObjectLocation = fieldPortrayal.getObjectLocation(object);
+				currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
 
 			double currentTime = state.state.schedule.getTime();
 			ListIterator iterator = places.listIterator();
 			Place lastPlace = null;
 			Point2D.Double lastPosition = null;
-			TrailDrawInfo2D temp = new TrailDrawInfo2D(new Rectangle2D.Double(info.draw.x, info.draw.y, info.draw.width, info.draw.height), // make a copy, we'll modify it
+			TrailDrawInfo2D temp = new TrailDrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(info.draw.x, info.draw.y, info.draw.width, info.draw.height), // make a copy, we'll modify it
 				info.clip, null);
 			while(iterator.hasNext())
 				{

@@ -8,6 +8,7 @@ package sim.portrayal;
 import java.awt.*;
 import java.awt.geom.*;
 import sim.util.*;
+import sim.display.*;
 
 /** 
     Superclass of all Field Portrayals in 2D.  Implements default versions of the
@@ -132,11 +133,13 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         return null;
         }
 
+	private final Object getObjectLocation(Object object) { return ""; }
+	
     /** Returns the first location in the underlying field of the given object, if such a thing
         is reasonable.  Largely used for getObjectPosition(...).     
         If null is returned, then the portrayal is unable to determine the position of the field location.
         <b>Optionally overridable</b>.  The default implementation returns null. */
-    public Object getObjectLocation(Object object)
+    public Object getObjectLocation(Object object, GUIState gui)
         {
         return null;
         }
@@ -163,9 +166,12 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         action on the given object.  */
     public Point2D.Double getObjectPosition(Object object, DrawInfo2D fieldPortrayalInfo)
         {
-        Object location = getObjectLocation(object);
-        if (location == null) return null;
-        return getLocationPosition(location, fieldPortrayalInfo);
+		synchronized(fieldPortrayalInfo.gui.state.schedule)
+			{
+			Object location = getObjectLocation(object, fieldPortrayalInfo.gui);
+			if (location == null) return null;
+			return getLocationPosition(location, fieldPortrayalInfo);
+			}
         }
         
     /** Default buffering: let the program decide on its own (typically in a platform-dependent fashion) */

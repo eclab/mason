@@ -224,7 +224,7 @@ public abstract class FieldPortrayal
 		setDirtyField(true);
 		}
 
-    public class CustomInspector extends Inspector
+	class CustomInspector extends Inspector
         {
         public JLabel positions = new JLabel();
         public DisclosurePanel disclosurePanel;

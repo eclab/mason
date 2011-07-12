@@ -70,7 +70,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
 			getGenerator().setDomainAxisLabel("Time");
 			}
 			
-        if (validInspector)
+        if (isValidInspector())
             {
             chartSeries = new XYSeries( properties.getName(index), false );
 
@@ -175,6 +175,8 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     protected void updateSeries(double time, double lastTime)
         {
         double d = 0;
+		
+		GlobalAttributes globalAttributes = getGlobalAttributes();
                 
         // FIRST, load the aggregate series with the items
         aggregateSeries.add(time, d = valueFor(properties.getValue(index)), false);

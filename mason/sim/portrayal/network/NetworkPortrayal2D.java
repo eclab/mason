@@ -47,6 +47,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         double yScale = info.draw.height / dimensions.y;
 
         EdgeDrawInfo2D newinfo = new EdgeDrawInfo2D(
+			info.gui, info.fieldPortrayal,
             new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replaced
             info.clip, // we don't do further clipping
             new Point2D.Double(0,0));  // these will also get replaced  

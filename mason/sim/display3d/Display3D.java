@@ -414,7 +414,7 @@ public class Display3D extends JPanel implements Steppable
     // new portrayals have been attached/detatched?
     boolean dirty = false;
     
-    /** Attaches a portrayal to the Display3D, along with the provided human-readable name for the portrayal.�
+    /** Attaches a portrayal to the Display3D, along with the provided human-readable name for the portrayal.
         The portrayal will be transformed, along with similar attached portrayals,
         according to the Display3D's internal transform.  */
     public void attach(Portrayal3D portrayal, String name)

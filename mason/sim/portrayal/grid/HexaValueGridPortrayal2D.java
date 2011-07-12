@@ -46,6 +46,8 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
 
     public Double2D getScale(DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -59,6 +61,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         final double xScale = info.draw.width / divideByX;
         final double yScale = info.draw.height / divideByY;
         return new Double2D(xScale, yScale);
+		}
         }
 
 
@@ -79,6 +82,8 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -96,7 +101,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, 
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
@@ -136,6 +141,7 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
         newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
 
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+		}
         }
 
 

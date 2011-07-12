@@ -56,7 +56,7 @@ public class TabbedInspector extends Inspector
         }
 
     /** Calls updateInspector() and repaint() on the currently-displayed inspector */
-    public void updateDisplayedInspector()
+	void updateDisplayedInspector()
         {
         if (inspectors.size() > 0)
             {

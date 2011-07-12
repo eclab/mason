@@ -2097,3 +2097,21 @@ Version 16
 		circumstances.  Documentation is still wrong.
 	Bug fix to NetworkPortrayal3D which was preventing the field from being displayed.
 		This was due to refactoring of the 'field' variable.
+	Major change to DrawInfo2D, EdgeDrawInfo2D, and TrailDrawInfo2D.  We add a new
+		variable, 'gui', which points to the GUIState.  We also add new constructors
+		which require passing in 'gui' and also the field portrayal.  Finally,
+		old constructors which did not require this have been *deleted* because they
+		are dangerous -- you have to be forced to upgrade to the new system.
+	All FieldPortrayals implement the methods getScale, getPositionLocation, getObjectLocation,
+		getLocationPosition, getObjectPosition, and setObjectLocation (as appropriate) 
+		by synchronizing on the underlying field before querying or modifying the field.
+	FieldPortrayal2D.getObjectLocation now requires a GUIState as an argument (so it can
+		synchronize on it).
+	FieldPortrayal.CustomInspector is no longer public
+	Made Inspector.updateButtonPressed() final -- do not use it.  Just expect to have
+		updateInspector() called instead.	
+	Made TabbedInspector.updateDisplayedInspector private.
+	Made ChartingPropertyInspector's various aggregation method and redraw constants
+		protected (they were package-level).
+	Made ChartingPropertyInspector.globalAttributes private and added getGlobalAttributes()
+	Console now indicates where the first problematic class is on loading

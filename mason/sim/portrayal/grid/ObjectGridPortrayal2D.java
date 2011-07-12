@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import sim.util.*;
 import java.util.*;
+import sim.display.*;
 
 /**
    A portrayal for grids containing objects, such as maybe agents or agent bodies.
@@ -53,6 +54,8 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 
     public Double2D getScale(DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -62,6 +65,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
         return new Double2D(xScale, yScale);
+		}
         }
                 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
@@ -76,8 +80,10 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
 
 
-    public Object getObjectLocation(Object object)
+    public Object getObjectLocation(Object object, GUIState gui)
         {
+		synchronized(gui.state.schedule)
+			{
         final ObjectGrid2D field = (ObjectGrid2D)this.field;
         if (field==null) return null;
 
@@ -93,10 +99,13 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
                     return new Int2D(x,y);
             }
         return null;  // it wasn't there
+		}
         }
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
         
@@ -107,7 +116,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
 
         Int2D loc = (Int2D) location;
@@ -127,6 +136,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         newinfo.draw.y += newinfo.draw.height / 2.0;
 
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+		}
         }
 
 
@@ -161,7 +171,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         int endx = /*startx +*/ (int)((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
         newinfo.location = locationToPass;
         newinfo.fieldPortrayal = this;
 

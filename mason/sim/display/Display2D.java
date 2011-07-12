@@ -1442,7 +1442,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             (int)(holder.bounds.y * scale) + origindy,
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
-        DrawInfo2D d2d = new DrawInfo2D(region, clip);
+        DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip);
+		d2d.gui = simulation;
         d2d.precise = precise;
         return d2d;
         }

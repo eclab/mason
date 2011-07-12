@@ -8,6 +8,7 @@ package sim.portrayal.network;
 import sim.portrayal.*;
 import java.awt.geom.*;
 import java.awt.*;
+import sim.display.*;
 
 /**
    An extension of DrawInfo2D for dealing with edges in visualizing network fields.
@@ -18,12 +19,19 @@ public class EdgeDrawInfo2D extends DrawInfo2D
     /** A pre-scaled point to draw to. */
     public Point2D.Double secondPoint;
     
+    public EdgeDrawInfo2D(GUIState state, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint)
+        {
+        super(state, fieldPortrayal, draw,clip);
+        this.secondPoint = secondPoint;
+        }
+		
+	/*
     public EdgeDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint)
         {
         super(draw,clip);
         this.secondPoint = secondPoint;
         }
-        
+		
     public EdgeDrawInfo2D(Rectangle draw, Rectangle clip, Point2D.Double secondPoint)
         {
         super(draw,clip);
@@ -35,10 +43,11 @@ public class EdgeDrawInfo2D extends DrawInfo2D
         super(draw,clip);
         this.secondPoint = secondPoint;
         }
-
+	*/
+	
     public EdgeDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double secondPoint)
         {
-        super(other, translateX,translateY);
+        super(other, translateX, translateY);
         this.secondPoint = secondPoint;
         }
 

@@ -78,9 +78,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         super(properties,index,parent,simulation);
         generator = chartToUse( properties.getName(index), parent, simulation );
-        validInspector = (generator!=null);
+        setValidInspector(generator!=null);
 
-        if (validInspector)
+        if (isValidInspector())
             {
             globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
             // make sure that when the window is closed, the stopper is stopped
@@ -130,7 +130,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator.getFrame().addWindowListener(wl);
 
         globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
-        validInspector = (this.generator!=null); //this should always be true.
+        setValidInspector(this.generator!=null); //this should always be true.
         }
     
     /** Used to find the global attributes that another inspector has set so I can share it. */
@@ -202,23 +202,24 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         }
         
                                         
-    static final int AGGREGATIONMETHOD_CURRENT = 0;
-    static final int AGGREGATIONMETHOD_MAX = 1;
-    static final int AGGREGATIONMETHOD_MIN = 2;
-    static final int AGGREGATIONMETHOD_MEAN = 3;
+    protected static final int AGGREGATIONMETHOD_CURRENT = 0;
+    protected static final int AGGREGATIONMETHOD_MAX = 1;
+    protected static final int AGGREGATIONMETHOD_MIN = 2;
+    protected static final int AGGREGATIONMETHOD_MEAN = 3;
         
-    static final int REDRAW_ALWAYS = 0;
-    static final int REDRAW_TENTH_SEC = 1;
-    static final int REDRAW_HALF_SEC = 2;
-    static final int REDRAW_ONE_SEC = 3;
-    static final int REDRAW_TWO_SECS = 4;
-    static final int REDRAW_FIVE_SECS = 5;
-    static final int REDRAW_TEN_SECS = 6;
-    static final int REDRAW_DONT = 7;
+    protected static final int REDRAW_ALWAYS = 0;
+    protected static final int REDRAW_TENTH_SEC = 1;
+    protected static final int REDRAW_HALF_SEC = 2;
+    protected static final int REDRAW_ONE_SEC = 3;
+    protected static final int REDRAW_TWO_SECS = 4;
+    protected static final int REDRAW_FIVE_SECS = 5;
+    protected static final int REDRAW_TEN_SECS = 6;
+    protected static final int REDRAW_DONT = 7;
         
-    /** The Global Attributes panel (the top-left panel) of this ChartingPropertyInspector.  Note that this
+    /* The Global Attributes panel (the top-left panel) of this ChartingPropertyInspector.  Note that this
         panel is shared with other inspectors using the same chart. */
-    protected GlobalAttributes globalAttributes;
+	GlobalAttributes globalAttributes;
+	public GlobalAttributes getGlobalAttributes() { return globalAttributes; }
 
     /** The Global Attributes panel (the top-left panel) of ChartingPropertyInspectors. */
     protected class GlobalAttributes extends JPanel

@@ -7,6 +7,7 @@
 package sim.portrayal;
 import java.awt.*;
 import java.awt.geom.*;
+import sim.display.*;
 
 /**
    The DrawInfo2D class provides two Rectangles which define a simple drawing situation.
@@ -50,6 +51,7 @@ import java.awt.geom.*;
 
 public class DrawInfo2D
     {
+	public GUIState gui;
     public FieldPortrayal2D fieldPortrayal;
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
@@ -57,6 +59,7 @@ public class DrawInfo2D
     public boolean precise;
     public Object location;
     
+	/*
     public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
         {
         this.draw = draw; this.clip = clip; precise = false;
@@ -68,7 +71,20 @@ public class DrawInfo2D
         this.clip = new Rectangle2D.Double(clip.x, clip.y, clip.width, clip.height);
         precise = false;
         } 
+	*/
 
+    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
+        {
+        this.draw = new Rectangle2D.Double();
+        this.draw.setRect(draw.getFrame());
+        this.clip = new Rectangle2D.Double();
+        this.clip.setRect(clip.getFrame());
+        precise = false;
+		this.gui = gui;
+		this.fieldPortrayal = fieldPortrayal;
+        }
+
+/*
     public DrawInfo2D(RectangularShape draw, RectangularShape clip)
         {
         this.draw = new Rectangle2D.Double();
@@ -77,7 +93,7 @@ public class DrawInfo2D
         this.clip.setRect(clip.getFrame());
         precise = false;
         }
-        
+*/
     public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)
         {
         Rectangle2D.Double odraw = other.draw;
@@ -85,6 +101,7 @@ public class DrawInfo2D
         Rectangle2D.Double oclip = other.clip;
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
         precise = other.precise;
+		gui = other.gui;
         }
         
     public DrawInfo2D(DrawInfo2D other)

@@ -75,7 +75,7 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
 			getGenerator().setDomainAxisLabel(properties.getName(index));
 			}
 
-        if (validInspector)
+        if (isValidInspector())
             {
             // add our series
             seriesAttributes = ((HistogramGenerator)generator).addSeries(previousValues, DEFAULT_BINS, properties.getName(index), 

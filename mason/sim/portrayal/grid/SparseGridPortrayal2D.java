@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.*;
 import java.awt.geom.*;
 import sim.portrayal.inspector.*;
+import sim.display.*;
 
 /**
    Can be used to draw both continuous and discrete sparse fields.
@@ -64,6 +65,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
     
     public Double2D getScale(DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -73,6 +76,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
         return new Double2D(xScale, yScale);
+		}
         }
 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
@@ -88,6 +92,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
+		synchronized(fieldPortrayalInfo.gui.state.schedule)
+			{
         final SparseGrid2D field = (SparseGrid2D)this.field;
         if (field==null) return;
         if (field.getObjectLocation(object) == null) return;
@@ -101,17 +107,23 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
             if (location != null)
                 field.setObjectLocation(object, location);
             }
+			}
         }
 
-    public Object getObjectLocation(Object object)
+    public Object getObjectLocation(Object object, GUIState gui)
         {
+		synchronized(gui.state.schedule)
+			{
         final SparseGrid2D field = (SparseGrid2D)this.field;
         if (field==null) return null;
         return field.getObjectLocation(object);
+		}
         }
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
+		synchronized(info.gui.state.schedule)
+			{
         final Grid2D field = (Grid2D) this.field;
         if (field==null) return null;
 
@@ -121,7 +133,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
 
         Int2D loc = (Int2D)location;
         if (loc == null) return null;
@@ -137,6 +149,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         newinfo.draw.y += newinfo.draw.height / 2.0;
 
         return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+		}
         }
         
         
@@ -159,7 +172,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
-        DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0,0, xScale, yScale),
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
             info.clip);  // we don't do further clipping 
         newinfo.fieldPortrayal = this;
 

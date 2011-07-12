@@ -28,9 +28,8 @@ import java.awt.*;
     In this second case (and for good measure the first case), you should provide a button 
     which manually updates the inspector via updateInspector().  The easiest way to do get such
     a button is to call makeUpdateButton(), which will do it for you.  You can then stick the
-    button in your inspector.  When pressed this button will call updateButtonPressed(), which you can override
-    as you like (by default, updateButtonPressed() simply calls updateInspector() to update the inspector).
-    
+    button in your inspector.
+	
     <p><b>The Stopper.</b>  Most inspectors, particularly volatile ones, are scheduled repeating and so need
     to have a way to be stopped if the user closes the inspector's window or otherwise clears it out.  Normally
     the system gets this Stoppable after scheduling the inspector repeating.  Before it uses it, it first calls
@@ -120,10 +119,11 @@ public abstract class Inspector extends JPanel
             };
         }
     
-    /** If you've added an UpdateButton with makeUpdateButton(), it will call updateButtonPressed
+    /* If you've added an UpdateButton with makeUpdateButton(), it will call updateButtonPressed
         when it is pressed, which by default will call updateInspector().  Override this
-        method if that's not the behavior you want. */
-    protected void updateButtonPressed()
+        method if that's not the behavior you want.
+	*/
+    final protected void updateButtonPressed()
         {
         updateInspector();
         }
@@ -147,7 +147,7 @@ public abstract class Inspector extends JPanel
             {
             public void actionPerformed(ActionEvent e)
                 {
-                updateButtonPressed();
+                updateInspector();
                 }
             });
         return jb;
