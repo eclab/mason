@@ -2115,3 +2115,4 @@ Version 16
 		protected (they were package-level).
 	Made ChartingPropertyInspector.globalAttributes private and added getGlobalAttributes()
 	Console now indicates where the first problematic class is on loading
+	OrientedPortrayal2D now has precise drawing as an option
