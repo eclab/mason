@@ -230,9 +230,9 @@ George Mason University}
 
 \chapter{Introduction}
 
-MASON is a multiagent simulation toolkit designed to support large numbers of agents relatively efficiently on a single machine.  MASON has no domain-specific features: it is not a robotics simulator like TeamBots or Player/Stage, nor is it a game library.  Instead it belongs in the class of domain-independent simulators which might be unfairly described as ``dots on a screen'' simulators, such as Repast, StarLogo, and NetLogo, and of course, the venerable SWARM.
+MASON is a multiagent simulation toolkit designed to support large numbers of agents relatively efficiently on a single machine.  MASON has no domain-specific features: it is not a robotics simulator like TeamBots or Player/Stage, nor is it a game library.  Instead it belongs in the class of domain-independent simulators which might be unfairly described as ``dots on a screen'' simulators, such as Repast, Ascape, StarLogo, NetLogo, and of course, the venerable SWARM.
 
-I call these simulators ``ultra-lightweight'' multiagent simulation toolkits.  They're popular for problems which involve many relatively simple agents and arbitrary problems, and are common in areas like artificial life, population biology, computational social sciences, complexity science, artificial intelligence, and (in my case) robotics.
+I call these simulators ``ultra-lightweight'' multiagent simulation toolkits.  They're popular for problems which involve many relatively simple agents and arbitrary problems, and are common in areas like artificial life, population biology, computational social sciences, complexity science, artificial intelligence, and (in my case) swarm robotics and mulitrobotics.
 
 I use ultra-lightweight multiagent simulation toolkits because of previous experience in domain-specific ones.  Among other things, I do research in swarm robotics and multirobotics, but often apply it to other scenarios (vehicular traffic, crowds of people, etc.), and have found that it's easier and {\it much less buggy} to add domain features to a general toolkit than it is to strip out features from a domain-specific one.  The process of stripping out features, or working around them, leads to all sorts of dangling stuff which bites you in the end.  I'm sure this isn't an uncommon experience among simulation writers.
 
@@ -269,6 +269,23 @@ Since then MASON has developed considerably.  It now has much more visualization
 I think MASON has done pretty well: it's fast and clean and has a small, modular, and orthogonal model.  It's had a strong influence (I think) on other toolkit development in the field, particularly Repast.  And MASON has been used for everything from small gridworld simulations to learning from demonstration on real robots to game development to large (up to millions of agents) simulations of fish, economic agents, swarm robots, and unmanned aerial vehicles.
 
 \paragraph{What MASON Stands For} It's a backronym, for which the blame may be placed squarely on the shoulders of John Grefenstette.  Notionally it stands for Multi-Agent Simulation Of ... (we can't figure out a good ``N'').  Claudio likes to add ``Neighborhoods and Networks'', but that'd be NN!
+
+\section{Architectural Layout}
+
+\begin{wrapfigure}{r}[0in]{3.7in}
+\vspace{-4em}\hfill\includegraphics[width=3.7in]{MASONLayout.pdf}\vspace{-3em}\end{wrapfigure}
+
+MASON is broken into two pieces.  The first part is the {\bf model} (the simulation proper) and the second part is the {\bf visualization}, presently either in 2D or in 3D.  Except when you choose to have model objects display themselves, the model and visualization are entirely separated.  This means that the model can be run without visualization; run with visualization of different sorts; and have its visualization changed, added, or removed at any time.  The model can also be {\bf checkpointed}, meaning it can be frozen and written out to disk, to be thawed out and continued even on another kind of computer.
+
+At right is a general overview of the MASON architecture.
+
+\paragraph{Model}  MASON's model is entirely encapsulated in a special object called \class{sim.engine.SimState}.  It contains a discrete event {\bf schedule} on which you can schedule various {\bf agents} to be called at some time in the future.  This facility is a MASON model's representation of {\bf time}. Additionally, the model contains one or more {\bf fields} to represent {\bf space}.  A field is nothing more than an arbitrary data structure relating various {\bf objects} or {\bf values} together.  MASON provides a number of built-in fields, such as networks, continuous space, and grids.  Last but not least, MASON's model contains a high-quality {\bf random number generator}.
+
+\paragraph{Visualization} MASON provides both 2D and 3D visualization tools for models: and various plug-in facilities provide additional visualization (such as for GIS).  A visualization is encapsulated in an object called a\class{sim.display.GUIState}.  This contains an object called a {\bf controller} whose job is to start, stop, and otherwise manipulate the schedule.  The most common controller is a window called a {\bf console}.  The controller or console also manages some number of windows called {\bf displays}, which handle 2D or 3D visualization.  Displays visualize fields using one or more {\bf field portrayals}.  A field portrayal often (but not always) visualizes individual objects or values in fields by calling forth a {\bf simple portrayal} designed to visualize that particular object or value. Finally, after selecting objects with the mouse, simple portrayals often create {\bf inspectors} which provide further inspection of model details.
+
+\paragraph{Utilities} MASON has a large set of utilities to support model design.  These include random number distributions, various collections objects, objects for inspecting Java Bean Properties, points in space, a host of GUI widgets, movie and picture generation, and chart generation.  Many of MASON's utility objects have since found their way into other agent-based simulation toolkits.
+
+\paragraph{Demo Applications} MASON comes with many demos and tutorials, all of which are stored in the same directory, \file{app}. 
 
 \section{Unpacking MASON}  When you download and unzip MASON, you'll get a directory consisting of the following things:
 
@@ -2441,7 +2458,7 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 \item Erlang
 \item Geometric
 \item Lambda
-\item Laplace,
+\item Laplace
 \item Logistic
 \item Power-Law
 \item Triangular
@@ -2454,7 +2471,7 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 
 MASON has a large number of consistent wrapper classes for 2D and 3D coordinates.  Java also has classes for 2D and 3D coordinates: for example, the \class{java.awt.Point} class wraps two integers (x and y), and the \class{java.awt.Point2D.Double} class wraps two doubles.  However Java's classes have severe deficiencies.  The most serious problem with them is that they are broken when used as keys in hash tables.  Sun in its infinite wisdom made a serious error in how it handles hashcode generation and equality testing in these classes, and so if you use them in hash tables, you will regret it.\footnote{Specifically: the classes hash by value rather than by pointer, yet they can have their values changed.  So if you hash an object keyed with a Point2D.Double, then change the values of the Point2D.Double, the object is lost in the hash table.}
 
-To fix this, MASON has its own coordinate classes, in two forms, {\bf immutable} and {\bf mutable}.  Immutable instances may not have their values changed once set during instantiation.  The immutable classes work well as keys in hash tables.  Mutable instances can have their values changed freely.  MASON's mutable classes have the same problem as Sun's classes, but they are at least consistent, code-wise with the immutable classes.  The mutable classes also have many more mathematical operations available.
+To fix this, MASON has its own coordinate classes, in two forms, {\bf immutable} and {\bf mutable}.  Immutable instances may not have their values changed once set during instantiation.  The immutable classes work well as keys in hash tables.  Mutable instances can have their values changed freely.  MASON's mutable classes have the same problem as Sun's classes, but they are at least consistent, code-wise, with the immutable classes.  The mutable classes also have many more mathematical operations available.
 
 The classes are:
 
@@ -2718,8 +2735,22 @@ int n = bag.size();\\
 for(int i = 0; i < n; i++)  System.out.println(bag.get(i));
 }
 
+\paragraph{Iterators} Instead of a for-loop, you could of course use an Iterator, one of:
 
-\paragraph{IntBag and DoubleBag}  These classes are very close to identical to Bag, except that instead of Objects, they store ints or doubles respectively.  They are missing methods involving Collections, Comparators, and Iterators, but otherwise follow the identical template as Bag.  We won't write them out here\,---\,too redundant. Refer to the Bag methods below.
+\java{%
+Iterator iter = bag.iterator();\\
+while(iter.hasNext()) System.out.println(iter.next());
+}
+
+\noindent ... or ...
+
+\java{%
+for(Object o :\ bag) System.out.println(o);
+}
+
+\noindent ... but you should be warned: Java's iterators are very slow.  They involve un-linlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.
+
+\paragraph{IntBag and DoubleBag}  These classes are very similar to Bag, except that instead of Objects, they store ints or doubles respectively.  They are missing methods involving Collections, Comparators, and Iterators (boxing and unboxing is just too slow to be of value), but otherwise follow the identical template as Bag.  We won't write them out here\,---\,too redundant. Refer to the Bag methods below.
 
 \paragraph{Bag} Bag has all the standard constructors and methods you'd expect in an extensible array:
 
@@ -2851,11 +2882,11 @@ public double getTemperature();\\
 public void setTemperature(float val);\\
 }
 
-If you name methods with the proper rules, MASON will automatically recognize them as Java Bean Properties: you need to nothing more.\footnote{Java by convention has since used Java Bean Properties as the ``standard'' pattern for getters and setters.  You will notice that a number of MASON objects violate this convention in one fashion or another.  This is by design: usually because MASON explicitly doesn't those methods to show up as properties in user interfaces by default.}
+If you name methods with the proper rules, MASON will automatically recognize them as Java Bean Properties: you need do nothing further.\footnote{Java by convention has since used Java Bean Properties as the ``standard'' pattern for getters and setters.  You will notice that a number of MASON objects violate this convention in one fashion or another.  This is by design: usually because MASON explicitly doesn't want those methods to show up as properties in user interfaces by default.}
 
 \paragraph{MASON Extensions to Java Bean Properties} 
 
-Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: String and StringBuffer have the \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
+Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: String and StringBuffer have \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
 
 In some cases you may wish to hide a property \method{Foo} so MASON GUI widgets don't display it to the user.  This is easy to do with MASON's special \method{hideFoo()} extension.  If this method returns \variable{true}, then MASON will ignore that property.  For example:
 
@@ -2878,7 +2909,7 @@ public void setAngle(double val)  // convert to between 0 ... 2 Pi \\
 \noindent ... you can let MASON know that \(0 ... 2 \pi\) is the range of the property like this:
 
 \java{%
-public Object domAngle() { return new sim.util.Interval(0.0 , 2 * Math.PI); }
+public Object domAngle() \{ return new sim.util.Interval(0.0 , 2 * Math.PI); \}
 }
 
 MASON GUI widgets will respond by displaying your property not as a text field but as a {\bf slider} from the minimum to maximum values.
@@ -2896,7 +2927,7 @@ The \method{domFoo()} mechanism is special to MASON, and it must always be typed
 \mthd{public boolean isDouble()} Returns whether the interval is defined in terms of doubles (as opposed to longs).
 \end{methods}
 
-But that's not all!  {\it Integer} properties (those with a type of \variable{int} only), you can also get MASON GUI widgets to display your property as a {\bf pop-up menu}.  It works like this.  The valid domain of your properties is assumed to be from \(0 ... i\) inclusive, for example:
+You can use the slider domain trick with integer or long (etc.) properties as well.  But that's not all!  With integer properties (only those with with a type of \variable{int}), you can also get MASON GUI widgets to display your property as a {\bf pop-up menu}.  It works like this.  Let's say that the valid domain of your properties is from some \(0 ... i\) inclusive, for example:
 
 \java{%
 public static int DEMOCRAT = 0;\\
@@ -2982,7 +3013,7 @@ The way this is done is to create an Object which is \Class{sim.util.Propertied}
 \mthd{public Properties properties()} Returns the proxy for the Object.
 \end{methods}
 
-You will be required to implement {\it at least} the following methods:
+The Properties object you provide will be required to implement {\it at least} the following methods:
 
 
 \begin{methods}{\class{sim.util.Properties} Abstract}
@@ -3383,7 +3414,7 @@ Most Steppable objects are more or less MASON's concept of {\bf agents}: computa
 For example, suppose you have a robot as an agent, and it has been posted on the schedule.  Each time the schedule steps it, the robot advances by some epsilon.  Or perhaps you have a thousand fish scheduled on the schedule.  Each time a fish is stepped, it makes a decision to swim a little bit in some new direction.  Or maybe you have a social network.  Each time a person on the network is stepped, he changes his internal state a bit based on the current opinions of his neighbors on the network.
 
 \subsection{Scheduling}
-MASON's Schedule is little more than a binary queue with a current real-valued {\bf simulation time} and a current number of {\bf steps} (the count of how often \method{schedule.step(...)} has been called by the top-level loop).    The Schedule defines certain important constants:
+MASON's Schedule is little more than a binary heap with a current real-valued {\bf simulation time} and a current number of {\bf steps} (the count of how often \method{schedule.step(...)} has been called by the top-level loop).    The Schedule defines certain important constants:
 
 \java{%
     public static final double EPOCH = 0.0;\\
@@ -3393,7 +3424,7 @@ MASON's Schedule is little more than a binary queue with a current real-valued {
     public static final double MAXIMUM\_INTEGER;
 }
 
-When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not a finite number of these: at some (very high) value, the integer timestamp becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than the timestamp~+~1.  You should be aware of this point.
+When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not a finite number of these: at some (very high) value, the timestamp becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than just timestamp~+~1.  That high value is \variable{MAXIMUM\_INTEGER}, and you probably should do integer scheduling beyond it.
 
 Here are some methods for accessing the current time and steps:
 
@@ -3472,13 +3503,13 @@ If you like you can clear out the entire Schedule.  There are two methods to do 
 \mthd{public boolean scheduleComplete()} Returns true if the Schedule is empty.
 \end{methods}
 
-{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods,} as they don't clear out AsynchronousSteppables (see below).  Instead there is a special SimState method which does the task for you:
+{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods,} as they don't clear out AsynchronousSteppables (we'll discuss them below).  Instead there is a special SimState method which does the task for you:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void kill()} Clears the schedule, pushes the Schedule's time forward to \variable{AFTER\_SIMULATION}, and clears out all AsynchronousSteppables.
 \end{methods}
 
-Note that this method should NOT be called from within the \method{step()} methods of AsynchronousSteppables, ParallelSequences, or other agents with non-primary threads, as it will cause a deadlock.  Instead, these kinds of agents can kill the simulation by scheduling an agent for the immediate next timestep which itself calls \method{kill()}.  For example:
+Note that this method should NOT be called from within the \method{step()} methods of AsynchronousSteppables, ParallelSequences (discussed later), or other agents with non-primary threads, as it will cause a deadlock.  Instead, these kinds of agents can kill the simulation by scheduling an agent for the immediate next timestep which itself calls \method{kill()}.  For example:
 
 \java{%
 schedule.scheduleOnceIn(0,\\
@@ -3659,8 +3690,8 @@ Actually you can.  Just create an anonymous wrapper Steppable and schedule it in
 
 \java{%
 	final Object myObject = ... \\
-	Steppable even = new Steppable() \{public void step(SimState state) \{ myObject.foo(); \}\};\\
-	Steppable odd = new Steppable() \{public void step(SimState state) \{ myObject.bar(); \}\};\\
+	\hbox{Steppable even = new Steppable() \{ public void step(SimState state) \{ myObject.foo(); \}\};}\\
+	Steppable odd = new Steppable() \{ public void step(SimState state) \{ myObject.bar(); \}\};\\
 	schedule.scheduleRepeating(0.0, even, 2.0);\\
 	schedule.scheduleRepeating(1.0, odd, 2.0);
 }
@@ -3905,7 +3936,7 @@ Though you'll never call them, there are three methods you should be aware of wh
 There's nothing magic about many of these representations: but they're helpful for two reasons.  First, they present a consistent interface with a variety of helpful functions, and second, MASON has field portrayals already written for them, so you don't have to write one.
 
 \begin{figure}[t]
-\begin{center}\includegraphics[width=6in]{GridUML.pdf}\end{center}
+\begin{center}\includegraphics[width=6.5in]{GridUML.pdf}\end{center}
 \caption{UML diagram of MASON's 2-dimensional and 3-dimensional grid classes.}
 \label{GridUML}
 \end{figure}
@@ -3925,7 +3956,7 @@ Grids are found in the MASON package \Package{sim.field.grid}; a few minor abstr
 
 These classes extend certain abstract classes and interfaces.  All 2-dimensional grids implement the interface \Class{sim.field.grid.Grid2D}, which provides various utility methods discussed in a moment (similarly all 3-dimensional grids implement \Class{sim.field.grid.Grid3D}).  The bounded 2-dimensional grids (IntGrid2D, DoubleGrid2D, and ObjectGrid) share a common abstract implementation of a number of these methods by subclassing the abstract class \Class{sim.field.grid.AbstractGrid2D} (and likewise the bounded 3-dimensional grids implement \Class{sim.field.grid.AbstractGrid3D}).
 
-\Class{sim.field.grid.SparseGrid2D} (and \Class{sim.field.grid.SparseGrid3D}) is a bit different.  It stores Objects at \(X, Y\) (or \(X,Y,Z\)) locations using a hash table.  Unlike an array, this allows multiple Objects to be stored at the same location, and also allows arbitrarily large grids, indeed unbounded, grids of sparse numbers of objects without the memory overhead incurred by arrays.  And you can look up all Objects within a certain distance, and find the location of an object quickly.  It's also got a lot more overhead than a simple array.
+\Class{sim.field.grid.SparseGrid2D} (and \Class{sim.field.grid.SparseGrid3D}) is a bit different.  It stores Objects at \(X, Y\) (or \(X,Y,Z\)) locations using a hash table.  Unlike an array, this allows multiple Objects to be stored at the same location, and also allows arbitrarily large, indeed unbounded, grids of objects without the memory overhead incurred by arrays.  And you can find the location of an object quickly.  But a Sparse Grid also has a lot more overhead than a simple array.
 
 SparseGrid2D and SparseGrid3D are both manifestations of the same abstract superclass \Class{sim.field.SparseField}, which handles the general hashtable lookup issues.  SparseField has been set up to make it easy for you to implement your own sparse fields if you care to.  SparseGrid2D also implements two methods, found in the interface \Class{sim.field.SparseField2D} which make it more useful to 2-dimensional Portrayals:\footnote{We've not needed an equivalent for 3-dimensional portrayals yet: but may eventually.}
 
@@ -4121,7 +4152,7 @@ The various other classes have equivalent methods (the 3-dimensional classes obv
 
 
 \paragraph{A Hint on Scanning}
-Java doesn't have 2- and 3-dimensional arrays.  It has {\it arrays of arrays} or {\it arrays of arrays of arrays}.  This means that every time you access a 2-dimensional array cell (say) using \code{field[x][y]} Java must first verify that \code{field} is non-null, then check that \code{x} is within the X dimensions of \code{field}, then check that \code{field[x]} is non-null, then finally check that \code{y} is within the Y dimensions of \code{field[x]}.  For 3-dimensional arrays, this is even worse.
+Java doesn't have 2- and 3-dimensional arrays.  It has {\it arrays of arrays} or {\it arrays of arrays of arrays}.  This means that every time you read a 2-dimensional array cell (say) using \code{field[x][y]} Java must first verify that \code{field} is non-null, then check that \code{x} is within the X dimensions of \code{field}, then check that \code{field[x]} is non-null, then check that \code{y} is within the Y dimensions of \code{field[x]}, then finally return \code{field[x][y]}.  For 3-dimensional arrays, this is even worse.
 
 That's a lot of checking.  But there's a way to reduce it 2- or 3-fold.  If you want to scan through your field, instead of saying:
 
@@ -4137,7 +4168,7 @@ Instead, use the following pattern (using DoubleGrid2D as an example):
 double[] fieldx = grid.field;
 for(int i = 0; i < fieldx.length; i++)
     {
-    double[] field = fieldx[i];
+    double[] fieldy = fieldx[i];
     for(int j=0; j < fieldy.length; j++)
         doSomethingWith(fieldy[j]);
     }
@@ -4552,8 +4583,8 @@ The hard choice is between dense and sparse grids.  My recommendation: use a spa
 Supported Grid Types&Bounded, Toroidal&Bounded, Toroidal&Bounded, Toroidal, Unbounded\\
 Objects per Location&0 or 1&Any Number&Any number\\
 Locations per Object&Any number&Any Number&0 or 1\\
-Object May Exist Multiply at a Location&No&Yes&No\\
-Scales With Larger&Grid Sizes&Grid Sizes&Numbers of Agents\\
+Object May Exist Multiply at Same Location&No&Yes&No\\
+Scales with Larger&Grid Sizes&Grid Sizes&Numbers of Agents\\
 Scanning over Objects&No&No&Yes\\
 Scanning over Locations&Yes&Yes&Yes, with constant overhead\\
 Neighborhood Queries&Yes&Yes&Yes, with constant overhead\\
@@ -4874,14 +4905,15 @@ Here's how you access these values:
 \mthd{public Network owner()} Returns the Edge's owner.
 \mthd{public Object getFrom()} Returns the ``from'' Object.
 \mthd{public Object getTo()} Returns the ``to'' Object.
-\mthd{public int indexFrom()} Returns the index of the ``from'' Object in the Edge's owner.
-\mthd{public int indexTo()} Returns the index of the ``to'' object in the Edge's owner.
+\mthd{public Object getOtherNode(Object node)} Returns the node on the other side of the edge from the provided node.  If the provided node is equal to \method{getFrom()}, then \method{getTo()} is returned.  If the node is equal to \method{getTo()}, then \method{getFrom()} is returned.  If the node is equal to neither, then \method{getFrom()} is returned.  This method is useful for undirected graphs where \method{getFrom()} and \method{getTo()} are relatively meaningless.
+\mthd{public int indexFrom()} Returns the index of the ``from'' Object in the Edge's owner.  This is an efficiency mechanism used internally by the Network object.
+\mthd{public int indexTo()} Returns the index of the ``to'' object in the Edge's owner.  This is an efficiency mechanism used internally by the Network object.
 \mthd{public Object getInfo()} Returns the ``info'' Object (the label or weight).
 \mthd{public void setInfo(Object val)} Sets the ``info'' Object (the label or weight).
 \mthd{public double getWeight()} Returns the ``info'' Object as a weight.  If the Object is a subclass of \Class{java.lang.Number}, its \method{doubleValue()} is returned.  Else if the Object implements the \Class{sim.util.Valuable} interface, its \method{doubleValue()} is returned.  Else 0 is returned.
-Creates a duplicate of the given edge.
-\mthd{public Edge(Object from, Object to, Object info)}
-Creates an Edge from the given object, to the given object, and with the given label or weight (info).
+\mthd{public boolean getDirected()} Returns whether or not the Edge is directed.
+\mthd{public int compareTo(Object obj)} Compares the edge to the given object (which should be an Edge).  Comparison is only relevant if the given object is an Edge and if both info objects of the two Edges are subclasses of \class{java.lang.Number} or are \class{sim.util.Valuable}.  In this case, -1 is returned if this Edge's info is less than the provided Edge's info, 1 if it is greater, and 0 if they are equal.  In all other cases, 0 is returned.
+\mthd{public String toString()} Returns a string description of the Edge.
 \end{methods}
 
 \section{Using a Network} 
@@ -6157,6 +6189,7 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
 \item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the Display2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}.
+\item The {\bf GUIState}.
 \end{itemize}
 
 These six variables are publicly accessible:
@@ -6167,7 +6200,8 @@ These six variables are publicly accessible:
     public Rectangle2D.Double clip;\\
     public boolean selected;\\
     public boolean precise;\\
-    public Object location;
+    public Object location;\\
+    public GUIState gui;
 }
 
 \paragraph{What's the point of DrawInfo2D?} DrawInfo2D basically stores graphics context information (scaling, translating, clipping).  You might be asking yourself: why do this when there's a perfectly good graphics context system in the form of Graphics2D's clip region and affine transforms?  There are several reasons.  First, DrawInfo2D is somewhat faster: because it doesn't allow rotation, we don't have to repeatedly apply, then remove, affine transform matrices.  Second, and more importantly, Graphics2D's affine transform mechanism scales {\it everything}: font sizes, line thicknesses, etc., when one zooms in. Very often  this is {\it not} what we want.  By using DrawInfo2D we can choose to scale line thickness (for example) if we wish.  With affine transforms we have no choice.  Third, DrawInfo2D is {\it much simpler to understand}.  It's probably not reasonable to ask simulation developers to perform rigorous affine transformation and resets on Java's graphics library.  Fourth, if you want to use AWT instead of Java2D (it's often much faster), affine transforms aren't even an option.
@@ -6672,7 +6706,7 @@ Next we're going to do the actual drawing, by overriding the \method{draw(...)} 
 	\end{enumerate}
 \end{enumerate}
 
-For our purposes this will suffice: but obviously for a Field with lots of objects, you'll want to have a more sophisticated way of whittling down which objects get drawn on-screen: instead of doing the \(O(n)\) process of going through every object on the Field, you might extract objects only from that portion of the Field which overlap with the Clip rectangle.
+For our purposes this will suffice: but obviously for a Field with lots of objects, you'll want to have a more sophisticated way of whittling down which objects get drawn on-screen: instead of doing the \(O(n)\) process of going through every object on the Field, you might extract objects only from that portion of the Field which overlaps with the Clip rectangle.
 
 You'll notice in the code below the use of a ``slop'' variable.  What's going on here is: objects can have their centers off-screen but still overlap somewhat on-screen.  Since objects generally are drawn filling a \(1 \times 1\) square in field coordinates, a 0.5 slop in our drawn bounds should be sufficient to guarantee objects will be drawn.  If you have objects taking up a larger area than this, you may have to make the slop bigger in this example.  A slop of this size will also nicely work when doing hit-testing later on.
 
@@ -7092,7 +7126,7 @@ ShapePortrayal2D has an additional variable you can set:
     public Stroke stroke;\ \ \ // the Stroke with which to draw the shape
 }
 
-If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.
+If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
 
 These classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
 
@@ -7126,6 +7160,8 @@ ImagePortrayal2D has a number of unusual constructors, so it's worthwhile explai
 \end{methods}
 
 You could override ImagePortrayal2D to change its image to reflect a change in status of the underlying object, but it's not very efficient.  Instead I'd use a special wrapper portrayal, \class{sim.portrayal.simple.FacetedPortrayal2D} instead.  See Section \ref{sim.portrayal.simple.FacetedPortrayal2D}.
+
+A {\bf warning about ImagePortrayal2D}: like ShapePortrayal2D, it's not serializable (because Images aren't serializable).  This means that if you create an agent which is a {\it subclass} of ImagePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
 
 \subsection{Value Simple Portrayals}
 
@@ -7957,12 +7993,15 @@ This code essentially replaces a \method{repaint()} call.  I'd use it in Inspect
 
 \java{%
 synchronized(gui.state.schedule) \{\\
-\ \ \ \ {\it do your code which changes the object}\\
+\indent {\it do your code which changes the object}\\
+\indent \}
 }
 
 Due to a design oversight, the GUIState is not provided in \method{updateInspector()}\,---\,you'll have to hold onto it some other way, perhaps passed in via a constructor;.
 
-\subsection{Volatility}  As discussed in Section \ref{volatility}, basic Inspectors can be {\bf volatile} (or not).  The definition is simple: a volatile inspector has its \method{updateInspector()} method called by MASON every iteration of the model.  A non-volatile inspector does not: instead \method{updateInspector()} is only called in special circumstances.
+\subsection{Volatility}  
+\label{volatility}
+As discussed in Section \ref{volatility}, basic Inspectors can be {\bf volatile} (or not).  The definition is simple: a volatile inspector has its \method{updateInspector()} method called by MASON every iteration of the model.  A non-volatile inspector does not: instead \method{updateInspector()} is only called in special circumstances.
 
 Ordinarily you'd want a volatile inspector.  But it's expensive to constantly update that Inspector.  So for situations (such as a Model Inspector) where the Inspector cannot be closed, you have the option of setting it to be non-volatile.  This is helpful particularly for Inspectors where the underlying object data is not expected to ever change except by the user as he modifies the Inspector.
 
@@ -7992,6 +8031,7 @@ This button has a specific refresh icon which looks like: \includegraphics[scale
 
 
 \subsection{Inspectors, Steppables, and Windows}
+\label{inspectorssteppablesandwindows}
 
 MASON ordinarily updates volatile inspectors by scheduling a Steppable on the GUIState's minischedule.  This steppable is then called by the minischedule each time the simulation iterates.  MASON obtains this Steppable by calling the following method:
 
@@ -8092,6 +8132,8 @@ You probably will never need to use these classes, but it's useful to understand
 
 All Property Inspectors are subclasses of the abstract class \Class{sim.portrayal.inspector.PropertyInspector}.  A Property Inspector is not like a basic Inspector.  While a basic Inspector inspects a given {\it object} (or in some cases {\it value}), a Property Inspector inspects a {\it property of an object}.  While objects can't change, their properties can change.  
 
+Otherwise, Property Inspectors have many similarities to Basic Inspectors (which is natural, as they also ultimately subclass \class{sim.portrayal.Inspector}).  Specifically, they respond to the \method{updateInspector()} method to update themselves, handle volatility in the same way as basic inspectors, and handle steppables and JFrames in the same way.  In short, they basically have the same functionality that was found in Sections \ref{sim.portrayal.SimpleInspector} (introduction), \ref{volatility}, and \ref{inspectorssteppablesandwindows}.  You should review those Sections now if you've not recently read them.
+
 Property Inspectors are nearly always volatile, and unlike basic Inspectors, they are {\bf dynamically loaded at runtime}: they're basically plug-ins to MASON.  You can create property inspectors and add them to MASON and they'll appear everywhere for all applications.  Last, though Property Inspectors are JPanels, like all Inspectors, it's often the case that this JPanel is not displayed, or the Property Inspector creates a window which is shared with other Property Inspectors (such as multiple time series sharing the same chart).  All this means that Property Inspectors are quite a bit more complicated than basic Inspectors.  So get ready!
 
 \subsection{How Property Inspectors are Created}
@@ -8153,7 +8195,7 @@ Collectively, these methods are:
 
 \subsection{Charting Property Inspectors}
 
-\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting in a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides three Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
+\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides three Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
 
 \java{%
 public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
@@ -8253,14 +8295,33 @@ Compared to the Charting property inspectors, StreamingPropertyInspector is fair
 \item Stream to Standard Out (\code{System.out}).
 \end{itemize}
 
-Additionally, StreamingPropertyInspector can be overridden to provide a custom streaming location.
+Additionally, StreamingPropertyInspector can be subclassed so as to provide a custom streaming location.
 
-Nearly everything of relevance is handled by StreamingPropertyInspector's two constructors: one meant for user options, and one for custom streaming:
+Nearly everything of relevance is handled by StreamingPropertyInspector's two constructors: the first is the standard constructor, meant for user options.  The second one is for custom streaming:
 
 \begin{methods}{\class{sim.portrayal.inspector.StreamingPropertyInspector} Constructor}
 \mthd{public StreamingPropertyInspector(Properties properties, int index, Frame parent, GUIState gui)}  Produces a new StreamingPropertyInspector on the given property index, with the user choosing how the data is to be streamed out.
 \mthd{public StreamingPropertyInspector(Properties properties, int index, Frame parent, GUIState gui, PrintWriter stream, String streamName)} Produces a new StreamingPropertyInspector on the given property index, which writes to the provided stream, using the given name to describe the stream.
 \end{methods}
+
+So how do you make a custom streaming class?  For example, let's say you wanted to write out to a remote server via a socket.  You do it by creating a class which overrides the first constructor to call the second, like this:
+
+{\footnotesize\begin{verbatim}
+public class NetworkStreamer extends sim.portrayal.inspector.StreamingPropertyInspector
+    {
+    public NetworkStreamer(Properties properties, int index, Frame parent, GUIState gui)
+        {
+        // first open our stream
+        Socket sock = new Socket("myserver.com", 5000);
+        PrintWriter stream = new PrintWriter(sock.getOutputStream());
+        
+        // now construct ourselves with the stream
+        this(properties, index, parent, gui, stream, "Streaming to myserver.com");
+        } 
+    }
+\end{verbatim}}
+
+You'll need to add the class name to the \file{sim/portrayal/inspector/propertyinspector.classes} file. 
 
 \chapter{Visualization in 3D}
 \label{3d}
