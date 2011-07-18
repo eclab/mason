@@ -67,16 +67,16 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
     //I isolated this code from the constructor into this method because I have two constructors now. 
     private void setupSeriesAttributes(Properties properties, int index)
         {
-		if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-			{
-			// take control
-			getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-			getGenerator().setRangeAxisLabel("Frequency");
-			getGenerator().setDomainAxisLabel(properties.getName(index));
-			}
-
         if (isValidInspector())
             {
+			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+				{
+				// take control
+				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+				getGenerator().setRangeAxisLabel("Frequency");
+				getGenerator().setDomainAxisLabel(properties.getName(index));
+				}
+
             // add our series
             seriesAttributes = ((HistogramGenerator)generator).addSeries(previousValues, DEFAULT_BINS, properties.getName(index), 
                 new SeriesChangeListener()

@@ -2116,3 +2116,9 @@ Version 16
 	Made ChartingPropertyInspector.globalAttributes private and added getGlobalAttributes()
 	Console now indicates where the first problematic class is on loading
 	OrientedPortrayal2D now has precise drawing as an option
+	Bug fixes to ChartingPropertyInspector and subclasses: no longer will *all* charts
+		appear in the charts popup, but rather only those compatible with the 
+		chart being generated.  Also if the user cancels, an error is no longer issued
+		on the command line.
+	OvalPortrayal2D and RectanglePortrayal2D are serializable, making some demos work
+		properly serialized.

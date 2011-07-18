@@ -48,16 +48,16 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
     //I isolated this code from the constructor into this method because I have two constructors now. 
     private void setupSeriesAttributes(Properties properties, int index)
         {
-		if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-			{
-			// take control
-			getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-			getGenerator().setRangeAxisLabel("" + properties.getName(index));
-			getGenerator().setDomainAxisLabel("Time");
-			}
-
         if (isValidInspector())
             {
+			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+				{
+				// take control
+				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+				getGenerator().setRangeAxisLabel("" + properties.getName(index));
+				getGenerator().setDomainAxisLabel("Time");
+				}
+
             // add our series
             seriesAttributes = ((ScatterPlotGenerator)generator).addSeries(previousValues, properties.getName(index), 
                 new SeriesChangeListener()

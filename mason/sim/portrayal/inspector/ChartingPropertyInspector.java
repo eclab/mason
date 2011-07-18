@@ -39,7 +39,7 @@ import org.jfree.data.general.*;
 */
 
 public abstract class ChartingPropertyInspector extends PropertyInspector
-    {
+    {	
     /** The ChartGenerator used by this ChartingPropertyInspector */
     protected ChartGenerator generator;
     public ChartGenerator getGenerator() { return generator; }
@@ -168,7 +168,16 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     /** Used to find the global attributes that another inspector has set so I can share it. */
     ChartGenerator chartToUse( final String sName, Frame parent, final GUIState simulation )
         {
-        Bag charts = getCharts(simulation);
+        Bag charts = new Bag(getCharts(simulation));		// make a copy so I can reduce it
+
+		// reduce the charts to ones I can use
+		for(int i = 0; i < charts.numObjs; i++)
+			{
+			ChartGenerator g = (ChartGenerator)(charts.objs[i]);
+			if (!validChartGenerator(g))  // I can't use this chart
+				{ charts.remove(g); i--; }
+			}
+
         if( charts.numObjs == 0 )
             return createNewChart(simulation);
 
@@ -303,7 +312,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             {
             public void windowActivated(WindowEvent e) {}
             public void windowClosed(WindowEvent e) {}
-            public void windowClosing(WindowEvent e) { generator.quit();}
+            public void windowClosing(WindowEvent e) { generator.quit(); }
             public void windowDeactivated(WindowEvent e) {}
             public void windowDeiconified(WindowEvent e) {}
             public void windowIconified(WindowEvent e) {}

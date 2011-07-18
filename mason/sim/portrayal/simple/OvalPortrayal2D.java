@@ -36,10 +36,14 @@ public class OvalPortrayal2D extends SimplePortrayal2D
         this.filled = filled;
         }
 
-    Ellipse2D.Double preciseEllipse = new Ellipse2D.Double();
+	// we must be transient because Ellipse2D.Double is not serializable.
+	// We also check to see if it's null elsewhere (because it's transient).
+    transient Ellipse2D.Double preciseEllipse = new Ellipse2D.Double();
+	
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
+ 		if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width*scale + offset;
         final double height = draw.height*scale + offset;
@@ -70,6 +74,7 @@ public class OvalPortrayal2D extends SimplePortrayal2D
     /** If drawing area intersects selected area, add last portrayed object to the bag */
     public boolean hitObject(Object object, DrawInfo2D range)
         {
+		if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();
         final double SLOP = 1.0;  // need a little extra area to hit objects
         final double width = range.draw.width*scale;
         final double height = range.draw.height*scale;

@@ -42,7 +42,10 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
         return( range.clip.intersects( range.draw.x-width/2, range.draw.y-height/2, width, height ) );
         }
 
-    Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
+	// we must be transient because Rectangle2D.Double is not serializable.
+	// We also check to see if it's null elsewhere (because it's transient).
+    transient Rectangle2D.Double preciseRectangle = new Rectangle2D.Double();
+	
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {

@@ -49,8 +49,8 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
 
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, Frame parent, final GUIState simulation)
         {
-        super(properties,index,parent,simulation);
-        setupSeriesAttributes(properties, index);
+        super(properties,index,parent,simulation); 
+        setupSeriesAttributes(properties, index); 
         }
     
     public TimeSeriesChartingPropertyInspector(Properties properties, int index, final GUIState simulation, ChartGenerator generator)
@@ -62,16 +62,16 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
     //I isolated this code from the constructor into this method because I have two constructors now. 
     private void setupSeriesAttributes(Properties properties, int index)
         {
-		if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-			{
-			// take control
-			getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-			getGenerator().setRangeAxisLabel("" + properties.getName(index));
-			getGenerator().setDomainAxisLabel("Time");
-			}
-			
         if (isValidInspector())
             {
+			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+				{
+				// take control
+				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+				getGenerator().setRangeAxisLabel("" + properties.getName(index));
+				getGenerator().setDomainAxisLabel("Time");
+				}
+			
             chartSeries = new XYSeries( properties.getName(index), false );
 
             // add our series

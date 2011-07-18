@@ -116,9 +116,9 @@ public class Edge implements java.io.Serializable, Comparable
         }
                 
     /**
-       Returns the alternate to the provided node.  Specifically: if node == from(), then to() is
-       returned; else from() is returned.  Note that if node != from() AND node != to(), then
-       from() is still returned.
+       Returns the alternate to the provided node.  Specifically: if node == getFrom(), then getTo() is
+       returned; else getFrom() is returned.  Note that if node != getFrom() AND node != getTo(), then
+       getFrom() is still returned.
                 
        <p>This method is useful for various algorithms which operate both on undirected and on
        directed graphs; rather than knowing if you're "to" or "from", you can just "get the node on the
