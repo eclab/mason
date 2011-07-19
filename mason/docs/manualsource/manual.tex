@@ -8326,7 +8326,35 @@ You'll need to add the class name to the \file{sim/portrayal/inspector/propertyi
 \chapter{Visualization in 3D}
 \label{3d}
 
-Yet to come.
+MASON has extensive 3D visualization facilities using the Java3D toolkit.  This toolkit is standard on Mac OS X but is an optional install on Linux or Windows.
+
+Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a graph structure (really mostly a few trees) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are high-level than say) OpenGL, which is more akin to the low-level 2D instructions.
+
+MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  But it's useful to have a bit of a refresher.
+
+\section{Java3D and MASON}
+
+Java3D objects are displayed in Java using a Java Component called a \class{javax.media.j3d.Canvas3D}.  MASON uses a subclass of Canvas3D called \class{sim.display3D.CapturingCanvas3D} which, as befits its name, allows MASON to capture screenshots and movies of the scene.  A Canvas3D is associated with the top-level object in the Java3D scene graph, a \class{javax.media.j3d.Universe} object, of which MASON uses the standard subclass \class{com.sun.j3d.utils.universe.SimpleUniverse}.  The Universe defines things such as the viewing angle of the eye of the camera, and various \class{javax.media.j3d.BranchGroup} objects which form the roots of the scene graph.  MASON primarily uses a single branch group.
+
+BranchGroup is a subclass of \class{javax.media.j3d.Group}, which is a subclass of \class{javax.media.j3d.Node}.  Generally speaking, most of the remainder of the scene graph is one or more trees.  BranchGroups are usually the roots of the trees, other Group objects form nonleaf nodes in the trees, and other Nodes often form leaf nodes in these trees.\footnote{Actually that's not quite true: non-Group Nodes often have certain attributes attached to them which may be viewed as their children.  But it's more or less the idea to keep in mind.}
+
+From MASON's primary BranchGroup is hung a \class{javax.media.j3d.TransformGroup}, a special object which transforms all of its children (rotates them, translates them, scales them, etc.) as a group.  TransformGroups are very common in Java3D and in MASON's 3D facility.  A TransformGroup takes an Affine Transform object in the form of a \class{javax.media.j3d.Transform3D}.  The top-level TransformGroup's purpose is to allow the user to spin the entire scene.  Another secondary TransformGroup allows the background to be spun along with the scene.
+
+From the TransformGroup is hung two \class{javax.media.j3d.Switch}es, one hung from the other.  A Switch is a Group which can make its children visible or invisible at any time.  MASON uses them to turn on or off spotlights and ambient light, various auxiliary objects such as axes or frames, and of course each of the fields being portrayed.
+
+Also associated with the Universe are three {\bf behaviors}: objects which run in the background and modify the environment in response to events of different kinds.  Specifically, MASON has a \class{com.sun.j3d.util.sbehaviors.vp.OrbitBehavior} which causes the camera to move about in response to the mouse (scaling in and out, rotating the environment, or translating the environment); and also two custom MASON behaviors, a \class{sim.display3d.SelectionBehavior} for selecting objects in response to mouse clicks, and a \class{sim.display.ToolTipBehavior} for displaying tool tips in response to mouse hovering.
+
+Most 3D Field Portrayals in MASON are pretty simple: they use a single Transform3D to scale and translate the individual objects in field.    Some 3D FieldPortrayals instead define triangular meshes using a \class{javax.media.j3d.GeometryArray}, a kind of Java3D geometry node.  In the former case, once the Field Portrayal has transformed the location of the underlying object, it calls on 3D SimplePortrayal to actually add the objects in the scene.  SimplePortrayals generally add a TransformGroup to the scene (transformed by the Field Portrayal's Transform3D), and hang off of it various node objects which define the object visually.  Often they will add their own TransformGroup to do internal rotation and scaling, followed by various \class{javax.media.j3d.Shape3D} objects or \class{com.sun.j3d.utils.geometry.Primitive}s such as cones or cylinders or spheres.  SImple Portrayals provide functions to dress up these Shape3D and Primitive objects using \class{javax.media.j3d.Appearance} objects, which are groupings of a variety of appearance features, such as material, light, color, texture, etc.}
+
+When you double-click on objects, MASON's SelectionBehavior or ToolTipBehavior objects perform {\bf picking}, whereby they cast a ray from the eye of the camera straight out through the environment, and gather all objects which intersected with this ray.  Shape3D, Primitive, and various Geometry objects can be associated with {\bf user data} in Java3D.  MASON uses this user data to refer to LocationWrappers defining the objects or values in the fields associated with those objects.  When the Java3D objects are picked, MASON can extract the LocationWrappers to determine which objects were chosen.
+
+Picking isn't cheap.  LocationWrappers are generally built beforehand and associated with object in the scene.  Java3D's user data is expensive to use, and so MASON's Java3D scenes can use a lot of memory.   You will often have to increase Java heap size to use Java3D facilities with MASON, even if the core itself isn't that big.
+
+\begin{figure}[t]
+\begin{center}\includegraphics[width=6.5in]{3DUML.pdf}\end{center}
+\caption{UML diagram of  MASON's Top-Level  3D Visualization Code.  Notice the three sections.  The Visualization section is divided into 3D Display and 3D Portrayal facilities.  Also note the very close similarity to the 2D Visualization code (in Figure \ref{Visualization2DUML}).}
+\label{Visualization3DUML}
+\end{figure}
 
 \section{3D Field Portrayals}
 \label{sim.portrayal.Portrayal3D}
