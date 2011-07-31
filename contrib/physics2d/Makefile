@@ -3,19 +3,12 @@
 
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
-#### To switch from jikes to javac:  change the JAVAC variable below
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
 
-### If you don't have jikes set up, change to JAVAC = javac
-JAVAC = javac 
-#JAVAC = jikes ${JIKESFLAGS}
+JAVAC = javac ${FLAGS}
 
-# The default flags for javac and jikes
-FLAGS = -g
-
-# Additional flags for jikes
-JIKESFLAGS = -nowarn -target 1.3
+FLAGS = -target 1.4 -source 1.4 -g -nowarn
 
 
 # Main java files, not including the 3D stuff

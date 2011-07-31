@@ -12,3 +12,6 @@ Version 3
 	Added new memory-bound-free version of getMeanShortestPath,
 		thanks to Martin Pokropp <mapokropp@googlemail.com>
 	Updated license and copyright information
+
+Version 4
+	Modified code to be compatible with recent MASON changes
