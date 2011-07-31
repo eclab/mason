@@ -56,7 +56,7 @@ public class CampusWorldWithUI extends GUIState
     {
         super.init(controller);
 
-        display = new Display2D(CampusWorld.WIDTH, CampusWorld.HEIGHT, this, 1);
+        display = new Display2D(CampusWorld.WIDTH, CampusWorld.HEIGHT, this);
 
         display.attach(walkwaysPortrayal, "Walkways");
         display.attach(buildingPortrayal, "Buildings");
