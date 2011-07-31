@@ -38,7 +38,6 @@ public class NearbyWorldWithUI extends GUIState {
     public NearbyWorldWithUI()  { super(new NearbyWorld(System.currentTimeMillis())); }
 
 
-    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -53,7 +52,6 @@ public class NearbyWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
-    @Override
     public void start()
     {
         super.start();

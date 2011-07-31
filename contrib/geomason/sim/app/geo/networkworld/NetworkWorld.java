@@ -126,7 +126,6 @@ public class NetworkWorld extends SimState
         }
     }
 
-    @Override
     public void start()
     {
         super.start();

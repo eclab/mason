@@ -40,7 +40,6 @@ public class NetworkWorldWithUI extends GUIState
     public NetworkWorldWithUI(SimState state) { super(state); }
     public NetworkWorldWithUI()  { super(new NetworkWorld(System.currentTimeMillis())); }
     
-    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -55,7 +54,6 @@ public class NetworkWorldWithUI extends GUIState
         displayFrame.setVisible(true);
     }
 
-    @Override
     public void start()
     {
         super.start();

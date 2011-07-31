@@ -89,7 +89,6 @@ public class NearbyWorld extends SimState
 
 
         
-    @Override
     public void start()
     {
         super.start();
