@@ -186,12 +186,11 @@ The displayer for 3D is <tt>Display3D</tt>, just as the displayer for 2D is <tt>
         }
 </tt></pre>
 
-<p>Next we need to define our personal setupPortrayals() method.  This is where we'll put most of the relevant 3D code.    The first thing we'll do in this code is tell our Display3D to remove any existing scene it had constructed (if any).
+<p>Next we need to define our personal setupPortrayals() method.  This is where we'll put most of the relevant 3D code.    
 
 <pre><tt>
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
 </tt></pre>
 
 <p>Next we add portrayals for our planets.  This needs to be done after destroying the scene graph because it could potentially try to modify Java3D objects which Java3D has (too cleverly) shared with existing objects in its scene graph and which are not allowed to be modified.  Destroying the scene graph prevents this possibility.

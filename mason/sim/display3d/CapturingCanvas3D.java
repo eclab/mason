@@ -16,18 +16,17 @@ import javax.media.j3d.*;
 /** 
  * Canvas3D that is synchronized with Display3D and 
  * uses postswap to save the contextGraphics into
- * an image.
+ * an image.  You can wait() on the Canvas3D to be notified
+ * when a new image has arrived.
+ *
+ * <p>The original CapturingCanvas3D in the URL above is due to Peter Z. Kunszt at Johns Hopkins University.
+ * Our version borrows enough snippets and ideas from the original that due credit is definitely deserved.
  *
  * @author Gabriel Catalin Balan
  * @see http://www.j3d.org/faq/examples/CapturingCanvas3D.java
  * 
  * @todo try offscreen rendering
- **/
-
-/*
-  The original CapturingCanvas3D in the URL above is due to Peter Z. Kunszt at Johns Hopkins University.
-  Our version borrows enough snippets and ideas from the original that due credit is deserved.
-*/
+ */
 
 
 public class CapturingCanvas3D extends Canvas3D
@@ -37,24 +36,36 @@ public class CapturingCanvas3D extends Canvas3D
     BufferedImage buffer_;
     int x, y, width, height;
     
-    public CapturingCanvas3D(GraphicsConfiguration gc) 
+    public CapturingCanvas3D(GraphicsConfiguration graphicsConfiguration) 
         {
-        super(gc);
+        super(graphicsConfiguration);
         }
     
-    public CapturingCanvas3D(GraphicsConfiguration arg0, boolean arg1)
+    public CapturingCanvas3D(GraphicsConfiguration graphicsConfiguration, boolean offScreen)
         {
-        super(arg0, arg1);
+        super(graphicsConfiguration, offScreen);
         }
     
-    public synchronized BufferedImage getFrameAsImage()
+    public synchronized BufferedImage getLastImage()
         {
         return buffer_;
         }
-    
-    /** sets the capturing regime and area */
-    public void setWritingParams(Rectangle2D r, boolean movie)
+
+	// how big should the image be to draw?
+	Rectangle2D getImageSize()
         {
+        Dimension s = getSize();
+        Rectangle2D clip = new Rectangle2D.Double(0,0,s.width,s.height);
+        Rectangle bounds = getGraphics().getClipBounds();
+        if(bounds != null)
+            clip = clip.createIntersection(bounds);
+        return clip;
+        }
+
+    /** sets the capturing regime and area */
+    public void beginCapturing(boolean movie)
+        {
+		Rectangle2D r = getImageSize();
         synchronized(this)
             {
             x  = (int)r.getX();
@@ -69,6 +80,8 @@ public class CapturingCanvas3D extends Canvas3D
         fillBuffer(true);
         }
     
+	// doubleRasterRead is a workaround for a Java bug where the first
+	// image may be black.
     void fillBuffer(boolean doubleRasterRead)
         {
         GraphicsContext3D  ctx = getGraphicsContext3D();
@@ -83,15 +96,15 @@ public class CapturingCanvas3D extends Canvas3D
                 new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)),
             null);
         ctx.readRaster(ras);
-        if(doubleRasterRead)ctx.readRaster(ras); 
+        if(doubleRasterRead)ctx.readRaster(ras);  // in case the first was empty
         // Now strip out the image info
         buffer_ = ras.getImage().getImage();
         buffer_.flush();  // prevents possible os x 1.4.2 memory leak
         }
     
-    public synchronized void stopMovie()
+    public synchronized void stopCapturing()
         {
-        keepOnWriting_ =false;
+        keepOnWriting_ = false;
         }
 
     public void postSwap()

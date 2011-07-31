@@ -56,7 +56,7 @@ public class Crowd3DWithUI extends GUIState
         
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
 
         boidsP.setField(((CrowdSim)state).boidSpace);
         

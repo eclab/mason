@@ -69,7 +69,8 @@ public class Tutorial6WithUI extends GUIState
     
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
+		
         Tutorial6 tut = (Tutorial6) state;
         bodyPortrayal.setField(tut.bodies);
         

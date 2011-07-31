@@ -50,7 +50,7 @@ public class Balls3DWithUI extends GUIState
 
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
         
         Balls3D tut = (Balls3D) state;
         
@@ -107,7 +107,7 @@ public class Balls3DWithUI extends GUIState
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
 
-        display.mSelectBehavior.setTolerance(10.0f);
+        display.getSelectionBehavior().setTolerance(10.0f);
         }
 
     public void quit()

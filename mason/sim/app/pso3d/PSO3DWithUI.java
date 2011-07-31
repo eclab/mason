@@ -61,7 +61,8 @@ public class PSO3DWithUI extends GUIState
 
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
+		
         PSO3D swarm = (PSO3D) state;
         final SimpleColorMap map = new SimpleColorMap(
             swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);

@@ -2122,3 +2122,28 @@ Version 16
 		on the command line.
 	OvalPortrayal2D and RectanglePortrayal2D are serializable, making some demos work
 		properly serialized.
+	Display3D.header is now formally a Box
+	Display3D.skipFrame is now public
+	Display3D.OptionPane3D's constructors and methods made private to be consistant with
+		Display2D.OptionPane
+	CapturingCanvas3D.setWritingParams(...) changed to startCapturing(...), and reduced by
+		one parameter.  CapturingCanvas3D.stopMovie() renamed to stopCapturing().  And
+		CapturingCanvas3D.getFrameAsImage() renamed to getLastImage()
+	Display3D.movieMaker is now private
+	Exposed a new Display3D instance variable called viewRoot, which allows the user to
+		add scene material which stays constant in the scene despite the viewpoint
+		changing.
+	Display3D.createConsoleMenu is now private
+	Display3D.rebuildSkipFrame is now private
+	Display3D.rebuildRefreshPopup is now private
+	Display3D.clearSelections added
+	Fixed documentation errors in Display3D.getTransform and Display3D.setTransform
+	Display3D.localWindowListener -> Display3D.LocalWindowListener
+	Display3D.getFrame() made public
+	Added Display3D.takeSnapshot(File file)
+	Added Display3D.getSelectionBehavior(), and modified Balls3D to use it
+	Deleted optional movement code in HeatBugs -- you should use MovablePortrayal2D
+	Display3D examples had a vestigial element in setupPortrayals: a call to
+		destroySceneGraph() which was unnecessary since createSceneGraph() would
+		call it anyway (if needed).  We've deleted this call in all the examples
+		and in the tutorials.

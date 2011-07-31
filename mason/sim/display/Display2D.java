@@ -1469,7 +1469,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         selectedWrappers.clear();
         }
         
-    public void performSelection( final Bag locationWrappers )
+    public void performSelection( Bag locationWrappers )
         {
         clearSelections();
                 

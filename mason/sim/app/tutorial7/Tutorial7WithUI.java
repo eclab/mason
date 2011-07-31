@@ -58,7 +58,7 @@ public class Tutorial7WithUI extends GUIState
 
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
 
         Tutorial7 tut = (Tutorial7) state;
         

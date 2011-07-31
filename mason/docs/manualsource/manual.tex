@@ -3270,6 +3270,10 @@ Adding checkpointing complicates the top-level loop, particularly if you mix it 
 }
 
 
+\paragraph{yo}
+
+java -Dsun.io.serialization.extendedDebugInfo=true
+
 
 
 \subsection{The \method{doLoop()} Method}
@@ -5822,7 +5826,8 @@ The Display2D is the central hub to visualizing the majority of MASON simulation
 \item Generating bitmaps, true vector PDFs, and movies of the simulation.
 \item {\it Inspecting} elements in the model: just double-click on an element and an inspector will pop up in the ``inspectors'' tab of the Console to allow you to examine and modify it.
 \item {\it Selecting} elements in the model: if you single-click on an element, the object will be selected.  Selected objects can have various operations performed on them: for example, having them display a special circle or a label or a trail. Certain selected objects can also be dragged about or have their size or orientation changed.
-\item Adding antialiasing, per-displayed-object tooltips, etc.
+\item Adding antialiasing and other graphics features (these options must be turned on in the options pane).
+\item See per-object tooltips, by hovering over the object with the mouse (this option must be turned on in the options pane).
 \item Handling user-customized mouse event routing.
 \end{itemize}
 
@@ -5836,6 +5841,9 @@ The \Class{sim.display.Display2D} class is how you make 2-dimensional display wi
 \item An {\bf Option Pane}, called forth by a widget in the Header, presents additional options to the user.
 \end{itemize}
 
+\phantomsection % A magical command defined in the hyperref package
+\label{display2dwidgets}
+
 These are defined by the following variables, which are rarely accessed by yourself:
 
 \java{%
@@ -5845,7 +5853,7 @@ public Box header;\\
 public JScrollPane display;
 }
 
-The header has various other widgets, which exist as variables in the Display2D:
+The \Class{sim.display.Display2D.OptionPane} is a subclass of JFrame which displays various additional options, and has no public variables.  On the other hand, the header has various other public widgets, which exist as variables in the Display2D:
 
 \java{%
 // The button (\includegraphics[scale=0.4]{LayersButton.png}) and popup menu for toggling Field Portrayals\\
@@ -5913,6 +5921,9 @@ Once you set up a Display2D, your next task is usually to arrange its display pa
 
 Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  Here are the relevant Controller methods:
 
+\phantomsection % A magical command defined in the hyperref package
+\label{registrationmethods}
+
 \begin{methods}{\class{sim.display.Controller}}
 \mthd{public boolean registerFrame(JFrame frame)}  Registers the JFrame, notionally holding a Display of some sort, with the Controller, and returns \variable{true}, unless the Controller cannot register JFrames of any kind, in which case this method returns \variable{false}.
 \mthd{public boolean unregisterFrame(JFrame frame)}  Unregisters the JFrame, notionally holding a Display of some sort, with the Controller, and returns \variable{true}, unless the Controller cannot register or unregister JFrames of any kind, in which case this method returns \variable{false}.
@@ -5924,7 +5935,7 @@ Next you'll want to attach Field Portrayals and certain global Inspectors to the
 
 \label{attachingfields}
 \begin{methods}{\class{sim.display.Display2D}}
-\mthd{ public void attach(final sim.portrayal.Inspector inspector, final String name)}
+\mthd{ public void attach(sim.portrayal.Inspector inspector, String name)}
 	Attaches the given Inspector to the Display, assigning it the provided name.  The user can call forth this Inspector by choosing that name from the Display's ``layers'' menu.
 \mthd{ public void attach(FieldPortrayal2D portrayal, String name )}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible, and placing it at the \(\langle 0,0\rangle\) position in the InnerDisplay (in pixels).  The width and height of the FieldPortrayal2D is set to that of the Inner Display.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
@@ -8323,6 +8334,13 @@ public class NetworkStreamer extends sim.portrayal.inspector.StreamingPropertyIn
 
 You'll need to add the class name to the \file{sim/portrayal/inspector/propertyinspector.classes} file. 
 
+
+
+
+
+
+
+
 \chapter{Visualization in 3D}
 \label{3d}
 
@@ -8330,31 +8348,320 @@ MASON has extensive 3D visualization facilities using the Java3D toolkit.  This 
 
 Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a graph structure (really mostly a few trees) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are high-level than say) OpenGL, which is more akin to the low-level 2D instructions.
 
-MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  But it's useful to have a bit of a refresher.
-
-\section{Java3D and MASON}
-
-Java3D objects are displayed in Java using a Java Component called a \class{javax.media.j3d.Canvas3D}.  MASON uses a subclass of Canvas3D called \class{sim.display3D.CapturingCanvas3D} which, as befits its name, allows MASON to capture screenshots and movies of the scene.  A Canvas3D is associated with the top-level object in the Java3D scene graph, a \class{javax.media.j3d.Universe} object, of which MASON uses the standard subclass \class{com.sun.j3d.utils.universe.SimpleUniverse}.  The Universe defines things such as the viewing angle of the eye of the camera, and various \class{javax.media.j3d.BranchGroup} objects which form the roots of the scene graph.  MASON primarily uses a single branch group.
-
-BranchGroup is a subclass of \class{javax.media.j3d.Group}, which is a subclass of \class{javax.media.j3d.Node}.  Generally speaking, most of the remainder of the scene graph is one or more trees.  BranchGroups are usually the roots of the trees, other Group objects form nonleaf nodes in the trees, and other Nodes often form leaf nodes in these trees.\footnote{Actually that's not quite true: non-Group Nodes often have certain attributes attached to them which may be viewed as their children.  But it's more or less the idea to keep in mind.}
-
-From MASON's primary BranchGroup is hung a \class{javax.media.j3d.TransformGroup}, a special object which transforms all of its children (rotates them, translates them, scales them, etc.) as a group.  TransformGroups are very common in Java3D and in MASON's 3D facility.  A TransformGroup takes an Affine Transform object in the form of a \class{javax.media.j3d.Transform3D}.  The top-level TransformGroup's purpose is to allow the user to spin the entire scene.  Another secondary TransformGroup allows the background to be spun along with the scene.
-
-From the TransformGroup is hung two \class{javax.media.j3d.Switch}es, one hung from the other.  A Switch is a Group which can make its children visible or invisible at any time.  MASON uses them to turn on or off spotlights and ambient light, various auxiliary objects such as axes or frames, and of course each of the fields being portrayed.
-
-Also associated with the Universe are three {\bf behaviors}: objects which run in the background and modify the environment in response to events of different kinds.  Specifically, MASON has a \class{com.sun.j3d.util.sbehaviors.vp.OrbitBehavior} which causes the camera to move about in response to the mouse (scaling in and out, rotating the environment, or translating the environment); and also two custom MASON behaviors, a \class{sim.display3d.SelectionBehavior} for selecting objects in response to mouse clicks, and a \class{sim.display.ToolTipBehavior} for displaying tool tips in response to mouse hovering.
-
-Most 3D Field Portrayals in MASON are pretty simple: they use a single Transform3D to scale and translate the individual objects in field.    Some 3D FieldPortrayals instead define triangular meshes using a \class{javax.media.j3d.GeometryArray}, a kind of Java3D geometry node.  In the former case, once the Field Portrayal has transformed the location of the underlying object, it calls on 3D SimplePortrayal to actually add the objects in the scene.  SimplePortrayals generally add a TransformGroup to the scene (transformed by the Field Portrayal's Transform3D), and hang off of it various node objects which define the object visually.  Often they will add their own TransformGroup to do internal rotation and scaling, followed by various \class{javax.media.j3d.Shape3D} objects or \class{com.sun.j3d.utils.geometry.Primitive}s such as cones or cylinders or spheres.  SImple Portrayals provide functions to dress up these Shape3D and Primitive objects using \class{javax.media.j3d.Appearance} objects, which are groupings of a variety of appearance features, such as material, light, color, texture, etc.}
-
-When you double-click on objects, MASON's SelectionBehavior or ToolTipBehavior objects perform {\bf picking}, whereby they cast a ray from the eye of the camera straight out through the environment, and gather all objects which intersected with this ray.  Shape3D, Primitive, and various Geometry objects can be associated with {\bf user data} in Java3D.  MASON uses this user data to refer to LocationWrappers defining the objects or values in the fields associated with those objects.  When the Java3D objects are picked, MASON can extract the LocationWrappers to determine which objects were chosen.
-
-Picking isn't cheap.  LocationWrappers are generally built beforehand and associated with object in the scene.  Java3D's user data is expensive to use, and so MASON's Java3D scenes can use a lot of memory.   You will often have to increase Java heap size to use Java3D facilities with MASON, even if the core itself isn't that big.
+MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  Indeed, as is shown in Figure \ref{Visualization3DUML}, the 3D Display and Portrayal facility bears an intentionally very strong similarity to the 2D Display and Portrayal facility (in Figure \ref{Visualization2DUML}) discussed in Section \ref{3d}.  Even so, it's useful to understand what's going on under the hood: there are important differences in setting up and portraying a model in 3D, largely stemming from fundamental differences in how 2D and 3D graphics are done underneath.  So just as the 2D Display chapter referred to Swing and Java AWT elements without explanation, some of this chapter will refer to Java3D elements without explanation.  If you don't know Java3D, take heart though: if you don't understand what (for example) a TransformGroup is, it's probably not really essential to getting something up and running.  We just have to be thorough in this section.
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6.5in]{3DUML.pdf}\end{center}
 \caption{UML diagram of  MASON's Top-Level  3D Visualization Code.  Notice the three sections.  The Visualization section is divided into 3D Display and 3D Portrayal facilities.  Also note the very close similarity to the 2D Visualization code (in Figure \ref{Visualization2DUML}).}
 \label{Visualization3DUML}
 \end{figure}
+
+\section{Java3D and MASON Overview}
+
+Java3D is centered around the notion of {\bf scene graphs}, data structures describing the organization of objects (shapes, coloring, lighting, transformations, etc.) which collectively define a {\bf scene} for the user to view.  So instead of specifically telling Java what to draw and how to draw it (as is done in Java2D/AWT), Java3D instead has the developer describing what he'd like to see, and letting Java3D handle the rest of the details.
+
+MASON's Display3D object has a particular scene graph layout, as shown in Figure \ref{java3dlayout}.  It's useful to go through this layout in an overview, both to understand how Java3D scene graphs are generally constructed, and to understand Display3D's arrangement.
+
+\sidebar{Why does Display3D subclass from JPanel?}{Display3D is a direct subclass of \class{javax.swing.JPanel}, unlike Display2D, which is a subclass of \class{javax.swing.JComponent}.  This difference is due to certain interactions between the background of a JComponent and a Canvas3D.}%
+\paragraph{Top-Level Scene Graph Objects} Just as MASON's top-level 2D display class is \class{sim.display.Display2D}, its top-level 3D display class is \class{sim.display.Display3D}.  Display3D manages the Java3D scene graph and its associated objects.  
+
+Java3D objects are displayed in Java using a Java Component called a \class{javax.media.j3d.Canvas3D}.  MASON uses a subclass of Canvas3D called \class{sim.display3D.CapturingCanvas3D} which, as befits its name, allows MASON to capture screenshots and movies of the scene.  A CapturingCanvas3D is associated with the top-level object in the MASON Java3D scene graph, a \class{javax.media.j3d.Universe} object, of which MASON uses the standard subclass \class{com.sun.j3d.utils.universe.SimpleUniverse}.  The Universe defines things such as the viewing angle of the eye of the camera, and various \class{javax.media.j3d.BranchGroup} objects which form the roots of the scene graph.  MASON primarily uses a single BranchGroup as the root of its scene graph (really, it's more or less a tree, not a graph).  BranchGroup is a subclass of \class{javax.media.j3d.Group}, which is a subclass of \class{javax.media.j3d.Node}.  BranchGroups are usually the roots of the trees, other Group objects form nonleaf nodes in the trees, and other Nodes often form leaf nodes or near-leaf-nodes in these trees.
+
+From MASON's primary BranchGroup is hung a \class{javax.media.j3d.TransformGroup}, a special object which transforms all of its children (rotates them, translates them, scales them, etc.) as a group.  TransformGroups are very common in Java3D and in MASON's 3D facility.  A TransformGroup takes an Affine Transform object in the form of a \class{javax.media.j3d.Transform3D}.  The top-level TransformGroup's purpose is to allow the user to spin the entire scene. Under it is hung a secondary TransformGroup whose purpose is to allow the user to transform the entire scene as he sees fit independent of spinning.
+
+From this TransformGroup is hung a \class{javax.media.j3d.Switch} which holds each of the fields (under one TransformGroup each).  A Switch is a Group which can make its children visible or invisible at any time.  MASON uses them to turn on or off the various fields as the user directs.
+
+\begin{figure}[t]
+\begin{center}\includegraphics[width=6.5in]{Java3DLayout.pdf}\end{center}
+\caption{Rough structure of MASON's Java3D scene graph.  MASON objects are listed with their package names.  Other objects are standard Java3D classes.  The graph is divided into six parts.  One part (Simple Portrayals) is repeated many times, once per object in each field.  This part is typical but varies depending on the kind of Simple Portrayal: and certain Field Portrayals may not have it at all.  Notice that three parts (Light Switches, Auxillary Data, Field Portrayals and Model) are headed by a Switch.  This allows elements in these areas to be turned on and off by the user, either via the Layers menu on the Display3D itself, or inside the Display3D's Options Pane.  The Light Switches part is hung off of the SimpleUniverse rather than off of the TransformGroup for spinning in order to keep it constant despite the user spinning the model.  The Auxillary Data section contains optional Axes and a Background.  The Background can be a spherical background, a flat panel background image, or a background color (or nothing). Note the ``hack'' TransformGroup in the spherical background.  This is to prevent Java3D from spinning each of the elements of the background sphere (a Java3D nuisance).}
+\label{java3dlayout}
+\vspace{-1em}  % makes me small enough to fit on a page so my image isn't bumped to the end of the chapter
+\end{figure}
+
+\paragraph{3D Field Portrayals and Simple Portrayals} The TransformGroups for each field hold all the objects in the field and are largely created by and maintained by the 3D Field Portrayal for a given field.  Most 3D Field Portrayals in MASON are pretty simple: they use a single Transform3D to scale and translate the individual objects in field.    Some 3D FieldPortrayals instead define triangular meshes using a \class{javax.media.j3d.GeometryArray}, a kind of Java3D geometry node.  In the former case, once the Field Portrayal has transformed the location of the underlying object, it calls on 3D SimplePortrayal to actually add the objects in the scene.  
+
+SimplePortrayals generally add a TransformGroup to the scene (transformed by the Field Portrayal's Transform3D), and hang off of it various node objects which define the object visually.  Often they will add their own TransformGroup to do internal rotation and scaling, followed by various \class{javax.media.j3d.Shape3D} objects or \class{com.sun.j3d.utils.geometry.Primitive}s such as cones or cylinders or spheres.  Simple Portrayals provide functions to dress up these Shape3D and Primitive objects using \class{javax.media.j3d.Appearance} objects, which are groupings of a variety of appearance features, such as material, light, color, texture, etc.
+
+SimplePortrayals don't just wrap Shape3D or Primitive objects.  They may also wrap images, 2D text, light sources, etc.  Just as in the 2D MASON portrayal facility, there are ``wrapper'' Simple Portrayals in 3D which add textual labels, perform transformations, add semitransparent spheres around selected objects, and so on.
+
+\paragraph{Selection and Inspection}  When you double-click on objects, MASON's SelectionBehavior or ToolTipBehavior objects perform {\bf picking}, whereby they cast a ray from the eye of the camera straight out through the environment, and gather all objects which intersected with this ray.  Shape3D, Primitive, and various Geometry objects can be associated with {\bf user data} in Java3D.  MASON uses this user data to refer to LocationWrappers defining the objects or values in the fields associated with those objects.  When the Java3D objects are picked, MASON can extract the LocationWrappers to determine which objects were chosen.
+
+Picking isn't cheap.  LocationWrappers are generally built beforehand and associated with object in the scene.  Java3D's user data is expensive to use, and so MASON's Java3D scenes can use a lot of memory.   You will often have to increase Java heap size to use Java3D facilities with MASON, even if the core itself isn't that big.
+
+\paragraph{Other Stuff}
+The SimpleUniverse holds a second BranchGroup with its own Switch for light.  MASON has two standard lights: an ambient light and a spotlight behind the camera and aimed at the scene. The Switch is used to turn these on or off as the user directs.  Similarly, the top-level TransformGroup holds an additional Switch used to turn on or off various auxiliary objects: the axes and the Background.  The Background can be one of three possible elements: a simple color, a flat backdrop behind the scene, or a spherical backdrop which envelops the scene.  
+
+The spherical backdrop is maintained by a Sphere object, which can be given an Appearance (notably a spherical image as a texture).  In order to do its magic\,---\,particularly spinning along with the rest of the scene\,---\,the Sphere is placed in a BranchGroup with two TransformGroups.  The presence of the second TransformGroup is a hack to get around a historical Java3D spinning bug.
+
+Also associated with the Universe are three {\bf behaviors}: objects which run in the background and modify the environment in response to events of different kinds.  Specifically, MASON has a \class{com.sun.j3d.util.sbehaviors.vp.OrbitBehavior} which causes the camera to move about in response to the mouse (scaling in and out, rotating the environment, or translating the environment); and also two custom MASON behaviors, a \class{sim.display3d.SelectionBehavior} for selecting objects in response to mouse clicks, and a \class{sim.display.ToolTipBehavior} for displaying tool tips in response to mouse hovering.
+
+
+
+\section{The 3D Display}
+\label{sim.display.Display3D}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-2em}\hfill\includegraphics[width=2.8in]{Display3D.pdf}\vspace{-2em}\end{wrapfigure}
+MASON's \Class{sim.display.Display3D} class is organized to largely mimic the Display2D class.  It has a {\bf header} which is for all intents and purposes identical to Display2D's header, and it has a display area like Display2D's display area. But unlike Display2D (which has an InnerDisplay2D contained within a JScrollPane), Display3D has a single 3D display region called a {\bf canvas}.  This region provides a viewpoint on a 3D scene which visualizes your model.  Finally, Display3D has an {\bf option pane} very similar to that of Display2D, which provides optional features.
+
+The canvas is defined by a MASON class called \class{sim.display.CapturingCanvas3D}, essentially a \class{javax.media.j3d.Canvas3D} which adds functionality needed for taking screenshots and generating movies.  The user can do any of the following with his mouse in the CapturingCanvas3D:
+
+\begin{itemize}
+\item Rotate the image about the origin by dragging with the mouse.
+\item Move the eye closer to the origin, or further from it, by dragging with the mouse using the middle mouse button.  For benefit of OS X users with a single mouse, you can also option/alt-drag.
+\item Translate the image up/down or right-left, by dragging with the mouse using the right mouse button.  For benefit of OS X users with a single mouse, you can also command-drag.
+\item Generate tooltips by hovering over an object (this feature must be turned on in the options pane), exactly as in the Display2D.
+\item Select objects by clicking on them once.
+\item Inspect objects by double-clicking on them.
+\end{itemize} 
+
+Display3D lets the user do various other tasks, many of them identical to Display2D:
+
+\begin{itemize}
+\item Take screenshots or generate movies\footnote{Unlike Display2D, Display3D cannot generate vector PDF images.  Java3D does not have this facility: it can only create bitmaps, and thus PNG files or movies.}
+\item Turn on or off the display of various fields
+\item Automatically spin the scene around a given \(\langle X, Y, Z\rangle\) axis at a certain speed
+\item Turn on spotlights, ambient light, backdrops, or axes
+\item Enable or disable various mouse actions
+\item Draw certain objects in different ways
+\item Scale the displayed image (change the field of view)
+\end{itemize}
+
+\sidebar{How do you resize a Display3D on the Mac?}{Same as always, just drag from the bottom-right corner. The resize box is obscured by the drawing area.} The last one is important as it's often quite confusing.  {\bf Scaling} the image (via the ``Scale'' NumberTextField in the header) causes the image to enlarge or reduce in size by adjusting the field of view of the camera.  This is different from {\bf Moving the Eye} closer to or further away from the image via dragging with the middle mouse button (or option key).  The first simply enlarges the displayed image with respect to the window.  The second also changes the perspective of the objects: and indeed moving close enough in can cause objects to be {\it behind} the eye, and thus hidden from view.
+
+Display3D consists of the same basic instance variables as discussed (in more detail) for Display2D (see page \pageref{display2dwidgets}):
+
+\java{%
+public Box header;\\
+\\
+// The layers button and associated menu\\
+public JToggleButton layersbutton;\\
+public JPopupMenu popup; \\
+\\
+// The refresh button and associated menu, plus the optional window and its widgets\\
+public JToggleButton refreshbutton;\\
+public JPopupMenu refreshPopup;\\
+public JFrame skipFrame;\\
+public JComboBox skipBox;\\
+public NumberTextField skipField;\\
+\\
+// The movie and snapshot buttons\\
+public JButton movieButton;\\
+public JButton snapshotButton;\\
+\\
+// The option button and associated window\\
+public JButton optionButton;\\
+public OptionPane3D optionPane;\\
+\\
+// The scaling field\\
+public NumberTextField scaleField;
+}
+
+All of these are identical to those in Display2D, except for \variable{optionPane}, which is (for obvious reasons) a \Class{sim.display3d.Display3D.OptionPane3D} rather than a \class{sim.display.Display2D.OptionPane}.  Like OptionPane, OptionPane3D is a JFrame with no publicly exposed methods or variables.
+
+Display3D also has several special public variables for providing access to its Java3D facilities:
+
+\java{%
+    public sim.display3d.CapturingCanvas3D canvas;      // MASON's Canvas3D\\
+    public SimpleUniverse universe;    // Display2D's Java3D Universe\\
+    public BranchGroup root;       // The root of the Java3D scene graph\\
+    public BranchGroup viewRoot;       // A viewpoint-independent auxiliary root\\
+    public TransformGroup autoSpinTransformGroup;  // hangs below the root\\
+    \hbox{public TransformGroup globalModelTransformGroup;   // hangs below the autoSpinTransformGroup}
+} 
+
+Figure \ref{java3dlayout} shows these objects in relationship to others in MASON's scene graph configuration.   The first object is MASON's {\bf canvas}, the Java3D equivalent of a JComponent and Graphics2D.    It's where the 3D image is displayed.  As mentioned before, the canvas is a \class{sim.display3d.CapturingCanvas3D}, discussed at length in Section \ref{sim.display3d.CapturingCanvas3D}.  Associated with the canvas is the {\bf universe}, the top-level Java3D object for describing the 3D environment.  Hanging off of the universe is a tree of various objects.  Four of those objects have been exposed as variables above in order to allow the model developer add Java3D scene material in different places and under different circumstances.  Specifically: Display3D lets the user {\it change the viewpoint of the camera} by dragging the mouse, and {\it auto-rotate} a scene (independent of changing the viewpoint); and lets the model-developer {\it transform} the entire scene (most commonly scale it).  This means that there are four places you might want to hang material:
+
+\begin{itemize}
+\item If you want your material to stay constant in the scene regardless of auto-rotation, model transforms, or the viewpoint changing (that is, it moves when the viewpoint moves), hang your material off of the \variable{viewRoot}.  {\it Example:} you might add ambient light, fog, or behind-the-camera spotlights here.
+\item If you don't want your scene material to be auto-rotated with the rest of the scene graph when the user turns on auto-rotation in the option pane, nor transformed along with the rest of the scene graph by various Display3D transform methods, then you should hang the material off of the \variable{root}.  The material will be subject to changing viewpoints.  {\it Example:} you might add fixed spotlights here.  Fog or ambient light is okay too.
+\item If you don't want your scene material transformed (translated etc.) along with the rest of the scene graph by various Display3D transform methods, then you should hang the material of the \variable{autoSpinTransformGroup}.  The material will be subject to changing viewpoints and auto-rotation.   {\it Example:} you might add a floor or a wireframe here.
+\item Otherwise, you should hang the material of the \variable{globalModelTransformGroup}.  The material will be subject to changing viewpoints, auto-rotation, and model transforms.   {\it Example:} you might additional model scene objects here.
+\end{itemize}
+
+Okay, enough with the Java3D for now.  A Display2D is constructed identically to a Display2D:
+
+\begin{methods}{\class{sim.display.Display3D Constructor}}
+\mthd{public Display3D(double width, double height, GUIState guistate)}
+Returns a Display3D connected to the given GUIState.  The viewable region of the Display3D's Canvas is set to the given width and height in pixels.
+\end{methods}
+
+Justl like a Display2D, when you build a Display3D it automatically connects to the GUIState and adds itself to the GUIState's minischedule.  Likewise, typically your next task is often to place the Display2D in a JFrame.   Unlike Display2D (where it's an option) we strongly suggest you {\bf don't build your own JFrame}: instead, let Display3D do it for you with \method{createFrame()}.  This JFrame has certain bug fixes that get around stupidities in OS X and Linux with regard to Java3D.\footnote{If you absolutely must use your own JFrame, check out the Display3D.java code to see what bug fixes you ought to hack in.}
+
+Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  The registration methods for Controller were previously discussed in the Display2D Section (see page \pageref{registrationmethods}).
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{public JFrame createFrame()} Directs the Display3D to spout a JFrame and put itself in it.  The JFrame has not been set visible yet.
+\mthd{public Frame getFrame()} Returns the Display3D's current JFrame (whether it created it or not).
+You also have the option of setting a {\bf backdrop} for the display.  You have the following options:
+\end{methods}
+
+\begin{itemize}
+\item A spherical backdrop enclosing the entire scene.  You can specify a color for this backdrop, or an image (which will be mapped onto the sphere), or a \class{javax.media.j3d.Appearance} object to provide many more options.
+\item A flat omnipresent backdrop behind the scene.  You can specify only an image for this kind of backdrop.  Note that flat backdrops can be slow on certain Java implementations.
+\end{itemize}
+
+From the Options Pane, the user can temporarily turn off the backdrop as well (by default, it's turned on).  Additionally, you can turn on certain auxiliary elements which may prove helpful.  At any point, the user can turn these on as well in Options Pane:
+
+\begin{itemize}
+\item {\bf Axes}.  Each axis is one unit in length and is labeled (X, Y, Z).  The origin is also labeled (O). 
+\item A {\bf Spotlight}, implemented as a \class{javax.media.j3d.PointLight}, white in color, positioned exactly at the camera location.\footnote{Okay, it's not directed, so it's not technically a spotlight.}
+\item {\bf Ambient Light}, implemented as a \class{javax.media.j3d.AmbientLight}, white in color.
+\end{itemize}
+
+Last, you can specify the field of view by computing a {\it scale} factor (the value the user can also enter into the ``scale'' text field at the top of the Display3D).  The field of view is related to this factor as:
+
+\[
+\text{\it fieldOfView} = 
+\begin{cases}
+\text{\it defaultFieldOfView} + (\pi - \text{\it defaultFieldOfView}) \times (1 - \text{\it scale})^2 & \text{if \it scale} < 1\\
+\text{\it defaultFieldOfView} / \text{\it scale}& \text{if \it scale} \geq 1
+\end{cases}
+\]
+
+Too technical?  Here's all you need to know: the default value for the scaling is 1.0.   If you make the scaling smaller, the image gets smaller, and if you make the scaling bigger, the image gets bigger.  Basically, it feels the same as in Display2D.
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{public void setBackdrop(java.awt.Color color)}  Sets the backdrop paint of the Display.  Set to null to instruct MASON not to draw the backdrop at all, which is faster if your fields are opaque and the backdrop wouldn't be seen anyway. 
+\mthd{public void setBackdrop(Image image, boolean spherical)}  Sets the backdrop paint of the Display.  Set to null to instruct MASON not to draw the backdrop at all, which is faster if your fields are opaque and the backdrop wouldn't be seen anyway. 
+\mthd{public void setBackdrop(Appearance appearance)}  Sets the backdrop paint of the Display.  Set to null to instruct MASON not to draw the backdrop at all, which is faster if your fields are opaque and the backdrop wouldn't be seen anyway. 
+\mthd{public void clearBackdrop()}  Sets the backdrop paint of the Display.  Set to null to instruct MASON not to draw the backdrop at all, which is faster if your fields are opaque and the backdrop wouldn't be seen anyway. 
+\mthd{public void setShowsBackdrop(boolean value)}  Sets the backdrop visible (or not).  The default is visible.
+\mthd{public void setShowsAxes(boolean value)}  Sets the axes visible (or not).  The default is NOT visible.
+\mthd{public void setShowsSpotlight(boolean value)}  Sets the spotlight visible (or not).  The default is NOT visible.
+\mthd{public void setShowsAmbientLight(boolean value)}  Sets the ambient light visible (or not).  The default is NOT visible.
+\mthd{public void setScale(double val)}  Sets the scale (zoom factor), which must be a positive number \(\geq 0\).
+\mthd{public double getScale()}  Returns the scale (zoom factor).
+\end{methods}
+
+Attaching Field Portrayals and global Inspectors to the Display is done identically to Display2D.  A Field Portrayal can in theory be attached to multiple Displays but it rarely makes sense to do so.  In Display2D Field Portrayals can be translated and scaled when attached: not so in Display3D.  But don't despair: if you want to perform a transformation on the Field Portrayal, it's done with Field Portrayal methods themselves (see Section \ref{sim.portrayal.FieldPortrayal3D}).  Also one big difference between Display3D and Display2D is that Display3D can attach {\it any Portrayal3D class} to the Display, not just FieldPortrayal3D.  But in truth it's rare to attach anything other than field portrayals.
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{ public void attach(sim.portrayal.Inspector inspector, String name)}
+	Attaches the given Inspector to the Display, assigning it the provided name.  The user can call forth this Inspector by choosing that name from the Display's ``layers'' menu.
+\mthd{ public void attach(Portrayal3D portrayal, String name, boolean visible )}
+	Attaches a Portrayal3D to this Display, assigning it the given name, setting it initially visible or not, and placing its origin at the \(\langle 0,0, 0\rangle\) position of the Display, oriented with the Display's axes.   The Portrayal3D is sized so that its width, height, and depth are in the same units as the 3D space.  The user can toggle the Portrayal3D's visibility by choosing its name in the Display's ``layers'' menu. 
+\mthd{ public void attach(Portrayal3D portrayal, String name )}
+	Attaches a Portrayal3D to this Display, assigning it the given name, setting it initially visible, and placing its origin at the \(\langle 0,0, 0\rangle\) position of the Display, oriented with the Display's axes.   The Portrayal3D is sized so that its width, height, and depth are in the same units as the 3D space.  The user can toggle the Portrayal3D's visibility by choosing its name in the Display's ``layers'' menu. 
+\mthd{ public ArrayList detatchAll()}
+	Detatches all Portrayals from the Display.
+\end{methods}
+
+When a simulation is begun, you'll want to reset the Display.  This causes it to clear all its selected objects and reschedule itself on the GUIState's minischedule.  When you quit the entire simulation, you'll want to quit the Display as well so it can free resources and finish any movies.  The Display3D is \class{sim.engine.Steppable}.  When the simulation is running, every iteration the Display3D is stepped: it first calls \method{shouldUpdate()} to determine if it should update and redraw itself.  If the answer is yes, then it redraws itself, including writing out to any movie.  Display3D makes movies and screenshots in a manner similar to that of Display2D, though note that Display3D cannot generate PDF vector images in its screenshots.
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{ public void reset()}
+	Causes the Display to clear all of its current selected objects and reschedule itself in the GUIState's minischedule.
+\mthd{ public void quit()}
+	Quits the display, stopping it and finishing any movies and freeing resources.
+\mthd{public void step(final SimState state)} Called every model iteration to pulse the Display, ultimately causing it to (if appropriate) update and repaint itself, and write out movies.
+\mthd{public void takeSnapshot(File file, int type)} Takes a snapshot of the given type and saves it to the given file.  Throws an IOException if the file could not be written.
+\mthd{public void takeSnapshot()} Asks the user what kind of snapshot to take, and what file to save to, and then takes the snapshot, saving it to the file.
+\mthd{public void startMovie()} Starts a movie, asking the user what kind of movie to make and what file to save it to.  Only one movie can be generated at a time.
+\mthd{public void stopMovie()} Stops any currently started movie.
+\mthd{public boolean shouldUpdate()} Returns true or false to indicate if a Display3D should update and redraw itself at a given time.  By default this method queries the Display3D's GUI regarding the user choices for updating.  You may override this method if you feel inclined.
+\end{methods}
+
+\subsection{Managing the Scene Graph}
+
+The Display3D manages the Java3D scene graph which ultimately holds all of the model objects for display.  Managing this graph requires three tasks: the Display3D must initially {\bf  build} or later {\bf rebuild} the graph; it must {\bf update} the graph each timestep to reflect changes in the model, and it must eventually {\bf destroy} the graph, either at the conclusion of the program or as part of the rebuilding procedure.
+
+These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
+
+As discussed earlier, the Display3D can transform the entire scene, ultimately using a \class{javax.media.j3d.Transform3D} object.  The most common use of this is to translate the scene so that the center of the scene is at the origin of the space to make it easier to view or spin.  Another use is to scale the scene so as to properly fit it within the window.  MASON provides a number of Display3D methods for your enjoyment:
+
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{ public void setTransform(Transform3D transform)}
+	Sets the current transformation of the scene.
+\mthd{ public Transform3D getTransform()}
+	Returns the current transformation of the scene.
+\mthd{ public void transform(Transform3D transform)}
+	Modifies the existing transform by concatenating it to the given the Transform3D.  This is essentially the equivalent of multiplying the existing transformation against the provided new transformation matrix.
+\mthd{ public void rotateX(double degrees)}
+	Modifies the existing transform by rotating it around the X axis by the provided degrees.
+\mthd{ public void rotateY(double degrees)}
+	Modifies the existing transform by rotating it around the Y axis by the provided degrees.
+\mthd{ public void rotateZ(double degrees)}
+	Modifies the existing transform by rotating it around the Z axis by the provided degrees.
+\mthd{ public void translate(double dx, double dy, double dz)}
+	Modifies the existing transform by translating it by the given values in each dimension
+\mthd{ public void scale(double sx, double sy, double sz)}
+	Modifies the existing transform by scaling it by the given values in each dimension.
+\mthd{ public void scale(double value)}
+	Modifies the existing transform by scaling it by the given value.  Each dimension is scaled the same amount.
+\mthd{public void resetTransform()}
+	Clears the current transform.  Equivalent to \method{setTransform(null)}.
+\end{methods}
+
+
+
+
+
+\ignore{
+    public String DEFAULT_PREFERENCES_KEY = "Display3D";
+    public class OptionPane3D extends JFrame
+    public OptionPane3D optionPane = new OptionPane3D("3D Options");    
+    public void setPreferencesKey(String s)
+    public String getPreferencesKey() { return preferencesKey; }
+       
+    public void destroySceneGraph()
+    public void createSceneGraph()
+    public void updateSceneGraph(boolean waitForRenderer)
+    
+    public void performSelection( LocationWrapper wrapper)
+    public void performSelection( Bag locationWrappers )
+    public void clearSelections()
+    public SelectionBehavior getSelectionBehavior()
+    public void setSelectsAll(boolean selection, boolean inspection)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{CapturingCanvas3D} 
+\label{sim.display3d.CapturingCanvas3D}
+
+Display3D performs drawing via a \Class{sim.display.CapturingCanvas3D}.  This is a subclass of \class{javax.media.j3d.Canvas3D} which has additional facilities for generating bitmap images.  CapturingCanvas3D has only three methods of importance:
+
+\begin{methods}{\class{sim.display3d.CapturingCanvas3D}}
+\mthd{public void beginCapturing(boolean movie)} Starts the capturing procedure.  If \variable{movie} is \variable{false}, then the capturing will continue until \method{stopCapturing()} is called.
+\mthd{public void stopCapturing()}  Stops capturing of images.
+\mthd{public BufferedImage getLastImage()}  Returns the last captured image, or null if no image was captured.
+\end{methods}
+
+Additionally, CapturingCanvas3D will \method{notify()} any object waiting on it whenever a new image has been captured.  The first image arrives immediately upon calling \method{beginCapturing(...)}, and subsequent images arrive whenever Java3D has performed image rendering (that is, after \method{postRender()} is called on the Canvas by Java3D).    To get a single image, you'd do the following:
+
+\java{%
+canvas.beginCapturing(false);\\
+BufferedImage image = canvas.getLastImage();
+}
+
+To produce a series of images, you could do something like this:
+
+\java{%
+canvas.beginCapturing(true);\\
+\\
+// ... then, after wait()ing on the canvas, or performing some event\\
+// which otherwise caused Java3D to render itself again...\\
+BufferedImage image = canvas.getLastImage();\\
+\\
+// Repeat that last command multiple times to get each image.\\
+// Then finally call...\\
+canvas.stopCapturing();
+}
+
+The two can be mixed: you can get single snapshot images in the middle of a movie sequence if you like.
 
 \section{3D Field Portrayals}
 \label{sim.portrayal.Portrayal3D}

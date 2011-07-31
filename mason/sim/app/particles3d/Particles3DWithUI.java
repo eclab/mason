@@ -58,7 +58,7 @@ public class Particles3DWithUI extends GUIState
         
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
 
         particlesPortrayal.setField(((Particles3D)state).particles);
         particlesPortrayal.setPortrayalForAll(new SpherePortrayal3D(Color.red)); 
