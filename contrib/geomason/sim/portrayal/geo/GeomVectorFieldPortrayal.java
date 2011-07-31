@@ -251,7 +251,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 		final double xScale = info.draw.width / geomField.getFieldWidth();
 		final double yScale = info.draw.height / geomField.getFieldHeight();
-		GeomInfo2D newinfo = new GeomInfo2D(new DrawInfo2D(new Rectangle2D.Double(0, 0, xScale, yScale), info.clip),
+		GeomInfo2D newinfo = new GeomInfo2D(new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0, 0, xScale, yScale), info.clip),
 				geomField.worldToScreen);
 		newinfo.fieldPortrayal = this;
 
@@ -293,9 +293,8 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
     @Override
 	public void setField(Object field)
 	{
-		setDirtyField(true);
 		if (field instanceof GeomVectorField)
-			this.field = field;
+			super.setField(field);
 		else
 			throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
 	}
