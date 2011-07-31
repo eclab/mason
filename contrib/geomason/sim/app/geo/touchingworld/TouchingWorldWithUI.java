@@ -53,7 +53,7 @@ public class TouchingWorldWithUI extends GUIState {
     {
         super.init(controller);
 
-        display = new Display2D(TouchingWorld.WIDTH, TouchingWorld.HEIGHT, this, 1);
+        display = new Display2D(TouchingWorld.WIDTH, TouchingWorld.HEIGHT, this);
 
         display.attach(shapePortrayal, "Shapes");
         display.attach(selectedDistrictPortrayal, "Selected shape");
