@@ -49,7 +49,7 @@ public class ColorWorldWithUI extends GUIState {
     {
         super.init(controller);
 
-        display = new Display2D(ColorWorld.WIDTH, ColorWorld.HEIGHT, this, 1);
+        display = new Display2D(ColorWorld.WIDTH, ColorWorld.HEIGHT, this);
 
         display.attach(countyPortrayal, "FFX County Politcal Boundaries");
         display.attach(agentPortrayal, "Agents");
