@@ -2147,3 +2147,16 @@ Version 16
 		destroySceneGraph() which was unnecessary since createSceneGraph() would
 		call it anyway (if needed).  We've deleted this call in all the examples
 		and in the tutorials.
+	Console.pressHide, pressHideAll, pressShow, and pressShowAll changed to
+		hideSelectedFrames, hideAllFrames, showSelectedFrames, and
+		showAllFrames.  Additionally, showAllFrames and hideAllFrames made
+		public.  An additional new method, getAllFrames(), also made public.
+		This last method also added to the Controller interface and is implemented
+		by SimpleController as well.
+	Tweaks to Inspector.createFrame() to make weak keys more likely to get GCed
+	Added Controller.getAllInspectors() and implementations in Console and SimpleController
+	ChartingPropertyInspectors now dispose their frames at the end of a simulation like
+		other Inspectors.  If this proves irritating, just delete the
+		ChartingPropertyInspector.disposeFrame() method and let us know and we may
+		consider reversion.
+

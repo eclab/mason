@@ -297,7 +297,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             else list.add(optionsBox2);
             }
         }
-                
+	
+	JFrame chartFrame = null;
+	
     ChartGenerator createNewChart( final GUIState simulation)
         {
         generator = createNewGenerator();
@@ -306,7 +308,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
 		getCharts(simulation).add( generator );			// put me in the global charts list
-        JFrame f = generator.createFrame(simulation);
+        chartFrame = generator.createFrame(simulation);
 
         WindowListener wl = new WindowListener()
             {
@@ -318,8 +320,8 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             public void windowIconified(WindowEvent e) {}
             public void windowOpened(WindowEvent e) {}
             };
-        f.addWindowListener(wl);
-        f.setVisible(true);
+        chartFrame.addWindowListener(wl);
+        chartFrame.setVisible(true);
         return generator;
         }
 
@@ -401,4 +403,11 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                 }
             };
         }
+		
+	public void disposeFrame()
+		{
+		if (chartFrame != null)
+			chartFrame.dispose();
+		chartFrame = null;
+		}
     }

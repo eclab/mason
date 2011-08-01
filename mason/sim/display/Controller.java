@@ -9,6 +9,7 @@ import javax.swing.*;
 import sim.portrayal.*;
 import sim.engine.*;
 import sim.util.*;
+import java.util.*;
 
 /** A Controller is the top-level object responsible for setting up and running the GUIState.
     More or less, the Controller calls the init, start, step, finish, and quit methods on the GUIState.
@@ -46,6 +47,9 @@ public interface Controller
         If the Controller does not have such a list, FALSE is returned.   */
     public boolean unregisterAllFrames();
     
+    /** Returns all registered frames.  */
+    public ArrayList getAllFrames();
+    
     /** Lazily updates and redraws all the displays and inspectors.  Do not call this method from
         the model thread -- only from the Swing event thread.
         This is an expensive procedure and should not be done unless necessary.  Typically it's done
@@ -60,5 +64,12 @@ public interface Controller
     /** Registers an inspector to be refreshed as appropriate and stopped when the model is restarted.
         Does not necessarily add the inspector to a list of inspectors like setInspectors(...) does. */
     public void registerInspector(Inspector inspector, Stoppable stopper);
+	
+	/** Returns a list of all current inspectors.  Some of these inspectors may be stored in
+		the Controller itself, and others may have been dragged out into their own JFrames.  You will
+		need to distinguish between these two on your own.  Note that some of these inspectors are stored as
+		weak keys in the Controller, so holding onto this list will prevent them from getting garbage
+		collected.  As a result, you should only use this list for temporary scans. */
+	public ArrayList getAllInspectors();
     }
     

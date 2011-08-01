@@ -5919,7 +5919,7 @@ Once you set up a Display2D, your next task is usually to arrange its display pa
 \mthd{public Frame getFrame()} Returns the Display2D's current JFrame (whether it created it or not).
 \end{methods}
 
-Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  Here are the relevant Controller methods:
+Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  You can also get a list of all the registered JFrames.  Here are the relevant Controller methods:
 
 \phantomsection % A magical command defined in the hyperref package
 \label{registrationmethods}
@@ -5928,8 +5928,17 @@ Once you've created a JFrame, you'll want to register it with your \class{sim.di
 \mthd{public boolean registerFrame(JFrame frame)}  Registers the JFrame, notionally holding a Display of some sort, with the Controller, and returns \variable{true}, unless the Controller cannot register JFrames of any kind, in which case this method returns \variable{false}.
 \mthd{public boolean unregisterFrame(JFrame frame)}  Unregisters the JFrame, notionally holding a Display of some sort, with the Controller, and returns \variable{true}, unless the Controller cannot register or unregister JFrames of any kind, in which case this method returns \variable{false}.
 \mthd{public boolean unregisterAllFrames()}  Unregisters all JFrames registered with the Controller, and returns \variable{true}, unless the Controller cannot register or unregister JFrames of any kind, in which case this method returns \variable{false}.
+\mthd{public ArrayList getAllFrames()}  Returns a list of all JFrames registered with the Controller.
 \mthd{public void refresh()}  Schedules updates and redraws of all Inspectors and Displays registered with the Controller to occur at some time soon in the future.  This is an expensive procedure and should not be called unless necessary: typically in response to some event (a button press etc.) rather than changes in the model itself.  Only call this method from the Swing even thread.
 \end{methods}
+
+The Console lets you additionally show or hide all the registered frames:
+
+\begin{methods}{\class{sim.display.Console}}
+\mthd{public void showAllFrames()}  Shows and brings to front all JFrames registered with the Console.  Note that this method should probably only be called from within the Swing event thread.
+\mthd{public void hideAllFrames()}  Hides all JFrames registered with the Console.  Note that this method should probably only be called from within the Swing event thread.
+\end{methods}
+
 
 Next you'll want to attach Field Portrayals and certain global Inspectors to the Display.  When the Display is updated, it'll instruct its Field Portrayals to redraw themselves.  A Field Portrayal can in theory be attached to multiple Displays but it rarely makes sense to do so.  Usually you'll just attach the Field Portrayal, though sometimes you may wish to translate it and scale it relative to other Field Portrayals so it's lined up properly with them in certain circumstances.
 
@@ -7977,7 +7986,35 @@ Last but not least, Inspectors can be generated from objects which appear as pro
 This stuff is automatically handled internally by Inspectors, and there's no API for it.  However, you can register a property inspector of your creation to be able to be produced for any property.  Property Inspectors are registered with MASON using a file and loaded at runtime.  See Section \ref{sim.portrayal.inspector.PropertyInspector} for more information.
 
 
+\section{Managing Inspectors}
 
+When inspectors are built, they're either given their own windows or assigned an existing window, typically the Console itself.  If they're in the Console, they're placed into a list in the {\bf consoles tab} where they can be selectively viewed and manipulated.  Inspectors under the consoles tab can also be {\bf detached}, meaning that they're separated from the Console and given their own window.
+
+If Inspectors are in the consoles tab list, they are displaced by new Inspectors whenever new objects are double-clicked on in the Display.  Otherwise, they stick around until the end of the simulation, at which time they're disposed of if they're in the consoles tab list or are in their own windows.
+
+All Controllers, including the Console, have certain methods for registering inspectors to be refreshed, or adding them to the consoles tab list (or internal list if not a Console).  Those are:
+
+\begin{methods}{\class{sim.display.Controller}}
+\mthd{public void setInspectors(Bag inspectors, Bag names)} Places the inspectors in the Controller's console tab list or internal inspector list, displacing existing inspectors on the list.  The inspectors are assigned the given names, which may be displayed to the user.  Automatically registers the inspectors with registerInspector(...) as well.  
+\mthd{public void registerInspector(Inspector inspector, Stoppable stopper)} Registers an inspector to be refreshed as appropriate and stopped when the model is restarted.  Does not necessarily add the inspector to a list of inspectors like setInspectors(...) does. 
+\mthd{public ArrayList getAllInspectors()} Returns a list of all current inspectors.  Some of these inspectors may be stored in the Controller itself, and others may have been dragged out into their own JFrames.  You will need to distinguish between these two on your own.  Note that some of these inspectors are stored as weak keys in the Controller, so holding onto this list will prevent them from getting garbage collected.  As a result, you should only use this list for temporary scans.
+\mthd{public void refresh()}  Schedules updates and redraws of all Inspectors and Displays registered with the Controller to occur at some time soon in the future.  This is an expensive procedure and should not be called unless necessary: typically in response to some event (a button press etc.) rather than changes in the model itself.  Only call this method from the Swing even thread.
+\end{methods}
+
+Be careful with \method{getAllInspectors()}: some of the inspectors being returned may also be keys in a weak hash table inside the Controller.  If you hang onto them (or hang onto the ArrayList provided), then they may never be garbage collected.  This isn't a big disaster, but you should be aware of it.
+
+The Console and SimpleController have two additional methods for managing inspectors:
+
+\begin{methods}{\class{sim.display.Console} and \class{sim.display.SimpleController}}
+\mthd{public void stopAllInspectors(boolean killDraggedOutWindowsToo)} Stops all inspectors.  If \variable{killDraggedOutWindowsToo} is \variable{true}, then the detatched inspectors are stopped as well.  Updates all inspectors once as well for good measure prior to stopping some.
+\mthd{public void removeAllInspectors(boolean killDraggedOutWindowsToo)} Stops and eliminates all inspectors, including disposal.  If \variable{killDraggedOutWindowsToo} is \variable{true}, then all inspector windows will be closed; else only the inspectors presently embedded in the console will be stopped and removed.  Inspectors will have the method \method{disposeFrame()} called on them to dispose of their JFrames (if they see fit to do so).
+\end{methods}
+
+Note that the second method calls a special method on each Inspector to ask it to dispose its JFrame as it sees fit. The default implementation of this method identifies the current JFrame holding the Inspector, if any, and disposes it if it's not a Controller.  You may wish to change this behavior: for example, charting inspectors share JFrames and have to dispose them specially.  The method in question is:
+
+\begin{methods}{\class{sim.portrayal.Inspector}}
+\mthd{public void disposeFrame()} Disposes the Inspector's containing JFrame if it's not a Controller.  Override this to change the disposal behavior of the Inspector.
+\end{methods}
 
 
 \section{Basic Inspectors}
