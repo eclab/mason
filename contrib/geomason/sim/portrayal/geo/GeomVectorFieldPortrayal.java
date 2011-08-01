@@ -294,7 +294,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	public void setField(Object field)
 	{
 		if (field instanceof GeomVectorField)
-			super.setField(field);
+			super.setField(field);  // sets dirty field already 
 		else
 			throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
 	}
