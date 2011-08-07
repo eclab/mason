@@ -3045,10 +3045,14 @@ Notice that this is {\it not} \method{getDoubleValue()}\,---\,it's expressly not
 
 \paragraph{Mutable Doubles}
 
-Java has no mutable wrapper for doubles, only the immutable class \class{java.lang.Double}.  In some cases MASON needs to store a double as an object in a mutable fashion, and it does so using \Class{sim.util.MutableDouble}.  This class extends \class{java.lang.Number}, and is \Class{sim.util.Valuable}, \class{java.lang.Cloneable}, and \class{java.io.Serializable}.
+Java has no mutable wrapper for doubles, only the immutable class \class{java.lang.Double}.  In some cases MASON needs to store a double as an object in a mutable fashion, and it does so using \Class{sim.util.MutableDouble}.  This class extends \class{java.lang.Number}, and is \Class{sim.util.Valuable}, \class{java.lang.Cloneable}, and \class{java.io.Serializable}.  It contains a single instance variable holding the value proper, which you can change freely:
+
+\java{%
+    public double val;
+}
 
 \begin{methods}{\class{sim.util.MutableDouble} Constructor}
-\mthd{public MutableDouble()} Creates a MutableDouble holding 0.
+\mthd{public MutableDouble()} Creates a MutableDouble initially holding 0.
 \mthd{public MutableDouble(double val)} Creates a MutableDouble holding the given value.
 \mthd{public MutableDouble(MutableDouble other)} Creates a MutableDouble holding the other MutableDouble's value.
 \end{methods}
@@ -3947,6 +3951,7 @@ There's nothing magic about many of these representations: but they're helpful f
 
 \section{General Topics}
 \label{sim.field.SparseField2D}
+\label{sim.field.SparseField3D}
 
 Grids are found in the MASON package \Package{sim.field.grid}; a few minor abstract classes are further found in \Package{sim.field}.  As shown in Figure \ref{GridUML}, MASON has four basic grid classes, available in both 2-dimensional and 3-dimensional formats:
 
@@ -3962,7 +3967,7 @@ These classes extend certain abstract classes and interfaces.  All 2-dimensional
 
 \Class{sim.field.grid.SparseGrid2D} (and \Class{sim.field.grid.SparseGrid3D}) is a bit different.  It stores Objects at \(X, Y\) (or \(X,Y,Z\)) locations using a hash table.  Unlike an array, this allows multiple Objects to be stored at the same location, and also allows arbitrarily large, indeed unbounded, grids of objects without the memory overhead incurred by arrays.  And you can find the location of an object quickly.  But a Sparse Grid also has a lot more overhead than a simple array.
 
-SparseGrid2D and SparseGrid3D are both manifestations of the same abstract superclass \Class{sim.field.SparseField}, which handles the general hashtable lookup issues.  SparseField has been set up to make it easy for you to implement your own sparse fields if you care to.  SparseGrid2D also implements two methods, found in the interface \Class{sim.field.SparseField2D} which make it more useful to 2-dimensional Portrayals:\footnote{We've not needed an equivalent for 3-dimensional portrayals yet: but may eventually.}
+SparseGrid2D and SparseGrid3D are both manifestations of the same abstract superclass \Class{sim.field.SparseField}, which handles the general hashtable lookup issues.  SparseField has been set up to make it easy for you to implement your own sparse fields if you care to.  SparseGrid2D also implements two methods, found in the interface \Class{sim.field.SparseField2D} which make it more useful to 2-dimensional Portrayals.
 
 \begin{methods}{\class{sim.field.SparseField2D} Utility}
 \mthd{public Double2D getDimensions()}
@@ -3970,6 +3975,16 @@ Returns the width and height of the field.
 \mthd{public Double2D getObjectLocationAsDouble2D(Object obect)}
 Returns the location, as a Double2D, of a given Object stored in the field.
 \end{methods}
+
+Likewise, SparseGrid3D implements \Class{sim.field.SparseField3D}:
+
+\begin{methods}{\class{sim.field.SparseField3D} Utility}
+\mthd{public Double3D getDimensions()}
+Returns the width and height of the field. 
+\mthd{public Double3D getObjectLocationAsDouble3D(Object obect)}
+Returns the location, as a Double3D, of a given Object stored in the field.
+\end{methods}
+
 
 \subsection{Extents and Neighborhood Lookup}
 
@@ -3988,7 +4003,7 @@ Returns the width of the field (Z dimension).
 \end{methods}
 
 \subsection{Rectangular Grids}
-Unless they are unbounded grids (notably \Class{sim.field.SparseField2D} and \Class{sim.field.SparseField3D}, which can have negative values), all rectangular grids start at coordinate 0 and proceed in a positive direction.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
+Unless they are unbounded grids (notably \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}, which can have negative values), all rectangular grids start at coordinate 0 and proceed in a positive direction.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
 
 All rectangular grids have neighborhood lookup facilities which gather all the locations (not their values) in the grid lying within some region a distance away from a given point.  MASON provides two such methods:
 
@@ -4613,11 +4628,17 @@ Speed of Drawing in GUI&Medium&Slow&Fast\\
 
 Continuous space is more complicated to implement than grids.  The most complex issue arises when performing neighborhood queries.  In a grid, the typical query is: ``what objects are in the immediate eight neighbors of grid cell X?''  Or perhaps ``what objects are in the cells located \(N\) cells away from grid cell X?'' These are simple queries to respond to: just sweep through the cells.  But in continuous space there are no cells per se: so a typical query is``what are all the objects up to \(N\) units away from point X?''.  If \(N\) varies, than this can be quite challenging to write an efficient data structure for.
 
-\begin{wrapfigure}{r}[0in]{3.2in}
-\begin{center}\includegraphics[width=3.2in]{ContinuousUML.pdf}\end{center}
+%\begin{wrapfigure}{r}[0in]{4.5in}
+%\begin{center}\includegraphics[width=4.5in]{ContinuousUML.pdf}\end{center}
+%\caption{UML diagram of MASON's 2-dimensional and 3-dimensional continuous space classes.}
+%\label{ContinuousUML}
+%\end{wrapfigure}
+
+\begin{figure}[t]
+\begin{center}\includegraphics[width=4.5in]{ContinuousUML.pdf}\end{center}
 \caption{UML diagram of MASON's 2-dimensional and 3-dimensional continuous space classes.}
 \label{ContinuousUML}
-\end{wrapfigure}
+\end{figure}
 
 The issue is complicated by whether or not the Objects in the continuous space fill a volume.   In grid environments, Objects usually fill a single grid cell.  But Continuous space may contain either {\bf point objects}, which essentially fill no space at all, or {\bf solid region objects}, which fill some arbitrary-sized area or volume in the space.  Solid region objects make neighborhood querying tougher: the question then becomes whether or not the region intersects with the query region.  
 
@@ -4625,9 +4646,9 @@ There are many approaches to solving such problems: for example, quad-trees, KD-
 
 \sidebar{What is a Sparse Field?  Or a SparseGrid2D?}{A Sparse Field is a data structure which associates Objects with Locations using a hash table.  See Section \ref{sim.field.SparseField} (Sparse Fields).  A \Class{sim.field.grid.SparseGrid2D} is a Sparse Field which represents a 2-dimensional integer grid.  See Section \ref{sim.field.grid.SparseGrid2D}.}  MASON's continuous data structures take a fairly rudimentary and common approach to representing space with neighborhood queries: by discretizing the space into an infinite grid using a fixed discretization size of your choosing.  When you store an Object in a continuous space, for example, and associate with it a real-valued coordinate, MASON first discretizes this coordinate into an integer coordinate.  It then stores the Object in a Sparse Field (essentially a SparseGrid2D).  It further retains the real-valued coordinate associated with the Object proper.
 
-\sidebar{Can I use this for vector GIS?}{Sure, in theory yes.  But vector GIS has its own domain-specific assumptions which are somewhat different, so it wouldn't be particularly efficient.  However you're in luck!  MASON has an entire vector GIS facility available as a plug-in called {\bf GeoMason}, which rests on a more appropriate facility, the Java Topology Suite (or JTS).  See the MASON web page at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/mason/ for more information.}  For example, if your Object is being stored at \(\langle 92.3, -41.4\rangle\) in a \Class{sim.field.continuous.Continuous2D} with a discretization of 10 units, MASON will first create a discretized coordinate of the form \(\langle 9, -5\rangle\), and will then store the Object internally associated with the discretized coordinate.  Finally, it will then retain the fact that the Object is actually located at  \(\langle 92.3, -41.4\rangle\), using a hash table.
+For example, if your Object is being stored at \(\langle 92.3, -41.4\rangle\) in a \Class{sim.field.continuous.Continuous2D} with a discretization of 10 units, MASON will first create a discretized coordinate of the form \(\langle 9, -5\rangle\), and will then store the Object internally associated with the discretized coordinate.  Finally, it will then retain the fact that the Object is actually located at  \(\langle 92.3, -41.4\rangle\), using a hash table.
 
-Why do this?  Because it makes neighborhood lookups efficient, if most of your lookups tend to fall within a certain range.  Let's say that you've picked a discretization of 10 because you typically want to know all the elements within 4 units in any direction of a target point.  That's your typical query.  If you ask MASON, for example, for all the Objects within 4 units distance of the point \(\langle 32.3, 49.4\rangle\), MASON creates the bounding box from \(\langle 28.3, 45.4\rangle\) to \(\langle 36.3, 53.4\rangle\).  This discretizes to the box of four cells from \(\langle 2, 4\) to \(\langle 3, 5\rangle\) inclusive.  Depending on the query, MASON either looks up the contents of these four cells and either returns them (they might contain Objects further than you asked for), or it whittles the Objects down to just the ones in the region you asked for by testing distance using the Objects' real-valued coordinates.  This works reasonably well in practice but there are guidelines you'll need to consider as discussed in the next Section.
+\sidebar{Can I use this for vector GIS?}{Sure, in theory yes.  But vector GIS has its own domain-specific assumptions which are somewhat different, so it wouldn't be particularly efficient.  However you're in luck!  MASON has an entire vector GIS facility available as a plug-in called {\bf GeoMason}, which rests on a more appropriate facility, the Java Topology Suite (or JTS).  See the MASON web page at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/mason/ for more information.}  Why do this?  Because it makes neighborhood lookups efficient, if most of your lookups tend to fall within a certain range.  Let's say that you've picked a discretization of 10 because you typically want to know all the elements within 4 units in any direction of a target point.  That's your typical query.  If you ask MASON, for example, for all the Objects within 4 units distance of the point \(\langle 32.3, 49.4\rangle\), MASON creates the bounding box from \(\langle 28.3, 45.4\rangle\) to \(\langle 36.3, 53.4\rangle\).  This discretizes to the box of four cells from \(\langle 2, 4\) to \(\langle 3, 5\rangle\) inclusive.  Depending on the query, MASON either looks up the contents of these four cells and either returns them (they might contain Objects further than you asked for), or it whittles the Objects down to just the ones in the region you asked for by testing distance using the Objects' real-valued coordinates.  This works reasonably well in practice but there are guidelines you'll need to consider as discussed in the next Section.
 
 MASON's continuous package is \Package{sim.field.continuous}, and it contains only two classes:
 
@@ -4636,7 +4657,7 @@ MASON's continuous package is \Package{sim.field.continuous}, and it contains on
 \item \Class{sim.field.continuous.Continuous3D} represents 3-dimensional continuous space.
 \end{itemize}
 
-These two classes extend the \Class{sim.field.SparseField} class (Section \ref{sim.field.SparseField}).  We'll repeat some of its methods below.  Additionally, \Class{sim.field.continuous.Continuous2D} implements the \Class{sim.field.SparseField2D} interface (see Section \ref{sim.field.SparseField2D}), which is used to aid 2-dimensional Field Portrayals.  We've not yet found it useful to implement an equivalent thing for \Class{sim.field.continuous.Continuous3D}:
+These two classes extend the \Class{sim.field.SparseField} class (Section \ref{sim.field.SparseField}).  We'll repeat some of its methods below.  Additionally, \class{sim.field.continuous.Continuous2D} implements the \class{sim.field.SparseField2D} interface (see Section \ref{sim.field.SparseField2D}), which is used to aid 2-dimensional Field Portrayals. Similarly, \class{sim.field.continuous.Continuous3D} implements \class{sim.field.SparseField3D}:
 
 \begin{methods}{\class{sim.field.continuous.Continuous2D} Utility}
 \mthd{public Double2D getDimensions()}
@@ -4644,6 +4665,14 @@ Returns the width and height of the field.
 \mthd{public Double2D getObjectLocationAsDouble2D(Object obect)}
 Returns the location, as a Double2D, of a given Object stored in the field.
 \end{methods}
+
+\begin{methods}{\class{sim.field.continuous.Continuous3D} Utility}
+\mthd{public Double3D getDimensions()}
+Returns the width and height of the field. 
+\mthd{public Double3D getObjectLocationAsDouble3D(Object obect)}
+Returns the location, as a Double3D, of a given Object stored in the field.
+\end{methods}
+
 
 \section{Extents}
 
@@ -4855,10 +4884,10 @@ Places into {\it result} (or a new Bag if {\it result} is not provided) all obje
 
 \begin{figure}[h]\vspace{-23em}\hspace{20em}\includegraphics[width=4in]{Balls.png}\vspace{0em}\end{figure}
 
-\begin{wrapfigure}{r}[0in]{1.8in}
-\vspace{-1em}\begin{center}\includegraphics[width=1.5in]{NetworkUML.pdf}\end{center}
+\begin{wrapfigure}{r}[0in]{3.2in}
+\vspace{-2em}\begin{center}\includegraphics[width=3in]{NetworkUML.pdf}\end{center}
 \caption{UML diagram of MASON's Network package.  Not a very complex package!}
-\vspace{-4em}
+\vspace{-6em}
 \label{NetworkUML}
 \end{wrapfigure}
 
@@ -6124,7 +6153,7 @@ Display2D's relevant methods are:
 \mthd{ public Bag[] objectsHitBy( Rectangle2D.Double rect )} Returns an array of Bags of LocationWrappers for every object which is hit by the given rectangular region.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
 \mthd{ public Bag[] objectsHitBy( Point2D point )} Returns an array of Bags of LocationWrappers for every object which is hit by the given point.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
 \mthd{ public void performSelection( LocationWrapper wrapper)}Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method.
-\mthd{ public void performSelection( Bag locationWrappers )}Selects the Object represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
+\mthd{ public void performSelection( Bag locationWrappers )}Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
 \mthd{ public void performSelection( Rectangle2D.Double rect )}Selects all objects hit by the given rectangle, by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
 \mthd{ public void clearSelections()}Instructs all Field Portrayals to clear all selections on all objects.
 \mthd{ public void createInspectors( Rectangle2D.Double rect, GUIState simulation )}Generates and submits to the Console inspectors for each object hit by the given rectangle, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
@@ -7893,7 +7922,7 @@ There are two kinds of inspectors.  Basic Inspectors inspect {\bf objects} or {\
 You can create your own Inspectors and it's perfectly fine to do so: after all, in its most basic form, an Inspector is little more than an ultimate subclass of \class{javax.swing.JPanel}.  But it's more common to use the built-in Inspectors provided with MASON, particularly \class{sim.portrayal.SimpleInspector}.
 
 \begin{figure}[t]
-\begin{center}\includegraphics[width=5.5in]{InspectorUML.pdf}\end{center}
+\begin{center}\includegraphics[width=6.5in]{InspectorUML.pdf}\end{center}
 \caption{UML diagram of  MASON's Inspector facility.}
 \label{InspectorUML}
 \end{figure}
@@ -8045,7 +8074,7 @@ synchronized(gui.state.schedule) \{\\
 \indent \}
 }
 
-Due to a design oversight, the GUIState is not provided in \method{updateInspector()}\,---\,you'll have to hold onto it some other way, perhaps passed in via a constructor;.
+Due to a design oversight, the GUIState is not provided in \method{updateInspector()}\,---\,you'll have to hold onto it some other way, perhaps passed in via a constructor.
 
 \subsection{Volatility}  
 \label{volatility}
@@ -8571,7 +8600,7 @@ Too technical?  Here's all you need to know: the default value for the scaling i
 \mthd{public double getScale()}  Returns the scale (zoom factor).
 \end{methods}
 
-Attaching Field Portrayals and global Inspectors to the Display is done identically to Display2D.  A Field Portrayal can in theory be attached to multiple Displays but it rarely makes sense to do so.  In Display2D Field Portrayals can be translated and scaled when attached: not so in Display3D.  But don't despair: if you want to perform a transformation on the Field Portrayal, it's done with Field Portrayal methods themselves (see Section \ref{sim.portrayal.FieldPortrayal3D}).  Also one big difference between Display3D and Display2D is that Display3D can attach {\it any Portrayal3D class} to the Display, not just FieldPortrayal3D.  But in truth it's rare to attach anything other than field portrayals.
+Attaching Field Portrayals and global Inspectors to the Display is done identically to Display2D.  A Field Portrayal can in theory be attached to multiple Displays but it rarely makes sense to do so.  In Display2D Field Portrayals can be translated and scaled when attached: not so in Display3D.  But don't despair: if you want to perform a transformation on the Field Portrayal, it's done with Field Portrayal methods themselves (see Section \ref{sim.portrayal3d.FieldPortrayal3D}).  Also one big difference between Display3D and Display2D is that Display3D can attach {\it any Portrayal3D class} to the Display, not just FieldPortrayal3D.  But in truth it's rare to attach anything other than field portrayals.
 
 \begin{methods}{\class{sim.display.Display3D}}
 \mthd{ public void attach(sim.portrayal.Inspector inspector, String name)}
@@ -8599,11 +8628,39 @@ When a simulation is begun, you'll want to reset the Display.  This causes it to
 \mthd{public boolean shouldUpdate()} Returns true or false to indicate if a Display3D should update and redraw itself at a given time.  By default this method queries the Display3D's GUI regarding the user choices for updating.  You may override this method if you feel inclined.
 \end{methods}
 
+
+As discussed in Section \ref{sim.display.Prefs}, Display3D, like Display2D maintains certain MASON and simulation preferences, using the key:
+
+\java{% 
+    public String DEFAULT\_PREFERENCES\_KEY = "Display3D";
+}
+
+This key is used to store preferences information associated with the Display3D.  However if your simulation has more than one Display3D, you may need to make their preference keys distinct.  I would associate the default preference key (``Display3D'') with your ``primary'' Display3D, and use alternative keys for each of the others (for example, ``Display3D-a'' or some such).  This can be done with the following methods:
+
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{ public void setPreferencesKey(String s)}
+	Sets the preferences key for the Display3D to the given string.
+\mthd{ public String getPreferencesKey()}
+	Returns the current preferences key (the default is DEFAULT\_PREFERENCES\_KEY, set to ``Display3D'').
+\end{methods}
+
+
 \subsection{Managing the Scene Graph}
 
 The Display3D manages the Java3D scene graph which ultimately holds all of the model objects for display.  Managing this graph requires three tasks: the Display3D must initially {\bf  build} or later {\bf rebuild} the graph; it must {\bf update} the graph each timestep to reflect changes in the model, and it must eventually {\bf destroy} the graph, either at the conclusion of the program or as part of the rebuilding procedure.
 
-These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
+These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one, and then calls the hook \method{sceneGraphCreated()}.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  So if you hang material under the light switch, in \method{sceneGraphCreated()}, you should remove it first, if it exists yet, before adding revised material.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
+
+\begin{methods}{\class{sim.display.Display3D}}
+\mthd{ public void createSceneGraph()}
+	Builds a new scene graph, destroying the old one.  This method is typically called when starting or restarting a simulation.  This method then calls a hook, \method{sceneGraphCreated()}.
+\mthd{protected void sceneGraphCreated()} Called after a scene graph has been created or recreated, to give you an opportunity to add custom material to the new scene.
+\mthd{ public void destroySceneGraph()}
+	Destroys the scene graph, freeing its resources.  This method is typically called when quitting a simulation.
+\mthd{ public void updateSceneGraph(boolean waitForRenderer)}
+	Revises the scene graph to reflect changes in the underlying simulation model.  If \variable{waitForRenderer} is \variable{true}, then this method blocks until the resulting updated scene graph has been redisplayed onscreen.  Else, the scene graph may be redisplayed at some time in the near future.  This method is typically called each model tick, and \variable{waitForRenderer} is set to \variable{true} to guarantee frames for movie output, etc.  This method may call \method{createSceneGraph()} to rebuild the graph if the model has changed too much (it is ``dirty'').  This happens, for example, if new FieldPortrayals have been attached to the Display3D.
+\end{methods}
 
 As discussed earlier, the Display3D can transform the entire scene, ultimately using a \class{javax.media.j3d.Transform3D} object.  The most common use of this is to translate the scene so that the center of the scene is at the origin of the space to make it easier to view or spin.  Another use is to scale the scene so as to properly fit it within the window.  MASON provides a number of Display3D methods for your enjoyment:
 
@@ -8635,38 +8692,7 @@ As discussed earlier, the Display3D can transform the entire scene, ultimately u
 
 
 
-\ignore{
-    public String DEFAULT_PREFERENCES_KEY = "Display3D";
-    public class OptionPane3D extends JFrame
-    public OptionPane3D optionPane = new OptionPane3D("3D Options");    
-    public void setPreferencesKey(String s)
-    public String getPreferencesKey() { return preferencesKey; }
-       
-    public void destroySceneGraph()
-    public void createSceneGraph()
-    public void updateSceneGraph(boolean waitForRenderer)
-    
-    public void performSelection( LocationWrapper wrapper)
-    public void performSelection( Bag locationWrappers )
-    public void clearSelections()
-    public SelectionBehavior getSelectionBehavior()
-    public void setSelectsAll(boolean selection, boolean inspection)
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\subsection{CapturingCanvas3D} 
+\subsection{CapturingCanvas3D: Movies and Screenshots} 
 \label{sim.display3d.CapturingCanvas3D}
 
 Display3D performs drawing via a \Class{sim.display.CapturingCanvas3D}.  This is a subclass of \class{javax.media.j3d.Canvas3D} which has additional facilities for generating bitmap images.  CapturingCanvas3D has only three methods of importance:
@@ -8700,9 +8726,138 @@ canvas.stopCapturing();
 
 The two can be mixed: you can get single snapshot images in the middle of a movie sequence if you like.
 
+
+\subsection{SelectionBehavior: Selecting and Inspection} 
+\label{sim.display3d.SelectionBehavior}
+
+\Class{sim.display3d.SelectionBehavior} is one of two custom Java3D behaviors (event handling procedures) which Display3D attaches to the scene graph.  Its function is to handle selection and inspection of objects, just as Display2D does the same.  In Display2D selection and inspection is done via a recursive {\it hit testing} procedure.  Display3D instead relies on Java3D's {\bf picking} facility.
+
+Picking works like this.  When a user clicks on the screen, Java3D creates a ray, starting at the camera, passing through the field of view right where the user clicked, and continuing through into the scene.  Any objects which intersect with this ray are ``picked'' and returned.
+
+Display3D relies on SelectionBehavior to manage picking and determine whether the picked objects are simply selected or if they are also inspected.  If they are inspected, SelectionBehavior builds inspectors for them and submits the inspectors to the Console.  If they are selected, SelectionBehavior calls \method{performSelection(...)} on the Display3D, which then clears its old selections and performs selection on the new objects.   Display3D maintains an internal list of currently selected objects in order to deselect them later.  
+
+Display3D has one additional option: you can set the system to select and/or inspect {\it all} the objects that were picked, or only select and/or inspect the {\it nearest} object to the eye.  The default is to select and inspect all objects.  You might wish to change this behavior for complex scenes because too many objects are picked to be useful to the user.  To change the behavior, simply call \method{setSelectsAll(...)} after constructing the Display3D but before it has been displayed (and thus had a chance to create its scene graph).
+
+Here are the relevant Display3D methods, many quite like equivalent Display2D methods:
+
+\begin{methods}{\class{sim.display3d.Display3D}}
+\mthd{public void performSelection( LocationWrapper wrapper)} Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method.
+\mthd{public void performSelection( Bag locationWrappers )} Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
+\mthd{public void clearSelections()} Instructs all Field Portrayals to clear all selections on all objects.
+\mthd{public void setSelectsAll(boolean selection, boolean inspection)} Instructs the Display3D to select and/or inspect {\it all} or merely the {\it closest} object hit by the pick ray.  Call this method immediately after constructing the Display3D.
+\mthd{ public SelectionBehavior getSelectionBehavior()} Returns the current SelectionBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
+\end{methods}
+
+If you want you can access the SelectionBehavior directly (as mentioned above, do so by calling \method{getSelectionBehavior()} during the \method{sceneGraphCreated()} hook).  But there's not a lot there:
+
+\begin{methods}{\class{sim.display3d.SelectionBehavior}}
+\mthd{public void setSelectsAll(boolean selection, boolean inspection)}  Called during \method{createSceneGraph()} to specify whether the SelectionBehavior should select and/or inspect {\it all} or merely the {\it closest} object hit by the pick ray.  The values passed in are those which were set earlier by Display3D's \method{setSelectsAll(...)} method: thus you probably should use Display3D's method instead.
+\mthd{public void setTolerance(float tolerance)} Changes the diameter of the ray, in pixels.  Larger rays are slower to pick but make it easier to pick lines or other thin objects.  The default tolerance SelectionBehavior uses is 2.0.
+\mthd{public void detach()} Properly and cleanly detaches the SelectionBehavior from the scene graph.  This method is called by \method{destroySceneGraph()} to avoid memory leaks.
+\end{methods}
+
+SelectionBehavior's constructor, for good measure:
+
+\begin{methods}{\class{sim.display3d.SelectionBehavior} Constructor}
+\mthd{public SelectionBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds, GUIState gui)} Builds the SelectionBehavior with the given canvas, gui, and scene graph root.  The bounds indicate the region in the scene affected by selection: Display3D passes in an infinite bounds.
+\end{methods}
+
+
+\subsection{ToolTipBehavior: Adding Tool Tips} 
+\label{sim.display3d.ToolTipBehavior}
+
+\Class{sim.display3D.ToolTipBehavior} is MASON's other custom Java3D behavior.  Java3D doesn't provide tool tips by default, and in fact \class{javax.media.j3d.Canvas3D} is fairly hostile to them (it's not a Swing element).  ToolTipBehavior remedies this.
+
+Tool tips are turned on via the Display3D Option Pane, just as they are in Display2D.  The Option Pane then directs the ToolTipBehavior as appropriate.
+
+If you wish, you can access current ToolTipBehavior directly via the Display3D method:
+
+\begin{methods}{\class{sim.display3d.Display3D}}
+\mthd{ public ToolTipBehavior getToolTipBehavior()} Returns the current ToolTipBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
+\end{methods}
+
+It's pretty rare to do so.  Really there are only two methods of relevance, neither of which are often used except by Display3D directly via it Option Pane:
+
+\begin{methods}{\class{sim.display3d.ToolTipBehavior}}
+\mthd{ public void setCanShowToolTips(boolean val)} Sets whether or not tool tips may be shown.  This method is triggered by the user clicking on the relevant button in the OptionPane3D.
+\mthd{ public boolean getCanShowToolTips()} Returns whether or not tool tips may be shown.
+\end{methods}
+
+And for good measure, ToolTipBehavior's constructor is largely the same format as SelectionBehavior's constructor:
+
+\begin{methods}{\class{sim.display3d.ToolTipBehavior} Constructor}
+\mthd{public ToolTipBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds, GUIState gui)} Builds the ToolTipBehavior with the given canvas, gui, and scene graph root.  The bounds indicate the region in the scene affected by selection: Display3D passes in an infinite bounds.
+\end{methods}
+
+
+
 \section{3D Field Portrayals}
-\label{sim.portrayal.Portrayal3D}
-\label{sim.portrayal.FieldPortrayal3D}
+
+3D Field Portrayals are subclasses of \class{sim.portrayal3d.FieldPortrayal3D}, which in turn implements the interface \class{sim.field.Portrayal3D}.  3D Field Portrayals in MASON have more or less the same tasks and structure as 2D Field Portrayals.  Each 3D Field Portrayal is responsible for portraying a single underlying field (not necessarily a 3D field though!), and multiple such portrayals are attached to a Display3D.  A 3D Field Portrayal does  
+
+\begin{itemize}
+\item Represent its field with 3D objects, adding them to the scene graph.  This differs from a 2D Field Portrayal, which directly {\it draws} the field.
+\item Set up the 3D objects to accommodate hit testing.  This differs from a 2D Field Portrayal, which is actively involved in computing which objects have been hit.
+\item Select objects in its field.
+\item Provide inspectors for objects in the field.
+\end{itemize}
+
+Compare to the bullet list in Section \ref{sim.portrayal.FieldPortrayal2D}.  Note that one task is missing: unlike in 2D, a 3D Field Portrayal does not translate back and forth between the location of objects in the field and their location on-screen.  Such tasks are less useful (and too complex to perform) in a 3D environment.
+
+A second major difference is that 3D Field Portrayals do not {\it layer} on top of one another like the 2D Field Portrayals do.  After all, what does it mean to ``layer'' in 3D?  Instead, they simply reside in the same space.
+
+The third major difference is that 3D Field Portrayals aren't directly involved in drawing or performing hit-testing, unlike 2D Field Portrayals.  Instead, they set up those capabilities in their respective scene graphs, but let Java3D then do all the work.  Thus there's no \method{draw(...)} or \method{hitObject(...)} methods, etc.
+
+\paragraph{Review} Before you continue, you should reread all of Section \ref{sim.portrayal.FieldPortrayal2D} and its subsections, particularly reviewing the basics of abstract (non-2D) {\bf Portrayals, Field Portrayals, ``Fast'' Field Portrayals,} and {\bf Location Wrappers}.  You can skip stuff on DrawInfo2D, which 3D facilities don't use.
+
+\subsection{3D Portrayals}
+\label{sim.portrayal3d.Portrayal3D}
+
+All MASON portrayals which work with Display3D, whether Field Portrayals or Simple Portrayals, must implement the interface \Class{sim.portrayal3d.Portrayal3D}.  This interface is actually extremely simple, containing only two methods, one of which is optional.
+
+The {\it non-}optional method is \method{getModel(...)}, which is the equivalent of Portrayal2D's \method{draw(...)} method.  In this method you will do one of two things: either create a {\it new} scene graph for your Portrayal, or modify an {\it existing} scene graph which you had provided previously.  The procedure is as follows: \method{getModel(...)} will provide you with a \class{javax.media.j3d.TransformGroup}, which might be \variable{null}.  If it is \variable{null}, you create a new TransformGroup (which you won't play with otherwise) and hang all your scene material under that.  If it is non-\variable{null}, you have been given an existing scene you created earlier: modify the scene to reflect new data in the underlying model at this time step (don't replace the TransformGroup itself).  Either way, you return the resulting TransformGroup.
+
+Field Portrayals won't actually modify \method{getModel(...)}, instead, they have a default implementation which breaks things out into two other methods, \method{createModel(...)} and \method{updateModel(...)}, discussed below in Section \ref{sim.portrayal3d.FieldPortrayal3D}.  However, SimplePortrayals will implement \method{getModel(...)} directly.
+
+The optional method is \method{polygonAttributes()}, which returns the \class{javax.media.j3d.PolygonAttributes} used by an object in your model, if any. This allows the user to modify these attributes in the Options Pane.  Specifically, the user can change the face-culling options of the polygons in your model, and he can also specify if the polygons should be drawn filled (the default), or just draw them as a mesh or draw only their vertices as single points.  In many cases Field Portrayals don't bother with this.  But for Field Portrayals which draw large meshes, such as \class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}, it's often helpful to give the user options as to how to draw the meshes.
+
+\method{polygonAttributes()} is for top-level portrayals attached to the Display3D.  Lower-level Simple Portrayals shouldn't do anything other than return \variable{null}.
+
+\begin{methods}{\class{sim.display3d.Portrayal3D}}
+\mthd{ public void setCanShowToolTips(boolean val)} Sets whether or not tool tips may be shown.  This method is triggered by the user clicking on the relevant button in the OptionPane3D.
+\mthd{ public PolygonAttributes polygonAttributes()} Returns the PolygonAttributes used by the Portrayal3D (which may be freely modified by the Display3D or the user) or returns \variable{null}, indicating that there are no PolygonAttributes which may be modified.
+\end{methods}
+
+
+
+\subsection{3D Field Portrayals}
+\label{sim.portrayal3d.FieldPortrayal3D}
+
+Just as the 2D Field Portrayal enables visualization and inspection of fields in 2D space, the 3D Field Portrayal does the same in 3D space.  And similarly, just as the 2D Field Portrayal generally rely on Simple Portrayals to describe the objects in its field, the 3D Field Portrayal does likewise.
+
+3D Field Portrayals are all subclasses of the abstract class \Class{sim.portrayal3d.FieldPortrayal3D}, which subclasses from \class{sim.portrayal.FieldPortrayal} and implements \class{sim.portrayal3d.Portrayal3D}.  FieldPortrayal3D contains various useful methods for building a Field Portrayal in 3D: but a concrete subclass \Class{sim.portrayal3d.SparseFieldPortrayal3D} provides even more methods for building easy portrayals for ``sparse'' fields such as Sparse Grid or Continuous spaces.
+
+There are Field Portrayals in 3D for a variety of fields:
+
+\begin{itemize}
+\item \class{sim.portrayal3d.grid.SparseGridPortrayal3D} portrays SparseGrid2D and SparseGrid3D.
+\item \class{sim.portrayal3d.grid.SparseGrid2DPortrayal3D} portrays SparseGrid2D by stacking objects up (in the Z direction) if they are at the same 2D location.
+\item \class{sim.portrayal3d.grid.ObjectGridPortrayal3D} portrays ObjectGrid2D and ObjectGrid3D.
+\item \class{sim.portrayal3d.grid.ValueGridPortrayal3D} portrays IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D.  The SimplePortrayal here is typically a \class{sim.portrayal3d.simple.ValuePortrayal3D}, which represents each value as a cube of various colors.
+\item \class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D} portrays IntGrid2D and DoubleGrid2D as a single sheet.  The SimplePortrayal here is required to be a subclass of \class{sim.portrayal.grid.quad.QuadPortrayal}.  MASON provides three such subclasses, each of which describe points on the sheet in different ways.
+\item \class{sim.portrayal3d.continuous.ContinuousPortrayal3D} portrays Continuous2D and Continuous3D.
+\item \class{sim.portrayal3d.network.NetworkPortrayal3D} portrays Network fields in a manner very similar to how it's done in 2D: by drawing only the edges.
+
+\end{itemize}
+
+\subsection{Sparse 3D Field Portrayals}
+
+\subsection{2D Value Grid Portrayals}
+
+\subsection{Standard 3D Field Portrayals}
+
+
+
 
 \section{3D Simple Portrayals}
 

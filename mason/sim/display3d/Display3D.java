@@ -1216,6 +1216,7 @@ public class Display3D extends JPanel implements Steppable
 	SelectionBehavior mSelectBehavior = null; 
 	
 	public SelectionBehavior getSelectionBehavior() { return mSelectBehavior; }
+	public ToolTipBehavior getToolTipBehavior() { return toolTipBehavior; }
 
     boolean selectionAll = true;
     boolean inspectionAll = true;
@@ -1223,7 +1224,8 @@ public class Display3D extends JPanel implements Steppable
         This can be done independently of selection and inspection.  By default these values are both TRUE. */
     public void setSelectsAll(boolean selection, boolean inspection)
         {
-        selectionAll = selection; inspectionAll = inspection;
+        selectionAll = selection;
+		inspectionAll = inspection;
         mSelectBehavior.setSelectsAll(selectionAll, inspectionAll);
         }
 

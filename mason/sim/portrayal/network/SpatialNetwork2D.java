@@ -25,9 +25,9 @@ import sim.util.*;
 
 public class SpatialNetwork2D
     {
-    public SparseField2D field;
-    public SparseField2D field2;
-    public Network network;
+	SparseField2D field;
+	SparseField2D field2;
+	Network network;
 
     public SpatialNetwork2D( final SparseField2D field, final Network network )
         {
@@ -42,8 +42,6 @@ public class SpatialNetwork2D
     public void setAuxiliaryField( final SparseField2D f)
         {
         field2 = f;
-        if (field2 != null && field instanceof SparseField2D)
-            throw new RuntimeException("The auxillary field of a SpatialNetwork2D should be the same type as the primary field.");
         }
 		
 	/**

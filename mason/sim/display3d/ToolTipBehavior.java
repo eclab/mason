@@ -31,9 +31,8 @@ import sim.util.gui.*;
  * double-click and the resulting info is presented in a tool-tip, not the
  * console
  * 
- * I'm using swings default (ToolTipManager) initialDelay constant, but I did
- * not implement DismissDelay, ReshowDelay
- * 
+ * I'm using Swing's default (ToolTipManager) initialDelay constant, but I did
+ * not implement DismissDelay or ReshowDelay
  * 
  * @author Gabriel Catalin Balan
  */
@@ -69,7 +68,7 @@ public class ToolTipBehavior extends PickMouseBehavior
             // cursors blink, tool tips appear,
             // and so on.")
             //
-            // Yeap, it's "AWT-EventQueue-0".
+            // Yep, it's "AWT-EventQueue-0".
             }
         };
 
@@ -100,7 +99,8 @@ public class ToolTipBehavior extends PickMouseBehavior
 
     boolean showing = false;
     boolean canShow = false;
-        
+	
+	/** Sets whether or not the behavior may show tool tips. */
     public void setCanShowToolTips(boolean val)
         {
         canShow = val;
@@ -112,6 +112,7 @@ public class ToolTipBehavior extends PickMouseBehavior
             }
         }
                 
+	/** Returns whether or not the behavior may show tool tips. */
     public boolean getCanShowToolTips()
         {
         return canShow;

@@ -45,7 +45,7 @@ import sim.util.*;
 
 */
 
-public class SparseGrid3D extends SparseField
+public class SparseGrid3D extends SparseField implements SparseField3D
     {
     protected int width;
     protected int height;
@@ -471,6 +471,7 @@ public class SparseGrid3D extends SparseField
         return result;
         }
 
+    public final Double3D getDimensions() { return new Double3D(width, height, length); }
     }
 
 

@@ -73,7 +73,7 @@ import java.util.*;
    the width and height.
 */
 
-public /*strictfp*/ class Continuous3D extends SparseField
+public /*strictfp*/ class Continuous3D extends SparseField implements SparseField3D
     {
     /** Where we store the Double3D values hashed by object */
     public HashMap doubleLocationHash = new HashMap();
@@ -664,6 +664,14 @@ public /*strictfp*/ class Continuous3D extends SparseField
         for(int i = 0; i < bag.numObjs; i++)
             remove(objs[i]);
         return bag;
+        }
+
+    public final Double3D getDimensions() { return new Double3D(width, height, length); }
+
+    /** Returns the object location as a Double3D, or as null if there is no such object. */
+    public Double3D getObjectLocationAsDouble3D(Object obj)
+        {
+        return (Double3D) doubleLocationHash.get(obj);
         }
     }
 

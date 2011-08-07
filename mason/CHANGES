@@ -2159,4 +2159,12 @@ Version 16
 		other Inspectors.  If this proves irritating, just delete the
 		ChartingPropertyInspector.disposeFrame() method and let us know and we may
 		consider reversion.
-
+	Removed nonsensical type check in SpatialNetwork2D.setAuxiliaryField(...)
+	Added SparseField3D
+	Added SparseGrid3D.getDimensions() and made SparseGrid3D a SparseField3D
+	Added Continuous3D.getDimensions() and Continuous3D.getObjectLocationAsDouble3D(),
+		and made Continuous3D a SparseField3D
+	Major modifications to SpatialNetwork3D to work properly with SparseField3D instead
+		of just with Continuous3D and SparseGrid3D.  SpatialNetwork3D also now
+		works with SparseField2D as well.
+	SpatialNetwork and SpatialNetwork3D instance variables now private
