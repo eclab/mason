@@ -97,8 +97,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         // we make a default portrayal that goes from blue to red when going from 0 to 1,
         // no change in height
         sim.util.gui.SimpleColorMap cm = new sim.util.gui.SimpleColorMap();
+		defaultPortrayal = new TilePortrayal(cm);
         cm.setLevels(0.0,1.0,java.awt.Color.blue,java.awt.Color.red);
-        _def = new TilePortrayal(cm);
         this.transparency = transparency;
         }
 
@@ -126,11 +126,10 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         return mPolyAttributes;
         }
 
-    QuadPortrayal _def;
-    
+    QuadPortrayal defaultPortrayal;
     public Portrayal getDefaultPortrayal()
         {
-        return _def;
+        return defaultPortrayal;
         }
 
     float[] coords;

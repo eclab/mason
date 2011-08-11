@@ -60,7 +60,7 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
         }
     
     /** Returns the default internal transform suggested for this FieldPortrayal3D. */
-    public Transform3D getDefaultTransform()
+    protected Transform3D getDefaultTransform()
         {
         return new Transform3D();
         }
@@ -138,7 +138,6 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
     
     public FieldPortrayal3D(Transform3D transform)
         {
-        defaultPortrayal = new SpherePortrayal3D();
         setTransform(transform);
         }
 
@@ -146,10 +145,10 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
      * White sphere as default portrayal
      * for objects that do not have any other specified to them
      * 
-     * Note that it is not final, so it can be replaced. It
-     * was chosen for its low triangle-count.
-     */
-    protected SimplePortrayal3D defaultPortrayal;
+     * Note that it is not final, so it can be replaced.
+	*/
+	
+	SimplePortrayal3D defaultPortrayal = new SpherePortrayal3D();
         
     public Portrayal getDefaultPortrayal()
         {
