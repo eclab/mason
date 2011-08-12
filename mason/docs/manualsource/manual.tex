@@ -55,10 +55,12 @@
 
 \newcommand\file[1]{\textsf{#1}}
 \newcommand\variable[1]{\textsf{#1}}
-\newcommand\package[1]{\textsf{#1}}
-\newcommand\Package[1]{\index{Packages!{#1}}\package{#1}}
-\newcommand\class[1]{\textsf{#1}}
-\newcommand\Class[1]{\index{Classes!{#1}}\class{#1}}
+%\newcommand\package[1]{\textsf{#1}}
+\newcommand\package[1]{\index{Packages!{#1}}\textsf{#1}}
+\newcommand\Package[1]{\index{Packages!{#1}|textbf}\textsf{#1}}
+%\newcommand\class[1]{\textsf{#1}}
+\newcommand\class[1]{\index{Classes!{#1}}\textsf{#1}}
+\newcommand\Class[1]{\index{Classes!{#1}|textbf}\textsf{#1}}
 \newcommand\method[1]{\textsf{#1}}
 \newcommand\parameter[1]{\texttt{#1}}
 \newcommand\character[1]{\texttt{"{#1}"}}
@@ -379,7 +381,7 @@ Wow, it doesn't get a whole lot simpler than that.
 When you create a MASON application, you define the simulation model as a subclass of \Class{sim.engine.SimState}.  MASON will create a single instance of this subclass and maintain it as the global state of your entire simulation.  SimState contains two important items:
 
 \begin{itemize}
-\item A {\bf random number generator}, specifically an instance of the class \class{ec.util.MersenneTwisterFast}.  This generator is far better than \Class{java.util.Random}. It is also not synchronized, which means that if you access it from multiple threads, you'll need to remember to acquire a lock on it first.  We'll get to that later.  Anyway, if you're serious about simulation, you should {\bf never use \Class{java.util.Random} nor \method{java.lang.Math.random()}.}  They're surprisingly poor quality.\footnote{\Class{java.util.Random} is highly non-random, and will ruin your experiments.  And \class{Math.random()} just uses \Class{java.util.Random}. Don't use them.  For a fun example of just how bad \Class{java.util.Random} is, check out ``Sun Reﬁnes Randomness'': http:/\!/alife.co.uk/nonrandom/}
+\item A {\bf random number generator}, specifically an instance of the class \class{ec.util.MersenneTwisterFast}.  This generator is far better than \Class{java.util.Random}. It is also not synchronized, which means that if you access it from multiple threads, you'll need to remember to acquire a lock on it first.  We'll get to that later.  Anyway, if you're serious about simulation, you should {\bf never use \Class{java.util.Random} nor \method{java.lang.Math.random()}.}  They're surprisingly poor quality.\footnote{\Class{java.util.Random} is highly non-random, and will ruin your experiments.  And \method{Math.random()} just uses \Class{java.util.Random}. Don't use them.  For a fun example of just how bad \Class{java.util.Random} is, check out ``Sun Reﬁnes Randomness'': http:/\!/alife.co.uk/nonrandom/}
 
 The random number generator is seeded with a random number {\bf seed}, a long integer passed into the SimState's constructor as shown in the code above.  Note that MersenneTwisterFast only uses the first 32 bits of this seed.
 
@@ -6178,7 +6180,6 @@ Display2D also uses hit testing to compute tool tip information.  Tool tips are 
 \label{sim.portrayal.Portrayal2D}
 \label{sim.portrayal.FieldPortrayal}
 \label{sim.portrayal.FieldPortrayal2D}
-\label{sim.portrayal.LocationWrapper}
 
 For every field that's portrayed in a Display2D, there's a \Class{sim.portrayal.FieldPortrayal2D} whose job is is to portray it.    Display2D draws, selects, inspects, and otherwise manipulates objects and data in fields by asking Field Portrayals to do the job on its behalf.  When drawing, Field Portrayals are layered one on top of each other in the Display2D: it asks the bottom-most Field Portrayal to draw itself first, then the next lowest Field Portrayal, and so on, up to the top.
 
@@ -6530,6 +6531,7 @@ ValueGridPortrayal2D also has a special constructor which sets the value name:
 \sidebar{Why doesn't HexaValueGridPortrayal2D use a SimplePortrayal?}{Because it's just unacceptably slow.  Drawing and computing hexagons is slow enough.  Calling forth a subsidiary object to do it for you is slower still.}  \paragraph{Important Note: Hexagonal Fields} There is also a Hexagonal version of ValueGridPortrayal2D called \Class{sim.portrayal.grid.HexaValueGridPortrayal2D}.  This field portrayal shares more in common with ``fast'' Field Portrayals: it does not use a SimplePortrayal.   Instead it simply draws its values as hexagons using the given ColorMap for color.  Note that there is {\it still} a ``fast'' version of this portrayal!  It's called \Class{sim.portrayal.grid.FastHexaValueGridPortrayal2D}, and it's fast (indeed {\it much} faster) because instead of drawing hexagons, it draws rectangles organized like bricks: this allows it to pull off the same image-stretching tricks discussed later in Section \ref{fastfieldportrayals}.
 
 \subsubsection{Field Portrayals for Continuous Space}
+\label{sim.portrayal.continuous.ContinuousPortrayal2D}
 
 \Class{sim.portrayal.continuous.ContinuousPortrayal2D} portrays fields of the form \class{sim.field.continuous.Continuous2D}.  The ContinuousPortrayal2D class is similar in many ways to SparseGridPortrayal2D: objects may occupy the same location, and the LocationWrappers can track an object as it changes location (and look up its location efficiently).  However ContinuousPortrayal2D does {\it not} use a DrawPolicy, unlike SparseGridPortrayal2D.
  
@@ -6545,7 +6547,7 @@ It's also not quite clear where the boundary {\it is} in a continuous space, par
 \mthd{ public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
 \end{methods}
 
-\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at \(\langle 0, 0\rangle\) in a grid and in continuous space. }\vspace{-4em}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at \(\langle 0, 0\rangle\) in a grid and in continuous space. }\label{mixingcontinuousandgrids}\vspace{-4em}\end{wrapfigure}
 
 \paragraph{A Note on Mixing Continuous and Grid Space}
 
@@ -7214,7 +7216,7 @@ A {\bf warning about ImagePortrayal2D}: like ShapePortrayal2D, it's not serializ
 
 \subsection{Value Simple Portrayals}
 
-\sidebar{What about HexaValuePortrayal2D?}{Recall that HexaValuePortrayal2D just draws the objects directly as hexagons because of efficiency concerns.  So it's only ValuePortrayal2D of interest here.} Some Field Portrayals draw fields which consist of arrays of numbers rather than objects.  One particular Field Portrayal, \class{sim.portrayal.grid.ValuePortrayal2D}, relies on a SimplePortrayal to help it draw those objects.  
+\sidebar{What about HexaValuePortrayal2D?}{Recall that HexaValueGridPortrayal2D just draws the objects directly as hexagons because of efficiency concerns.  So it's only ValuePortrayal2D of interest here.} Some Field Portrayals draw fields which consist of arrays of numbers rather than objects.  One particular Field Portrayal, \class{sim.portrayal.grid.ValuePortrayal2D}, relies on a SimplePortrayal to help it draw those objects.  
 
 So if SimplePortrayal's \method{draw(...)} and \method{hitObject(...)} methods take Objects to draw/hit, what's passed in if there's no Object, but just a number?  Answer: a \Class{sim.util.MutableDouble} (Section \ref{sim.util.MutableDouble}).  This object is little more than a wrapper around the number in question.
 
@@ -8000,7 +8002,7 @@ By default, the inspector produced by \method{getSimulationProperties()} is vola
 
 In addition to the model Inspector,  can create additional custom ``permanent'' Inspectors for whatever purpose you like: most commonly, to provide some inspection of a Field.  To do this, you simply attach the Inspector of your choice to a Display, using the following method:
 
-\begin{methods}{\class{sim.display.Display2D and sim.display.Display3D}}
+\begin{methods}{\class{sim.display.Display2D} and \class{sim.display3d.Display3D}}
 \mthd{public void attach(Inspector inspector, String name)} Attaches an inspector to the Display, assigning it the given name.
 \end{methods}
 
@@ -8438,8 +8440,8 @@ From MASON's primary BranchGroup is hung a \class{javax.media.j3d.TransformGroup
 From this TransformGroup is hung a \class{javax.media.j3d.Switch} which holds each of the fields (under one TransformGroup each).  A Switch is a Group which can make its children visible or invisible at any time.  MASON uses them to turn on or off the various fields as the user directs.
 
 \begin{figure}[t]
-\begin{center}\includegraphics[width=6.5in]{Java3DLayout.pdf}\end{center}
-\caption{Rough structure of MASON's Java3D scene graph.  MASON objects are listed with their package names.  Other objects are standard Java3D classes.  The graph is divided into six parts.  One part (Simple Portrayals) is repeated many times, once per object in each field.  This part is typical but varies depending on the kind of Simple Portrayal: and certain Field Portrayals may not have it at all.  Notice that three parts (Light Switches, Auxillary Data, Field Portrayals and Model) are headed by a Switch.  This allows elements in these areas to be turned on and off by the user, either via the Layers menu on the Display3D itself, or inside the Display3D's Options Pane.  The Light Switches part is hung off of the SimpleUniverse rather than off of the TransformGroup for spinning in order to keep it constant despite the user spinning the model.  The Auxillary Data section contains optional Axes and a Background.  The Background can be a spherical background, a flat panel background image, or a background color (or nothing). Note the ``hack'' TransformGroup in the spherical background.  This is to prevent Java3D from spinning each of the elements of the background sphere (a Java3D nuisance).}
+\begin{center}\includegraphics[width=6in]{Java3DLayout.pdf}\end{center}
+\caption{Rough structure of MASON's Java3D scene graph.  MASON objects are listed with their package names.  Other objects are standard Java3D classes.  The graph is divided into six parts.  One part (Simple Portrayals) is repeated many times, once per object in each field.  This part is typical but varies depending on the kind of Simple Portrayal: and certain Field Portrayals may not have it at all.  Notice that three parts (Light Switches, Auxillary Data, Field Portrayals) are headed by a Switch.  This allows elements in these areas to be turned on and off by the user, either via the Layers menu on the Display3D itself, or inside the Display3D's Options Pane.  The Light Switches part is hung off of the SimpleUniverse rather than off of the TransformGroup for spinning in order to keep it constant despite the user spinning the model.  The Auxillary Data section contains optional Axes and a Background.  The Background can be a spherical background, a flat panel background image, or a background color (or nothing). Note the ``hack'' TransformGroup in the spherical background.  This is to prevent Java3D from spinning each of the elements of the background sphere (a Java3D nuisance).}
 \label{java3dlayout}
 \vspace{-1em}  % makes me small enough to fit on a page so my image isn't bumped to the end of the chapter
 \end{figure}
@@ -8450,6 +8452,8 @@ SimplePortrayals generally add a TransformGroup to the scene (transformed by the
 
 SimplePortrayals don't just wrap Shape3D or Primitive objects.  They may also wrap images, 2D text, light sources, etc.  Just as in the 2D MASON portrayal facility, there are ``wrapper'' Simple Portrayals in 3D which add textual labels, perform transformations, add semitransparent spheres around selected objects, and so on.
 
+While some Field Portrayals directly use the TransformGroup provided by the SimplePortrayal, it's often important to be able to remove it later on if the object disappears from the field.  Thus many Field Portrayals wrap the TransformGroup in a BranchGroup (which can be removed from a scene in real time) before adding it to the field's scene.
+
 \paragraph{Selection and Inspection}  When you double-click on objects, MASON's SelectionBehavior or ToolTipBehavior objects perform {\bf picking}, whereby they cast a ray from the eye of the camera straight out through the environment, and gather all objects which intersected with this ray.  Shape3D, Primitive, and various Geometry objects can be associated with {\bf user data} in Java3D.  MASON uses this user data to refer to LocationWrappers defining the objects or values in the fields associated with those objects.  When the Java3D objects are picked, MASON can extract the LocationWrappers to determine which objects were chosen.
 
 Picking isn't cheap.  LocationWrappers are generally built beforehand and associated with object in the scene.  Java3D's user data is expensive to use, and so MASON's Java3D scenes can use a lot of memory.   You will often have to increase Java heap size to use Java3D facilities with MASON, even if the core itself isn't that big.
@@ -8459,7 +8463,7 @@ The SimpleUniverse holds a second BranchGroup with its own Switch for light.  MA
 
 The spherical backdrop is maintained by a Sphere object, which can be given an Appearance (notably a spherical image as a texture).  In order to do its magic\,---\,particularly spinning along with the rest of the scene\,---\,the Sphere is placed in a BranchGroup with two TransformGroups.  The presence of the second TransformGroup is a hack to get around a historical Java3D spinning bug.
 
-Also associated with the Universe are three {\bf behaviors}: objects which run in the background and modify the environment in response to events of different kinds.  Specifically, MASON has a \class{com.sun.j3d.util.sbehaviors.vp.OrbitBehavior} which causes the camera to move about in response to the mouse (scaling in and out, rotating the environment, or translating the environment); and also two custom MASON behaviors, a \class{sim.display3d.SelectionBehavior} for selecting objects in response to mouse clicks, and a \class{sim.display.ToolTipBehavior} for displaying tool tips in response to mouse hovering.
+Also associated with the Universe are three {\bf behaviors}: objects which run in the background and modify the environment in response to events of different kinds.  Specifically, MASON has a \class{com.sun.j3d.utils.behaviors.vp.OrbitBehavior} which causes the camera to move about in response to the mouse (scaling in and out, rotating the environment, or translating the environment); and also two custom MASON behaviors, a \class{sim.display3d.SelectionBehavior} for selecting objects in response to mouse clicks, and a \class{sim.display.ToolTipBehavior} for displaying tool tips in response to mouse hovering.
 
 
 
@@ -8575,7 +8579,7 @@ From the Options Pane, the user can temporarily turn off the backdrop as well (b
 \item {\bf Ambient Light}, implemented as a \class{javax.media.j3d.AmbientLight}, white in color.
 \end{itemize}
 
-Last, you can specify the field of view by computing a {\it scale} factor (the value the user can also enter into the ``scale'' text field at the top of the Display3D).  The field of view is related to this factor as:
+Last, you can specify the field of view by computing a {\it scale} factor (the value the user can also enter into the ``scale'' text field at the top of the Display3D).  The field of view is presently related to this factor as follows:
 
 \[
 \text{\it fieldOfView} = 
@@ -8647,6 +8651,7 @@ This key is used to store preferences information associated with the Display3D.
 
 
 \subsection{Managing the Scene Graph}
+\label{managingthescenegraph}
 
 The Display3D manages the Java3D scene graph which ultimately holds all of the model objects for display.  Managing this graph requires three tasks: the Display3D must initially {\bf  build} or later {\bf rebuild} the graph; it must {\bf update} the graph each timestep to reflect changes in the model, and it must eventually {\bf destroy} the graph, either at the conclusion of the program or as part of the rebuilding procedure.
 
@@ -8850,13 +8855,174 @@ There are Field Portrayals in 3D for a variety of fields:
 
 \end{itemize}
 
+Although MASON provides 3D portrayals for most of its fields (the notable exception being, at the moment, \class{sim.field.grid.DenseGrid2D}), some of these portrayals are better than others.  Java3D can be very costly memory-wise when used the way MASON needs to use it.  Notably, {\bf ObjectGridPortrayal3D} and {\bf ValueGridPortrayal3D} can be slow and require very large amounts of memory, as they can create large numbers of objects.  You may need to significantly increase memory to use them.  Here is an example which increases the Java heap to 500M on the {\bf Particles3DWithUI} example, which enables it to run well.  Particles3DWithUI uses the ValueGridPortrayal3D, and even with this increase in heap memory, it still takes a long time to set up:
+
+\java{%
+java -Xmx500M -Xms500M sim.app.particles3d.Particles3DWithUI
+}
+
+\paragraph{Per-Field Transforms} It's often important to be able to translate, scale, or rotate your 3D Field Portrayal in space, either to position them properly relative to the eye or relative to other 3D Field Portrayals.  This is done using per-Portrayal Affine Transformations similar to the global Affine Transformation available in Display3D.
+
+For example, 3D portrayals are positioned so that their \(\langle 0, 0, 0\rangle\) position is located at the origin in the space.  Since the eye is looking right at the origin, you might want to reposition the 3D Portrayal so that it's centered with regard to the eye.  Additionally, 3D portrayals are scaled at full size in the world: but the eye is positioned so as to be able to view objects which are roughly \(1x1x1\) unit in size, so you might want to scale them down appropriately.  
+
+If {\bf all} of your portrayals need to be translated and scaled the same exact way, you might as well use the Display's global Affine Transformation (see Section \ref{managingthescenegraph}).  For example, here's one way to do it for a continuous space:
+
+\java{%
+display.translate(-0.5 * field.width, -0.5 * field.height, -0.5 * field.length);\\
+display.scale(1.0 / Math.max(field.width, field.height, field.length));
+}
+
+Recall from Section \ref{sim.portrayal.continuous.ContinuousPortrayal2D} and Figure \ref{mixingcontinuousandgrids} that the origin of a grid is naturally offset from the origin of a continuous space.  If you've got all grids, you should subtract their width, height, and length by 1:
+
+\java{%
+\hbox{display.translate(-0.5*(field.width-1.0), -0.5*(field.height-1.0), -0.5*(field.length-1.0));}\\
+display.scale(1.0 / Math.max(field.width, field.height, field.length));
+}
+
+In other cases you'll need to transform your fields separately.  For example, if you need to rotate about an axis a 3D field portrayal for a 2D grid.  For example, {\bf Tutorial 7} does exactly this.  Or if you need to offset a grid with respect to a continuous space.  In this case you'll need to use per-Field-Portrayal Affine Transformations.  These have largely the same organization as the Display version, for example:
+
+\java{%
+\hbox{field.translate(-0.5*(field.width-1.0), -0.5*(field.height-1.0), -0.5*(field.length-1.0));}\\
+field.scale(1.0 / Math.max(field.width, field.height, field.length));
+}
+
+Notice the only difference is the change from \variable{display} to \variable{field} in this example.
+
+The default implementation of a 3D Field Portrayal has no PolygonAttributes, though certain Field Portrayals override this.  Additionally, the default Simple Portrayal for 3D Field Portrayals is a white unlit\footnote{This is graphics-speak for ``you can see it as a white blob even when there are no lights turned on in the scene.''} sphere 1 unit in diameter.  You'll likely set your own simple portrayals, of course.  See Section \ref{sim.portrayal.FieldPortrayal}.
+
+
+\begin{methods}{\class{sim.display.FieldPortrayal3D}}
+\mthd{ public void setTransform(Transform3D transform)}
+	Sets the current transformation of the scene for the field.
+\mthd{ public Transform3D getTransform()}
+	Returns the current transformation of the scene for the field.
+\mthd{ public void transform(Transform3D transform)}
+	Modifies the existing transform by concatenating it to the given the Transform3D.  This is essentially the equivalent of multiplying the existing transformation against the provided new transformation matrix.
+\mthd{ public void rotateX(double degrees)}
+	Modifies the existing transform by rotating it around the X axis by the provided degrees.
+\mthd{ public void rotateY(double degrees)}
+	Modifies the existing transform by rotating it around the Y axis by the provided degrees.
+\mthd{ public void rotateZ(double degrees)}
+	Modifies the existing transform by rotating it around the Z axis by the provided degrees.
+\mthd{ public void translate(double dx, double dy, double dz)}
+	Modifies the existing transform by translating it by the given values in each dimension
+\mthd{ public void scale(double sx, double sy, double sz)}
+	Modifies the existing transform by scaling it by the given values in each dimension.
+\mthd{ public void scale(double value)}
+	Modifies the existing transform by scaling it by the given value.  Each dimension is scaled the same amount.
+\mthd{public void resetTransform()}
+	Clears the current transform.  Equivalent to \method{setTransform(getDefaultTransform())}.
+\mthd{protected Transform3D getDefaultTransform()}
+	Returns a copy of default initial transform for the Field Portrayal.  Override this to provide your own default transform.  By default the transform is simply a new empty Transform3D.
+\mthd{public PolygonAttributes polygonAttributes()}
+	Returns the polygon attributes for the FieldPortrayal3D.  By default FieldPortrayal3D returns null, meaning no attributes are available.
+\mthd{public Portrayal getDefaultPortrayal()}
+	Returns the default portrayal.  By default this portrayal is a white unlit sphere 1 unit in diameter.
+\end{methods}
+
+FieldPortrayal3D has two constructors: one which takes a Transform3D (applied using \method{setTransform(...)}) and a default constructor which simply uses the default transform.
+
+\begin{methods}{\class{sim.display.FieldPortrayal3D} Constructor}
+\mthd{ FieldPortrayal3D()}
+	Creates a FieldPortrayal3D using the default transform as the initial transform.
+\mthd{ FieldPortrayal3D(Transform3D transform)}
+	Creates a FieldPortrayal3D with the given initial transform.  Note that this is not the default transform: it's the transform used via \method{setTransform(...)}.
+\end{methods}
+
+\paragraph{Building Models}
+
+The top-level Portrayal3D class has a single method, \method{getModel(...)} which must be overridden to supply a Java3D scenegraph appropriate for the portrayal.  If the provided TransformGroup is null, a new scenegraph must be built from scratch: otherwise the existing scenegraph (hanging off the TransformGroup) should be modified.
+
+FieldPortrayal3D breaks this out explicitly, by implementing the \method{getModel(...)} method to itself call two other abstract methods: \method{createModel()} and \method{updateModel()}.  Additionally, the \method{getModel(...)} method handles the immutable field and dirty field features present in \class{sim.portrayal.FieldPortrayal}, which FieldPortrayal3D subclasses.  For a refresher on immutable and dirty fields, see Section \ref{sim.portrayal.FieldPortrayal}.  Thus in general subclasses should not be overriding the \method{getModel(...)} method in FieldPortrayal3D, but rather implementing the \method{createModel()} and \method{updateModel(...)} methods.
+
+The \method{createModel()} method is called when the FieldPortrayal3D must build a model from scratch.  As shown in Figure \ref{java3dlayout} (page \pageref{java3dlayout}), a FieldPortrayal3D constructs a model consisting of an ``outer'' TransformGroup, followed by an ``inner'' TransformGroup to which the FieldPortrayal3D's \method{setTransform(...)} and related methods are automatically applied.  The \method{createModel()} method must create this ``inner'' TransformGroup, hang the entire scene graph of the as child 0 of this ``inner'' TransformGroup, and return it.  It doesn't create the ``outer'' TransformGroup.
+
+The \method{updateModel(...)} is similar.  It takes a single TransformGroup (again, the ``inner'' transform group), and modifies the model hanging off of it (as child 0) to reflect changes in the field.
+
+\begin{methods}{\class{sim.display.FieldPortrayal3D}}
+\mthd{ protected abstract TransformGroup createModel()}
+	Called to create a scene graph for the field from scratch.  Creates a scene graph which portrays the field, then creates a single TransformGroup (which should not be modified) and hangs the scene graph off of it as child 0 of the TransformGroup.  This TransformGroup will be used to perform internal transformations via the FieldPortrayal3D's various transformation methods.
+\mthd{ protected abstract void updateModel(TransformGroup previousTransformGroup)}
+	Called to update an existing a scene graph to reflect changes in the field.  The scene graph in question will have been hung off of the TransformGroup as child 0.  The provided TransformGroup should itself not be modified: only child 0.
+\end{methods}
+
+\paragraph{Handling Picking}
+
+There's one last method which handles the location of picked objects in the field.  When the user selects or inspects an object in the field by double-clicking on it, the Display3D constructs a LocationWrapper (for a refresher, see Section \ref{sim.portrayal.LocationWrapper}) which holds the relevant picked object.  It then calls a specific method in the FieldPortrayal3D called \method{completedWrapper(...)}, passing in the LocationWrapper plus various picking information.  This method must modify the LocationWrapper to set the location of the object.  Alternatively, it can provide its own entirely new LocationWrapper if it pleases.
+
+\begin{methods}{\class{sim.display.FieldPortrayal3D}}
+\mthd{ public abstract LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)}  Revises the provided wrapper to reflect the location of the object stored therein, or entirely replaced the wrapper with a new completed wrapper.  Returns either the wrapper or the replacement.
+\end{methods}
+		
 \subsection{Sparse 3D Field Portrayals}
 
-\subsection{2D Value Grid Portrayals}
+The most common 3D Field Portrayals are {\bf Sparse 3D Field Portrayals} which portray Sparse Fields, such as continuous space and sparse grids.  These field portrayals share a lot in common, and so the abstract class \Class{sim.portrayal3d.SparseFieldPortrayal3D} handles much of the machinery for them automatically.  It implements the \method{updateModel(...)} and \method{createModel()} methods, and in turn requires its subclasses to implement \method{setField()} (of course), \method{completedWrapper(...)}, and the following new, and trivial, method:
+
+\begin{methods}{\class{sim.display.SparseFieldPortrayal3D}}
+\mthd{ public abstract Vector3d getLocationOfObjectAsVector3d(Object location, Vector3d putInHere)}
+	Coverts the provided location (as a Double3D, Double2D, Int3D, or Int2D most likely) into a \class{javax.vecmath.Vector3d} and places the relevant coordinates in the provided Vector3d.
+\mthd{ public void updateModel(TransformGroup previousTransformGroup)}
+\end{methods}
+
+\sidebar{Aren't Branch Groups expensive?}{Indeed they are.  Branch Groups use a lot of memory.  But due to stupidities in Java3D, we really don't have much of a choice in the matter.}In some cases subclasses may still wish to override the \method{updateModel(...)} or \method{createModel()} methods.  In these cases, Sparse3DFieldPortrayal also has one utility method available to subclasses.  Objects in Sparse Fields often come and go as they please.  Once a scene graph is live, adding new objects to an existing scene graph isn't a problem: but removing objects is (in Java3D anyway).  The only things which may be removed from scenes in real time are {\bf BranchGroups}, that is, scenes rooted by an instance of \class{javax.media.j3d.BranchGroup}.  But 3D Simple Portrayals don't provide BranchGroups: they provide TransformGroups, just like every other 3D Portrayal.  
+
+Thus SparseFieldPortrayal has a utility method which does all this for you: it identifies the SimplePortrayal for a given object, calls \method{setParentPortrayal(this)} and \method{getModel(...)} on that SimplePortrayal to get a new scene graph, transforms the scene graph according to the provided Transform3D to place it in the right spot in the field, then finally wraps the resulting scene graph in a BranchGroup suitable to be added or removed at any time from the field.
+
+\begin{methods}{\class{sim.display.SparseFieldPortrayal3D}}
+\mthd{ protected BranchGroup wrapModelForNewObject(Object object, Transform3D localTransform)}
+	Queries the underlying SimplePortraryal3D for the given object to produce a new scene graph, then transforms the scene graph according to the provided \variable{localTransform}, then wraps the result in a BranchGroup suitable to add to the field.
+\end{methods}
 
 \subsection{Standard 3D Field Portrayals}
 
+MASON provides 3D Field Portrayals for a number of 2D and 3D fields: but not in all configurations.  For example, hexagonal representations of 2D grid fields are not supported, and at present Dense Grids are not supported.
 
+Some of the Field Portrayals are quite costly, particularly as the grid size increases, largely due to poor design decisions in Java3D itself that can't easily be rectified.  Others are reasonably good memory-efficiency-wise (despite their use of BranchGroups).  In particular, the Sparse Grid, Network, and Continuous portrayals are good, as are portrayals for 2D numbers.
+
+\subsubsection{Field Portrayals for Object Grids}
+
+The class \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} portrays both 2D and 3D Object Grids in 3D.  2D Object Grids are treated as if they were 3D Object Grids with a single layer in the {\it length}, that is, \(Z\), dimension.  Thus objects in 2D Object Grids are assumed to have a location with \(Z=0\) always.  If you want to position your 2D Object Grid to have \(Y=0\) or \(X=0\) or \(Z=15\) or whatnot, you'll need to use the affine transform methods available in FieldPortrayal3D to move it appropriately. 
+
+\sidebar{Why not just use Java3D Link and SharedGroup Classes?  Aren't they designed for this purpose?}{SharedGroup is unusably buggy.} If objects move around a lot on the grid, ObjectGridPortrayal3D is expensive in terms of time and in this situation we strongly encourage the use of SparseGridPortrayal3D instead.  This is because ObjectGridPortrayal3D has to figure out where objects went in order to determine whether to simply move their corresponding scene graphs or to delete them entirely.  It also has to do a tally of existing objects in order to determine which objects are new and must be updated.  ObjectGridPortrayal3D is a lot cheaper if it assumes the field is immutable.  The problem is even more fun when dealing with Objects located at multiple places at once.  
+
+Just like ObjectGridPortrayal2D, ObjectGridPortrayal3D produces Inspectors which try to follow objects as they move around, but don't guarantee it.  If an object has moved, the Inspector will search the \(5 \times 5 \times 5\) space surrounding the last known location of the object to find it.  That's 125 cells.   If it still can't find the object, it gives up and reports the location as ``unknown''.  Moral of the story: don't move your objects more than 2 cell spaces at a time if you want them to be trackable via an inspector.
+
+\begin{methods}{\class{sim.portrayal.grid.ObjectGridPortrayal2D}}
+\mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 2 grid cells away at any one time.
+\end{methods}
+
+
+
+\subsubsection{Field Portrayals for Sparse Grids}
+
+MASON provides not one but two classes for portraying Sparse Grids in 3D: one which handles both 2D and 3D grids, and one which handles just 2D grids, but in a special and useful way.  The first class is \Class{sim.portrayal3d.grid.SparseGridPortrayal3D}, which can handle both 2D and 3D Sparse Grids. As was the case for ObjectGridPortrayal3D, 2D Object Grids are considered to have a single layer in the \(Z\) (length) dimension, with objects having a location with \(Z=0\).  However you can use the FieldPortrayal3D affine transformations to rotate or translate the SparseGridPortrayal3D to change this.
+
+Because SparseGridPortrayal3D can keep track of the locations of objects, it's not nearly as inefficient as ObjectGridPortrayal3D was.  Furthermore this allows SparseGridPortrayal3D to create LocationWrappers which follow objects perfectly. However if your objects come and go a lot, SparseGridPortrayal3D will have to delete them and recreate a lot of scene graph material, which can be expensive.  Keep this in mind.
+
+\begin{methods}{\class{sim.portrayal.grid.SparseGridPortrayal3D}}
+\mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper fixes on the object but allows its location to change.
+\end{methods}
+
+The other class for Sparse Grids is \Class{sim.portrayal3d.grid.SparseGrid2DPortrayal3D}.  This class, as is suggested by its name, is only for 2D Sparse Grids.  It depicts them as a flat sheet just like SparseGridPortrayal3D would, except that if there is more than one object at a given \(\langle X, Y\rangle\) location, SparseGrid2DPortrayal2D doesn't stick them in the same place.  Instead, it starts stacking them in the \(Z\) dimension, creating a little column of objects.  You can see this effect in the {\bf HeatBugs3D} example.
+
+SparseGrid2DPortrayal3D has the same LocationWrapper facility, more or less, as SparseGridPortrayal3D.
+
+\begin{methods}{\class{sim.portrayal.grid.SparseGrid2DPortrayal3D}}
+\mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper fixes on the object but allows its location to change.
+\end{methods}
+
+
+\subsubsection{Field Portrayals for Grids of Numbers}
+\paragraph{Quad Portrayals}
+
+Just as MASON provides two classes for Sparse Grids, it also has two similar classes for Value Grids (that is, IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D).  And just as is the case for the Sparse Grid case, one of the portrayals handles both 2D and 3D grids, while the other handles 2D grids in a special way.
+
+The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortrayal3D}.  This class portrays 2D and 3D Value Grids as 
+
+
+
+\subsubsection{Field Portrayals for Continuous Space}
+\subsection{Field Portrayals for Networks}
 
 
 \section{3D Simple Portrayals}

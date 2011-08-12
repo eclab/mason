@@ -62,7 +62,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         
     SimplePortrayal2D defaultPortrayal = new ValuePortrayal2D();
 
-    public String valueName;
+	String valueName;
     
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }

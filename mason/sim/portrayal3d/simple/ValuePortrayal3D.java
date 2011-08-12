@@ -120,7 +120,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
     /* Builds a model, but obj is expected to be a ValuePortrayal3D.ValueWrapper. */
     public TransformGroup getModel(Object obj, TransformGroup j3dModel) 
         {
-        float[] c = ((ValueGridPortrayal3D)parentPortrayal).map.getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
+        float[] c = ((ValueGridPortrayal3D)parentPortrayal).getMap().getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
 
         // make sure the polygon attributes are set
         if(j3dModel==null) 
@@ -128,6 +128,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             j3dModel = super.getModel(obj, j3dModel);
                         
             /*
+			// [This may break things, so we don't do it.  Dunno about the speed really anyway.  Memory is our problem here, not speed.]
             // We dispense of our TransformGroup: it makes us about 20% faster.
                         
             Shape3D s = getShape(j3dModel, 0);
@@ -137,7 +138,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             j3dModel.addChild(s);
             */
 
-            Appearance app = appearanceForColor(((ValueGridPortrayal3D)parentPortrayal).map.getColor(((ValueWrapper)obj).lastVal));
+            Appearance app = appearanceForColor(((ValueGridPortrayal3D)parentPortrayal).getMap().getColor(((ValueWrapper)obj).lastVal));
             app.setPolygonAttributes(polygonAttributes());
 
 /*
@@ -242,6 +243,7 @@ app.setTransparencyAttributes(ta);
             
         ValueGridPortrayal3D fieldPortrayal;
         Grid3D grid; 
+        String name;
         public Filter(LocationWrapper wrapper)
             {
             fieldPortrayal = (ValueGridPortrayal3D)(wrapper.getFieldPortrayal());
@@ -250,7 +252,9 @@ app.setTransparencyAttributes(ta);
             x = loc.x;
             y = loc.y;
             z = loc.z; 
+            name = fieldPortrayal.getValueName() + " at " + wrapper.getLocationName();
             }
+        public String toString() { return name; }
         }
 
     public static class DoubleFilter extends Filter  // must be public so it can be accessed by SimpleInspector
@@ -278,14 +282,16 @@ app.setTransparencyAttributes(ta);
         {
         public IntFilter(LocationWrapper wrapper) { super(wrapper); }
         
-        public int getValue() { 
+        public int getValue() 
+			{ 
             if (grid instanceof IntGrid3D)
                 return ((IntGrid3D)grid).field[x][y][z];
             else //if (field instanceof IntGrid2D)
                 return ((IntGrid2D)grid).field[x][y];
             }
 
-        public void setValue(int val) { 
+        public void setValue(int val) 
+			{ 
             if (grid instanceof IntGrid3D)
                 ((IntGrid3D)grid).field[x][y][z] = val;
             else //if (field instanceof IntGrid2D)

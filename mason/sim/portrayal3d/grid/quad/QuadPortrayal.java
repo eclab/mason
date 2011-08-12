@@ -40,9 +40,15 @@ import com.sun.j3d.utils.picking.*;
 public abstract class QuadPortrayal implements Portrayal 
     {
     /** How much we move the quad up or down for a given value. */
-    public float zScale;
+	float zScale;
     /** Our color map for values */
-    public ColorMap colorDispenser;
+	ColorMap colorDispenser;
+	
+	public ColorMap getMap() { return colorDispenser; }
+	public void setMap(ColorMap map) { colorDispenser = map; }
+	
+	public float getZScale() { return zScale; }
+	public void setZScale(float scale) { zScale = scale; }
 
     public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex,
         int gridWidth, int gridHeight);

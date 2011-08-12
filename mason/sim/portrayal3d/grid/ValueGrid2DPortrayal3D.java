@@ -58,7 +58,6 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     public float transparency = 1.0f;
     
     boolean useTriangles = false;
-        
     public boolean isUsingTriangles() { return useTriangles; }
     public void setUsingTriangles(boolean val) { useTriangles = val; }
     
@@ -67,9 +66,10 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         return field;
         }
 
-    public String valueName;
+	String valueName;
     
     public String getValueName() { return valueName; }
+    public void setValueName(String name) { valueName = name; }
     
     /** Sets non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
     public void setTransparency(float transparency)
@@ -83,32 +83,36 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         this.image = image;
         }
     
-    /** Use a fully opaque image as the appearance. */
+    /** Use a fully opaque image as the appearance. The default portrayal is a simple 
+		TilePortrayal which ranges from blue to red.*/
     public ValueGrid2DPortrayal3D(String valueName, Image image)
         {
         this(valueName, 1.0f);
         this.image = image;
         }
 
-    /** Be somewhat transparent (1.0 is fully opaque, 0.0f is fully transparent). */
+    /** Be somewhat transparent (1.0 is fully opaque, 0.0f is fully transparent). 
+		The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
     public ValueGrid2DPortrayal3D(String valueName, float transparency)
         {
         this.valueName = valueName;
         // we make a default portrayal that goes from blue to red when going from 0 to 1,
         // no change in height
         sim.util.gui.SimpleColorMap cm = new sim.util.gui.SimpleColorMap();
+        cm.setLevels(0.0,1.0,java.awt.Color.blue, java.awt.Color.red);
 		defaultPortrayal = new TilePortrayal(cm);
-        cm.setLevels(0.0,1.0,java.awt.Color.blue,java.awt.Color.red);
         this.transparency = transparency;
         }
 
-    /** Be completely opaque */
+    /** Be completely opaque.  The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
     public ValueGrid2DPortrayal3D(String valueName)
         {
         this(valueName,1.0f);
         }
         
-    public ValueGrid2DPortrayal3D()
+     /** Be completely opaque, with a value name of "Value".
+		The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
+   public ValueGrid2DPortrayal3D()
         {
         this("Value");
         }
@@ -327,7 +331,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         if (field instanceof IntGrid2D) value = (int) value;
         tmpGCI.x = x; tmpGCI.y = y;
         QuadPortrayal quadPortrayal = (QuadPortrayal)getPortrayalForObject(tmpGCI);
-        if(quadPortrayal.colorDispenser.validLevel(value))
+        if(quadPortrayal.getMap().validLevel(value))
             return value;
 
         // at this point we need to reset to current value
@@ -338,7 +342,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
                 return ((DoubleGrid2D)field).field[x][y];
             else return ((IntGrid2D)field).field[x][y];
             }
-        else return quadPortrayal.colorDispenser.defaultValue(); // return *something*
+        else return quadPortrayal.getMap().defaultValue(); // return *something*
         }
 
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)

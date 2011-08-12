@@ -23,18 +23,7 @@ import sim.portrayal.inspector.*;
  * @author Gabriel Balan
  */
 public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
-    {
-    /*
-      public Transform3D getDefaultTransform()
-      {
-      // adjust so that the [0,0,0] object is centered on the origin
-      return new Transform3D(new Quat4f(), new Vector3d(-0.5,-0.5,-0.5), 1);
-      }
-    */
-    
-    /**
-     * @see sim.portrayal.SparseFieldPortrayal3D#getLocationOfObjectAsVector3d(Object)
-     */
+    {    
     public Vector3d getLocationOfObjectAsVector3d(Object obj, Vector3d putInHere)
         {
         if(field instanceof SparseGrid3D)
@@ -71,32 +60,11 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
             {
             public Object getLocation()
                 {
-                /*
-                  if(field instanceof SparseGrid3D)
-                  return ((SparseGrid3D)field).getObjectLocation(object);
-                  else
-                  return ((SparseGrid2D)field).getObjectLocation(object);
-                */
-                //loc.update();
                 return loc;
                 }
                 
             public String getLocationName()
                 {
-                /*
-                  if(field instanceof SparseGrid3D)
-                  {
-                  Int3D loc = ((SparseGrid3D)field).getObjectLocation(object);
-                  if (loc!=null) return loc.toCoordinates();
-                  }
-                  else
-                  {
-                  Int2D loc = ((SparseGrid2D)field).getObjectLocation(object);
-                  if (loc!=null) return loc.toCoordinates();
-                  }
-                  return null;
-                */
-                //loc.update();
                 return loc.toString();
                 }
             };

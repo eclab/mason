@@ -2168,3 +2168,16 @@ Version 16
 		of just with Continuous3D and SparseGrid3D.  SpatialNetwork3D also now
 		works with SparseField2D as well.
 	SpatialNetwork and SpatialNetwork3D instance variables now private
+	FieldPortrayal3D.getDefaultTransform() made protected
+	FieldPortrayal3D.defaultPortrayal is now private.  Subclasses wishing to modify this
+		variable should instead override FieldPortrayal3D.getDefaultPortrayal()
+	ValuePortrayal3D.Filter now has a toString() method which works just like
+		ValuePortrayal2D.Portrayal
+	Made QuadPortrayal.zScale and QuadPortrayal.colorDispenser private and created
+		getters and setters for them.  Likewise for ValuePortrayal3D.map.
+	Added ValueGrid2DPortrayal3D.[get|set]ValueName(...).  Made
+		ValueGrid2DPortrayal3D.valueName private.  This required a small modification
+		to HeatBugs.
+	Added ValueGridPortrayal3D.[get|set]Map(...). Made ValueGridPortrayal3D.map private.
+	Made both ValueGridPortrayal2D.valueName and ValueGridPortrayal3D.valueName private.
+

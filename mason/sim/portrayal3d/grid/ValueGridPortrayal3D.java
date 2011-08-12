@@ -21,7 +21,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
     {       
     String valueName; 
     public double scale;
-    public ColorMap map = new SimpleColorMap(); 
+	ColorMap map = new SimpleColorMap(); 
 
     int width, height, length; 
     
@@ -30,6 +30,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
     public ColorMap getMap() { return map;}
     public void setMap(ColorMap m) { map = m; }
     public String getValueName () { return valueName; } 
+    public void setValueName(String name) { valueName = name; }
     
     ValuePortrayal3D defaultPortrayal = new ValuePortrayal3D(); 
     public Portrayal getDefaultPortrayal() 

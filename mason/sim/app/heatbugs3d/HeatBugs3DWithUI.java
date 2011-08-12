@@ -155,7 +155,7 @@ public class HeatBugs3DWithUI extends GUIState
         // attach the portrayals to the displayer, from bottom to top
         display.attach(heatPortrayal,"Heat");
         display.attach(bugPortrayal, "Bugs");
-        heatPortrayal.valueName = "Heat";
+        heatPortrayal.setValueName("Heat");
                 
         HeatBugs hbState = (HeatBugs)state;
         

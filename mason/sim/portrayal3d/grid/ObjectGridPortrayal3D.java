@@ -141,10 +141,6 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
     
         
         
-        
-        
-        
-        
     protected void updateModel(TransformGroup globalTG)
         {
         Group global = (Group)(globalTG.getChild(0));
@@ -307,8 +303,6 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
         }
 
 
-
-
     public void setField(Object field)
         {
         if (field instanceof ObjectGrid3D || field instanceof ObjectGrid2D) super.setField(field);
@@ -316,15 +310,12 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
         }
         
                 
-
-
-
-
     // searches for an object within a short distance of a location
     final int SEARCH_DISTANCE = 2;
-    IntBag xPos = new IntBag(49);
-    IntBag yPos = new IntBag(49);
-    IntBag zPos = new IntBag(49);
+	final int bagsize = (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1);  // 125
+    IntBag xPos = new IntBag(bagsize);
+    IntBag yPos = new IntBag(bagsize);
+    IntBag zPos = new IntBag(bagsize);
         
     Int3D searchForObject(Object object, Int3D loc)
         {
@@ -394,31 +385,6 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                     return ((Int3D)this.location).toCoordinates();
                 else return "Location Unknown";
                 }
-
-
-            /*
-              public Object getObject()
-              { 
-              if (this.location instanceof Int3D)
-              {
-              Int3D loc = (Int3D)this.location;
-              return ((ObjectGrid3D)field).field[loc.x][loc.y][loc.z];
-              }
-              else
-              {
-              Int2D loc = (Int2D)this.location;
-              return ((ObjectGrid2D)field).field[loc.x][loc.y];
-              }
-              }
-            
-              public String getLocationName()
-              {
-              if (this.location == null) return null;
-              if (this.location instanceof Int3D)
-              return ((Int3D)this.location).toCoordinates();
-              else return ((Int2D)this.location).toCoordinates();
-              }
-            */
             };
         }
     }
