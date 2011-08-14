@@ -273,21 +273,23 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                     if (graphics == null)
                         {
                         if (portrayal.hitObject(portrayedObject, newinfo))
-                            putInHere.add(getWrapper(portrayedObject));
+                            {
+							putInHere.add(getWrapper(portrayedObject));
+							}
                         }
                     else
                         {
                         // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                        // graphics.setClip(clip);
-                        if (objectSelected &&  // there's something there
-                            selectedWrappers.get(portrayedObject) != null)
-                            {
-                            LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                            portrayal.setSelected(wrapper,true);
-                            portrayal.draw(portrayedObject, graphics, newinfo);
-                            portrayal.setSelected(wrapper,false);
-                            }
-                        else portrayal.draw(portrayedObject, graphics, newinfo);
+                        //                    graphics.setClip(clip);
+                        newinfo.selected = (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null); 
+                        /* {
+                           LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                           portrayal.setSelected(wrapper,true);
+                           portrayal.draw(portrayedObject, graphics, newinfo);
+                           portrayal.setSelected(wrapper,false);
+                           }
+                           else */ portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

@@ -16,6 +16,7 @@ import sim.field.continuous.*;
 import sim.field.grid.*;
 import sim.engine.*;
 import sim.portrayal.network.*;
+import java.awt.event.*;
 
 /**
    <p>TrailedPortrayal2D is a special SimplePortrayal wrapper which enables you to draw "trails" or
@@ -422,6 +423,12 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         if (wrapper.getFieldPortrayal() != fieldPortrayal)
             return getChild(object).getName(wrapper);
         else return null;
+        }
+
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+        MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+        {
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type);  // let someone else have it
         }
     }
     

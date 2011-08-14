@@ -9,6 +9,7 @@ import sim.portrayal.*;
 import java.awt.*;
 import sim.display.*;
 import java.awt.geom.*;
+import java.awt.event.*;
 
 /**
    A wrapper for other Portrayal2Ds which provides some kind of pointing object (typically a line)
@@ -348,6 +349,12 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     public String getName(LocationWrapper wrapper)
         {
         return getChild(wrapper.getObject()).getName(wrapper);
+        }
+
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+        MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+        {
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type);  // let someone else have it
         }
     }
     

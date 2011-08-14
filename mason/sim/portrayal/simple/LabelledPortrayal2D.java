@@ -8,6 +8,7 @@ package sim.portrayal.simple;
 import sim.portrayal.*;
 import java.awt.*;
 import sim.display.*;
+import java.awt.event.*;
 
 /**
    A wrapper for other Portrayal2Ds which also draws a textual label.  When you create this
@@ -236,6 +237,12 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     public String getName(LocationWrapper wrapper)
         {
         return getChild(wrapper.getObject()).getName(wrapper);
+        }
+
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+        MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+        {
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type);  // let someone else have it
         }
     }
     

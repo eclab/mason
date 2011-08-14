@@ -128,6 +128,7 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
         else
             return getChild(wrapper.getObject()).getName(wrapper);
         }
+
     }
     
     

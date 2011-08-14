@@ -2180,4 +2180,7 @@ Version 16
 		to HeatBugs.
 	Added ValueGridPortrayal3D.[get|set]Map(...). Made ValueGridPortrayal3D.map private.
 	Made both ValueGridPortrayal2D.valueName and ValueGridPortrayal3D.valueName private.
-
+	Fixed bug in SparseGridPortrayal2D: selection information was not being passed on to
+		simple portrayals.  Thanks to Martin Erdelen <martin.erdelen@kolombus.fi>
+	Appropriate wrapper Simple Portrayals now pass mouse event information on to their
+		children.

@@ -8,6 +8,7 @@ package sim.portrayal.simple;
 import sim.portrayal.*;
 import java.awt.*;
 import sim.display.*;
+import java.awt.event.*;
 
 /**
    A wrapper for other Portrayal2Ds which also draws a big circle around them -- useful for
@@ -123,6 +124,12 @@ public class CircledPortrayal2D extends OvalPortrayal2D
     public String getName(LocationWrapper wrapper)
         {
         return getChild(wrapper.getObject()).getName(wrapper);
+        }
+
+    public boolean handleMouseEvent(GUIState guistate, Manipulating2D manipulating, LocationWrapper wrapper,
+        MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)
+        {
+        return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, fieldPortrayalDrawInfo, type);  // let someone else have it
         }
     }
     

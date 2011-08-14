@@ -256,9 +256,9 @@ Many of these features are quite common among good simulation libraries.  But no
 \paragraph{What MASON is Not}
 MASON is {\it not} a distributed toolkit.  Yet.  MASON was designed to be efficient when running in a single process, albeit with multiple threads.  It requires a single unified memory space, and has no facilities for distributing models over multiple processes or multiple computers.  However, there are several projects underway towards developing distributed versions of MASON.
 
-MASON is {\it not} a easy toolkit for Java beginners.  MASON expects significant Java knowledge out of its users.  If you are a rank beginner, allow me to recommend NetLogo\footnote{http:/\!/ccl.northwestern.edu/netlogo/}, a good toolkit with an easy-to-learn language.
+MASON is {\it not} a easy toolkit for Java beginners.  MASON expects significant Java knowledge out of its users.  If you are a rank beginner, allow me to recommend NetLogo,\footnote{http:/\!/ccl.northwestern.edu/netlogo/} a good toolkit with an easy-to-learn language.
 
-Finally MASON does {\it not} have plug-in facilities for Eclipse or NetBeans, though it can be used quite comfortably with them.  If you're looking for a richer set of development tools, you might look into Repast,\footnote{http:/\!/repast.sourceforge.net/}
+Finally MASON does {\it not} have plug-in facilities for Eclipse or NetBeans, though it can be used quite comfortably with them.  If you're looking for a richer set of development tools, you might look into Repast.\footnote{http:/\!/repast.sourceforge.net/}
 
 \paragraph{MASON History}  In 1998, after using a variety of genetic programming and evolutionary computation toolkits for my thesis work, I decided to develop ECJ, a big evolutionary computation toolkit which was meant to support my own research for the next ten years or so.  ECJ turned out pretty well: it's used very widely in the evolutionary computation field and can run on a lot of machines in parallel.  ECJ was written in Java.
 
@@ -270,7 +270,7 @@ Since then MASON has developed considerably.  It now has much more visualization
 
 I think MASON has done pretty well: it's fast and clean and has a small, modular, and orthogonal model.  It's had a strong influence (I think) on other toolkit development in the field, particularly Repast.  And MASON has been used for everything from small gridworld simulations to learning from demonstration on real robots to game development to large (up to millions of agents) simulations of fish, economic agents, swarm robots, and unmanned aerial vehicles.
 
-\paragraph{What MASON Stands For} It's a backronym, for which the blame may be placed squarely on the shoulders of John Grefenstette.  Notionally it stands for Multi-Agent Simulation Of ... (we can't figure out a good ``N'').  Claudio likes to add ``Neighborhoods and Networks'', but that'd be NN!
+\paragraph{What MASON Stands For} It's a backronym, for which the blame may be placed squarely on the shoulders of John Grefenstette.  Notionally it stands for Multi-Agent Simulation Of ... (we can't figure out a good ``N'').  Claudio likes to add ``Neighborhoods and Networks'', but that'd be NaN!
 
 \section{Architectural Layout}
 
@@ -7541,8 +7541,13 @@ You can use this, for example, to display different images depending on an objec
 
 Or you could use this to make a SimplePortrayal2D appear and disappear.  Here, you attach your SimplePortrayal2D of choice, plus an unsubclassed instance of \class{sim.portrayal.SimplePortrayal2D} (which doesn't draw anything).
 
+FacetedPortrayal2D also doesn't at present pass on mouse events to its children.
+
 \begin{methods}{\class{sim.portrayal.simple.FacetedPortrayal2D}}
 \mthd{ public int getChildIndex(Object object, int numIndices)}  Returns the child index to use based on the given object.  The index must be \(\geq 0\) but less than {\it numIndices}.
+AdjustablePortrayal2D does {\it not} pass through the \method{handleMouseEvent(...)} method by :
+\mthd{public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, LocationWrapper wrapper,}\hsp{\fill}{\sf MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)}
+Always returns false: no mouse events are passed to children.
 \end{methods}
 
 
@@ -7550,7 +7555,7 @@ Or you could use this to make a SimplePortrayal2D appear and disappear.  Here, y
 \subsubsection{Applying a Geometric Transformation}
 \label{sim.portrayal.simple.TransformedPortrayal2D}
 
-\sidebar{This class doesn't feel fully baked}{It's not.}\Class{sim.portrayal.simple.TransformedPortrayal2D} is pretty straightforward: it allows you to rotate, translate, scale, shear, or otherwise transform the way the subsidiary portrayal is drawn using a \class{java.awt.geom.AffineTransform}.  But there's a tradeoff: you're not allowed to perform hit-testing on the object, thus no selection or inspection.
+\sidebar{This class doesn't feel fully baked}{It's not.}\Class{sim.portrayal.simple.TransformedPortrayal2D} is pretty straightforward: it allows you to rotate, translate, scale, shear, or otherwise transform the way the subsidiary portrayal is drawn using a \class{java.awt.geom.AffineTransform}.  But there's a tradeoff: you're not allowed to perform hit-testing on the object, thus no selection or inspection.  Also, TransformedPortrayal2D doesn't at present pass on mouse events to its child.
 
 A note about AffineTransforms: they change {\it everything}: the text, the thickness of the lines, the scale of the patterns in the paint being used.    This class is rarely used.  I'd instead just build a new SimplePortrayal2D.
 
@@ -7565,6 +7570,8 @@ And the methods of interest:
 \begin{methods}{\class{sim.portrayal.simple.TransformedPortrayal2D}}
 \mthd{ public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
 \mthd{ public boolean hitObject(Object object, DrawInfo2D range)}  Always returns false.
+\mthd{public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, LocationWrapper wrapper,}\hsp{\fill}{\sf MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)}
+Always returns false: no mouse events are passed its child.
 \end{methods}
 
 
@@ -9013,12 +9020,23 @@ SparseGrid2DPortrayal3D has the same LocationWrapper facility, more or less, as 
 
 
 \subsubsection{Field Portrayals for Grids of Numbers}
-\paragraph{Quad Portrayals}
 
 Just as MASON provides two classes for Sparse Grids, it also has two similar classes for Value Grids (that is, IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D).  And just as is the case for the Sparse Grid case, one of the portrayals handles both 2D and 3D grids, while the other handles 2D grids in a special way.
 
-The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortrayal3D}.  This class portrays 2D and 3D Value Grids as 
+The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortrayal3D}.  This class portrays 2D and 3D Value Grids as 3-dimensional arrays of cubes or squares, each cube or square colored according to the value at that position.  Just like \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} and \Class{sim.portrayal3d.grid.SparseGridPortrayal3D}, ValueGridPortrayal3D treats 2D Object Grids as if  they were 3D Object Grids with a single layer in the {\it length}, that is, \(Z\), dimension.  Thus objects in 2D Object Grids are assumed to have a location with \(Z=0\) always, and if you'd like to change that you'll need to transform them using one of the affine transform methods available in FieldPortrayal3D.
 
+ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.  The ColorMap and the value name are set like this:
+
+\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D}}
+\mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
+\mthd{public ColorMap getMap()} Returns the color map for the portrayal.
+\mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
+\mthd{public String getValueName()} Returns the name for numerical values for the portrayal.
+\end{methods}
+
+
+
+\paragraph{Quad Portrayals}
 
 
 \subsubsection{Field Portrayals for Continuous Space}

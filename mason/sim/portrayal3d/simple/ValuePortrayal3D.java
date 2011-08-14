@@ -81,7 +81,8 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
         return p;
         }
 
-    static GeometryArray processArray(int shape)  // must be static or else we can't call super() below
+     // must be static or else we can't call super() below
+	 static GeometryArray processArray(int shape) 
         {
         float[] verts = (shape == SHAPE_CUBE ? verts_cube : verts_square);
         GeometryArray ga = new QuadArray(verts.length/3, QuadArray.COORDINATES);
