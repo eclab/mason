@@ -329,13 +329,13 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     public double newValue(int x, int y, double value)
         {
         if (field instanceof IntGrid2D) value = (int) value;
-        tmpGCI.x = x; tmpGCI.y = y;
+       
+		tmpGCI.x = x;
+		tmpGCI.y = y;
         QuadPortrayal quadPortrayal = (QuadPortrayal)getPortrayalForObject(tmpGCI);
-        if(quadPortrayal.getMap().validLevel(value))
-            return value;
+        if(quadPortrayal.getMap().validLevel(value)) return value;
 
         // at this point we need to reset to current value
-        java.awt.Toolkit.getDefaultToolkit().beep();
         if (field != null)
             {
             if (field instanceof DoubleGrid2D)

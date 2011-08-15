@@ -2184,3 +2184,5 @@ Version 16
 		simple portrayals.  Thanks to Martin Erdelen <martin.erdelen@kolombus.fi>
 	Appropriate wrapper Simple Portrayals now pass mouse event information on to their
 		children.
+	ValueGridPortrayal3D.newValue revised to work in the same way as ValueGridPortrayal2D
+		and ValueGrid2DPortrayal3D.

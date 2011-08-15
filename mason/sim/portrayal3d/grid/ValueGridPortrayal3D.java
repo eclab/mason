@@ -73,7 +73,31 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         return ((Portrayal3D)(getPortrayalForObject(new ValuePortrayal3D.ValueWrapper(0,0,0,0,this)))).polygonAttributes();
         }
 
-    public double newValue(int x, int y, int z)
+    /** This method is called by the default inspector to filter new values set by the user.
+        You should return the "corrected" value if the given value is invalid. The default version
+        of this method bases values on the values passed into the setLevels() and setColorTable() methods. */
+    public double newValue(int x, int y, int z, double value)
+        {
+		if (field instanceof IntGrid2D || field instanceof IntGrid3D) value = (int) value;
+		
+        if (map.validLevel(value)) return value;
+
+		if (field != null)
+			{
+			if (field instanceof DoubleGrid3D)
+				return ((DoubleGrid3D)field).field[x][y][z];
+			else if (field instanceof IntGrid3D)
+				return ((IntGrid3D)field).field[x][y][z];
+			else if (field instanceof DoubleGrid2D)
+				return ((DoubleGrid2D)field).field[x][y];
+			else //if (field instanceof IntGrid2D)
+				return ((IntGrid2D)field).field[x][y];
+			}
+		else return map.defaultValue();
+        }
+
+	// returns the value at the given grid position
+	double gridValue(int x, int y, int z)
         {                        
         if (field instanceof DoubleGrid3D)
             return ((DoubleGrid3D)field).field[x][y][z];
@@ -121,7 +145,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
             for (int y=0;y<height;y++) 
                 for (int z=0;z<length;z++) 
                     {
-                    double value = newValue(x,y,z); 
+                    double value = gridValue(x,y,z); 
                     ValuePortrayal3D.ValueWrapper wrapper = new ValuePortrayal3D.ValueWrapper(value,x,y,z,this);
                     TransformGroup tg = portrayal.getModel(wrapper, null);
                     tg.setCapability(Group.ALLOW_CHILDREN_READ);
@@ -179,7 +203,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                     Shape3D shape = (Shape3D)(tg.getChild(0));
 
                     ValuePortrayal3D.ValueWrapper wrapper = (ValuePortrayal3D.ValueWrapper)(shape.getUserData());
-                    double value = newValue(x,y,z); 
+                    double value = gridValue(x,y,z); 
                     double oldValue = wrapper.lastVal;
 
                     if (value != oldValue) // change to new value

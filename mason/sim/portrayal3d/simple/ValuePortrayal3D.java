@@ -271,9 +271,9 @@ app.setTransparencyAttributes(ta);
 
         public void setValue(double val) { 
             if (grid instanceof DoubleGrid3D)
-                ((DoubleGrid3D)grid).field[x][y][z] = val;
+                ((DoubleGrid3D)grid).field[x][y][z] = fieldPortrayal.newValue(x,y,z,val);
             else //if (field instanceof DoubleGrid2D)
-                ((DoubleGrid2D)grid).field[x][y] = val;
+                ((DoubleGrid2D)grid).field[x][y] = fieldPortrayal.newValue(x,y,z,val);
             }
         // static inner classes don't need serialVersionUIDs
         }
@@ -294,9 +294,9 @@ app.setTransparencyAttributes(ta);
         public void setValue(int val) 
 			{ 
             if (grid instanceof IntGrid3D)
-                ((IntGrid3D)grid).field[x][y][z] = val;
+                ((IntGrid3D)grid).field[x][y][z] = (int)fieldPortrayal.newValue(x,y,z,val);
             else //if (field instanceof IntGrid2D)
-                ((IntGrid2D)grid).field[x][y] = val;
+                ((IntGrid2D)grid).field[x][y] = (int)fieldPortrayal.newValue(x,y,z,val);
             }
         }
 

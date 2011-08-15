@@ -6528,6 +6528,14 @@ ValueGridPortrayal2D also has a special constructor which sets the value name:
 \mthd{ public ValueGridPortrayal2D(String valueName) } Constructs the ValueGridPortrayal2D, setting the name used to describe the values in the grid.
 \end{methods}
 
+When the user attempts to change the value in the grid, via an Inspector or some other GUI mechanism, this attempt is routed through a special method called \method{newValue(...)} which allows you to constrain what values the user can set.  The default constraints the values to within those permitted by the ColorMap, which is usually a good choice. But you can override it to do anything you like:
+
+\begin{methods}{\class{sim.portrayal.simple.ValueGridPortrayal2D}}
+\mthd{public double newValue(int x, int y, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
+\end{methods}
+
+For more information on this procedure, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
+
 \sidebar{Why doesn't HexaValueGridPortrayal2D use a SimplePortrayal?}{Because it's just unacceptably slow.  Drawing and computing hexagons is slow enough.  Calling forth a subsidiary object to do it for you is slower still.}  \paragraph{Important Note: Hexagonal Fields} There is also a Hexagonal version of ValueGridPortrayal2D called \Class{sim.portrayal.grid.HexaValueGridPortrayal2D}.  This field portrayal shares more in common with ``fast'' Field Portrayals: it does not use a SimplePortrayal.   Instead it simply draws its values as hexagons using the given ColorMap for color.  Note that there is {\it still} a ``fast'' version of this portrayal!  It's called \Class{sim.portrayal.grid.FastHexaValueGridPortrayal2D}, and it's fast (indeed {\it much} faster) because instead of drawing hexagons, it draws rectangles organized like bricks: this allows it to pull off the same image-stretching tricks discussed later in Section \ref{fastfieldportrayals}.
 
 \subsubsection{Field Portrayals for Continuous Space}
@@ -7605,7 +7613,7 @@ Like MovablePortrayal2D, AdjustablePortrayal2D has a single straightforward cons
 \mthd{ public AdjustablePortrayal2D(SimplePortrayal2D child)}  Creates a AdjustablePortrayal2D with the given child.
 \end{methods}
 
-If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-and-knob widget whenever the object is selected (see Figure \ref{trailandring} below).  If the user rotates the knob on the ring, the object will be asked to reorient itself.  If the user drags the knob {\it away} from the ring (the knob doesn't presently move off the ring, but MASON will understand) the object will be asked to rescale itself.  
+If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-and-knob widget whenever the object is selected (see Figure \ref{trailandring} below).  If the user rotates the knob on the ring, the object will be asked to reorient itself.  If the user drags the knob {\it off} of the ring (the knob doesn't presently move off the ring, but MASON will understand) the object will be asked to rescale itself.  
 
 \sidebar{Oriented2D doesn't define a proper Java Property!}{We don't want to require the user to display orientation information in inspectors.  If you'd like to do so, just implement an additional method, \method{public double getOrientation2D()}, which simply calls \method{orientation2D()}.}AdjustablePortrayal2D only bothers to ask objects to orient themselves if they implement the \Class{sim.portrayal.Orientable2D} interface, which is an extension of the \class{sim.portrayal.Oriented2D}, an interface defined earlier in Section \ref{sim.portrayal.Oriented2D}.  The Orientable2D interface defines two methods:
  
@@ -8189,6 +8197,7 @@ TabbedInspector's methods are likewise obvious:
 \end{methods}
 
 \subsection{Inspecting Values}
+\label{sim.portrayal.simple.ValuePortrayal2D.Filter}
 
 Basic inspectors don't always inspect objects: sometimes they inspect values (usually numbers).  For example,  when you double-click on a {\it value} in ValueGrid2D, FastValueGrid2D, or similar field, up will come an inspector for the value at that position.  What is being shown you?  
 
@@ -8209,6 +8218,12 @@ IntFilter and DoubleFilter both have getters and setters for the value.  Here's 
 \begin{methods}{\class{sim.portrayal.simple.ValuePortrayal2D.DoubleFilter}}
 \mthd{public void setValue(double val)} Sets the current value in the field.
 \mthd{public double getValue()} Returns the current value in the field.
+\end{methods}
+
+When the user tries to change the value in a Filter, the Filter calls a special method in the ValueGridPortrayal2D (or ValueGridPortrayal3D, or ValueGridPortrayal3D) called \method{newValue(...)}.  This method takes the proposed value, and the location where the value is to be set, and returns a revised value according to the constraints of the field.  The default version uses the ColorMap to determine if the value is valid, but you might want to override it to create your own constraints.
+
+\begin{methods}{\class{sim.portrayal.simple.ValueGridPortrayal2D}}
+\mthd{public double newValue(int x, int y, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
 \end{methods}
 
 You probably will never need to use these classes, but it's useful to understand how they work in case you need to do a similar thing.
@@ -9027,13 +9042,20 @@ The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortr
 
 ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.  The ColorMap and the value name are set like this:
 
-\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D}}
+\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal3D}}
 \mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
 \mthd{public ColorMap getMap()} Returns the color map for the portrayal.
 \mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
 \mthd{public String getValueName()} Returns the name for numerical values for the portrayal.
 \end{methods}
 
+When the user attempts to change the value in the grid, via an Inspector or some other GUI mechanism, this attempt is routed through a special method called \method{newValue(...)} which allows you to constrain what values the user can set.  The default constraints the values to within those permitted by the ColorMap, which is usually a good choice. But you can override it to do anything you like:
+
+\begin{methods}{\class{sim.portrayal.simple.ValueGridPortrayal3D}}
+\mthd{public double newValue(int x, int y, int z, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
+\end{methods}
+
+For more information on this procedure, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
 
 
 \paragraph{Quad Portrayals}
