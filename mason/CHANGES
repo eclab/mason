@@ -2186,3 +2186,4 @@ Version 16
 		children.
 	ValueGridPortrayal3D.newValue revised to work in the same way as ValueGridPortrayal2D
 		and ValueGrid2DPortrayal3D.
+	Removed a spurious beep in ValueGridPortrayal3D
