@@ -3,7 +3,7 @@
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
-
+ 
 package sim.app.particles3d;
 import sim.engine.*;
 import sim.display3d.*;
@@ -15,8 +15,6 @@ import javax.swing.*;
 
 public class Particles3DWithUI extends GUIState
     {
-	double size = 1.0;
-	
     public Display3D display;
     public JFrame displayFrame;
 
@@ -50,8 +48,6 @@ public class Particles3DWithUI extends GUIState
         super.start();
         // set up our portrayals
         setupPortrayals();
-		trailsPortrayal.setScale(size);
-		size /= 2.0;
         }
     
     public void load(SimState state)
