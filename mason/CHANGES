@@ -2187,3 +2187,14 @@ Version 16
 	ValueGridPortrayal3D.newValue revised to work in the same way as ValueGridPortrayal2D
 		and ValueGrid2DPortrayal3D.
 	Removed a spurious beep in ValueGridPortrayal3D
+	Revisions to ValueGridPortrayal3D to refuse to allow changes in dimension to the
+		field (because it doesn't use BranchGroups, argh, Java3D is irritating)
+		and to allow scale changes to the individual blocks.
+	Added ValueGrid2DPortrayal3D.getTransparency() and getImage().  Made the image and
+		transparency variables private.  setTransparency() now checks for a valid
+		transparency value.
+	Restructuring of code to move polygon attributes in the ValueGrid2DPortrayal3D, 
+		eliminating a confusing piece of code which was a possible facilitator of bugs.
+	Modified ValueGrid2DPortrayal3D.newValue(...) to handle ObjectGrid2D
+	Modified ValueGridCellInfo, removing the z option and removing doubleValue()
+

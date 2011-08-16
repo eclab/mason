@@ -20,10 +20,12 @@ import com.sun.j3d.utils.picking.*;
 public class ValueGridPortrayal3D extends FieldPortrayal3D
     {       
     String valueName; 
-    public double scale;
+	double scale;
 	ColorMap map = new SimpleColorMap(); 
 
-    int width, height, length; 
+    int width = 0;
+	int height = 0;
+	int length = 0; 
     
     final MutableDouble valueToPass = new MutableDouble(0); 
 
@@ -31,7 +33,11 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
     public void setMap(ColorMap m) { map = m; }
     public String getValueName () { return valueName; } 
     public void setValueName(String name) { valueName = name; }
-    
+	
+	boolean dirtyScale = false;
+    public double getScale () { return scale; } 
+    public void setScale(double val) { scale = val; dirtyScale = true; }
+	
     ValuePortrayal3D defaultPortrayal = new ValuePortrayal3D(); 
     public Portrayal getDefaultPortrayal() 
         { 
@@ -115,6 +121,8 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         globalTG.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
         
         if (field == null) return globalTG;
+		
+		dirtyScale = false;  // we'll be revising the scale entirely
         
         Switch localSwitch = new Switch(Switch.CHILD_MASK); 
         localSwitch.setCapability(Switch.ALLOW_SWITCH_READ);
@@ -138,9 +146,9 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         portrayal.setParentPortrayal(this);
 
         int i = 0;
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;
+		int width = this.width;
+		int height = this.height;
+		int length = this.length;
         for (int x=0;x<width;x++) 
             for (int y=0;y<height;y++) 
                 for (int z=0;z<length;z++) 
@@ -148,6 +156,8 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                     double value = gridValue(x,y,z); 
                     ValuePortrayal3D.ValueWrapper wrapper = new ValuePortrayal3D.ValueWrapper(value,x,y,z,this);
                     TransformGroup tg = portrayal.getModel(wrapper, null);
+					tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+					tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
                     tg.setCapability(Group.ALLOW_CHILDREN_READ);
                     trans.setTranslation(new Vector3f(x,y,z)); 
                     trans.setScale(scale); 
@@ -184,11 +194,14 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         
         SimplePortrayal3D portrayal = (SimplePortrayal3D) p;
         portrayal.setParentPortrayal(this);
+		
+		if (dirtyScale || isDirtyField())
+			reviseScale(localSwitch);		// sizes may have changed
                                                 
         int i = 0;
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;
+		int width = this.width;
+		int height = this.height;
+		int length = this.length;
         for (int x=0;x<width;x++) 
             for (int y=0;y<height;y++) 
                 for (int z=0;z<length;z++) 
@@ -197,9 +210,9 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                                         
                     // ValuePortrayal3D dispenses with its TransformGroup in order to achieve some
                     // additional speed.  We recognize that fact here.
-                                        
                     // TransformGroup g = (TransformGroup)(g.getChild(0));
                     // Shape3D shape = (Shape3D)(g.getChild(0));
+					
                     Shape3D shape = (Shape3D)(tg.getChild(0));
 
                     ValuePortrayal3D.ValueWrapper wrapper = (ValuePortrayal3D.ValueWrapper)(shape.getUserData());
@@ -220,22 +233,55 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         }
             
 
-    private void extractDimensions() 
+	void reviseScale(Switch localSwitch)
+		{
+		Transform3D trans = new Transform3D();
+        int i = 0;
+		int width = this.width;
+		int height = this.height;
+		int length = this.length;
+        for (int x=0;x<width;x++) 
+            for (int y=0;y<height;y++) 
+                for (int z=0;z<length;z++) 
+                    {
+                    TransformGroup tg = (TransformGroup)localSwitch.getChild(i);
+					tg.getTransform(trans);
+					trans.setScale(scale);
+					tg.setTransform(trans);
+                    i++;  // next index
+					}
+		dirtyScale = false;
+		}
+
+
+	void extractDimensions() 
         { 
         if (field instanceof IntGrid3D || field instanceof DoubleGrid3D)
             {
             AbstractGrid3D v = (AbstractGrid3D) field;
-            width = v.getWidth(); height = v.getHeight(); length = v.getLength();
+            int _width = v.getWidth(); 
+			int _height = v.getHeight(); 
+			int _length = v.getLength();
+			if (width != 0  && (_width != width || _height != height || _length != length))
+				throw new RuntimeException("Cannot presently change the dimensions of a field once it's set in ValueGridPortrayal3D.  Sorry.");
+			width = _width;
+			height = _height;
+			length = _length;
             }
         else if (field instanceof IntGrid2D || field instanceof DoubleGrid2D)
             {
             AbstractGrid2D v = (AbstractGrid2D) field;
-            width = v.getWidth(); height = v.getHeight(); length = 1;
+            int _width = v.getWidth(); 
+			int _height = v.getHeight(); 
+			int _length = 1;
+			if (width != 0 && (_width != width || _height != height || _length != length))
+				throw new RuntimeException("Cannot presently change the dimensions of a field once it's set in ValueGridPortrayal3D.  Sorry.");
+			width = _width;
+			height = _height;
+			length = _length;
             }
         else throw new RuntimeException("Invalid field for ValueGridPortrayal3D: " + field);
         }
-
-
 
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {

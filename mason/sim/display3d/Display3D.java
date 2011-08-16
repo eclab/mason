@@ -1328,7 +1328,7 @@ public class Display3D extends JPanel implements Steppable
             Portrayal3DHolder ph =      (Portrayal3DHolder)iter.next();
             if(portrayalSwitchMask.get(ph.subgraphIndex))
                 {
-                // update model ONLY on what is actully on screen. 
+                // update model ONLY on what is actually on screen. 
                 ph.portrayal.getModel(
                     (ph.portrayal instanceof FieldPortrayal3D)? ((FieldPortrayal3D)ph.portrayal).getField(): null,
                     (TransformGroup)portrayalSwitch.getChild(ph.subgraphIndex));

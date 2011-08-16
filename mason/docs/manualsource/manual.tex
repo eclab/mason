@@ -295,7 +295,7 @@ At right is a general overview of the MASON architecture.
 \item A \file{CHANGES} file detailing all changes made to MASON since its inception.
 \item A \file{LICENSE} file describing MASON's open-souce license.  Most of MASON uses the Academic Free License (AFL) 3.0.  This is a BSD-style license.  Those few classes which are not distributed as AFL fall under other BSD-style licenses.  AFL is very liberal, but if for some reason you have difficulty with this license, contact me and we can discuss other options.
 \item A top-level \file{README} file describing how to start up MASON and where to go.
-\item A \file{Makefile}.  MASON does not use Ant: I'm an old Unix hacker.  The Makefile can be used to build the 2D MASON facilities, the 3D facilities, to clean it, to indent all the code using Emacs, or to build a jar file.
+\item A \file{Makefile}.  MASON does not use Ant: I'm an old Unix hacker.  The Makefile can be used to build the 2D MASON facilities, to build the 3D facilities, to clean it, to indent all the code using Emacs, or to build a jar file.
 \item A \file{docs} directory, containing all documentation on the system.
 \item A \file{start} directory, containing double-click-on-me scripts for firing up MASON easily on various operating systems.
 \item A \file{sim} directory.  This is the top-level package for MASON class files.
@@ -2600,7 +2600,7 @@ Double2D is similar to Int2D, though you'll find a few more constructors and use
 
 \paragraph{Example Usage}
 
-Double2D is designed so that math operations produce new Double2D classes at each step.  For example, let's say you wanted to cause an agent \(\vec{a}\) to move away from enemies.  If an enemy \(e^{(i)}\) is close, it exerts a much higher force on the agent than if an enemy is far away.  We could have the agent add up all the forces, then move in a constant speed in the other direction.  Something along the lines of:
+Double2D is designed so that math operations produce new Double2D instances at each step.  For example, let's say you wanted to cause an agent \(\vec{a}\) to move away from enemies.  If an enemy \(e^{(i)}\) is close, it exerts a much higher force on the agent than if an enemy is far away.  We could have the agent add up all the forces, then move in a constant speed in the opposite direction.  Something along the lines of:
 
 \[
 	\vec{a} = \vec{a} + \delta \times \text{normalize}\left(\sum_i \frac{-1}{|\vec{e^{(i)}}|} \vec{e^{(i)}}\right)
@@ -2705,13 +2705,13 @@ MASON has four collections classes special to it:
 Bag is an extensible array like ArrayList but with four major differences:
 
 \begin{itemize}
-\item It's a \class{java.util.Collection} but not a \class{java.util.List} most because implementing the List interface is a pain and not particularly useful.
-\item It's has a special version of the \method{remove()} method which is \(O(1)\) where ArrayList's is \(O(n)\). The method modifies the order of the elements in the Bag however.
+\item It's a \class{java.util.Collection} but not a \class{java.util.List}, mostly because implementing the List interface is a pain and is not particularly useful.
+\item It has a special version of the \method{remove()} method which is \(O(1)\) where ArrayList's is \(O(n)\). The method modifies the order of the elements in the Bag however.
 \item Bag does not (at present) support generics.
 \item You can access the elements in the underlying array directly (if you're careful).
 \end{itemize}
 
-This last item used to be a big deal: it enabled Bag to be up to five times faster than ArrayList.  But no longer.  As of Java 1.6, ArrayList has improved significantly in efficiency, bugs and all.  So at some point it will make sense to shift from Bag to ArrayList simply to be less obtuse, if anything.  But as MASON makes quite extensive use of Bag, for now we're sticking with it. 
+This last item used to be a big deal: it enabled Bag to be up to five times faster than ArrayList.  But no longer.  As of Java 1.6, ArrayList has improved significantly in efficiency, bugs and all, due to HotSpot improvements.  So at some point it will make sense to shift from Bag to ArrayList simply to be less obtuse, if anything.  But as MASON makes quite extensive use of Bag, for now we're sticking with it. 
 
 Bag's basic variables are public:
 
@@ -2845,7 +2845,7 @@ There are several classes and interfaces in the Properties system:
 
 \paragraph{The Standard Java Definition} Java has a convention called {\bf Java Bean Properties} where Objects define features by which they may be manipulated, typically by a graphical user interface widget.  MASON uses Java Bean Properties, and certain MASON-only extensions, to allow the user to inspect and manipulate objects.
 
-Every public non-static non-void method of the form \method{getFoo()} defines a {\it readable Java Bean Property} called \code{Foo}.  If the return type of the property is \variable{boolean}, the method can be either called \method{getFoo()} or \method{isFoo()}.  You can access readable Java Bean Properties to get their current values.   For example, here are some readable Java Bean Properties:
+Every public non-static non-void method of the form \method{getFoo()} Java defines a {\it readable Java Bean Property} called \code{Foo}.  If the return type of the property is \variable{boolean}, the method can be either called \method{getFoo()} or \method{isFoo()}.  You can access readable Java Bean Properties to get their current values.   For example, here are some readable Java Bean Properties:
 
 \java{%
 public String getName();\\
@@ -2879,6 +2879,7 @@ public Object getObjectAtIndex(int index);\\
 protected String getAppropriateness();\\
 public static String getLatestJoke();\\
 public void getItAll();\\
+public boolean get();\\
 \\
 public double getTemperature();\\
 public void setTemperature(float val);\\
@@ -6238,7 +6239,7 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \item Whether or not the object has been {\bf selected} and should draw itself appropriately.  This is a temporary setting.
 \item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
-\item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the Display2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}.
+\item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the Display2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
 \item The {\bf GUIState}.
 \end{itemize}
 
@@ -6254,7 +6255,7 @@ These six variables are publicly accessible:
     public GUIState gui;
 }
 
-\paragraph{What's the point of DrawInfo2D?} DrawInfo2D basically stores graphics context information (scaling, translating, clipping).  You might be asking yourself: why do this when there's a perfectly good graphics context system in the form of Graphics2D's clip region and affine transforms?  There are several reasons.  First, DrawInfo2D is somewhat faster: because it doesn't allow rotation, we don't have to repeatedly apply, then remove, affine transform matrices.  Second, and more importantly, Graphics2D's affine transform mechanism scales {\it everything}: font sizes, line thicknesses, etc., when one zooms in. Very often  this is {\it not} what we want.  By using DrawInfo2D we can choose to scale line thickness (for example) if we wish.  With affine transforms we have no choice.  Third, DrawInfo2D is {\it much simpler to understand}.  It's probably not reasonable to ask simulation developers to perform rigorous affine transformation and resets on Java's graphics library.  Fourth, if you want to use AWT instead of Java2D (it's often much faster), affine transforms aren't even an option.
+\paragraph{What's the point of DrawInfo2D?} DrawInfo2D basically stores graphics context information (scaling, translating, clipping).  You might be asking yourself: why do this when there's a perfectly good graphics context system in the form of Graphics2D's clip region and affine transforms?  There are several reasons.  First, DrawInfo2D is somewhat faster: because it doesn't allow rotation, we don't have to repeatedly apply, then remove, affine transform matrices.  Second, and more importantly, Graphics2D's affine transform mechanism scales {\it everything}: font sizes, line thicknesses, etc., when one zooms in. Very often  this is {\it not} what we want.  By using DrawInfo2D we can choose to scale line thickness (for example) if we wish.  With affine transforms we have no choice.  Third, DrawInfo2D is {\it much simpler to understand}.  It's probably not reasonable to ask simulation developers to perform rigorous affine transformations and resets on Java's graphics library.  Fourth, if you want to use AWT instead of Java2D (it's often much faster), affine transforms aren't an option in some cases.
 
 Beyond the variables above, DrawInfo2D is mostly constructors:
 
@@ -6264,7 +6265,7 @@ Beyond the variables above, DrawInfo2D is mostly constructors:
 \mthd{ public DrawInfo2D(DrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
 \end{methods}
 
-Beyond this, there are only a few methods:
+There are only a few methods:
 
 \begin{methods}{\class{sim.portrayal.DrawInfo2D}}
 \mthd{ public boolean equals(Object obj) } Compares against another DrawInfo2D's draw and clip rectangles and precise flag.
@@ -8977,6 +8978,7 @@ There's one last method which handles the location of picked objects in the fiel
 \end{methods}
 		
 \subsection{Sparse 3D Field Portrayals}
+\label{sim.portrayal3d.SparseFieldPortrayal3D}
 
 The most common 3D Field Portrayals are {\bf Sparse 3D Field Portrayals} which portray Sparse Fields, such as continuous space and sparse grids.  These field portrayals share a lot in common, and so the abstract class \Class{sim.portrayal3d.SparseFieldPortrayal3D} handles much of the machinery for them automatically.  It implements the \method{updateModel(...)} and \method{createModel()} methods, and in turn requires its subclasses to implement \method{setField()} (of course), \method{completedWrapper(...)}, and the following new, and trivial, method:
 
@@ -9009,9 +9011,14 @@ The class \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} portrays both 2D an
 
 Just like ObjectGridPortrayal2D, ObjectGridPortrayal3D produces Inspectors which try to follow objects as they move around, but don't guarantee it.  If an object has moved, the Inspector will search the \(5 \times 5 \times 5\) space surrounding the last known location of the object to find it.  That's 125 cells.   If it still can't find the object, it gives up and reports the location as ``unknown''.  Moral of the story: don't move your objects more than 2 cell spaces at a time if you want them to be trackable via an inspector.
 
-\begin{methods}{\class{sim.portrayal.grid.ObjectGridPortrayal2D}}
+\begin{methods}{\class{sim.portrayal3d.grid.ObjectGridPortrayal2D}}
 \mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 2 grid cells away at any one time.
 \end{methods}
+
+
+\paragraph{Another Way to Draw 2D Object Grids}
+
+The class \class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D} can also be used to draw 2D Object Grids as a flat sheet.  See the section \ref{sim.portrayal3d.grid.ValueGrid2DPortrayal3D} coming up.
 
 
 
@@ -9021,7 +9028,7 @@ MASON provides not one but two classes for portraying Sparse Grids in 3D: one wh
 
 Because SparseGridPortrayal3D can keep track of the locations of objects, it's not nearly as inefficient as ObjectGridPortrayal3D was.  Furthermore this allows SparseGridPortrayal3D to create LocationWrappers which follow objects perfectly. However if your objects come and go a lot, SparseGridPortrayal3D will have to delete them and recreate a lot of scene graph material, which can be expensive.  Keep this in mind.
 
-\begin{methods}{\class{sim.portrayal.grid.SparseGridPortrayal3D}}
+\begin{methods}{\class{sim.portrayal3d.grid.SparseGridPortrayal3D}}
 \mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper fixes on the object but allows its location to change.
 \end{methods}
 
@@ -9029,39 +9036,189 @@ The other class for Sparse Grids is \Class{sim.portrayal3d.grid.SparseGrid2DPort
 
 SparseGrid2DPortrayal3D has the same LocationWrapper facility, more or less, as SparseGridPortrayal3D.
 
-\begin{methods}{\class{sim.portrayal.grid.SparseGrid2DPortrayal3D}}
+\begin{methods}{\class{sim.portrayal3d.grid.SparseGrid2DPortrayal3D}}
 \mthd{public LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)} Revises the provided wrapper to reflect the location of the object stored therein.  The wrapper fixes on the object but allows its location to change.
 \end{methods}
 
 
 \subsubsection{Field Portrayals for Grids of Numbers}
+\label{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}
 
-Just as MASON provides two classes for Sparse Grids, it also has two similar classes for Value Grids (that is, IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D).  And just as is the case for the Sparse Grid case, one of the portrayals handles both 2D and 3D grids, while the other handles 2D grids in a special way.
+Just as MASON provides two classes for Sparse Grids, it also has two similar classes for Value Grids (that is, IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D).  And just as is the case for the Sparse Grid case, one of the portrayals handles both 2D and 3D grids, while the other handles 2D grids (IntGrid2D, DoubleGrid2D) in a special way.  Additionally, the 2D special case class can also draw ObjectGrid2D.
 
 The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortrayal3D}.  This class portrays 2D and 3D Value Grids as 3-dimensional arrays of cubes or squares, each cube or square colored according to the value at that position.  Just like \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} and \Class{sim.portrayal3d.grid.SparseGridPortrayal3D}, ValueGridPortrayal3D treats 2D Object Grids as if  they were 3D Object Grids with a single layer in the {\it length}, that is, \(Z\), dimension.  Thus objects in 2D Object Grids are assumed to have a location with \(Z=0\) always, and if you'd like to change that you'll need to transform them using one of the affine transform methods available in FieldPortrayal3D.
 
-ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.  The ColorMap and the value name are set like this:
+\begin{figure}[t]\noindent\begin{center}%
+\includegraphics[height=1.5in]{ValueGridPortrayal3D.png}\hfill%
+\includegraphics[height=1.5in]{ValueGridPortrayal3DEdges.png}\hfill%
+\includegraphics[height=1.5in]{ValueGridPortrayal3DSmaller.png}\hfill%
+\end{center}%
+\caption{Different ValueGridPortrayal3D effects (outer blue frame not included).  From left to right: (1) a normal ValueGridPortrayal3D, with a color map ranging from transparent to opaque black (2) a ValueGridPortrayal3D with its Polygon Attributes set by the user to display only edges (3) a ValueGridPortrayal3D with smaller scaled cubes.}%
+\label{ValueGridPortrayal3D}
+\end{figure}
 
-\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal3D}}
+ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.    Last but not least, you can also change the size of the individual ValuePortrayal3D's scene objects in the ValueGridPortrayal3D, using \method{setScale(...)}.\footnote{Not to be confused with the \method{scale(...)} methods for applying the field-level affine transform.}  Be warned that changing this scale is very costly once the scene is live: it may take some time depending on the size of the grid.  See Figure \ref{ValueGridPortrayal3D} for some of the effects resulting from these changes.
+
+The ColorMap and the value name are set like this:
+
+\begin{methods}{\class{sim.portrayal3d.grid.ValueGridPortrayal3D}}
 \mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
 \mthd{public ColorMap getMap()} Returns the color map for the portrayal.
 \mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
 \mthd{public String getValueName()} Returns the name for numerical values for the portrayal.
+\mthd{public void setScale(double scale)} Sets the scale to size the individual objects for the values in the portrayal.  Warning: this is a very costly operation if performed once the scene is live.
+\mthd{public double getScale()} Returns the scale to size the individual objects for the values in the portrayal.
+\end{methods}
+
+ValueGridPortrayal3D's constructors are:
+
+\begin{methods}{\class{sim.portrayal3d.grid.ValueGridPortrayal3D} Constructor}
+\mthd{public ValueGridPortrayal3D(String valueName, double scale)} Creates a ValueGridPortrayal3D with the provided value name and object scale.
+\mthd{public ValueGridPortrayal3D(String valueName)} Creates a ValueGridPortrayal3D with the provided value name and an object scale of 1.0
+\mthd{public ValueGridPortrayal3D(double scale)} Creates a ValueGridPortrayal3D with a value name of "Value" and the provided object scale.
+\mthd{public ValueGridPortrayal3D()} Creates a ValueGridPortrayal3D with a value name of "Value" and an object scale of 1.0.
+\end{methods}
+
+\paragraph{Important Note} In order to make the ValueGridPortrayal3D sufficiently efficient, MASON does not include BranchGroups for each separate value.  This means that you can replace the field, but you may not {\it change the dimensions} of your field.  ValueGridPortrayal3D will issue an error otherwise.
+
+When the user attempts to change the value in the grid, via an Inspector or some other GUI mechanism, this attempt is routed through a special method called \method{newValue(...)} which allows you to constrain what values the user can set.  The default constraints the values to within those permitted by the ColorMap, which is usually a good choice. But you can override it to do anything you like:
+
+\begin{methods}{\class{sim.portrayal3d.simple.ValueGridPortrayal3D}}
+\mthd{public double newValue(int x, int y, int z, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
+\end{methods}
+
+This is essentially identical to the procedure in ValueGridPortrayal2D.  For more information on this procedure in general, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
+
+ValueGridPortrayal3D assumes that you are using a single SimplePortrayal, likely a ValuePortrayal3D, and thus it provides the Polygon Attributes of that single SimplePortrayal.  This means that if you use a ValueGridPortrayal3D, the user can change the Polygon Attributes in the Options pane to display only wireframes or vertices of the cubes.  See Figure \ref{ValueGridPortrayal3D} for some of the effects resulting from these changes.
+
+\begin{figure}[t]\noindent\begin{center}%
+\includegraphics[height=1.5in]{MeshPortrayal.png}\hfill%
+\includegraphics[height=1.5in]{MeshPortrayalImage.png}\hfill%
+\includegraphics[height=1.5in]{TilePortrayal.png}\hfill%
+\includegraphics[height=1.5in]{TilePortrayalZero.png}\hfill%
+\end{center}%
+\caption{Four ways of modifying a mesh with QuadPortrayals.  From left to right: (1) a MeshPortrayal with changes in elevation and color (2) a MeshPortrayal with an image and changes only in elevation (3) a TilePortrayal with changes in elevation and color (4) a TilePortrayal with changes in color but not elevation, and which is semitransparent (as is shown by the MeshPortrayal behind it).}%
+\label{QuadPortrayals}
+\end{figure}
+
+\begin{figure}[t]\noindent\begin{center}%
+\includegraphics[height=1.5in]{MeshPortrayalEdges.png}\hfill%
+\includegraphics[height=1.5in]{TilePortrayalEdges.png}\hfill%
+\includegraphics[height=1.5in]{MeshPortrayalVertices.png}\hfill%
+\end{center}%
+\caption{Effects of Polygon Attributes on Meshes in QuadPortrayals.  From left to right: (1) a Mesh Portrayal drawing only edges, not full polygons (2) a Tile Portrayal doing the same (3) a Mesh Portrayal drawing only vertices (Tile Portrayals can also, but it's less useful).}%
+\label{QuadPortrayalPolygonAttributes}
+\end{figure}
+
+\paragraph{ValueGrid2DPortrayal3D and Quad Portrayals}  MASON has one other Value Grid Portrayal in 3D, called \Class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}.  That's quite a mouthful of a name.  This portrayal only displays 2D Value Grids (IntGrid2D, DoubleGrid2D) or ObjectGrid2D, but does so as a thin sheet in space whose 2D coordinates reflect the grid values.
+
+First off, note that ValueGridPortrayal3D can handle ObjectGrid2D in addition to IntGrid2D and DoubleGrid2D.  It does this by running each object in the ObjectGrid2D through a function called \method{doubleValue(...)} which returns the equivalent ``value'' (number) to use for drawing.  This basically maps the ObjectGrid2D into a DoubleGrid2D, more or less.  The method by default returns 0.0 if the object is null, else the object's numerical value if it's a \class{java.lang.Number} or is \class{sim.util.Valuable}, else returns 1.0.  You an override it to provide more sophisticated mapping:
+
+\begin{methods}{\class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}}
+\mthd{public double doubleValue(Object obj)} Maps objects into values for purposes of drawing an ObjectGrid2D as if it were a DoubleGrid2D.  By default, returns 0.0 if the object is null, else returns the value of the object if it is a \class{java.lang.Number} or is \class{sim.util.Valuable}, else returns 1.0.
+\end{methods}
+
+Inspectors won't display the object as an object, but rather as its numerical value.
+
+Okay, now that that's out of the way... the ValueGrid2DPortrayal3D has two basic ways  of drawing this grid: by representing values as {\bf squares} on the grid, or by representing them by the {\bf intersections} between squares.  The first option uses a special default SimplePortrayal called a \Class{sim.portrayal3d.grid.quad.TilePortrayal}, and the second uses a special default SimplePortrayal called a \Class{sim.portrayal3d.grid.quad.MeshPortrayal}.  Both are subclasses of the abstract SimplePortrayal subclass \Class{sim.portrayal3d.grid.quad.QuadPortrayal}.  If you're totally nuts, you can create and use your own QuadPortrayal.  But it makes more sense in nearly all cases to the one that's automatically set up when you construct a ValueGrid2DPortrayal3D.
+
+The default QuadPortrayal used is a simple TilePortrayal, but this can be easily changed to a MeshPortrayal or more complex TilePortrayal along these lines:
+
+\java{%
+ColorMap map = ... \\
+MeshPortrayal mp = new MeshPortrayal(map, 1.0f);\\
+myValueGrid2DPortrayal3D.setPortrayalForAll(mp);
+}
+
+ValueGrid2DPortrayal2D has other basic constructor options:
+
+\begin{itemize}
+\item Create a mesh with overall transparency of a certain amount.  You can't have individual mesh elements with different levels of transparency (sorry, a weakness in Java3D).
+\item Create a mesh mapped with an image.
+\end{itemize}
+
+Some of these QuadPortrayal and other options are shown in Figure \ref{QuadPortrayalPolygonAttributes}.  Like ValueGridPortrayal3D, ValueGrid2DPortrayal3D needs to assign a name (a String) to describe the values in the grid, and you provide this in the constructor.
+
+\begin{methods}{\class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D} Constructor}
+\mthd{public ValueGridPortrayal3D(String valueName, Image image)} Creates a ValueGridPortrayal3D with the provided value name and image for mapping.
+\mthd{public ValueGridPortrayal3D(String valueName, float transparency)} Creates a ValueGridPortrayal3D with the provided value name and transparency value, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public ValueGridPortrayal3D(String valueName)} Creates a fully opaque, image-less ValueGridPortrayal3D with the provided value name.
+\mthd{public ValueGridPortrayal3D()} Creates a ValueGridPortrayal3D with a value name of "Value" and an object scale of 1.0.
+\end{methods}
+
+You can get and set the value name, overall transparency, and image.  You can also specify whether the squares in the mesh are generated using squares or triangles.  Why would you want to display squares as triangles?  If you're using MeshPortrayal2D and your ``mountain peaks'' are too steep, this triggers bugs in Java3D's picking, with certain squares insisting on being part of the picking results.  You can fix this by switching the triangles.  Note however that triangles are very slightly slower, and show up as triangles if the user changes the Polygon Attributes to use edges rather than polygons or vertices (these are minor downsides).
+
+
+
+\begin{methods}{\class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}}
+\mthd{public void setTransparency(float val))} Sets the overall transparency for the portrayal, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public float getTransparency())} Returns the overall transparency for the portrayal, which will be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public void setImage(Image img))} Sets the image for the portrayal, or null for no image.
+\mthd{public Image getImage())} Returns the image for the portrayal, or null for no image.
+\mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
+\mthd{public String getValueName()} Returns the name for numerical values for the portrayal.
+\mthd{public void setUsingTriangles(boolean val)} Sets whether or not to use triangles to draw.
+\mthd{public boolean isUsingTriangles()} Returns whether or not to use triangles to draw.
 \end{methods}
 
 When the user attempts to change the value in the grid, via an Inspector or some other GUI mechanism, this attempt is routed through a special method called \method{newValue(...)} which allows you to constrain what values the user can set.  The default constraints the values to within those permitted by the ColorMap, which is usually a good choice. But you can override it to do anything you like:
 
-\begin{methods}{\class{sim.portrayal.simple.ValueGridPortrayal3D}}
-\mthd{public double newValue(int x, int y, int z, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
+\begin{methods}{\class{sim.portrayal3d.simple.ValueGrid2DPortrayal3D}}
+\mthd{public double newValue(int x, int y, double val)} Returns a revised version of the proposed value, enabling you to constrain how the user changes values in the grid via an inspector or other GUI tool.
 \end{methods}
 
-For more information on this procedure, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
+This is essentially identical to the procedure in ValueGrid2DPortrayal3D.  For more information on this procedure in general, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
 
+The default QuadPortrayal used by ValueGrid2DPortrayal3D is a TilePortrayal with no elevation, and which maps the range 0.0 through 1.0 as the colors blue through red.  Values less than 0.0 are thresholded to blue and values greater than 1.0 are thresholded to red.  This a pretty simple QuadPortrayal: perhaps you'd want to have a bit more customization.
 
-\paragraph{Quad Portrayals}
+You can provide your own QuadPortrayal via ValueGridPortrayal2D's \method{setPortrayal...(..)} methods (for a refresher, see Section \ref{sim.portrayal.FieldPortrayal}).  Both TilePortrayal and MeshPortrayal have the same constructors:
+
+\begin{methods}{\class{sim.portrayal3d.grid.quad.TilePortrayal} and \class{sim.portrayal3dc.grid.quad.MeshPortrayal} Constructor}
+\mthd{public TilePortrayal(ColorMap map, float zScale))} Sets the color map for values in the TilePortrayal, as well as the scaling factor for elevating or lowering tiles (or for MeshPortrayal, ``peaks'') to reflect values.  0.0 indicates a completely flat portrayal surface.
+\mthd{public TilePortrayal(ColorMap map))} Sets the color map for values in the TilePortrayal, with no elevation at all (0.0).
+\end{methods}
+
+Besides all the standard SimplePortrayal methods, QuadPortrayals provide methods for setting color maps and the scale for elevating tiles or peaks.  Additionally, QuadPortrayals can return the coordinate location in the grid corresponding to a certain pick result from Java3D.  And importantly, QuadPortrayals have a special method called \method{setData(...)} by which the ValueGrid2DPortrayal3D gets the 3-dimensional coordinates of each corner of a square (or triangle) polygon corresponding to a given grid location.
+
+\begin{methods}{\class{sim.portrayal3d.grid.quad.QuadPortrayal}}
+\mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
+\mthd{public ColorMap getMap()} Returns the color map for the portrayal.
+\mthd{public void setZScale(float scale)} Sets the Z (elevation) scaling factor for the portrayal.
+\mthd{public float getZScale()} Returns the Z (elevation) scaling factor for the portrayal.
+\mthd{public Int2D getCellForIntersection(PickIntersection pi, Grid2D field)} Returns the field's grid location corresponding to a given pick result on the mesh.
+\mthd{public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex, int gridWidth, int gridHeight)} Given information about the grid cell, and its location in a grid of a given height and width, fills out the 3-dimensional coordinates and 3-color values corresponding to that point. 
+\end{methods}
+
+This last method uses a special class called \Class{sim.portrayal3d.grid.quad.ValueGridCellInfo} which holds the 2D or 3D grid coordinates of a value in a 2D or 3D Value or ObjectGrid, plus the current value corresponding to the coordinate.  At present it's only used by ValueGrid2DPortrayal3D for 2-dimensional grids.  ValueGridCellInfo is simple: it contains two public grid cell variables:
+
+\java{%
+public int x;\\
+public int y;
+}
+
+And a simple constructor...
+
+\begin{methods}{\class{sim.portrayal3d.grid.quad.ValueGridCellInfo} Constructor}
+\mthd{public ValueGridCellInfo(ValueGrid2DPortrayal3D fieldPortrayal, Grid2D grid)} Constructs a ValueGridCellInfo using a provided field portrayal and grid.
+\end{methods}
+
+From this, the current value of the grid coordinate can be extracted with:
+
+\begin{methods}{\class{sim.portrayal3d.grid.quad.ValueGridCellInfo}}
+\mthd{public double value()} Returns the current value at the indicated grid cell location.
+\end{methods}
+
+Last but not least, QuadPortrayal contains three {\bf filters} (for a reminder, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}).  These are \Class{sim.portrayal.grid.quad.QuadPortrayal.ObjectFilter}, \Class{sim.portrayal.grid.quad.QuadPortrayal.DoubleFilter}, and
+\Class{sim.portrayal.grid.quad.QuadPortrayal.IntFilter}, all subclasses of the abstract superclass \Class{sim.portrayal.grid.quad.QuadPortrayal.Filter}.  These methods allow inspectors etc. to set or get the value at the underlying grid location, be it a double, integer, or Object (objects can only be extracted in their numerical value form, and not set).  These filters have identical constructors and methods as ValuePortrayal2D.Filter, and so we won't write them here.\footnote{QuadPortrayal.ObjectFilter is missing \method{setValue(...)}.}
 
 
 \subsubsection{Field Portrayals for Continuous Space}
+
+MASON has one class, \Class{sim.portrayal3d.continuous.ContinuousPortrayal3D}, which displays 2D and 3D continuous fields in 3-dimensional continuous space.  2D continuous fields (Continuous2D) are portrayed as if their Z dimension was infinitely thin (0 in ``length'') and passing through the origin.  You can of course rotate or translate the field as appropriate using the FieldPortrayal3D affine transform methods.
+
+There's not much to say about ContinuousPortrayal3D: like SparseGridPortrayal3D, it is a subclass of  SparseFieldPortrayal3D and has no special methods beyond this.  See Section \ref{sim.portrayal3d.SparseFieldPortrayal3D} for more information on SparseFieldPortrayal3D.
+
+
 \subsection{Field Portrayals for Networks}
 
 

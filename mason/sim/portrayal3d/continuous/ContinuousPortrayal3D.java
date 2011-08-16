@@ -65,31 +65,12 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
             {
             public Object getLocation()
                 {
-                /*
-                  if(field instanceof Continuous3D)
-                  return ((Continuous3D)field).getObjectLocation(object);
-                  else
-                  return ((Continuous2D)field).getObjectLocation(object);
-                */
                 //loc.update();
                 return loc;
                 }
                 
             public String getLocationName()
                 {
-                /*
-                  if(field instanceof Continuous3D)
-                  {
-                  Double3D loc = ((Continuous3D)field).getObjectLocation(object);
-                  if (loc!=null) return loc.toCoordinates();
-                  }
-                  else
-                  {
-                  Double2D loc = ((Continuous2D)field).getObjectLocation(object);
-                  if (loc!=null) return loc.toCoordinates();
-                  }
-                  return null;
-                */
                 //loc.update();
                 return loc.toString();
                 }

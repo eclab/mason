@@ -159,8 +159,8 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
         instead you should implement the createModel and updateModel methods. 
     
         <p>The TransformGroup tree structure should be of the form 
-        ModelTransform[InternalTransform[<i>model info</i>]].
-        <p>InternalTransform is a hook for transforming the FieldPortrayal3D.  ModelTransform
+        ModelTransformGroup[InternalTransformGroup[<i>model info</i>]].
+        <p>InternalTransform is a hook for transforming the FieldPortrayal3D.  The ModelTransformGroup
         should not be played with. */
     
     public TransformGroup getModel(Object obj, TransformGroup previousTransformGroup)
@@ -188,14 +188,14 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
         }
 
     /** Returns a tree structure of the form
-        InternalTransform[<i>model info</i>].
-        <p>...where InternalTransform is an identity transformgroup whose transform will be
+        InternalTransformGroup[<i>model info</i>].
+        <p>...where InternalTransformGroup is an identity transformgroup whose transform will be
         modified elsewhere (create it but don't play with it). */
     protected abstract TransformGroup createModel();
     
     /** Returns a tree structure of the form
-        InternalTransform[<i>model info</i>].
-        <p>...where InternalTransform is an identity transformgroup whose transform will be
+        InternalTransformGroup[<i>model info</i>].
+        <p>...where InternalTransformGroup is an identity transformgroup whose transform will be
         modified elsewhere (don't play with it).  By default, this function does nothing.
         Override it to update the model when it's called. */
     protected void updateModel(TransformGroup previousTransformGroup) { }

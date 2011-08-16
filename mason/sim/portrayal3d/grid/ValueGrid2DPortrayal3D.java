@@ -53,9 +53,10 @@ import com.sun.j3d.utils.picking.*;
 
 public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     {
-    public Image image;
+	Image image;
     /** Non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
-    public float transparency = 1.0f;
+	float transparency = 1.0f;
+	PolygonAttributes mPolyAttributes = new PolygonAttributes();
     
     boolean useTriangles = false;
     public boolean isUsingTriangles() { return useTriangles; }
@@ -71,10 +72,16 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }
     
+	public float getTransparency()
+		{
+		return transparency;
+		}
+		
     /** Sets non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
     public void setTransparency(float transparency)
         {
-        this.transparency = transparency;
+		if (transparency >= 0.0f && transparency <= 1.0f)
+			this.transparency = transparency;
         }
     
     /** Set the appearance to a fully opaque image.  If image is null, then removes any image. */
@@ -82,6 +89,11 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         {
         this.image = image;
         }
+		
+	public Image getImage()
+		{
+		return image;
+		}
     
     /** Use a fully opaque image as the appearance. The default portrayal is a simple 
 		TilePortrayal which ranges from blue to red.*/
@@ -102,6 +114,11 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         cm.setLevels(0.0,1.0,java.awt.Color.blue, java.awt.Color.red);
 		defaultPortrayal = new TilePortrayal(cm);
         this.transparency = transparency;
+
+        mPolyAttributes.setCapability(PolygonAttributes.ALLOW_CULL_FACE_WRITE);
+        mPolyAttributes.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
+        mPolyAttributes.clearCapabilityIsFrequent(PolygonAttributes.ALLOW_CULL_FACE_WRITE);
+        mPolyAttributes.clearCapabilityIsFrequent(PolygonAttributes.ALLOW_MODE_WRITE);
         }
 
     /** Be completely opaque.  The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
@@ -116,14 +133,6 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         {
         this("Value");
         }
-
-    final PolygonAttributes mPolyAttributes = new PolygonAttributes();
-        {
-        mPolyAttributes.setCapability(PolygonAttributes.ALLOW_CULL_FACE_WRITE);
-        mPolyAttributes.setCapability(PolygonAttributes.ALLOW_MODE_WRITE);
-        mPolyAttributes.clearCapabilityIsFrequent(PolygonAttributes.ALLOW_CULL_FACE_WRITE);
-        mPolyAttributes.clearCapabilityIsFrequent(PolygonAttributes.ALLOW_MODE_WRITE);
-        }  
 
     public PolygonAttributes polygonAttributes()
         {
@@ -340,6 +349,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
             {
             if (field instanceof DoubleGrid2D)
                 return ((DoubleGrid2D)field).field[x][y];
+			else if (field instanceof ObjectGrid2D)
+				return doubleValue(((ObjectGrid2D)field).field[x][y]);
             else return ((IntGrid2D)field).field[x][y];
             }
         else return quadPortrayal.getMap().defaultValue(); // return *something*
