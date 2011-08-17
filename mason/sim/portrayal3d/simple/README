@@ -23,7 +23,7 @@ Arrow.java
 An auxiliary class used for drawing arrows.  Usually you'd ignore this.
 
 
-Axes.java
+AxesPortrayal3D.java
 
 An auxiliary class used for drawing axes (by using Arrow.java).  Usually 
 you'd ignore this.
