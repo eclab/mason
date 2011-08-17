@@ -10,6 +10,7 @@ import sim.portrayal3d.*;
 import javax.media.j3d.*;
 import sim.portrayal.*;
 import com.sun.j3d.utils.geometry.*;
+import java.awt.*;
 
 /**
  * Portrays objects as a sphere of the specified color or appearance (flat opaque white by default)
@@ -29,44 +30,50 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
     /** Constructs a SpherePortrayal3D with a default (flat opaque white) appearance and the given scale. */
     public SpherePortrayal3D(float scale)
         {
-        this(java.awt.Color.white,scale);
+        this(Color.white,scale);
         }
         
     /** Constructs a SpherePortrayal3D with a flat opaque appearance of the given color and a scale of 1.0. */
-    public SpherePortrayal3D(java.awt.Color color)
+    public SpherePortrayal3D(Color color)
         {
         this(color,1f);
         }
         
     /** Constructs a SpherePortrayal3D with a flat opaque appearance of the given color and the given scale. */
-    public SpherePortrayal3D(java.awt.Color color, float scale)
+    public SpherePortrayal3D(Color color, float scale)
         {
         this(color,scale, DEFAULT_DIVISIONS);
         }
 
     /** Constructs a SpherePortrayal3D with a flat opaque appearance of the given color, scale, and divisions. */
-    public SpherePortrayal3D(java.awt.Color color, float scale, int divisions)
+    public SpherePortrayal3D(Color color, float scale, int divisions)
         {
         this(appearanceForColor(color),true,false,scale,divisions);
         }
 
     /** Constructs a SpherePortrayal3D with the given (opaque) image and a scale of 1.0. */
-    public SpherePortrayal3D(java.awt.Image image)
+    public SpherePortrayal3D(Image image)
         {
         this(image,1f);
         }
 
     /** Constructs a SpherePortrayal3D with the given (opaque) image and scale. */
-    public SpherePortrayal3D(java.awt.Image image, float scale)
+    public SpherePortrayal3D(Image image, float scale)
         {
-        this(image,scale,DEFAULT_DIVISIONS);
+        this(image,scale, DEFAULT_DIVISIONS);
         }
 
     /** Constructs a SpherePortrayal3D with the given (opaque) image, scale, and divisions. */
-    public SpherePortrayal3D(java.awt.Image image, float scale, int divisions)
+    public SpherePortrayal3D(Image image, float scale, int divisions)
         {
         this(appearanceForImage(image,true),false,true,scale,divisions);
         }
+
+    /** Constructs a SpherePortrayal3D with the given appearance, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
+    public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
+		{
+		this(appearance, generateNormals, generateTextureCoordinates, scale, DEFAULT_DIVISIONS);
+		}
 
     /** Constructs a SpherePortrayal3D with the given appearance, divisions, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
     public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale, int divisions)
@@ -81,12 +88,6 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
             divisions, appearance);
                 
         setShape3DFlags(sphere.getShape(Sphere.BODY));
-/*
-  group = new TransformGroup();
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-  group.addChild(sphere);
-*/
         group = sphere;
         }
 

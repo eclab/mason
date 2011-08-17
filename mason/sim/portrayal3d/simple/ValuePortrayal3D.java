@@ -61,7 +61,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
         }
 
     /** Returns false and does not set the transform (there's nothing to set). */
-    protected boolean setTransform(TransformGroup j3dModel, Transform3D transform)
+    public boolean setTransform(TransformGroup j3dModel, Transform3D transform)
         {
         return false;  // there's no transform for this class
         }

@@ -10,6 +10,7 @@ import com.sun.j3d.utils.geometry.*;
 import sim.portrayal3d.*;
 import sim.portrayal.*;
 import javax.media.j3d.*;
+import java.awt.*;
 
 /**
  * Portrays objects as a cylinder of the specified color or appearance (flat opaque white by default)
@@ -27,29 +28,29 @@ public class CylinderPortrayal3D extends PrimitivePortrayal3D
     /** Constructs a CylinderPortrayal3D with a default (flat opaque white) appearance and the given scale. */
     public CylinderPortrayal3D(float scale)
         {
-        this(java.awt.Color.white,scale);
+        this(Color.white,scale);
         }
         
     /** Constructs a CylinderPortrayal3D with a flat opaque appearance of the given color and a scale of 1.0. */
-    public CylinderPortrayal3D(java.awt.Color color)
+    public CylinderPortrayal3D(Color color)
         {
         this(color,1f);
         }
         
     /** Constructs a CylinderPortrayal3D with a flat opaque appearance of the given color and the given scale. */
-    public CylinderPortrayal3D(java.awt.Color color, float scale)
+    public CylinderPortrayal3D(Color color, float scale)
         {
         this(appearanceForColor(color),true,false,scale);
         }
 
     /** Constructs a CylinderPortrayal3D with the given (opaque) image and a scale of 1.0. */
-    public CylinderPortrayal3D(java.awt.Image image)
+    public CylinderPortrayal3D(Image image)
         {
         this(image,1f);
         }
 
     /** Constructs a CylinderPortrayal3D with the given (opaque) image and scale. */
-    public CylinderPortrayal3D(java.awt.Image image, float scale)
+    public CylinderPortrayal3D(Image image, float scale)
         {
         this(appearanceForImage(image,true),false,true,scale);
         }

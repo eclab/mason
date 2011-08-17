@@ -60,13 +60,6 @@ Shape3DPortrayal3D.java
 A PrimitivePortrayal3D subclass which draws arbitrary Shape3D objects.
 
 
-BoxPortrayal3D.java
-
-A SimplePortrayal3D which draws boxes (cubes).  It's faster than 
-CubePortrayal3D but has certain idiosyncracies: it may go away in a 
-while.
-
-
 ImagePortrayal3D.java
 
 A SimplePortrayal3D which draws squares with images on them.

@@ -9360,19 +9360,49 @@ Some final methods: prior to constructing the scene graph, you can stipulate tha
 
 MASON provides quite a number of basic and decorative simple portrayals.  You can use any Decorative Simple Portrayal as a Basic Simple Portrayal (and vice versa), but they're more commonly used for their respective purposes: Basic Simple Portrayals portray objects in fields, while Decorative Simple Portrayals simply decorate a scene.
 
+\begin{itemize}
+\item \class{sim.portrayal3d.simple.SpherePortrayal3D} portrays objects as spheres.
+\item \class{sim.portrayal3d.simple.CylinderPortrayal3D} portrays objects as cylinders.
+\item \class{sim.portrayal3d.simple.ConePortrayal3D} portrays objects as cones.
+\item \class{sim.portrayal3d.simple.CubePortrayal3D} portrays objects as cubes.
+\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D} portrays objects with a loaded Shape3D.
+\item \class{sim.portrayal3d.simple.ImagePortrayal3D} portrays objects with a flat image.
+\item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D} portrays objects using a provided BranchGroup.
+\item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D} portrays objects using a provided SharedGroup
+\item \class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal which draws a wireframe cube in the scene.
+\item \class{sim.portrayal3d.simple.LightPortrayal3D} is a Decorative Simple Portrayal which adds ambient or spot lights to the scene.
+\item \class{sim.portrayal3d.simple.AxesPortrayal3D} is a Decorative Simple Portrayal which adds axes to the scene.  This portrayal is more or less automatic: it's part of the Display3D facility and can be turned on by the user automatically in the Options Pane.
+\end{itemize}
+
 Many Basic and Decorative Simple Portrayals are subclasses of PrimitivePortrayal3D (see Section \ref{sim.portrayal3d.simple.PrimitivePortrayal3D}).
 
-\item \class{sim.portrayal3d.simple.SpherePortrayal3D}
-\item \class{sim.portrayal3d.simple.CylinderPortrayal3D}
-\item \class{sim.portrayal3d.simple.ConePortrayal3D}
-\item \class{sim.portrayal3d.simple.BoxPortrayal3D} and \class{sim.portrayal3d.simple.CubePortrayal3D}
-\item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D}
-\item \class{sim.portrayal3d.simple.ImagePortrayal3D}
-\item \class{sim.portrayal3d.simple.LightPortrayal3D}
-\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D}
-\item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D}
-\item \class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D}
+\sidebar{How do I orient a cylinder or cone?}{See TransformedPortrayal3D.}
+\paragraph{Spheres, Cylinders, and Cones}
 
+The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portrayal3d.simple.CylinderPortrayal3D},  and \Class{sim.portrayal3d.simple.ConePortrayal3D} are all subclasses of PrimitivePortrayal3D and all share more or less the same constructors.  Here are the constructors for CylinderPortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.CylinderPortrayal3D} Constructor}
+\mthd{public CylinderPortrayal3D()} Creates a new CylinderPortrayal3D with the a scale of 1.0 and a flat unlit white color.
+\mthd{public CylinderPortrayal3D(float scale)} Creates a new CylinderPortrayal3D with the given scale and a flat unlit white color.
+\mthd{public CylinderPortrayal3D(Color color)} Creates a new CylinderPortrayal3D with the given color and a scale of 1.0.
+\mthd{public CylinderPortrayal3D(Color color, float scale)} Creates a new CylinderPortrayal3D with the given color and scale.
+\mthd{public CylinderPortrayal3D(Image image)}Creates a new CylinderPortrayal3D with the given image and a scale of 1.0.
+\mthd{public CylinderPortrayal3D(Image image, float scale)} Creates a new CylinderPortrayal3D with the given image and scale.
+\mthd{public CylinderPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)} Creates a new CylinderPortrayal3D with the given appearance and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
+\end{methods}
+
+SpherePortrayal3D has a few additional constructors to reflect the fact that you can specify the number of {\bf divisions} in the sphere (essentially how many polygons it uses).  If a constructor doesn't specify it, the default number of divisions is:
+
+\java{%
+public static final int DEFAULT\_DIVISIONS = 15;
+}
+
+\begin{methods}{Additional \class{sim.portrayal3d.SpherePortrayal3D} Constructor}
+\mthd{public SpherePortrayal3D(Color color, float scale, int divisions)} Creates a new SpherePortrayal3D with the given color, divisions, and scale.
+\mthd{public SpherePortrayal3D(Image image, float scale, int divisions)} Creates a new SpherePortrayal3D with the given image, divisions, and scale.
+\mthd{public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates,} \rule{0pt}{0pt}\hspace{\fill}{\sf float scale, int divisions)}\\
+Creates a new SpherePortrayal3D with the given appearance, divisions, and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
+\end{methods}
 
 
 \subsection{Value Simple Portrayals}

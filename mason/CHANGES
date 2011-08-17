@@ -2203,3 +2203,7 @@ Version 16
 	PrimitivePortrayal3D.getAppearance returns a brand-new Appearance if the number of
 		shapes is zero.
 	Renamed Axes to AxesPortrayal3D
+	BoxPortrayal3D is officially deleted
+	Added an additional SpherePortrayal3D constructor
+	Slight efficiency added to PrimitivePortrayal3D: if the scale is set to 1.0, no
+		Transform3D is created.
