@@ -10,6 +10,7 @@ import sim.portrayal3d.*;
 import javax.vecmath.*;
 import sim.portrayal.*;
 import javax.media.j3d.*;
+import java.awt.*;
 
 /**
  * Portrays objects as a cube of the specified color or appearance (flat opaque white by default)
@@ -18,10 +19,10 @@ import javax.media.j3d.*;
  */
 public class CubePortrayal3D extends SimplePortrayal3D
     {
-    public float scale = 1f;
-    public Appearance appearance;
-    public boolean generateNormals;
-    public boolean generateTextureCoordinates;
+	float scale = 1f;
+	Appearance appearance;
+	boolean generateNormals;
+	boolean generateTextureCoordinates;
     
     /** Constructs a CubePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public CubePortrayal3D()
@@ -32,39 +33,29 @@ public class CubePortrayal3D extends SimplePortrayal3D
     /** Constructs a CubePortrayal3D with a default (flat opaque white) appearance and the given scale. */
     public CubePortrayal3D(float scale)
         {
-        this(java.awt.Color.white,scale);
+        this(Color.white,scale);
         }
         
     /** Constructs a CubePortrayal3D with a flat opaque appearance of the given color and a scale of 1.0. */
-    public CubePortrayal3D(java.awt.Color color)
+    public CubePortrayal3D(Color color)
         {
         this(color,1f);
         }
         
     /** Constructs a CubePortrayal3D with a flat opaque appearance of the given color and the given scale. */
-    public CubePortrayal3D(java.awt.Color color, float scale)
+    public CubePortrayal3D(Color color, float scale)
         {
-        this(appearanceForColor(color),scale);
+        this(appearanceForColor(color), false, false, scale);
         }
-    public CubePortrayal3D(Appearance appearence)
-        {
-        this(appearence,1f);
-        }
-
-    public CubePortrayal3D(Appearance appearence, float scale)
-        {
-        this(appearence,false,false,scale);
-        }
-
-
+		
     /** Constructs a CubePortrayal3D with the given (opaque) image and a scale of 1.0. */
-    public CubePortrayal3D(java.awt.Image image)
+    public CubePortrayal3D(Image image)
         {
         this(image,1f);
         }
 
     /** Constructs a CubePortrayal3D with the given (opaque) image and scale. */
-    public CubePortrayal3D(java.awt.Image image, float scale)
+    public CubePortrayal3D(Image image, float scale)
         {
         this(appearanceForImage(image,true),false,true,scale);
         }

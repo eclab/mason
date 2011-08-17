@@ -2207,3 +2207,11 @@ Version 16
 	Added an additional SpherePortrayal3D constructor
 	Slight efficiency added to PrimitivePortrayal3D: if the scale is set to 1.0, no
 		Transform3D is created.
+	PrimitivePortrayal3D.setTransform(...) and setScale(...) now public
+	Made various variables in CubePortrayal3D private
+	Deleted two construcors in CubePortrayal3D
+	LightPortrayal3D.light is private
+	Major modifications to the ill-used SharedGroupPortrayal3D. It's now a wrapper
+		portrayal for other SimplePortrayals which displays them repeatedly using
+		a SharedGroup and Links.  This saves some memory but is not pickable.
+

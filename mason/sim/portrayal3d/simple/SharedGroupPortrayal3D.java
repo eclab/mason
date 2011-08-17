@@ -13,26 +13,26 @@ import javax.media.j3d.*;
 /**
  * @author Gabriel Balan
  *
- * Wraps a non-pickable SharedGroup into a SimplePortrayal3D.
- * You are responsible for compiling the Shared Group if you so
- * desire.
+ * Wraps a non-pickable SimplePortrayal3D using a Shared Group and Links.
  */
  
 public class SharedGroupPortrayal3D extends SimplePortrayal3D 
     {
-    SharedGroup group;
+	SimplePortrayal3D child;
     
-    public SharedGroupPortrayal3D(SharedGroup group)
+    public SharedGroupPortrayal3D(SimplePortrayal3D child)
         {
-        this.group = group;
-        group.setCapability(Group.ALLOW_CHILDREN_READ);
-        group.clearCapabilityIsFrequent(Group.ALLOW_CHILDREN_READ);
+		this.child = child;
         }
 
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
         {
         if(j3dModel==null)
             {
+			// load the child
+			SharedGroup group = new SharedGroup();
+			group.addChild(child.getModel(obj, null));
+			
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             

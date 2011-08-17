@@ -9351,8 +9351,8 @@ Some final methods: prior to constructing the scene graph, you can stipulate tha
 \mthd{public static void setShape3DFlags(Shape3D shape)} Sets flags in the provided Shape3D object which makes its appearance and geometry readable and writeable.
 \mthd{protected Appearance getAppearance(TransformGroup model)} Returns an Appearance associated with the given model (specifically, Shape3D number 0).  If the model is \variable{null} or the number of shapes is zero, then builds a brand new Appearance object, sets flags in it, and returns it.
 \mthd{protected void setAppearance(TransformGroup model, Appearance appearance)} Sets the Appearance associated with all the Shape3D objects in the given model.  If the model is \variable{null}, then the internal Appearance is set and future constructed models will use it.
-\mthd{protected boolean setTransform(TransformGroup model, Transform3D transform)} Sets the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method can be overridden to refuse to set the transform by returning \variable{false}.
-\mthd{protected boolean setScale(TransformGroup model, float val)} Sets the scale of the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method calls \method{setTransform(...)} so there's no need to override it.
+\mthd{public boolean setTransform(TransformGroup model, Transform3D transform)} Sets the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method can be overridden to refuse to set the transform by returning \variable{false}.
+\mthd{public boolean setScale(TransformGroup model, float val)} Sets the scale of the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method calls \method{setTransform(...)} so there's no need to override it.
 \mthd{protected void setPickable(boolean val)} Sets whether or not future constructed models from the PrimitivePortrayal3D will be pickable.  The default is \variable{true}.
 \end{methods}
 
@@ -9365,21 +9365,21 @@ MASON provides quite a number of basic and decorative simple portrayals.  You ca
 \item \class{sim.portrayal3d.simple.CylinderPortrayal3D} portrays objects as cylinders.
 \item \class{sim.portrayal3d.simple.ConePortrayal3D} portrays objects as cones.
 \item \class{sim.portrayal3d.simple.CubePortrayal3D} portrays objects as cubes.
-\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D} portrays objects with a loaded Shape3D.
-\item \class{sim.portrayal3d.simple.ImagePortrayal3D} portrays objects with a flat image.
-\item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D} portrays objects using a provided BranchGroup.
-\item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D} portrays objects using a provided SharedGroup
-\item \class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal which draws a wireframe cube in the scene.
+\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D} portrays objects with a Shape3D.
+\item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D} portrays objects using a provided BranchGroup. Scenes can be loaded from files into this BranchGroup and displayed.
+\item \class{sim.portrayal3d.simple.ImagePortrayal3D} portrays objects with a flat image, which can be loaded from a file.
+\item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D} portrays objects using a provided SharedGroup and Links, potentially saving a great deal of memory.
 \item \class{sim.portrayal3d.simple.LightPortrayal3D} is a Decorative Simple Portrayal which adds ambient or spot lights to the scene.
+\item \class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal which draws a wireframe cube in the scene.
 \item \class{sim.portrayal3d.simple.AxesPortrayal3D} is a Decorative Simple Portrayal which adds axes to the scene.  This portrayal is more or less automatic: it's part of the Display3D facility and can be turned on by the user automatically in the Options Pane.
 \end{itemize}
 
 Many Basic and Decorative Simple Portrayals are subclasses of PrimitivePortrayal3D (see Section \ref{sim.portrayal3d.simple.PrimitivePortrayal3D}).
 
-\sidebar{How do I orient a cylinder or cone?}{See TransformedPortrayal3D.}
-\paragraph{Spheres, Cylinders, and Cones}
+\sidebar{How do I orient a cylinder or cone or cube?}{You can either use the \method{setTransform(...)} method, or wrap the cylinder or cone in a TransformedPortrayal3D.  For the latter, see Section \ref{sim.portrayal3d.simple.TransformedPortrayal3D}}
+\paragraph{Spheres, Cylinders, Cubes, and Cones}
 
-The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portrayal3d.simple.CylinderPortrayal3D},  and \Class{sim.portrayal3d.simple.ConePortrayal3D} are all subclasses of PrimitivePortrayal3D and all share more or less the same constructors.  Here are the constructors for CylinderPortrayal3D:
+The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portrayal3d.simple.CylinderPortrayal3D},  and \Class{sim.portrayal3d.simple.ConePortrayal3D} are all subclasses of PrimitivePortrayal3D and all share more or less the same constructors.  \paragraph{Cubes}  The class \Class{sim.portrayal3d.CubePortrayal3D} is not a subclass of PrimitivePortrayal3D, but rather a direct subclass of SimplePortrayal3D which provides its own geometry.  But its construction is essentially identical.  Here are the constructors for CylinderPortrayal3D for example:
 
 \begin{methods}{\class{sim.portrayal3d.CylinderPortrayal3D} Constructor}
 \mthd{public CylinderPortrayal3D()} Creates a new CylinderPortrayal3D with the a scale of 1.0 and a flat unlit white color.
@@ -9404,6 +9404,103 @@ public static final int DEFAULT\_DIVISIONS = 15;
 Creates a new SpherePortrayal3D with the given appearance, divisions, and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
 \end{methods}
 
+\paragraph{Arbitrary Shapes and Scenes}  The class \Class{sim.portrayal3d.simple.Shape3DPortrayal3D} allows you to create a Portrayal built around a single Shape3D object of your design, or an arbitrary Geometry of your design (it will build the Geometry into a Shape3D object for you).  Its constructors are fairly straightforward:
+
+\begin{methods}{\class{sim.portrayal3d.Shape3DPortrayal3D} Constructor}
+\mthd{public Shape3DPortrayal3D(Shape3D shape)} Creates a new Shape3DPortrayal3D for the given shape and flat unlit white color.
+\mthd{public Shape3DPortrayal3D(Shape3D shape, Color color)} Creates a new Shape3DPortrayal3D for the given shape and color.
+\mthd{public Shape3DPortrayal3D(Shape3D shape, Image image)} Creates a new Shape3DPortrayal3D for the given shape, wrapped with the given image.
+\mthd{public Shape3DPortrayal3D(Shape3D shape, Appearance appearance)} Creates a new Shape3DPortrayal3D for the given shape and appearance.
+\mthd{public Shape3DPortrayal3D(Geometry geometry)} Creates a new Shape3DPortrayal3D for the given geometry and flat unlit white color.
+\mthd{public Shape3DPortrayal3D(Geometry geometry, Color color)} Creates a new Shape3DPortrayal3D for the given geometry and color.
+\mthd{public Shape3DPortrayal3D(Geometry geometry, Image image)} Creates a new Shape3DPortrayal3D for the given geometry, wrapped with the given image.
+\mthd{public Shape3DPortrayal3D(Geometry geometry, Appearance appearance)} Creates a new Shape3DPortrayal3D for the given geometry and appearance.
+\end{methods}
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{0em}\hfill\includegraphics[width=2in]{teapot.png}
+\caption{The Utah Teapot, one of the scene objects provided with MASON.}
+\vspace{0em}
+\end{wrapfigure}
+
+If you have an existing shape or scene in the form of a Lightwave Scene File (.lwo or .lws) or Wavefront Object File (.obj, plus other extensions as add-ons), you can load the file into a BranchGroup as a scene using \Class{sim.portrayal3d.simple.BranchGroupPortrayal3D}.  This is a subclass of PrimitivePortrayal which represents the scene as a BranchGroup (which you provide) and also provides functions for loading these scenes from files.
+
+To use a BranchGroupPortrayal, you first need a BranchGroup.  You can either build this by hand if you have one handy, or you can load a scene from a file.  Via Java3D, MASON provides functionality for loading Lightwave Scene File (.lwo or .lws) or Wavefront Object File (.obj) files into BranchGroups like this:
+
+\begin{methods}{\class{sim.portrayal3d.BranchGroupPortrayal3D}}
+\mthd{public static BranchGroup getBranchGroupForURL(URL url)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
+\mthd{public static BranchGroup getBranchGroupForURL(String filename)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
+\end{methods}
+
+\sidebar{Got an example?}{See the commented-out code in \file{sim/app/Balls3DWithUI}.}
+MASON has a few example files you can use in the \file{sim/portrayal3d/simple/shape/} directory.  For example, you could load one like this:
+
+\java{%
+\hbox{javax.media.j3d.BranchGroup bg = BranchGroupPortrayal3D.getBranchGroupForURL(}\\
+~\(\mbox{\ \ \ \ \ \ \ }\)BranchGroupPortrayal3D.class.getResource("shapes/teapot.obj"));
+}
+
+Now that you're armed with a BranchGroup, you can make a BranchGroupPortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.BranchGroupPortrayal3D} Constructor}
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene)} Creates a new BranchGroupPortrayal3D for the given scene.
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, float scale)} Creates a new BranchGroupPortrayal3D for the given scene and scaling factor.
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform)} Creates a new BranchGroupPortrayal3D for the given scene and transformed as specified.
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene and appearance (which overrides appearances specified in any loaded file).
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, float scale, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, scaling factor, and appearance (which overrides appearances specified in any loaded file).
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, transform, and appearance (which overrides appearances specified in any loaded file).
+\end{methods}
+
+In fact, Java3D has a pretty limited collection of possible scene or object file types.  However, the MASON website has a link to download {\bf NCSA Portfolio}, a free but not quite open source collection of loaders for a much wider range of files.  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
+
+\java{%
+ncsa.j3d.loaders.ModelLoader loader = new ncsa.j3d.loaders.ModelLoader(); \\
+\\
+    // then either ... \\
+com.sun.j3d.loaders.Scene scene = loader.load(new java.net.URL("URL to your file")); \\
+    // or... \\
+com.sun.j3d.loaders.Scene scene = loader.load("File Name for your file"); \\
+\\
+BranchGroupPortrayal3D bgp = new BranchGroupPortrayal3D(scene.getSceneGroup()); \\
+    // or some other BranchGroupPortrayal3D constructor
+}
+
+\paragaph{Images}
+
+Using \Class{sim.portrayal3d.simple.ImagePortrayal3D}, you can portray objects in fields with images floating in space.  The images can either be unoriented (facing arbitrarily), or always oriented directly facing the user.  If you don't understand this, then you want the second of the two.
+
+Images can be semitransparent or fully opaque. If an image is fully opaque, be sure to specify this fact in the constructor, as semi-transparent images and produce Java3D bugs.  Specifically, semitransparent images may not be drawn in the correct order if they're piled up on top of one another.  Thus a portrayal in the background may incorrectly appear in front of a portrayal in the foreground.
+
+ImagePortrayal3D provides constructors for images loaded in various ways, including using Java's \method{Class.getResource} procedure.  This last constructor lets you pass in a class and a filename for the image file.  MASON will then look for a file of that filename located right next to the \file{.class} file for the class.  For example, you could say:
+
+\java{%
+ImagePortrayal3D portrayal = new ImagePortrayal3D(sim.display.Console.class, "Playing.png");
+}
+
+... and the \file{Playing.png} file, located right next to the \file{sim/display/Console.class} file, will be loaded.  This is a very convenient mechanism for loading files anywhere, including in remote Jar files, and it is recommended.
+
+\begin{methods}{\class{sim.portrayal3d.ImagePortrayal3D} Constructor}
+\mthd{public ImagePortrayal3D(Class c, String resourceName)} Creates an ImagePortrayal3D, loading an image from a file of the given name located next to the \file{.class} file of the given class.  Uses \java{c.getClass().getResource(resourceName)} to load the Image.  The image is assumed to be semitransparent and oriented to face the user.
+\mthd{public ImagePortrayal3D(Class c, String resourceName, boolean oriented, boolean opaque)} Creates an ImagePortrayal3D, loading an image from a file of the given name located next to the \file{.class} file of the given class.  Uses \java{c.getClass().getResource(resourceName)} to load the Image.  The orientation and opacity is provided.
+\mthd{public ImagePortrayal3D(ImageIcon icon)} Creates an ImagePortrayal3D from the given ImageIcon.  The image is assumed to be semitransparent and oriented to face the user.
+\mthd{public ImagePortrayal3D(ImageIcon icon, boolean oriented, boolean opaque)} Creates an ImagePortrayal3D from the given ImageIcon.  The orientation and opacity is provided.
+\mthd{public ImagePortrayal3D(Image image)} Creates an ImagePortrayal3D from the given Image.  The image is assumed to be semitransparent and oriented to face the user.
+\mthd{public ImagePortrayal3D(Image image, boolean oriented, boolean opaque)} Creates an ImagePortrayal3D from the given Image.  The orientation and opacity is provided.
+\end{methods}
+
+\paragaph{Lights}
+
+Java3D provides three kinds of light (ambient light, point light, spotlights), and you can create a SimplePortrayal for any of them.  You could use this kind of SimplePortrayal as a decorative portrayal, attaching it directly to the scene at a certain location (you might want to move it by wrapping it in TransformedPortrayal3D first, see Section \ref{sim.portrayal3d.simple.TransformedPortrayal3D}), or you could use it in an ordinary SimplePortrayal fashion to create a field of lights which move about in interesting ways.
+
+\begin{itemize}
+\item This approach does not permit picking.  If you want to select objects or inspect them, don't use this approach.
+\item Shared Groups and Links are buggy.
+\end{itemize}
+
+\begin{methods}{\class{sim.portrayal3d.SharedGroupPortrayal3D} Constructor}
+\mthd{public SharedGroupPortrayal3D(SharedGroup group)} Creates a SharedGroupPortrayal3D from the given SharedGroup.  The portrayal will produce links on its own, you do not need to worry about that.  You may wish to compile your SharedGroup beforehand.
+\end{methods}
+
 
 \subsection{Value Simple Portrayals}
 
@@ -9411,6 +9508,25 @@ Creates a new SpherePortrayal3D with the given appearance, divisions, and scale 
 \label{sim.portrayal3d.network.SimplePortrayal3D}
 
 \subsection{Wrapper Simple Portrayals}
+\label{sim.portrayal3d.simple.TransformedPortrayal3D}
+
+
+
+\paragaph{Shared Groups}
+
+MASON provides limited functionality for using a SharedGroup and Links to display the SimplePortrayal repeatedly in the environment.  The idea here is to have a single scene which is displayed in multiple places, rather than copying the scene over and over again for each object in the field.  This trick potentially uses much less memory than other approaches, but it has two downsides.
+
+\begin{itemize}
+\item This approach does not permit picking.  If you want to select objects or inspect them, don't use this approach.
+\item Shared Groups and Links are buggy.
+\end{itemize}
+
+This takes the form of a wrapper portrayal called \Class{sim.portrayal3d.SharedGroupPortrayal3D}, which takes another SimplePortrayal as its child. When \method{getModel(...)} is called, SharedGroupPortrayal3D will do the same {\it once} on its child, and use the result repeatedly.  It will not call \method{getModel(...)} again unless the Display3D has rebuilt the entire scene.  And you can't pick the objects.
+
+\begin{methods}{\class{sim.portrayal3d.SharedGroupPortrayal3D} Constructor}
+\mthd{public SharedGroupPortrayal3D(SimplePortrayal3D child)} Creates a SharedGroupPortrayal3D from the given child.  The portrayal will produce links on its own, you do not need to worry about that.  You cannot pick the child, and the child will not be updated further once created.
+\end{methods}
+
 
 \subsection{Objects Acting As Their Own Simple Portrayals}
 

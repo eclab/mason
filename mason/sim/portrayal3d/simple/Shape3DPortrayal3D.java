@@ -9,6 +9,7 @@ package sim.portrayal3d.simple;
 import sim.portrayal3d.*;
 import javax.media.j3d.*;
 import sim.portrayal.*;
+import java.awt.*;
 
 /**
    A simple portrayal for displaying Shape3D objects.  You can find Shape3D objects,
@@ -24,17 +25,17 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     /** Constructs a Shape3DPortrayal3D with the given shape and a default (flat opaque white) appearance. */
     public Shape3DPortrayal3D(Shape3D shape)
         {
-        this(shape,java.awt.Color.white);
+        this(shape,Color.white);
         }
 
     /** Constructs a Shape3DPortrayal3D  with the given shape and a flat opaque appearance of the given color. */
-    public Shape3DPortrayal3D(Shape3D shape, java.awt.Color color)
+    public Shape3DPortrayal3D(Shape3D shape, Color color)
         {
         this(shape,appearanceForColor(color));
         }
 
     /** Constructs a Shape3DPortrayal3D with the given shape and (opaque) image. */
-    public Shape3DPortrayal3D(Shape3D shape, java.awt.Image image)
+    public Shape3DPortrayal3D(Shape3D shape, Image image)
         {
         this(shape,appearanceForImage(image,true));
         }
@@ -57,17 +58,17 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     /** Constructs a Shape3DPortrayal3D with the given geometry and a default (flat opaque white) appearance. */
     public Shape3DPortrayal3D(Geometry geometry)
         {
-        this(geometry,java.awt.Color.white);
+        this(geometry,Color.white);
         }
 
     /** Constructs a Shape3DPortrayal3D  with the given geometry and a flat opaque appearance of the given color. */
-    public Shape3DPortrayal3D(Geometry geometry, java.awt.Color color)
+    public Shape3DPortrayal3D(Geometry geometry, Color color)
         {
         this(geometry,appearanceForColor(color));
         }
 
     /** Constructs a Shape3DPortrayal3D with the given geometry and (opaque) image. */
-    public Shape3DPortrayal3D(Geometry geometry, java.awt.Image image)
+    public Shape3DPortrayal3D(Geometry geometry, Image image)
         {
         this(geometry,appearanceForImage(image,true));
         }

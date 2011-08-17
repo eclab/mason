@@ -10,6 +10,7 @@ import sim.portrayal3d.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import sim.util.*;
+import java.awt.*;
 
 /** A simple Portrayal3D which provides ambient, directional, or point light to the scene.  While this could be used
     in a FieldPortrayal to represent its objects, it's more likely to be dropped directly into the Display3D itself.  Your
@@ -30,7 +31,7 @@ import sim.util.*;
     <i>import javax.media.j3d.*;
     import javax.vecmath.*;</i>
 
-    Color3f color = new Color3f(java.awt.Color.green);
+    Color3f color = new Color3f(Color.green);
     Appearance appearance = new Appearance();
     appearance.setColoringAttributes(
     new ColoringAttributes(color, ColoringAttributes.SHADE_GOURAUD));           
@@ -48,7 +49,7 @@ import sim.util.*;
 
 public class LightPortrayal3D extends SimplePortrayal3D
     {
-    public Light light;
+	Light light;
     
     Vector3f double3DToVector3f(Double3D d)
         {
@@ -58,21 +59,21 @@ public class LightPortrayal3D extends SimplePortrayal3D
         }
 
     /** Directional Light */
-    public LightPortrayal3D(java.awt.Color color, Double3D direction)
+    public LightPortrayal3D(Color color, Double3D direction)
         {
         light = new DirectionalLight(new Color3f(color),double3DToVector3f(direction));
         light.setInfluencingBounds(new BoundingSphere(new Point3d(0,0,0), Double.POSITIVE_INFINITY));
         }
         
     /** Ambient Light */
-    public LightPortrayal3D(java.awt.Color color)
+    public LightPortrayal3D(Color color)
         {
         light = new AmbientLight(new Color3f(color));
         light.setInfluencingBounds(new BoundingSphere(new Point3d(0,0,0), Double.POSITIVE_INFINITY));
         }
 
     /** Point Light.  If you don't know what to provide for attenutation, you can't go wrong with 1,0,0. */
-    public LightPortrayal3D(java.awt.Color color, Double3D position, 
+    public LightPortrayal3D(Color color, Double3D position, 
         float constantAttenuation, float linearAttenuation, float quadraticAttenuation)
         {
         PointLight p = new PointLight();
