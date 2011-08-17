@@ -38,17 +38,17 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
     // this is set instead, so that when the model DOES exist, getModel() will use it.
     Appearance appearance;
 
-    // This is cloned to create the model.  Typically this group holds a single element,
-    // either a Shape3D object or a Primitive of some sort.  The model, which is also a
-    // TransformGroup, will then hold onto this object (or more properly, a clone).  Note
-    // that the outer model TransformGroup (called j3dModel throughout this code) is not owned
-    // by us once we create it.  So if we want to rotate or scale the Shape3D or Primitive,
-    // we do it by transforming 'group' instead upon creation.
-    Node group;
+    /** This is cloned to create the model.  Typically this group holds a single element,
+     either a Shape3D object or a Primitive of some sort.  The model, which is also a
+     TransformGroup, will then hold onto this object (or more properly, a clone).  Note
+     that the outer model TransformGroup (called j3dModel throughout this code) is not owned
+     by us once we create it.  So if we want to rotate or scale the Shape3D or Primitive,
+     we do it by transforming 'group' instead upon creation. */
+    protected Node group;
         
-    // This is the shape index by getAppearance to fetch an appearance from.  It's usually
+    // This is the shape index used by getAppearance to fetch an appearance from.  It's usually
     // the 'body'.
-    int DEFAULT_SHAPE = 0;
+    static final int DEFAULT_SHAPE = 0;
         
     // indicates whether newly created models should be made pickable or not.
     boolean pickable = true;
@@ -79,6 +79,24 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         return p.getShape(shapeIndex);
         }
 
+    /** Sets the Appearance of the portrayal.  If the j3DModel isn't null, its transform
+        is set directly.  If the j3DModel is null (probably because
+        the model hasn't been built yet), an underlying appearance will be set and then used
+        when the model is built.  Only call this method within getModel(). */
+    protected void setAppearance(TransformGroup j3dModel, Appearance app)
+        {
+        if (j3dModel == null) 
+            {
+            appearance = app;
+            }
+        else
+            {
+            int numShapes = numShapes();
+            for(int i = 0; i < numShapes; i++)
+                getShape(j3dModel, i).setAppearance(app);
+            }
+        }
+        
     /** Returns an appearance object suitable to set in setAppearance(...). If the j3DModel 
         is null, a brand new Appearance will be created and returned; otherwise the Appearance
         (not a copy) will be extracted from the j3DModel and provided to you.  It's good
@@ -86,7 +104,7 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         getModel().  */
     protected Appearance getAppearance(TransformGroup j3dModel)
         {
-        if (j3dModel == null) 
+        if (j3dModel == null || numShapes() == 0) 
             {
             Appearance a = new Appearance(); 
             setAppearanceFlags(a);
@@ -131,34 +149,16 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         }
         
         
-    /** Sets the Appearance of the portrayal.  If the j3DModel isn't null, its transform
-        is set directly.  If the j3DModel is null (probably because
-        the model hasn't been built yet), an underlying appearance will be set and then used
-        when the model is built.  Only call this method within getModel(). */
-    protected void setAppearance(TransformGroup j3dModel, Appearance app)
-        {
-        if (j3dModel == null) 
-            {
-            appearance = app;
-            }
-        else
-            {
-            int numShapes = numShapes();
-            for(int i = 0; i < numShapes; i++)
-                getShape(j3dModel, i).setAppearance(app);
-            }
-        }
-        
     /** Returns the number of shapes handled by this primitive or Shape3D.  
         Shape3D objects only have a single shape.  Cylinder has three shapes
         (BODY=0, TOP=1, BOTTOM=2), while Cone has two shapes (BODY=0, CAP=1) and
         Sphere has a single shape (BODY=0).  */
     protected abstract int numShapes();
 
-    /* Sets objects as pickable or not.  If you call setPickable prior to the model
+    /** Sets objects as pickable or not.  If you call setPickable prior to the model
        being built in getModel(), then the model will be pickable or not as you specify. */
     public void setPickable(boolean val) { pickable = val; }
-
+	
     /** We suggest that if you wish to override this to change the appearance or scale or transform 
         of the underlying model, do the changes first and THEN call super.getModel(obj, j3dModel).
         Be sure to also set the appearance/scale/transform of the model the first time 

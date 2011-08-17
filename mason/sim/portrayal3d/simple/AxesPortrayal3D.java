@@ -17,33 +17,36 @@ import sim.portrayal3d.*;
  *
  * @author Gabriel Catalin Balan
  */
-public class Axes extends SimplePortrayal3D
+ 
+public class AxesPortrayal3D extends SimplePortrayal3D
     {
-    /** thickness of the arrows*/
-    float mArrowDia; 
-    /** flag showing/hidding the letters */
+    // thickness of the arrows
+    float arrowDiameter;
+	
+    // flag showing/hidding the letters
     boolean mLetters;
-    public Axes(float ArrowDia, boolean letters)
+	
+    public AxesPortrayal3D(float arrowDiameter, boolean letters)
         {
-        mArrowDia = ArrowDia; mLetters = letters;       
+        this.arrowDiameter = arrowDiameter;
+		mLetters = letters;       
         }
                 
-        
-    public static void createAxes(final Group group, final float ArrowDia, final boolean letters)
+	void createAxes(final Group group, final float arrowDiameter, final boolean letters)
         {
         float length = 1.1f;
         group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        group.addChild(Arrow.createArrow(ArrowDia, 
+        group.addChild(Arrow.createArrow(arrowDiameter, 
                 new Vector3f(0, 0, 0), 
                 new Vector3f(length,0,0),
                 (letters? "O": null),
                 (letters? "X": null)));
-        group.addChild(Arrow.createArrow(ArrowDia, 
+        group.addChild(Arrow.createArrow(arrowDiameter, 
                 new Vector3f(0, 0, 0), 
                 new Vector3f(0,length,0), 
                 null, 
                 (letters? "Y": null)));
-        group.addChild(Arrow.createArrow(ArrowDia, 
+        group.addChild(Arrow.createArrow(arrowDiameter, 
                 new Vector3f(0, 0, 0), 
                 new Vector3f(0,0,length), 
                 null, 
@@ -56,7 +59,7 @@ public class Axes extends SimplePortrayal3D
         if(prev != null)
             return prev;
         TransformGroup tg = new TransformGroup();
-        createAxes(tg, mArrowDia, mLetters);
+        createAxes(tg, this.arrowDiameter, mLetters);
         clearPickableFlags(tg);
         return tg;
         }

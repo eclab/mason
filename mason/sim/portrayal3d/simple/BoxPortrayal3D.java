@@ -17,10 +17,6 @@ import com.sun.j3d.utils.geometry.*;
  */
 public class BoxPortrayal3D extends PrimitivePortrayal3D
     {
-//    public float scale = 1f;
-//    public boolean generateNormals;
-//    public boolean generateTextureCoordinates;
-    
     /** Constructs a BoxPortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public BoxPortrayal3D()
         {
@@ -77,12 +73,6 @@ public class BoxPortrayal3D extends PrimitivePortrayal3D
         setShape3DFlags(box.getShape(Box.TOP));
         setShape3DFlags(box.getShape(Box.LEFT));
         setShape3DFlags(box.getShape(Box.RIGHT));
-/*
-  group = new TransformGroup();
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-  group.addChild(box);
-*/
         group = box;
         }
 

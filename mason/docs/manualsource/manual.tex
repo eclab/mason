@@ -9041,8 +9041,9 @@ SparseGrid2DPortrayal3D has the same LocationWrapper facility, more or less, as 
 \end{methods}
 
 
-\subsubsection{Field Portrayals for Grids of Numbers}
+\subsubsection{Field Portrayals for Grids of Numbers, and QuadPortrayals}
 \label{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}
+\label{sim.portrayal3d.grid.quad.QuadPortrayal}
 
 Just as MASON provides two classes for Sparse Grids, it also has two similar classes for Value Grids (that is, IntGrid2D, IntGrid3D, DoubleGrid2D, and DoubleGrid3D).  And just as is the case for the Sparse Grid case, one of the portrayals handles both 2D and 3D grids, while the other handles 2D grids (IntGrid2D, DoubleGrid2D) in a special way.  Additionally, the 2D special case class can also draw ObjectGrid2D.
 
@@ -9186,7 +9187,9 @@ Besides all the standard SimplePortrayal methods, QuadPortrayals provide methods
 \mthd{public void setZScale(float scale)} Sets the Z (elevation) scaling factor for the portrayal.
 \mthd{public float getZScale()} Returns the Z (elevation) scaling factor for the portrayal.
 \mthd{public Int2D getCellForIntersection(PickIntersection pi, Grid2D field)} Returns the field's grid location corresponding to a given pick result on the mesh.
-\mthd{public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex, int gridWidth, int gridHeight)} Given information about the grid cell, and its location in a grid of a given height and width, fills out the 3-dimensional coordinates and 3-color values corresponding to that point. 
+\mthd{public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex, int gridWidth,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf int gridHeight)}\\
+Given information about the grid cell, and its location in a grid of a given height and width, fills out the 3-dimensional coordinates and 3-color values corresponding to that point. 
 \end{methods}
 
 This last method uses a special class called \Class{sim.portrayal3d.grid.quad.ValueGridCellInfo} which holds the 2D or 3D grid coordinates of a value in a 2D or 3D Value or ObjectGrid, plus the current value corresponding to the coordinate.  At present it's only used by ValueGrid2DPortrayal3D for 2-dimensional grids.  ValueGridCellInfo is simple: it contains two public grid cell variables:
@@ -9245,7 +9248,7 @@ To set the second spatial field (for the rare use mentioned above), you can then
 \mthd{public void setAuxiliaryField(SparseField2D)} Sets the auxiliary field for the SpatialNetwork3D.  If this is set to \variable{null}, the field is removed.
 \end{methods}
 
-A SpatialNetwork3D has two other methods, which you'll never need to modify, used by the NetworkPortrayal3D:
+A SpatialNetwork3D has two other methods, which you'll rarely need to override, used by the NetworkPortrayal3D:
 
 \begin{methods}{\class{sim.portrayal3d.network.SpatialNetwork3D}}
 \mthd{public Double3D getObjectLocation(Object node)} Returns, as a point in 3D space, the location of the given object.  First checks the primary field, then the auxiliary field.
@@ -9256,10 +9259,121 @@ NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  Thes
 
 \section{3D Simple Portrayals}
 
-The last part of the 3D portrayal facility consists of {\bf simple portrayals}.  As was the case in 2D, 3D Simple Portrayals are responsible for portraying individual objects or values in fields.  
+The last part of the 3D portrayal facility consists of {\bf simple portrayals}.  As was the case in 2D, 3D Simple Portrayals are responsible for portraying individual objects or values in fields.  However, 3D Portrayals can also in some cases also be used to simply exist in space as decoration: for example, a wireframe or axes.  In this case you can attach these Simple Portrayals directly to the Display3D, much as you would attach a 3D Field Portrayal.  I refer to these as ``Decoration Simple Portrayals''.
+
+All Field Portrayals in 3D use Simple Portrayals in one way or another.  However, some Field Portrayals are very closely tied to their Simple Portrayals.  For example, ValueGrid2DPortrayal3D uses special Simple Portrayals called {\bf QuadPortrayals} which are not discussed here but instead were defined earlier, in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
+
+There are several kinds of Simple Portrayals in 3D, many of which are similar to the ones in 2D:
+
+\begin{itemize}
+\item {\bf Basic Simple Portrayals} portray objects as simple shapes such as cubes or spheres.
+\item {\bf Decorative Simple Portrayals} are Basic Simple Portrayals primarily designed to simply add elements to the scene, not to portray any particular object in a field.  All Simple Portrayals in 3D can be attached directly to the Display3D, but Decorative Simple Portrayals are meant specifically for this purpose.
+\item {\bf Value Simple Portrayals} portray numbers as if they were simple shapes (typically cubes) of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}.
+\item {\bf Quad Portrayals} portray numbers as if they were squares or points in a mesh, of various colors, using a \class{sim.util.gui.ColorMap} to translate between numerical values and colors.  These are designed primarily to work with \class{sim.portrayal3d.grid.Value2DGridPortrayal3D}.  Quad Portrayals were discussed in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
+\item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \method{sim.portrayal3d.network.NetworkPortrayal3D}.
+\item {\bf Wrapper Simple Portrayals}  ``wrap'' around subsidiary Simple Portrayals to add additional gizmos  to them. For example. to add a label, or to circle an object when it’s selected, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal. Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal. 
+\end{itemize}
 
 
-\subsection{Basic Simple Portrayals}
+All 3D SimplePortrayals are subclasses of the class \Class{sim.portrayal3d.SimplePortrayal3D}.  This class provides some basic utility functions for constructing basic \class{javax.media.j3d.Appearance} objects out of colors and images.  The default Appearance used by many Simple Portrayals is a simple unlit\footnote{This means ``visible even when there are no lights turned on in the scene.''} flat white:
+
+\java{%
+public static final Appearance DEFAULT\_APPEARANCE;
+}
+
+There are also some methods used by FieldPortrayals to set or clear various pickability (selectability, inspectability) features in the underlying objects of a SimplePortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.SimplePortrayal3D} Utility}
+\mthd{public static Appearance appearanceForColor(Color unlitColor)} Produces a simple Appearance object for the given unlit color.
+\mthd{public static Appearance appearanceForColor(Color ambientColor, Color emissiveColor, Color diffuseColor,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf Color specularColor, float shininess, float opacity)}\\
+Produces a simple Appearance object for the given colors, shininess, and opacity.  Ambient color is the reflective color from ambient lights.  Emissive color is the color that the object glows with as if with its own light.  Diffuse and Specular colors are colors which reflect from spotlights.  Shininess and opacity are self-explanatory, and each run from 0.0 to 1.0.  These concepts are directly from Java3D.  Colors passed in may be \variable{null}, indicating no color setting for that feature: instead it's set to jet black.  Note that in Java3D, jet black will still reflect to some degree from bright light.
+\mthd{public static Appearance appearanceForImage(Image image, boolean opaque)}  Produces a simple Appearance object for the given image.  If the image is entirely opaque, you should also set \variable{opaque} to true, which is more efficiency.  Note that there are bugs in Java3D's handling of transparent or partially transparent images: multiple such objects will often not draw in the correct order: thus objects in the back may appear to be in the front.
+\mthd{public static Appearance setAppearanceFlags(Appearance appearance)} Sets a variety of flags on an Appearance so that its features may be modified when the scene is live.  This method cannot be called on an Appearance presently used in a live scene.
+\mthd{public static void setPickableFlags(Shape3D shape3d)} Prepares a given Shape3D to be pickable.
+\mthd{public static void setPickableFlags(Geometry geometry)} Prepares a given Geometry to be pickable.
+\mthd{public static void clearPickableFlages(Node node)} Makes a given Node entirely unpickable.
+\end{methods}
+
+By default, no PolygonAttribues are defined.
+
+\paragraph{The Parent Portrayal}
+SimplePortrayal3Ds have a {\bf parent portrayal} which is set by FieldPortrayal3Ds.  This is used to properly identify the FieldPortrayal3D when the user picks the object in the SimplePortrayal3D.  The variable is 
+
+\java{%
+protected FieldPortrayal3D parentPortrayal;
+}
+
+And it is set with...
+
+\begin{methods}{\class{sim.portrayal3d.SimplePortrayal3D}}
+\mthd{public void setParentPortrayal(FieldPortrayal3D portrayal)} Sets the given Field Portrayal as the parent of the SimplePortrayal3D.
+\end{methods}
+
+\paragraph{Selection}
+MASON uses a different procedure for selecting objects in 3D than it does in 2D.  The issue is that a given Simple Portrayal may portray a great many objects in the scene.  In 2D, MASON handles this by setting the \variable{selected} flag in the DrawInfo2D when drawing any given object.  This isn't an available procedure in Java3D.  Instead, the 3D Simple Portrayal must keep track of the selected objects under its keep.
+
+This is done in the \method{setSelected(...)} method.  If an object is selected, the SimplePortrayal3D will hold onto it in a HashMap.  If it's been deselected, it'll be removed from the HashMap.  This has some efficiency consequences.  First off, after an object has been selected, the SimplePortrayal3D is now holding onto a HashMap.  If you have many SimplePortrayal3Ds, this could get to be a lot of HashMaps.  Furthermore, HashMaps grow but they cannot shrink, though MASON will delete the HashMap if it's entirely empty.  Second, if you want to change the look of your portrayal based on whether or not it's selected, you will need to test this HashMap (via \method{isSelected()}) every time your SimplePortrayal's \method{getModel()} method is called, and modify the model accordingly.  This could be a bit expensive.
+
+\begin{methods}{\class{sim.portrayal3d.SimplePortrayal3D}}
+\mthd{public boolean setSelected(LocationWrapper wrapper, boolean selected)} Selects or deselects an object stored in the given wrapper.
+\mthd{public boolean isSelected(Object obj)} Returns whether or not a given object is presently selected.
+\end{methods}
+
+\paragraph{Producing a Model}
+FieldPortrayals break out the \method{getModel(...)} method into two subsidiary methods, \method{createModel(...)} and \method{updateModel(...)}.  SimplePortrayal3D doesn't do this.  Instead, SimplePortrayal3D subclasses override Portrayal3D's \method{getModel(...)} method directly, and either return a new scene (if the provided TransformGroup was \method{null}) or update the existing scene.
+
+\subsection{Primitive Portrayals}
+\label{sim.portrayal3d.simple.PrimitivePortrayal3D}
+
+Many Basic and Decorative SimplePortrayals are subclasses of \Class{sim.portrayal3d.simple.PrimitivePortrayal3D}, an abstract superclass of portrayals which use either simple Java3D Shape3D objects or Java3D Primitives (spheres, cones, cylinders, boxes).   PrimitivePortrayal collects various utility methods important for these portrayals and generally handles the implementation of \method{getModel(...)}, as long as a subclass has filled in the following field:
+
+\java{%
+protected Node group;
+}
+
+In their constructors, subclasses fill this field with a scenegraph representing the object: typically (but not always) a Shape3D or a Java3D Primitive  of some sort.  \method{getModel(...)} will clone this Node to create an appropriate scenegraph for any given object as necessary.  It's common for \variable{group} to be a TransformGroup (hence the name), but it doesn't have to be.
+
+Primitive Portrayals often have more than one Shape3D involved in their scene: for example, Java Primitives typically contain multiple shapes.  This is important because picking will be done on a per-Shape3D basis.  Thus PrimitivePortrayal3D needs to be able to iterate over all the Shape3D objects in a given scene. This is done via the \method{getShape(...)} method.  If the scene graph defined in the \variable{group} variable consists solely of TransformGroups and Java3D Primitives, then this method need not be overridden: else you must override it to return the Shape3D objects in the scene as appropriate.  At any rate, you must override the \method{numShapes()} method.
+
+\begin{methods}{\class{sim.portrayal3d.PrimitivePortrayal3D}}
+\mthd{public abstract int numShapes()} Returns the number of Shape3D objects in the scene graph.
+\mthd{public Shape3D getShape(TransformGroup j3dModel, int shapeIndex)} Returns the shape in the scene graph corresponding to the given index.  If your scene graph does not consist entirely of Java3D Primitives and TransformGroups you will need to override this method.
+\end{methods}
+
+PrimitivePortrayal3D has a built-in internal Transform3D, largely used to rotate or scale the Primitive or Shape3D.  This Transform3D is provided to a TransformGroup constructed by the \method{getModel(...)} method, so it's automatically handled for you if you set it in a subclass.  You can override the \method{setTransform(...)} method to return \variable{false} to prevent MASON from ever changing the transform of the object.
+
+In addition, PrimitivePortrayal3D maintains an internal Appearance object which is applied to all the Shape3Ds in the scene graph.  This Appearance object is provided in an unusual way.  If the scene graph has not yet been added yet to the Display3D, then if you call \method{getAppearance()}, a new Appearance object will be provided to you, and if you call \method{setAppearance(...)}, the internal Appearance will be set, and later on will be used for the scene when it's constructed and placed in the Display3D.  Otherwise, the Appearance object retrieved or set will be the one presently in the scene in the Display3D.
+
+Some final methods: prior to constructing the scene graph, you can stipulate that an object is pickable: if so, its flags will be automatically set up for you.  Additionally, the \method{setShape3DFlags(...)} method sets up some flags appropriate for Shape3D objects to make their appearance and geometry readable and writeable once the scene is live.
+
+\begin{methods}{\class{sim.portrayal3d.PrimitivePortrayal3D}}
+\mthd{public static void setShape3DFlags(Shape3D shape)} Sets flags in the provided Shape3D object which makes its appearance and geometry readable and writeable.
+\mthd{protected Appearance getAppearance(TransformGroup model)} Returns an Appearance associated with the given model (specifically, Shape3D number 0).  If the model is \variable{null} or the number of shapes is zero, then builds a brand new Appearance object, sets flags in it, and returns it.
+\mthd{protected void setAppearance(TransformGroup model, Appearance appearance)} Sets the Appearance associated with all the Shape3D objects in the given model.  If the model is \variable{null}, then the internal Appearance is set and future constructed models will use it.
+\mthd{protected boolean setTransform(TransformGroup model, Transform3D transform)} Sets the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method can be overridden to refuse to set the transform by returning \variable{false}.
+\mthd{protected boolean setScale(TransformGroup model, float val)} Sets the scale of the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method calls \method{setTransform(...)} so there's no need to override it.
+\mthd{protected void setPickable(boolean val)} Sets whether or not future constructed models from the PrimitivePortrayal3D will be pickable.  The default is \variable{true}.
+\end{methods}
+
+\subsection{Basic and Decorative Simple Portrayals}
+
+MASON provides quite a number of basic and decorative simple portrayals.  You can use any Decorative Simple Portrayal as a Basic Simple Portrayal (and vice versa), but they're more commonly used for their respective purposes: Basic Simple Portrayals portray objects in fields, while Decorative Simple Portrayals simply decorate a scene.
+
+Many Basic and Decorative Simple Portrayals are subclasses of PrimitivePortrayal3D (see Section \ref{sim.portrayal3d.simple.PrimitivePortrayal3D}).
+
+\item \class{sim.portrayal3d.simple.SpherePortrayal3D}
+\item \class{sim.portrayal3d.simple.CylinderPortrayal3D}
+\item \class{sim.portrayal3d.simple.ConePortrayal3D}
+\item \class{sim.portrayal3d.simple.BoxPortrayal3D} and \class{sim.portrayal3d.simple.CubePortrayal3D}
+\item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D}
+\item \class{sim.portrayal3d.simple.ImagePortrayal3D}
+\item \class{sim.portrayal3d.simple.LightPortrayal3D}
+\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D}
+\item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D}
+\item \class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D}
+
+
 
 \subsection{Value Simple Portrayals}
 

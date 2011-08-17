@@ -46,7 +46,7 @@ public class SimplePortrayal3D implements Portrayal3D
 
     /** Creates an Appearance equivalent to a flat opaque surface of the provided color, needing no lighting.
         Opacity is determined by the opacity of the unlit color.  */
-    public static Appearance appearanceForColor(java.awt.Color unlitColor)
+    public static Appearance appearanceForColor(Color unlitColor)
         {
         Appearance appearance = new Appearance();
 
@@ -72,9 +72,9 @@ public class SimplePortrayal3D implements Portrayal3D
         shininess and opacity both from 0.0 to 1.0.  If any color is null, it's assumed to be black.
         Note that even jet black ambient color will show up as a charcoal gray under the bright white
         ambient light in MASON.  That's Java3D for you, sorry. */
-    public static Appearance appearanceForColors(java.awt.Color ambientColor, 
-        java.awt.Color emissiveColor, java.awt.Color diffuseColor, 
-        java.awt.Color specularColor, float shininess, float opacity)
+    public static Appearance appearanceForColors(Color ambientColor, 
+        Color emissiveColor, Color diffuseColor, 
+        Color specularColor, float shininess, float opacity)
         {
         Appearance appearance = new Appearance();
 
@@ -123,9 +123,9 @@ public class SimplePortrayal3D implements Portrayal3D
         you should set <tt>opaque</tt> to false.  Beware that there are bugs in Java3D's handling of transparent 
         textures: multiple such objects often will not draw in the correct order; thus objects in the back
         may appear to be in the front. */
-    public static Appearance appearanceForImage(java.awt.Image image, boolean opaque)
+    public static Appearance appearanceForImage(Image image, boolean opaque)
         {
-        Appearance appearance = appearanceForColor(java.awt.Color.black);
+        Appearance appearance = appearanceForColor(Color.black);
 
         if (!opaque)
             {
@@ -214,7 +214,11 @@ public class SimplePortrayal3D implements Portrayal3D
         if (selected)
             selectedObjects.put(wrapper.getObject(), wrapper);
         else
-            selectedObjects.remove(wrapper.getObject());
+            {
+			selectedObjects.remove(wrapper.getObject());
+			if (selectedObjects.isEmpty())
+				selectedObjects = null;
+			}
         return true;
         }
         

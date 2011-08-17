@@ -51,12 +51,6 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
 
         setShape3DFlags(shape);
         shape.setAppearance(appearance);
-/*
-  group = new TransformGroup();
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-  group.addChild(shape);
-*/
         group = shape;
         }
 

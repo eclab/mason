@@ -69,12 +69,7 @@ public class CylinderPortrayal3D extends PrimitivePortrayal3D
         setShape3DFlags(cylinder.getShape(Cylinder.BODY));
         setShape3DFlags(cylinder.getShape(Cylinder.TOP));
         setShape3DFlags(cylinder.getShape(Cylinder.BOTTOM));
-/*
-  group = new TransformGroup();
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-  group.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-  group.addChild(cylinder);
-*/
+
         group = cylinder;
         }
 
