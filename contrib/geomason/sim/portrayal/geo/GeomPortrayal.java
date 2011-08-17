@@ -10,9 +10,6 @@ package sim.portrayal.geo;
 // we can't do a mass import of java.awt.* since java.awt.Polygon and
 // com.vividsolutions.jts.geom.Polygon will conflict
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.geom.util.*;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -22,7 +19,6 @@ import java.util.ArrayList;
 
 import sim.portrayal.*;
 import sim.display.*;
-import sim.field.geo.GeomVectorField;
 import sim.util.geo.*;
 import sim.portrayal.inspector.*;
 
@@ -88,11 +84,15 @@ public class GeomPortrayal extends SimplePortrayal2D
 	 * Use our custom Inspector. We create a TabbedInspector for each object
 	 * that allows inspection of the JTS geometry, attribute information, and
 	 * the MasonGeometry userData field.
-	 */
+     */
+    @Override
 	public Inspector getInspector(LocationWrapper wrapper, GUIState state)
 	{
 		if (wrapper == null)
-			return null;
+        {
+            return null;
+        }
+
 		TabbedInspector inspector = new TabbedInspector();
 
 		// for basic geometry information such as area, perimeter, etc.
@@ -123,11 +123,12 @@ public class GeomPortrayal extends SimplePortrayal2D
 					GeometryProperties properties = new GeometryProperties(aList);
 					inspector.addInspector(new SimpleInspector(properties, state, null), "Attributes");
 				}
-
-				if (gw.userData != null) // only add userData inspector if there
-					// is actually userdata
-					inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data");
 			}
+
+			if (gw.userData != null)
+            {
+                inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data");
+            }
 		}
 		return inspector;
 	}
@@ -140,22 +141,31 @@ public class GeomPortrayal extends SimplePortrayal2D
 	 * general path objects, which are then drawn using the native Graphics2D
 	 * methods.
 	 */
+    @Override
 	public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
 	{
 		GeomInfo2D gInfo;
 		if (info instanceof GeomInfo2D)
-			gInfo = (GeomInfo2D) info;
+        {
+            gInfo = (GeomInfo2D) info;
+        }
 		else
-			gInfo = new GeomInfo2D(info, new AffineTransform());
+        {
+            gInfo = new GeomInfo2D(info, new AffineTransform());
+        }
 
 		MasonGeometry gm = (MasonGeometry) object;
 		Geometry geometry = gm.getGeometry();
 
 		if (geometry.isEmpty())
-			return;
+        {
+            return;
+        }
 
 		if (paint != null)
-			graphics.setPaint(paint);
+        {
+            graphics.setPaint(paint);
+        }
 
 		// don't have cached shape or the transform changed, so need to build
 		// the shape
@@ -178,7 +188,9 @@ public class GeomPortrayal extends SimplePortrayal2D
 				filled = false;
 			}
 			else if (geometry instanceof Polygon)
-				gm.shape = drawPolygon((Polygon) geometry, gInfo, filled);
+            {
+                gm.shape = drawPolygon((Polygon) geometry, gInfo, filled);
+            }
 			else if (geometry instanceof MultiLineString)
 			{
 				// draw each LineString individually
@@ -187,9 +199,13 @@ public class GeomPortrayal extends SimplePortrayal2D
 				{
 					GeneralPath p = drawGeometry(multiLine.getGeometryN(i), gInfo, false);
 					if (i == 0)
-						gm.shape = p;
+                    {
+                        gm.shape = p;
+                    }
 					else
-						gm.shape.append(p, false);
+                    {
+                        gm.shape.append(p, false);
+                    }
 				}
 				filled = false;
 			}
@@ -201,20 +217,30 @@ public class GeomPortrayal extends SimplePortrayal2D
 				{
 					GeneralPath p = drawPolygon((Polygon) multiPolygon.getGeometryN(i), gInfo, filled);
 					if (i == 0)
-						gm.shape = p;
+                    {
+                        gm.shape = p;
+                    }
 					else
-						gm.shape.append(p, false);
+                    {
+                        gm.shape.append(p, false);
+                    }
 				}
 			}
 			else
-				throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
+            {
+                throw new UnsupportedOperationException("Unsupported JTS type for draw()" + geometry);
+            }
 		}
 
 		// now draw it!
 		if (filled)
-			graphics.fill(gm.shape);
+        {
+            graphics.fill(gm.shape);
+        }
 		else
-			graphics.draw(gm.shape);
+        {
+            graphics.draw(gm.shape);
+        }
 		return;
 
 	}
@@ -251,7 +277,9 @@ public class GeomPortrayal extends SimplePortrayal2D
 		path.moveTo((float) coords[0].x, (float) coords[0].y);
 
 		for (int i = 1; i < coords.length; i++)
-			path.lineTo((float) coords[i].x, (float) coords[i].y);
+        {
+            path.lineTo((float) coords[i].x, (float) coords[i].y);
+        }
 
 		path.transform(info.transform);
 
@@ -259,13 +287,16 @@ public class GeomPortrayal extends SimplePortrayal2D
 	}
 
 	/** Determine if the object was hit or not. */
+    @Override
 	public boolean hitObject(Object object, DrawInfo2D range)
 	{
 		double SLOP = 2.0;
 		MasonGeometry geom = (MasonGeometry) object;
 		
-		if (geom.shape == null)		// if there's no shape, you can't hit it
-			return false;
+		if (geom.shape == null)
+        {
+            return false;
+        }
 
 		return geom.shape.intersects(range.clip.x - SLOP / 2, range.clip.y - SLOP / 2, range.clip.width + SLOP / 2,
 				range.clip.height + SLOP / 2);
