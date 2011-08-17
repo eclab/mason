@@ -76,7 +76,7 @@ public class PSO3DWithUI extends GUIState
                 {
                 public TransformGroup getModel(Object obj,TransformGroup j3dModel)
                     {
-                    appearance = appearanceForColor(map.getColor(p.getFitness()));
+                    Appearance appearance = appearanceForColor(map.getColor(p.getFitness()));
                     TransformGroup model = super.getModel(obj, j3dModel);
                     Shape3D shape = (Shape3D) (model.getChild(0));
                     shape.setAppearance(appearance);
