@@ -1,6 +1,6 @@
 # Blender3D v249 OBJ File: monkey1.blend
 # www.blender3d.org
-mtllib monkey1.mtl
+mtllib monkey.mtl
 v 0.354341 -0.868507 0.281269
 v -0.445623 -0.868507 0.281269
 v 0.411481 -0.797082 0.216986
