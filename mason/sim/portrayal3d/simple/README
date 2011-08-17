@@ -14,6 +14,9 @@ portrayals in particular are designed to make this easy so (for example)
 when you click on an object in the window, a label appears under it, 
 then disappears when you click elsewhere.
 
+A subdirectory, 'shapes', contains some object files appropriate for use
+with Shape3DPortrayal3D.java
+
 
 Arrow.java
 

@@ -9221,8 +9221,54 @@ There's not much to say about ContinuousPortrayal3D: like SparseGridPortrayal3D,
 
 \subsection{Field Portrayals for Networks}
 
+Just as is the case in 2D, Network Portrayals in 3D are unusual in that they don't portray the nodes of networks or graphs: only the edges.  It's up to a ContinuousPortrayal3D or SparseGridPortrayal3D to portray the nodes.
+
+MASON has one Network Portrayal in 3D, named (not surprisingly) \Class{sim.portrayal3d.network.NetworkPortrayal3D}.  Just as in the 2D case, this class requires a special ``field'' which is actually two fields: the Network proper and the continuous or sparse grid in which the nodes are spatially embedded.  This ``field'' is a \Class{sim.portrayal3d.network.SpatialNetwork3D}.  You set this ``field'' in the usual way: via the \method{setField(...)} method.
+
+There's not much more to say about a NetworkPortrayal3D proper: except to say that when you use a NetworkPortrayal3D, be sure to also use a ContinuousPortrayal3D or SparseGridPortrayal3D, or you'll only see the edges.
+
+As to SpatialNetwork3D: this class typically takes one spatial field and one Network, though in some cases it can take {\it two} spatial fields and a Network.   In the first case, the field defines the location of all the objects.  
+
+The second case is for certain situations involving bijective directed networks: you can define the locations of the ``from'' end of the edges using the first field, and the locations of the ``to'' end of the edges using the second field.  You should take care that the ``from'' nodes are only in one field and the ``to'' nodes are only in another field.  This allows you, for example, to create a network with edges ``from'' continuous-space objects ``to'' (say) 2-dimensional grid space objects.  It's a pretty rare need.
+
+To construct a SpatialNetwork3D, by default using the first case, you use one of the following constructors:
+
+\begin{methods}{\class{sim.portrayal3d.network.SpatialNetwork3D} Constructor}
+\mthd{public SpatialNetwork3D(SparseField3D field, Network network} Creates a SpatialNetwork3D using the given field and network.  Both Continuous3D and SparseGrid3D fields will work.
+\mthd{public SpatialNetwork3D(SparseField2D field, Network network} Creates a SpatialNetwork3D using the given field and network.  Both Continuous2D and SparseGrid2D fields will work.
+\end{methods}
+
+To set the second spatial field (for the rare use mentioned above), you can then say:
+
+\begin{methods}{\class{sim.portrayal3d.network.SpatialNetwork3D}}
+\mthd{public void setAuxiliaryField(SparseField3D)} Sets the auxiliary field for the SpatialNetwork3D.  If this is set to \variable{null}, the field is removed.
+\mthd{public void setAuxiliaryField(SparseField2D)} Sets the auxiliary field for the SpatialNetwork3D.  If this is set to \variable{null}, the field is removed.
+\end{methods}
+
+A SpatialNetwork3D has two other methods, which you'll never need to modify, used by the NetworkPortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.network.SpatialNetwork3D}}
+\mthd{public Double3D getObjectLocation(Object node)} Returns, as a point in 3D space, the location of the given object.  First checks the primary field, then the auxiliary field.
+\mthd{public Double3D getDimensions()} Returns the dimensions of the primary spatial field in 3D space.
+\end{methods}
+
+NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  These are discussed later in Section \ref{sim.portrayal3d.network.SimplePortrayal3D}.
 
 \section{3D Simple Portrayals}
+
+The last part of the 3D portrayal facility consists of {\bf simple portrayals}.  As was the case in 2D, 3D Simple Portrayals are responsible for portraying individual objects or values in fields.  
+
+
+\subsection{Basic Simple Portrayals}
+
+\subsection{Value Simple Portrayals}
+
+\subsection{Edge Simple Portrayals}
+\label{sim.portrayal3d.network.SimplePortrayal3D}
+
+\subsection{Wrapper Simple Portrayals}
+
+\subsection{Objects Acting As Their Own Simple Portrayals}
 
 
 

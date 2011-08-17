@@ -2197,4 +2197,4 @@ Version 16
 		eliminating a confusing piece of code which was a possible facilitator of bugs.
 	Modified ValueGrid2DPortrayal3D.newValue(...) to handle ObjectGrid2D
 	Modified ValueGridCellInfo, removing the z option and removing doubleValue()
-
+	Created new directory, sim/portrayal3d/simple/shapes/ for some OBJ files
