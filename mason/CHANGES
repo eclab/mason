@@ -2202,4 +2202,4 @@ Version 16
 	Made PrimitivePortrayal3D.group protected
 	PrimitivePortrayal3D.getAppearance returns a brand-new Appearance if the number of
 		shapes is zero.
-
+	Renamed Axes to AxesPortrayal3D

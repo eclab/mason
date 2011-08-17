@@ -736,7 +736,7 @@ public class Display3D extends JPanel implements Steppable
         auxillarySwitch.setChildMask(auxillarySwitchMask);
 
         // Add Axes to position 0 of switch
-        Axes x = new Axes(0.01f, true);
+        AxesPortrayal3D x = new AxesPortrayal3D(0.01f, true);
         auxillarySwitch.insertChild(x.getModel(null, null), AXES_AUX_INDEX);
                 
         
