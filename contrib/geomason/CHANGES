@@ -1,1296 +1,699 @@
-2010-04-12 16:35  mcoletti
+2011-08-17  mcoletti
+
+	* [r510] sim/portrayal/geo/GeomPortrayal.java: Applied Stefan
+	  Dlugolinsky's patch for showing inspectors for geometry info
+
+2011-08-01  sean@cs.gmu.edu
+
+	* [r498] sim/portrayal/geo/GeomVectorFieldPortrayal.java: yo
+
+2011-07-31  sean@cs.gmu.edu
+
+	* [r497] sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java: yo
+	* [r494] sim/portrayal/geo/GeomVectorFieldPortrayal.java: yo
+	* [r493] ChangeLog: yo
+	* [r492] sim/app/geo/campusworld/CampusWorldWithUI.java: yo
+	* [r491] sim/app/geo/colorworld/ColorWorldWithUI.java: y
+	* [r490] CHANGES, Makefile,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java: yo
+
+2011-06-22  mcoletti
+
+	* [r478] LICENSE, sim/app/data/bldg.zip, sim/app/data/roads.tgz,
+	  sim/app/data/roads.zip, sim/app/data/walk_ways.zip,
+	  sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/BuildingLabelPortrayal.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldPortrayal.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java,
+	  sim/app/geo/touchingworld/Mover.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java,
+	  sim/field/geo/GeomField.java, sim/field/geo/GeomGridField.java,
+	  sim/field/geo/GeomVectorField.java,
+	  sim/io/geo/ArcInfoASCGridImporter.java, sim/io/geo/GDALImporter.java,
+	  sim/io/geo/GeoToolsImporter.java, sim/io/geo/GeomExporter.java,
+	  sim/io/geo/GeomImporter.java, sim/io/geo/OGRImporter.java,
+	  sim/io/geo/ShapeFileExporter.java, sim/io/geo/ShapeFileImporter.java,
+	  sim/portrayal/geo/GeomInfo2D.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/AttributeField.java, sim/util/geo/GeomPlanarGraph.java,
+	  sim/util/geo/GeomPlanarGraphDirectedEdge.java,
+	  sim/util/geo/GeomPlanarGraphEdge.java,
+	  sim/util/geo/GeometryProperties.java,
+	  sim/util/geo/GeometryUtilities.java, sim/util/geo/MasonGeometry.java,
+	  sim/util/geo/PointMoveTo.java: Added license text.
+
+2011-06-10  mcoletti
+
+	* [r476] sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/app/geo/nearbyworld/nearbyworldthumb.png: Removed copious output.
+	  Now highlights nearby objects to randomly moving agent.
+
+2011-06-09  mcoletti
+
+	* [r473] sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java: Fixed bug whereby
+	  the agent position was never getting updated on display.
+	* [r472] sim/portrayal/geo/GeomVectorFieldPortrayal.java: Now use new
+	  setDirtyField() added to FieldPortrayals
+
+2011-06-07  joey.f.harrison
+
+	* [r470] sim/io/geo/GeomImporter.java,
+	  sim/io/geo/ShapeFileImporter.java: Moved the shape type constants from
+	  GeomImporter to ShapeFileImporter and expanded them to include the
+	  full list (from the ESRI spec). Added more graceful handling of
+	  unsupported shape types. Previously it would potentially read in
+	  garbage with no indication.
+
+2011-05-19  joey.f.harrison
+
+	* [r453] sim/portrayal/geo/GeomPortrayal.java: Added a null check to
+	  prevent an exception.
+
+2011-05-04  joey.f.harrison
+
+	* [r441] sim/io/geo/ShapeFileImporter.java: In the previous commit, I
+	  made the ShapeFileImporter able to handle polygons with holes.
+	* [r440] .classpath, .project, sim/field/geo/GeomVectorField.java,
+	  sim/io/geo/ShapeFileImporter.java: Added a getContainingObjects
+	  function to GeomVectorField.
+
+2011-05-02  joey.f.harrison
+
+	* [r438] sim/io/geo/ShapeFileImporter.java: Fixed a bug in the
+	  ShapeFileImporter when reading files with Point data. Polygon and
+	  Polyline records have a bounding box, numParts, etc. that Point
+	  records do not. These fields were being read regardless of type and
+	  this was causing pukage.
+	* [r437] sim/app/data/bndyschles,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.dbf,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.prj,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.sbn,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.sbx,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.shp,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.shp.xml,
+	  sim/app/data/bndyschles/ES_ATTENDANCE_AREAS.shx, sim/app/data/schools,
+	  sim/app/data/schools/SCHOOL_FACILITIES.dbf,
+	  sim/app/data/schools/SCHOOL_FACILITIES.prj,
+	  sim/app/data/schools/SCHOOL_FACILITIES.sbn,
+	  sim/app/data/schools/SCHOOL_FACILITIES.sbx,
+	  sim/app/data/schools/SCHOOL_FACILITIES.shp,
+	  sim/app/data/schools/SCHOOL_FACILITIES.shp.xml,
+	  sim/app/data/schools/SCHOOL_FACILITIES.shx: Added some GIS data for
+	  testing purposes.
+
+2011-03-25  mcoletti
+
+	* [r427] Makefile: Added ArcInfoASCGridImporter.java to Makefile
+	* [r426] sim/io/geo/ArcInfoASCGridImporter.java: Added
+	  ArcInfoASCGridImporter
+
+2011-03-17  sean@cs.gmu.edu
+
+	* [r422] sim/app/geo/campusworld/BuildingLabelPortrayal.java: reduced to
+	  1.4
+
+2011-03-17  kemsulli@gmail.com
+
+	* [r421] sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java: Fixed scrolling,
+	  zooming for GeomPortrayals
+	* [r420] sim/app/geo/campusworld/BuildingLabelPortrayal.java:
+	* [r419] sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/MasonGeometry.java:
+	* [r418] sim/portrayal/geo/GeomPortrayal.java,
+	  sim/util/geo/MasonGeometry.java:
+
+2011-03-17  sean@cs.gmu.edu
+
+	* [r417] Makefile, sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java,
+	  sim/util/geo/MasonGeometry.java: Made compatible with 1.4
+
+2011-03-17  kemsulli@gmail.com
+
+	* [r416] sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/MasonGeometry.java: Fixed GeomPortrayal to handle movable
+	  MasonGeometries
+
+2011-03-16  sean@cs.gmu.edu
+
+	* [r415] sim/portrayal/geo/GeomVectorFieldPortrayal.java: Fixed
+	  antialiasing in GeomVectorFieldPortrayal's Buffering
+
+2011-03-16  kemsulli@gmail.com
+
+	* [r414] sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/touchingworld/Mover.java,
+	  sim/field/geo/GeomVectorField.java, sim/portrayal/geo/GeomInfo2D.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/MasonGeometry.java: Speedup in
+	  GeomField.getCoveredObjects
+
+2011-03-14  mcoletti
+
+	* [r413] sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java: Added circle for
+	  showing distance detection radius. Too bad it's currently the wrong
+	  radius. :(
+	* [r412] sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java: Nearby objects now
+	  colored blue.
+
+2011-03-14  kemsulli@gmail.com
+
+	* [r411] sim/app/geo/colorworld/CountingGeomWrapper.java:
+	* [r410] sim/app/geo/colorworld/ColorWorld.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/GeometryUtilities.java:
+	* [r409] sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/field/geo/GeomField.java, sim/field/geo/GeomVectorField.java,
+	  sim/io/geo/GDALImporter.java, sim/io/geo/ShapeFileImporter.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/GeometryUtilities.java: Fixed SimplePortrayal2D scaleing
+
+2011-03-11  kemsulli@gmail.com
+
+	* [r407] sim/portrayal/geo/GeomVectorFieldPortrayal.java: Fixed
+	  SimplePortrayal2D bug
+
+2011-03-11  mcoletti
+
+	* [r406] sim/app/geo/colorworld/ColorWorld.java: Restarting simuilation
+	  now resamples space with new agents; shape file now only read once.
+
+2011-03-11  kemsulli@gmail.com
+
+	* [r405] sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithUI.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java: Added WIDTH,
+	  HEIGHT
+
+2011-03-10  mcoletti
+
+	* [r404] sim/app/geo/campusworld/CampusWorld.java: No longer clear the
+	  agents at finish; instead clear any existing agents at startup.
+	* [r403] sim/field/geo/GeomVectorField.java: Added default ctor and
+	  setFieldWidth and Height to GeomVectorField.
+
+2011-03-10  kemsulli@gmail.com
+
+	* [r402] sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/field/geo/GeomVectorField.java:
+	* [r401] sim/portrayal/geo/GeomInfo2D.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java: GeoMASON now displays
+	  Geographic information and MASON portrayals correctly
+
+2011-03-10  mcoletti
+
+	* [r400] sim/app/geo/touchingworld/Mover.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java,
+	  sim/app/geo/touchingworld/index.html: Repaired touching world demo; it
+	  now runs again.
+	* [r399] sim/field/geo/GeomVectorField.java: Corrected bug in
+	  getTouchingObjects() whereby the given geometry was never compared to
+	  the field geometries.
+
+2011-03-09  mcoletti
+
+	* [r398] sim/app/geo/colorworld/colorworld.png: Added inset image for
+	  colorworld demo.
+	* [r397] sim/app/geo/touchingworld/touchingthumb.png: Added icon for
+	  touching world demo
+
+2011-02-14  mcoletti
+
+	* [r381] sim/field/geo/GeomGridField.java: Fixed y coordinate inversion
+	  bug.
+
+2011-01-11  mcoletti
+
+	* [r370] sim/app/geo/campusworld/index.html: Minor changes to text and
+	  HTML
+
+2010-12-15  mcoletti
+
+	* [r362] Makefile: Updated BASE_FILES with current reality; broke out
+	  GDAL as optional.
+
+2010-09-24  mcoletti
+
+	* [r349] sim/field/geo/GeomGridField.java: Added toXCoord() and
+	  toYCoord() convenience functions.
+	* [r348] sim/field/geo/GeomGridField.java: Added isInGrid() and
+	  toPolygon().
+	* [r347] sim/field/geo/GeomGridField.java: Added toPoint(), which
+	  returns a representational point in world coordinates for a grid cell.
+
+2010-09-22  mcoletti
+
+	* [r346] sim/io/geo/GDALImporter.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/ShapeFileImporter.java: Restored some of the old
+	  functionality whereby one can import data by given a simple file name.
+	  Made ShapeFileImporter a little more intelligent about file names.
+	  Will accept shape file names with or without ".shp" suffix. User can
+	  choose to use resource search method for opening file or directly
+	  specify a file.
+
+2010-09-17  mcoletti
+
+	* [r345] sim/io/geo/GDALImporter.java, sim/io/geo/GeomImporter.java:
+	  Added GDALImporter for reading grid-based geospatial data.
+	* [r344] sim/field/geo/GeomGridField.java: setGrid() now updates pixel
+	  widths based on new grid.
+
+2010-09-10  kemsulli
+
+	* [r340] Makefile, sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/colorworld/ColorWorld.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/ShapeFileImporter.java,
+	  sim/portrayal/geo/GeomPortrayal.java: Updated GeomImporter and
+	  Makefile cleanup
+
+2010-09-03  mcoletti
+
+	* [r339] sim/util/geo/GeometryUtilities.java: Added overloaded
+	  worldToScreenTransform() that accepts a Rectangle2D.Double as
+	  viewport. Changed computeBounds() to accept Display2D parameter
+	  instead of DrawInfo2D. Some other minor edits, too.
+
+2010-09-02  mcoletti
+
+	* [r338] sim/util/geo/GeometryUtilities.java: Added computeBounds() and
+	  isWithinBounds(), which are used for properly placing a GeomGridField
+	  within a Display2D.
+
+2010-08-25  mcoletti
+
+	* [r337] sim/field/geo/GeomVectorField.java: Added checks for no data in
+	  computeConvexHull() and computeUnion(). Somewhat simplified
+	  computeConvexHull().
+	* [r336] sim/app/geo/campusworld/CampusWorldWithUI.java:
+	  s/GeomField/GeomVector/Field/
+	* [r335] sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java: Minor edits.
+	* [r334] sim/util/geo/GeomPlanarGraph.java: Removed comments regarding
+	  making planar graph. Added commented out code for future work to do
+	  planar-izing if we later want to do that.
+
+2010-08-24  kemsulli
+
+	* [r333] sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java,
+	  sim/app/geo/networkworld/index.html, sim/util/geo/PointMoveTo.java:
+	  Issue number: Obtained from: Submitted by: Reviewed by:
+	* [r332] Makefile, sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/index.html, sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldPortrayal.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/colorworld/index.html, sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/app/geo/nearbyworld/index.html, sim/io/geo/ShapeFileImporter.java,
+	  sim/util/geo/PointMoveTo.java: Issue number: Obtained from: Submitted
+	  by: Reviewed by:
+
+2010-08-23  kemsulli
+
+	* [r331] sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldPortrayal.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/field/geo/GeomVectorField.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/ShapeFileImporter.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/MasonGeometry.java: Issue number: Obtained from:
+	  Submitted by: Reviewed by:
+	* [r330] sim/app/geo/colorworld/ColorWorldPortrayal.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java: Issue number:
+	  Obtained from: Submitted by: Reviewed by:
+	* [r329] Makefile, sim/portrayal/geo/GeomValuedFieldPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java: Issue number:
+	  Obtained from: Submitted by: Reviewed by:
+
+2010-08-20  feijai
+
+	* [r327] sim/portrayal/geo/GeomVectorFieldPortrayal.java:
+	  GeomVectorFieldPortrayal.java
+
+2010-08-20  kemsulli
+
+	* [r326] Makefile, sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java,
+	  sim/field/geo/GeomField.java, sim/field/geo/GeomGridField.java,
+	  sim/field/geo/GeomVectorField.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/ShapeFileImporter.java,
+	  sim/util/geo/GeometryUtilities.java, sim/util/geo/MasonGeometry.java:
+	  Issue number: Obtained from: Submitted by: Reviewed by:
+
+2010-08-20  mcoletti
+
+	* [r325] sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/util/geo/GeomPlanarGraph.java,
+	  sim/util/geo/GeomPlanarGraphDirectedEdge.java,
+	  sim/util/geo/GeomPlanarGraphEdge.java, sim/util/geo/Network.java,
+	  sim/util/geo/NetworkDirectedEdge.java, sim/util/geo/NetworkEdge.java:
+	  s/Network/GeomPlanarGraph/. Also GeomPlanarGraph has a member function
+	  for converting a GeomPlanarGraph to a MASON Network object.
+
+2010-08-20  kemsulli
+
+	* [r324] sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomValuedFieldPortrayal.java,
+	  sim/portrayal/geo/GeomVectorFieldPortrayal.java,
+	  sim/util/geo/AttributeField.java,
+	  sim/util/geo/GeometryProperties.java,
+	  sim/util/geo/GeometryUtilities.java, sim/util/geo/MasonGeometry.java,
+	  sim/util/geo/PointMoveTo.java: *** empty log message ***
+
+2010-08-20  mcoletti
+
+	* [r323] sim/field/geo/GeomGridField.java: Added clear() and setMBR() as
+	  well as a few TODOs.
+	* [r322] sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/field/geo/GeomField.java, sim/field/geo/GeomGridField.java,
+	  sim/field/geo/GeomVectorField.java, sim/io/geo/GeoToolsImporter.java,
+	  sim/io/geo/GeomExporter.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/OGRImporter.java, sim/io/geo/ShapeFileExporter.java,
+	  sim/io/geo/ShapeFileImporter.java,
+	  sim/portrayal/geo/GeomFieldPortrayal.java, sim/util/geo/Network.java:
+	  Moved GeomField to GeomVectorField and generalized some contents to
+	  GeomField. Added GeomGridField, which is a sibling to GeomVectorField.
+
+2010-08-19  mcoletti
+
+	* [r321] sim/app/geo/campusworld/CampusWorldWithUI.java: Have no idea
+	  why this didn't make it into the main trunk.
+
+2010-08-19  kemsulli
+
+	* [r318] sim/app/data, sim/app/data/bldg.dbf, sim/app/data/bldg.fix,
+	  sim/app/data/bldg.prj, sim/app/data/bldg.qix, sim/app/data/bldg.sbn,
+	  sim/app/data/bldg.sbx, sim/app/data/bldg.shp,
+	  sim/app/data/bldg.shp.xml, sim/app/data/bldg.shx,
+	  sim/app/data/bldg.zip, sim/app/data/pol.dbf, sim/app/data/pol.fix,
+	  sim/app/data/pol.prj, sim/app/data/pol.qix, sim/app/data/pol.shp,
+	  sim/app/data/pol.shp.xml, sim/app/data/pol.shx,
+	  sim/app/data/roads.dbf, sim/app/data/roads.fix,
+	  sim/app/data/roads.prj, sim/app/data/roads.qix,
+	  sim/app/data/roads.sbn, sim/app/data/roads.sbx,
+	  sim/app/data/roads.shp, sim/app/data/roads.shp.xml,
+	  sim/app/data/roads.shx, sim/app/data/roads.tgz,
+	  sim/app/data/roads.zip, sim/app/data/walk_ways.dbf,
+	  sim/app/data/walk_ways.fix, sim/app/data/walk_ways.prj,
+	  sim/app/data/walk_ways.qix, sim/app/data/walk_ways.sbn,
+	  sim/app/data/walk_ways.sbx, sim/app/data/walk_ways.shp,
+	  sim/app/data/walk_ways.shp.xml, sim/app/data/walk_ways.shx,
+	  sim/app/data/walk_ways.zip: Issue number: Obtained from: Submitted by:
+	  Reviewed by:
+	* [r317] sim/app/data: Issue number: Obtained from: Submitted by:
+	  Reviewed by:
+
+2010-08-17  kemsulli
+
+	* [r310] Makefile: Issue number: Obtained from: Submitted by: Reviewed
+	  by:
+	* [r309] sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/touchingworld/Mover.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/field/geo/GeomField.java, sim/io/geo/GeoToolsImporter.java,
+	  sim/io/geo/GeomExporter.java, sim/io/geo/GeomImporter.java,
+	  sim/io/geo/OGRImporter.java, sim/io/geo/ShapeFileExporter.java,
+	  sim/io/geo/ShapeFileImporter.java, sim/util/geo/AttributeField.java,
+	  sim/util/geo/Network.java: Issue number: Obtained from: Submitted by:
+	  Reviewed by:
+	* [r308] sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldWithGUI.java,
+	  sim/field/geo/GeomField.java, sim/io/geo/GeoToolsImporter.java,
+	  sim/io/geo/GeoToolsInfo.java, sim/io/geo/GeomExporter.java,
+	  sim/io/geo/GeomImporter.java, sim/io/geo/GeometryInfo.java,
+	  sim/io/geo/OGRImporter.java, sim/io/geo/OGRInfo.java,
+	  sim/io/geo/ShapeFileExporter.java, sim/io/geo/ShapeFileImporter.java,
+	  sim/io/geo/ShapeFileInfo.java,
+	  sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomValuedFieldPortrayal.java,
+	  sim/portrayal/geo/GeometryInspector.java,
+	  sim/util/geo/AttributeField.java, sim/util/geo/GeomWrapper.java,
+	  sim/util/geo/GeometricProperties.java,
+	  sim/util/geo/GeometryProperties.java, sim/util/geo/MasonGeometry.java:
+	  Issue number: Obtained from: Submitted by: Reviewed by:
+
+2010-08-03  mcoletti
+
+	* [r306] Makefile: Added planar graph class
+
+2010-07-22  mcoletti
+
+	* [r302] Makefile: Added missing GeomField files and compensated for
+	  Network to GeomPlanarGraph name change
+
+2010-06-17  mcoletti
+
+	* [r283] sim/app/geo/campusworld/CampusWorld.java,
+	  sim/io/geo/GeoToolsImporter.java: Corrected bug whereby mousing around
+	  in the display would raise null pointer exceptions. Added some
+	  comments.
+
+2010-04-28  kemsulli
+
+	* [r281] sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomValuedFieldPortrayal.java: *** empty log message
+	  ***
+
+2010-04-27  mcoletti
+
+	* [r280] sim/portrayal/geo/GeomFieldPortrayal.java: Corrected bug
+	  whereby mousing around in the display would raise null pointer
+	  exceptions. Added some comments.
+	* [r279] sim/app/geo/touchingworld/index.html: Fixed title
+	* [r278] Makefile: Added line for color world
+	* [r277] sim/app/geo/networkworld/index.html,
+	  sim/app/geo/networkworld/networkworldthumb.png: Added image thumbnail
+	  and tweaked text.
+	* [r276] sim/app/geo/nearbyworld/index.html,
+	  sim/app/geo/nearbyworld/nearbyworldthumb.png: Added image thumbnail
+	  and tweaked text.
+	* [r275] sim/app/geo/campusworld/campusworldthumb.png,
+	  sim/app/geo/campusworld/index.html: Fleshed out index.html with very
+	  basic explanatory text.
+
+2010-04-23  mcoletti
+
+	* [r274] sim/app/geo/touchingworld/index.html: First cut at decent
+	  index.html
+	* [r273] sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java: - Now use simpler
+	  mechanism for creating GeomWrappers such that it's now unnecessary to
+	  do a second loop through all the data
+	  
+	  - Corrected data path
+
+2010-04-21  mcoletti
+
+	* [r272] README: Completed Campus World fully qualified name.
+	* [r271] sim/app/geo/campusworld/index.html,
+	  sim/app/geo/colorworld/index.html,
+	  sim/app/geo/networkworld/index.html,
+	  sim/app/geo/touchingworld/index.html: added skeleton index.html
+	* [r270] sim/app/geo/campusworld/CampusWorld.java: Fixed data path
+
+2010-04-13  mcoletti
+
+	* [r266] sim/app/geo/campusworld/CampusWorldWithGUI.java: Added missing
+	  source file
+	* [r265] README: Added information on dependencies.
+	* [r264] Makefile: Makefile now generates geomason.jar by default and
+	  now properly handles optional GeoTools and OGR based importers.
+	* [r263] ChangeLog: Restored old history to ChangeLog
+	* [r262] ChangeLog: synced ChangeLog
+
+2010-04-12  mcoletti
+
+	* [r261] Makefile: Added "touchingworld" demo.
+	* [r260] sim/app/geo/touchingworld,
+	  sim/app/geo/touchingworld/Mover.java,
+	  sim/app/geo/touchingworld/TouchingWorld.java,
+	  sim/app/geo/touchingworld/TouchingWorldWithUI.java: Added demo of
+	  touching geometry demo.
+
+2010-04-10  kemsulli
+
+	* [r256] sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldGUI.java,
+	  sim/field/geo/GeomField.java, sim/io/geo/GeoToolsImporter.java,
+	  sim/io/geo/GeoToolsInfo.java, sim/io/geo/GeomExporter.java,
+	  sim/io/geo/GeomImporter.java, sim/io/geo/GeometryInfo.java,
+	  sim/io/geo/OGRImporter.java, sim/io/geo/OGRInfo.java,
+	  sim/io/geo/ShapeFileExporter.java, sim/io/geo/ShapeFileImporter.java,
+	  sim/io/geo/ShapeFileInfo.java,
+	  sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomValuedFieldPortrayal.java,
+	  sim/portrayal/geo/GeometryInspector.java,
+	  sim/util/geo/AttributeField.java, sim/util/geo/GeomWrapper.java,
+	  sim/util/geo/GeometricProperties.java, sim/util/geo/Network.java,
+	  sim/util/geo/NetworkDirectedEdge.java, sim/util/geo/NetworkEdge.java,
+	  sim/util/geo/PointMoveTo.java: Code cleanup
+	* [r255] sim/app/data, sim/app/data/bldg.dbf, sim/app/data/bldg.fix,
+	  sim/app/data/bldg.prj, sim/app/data/bldg.qix, sim/app/data/bldg.sbn,
+	  sim/app/data/bldg.sbx, sim/app/data/bldg.shp,
+	  sim/app/data/bldg.shp.xml, sim/app/data/bldg.shx,
+	  sim/app/data/bldg.zip, sim/app/data/pol.dbf, sim/app/data/pol.fix,
+	  sim/app/data/pol.prj, sim/app/data/pol.qix, sim/app/data/pol.shp,
+	  sim/app/data/pol.shp.xml, sim/app/data/pol.shx,
+	  sim/app/data/roads.dbf, sim/app/data/roads.fix,
+	  sim/app/data/roads.prj, sim/app/data/roads.qix,
+	  sim/app/data/roads.sbn, sim/app/data/roads.sbx,
+	  sim/app/data/roads.shp, sim/app/data/roads.shp.xml,
+	  sim/app/data/roads.shx, sim/app/data/roads.tgz,
+	  sim/app/data/roads.zip, sim/app/data/walk_ways.dbf,
+	  sim/app/data/walk_ways.fix, sim/app/data/walk_ways.prj,
+	  sim/app/data/walk_ways.qix, sim/app/data/walk_ways.sbn,
+	  sim/app/data/walk_ways.sbx, sim/app/data/walk_ways.shp,
+	  sim/app/data/walk_ways.shp.xml, sim/app/data/walk_ways.shx,
+	  sim/app/data/walk_ways.zip: Added data files
+	* [r254] sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/GeoTest.java,
+	  sim/app/geo/networkworld/GeoTestGUI.java,
+	  sim/app/geo/networkworld/NetworkWorld.java,
+	  sim/app/geo/networkworld/NetworkWorldWithUI.java: Code clean ups
+	* [r253] sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/colorworld/Mover.java,
+	  sim/app/geo/networkworld/Agent.java: Code clean ups
+	* [r252] sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/GeoGuiTest.java,
+	  sim/app/geo/nearbyworld/GeoGuiTestGUI.java,
+	  sim/app/geo/nearbyworld/NearbyWorld.java,
+	  sim/app/geo/nearbyworld/NearbyWorldWithUI.java: Code clean ups
+
+2010-04-07  kemsulli
+
+	* [r251] Makefile, sim/field/geo/GeomField.java,
+	  sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomPortrayal.java: Updated overridding paint object
+	  in GeomPortrayal
+	* [r250] sim/app/geo/campusworld/CampusWorldGUI.java: *** empty log
+	  message ***
+
+2010-04-05  mcoletti
+
+	* [r248] sim/app/geo/campusworld, sim/app/geo/campusworld/Agent.java,
+	  sim/app/geo/campusworld/CampusWorld.java,
+	  sim/app/geo/campusworld/CampusWorldGUI.java: Added campusworld
+	* [r247] sim/app/geo/colorworld, sim/app/geo/colorworld/Agent.java,
+	  sim/app/geo/colorworld/ColorWorld.java,
+	  sim/app/geo/colorworld/ColorWorldWithUI.java,
+	  sim/app/geo/colorworld/CountingGeomWrapper.java,
+	  sim/app/geo/colorworld/Mover.java: Added colorworld
+	* [r246] sim/app/geo/networkworld, sim/app/geo/networkworld/Agent.java,
+	  sim/app/geo/networkworld/GeoTest.java,
+	  sim/app/geo/networkworld/GeoTestGUI.java: Added what was previously
+	  gridfollow and now renamed to more sensible networkworld.
+	* [r245] sim/app, sim/app/geo, sim/app/geo/nearbyworld,
+	  sim/app/geo/nearbyworld/Agent.java,
+	  sim/app/geo/nearbyworld/GeoGuiTest.java,
+	  sim/app/geo/nearbyworld/GeoGuiTestGUI.java,
+	  sim/app/geo/nearbyworld/index.html: Added simulation for showing
+	  nearby objects
+
+2010-04-02  mcoletti
+
+	* [r244] ChangeLog, Makefile, README: Added
+	* [r242] sim/field, sim/field/geo, sim/field/geo/GeomField.java, sim/io,
+	  sim/io/geo, sim/io/geo/GeoToolsImporter.java,
+	  sim/io/geo/GeoToolsInfo.java, sim/io/geo/GeomExporter.java,
+	  sim/io/geo/GeomImporter.java, sim/io/geo/GeometryInfo.java,
+	  sim/io/geo/OGRImporter.java, sim/io/geo/OGRInfo.java,
+	  sim/io/geo/ShapeFileExporter.java, sim/io/geo/ShapeFileImporter.java,
+	  sim/io/geo/ShapeFileInfo.java, sim/portrayal, sim/portrayal/geo,
+	  sim/portrayal/geo/GeomFieldPortrayal.java,
+	  sim/portrayal/geo/GeomPortrayal.java,
+	  sim/portrayal/geo/GeomValuedFieldPortrayal.java,
+	  sim/portrayal/geo/GeometryInspector.java: Copied over base GeoMason
+	  source files
+	* [r241] ., sim, sim/util, sim/util/geo,
+	  sim/util/geo/AttributeField.java, sim/util/geo/GeomWrapper.java,
+	  sim/util/geo/GeometricProperties.java, sim/util/geo/Network.java,
+	  sim/util/geo/NetworkDirectedEdge.java, sim/util/geo/NetworkEdge.java,
+	  sim/util/geo/PointMoveTo.java: Initial commit of java source
 
-	* Makefile: Added "touchingworld" demo.
-
-2010-04-12 16:32  mcoletti
-
-	* sim/app/geo/touchingworld/: Mover.java, TouchingWorld.java,
-	TouchingWorldWithUI.java: Added demo of touching geometry demo.
-
-2010-04-10 14:27  kemsulli
-
-	* sim/: app/geo/campusworld/Agent.java,
-	app/geo/campusworld/CampusWorld.java,
-	app/geo/campusworld/CampusWorldGUI.java, field/geo/GeomField.java,
-	io/geo/GeoToolsImporter.java, io/geo/GeoToolsInfo.java,
-	io/geo/GeomExporter.java, io/geo/GeomImporter.java,
-	io/geo/GeometryInfo.java, io/geo/OGRImporter.java,
-	io/geo/OGRInfo.java, io/geo/ShapeFileExporter.java,
-	io/geo/ShapeFileImporter.java, io/geo/ShapeFileInfo.java,
-	portrayal/geo/GeomFieldPortrayal.java,
-	portrayal/geo/GeomPortrayal.java,
-	portrayal/geo/GeomValuedFieldPortrayal.java,
-	portrayal/geo/GeometryInspector.java, util/geo/AttributeField.java,
-	util/geo/GeomWrapper.java, util/geo/GeometricProperties.java,
-	util/geo/Network.java, util/geo/NetworkDirectedEdge.java,
-	util/geo/NetworkEdge.java, util/geo/PointMoveTo.java: Code cleanup
-
-2010-04-10 14:21  kemsulli
-
-	* sim/app/data/: bldg.dbf, bldg.fix, bldg.prj, bldg.qix, bldg.sbn,
-	bldg.sbx, bldg.shp, bldg.shp.xml, bldg.shx, bldg.zip, pol.dbf,
-	pol.fix, pol.prj, pol.qix, pol.shp, pol.shp.xml, pol.shx,
-	roads.dbf, roads.fix, roads.prj, roads.qix, roads.sbn, roads.sbx,
-	roads.shp, roads.shp.xml, roads.shx, roads.tgz, roads.zip,
-	walk_ways.dbf, walk_ways.fix, walk_ways.prj, walk_ways.qix,
-	walk_ways.sbn, walk_ways.sbx, walk_ways.shp, walk_ways.shp.xml,
-	walk_ways.shx, walk_ways.zip: Added data files
-
-2010-04-10 14:20  kemsulli
-
-	* sim/app/geo/networkworld/Agent.java: Code clean ups
-
-2010-04-10 14:17  kemsulli
-
-	* sim/app/geo/: colorworld/Agent.java, colorworld/ColorWorld.java,
-	colorworld/ColorWorldWithUI.java,
-	colorworld/CountingGeomWrapper.java, colorworld/Mover.java,
-	networkworld/Agent.java, networkworld/GeoTest.java,
-	networkworld/GeoTestGUI.java, networkworld/NetworkWorld.java,
-	networkworld/NetworkWorldWithUI.java: Code clean ups
-
-2010-04-10 13:55  kemsulli
-
-	* sim/app/geo/nearbyworld/: Agent.java, GeoGuiTest.java,
-	GeoGuiTestGUI.java, NearbyWorld.java, NearbyWorldWithUI.java: Code
-	clean ups
-
-2010-04-07 12:05  kemsulli
-
-	* Makefile, sim/field/geo/GeomField.java,
-	sim/portrayal/geo/GeomFieldPortrayal.java,
-	sim/portrayal/geo/GeomPortrayal.java: Updated overridding paint
-	object in GeomPortrayal
-
-2010-04-07 11:51  kemsulli
-
-	* sim/app/geo/campusworld/CampusWorldGUI.java: [no log message]
-
-2010-04-05 13:27  mcoletti
-
-	* sim/app/geo/campusworld/: Agent.java, CampusWorld.java,
-	CampusWorldGUI.java: Added campusworld
-
-2010-04-05 13:21  mcoletti
-
-	* sim/app/geo/colorworld/: Agent.java, ColorWorld.java,
-	ColorWorldWithUI.java, CountingGeomWrapper.java, Mover.java: Added
-	colorworld
-
-2010-04-05 13:19  mcoletti
-
-	* sim/app/geo/networkworld/: Agent.java, GeoTest.java,
-	GeoTestGUI.java: Added what was previously gridfollow and now
-	renamed to more sensible networkworld.
-
-2010-04-05 13:07  mcoletti
-
-	* sim/app/geo/nearbyworld/: Agent.java, GeoGuiTest.java,
-	GeoGuiTestGUI.java, index.html: Added simulation for showing nearby
-	objects
-
-2010-04-02 13:26  mcoletti
-
-	* ChangeLog, Makefile, README: Added
-
-2010-04-02 13:12  mcoletti
-
-	* sim/: field/geo/GeomField.java, io/geo/GeoToolsImporter.java,
-	io/geo/GeoToolsInfo.java, io/geo/GeomExporter.java,
-	io/geo/GeomImporter.java, io/geo/GeometryInfo.java,
-	io/geo/OGRImporter.java, io/geo/OGRInfo.java,
-	io/geo/ShapeFileExporter.java, io/geo/ShapeFileImporter.java,
-	io/geo/ShapeFileInfo.java, portrayal/geo/GeomFieldPortrayal.java,
-	portrayal/geo/GeomPortrayal.java,
-	portrayal/geo/GeomValuedFieldPortrayal.java,
-	portrayal/geo/GeometryInspector.java: Copied over base GeoMason
-	source files
-
-2010-04-02 12:53  mcoletti
-
-	* sim/util/geo/: AttributeField.java, GeomWrapper.java,
-	GeometricProperties.java, Network.java, NetworkDirectedEdge.java,
-	NetworkEdge.java, PointMoveTo.java: Initial commit of java source
-
-2010-03-16 14:48  mcoletti
-
-	* sim/io/geo/: GeoToolsImporter.java, GeomImporter.java,
-	OGRImporter.java, ShapeFileImporter.java: Made GeomImporter an ABC
-	from an interface.  Users can now  specifiy a GeomWrapper subclass
-	to be used in GeomImporter.ingest() implementations.  Added factory
-	member function, makeGeomWrapper() which returns GeomWrapper
-	instance by default, or a user specified GeomWrapper subclass. 
-	Rolled forward changes to native, GeoTools, and OGR import()
-	implementations.
-
-2010-03-09 14:52  mcoletti
-
-	* sim/portrayal/geo/GeomFieldPortrayal.java: Removed unnecessary
-	import.
-
-2010-03-03 15:15  ksulliv
-
-	* sim/portrayal/geo/GeomFieldPortrayal.java: [no log message]
-
-2010-02-28 19:01  mcoletti
-
-	* sim/util/geo/GeomWrapper.java: Added copy ctor.
-
-2010-02-17 18:29  mcoletti
-
-	* sim/io/geo/ShapeFileImporter.java: Removed unused import.
-
-2010-02-17 16:37  ksulliv
-
-	* sim/: app/geo/coverworld/CoverWorld.java,
-	app/geo/coverworld/CoverWorldWithUI.java,
-	app/geo/ogrtest3/GeoOgrTest.java,
-	app/geo/ogrtest3/GeoOgrTestGUI.java,
-	portrayal/geo/GeomFieldPortrayal.java, util/geo/GeomWrapper.java:
-	[no log message]
-
-2010-02-15 14:18  ksulliv
-
-	* sim/: app/geo/coverworld/CoverWorldWithUI.java,
-	app/geo/ogrtest3/GeoOgrTest.java,
-	portrayal/geo/GeomFieldPortrayal.java: [no log message]
-
-2010-02-09 21:51  ksulliv
-
-	* sim/: app/geo/adjacentworld/AdjacentWorld.java,
-	app/geo/colorworld/Agent.java, app/geo/colorworld/ColorWorld.java,
-	app/geo/colorworld/CountingGeomWrapper.java,
-	app/geo/coverworld/CoverWorld.java, field/geo/GeomField.java,
-	portrayal/geo/GeomFieldPortrayal.java,
-	portrayal/geo/GeomValuedFieldPortrayal.java,
-	util/geo/GeomWrapper.java: [no log message]
-
-2010-02-09 15:24  ksulliv
-
-	* sim/util/geo/: GeomValuedWrapper.java, GeomWrapper.java: [no log
-	message]
-
-2010-02-09 15:02  mcoletti
-
-	* sim/io/geo/: MasonExporter.java, MasonImporter.java,
-	MasonInfo.java, ShapeFileExporter.java, ShapeFileImporter.java,
-	ShapeFileInfo.java: s/Mason/ShapeFile/ as this is a more
-	descriptive name.
-
-2010-02-09 13:55  ksulliv
-
-	* sim/: app/geo/ogrtest3/GeoOgrTest.java,
-	io/geo/GeoToolsImporter.java, io/geo/GeoToolsInfo.java,
-	io/geo/MasonExporter.java: [no log message]
-
-2010-02-09 04:08  mcoletti
-
-	* sim/portrayal/geo/GeomPortrayal.java: Changed paint to default to
-	null so that we can use colors set by GeomValuedFieldPortrayal.
-
-2010-02-09 04:08  mcoletti
-
-	* sim/app/geo/colorworld/: ColorWorld.java, ColorWorldWithUI.java:
-	Works!	Just verrrrrrrrrry slowly.
-
-2010-02-09 03:53  mcoletti
-
-	* sim/app/geo/colorworld/ColorWorldWithUI.java: Hooked up
-	GeomValuedFieldPortrayal.  Too bad GeomPortrayal overrides set
-	color.	:(
-
-2010-02-09 03:50  mcoletti
-
-	* sim/portrayal/geo/GeomValuedFieldPortrayal.java: Trivial
-	optimization; no need to getValue() twice.
-
-2010-02-09 03:30  mcoletti
-
-	* sim/field/geo/GeomField.java: Added getCoveredObjects()
-
-2010-02-09 03:29  mcoletti
-
-	* sim/app/geo/colorworld/: Agent.java, ColorWorld.java,
-	CountingGeomWrapper.java: Now uses CountingGeomWrapper for
-	districts.  Not hooked up to portrayal yet.
-
-2010-02-09 03:02  mcoletti
-
-	* sim/app/geo/colorworld/: Agent.java, ColorWorld.java,
-	ColorWorldWithUI.java, Mover.java: Start of new demostration of
-	GeomValuedFieldPortrayal and GeomValuedWrapper classes.
-
-2010-02-08 21:32  mcoletti
-
-	* sim/util/geo/GeomValuedWrapper.java: GeomValuedWrapper is an
-	abstract subsclass of GeomWrapper that adds getValue().  This value
-	will be used to determine colors when rendering.
-
-2010-02-08 21:31  mcoletti
-
-	* sim/portrayal/geo/: GeomFieldPortrayal.java,
-	GeomValuedFieldPortrayal.java: Added lookupColor() to
-	GeomFieldPortrayal.  Added GeomValuedFieldPortrayal, which is a
-	subclass of GeomFieldPortrayal that selects color based on value.
-
-2010-02-08 12:52  ksulliv
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: [no log message]
-
-2010-02-05 10:16  ksulliv
-
-	* sim/io/geo/: MasonExporter.java, OGRInfo.java: Updated Mason*
-
-2010-02-04 15:54  ksulliv
-
-	* sim/: app/geo/ogrtest3/GeoOgrTest.java,
-	app/geo/ogrtest3/GeoOgrTestGUI.java, field/geo/GeomField.java,
-	io/geo/GeomExporter.java, io/geo/MasonExporter.java,
-	io/geo/MasonImporter.java, io/geo/OGRImporter.java,
-	util/geo/AttributeField.java, util/geo/GeometricProperties.java:
-	Can update attribute fields; added MasonExporter
-
-2010-02-02 17:22  mcoletti
-
-	* sim/app/geo/coverworld/CoverWorld.java:
-	s/MasonGeometry/GeomWrapper/
-
-2010-02-02 17:19  mcoletti
-
-	* sim/app/geo/coverworld/CoverWorldWithUI.java: Restored
-
-2010-02-02 17:15  mcoletti
-
-	* sim/: util/geo/GeomWrapper.java, util/geo/Network.java,
-	portrayal/geo/GeomFieldPortrayal.java,
-	portrayal/geo/GeometryInspector.java, util/geo/MasonGeometry.java,
-	io/geo/GeoToolsImporter.java, io/geo/MasonImporter.java,
-	io/geo/OGRImporter.java, field/geo/GeomField.java,
-	app/geo/adjacentworld/AdjacentWorld.java,
-	app/geo/gridfollow/Agent.java, app/geo/gridfollow/GeoTest.java,
-	app/geo/guitest1/GeoGuiTest.java, app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest2/GeoOgrTest.java, app/geo/ogrtest3/Agent.java,
-	app/geo/ogrtest3/GeoOgrTest.java,
-	app/geo/routefollow/GeoGuiTest.java, app/geo/touchTest/Agent.java,
-	app/geo/touchTest/TouchTest.java: s/MasonGeometry/GeomMason/
-
-2010-01-31 18:38  mcoletti
-
-	* sim/app/geo/adjacentworld/AdjacentWorldWithUI.java: Properly
-	displays GeomFields.  Now to get Mover to properly update the
-	simulation.
-
-2010-01-31 18:31  mcoletti
-
-	* sim/app/geo/adjacentworld/: AdjacentWorld.java,
-	AdjacentWorldWithUI.java, Mover.java: Added first cut of new demo. 
-	Not done yet.
-
-2010-01-19 17:29  mcoletti
-
-	* sim/app/geo/touchTest/: TouchTest.java, TouchTestWithUI.java:
-	Places agent in Arlington County.  Start of placing agents in
-	adjacent regions.
-
-2010-01-19 17:15  mcoletti
-
-	* sim/app/geo/touchTest/: Agent.java, TouchTest.java,
-	TouchTestWithUI.java, index.html: Start of touch test harness.
-
-2010-01-19 16:32  mcoletti
-
-	* sim/portrayal/geo/GeomFieldPortrayal.java: Removed unused
-	imports.  Commented out debugging statement.
-
-2010-01-19 13:23  mcoletti
-
-	* sim/field/geo/GeomField.java: Added getTouchingObjects()
-
-2010-01-19 10:28  ksulliv
-
-	* Makefile, sim/app/geo/coverworld/CoverWorld.java,
-	sim/app/geo/coverworld/CoverWorldWithUI.java,
-	sim/app/geo/ogrtest1/GeoOgrTest.java,
-	sim/app/geo/ogrtest1/GeoOgrTestGUI.java,
-	sim/app/geo/ogrtest3/GeoOgrTest.java,
-	sim/io/geo/MasonImporter.java, sim/io/geo/OGRImporter.java,
-	sim/portrayal/geo/GeomFieldPortrayal.java,
-	sim/portrayal/geo/GeomPortrayal.java,
-	sim/util/geo/MasonGeometry.java: [no log message]
-
-2010-01-18 17:27  mcoletti
-
-	* sim/app/geo/guitest1/: GeoGuiTest.java, GeoGuiTestGUI.java: Now
-	have agent moving around as a red dot.	This way when the
-	simulation is paused the agent can be readily picked out.
-
-2010-01-18 16:57  mcoletti
-
-	* sim/util/geo/MasonGeometry.java: getCentroid() should return
-	Point not a string representation of Point.
-
-2010-01-08 16:16  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Changed to compensate for use
-	of MasonGeometry.
-
-2010-01-05 15:28  mcoletti
-
-	* sim/app/geo/guitest1/Agent.java: Y coordinates were not getting
-	properly updated for diagonal movement.
-
-2009-12-23 18:05  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTest.java: Fixed bug whereby polygon
-	wasn't getting properly added to the GeomField.
-
-2009-12-10 16:32  mcoletti
-
-	* sim/app/geo/coverworld/CoverWorld.java: Minor code and comment
-	changes.
-
-2009-12-10 16:25  mcoletti
-
-	* sim/util/geo/MasonGeometry.java: Added toString(), which just
-	reports underlying Geometry string.
-
-2009-12-07 18:42  mcoletti
-
-	* sim/portrayal/geo/GeomPortrayal.java: Fixed bug whereby polygon
-	internal rings were not being properly drawn.
-
-2009-11-30 13:05  ksulliv
-
-	* sim/io/geo/MasonImporter.java: [no log message]
-
-2009-11-30 12:53  mcoletti
-
-	* sim/app/geo/: ogrtest3/GeoOgrTestGUI.java,
-	coverworld/CoverWorldWithUI.java: Compensated for portryal package
-	rename.
-
-2009-11-30 12:46  ksulliv
-
-	* sim/portrayal/geo/: GeomFieldPortrayal.java, GeomPortrayal.java,
-	GeometryInspector.java: [no log message]
-
-2009-11-29 14:56  mcoletti
-
-	* sim/app/geo/ogrtest3/: GeoOgrTest.java, GeoOgrTestGUI.java:
-	s/NUM_AGENTS/numAgents/ and added inspector friendly member
-	functions.
-
-2009-11-22 19:09  ksulliv
-
-	* sim/portrayal/geomfield/: GeomFieldPortrayal.java,
-	GeomPortrayal.java, GeometryInspector.java: [no log message]
-
-2009-11-22 18:40  mcoletti
-
-	* sim/app/geo/coverworld/: Agent.java, CoverWorld.java,
-	CoverWorldWithUI.java, index.html: Moved demo to proper
-	package/location.
-
-2009-11-22 18:25  mcoletti
-
-	* sim/util/geo/Network.java: Fixed bug whereby createFromGeomField
-	didn't know about MasonGeometry wrapper object, therefore network
-	was never getting populated.
-
-2009-11-22 18:01  mcoletti
-
-	* ChangeLog: CVS history dump of changes.
-
-2009-11-20 10:14  ksulliv
-
-	* sim/: app/geo/gridfollow/GeoTestGUI.java,
-	app/geo/guitest1/GeoGuiTestGUI.java,
-	app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest1/GeoOgrTestGUI.java,
-	app/geo/ogrtest2/GeoOgrTestGUI.java,
-	app/geo/ogrtest3/GeoOgrTestGUI.java,
-	app/geo/routefollow/GeoGuiTestGUI.java, io/geo/MasonImporter.java,
-	io/geo/OGRImporter.java: [no log message]
-
-2009-11-19 20:40  mcoletti
-
-	* sim/app/geo/: test1/GeoFieldTest1.java, test2/GeoFieldTest2.java:
-	Now uses MasonGeometry wrapper; works again.
-
-2009-11-19 20:24  mcoletti
-
-	* sim/app/geo/: ogrtest2/GeoOgrTestGUI.java,
-	ogrtest1/GeoOgrTestGUI.java, ogrtest3/GeoOgrTestGUI.java,
-	routefollow/GeoGuiTestGUI.java: Fixed import to reflect renaming.
-
-2009-11-19 20:16  mcoletti
-
-	* sim/: portrayal/geomfield/GeomFieldPortrayal.java,
-	app/geo/guitest1/GeoGuiTestGUI.java,
-	app/geo/gridfollow/GeoTestGUI.java: Fixed import to reflect
-	renaming.
-
-2009-11-16 10:43  ksulliv
-
-	* Makefile, sim/app/geo/gridfollow/GeoTest.java,
-	sim/app/geo/guitest1/GeoGuiTest.java,
-	sim/app/geo/ogrtest2/GeoOgrTest.java,
-	sim/app/geo/ogrtest3/GeoOgrTest.java,
-	sim/app/geo/routefollow/GeoGuiTest.java,
-	sim/field/geo/GeomField.java, sim/io/geo/GeoToolsImporter.java,
-	sim/io/geo/GeoToolsInfo.java, sim/io/geo/GeomImporter.java,
-	sim/io/geo/GeometryInfo.java, sim/io/geo/MasonImporter.java,
-	sim/io/geo/MasonInfo.java, sim/io/geo/OGRInfo.java,
-	sim/util/geo/GeometricProperties.java,
-	sim/util/geo/MasonGeometry.java: [no log message]
-
-2009-11-16 09:27  ksulliv
-
-	* Makefile, sim/app/geo/gridfollow/GeoTest.java,
-	sim/app/geo/gridfollow/GeoTestGUI.java,
-	sim/app/geo/guitest1/Agent.java,
-	sim/app/geo/guitest1/GeoGuiTest.java,
-	sim/app/geo/guitest1/GeoGuiTestGUI.java,
-	sim/app/geo/ogrtest1/Agent.java,
-	sim/app/geo/ogrtest1/GeoOgrTest.java,
-	sim/app/geo/ogrtest1/GeoOgrTestGUI.java,
-	sim/app/geo/ogrtest2/Agent.java,
-	sim/app/geo/ogrtest2/GeoOgrTest.java,
-	sim/app/geo/ogrtest2/GeoOgrTestGUI.java,
-	sim/app/geo/ogrtest3/Agent.java,
-	sim/app/geo/ogrtest3/GeoOgrTest.java,
-	sim/app/geo/ogrtest3/GeoOgrTestGUI.java,
-	sim/app/geo/routefollow/GeoGuiTest.java,
-	sim/app/geo/routefollow/GeoGuiTestGUI.java,
-	sim/app/geo/test1/Agent.java, sim/app/geo/test1/GeoFieldTest1.java,
-	sim/app/geo/test2/Agent.java, sim/app/geo/test2/GeoFieldTest2.java,
-	sim/field/geo/GeomField.java, sim/io/geo/GeoToolsImporter.java,
-	sim/io/geo/GeoToolsInfo.java, sim/io/geo/GeomImporter.java,
-	sim/io/geo/GeometryInfo.java, sim/io/geo/MasonImporter.java,
-	sim/io/geo/MasonInfo.java, sim/io/geo/OGRImporter.java,
-	sim/io/geo/OGRInfo.java, sim/util/geo/GeometricProperties.java,
-	sim/util/geo/MasonGeometry.java, sim/util/geo/Network.java: [no log
-	message]
-
-2009-11-16 09:06  ksulliv
-
-	* sim/io/: GeoToolsImporter.java, GeoToolsInfo.java,
-	GeomImporter.java, GeometryInfo.java, MasonImporter.java,
-	MasonInfo.java, OGRImporter.java, OGRInfo.java,
-	geo/GeoToolsImporter.java, geo/GeoToolsInfo.java,
-	geo/GeomImporter.java, geo/GeometryInfo.java,
-	geo/MasonImporter.java, geo/MasonInfo.java, geo/OGRImporter.java,
-	geo/OGRInfo.java: [no log message]
-
-2009-11-16 09:03  ksulliv
-
-	* CHANGES, Makefile, README, sim/field/GeomField.java,
-	sim/field/geo/GeomField.java: [no log message]
-
-2009-11-16 08:52  ksulliv
-
-	* sim/: Makefile, app/geo/ogrtest3/Agent.java,
-	app/geo/ogrtest3/GeoOgrTest.java, io/MasonImporter.java: [no log
-	message]
-
-2009-11-11 16:12  ksulliv
-
-	* sim/: app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest2/GeoOgrTest.java, app/geo/ogrtest3/GeoOgrTest.java,
-	io/MasonImporter.java, io/MasonInfo.java: [no log message]
-
-2009-11-09 15:41  ksulliv
-
-	* sim/: app/geo/ogrtest1/GeoOgrTestGUI.java,
-	app/geo/ogrtest1/car.jpeg,
-	portrayal/geomfield/GeomFieldPortrayal.java: [no log message]
-
-2009-11-04 17:34  ksulliv
-
-	* sim/io/: GeoToolsImporter.java, GeoToolsInfo.java: [no log
-	message]
-
-2009-11-04 11:01  ksulliv
-
-	* sim/: app/geo/ogrtest1/Agent.java,
-	app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest1/GeoOgrTestGUI.java,
-	app/geo/ogrtest3/GeoOgrTest.java, field/GeomField.java,
-	io/OGRImporter.java, portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeometryInspector.java,
-	util/geo/MasonGeometry.java: [no log message]
-
-2009-11-04 09:39  ksulliv
-
-	* sim/: app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest2/GeoOgrTest.java, app/geo/ogrtest3/Agent.java,
-	app/geo/ogrtest3/GeoOgrTest.java, field/GeomField.java,
-	io/OGRImporter.java, portrayal/geomfield/DisplayGeometry.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java,
-	portrayal/geomfield/GeometryInspector.java,
-	util/geo/MasonGeometry.java: [no log message]
-
-2009-11-02 13:51  mcoletti
-
-	* sim/app/geo/: ogrtest1/GeoOgrTest.java, ogrtest2/GeoOgrTest.java:
-	Rolled forward ingest() interface changes.
-
-2009-11-02 11:42  ksulliv
-
-	* sim/: app/geo/ogrtest3/GeoOgrTest.java, io/GeomImporter.java,
-	io/GeometryInfo.java, io/OGRImporter.java, io/OGRInfo.java,
-	util/geo/GeometricProperties.java: [no log message]
-
-2009-10-30 13:59  mcoletti
-
-	* sim/app/geo/: ogrtest3/GeoOgrTest.java, ogrtest1/GeoOgrTest.java:
-	added dataDirectory string
-
-2009-10-30 13:58  mcoletti
-
-	* sim/field/GeomField.java: Merged Keith's cosmetic changes.
-
-2009-10-29 16:18  ksulliv
-
-	* sim/: app/geo/gridfollow/Agent.java,
-	app/geo/gridfollow/GeoTest.java,
-	app/geo/gridfollow/GeoTestGUI.java, app/geo/guitest1/Agent.java,
-	app/geo/guitest1/GeoGuiTest.java,
-	app/geo/guitest1/GeoGuiTestGUI.java, app/geo/ogrtest1/Agent.java,
-	app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest1/GeoOgrTestGUI.java, app/geo/ogrtest3/Agent.java,
-	app/geo/ogrtest3/GeoOgrTest.java,
-	app/geo/ogrtest3/GeoOgrTestGUI.java,
-	app/geo/routefollow/Agent.java,
-	app/geo/routefollow/GeoGuiTest.java,
-	app/geo/routefollow/GeoGuiTestGUI.java, app/geo/test1/Agent.java,
-	app/geo/test1/GeoFieldTest1.java, app/geo/test2/Agent.java,
-	app/geo/test2/GeoFieldTest2.java, field/GeomField.java,
-	io/GeomImporter.java, io/GeometryInfo.java, io/OGRImporter.java,
-	io/OGRInfo.java, util/geo/GeometricProperties.java: [no log
-	message]
-
-2009-10-27 15:43  ksulliv
-
-	* sim/: app/geo/ogrtest2/GeoOgrTest.java,
-	util/geo/GeometricProperties.java: [no log message]
-
-2009-10-27 15:13  ksulliv
-
-	* sim/util/geo/GeometricProperties.java: [no log message]
-
-2009-10-27 10:52  ksulliv
-
-	* sim/: io/GeometryInfo.java, io/OGRInfo.java,
-	portrayal/geomfield/GeometryInspector.java: [no log message]
-
-2009-10-26 13:25  ksulliv
-
-	* sim/io/OGRInfo.java: [no log message]
-
-2009-10-26 10:51  ksulliv
-
-	* sim/: app/geo/ogrtest3/Agent.java,
-	app/geo/ogrtest3/GeoOgrTest.java, io/GeometryInfo.java,
-	io/OGRImporter.java, io/OGRInfo.java,
-	portrayal/geomfield/DisplayGeometry.java,
-	portrayal/geomfield/GeomPortrayal.java,
-	portrayal/geomfield/GeometryInspector.java: [no log message]
-
-2009-10-26 08:36  ksulliv
-
-	* sim/: io/OGRImporter.java,
-	portrayal/geomfield/DisplayGeometry.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-23 13:32  ksulliv
-
-	* sim/: app/geo/ogrtest2/Agent.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-23 11:52  ksulliv
-
-	* sim/io/OGRImporter.java: [no log message]
-
-2009-10-23 11:01  ksulliv
-
-	* sim/: app/geo/ogrtest1/GeoOgrTestGUI.java,
-	portrayal/geomfield/DisplayGeometry.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-22 15:13  ksulliv
-
-	* sim/portrayal/geomfield/: DisplayGeometry.java,
-	GeomFieldPortrayal.java: [no log message]
-
-2009-10-22 15:07  ksulliv
-
-	* sim/: app/geo/ogrtest2/GeoOgrTest.java,
-	portrayal/geomfield/DisplayGeometry.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-20 10:14  ksulliv
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-19 17:24  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTest.java: Now use dataDirectory for
-	easy tailoring of data path.
-
-2009-10-19 17:23  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: drawPolygon()
-	deprecated.  Changed call to that function to drawGeometry.
-
-2009-10-19 16:41  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTest.java: Bumped to 50 agents.  Fixed
-	data path.
-
-2009-10-19 16:36  ksulliv
-
-	* sim/: app/geo/ogrtest2/GeoOgrTestGUI.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-19 16:25  ksulliv
-
-	* sim/: app/geo/ogrtest2/GeoOgrTestGUI.java,
-	app/geo/ogrtest3/GeoOgrTest.java, field/GeomField.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-16 18:58  mcoletti
-
-	* sim/app/geo/ogrtest3/: Agent.java, GeoOgrTest.java,
-	GeoOgrTestGUI.java: Now uses GMU campus shapefiles.  Agents now
-	move along walk ways.
-
-2009-10-15 16:36  ksulliv
-
-	* sim/: app/geo/ogrtest2/Agent.java,
-	app/geo/ogrtest2/GeoOgrTestGUI.java,
-	app/geo/ogrtest3/GeoOgrTest.java,
-	portrayal/geomfield/GeomFieldPortrayal.java: [no log message]
-
-2009-10-15 15:57  ksulliv
-
-	* sim/: app/geo/ogrtest2/Agent.java,
-	app/geo/ogrtest2/GeoOgrTest.java,
-	app/geo/ogrtest2/GeoOgrTestGUI.java, field/GeomField.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	portrayal/geomfield/GeomPortrayal.java: [no log message]
-
-2009-10-08 16:43  ksulliv
-
-	* sim/: Makefile, app/geo/ogrtest1/GeoOgrTest.java,
-	app/geo/ogrtest2/GeoOgrTest.java, app/geo/ogrtest3/GeoOgrTest.java,
-	io/OGRImporter.java, portrayal/geomfield/GeomPortrayal.java: [no
-	log message]
-
-2009-10-02 14:59  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: drawLineString_() now
-	uses Java 5 GeneralPath not Java 6 Path2D to resolve perfomance and
-	compatability issues.
-
-2009-09-25 15:53  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTestGUI.java: Toggled on loading
-	building layer.
-
-2009-09-25 15:53  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: Toggle loading building
-	layer.
-
-2009-09-25 15:38  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: Now add 50 randomly moving
-	agents to the simulation.
-
-2009-09-25 15:37  mcoletti
-
-	* sim/app/geo/ogrtest3/Agent.java: Now randomly select a road
-	segment to start on.
-
-2009-09-25 15:24  mcoletti
-
-	* sim/app/geo/ogrtest3/Agent.java: Fixed bug whereby the agent
-	could run off the end of the current line segment and thus not find
-	the start of the next one since nearest point would then be too far
-	away.  Fixed another bug where the step size would always be reset
-	to 1 or -1 despite the step size being initialized to larger
-	values.
-
-2009-09-25 15:23  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTestGUI.java: Reduced size of agent
-	dot to something reasonable.
-
-2009-09-22 18:13  mcoletti
-
-	* sim/app/geo/ogrtest2/: GeoOgrTestGUI.java, index.html: Fixed
-	typo.
-
-2009-09-22 18:12  mcoletti
-
-	* sim/app/geo/ogrtest2/: GeoOgrTestGUI.java, index.html: Added
-	index.html describing example.	Spruced up some comments.
-
-2009-09-22 18:01  mcoletti
-
-	* sim/app/geo/ogrtest1/: GeoOgrTestGUI.java, index.html: Added
-	index.html describing example.	Spruced up some comments.
-
-2009-09-22 17:54  mcoletti
-
-	* sim/app/geo/guitest1/: GeoGuiTest.java, GeoGuiTestGUI.java,
-	index.html: Spruced up the comments and embellished the index.html
-	a bit.
-
-2009-09-22 17:46  mcoletti
-
-	* sim/app/geo/guitest1/index.html: Very basic index.html that
-	describes intent of this demo package.
-
-2009-09-22 17:18  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: I swear this is
-	the LAST attempt at getting the thrown exception right.  :P
-
-2009-09-22 16:02  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Forgot that
-	sometimes the object parameter for draw() is null, so now check for
-	that.
-
-2009-09-22 15:59  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: draw() now
-	throws RuntimeException if not given a GeomField.
-
-2009-09-22 15:55  mcoletti
-
-	* sim/app/geo/gridfollow/GeoTest.java: Removed redundant
-	addGeometry() call.
-
-2009-09-22 13:55  mcoletti
-
-	* sim/app/geo/test2/GeoFieldTest2.java: Cleaned up imports.
-
-2009-09-22 13:54  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: Now use data directory.
-
-2009-09-22 13:51  mcoletti
-
-	* sim/app/geo/: ogrtest1/GeoOgrTest.java, ogrtest2/GeoOgrTest.java:
-	Now use data directory.
-
-2009-09-22 13:50  mcoletti
-
-	* sim/io/OGRImporter.java: Fixed bug whereby file not found check
-	should happen when file is opened, not when the driver is loaded.
-
-2009-09-09 18:55  mcoletti
-
-	* sim/app/geo/ogrtest3/: Agent.java, GeoOgrTest.java,
-	GeoOgrTestGUI.java: We have a point moving round, though very
-	slowly.  And eventually it wedges.
-
-2009-09-09 18:39  mcoletti
-
-	* sim/app/geo/ogrtest3/: Agent.java, GeoOgrTest.java,
-	GeoOgrTestGUI.java: First cut at having an agent move through road
-	network.  Not quite working yet, but close.  Maybe.
-
-2009-09-09 17:57  mcoletti
-
-	* sim/app/geo/gridfollow/: Agent.java, GeoTest.java, Network.java,
-	NetworkDirectedEdge.java, NetworkEdge.java, PointMoveTo.java:
-	Compensated for moving Network stuff to another package.
-
-2009-09-09 17:56  mcoletti
-
-	* sim/util/geo/PointMoveTo.java: Made member functions and class
-	public so can be accessed by other packages.
-
-2009-09-09 17:53  mcoletti
-
-	* sim/util/geo/: Network.java, NetworkDirectedEdge.java,
-	NetworkEdge.java, PointMoveTo.java: Moved these classes to
-	sim.util.geo package.
-
-2009-09-09 15:07  mcoletti
-
-	* sim/app/geo/gridfollow/NetworkEdge.java: Updated class comment.
-
-2009-09-09 15:00  mcoletti
-
-	* sim/app/geo/gridfollow/GeoTest.java: Some more code clean up.
-
-2009-09-09 14:37  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Cleaned up some comments and
-	formatting.
-
-2009-09-09 14:33  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Added findNewPath() which
-	contains code pulled from move().
-
-2009-09-09 14:26  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Fixed up imports.
-
-2009-09-09 14:25  mcoletti
-
-	* sim/app/geo/routefollow/Agent.java: tighted up imports
-
-2009-09-02 17:23  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Bug fixed.  Agent now randomly
-	traverses entire network.
-
-2009-09-02 16:52  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Closer to fixing traversal bug
-	where sometimes agent teleports to wrong line segment end.
-
-2009-09-02 16:05  mcoletti
-
-	* sim/app/geo/gridfollow/GeoTest.java: Did manual noding of
-	network.
-
-2009-09-01 17:40  mcoletti
-
-	* sim/app/geo/gridfollow/GeoTest.java: Enabled agent.
-
-2009-09-01 17:39  mcoletti
-
-	* sim/app/geo/gridfollow/PointMoveTo.java: Added setCoordinate()
-	and new ctor.
-
-2009-09-01 17:39  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Agent now navigatges along
-	grid network.
-
-2009-08-31 16:47  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Points are now
-	properly centered at the given (x,y)
-
-2009-08-31 15:22  mcoletti
-
-	* sim/app/geo/gridfollow/: GeoTest.java, GeoTestGUI.java: Now draw
-	intersections.
-
-2009-08-31 15:22  mcoletti
-
-	* sim/app/geo/gridfollow/Agent.java: Moved PointMoveTo internal
-	class to separate class.
-
-2009-08-31 15:21  mcoletti
-
-	* sim/app/geo/gridfollow/PointMoveTo.java: Pulled PointMoveTo out
-	of Agent.java; convenience class for moving a Point.  May
-	eventually move this to a separate utility package.
-
-2009-08-28 18:24  mcoletti
-
-	* sim/app/geo/gridfollow/: Agent.java, GeoGuiTest.java,
-	GeoGuiTestGUI.java, GeoTest.java, GeoTestGUI.java, Network.java,
-	NetworkDirectedEdge.java, NetworkEdge.java: Added Network,
-	NetworkDirectedEdge, and NetworkEdge classes.  Renamed GeoGuiTest
-	to GeoTest.  Renamed GeoGuitTestGUI to GeoTestGUI.  Hooked in
-	network.  Appears to build planar graph from line strings, but
-	still needs to be verified.
-
-2009-08-24 18:06  mcoletti
-
-	* sim/app/geo/routefollow/: Agent.java, GeoGuiTest.java: Made line
-	more complicated.  Agent now moves back and forth along line.
-
-2009-08-24 18:05  mcoletti
-
-	* sim/app/geo/routefollow/Agent.java: The agent now moves back and
-	forth along the line segment.
-
-2009-08-24 17:44  mcoletti
-
-	* sim/app/geo/gridfollow/: Agent.java, GeoGuiTest.java,
-	GeoGuiTestGUI.java: Initial start of gridfollow use case.  Just
-	blind copy of routefollow.
-
-2009-08-24 17:12  mcoletti
-
-	* sim/app/geo/routefollow/GeoGuiTest.java: More sophisticated line
-	string.  :P
-
-2009-08-24 15:58  mcoletti
-
-	* sim/app/geo/routefollow/Agent.java: Agent now moves along line
-	segment.
-
-2009-08-21 17:59  mcoletti
-
-	* sim/app/geo/routefollow/: Agent.java, GeoGuiTest.java,
-	GeoGuiTestGUI.java: Create line.  Create agent.  Shows both in GUI
-	mode.
-
-2009-08-20 16:45  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTest.java: Minor formatting change.
-
-2009-08-20 16:45  mcoletti
-
-	* sim/app/geo/routefollow/: Agent.java, GeoGuiTestGUI.java,
-	GeoGuiTest.java: Start of route following test scenario. 
-	Essentially copied over code from guitest1 for start.
-
-2009-08-19 14:40  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Minor comments added.
-
-2009-08-19 14:39  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTestGUI.java: Now specifies a portryal
-	for filling in polygonal holes.
-
-2009-08-19 14:36  mcoletti
-
-	* sim/app/geo/ogrtest1/GeoOgrTestGUI.java: Now specifies a portryal
-	for filling in polygonal holes.
-
-2009-08-19 14:36  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Now properly fills in
-	interior polygon holes.
-
-2009-08-18 17:25  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: Now ensure all loaded
-	layers use the same MBR so that things now properly line up.
-
-2009-08-18 15:40  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTest.java: Reads in roads.
-
-2009-08-18 15:40  mcoletti
-
-	* sim/app/geo/ogrtest3/GeoOgrTestGUI.java: Portrays hydrography,
-	buildings, and roads now.
-
-2009-08-18 15:40  mcoletti
-
-	* sim/io/OGRImporter.java: Now supports reading lines.
-
-2009-08-17 13:32  mcoletti
-
-	* sim/app/geo/ogrtest3/: Agent.java, GeoOgrTest.java,
-	GeoOgrTestGUI.java: Added new OGR test bed for Athens, GA.
-
-2009-08-14 16:20  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTest.java: Added NUM_AGENTS, which is
-	now set to just five.
-
-2009-08-14 16:20  mcoletti
-
-	* sim/app/geo/ogrtest2/Agent.java: Agents now move in a straight
-	line until they encounter water.  Then they will randomly select a
-	different direction to move.
-
-2009-08-14 16:19  mcoletti
-
-	* sim/field/GeomField.java: Added isCovered()
-
-2009-08-14 15:32  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTestGUI.java: This uses the
-	individualized GeomField implementation model. One GeomField holds
-	the stream polygons, and another holds the agents.
-
-2009-08-14 15:31  mcoletti
-
-	* sim/app/geo/ogrtest2/GeoOgrTest.java: Now have 50 agents running
-	around on the main island.
-
-2009-08-14 15:31  mcoletti
-
-	* sim/app/geo/ogrtest2/Agent.java: Agents now stay on land, if
-	possible.
-
-2009-08-14 15:08  mcoletti
-
-	* sim/field/GeomField.java: added setMBR()
-
-2009-08-14 14:17  mcoletti
-
-	* sim/app/geo/ogrtest1/GeoOgrTestGUI.java: GUI wrapper for
-	GeoOgrTest.
-
-2009-08-13 17:12  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Over-ride
-	getPortrayalForObject() such that it can now fetch any special
-	portrayals for user data objects.
-
-2009-08-13 17:11  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Fixed scale for point
-	rendering.  (Still need to implement scale for other geometries.)
-
-2009-08-13 17:10  mcoletti
-
-	* sim/io/OGRImporter.java: Commented out noisy print statements.
-
-2009-08-13 17:09  mcoletti
-
-	* sim/app/geo/ogrtest1/GeoOgrTest.java: Removed superannuated test
-	code.
-
-2009-08-13 17:08  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTestGUI.java: Small code change.
-
-2009-08-13 17:08  mcoletti
-
-	* sim/app/geo/ogrtest1/Agent.java: Bumped up move rate to 100 so
-	that agent has better chance of changing terrain between moves.
-
-2009-08-12 17:07  mcoletti
-
-	* sim/app/geo/ogrtest1/GeoOgrTest.java: Tied in agent.
-
-2009-08-12 17:07  mcoletti
-
-	* sim/app/geo/ogrtest1/Agent.java: Added agent that moves randomly
-	and reports whether it's on land or water.
-
-2009-08-12 15:37  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Now fill polygons if
-	fill set to true.
-
-2009-08-12 14:55  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: - Ganked
-	worldToScreenTransform() from GeoTools renderer - Use calculated
-	affine transform to properly render map Looks like things are
-	shifted a little north, but otherwise renders ok
-
-2009-08-12 13:56  mcoletti
-
-	* sim/field/GeomField.java: Added getMBR()
-
-2009-08-11 17:37  mcoletti
-
-	* sim/app/geo/ogrtest1/GeoOgrTest.java: Hooked up to GeoOgrTest.
-
-2009-08-11 17:36  mcoletti
-
-	* sim/io/OGRImporter.java: Adds ingested Geometry to GeomField.
-
-2009-08-11 17:36  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: - moved polygon
-	rendering to drawPolygon_() - added code to draw MultiPolygons
-	Doesn't seem to render anything probably because it's likely
-	outside of the drawing area.
-
-2009-08-11 17:35  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTestGUI.java: Added GUI wrapper.
-
-2009-08-11 16:58  mcoletti
-
-	* sim/io/OGRImporter.java: Implemented kludge to write out OGR
-	geometry to WKT string and then read into JTS Geometry.
-
-2009-07-29 19:42  mcoletti
-
-	* sim/io/OGRImporter.java: Can dump out some info, but still need
-	to figure out how to get geometry details.
-
-2009-07-29 17:57  mcoletti
-
-	* sim/: app/geo/test1/Agent.java, app/geo/test1/GeoFieldTest1.java,
-	portrayal/geomfield/GeomFieldPortrayal.java,
-	app/geo/ogrtest1/GeoOgrTest.java, io/GeomImporter.java,
-	io/OGRImporter.java: Added Importer and OGRImporter subclass
-
-2009-07-27 17:13  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Added
-	getDefaultPortrayal().	Now rely on getting tailored portrayals to
-	render Geometries.
-
-2009-07-24 19:41  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Removed
-	superfluous draw_().
-
-2009-07-24 19:40  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Now use a
-	default GeomPortrayal object.
-
-2009-07-24 19:40  mcoletti
-
-	* sim/portrayal/geomfield/GeomPortrayal.java: Added new, simple
-	portrayal for individual Geometry objects.
-
-2009-07-22 17:32  mcoletti
-
-	* sim/: app/geo/guitest1/GeoGuiTest.java,
-	portrayal/geomfield/GeomFieldPortrayal.java: Added polygons.
-
-2009-07-22 17:31  mcoletti
-
-	* sim/app/geo/guitest1/Agent.java: Minor changes
-
-2009-07-22 13:26  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTest.java: Added sample line strings.
-
-2009-07-22 13:25  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTestGUI.java: Compensated for
-	ParseExceptiont that can be thrown from GeoGuiTest when creating
-	LineStrings.
-
-2009-07-22 13:25  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Now renders
-	LineStrings
-
-2009-07-21 18:04  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTest.java: Just added single point to
-	mark upper right boundary of area of interest.
-
-2009-07-21 18:03  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: Scaling issues
-	*seem* to be resolved.
-
-2009-07-21 18:03  mcoletti
-
-	* sim/app/geo/guitest1/Agent.java: Added static private variable
-	distance_.  Made moveRate_ static.
-
-2009-07-21 18:01  mcoletti
-
-	* sim/field/GeomField.java: getObjectsWithinDistance() will now not
-	compare and object with itself.
-
-2009-07-21 14:23  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTest.java: Now have a moving dot for
-	the agent!
-
-2009-07-21 14:17  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: WE have dots! 
-	Not handling the clipping and scaling right yet.
-
-2009-07-21 14:09  mcoletti
-
-	* sim/app/geo/guitest1/GeoGuiTestGUI.java: Added and hooked up
-	GeomFieldPortrayal.
-
-2009-07-21 14:09  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: First cut at
-	drawing objects.  Just draws points for now.  (Though it's not
-	working for some reason.)
-
-2009-07-17 15:46  mcoletti
-
-	* sim/app/geo/guitest1/: Agent.java, GeoGuiTestGUI.java: Added
-	GeoGuiTestGUI.	Runs, but doesn't show anything interesting yet
-	beyond text console debugging output.
-
-2009-07-17 15:17  mcoletti
-
-	* sim/portrayal/geomfield/GeomFieldPortrayal.java: First cut of
-	GeomFieldPortrayal
-
-2009-07-17 15:16  mcoletti
-
-	* sim/app/geo/guitest1/: Agent.java, GeoGuiTest.java: First cut of
-	GUI test
-
-2009-07-16 17:18  mcoletti
-
-	* sim/field/GeomField.java: Added an internal minimum bounding
-	rectangle that encompasses all geometries.  Added getWidth(). 
-	Added getHeight().
-
-2009-07-15 18:01  mcoletti
-
-	* sim/field/: GeoField.java, GeomField.java: Renamed GeoField to
-	GeomField to better indicate that it's just geometry and nothing
-	georeferenced.
-
-2009-07-15 18:00  mcoletti
-
-	* sim/app/geo/test2/: Agent.java, GeoFieldTest2.java: Added new
-	test for use case for detecting nearby objects.
-
-2009-07-01 18:50  mcoletti
-
-	* sim/app/geo/test1/GeoFieldTest1.java: Moved some intitialization
-	to start().  Added some debugging statements.
-
-2009-07-01 18:50  mcoletti
-
-	* sim/app/geo/test1/Agent.java: Added debugging statements.
-
-2009-07-01 18:49  mcoletti
-
-	* sim/field/GeoField.java: Fixed bug in getCoveringObjects()
-	whereby objects will always return true when compared to
-	themselves; therefore will not compare objects to themselves.
-
-2009-07-01 17:19  mcoletti
-
-	* sim/app/geo/test1/GeoFieldTest1.java: SimState containing
-	GeoField to be tested.
-
-2009-07-01 17:19  mcoletti
-
-	* sim/app/geo/test1/Agent.java: Steppable Agent for moving around
-	GeoField.
-
-2009-06-30 18:03  mcoletti
-
-	* sim/field/GeoField.java: Added getCoveringObjects()
-
-2009-06-30 15:40  mcoletti
-
-	* sim/field/GeoField.java: Initial commit of GeoMason java class
-	library.
-
-2009-06-30 15:40  mcoletti
-
-	* sim/field/GeoField.java: Initial revision
-
-Sat Jun  4 15:10:11 EDT 2011 sean
-	
-	Modified code to be compatible with recent MASON changes
-
-Wed Jun  8 00:32:43 EDT 2011
-
-	Further code modifications to be compatible with recent MASON changes
-
-Sun Jul  3 16:26:54 EDT 2011
-
-	Further code modifications to be compatible with recent MASON changes
