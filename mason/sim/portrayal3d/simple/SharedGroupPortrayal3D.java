@@ -19,6 +19,7 @@ import javax.media.j3d.*;
 public class SharedGroupPortrayal3D extends SimplePortrayal3D 
     {
 	SimplePortrayal3D child;
+	SharedGroup group = null;
     
     public SharedGroupPortrayal3D(SimplePortrayal3D child)
         {
@@ -30,8 +31,11 @@ public class SharedGroupPortrayal3D extends SimplePortrayal3D
         if(j3dModel==null)
             {
 			// load the child
-			SharedGroup group = new SharedGroup();
-			group.addChild(child.getModel(obj, null));
+			if (group == null)
+				{
+				group = new SharedGroup();
+				group.addChild(child.getModel(obj, null));
+				}
 			
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
