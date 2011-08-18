@@ -27,7 +27,7 @@ public class ConePortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a ConePortrayal3D with a default (flat opaque white) appearance and the given scale. */
-    public ConePortrayal3D(float scale)
+    public ConePortrayal3D(double scale)
         {
         this(Color.white,scale);
         }
@@ -39,7 +39,7 @@ public class ConePortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a ConePortrayal3D with a flat opaque appearance of the given color and the given scale. */
-    public ConePortrayal3D(Color color, float scale)
+    public ConePortrayal3D(Color color, double scale)
         {
         this(appearanceForColor(color),true,false,scale);
         }
@@ -51,13 +51,13 @@ public class ConePortrayal3D extends PrimitivePortrayal3D
         }
 
     /** Constructs a ConePortrayal3D with the given (opaque) image and scale. */
-    public ConePortrayal3D(Image image, float scale)
+    public ConePortrayal3D(Image image, double scale)
         {
         this(appearanceForImage(image,true),false,true,scale);
         }
 
     /** Constructs a ConePortrayal3D with the given appearance and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed. */
-    public ConePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
+    public ConePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale)
         {
         this.appearance = appearance;  
         setScale(null, scale);

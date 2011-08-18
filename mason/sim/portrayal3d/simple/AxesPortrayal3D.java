@@ -9,6 +9,7 @@ package sim.portrayal3d.simple;
 import javax.vecmath.*;
 import javax.media.j3d.*;
 import sim.portrayal3d.*;
+import sim.util.*;
 
 
 /**
@@ -21,34 +22,34 @@ import sim.portrayal3d.*;
 public class AxesPortrayal3D extends SimplePortrayal3D
     {
     // thickness of the arrows
-    float arrowDiameter;
+    double arrowDiameter;
 	
     // flag showing/hidding the letters
     boolean mLetters;
 	
-    public AxesPortrayal3D(float arrowDiameter, boolean letters)
+    public AxesPortrayal3D(double arrowDiameter, boolean letters)
         {
         this.arrowDiameter = arrowDiameter;
 		mLetters = letters;       
         }
                 
-	void createAxes(final Group group, final float arrowDiameter, final boolean letters)
+	void createAxes(Group group, double arrowDiameter, boolean letters)
         {
         float length = 1.1f;
         group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         group.addChild(Arrow.createArrow(arrowDiameter, 
-                new Vector3f(0, 0, 0), 
-                new Vector3f(length,0,0),
+                new Double3D(0, 0, 0), 
+                new Double3D(length,0,0),
                 (letters? "O": null),
                 (letters? "X": null)));
         group.addChild(Arrow.createArrow(arrowDiameter, 
-                new Vector3f(0, 0, 0), 
-                new Vector3f(0,length,0), 
+                new Double3D(0, 0, 0), 
+                new Double3D(0,length,0), 
                 null, 
                 (letters? "Y": null)));
         group.addChild(Arrow.createArrow(arrowDiameter, 
-                new Vector3f(0, 0, 0), 
-                new Vector3f(0,0,length), 
+                new Double3D(0, 0, 0), 
+                new Double3D(0,0,length), 
                 null, 
                 (letters? "Z": null)));
         }
@@ -59,7 +60,7 @@ public class AxesPortrayal3D extends SimplePortrayal3D
         if(prev != null)
             return prev;
         TransformGroup tg = new TransformGroup();
-        createAxes(tg, this.arrowDiameter, mLetters);
+        createAxes(tg, arrowDiameter, mLetters);
         clearPickableFlags(tg);
         return tg;
         }

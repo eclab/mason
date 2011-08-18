@@ -2214,4 +2214,13 @@ Version 16
 	Major modifications to the ill-used SharedGroupPortrayal3D. It's now a wrapper
 		portrayal for other SimplePortrayals which displays them repeatedly using
 		a SharedGroup and Links.  This saves some memory but is not pickable.
-
+	WireFrameBoxPortrayal3D.appearance is private
+	TilePortrayal.tmpCoords and TilePortrayal.tmpColor are private	
+	MeshPortrayal.tmpCoords and MeshPortrayal.tmpColor are private
+	QuadPortrayals of various kinds have floats changed to doubles
+	Various variables in Arrow made private and renamed
+	Added Arrow.getArrowTail() and Arrow.getArrowHead()
+	Changed a wide range of float arguments and variales to doubles in 3D to make it
+		a little simpler for people to use with fewer errors (remembering to add
+		'f' at the end).  This is a big change but it should be essentially
+		upward-compatible.

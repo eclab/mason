@@ -45,7 +45,7 @@ public class SelectionBehavior extends MouseBehavior
     boolean oneClick = true;
     boolean twoClicks = true;
     
-    public void setTolerance(float tolerance) { pickCanvas.setTolerance(tolerance); }
+    public void setTolerance(double tolerance) { pickCanvas.setTolerance((float)tolerance); }
     
 	/** Detaches the Selection Behavior from the Canvas properly, so leaks don't occur. */
     public void detach()

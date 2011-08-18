@@ -71,13 +71,6 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         return offset;
         }
 
-    static Transform3D transformForOffset(float x, float y, float z)
-        {
-        Transform3D offset = new Transform3D();
-        offset.setTranslation(new Vector3f(x, y, z));
-        return offset;
-        }
-
     /**
      * Returns a name appropriate for the edge. By default, this returns
      * (edge.info == null ? "" : "" + edge.info). Override this to make a more

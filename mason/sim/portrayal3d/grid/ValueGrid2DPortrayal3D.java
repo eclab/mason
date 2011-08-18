@@ -55,7 +55,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     {
 	Image image;
     /** Non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
-	float transparency = 1.0f;
+	double transparency = 1.0f;
 	PolygonAttributes mPolyAttributes = new PolygonAttributes();
     
     boolean useTriangles = false;
@@ -72,13 +72,13 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }
     
-	public float getTransparency()
+	public double getTransparency()
 		{
 		return transparency;
 		}
 		
-    /** Sets non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
-    public void setTransparency(float transparency)
+    /** Sets non-image transparency: 1.0 is fully opaque, 0.0 is fully transparent. */
+    public void setTransparency(double transparency)
         {
 		if (transparency >= 0.0f && transparency <= 1.0f)
 			this.transparency = transparency;
@@ -105,7 +105,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
 
     /** Be somewhat transparent (1.0 is fully opaque, 0.0f is fully transparent). 
 		The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
-    public ValueGrid2DPortrayal3D(String valueName, float transparency)
+    public ValueGrid2DPortrayal3D(String valueName, double transparency)
         {
         this.valueName = valueName;
         // we make a default portrayal that goes from blue to red when going from 0 to 1,
@@ -262,7 +262,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
             if (transparency < 1.0f )
                 {
                 appearance.setTransparencyAttributes(
-                    new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - transparency));  // duh, alpha's backwards  
+                    new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - (float)transparency));  // duh, alpha's backwards  
                 }
             }
         

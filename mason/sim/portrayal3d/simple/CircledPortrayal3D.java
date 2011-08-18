@@ -39,8 +39,8 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     {
     public final static Appearance DEFAULT_CIRCLED_APPEARANCE = appearanceForColor(new java.awt.Color(255,255,255,63));
     
-    public float scale;
-    public Appearance appearance;
+	double scale;
+	Appearance appearance;
     
     protected SimplePortrayal3D child;
     
@@ -49,12 +49,12 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         this(child, 2f);
         }
     
-    public CircledPortrayal3D(SimplePortrayal3D child, float scale)
+    public CircledPortrayal3D(SimplePortrayal3D child, double scale)
         {
         this(child,scale, false);
         }
         
-    public CircledPortrayal3D(SimplePortrayal3D child, float scale, boolean onlyCircleWhenSelected)
+    public CircledPortrayal3D(SimplePortrayal3D child, double scale, boolean onlyCircleWhenSelected)
         {
         this(child,DEFAULT_CIRCLED_APPEARANCE,scale, onlyCircleWhenSelected);
         }
@@ -64,15 +64,16 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         this(child,color, 2f ,false);
         }
 
-    public CircledPortrayal3D(SimplePortrayal3D child, java.awt.Color color, float scale, boolean onlyCircleWhenSelected)
+    public CircledPortrayal3D(SimplePortrayal3D child, java.awt.Color color, double scale, boolean onlyCircleWhenSelected)
         {
         this(child,appearanceForColor(color),scale,onlyCircleWhenSelected);
         }
     
-    public CircledPortrayal3D(SimplePortrayal3D child, Appearance appearance, float scale, boolean onlyCircleWhenSelected)
+    public CircledPortrayal3D(SimplePortrayal3D child, Appearance appearance, double scale, boolean onlyCircleWhenSelected)
         {
         this.child = child;
-        this.appearance = appearance; this.scale = scale;
+        this.appearance = appearance; 
+		this.scale = scale;
         this.onlyCircleWhenSelected = onlyCircleWhenSelected;
         }
 
@@ -143,7 +144,7 @@ public class CircledPortrayal3D extends SimplePortrayal3D
             jswitch.setCapability(Switch.ALLOW_SWITCH_WRITE);
                         
             // make a sphere
-            Sphere sphere = new Sphere(scale/2,appearance);
+            Sphere sphere = new Sphere((float)(scale/2.0),appearance);
             
             // it's not pickable
             clearPickableFlags(sphere);

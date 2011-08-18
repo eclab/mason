@@ -2548,14 +2548,14 @@ MutableInt2D has all these methods and constructors, plus a few more:
 Double2D is similar to Int2D, though you'll find a few more constructors and useful mathematics functions:
 
 \begin{methods}{\class{sim.util.Double2D} Constructor}
-\mthd{public Double2D()}  Creates an Double2D with x=0 and y=0.
-\mthd{public Double2D(double x, double y)}  Creates an Double2D with the given x and y values.
-\mthd{public Double2D(java.awt.Point p)}  Creates an Double2D with x and y values of the given Point.
-\mthd{public Double2D(java.awt.geom.Point2D.Double p)}  Creates an Double2D with x and y values of the given Point2D.Double.
-\mthd{public Double2D(java.awt.geom.Point2D.Float p)}  Creates an Double2D with x and y values of the given Point2D.Float.
-\mthd{public Double2D(MutableDouble2D p)}  Creates an Double2D with x and y values of the given MutableDouble2D.
-\mthd{public Double2D(Int2D p)}  Creates an Double2D with x and y values of the given Int2D.
-\mthd{public Double2D(MutableInt2D p)}  Creates an Double2D with x and y values of the given MutableInt2D.
+\mthd{public Double2D()}  Creates a Double2D with x=0 and y=0.
+\mthd{public Double2D(double x, double y)}  Creates a Double2D with the given x and y values.
+\mthd{public Double2D(java.awt.Point p)}  Creates a Double2D with x and y values of the given Point.
+\mthd{public Double2D(java.awt.geom.Point2D.Double p)}  Creates a Double2D with x and y values of the given Point2D.Double.
+\mthd{public Double2D(java.awt.geom.Point2D.Float p)}  Creates a Double2D with x and y values of the given Point2D.Float.
+\mthd{public Double2D(MutableDouble2D p)}  Creates a Double2D with x and y values of the given MutableDouble2D.
+\mthd{public Double2D(Int2D p)}  Creates a Double2D with x and y values of the given Int2D.
+\mthd{public Double2D(MutableInt2D p)}  Creates a Double2D with x and y values of the given MutableInt2D.
 \end{methods}
 
 \begin{methods}{\class{sim.util.Double2D}}
@@ -7141,6 +7141,7 @@ You'll notice some similarity between this code and the drawing code.  Perhaps t
 
 \section{2D Simple Portrayals}
 \label{sim.portrayal.SimplePortrayal2D}
+\label{sim.portrayal.simple.ImagePortrayal2D}
 
 \sidebar{There's no \class{sim.portrayal.SimplePortrayal} class?}{Not at present, no.  Though there is a \class{sim.portrayal.SimplePortrayal2D} class for 2D Simple Portrayals and a \class{sim.portrayal.SimplePortrayal3D} class for 3D Simple Portrayals.}  The final part of the visualization puzzle, after 2D Displays and 2D Field Portrayals, are {\bf simple portrayals}.  These are subclasses of \Class{sim.portrayal.Portrayal} whose job is to draw individual objects or values stored a Field.  Simple Portrayals are registered with Field Portrayals to draw specific objects; or objects of a certain class; or all objects in the Field, or null values, etc.  Objects in a field may also automatically serve as their own Simple Portrayals.
 
@@ -8780,7 +8781,7 @@ If you want you can access the SelectionBehavior directly (as mentioned above, d
 
 \begin{methods}{\class{sim.display3d.SelectionBehavior}}
 \mthd{public void setSelectsAll(boolean selection, boolean inspection)}  Called during \method{createSceneGraph()} to specify whether the SelectionBehavior should select and/or inspect {\it all} or merely the {\it closest} object hit by the pick ray.  The values passed in are those which were set earlier by Display3D's \method{setSelectsAll(...)} method: thus you probably should use Display3D's method instead.
-\mthd{public void setTolerance(float tolerance)} Changes the diameter of the ray, in pixels.  Larger rays are slower to pick but make it easier to pick lines or other thin objects.  The default tolerance SelectionBehavior uses is 2.0.
+\mthd{public void setTolerance(double tolerance)} Changes the diameter of the ray, in pixels.  Larger rays are slower to pick but make it easier to pick lines or other thin objects.  The default tolerance SelectionBehavior uses is 2.0.
 \mthd{public void detach()} Properly and cleanly detaches the SelectionBehavior from the scene graph.  This method is called by \method{destroySceneGraph()} to avoid memory leaks.
 \end{methods}
 
@@ -9142,7 +9143,7 @@ Some of these QuadPortrayal and other options are shown in Figure \ref{QuadPortr
 
 \begin{methods}{\class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D} Constructor}
 \mthd{public ValueGridPortrayal3D(String valueName, Image image)} Creates a ValueGridPortrayal3D with the provided value name and image for mapping.
-\mthd{public ValueGridPortrayal3D(String valueName, float transparency)} Creates a ValueGridPortrayal3D with the provided value name and transparency value, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public ValueGridPortrayal3D(String valueName, double transparency)} Creates a ValueGridPortrayal3D with the provided value name and transparency value, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
 \mthd{public ValueGridPortrayal3D(String valueName)} Creates a fully opaque, image-less ValueGridPortrayal3D with the provided value name.
 \mthd{public ValueGridPortrayal3D()} Creates a ValueGridPortrayal3D with a value name of "Value" and an object scale of 1.0.
 \end{methods}
@@ -9152,8 +9153,8 @@ You can get and set the value name, overall transparency, and image.  You can al
 
 
 \begin{methods}{\class{sim.portrayal3d.grid.ValueGrid2DPortrayal3D}}
-\mthd{public void setTransparency(float val))} Sets the overall transparency for the portrayal, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
-\mthd{public float getTransparency())} Returns the overall transparency for the portrayal, which will be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public void setTransparency(double val))} Sets the overall transparency for the portrayal, which must be between 0.0f (fully transparent) and 1.0f (fully opaque).
+\mthd{public double getTransparency())} Returns the overall transparency for the portrayal, which will be between 0.0f (fully transparent) and 1.0f (fully opaque).
 \mthd{public void setImage(Image img))} Sets the image for the portrayal, or null for no image.
 \mthd{public Image getImage())} Returns the image for the portrayal, or null for no image.
 \mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
@@ -9175,7 +9176,7 @@ The default QuadPortrayal used by ValueGrid2DPortrayal3D is a TilePortrayal with
 You can provide your own QuadPortrayal via ValueGridPortrayal2D's \method{setPortrayal...(..)} methods (for a refresher, see Section \ref{sim.portrayal.FieldPortrayal}).  Both TilePortrayal and MeshPortrayal have the same constructors:
 
 \begin{methods}{\class{sim.portrayal3d.grid.quad.TilePortrayal} and \class{sim.portrayal3dc.grid.quad.MeshPortrayal} Constructor}
-\mthd{public TilePortrayal(ColorMap map, float zScale))} Sets the color map for values in the TilePortrayal, as well as the scaling factor for elevating or lowering tiles (or for MeshPortrayal, ``peaks'') to reflect values.  0.0 indicates a completely flat portrayal surface.
+\mthd{public TilePortrayal(ColorMap map, double zScale))} Sets the color map for values in the TilePortrayal, as well as the scaling factor for elevating or lowering tiles (or for MeshPortrayal, ``peaks'') to reflect values.  0.0 indicates a completely flat portrayal surface.
 \mthd{public TilePortrayal(ColorMap map))} Sets the color map for values in the TilePortrayal, with no elevation at all (0.0).
 \end{methods}
 
@@ -9184,8 +9185,8 @@ Besides all the standard SimplePortrayal methods, QuadPortrayals provide methods
 \begin{methods}{\class{sim.portrayal3d.grid.quad.QuadPortrayal}}
 \mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
 \mthd{public ColorMap getMap()} Returns the color map for the portrayal.
-\mthd{public void setZScale(float scale)} Sets the Z (elevation) scaling factor for the portrayal.
-\mthd{public float getZScale()} Returns the Z (elevation) scaling factor for the portrayal.
+\mthd{public void setZScale(double scale)} Sets the Z (elevation) scaling factor for the portrayal.
+\mthd{public double getZScale()} Returns the Z (elevation) scaling factor for the portrayal.
 \mthd{public Int2D getCellForIntersection(PickIntersection pi, Grid2D field)} Returns the field's grid location corresponding to a given pick result on the mesh.
 \mthd{public abstract void setData(ValueGridCellInfo gridCell, float[] coordinates, float[] colors, int quadIndex, int gridWidth,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf int gridHeight)}\\
@@ -9286,7 +9287,7 @@ There are also some methods used by FieldPortrayals to set or clear various pick
 \begin{methods}{\class{sim.portrayal3d.SimplePortrayal3D} Utility}
 \mthd{public static Appearance appearanceForColor(Color unlitColor)} Produces a simple Appearance object for the given unlit color.
 \mthd{public static Appearance appearanceForColor(Color ambientColor, Color emissiveColor, Color diffuseColor,}
-\rule{0pt}{0pt}\hspace{\fill}{\sf Color specularColor, float shininess, float opacity)}\\
+\rule{0pt}{0pt}\hspace{\fill}{\sf Color specularColor, double shininess, double opacity)}\\
 Produces a simple Appearance object for the given colors, shininess, and opacity.  Ambient color is the reflective color from ambient lights.  Emissive color is the color that the object glows with as if with its own light.  Diffuse and Specular colors are colors which reflect from spotlights.  Shininess and opacity are self-explanatory, and each run from 0.0 to 1.0.  These concepts are directly from Java3D.  Colors passed in may be \variable{null}, indicating no color setting for that feature: instead it's set to jet black.  Note that in Java3D, jet black will still reflect to some degree from bright light.
 \mthd{public static Appearance appearanceForImage(Image image, boolean opaque)}  Produces a simple Appearance object for the given image.  If the image is entirely opaque, you should also set \variable{opaque} to true, which is more efficiency.  Note that there are bugs in Java3D's handling of transparent or partially transparent images: multiple such objects will often not draw in the correct order: thus objects in the back may appear to be in the front.
 \mthd{public static Appearance setAppearanceFlags(Appearance appearance)} Sets a variety of flags on an Appearance so that its features may be modified when the scene is live.  This method cannot be called on an Appearance presently used in a live scene.
@@ -9352,7 +9353,7 @@ Some final methods: prior to constructing the scene graph, you can stipulate tha
 \mthd{protected Appearance getAppearance(TransformGroup model)} Returns an Appearance associated with the given model (specifically, Shape3D number 0).  If the model is \variable{null} or the number of shapes is zero, then builds a brand new Appearance object, sets flags in it, and returns it.
 \mthd{protected void setAppearance(TransformGroup model, Appearance appearance)} Sets the Appearance associated with all the Shape3D objects in the given model.  If the model is \variable{null}, then the internal Appearance is set and future constructed models will use it.
 \mthd{public boolean setTransform(TransformGroup model, Transform3D transform)} Sets the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method can be overridden to refuse to set the transform by returning \variable{false}.
-\mthd{public boolean setScale(TransformGroup model, float val)} Sets the scale of the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method calls \method{setTransform(...)} so there's no need to override it.
+\mthd{public boolean setScale(TransformGroup model, double val)} Sets the scale of the Transform3D associated with the given model.  If the model is \variable{null}, then an internal Transform3D is set and future constructed models will use it.  This method calls \method{setTransform(...)} so there's no need to override it.
 \mthd{protected void setPickable(boolean val)} Sets whether or not future constructed models from the PrimitivePortrayal3D will be pickable.  The default is \variable{true}.
 \end{methods}
 
@@ -9383,12 +9384,12 @@ The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portray
 
 \begin{methods}{\class{sim.portrayal3d.simple.CylinderPortrayal3D} Constructor}
 \mthd{public CylinderPortrayal3D()} Creates a new CylinderPortrayal3D with the a scale of 1.0 and a flat unlit white color.
-\mthd{public CylinderPortrayal3D(float scale)} Creates a new CylinderPortrayal3D with the given scale and a flat unlit white color.
+\mthd{public CylinderPortrayal3D(double scale)} Creates a new CylinderPortrayal3D with the given scale and a flat unlit white color.
 \mthd{public CylinderPortrayal3D(Color color)} Creates a new CylinderPortrayal3D with the given color and a scale of 1.0.
-\mthd{public CylinderPortrayal3D(Color color, float scale)} Creates a new CylinderPortrayal3D with the given color and scale.
+\mthd{public CylinderPortrayal3D(Color color, double scale)} Creates a new CylinderPortrayal3D with the given color and scale.
 \mthd{public CylinderPortrayal3D(Image image)}Creates a new CylinderPortrayal3D with the given image and a scale of 1.0.
-\mthd{public CylinderPortrayal3D(Image image, float scale)} Creates a new CylinderPortrayal3D with the given image and scale.
-\mthd{public CylinderPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)} Creates a new CylinderPortrayal3D with the given appearance and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
+\mthd{public CylinderPortrayal3D(Image image, double scale)} Creates a new CylinderPortrayal3D with the given image and scale.
+\mthd{public CylinderPortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale)} Creates a new CylinderPortrayal3D with the given appearance and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
 \end{methods}
 
 SpherePortrayal3D has a few additional constructors to reflect the fact that you can specify the number of {\bf divisions} in the sphere (essentially how many polygons it uses).  If a constructor doesn't specify it, the default number of divisions is:
@@ -9398,9 +9399,9 @@ public static final int DEFAULT\_DIVISIONS = 15;
 }
 
 \begin{methods}{Additional \class{sim.portrayal3d.simple.SpherePortrayal3D} Constructor}
-\mthd{public SpherePortrayal3D(Color color, float scale, int divisions)} Creates a new SpherePortrayal3D with the given color, divisions, and scale.
-\mthd{public SpherePortrayal3D(Image image, float scale, int divisions)} Creates a new SpherePortrayal3D with the given image, divisions, and scale.
-\mthd{public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates,} \rule{0pt}{0pt}\hspace{\fill}{\sf float scale, int divisions)}\\
+\mthd{public SpherePortrayal3D(Color color, double scale, int divisions)} Creates a new SpherePortrayal3D with the given color, divisions, and scale.
+\mthd{public SpherePortrayal3D(Image image, double scale, int divisions)} Creates a new SpherePortrayal3D with the given image, divisions, and scale.
+\mthd{public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates,} \rule{0pt}{0pt}\hspace{\fill}{\sf double scale, int divisions)}\\
 Creates a new SpherePortrayal3D with the given appearance, divisions, and scale (the default scale is 1.0).  Whether to generate Normals and Texture Coordinates (Java3D notions for images and colors) can also be specified.
 \end{methods}
 
@@ -9428,26 +9429,36 @@ If you have an existing shape or scene in the form of a Lightwave Scene File (.l
 To use a BranchGroupPortrayal, you first need a BranchGroup.  You can either build this by hand if you have one handy, or you can load a scene from a file.  Via Java3D, MASON provides functionality for loading Lightwave Scene File (.lwo or .lws) or Wavefront Object File (.obj) files into BranchGroups like this:
 
 \begin{methods}{\class{sim.portrayal3d.simple.BranchGroupPortrayal3D}}
+\mthd{public static BranchGroup getBranchGroupForResource(Class c, String resourceName)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  The file name is provided in \variable{resourceName} and is located right next to the \file{.class} file of the Class \variable{c}.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
 \mthd{public static BranchGroup getBranchGroupForURL(URL url)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
-\mthd{public static BranchGroup getBranchGroupForURL(String filename)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
+\mthd{public static BranchGroup getBranchGroupForFile(String filename)} Loads a file (.lwo, .lws, or .obj) into a BranchGroup.  Auxiliary materials files (such as .mtl) are also loaded if they are in the same directory.
 \end{methods}
 
 \sidebar{Got an example?}{See the commented-out code in \file{sim/app/Balls3DWithUI}.}
 MASON has a few example files you can use in the \file{sim/portrayal3d/simple/shape/} directory.  For example, you could load one like this:
 
 \java{%
+\hbox{javax.media.j3d.BranchGroup bg = BranchGroupPortrayal3D.getBranchGroupForResource(}\\
+~\(\mbox{\ \ \ \ \ \ \ }\)BranchGroupPortrayal3D.class, "shapes/teapot.obj");
+}
+
+Or alternatively like this:
+
+\java{%
 \hbox{javax.media.j3d.BranchGroup bg = BranchGroupPortrayal3D.getBranchGroupForURL(}\\
 ~\(\mbox{\ \ \ \ \ \ \ }\)BranchGroupPortrayal3D.class.getResource("shapes/teapot.obj"));
 }
+
+I wouldn't load via \method{getBranchGroupForFile(...)}, as it's not portable.
 
 Now that you're armed with a BranchGroup, you can make a BranchGroupPortrayal3D:
 
 \begin{methods}{\class{sim.portrayal3d.simple.BranchGroupPortrayal3D} Constructor}
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene)} Creates a new BranchGroupPortrayal3D for the given scene.
-\mthd{public BranchGroupPortrayal3D(BranchGroup scene, float scale)} Creates a new BranchGroupPortrayal3D for the given scene and scaling factor.
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, double scale)} Creates a new BranchGroupPortrayal3D for the given scene and scaling factor.
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform)} Creates a new BranchGroupPortrayal3D for the given scene and transformed as specified.
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene and appearance (which overrides appearances specified in any loaded file).
-\mthd{public BranchGroupPortrayal3D(BranchGroup scene, float scale, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, scaling factor, and appearance (which overrides appearances specified in any loaded file).
+\mthd{public BranchGroupPortrayal3D(BranchGroup scene, double scale, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, scaling factor, and appearance (which overrides appearances specified in any loaded file).
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, transform, and appearance (which overrides appearances specified in any loaded file).
 \end{methods}
 
@@ -9474,10 +9485,10 @@ Images can be semitransparent or fully opaque. If an image is fully opaque, be s
 ImagePortrayal3D provides constructors for images loaded in various ways, including using Java's \code{Class.getResource} procedure.  This last constructor lets you pass in a class and a filename for the image file.  MASON will then look for a file of that filename located right next to the \file{.class} file for the class.  For example, you could say:
 
 \java{%
-ImagePortrayal3D portrayal = new ImagePortrayal3D(sim.display.Console.class, "Playing.png");
+\hbox{ImagePortrayal3D portrayal = new ImagePortrayal3D(sim.display.Console.class, "Playing.png");}
 }
 
-... and the \file{Playing.png} file, located right next to the \file{sim/display/Console.class} file, will be loaded.  This is a very convenient mechanism for loading files anywhere, including in remote Jar files, and it is recommended.
+... and the \file{Playing.png} file, located right next to the \file{sim/display/Console.class} file, will be loaded.  This is a very convenient mechanism for loading files anywhere, including in remote Jar files, and it is recommended.  It's basically the same procedure as for \class{sim.portrayal.simple.ImagePortrayal2D} (Section \ref{sim.portrayal.simple.ImagePortrayal2D}).
 
 \begin{methods}{\class{sim.portrayal3d.simple.ImagePortrayal3D} Constructor}
 \mthd{public ImagePortrayal3D(Class c, String resourceName)} Creates an ImagePortrayal3D, loading an image from a file of the given name located next to the \file{.class} file of the given class.  Uses \code{c.getClass().getResource(resourceName)} to load the Image.  The image is assumed to be semitransparent and oriented to face the user.
@@ -9498,15 +9509,21 @@ Light affects materials in an Appearance in various interesting ways: but it is 
 \begin{methods}{\class{sim.portrayal3d.LightPortrayal3D} Constructor}
 \mthd{public LightPortrayal3D(Color color, Double3D direction)} Creates directed light of a given color flowing in the provided direction.
 \mthd{public LightPortrayal3D(Color color)} Creates ambient light of a given color.
-\mthd{public LightPortrayal3D(Color color, Double3D direction, float constantAttenuation, float linearAttenuation, float quadraticAttenuation)} Creates a point light of a given color with the provided attenuation values (which range from 0.0 to 1.0 each).  You can't go wrong with 1, 0, and 0 respectively.
+\mthd{public LightPortrayal3D(Color color, Double3D direction, double constantAttenuation, double linearAttenuation, double quadraticAttenuation)} Creates a point light of a given color with the provided attenuation values (which range from 0.0 to 1.0 each).  You can't go wrong with 1, 0, and 0 respectively.
 \mthd{public LightPortrayal3D(Light light)} Creates an arbitrary light.
 \end{methods}
 
 
 \paragraph{Wireframes and Axes}
 
+\sidebar{Why not just define width, height, and length? Why six coordinates?}{Because usually wireframes go around fields, and fields are not always\,---\,in fact usually not\,---\,centered at the origin.}The class \Class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal used to draw wireframes around an entire scene.  This portrayal isn't automatic like axes mostly because the size of the wireframe must be defined by the coder.  It's a simple class: you define the six coordinates of the box in the constructor and attach it to the Display3D. 
 
-
+\begin{methods}{\class{sim.portrayal3d.WireFrameBoxPortrayal3D} Constructor}
+\mthd{public WireFrameBoxPortrayal3D()} Creates a wireframe box from \(\langle -0.5, -0.5, -0.5\rangle\) to  \(\langle 0.5, 0.5, 0.5\rangle\).  This is rarely helpful.
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2)} Creates a white wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\).
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Color c)} Creates a colored wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\).
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Appearance a)} Creates a wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\) with the given Appearance.
+\end{methods}
 
 
 

@@ -74,7 +74,8 @@ public class Balls3DWithUI extends GUIState
         try
             {
             nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(
-                    new BallPortrayal(5.0f),
+//                    new BallPortrayal(5.0f),
+                    new BranchGroupPortrayal3D(BranchGroupPortrayal3D.getBranchGroupForResource(BranchGroupPortrayal3D.class, "shapes/teapot.obj")),
                     //new BranchGroupPortrayal3D(BranchGroupPortrayal3D.getBranchGroupForURL(BranchGroupPortrayal3D.class.getResource("shapes/teapot.obj"))),
                     20f, true));
             }

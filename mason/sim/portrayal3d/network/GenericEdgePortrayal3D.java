@@ -98,9 +98,9 @@ public abstract class GenericEdgePortrayal3D extends SimpleEdgePortrayal3D
 
         if (showLabels)
             trans = transformForOffset(
-                (float) (firstPoint.x + secondPoint.x) / 2,
-                (float) (firstPoint.y + secondPoint.y) / 2,
-                (float) (firstPoint.z + secondPoint.z) / 2);
+                (firstPoint.x + secondPoint.x) / 2,
+                (firstPoint.y + secondPoint.y) / 2,
+                (firstPoint.z + secondPoint.z) / 2);
 
         if (j3dModel == null)
             {

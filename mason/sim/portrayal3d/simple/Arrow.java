@@ -11,6 +11,7 @@ import com.sun.j3d.utils.geometry.*;
 import java.awt.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
+import sim.util.*;
 
 import sim.portrayal3d.SimplePortrayal3D;
 
@@ -24,38 +25,39 @@ import sim.portrayal3d.SimplePortrayal3D;
  */
 public class Arrow extends TransformGroup
     {
-    public static final Color defaultArrowColor = Color.gray;
+	static final Color DEFAULT_ARROW_COLOR = Color.gray;
 
-    public static final Font3D f3d = new Font3D(new Font(null, Font.PLAIN, 1),
-        null);
+	static final Font3D DEFAULT_FONT3D = new Font3D(new Font(null, Font.PLAIN, 1), null);
 
-    public Cone arrowHead;
-
-    public Cylinder arrowTail;
+	Cone arrowHead;
+	Cylinder arrowTail;
+	public Cylinder getArrowTail() { return arrowTail; }
+	public Cone getArrowHead() { return arrowHead; }
 
     /**
-     * Creates a 3D arrow between points <code>stPt</code> and
-     * <code>endPt</code> if either label is not null, it adds a Text2D obect
+     * Creates a 3D arrow between points <code>startPoint</code> and
+     * <code>endPoint</code> if either label is not null, it adds a Text2D obect
      * at the appropriate end.
      */
-    public static Arrow createArrow(float arrowTailRadius, Vector3f stPt,
-        Vector3f endPt, String stLabel, String endLabel)
+    public static Arrow createArrow(double arrowTailRadius, Double3D startPoint,
+        Double3D endPoint, String stLabel, String endLabel)
         {
-        return new Arrow(arrowTailRadius, stPt, endPt, stLabel, endLabel, null);
+        return new Arrow(arrowTailRadius, startPoint, endPoint, stLabel, endLabel, null);
         }
 
-    public Arrow(float arrowTailRadius, Vector3f stPt, Vector3f endPt, String stLabel,
+    public Arrow(double arrowTailRadius, Double3D startPoint, Double3D endPoint, String stLabel,
         String endLabel, Appearance appearance)
         {
-
+		Vector3d stPt = new Vector3d(startPoint.x, startPoint.y, startPoint.z);
+		Vector3d endPt = new Vector3d(endPoint.x, endPoint.y, endPoint.z);
         Vector3d v = new Vector3d(stPt);
         v.negate();
         v.add(new Vector3d(endPt));
         // v= start -> end
 
         float arrowLen = (float) v.length();
-        float arrowHeadLen = 5.0f * arrowTailRadius;
-        float arrowHeadMaxRadius = 3.0f * arrowTailRadius;
+        float arrowHeadLen = 5.0f * (float)arrowTailRadius;
+        float arrowHeadMaxRadius = 3.0f * (float)arrowTailRadius;
         float cylinderLen = arrowLen - arrowHeadLen;
         
         if(cylinderLen<0)
@@ -70,7 +72,7 @@ public class Arrow extends TransformGroup
         Appearance caAppearance = appearance; 
         if(caAppearance==null)
             {
-            caAppearance = SimplePortrayal3D.appearanceForColors(defaultArrowColor, null, defaultArrowColor, defaultArrowColor, 1.0f, 1.0f);
+            caAppearance = SimplePortrayal3D.appearanceForColors(DEFAULT_ARROW_COLOR, null, DEFAULT_ARROW_COLOR, DEFAULT_ARROW_COLOR, 1.0f, 1.0f);
             }
 
         // Rotation Matrix for whole arrow (cylinder + cone)
@@ -94,7 +96,7 @@ public class Arrow extends TransformGroup
 
         this.setTransform(caTransform);
 
-        this.arrowTail = new Cylinder(arrowTailRadius, cylinderLen, caAppearance);
+        this.arrowTail = new Cylinder((float)arrowTailRadius, cylinderLen, caAppearance);
         Transform3D arrowCylinderTransform = new Transform3D();
         arrowCylinderTransform.set(new Vector3f(0, cylinderLen / 2, 0));
         TransformGroup arrowCylinderTransformGroup = new TransformGroup(
@@ -112,12 +114,12 @@ public class Arrow extends TransformGroup
 
         if (stLabel != null)
             {
-            Text3D txt = new Text3D(f3d, stLabel);
+            Text3D txt = new Text3D(DEFAULT_FONT3D, stLabel);
             OrientedShape3D os3d = new OrientedShape3D(txt, caAppearance,
                 OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0, 0, 0));
 
             Transform3D t = new Transform3D();
-            t.setScale(5 * arrowTailRadius);
+            t.setScale(5 * (float)arrowTailRadius);
             t.setTranslation(new Vector3f(0, -.1f, 0));
             TransformGroup stLabelTG = new TransformGroup(t);
 
@@ -127,13 +129,13 @@ public class Arrow extends TransformGroup
 
         if (endLabel != null)
             {
-            Text3D txt = new Text3D(f3d, endLabel);
+            Text3D txt = new Text3D(DEFAULT_FONT3D, endLabel);
             OrientedShape3D os3d = new OrientedShape3D(txt, caAppearance,
                 OrientedShape3D.ROTATE_ABOUT_POINT, new Point3f(0,
                     arrowLen, 0));
 
             Transform3D t = new Transform3D();
-            t.setScale(5 * arrowTailRadius);
+            t.setScale(5 * (float)arrowTailRadius);
             t.setTranslation(new Vector3f(0, arrowLen + .1f, 0));
             TransformGroup endLabelTG = new TransformGroup(t);
 

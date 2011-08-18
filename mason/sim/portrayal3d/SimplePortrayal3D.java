@@ -74,7 +74,7 @@ public class SimplePortrayal3D implements Portrayal3D
         ambient light in MASON.  That's Java3D for you, sorry. */
     public static Appearance appearanceForColors(Color ambientColor, 
         Color emissiveColor, Color diffuseColor, 
-        Color specularColor, float shininess, float opacity)
+        Color specularColor, double shininess, double opacity)
         {
         Appearance appearance = new Appearance();
 
@@ -106,11 +106,11 @@ public class SimplePortrayal3D implements Portrayal3D
         if (specularColor != null) m.setSpecularColor(new Color3f(specularColor));
         else m.setSpecularColor(BLACK);
 
-        m.setShininess(shininess);
+        m.setShininess((float)shininess);
         appearance.setMaterial(m);
         if (opacity < 1.0f)  // partially transparent
             {
-            TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - opacity); // duh, alpha's backwards
+            TransparencyAttributes tta = new TransparencyAttributes(TransparencyAttributes.BLENDED, 1.0f - (float)opacity); // duh, alpha's backwards
             tta.setCapability(TransparencyAttributes.ALLOW_VALUE_WRITE);
             tta.setCapability(TransparencyAttributes.ALLOW_VALUE_READ);
             appearance.setTransparencyAttributes(tta);

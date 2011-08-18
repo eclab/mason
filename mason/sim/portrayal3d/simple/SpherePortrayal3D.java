@@ -28,7 +28,7 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a SpherePortrayal3D with a default (flat opaque white) appearance and the given scale. */
-    public SpherePortrayal3D(float scale)
+    public SpherePortrayal3D(double scale)
         {
         this(Color.white,scale);
         }
@@ -40,13 +40,13 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a SpherePortrayal3D with a flat opaque appearance of the given color and the given scale. */
-    public SpherePortrayal3D(Color color, float scale)
+    public SpherePortrayal3D(Color color, double scale)
         {
         this(color,scale, DEFAULT_DIVISIONS);
         }
 
     /** Constructs a SpherePortrayal3D with a flat opaque appearance of the given color, scale, and divisions. */
-    public SpherePortrayal3D(Color color, float scale, int divisions)
+    public SpherePortrayal3D(Color color, double scale, int divisions)
         {
         this(appearanceForColor(color),true,false,scale,divisions);
         }
@@ -58,25 +58,25 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
         }
 
     /** Constructs a SpherePortrayal3D with the given (opaque) image and scale. */
-    public SpherePortrayal3D(Image image, float scale)
+    public SpherePortrayal3D(Image image, double scale)
         {
         this(image,scale, DEFAULT_DIVISIONS);
         }
 
     /** Constructs a SpherePortrayal3D with the given (opaque) image, scale, and divisions. */
-    public SpherePortrayal3D(Image image, float scale, int divisions)
+    public SpherePortrayal3D(Image image, double scale, int divisions)
         {
         this(appearanceForImage(image,true),false,true,scale,divisions);
         }
 
     /** Constructs a SpherePortrayal3D with the given appearance, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
-    public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale)
+    public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale)
 		{
 		this(appearance, generateNormals, generateTextureCoordinates, scale, DEFAULT_DIVISIONS);
 		}
 
     /** Constructs a SpherePortrayal3D with the given appearance, divisions, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
-    public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, float scale, int divisions)
+    public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale, int divisions)
         {
         this.appearance = appearance;  
         setScale(null, scale); 

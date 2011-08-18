@@ -9,6 +9,7 @@ package sim.portrayal3d.network;
 import java.awt.Color;
 import javax.media.j3d.*;
 import javax.vecmath.Vector3f;
+import sim.util.*;
 
 import com.sun.j3d.utils.geometry.*;
 
@@ -23,20 +24,20 @@ import sim.portrayal3d.simple.*;
  */
 public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
     {   
-    private static Vector3f dummyFrom = new Vector3f(0f,-1f,0f);
-    private static Vector3f dummyTo = new Vector3f(0f,1f,0f);
+    private static Double3D dummyFrom = new Double3D(0f,-1f,0f);
+    private static Double3D dummyTo = new Double3D(0f,1f,0f);
     
     public ArrowEdgePortrayal3D()
         {
         this(0.5f);
         }
         
-    public ArrowEdgePortrayal3D(float radius)
+    public ArrowEdgePortrayal3D(double radius)
         {
         this(radius, null);
         }
         
-    public ArrowEdgePortrayal3D(float radius, Appearance ap)
+    public ArrowEdgePortrayal3D(double radius, Appearance ap)
         {
         super(new Arrow(radius, dummyFrom, dummyTo, null, null, ap));
         }       
@@ -101,11 +102,11 @@ public class ArrowEdgePortrayal3D extends GenericEdgePortrayal3D
         //In the future I will want to read the cone out of its TransformGroup
         ((TransformGroup)arrow.getChild(1)).setCapability(Group.ALLOW_CHILDREN_READ);
                 
-        Cylinder body = arrow.arrowTail;
+        Cylinder body = arrow.getArrowTail();
         PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BODY));
         PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.TOP));
         PrimitivePortrayal3D.setShape3DFlags(body.getShape(Cylinder.BOTTOM));
-        Cone head = arrow.arrowHead;
+        Cone head = arrow.getArrowHead();
         PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.BODY));
         PrimitivePortrayal3D.setShape3DFlags(head.getShape(Cone.CAP));
         }

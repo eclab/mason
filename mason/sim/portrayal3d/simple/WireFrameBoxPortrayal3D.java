@@ -12,6 +12,7 @@ package sim.portrayal3d.simple;
 
 import sim.portrayal3d.*;
 import javax.media.j3d.*;
+import java.awt.*;
 
 /**
  * A SimplePortrayal3D which draws an arbitrary wireframe box.  Unlike most other
@@ -29,17 +30,16 @@ import javax.media.j3d.*;
  **/
 public class WireFrameBoxPortrayal3D extends SimplePortrayal3D
     {
-    //LineStripArray box;
-    public Appearance appearance;
+	Appearance appearance;
     
-    private static final float[] verts = 
+	static final float[] verts = 
         {
-        1f, 0f,  1f,     1f,  1f,  1f,  0f,  1f,  1f,   0f, 0f,  1f,     1f, 0f,  1f,/* front face*/    
-        0f, 0f, 0f,     0f,  1f, 0f,     1f,  1f, 0f,    1f, 0f, 0f,    0f, 0f, 0f,/* back face*/       
-        1f, 0f, 0f,      1f,  1f, 0f,    1f,  1f,  1f,   1f, 0f,  1f,    1f, 0f, 0f,/* right face*/     
-        0f, 0f,  1f,    0f,  1f,  1f,   0f,  1f, 0f,    0f, 0f, 0f,     0f, 0f,  1f,/* left face*/      
-        1f,  1f,  1f,    1f,  1f, 0f,   0f,  1f, 0f,    0f,  1f,  1f,    1f,  1f,  1f,/* top face*/     
-        0f, 0f,  1f,    0f, 0f, 0f,      1f, 0f, 0f,     1f, 0f,  1f,   0f, 0f,  1f /* bottom face*/
+        1f, 0f,  1f,     1f,  1f,  1f,  0f,  1f,  1f,   0f, 0f,  1f,     1f, 0f,  1f, /* front face*/    
+        0f, 0f, 0f,     0f,  1f, 0f,     1f,  1f, 0f,    1f, 0f, 0f,    0f, 0f, 0f, /* back face*/       
+        1f, 0f, 0f,      1f,  1f, 0f,    1f,  1f,  1f,   1f, 0f,  1f,    1f, 0f, 0f, /* right face*/     
+        0f, 0f,  1f,    0f,  1f,  1f,   0f,  1f, 0f,    0f, 0f, 0f,     0f, 0f,  1f, /* left face*/      
+        1f,  1f,  1f,    1f,  1f, 0f,   0f,  1f, 0f,    0f,  1f,  1f,    1f,  1f,  1f, /* top face*/     
+        0f, 0f,  1f,    0f, 0f, 0f,      1f, 0f, 0f,     1f, 0f,  1f,   0f, 0f,  1f  /* bottom face*/
         };
         
     float[] scaledVerts = new float[verts.length];
@@ -47,20 +47,14 @@ public class WireFrameBoxPortrayal3D extends SimplePortrayal3D
     /** Draws a white wireframe box from (-0.5,-0.5,-0.5) to (0.5,0.5,0.5) */
     public WireFrameBoxPortrayal3D() { this(-0.5,-0.5,-0.5,0.5,0.5,0.5); }
 
-    //    /** Draws a white wireframe box from (-dx/2,-dy/2,-dz/2) to (dx/2,dy/2,dz/2) */
-    //    public WireFrameBoxPortrayal3D(double dx, double dy, double dz)
-    //      {
-    //        this(-dx/2,-dy/2,-dz/2, dx/2,dy/2,dz/2);
-    //      }
-
     /** Draws a white wireframe box from (x,y,z) to (x2,y2,z2) */
     public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2)
         {
-        this(x,y,z,x2,y2,z2,java.awt.Color.white);
+        this(x,y,z,x2,y2,z2,Color.white);
         }
 
     /** Draws a wireframe box from (x,y,z) to (x2,y2,z2) in the specified color. */
-    public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, java.awt.Color color)
+    public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Color color)
         {
         this(x,y,z,x2,y2,z2,appearanceForColor(color));
         }

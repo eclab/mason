@@ -53,19 +53,19 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         DEFAULT_LABEL_OFFSET = transformForOffset(0.5f,0.5f,0.5f);
         }
     
-    static Transform3D transformForOffset(float x, float y, float z)
+    static Transform3D transformForOffset(double x, double y, double z)
         {
         Transform3D offset = new Transform3D();
-        offset.setTranslation(new Vector3f(x,y,z));
+        offset.setTranslation(new Vector3f((float)x,(float)y,(float)z));
         return offset;
         }
         
-    public float scale = 1.0f;
-    public Color color;
-    public Transform3D offset;
-    public Font font;
+	double scale = 1.0f;
+	Color color;
+	Transform3D offset;
+	Font font;
     protected SimplePortrayal3D child;
-    public String label;
+	String label;
     
     public LabelledPortrayal3D(SimplePortrayal3D child, String label)
         {
@@ -78,17 +78,18 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             label,color,1.0f,onlyLabelWhenSelected);
         }
     
-    public LabelledPortrayal3D(SimplePortrayal3D child, float offsetx, float offsety, float offsetz, 
-        Font font, String label, Color color, float scale, boolean onlyLabelWhenSelected)
+    public LabelledPortrayal3D(SimplePortrayal3D child, double offsetx, double offsety, double offsetz, 
+        Font font, String label, Color color, double scale, boolean onlyLabelWhenSelected)
         {
         this(child,transformForOffset(offsetx,offsety,offsetz),font,label,color,scale,onlyLabelWhenSelected);
         }        
         
     public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,
-        float scale, boolean onlyLabelWhenSelected)
+        double scale, boolean onlyLabelWhenSelected)
         {
         this.child = child;
-        this.color = color; this.offset = offset;
+        this.color = color; 
+		this.offset = offset;
         this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         this.label = label;
         this.font = font;

@@ -24,9 +24,9 @@ public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
         super(new Cylinder(0.5f, 2f));
         }
         
-    public CylinderEdgePortrayal3D(float cylinderRadius)
+    public CylinderEdgePortrayal3D(double cylinderRadius)
         {
-        super(new Cylinder(cylinderRadius, 2));
+        super(new Cylinder((float)cylinderRadius, 2));
         }
 
     public CylinderEdgePortrayal3D(Color labelColor)

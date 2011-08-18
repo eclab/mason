@@ -31,6 +31,11 @@ import com.sun.j3d.utils.picking.*;
  
 public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
     {
+	public static BranchGroup getBranchGroupForResource(Class c, String resourceName) throws IllegalArgumentException, FileNotFoundException
+		{
+		return getBranchGroupForURL(c.getResource(resourceName));
+		}
+		
     public static BranchGroup getBranchGroupForURL(URL url) throws IllegalArgumentException, FileNotFoundException
         {
         String s = url.getPath().trim();
@@ -57,7 +62,7 @@ public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a BranchGroupPortrayal3D with the given scene file loader without changing its appearance, but scaling it. */
-    public BranchGroupPortrayal3D(BranchGroup scene, float scale) 
+    public BranchGroupPortrayal3D(BranchGroup scene, double scale) 
         {
         this(scene, scale, null);
         }
@@ -75,7 +80,7 @@ public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
         }
         
     /** Constructs a BranchGroupPortrayal3D with the given scene file loader by scaling it and changing its appearance (unless the appearance is null). */
-    public BranchGroupPortrayal3D(BranchGroup scene, float scale, Appearance a) 
+    public BranchGroupPortrayal3D(BranchGroup scene, double scale, Appearance a) 
         {
         setScale(null, scale);
         traverseForAttributes(scene);

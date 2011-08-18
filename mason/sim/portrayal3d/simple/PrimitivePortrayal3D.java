@@ -141,12 +141,12 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         is set directly.  If the j3DModel is null (probably because
         the model hasn't been built yet), an underlying transform will be set and then used
         when the model is built.  Only call this method within getModel(). */
-    public boolean setScale(TransformGroup j3dModel, float val)
+    public boolean setScale(TransformGroup j3dModel, double val)
         {
 		if (transform != null || val != 1.0)
 			{
 			Transform3D tr = new Transform3D();
-			tr.setScale(val);
+			tr.setScale((float)val);
 			return setTransform(j3dModel, tr);
 			}
 		else return setTransform(j3dModel, transform); // keep as is

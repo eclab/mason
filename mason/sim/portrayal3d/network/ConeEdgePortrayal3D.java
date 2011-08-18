@@ -25,9 +25,9 @@ public class ConeEdgePortrayal3D extends PrimitiveEdgePortrayal3D
         super(new Cone(0.5f, 2f));
         }
         
-    public ConeEdgePortrayal3D(float coneBaseRadius)
+    public ConeEdgePortrayal3D(double coneBaseRadius)
         {
-        super(new Cone(coneBaseRadius, 2));
+        super(new Cone((float)coneBaseRadius, 2));
         }
         
     public ConeEdgePortrayal3D(Color labelColor)
