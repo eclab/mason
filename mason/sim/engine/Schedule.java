@@ -659,6 +659,9 @@ public class Schedule implements java.io.Serializable
         {
         double time;
         int ordering;
+		
+		public int getOrdering() { return ordering; }
+		public double getTime() { return time; }
             
         public Key(double time, int ordering)
             {
