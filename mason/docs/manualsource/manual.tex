@@ -3529,6 +3529,7 @@ schedule.scheduleOnceIn(0,\\
 
 \subsubsection{Under the Hood}
 \label{sim.util.Heap}
+\label{sim.engine.Schedule.Key}
 
 \sidebar{Why doesn't Schedule use \class{java.util.PriorityQueue}?}{\class{sim.util.Heap} is a little bit faster, but that's not the reason.  PriorityQueue didn't exist when MASON was developed.}
 The Schedule employs a binary heap: specifically the MASON utility class \Class{sim.util.Heap}.   A binary heap is a data structure in which objects can be inserted and associated with {\it keys} which specify their ordering with respect to one another.  Inserting or removing an object is \(O(\lg n)\), and finding the minimum object is \(O(\lg 1)\).  The class is pretty simple:
@@ -3549,8 +3550,25 @@ The Schedule employs a binary heap: specifically the MASON utility class \Class{
 
 MASON uses a binary heap because we don't know beforehand how you'll be using the Schedule, and so need something general-purpose.  Binary heaps are fast enough for most purposes, but if you have a lot of agents and know something about how they'll be scheduled, you may be able to do significantly better, with a smarter {\bf calendar queue} tuned for your application. All you have to do is write a subclass of Heap which overrides above methods. Then override Schedule's \method{createHeap()} method to return your special kind of calendar queue instead of the standard Heap.  Then in SimState's constructor, set the Schedule to your special subclass to use it instead of the standard Schedule.
 
-\begin{methods}{\class{sim.util.Schedule}}
+\begin{methods}{\class{sim.engine.Schedule}}
 \mthd{protected Heap createHeap()} Creates and returns a new Heap for the Schedule to use.
+\end{methods}
+
+So what kind of key does the Schedule use to represent order in the Heap?  By default, it uses an object called \Class{sim.engine.Schedule.Key}.  This is a protected class available only to subclasses of Schedule, and it holds the a timestamp and an ordering.  The Key is \class{java.lang.Comparable} with other Keys.  A Key \(A\) is {\it less} than a Key \(B\) if the timestamp for \(A\) is less than that of \(B\), or if the two timestamps are equal but the ordering of \(A\) is less than \(B\).  If the timestamps and orderings are identical then \(A\) and \(B\) are considered equal to each other.
+
+
+\begin{methods}{\class{sim.engine.Schedule.Key} Constructor}
+\mthd{public Key(double time, int ordering)} Creates Key with the given time and ordering.
+\end{methods}
+
+The Key's methods are pretty straightforward:
+
+\begin{methods}{\class{sim.engine.Schedule.Key}}
+\mthd{public double getTime()} Returns the Key's time.
+\mthd{public int getOrdering()} Returns the Key's ordering.
+\mthd{public boolean equals(Object obj)} Returns true if \variable{obj} is a Key and the orderings and times are identical.
+\mthd{public int compareTo(Object obj)} Assumes \variable{obj} is a Key.  Returns -1 if the Key's time is less than \variable{obj}'s time, or if the times are the same but the Key's ordering is less than \variable{obj}'s ordering.  Returns 1 if the Key's time is greater than \variable{obj}'s time, or if the times are the same but the Key's ordering is greater than \variable{obj}'s ordering.  Returns 0 if the orderings and times are the same.
+\mthd{public int hashCode(Object obj)} Produces a hashcode suitable for the Key, based on a combination of the time and ordering.
 \end{methods}
 
 
@@ -8438,9 +8456,9 @@ You'll need to add the class name to the \file{sim/portrayal/inspector/propertyi
 
 MASON has extensive 3D visualization facilities using the Java3D toolkit.  This toolkit is standard on Mac OS X but is an optional install on Linux or Windows.
 
-Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a graph structure (really mostly a few trees) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are high-level than say) OpenGL, which is more akin to the low-level 2D instructions.
+Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a {\bf scene graph} structure (not necessarily a graph: usually just a tree) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are high-level than say, OpenGL, which is more akin to the low-level 2D instructions.
 
-MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  Indeed, as is shown in Figure \ref{Visualization3DUML}, the 3D Display and Portrayal facility bears an intentionally very strong similarity to the 2D Display and Portrayal facility (in Figure \ref{Visualization2DUML}) discussed in Section \ref{3d}.  Even so, it's useful to understand what's going on under the hood: there are important differences in setting up and portraying a model in 3D, largely stemming from fundamental differences in how 2D and 3D graphics are done underneath.  So just as the 2D Display chapter referred to Swing and Java AWT elements without explanation, some of this chapter will refer to Java3D elements without explanation.  If you don't know Java3D, take heart though: if you don't understand what (for example) a TransformGroup is, it's probably not really essential to getting something up and running.  We just have to be thorough in this section.
+MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  As is shown in Figure \ref{Visualization3DUML}, the 3D Display and Portrayal facility bears an intentionally very strong similarity to the 2D Display and Portrayal facility (in Figure \ref{Visualization2DUML}) discussed in Section \ref{3d}.  Even so, it's useful to understand what's going on under the hood: there are important differences in setting up and portraying a model in 3D, largely stemming from fundamental differences in how 2D and 3D graphics are done underneath.  So just as the 2D Display chapter referred to Swing and Java AWT elements without explanation, some of this chapter will refer to Java3D elements without explanation.  If you don't know Java3D, take heart though: if you don't understand what (for example) a TransformGroup is, it's probably not really essential to getting something up and running.  We just have to be thorough in this section.
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6.5in]{3DUML.pdf}\end{center}
@@ -8522,6 +8540,28 @@ Display3D lets the user do various other tasks, many of them identical to Displa
 \end{itemize}
 
 \sidebar{How do you resize a Display3D on the Mac?}{Same as always, just drag from the bottom-right corner. The resize box is obscured by the drawing area.} The last one is important as it's often quite confusing.  {\bf Scaling} the image (via the ``Scale'' NumberTextField in the header) causes the image to enlarge or reduce in size by adjusting the field of view of the camera.  This is different from {\bf Moving the Eye} closer to or further away from the image via dragging with the middle mouse button (or option key).  The first simply enlarges the displayed image with respect to the window.  The second also changes the perspective of the objects: and indeed moving close enough in can cause objects to be {\it behind} the eye, and thus hidden from view.
+
+
+\paragraph{Boilerplate for Using a Display3D}
+
+In your code there's really only one significant difference between using a Display3D and a Display2D, Recall that for Display2D, at the end of your \method{GUIState.start(...)} and \method{GUIState.load(...)} methods (or more commonly, in the \method{GUIState.setupPortrayals(...)} method that they often both call) you would say:
+
+\java{%
+	display.reset();\\
+	display.repaint();
+}
+
+In Display3D it's slightly different:
+
+\java{%
+        display.createSceneGraph();\\
+        display.reset();
+}
+
+And that, more or less, is all there is to it.
+
+
+\paragraph{Details}
 
 Display3D consists of the same basic instance variables as discussed (in more detail) for Display2D (see page \pageref{display2dwidgets}):
 
@@ -8679,7 +8719,7 @@ This key is used to store preferences information associated with the Display3D.
 
 The Display3D manages the Java3D scene graph which ultimately holds all of the model objects for display.  Managing this graph requires three tasks: the Display3D must initially {\bf  build} or later {\bf rebuild} the graph; it must {\bf update} the graph each timestep to reflect changes in the model, and it must eventually {\bf destroy} the graph, either at the conclusion of the program or as part of the rebuilding procedure.
 
-These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one, and then calls the hook \method{sceneGraphCreated()}.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  So if you hang material under the light switch, in \method{sceneGraphCreated()}, you should remove it first, if it exists yet, before adding revised material.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
+These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one, and then calls the hook \method{sceneGraphCreated()}.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  So if you hang material under the light switch, in \method{sceneGraphCreated()}, you should remove it first, if it exists yet, before adding revised material.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  %You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
 
 \begin{methods}{\class{sim.display.Display3D}}
 \mthd{ public void createSceneGraph()}
@@ -9514,25 +9554,34 @@ Light affects materials in an Appearance in various interesting ways: but it is 
 \end{methods}
 
 
-\paragraph{Wireframes and Axes}
-
-\sidebar{Why not just define width, height, and length? Why six coordinates?}{Because usually wireframes go around fields, and fields are not always\,---\,in fact usually not\,---\,centered at the origin.}The class \Class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal used to draw wireframes around an entire scene.  This portrayal isn't automatic like axes mostly because the size of the wireframe must be defined by the coder.  It's a simple class: you define the six coordinates of the box in the constructor and attach it to the Display3D. 
+\sidebar{Why not just define width, height, and length? Why six coordinates?}{Because usually wireframes go around fields, and fields are not always\,---\,in fact usually not\,---\,centered at the origin.}
+\paragraph{Wireframes and Axes}\hfill The~class \Class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal used to draw wireframes around an entire scene.  This portrayal isn't automatic like axes mostly because the size of the wireframe must be defined by the coder.  It's a simple class: you define the six coordinates of the box in the constructor and attach it to the Display3D. 
 
 \begin{methods}{\class{sim.portrayal3d.WireFrameBoxPortrayal3D} Constructor}
 \mthd{public WireFrameBoxPortrayal3D()} Creates a wireframe box from \(\langle -0.5, -0.5, -0.5\rangle\) to  \(\langle 0.5, 0.5, 0.5\rangle\).  This is rarely helpful.
-\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2)} Creates a white wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\).
-\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Color c)} Creates a colored wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\).
-\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Appearance a)} Creates a wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2}, \rangle\) with the given Appearance.
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2)} Creates a white wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2} \rangle\).
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Color c)} Creates a colored wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2} \rangle\).
+\mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Appearance a)} Creates a wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2} \rangle\) with the given Appearance.
 \end{methods}
 
+Last but not least, MASON provides axes as a Decorative Simple Portrayal.  This isn't particularly helpful since Display3D's Option Pane already gives the option of turning on axes (in fact the same class) built into your display already.  At any rate, Axes are fixed to 1.0 in length, can have various arrow radii, and can be given letter labels (or not) in the form of ``X'', ``Y'', ``Z'', and ``O'' (indicating the origin).  Axes are defined with the class \Class{sim.portrayal3d.AxesPortrayal3D}.
 
+\begin{methods}{\class{sim.portrayal3d.AxesPortrayal3D} Constructor}
+\mthd{public AxesPortrayal3D(double arrowRadius, boolean letters)} Creates a set of axes with the given arrow radius and letter labels (or not).
+\end{methods}
+
+Axes use a special class underneath which is exposed in MASON because it's also used in one of the 3D Edge Portrayals (Section \ref{sim.portrayal3d.network.SimpleEdgePortrayal3D}).  This class draws arrows, and not surprisingly, it's called \Class{sim.portrayal3d.simple.Arrow}.  It is {\it not} a SimplePortrayal, just a utility class, and you'll probably never need to know about it.  Arrow is a subclass of \class{javax.media.j3d.TransformGroup}.
+
+\begin{methods}{\class{sim.portrayal3d.Arrow} Constructor}
+\mthd{public Arrow(double arrowRadius, Double3D startPoint, Double3D endPoint, String startLabel, String endLabel, Appearance appearance)} Creates an arrow of the given radius from startPoint to endPoint.  The two ends may be labeled (else you can pass in \variable{null}, and the arrow can be assigned an Appearance (or you can pass in \variable{null}).
+\end{methods}
 
 
 
 \subsection{Value Simple Portrayals}
 
 \subsection{Edge Simple Portrayals}
-\label{sim.portrayal3d.network.SimplePortrayal3D}
+\label{sim.portrayal3d.network.SimpleEdgePortrayal3D}
 
 \subsection{Wrapper Simple Portrayals}
 \label{sim.portrayal3d.simple.TransformedPortrayal3D}
