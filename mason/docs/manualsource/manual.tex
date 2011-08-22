@@ -248,7 +248,7 @@ Most of these toolkits were developed for small jobs.  MASON is distinguished am
 \item MASON has a high-quality random number generator (Mersenne Twister) and uses the fastest known implementation of it (I know\,---\,I wrote it).
 \item MASON models are largely {\it duplicable},\footnote{Not to be confused with {\it replicable}: where the model can be built again in (say) NetLogo and it'll more or less run the same.  That's also true for MASON, but it's in some sense a lower standard.} meaning that if you run the simulation with exactly the same parameters (including random number seed) it'll run exactly the same way, even on different machines.\footnote{Well, that's not quite true.  MASON doesn't use the \variable{strictfp} keyword or the \class{java.lang.StrictMath} class, so if you move to a different CPU you may get slightly different floating point results.  However if you want to guarantee full duplicability, you can add the \variable{strictfp} keyword and replace \class{java.lang.Math} references with \class{java.lang.StrictMath} and everything should be perfectly duplicable, albeit slower.}
 \item MASON dovetails nicely with ECJ\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}, a very popular evolutionary computation (genetic algorithms, etc.) toolkit I wrote, which is designed (not surprisingly) for everything from single laptops to  large jobs involving thousands of machines.
-\item MASON is unusually modular and consistent.  There is a high degree of separation and independence among elements of the system.  This allows you to use, and recombine, different parts of the system in unexpected ways.  MASON is very highly hackable.  Indeed, a number of MASON's classes are used, with our blessing, in MASON's competition.\footnote{Well, not really competition: we're all friends here.}
+\item MASON is modular and consistent.  There is a high degree of separation and independence among elements of the system.  This allows you to use, and recombine, different parts of the system in unexpected ways.  MASON is very highly hackable.  Indeed, a number of MASON's classes are used, with our blessing, in MASON's competition.\footnote{Well, not really competition: we're all friends here.}
 \end{itemize}
 
 Many of these features are quite common among good simulation libraries.  But not among those in the ``ultra-light'' multiagent simulation category.  In this area, MASON was {\it completely unique} when it was developed.  Since then, MASON's features have influenced the restructuring of other toolkits to include some of the above, but I believe that MASON still remains very much the high-performance, high-hackability leader among systems in this area.
@@ -6856,9 +6856,9 @@ You'll notice in the code below the use of a ``slop'' variable.  What's going on
 
 \subsubsection{Hit Testing} 
 \label{sim.portrayal.inspector.StableDouble2D}
-\label{sim.portrayal.inspector.StableDouble3D}
+\label{sim.portrayal3d.inspector.StableDouble3D}
 \label{sim.portrayal.inspector.StableInt2D}
-\label{sim.portrayal.inspector. StableInt3D}
+\label{sim.portrayal3d.inspector.StableInt3D}
 
 The above is sufficient for drawing our objects in a ring: but if we want to select or inspect them, we'll need to perform {\bf hit testing}.    It turns out that hit-testing is nearly identical in code to drawing.  But before we get to that, we need to start by discussing the concept of a {\bf Stable Location}.  
 
@@ -6923,9 +6923,9 @@ MASON provides some StableLocation objects for you already:
 
 \begin{itemize}
 \item \Class{sim.portrayal.inspector.StableDouble2D} wraps around Double2D and expects a Continuous2D field.
-\item \Class{sim.portrayal.inspector.StableDouble3D} wraps around Double3D and expects a Continuous3D field..
+\item \Class{sim.portrayal3d.inspector.StableDouble3D} wraps around Double3D and expects a Continuous3D field..
 \item \Class{sim.portrayal.inspector.StableInt2D} wraps around Int2D and expects a SparseGrid2D field.
-\item \Class{sim.portrayal.inspector.StableInt3D} wraps around Int3D and expects a SparseGrid3D field.
+\item \Class{sim.portrayal3d.inspector.StableInt3D} wraps around Int3D and expects a SparseGrid3D field.
 \end{itemize}
 
 These classes are essentially the same implementation as the one above: they have a constructor which takes the Object and some kind of SparseField, plus various get and set methods for Inspectors, and a toString() method.
@@ -9756,7 +9756,7 @@ Once the portrayal is constructed, you may change whether it shows the circle on
 \mthd{public boolean getCircleShowing()} Returns whether or not the sphere is shown at all.
 \end{methods}
 
-The \Class{sim.portrayal3d.simple.LabelledPortrayal3D} is very similar.  It allows you to add a textual label which is shown always or only when the object is selected:
+The \Class{sim.portrayal3d.simple.LabelledPortrayal3D} is very similar.  It allows you to add a textual label which is shown always or only when the object is selected.  The label always faces the user.
 
 \begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D} Constructor}
 \mthd{public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,}\rule{0pt}{0pt}\hspace{\fill}{\sf boolean onlyLabelWhenSelected)}\\ Builds a LabelledPortrayal3D with the given child, offset (as a transform), label font and color, and the string used for the label. The portrayal will (or will not) show the label only when the object is selected.  If the label is null, then label used will be queried from the underlying object itself.
