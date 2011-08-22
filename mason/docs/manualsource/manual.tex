@@ -9463,6 +9463,36 @@ Creates a new SpherePortrayal3D with the given appearance, divisions, and scale 
 \mthd{public Shape3DPortrayal3D(Geometry geometry, Appearance appearance)} Creates a new Shape3DPortrayal3D for the given geometry and appearance.
 \end{methods}
 
+For example, you could use this class to:
+
+\begin{itemize}
+\item Display a seagull provided by the {\bf crowd3d} MASON demo.  Note that the seagull comes with its own coloring and will ignore attempts to change it with an Appearance (Compressed Geometry is like that, unfortunately):
+
+\java{%
+import javax.media.j3d*;\\
+\\
+\hbox{ShapePortrayal3D portrayal = new ShapePortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));}
+}
+\item Display a box with six colored sides:
+
+\java{%
+import com.sun.j3d.utils.geometry.*;\\
+\\
+ShapePortrayal3D portrayal = new ShapePortrayal3D(new ColorCube());
+}
+\item Display some extruded 3D text:
+
+\java{%
+import com.sun.j3d.utils.geometry.*;\\
+import java.awt.*;\\
+import javax.media.j3d.*;\\
+\\
+\hbox{Font3D font = new Font3D(new FontExtrusion(), new Font("SansSerif", Font.PLAIN, 60));}\\
+\hbox{ShapePortrayal3D portrayal = new ShapePortrayal3D(new Shape3D(new Text3D(font, "Hello, World!")));}
+}
+\end{itemize}
+
+
 \begin{wrapfigure}{r}[0in]{2in}
 \vspace{0em}\hfill\includegraphics[width=2in]{teapot.png}
 \caption{The Utah Teapot, a demo scene object file provided with MASON.}
@@ -9838,27 +9868,76 @@ You can't pick the objects in a Shared Group.  Thus SharedPortrayal3D has pickin
 
 \subsection{Objects Acting As Their Own Simple Portrayals}
 
-Objects in fields can certainly act as their own Simple Portrayals: they need only to subclass from \class{sim.portrayal3d.SimplePortrayal3D} and implement methods as described in Section \ref{implementing3dsimple}.  
+Don't do it.
 
-Just as is the case in 2D, if your object subclasses SimplePortrayal3D, you can still use wrapper portrayals even though there's no underlying SimplePortrayal3D registered for the object.  Just pass in \variable{null} as the child to the wrapper portrayal, and it'll use the object itself as the child.
+Oh sure, objects in fields {\it can} act as their own Simple Portrayals: they need only to subclass from \class{sim.portrayal3d.SimplePortrayal3D} and implement methods as described in Section \ref{implementing3dsimple}.  And if your object subclasses SimplePortrayal3D, you can still use wrapper portrayals even though there's no underlying SimplePortrayal3D registered for the object.  Just pass in \variable{null} as the child to the wrapper portrayal, and it'll use the object itself as the child.
 
-\begin{itemize}
-\item Override \method{getModel(...)} to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.
-\item Either make the scene graph unpickable (using \method{clearPickableFlags(...)}), or 
-\item Make the scene graph pickable by using \method{setPickableFlags(...)} on each shape, and store a LocationWrapper in the user data of each shape, like this:
+However, these objects are not going to be \class{java.io.Serializable}.  This is because Java3D is not like Java2D: it requires maintaining tendrils from the Portrayals proper into the Java3D subsystem.  For example, cloneable scene graphs and Appearances, plus pointers to field portrayals and ultimately the Display3D.\footnote{These latter pointers are mostly my fault: the Display3D subsystem doesn't have any notion of a ``DrawInfo3D''.  But even so, selection and inspection are done so differently I doubt it'd be of much help.}
 
-\java{%
-LocationWrapper wrap = new LocationWrapper(object, null, parentPortrayal);\\
-// ... then for each Shape3D shape...\\
-shape.setUserData(wrap);
-}
-\end{itemize}
+Because Simple Portrayals in 3D need to hold onto various non-serializable stuff, if an object in your field is also a SimplePortrayal3D, you won't be able to checkpoint your model.
 
-See the \method{getModel(...)} code in PrimitivePortrayal to get the idea.  PrimitivePortrayal only provides a model, but never changes it afterwards.  For an idea about how to change the model or its Appearance etc. over time, see the \method{getModel(...)} method in ValuePortrayal3D.
+Now, it may be that you don't care about this feature, in which case sure, go ahead.  For example, the {\bf woims3d demo} has a field object (\Class{sim.app.woims3d.Woim}) which is also a SimplePortrayal3D: we've left it this way to give you an idea of how you could go about doing it if you wanted.  But I strongly urge you to consider having separate model objects and Simple Portrayals, at least in the 3D case.
+
+If you want to know how to make your own custom Simple Portrayal for your model object, read on.
 
 \subsection{Implementing a Simple Portrayal}
 \label{implementing3dsimple}
 
+Building a Java3D scene can be daunting.  But if you have Java3D chops, sticking it in MASON is actually quite simple.
+
+Simple Portrayals in 3D really have one major task: create a scene graph and hang certain LocationWrappers in shapes and geometry found in that graph.  The LocationWrappers indicate the object in the field that that portion of scene represents.  If you've set up the LocationWrappers right, you don't have to do anything further to handle selection or inspection, as SimplePortrayal3D does all the machinery for you.  Though you can override various SimplePortrayal3D methods to customize things if you like.
+
+The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.    Often if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all, unless you want to change a color or size or whatnot to reflect some underlying change in the object status.
+
+Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{0em}\hfill\includegraphics[width=2in]{ColorCube.png}
+\caption{Our ColorCube Portrayal.}
+\vspace{0em}
+\end{wrapfigure}
+
+And that's more or less all there's to it.  Here's an example using the \class{com.sun.j3d.utils.geometry.ColorCube} class, which defines a simple Shape3D in the form of a multicolored cube.  In this example we create a cube and then leave it alone\,---\,thecube doesn't change size or color, etc. to reflect some feature of the underlying model object.  It just draws it as a cube.  This example is pickable, and creates a LocationWrapper as necessary.  Note the various Java3D capability bits turned on (both explicitly and via \method{setPickableFlags(...)}): in more complex scene graphs, getting all the bits turned on to allow the object to be pickable or change in color or appearance, etc., can be a frustrating experience of trial and error.  It's Java3D's worst feature.
+
+{\footnotesize\begin{verbatim}
+package sim.portrayal3d.simple;
+import javax.media.j3d.*;
+import com.sun.j3d.utils.geometry.*;
+import sim.portrayal.*;
+import sim.portrayal3d.*;
+
+public class ColorCubePortrayal3D extends SimplePortrayal3D
+    {
+    public TransformGroup getModel(Object object, TransformGroup prev)
+        {
+        if (prev == null)  // scene graph is being created
+            {
+            // create the scene. We hang it off of a TransformGroup, which we don't mess with.
+            prev = new TransformGroup();
+            prev.setCapability(Group.ALLOW_CHILDREN_READ);
+            ColorCube cube = new ColorCube();
+            prev.addChild(cube);
+            
+            // we assume we're pickable.  So we need to create
+            // LocationWrappers for each shape.  ColorCube only has one: itself.
+            // We store the wrapper as user data in the shape.
+            
+            LocationWrapper wrapper = new LocationWrapper(object, null, getCurrentFieldPortrayal());
+            cube.setUserData(wrapper);
+            
+            // Here we make the cube pickable so it can be selected or inspected
+            setPickableFlags(cube);
+            }
+        else   // scene graph is being updated to reflect model changes
+            {
+            // here's you'd modify the existing ColorCube hanging
+            // off as child 0 of prev if you so felt like it.
+            }
+            
+        return prev;
+        }
+    }
+\end{verbatim}}
 
 
 \chapter{GUI and Media Utilities}

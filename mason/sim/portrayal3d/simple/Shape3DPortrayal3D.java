@@ -18,6 +18,14 @@ import java.awt.*;
    
    <p><b>Important note: CompressedGeometry cannot have any appearances set: it ignores all of them
    and only uses what's defined in the geometry itself. That's Java3D for you.</b>
+   
+   <p>Some examples (be sure to <tt>import javax.media.j3d.*; import com.sun.j3d.utils.geometry.*; import java.awt.Font.*;</tt>)
+   
+   <ul>
+   <li>A seagull comes with MASON: <tt>new ShapePortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));</tt>
+   <li>A box with six colored sides: <tt>new ShapePortrayal3D(new ColorCube());</tt>
+   <li>Some 3D text: <tt>new ShapePortrayal3D(new Shape3D(new Text3D(new Font3D(new FontExtrusion(), new Font("SansSerif", Font.PLAIN, 60)), "Hello, World!")));</tt>
+   </ul>
 */
 
 public class Shape3DPortrayal3D extends PrimitivePortrayal3D
