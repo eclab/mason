@@ -27,6 +27,7 @@ public class Balls3DWithUI extends GUIState
         }
 
     public Balls3DWithUI() { super(new Balls3D( System.currentTimeMillis())); }
+
     public Balls3DWithUI(SimState state) 
         { 
         super(state); 
@@ -67,7 +68,7 @@ public class Balls3DWithUI extends GUIState
                 return strengthFormat.format(e.getWeight());
                 }
             }; 
-        portrayal.setShowLabels(true);
+        // portrayal.setShowLabels(true);  // deprecated.  The default constructor for CylinderEdgePortrayal shows labels by default anyway
         
         edgePortrayal.setPortrayalForAll( portrayal );
         nodePortrayal.setField( tut.balls );

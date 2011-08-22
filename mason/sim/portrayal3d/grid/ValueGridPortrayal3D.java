@@ -15,6 +15,7 @@ import sim.util.gui.*;
 import javax.vecmath.*;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.picking.*;
+import java.awt.*;
 
 
 public class ValueGridPortrayal3D extends FieldPortrayal3D
@@ -76,7 +77,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
 
     public PolygonAttributes polygonAttributes()
         {
-        return ((Portrayal3D)(getPortrayalForObject(new ValuePortrayal3D.ValueWrapper(0,0,0,0,this)))).polygonAttributes();
+        return ((Portrayal3D)(getPortrayalForObject(new ValueWrapper(0.0, new Int3D(), this)))).polygonAttributes();
         }
 
     /** This method is called by the default inspector to filter new values set by the user.
@@ -137,13 +138,13 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
 
         Transform3D trans = new Transform3D(); 
         
-        Portrayal p = getPortrayalForObject(new ValuePortrayal3D.ValueWrapper(0,0,0,0,this));
-        if (!(p instanceof SimplePortrayal3D))
+        Portrayal p = getPortrayalForObject(new ValueWrapper(0.0, new Int3D(), this));
+		if (!(p instanceof SimplePortrayal3D))
             throw new RuntimeException("Unexpected Portrayal " + p + "for object " +
                 valueToPass + " -- expected a SimplePortrayal3D");
         
         SimplePortrayal3D portrayal = (SimplePortrayal3D) p;
-        portrayal.setParentPortrayal(this);
+		portrayal.setCurrentFieldPortrayal(this);
 
         int i = 0;
 		int width = this.width;
@@ -154,8 +155,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                 for (int z=0;z<length;z++) 
                     {
                     double value = gridValue(x,y,z); 
-                    ValuePortrayal3D.ValueWrapper wrapper = new ValuePortrayal3D.ValueWrapper(value,x,y,z,this);
-                    TransformGroup tg = portrayal.getModel(wrapper, null);
+                    TransformGroup tg = portrayal.getModel(new ValueWrapper(0.0, new Int3D(x,y,z), this), null);
 					tg.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 					tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
                     tg.setCapability(Group.ALLOW_CHILDREN_READ);
@@ -193,7 +193,7 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
                 valueToPass + " -- expected a SimplePortrayal3D");
         
         SimplePortrayal3D portrayal = (SimplePortrayal3D) p;
-        portrayal.setParentPortrayal(this);
+		portrayal.setCurrentFieldPortrayal(this);
 		
 		if (dirtyScale || isDirtyField())
 			reviseScale(localSwitch);		// sizes may have changed
@@ -215,15 +215,15 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
 					
                     Shape3D shape = (Shape3D)(tg.getChild(0));
 
-                    ValuePortrayal3D.ValueWrapper wrapper = (ValuePortrayal3D.ValueWrapper)(shape.getUserData());
+                    ValueWrapper wrapper = (ValueWrapper)(shape.getUserData());
                     double value = gridValue(x,y,z); 
-                    double oldValue = wrapper.lastVal;
-
+                    double oldValue = wrapper.lastValue;
+					
                     if (value != oldValue) // change to new value
                         if (map.getAlpha(value) > 2)  // nontransparent
                             { 
                             childMask.set(i);
-                            wrapper.lastVal = value;
+                            wrapper.lastValue = value;
                             portrayal.getModel(wrapper, tg); 
                             }
                         else childMask.clear(i);
@@ -287,4 +287,51 @@ public class ValueGridPortrayal3D extends FieldPortrayal3D
         {
         return w;
         }
-    }
+	
+	// used to store the 'lastValue' so in updateModel we can determine whether to bother updating
+	// the cube or square's color.
+	static class ValueWrapper extends LocationWrapper
+		{
+		public double lastValue;  // we need the old value to determine if the color of the cube must be updated
+		
+		public ValueWrapper(double value, Object location, ValueGridPortrayal3D portrayal)
+			{
+			super(new MutableDouble(value), location, portrayal);
+			lastValue = value;
+			}
+			
+		public Object getObject()
+			{
+			Int3D loc = (Int3D)location;
+			Object field = fieldPortrayal.getField();
+			MutableDouble val = (MutableDouble) this.object;
+			if (field instanceof DoubleGrid3D)
+				val.val = ((DoubleGrid3D)field).field[loc.x][loc.y][loc.z];
+			else if (field instanceof IntGrid3D)
+				val.val = ((IntGrid3D)field).field[loc.x][loc.y][loc.z];
+			else if (field instanceof DoubleGrid2D)
+				val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
+			else // if (field instanceof IntGrid2D)
+				val.val = ((IntGrid2D)field).field[loc.x][loc.y];
+			return val;
+			}
+		
+		public String getLocationName()
+			{
+			Int3D loc = (Int3D) location;
+			Object field = fieldPortrayal.getField();
+			if (field instanceof DoubleGrid3D || field instanceof IntGrid3D)
+				return loc.toCoordinates();
+			else return (new Int2D(loc.x,loc.y)).toCoordinates();
+			}
+		}
+		
+	/** Returns the color presently mapped to the value stored within the given wrapper.  The wrapper
+		must have been generated by ValueGridPortrayal3D, else a cast error will be raised.   Used
+		solely by ValuePortrayal3D to determine the color of the object passed it.  It's an Object
+		rather than a LocationWrapper to save an unneccessary cast. */
+	public Color getColorFor(Object wrapper)
+		{
+		return getMap().getColor(((ValueWrapper)wrapper).lastValue);
+		}
+	}

@@ -26,7 +26,6 @@ import sim.portrayal3d.SimplePortrayal3D;
 public class Arrow extends TransformGroup
     {
 	static final Color DEFAULT_ARROW_COLOR = Color.gray;
-
 	static final Font3D DEFAULT_FONT3D = new Font3D(new Font(null, Font.PLAIN, 1), null);
 
 	Cone arrowHead;
@@ -36,15 +35,9 @@ public class Arrow extends TransformGroup
 
     /**
      * Creates a 3D arrow between points <code>startPoint</code> and
-     * <code>endPoint</code> if either label is not null, it adds a Text2D obect
+     * <code>endPoint</code> if either label is not null, it adds a Text2D object
      * at the appropriate end.
      */
-    public static Arrow createArrow(double arrowTailRadius, Double3D startPoint,
-        Double3D endPoint, String stLabel, String endLabel)
-        {
-        return new Arrow(arrowTailRadius, startPoint, endPoint, stLabel, endLabel, null);
-        }
-
     public Arrow(double arrowTailRadius, Double3D startPoint, Double3D endPoint, String stLabel,
         String endLabel, Appearance appearance)
         {

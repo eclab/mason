@@ -10,13 +10,18 @@ import sim.util.*;
 import sim.engine.*;
 import sim.portrayal3d.*;
 import sim.portrayal3d.simple.*;
-
 import javax.media.j3d.*;
 import javax.vecmath.*;
 
+/** 
+	This class demonstrates that it is perfectly POSSIBLE to create a SimplePortrayal3D
+	which is also a Steppable in the model -- but it's not a good idea, because it's not serializable
+	and so you can't save your model out to a checkpoint.  In 3D, you should make separate portrayals
+	from model objects.
+*/
+
 public class Woim3D extends SimplePortrayal3D implements Steppable 
     {
-
     public static final double CENTROID_DISTANCE = 20 * WoimsDemo3D.DIAMETER;
     public static final double AVOID_DISTANCE = 16 * WoimsDemo3D.DIAMETER;
     public static final double COPY_SPEED_DISTANCE = 40 * WoimsDemo3D.DIAMETER;
@@ -24,9 +29,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public static final double OBSTACLE_AVOID_COEF = 1.05;
     public static final double OBSTACLE_FAST_AVOID_COEF = 1.5;
 
-    public static final double MAX_DISTANCE = Math.max( CENTROID_DISTANCE,
-        Math.max( AVOID_DISTANCE,
-            COPY_SPEED_DISTANCE ) );
+    public static final double MAX_DISTANCE = Math.max( CENTROID_DISTANCE, Math.max( AVOID_DISTANCE, COPY_SPEED_DISTANCE ) );
 
     public static final double ADJUSTMENT_RATE = 0.025;
     public static final double MIN_VELOCITY = 0.25;
@@ -156,7 +159,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
 
     double ond;
     double ondSpeed;
-    public Vector3D niceOndulation( final SimState state )
+    public Vector3D niceUndulation( final SimState state )
         {
         ond += ondSpeed;
         if( ond > 7 )
@@ -196,7 +199,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         {
         WoimsDemo3D bd = (WoimsDemo3D)state;
                 {
-                Double3D temp = new Double3D(x,y,z);  //bd.environment.getObjectLocation( this );
+                Double3D temp = new Double3D(x,y,z);
                 woimPosition.x = x;
                 woimPosition.y = y;
                 woimPosition.z = z;
@@ -209,7 +212,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         vel = vel.add( awayFromCloseBys(bd).amplify(1.5) );
         if( vel.length() <= 1.0 )
             {
-            vel = vel.add( niceOndulation(bd).amplify(0.5) );
+            vel = vel.add( niceUndulation(bd).amplify(0.5) );
             vel = vel.add( randomDirection(bd).amplify(0.25) );
             }
 
@@ -232,7 +235,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public double y;
     public double z;
     
-    final static int numLinks = 7;
+    final static int numLinks = 15;
     Vector3d[] lastPos = new Vector3d[numLinks];
     Vector3d[] lastPosRel = new Vector3d[numLinks];
     java.awt.Color[] colors = new java.awt.Color[numLinks];
@@ -242,7 +245,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     protected Vector3D acceleration = new Vector3D( 0, 0, 0 );
     
 
-
+	public static final float SKIP = 10.0f;
 
     public void computePositions()
         {
@@ -252,7 +255,6 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         centerx = x + 1.0/2.0;
         centery = y + 1.0/2.0;
         centerz = z + 1.0/2.0;
-//        drawLink( graphics, centerx, centery, rx, ry, colors[0] );
         lastPos[0] = new Vector3d( centerx, centery, centerz );
         Vector3d temp  = new Vector3d();
         Vector3d velocity3d = new Vector3d(velocity.x, velocity.y, velocity.z);
@@ -262,21 +264,18 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
                 {
                 temp.scale(-1.0, velocity3d);
                 temp.normalize();
-                centerx = lastPos[i-1].x+1.0*temp.x;
-                centery = lastPos[i-1].y+1.0*temp.y;
-                centerz = lastPos[i-1].z+1.0*temp.z;
-//                drawLink( graphics, centerx, centery, rx, ry, colors[i] );
+                centerx = lastPos[i-1].x+temp.x;
+                centery = lastPos[i-1].y+temp.y;
+                centerz = lastPos[i-1].z+temp.z;
                 lastPos[i] = new Vector3d( centerx, centery, centerz );
                 }
             else
                 {
                 temp.sub(lastPos[i-1], lastPos[i] );
-                temp.scale(1.0/temp.length());
+                temp.scale(SKIP/temp.length());
                 temp.sub(lastPos[i-1], temp);
-//                drawLink( graphics, temp.x, temp.y, rx, ry, colors[i] );
                 lastPos[i] = new Vector3d( temp.x, temp.y, temp.z );
                 }
-//                      lastPos[i].negate();
             }
         for( int i = 0 ; i < lastPosRel.length ; i++ )
             {
@@ -289,13 +288,13 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public TransformGroup createModel(Object obj)
         {
         TransformGroup globalTG = new TransformGroup();
-//              globalTG.addChild(new ColorCube());
-        for(int i=0; i<numLinks; ++i)
+        for(int i=0; i< numLinks; ++i)
             {
             // we set the number of divisions to 6 and it's quite a bit faster and
-            // less memory-hungry.  The default is 15.
-            SpherePortrayal3D s = new SpherePortrayal3D(colors[i],1.0f,6);
-            s.setParentPortrayal(parentPortrayal);
+            // less memory-hungry.  The default is 15.  This is a sort of goofy way of
+			// doing things.
+            SpherePortrayal3D s = new SpherePortrayal3D(colors[i], 4.0f , 6);
+            s.setCurrentFieldPortrayal(getCurrentFieldPortrayal());
             TransformGroup localTG = s.getModel(obj, null);
             
             localTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -304,9 +303,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         globalTG.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
         return globalTG;
         }
-        
-//      Transform3D tmpT3d = new Transform3D();
-        
+                
     public TransformGroup getModel(Object obj, TransformGroup transf)
         {
         computePositions();

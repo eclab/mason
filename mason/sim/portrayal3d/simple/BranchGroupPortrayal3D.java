@@ -154,7 +154,7 @@ public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
             // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+            LocationWrapper pickI = new LocationWrapper(obj, null, getCurrentFieldPortrayal());
 
             Node g = (Node) (group.cloneTree(true));
 

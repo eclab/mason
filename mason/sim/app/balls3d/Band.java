@@ -8,7 +8,7 @@ package sim.app.balls3d;
 
 import sim.util.*;
 
-public class Band extends MutableDouble implements java.io.Serializable
+public class Band implements java.io.Serializable, sim.util.Valuable
     {
     public double laxDistance;
     public double strength;
@@ -23,8 +23,6 @@ public class Band extends MutableDouble implements java.io.Serializable
     public double getLaxDistance() { return laxDistance; }
 
     public double doubleValue() { return strength; }
-
-    // ... this is here to output the appropriate value on the band's label
-    // how our strength should look
-    java.text.DecimalFormat strengthFormat = new java.text.DecimalFormat("#0.##");
+	
+	public String toString() { return "" + strength + " (" + laxDistance + ")"; }
     }

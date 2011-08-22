@@ -5063,24 +5063,27 @@ The Figure at right shows the basic elements of the {\bf model} (the {\bf schedu
 
 When we build a GUI for the model, we pair with many of these model objects an object whose job is to control or visualize them.  The schedule and random number generator are controlled by a {\bf controller}, the most common of which is the \Class{sim.display.Console}.  One or more {\bf displays} show whole fields in a GUI window. Displays are capable of producing movies or screenshots of their fields.  The fields are drawn by {\bf field portrayals}, possibly overlaid on one another.  In order to draw the fields, the Field Portrayals often (but not always) rely on the services of {\bf simple portrayals} designed to draw or control specific kinds of objects.  When the user wishes to {\bf inspect}\footnote{SWARM and Repast users would call this {\it probing}  object.  Coming from a NeXTSTEP and MacOS X background, I was more comfortable with the term {\it inspection}.} an object, the associated SimplePortrayal might produce an {\bf inspector} to provide the GUI widgets to do the job.  Inspectors can call forth other inspectors to track the object, chart it, etc.
 
-All GUI elements in a visualized MASON model are also encapsulated by an instance of a subclass of a special class: in this case, the class \Class{sim.display.GUIState}.  The GUIState object knows about the SimState model object, but not the other way around, and ultimately encapsulates all the elements mentioned above to visualize and control the model.
+All GUI elements in a visualized MASON model are also encapsulated by an instance of a subclass of a special class: in this case, the class \class{sim.display.GUIState}.  The GUIState object knows about the SimState model object, but not the other way around, and ultimately encapsulates all the elements mentioned above to visualize and control the model.
 
 \section{Encapsulation of the Model, Control, and Visualization}
 \label{sim.display.GUIState}
 
 When you build a GUI for your model, you'll begin by creating a subclass of \Class{sim.display.GUIState}, of which MASON will build a single instance to encapsulate your control and visualization of the model.    It's traditional in MASON, but not required, that if your SimState model is called \class{Foo}, your GUIState subclass will be called \class{FooWithUI}.
 
-The GUIState contains only three variables:
+The GUIState contains four variables:
 
 \java{%
 public SimState state;\\
 pubic Controller controller;\\
-public HashMap storage;
+public HashMap storage;\\
+public MersenneTwisterFast guirandom;
 }
 
-The first item is a pointer to the model itself.  The second item is a pointer to the {\bf controller} which starts and stops the model (among other things).  The final item is a HashMap of elements for those occasional widgets which need to stash a global element somewhere (MASON frowns on using static variables).  
+The first item is a pointer to the model itself.  The second item is a pointer to the {\bf controller} which starts and stops the model (among other things).  The third item is a HashMap of elements for those occasional widgets which need to stash a global element somewhere (MASON frowns on using static variables).  
 
 At present the only widgets which use the \variable{storage} variable are certain charting inspectors which need to retain the charts open at a given time.  You probably shouldn't mess around with the \variable{storage} variable unless you're making plug-in inspectors as well.  In that case, the rule is: you can put things in the HashMap, and take them out and change them, but you can't modify or take out anything someone {\it else} put in there.
+
+\sidebar{Why not just have a single random number generator?}{Since the generator would be used for both visualization and the model, you'd get different results with the same seed if you ran the simulation under visualization than you'd get if you ran it on the command line.  See the {\bf flockers} demo for an example which uses both generators.}  The final item is a random number generator, separate from the one provided in the model (the SimState), which can be used by GUIState, displays, inspectors, or portrayals in the rare case that they need a random number.  For example, if each of your agents needs a random color, you could use guirandom to pick this color.  In general, you {\bf must} use the SimState random number generator for all random number generation regarding your model, and {\bf ought to} use the GUIState random number generator for random number generation regarding your visualization which is entirely separate from the model.
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6in]{GUIUML.pdf}\end{center}
@@ -7686,7 +7689,7 @@ You have several options, in increasing memory usage:
 \begin{itemize}
 \item If you don't mind if {\bf only one} object will draw a trail at a time, chosen from among the objects currently {\bf selected}, and that the trail will be {\bf grown only once the object is selected}, then you can get away with using a single TrailedPortrayal2D for your two FieldPortrayals: for example you can set it as their \method{portrayalForAll()}.  In this case you must also call \method{setOnlyGrowTrailWhenSelected(true)} (otherwise the behavior will be undefined).  
 \item If you want {\bf every selected object} to draw its trail, and don't mind that the trail will be  {\bf grown only once the object is selected}, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).  You fortunately still can call \method{setOnlyGrowTrailWhenSelected(true)}, which will save some memory.
-\item If you want {\bf every selected object} to draw its trail, and each object must {\bf retain knowledge of its trail} even when it's not being displayed, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).
+\item If you want {\bf every selected object} to draw its trail, and each object (selected or no) must {\bf retain knowledge of its trail} even when it's not being displayed, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).
 \item If you want {\bf every object to draw its trail at all times}, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).  You will have to call \method{setOnlyShowTrailWhenSelected(false)}, which will potentially be {\it very} slow.
 \end{itemize}
 
@@ -8892,9 +8895,14 @@ The optional method is \method{polygonAttributes()}, which returns the \class{ja
 
 \method{polygonAttributes()} is for top-level portrayals attached to the Display3D.  Lower-level Simple Portrayals shouldn't do anything other than return \variable{null}.
 
+Portrayals also have a {\bf display} set, and from this display they may access the {\bf guistate} using methods below.  These methods largely exist to give the Portrayals access to the GUIState's GUI-level random number generator.
+
 \begin{methods}{\class{sim.display3d.Portrayal3D}}
-\mthd{ public void setCanShowToolTips(boolean val)} Sets whether or not tool tips may be shown.  This method is triggered by the user clicking on the relevant button in the OptionPane3D.
+\mthd{ public TransformGroup getModel(Object object, TransformGroup prev)} Builds a scene graph for the Portrayal.  If \variable{prev} is \variable{null}, creates a new TransformGroup and then hangs all the scene graph off of that TransformGroup as child 0 of the group.  Else assumes that \variable{prev} was the previously constructed TransformGroup: and modifies the existing scene graph hanging as child 0 as appropriate.  Returns the TransformGroup.
 \mthd{ public PolygonAttributes polygonAttributes()} Returns the PolygonAttributes used by the Portrayal3D (which may be freely modified by the Display3D or the user) or returns \variable{null}, indicating that there are no PolygonAttributes which may be modified.
+\mthd{public void setCurrentDisplay(Display3D display)} Sets the current Display3D for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple displays.  The display will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
+\mthd{public Display3D getCurrentDisplay()} Returns the current Display3D for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple displays.  The display will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
+\mthd{public GUIState getCurrentGUIState(GUIState)} Queries the current Display to extract the current GUIState.  If there is no such display, then \variable{null} will be returned.
 \end{methods}
 
 
@@ -9042,13 +9050,13 @@ Thus SparseFieldPortrayal has a utility method which does all this for you: it i
 
 MASON provides 3D Field Portrayals for a number of 2D and 3D fields: but not in all configurations.  For example, hexagonal representations of 2D grid fields are not supported, and at present Dense Grids are not supported.
 
-Some of the Field Portrayals are quite costly, particularly as the grid size increases, largely due to poor design decisions in Java3D itself that can't easily be rectified.  Others are reasonably good memory-efficiency-wise (despite their use of BranchGroups).  In particular, the Sparse Grid, Network, and Continuous portrayals are good, as are portrayals for 2D numbers.
+\sidebar{Why not just use Java3D Link and SharedGroup Classes?  Aren't they designed for this purpose?}{Couple of reasons.  First, SharedGroup has bugs.  Second, SharedGroup and Links still don't let objects appear and disappear from a scene: you still gotta deal with BranchGroups.  However, SharedGroups remain an option for complex or expensive objects: see Section \ref{sim.portrayal3d.simple.SharedPortrayal3D}.} Some of the Field Portrayals are quite costly, particularly as the grid size increases, largely due to poor design decisions in Java3D itself that can't easily be rectified.  Others are reasonably good memory-efficiency-wise (despite their use of BranchGroups).  In particular, the Sparse Grid, Network, and Continuous portrayals are good, as are portrayals for 2D numbers.
 
 \subsubsection{Field Portrayals for Object Grids}
 
 The class \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} portrays both 2D and 3D Object Grids in 3D.  2D Object Grids are treated as if they were 3D Object Grids with a single layer in the {\it length}, that is, \(Z\), dimension.  Thus objects in 2D Object Grids are assumed to have a location with \(Z=0\) always.  If you want to position your 2D Object Grid to have \(Y=0\) or \(X=0\) or \(Z=15\) or whatnot, you'll need to use the affine transform methods available in FieldPortrayal3D to move it appropriately. 
 
-\sidebar{Why not just use Java3D Link and SharedGroup Classes?  Aren't they designed for this purpose?}{SharedGroup is unusably buggy.} If objects move around a lot on the grid, ObjectGridPortrayal3D is expensive in terms of time and in this situation we strongly encourage the use of SparseGridPortrayal3D instead.  This is because ObjectGridPortrayal3D has to figure out where objects went in order to determine whether to simply move their corresponding scene graphs or to delete them entirely.  It also has to do a tally of existing objects in order to determine which objects are new and must be updated.  ObjectGridPortrayal3D is a lot cheaper if it assumes the field is immutable.  The problem is even more fun when dealing with Objects located at multiple places at once.  
+ If objects move around a lot on the grid, ObjectGridPortrayal3D is expensive in terms of time and in this situation we strongly encourage the use of SparseGridPortrayal3D instead.  This is because ObjectGridPortrayal3D has to figure out where objects went in order to determine whether to simply move their corresponding scene graphs or to delete them entirely.  It also has to do a tally of existing objects in order to determine which objects are new and must be updated.  ObjectGridPortrayal3D is a lot cheaper if it assumes the field is immutable.  The problem is even more fun when dealing with Objects located at multiple places at once.  
 
 Just like ObjectGridPortrayal2D, ObjectGridPortrayal3D produces Inspectors which try to follow objects as they move around, but don't guarantee it.  If an object has moved, the Inspector will search the \(5 \times 5 \times 5\) space surrounding the last known location of the object to find it.  That's 125 cells.   If it still can't find the object, it gives up and reports the location as ``unknown''.  Moral of the story: don't move your objects more than 2 cell spaces at a time if you want them to be trackable via an inspector.
 
@@ -9099,13 +9107,14 @@ The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortr
 \label{ValueGridPortrayal3D}
 \end{figure}
 
-ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.    Last but not least, you can also change the size of the individual ValuePortrayal3D's scene objects in the ValueGridPortrayal3D, using \method{setScale(...)}.\footnote{Not to be confused with the \method{scale(...)} methods for applying the field-level affine transform.}  Be warned that changing this scale is very costly once the scene is live: it may take some time depending on the size of the grid.  See Figure \ref{ValueGridPortrayal3D} for some of the effects resulting from these changes.
+ValueGridPortrayal3D expects that its SimplePortrayal be a \Class{sim.portrayal3d.simple.ValuePortrayal3D} or a subclass thereof.  See Section \ref{sim.portrayal3d.simple.ValuePortrayal3D} for details on ValuePortrayal3D.  ValuePortrayal3D draws its particular value as a cube or square of a certain color according to a \class{sim.util.gui.ColorMap} defined in the ValueGridPortrayal3D itself.  Just as in ValueGridPortrayal2D, this ColorMap maps numerical values to colors (including transparency) in different ways.  For more on ColorMaps, see Section \ref{sim.util.gui.ColorMap}.  Your values also need a name, like ``heat'' or ``density'' or whatnot.    Last but not least, you can also change the size of the individual ValuePortrayal3D's scene objects in the ValueGridPortrayal3D, using \method{setScale(...)}.\footnote{Not to be confused with the \method{scale(...)} methods for applying the field-level affine transform.}  Be warned that changing this scale is very costly once the scene is live: it may take some time depending on the size of the grid.  See Figure \ref{ValueGridPortrayal3D} for some of the effects resulting from these changes.
 
 The ColorMap and the value name are set like this:
 
 \begin{methods}{\class{sim.portrayal3d.grid.ValueGridPortrayal3D}}
 \mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
 \mthd{public ColorMap getMap()} Returns the color map for the portrayal.
+\mthd{public Color getColorFor(Object wrapper)} Returns the color mapped to the LocationWrapper indicated.  This is a publicly exposed method only because it's needed by ValuePortrayal3D to determine the color of the object provided it in its getModel(...) method.  Otherwise, treat it largely as private to ValuePortrayal3D.
 \mthd{public void setValueName(String name)} Sets the name for numerical values for the portrayal.
 \mthd{public String getValueName()} Returns the name for numerical values for the portrayal.
 \mthd{public void setScale(double scale)} Sets the scale to size the individual objects for the values in the portrayal.  Warning: this is a very costly operation if performed once the scene is live.
@@ -9338,17 +9347,13 @@ Produces a simple Appearance object for the given colors, shininess, and opacity
 
 By default, no PolygonAttribues are defined.
 
-\paragraph{The Parent Portrayal}
-SimplePortrayal3Ds have a {\bf parent portrayal} which is set by FieldPortrayal3Ds.  This is used to properly identify the FieldPortrayal3D when the user picks the object in the SimplePortrayal3D.  The variable is 
-
-\java{%
-protected FieldPortrayal3D parentPortrayal;
-}
-
-And it is set with...
+\paragraph{The Field Portrayal}
+SimplePortrayal3Ds have a {\bf field portrayal} which is set by FieldPortrayal3Ds.  This is used to properly identify the FieldPortrayal3D when the user picks the object in the SimplePortrayal3D.  The value may be \variable{null} initially, but will be set at least when \method{createModel(...)} is called.  It may change to other Field Portrayals if the SimplePortrayal3D has been assigned to multiple Field Portrayals.  This method influences \method{getCurrentDisplay(...)} as described below:
 
 \begin{methods}{\class{sim.portrayal3d.SimplePortrayal3D}}
-\mthd{public void setParentPortrayal(FieldPortrayal3D portrayal)} Sets the given Field Portrayal as the parent of the SimplePortrayal3D.
+\mthd{public void setCurrentFieldPortrayal(FieldPortrayal3D fp)} Sets the current FieldPortrayal for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple Field Portrayals.  The field portrayal will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
+\mthd{public FieldPortrayal3D getCurrentFieldPortrayal()} Returns the current FieldPortrayal for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple Field Portrayals.  The field portrayal will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
+\mthd{public Display3D getCurrentDisplay()} Returns the current Display3D for the Portrayal3D.  If this value was not set directly via \method{setCurrentDisplay()}, this method queries the field portrayal for the current display.  If the field portrayal has not yet been set, the method then returns null.  This value may change if the Portrayal3D is used in multiple displays.  The value will be queriable immediately prior to \method{getModel(...)}, and possibly not prior to that.
 \end{methods}
 
 \paragraph{Selection}
@@ -9546,10 +9551,12 @@ Java3D provides three kinds of light (ambient light, directed light, point light
 Light affects materials in an Appearance in various interesting ways: but it is beyond the scope of this manual to describe these effects suffice to say that some examples may be found in the class documentation for LightPortrayal3D, and also the code for the {\bf Balls3D} example.  Otherwise, you'll need to consult a Java3D text.
 
 
-\begin{methods}{\class{sim.portrayal3d.LightPortrayal3D} Constructor}
+\begin{methods}{\class{sim.portrayal3d.simple.LightPortrayal3D} Constructor}
 \mthd{public LightPortrayal3D(Color color, Double3D direction)} Creates directed light of a given color flowing in the provided direction.
 \mthd{public LightPortrayal3D(Color color)} Creates ambient light of a given color.
-\mthd{public LightPortrayal3D(Color color, Double3D direction, double constantAttenuation, double linearAttenuation, double quadraticAttenuation)} Creates a point light of a given color with the provided attenuation values (which range from 0.0 to 1.0 each).  You can't go wrong with 1, 0, and 0 respectively.
+\mthd{public LightPortrayal3D(Color color, Double3D direction, double constantAttenuation, double linearAttenuation,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf double quadraticAttenuation)}\\
+Creates a point light of a given color with the provided attenuation values (which range from 0.0 to 1.0 each).  You can't go wrong with 1, 0, and 0 respectively.
 \mthd{public LightPortrayal3D(Light light)} Creates an arbitrary light.
 \end{methods}
 
@@ -9557,7 +9564,7 @@ Light affects materials in an Appearance in various interesting ways: but it is 
 \sidebar{Why not just define width, height, and length? Why six coordinates?}{Because usually wireframes go around fields, and fields are not always\,---\,in fact usually not\,---\,centered at the origin.}
 \paragraph{Wireframes and Axes}\hfill The~class \Class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} is a Decorative Simple Portrayal used to draw wireframes around an entire scene.  This portrayal isn't automatic like axes mostly because the size of the wireframe must be defined by the coder.  It's a simple class: you define the six coordinates of the box in the constructor and attach it to the Display3D. 
 
-\begin{methods}{\class{sim.portrayal3d.WireFrameBoxPortrayal3D} Constructor}
+\begin{methods}{\class{sim.portrayal3d.simple.WireFrameBoxPortrayal3D} Constructor}
 \mthd{public WireFrameBoxPortrayal3D()} Creates a wireframe box from \(\langle -0.5, -0.5, -0.5\rangle\) to  \(\langle 0.5, 0.5, 0.5\rangle\).  This is rarely helpful.
 \mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2)} Creates a white wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2} \rangle\).
 \mthd{public WireFrameBoxPortrayal3D(double x, double y, double z, double x2, double y2, double z2, Color c)} Creates a colored wireframe box from \(\langle x, y, z\rangle\) to  \(\langle \text{\it x2}, \text{\it y2}, \text{\it z2} \rangle\).
@@ -9566,29 +9573,141 @@ Light affects materials in an Appearance in various interesting ways: but it is 
 
 Last but not least, MASON provides axes as a Decorative Simple Portrayal.  This isn't particularly helpful since Display3D's Option Pane already gives the option of turning on axes (in fact the same class) built into your display already.  At any rate, Axes are fixed to 1.0 in length, can have various arrow radii, and can be given letter labels (or not) in the form of ``X'', ``Y'', ``Z'', and ``O'' (indicating the origin).  Axes are defined with the class \Class{sim.portrayal3d.AxesPortrayal3D}.
 
-\begin{methods}{\class{sim.portrayal3d.AxesPortrayal3D} Constructor}
+\begin{methods}{\class{sim.portrayal3d.simple.AxesPortrayal3D} Constructor}
 \mthd{public AxesPortrayal3D(double arrowRadius, boolean letters)} Creates a set of axes with the given arrow radius and letter labels (or not).
 \end{methods}
 
 Axes use a special class underneath which is exposed in MASON because it's also used in one of the 3D Edge Portrayals (Section \ref{sim.portrayal3d.network.SimpleEdgePortrayal3D}).  This class draws arrows, and not surprisingly, it's called \Class{sim.portrayal3d.simple.Arrow}.  It is {\it not} a SimplePortrayal, just a utility class, and you'll probably never need to know about it.  Arrow is a subclass of \class{javax.media.j3d.TransformGroup}.
 
-\begin{methods}{\class{sim.portrayal3d.Arrow} Constructor}
+\begin{methods}{\class{sim.portrayal3d.simple.Arrow} Constructor}
 \mthd{public Arrow(double arrowRadius, Double3D startPoint, Double3D endPoint, String startLabel, String endLabel, Appearance appearance)} Creates an arrow of the given radius from startPoint to endPoint.  The two ends may be labeled (else you can pass in \variable{null}, and the arrow can be assigned an Appearance (or you can pass in \variable{null}).
 \end{methods}
 
 
 
 \subsection{Value Simple Portrayals}
+\label{sim.portrayal3d.simple.ValuePortrayal3D}
+
+3D Value Simple Portrayals are Simple Portrayals designed to represent a numerical value stored in a 3D location.  We've already seen a certain kind of 3D Value Simple Portrayal: the QuadPortrayal (Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}).  QuadPortrayals represent numerical values stored in 2D locations embedded in a mesh in 3D space, and work with ValueGrid2DPortrayal3D (which portrays 2D grids of numbers).
+
+The other kind of Value Simple Portrayal is a \Class{sim.portrayal3d.simple.ValuePortrayal3D}, which represents values as colored cubes in 3D grids.  ValuePortrayal3D works in concert with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}, which largely portrays 3D grids of numbers.  ValuePortrayal3D is the rough 3D equivalent to ValuePortrayal2D (Section \ref{sim.portrayal.simple.ValuePortrayal2D}).
+
+ValuePortrayal3D is a Shape3DPortrayal3D in the form of a simple {\bf cube} or as a simple {\bf square}, one of:
+
+\java{%
+    public static final int SHAPE\_CUBE;
+    public static final int SHAPE\_SQUARE;
+}
+
+\begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D} Constructor}
+\mthd{public ValuePortrayal3D(int shape)} Builds a ValuePortrayal3D using the given shape (either \variable{ValuePortayal3D.SHAPE\_CUBE} or \variable{ValuePortrayal3D.SHAPE\_SQUARE}).
+\mthd{public ValuePortrayal3D()} Builds a ValuePortrayal3D using a cube shape.
+\end{methods}
+
+ValueGridPortrayal3D changes the Appearance of the ValuePortrayal3D cube to reflect the value in question (using a ColorMap).   ValueGridPortrayal3D has no internal transform, so \method{setTransform(...)} simply returns false.  It does have PolygonAttributes, however.   By default these attributes are set up to cull faces away from the user.
+
+\begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D}}
+\mthd{public boolean setTransform(TransformGroup model, Transform3D transform)} Simply returns false: no internal transform may be set.
+\mthd{public PolygonAttributes polygonAttributes()} Returns the ValuePortrayal3D's PolygonAttributes.
+\end{methods}
+
+Like ValuePortrayal2D and various QuadPortrayals, ValuePortrayal3D has a notion of a {\bf filter}: a simple class which allows setting or changing the value stored at a given \(\langle x, y, z\rangle\) location in a certain field.  Here, filters are subclasses of the abstract superclass \Class{sim.portayal3d.simple.ValuePortrayal3D.Filter}.  There are only two of them: \Class{sim.portayal3d.simple.ValuePortrayal3D.DoubleFilter} and \Class{sim.portayal3d.simple.ValuePortrayal3D.IntFilter}  Filters are used by Inspectors to make values (rather than objects) inspectable and potentially modifiable.  All filters have the same constructor:
+
+\begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D.Filter} Constructor}
+\mthd{public Filter(LocationWrapper)} Builds a Filter based on the location and field stored in the given LocationWrapper.
+\end{methods}
+
+Their methods are simple, for example:
+
+\begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D.DoubleFilter}}
+\mthd{public double getValue()} Returns the current value stored at the Filter's location in its field.
+\mthd{public void setValue(double value)} Sets the current value stored at the Filter's location in its field.
+\mthd{public String toString()} Returns an appropriate String describing the current value and its location.
+\end{methods}
+
+IntFilter's methods are similar.  For more on Filters, see Section \ref{sim.portrayal.simple.ValuePortrayal2D.Filter}.
 
 \subsection{Edge Simple Portrayals}
 \label{sim.portrayal3d.network.SimpleEdgePortrayal3D}
 
+Unlike the 2D case, MASON actually has several 3D Simple Edge Portrayals for drawing edges in various ways: as simple lines, cones, arrows, and cylinders.  Edges can be labelled and can have one or two colors (depending on whether the graph is directed or undirected).  
+
+All 3D Simple Edge Portrayals are subclasses, ultimately of \Class{sim.portrayal.network.SimpleEdgePortrayal3D}.  This class is not abstract: it is capable of drawing edges as simple thin lines.  And again, unlike the 2D case (SimpleEdgePortrayal2D), SimpleEdgePortrayal3D {\it only} draws lines as edges.  For undirected graphs, the edges can be labelled with a single color, and for directed graphs, the edges can be labelled with two colors, one for each end of the edge, to distinguish between the ``to'' node and the ``from'' node.  SimpleEdgePortrayal3D's constructors are:
+
+\begin{methods}{\class{sim.portrayal3d.network.SimpleEdgePortrayal3D} Constructor}
+\mthd{public SimpleEdgePortrayal3D(Color fromColor, Color toColor, Color labelColor, Font labelFont)} Builds a SimpleEdgePortrayal3D for directed edges, with a from-color, a to-color, and an optional label color and label font.  If the from-color is equal to the to-color, only a single color line will be drawn.  If  the label color is null, no label will be drawn.
+\mthd{public SimpleEdgePortrayal3D(Color fromColor, Color toColor, Color labelColor)} Builds a SimpleEdgePortrayal3D for directed edges, with a from-color, a to-color, and an optional label color and a default font.  If the from-color is equal to the to-color, only a single color line will be drawn.  If  the label color is null, no label will be drawn.
+\mthd{public SimpleEdgePortrayal3D(Color edgeColor, Color labelColor, Font labelFont)} Builds a SimpleEdgePortrayal3D for undirected edges, with a single edge color and an optional label color and label font.  If  the label color is null, no label will be drawn.
+\mthd{public SimpleEdgePortrayal3D(Color edgeColor, Color labelColor)} Builds a SimpleEdgePortrayal3D for undirected edges, with a single edge color and an optional label color and a default font.  If  the label color is null, no label will be drawn.
+\mthd{public SimpleEdgePortrayal3D()} Builds a SimpleEdgePortrayal3D for undirected edges, with a gray edge color and white labels.
+\end{methods}
+
+If you have created a labelled SimplePortrayal3D, it will call the method \method{getLabel(...)} to retrieve the label for a given Edge.  This method can be overridden to customize what label you'd like to see.  By default, it returns a String-ified version of the Edge's \variable{info} object.   You can also override the \method{getName(...)} method to customize the name provided in the Inspector list, though this is less common.
+
+\begin{methods}{\class{sim.portrayal3d.network.SimpleEdgePortrayal3D}}
+\mthd{public String getLabel(Edge edge)} Returns an appropriate label for the object contained within the edge.
+\mthd{public String getName(LocationWrapper wrapper)} Returns an appropriate label for the edge as a whole, suitable for appearing in the Inspector list.
+\end{methods}
+
+SimplePortrayal3D's edges are pickable.
+
+\sidebar{So SimpleEdgePortrayal3D should be faster at drawing than its subclasses, right?}{Nope. For reasons we cannot explain, it's faster in Java3D to draw a complete Shape3D object or Primitive such as a cone or cylinder than it is to draw the trivial LineArray used to make the lines in SimpleEdgePortrayal3D.}  The remaining SimpleEdgePortrayal3Ds draw edges not with simple single- or bi-colored lines but with primitive objects such as arrows, cylinders, or cones.  The top-level abstract class for such portrayals is \Class{sim.portrayal3d.network.PrimitiveEdgePortrayal3D}, which is a subclass of SimpleEdgePortrayal3D, mostly for consistency with MASON tradition, even though it doesn't share a whole lot in common with it.  As befits its name, PrimitiveEdgePortrayal3D in fact shares a lot in common, style-wise and functionally, with \class{sim.portrayal3d.simple.PrimitivePortrayal3D} (Section \ref{sim.portrayal3d.simple.PrimitivePortrayal3D}).  
+
+PrimitiveEdgePortrayal3D draws edges with Java3D Primitives or other Shape3D objects.  Since they're used as 3-dimensional edges, nearly all such objects have a {\bf radius} and a {\bf height}.  The height will be stretched, so it's not very important.  But the radius determines the thickness of the edge.  There are default settings for these:
+
+\java{%
+	public static final double DEFAULT\_RADIUS = 0.5;\\
+	public static final double DEFAULT\_HEIGHT = 2.0;
+}
+
+PrimitiveEdgePortrayal3D has a single constructor, though you'll never use it unless you're subclassing it: instead, you'll call one of the constructors used by its subclasses.  The constructor takes the model used to describe the scene graph of the object, its Appearance, the label color (which can be null, indicating, as usual, a lack of a label) and a label font (which can also be null).
+
+\begin{methods}{\class{sim.portrayal3d.network.PrimitiveEdgePortrayal3D} Constructor}
+\mthd{public PrimitiveEdgePortrayal3D(Node model, Appearance appearance, Color labelColor, Font labelFont)} Builds a PrimitiveEdgePortrayal3D for directed edges, with a from-color, a to-color, and an optional label color and label font.  If the from-color is equal to the to-color, only a single color line will be drawn.  If  the label color is null, no label will be drawn.
+\end{methods}
+
+The constructor passes this model to a method called \method{init(...)}, which permits further setting up.  This is basically a mechanism to get around stupidities in Java's requirements for constructors.  If you override this method, be sure to call \code{super.init(...)}.  One common task in \method{init(...)} is setting geometry and appearance read/write flags for each of the shapes in the edge, using \method{setShape3DFlags(...)}.  Just as was the case for PrimitivePortrayal3D, you can also get and set the Appearance for the object, and can set whether or not it is pickable.   (By default, these edges are pickable).
+
+\begin{methods}{\class{sim.portrayal3d.network.PrimitiveEdgePortrayal3D}}
+\mthd{protected void init(Node model)} Called by the constructor to permit further tweaks to the model.
+\mthd{public static void setShape3DFlags(Shape3D shape)} Sets flags in the provided Shape3D object which makes its appearance and geometry readable and writeable.
+\mthd{protected Appearance getAppearance(TransformGroup model)} Returns an Appearance associated with the given model (specifically, Shape3D number 0).  If the model is \variable{null} or the number of shapes is zero, then builds a brand new Appearance object, sets flags in it, and returns it.
+\mthd{protected void setAppearance(TransformGroup model, Appearance appearance)} Sets the Appearance associated with all the Shape3D objects in the given model.  If the model is \variable{null}, then the internal Appearance is set and future constructed models will use it.
+\mthd{protected void setPickable(boolean val)} Sets whether or not future constructed models from the PrimitivePortrayal3D will be pickable.  The default is \variable{true}.
+\end{methods}
+
+Besides \method{init(...)}, PrimitivePortrayal3D often has two methods to be overridden in its subclasses.  \method{numShapes()} indicates how many total Shape3D objects there are in the scene graph of the edge, and \method{getShape(..)} returns each of them according to an index value.  You must override \method{numShapes()} if you create a subclass: but the second method must only be overridden if your model is something other than just a Primitive.
+
+\begin{methods}{\class{sim.portrayal3d.network.PrimitiveEdgePortrayal3D}}
+\mthd{public abstract int numShapes()} Returns the number of Shape3D objects in the scene graph.
+\mthd{public Shape3D getShape(TransformGroup j3dModel, int shapeIndex)} Returns the shape in the scene graph corresponding to the given index.  If your scene graph is not simply a Java3D Primitive, you will need to override this method.
+\end{methods}
+
+MASON provides three concrete subclasses of PrimitiveEdgePortrayal3D:
+
+\begin{itemize}
+\item \Class{sim.portrayal3d.network.CylinderEdgePortrayal3D} represents edges as cylinders of a single color.  Thus this edge representation is suitable only for undirected edges.
+\item \Class{sim.portrayal3d.network.ConeEdgePortrayal3D} represents edges as cones of a single color, with the base of the cone at the ``from'' node and the tip of the cone at the ``to'' node.
+\item \Class{sim.portrayal3d.network.ArrowEdgePortrayal3D} represents edges as arrows of a single color (using underneath the \class{sim.portrayal3d.simple.Arrow} utility class), with the base of the arrow at the ``from'' node and the tip of the arrow at the ``to'' node.
+\end{itemize}
+
+These classes all have the same constructors.  Here's the one for ConeEdgePortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.network.ConeEdgePortrayal3D} Constructor}
+\mthd{public ConeEdgePortrayal3D(Appearance appearance, Color labelColor, Font labelFont, double radius)} Builds a ConeEdgePortrayal3D with the provided appearance, label color, label font, and radius. The appearance and label font may be null, in which case default values are used.  If the label color is null, then no labels will be shown.
+\mthd{public ConeEdgePortrayal3D(Appearance appearance, Color labelColor)} Builds a ConeEdgePortrayal3D with the provided appearance and label color, using default values for the label font and radius (\variable{DEFAULT\_RADIUS}).  If the appearance is null, a default value will be used.  If the label color is null, then no labels will be shown.
+\mthd{public ConeEdgePortrayal3D(Image image, Color labelColor)} Builds a ConeEdgePortrayal3D with the provided Image and label color, using default values for the label font and radius (\variable{DEFAULT\_RADIUS}).  If the label color is null, then no labels will be shown.
+\mthd{public ConeEdgePortrayal3D(Color color, Color labelColor)} Builds a ConeEdgePortrayal3D with the provided color and label color, using default values for the label font and radius (\variable{DEFAULT\_RADIUS}).  If the label color is null, then no labels will be shown.
+\mthd{public ConeEdgePortrayal3D()} Builds a ConeEdgePortrayal3D using a gray color and a white label color, using default values for the label font and radius (\variable{DEFAULT\_RADIUS}). Labels are shown.
+\end{methods}
+
 \subsection{Wrapper Simple Portrayals}
 \label{sim.portrayal3d.simple.TransformedPortrayal3D}
 
-
+In 2D, Wrapper Simple Portrayals held subsidiary portrayals as {\it children} and added features to their portrayal of objects or otherwise manipulated them.  The same goes for the 3D case.  
 
 \paragraph{Shared Groups}
+\label{sim.portrayal3d.SharedPortrayal3D}
 
 MASON provides limited functionality for using a SharedGroup and Links to display the SimplePortrayal repeatedly in the environment.  The idea here is to have a single scene which is displayed in multiple places, rather than copying the scene over and over again for each object in the field.  This trick potentially uses much less memory than other approaches, but it has two downsides.\footnote{In truth, the memory issue may be a wash.  Java3D leaks memory in all sorts of places: for example, when you detach the main BranchGroup from the Universe and attach a new one to start a new visualization, the memory used in the old BranchGroup isn't immediately reclaimed upon garbage collection\,---\,or sometimes at all.}
 
@@ -9597,15 +9716,36 @@ MASON provides limited functionality for using a SharedGroup and Links to displa
 \item Shared Groups and Links can be buggy.
 \end{itemize}
 
-This takes the form of a wrapper portrayal called \Class{sim.portrayal3d.SharedGroupPortrayal3D}, which takes another SimplePortrayal as its child. When \method{getModel(...)} is called, SharedGroupPortrayal3D will do the same {\it once} on its child, and use the result repeatedly.  It will not call \method{getModel(...)} again unless the Display3D has rebuilt the entire scene.  And you can't pick the objects.
+This takes the form of a wrapper portrayal called \Class{sim.portrayal3d.SharedPortrayal3D}, which takes another SimplePortrayal as its child. When \method{getModel(...)} is called, SharedPortrayal3D will do the same {\it once} on its child, and use the result repeatedly.  It will not call \method{getModel(...)} again unless the Display3D has rebuilt the entire scene.  And you can't pick the objects.
 
-\begin{methods}{\class{sim.portrayal3d.SharedGroupPortrayal3D} Constructor}
-\mthd{public SharedGroupPortrayal3D(SimplePortrayal3D child)} Creates a SharedGroupPortrayal3D from the given child.  The portrayal will produce links on its own, you do not need to worry about that.  You cannot pick the child, and the child will not be updated further once created.
+\begin{methods}{\class{sim.portrayal3d.SharedPortrayal3D} Constructor}
+\mthd{public SharedPortrayal3D(SimplePortrayal3D child)} Creates a SharedPortrayal3D from the given child.  The portrayal will produce links on its own, you do not need to worry about that.  You cannot pick the child, and the child will not be updated further once created.
 \end{methods}
 
 For this class to work properly, you should build a new one each time the simulation is restarted, that is on \method{start()} or \method{load()}.  All MASON demo applications call the method \method{setupPortrayals()} from these methods and use \method{setupPortrayals()} to create new portrayals, including this one, so this isn't a problem.
 
 \subsection{Objects Acting As Their Own Simple Portrayals}
+
+Objects in fields can certainly act as their own Simple Portrayals: they need only to subclass from \class{sim.portrayal3d.SimplePortrayal3D} and implement methods as described in Section \ref{implementing3dsimple}.  
+
+Just as is the case in 2D, if your object subclasses SimplePortrayal3D, you can still use wrapper portrayals even though there's no underlying SimplePortrayal3D registered for the object.  Just pass in \variable{null} as the child to the wrapper portrayal, and it'll use the object itself as the child.
+
+\begin{itemize}
+\item Override \method{getModel(...)} to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.
+\item Either make the scene graph unpickable (using \method{clearPickableFlags(...)}), or 
+\item Make the scene graph pickable by using \method{setPickableFlags(...)} on each shape, and store a LocationWrapper in the user data of each shape, like this:
+
+\java{%
+LocationWrapper wrap = new LocationWrapper(object, null, parentPortrayal);\\
+// ... then for each Shape3D shape...\\
+shape.setUserData(wrap);
+}
+\end{itemize}
+
+See the \method{getModel(...)} code in PrimitivePortrayal to get the idea.  PrimitivePortrayal only provides a model, but never changes it afterwards.  For an idea about how to change the model or its Appearance etc. over time, see the \method{getModel(...)} method in ValuePortrayal3D.
+
+\subsection{Implementing a Simple Portrayal}
+\label{implementing3dsimple}
 
 
 

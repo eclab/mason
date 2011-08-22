@@ -21,53 +21,59 @@ import javax.media.j3d.*;
 
 public class SimpleEdgePortrayal3D extends SimplePortrayal3D
     {
-    public Color fromColor;
-    public Color toColor;
-    public Color labelColor;
-    public Font labelFont;
-    public boolean showLabels;
-    public void setShowLabels(boolean val){showLabels = val;}
-    public boolean getShowLabels(){return showLabels;}
+	Color fromColor;
+	Color toColor;
+	Color labelColor;
+	Font labelFont;
+	boolean showLabels;
+	
+	/** @deprecated */
+	public void setShowLabels(boolean val) { showLabels = val; }
+
+	/** @deprecated */
+	public boolean getShowLabels() { return showLabels; }
 
     public SimpleEdgePortrayal3D()
         {
-        this(Color.gray, Color.gray, Color.white);
+        this(Color.gray, Color.gray, Color.white, null);
         }
 
-    /** If fromPaint == toPaint, one single color line will be drawn, and if labelPaint is null, no label is drawn. */
     public SimpleEdgePortrayal3D(Color edgeColor, Color labelColor)
         {
-        this(edgeColor, edgeColor, labelColor, new Font("SansSerif", Font.PLAIN, 60));
+        this(edgeColor, edgeColor, labelColor, null);
+        }
+
+    public SimpleEdgePortrayal3D(Color edgeColor, Color labelColor, Font labelFont)
+        {
+        this(edgeColor, edgeColor, labelColor, labelFont);
         }
 
     public SimpleEdgePortrayal3D(Color fromColor, Color toColor, Color labelColor)
         {
-        this(fromColor, toColor, labelColor, new Font("SansSerif", Font.PLAIN, 60));
+        this(fromColor, toColor, labelColor, null);
         }
 
     /**
-     * If fromPaint == toPaint, one single color line will be drawn, and if
-     * labelPaint is null, no label is drawn.
+     * If fromColor == toColor, one single color line will be drawn, and if
+     * labelColor is null, no label is drawn.
      */
     public SimpleEdgePortrayal3D(Color fromColor, Color toColor, Color labelColor, Font labelFont)
         {
         this.fromColor = fromColor;
         this.toColor = toColor;
         this.labelColor = labelColor;
+		if (labelFont == null) 
+			labelFont = new Font("SansSerif", Font.PLAIN, 60);
         this.labelFont = labelFont;
+		showLabels = (labelColor != null);
+		if (this.labelColor == null) 
+			this.labelColor = Color.white;  // just in case the user turns on labels again
         }
 
-    static Transform3D transformForOffset(double x, double y, double z)
+	Transform3D transformForOffset(double x, double y, double z)
         {
         Transform3D offset = new Transform3D();
         offset.setTranslation(new Vector3d(x, y, z));
-        return offset;
-        }
-
-    static Transform3D transformForOffset(double[] xyz)
-        {
-        Transform3D offset = new Transform3D();
-        offset.setTranslation(new Vector3d(xyz));
         return offset;
         }
 
@@ -95,15 +101,16 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         Double3D firstPoint;
         Double3D secondPoint;
         SpatialNetwork3D field;
-        EdgeWrapper drawInfo;
+        LocationWrapper wrapper;
         Transform3D trans = null;
         com.sun.j3d.utils.geometry.Text2D tempText;
         
-        drawInfo = (EdgeWrapper) object;
-        field = (SpatialNetwork3D) drawInfo.fieldPortrayal.getField();
+        wrapper = (LocationWrapper) object;
+		Edge edge = (Edge)(wrapper.getLocation());
+        field = (SpatialNetwork3D) wrapper.fieldPortrayal.getField();
 
-        secondPoint = field.getObjectLocation(drawInfo.edge.to());
-        firstPoint = field.getObjectLocation(drawInfo.edge.from());
+        secondPoint = field.getObjectLocation(edge.to());
+        firstPoint = field.getObjectLocation(edge.from());
         
         startPoint[0] = firstPoint.x;
         startPoint[1] = firstPoint.y;
@@ -116,7 +123,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         middlePoint[1] = (secondPoint.y + firstPoint.y) / 2;
         middlePoint[2] = (secondPoint.z + firstPoint.z) / 2;
         if (showLabels)
-            trans = transformForOffset(middlePoint);
+            trans = transformForOffset(middlePoint[0], middlePoint[1], middlePoint[2]);
 
         if (j3dModel == null)
             {
@@ -131,7 +138,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
             Shape3D lineShape1 = new Shape3D(lineGeometry1, SimplePortrayal3D.appearanceForColor(fromColor)); 
             lineShape1.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); 
             setPickableFlags(lineShape1); 
-            lineShape1.setUserData(drawInfo); 
+            lineShape1.setUserData(wrapper); 
             j3dModel.addChild(lineShape1);
 
             LineArray lineGeometry2 = new LineArray(2, GeometryArray.COORDINATES);
@@ -141,14 +148,14 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
             Shape3D lineShape2 = new Shape3D(lineGeometry2, SimplePortrayal3D.appearanceForColor(toColor)); 
             lineShape2.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); 
             setPickableFlags(lineShape2); 
-            lineShape2.setUserData(drawInfo); 
+            lineShape2.setUserData(wrapper); 
             j3dModel.addChild(lineShape2);
 
 
             // draw the edge labels if the user wants
             if (showLabels)
                 {
-                String str = getLabel(drawInfo.edge);
+                String str = getLabel(edge);
                 com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
                     str, new Color3f(labelColor), labelFont.getFamily(),
                     labelFont.getSize(), labelFont.getStyle());
@@ -158,18 +165,8 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                     text.getAppearance(),
                     OrientedShape3D.ROTATE_ABOUT_POINT,
                     new Point3f(0, 0, 0));
-                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need
-                // to change
-                // the
-                // appearance
-                // (see
-                // below)
-                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need
-                // to change
-                // the
-                // geometry
-                // (see
-                // below)
+                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
+                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
 
@@ -192,13 +189,13 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                     new Color3f(labelColor), labelFont.getFamily(),
                     labelFont.getSize(), labelFont.getStyle());
 
-                // tempText = new Text3D(new Font3D(labelFont, new
-                // FontExtrusion()), "");
+                // tempText = new Text3D(new Font3D(labelFont, new FontExtrusion()), "");
 
                 tempText.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
                 tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
                 }
-            } else
+            } 
+		else
             {
             Shape3D shape = (Shape3D)j3dModel.getChild(0);
             LineArray geo = (LineArray)shape.getGeometry(); 
@@ -213,14 +210,13 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
             if (showLabels)
                 {
                 TransformGroup tg = (TransformGroup) j3dModel.getChild(2);
-                String str = getLabel(drawInfo.edge);
+                String str = getLabel(edge);
 
                 // see if the label has changed?
                 if (!tg.getUserData().equals(str))
                     {
                     // ugh. This is really slow. Using the Shape3D results in
-                    // huge text, so, the default
-                    // value has to be changed in the constructor.
+                    // huge text, so, the default value has to be changed in the constructor.
 
                     // make the text again
                     com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
@@ -235,8 +231,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                     // Grab the OrientedShape3D
                     OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 
-                    // update its geometry and appearance to reflect the new
-                    // text.
+                    // update its geometry and appearance to reflect the new text.
                     o3d.setGeometry(text.getGeometry());
                     o3d.setAppearance(text.getAppearance());
 
@@ -256,67 +251,5 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         {
         // indicate it's an edge
         return "Edge: " + super.getName(wrapper);
-        }
-
-    public static class EdgeWrapper extends LocationWrapper
-        {
-        // we keep this around so we don't keep allocating MutableDoubles
-        // every time getObject is called -- that's wasteful, but more
-        // importantly,
-        // it causes the inspector to load its property inspector entirely
-        // again,
-        // which will cause some flashing...
-        MutableDouble val = null;
-        SpatialNetwork3D field;
-
-        public EdgeWrapper(FieldPortrayal fieldPortrayal, Edge edge)
-            {
-            super(edge.info, edge, fieldPortrayal);
-            this.edge = edge;
-            field = (SpatialNetwork3D)(fieldPortrayal.getField());
-            }
-
-        public String getLocationName()
-            {
-            Edge edge = (Edge)getLocation();
-            if (field != null && field.network != null)
-                {  
-                // do I still exist in the field?  Check the from() value
-                Bag b = field.network.getEdgesOut(edge.from());
-                // if (b != null)  // no longer necessary
-                for(int x=0;x<b.numObjs;x++)
-                    if (b.objs[x] == edge)
-                        return "" + edge.from() + " --> " + edge.to();
-                }
-            return "Gone.  Was: " + edge.from() + " --> " + edge.to();
-            }
-            
-/*
-  public String toString()
-  {
-  return "" + edge.info;
-  }
-
-  public String getLocationName()
-  {
-  SpatialNetwork3D field = (SpatialNetwork3D) fieldPortrayal.getField();
-  if (field != null && field.network != null)
-  {
-  // do I still exist in the field? Check the from() value
-  Bag b = field.network.getEdgesOut(edge.from());
-  for (int x = 0; x < b.numObjs; x++)
-  if (b.objs[x] == edge)
-  return "" + edge.from() + " --> " + edge.to();
-  }
-  return "Gone.  Was: " + edge.from() + " --> " + edge.to();
-  }
-
-  public Object getObject()
-  {
-  return edge;
-  }
-*/
-
-        public Edge edge;
         }
     }

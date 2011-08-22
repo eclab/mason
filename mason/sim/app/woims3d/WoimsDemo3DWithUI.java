@@ -60,7 +60,8 @@ public class WoimsDemo3DWithUI extends GUIState
         
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
+		
         p2.setField(((WoimsDemo3D) state).environment);
 
         display.createSceneGraph();

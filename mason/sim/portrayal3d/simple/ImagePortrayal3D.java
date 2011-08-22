@@ -127,7 +127,7 @@ public class ImagePortrayal3D extends SimplePortrayal3D
             setPickableFlags(s);
             
             // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+            LocationWrapper pickI = new LocationWrapper(obj, null, getCurrentFieldPortrayal());
 
             // Store the LocationWrapper in the user data
             s.setUserData(pickI);

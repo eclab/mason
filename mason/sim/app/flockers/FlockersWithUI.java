@@ -69,9 +69,9 @@ public class FlockersWithUI extends GUIState
                 this,
                 new OrientedPortrayal2D(
                     new SimplePortrayal2D(), 0, 4.0,
-                    new Color(      128 + state.random.nextInt(128),
-                        128 + state.random.nextInt(128),
-                        128 + state.random.nextInt(128)),
+                    new Color(      128 + guirandom.nextInt(128),
+                        128 + guirandom.nextInt(128),
+                        128 + guirandom.nextInt(128)),
                     OrientedPortrayal2D.SHAPE_COMPASS),
                 trailsPortrayal, 100);
 

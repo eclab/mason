@@ -8,6 +8,8 @@ package sim.portrayal3d;
 
 import sim.portrayal.*;
 import javax.media.j3d.*;
+import sim.display3d.*;
+import sim.display.*;
 
 /**
  * The top-level definition of Portrayals which portray underlying models using, er,
@@ -47,7 +49,7 @@ public interface Portrayal3D extends Portrayal
      * TransformGroup is non-null, you should modify it and return the same.
      *
      * <p>SimplePortrayals should assume the following contract: at the point
-     * that getModel(...) is called, the parentPortrayal will have already been
+     * that getModel(...) is called, the field portrayal and display will have already been
      * set if it exists, else it will be null.
      */
     public TransformGroup getModel(Object object, TransformGroup prev);
@@ -59,5 +61,21 @@ public interface Portrayal3D extends Portrayal
      */
     // not getPolygonAttributes because that shows up in the inspector as a property!
     public PolygonAttributes polygonAttributes();
-    }
+	
+	/** Sets the current Display3D.  Called by the Display3D on attach(...). */
+	public void setCurrentDisplay(Display3D display);
+
+	/** Returns the current Display3D, or possibly null if it's not been set yet.  
+		SimplePortrayals should implement this method by
+		returning a display if it's been set with setCurrentDisplay(...), else returning
+		whatever the field portrayal's got set, else null if there is no field portrayal yet. */
+	public Display3D getCurrentDisplay();
+
+	/** Returns the current GUIState, or null if no GUIState has been set yet.
+		The GUIState will be set *at least* immediately prior to getModel(...).  
+		You should implement this method as: 
+		<tt>{ Display3D d = getCurrentDisplay(); return (d == null ? null : d.getSimulation()); }</tt>
+	*/
+	public GUIState getCurrentGUIState();
+	}
     

@@ -72,11 +72,6 @@ Can be added to a scene without the need of an underlying field or
 object (and indeed ignores the position of the object).
 
 
-SharedGroupPortrayal3D.java
-
-A SimplePortrayal3D subclass which draws Java3D SharedGroup objects.
-
-
 BranchGroupPortrayal3D.java
 
 A PrimitivePortrayal3D subclass which loads and displays entire BranchGroups
@@ -114,4 +109,10 @@ TransformedPortrayal3D.java
 A wrapper portrayal which can transform (scale, rotate, translate) the 
 underlying portrayal as desired.
 
+
+SharedPortrayal3D.java
+
+A wrapper portrayal which distributes a given subsidiary portrayal somewhat
+more efficiently in multiple locations in a scene, using SharedGroups and
+Links.
 

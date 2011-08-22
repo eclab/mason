@@ -2220,7 +2220,46 @@ Version 16
 	QuadPortrayals of various kinds have floats changed to doubles
 	Various variables in Arrow made private and renamed
 	Added Arrow.getArrowTail() and Arrow.getArrowHead()
-	Changed a wide range of float arguments and variales to doubles in 3D to make it
+	Changed a wide range of float arguments and variables to doubles in 3D to make it
 		a little simpler for people to use with fewer errors (remembering to add
 		'f' at the end).  This is a big change but it should be essentially
 		upward-compatible.
+	Arrow.createArrow(...) deleted
+	Axes are defined in radius, not diameter
+	Removed ValuePortrayal3D.ValueWrapper.  Instead, ValueGridPortrayal3D now has a
+		method called getColorFor(wrapper).
+	Made various variables in SimpleEdgePortrayal3D private
+	Deleted SimpleEdgePortrayal3D.transformForOffset(double[])
+	In SimpleEdgePortrayal3D, setting the label color to null turns off labels, and
+		setting the label color to non-null turns on labels.
+	LabelledPortrayal3D's malformed attempt to do ordered labels is officially removed.
+	SimpleEdgePortrayal3D.setShowLabels() and getShowLabels() deprecated
+	new CylinderEdgePortrayal3D(labelColor) now sets cylinders with the same size as
+		new CylinderEdgePortrayal3D()
+	For all SimpleEdgePortrayal3D and subclasses: if you pass in a null font, the
+		default font (Sans Serif, Plain, 60pt) is assumed.
+	All new set of constructors for all SimpleEdgePortrayal subclasses.  Multiple
+		constructors deprecated.
+	balls3d.Band is no longer a subclass of MutableDouble
+	Modifications to tutorial5 and balls3d to make the Edges in the inspectors list
+		more useful.  Also removed a vestigial decimalFormat from balls3d.Band
+	Entirely eliminated SimpleEdgePortrayal3D.EdgeWrapper
+	Made GenericEdgePortrayal3D.getTransform(...) private	
+	GenericEdgePortrayal3D and PrimitiveEdgePortrayal3D folded into
+		PrimitiveEdgePortrayal3D.  GenericEdgePortrayal3D is deleted.
+	SharedGroupPortrayal3D renamed to SharedPortrayal3D to be consistent with the
+		wrapper portrayal naming convention.
+	LabelledPortrayal3D now uses Text2D again.
+	Woims3D visualization look improved.
+	Added GUIState.guirandom, a new random number generator just for the GUI and
+		visualization.  Flockers modified to demonstrate how it works.
+	Removed SimplePortrayal3D.setParentPortrayal() and SimplePortrayal3D.parentPortrayal.
+		Added Portrayal3D.setCurrentDisplay(), Portrayal3D.getCurrentDisplay(),
+		Portrayal3D.getCurrentGUIState(), SimplePortrayal3D.setCurrentFieldPortrayal(),
+		and SimplePortrayal3D().getCurrentFieldPortrayal().  Modified the wrapper
+		classes so that they call the appropriate methods on their children.
+		Displays and Field Portrayals all call these methods as appropriate.  This
+		approach solidifies the assumption that model objects oughtn't be their
+		own Portrayal3Ds, though it's not forbidden (but serialization won't work).
+		Modified Woims3D demo documentation to explain that it's an example of
+		objects serving as their own Portrayal3Ds, but that it's not a good idea.

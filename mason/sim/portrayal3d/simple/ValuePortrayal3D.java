@@ -12,6 +12,7 @@ import sim.portrayal3d.grid.*;
 import javax.media.j3d.*;
 import sim.portrayal.*;
 import sim.util.*;
+import java.awt.*;
 
 /** ValuePortrayal3D defines a cube or square whose color and transparency can be changed, 
     and is really intended solely for use in ValueGridPortrayal3D.  Note that although
@@ -121,8 +122,9 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
     /* Builds a model, but obj is expected to be a ValuePortrayal3D.ValueWrapper. */
     public TransformGroup getModel(Object obj, TransformGroup j3dModel) 
         {
-        float[] c = ((ValueGridPortrayal3D)parentPortrayal).getMap().getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
-
+        //float[] c = ((ValueGridPortrayal3D)getCurrentFieldPortrayal()).getMap().getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
+		Color color = ((ValueGridPortrayal3D)getCurrentFieldPortrayal()).getColorFor(obj);
+		
         // make sure the polygon attributes are set
         if(j3dModel==null) 
             {
@@ -139,7 +141,7 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
             j3dModel.addChild(s);
             */
 
-            Appearance app = appearanceForColor(((ValueGridPortrayal3D)parentPortrayal).getMap().getColor(((ValueWrapper)obj).lastVal));
+            Appearance app = appearanceForColor(color);
             app.setPolygonAttributes(polygonAttributes());
 
 /*
@@ -171,58 +173,11 @@ app.setTransparencyAttributes(ta);
 
             // extract color to use
             Appearance appearance = getAppearance(j3dModel);        
-            appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
+            float[] c = color.getRGBComponents(null);
+			appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
             appearance.getTransparencyAttributes().setTransparency(1.0f - c[3]);  // duh, alpha's backwards
             }
         return j3dModel;
-        }
-
-
-
-    /** This special LocationWrapper contains a public double holding the last value used
-        to display the object. */
-    public static class ValueWrapper extends LocationWrapper
-        {
-        // we keep this around so we don't keep allocating MutableDoubles
-        // every time getObject is called -- that's wasteful, but more importantly,
-        // it causes the inspector to load its property inspector entirely again,
-        // which will cause some flashing...
-        MutableDouble val = null;  
-                        
-        public ValueWrapper(double lastVal, int x, int y, int z, FieldPortrayal fieldPortrayal)
-            {
-            super((Object)null, new Int3D(x,y,z), fieldPortrayal);
-            this.lastVal = lastVal;
-            }
-
-        public String getLocationName()
-            {
-            Int3D loc = (Int3D) location;
-            Object field = fieldPortrayal.getField();
-            if (field instanceof DoubleGrid3D || field instanceof IntGrid3D)
-                return loc.toCoordinates();
-            else return (new Int2D(loc.x,loc.y)).toCoordinates();
-            }
-
-        public Object getObject()
-            {
-            Object field = fieldPortrayal.getField();
-            Int3D loc = (Int3D)location;
-            if (val==null) val = new MutableDouble(0);
-
-            if (field instanceof DoubleGrid3D)
-                val.val = ((DoubleGrid3D)field).field[loc.x][loc.y][loc.z];
-            else if (field instanceof IntGrid3D)
-                val.val = ((IntGrid3D)field).field[loc.x][loc.y][loc.z];
-            else if (field instanceof DoubleGrid2D)
-                val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
-            else // if (field instanceof IntGrid2D)
-                val.val = ((IntGrid2D)field).field[loc.x][loc.y];
-            
-            return val;
-            }
-
-        public double lastVal;  // the last value used to display the object
         }
 
 
@@ -245,6 +200,7 @@ app.setTransparencyAttributes(ta);
         ValueGridPortrayal3D fieldPortrayal;
         Grid3D grid; 
         String name;
+		
         public Filter(LocationWrapper wrapper)
             {
             fieldPortrayal = (ValueGridPortrayal3D)(wrapper.getFieldPortrayal());
@@ -255,6 +211,7 @@ app.setTransparencyAttributes(ta);
             z = loc.z; 
             name = fieldPortrayal.getValueName() + " at " + wrapper.getLocationName();
             }
+			
         public String toString() { return name; }
         }
 

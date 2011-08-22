@@ -167,7 +167,7 @@ public class SelectionBehavior extends MouseBehavior
                     // could be null for some reason
                     if (fPortrayal == null)
                         {
-                        System.err.println("Warning: The value of a LocationWrapper.getFieldPortrayal() is null.\nLikely the wrapper was created from a SimplePortrayal3D whose parentPortrayal\nwas not set before getModel(...) was called."); 
+                        System.err.println("Warning: The value of a LocationWrapper.getFieldPortrayal() is null.\nLikely the wrapper was created from a SimplePortrayal3D whose field portrayal was not set before getModel(...) was called."); 
                         }
                     else
                         {

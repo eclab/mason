@@ -258,15 +258,17 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         {
         final Grid2D field = (Grid2D)this.field;
         return new LocationWrapper( new MutableDouble(val),  // something unique to return for getObject()
-            loc, this )  // it's location
+            loc, this )  // its location
             {
             public Object getObject()
                 {
                 Int2D loc = (Int2D) location;
                 MutableDouble val = (MutableDouble) this.object;
                 // update the current value
-                if (field instanceof DoubleGrid2D) val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
-                else val.val = ((IntGrid2D)field).field[loc.x][loc.y];
+                if (field instanceof DoubleGrid2D) 
+					val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
+                else 
+					val.val = ((IntGrid2D)field).field[loc.x][loc.y];
                 return val;
                 }
             

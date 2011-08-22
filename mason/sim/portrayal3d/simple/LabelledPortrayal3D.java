@@ -14,6 +14,7 @@ import com.sun.j3d.utils.geometry.*;
 import javax.vecmath.*;
 import java.awt.*;
 import java.util.*;
+import sim.display3d.*;
 
 /**
    A wrapper for other Portrayal3Ds which also draws a textual label.  When you create this
@@ -41,8 +42,6 @@ import java.util.*;
    in the constructor if you like.  
    
    <P>The label will always be drawn directly facing the viewer regardless of the rotation of the model.
-
-   <p>Labelled
 */
 
 public class LabelledPortrayal3D extends SimplePortrayal3D
@@ -95,15 +94,6 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         this.font = font;
         this.scale = scale;
         }
-
-    /* Warning: does not work right now.  :-(  :-(  */
-    boolean labelGoesOnTop;
-    /*
-      public void setLabelGoesOnTop(boolean val)
-      {
-      labelGoesOnTop = val;
-      }
-    */
         
     public PolygonAttributes polygonAttributes()
         { 
@@ -120,11 +110,20 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         return child.getName(wrapper);
         }
     
-    public void setParentPortrayal(FieldPortrayal3D p)
+	/** Sets the current display both here and in the child. */
+	public void setCurrentDisplay(Display3D display)
+		{
+		super.setCurrentDisplay(display);
+		child.setCurrentDisplay(display);
+		}
+		
+	/** Sets the current field portrayal both here and in the child. */
+    public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-        child.setParentPortrayal(p);
+		super.setCurrentFieldPortrayal(p);
+        child.setCurrentFieldPortrayal(p);
         }
-            
+
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
         if (child.setSelected(wrapper,selected))
@@ -207,15 +206,15 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             jswitch.setUserData(l);
                         
             // make the text
-            //Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
-            //text.setRectangleScaleFactor(scale/16.0f);
+            Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
+            text.setRectangleScaleFactor((float)(scale/16.0));
             
             // Windows is acting weird with regard to Text2D.  The text is way
             // too small.  Or is it that MacOSX is weird with the font way too big?
             // dunno yet.  Anyway, an alternative to Text2D is to do Text3D, but it's
             // significantly more expensive in terms of polygons, so I'd prefer not to
             // do it if I can.
-            Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
+            // Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
             
             // We want the Text2D to always be facing forwards.  So we dump its
             // geometry and appearance into an OrientedShape3D and use that instead.
@@ -239,22 +238,8 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             o.addChild(o3d);         // Add label to the offset TransformGroup
             jswitch.addChild(o);    // Add offset TransformGroup to the Switch
             
-            // is there an explicit ordering?
-            if (labelGoesOnTop)
-                {
-                OrderedGroup g = new OrderedGroup();
-                g.setCapability(OrderedGroup.ALLOW_CHILDREN_READ);
-                g.clearCapabilityIsFrequent(OrderedGroup.ALLOW_CHILDREN_READ);
-                g.addChild(n);
-                g.addChild(jswitch);
-                g.setChildIndexOrder(new int[] { 0, 1 });
-                j3dModel.addChild(g);
-                }
-            else
-                {
-                j3dModel.addChild(n);   // Add the underlying model as child 0
-                j3dModel.addChild(jswitch);  // Add the switch as child 1
-                }
+			j3dModel.addChild(n);   // Add the underlying model as child 0
+			j3dModel.addChild(jswitch);  // Add the switch as child 1
             updateSwitch(jswitch, obj);       // turn the switch on/off
             }
         else

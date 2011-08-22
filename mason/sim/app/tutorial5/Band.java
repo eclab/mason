@@ -19,4 +19,6 @@ public class Band implements java.io.Serializable
     public double getStrength() { return strength; }
     public void setLaxDistance(double val) { if (val >= 0) laxDistance = val; }
     public double getLaxDistance() { return laxDistance; }
+
+	public String toString() { return "" + strength + " (" + laxDistance + ")"; }
     }

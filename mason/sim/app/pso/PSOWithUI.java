@@ -67,10 +67,7 @@ public class PSOWithUI extends GUIState
         final SimpleColorMap map = new SimpleColorMap(
             swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);
          
-        // obstacle portrayal needs no setup
         swarmPortrayal.setField(swarm.space);
-        
-        // make the flockers random colors and four times their normal size (prettier)
         for(int x=0;x<swarm.space.allObjects.numObjs;x++)
             {
             final Particle p = (Particle)(swarm.space.allObjects.objs[x]);

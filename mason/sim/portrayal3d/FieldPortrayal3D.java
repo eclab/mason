@@ -10,6 +10,8 @@ import sim.portrayal3d.simple.*;
 import javax.media.j3d.*;
 import javax.vecmath.*;
 import com.sun.j3d.utils.picking.*;
+import sim.display3d.*;
+import sim.display.*;
 
 /** 
  * Superclass of all Field Portrayals in J3D.
@@ -47,7 +49,24 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
 
     Transform3D internalTransform;
     boolean updateInternalTransform = false;
+	
+	Display3D display = null;
+	public void setCurrentDisplay(Display3D display)
+		{
+		this.display = display;
+		}
+	
+	public Display3D getCurrentDisplay()		
+		{
+		return display;
+		}
     
+	public GUIState getCurrentGUIState()
+		{
+		Display3D d = getCurrentDisplay(); 
+		return (d == null ? null : d.getSimulation());
+		}
+	
     /** Sets the FieldPortrayal3D's internal Transform.  This is a user-modifiable
         transform which should be used primarily to adjust the location of the FieldPortrayal3D
         relative to <i>other FieldPortrayal3D</i> objects.  If null is provided, then

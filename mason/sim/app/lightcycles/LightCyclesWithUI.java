@@ -62,7 +62,7 @@ public class LightCyclesWithUI extends GUIState
         Color[] colors = new Color[((LightCycles)state).cycleCount+1];  
         colors[0] = new Color(0,0,0,0);
         for(int i = 1 ; i < colors.length; i++)
-            { colors[i] = new Color(state.random.nextInt(255), state.random.nextInt(255), state.random.nextInt(255)); }
+            { colors[i] = new Color(guirandom.nextInt(255), guirandom.nextInt(255), guirandom.nextInt(255)); }
                 
         gridPortrayal.setMap(new sim.util.gui.SimpleColorMap(colors));
         

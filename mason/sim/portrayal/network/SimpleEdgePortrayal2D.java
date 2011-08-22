@@ -5,6 +5,7 @@
 */
 
 package sim.portrayal.network;
+
 import sim.portrayal.*;
 import java.awt.*;
 import sim.field.network.*;

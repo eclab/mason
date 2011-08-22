@@ -131,7 +131,7 @@ public class CubePortrayal3D extends SimplePortrayal3D
             setPickableFlags(localShape);
                         
             // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+            LocationWrapper pickI = new LocationWrapper(obj, null, getCurrentFieldPortrayal());
             localShape.setUserData(pickI); 
                         
             j3dModel.addChild(localShape); 

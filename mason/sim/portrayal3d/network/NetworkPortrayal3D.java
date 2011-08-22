@@ -73,23 +73,24 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
      **/
     protected BranchGroup wrapModelForNewEdge(Edge edge)
         {
-        SimpleEdgePortrayal3D.EdgeWrapper newinfo = new SimpleEdgePortrayal3D.EdgeWrapper(this, edge); 
-
-        Portrayal p = getPortrayalForObject(newinfo);
+        LocationWrapper newwrapper = new LocationWrapper(edge.info, edge, this);
+		
+        Portrayal p = getPortrayalForObject(newwrapper);
         if (!(p instanceof SimpleEdgePortrayal3D)) 
             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                 edge + " -- expected a SimpleEdgePortrayal3D");
         SimpleEdgePortrayal3D portrayal = (SimpleEdgePortrayal3D) p; 
         
-        TransformGroup localTG = portrayal.getModel(newinfo, null); 
+		portrayal.setCurrentFieldPortrayal(this);
+        TransformGroup localTG = portrayal.getModel(newwrapper, null); 
         localTG.setCapability(Group.ALLOW_CHILDREN_READ); 
-        localTG.setUserData(newinfo);                 
+        localTG.setUserData(newwrapper);                 
         
         BranchGroup localBG = new BranchGroup();
         localBG.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
         localBG.setCapability(BranchGroup.ALLOW_DETACH);
         localBG.addChild(localTG);
-        localBG.setUserData(newinfo);
+        localBG.setUserData(newwrapper);
         //I set the user data in both localBG, and localTG.
         return localBG;
         }
@@ -121,27 +122,30 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
         for(int t= globalTG.numChildren()-1; t>=0; t--)
             {
             BranchGroup localBG = (BranchGroup)globalTG.getChild(t);
-            SimpleEdgePortrayal3D.EdgeWrapper infoObj = (SimpleEdgePortrayal3D.EdgeWrapper)localBG.getUserData();
-            if(hm.remove(infoObj.edge) != null) // hm.containsKey(edgeObj))  // object still in the field
+            LocationWrapper wrapper = (LocationWrapper)localBG.getUserData();
+			Object edge = wrapper.getLocation();
+			
+            if(hm.remove(edge) != null) // hm.containsKey(edgeObj))  // object still in the field
                 {  // we can pull this off because valid edges can't be null -- Gabriel
                 TransformGroup localTG = (TransformGroup)localBG.getChild(0);
-                Portrayal p = getPortrayalForObject(infoObj);
+                Portrayal p = getPortrayalForObject(wrapper);
                 if(! (p instanceof SimplePortrayal3D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                        infoObj + " -- expecting a SimplePortrayal3D");
+                        wrapper + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                 
-                TransformGroup localTG2 = p3d.getModel(infoObj, localTG);
+				p3d.setCurrentFieldPortrayal(this);
+                TransformGroup localTG2 = p3d.getModel(wrapper, localTG);
 
                 if(localTG != localTG2)
                     {
                     localTG2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
                     localTG2.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-                    localTG2.setUserData(infoObj);                                                
+                    localTG2.setUserData(wrapper);                                                
                     BranchGroup newlocalBG = new BranchGroup();
                     newlocalBG.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
                     newlocalBG.setCapability(BranchGroup.ALLOW_DETACH);
-                    newlocalBG.setUserData(infoObj);
+                    newlocalBG.setUserData(wrapper);
                     newlocalBG.addChild(localTG2);
                                                 
                     globalTG.setChild(newlocalBG, t);

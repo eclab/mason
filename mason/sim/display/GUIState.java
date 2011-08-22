@@ -8,8 +8,9 @@ package sim.display;
 import sim.engine.*;
 import sim.portrayal.*;
 import java.io.*;
-import sim.util.Bag;
-import java.util.HashMap;
+import sim.util.*;
+import ec.util.*;
+import java.util.*;
 
 /** A wrapper for SimState and Schedule which provides additional functionality for
     GUI objects. This wrapper extends the functionality of SimState and
@@ -69,6 +70,13 @@ import java.util.HashMap;
 
 public abstract class GUIState
     {
+	/** An additional random number generator available for GUI and drawing purposes,
+		separate from the one used in the model.  If you use this generator to do things
+		like specify the colors of agents on-screen, rather than use the model's generator,
+		you can guarantee identical simulation results with the model regardless of whether
+		it runs under the model or the GUI. */
+	public MersenneTwisterFast guirandom = new MersenneTwisterFast();
+	
     /** The underlying SimState */
     public SimState state;
     

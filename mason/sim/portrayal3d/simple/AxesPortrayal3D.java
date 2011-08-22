@@ -22,36 +22,39 @@ import sim.util.*;
 public class AxesPortrayal3D extends SimplePortrayal3D
     {
     // thickness of the arrows
-    double arrowDiameter;
+    double arrowRadius;
 	
     // flag showing/hidding the letters
     boolean mLetters;
 	
-    public AxesPortrayal3D(double arrowDiameter, boolean letters)
+    public AxesPortrayal3D(double arrowRadius, boolean letters)
         {
-        this.arrowDiameter = arrowDiameter;
+        this.arrowRadius = arrowRadius;
 		mLetters = letters;       
         }
                 
-	void createAxes(Group group, double arrowDiameter, boolean letters)
+	void createAxes(Group group, double arrowRadius, boolean letters)
         {
         float length = 1.1f;
         group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-        group.addChild(Arrow.createArrow(arrowDiameter, 
-                new Double3D(0, 0, 0), 
-                new Double3D(length,0,0),
-                (letters? "O": null),
-                (letters? "X": null)));
-        group.addChild(Arrow.createArrow(arrowDiameter, 
+        group.addChild(new Arrow(arrowRadius, 
+					   new Double3D(0, 0, 0), 
+					   new Double3D(length,0,0),
+					   (letters? "O": null),
+                       (letters? "X": null),
+					   null));
+        group.addChild(new Arrow(arrowRadius, 
                 new Double3D(0, 0, 0), 
                 new Double3D(0,length,0), 
                 null, 
-                (letters? "Y": null)));
-        group.addChild(Arrow.createArrow(arrowDiameter, 
+                (letters? "Y": null),
+				null));
+        group.addChild(new Arrow(arrowRadius, 
                 new Double3D(0, 0, 0), 
                 new Double3D(0,0,length), 
                 null, 
-                (letters? "Z": null)));
+                (letters? "Z": null),
+				null));
         }
 
                 
@@ -60,7 +63,7 @@ public class AxesPortrayal3D extends SimplePortrayal3D
         if(prev != null)
             return prev;
         TransformGroup tg = new TransformGroup();
-        createAxes(tg, arrowDiameter, mLetters);
+        createAxes(tg, arrowRadius, mLetters);
         clearPickableFlags(tg);
         return tg;
         }

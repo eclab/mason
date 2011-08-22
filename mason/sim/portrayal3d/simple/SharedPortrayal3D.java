@@ -9,19 +9,28 @@ package sim.portrayal3d.simple;
 import sim.portrayal3d.*;
 import sim.portrayal.*;
 import javax.media.j3d.*;
-
-/**
- * @author Gabriel Balan
- *
- * Wraps a non-pickable SimplePortrayal3D using a Shared Group and Links.
- */
+import sim.display3d.*;
  
-public class SharedGroupPortrayal3D extends SimplePortrayal3D 
+public class SharedPortrayal3D extends SimplePortrayal3D 
     {
 	SimplePortrayal3D child;
 	SharedGroup group = null;
     
-    public SharedGroupPortrayal3D(SimplePortrayal3D child)
+	/** Sets the current display both here and in the child. */
+	public void setCurrentDisplay(Display3D display)
+		{
+		super.setCurrentDisplay(display);
+		child.setCurrentDisplay(display);
+		}
+		
+	/** Sets the current field portrayal both here and in the child. */
+    public void setCurrentFieldPortrayal(FieldPortrayal3D p)
+        {
+		super.setCurrentFieldPortrayal(p);
+        child.setCurrentFieldPortrayal(p);
+        }
+
+    public SharedPortrayal3D(SimplePortrayal3D child)
         {
 		this.child = child;
         }
@@ -52,7 +61,7 @@ public class SharedGroupPortrayal3D extends SimplePortrayal3D
             // since this isn't pickable, it doesn't matter
             
             // build a LocationWrapper for the object
-            LocationWrapper pickI = new LocationWrapper(obj, null, parentPortrayal);
+            LocationWrapper pickI = new LocationWrapper(obj, null, getCurrentFieldPortrayal());
             // Store the LocationWrapper in the user data
             link.setUserData(pickI);
 

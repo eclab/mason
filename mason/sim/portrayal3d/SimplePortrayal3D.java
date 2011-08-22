@@ -13,6 +13,7 @@ import com.sun.j3d.utils.image.*;
 import java.awt.*;
 import javax.vecmath.*;
 import java.util.*;
+import sim.display3d.*;
 
 /** The superclass of all 3D Simple Portrayals which by default adds nothing to the 3D
     scene.  Since nothing is added to the scene, nothing is shown and you cannot
@@ -23,10 +24,10 @@ import java.util.*;
     update requests by updating this same LabelledList.  No polygonAttributes are
     provided by default, and setSelected always true by default.
     
-    <p>SimplePortrayal3Ds have a <i>parentPortrayal</i>, which is the FieldPortrayal3D
+    <p>SimplePortrayal3Ds have a <i>getFieldPortrayal()</i>, which is the FieldPortrayal3D
     which houses them.  This value can be null if the SimplePortrayal3D was added directly
     into the Display3D's collection of portrayals rather than being used inside
-    a field portrayal.  The contract SimplePortrayal3Ds may assume is that the parentPortrayal,
+    a field portrayal.  The contract SimplePortrayal3Ds may assume is that the getFieldPortrayal(),
     if it exists, will have been set prior to getModel(...) being called.
     
     <P>Various utility functions are provided.  setPickableFlags makes a Java3D object
@@ -144,10 +145,6 @@ public class SimplePortrayal3D implements Portrayal3D
         return appearance;
         }
 
-    /** Used by the SimplePortrayal3D to add its parent to its pickInfo object
-        when the user picks the SimplePortrayal3D. */
-    protected FieldPortrayal3D parentPortrayal = null;
-        
     public PolygonAttributes polygonAttributes() { return null; } // default
 
     public TransformGroup getModel(Object object, TransformGroup prev)
@@ -172,12 +169,44 @@ public class SimplePortrayal3D implements Portrayal3D
         return "" + wrapper.getObject();
         }
     
-    /** Sets the parent portrayal (a FieldPortrayal3D). */
-    public void setParentPortrayal(FieldPortrayal3D p)
+	FieldPortrayal3D fieldPortrayal = null;        
+    public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-        parentPortrayal = p;
+        fieldPortrayal = p;
         }
+		
+	public FieldPortrayal3D getCurrentFieldPortrayal()
+		{
+		return fieldPortrayal;
+		}
+
+	Display3D display = null;	
+	public void setCurrentDisplay(Display3D display)
+		{
+		this.display = display;
+		}
+	
+	/** If the current display has been set, returns it.
+		Else if the field portrayal is null, returns null.
+		Else queries the field portrayal for its current
+		display and returns that. */
+	public Display3D getCurrentDisplay()		
+		{
+		if (display == null) 
+			{
+			FieldPortrayal3D f = getCurrentFieldPortrayal();
+			if (f == null) return null;
+			else return f.getCurrentDisplay();
+			}
+		else return display;
+		}
                 
+	public GUIState getCurrentGUIState()
+		{
+		Display3D d = getCurrentDisplay(); 
+		return (d == null ? null : d.getSimulation());
+		}
+
     public boolean isSelected(Object obj)
         {
         return selectedObjects != null && selectedObjects.containsKey(obj);

@@ -28,21 +28,15 @@ SimpleEdgePortrayal3D.java
 A basic class for drawing edges as simple colored lines.
 
 
-GenericEdgePortrayal3D.java
+PrimitiveEdgePortrayal3D.java
 
-A generic superclass for drawing edges as 3D volumes.  A subclass of 
-SimpleEdgePortryal3D.
+A generic superclass for drawing edges with Primitives or Shape3D 
+objects of various kinds.  A subclass of SimpleEdgePortrayal3D.
 
 
 ArrowEdgePortrayal3D.java
 
-A subclass of GenericEdgePortrayal3D which draws edges as arrows.
-
-
-PrimitiveEdgePortrayal3D.java
-
-A generic superclass for drawing edges with Primitives or Shape3D 
-objects.  A subclass of GenericEdgePortrayal3D.
+A subclass of PrimitiveEdgePortrayal3D which draws edges as arrows.
 
 
 ConeEdgePortrayal3D.java

@@ -425,14 +425,15 @@ public class Display3D extends JPanel implements Steppable
         initially visible or not visible.  */
     public void attach(Portrayal3D portrayal, String name, boolean visible)
         {
-        /* In case our attached portrayal was done AFTER the display is live, let's recreate*/
+        /* In case our attached portrayal was done AFTER the display is live, let's recreate */
         destroySceneGraph();
         
         Portrayal3DHolder p = new Portrayal3DHolder(portrayal,name,visible);
         portrayals.add(p);
         popup.add(p.menuItem);
         dirty = true;
-        
+		portrayal.setCurrentDisplay(this);
+
         createSceneGraph();
         }
 
@@ -487,6 +488,8 @@ public class Display3D extends JPanel implements Steppable
         return old;
         }
     
+	public GUIState getSimulation() { return simulation; }
+	
     /**
        Creates a Display3D with the provided width and height for its portrayal region, 
        attached to the provided simulation.  The interval is ignored.
@@ -737,7 +740,8 @@ public class Display3D extends JPanel implements Steppable
 
         // Add Axes to position 0 of switch
         AxesPortrayal3D x = new AxesPortrayal3D(0.01f, true);
-        auxillarySwitch.insertChild(x.getModel(null, null), AXES_AUX_INDEX);
+        x.setCurrentDisplay(this);
+		auxillarySwitch.insertChild(x.getModel(null, null), AXES_AUX_INDEX);
                 
         
         // Add Backdrop Sphere to position 1 of switch
@@ -1074,6 +1078,7 @@ public class Display3D extends JPanel implements Steppable
             Portrayal3DHolder p3h = (Portrayal3DHolder)(iter.next());
             Portrayal3D p = p3h.portrayal;
             Object obj = (p instanceof FieldPortrayal3D)? ((FieldPortrayal3D)p).getField(): null;
+			p.setCurrentDisplay(this);
             portrayalSwitch.addChild(p.getModel(obj,null));
             if (p3h.visible)
                 portrayalSwitchMask.set(count);
@@ -1325,10 +1330,11 @@ public class Display3D extends JPanel implements Steppable
         moveBogusMover();
         while(iter.hasNext())
             {
-            Portrayal3DHolder ph =      (Portrayal3DHolder)iter.next();
+            Portrayal3DHolder ph = (Portrayal3DHolder)iter.next();
             if(portrayalSwitchMask.get(ph.subgraphIndex))
                 {
                 // update model ONLY on what is actually on screen. 
+				ph.portrayal.setCurrentDisplay(this);
                 ph.portrayal.getModel(
                     (ph.portrayal instanceof FieldPortrayal3D)? ((FieldPortrayal3D)ph.portrayal).getField(): null,
                     (TransformGroup)portrayalSwitch.getChild(ph.subgraphIndex));

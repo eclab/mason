@@ -54,7 +54,7 @@ public class CelegansWithUI extends GUIState
 
     public void setupPortrayals()
         {
-        display.destroySceneGraph();
+        // display.destroySceneGraph();
         
         Celegans tut = (Celegans) state;
         
