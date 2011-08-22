@@ -10,6 +10,7 @@ import sim.portrayal3d.*;
 import sim.portrayal.*;
 import javax.media.j3d.*;
 import sim.display3d.*;
+import sim.display.*;
  
 public class SharedPortrayal3D extends SimplePortrayal3D 
     {
@@ -35,6 +36,42 @@ public class SharedPortrayal3D extends SimplePortrayal3D
 		this.child = child;
         }
 
+    public PolygonAttributes polygonAttributes()
+        { 
+        return child.polygonAttributes(); 
+        }
+
+	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    public Inspector getInspector(LocationWrapper wrapper, GUIState state)
+        {
+        return child.getInspector(wrapper,state);
+        }
+        
+	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    public String getName(LocationWrapper wrapper)
+        {
+        return child.getName(wrapper);
+        }
+    
+	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    public boolean setSelected(LocationWrapper wrapper, boolean selected)
+        {
+        if (child.setSelected(wrapper,selected))
+            return super.setSelected(wrapper, selected);
+        else return false;  // which will bypass the selection procedure entirely.
+        }
+        
+    public SimplePortrayal3D getChild(Object object)
+        {
+        if (child!=null) return child;
+        else
+            {
+            if (!(object instanceof SimplePortrayal3D))
+                throw new RuntimeException("Object provided to TransformedPortrayal3D is not a SimplePortrayal3D: " + object);
+            return (SimplePortrayal3D) object;
+            }
+        }
+        
     public TransformGroup getModel(Object obj, TransformGroup j3dModel)
         {
         if(j3dModel==null)

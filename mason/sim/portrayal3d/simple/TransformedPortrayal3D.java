@@ -33,7 +33,7 @@ import sim.display3d.*;
 
 public class TransformedPortrayal3D extends SimplePortrayal3D
     {
-    protected SimplePortrayal3D child;
+	SimplePortrayal3D child;
     
     public TransformedPortrayal3D(SimplePortrayal3D child, Transform3D transform)
         {

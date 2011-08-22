@@ -12,6 +12,7 @@ import sim.display.*;
 import javax.media.j3d.*;
 import com.sun.j3d.utils.geometry.*;
 import sim.display3d.*;
+import java.awt.*;
 
 /**
    A wrapper for other Portrayal3Ds which also draws a big translucent sphere around them -- useful for
@@ -38,16 +39,16 @@ import sim.display3d.*;
 
 public class CircledPortrayal3D extends SimplePortrayal3D
     {
-    public final static Appearance DEFAULT_CIRCLED_APPEARANCE = appearanceForColor(new java.awt.Color(255,255,255,63));
-    
+    public final static Appearance DEFAULT_CIRCLED_APPEARANCE = appearanceForColor(new Color(255,255,255,63));
+    public final static double DEFAULT_SCALE = 2.0;
+	
 	double scale;
 	Appearance appearance;
-    
-    protected SimplePortrayal3D child;
+    SimplePortrayal3D child;
     
     public CircledPortrayal3D(SimplePortrayal3D child)
         {
-        this(child, 2f);
+        this(child, DEFAULT_SCALE);
         }
     
     public CircledPortrayal3D(SimplePortrayal3D child, double scale)
@@ -60,12 +61,12 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         this(child,DEFAULT_CIRCLED_APPEARANCE,scale, onlyCircleWhenSelected);
         }
 
-    public CircledPortrayal3D(SimplePortrayal3D child, java.awt.Color color)
+    public CircledPortrayal3D(SimplePortrayal3D child, Color color)
         {
-        this(child,color, 2f ,false);
+        this(child,color, DEFAULT_SCALE ,false);
         }
 
-    public CircledPortrayal3D(SimplePortrayal3D child, java.awt.Color color, double scale, boolean onlyCircleWhenSelected)
+    public CircledPortrayal3D(SimplePortrayal3D child, Color color, double scale, boolean onlyCircleWhenSelected)
         {
         this(child,appearanceForColor(color),scale,onlyCircleWhenSelected);
         }
@@ -135,7 +136,7 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     public boolean isCircleShowing() { return showCircle; }
     public void setCircleShowing(boolean val) { showCircle = val;  }
 
-    public void updateSwitch(Switch jswitch, Object object)
+	void updateSwitch(Switch jswitch, Object object)
         {
         if (showCircle && (isSelected(object) || !onlyCircleWhenSelected))
             jswitch.setWhichChild( Switch.CHILD_ALL );

@@ -2263,3 +2263,8 @@ Version 16
 		own Portrayal3Ds, though it's not forbidden (but serialization won't work).
 		Modified Woims3D demo documentation to explain that it's an example of
 		objects serving as their own Portrayal3Ds, but that it's not a good idea.
+	All wrapper simple portrayals in 3D have their 'child' variable made private.
+	LabelledPortrayal3D.updateSwitch() and CircledPortrayal3D.updateSwitch() made private.
+	Bugs in LabelledPortrayal3D which were making the label too tiny
+	LabelledPortayal3D now makes labels exactly the same size as SimpleEdgePortrayal3D.
+	Modifications to LabelledPortrayal3D's constructors: scale no longer exists	

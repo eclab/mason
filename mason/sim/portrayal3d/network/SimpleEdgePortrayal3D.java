@@ -161,6 +161,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                     labelFont.getSize(), labelFont.getStyle());
 
                 text.setRectangleScaleFactor(1.0f / 16.0f);
+				
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
                     text.getAppearance(),
                     OrientedShape3D.ROTATE_ABOUT_POINT,

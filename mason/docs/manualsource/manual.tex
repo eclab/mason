@@ -482,7 +482,7 @@ First notice that we have added two variables to the \class{Students} class: the
 
 The Continuous2D class defines a 2-dimensional environment of real-valued (continuous) space.  The space may be bounded, toroidal, or infinite: here we're going to assume it's infinite, though we'll specify some bounds for drawing purposes later.  Our bounds are 100 by 100.  Furthermore, the Continuous2D discretizes its space into an underlying grid to make neighborhood lookups easier: we don't use that feature so we just use 1.0 as our discretization (it doesn't make any difference).
 
-We have also added a \class{start()} method.  Recall that this method is called before the schedule is stepped in order to allow the simulation to set itself up.  The first thing we do in this method is call \code{super.start()}, which is very important.
+We have also added a \method{start()} method.  Recall that this method is called before the schedule is stepped in order to allow the simulation to set itself up.  The first thing we do in this method is call \code{super.start()}, which is very important.
 
 We then use this method to set up the yard: we clear it of objects (the students), and then we add 50 students to the yard at random locations.
 
@@ -1999,7 +1999,7 @@ This creates new JPanel subclasses on the fly with custom \method{paintComponent
 
 Notice that \variable{color} had to be declared {\bf final}.  This isn't the case for outer instance variables used by anonymous classes, but it is the case for local variables and method parameters.\footnote{Why is this the case?  Beats me.  Any decent modern language contains {\bf closures}\,---\,non-final outer local variables usable by anonymous classes (or in many other languages, anonymous functions).  Closures are very useful, but require cleverness in compilation.  Sun's apparently not very clever.  The amazing thing is that you can hack the same thing with a work-around: instead of making a local variable \variable{final int foo = 4;}, you can make the variable \variable{final int[] foo = new int[] \{4\};}  Then you can modify \variable{foo}, from within the inner class, or more correctly, you can modify the value stored inside the array even if you can't change the array.  Why Sun didn't just bake this into the compiler, instead of requiring a hack work-around, is utterly beyond me.}
 
-An anonymous class will save us the tedium of creating a new file for our class, and various casts or constructors.  So we're going with it.\footnote{Anonymous classes also make it possible to create an agent which is scheduled {\it twice} on the schedule, with different methods called each time, even though there's only {\it one} \class{step(...)} method.  If you have an agent with methods like this:\\
+An anonymous class will save us the tedium of creating a new file for our class, and various casts or constructors.  So we're going with it.\footnote{Anonymous classes also make it possible to create an agent which is scheduled {\it twice} on the schedule, with different methods called each time, even though there's only {\it one} \method{step(...)} method.  If you have an agent with methods like this:\\
 
 \noindent{\tt public class MyAgent\\
 \indent\{\\
@@ -9171,7 +9171,7 @@ First off, note that ValueGridPortrayal3D can handle ObjectGrid2D in addition to
 
 Inspectors won't display the object as an object, but rather as its numerical value.
 
-Okay, now that that's out of the way... the ValueGrid2DPortrayal3D has two basic ways  of drawing this grid: by representing values as {\bf squares} on the grid, or by representing them by the {\bf intersections} between squares.  The first option uses a special default SimplePortrayal called a \Class{sim.portrayal3d.grid.quad.TilePortrayal}, and the second uses a special default SimplePortrayal called a \Class{sim.portrayal3d.grid.quad.MeshPortrayal}.  Both are subclasses of the abstract SimplePortrayal subclass \Class{sim.portrayal3d.grid.quad.QuadPortrayal}.  If you're totally nuts, you can create and use your own QuadPortrayal.  But it makes more sense in nearly all cases to the one that's automatically set up when you construct a ValueGrid2DPortrayal3D.
+Okay, now that that's out of the way... the ValueGrid2DPortrayal3D has two basic ways  of drawing this grid: by representing values as {\bf squares} on the grid, or by representing them by the {\bf intersections} between squares.  The first option uses a special class called a \Class{sim.portrayal3d.grid.quad.TilePortrayal}, and the second uses a special class called a \Class{sim.portrayal3d.grid.quad.MeshPortrayal}.  Both are subclasses of the abstract Portrayal subclass \Class{sim.portrayal3d.grid.quad.QuadPortrayal}.\footnote{Note that QuadPortrayal is a subclass of Portrayal, not Portrayal3D or SimplePortrayal3D.}  If you're totally nuts, you can create and use your own QuadPortrayal.  But it makes more sense in nearly all cases to the one that's automatically set up when you construct a ValueGrid2DPortrayal3D.
 
 The default QuadPortrayal used is a simple TilePortrayal, but this can be easily changed to a MeshPortrayal or more complex TilePortrayal along these lines:
 
@@ -9229,7 +9229,7 @@ You can provide your own QuadPortrayal via ValueGridPortrayal2D's \method{setPor
 \mthd{public TilePortrayal(ColorMap map))} Sets the color map for values in the TilePortrayal, with no elevation at all (0.0).
 \end{methods}
 
-Besides all the standard SimplePortrayal methods, QuadPortrayals provide methods for setting color maps and the scale for elevating tiles or peaks.  Additionally, QuadPortrayals can return the coordinate location in the grid corresponding to a certain pick result from Java3D.  And importantly, QuadPortrayals have a special method called \method{setData(...)} by which the ValueGrid2DPortrayal3D gets the 3-dimensional coordinates of each corner of a square (or triangle) polygon corresponding to a given grid location.
+Besides all the standard Portrayal methods, QuadPortrayals provide methods for setting color maps and the scale for elevating tiles or peaks.  Additionally, QuadPortrayals can return the coordinate location in the grid corresponding to a certain pick result from Java3D.  And importantly, QuadPortrayals have a special method called \method{setData(...)} by which the ValueGrid2DPortrayal3D gets the 3-dimensional coordinates of each corner of a square (or triangle) polygon corresponding to a given grid location.
 
 \begin{methods}{\class{sim.portrayal3d.grid.quad.QuadPortrayal}}
 \mthd{public void setMap(ColorMap map)} Sets the color map for the portrayal.
@@ -9311,7 +9311,7 @@ NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  Thes
 
 The last part of the 3D portrayal facility consists of {\bf simple portrayals}.  As was the case in 2D, 3D Simple Portrayals are responsible for portraying individual objects or values in fields.  However, 3D Portrayals can also in some cases also be used to simply exist in space as decoration: for example, a wireframe or axes.  In this case you can attach these Simple Portrayals directly to the Display3D, much as you would attach a 3D Field Portrayal.  I refer to these as ``Decoration Simple Portrayals''.
 
-All Field Portrayals in 3D use Simple Portrayals in one way or another.  However, some Field Portrayals are very closely tied to their Simple Portrayals.  For example, ValueGrid2DPortrayal3D uses special Simple Portrayals called {\bf QuadPortrayals} which are not discussed here but instead were defined earlier, in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
+All Field Portrayals in 3D use Simple Portrayals in one way or another.  However, some Field Portrayals are very closely tied to their Simple Portrayals.  For example, ValueGrid2DPortrayal3D uses special Portrayals called {\bf QuadPortrayals} which are not discussed here but instead were defined earlier, in Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}.
 
 There are several kinds of Simple Portrayals in 3D, many of which are similar to the ones in 2D:
 
@@ -9588,7 +9588,7 @@ Axes use a special class underneath which is exposed in MASON because it's also 
 \subsection{Value Simple Portrayals}
 \label{sim.portrayal3d.simple.ValuePortrayal3D}
 
-3D Value Simple Portrayals are Simple Portrayals designed to represent a numerical value stored in a 3D location.  We've already seen a certain kind of 3D Value Simple Portrayal: the QuadPortrayal (Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}).  QuadPortrayals represent numerical values stored in 2D locations embedded in a mesh in 3D space, and work with ValueGrid2DPortrayal3D (which portrays 2D grids of numbers).
+3D Value Simple Portrayals are Simple Portrayals designed to represent a numerical value stored in a 3D location.  We've already seen a certain kind of Portrayal for displaying values in 3D: the QuadPortrayal (Section \ref{sim.portrayal3d.grid.quad.QuadPortrayal}).  QuadPortrayals represent numerical values stored in 2D locations embedded in a mesh in 3D space, and work with ValueGrid2DPortrayal3D (which portrays 2D grids of numbers).
 
 The other kind of Value Simple Portrayal is a \Class{sim.portrayal3d.simple.ValuePortrayal3D}, which represents values as colored cubes in 3D grids.  ValuePortrayal3D works in concert with \class{sim.portrayal3d.grid.ValueGridPortrayal3D}, which largely portrays 3D grids of numbers.  ValuePortrayal3D is the rough 3D equivalent to ValuePortrayal2D (Section \ref{sim.portrayal.simple.ValuePortrayal2D}).
 
@@ -9703,11 +9703,121 @@ These classes all have the same constructors.  Here's the one for ConeEdgePortra
 
 \subsection{Wrapper Simple Portrayals}
 \label{sim.portrayal3d.simple.TransformedPortrayal3D}
+\label{sim.portrayal3d.SharedPortrayal3D}
 
-In 2D, Wrapper Simple Portrayals held subsidiary portrayals as {\it children} and added features to their portrayal of objects or otherwise manipulated them.  The same goes for the 3D case.  
+In 2D, Wrapper Simple Portrayals held subsidiary portrayals as {\it children} and added features to their portrayal of objects or otherwise manipulated them.  The same goes for the 3D case.  MASON at present provides four Wrapper Simple Portrayals in 3D:
+
+\begin{itemize}
+\item \class{sim.portrayal3d.simple.CircledPortrayal3D} draws a semitransparent sphere around its child.  It's the rough equivalent of \class{sim.portrayal.simple.CircledPortrayal2D}.
+\item \class{sim.portrayal3d.simple.LabelledPortrayal3D} adds a textual label to its child.  It's the rough equivalent of \class{sim.portrayal.simple.LabelledPortrayal2D}.
+\item \class{sim.portrayal3d.simple.TransformedPortrayal3D} transforms its child through an Affine Transform.  It's the rough equivalent of \class{sim.portrayal.simple.TransformedPortrayal2D} (but without the heavy downsides).
+\item \class{sim.portrayal3d.simple.SharedPortrayal3D} allows sharing of the child's scene graph for multiple objects, potentially saving some memory.
+\end{itemize}
+
+Though they are not (presently) subclasses of a common class other than SimplePortrayal3D, 3D Wrapper Simple Portrayals all share certain methods in common due to their use of children.  Here are the versions of those methods for CircledPortrayal3D:
+
+\begin{methods}{\class{sim.portrayal3d.simple.CircledPortrayal3D}}
+\mthd{public SimplePortrayal3D getChild(Object object)} Returns the wrapper portrayal's child.
+\mthd{public PolygonAttriutes polygonAttributes()} Returns the {\it child's} polygon attributes.
+\mthd{public Inspector getInspector(LocationWrapper wrapper, GUIState gui)} Calls the same method on the child.
+\mthd{public String getName(LocationWrapper wrapper)} Calls the same method on the child.
+\mthd{public boolean setSelected(LocationWrapper wrapper, boolean selected)} Calls the same method on the child.
+\mthd{public void setCurrentDisplay(Display3D display)} Calls super.setCurrentDisplay(...) and also the same method on the child.
+\mthd{public void setCurrentFieldPortrayal(FieldPortrayal3D p)} Calls super.setCurrentFieldPortrayal(...) and also the same method on the child.
+\end{methods}
+
+\sidebar{Why is it called CircledPortrayal3D?  Why not SpheredPortrayal3D?}{To be consistent with CircledPortrayal3D.  Plus ``sphered'' isn't a word!} 
+\paragraph{Circles and Labels}
+Like its 2D counterpart, the 3D portrayal facility has ``circled'' and ``labelled'' portrayals, which either highlight (with a semitransparent sphere) or add a textual label to their child portrayal objects.
+
+The ``circled'' portrayal is \Class{sim.portrayal3d.simple.CircledPortrayal3D}, and it has the following constructors:
+
+\begin{methods}{\class{sim.portrayal3d.simple.CircledPortrayal3D} Constructor}
+\mthd{public CircledPortrayal3D(SimplePortrayal3D child, Appearance appearance, double scale, boolean onlyCircleWhenSelected)} Builds a CircledPortrayal3D with the given child and sphere appearance and scale.  The portrayal will (or will not) show the circle only when the object is selected.
+\mthd{public CircledPortrayal3D(SimplePortrayal3D child, Color color, double scale, boolean onlyCircleWhenSelected)} Builds a CircledPortrayal3D with the given child and sphere color and scale.  The portrayal will (or will not) show the circle only when the object is selected.
+\mthd{public CircledPortrayal3D(SimplePortrayal3D child, double scale, boolean onlyCircleWhenSelected)} Builds a CircledPortrayal3D with the given child and sphere scale.  The color is a default semitransparent gray. The portrayal will (or will not) show the circle only when the object is selected.
+\mthd{public CircledPortrayal3D(SimplePortrayal3D child, double scale)} Builds a CircledPortrayal3D with the given child and sphere scale.  The color is a default semitransparent gray, that is, \variable{DEFAULT\_CIRCLED\_APPEARANCE}. The portrayal will always show the sphere regardless of selection.
+\mthd{public CircledPortrayal3D(SimplePortrayal3D child)} Builds a CircledPortrayal3D with the given child and a sphere scale of \variable{DEFAULT\_SCALE}.  The color is a default semitransparent gray, that is, \variable{DEFAULT\_CIRCLED\_APPEARANCE}. The portrayal will always show the sphere regardless of selection.
+\end{methods}
+
+These constructors rely on two static final variables:
+
+\java{%
+public final static Appearance DEFAULT\_CIRCLED\_APPEARANCE;\\
+public final static double DEFAULT\_SCALE = 2.0;
+}
+
+Once the portrayal is constructed, you may change whether it shows the circle only when selected, and whether it shows the circle at all (that is you can totally turn it off):
+
+\begin{methods}{\class{sim.portrayal3d.simple.CircledPortrayal3D}}
+\mthd{public void setOnlyCircleWhenSelected(boolean val)} Sets whether or not the sphere is shown only when the underlying object is selected.
+\mthd{public boolean getOnlyCircleWhenSelected()} Returns whether or not the sphere is shown only when the underlying object is selected.
+\mthd{public void setCircleShowing(boolean val)} Sets whether or not the sphere is shown at all.
+\mthd{public boolean getCircleShowing()} Returns whether or not the sphere is shown at all.
+\end{methods}
+
+The \Class{sim.portrayal3d.simple.LabelledPortrayal3D} is very similar.  It allows you to add a textual label which is shown always or only when the object is selected:
+
+\begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D} Constructor}
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,}\rule{0pt}{0pt}\hspace{\fill}{\sf boolean onlyLabelWhenSelected)}\\ Builds a LabelledPortrayal3D with the given child, offset (as a transform), label font and color, and the string used for the label. The portrayal will (or will not) show the label only when the object is selected.  If the label is null, then label used will be queried from the underlying object itself.
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child, double offsetx, double offsety, double offsetz, Font font,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  String label, Color color, boolean onlyLabelWhenSelected)}\\ Builds a LabelledPortrayal3D with the given child, offset (as three translations), label font and color, and the string used for the label. The portrayal will (or will not) show the label only when the object is selected. If the label is null, then label used will be queried from the underlying object itself.
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child, double offset, Font font, String label, Color color, boolean onlyLabelWhenSelected)} Builds a LabelledPortrayal3D with the given child, offset (transformed in each dimension in the same way), label font and color, and the string used for the label. The portrayal will (or will not) show the label only when the object is selected. If the label is null, then label used will be queried from the underlying object itself.
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child, String label, Color color, boolean onlyLabelWhenSelected)} Builds a LabelledPortrayal3D with the given child, label color, and the string used for the label. A default offset (\variable{DEFAULT\_LABEL\_OFFSET}) is used, as is a default font (Sans Serif plain, 60pt.).  The portrayal will (or will not) show the label only when the object is selected. If the label is null, then label used will be queried from the underlying object itself.
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child, String label)} Builds a LabelledPortrayal3D with the given child and the string used for the label. A default label color (white) and offset (\variable{DEFAULT\_LABEL\_OFFSET}) is used, as is a default font (Sans Serif plain, 60pt.).  The portrayal will always be shown regardless of selection. If the label is null, then label used will be queried from the underlying object itself.
+\mthd{public LabelledPortrayal3D(SimplePortrayal3D child)} Builds a LabelledPortrayal3D with the given child. A default label color (white) and offset (\variable{DEFAULT\_LABEL\_OFFSET}) is used, as is a default font (Sans Serif plain, 60pt.).  The portrayal will always be shown regardless of selection.  The label will be queried from the underlying object itself.
+\end{methods}
+
+These constructors rely on a static final variable:
+
+\java{%
+public final static Transform3D DEFAULT\_LABEL\_OFFSET;
+}
+
+This offset is \(\langle 0.5, 0.5, 0.5\rangle\) from the origin of the portrayal in space.
+
+Just as the case for CircledPortrayal3D, in LabelledPortrayal3D you can specify after the fact whether the label should be shown only when selected, and if it should be shown at all:
+
+\begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D}}
+\mthd{public void setOnlyLabelWhenSelected(boolean val)} Sets whether or not the label is shown only when the underlying object is selected.
+\mthd{public boolean getOnlyLabelWhenSelected()} Returns whether or not the label is shown only when the underlying object is selected.
+\mthd{public void setLabelShowing(boolean val)} Sets whether or not the label is shown at all.
+\mthd{public boolean getLabelShowing()} Returns whether or not the label is shown at all.
+\end{methods}
+
+Finally, LabelledPortrayal calls a special method on itself to determine what label text to use.  You can override the default implementation of this method to provide your own label text generator:
+
+\begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D}}
+\mthd{public String getLabel(Object object, TransformGroup j3dModel)}  Returns a label for the given object.  By default, returns the label set in the constructor if it is non-null.  Otherwise calls \method{toString(...)} on the object and returns that value.  Override this to provide more sophisticated labeling.
+\end{methods}
+
+\paragraph{Transformations}
+
+The 3D Wrapper Simple Portrayal class \Class{sim.portrayal3d.simple.TransformedPortrayal3D} allows you to perform an affine transform on the scene graphs produced by a child portrayal.  This is useful if you'd like the scene graphs to be larger, for example, or rotated in a different direction.  Unlike TransformedPortrayal2D, TransformedPortrayal3D does not impact on selection, inspection, etc.  It's fully baked.  TransformedPortrayal3D underneath is simply adding an additional TransformGroup to the root of the scene graph.
+
+\begin{methods}{\class{sim.portrayal3d.simple.TransformedPortrayal3D} Constructor}
+\mthd{public TransformedPortrayal3D(SimplePortrayal3D child, Transform3D transform} Builds a TransformedPortrayal3D with the given child and transform.  The transform may be changed at a later time.
+\mthd{public TransformedPortrayal3D(SimplePortrayal3D child} Builds a TransformedPortrayal3D with the given child and an empty transform.  The transform may be changed at a later time.
+\end{methods}
+
+Transformations are made after the fact in a manner very similar to the Display3D's internal transform.  If you set the transform to null, the TransformedPortrayal3D will provide a {\bf default transform} via its method \method{getDefaultTransform()}.  By default, this returns an empty Transform3D, but you can override it (for some reason) to provide something else.  
+
+\begin{methods}{\class{sim.portrayal3d.simple.TransformedPortrayal3D}}
+\mthd{public void setTransform(Transform3D transform)} Sets the transform used.  If \variable{null} is passed in, then the default transform is used.
+\mthd{public Transform3D getTransform()} Returns the transform used. 
+\mthd{public void transform(Transform3D transform)} Modifies the current transform  by appending this transform to it (through multiplication).
+\mthd{public void resetTransform()} Sets the current transform to the default transform.
+\mthd{public void rotateX(double degrees)} Rotates the current transform around the X axis.
+\mthd{public void rotateY(double degrees)} Rotates the current transform around the Y axis.
+\mthd{public void rotateZ(double degrees)} Rotates the current transform around the Z axis.
+\mthd{public void translate(double dx, double dy, double dz)} Translates the current transform by the given x, y, and z values.
+\mthd{public void scale(double sx, double sy, double sz)} Scales the current transform by the given x, y, and z values in each dimension respectively.
+\mthd{public void scale(double value)} Scales the current transform in all dimensions by the given value.
+\mthd{public Transform3D getDefaultTransform()} Provides a default transform.  By default, provides an empty Transform3D.  You can override this if you really want to.
+\end{methods}
+
 
 \paragraph{Shared Groups}
-\label{sim.portrayal3d.SharedPortrayal3D}
 
 MASON provides limited functionality for using a SharedGroup and Links to display the SimplePortrayal repeatedly in the environment.  The idea here is to have a single scene which is displayed in multiple places, rather than copying the scene over and over again for each object in the field.  This trick potentially uses much less memory than other approaches, but it has two downsides.\footnote{In truth, the memory issue may be a wash.  Java3D leaks memory in all sorts of places: for example, when you detach the main BranchGroup from the Universe and attach a new one to start a new visualization, the memory used in the old BranchGroup isn't immediately reclaimed upon garbage collection\,---\,or sometimes at all.}
 
@@ -9716,13 +9826,15 @@ MASON provides limited functionality for using a SharedGroup and Links to displa
 \item Shared Groups and Links can be buggy.
 \end{itemize}
 
-This takes the form of a wrapper portrayal called \Class{sim.portrayal3d.SharedPortrayal3D}, which takes another SimplePortrayal as its child. When \method{getModel(...)} is called, SharedPortrayal3D will do the same {\it once} on its child, and use the result repeatedly.  It will not call \method{getModel(...)} again unless the Display3D has rebuilt the entire scene.  And you can't pick the objects.
+This takes the form of a wrapper portrayal called \Class{sim.portrayal3d.SharedPortrayal3D}, which takes another SimplePortrayal as its child. When \method{getModel(...)} is called, SharedPortrayal3D will do the same {\it once} on its child, and use the result repeatedly.  It will not call \method{getModel(...)} again unless the Display3D has rebuilt the entire scene.
 
 \begin{methods}{\class{sim.portrayal3d.SharedPortrayal3D} Constructor}
 \mthd{public SharedPortrayal3D(SimplePortrayal3D child)} Creates a SharedPortrayal3D from the given child.  The portrayal will produce links on its own, you do not need to worry about that.  You cannot pick the child, and the child will not be updated further once created.
 \end{methods}
 
 For this class to work properly, you should build a new one each time the simulation is restarted, that is on \method{start()} or \method{load()}.  All MASON demo applications call the method \method{setupPortrayals()} from these methods and use \method{setupPortrayals()} to create new portrayals, including this one, so this isn't a problem.
+
+You can't pick the objects in a Shared Group.  Thus SharedPortrayal3D has picking turned off.  This has certain implications for some methods: \method{getInspector(...)}, \method{getName(...)}, and \method{setSelected(...)} are implemented but unlikely to ever be called.
 
 \subsection{Objects Acting As Their Own Simple Portrayals}
 

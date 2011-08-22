@@ -36,8 +36,7 @@ import sim.display3d.*;
    Additionally if you call the setLabelShowing(...) function, you can turn off or on label
    drawing entirely for this LabelledPortrayal2D.
    
-   <p>You may specify a color, or font for the label.  You can also provide a scale for the text relative
-   to the labelled object: a scale of 1.0f (the default) is fairly reasonable for small objects. 
+   <p>You may specify a color, or font for the label. 
    The label is drawn at the (0.5,0.5,0.5) corner of the object by default: you can change this offset
    in the constructor if you like.  
    
@@ -47,6 +46,7 @@ import sim.display3d.*;
 public class LabelledPortrayal3D extends SimplePortrayal3D
     {
     public static final Transform3D DEFAULT_LABEL_OFFSET;
+	
     static
         {
         DEFAULT_LABEL_OFFSET = transformForOffset(0.5f,0.5f,0.5f);
@@ -59,13 +59,17 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         return offset;
         }
         
-	double scale = 1.0f;
 	Color color;
 	Transform3D offset;
 	Font font;
-    protected SimplePortrayal3D child;
+	SimplePortrayal3D child;
 	String label;
     
+    public LabelledPortrayal3D(SimplePortrayal3D child)
+        {
+        this(child,null,Color.white, false);
+        }
+
     public LabelledPortrayal3D(SimplePortrayal3D child, String label)
         {
         this(child,label,Color.white, false);
@@ -73,26 +77,31 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
 
     public LabelledPortrayal3D(SimplePortrayal3D child, String label, Color color, boolean onlyLabelWhenSelected)
         {
-        this(child,DEFAULT_LABEL_OFFSET,new Font("SansSerif",Font.PLAIN, 24),
-            label,color,1.0f,onlyLabelWhenSelected);
+        this(child,DEFAULT_LABEL_OFFSET, null, label,color,1.0f,onlyLabelWhenSelected);
         }
     
-    public LabelledPortrayal3D(SimplePortrayal3D child, double offsetx, double offsety, double offsetz, 
-        Font font, String label, Color color, double scale, boolean onlyLabelWhenSelected)
+    public LabelledPortrayal3D(SimplePortrayal3D child, double offset, 
+        Font font, String label, Color color, boolean onlyLabelWhenSelected)
         {
-        this(child,transformForOffset(offsetx,offsety,offsetz),font,label,color,scale,onlyLabelWhenSelected);
+        this(child,transformForOffset(offset,offset,offset),font,label,color,onlyLabelWhenSelected);
+        }        
+        
+    public LabelledPortrayal3D(SimplePortrayal3D child, double offsetx, double offsety, double offsetz, 
+        Font font, String label, Color color, boolean onlyLabelWhenSelected)
+        {
+        this(child,transformForOffset(offsetx,offsety,offsetz),font,label,color,onlyLabelWhenSelected);
         }        
         
     public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,
-        double scale, boolean onlyLabelWhenSelected)
+        boolean onlyLabelWhenSelected)
         {
         this.child = child;
         this.color = color; 
 		this.offset = offset;
         this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         this.label = label;
+		if (font == null) font = new Font("SansSerif",Font.PLAIN, 60);
         this.font = font;
-        this.scale = scale;
         }
         
     public PolygonAttributes polygonAttributes()
@@ -162,7 +171,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             }
         }
         
-    public void updateSwitch(Switch jswitch, Object object)
+	void updateSwitch(Switch jswitch, Object object)
         {
         // we do it this way rather than the obvious if/else
         // statement because it gets inlined this way (32 bytes vs. 36 bytes).
@@ -207,7 +216,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
                         
             // make the text
             Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
-            text.setRectangleScaleFactor((float)(scale/16.0));
+            text.setRectangleScaleFactor((float)(1.0f/16.0f));
             
             // Windows is acting weird with regard to Text2D.  The text is way
             // too small.  Or is it that MacOSX is weird with the font way too big?
@@ -229,12 +238,10 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             TransformGroup o = new TransformGroup();
             o.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
             o.clearCapabilityIsFrequent(TransformGroup.ALLOW_CHILDREN_READ);
-            offset.setScale(scale/16.0f);
             o.setTransform(offset);
 
             // the label shouldn't be pickable -- we'll turn this off in the TransformGroup
             clearPickableFlags(o);
-
             o.addChild(o3d);         // Add label to the offset TransformGroup
             jswitch.addChild(o);    // Add offset TransformGroup to the Switch
             
@@ -268,7 +275,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
                 Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
 
                 //Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
-                //text.setRectangleScaleFactor(scale/16.0f);
+                //text.setRectangleScaleFactor(1.0/16.0f);
                 
                 // Grab the OrientedShape3D
                 TransformGroup t2 = (TransformGroup)(s.getChild(0));
