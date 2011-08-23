@@ -53,6 +53,9 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
         final double width = draw.width*scale;
         final double height = draw.height*scale;
 
+        graphics.setPaint(paint);
+        // we are doing a simple draw, so we ignore the info.clip
+
         if (info.precise)
             {
             preciseRectangle.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
@@ -61,9 +64,6 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
             return;
             }
                 
-        graphics.setPaint(paint);
-        // we are doing a simple draw, so we ignore the info.clip
-
         final int x = (int)(draw.x - width / 2.0);
         final int y = (int)(draw.y - height / 2.0);
         final int w = (int)(width);
