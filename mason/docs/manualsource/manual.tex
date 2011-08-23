@@ -8475,7 +8475,7 @@ Java3D is centered around the notion of {\bf scene graphs}, data structures desc
 
 MASON's Display3D object has a particular scene graph layout, as shown in Figure \ref{java3dlayout}.  It's useful to go through this layout in an overview, both to understand how Java3D scene graphs are generally constructed, and to understand Display3D's arrangement.
 
-\sidebar{Why does Display3D subclass from JPanel?}{Display3D is a direct subclass of \class{javax.swing.JPanel}, unlike Display2D, which is a subclass of \class{javax.swing.JComponent}.  This difference is due to certain interactions between the background of a JComponent and a Canvas3D.}%
+\sidebar{Why does Display3D subclass from JPanel?}{Display3D is a direct subclass of \class{javax.swing.JPanel}, unlike Display2D, which is a subclass of \class{javax.swing.JComponent}.  This difference is due to certain unfortunate interactions between the background of a JComponent and a Canvas3D.}%
 \paragraph{Top-Level Scene Graph Objects} Just as MASON's top-level 2D display class is \class{sim.display.Display2D}, its top-level 3D display class is \class{sim.display.Display3D}.  Display3D manages the Java3D scene graph and its associated objects.  
 
 Java3D objects are displayed in Java using a Java Component called a \class{javax.media.j3d.Canvas3D}.  MASON uses a subclass of Canvas3D called \class{sim.display3D.CapturingCanvas3D} which, as befits its name, allows MASON to capture screenshots and movies of the scene.  A CapturingCanvas3D is associated with the top-level object in the MASON Java3D scene graph, a \class{javax.media.j3d.Universe} object, of which MASON uses the standard subclass \class{com.sun.j3d.utils.universe.SimpleUniverse}.  The Universe defines things such as the viewing angle of the eye of the camera, and various \class{javax.media.j3d.BranchGroup} objects which form the roots of the scene graph.  MASON primarily uses a single BranchGroup as the root of its scene graph (really, it's more or less a tree, not a graph).  BranchGroup is a subclass of \class{javax.media.j3d.Group}, which is a subclass of \class{javax.media.j3d.Node}.  BranchGroups are usually the roots of the trees, other Group objects form nonleaf nodes in the trees, and other Nodes often form leaf nodes or near-leaf-nodes in these trees.
@@ -9466,29 +9466,28 @@ Creates a new SpherePortrayal3D with the given appearance, divisions, and scale 
 For example, you could use this class to:
 
 \begin{itemize}
-\item Display a seagull provided by the {\bf crowd3d} MASON demo.  Note that the seagull comes with its own coloring and will ignore attempts to change it with an Appearance (Compressed Geometry is like that, unfortunately):
+\item Display a small seagull provided by the {\bf crowd3d} MASON demo.  Note that the seagull comes with its own coloring and will ignore attempts to change it with an Appearance (Compressed Geometry is like that, unfortunately):
 
 \java{%
 import javax.media.j3d*;\\
 \\
-\hbox{ShapePortrayal3D portrayal = new ShapePortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));}
+\hbox{Shape3DPortrayal3D portrayal = new Shape3DPortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));}
 }
 \item Display a box with six colored sides:
 
 \java{%
 import com.sun.j3d.utils.geometry.*;\\
 \\
-ShapePortrayal3D portrayal = new ShapePortrayal3D(new ColorCube());
+Shape3DPortrayal3D portrayal = new Shape3DPortrayal3D(new ColorCube());
 }
 \item Display some extruded 3D text:
 
 \java{%
-import com.sun.j3d.utils.geometry.*;\\
 import java.awt.*;\\
 import javax.media.j3d.*;\\
 \\
-\hbox{Font3D font = new Font3D(new FontExtrusion(), new Font("SansSerif", Font.PLAIN, 60));}\\
-\hbox{ShapePortrayal3D portrayal = new ShapePortrayal3D(new Shape3D(new Text3D(font, "Hello, World!")));}
+\hbox{Font3D font = new Font3D(new Font("SansSerif", Font.PLAIN, 9), new FontExtrusion());}\\
+\hbox{Shape3DPortrayal3D portrayal = new Shape3DPortrayal3D(new Shape3D(new Text3D(font, "Hello, World!")));}
 }
 \end{itemize}
 

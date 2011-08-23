@@ -22,9 +22,9 @@ import java.awt.*;
    <p>Some examples (be sure to <tt>import javax.media.j3d.*; import com.sun.j3d.utils.geometry.*; import java.awt.Font.*;</tt>)
    
    <ul>
-   <li>A seagull comes with MASON: <tt>new ShapePortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));</tt>
-   <li>A box with six colored sides: <tt>new ShapePortrayal3D(new ColorCube());</tt>
-   <li>Some 3D text: <tt>new ShapePortrayal3D(new Shape3D(new Text3D(new Font3D(new FontExtrusion(), new Font("SansSerif", Font.PLAIN, 60)), "Hello, World!")));</tt>
+   <li>A seagull comes with MASON: <tt>new Shape3DPortrayal3D(new Shape3D(new sim.app.crowd3d.GullCG()));</tt>
+   <li>A box with six colored sides: <tt>new Shape3DPortrayal3D(new ColorCube());</tt>
+   <li>Some 3D text: <tt>new Shape3DPortrayal3D(new Shape3D(new Text3D(new Font3D(new Font("SansSerif", Font.PLAIN, 9), new FontExtrusion()), "Hello, World!")));</tt>
    </ul>
 */
 

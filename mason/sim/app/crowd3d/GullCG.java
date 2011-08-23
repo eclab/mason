@@ -4,10 +4,9 @@
 package sim.app.crowd3d;
 import javax.media.j3d.*;
 
-class GullCG extends CompressedGeometry 
+public class GullCG extends CompressedGeometry 
     {
-
-    GullCG() 
+    public GullCG() 
         {
         super(cgHeader, cgData) ;
         }
