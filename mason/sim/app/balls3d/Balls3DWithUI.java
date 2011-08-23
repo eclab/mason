@@ -83,6 +83,10 @@ public class Balls3DWithUI extends GUIState
 //                    new BranchGroupPortrayal3D(BranchGroupPortrayal3D.getBranchGroupForResource(BranchGroupPortrayal3D.class, "shapes/teapot.obj")),
 //                    20f, true));
 
+// Or some colorful cubes....
+//            nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(
+//                    new Shape3DPortrayal3D(new com.sun.j3d.utils.geometry.ColorCube()),
+//                    20f, true));
 
             }
         catch (Exception e) { throw new RuntimeException("yo", e); }

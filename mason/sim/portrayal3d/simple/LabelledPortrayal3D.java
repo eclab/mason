@@ -77,7 +77,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
 
     public LabelledPortrayal3D(SimplePortrayal3D child, String label, Color color, boolean onlyLabelWhenSelected)
         {
-        this(child,DEFAULT_LABEL_OFFSET, null, label,color,1.0f,onlyLabelWhenSelected);
+        this(child,DEFAULT_LABEL_OFFSET, null, label,color, onlyLabelWhenSelected);
         }
     
     public LabelledPortrayal3D(SimplePortrayal3D child, double offset, 

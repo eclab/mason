@@ -2269,3 +2269,5 @@ Version 16
 	LabelledPortayal3D now makes labels exactly the same size as SimpleEdgePortrayal3D.
 	Modifications to LabelledPortrayal3D's constructors: scale no longer exists	
 	GullCG made public
+	Added missing copyright declarations
+
