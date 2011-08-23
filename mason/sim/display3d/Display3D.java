@@ -1389,7 +1389,7 @@ public class Display3D extends JPanel implements Steppable
         {
         canvas.beginCapturing(false);
 		BufferedImage image = canvas.getLastImage();
-		PngEncoder tmpEncoder = new PngEncoder(image, false,PngEncoder.FILTER_NONE,9);
+		PNGEncoder tmpEncoder = new PNGEncoder(image, false,PNGEncoder.FILTER_NONE,9);
 		OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
 		stream.write(tmpEncoder.pngEncode());
 		stream.close();
@@ -1425,9 +1425,9 @@ public class Display3D extends JPanel implements Steppable
             try
                 {
                 File snapShotFile = new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"));
-//                PngEncoder tmpEncoder = new PngEncoder(image, false,PngEncoder.FILTER_NONE,9);
+//                PNGEncoder tmpEncoder = new PNGEncoder(image, false,PNGEncoder.FILTER_NONE,9);
                 BufferedImage image = canvas.getLastImage();
-                PngEncoder tmpEncoder = new PngEncoder(image, false,PngEncoder.FILTER_NONE,9);
+                PNGEncoder tmpEncoder = new PNGEncoder(image, false,PNGEncoder.FILTER_NONE,9);
                 OutputStream stream = new BufferedOutputStream(new FileOutputStream(snapShotFile));
                 stream.write(tmpEncoder.pngEncode());
                 stream.close();

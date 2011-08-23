@@ -2270,4 +2270,8 @@ Version 16
 	Modifications to LabelledPortrayal3D's constructors: scale no longer exists	
 	GullCG made public
 	Added missing copyright declarations
-
+	Fixed bug in Rectangle2D where color wasn't set if precise was used.  Thanks to 
+		Joerg Hoehne <hoehne@gmail.com>
+	Moved reloading of precise rectangles and ovals to within the precise if-statement;
+		a very minor efficiency improvement.
+	PngEncoder renamed to PNGEncoder

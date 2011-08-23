@@ -328,7 +328,7 @@ MASON is run in two ways: either by running an application directly, or by firin
 
 \script{\textit{java -Xmx500M -Xms500M sim.display.Console}}
 
-\indent This example caused MASON to be run with 500 megabytes of available virtual memory.
+\indent This example causes MASON to be run with 500 megabytes of available virtual memory.
 
 More information on Running MASON can be found in the \file{README} file and also in the \file{docs/index.html} file.  On the website you can also find a tutorials for running an (earlier version of) MASON on NetBeans and Eclipse.
 
@@ -486,9 +486,9 @@ We have also added a \method{start()} method.  Recall that this method is called
 
 We then use this method to set up the yard: we clear it of objects (the students), and then we add 50 students to the yard at random locations.
 
-\sidebar{Why use Double2D?  Why not use Point2D.Double?}{Because Point2D.Double is {\it mutable}, meaning that its X and Y values can be changed once set.  As a result, Point2D.Double is not safe as a key in a hashtable.  And Continuous2D uses hash tables to store its objects.
+\sidebar{Why use Double2D?  Why not use Point2D.Double?}{Because Point2D.Double is {\it mutable}, meaning that its X and Y values can be changed once set.  As a result, Point2D.Double is not safe as a key in a hash table.  And Continuous2D uses hash tables to store its objects.
 
-You'll see Double2D and its friends (Int2D, Double3D, and Int3D) a lot.  They're very simple classes which store {\it immutable} pairs or triples of doubles or ints.  Once you set the values, you cannot change them\,---\,you'll need to make a new object\,---\,and this makes them safe for use in classes relying on hashtables.
+You'll see Double2D and its friends (Int2D, Double3D, and Int3D) a lot.  They're very simple classes which store {\it immutable} pairs or triples of doubles or ints.  Once you set the values, you cannot change them\,---\,you'll need to make a new object\,---\,and this makes them safe for use in classes relying on hash tables.
 
 You can easily convert between these classes and similar Java classes, such as Point or Point2D.Double.}
 
@@ -3980,7 +3980,7 @@ Grids are found in the MASON package \Package{sim.field.grid}; a few minor abstr
 \item \Class{sim.field.grid.IntGrid2D} and \Class{sim.field.grid.IntGrid3D} are little more than covers for 2-d and 3-d arrays of ints.
 \item \Class{sim.field.grid.DoubleGrid2D} and \Class{sim.field.grid.DoubleGrid3D} are little more than covers for 2-d and 3-d arrays of doubles.
 \item \Class{sim.field.grid.ObjectGrid2D} and \Class{sim.field.grid.ObjectGrid3D} are little more than covers for 2-d and 3-d arrays of Objects.
-\item \Class{sim.field.grid.SparseGrid2D} and \Class{sim.field.grid.SparseGrid3D} are representations of 2-d and 3-d grids using hashtables, which permit objects to be located at any positive or negative integer location and multiple objects to be stored at the same location.
+\item \Class{sim.field.grid.SparseGrid2D} and \Class{sim.field.grid.SparseGrid3D} are representations of 2-d and 3-d grids using hash tables, which permit objects to be located at any positive or negative integer location and multiple objects to be stored at the same location.
 \item \Class{sim.field.grid.DenseGrid2D} is a representation of 2-d grids using double arrays of Bags, which permits multiple objects to be located at the same location.
 \end{itemize}
 
@@ -3988,7 +3988,7 @@ These classes extend certain abstract classes and interfaces.  All 2-dimensional
 
 \Class{sim.field.grid.SparseGrid2D} (and \Class{sim.field.grid.SparseGrid3D}) is a bit different.  It stores Objects at \(X, Y\) (or \(X,Y,Z\)) locations using a hash table.  Unlike an array, this allows multiple Objects to be stored at the same location, and also allows arbitrarily large, indeed unbounded, grids of objects without the memory overhead incurred by arrays.  And you can find the location of an object quickly.  But a Sparse Grid also has a lot more overhead than a simple array.
 
-SparseGrid2D and SparseGrid3D are both manifestations of the same abstract superclass \Class{sim.field.SparseField}, which handles the general hashtable lookup issues.  SparseField has been set up to make it easy for you to implement your own sparse fields if you care to.  SparseGrid2D also implements two methods, found in the interface \Class{sim.field.SparseField2D} which make it more useful to 2-dimensional Portrayals.
+SparseGrid2D and SparseGrid3D are both manifestations of the same abstract superclass \Class{sim.field.SparseField}, which handles the general hash table lookup issues.  SparseField has been set up to make it easy for you to implement your own sparse fields if you care to.  SparseGrid2D also implements two methods, found in the interface \Class{sim.field.SparseField2D} which make it more useful to 2-dimensional Portrayals.
 
 \begin{methods}{\class{sim.field.SparseField2D} Utility}
 \mthd{public Double2D getDimensions()}
@@ -6528,7 +6528,7 @@ SparseGridPortrayal2D also makes its own LocationWrappers: in this case, the Obj
 
 \subsubsection{Field Portrayals for Grids of Numbers}
 
- \Class{sim.portrayal.grid.ValueGridPortrayal2D} portrays fields of the form \class{sim.field.grid.IntGrid2D} and \class{sim.field.grid.DoubleGrid2D}.  You can use various kinds of SimplePortrayals with this class, but the default portrayal (which is an instance of \class{sim.field.grid.ValuePortrayal2D}) works fine and draws each grid cell with a color corresponding to the value in the cell.  You specify this value with a {\bf color map} (a class discussed later in Section \ref{sim.util.gui.ColorMap}), which maps colors to values.  This map can be specified with the method \method{setMap(...)}.
+ \Class{sim.portrayal.grid.ValueGridPortrayal2D} portrays fields of the form \class{sim.field.grid.IntGrid2D} and \class{sim.field.grid.DoubleGrid2D}.  You can use various kinds of SimplePortrayals with this class, but the default portrayal (which is an instance of \class{sim.portrayal.simple.ValuePortrayal2D}) works fine and draws each grid cell with a color corresponding to the value in the cell.  You specify this value with a {\bf color map} (a class discussed later in Section \ref{sim.util.gui.ColorMap}), which maps colors to values.  This map can be specified with the method \method{setMap(...)}.
 
 ValueGridPortrayal2D also generates custom LocationWrappers, where its ``objects'' are actually numerical values.  Unlike other LocationWrappers, these do not change location: but they change ``object'' (the value at that location) as time passes.   
 
@@ -7246,8 +7246,9 @@ You could override ImagePortrayal2D to change its image to reflect a change in s
 A {\bf warning about ImagePortrayal2D}: like ShapePortrayal2D, it's not serializable (because Images aren't serializable).  This means that if you create an agent which is a {\it subclass} of ImagePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
 
 \subsection{Value Simple Portrayals}
+\label{sim.portrayal.simple.ValuePortrayal2D}
 
-\sidebar{What about HexaValuePortrayal2D?}{Recall that HexaValueGridPortrayal2D just draws the objects directly as hexagons because of efficiency concerns.  So it's only ValuePortrayal2D of interest here.} Some Field Portrayals draw fields which consist of arrays of numbers rather than objects.  One particular Field Portrayal, \class{sim.portrayal.grid.ValuePortrayal2D}, relies on a SimplePortrayal to help it draw those objects.  
+\sidebar{What about HexaValuePortrayal2D?}{Recall that HexaValueGridPortrayal2D just draws the objects directly as hexagons because of efficiency concerns.  So it's only ValuePortrayal2D of interest here.} Some Field Portrayals draw fields which consist of arrays of numbers rather than objects.  One particular Field Portrayal, \Class{sim.portrayal.simple.ValuePortrayal2D}, relies on a SimplePortrayal to help it draw those objects.  
 
 So if SimplePortrayal's \method{draw(...)} and \method{hitObject(...)} methods take Objects to draw/hit, what's passed in if there's no Object, but just a number?  Answer: a \Class{sim.util.MutableDouble} (Section \ref{sim.util.MutableDouble}).  This object is little more than a wrapper around the number in question.
 
@@ -7364,7 +7365,7 @@ If you'd like to (say) change the edge {\it color} to reflect a weight or label,
 \label{sim.portrayal.simple.MovablePortrayal2D}
 \label{sim.portrayal.simple.AdjustablePortrayal2D}
 
-\sidebar{I notice all these names are adjectives}{Yep.  Wrapper portrayals are given adjectives describing their added functionality, and other simple portrayals are given nouns as names.}
+\sidebar{I notice all these names are gerunds.}{Yep.  Wrapper portrayals are given adjectives describing their added functionality, and other simple portrayals are given nouns as names.}
 MASON provides a whole bunch of {\bf wrapper portrayals} which greatly enhance your 2D Simple Portrayal's capabilities without you having to write any more code.  These portrayals can wrap around another Simple Portrayal to enhance it: and you can wrap a wrapper portrayal in another wrapper portrayal to stack on the enhancement fun.  Here are the wrapper portrayals presently provided:
 
 \begin{itemize}
@@ -8459,7 +8460,7 @@ You'll need to add the class name to the \file{sim/portrayal/inspector/propertyi
 
 MASON has extensive 3D visualization facilities using the Java3D toolkit.  This toolkit is standard on Mac OS X but is an optional install on Linux or Windows.
 
-Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a {\bf scene graph} structure (not necessarily a graph: usually just a tree) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are high-level than say, OpenGL, which is more akin to the low-level 2D instructions.
+Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a {\bf scene graph} structure (not necessarily a graph: usually just a tree) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are higher-level than say, OpenGL, which is more akin to the low-level 2D instructions.
 
 MASON tries to shield you as much as possible from Java3D: indeed in many cases you can use MASON's 3D facilities without knowing anything about Java3D.  As is shown in Figure \ref{Visualization3DUML}, the 3D Display and Portrayal facility bears an intentionally very strong similarity to the 2D Display and Portrayal facility (in Figure \ref{Visualization2DUML}) discussed in Section \ref{3d}.  Even so, it's useful to understand what's going on under the hood: there are important differences in setting up and portraying a model in 3D, largely stemming from fundamental differences in how 2D and 3D graphics are done underneath.  So just as the 2D Display chapter referred to Swing and Java AWT elements without explanation, some of this chapter will refer to Java3D elements without explanation.  If you don't know Java3D, take heart though: if you don't understand what (for example) a TransformGroup is, it's probably not really essential to getting something up and running.  We just have to be thorough in this section.
 
@@ -9940,11 +9941,46 @@ public class ColorCubePortrayal3D extends SimplePortrayal3D
 
 
 \chapter{GUI and Media Utilities}
+
+MASON has quite a lot of utility classes for performing GUI tasks, generating pictures and movies, and producing charts and histograms of different kinds.  These utility classes are largely independent of MASON: you can perfectly well use them for other non-MASON projects if you like.
+
+These classes are collected under three packages.  The first package, \Package{sim.util.gui}, contains a ragtag bunch of useful GUI classes which fill in the gaps in Java's Swing library.  The second package, \Package{sim.util.media}, contains generators for movies, vector PDF files, and PNG bitmaps.  Movies are produced using Sun's JMF\footnote{http:/\!/en.wikipedia.org/wiki/Java\_Media\_Framework} facility.  PDF files are produced using iText.\footnote{http:/\!/itextpdf.com/}  The third package, \Package{sim.util.media.chart}, contains MASON's charting facility, which sits on top of JFreeChart.\footnote{http:/\!/www.jfree.org/jfreechart/}
+
+\section{GUI Utilities}
 \label{sim.util.gui.ColorMap}
+
+A lot of the GUI utilities for MASON were developed as MASON's 2D and 3D display facilities were developed, and so they're a fairly motley but useful bunch.  We'll cover them in turn, but don't expect any rhyme or reason here.
+
+\subsection{Colors and Color Maps}
+ColorMap
+SimpleColorMap
+ColorWell
+
+\subsection{Widgets for Inspectors}
+LabelledList
+NumberTextField
+PropertyTextField
+MiniHistogram
+DisclosurePanel
+
+\subsection{Other Widgets and Utilities}
+WordWrap
+HTMLBrowser
+DialogToolTip
+AbstractScrollable
+Utilities
+
+\section{Generating Movies, PDF Files, and PNG Bitmap Files}
+
+\section{Charting}
 \label{sim.util.media.chart.ChartGenerator}
 \label{sim.util.media.chart.SeriesAttributes}
 
-Yet to come.
+\begin{figure}[t]
+\begin{center}\includegraphics[width=6.4in]{ChartUML.pdf}\end{center}
+\caption{UML diagram of MASON's charting facility.}
+\label{ChartUML}
+\end{figure}
 
 \cleardoublepage
 \footnotesize

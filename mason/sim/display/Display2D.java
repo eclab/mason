@@ -1590,7 +1590,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             BufferedImage img = insideDisplay.paint(g,true,false);
             g.dispose();
             OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-            PngEncoder tmpEncoder = new PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+            PNGEncoder tmpEncoder = new PNGEncoder(img, false,PNGEncoder.FILTER_NONE,9);
             stream.write(tmpEncoder.pngEncode());
             stream.close();
             }
@@ -1662,8 +1662,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                                             {
                                             OutputStream stream = new BufferedOutputStream(new FileOutputStream(
                                                     new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".png"))));
-                                            PngEncoder tmpEncoder = new
-                                                PngEncoder(img, false,PngEncoder.FILTER_NONE,9);
+                                            PNGEncoder tmpEncoder = new
+                                                PNGEncoder(img, false,PNGEncoder.FILTER_NONE,9);
                                             stream.write(tmpEncoder.pngEncode());
                                             stream.close();
                                             }
