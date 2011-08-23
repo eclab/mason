@@ -13,10 +13,6 @@ import sim.display.*;
 import javax.swing.*;
 import sim.portrayal3d.simple.*;
 
-import java.awt.*;
-import javax.media.j3d.*;
-
-
 public class Balls3DWithUI extends GUIState
     {
     public Display3D display;
@@ -79,9 +75,8 @@ public class Balls3DWithUI extends GUIState
         try
             {
             nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(
-                    //new BallPortrayal(5.0f),
-                    new Shape3DPortrayal3D(new Shape3D(new Text3D(new Font3D(new Font("SansSerif", Font.PLAIN, 9), new FontExtrusion()), "Hello World"))),
-					20f, true));
+                    new BallPortrayal(5.0f),
+                    20f, true));
 
 // Or to see some teapots....
 //            nodePortrayal.setPortrayalForAll(new CircledPortrayal3D(
