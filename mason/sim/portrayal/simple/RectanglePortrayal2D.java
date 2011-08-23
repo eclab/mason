@@ -58,6 +58,7 @@ public class RectanglePortrayal2D extends SimplePortrayal2D
 
         if (info.precise)
             {
+			if (preciseRectangle == null) preciseRectangle= new Rectangle2D.Double();
             preciseRectangle.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
             if (filled) graphics.fill(preciseRectangle);
             else graphics.draw(preciseRectangle);

@@ -43,7 +43,6 @@ public class OvalPortrayal2D extends SimplePortrayal2D
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
- 		if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();
         Rectangle2D.Double draw = info.draw;
         final double width = draw.width*scale + offset;
         final double height = draw.height*scale + offset;
@@ -53,6 +52,7 @@ public class OvalPortrayal2D extends SimplePortrayal2D
 
         if (info.precise)
             {
+			if (preciseEllipse == null) preciseEllipse = new Ellipse2D.Double();    // could get reset because it's transient
             preciseEllipse.setFrame(info.draw.x - width/2.0, info.draw.y - height/2.0, width, height);
             if (filled) graphics.fill(preciseEllipse);
             else graphics.draw(preciseEllipse);
