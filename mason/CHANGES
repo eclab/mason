@@ -2275,3 +2275,5 @@ Version 16
 	Moved reloading of precise rectangles and ovals to within the precise if-statement;
 		a very minor efficiency improvement.
 	PngEncoder renamed to PNGEncoder
+	All variables in SimpleColorMap made private
+	Changes changeColor(...) calls to setColor(...) in the various SeriesAttributes

@@ -9940,21 +9940,83 @@ public class ColorCubePortrayal3D extends SimplePortrayal3D
 \end{verbatim}}
 
 
-\chapter{GUI and Media Utilities}
+\chapter{GUI and Media Utility Classes}
 
 MASON has quite a lot of utility classes for performing GUI tasks, generating pictures and movies, and producing charts and histograms of different kinds.  These utility classes are largely independent of MASON: you can perfectly well use them for other non-MASON projects if you like.
 
 These classes are collected under three packages.  The first package, \Package{sim.util.gui}, contains a ragtag bunch of useful GUI classes which fill in the gaps in Java's Swing library.  The second package, \Package{sim.util.media}, contains generators for movies, vector PDF files, and PNG bitmaps.  Movies are produced using Sun's JMF\footnote{http:/\!/en.wikipedia.org/wiki/Java\_Media\_Framework} facility.  PDF files are produced using iText.\footnote{http:/\!/itextpdf.com/}  The third package, \Package{sim.util.media.chart}, contains MASON's charting facility, which sits on top of JFreeChart.\footnote{http:/\!/www.jfree.org/jfreechart/}
 
 \section{GUI Utilities}
-\label{sim.util.gui.ColorMap}
 
 A lot of the GUI utilities for MASON were developed as MASON's 2D and 3D display facilities were developed, and so they're a fairly motley but useful bunch.  We'll cover them in turn, but don't expect any rhyme or reason here.
 
 \subsection{Colors and Color Maps}
-ColorMap
-SimpleColorMap
-ColorWell
+\label{sim.util.gui.ColorMap}
+
+A number of MASON classes need to map numbers (doubles, ints) into colors.  For this purpose, MASON has an interface called \Class{sim.util.gui.ColorMap} and a concrete implementation of that interface called \Class{sim.util.gui.SimpleColorMap}.  You can provide your own ColorMap implementation for more sophisticated mapping, but we've found that SimpleColorMap works well for a lot of cases.
+
+ColorMap is a pretty straightforward interface: you provide a {\bf level} (a double value), and ColorMap returns a color either as a \class{java.awt.Color} or as a packed ARGB integer (the same format as returned by \method{Color.getRGB()}).  You can also just get the alpha (transparency) value from 0 to 255 inclusive (255 is opaque).
+
+ColorMaps should map {\it every} value to a color, but they are allowed to complain that a value isn't {\bf valid}.  They also provide a canonical numerical value which you can use to replace invalid values provided by the user.
+
+\begin{methods}{\class{sim.util.gui.ColorMap}}
+\mthd{public Color getColor(double level)} Returns the color mapped to the given level.
+\mthd{public int getRGB(double level)} Returns the color mapped to the given level, as a packed ARGB integer.  It's sufficient to implement this method simply as \code{return getColor(level).getRGB();} but you can likely implement it more efficiently than that. 
+\mthd{public int getAlpha(double level)} Returns the alpha portion of the color.  It's sufficient to implement this method simply as \code{return getRGB(level) \(>>>\) 24;} or as \code{return getColor(level).getAlpha();} but you can likely implement it more efficiently than that.
+\mthd{public boolean validLevel(double level)} Returns true if a level is "valid" (it provides a meaningful color).  The ColorMap will provide non-insane values for all level values, valid or not.
+\mthd{public double defaultValue()} Provides a valid level which can serve as a canonical level value to replace invalid levels provided by the user.  The ColorMap should not replace values itself, but simply offer this as a reasonable replacement. 
+\end{methods}
+
+MASON provides a single concrete implementation ColorMap, called SimpleColorMap.  This class offers three ways to map numbers to colors:
+
+\begin{itemize}
+\item A minimum and maximum double value are provided, as well as a minimum and maximum color.  SimpleColorMap maps double values between the minimum and maximum to the appropriate linear interpolated color.  Values outside the minimum and maximum range simply return the minimum or maximum color as appropriate.
+\item An array of size \(n\) of colors is provided.  Values from \(i \in [0 ... n)\) are first converted as \(i \leftarrow \lfloor i \rfloor\), and then mapped to their respective color values in the array.
+\item Both of the above elements are provided.  Values from \(i \in [0 ... n)\) are first converted as \(i \leftarrow \lfloor i \rfloor\), and then mapped to their respective color values in the array.  All other numerical values, including \(n\), are interpolated as doubles using the minimum/maximum method.
+\end{itemize}
+
+Armed with this knowledge, SimpleColorMap's constructors should be easy to understand:
+
+
+\begin{methods}{\class{sim.util.gui.SimpleColorMap} Constructor}
+\mthd{public SimpleColorMap(Color[] colorTable, double minLevel, double maxLevel, Color minColor, Color maxColor)} Creates a SimpleColorMap which maps values from \([0 ... n)\) to colors in the provided color table (of length \(n\), by flooring them, then looking up the floor value in the table; and maps all other numbers (including \(n\)) using linear interpolation between the minimum and maximum levels and their associated colors.  Non-array values outside the minimum or maximum levels are thresholded to the minimum or maximum as appropriate.  The default value is 0.  If a level is between minLevel and maxLevel inclusive, or it falls within \([0 ... n)\), it is considered ``valid''. 
+\mthd{public SimpleColorMap(Color[] colorTable)} Creates a SimpleColorMap which maps values from \([0 ... n)\) to colors in the provided color table (of length \(n\), by flooring them, then looking up the floor value in the table; all other values (including \(n\)) are mapped to clear (transparent).  The default value is set to 0.  If a level falls within \([0 ... n)\), it is considered ``valid''.
+\mthd{public SimpleColorMap(double minLevel, double maxLevel, Color minColor, Color maxColor)} Creates a SimpleColorMap which maps all numbers using linear interpolation between the minimum and maximum levels and their associated colors.  Values outside the minimum or maximum levels are thresholded to the minimum or maximum as appropriate.  The default value is set to minLevel.  If a level is between minLevel and maxLevel inclusive, it is considered ``valid''.
+\mthd{public SimpleColorMap()} Creates a SimpleColorMap which interpolates \(0.0 ... 1.0\) to black (0.0) and white (1.0).  The default value is 0.0.  If a level is between minLevel and maxLevel inclusive, or it falls within \([0 ... n)\), it is considered ``valid''.  If a level is between 0.0 and 1.0 inclusive, it is considered ``valid''.
+\end{methods}
+
+In addition to the ColorMap methods described above, SimpleColorMap also has a few additional methods:
+
+\begin{methods}{\class{sim.util.gui.SimpleColorMap} Constructor}
+\mthd{public void setLevels(double minLevel, double maxLevel, Color minColor, Color maxColor)}  Sets minimum and maximum levels for the map and their respective colors.  The minimum level must be \(<=\) the maximum level. If they are equivalent, then minimum and maximum levels are unset.
+\mthd{public Color[] setColorTable(Color[] colorTable)}  Sets the color table for the map.  If null is passed in, the color table is unset.
+\mthd{public double filterLevel(double level)} Called prior to mapping the level to allow further modification by you.  You can override this method to filter the level as you like.  By default this method simply returns the level.
+\end{methods}
+
+SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has an faster cache commented out in its source code, but that cache has lower resolution.
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-1em}\hfill\includegraphics[width=2in]{ColorWell.png}
+\caption{A Color Well (text not included).}
+\vspace{-2em}
+\end{wrapfigure}
+
+\paragraph{Color Wells} MASON also provides a simple widget (a JPanel) called \Class{sim.util.gui.ColorWell} which holds a color.  It displays the color as a filled rectangle and lets you click on that color to change it.
+
+\begin{methods}{\class{sim.util.gui.ColorWell} Constructor}
+\mthd{public ColorWell(Color c)}  Creates a ColorWell holding the given color.
+\mthd{public ColorWell()}  Creates a ColorWell holding transparent black.  You'd probably want to change this color before offering it to the user.
+\end{methods}
+
+You can both query and set the color in the ColorWell.  Additionally, there's a method called \method{changeColor(...)} which allows you to filter which colors are being set or otherwise be informed of it.  
+
+\begin{methods}{\class{sim.util.gui.ColorWell}}
+\mthd{public void setColor(Color c)}  Sets the ColorWell's color, filtering it through \method{changeColor(...)} first.
+\mthd{public Color getColor()}  Returns the ColorWell's color.
+\mthd{public Color changeColor(Color c)}  Filters the color passed into \method{setColor(...)}.  Override this to be informed of changes or to constrain them as you see fit.  The default implementation simply returns the color.
+\end{methods}
+
+ColorWell doesn't do a good job of showing alpha: you should use it only for fully opaque colors.
 
 \subsection{Widgets for Inspectors}
 LabelledList
@@ -9972,6 +10034,14 @@ Utilities
 
 \section{Generating Movies, PDF Files, and PNG Bitmap Files}
 
+\subsection{Movies}
+MovieMaker
+MovieEncoder
+
+\subsection{Pictures}
+PDFEncoder
+PNGEncoder
+
 \section{Charting}
 \label{sim.util.media.chart.ChartGenerator}
 \label{sim.util.media.chart.SeriesAttributes}
@@ -9981,6 +10051,23 @@ Utilities
 \caption{UML diagram of MASON's charting facility.}
 \label{ChartUML}
 \end{figure}
+
+
+\subsection{Chart Generators}
+ChartGenerator
+TimeSeriesChartGenerator
+ScatterPlotGenerator
+HistogramGenerator
+
+\subsubsection{Data Culling}
+DataCuller
+MinGapDataCuller
+
+\subsection{Series}
+SeriesAttributes
+TimeSeriesAttributes
+ScatterPlotSeriesAttributes
+HistogramSeriesAttributes
 
 \cleardoublepage
 \footnotesize

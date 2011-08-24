@@ -87,7 +87,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
     public void setFillOpacity(double value) { fillOpacityField.setValue(fillOpacityField.newValue(value));  }
     public double getFillOpacity() { return fillOpacityField.getValue(); }
     
-    public void setFillColor(Color value) { fillColorWell.changeColor(fillColor = value); }
+    public void setFillColor(Color value) { fillColorWell.setColor(fillColor = value); }
     public Color getFillColor() { return fillColor; }
 
     int shapeNum = 0;

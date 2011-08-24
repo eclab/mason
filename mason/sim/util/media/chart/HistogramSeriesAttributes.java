@@ -70,10 +70,10 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     public void setNumBins(int value) { numBinsField.setValue(numBinsField.newValue(value));  numBins = (int)(numBinsField.getValue()); }
     public int getNumBins() { return numBins; }
         
-    public void setFillColor(Color value) { fillColorWell.changeColor(fillColor = value); }
+    public void setFillColor(Color value) { fillColorWell.setColor(fillColor = value); }
     public Color getFillColor() { return fillColor; }
 
-    public void setStrokeColor(Color value) { strokeColorWell.changeColor(strokeColor = value); }
+    public void setStrokeColor(Color value) { strokeColorWell.setColor(strokeColor = value); }
     public Color getStrokeColor() { return strokeColor; }
 
     /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,

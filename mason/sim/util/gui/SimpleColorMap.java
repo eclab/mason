@@ -49,21 +49,21 @@ import sim.util.*;
 
 public class SimpleColorMap implements ColorMap 
     {
-    public int minRed = 0;
-    public int minBlue = 0;
-    public int minGreen = 0;
-    public int minAlpha = 0;
-    public int maxRed = 0;
-    public int maxBlue = 0;
-    public int maxGreen = 0;
-    public int maxAlpha = 0;
-    public double maxLevel = 0;
-    public double minLevel = 0;
-    public final Color clearColor = new Color(0,0,0,0);
-    public Color minColor = clearColor;  // used when minLevel = maxLevel
-    public Color maxColor = clearColor;
-    
-    public static final int COLOR_DISCRETIZATION = 257;
+	final Color clearColor = new Color(0,0,0,0);
+	static final int COLOR_DISCRETIZATION = 257;
+
+	int minRed = 0;
+	int minBlue = 0;
+	int minGreen = 0;
+	int minAlpha = 0;
+	int maxRed = 0;
+	int maxBlue = 0;
+	int maxGreen = 0;
+	int maxAlpha = 0;
+	double maxLevel = 0;
+	double minLevel = 0;
+	Color minColor = clearColor;
+	Color maxColor = clearColor;
     
     /** User-provided color table */
     public Color[] colors;
@@ -98,7 +98,7 @@ public class SimpleColorMap implements ColorMap
     
     /** Given an array of size n, constructs a ColorMap that maps integers from 0 to n-1 to the colors in the array.
         Any real-valued number x, for 0 <= x < n, is converted into an integer (with floor()) and then mapped to an array color.
-        For all other values, black is returned. 
+        For all other values, clear is returned. 
         Values from x through n, not including n, are considered valid levels by validLevel(...).
         The default value is 0 (for defaultValue() ).
     */
@@ -123,6 +123,23 @@ public class SimpleColorMap implements ColorMap
         setLevels(minLevel,maxLevel,minColor,maxColor);
         }
 
+    /** Specifies that if a value (cast into an int) in the IntGrid2D or DoubleGrid2D falls in the range 0 ... colors.length,
+        then that index in the colors table should be used to represent that value.  Otherwise, values in
+        setLevels(...) are used.  You can remove the color table by passing in null here.  Returns the old color table. */
+    public Color[] setColorTable(Color[] colorTable)
+        {
+        Color[] retval = colors;
+        colors = colorTable;
+        return retval;
+        }
+        
+    public double filterLevel(double level) { return level; }
+        
+    /** Override this if you'd like to customize the color for values in the portrayal.  The default version
+        looks up the value in the colors[] table, else computes the interpolated color and grabs it out of
+        a predefined color cache (there can't be more than about 1024 or so interpolated colors, max). 
+    */
+    
     /** Sets the color levels for the ValueGridPortrayal2D values for use by the default getColor(...)
         method.  These are overridden by any array provided in setColorTable().  If the value in the IntGrid2D or DoubleGrid2D
         is less than or equal to minLevel, then minColor is used.  If the value is greater than or equal to maxColor, then
@@ -151,23 +168,6 @@ public class SimpleColorMap implements ColorMap
         //                      }
         }
         
-    /** Specifies that if a value (cast into an int) in the IntGrid2D or DoubleGrid2D falls in the range 0 ... colors.length,
-        then that index in the colors table should be used to represent that value.  Otherwise, values in
-        setLevels(...) are used.  You can remove the color table by passing in null here.  Returns the old color table. */
-    public Color[] setColorTable(Color[] colorTable)
-        {
-        Color[] retval = colors;
-        colors = colorTable;
-        return retval;
-        }
-        
-    public double filterLevel(double level) { return level; }
-        
-    /** Override this if you'd like to customize the color for values in the portrayal.  The default version
-        looks up the value in the colors[] table, else computes the interpolated color and grabs it out of
-        a predefined color cache (there can't be more than about 1024 or so interpolated colors, max). 
-    */
-    
     public Color getColor(double level)
         {
         if (colors != null && level >= 0 && level < colors.length)

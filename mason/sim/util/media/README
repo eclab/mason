@@ -22,7 +22,7 @@ collections of snapshots of a widget.  The sim/util/gui/MovieMaker.java
 class wraps this in a nice GUI and is easier to use.
 
 
-PngEncoder.java
+PNGEncoder.java
 
 A class, written by J. David Eisenberg, which writes out PNG files.
 
