@@ -5415,7 +5415,8 @@ This is all a lie actually, but a useful lie to give you the idea of how things 
 \label{sim.display.Console}
 
 \begin{wrapfigure}{r}[0in]{2.9in}
-\vspace{-1em}\hfill\includegraphics[width=2.8in]{Console2.png}\vspace{-1em}\end{wrapfigure}
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{Console2.png}
+\caption{The Console displaying a web page.}\label{consoleabout}\vspace{-1em}\end{wrapfigure}
 
 The {\bf Console} is a Controller defined by the class \Class{sim.display.Console}.  It's the most common Controller and is often viewed as the Grand Central Station of a typical simulation.  Because it is sort of the central GUI object, the Console handles a lot of simulation tasks in MASON.
 
@@ -8004,7 +8005,6 @@ FieldPortrayals often implement this method by calling the same method on the Si
 These kinds of Inspectors are fleeting: they're generated on request, and are stored in the {\bf ``Inspectors'' tab}.  The user can detach them into separate windows and can also destroy them at any time.  When the simulation is stopped and restarted, all such inspectors are automatically destroyed.
 
 \section{Producing an Inspector for a Model}
-\label{volatility}
 
 An Inspector is often commonly provided for the model as a whole, where it will appear permanently in the optional {\bf ``Model''  tab} of the Console.
 
@@ -10107,7 +10107,7 @@ MASON has two special widgets for inspecting properties or numerical values, com
 
 NumberTextField has three parts: an optional {\bf label}, a {\bf text field} holding the number proper, and a {\bf button cluster} which allows manipulation of the number other than via typing.  The button cluster consists of a left-button, a ``belly button'', and a right-button.  The left button decreases the value, the right button increases the value, and the belly button resets the value to its default (initial) setting. 
  
- \sidebar{Where did that button cluster concept come from?}{From the Apple Newton MessagePad.\\
+ \sidebar{Where did that button cluster concept come from?}{From the Apple Newton MessagePad.  Behold:\\
 \rule{0pt}{0pt}\hspace{\fill}\includegraphics[width=0.35in]{Newton.png}}
 There's another gizmo.  When you change the number via editing the text field proper, NumberTextField will highlight that field in a light blue.  This indicates that the number has been edited but not entered into the text field yet.  The value is submitted when you press the ENTER or RETURN key, or when the focus is lost on the field (perhaps you've tabbed or clicked elsewhere).  As long as the field is highlighted in blue, you can reset your changes by pressing ESCAPE.
 
@@ -10228,7 +10228,7 @@ Like NumberTextField, PropertyField has a few methods to query and update the pa
 
 \begin{wrapfigure}{r}[0in]{2.5in}
 \vspace{-1em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
-\caption{Several MiniHistograms at work.  The tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
+\caption{Several MiniHistograms at work.  The top two histograms are uniform. tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
 \vspace{0em}
 \end{wrapfigure}
 
@@ -10260,23 +10260,183 @@ And you can update the buckets and labels any time you like:
 \mthd{public void setBucketsAndLabels(double[] buckets, String[] buckets)}  Changes the bucket array and the bucket label array.  Be sure that your bucket array is the same length as the label array before the next repaint.
 \end{methods}
 
-
 \subsection{Other Widgets and Utilities}
-WordWrap
-HTMLBrowser
-DialogToolTip
-AbstractScrollable
-Utilities
+
+\sidebar{Why aren't the HTML and URL broken out in the consructor?}{Because it makes things easier for Display2D and Display3D, for which this class was designed.}The class \Class{sim.util.gui.HTMLBrowser} provides a small web browser using Java's built-in HTML and socket facility.  The HTMLBrowser is the widget used in the Console's ``about'' tab (see Figure \ref{consoleabout})  HTMLBrowser has its own JScrollPane built-in, plus a ``back'' button to let you return to previously-viewed pages.
+
+\begin{methods}{\class{sim.util.gui.HTMLBrowser} Constructor}
+\mthd{public HTMLBrowser(Object HTMLTextOrURL)}  Builds an HTMLBrowser with either a String (HTML Text) or a URL from which it will download HTML text.
+\end{methods}
+
+You can change the text at any time:
+
+\begin{methods}{\class{sim.util.gui.HTMLBrowser}}
+\mthd{public void setText(Object HTMLTextOrURL)}  Sets the text to either a String (HTML Text) or a URL from which it will download HTML text.
+\end{methods}
+
+\paragraph{Word Wrapping} Java doesn't provide an easy solution for specifying word wrapping to a number of pixels or a number of characters.\footnote{Admittedly, this isn't a major need, but we've used it a few times.}  MASON has a simple class, called \Class{sim.util.gui.WordWrap}, which performs this function.  Using WordWrap, you can force a collection of text to wrap to a certain number of pixels wide, for example:
+
+{\footnotesize\begin{verbatim}
+String myText = "Here is the big text that we want to have word-wrapped";
+int myNumberOfPixels = 50; // our word-wrap pixel length
+JButton button = new JButton();
+String wrappedText = sim.util.WordWrap.wrap(myText, myNumberOfPixels, button.getFontMetrics(button.getFont()));
+button.setText("&lt;html>" + sim.util.WordWrap.toHTML(wrappedText) + "&lt;/html>");
+\end{verbatim}}
+
+There are no constructors: it's all just static methods.
+
+\begin{methods}{\class{sim.util.gui.WordWrap} Utility}
+\mthd{public static String wrap(String string, int numColumns)} Wraps a string to a given number of characters wide.
+\mthd{public static String wrap(String string, int numPixels, FontMetrics metrics)} Wraps a string to a given number of pixels wide, under the assumption that the text will use the provided FontMetrics.
+\mthd{public static String[] split(String wrappedString)} Splits a string into multiple strings, one per line, based on the newlines inserted previously during wrapping.  A potentially useful auxiliary method.
+\mthd{public static String toHTML(String wrappedString)} Converts a wrapped string into HTML text suitable to insert into a JComponent.
+\end{methods}
+
+\paragraph{Scrollables}  The class \Class{sim.util.gui.AbstractScrollable} is a simple JPanel which provides a basic abstract implementation of the \class{javax.swing.Scrollable} interface.  This makes it easy, for example, to create a JComponent which refuses to permit a horizontal scrollbar.  For some reason Java doesn't provide one on its own.  The methods below are simply default implementations and intended to be overridden.
+
+\begin{methods}{\class{sim.util.gui.AbstractScrollable} Default}
+\mthd{public Dimension getPreferredScrollableViewportSize()} Returns \code{getPreferredSize();}
+\mthd{public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)} Returns \code{visibleRect.height / 20} to scroll by one twentieth of a page.
+\mthd{public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)} Returns \code{visibleRect.height / 2} to scroll by one half of a page.
+\mthd{public boolean getScrollableTracksViewportWidth()} Returns false.
+\mthd{public boolean getScrollableTracksViewportHeight()} Returns false.
+\end{methods}
+
+\paragraph{Random Utility Functions}  
+
+The class \Class{sim.util.gui.Utilities} collects various random but useful utility functions used in a variety of spots throughout MASON's visualization facilities.
+
+
+\begin{methods}{\class{sim.util.gui.Utilities} Utility}
+\mthd{public static String ensureFileEndsWith(String filename, String ending)} Returns a modified version of the filename such that it's guaranteed to end with the provided ending.
+\mthd{public static void doEnsuredRepaint(Component component)} Does a repaint that is guaranteed to work.  On some systems, a plain \method{repaint()} fails if there are a lot of updates going on rapidly.  Notably, MacOS X 1.3.1 has difficulties.
+\mthd{public static Thread doLater(long milliseconds, Runnable doThis)} Performs the provided runnable on the Swing Event Thread at least as far in the future as the milliseconds provided.
+\mthd{public static void informOfError(Throwable error, String description, JFrame frame)} Pops up a dialog informing the user of an error.  The description provides additional text.  The frame may be null, or it may be associated with a JFrame in which the error occurred.
+\mthd{public static void inform(String fact, String description, JFrame frame)} Pops up a dialog informing the user of a fact.  The description provides additional text.  The frame may be null, or it may be associated with a JFrame in which the error occurred.
+\end{methods}
+
+
 
 \section{Generating Movies, PDF Files, and PNG Bitmap Files}
 
+MASON can make movies, PNG bitmaps, and vector PDF files of its simulation visualization.  These tasks are handled by a small collection of straightforward utility classes.  You can use these classes for other tasks than MASON-specific ones too: they're general-purpose and more or less independent of the rest of the MASON toolkit.
+
 \subsection{Movies}
-MovieMaker
-MovieEncoder
+
+MASON creates movies by setting up a \Class{sim.util.media.MovieEncoder} and then submitting bitmaps to it one by one.  These bitmaps are then encoded into a video stream.  MovieEncoder is little more than a thin wrapper over Sun's JMF media utilities.
+
+The biggest downside to encoding with JMF is the size of the movies produced.  JMF has few generic options for producing movies: most of its encoders are outdated and operating-system-specific.  As a result MASON has opted to encode movies with the Motion JPEG codec: they are essentially streams of JPEG images.  It wouldn't surprise you to hear that this makes for some really gigantic files.  However, it's a simple task to re-encode these movies into something more useful.  For example, Quicktime on OS X 1.6 and later can load these movies and save them out under a smarter encoding (H.264 for example), resulting in radically smaller files.
+
+Note that JMF produces Motion JPEG files with broken headers, and this will irritate certain movie-playing programs which are trying to get a handle on them.  This is another good reason to re-encode the videos.
+
+To create a movie, MovieEncoder requires four things up front:
+
+\begin{itemize}
+\item A {\bf frame rate} (images per second)
+\item The file to write out to
+\item A typical image, from which MovieEncoder will extract size information
+\item A {\bf format} for the movie: the color depth in bits, etc.
+\end{itemize}
+
+The last item is chosen from an array of formats provided by JMF itself.  MovieEncoder has a utility method which can give you the complete list of available formats (usually three):
+
+\begin{methods}{\class{sim.util.media.MovieEncoder} Utility}
+\mthd{public static Format[] getEncodingFormats(float framerate, BufferedImage typicalImage)} Returns all available formats for the provided frame rate and a typical image.
+\end{methods}
+
+Once you have chosen a Format, you can set up the MovieEncoder:
+
+\begin{methods}{\class{sim.util.media.MovieEncoder} Constructor}
+\mthd{public MovieEncoder(float frameRate, File file, BufferedImage typicalImage, Format encodeFormat)} Creates a MovieEncoder with the given frame rate, file to write to, typical image, and chosen encoding format.
+\end{methods}
+
+You can now start stuffing the MovieEncoder with images, one after another.  The images should probably be of the same size and format as the typical image provided earlier.  When you are done, call \method{stop()} and the MovieEncoder will produce the movie.  You should then throw the MovieEncoder away and create a new one if you wish to make another movie.
+
+\begin{methods}{\class{sim.util.media.MovieEncoder}}
+\mthd{public synchronized boolean add(BufferedImage image)} Adds an image to the MovieEncoder's stream.  Returns true if successful, else false if we're stopped or some error occurred preventing addition of the image.
+\mthd{public synchronized boolean stop()} Stops and writes out the MovieEncoder's stream. Returns true if successful.
+\end{methods}
+
+\paragraph{Warning:} The \method{stop()} method is where a lot of writing takes place: it can take a few seconds for this method to complete.
+
+\paragraph{GUI Assistance for Movie Encoding}
+
+MASON provides a simple class, \Class{sim.util.gui.MovieMaker}, which handles much of the GUI gruntwork of having the user set up a movie to write out with MovieEncoder.  This class is essentially a GUI sheen over MovieEncoder itself.  A MovieMaker is constructed like this:
+ 
+\begin{methods}{\class{sim.util.media.MovieMaker} Constructor}
+\mthd{public MovieMaker(Frame parent)}  Creates a MovieMaker.  The MovieMaker will produce some dialog panels whose parent will be assigned to \variable{parent} (which can be \variable{null}) if you like).
+\end{methods}
+
+Once you have a MovieMaker, you \method{start(...)} it, then start adding images to it with \method{add(...)}, then finally call \method{stop(...)} to write the movie out.  If this sounds similar to the MovieEncoder procedure, you win a gold star.  The difference is that you don't have to specify much: MovieMaker queries the user for the file name, frame rate, and the format he'd prefer.
+
+\begin{methods}{\class{sim.util.media.MovieMaker}}
+\mthd{public synchronized boolean start(BufferedImage typicalImage, float frameRate) }  Starts the MovieMaker with the given typical image and initial frame rate (the user can change it).  The user will specify the format and file name.  Blocks until the user has done so.  If the user cancelled the process, returns \variable{false}, else returns \variable{true}.
+\mthd{public synchronized boolean start(BufferedImage typicalImage) }  Starts the MovieMaker with the given typical image and an initial frame rate of 10 FPS (the user can change it).  The user will specify the format and file name.  Blocks until the user has done so.  If the user cancelled the process, returns \variable{false}, else returns \variable{true}.
+\mthd{public synchronized boolean add(BufferedImage image) }  Adds an image to the MovieMaker's movie stream.  The image ought to be the same size and format as the typical image provided in \method{start(...)}.  Returns false if the stream has been stopped or an error occurred.  Else returns true.
+\mthd{public synchronized boolean stop() }  Stops the MovieMaker's movie stream and writes out the movie.  Returns false if the stream is already stopped or an error occurred.  Else returns true.
+\end{methods}
+
+\paragraph{Warning:} Since it relies on the MovieEncoder underneath, the \method{stop()} method is where a lot of writing takes place: it can take a few seconds for this method to complete.
+
 
 \subsection{Pictures}
-PDFEncoder
-PNGEncoder
+
+MASON generates PNG bitmaps using \Class{sim.util.media.PNGEncoder}, a free class largely written by J. David Eisenberg at KeyPoint Software.
+
+PNGEncoder can be constructed with or without an image.  You can also choose to encode alpha (transparency) and specify compression level and a filter, one of:
+
+\java{%
+    public static final int FILTER\_NONE;\\
+    public static final int FILTER\_SUB;\\
+    public static final int FILTER\_UP;
+}
+
+These correspond to the ``None'' (0), ``Sub'' (1), and ``Up'' (2) filters in the PNG Specification.  PNGEncoder does not support the ``Average'' (3) or ``Paeth'' (4) fillters.  If you don't know what the heck this stuff is, don't bother with a filter.
+
+\begin{methods}{\class{sim.util.media.PNGEncoder} Constructor}
+\mthd{public PNGEncoder(Image image, boolean encodeAlpha, int whichFilter, int compressionLevel) }  Creates a PNGEncoder with the given image, alpha encoding, filter, and compression level (chosen from 0 through 9).
+\mthd{public PNGEncoder(Image image, boolean encodeAlpha, int whichFilter) }  Creates a PNGEncoder with the given image, alpha encoding, filter, and a compression level of 0 (uncompressed).
+\mthd{public PNGEncoder(Image image, boolean encodeAlpha) }  Creates a PNGEncoder with the given image and alpha encoding.  No filter is used, and a compression level of 0 (uncompressed) is used.
+\mthd{public PNGEncoder(Image image) }  Creates a PNGEncoder with the given image.  Alpha is not encoded.  No filter is used, and a compression level of 0 (uncompressed) is used.
+\mthd{public PNGEncoder() }  Creates a PNGEncoder without an image (yet).  Alpha is not encoded.  No filter is used, and a compression level of 0 (uncompressed) is used.
+\end{methods}
+
+You can set these values by hand as well:
+
+\begin{methods}{\class{sim.util.media.PNGEncoder}}
+\mthd{public void setImage(Image image)} Sets the image.
+\mthd{public void setEncodeAlpha(boolean encode)} Sets whether or not to encode alpha (transparency).
+\mthd{public boolean getEncodeAlpha()} Returns whether or not to encode alpha (transparency).
+\mthd{public void setFilter(int filter)} Sets the filter to use.
+\mthd{public int getFilter()} Returns the filter being used.
+\mthd{public void setCompressionLevel(int compressionLevel)} Sets the compression level (one of 0 to 9 inclusive).  0 is uncompressed.
+\mthd{public int getCompressionLevel()} Returns the compression level (one of 0 to 9 inclusive).  0 is uncompressed.
+\end{methods}
+
+Once everything is set up, you can encode the image to an array of bytes.
+
+\begin{methods}{\class{sim.util.media.PNGEncoder}}
+\mthd{public byte[] pngEncode()} Encodes the image into an array of bytes suitable to write out to a file.
+\end{methods}
+
+You could then write the file like this:
+
+\java{%
+OutputStream  stream = ...\\
+stream.write(encoder.pngEncode());
+}
+
+\paragraph{Writing Vector PDF Images}
+
+MASON doesn't just produce bitmaps: it also has the capability of producing publication-quality vector PDF images directly from the visualization system.  This is done using the iText library, which generates PDF from Java Graphics objects. iText is a little complex, so MASON provides a simple wrapper to make emitting PDF easy.  This wrapper is the class \Class{sim.util.media.PDFEncoder}.
+
+PDFEncoder has a single method, which takes a \class{java.awt.Component} and a file.  It then tells the Component to repaint itself into a special Graphics object.  This Graphics object redirects all the paint directives directly into the file, to produce a PDF file. Piece of cake!
+
+\begin{methods}{\class{sim.util.media.PDFEncoder} Utility}
+\mthd{public static void generatePDF(Component component, File file)} Repaints the component and redirects the result into the file, producing a PDF file.
+\end{methods}
+
 
 \section{Charting}
 \label{sim.util.media.chart.ChartGenerator}

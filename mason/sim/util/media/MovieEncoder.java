@@ -205,6 +205,7 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
             }
         return stateTransitionOK;
         }
+		
     /**
      * Controller Listener.
      */

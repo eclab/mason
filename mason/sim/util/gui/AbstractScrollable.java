@@ -15,7 +15,7 @@ public abstract class AbstractScrollable extends JPanel implements Scrollable
     {
     public Dimension getPreferredScrollableViewportSize()
         {
-        return super.getPreferredSize();
+        return getPreferredSize();
         }
         
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)

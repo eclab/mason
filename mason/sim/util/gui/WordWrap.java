@@ -161,26 +161,10 @@ public class WordWrap implements java.io.Serializable
         String myText = "Here is the big text that we want to have word-wrapped";
         int myNumberOfPixels = 50; // our word-wrap pixel length
         JButton button = new JButton();
-        button.setText("&lt;html>" + sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(
-        myText, myNumberOfPixels, button.getFontMetrics(button.getFont()))) +
-        "&lt;/html>");
+		String wrappedText = sim.util.WordWrap.wrap(myText, myNumberOfPixels, button.getFontMetrics(button.getFont()));
+        button.setText("&lt;html>" + sim.util.WordWrap.toHTML(wrappedText) + "&lt;/html>");
         </tt></pre>
-        
-        <p>On MacOS X Java 1.3 (which will go away soon), this isn't sufficient -- the default
-        font is incorrectly Times Roman, and the default point size is slightly off.  You can get the
-        font fixed, but not the size, with:
-
-        <pre><tt>
-        String myText = "Here is the big text that we want to have word-wrapped";
-        int myNumberOfPixels = 50; // our word-wrap pixel length
-        JButton button = new JButton();
-        button.setText("&lt;html>&lt;font face=\"" + 
-        sim.util.WordWrap.toHTML(button.getFont().getFamily()) + "\">" + 
-        sim.util.WordWrap.toHTML(sim.util.WordWrap.wrap(
-        myText, myNumberOfPixels, button.getFontMetrics(button.getFont()))) +
-        "&lt;/font>&lt;/html>");
-        </tt></pre>
-    */
+	*/
     
     public static String toHTML(final String text)
         {

@@ -2292,3 +2292,8 @@ Version 16
 	Made MiniHistogram.minimum(...) and maximum(...) private	
 	Added MiniHistogram.makeBuckets(...) variant
 	DialogToolip is deleted and folded back into ToolTipBehavior
+	WordWrap examples trimmed
+	AbstractScrollable.getPreferredScrollableViewportSize() now doesn't call super
+	Various PNGEncoder protected variables and methods made private
+	PNGEncoder.ENCODE_ALPHA, NO_ALPHA, and FILTER_LAST constants deleted
+	PNGEncoder.encodeBytes(alpha) method deleted
