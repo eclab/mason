@@ -2277,3 +2277,5 @@ Version 16
 	PngEncoder renamed to PNGEncoder
 	All variables in SimpleColorMap made private
 	Changes changeColor(...) calls to setColor(...) in the various SeriesAttributes
+	LabelledList.setBackground(...) removed.
+	Added DisclosurePanel.setDisclosed(...) and isDisclosed()

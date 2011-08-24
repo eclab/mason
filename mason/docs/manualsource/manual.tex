@@ -9993,10 +9993,10 @@ In addition to the ColorMap methods described above, SimpleColorMap also has a f
 \mthd{public double filterLevel(double level)} Called prior to mapping the level to allow further modification by you.  You can override this method to filter the level as you like.  By default this method simply returns the level.
 \end{methods}
 
-SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has an faster cache commented out in its source code, but that cache has lower resolution.
+SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has a faster cache commented out in its source code, but that cache has lower resolution.
 
-\begin{wrapfigure}{r}[0in]{2in}
-\vspace{-1em}\hfill\includegraphics[width=2in]{ColorWell.png}
+\begin{wrapfigure}{r}[0in]{1.5in}
+\vspace{-1em}\hfill\includegraphics[width=1.5in]{ColorWell.png}
 \caption{A Color Well (text not included).}
 \vspace{-2em}
 \end{wrapfigure}
@@ -10019,11 +10019,89 @@ You can both query and set the color in the ColorWell.  Additionally, there's a 
 ColorWell doesn't do a good job of showing alpha: you should use it only for fully opaque colors.
 
 \subsection{Widgets for Inspectors}
-LabelledList
+
+MASON's SimpleInspector class relies on various custom GUI widgets  to do its task.  These widgets have also proven useful in other contexts, such as on the front of Display2D and Display3D, as well as in the charting facility and all over the Console.
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{0em}\hfill\includegraphics[width=2in]{LabelledList.png}
+\caption{A LabelledList of three columns and three rows, shown with the optional labelled border (``Properties'').}
+\vspace{0em}
+\label{LabelledList}
+\end{wrapfigure}
+
+The ``top level'' class in this collection, so to speak, is \Class{sim.util.gui.LabelledList}.  This class provides an easy way to make tables of up to 5 columns and arbitrary numbers of rows, suitable for creating rows of labelled components such as is found in a property list.  It's used to create the tabular arrangement of Java Bean Properties which appear in SimpleInspector, for example, and is also used elsewhere in MASON as well.
+
+LabelledList has only two simple constructors.  One adds an optional bordered around the list with a label attached to the border:
+
+\begin{methods}{\class{sim.util.gui.LabelledList} Constructor}
+\mthd{public LabelledList(String borderLabel)}  Creates a LabelledList with a labelled border.
+\mthd{public LabelledList()}  Creates a LabelledList with no labelled border.
+\end{methods}
+
+\sidebar{Why is LabelledList spelled British-style (``labelled') rather than American-Style (``labeled'')?}{I have absolutely no idea.} A LabelledList defines five columns.  The center column is stretched to fill all available space not taken up by the other columns.  The leftmost column are sized and justified like this:
+
+{\footnotesize\begin{center}\begin{tabular}{|l|r|c|l|r|}
+\hline
+Column 0{\qquad}~&~{\qquad}Column 1&~{\quad}Column 2{\quad}~&Column 3{\qquad\qquad\qquad\qquad\qquad\qquad\qquad}~&~{\qquad}Column 4\\
+\hline
+\end{tabular}\end{center}}
+
+\sidebar{Why not use a JTable?}{JTables are ridiculously overcomplex for this task.}In MASON, the most common use of LabelledList is in property inspectors.  Here, the property name is placd in Column 1, a pop-up widget (the magnifying glass for example) is placed in Column 2, and the property itself is placed in Column 3, often as a text field.  Columns 0 and 4 hold \variable{null}.  This is the arrangement shown in Figure \ref{LabelledList}.  Another common use is to omit the widget, putting \variable{null} there.
+
+LabelledList has various methods for adding rows to the table.  It has {\it no} methods for removing rows or modifying them.  If you need more functionality than this, consider \class{javax.swing.JTable}.
+
+\begin{methods}{\class{sim.util.gui.LabelledList}}
+\mthd{public void add(Component farLeft, Component left, Component center, Component right, Component farRight)}  Adds a row with the specified components.
+\mthd{public void add(Component left, Component right)}
+Adds a row with the specified components in column positions 1 and 3, respectively.
+\mthd{public void addLabelled(String left, Component right)}
+Adds a row with the specified components in column positions 1 and 3, respectively.  The left component will be a JLabel holding the provided string.
+\mthd{public Component add(Component component)}
+Adds a row which holds the provided component filling all five columns.  Returns the component.
+\end{methods}
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-1em}\hfill\includegraphics[width=2in]{Disclosure1.png}\\
+\\
+\hfill\includegraphics[width=2in]{Disclosure2.png}
+\caption{A DisclosurePanel in its ``hidden'' state and ``disclosed'' state.}
+\vspace{0em}
+\label{LabelledList}
+\end{wrapfigure}
+
+\paragraph{Disclosure Panels}
+For some reason, Java lacks {\bf disclosure panels}.  A disclosure panel is a JPanel which shows a small element (perhaps a single line of text) and a little button (in OS X, it's a triangle; in Windows, it's a \(+\)).  Clicking on the button changes the element to a much larger, more detailed version.  You can click on the button a second time to hide the details.
+
+MASON remedies this with \Class{sim.util.gui.DisclosurePanel}.  The class has several useful constructors:
+
+\begin{methods}{\class{sim.util.gui.DisclosurePanel} Constructor}
+\mthd{public DisclosurePanel(Component abridgedComponent, Component disclosedComponent, String borderLabel)}  Creates a DisclosurePanel with the given abridged and disclosed components, and a bordered label around the whole thing.
+\mthd{public DisclosurePanel(Component abridgedComponent, Component disclosedComponent)}  Creates a DisclosurePanel with the given abridged and disclosed components, and no border.
+\mthd{public DisclosurePanel(String abridgedText, Component disclosedComponent, String borderLabel)}  Creates a DisclosurePanel with the given abridged and disclosed components, and a bordered label around the whole thing.  The abridged component is a JLabel holding the provided abridged text.
+\mthd{public DisclosurePanel(String abridgedText, Component disclosedComponent)}  Creates a DisclosurePanel with the given abridged and disclosed components, and no border.   The abridged component is a JLabel holding the provided abridged text.
+\end{methods}
+
+DisclosurePanels start in their abridged state.  You can query or change the state, or change the components involved, with certain methods:
+
+\begin{methods}{\class{sim.util.gui.DisclosurePanel}}
+\mthd{public void setDisclosed(boolean disclosed)}  Sets the DisclosurePanel to its disclosed state (or not).
+\mthd{public boolean isDisclosed()}  Returns whether the DisclosurePanel is in its disclosed state (or not).
+\mthd{public void setAbridgedComponent(Component component)}  Sets the DisclosurePanel's abridged component.
+\mthd{public Component getAbridgedComponent()}  Returns the DisclosurePanel's abridged component.
+\mthd{public void setDisclosedComponent(Component component)}  Sets the DisclosurePanel's disclosed component.
+\mthd{public Component getDisclosedComponent()}  Returns the DisclosurePanel's disclosed component.
+\end{methods}
+
+
+\paragraph{Number and Property Fields}
 NumberTextField
 PropertyTextField
+
+\paragraph{Tiny Histograms}
 MiniHistogram
-DisclosurePanel
+
+
+
 
 \subsection{Other Widgets and Utilities}
 WordWrap

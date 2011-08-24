@@ -79,10 +79,6 @@ public class DisclosurePanel extends JPanel
         setLayout(new BorderLayout());
         JPanel b = new JPanel();
         b.setLayout(new BorderLayout());
-/*        Box b = new Box(BoxLayout.Y_AXIS);
-          b.add(disclosureToggle);
-          b.add(Box.createGlue());
-*/
         b.add(disclosureToggle, BorderLayout.NORTH);
         add(b, BorderLayout.WEST);
         add(abridgedComponent, BorderLayout.CENTER);
@@ -94,21 +90,32 @@ public class DisclosurePanel extends JPanel
             {
             public void itemStateChanged(ItemEvent e)
                 {
-                if (disclosureToggle.isSelected()) // disclose
-                    {
-                    DisclosurePanel.this.remove(DisclosurePanel.this.abridgedComponent);
-                    DisclosurePanel.this.add(DisclosurePanel.this.disclosedComponent, BorderLayout.CENTER);
-                    DisclosurePanel.this.revalidate();
-                    }
-                else // hide
-                    {
-                    DisclosurePanel.this.remove(DisclosurePanel.this.disclosedComponent);
-                    DisclosurePanel.this.add(DisclosurePanel.this.abridgedComponent, BorderLayout.CENTER);
-                    DisclosurePanel.this.revalidate();
-                    }
+				setDisclosed(disclosureToggle.isSelected());
                 }
             });
         }
+	
+	boolean disclosed = false;  // abridged
+	
+	public void setDisclosed(boolean disclosed)
+		{
+		this.disclosed = disclosed;
+		if (disclosed) // disclose
+			{
+			remove(abridgedComponent);
+			add(disclosedComponent, BorderLayout.CENTER);
+			revalidate();
+			}
+		else // hide
+			{
+			remove(disclosedComponent);
+			add(abridgedComponent, BorderLayout.CENTER);
+			revalidate();
+			}
+		disclosureToggle.setSelected(disclosed);
+		}
+		
+	public boolean isDisclosed() { return disclosed; }
         
     public Component getAbridgedComponent()
         {
