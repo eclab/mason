@@ -33,7 +33,7 @@ import java.awt.event.*;
 
 public class MiniHistogram extends JComponent
     {
-    final static JLabel DEFAULT_SIZE_COMPARISON = new JLabel("X");
+	static JLabel DEFAULT_SIZE_COMPARISON = new JLabel("X");
     double[] buckets;
     String[] labels;
     
@@ -204,6 +204,7 @@ public class MiniHistogram extends JComponent
         return s;
         }
 
+/*
     public static double[] makeBucketPositions(int numBuckets, double min, double max, boolean logScale)
         {
         double[] s = new double[numBuckets];
@@ -223,6 +224,7 @@ public class MiniHistogram extends JComponent
                     (((x+1)/(double)numBuckets)*(max-min) + min)) / 2;
         return s;
         }
+*/
 
     /** Returns the minimum over the provided vals.  You might use this to set the minimum in makeBuckets
         if you don't have a prescribed minimum */

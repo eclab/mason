@@ -35,12 +35,6 @@ holding a color and when you click on it the color panel pops up and you
 can change the color.
 
 
-DialogToolTip.java
-
-A simple class which implements ToolTips using a JDialog.  Used for 
-classes (like Canvas3D) which do not support Swing ToolTips.
-
-
 DisclosurePanel.java
 
 A label with a little "disclosure" button to the left of it (on OS X, 

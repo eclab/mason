@@ -2279,3 +2279,16 @@ Version 16
 	Changes changeColor(...) calls to setColor(...) in the various SeriesAttributes
 	LabelledList.setBackground(...) removed.
 	Added DisclosurePanel.setDisclosed(...) and isDisclosed()
+	Multiple variables in NumberTextField made private.  This may break some people's code.
+	NumberTextField.currentValue made protected  This may break some people's code.
+	Added NumberTextField.setInitialValue(...), getInitialValue(), and getField()
+	NumberTextField.listener and focusAdapter made private
+	NumberTextField.iconFor(...) made private
+	NumberTextField.setValues(...) deleted
+	Numerous PropertyField public variables made private
+	Added PropertyField.setEnabled(...) to be consistent with NumberTextField
+	PropertyField.setValues(...) made private
+	Deleted MiniHistogram.makeBucketPositions(...)
+	Made MiniHistogram.minimum(...) and maximum(...) private	
+	Added MiniHistogram.makeBuckets(...) variant
+	DialogToolip is deleted and folded back into ToolTipBehavior

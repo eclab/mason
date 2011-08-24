@@ -2842,6 +2842,7 @@ There are several classes and interfaces in the Properties system:
 \end{itemize}
 
 \subsection{Java Bean Property Methods and Extensions}
+\label{sim.util.Interval}
 
 \paragraph{The Standard Java Definition} Java has a convention called {\bf Java Bean Properties} where Objects define features by which they may be manipulated, typically by a graphical user interface widget.  MASON uses Java Bean Properties, and certain MASON-only extensions, to allow the user to inspect and manipulate objects.
 
@@ -4576,7 +4577,7 @@ Sets the Location of a given Object to \code{new Int2D(x,y)} and returns true.  
 
 The (max/Hamiltonian/hexagonal) neighborhood methods and various other utility methods are omitted for brevity, but they're there.
 
-\subsubsection{Sparse Grids Versus Object Grids and Dense Grids}
+\subsubsection{Sparse Grids Versus Object Grids Versus Dense Grids}
 \label{GridComparison}
 
 Sparse Grids, Dense Grids, and Object Grids store objects at locations.  Sparse Grids create a many-to-one mapping using hash tables.  Object Grids store objects in arrays.  Dense Grids store objects in arrays of Bags, why use one or the other?
@@ -10046,7 +10047,7 @@ Column 0{\qquad}~&~{\qquad}Column 1&~{\quad}Column 2{\quad}~&Column 3{\qquad\qqu
 \hline
 \end{tabular}\end{center}}
 
-\sidebar{Why not use a JTable?}{JTables are ridiculously overcomplex for this task.}In MASON, the most common use of LabelledList is in property inspectors.  Here, the property name is placd in Column 1, a pop-up widget (the magnifying glass for example) is placed in Column 2, and the property itself is placed in Column 3, often as a text field.  Columns 0 and 4 hold \variable{null}.  This is the arrangement shown in Figure \ref{LabelledList}.  Another common use is to omit the widget, putting \variable{null} there.
+\sidebar{Why not use a JTable?}{JTables are overcomplex for this task.}In MASON, the most common use of LabelledList is in property inspectors.  Here, the property name is placd in Column 1, a pop-up widget (the magnifying glass for example) is placed in Column 2, and the property itself is placed in Column 3, often as a text field.  Columns 0 and 4 hold \variable{null}.  This is the arrangement shown in Figure \ref{LabelledList}.  Another common use is to omit the widget, putting \variable{null} there.
 
 LabelledList has various methods for adding rows to the table.  It has {\it no} methods for removing rows or modifying them.  If you need more functionality than this, consider \class{javax.swing.JTable}.
 
@@ -10094,13 +10095,170 @@ DisclosurePanels start in their abridged state.  You can query or change the sta
 
 
 \paragraph{Number and Property Fields}
-NumberTextField
-PropertyTextField
+
+MASON has two special widgets for inspecting properties or numerical values, commonly (but not always) as rows in a LabelledList.  The first one is \Class{sim.util.gui.NumberTextField}, which provides an easy way to edit and view single numbers.  
+
+
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-1em}\hfill\includegraphics[width=1.8in]{NumberTextField.png}
+\caption{A NumberTextField.}
+\vspace{0em}
+\end{wrapfigure}
+
+NumberTextField has three parts: an optional {\bf label}, a {\bf text field} holding the number proper, and a {\bf button cluster} which allows manipulation of the number other than via typing.  The button cluster consists of a left-button, a ``belly button'', and a right-button.  The left button decreases the value, the right button increases the value, and the belly button resets the value to its default (initial) setting. 
+ 
+ \sidebar{Where did that button cluster concept come from?}{From the Apple Newton MessagePad.\\
+\rule{0pt}{0pt}\hspace{\fill}\includegraphics[width=0.35in]{Newton.png}}
+There's another gizmo.  When you change the number via editing the text field proper, NumberTextField will highlight that field in a light blue.  This indicates that the number has been edited but not entered into the text field yet.  The value is submitted when you press the ENTER or RETURN key, or when the focus is lost on the field (perhaps you've tabbed or clicked elsewhere).  As long as the field is highlighted in blue, you can reset your changes by pressing ESCAPE.
+
+You create a NumberTextField like this:
+
+\begin{methods}{\class{sim.util.gui.NumberTextField} Constructor}
+\mthd{public NumberTextField(String label, double initialValue, double multiply, double add)}  Creates a NumberTextField with the provided label, which may be \variable{null} or empty, in which case no label is shown.  The initial value of the field is provided.  When the user clicks on the right arrow button in the cluster, the value is multiplied by the \variable{multiply} constant, and then the \variable{add} constant is added to it.  The opposite occurs when the user clicks on the left arrow button: the \variable{add} constant is first subtracted from it, and then the \variable{multiply} constant is divided into it.
+\mthd{public NumberTextField(double initialValue, double multiply, double add)}  Creates an unlabelled NumberTextField.  The initial value of the field is provided.  When the user clicks on the right arrow button in the cluster, the value is multiplied by the \variable{multiply} constant, and then the \variable{add} constant is added to it.  The opposite occurs when the user clicks on the left arrow button: the \variable{add} constant is first subtracted from it, and then the \variable{multiply} constant is divided into it.
+\mthd{public NumberTextField(String label, double initialValue, boolean doubleEachTime)}  Creates a NumberTextField with the provided label, which may be \variable{null} or empty, in which case no label is shown.  The initial value of the field is provided.  If \variable{doubleEachTime} is true, then when the user clicks on the right arrow button, the value is doubled; else it is increased by 1.  Similarly, if \variable{doubleEachTime} is true, then when the user clicks on the left arrow button, the value is halved; else it is decreased by 1.  
+\mthd{public NumberTextField(double initialValue, boolean doubleEachTime)}  Creates an unlabelled NumberTextField.  The initial value of the field is provided.  If \variable{doubleEachTime} is true, then when the user clicks on the right arrow button, the value is doubled; else it is increased by 1.  Similarly, if \variable{doubleEachTime} is true, then when the user clicks on the left arrow button, the value is halved; else it is decreased by 1.  
+\mthd{public NumberTextField(String label, double initialValue)}  Creates a NumberTextField with the provided label, which may be \variable{null} or empty, in which case no label is shown.   The initial value of the field is provided.  The button cluster is not shown.
+\mthd{public NumberTextField(double initialValue)}  Creates an unlabelled NumberTextField.  The initial value of the field is provided.  The button cluster is not shown.
+\end{methods}
+
+NumberTextField maintains the current value as a variable, available to subclasses for additional filtering.  However, it's better if you called \method{getValue()} instead, which returns the same thing.
+
+\java{%
+protected double currentValue;
+}
+
+Additionally, the various icons used in the NumberTextField are exposed:
+
+\java{%
+    public static final ImageIcon I\_DOWN;  // the left arrow\\
+    public static final ImageIcon I\_DOWN\_PRESSED;\\
+    public static final ImageIcon I\_BELLY;\\
+    public static final ImageIcon I\_BELLY\_PRESSED;\\
+    public static final ImageIcon I\_UP;  // the right arrow\\
+    public static final ImageIcon I\_UP\_PRESSED;
+}
+
+When the user changes the number in the NumberTextField, the \method{submit()} is called. This method tries to parse the value out of the field.  It then calls the filter \method{newValue(...)} passing in this value and receiving a revised value, then finally calls \method{setValue(...)} to set the revised value and update the field.  Subclasses may override the \method{newValue(...)} method to filter or constrain the values the user can enter into the field, or be otherwise informed that the value is changing.
+
+Similarly, when the user hits ESCAPE in the NumberTextField, the \method{update()} is called.  This method calls \method{getValue()} to retrieve the current internal value, then calls \method{setValue(...)} to set the value and update the field.
+
+\begin{methods}{\class{sim.util.gui.NumberTextField}}
+\mthd{public void submit()}  Triggers the NumberTextField to attempt to submit the current text in the field, by first parsing it into a number called \variable{val}, then calling \code{setValue(newValue(val));}
+\mthd{public void update()}  Triggers the NumberTextField to attempt to update or revert the current text in the field, by calling \code{setValue(getValue());}
+\mthd{public double getValue()}  Returns the current value in the NumberTextField regardless of the text presently being edited.
+\mthd{public void setValue(double value)}  Changes the current value in the NumberTextField and updates the text.
+\mthd{public double newValue(double value)}  Override this method to filter values being submitted by the user, or to be informed that the user is doing so.  The default version of this method simply returns \variable{value}.
+\end{methods}
+
+NumberTextField has a few methods to query and update the parameters it uses internally, or do other GUI tasks:
+
+ \begin{methods}{\class{sim.util.gui.NumberTextField}}
+\mthd{public void setInitialValue(double val)}  Sets initial value of the NumberTextField, sets the current value to that value, and updates the text in the field
+\mthd{public double getInitialValue()}  Returns the initial value of the NumberTextField.
+\mthd{public JTextField getField()}  Returns the text field used inside the NumberTextField.
+\mthd{public void setToolTipText(String text)}  Sets the tool tip text for the field.
+\mthd{public void setEnabled(boolean b)}  Enables or disables GUI events on the field.
+\mthd{public void setEditedColor(Color c)}  Sets the color used to indicate that the text is being edited (by default a light blue).
+\mthd{public Color getEditedColor()}  Returns the color used to indicate that the text is being edited (by default a light blue).
+\end{methods}
+
+The second editable field provided by MASON is a {\bf property field}, of the class \Class{sim.util.gui.PropertyField}.  This widget is designed to allow the user to query and modify a Java Bean Property of a class.  PropertyField doesn't actually edit properties. Instead, it really allows you to maintain a String, much as NumberTextField lets you maintain a double value.  PropertyField also allows you to view that String in different ways:
+
+\begin{itemize}
+\item As text in a text field.  For example, strings or numbers might be edited this way.
+\item As a checkbox.  For example, boolean values might be edited this way.
+\item As text in a text field augmented with a slider.  For example, numbers with ranges might be edited this way.
+\item As a popup menu in a JComboBox.  For example, integers with ranges might be edited this way.
+\item As a label plus a button labelled ``view''.  For example, arrays or arbitrary objects might be displayed this way.
+\end{itemize}
+
+These five options are represented by the following constants:
+
+\java{%
+	public static final int SHOW\_TEXTFIELD;\\
+	public static final int SHOW\_CHECKBOX;\\
+	public static final int SHOW\_SLIDER;\\
+	public static final int SHOW\_LIST;\\
+	public static final int SHOW\_VIEWBUTTON;	
+}
+
+Additionally, all of these options can be set to be either read-only or read-write.
+
+PropertyField has the following constructors:
+
+\begin{methods}{\class{sim.util.gui.PropertyField} Constructor}
+\mthd{public PropertyField(String label, String initialValue, boolean isReadWrite, Object domain, int show)} Builds a PropertyField with the provided label, which may be \variable{null} or empty, in which case no label is shown.  The initial value is provided, as is whether the value is read-only or read-write.  The \variable{show} variable indicates how the value is shown: one of \variable{SHOW\_TEXTFIELD, SHOW\_CHECKBOX, SHOW\_SLIDER, SHOW\_LIST,} or \variable{SHOW\_VIEWBUTTON}.  If \variable{SHOW\_SLIDER} is used, then the value must be the text representation of a real-valued number, and a domain must be provided in the form of  a \class{sim.util.Interval} (Section \ref{sim.util.Interval}).  If \variable{SHOW\_LIST} is used, then the value must be the text representation of an integer from \(0 ... n -1\) inclusive, and a domain must be provided in the form of an array of Strings of length \(n\).  Each element in the array will be shown in the list and will represent its respective integer value.  If \variable{SHOW\_CHECKBOX} is shown, then the value must be the text representation of a boolean (that is, ``true'' or ``false'').
+\mthd{public PropertyField(String label, String initialValue, boolean isReadWrite)} Builds a PropertyField with the provided label, which may be \variable{null} or empty, in which case no label is shown.  The initial value is provided, as is whether the value is read-only or read-write. The value is shown as a string in a text field.
+\mthd{public PropertyField(String label, String initialValue)} Builds a PropertyField with the provided label, which may be \variable{null} or empty, in which case no label is shown.  The initial value is provided. The value is shown as a string in a text field, and is considered to be read-write.
+\mthd{public PropertyField(String initialValue, boolean isReadWrite)} Builds an unlabelled PropertyField. The initial value is provided, as is whether the value is read-only or read-write. The value is shown as a string in a text field, and is considered to be read-write.
+\mthd{public PropertyField(String initialValue)} Builds an unlabelled PropertyField. The initial value is provided. The value is shown as a string in a text field, and is considered to be read-write.
+\mthd{public PropertyField(String initialValue)} Builds an unlabelled PropertyField. The initial value is set to the empty String. The value is shown as a string in a text field, and is considered to be read-write.
+\end{methods}
+
+PropertyField works quite similarly to NumberTextField.  When the user changes the value in the PropertyField, the \method{submit()} is called. This method calls the filter \method{newValue(...)} passing in this value and receiving a revised value, then calls \method{setValue(...)} to set the revised value and update the field.  Subclasses may override the \method{newValue(...)} method to filter or constrain the values the user can enter into the field, or be otherwise informed that the value is changing.
+
+Similarly, when the user hits ESCAPE in the PropertyField, the \method{update()} is called.  This method calls \method{getValue()} to retrieve the current internal value, then calls \method{setValue(...)} to set the value and update the field.
+
+Last but not least, if you have specified \variable{SHOW\_VIEWBUTTON}, then a read-only view button is presented.  When the user presses this button, the method \method{viewProperty()} is called.  By default this method does nothing.  Subclasses of PropertyField are encouraged to override this method to perform some appropriate action.
+
+\begin{methods}{\class{sim.util.gui.PropertyField}}
+\mthd{public void submit()}  Triggers the PropertyField to attempt to submit the current text in the field, by calling \code{setValue(newValue(val));}
+\mthd{public void update()}  Triggers the PropertyField to attempt to update or revert the current text in the field, by calling \code{setValue(getValue());}
+\mthd{public String getValue()}  Returns the current value in the PropertyField regardless of the text presently being edited.
+\mthd{public void setValue(String value)}  Changes the current value in the PropertyField and updates the text.
+\mthd{public String newValue(String value)}  Override this method to filter values being submitted by the user, or to be informed that the user is doing so.  The default version of this method simply returns \variable{value}.
+\mthd{public void viewProperty()}  Called when the \variable{SHOW\_VIEWBUTTON} button is pressed.  Override this method to perform some appropriate action in response to the button press.  By default this method is empty.
+\end{methods}
+
+Like NumberTextField, PropertyField has a few methods to query and update the parameters it uses internally, or do other GUI tasks:
+
+\begin{methods}{\class{sim.util.gui.PropertyField}}
+\mthd{public JTextField getField()}  Returns the text field used inside the PropertyField.
+\mthd{public void setToolTipText(String text)}  Sets the tool tip text for the field.
+\mthd{public void setEnabled(boolean b)}  Enables or disables GUI events on the field.
+\mthd{public void setEditedColor(Color c)}  Sets the color used to indicate that the text is being edited (by default a light blue).
+\mthd{public Color getEditedColor()}  Returns the color used to indicate that the text is being edited (by default a light blue).
+\mthd{public Dimension getMinimumSize()}  Overridden to force the minimum height to be at least that of the text field.
+\mthd{public Dimension getPreferredSize()}  Overridden to force the preferred height to be at least that of the text field.
+\end{methods}
+
 
 \paragraph{Tiny Histograms}
-MiniHistogram
 
+\begin{wrapfigure}{r}[0in]{2.5in}
+\vspace{-1em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
+\caption{Several MiniHistograms at work.  The tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
+\vspace{0em}
+\end{wrapfigure}
 
+MASON has a simple class for generating very simple Histograms and inserting in the space about the size of a text field.  How simple?  Think of the equalizer histogram on your home stereo.  The idea is to enable visual histogram information in the kind of space normally allotted by SimpleInspectors.
+
+The class in question is \Class{sim.util.gui.MiniHistogram}, and it's pretty simple.  You must provide it with two arrays of equal length: an array of {\bf buckets}, and an array of {\bf labels} for the buckets.  The buckets form the histogram elements and the labels appear as {\bf tooltips} when hovering over each bucket.
+
+You can create buckets and labels with static utility methods provided with MiniHistogram:
+
+\begin{methods}{\class{sim.util.gui.MiniHistogram} Utility}
+\mthd{public static double minimum(double[] sample)}  Returns the minimum value found among the provided values.
+\mthd{public static double maximum(double[] sample)}  Returns the maximum value found among the provided values.
+\mthd{public static double[] makeBuckets(double[] sample, int numBuckets, double min, double max, boolean logScale)}  Produces an array of \variable{numBuckets} buckets.  Each bucket is sized according to the number of samples which fell into that bucket.  The buckets are spaced evenly between \variable{min} and \variable{max}, either linearly or according to a log scale.  You can provide your own min and max, or compute reasonable values using \method{minimum(...)} and \method{maximum(...)}. 
+\mthd{public static String[] makeBucketLabels(int numBuckets, double min, double max, boolean logScale)}  Produces an array of \variable{numBuckets} bucket labels.  The bucket labels will indicate that the buckets are spaced evenly between \variable{min} and \variable{max}, either linearly or according to a log scale.  You can provide your own min and max, or compute reasonable values using \method{minimum(...)} and \method{maximum(...)}. 
+\end{methods}
+
+Once you have some buckets and labels, you can make a MiniHistogram:
+
+\begin{methods}{\class{sim.util.gui.MiniHistogram} Constructor}
+\mthd{public MiniHistogram(double[] buckets, String[] labels)}  Builds a MiniHistogram with the given buckets and labels.
+\mthd{public MiniHistogram()}  Builds a MiniHistogram with no buckets or labels (yet).
+\end{methods}
+
+And you can update the buckets and labels any time you like:
+
+\begin{methods}{\class{sim.util.gui.MiniHistogram}}
+\mthd{public void setBuckets(double[] buckets)}  Changes the bucket array.  Be sure that your bucket array is the same length as the label array before the next repaint.
+\mthd{public void setBucketLabels(String[] buckets)}  Changes the bucket label array.  Be sure that your bucket array is the same length as the label array before the next repaint.
+\mthd{public void setBucketsAndLabels(double[] buckets, String[] buckets)}  Changes the bucket array and the bucket label array.  Be sure that your bucket array is the same length as the label array before the next repaint.
+\end{methods}
 
 
 \subsection{Other Widgets and Utilities}

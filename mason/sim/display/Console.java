@@ -585,9 +585,9 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        endField.valField.setColumns(20);  // make enough space
-        endField.setMaximumSize(endField.valField.getPreferredSize());
-        endField.setPreferredSize(endField.valField.getPreferredSize());
+        endField.getField().setColumns(20);  // make enough space
+        endField.setMaximumSize(endField.getField().getPreferredSize());
+        endField.setPreferredSize(endField.getField().getPreferredSize());
 
         b = new Box(BoxLayout.X_AXIS)
             {
@@ -623,9 +623,9 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        timeEndField.valField.setColumns(20);  // make enough space
-        timeEndField.setMaximumSize(endField.valField.getPreferredSize());
-        timeEndField.setPreferredSize(endField.valField.getPreferredSize());
+        timeEndField.getField().setColumns(20);  // make enough space
+        timeEndField.setMaximumSize(endField.getField().getPreferredSize());
+        timeEndField.setPreferredSize(endField.getField().getPreferredSize());
 
         b = new Box(BoxLayout.X_AXIS)
             {
@@ -663,9 +663,9 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        pauseField.valField.setColumns(20);  // make enough space
-        pauseField.setMaximumSize(pauseField.valField.getPreferredSize());
-        pauseField.setPreferredSize(pauseField.valField.getPreferredSize());
+        pauseField.getField().setColumns(20);  // make enough space
+        pauseField.setMaximumSize(pauseField.getField().getPreferredSize());
+        pauseField.setPreferredSize(pauseField.getField().getPreferredSize());
 
         b = new Box(BoxLayout.X_AXIS)
             {
@@ -703,9 +703,9 @@ public class Console extends JFrame implements Controller
                 }
             };
         // need space for 9218868437227405312
-        timePauseField.valField.setColumns(20);  // make enough space
-        timePauseField.setMaximumSize(pauseField.valField.getPreferredSize());
-        timePauseField.setPreferredSize(pauseField.valField.getPreferredSize());
+        timePauseField.getField().setColumns(20);  // make enough space
+        timePauseField.setMaximumSize(pauseField.getField().getPreferredSize());
+        timePauseField.setPreferredSize(pauseField.getField().getPreferredSize());
 
         b = new Box(BoxLayout.X_AXIS)
             {
@@ -747,9 +747,9 @@ public class Console extends JFrame implements Controller
             };
                         
         // need space for -9223372036854775808
-        randomField.valField.setColumns(20);  // make enough space
-        randomField.setMaximumSize(randomField.valField.getPreferredSize());
-        randomField.setPreferredSize(randomField.valField.getPreferredSize());
+        randomField.getField().setColumns(20);  // make enough space
+        randomField.setMaximumSize(randomField.getField().getPreferredSize());
+        randomField.setPreferredSize(randomField.getField().getPreferredSize());
         randomField.setValue("" + randomSeed);  // so the user can see the initial seed value
 
         b = new Box(BoxLayout.X_AXIS)

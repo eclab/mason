@@ -204,7 +204,7 @@ public class SimpleInspector extends Inspector
                 f.setToolTipText(s);
                 numElements.setText(" of " + len + " ");
                 numElements.setToolTipText(s);
-                f.valField.setColumns(4);
+                f.getField().setColumns(4);
                 startField = new Box(BoxLayout.X_AXIS);
                 startField.add(f);
                 startField.add(numElements);

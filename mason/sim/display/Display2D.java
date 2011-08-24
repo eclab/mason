@@ -1894,7 +1894,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 updateRule = skipBox.getSelectedIndex();
                 if (updateRule == UPDATE_RULE_ALWAYS || updateRule == UPDATE_RULE_NEVER)
                     {
-                    skipField.valField.setText("");
+                    skipField.getField().setText("");
                     skipField.setEnabled(false);
                     }
                 else if (updateRule == UPDATE_RULE_STEPS)
@@ -1966,7 +1966,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             };
         skipField.setToolTipText("Specify the interval between screen updates");
-        skipField.valField.setColumns(10);
+        skipField.getField().setColumns(10);
         skipHeader.add(skipField,BorderLayout.CENTER);
         skipHeader.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         skipListener.actionPerformed(null);  // have it update the text field accordingly

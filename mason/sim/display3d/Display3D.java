@@ -1605,8 +1605,8 @@ public class Display3D extends JPanel implements Steppable
             autoSpin.setTransformAxis(getTransformForAxis(newValue, rotAxis_Y.getValue(), rotAxis_Z.getValue()));
             // spin background too
             autoSpinBackground.setTransformAxis(getTransformForAxis(newValue, rotAxis_Y.getValue(), rotAxis_Z.getValue()));
-            if (spinDuration.currentValue == 0 ||
-                (newValue == 0 && rotAxis_Y.currentValue == 0 && rotAxis_Z.currentValue==0))
+            if (spinDuration.getValue() == 0 ||
+                (newValue == 0 && rotAxis_Y.getValue() == 0 && rotAxis_Z.getValue()==0))
                 setSpinningEnabled(false);
             else setSpinningEnabled(true);
             return newValue;
@@ -1619,8 +1619,8 @@ public class Display3D extends JPanel implements Steppable
             autoSpin.setTransformAxis(getTransformForAxis(rotAxis_X.getValue(),newValue, rotAxis_Z.getValue()));
             // spin background too
             autoSpinBackground.setTransformAxis(getTransformForAxis(rotAxis_X.getValue(),newValue, rotAxis_Z.getValue()));
-            if (spinDuration.currentValue == 0 ||
-                (rotAxis_X.currentValue == 0 && newValue == 0 && rotAxis_Z.currentValue==0))
+            if (spinDuration.getValue() == 0 ||
+                (rotAxis_X.getValue() == 0 && newValue == 0 && rotAxis_Z.getValue()==0))
                 setSpinningEnabled(false);
             else setSpinningEnabled(true);
             return newValue;
@@ -1633,8 +1633,8 @@ public class Display3D extends JPanel implements Steppable
             autoSpin.setTransformAxis(getTransformForAxis(rotAxis_X.getValue(),rotAxis_Y.getValue(),newValue));
             // spin background too
             autoSpinBackground.setTransformAxis(getTransformForAxis(rotAxis_X.getValue(),rotAxis_Y.getValue(),newValue));
-            if (spinDuration.currentValue == 0 ||
-                (rotAxis_X.currentValue == 0 && rotAxis_Y.currentValue == 0 && newValue==0))
+            if (spinDuration.getValue() == 0 ||
+                (rotAxis_X.getValue() == 0 && rotAxis_Y.getValue() == 0 && newValue==0))
                 setSpinningEnabled(false);
             else setSpinningEnabled(true);
             return newValue;
@@ -1651,7 +1651,7 @@ public class Display3D extends JPanel implements Steppable
             // spin background too
             autoSpinBackground.getAlpha().setIncreasingAlphaDuration(mSecsPerRot);
             if (newValue == 0 ||
-                (rotAxis_X.currentValue == 0 && rotAxis_Y.currentValue == 0 && rotAxis_Z.currentValue==0))
+                (rotAxis_X.getValue() == 0 && rotAxis_Y.getValue() == 0 && rotAxis_Z.getValue()==0))
                 setSpinningEnabled(false);
             else setSpinningEnabled(true);
             return newValue;  // rounding errors ignored...
@@ -2165,7 +2165,7 @@ public class Display3D extends JPanel implements Steppable
                 updateRule = skipBox.getSelectedIndex();
                 if (updateRule == Display2D.UPDATE_RULE_ALWAYS || updateRule == Display2D.UPDATE_RULE_NEVER)
                     {
-                    skipField.valField.setText("");
+                    skipField.getField().setText("");
                     skipField.setEnabled(false);
                     }
                 else if (updateRule == Display2D.UPDATE_RULE_STEPS)
@@ -2237,7 +2237,7 @@ public class Display3D extends JPanel implements Steppable
                 }
             };
         skipField.setToolTipText("Specify the interval between screen updates");
-        skipField.valField.setColumns(10);
+        skipField.getField().setColumns(10);
         skipHeader.add(skipField,BorderLayout.CENTER);
         skipHeader.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         skipListener.actionPerformed(null);  // have it update the text field accordingly

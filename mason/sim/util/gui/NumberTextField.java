@@ -29,20 +29,21 @@ import java.awt.*;
 
 public class NumberTextField extends JComponent
     {
-    public JTextField valField = new JTextField();
-    public JButton downButton;
-    public JButton upButton;
-    public JButton bellyButton;
-    public JLabel fieldLabel;
-    public double initialValue;
-    public double multiply;
-    public double add;
-    public double currentValue;
+	JTextField valField = new JTextField();
+	JButton downButton;
+	JButton upButton;
+	JButton bellyButton;
+	JLabel fieldLabel;
+	double initialValue;
+	double multiply;
+	double add;
+	protected double currentValue;
 
-    public Color defaultColor;
-    public Color editedColor = new Color(225,225,255);
-    public void setEditedColor(Color c) { editedColor = c; }
-    public Color getEditedColor() { return editedColor; }
+	Color defaultColor;
+	Color editedColor = new Color(225,225,255);
+	
+	public void setEditedColor(Color c) { editedColor = c; }
+	public Color getEditedColor() { return editedColor; }
 
     public static final ImageIcon I_DOWN = iconFor("LeftArrow.png");
     public static final ImageIcon I_DOWN_PRESSED = iconFor("LeftArrowPressed.png");
@@ -51,7 +52,7 @@ public class NumberTextField extends JComponent
     public static final ImageIcon I_UP = iconFor("RightArrow.png");
     public static final ImageIcon I_UP_PRESSED = iconFor("RightArrowPressed.png");
 
-    public static ImageIcon iconFor(String name)
+	static ImageIcon iconFor(String name)
         {
         return new ImageIcon(NumberTextField.class.getResource(name));
         }
@@ -92,7 +93,7 @@ public class NumberTextField extends JComponent
         setValue(getValue());
         }
 
-    public KeyListener listener = new KeyListener()
+	KeyListener listener = new KeyListener()
         {
         public void keyReleased(KeyEvent keyEvent) { }
         public void keyTyped(KeyEvent keyEvent) { }
@@ -112,7 +113,7 @@ public class NumberTextField extends JComponent
             }
         };
     
-    public FocusAdapter focusAdapter = new FocusAdapter()
+	FocusAdapter focusAdapter = new FocusAdapter()
         {
         public void focusLost ( FocusEvent e )
             {
@@ -136,12 +137,27 @@ public class NumberTextField extends JComponent
         {
         return currentValue;
         }
+	
+	public JTextField getField() { return valField; }
+	
+	public void setInitialValue(double initialValue)
+		{
+		this.initialValue = initialValue;
+        setValue(initialValue);
+		}
     
+	public double getInitialValue() { return initialValue; }
     
     /** Creates a NumberTextField which does not display the belly button or arrows. */
     public NumberTextField(double initialValue)
         {
         this(null,initialValue,0,0);
+        }
+    
+    /** Creates a NumberTextField which does not display the belly button or arrows. */
+    public NumberTextField(String label, double initialValue)
+        {
+        this(label,initialValue,0,0);
         }
     
     /** Creates a NumberTextField which (if <code>doubleEachTime</code>)
@@ -198,8 +214,7 @@ public class NumberTextField extends JComponent
         setValues(label,initialValue,multiply,add);
         }
         
-    //final static Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
-    protected void setValues(String label, double initialValue, double multiply, double add)
+	void setValues(String label, double initialValue, double multiply, double add)
         {
         defaultColor = valField.getBackground();
 
@@ -235,7 +250,6 @@ public class NumberTextField extends JComponent
             downButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));//4,4,4,4));
             downButton.setBorderPainted(false);
             downButton.setContentAreaFilled(false);
-            //downButton.setBackground(transparentBackground);  // looks better in Windows
             box.add(downButton);
             bellyButton = new JButton(I_BELLY);
             bellyButton.setPressedIcon(I_BELLY_PRESSED);
@@ -248,7 +262,6 @@ public class NumberTextField extends JComponent
             bellyButton.setBorder(BorderFactory.createEmptyBorder(1,0,1,0)); //2,2,2,2));
             bellyButton.setBorderPainted(false);
             bellyButton.setContentAreaFilled(false);
-            //bellyButton.setBackground(transparentBackground);  // looks better in Windows
             box.add(bellyButton);        
             upButton = new JButton(I_UP);
             upButton.setPressedIcon(I_UP_PRESSED);
@@ -261,7 +274,6 @@ public class NumberTextField extends JComponent
             upButton.setBorder(BorderFactory.createEmptyBorder(1,1,1,1)); //2,2,2,2));
             upButton.setBorderPainted(false);
             upButton.setContentAreaFilled(false);
-            //upButton.setBackground(transparentBackground);  // looks better in Windows
             box.add(upButton);
             add(box,BorderLayout.EAST);
             }
