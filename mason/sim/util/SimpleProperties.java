@@ -154,7 +154,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
-        if (object != null && auxillary == null) try
+        if (object != null && auxillary == null) 
+		try
                                                      {
                                                      // generate the properties
                                                      Class c = object.getClass();
@@ -219,7 +220,46 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                                                      setMethods.add(getWriteProperty(m[x],c));
                                                                      domMethods.add(getDomain(m[x],c,includeExtensions));
                                                                      hideMethods.add(getHidden(m[x], c, includeExtensions));
-                                                                     }
+																	 
+																	 // simple check for invalid Interval domains
+																	int lastIndex = domMethods.size() - 1;
+																	Object domain = getDomain(lastIndex);
+																	 if (returnType == Float.TYPE || returnType == Double.TYPE)
+																		{
+																		if (domain != null && domain instanceof Interval)
+																			{
+																			Interval interval = (Interval) domain;
+																			if (!interval.isDouble())
+																				{
+																				System.err.println("WARNING: Property is double or float valued, but the Interval provided for the property's domain is byte/short/integer/long valued: " + 
+																						getName(lastIndex) + " on Object " + object);
+																				// get rid of the domain
+																				domMethods.set(lastIndex, null);
+																				}
+																			}
+																		}
+																	else if (returnType == Byte.TYPE || returnType == Short.TYPE || returnType == Integer.TYPE || returnType == Long.TYPE)
+																		{
+																		if (domain != null && domain instanceof Interval)
+																			{
+																			Interval interval = (Interval) domain;
+																			if (interval.isDouble())
+																				{
+																				System.err.println("WARNING: Property is byte/short/integer/long valued, but the Interval provided for the property's domain is double or float valued: " + 
+																						getName(lastIndex) + " on Object " + object);
+																				// get rid of the domain
+																				domMethods.set(lastIndex, null);
+																				}
+																			}
+																		}
+																	else if (domain != null && domain instanceof Interval)
+																		{
+																		System.err.println("WARNING: Property is not a basic number type, but an Interval was provided for the property's domain: " + 
+																				getName(lastIndex) + " on Object " + object);
+																		// get rid of the domain
+																		domMethods.set(lastIndex, null);
+																		}
+																	}
                                                                  }
                                                              }
                                                          }

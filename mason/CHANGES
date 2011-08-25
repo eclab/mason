@@ -2297,3 +2297,4 @@ Version 16
 	Various PNGEncoder protected variables and methods made private
 	PNGEncoder.ENCODE_ALPHA, NO_ALPHA, and FILTER_LAST constants deleted
 	PNGEncoder.encodeBytes(alpha) method deleted
+	Added double-checking for invalid Intervals as domains in Properties

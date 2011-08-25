@@ -10224,19 +10224,18 @@ Like NumberTextField, PropertyField has a few methods to query and update the pa
 \end{methods}
 
 
-\paragraph{Tiny Histograms}
-
 \begin{wrapfigure}{r}[0in]{2.5in}
-\vspace{-1em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
+\vspace{0em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
 \caption{Several MiniHistograms at work.  The top two histograms are uniform. tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
 \vspace{0em}
 \end{wrapfigure}
 
-MASON has a simple class for generating very simple Histograms and inserting in the space about the size of a text field.  How simple?  Think of the equalizer histogram on your home stereo.  The idea is to enable visual histogram information in the kind of space normally allotted by SimpleInspectors.
+\paragraph{Tiny Histograms} MASON has a simple class for generating very simple Histograms and inserting in the space about the size of a text field.  How simple?  Think of the equalizer histogram on your home stereo.  The idea is to enable visual histogram information in the kind of space normally allotted by SimpleInspectors.
 
 The class in question is \Class{sim.util.gui.MiniHistogram}, and it's pretty simple.  You must provide it with two arrays of equal length: an array of {\bf buckets}, and an array of {\bf labels} for the buckets.  The buckets form the histogram elements and the labels appear as {\bf tooltips} when hovering over each bucket.
 
-You can create buckets and labels with static utility methods provided with MiniHistogram:
+\sidebar{Wait, what about ``real'' histograms?  Not this tiny stuff.}{See the Charting facility, particularly Section \ref{sim.util.media.chart.HistogramGenerator}.}  
+You don't provide a sample distribution to the HistogramGenerator: instead, you provide bucket sizes and ranges.  You can compute these buckets and labels with static utility methods provided with MiniHistogram:
 
 \begin{methods}{\class{sim.util.gui.MiniHistogram} Utility}
 \mthd{public static double minimum(double[] sample)}  Returns the minimum value found among the provided values.
@@ -10450,6 +10449,7 @@ PDFEncoder has a single method, which takes a \class{java.awt.Component} and a f
 
 
 \subsection{Chart Generators}
+\label{sim.util.media.chart.HistogramGenerator}
 ChartGenerator
 TimeSeriesChartGenerator
 ScatterPlotGenerator
