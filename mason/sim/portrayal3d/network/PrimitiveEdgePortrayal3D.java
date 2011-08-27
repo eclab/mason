@@ -129,14 +129,16 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
                 com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
                     str, new Color3f(labelColor), labelFont.getFamily(),
                     labelFont.getSize(), labelFont.getStyle());
+                text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
-                text.setRectangleScaleFactor(1.0f / 16.0f);
+                //text = new Shape3D(new Text3D(labelFont3D, ""));
+				
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
                     text.getAppearance(),
                     OrientedShape3D.ROTATE_ABOUT_POINT,
                     new Point3f(0, 0, 0));
-                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);  // may need to change the appearance (see below)
-                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);  // may need to change the geometry (see below)
+                o3d.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE); // may need to change the appearance (see below)
+                o3d.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE); // may need to change the geometry (see below)
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_APPEARANCE_WRITE);
                 o3d.clearCapabilityIsFrequent(Shape3D.ALLOW_GEOMETRY_WRITE);
 
@@ -149,20 +151,11 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
                 o.setTransform(trans);
                 o.setUserData(str);
 
-                // the label shouldn't be pickable -- we'll turn this off in the TransformGroup
+                // the label shouldn't be pickable -- we'll turn this off in the
+                // TransformGroup
                 clearPickableFlags(o);
-                o.addChild(o3d);  // Add label to the offset TransformGroup
+                o.addChild(o3d); // Add label to the offset TransformGroup
                 j3dModel.addChild(o);
-
-//                tempText = new com.sun.j3d.utils.geometry.Text2D("",
-//                    new Color3f(labelColor), labelFont.getFamily(),
-//                    labelFont.getSize(), labelFont.getStyle());
-//
-//                // tempText = new Text3D(new Font3D(labelFont, new
-//                // FontExtrusion()), "");
-//
-//                tempText.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-//                tempText.setCapability(Appearance.ALLOW_TEXTURE_READ);
                 }
             } 
         else
@@ -178,20 +171,15 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
                 // see if the label has changed?
                 if (!tg.getUserData().equals(str))
                     {
-                    // ugh. This is really slow. Using the Shape3D results in
-                    // huge text, so, the default
-                    // value has to be changed in the constructor.
-
                     // make the text again
                     com.sun.j3d.utils.geometry.Text2D text = new com.sun.j3d.utils.geometry.Text2D(
                         str, new Color3f(labelColor),
                         labelFont.getFamily(), labelFont.getSize(),
                         labelFont.getStyle());
-                    text.setRectangleScaleFactor(1.0f / 16.0f);
+					text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
-                    // Shape3D text = new Shape3D(new Text3D(new
-                    // Font3D(labelFont, new FontExtrusion()), str));
-
+                    //Shape3D text = new Shape3D(new Text3D(labelFont3D, str));
+					
                     // Grab the OrientedShape3D
                     OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 

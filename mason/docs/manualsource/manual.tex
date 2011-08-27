@@ -2347,17 +2347,308 @@ When you do this, the Console window will look like it does at right.  Notice th
 
 
 
+\section{Go 3D} 
 
-%\chapter{Multiagent Simulation}
+MASON has as extensive a 3D model and visualization as it has a 3D one.  3D Visualization in MASON sits on top of Java3D, a scenegraph developed by Sun and widely available.  You don't need to know any Java3D at all to do visualization and model development in MASON, though just like AWT graphics and Java2D help in doing the 2D visualization, knowing a bit of Java3D will help to do advanced stuff in the 3D case.
 
-%\chapter{Preliminaries}
-%\section{Certain Java Concepts}
+Here we're going to add a simple 3D viewer to give you a taste of how to do visualization in 3D.  The 3D facility can visualize 2D fields, but obviously 3D fields are more fun.  So we'll start by creating a 3D field.  Let's make a 3D version of the playground, where the position of the student in the Z direction is the degree of agitation he presently has.
 
-%\subsection{Anonymous Classes}
+To do this, we'll provide the \file{Students.java} file with a \class{sim.field.continuous.Continuous3D} field.  Modify \file{Students.java} as follows:
 
-%\subsection{Random Number Generation}
+{\footnotesize \begin{alltt}{\color{gray}import sim.engine.*;
+import sim.util.*;
+import sim.field.continuous.*;
+import sim.field.network.*;
 
-%\section{MASON's Architecture}
+public class Students extends SimState
+    \{
+    public Continuous2D yard = new Continuous2D(1.0,100,100);}
+    public Continuous3D agitatedYard = new Continuous3D(1.0, 100, 100);
+    
+    {\color{gray}public double TEMPERING_CUT_DOWN = 0.99;
+    public double TEMPERING_INITIAL_RANDOM_MULTIPLIER = 10.0;
+    public boolean tempering = true;}
+\end{alltt}}
+
+... and on.  Continuous3D is basically the same as Continuous2D, except that it uses Double3D rather than Double2D.
+The students will be placed in this field as well, but each timestep their locations will be simply updated by setting their X and Y positions to the same as in the Continuous2D, and setting their Z position to their agitation (plus a little scaling).  We add to \file{Students.java} the following method:
+
+
+{\footnotesize \begin{alltt}
+    public void load3DStudents()
+        \{
+        Bag students = buddies.getAllNodes();
+        for(int i = 0; i < students.size(); i++)
+            \{
+            Student student = (Student)(students.get(i));
+            Double2D loc = (Double2D)(yard.getObjectLocation(student));
+            
+            // we multiply by 5 in order to scale the agitation roughly with the student dispersion
+            // in the other two dimensions
+            agitatedYard.setObjectLocation(student, new Double3D(loc, student.getAgitation() * 5.0));
+            \}
+        \}
+\end{alltt}}
+
+We need to call this method two times.  First we need to call it each timestep.  Second, we need to call it at the end of the \method{start()} method so that the Continuous3D has students stored in it when it's first queried by the Network for their locations so the Network can draw edges in 3D.  We also need to clear the yard just like we cleared the 2D yard.
+
+Modify the \method{start()} method in \file{Students.java} like this:
+
+{\footnotesize \begin{alltt}{\color{gray}
+    public void start()
+        \{
+        super.start();
+        
+        // add the tempering agent
+        if (tempering)
+            \{
+            randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
+            schedule.scheduleRepeating(new Steppable() \{ public void step(SimState state) 
+                \{ if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; \} \});
+            \}
+                
+        // clear the yard
+        yard.clear();
+
+        // clear the buddies
+        buddies.clear();}
+        
+        agitatedYard.clear();
+        
+        {\color{gray}// add some students to the yard
+        for(int i = 0; i < numStudents; i++)
+            \{
+            Student student = new Student();
+            yard.setObjectLocation(student, 
+                new Double2D(yard.getWidth() * 0.5 + random.nextDouble() - 0.5,
+                    yard.getHeight() * 0.5 + random.nextDouble() - 0.5));
+
+            buddies.addNode(student);
+            schedule.scheduleRepeating(student);}
+            Steppable steppable = new Steppable() 
+                    \{
+                    public void step(SimState state) \{ load3DStudents(); \}
+                    \};
+            schedule.scheduleRepeating(steppable, 1, 1.0);
+            {\color{gray}\}
+        
+        // define like/dislike relationships
+        Bag students = buddies.getAllNodes();
+        for(int i = 0; i < students.size(); i++)
+            \{
+            Object student = students.get(i);
+            
+            // who does he like?
+            Object studentB = null;
+            do
+                \{
+                studentB = students.get(random.nextInt(students.numObjs));
+                \} while (student == studentB);
+            double buddiness = random.nextDouble();
+            buddies.addEdge(student, studentB, new Double(buddiness));
+
+            // who does he dislike?
+            do
+                \{
+                studentB = students.get(random.nextInt(students.numObjs));
+                \} while (student == studentB);
+            buddiness = random.nextDouble();
+            buddies.addEdge(student, studentB, new Double( -buddiness));
+            \}}
+            
+        load3DStudents();
+        {\color{gray}\}}
+\end{alltt}}
+
+Notice that we scheduled an anonymous agent which simply calls \method{load3DStudents();}.  But this piece of code may have been confusing:
+
+\java{%
+            schedule.scheduleRepeating(steppable, 1, 1.0);
+}
+
+Here we're scheduling the anonymous agent every timestep (the 1.0) but with ordering 1, rather than the default, which is ordering 0.  This means that the agent will get stepped every timestep, but after the ordering-0 agents are stepped.  These include all the students.  That way we know the students have updated their agitation before we call the method (\method{load3DStudents()} which relocates them in the 3D field based on their agitation.
+
+\paragraph{Compile and Run}  If you compile and run the command-line simulation at this point...
+
+{\footnotesize \begin{alltt}
+\textit{javac Students.java Student.java
+java Students}
+\end{alltt}}
+
+\noindent ...you'll find that it should run fine.  But what does it look like?  Let's start in on the visualization.
+
+Java3D has a different collection of import needs than 2D Java.  Open the \file{StudentsWithUI.java} file and add the following imports:
+
+{\footnotesize \begin{alltt}
+import sim.display3d.*;
+import sim.portrayal3d.continuous.*;
+import sim.portrayal3d.network.*;
+import sim.portrayal3d.simple.*;
+import java.text.*;
+import sim.field.network.*;
+\end{alltt}}
+
+Next we need to add a \class{sim.display3d.Display3D} and its JFrame, plus a \class{sim.portrayal3d.continuous.ContinuousPortrayal3D} and a \class{sim.portrayal3d.network.NetworkPortrayal3D}.  These classes are the 3D equivalents of Display2D, ContinuousPortrayal2D, and NetworkPortayal2D, and you'll find they work similarly.  Add the following to \file{StudentsWithUI.java}:
+
+{\footnotesize \begin{alltt}{\color{gray}
+public class StudentsWithUI extends GUIState
+    \{
+    public Display2D display;
+    public JFrame displayFrame;
+
+    ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
+    NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();}
+	
+	
+    public Display3D display3d;
+    public JFrame displayFrame3d;
+    ContinuousPortrayal3D agitatedYardPortrayal = new ContinuousPortrayal3D();
+    NetworkPortrayal3D agitatedBuddiesPortrayal = new NetworkPortrayal3D();
+\end{alltt}}
+
+In the 2D case, we needed to set the field and the Simple Portrayal for the 2D yard and buddies field portrayals.  We'll do the same thing in the 3D case.  Our students will be represented by red unlit\footnote{A term of art in 3D graphics meaning ``visible even when there are no lights turned on''.} cones via \class{sim.portrayal3d.simple.ConePortrayal3D}.  We'll scale them to them twice their normal size (2.0).  Our buddies edges will be represented by gray cylinders via \class{sim.portrayal3d.simple.ConePortrayal3D}.  For grins, we'll label the edges with the edge weight by overriding the \method{getLabel(...)} method.  Because space is tight, we'll make the labels half their normal size.  The buddies field portrayal will use a SpatialNetwork3D, which works more or less identically to the SpatialNetwork2D used in the 2D case.
+
+This will all be done in the \method{setupPortrayals()} method.  At the very end of this method we need to set up the 3D display.  In the 2D cases we had to reset the display and repaint it.  In the 3D case we instead do the following incantation:
+
+\java{%
+display3d.createSceneGraph();\\
+display3d.reset();
+}
+
+The \method{createSceneGraph()} method instructs the 3D display to load all of its 3D objects and start displaying them.  It's the rough equivalent, in the MASON visualization parlance, of what \method{repaint()} was in the 2D case.
+
+Modify the \method{setupPortrayals()} method in \file{StudentsWithUI.java} as follows:
+
+{\footnotesize \begin{alltt}{\color{gray}
+    public void setupPortrayals()
+        \{
+        Students students = (Students) state;
+        
+        // tell the portrayals what to portray and how to portray them
+        yardPortrayal.setField( students.yard );
+        yardPortrayal.setPortrayalForAll(
+            new MovablePortrayal2D(
+                new CircledPortrayal2D(
+                    new LabelledPortrayal2D(
+                        new OvalPortrayal2D()
+                            \{
+                            public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+                                \{
+                                Student student = (Student)object;
+
+                                int agitationShade = (int) (student.getAgitation() * 255 / 10.0);
+                                if (agitationShade > 255) agitationShade = 255;
+                                paint = new Color(agitationShade, 0, 255 - agitationShade);
+                                super.draw(object, graphics, info);
+                                \}
+                            \}, 
+                        5.0, null, Color.black, true),
+                    0, 5.0, Color.green, true)));
+                                                
+
+        
+        buddiesPortrayal.setField( new SpatialNetwork2D( students.yard, students.buddies ) );
+        buddiesPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
+
+        // reschedule the displayer
+        display.reset();
+        display.setBackdrop(Color.white);
+
+        // redraw the display
+        display.repaint();}
+        
+        
+        agitatedYardPortrayal.setField( students.agitatedYard );
+        agitatedYardPortrayal.setPortrayalForAll(new ConePortrayal3D(Color.red, 2.0));
+
+        agitatedBuddiesPortrayal.setField( new SpatialNetwork3D( students.agitatedYard, students.buddies ) );
+        SimpleEdgePortrayal3D ep = new CylinderEdgePortrayal3D()
+            \{
+            DecimalFormat format = new DecimalFormat("#.##");
+                
+            public String getLabel(Edge edge)
+                \{
+                return "" + format.format(edge.getWeight());
+                \}
+            \};
+            
+        ep.setLabelScale(0.5);
+        agitatedBuddiesPortrayal.setPortrayalForAll(ep);
+        
+        display3d.createSceneGraph(); 
+        display3d.reset();
+        \}
+\end{alltt}}
+
+Now we need to set up the Display3D in the \method{init()} method.  It's exactly like setting up the Display2D except we're optionally translating and scaling the scene that's going to be displayed.  The translation moves it so that the X and Y portions are centered at the origin (just as they're centered in the middle of the 2D screen) but the Z portion stays as it is.   We typically scale Java3D scenes by \(1.0 / W\) or \(2.0 / W\) where \(W\) is the maximum extent of the scene -- perhaps the width of the field.  This sets them up to roughly fill a cube 1 or 2 units on a side, which looks good given the standard position of the 3D camera.
+
+Also we'll make the Display3D window smaller for no good reason (you can change it).  Modify the \method{init()} method as follows:
+
+{\footnotesize \begin{alltt}{\color{gray}
+    public void init(Controller c)
+        \{
+        super.init(c);
+
+        // make the displayer
+        display = new Display2D(600,600,this);
+        // turn off clipping
+        display.setClipping(false);
+
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("Schoolyard Display");
+        c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        displayFrame.setVisible(true);
+        display.attach( buddiesPortrayal, "Buddies" );
+        display.attach( yardPortrayal, "Yard" );}
+
+        display3d = new Display3D(300, 300,this);
+        double width = 100;
+        display3d.translate(-width / 2.0, -width / 2.0, 0);
+        display3d.scale(2.0 / width);
+
+        displayFrame3d = display3d.createFrame();
+        displayFrame3d.setTitle("Schoolyard Display... NOW IN 3-D!");
+        c.registerFrame(displayFrame3d);   // register the frame so it appears in the "Display" list
+        displayFrame3d.setVisible(true);
+        display3d.attach( agitatedBuddiesPortrayal, "Buddies ... IN 3-D!" );
+        display3d.attach( agitatedYardPortrayal, "Yard ... IN 3-D!" );
+        {\color{gray}\}}
+\end{alltt}}
+        
+You might want to move the Display3D frame so it's not overlapping on top of the Display2D frame, but we'll not bother here.  All that remains is to shut down the Display3D just like we shut down the Display2D.  Modify the \method{quit()} method like this:
+
+{\footnotesize \begin{alltt}{\color{gray}
+    public void quit()
+        \{
+        super.quit();
+
+        if (displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;
+        display = null;}
+		
+        if (displayFrame3d!=null) displayFrame3d.dispose();
+        displayFrame3d = null;
+        display3d = null;
+        {\color{gray}\}}
+\end{alltt}}
+
+And we're done!
+
+\paragraph{Compile and Run}  If you compile and run the simulation...
+
+{\footnotesize \begin{alltt}
+\textit{javac StudentsWithUI.java Students.java Student.java
+java StudentsWithUI}
+\end{alltt}}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-2em}\hfill\includegraphics[width=2.8in]{Students3D.png}\vspace{-5em}\end{wrapfigure}
+
+\noindent ...you should fine a new Display added to your simulation which looks like the figure to the right (I've enlarged the window a bit\,---\,try dragging in the bottom right corner to do that.).  You can {\bf rotate} the scene by dragging on it, {\bf translate} the scene by right-mouse-button-dragging or by dragging with the Command key pressed, and finally {\bf move the camera towards or away from the scene} by middle-mouse-button-dragging or by dragging with the Option/Alt key pressed.  You'll find that double-clicking on objects and edges in the 3D 
+scene will bring up inspectors too.  And be sure to check out the options in the Options pane too: for example, auto-rotation, or adding axes.
+
+
+
 
 \chapter{Basic Utility Classes}
 \label{sim.util}
@@ -9673,11 +9964,13 @@ All 3D Simple Edge Portrayals are subclasses, ultimately of \Class{sim.portrayal
 \mthd{public SimpleEdgePortrayal3D()} Builds a SimpleEdgePortrayal3D for undirected edges, with a gray edge color and white labels.
 \end{methods}
 
-If you have created a labelled SimplePortrayal3D, it will call the method \method{getLabel(...)} to retrieve the label for a given Edge.  This method can be overridden to customize what label you'd like to see.  By default, it returns a String-ified version of the Edge's \variable{info} object.   You can also override the \method{getName(...)} method to customize the name provided in the Inspector list, though this is less common.
+If you have created a labelled SimplePortrayal3D, it will call the method \method{getLabel(...)} to retrieve the label for a given Edge.  This method can be overridden to customize what label you'd like to see.  By default, it returns a String-ified version of the Edge's \variable{info} object.   You can also override the \method{getName(...)} method to customize the name provided in the Inspector list, though this is less common.  Finally, you can specify the scale of the label (the default is 1.0).
 
 \begin{methods}{\class{sim.portrayal3d.network.SimpleEdgePortrayal3D}}
 \mthd{public String getLabel(Edge edge)} Returns an appropriate label for the object contained within the edge.
 \mthd{public String getName(LocationWrapper wrapper)} Returns an appropriate label for the edge as a whole, suitable for appearing in the Inspector list.
+\mthd{public double getScale()} Returns the scale of the label (default is 1.0).
+\mthd{public void setScale(double val)} Sets the scale of the label (default is 1.0).
 \end{methods}
 
 SimplePortrayal3D's edges are pickable.
@@ -9807,13 +10100,15 @@ public final static Transform3D DEFAULT\_LABEL\_OFFSET;
 
 This offset is \(\langle 0.5, 0.5, 0.5\rangle\) from the origin of the portrayal in space.
 
-Just as the case for CircledPortrayal3D, in LabelledPortrayal3D you can specify after the fact whether the label should be shown only when selected, and if it should be shown at all:
+Just as the case for CircledPortrayal3D, in LabelledPortrayal3D you can specify after the fact whether the label should be shown only when selected, and if it should be shown at all.  You can also scale the size of the label (the default scaling is 1.0):
 
 \begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D}}
 \mthd{public void setOnlyLabelWhenSelected(boolean val)} Sets whether or not the label is shown only when the underlying object is selected.
 \mthd{public boolean getOnlyLabelWhenSelected()} Returns whether or not the label is shown only when the underlying object is selected.
 \mthd{public void setLabelShowing(boolean val)} Sets whether or not the label is shown at all.
 \mthd{public boolean getLabelShowing()} Returns whether or not the label is shown at all.
+\mthd{public double getScale()} Returns the scale of the label (default is 1.0).
+\mthd{public void setScale(double val)} Sets the scale of the label (default is 1.0).
 \end{methods}
 
 Finally, LabelledPortrayal calls a special method on itself to determine what label text to use.  You can override the default implementation of this method to provide your own label text generator:

@@ -47,6 +47,15 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
     {
     public static final Transform3D DEFAULT_LABEL_OFFSET;
 	
+	// A larger font size makes the label bigger but also uses much more memory
+	static final int FONT_SIZE = 18;
+	// A smaller scaling factor reduces the label size
+	static final double SCALING_MODIFIER = 1.0 / 5.0; 
+	
+	double labelScale = 1.0;
+	public double getLabelScale() { return labelScale; }
+	public void setLabelScale(double s) { labelScale = Math.abs(s); }
+	
     static
         {
         DEFAULT_LABEL_OFFSET = transformForOffset(0.5f,0.5f,0.5f);
@@ -62,6 +71,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
 	Color color;
 	Transform3D offset;
 	Font font;
+	Font3D font3D;	// only used if we're doing Text3D
 	SimplePortrayal3D child;
 	String label;
     
@@ -100,8 +110,9 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
 		this.offset = offset;
         this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         this.label = label;
-		if (font == null) font = new Font("SansSerif",Font.PLAIN, 60);
+		if (font == null) font = new Font("SansSerif",Font.PLAIN, FONT_SIZE);
         this.font = font;
+		font3D = new Font3D(font, new FontExtrusion());
         }
         
     public PolygonAttributes polygonAttributes()
@@ -216,14 +227,14 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
                         
             // make the text
             Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
-            text.setRectangleScaleFactor((float)(1.0f/16.0f));
+            text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
             
             // Windows is acting weird with regard to Text2D.  The text is way
             // too small.  Or is it that MacOSX is weird with the font way too big?
             // dunno yet.  Anyway, an alternative to Text2D is to do Text3D, but it's
             // significantly more expensive in terms of polygons, so I'd prefer not to
             // do it if I can.
-            // Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
+            // Shape3D text = new Shape3D(new Text3D(font3D, l));
             
             // We want the Text2D to always be facing forwards.  So we dump its
             // geometry and appearance into an OrientedShape3D and use that instead.
@@ -272,10 +283,10 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
                 && showLabel)  // only rebuild if we're displaying.  If we're not selected, we still need to build.
                 {  
                 // make the text again
-                Shape3D text = new Shape3D(new Text3D(new Font3D(font,new FontExtrusion()), l));
+                //Shape3D text = new Shape3D(new Text3D(font3D, l));
 
-                //Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
-                //text.setRectangleScaleFactor(1.0/16.0f);
+                Text2D text = new Text2D(l, new Color3f(color), font.getFamily(), font.getSize(), font.getStyle());
+                text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
                 
                 // Grab the OrientedShape3D
                 TransformGroup t2 = (TransformGroup)(s.getChild(0));

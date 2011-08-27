@@ -69,6 +69,7 @@ public class Balls3DWithUI extends GUIState
                 }
             }; 
         // portrayal.setShowLabels(true);  // deprecated.  The default constructor for CylinderEdgePortrayal shows labels by default anyway
+		portrayal.setLabelScale(1.0);
         
         edgePortrayal.setPortrayalForAll( portrayal );
         nodePortrayal.setField( tut.balls );

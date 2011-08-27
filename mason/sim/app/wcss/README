@@ -1,0 +1,5 @@
+The subdirectories here hold versions of the Student Schoolyard Cliques
+tutorial presented at WCSS in 2008, and represented in Chapter 2 of the
+MASON Manual, "Multiagent Simulation and the MASON Library".  To compile
+a subdirectory, copy all of its material into the wcss directory proper
+(that is, the parent directory) and compile the Java files.

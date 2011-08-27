@@ -2298,3 +2298,6 @@ Version 16
 	PNGEncoder.ENCODE_ALPHA, NO_ALPHA, and FILTER_LAST constants deleted
 	PNGEncoder.encodeBytes(alpha) method deleted
 	Added double-checking for invalid Intervals as domains in Properties
+	Font size reduced in LabelledPortrayal3D and EdgePortrayal3D in order to save memory.
+	Added setScale() and getScale() methods to LabelledPortrayal3D and EdgePortrayal3D
+	Added wcss tutorials

@@ -253,7 +253,7 @@ public class Schedule implements java.io.Serializable
 
     Bag currentSteps = new Bag();
     Bag substeps = new Bag();
-    boolean inStep = false;  // prevens reentrancy
+    boolean inStep = false;  // prevents reentrancy
     /** Steps the schedule, gathering and ordering all the items to step on the next time step (skipping
         blank time steps), and then stepping all of them in the decided order.  
         Returns FALSE if nothing was stepped -- the schedule is exhausted or time has run out. */
