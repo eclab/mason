@@ -8614,6 +8614,7 @@ Collectively, these methods are:
 \end{methods}
 
 \subsection{Charting Property Inspectors}
+\label{sim.portrayal.inspector.ChartingPropertyInspector}
 
 \sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides three Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
 
@@ -10745,23 +10746,63 @@ PDFEncoder has a single method, which takes a \class{java.awt.Component} and a f
 \label{ChartUML}
 \end{figure}
 
+MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) throw up Histograms, Time-Series Charts, and Scatter Plots of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
+
+This package, which is laid out in Figure \ref{ChartUML}, provides three kinds of items:
+
+\begin{itemize}
+\item {\bf Chart Generators} are JPanels which display multiple charts (of the same kind) layered on one another.  Chart Generators provide a lot of additional features: they make global attributes (chart titles, etc.) easy to set; they permit pictures and movies; and they maintain {\bf Series Attributes}, one per layered chart.
+\item {\bf Series Attributes} are JPanels which allow the user to view and modify per-chart attributes (chart color, etc.). Each chart is associated with a {\bf series}, that is, a set of data which is being displayed.  Hence the name.  Series Attributes can be moved around relative to one another, or deleted entirely.
+\item {\bf Data Cullers} are simple objects whose job is to reduce a series to a more manageable size as it has grown over time, so fewer points are displayed on the chart.  Data Cullers are presently only used for Time Series Charts.
+\end{itemize}
+
+Chart Generators and Series Attributes are presently provided for three kinds of charts:
+
+\begin{itemize}
+\item Time Series Charts
+\item Histograms
+\item Scatter Plots
+\end{itemize}
 
 \subsection{Chart Generators}
 \label{sim.util.media.chart.HistogramGenerator}
+
+Chart Generators are all subclasses of the abstract class \Class{sim.util.media.chart.ChartGenerator}.  This class provides most of the heavy lifting for creating a JPanel which encapsulates JFreeChart's charts and provides a user interface to modifying or manipulating them.  A Chart Generator also holds a visible list ol some \(N\) Series Attributes, one for each chart being layered in its display.
+
+In an important sense, a ChartGenerator is like a Display2D or Display3D.  You can think of its relationships to its Series Attributes as similar to the relationship between a Display2D and its Field Portrayals.   Like the displays, ChartGenerator can create movies and publication-quality vector PDFs.
+
+\sidebar{Got an example?}{For an extended example, see MASON's \file{howto.html} file, under the subtitle ``How to Add a Chart Programmatically''.}You don't just have to create a ChartGenerator via an inspector: you can also set one up as a display or a free-standing JFrame.   ChartGenerator is essentially independent of MASON.
+
+A ChartGenerator has the following protected variables:
+
+\java{%
+protected Box globalAttributes;\\
+protected Box seriesAttributes;\\
+protected JFreeChart chart;\\
+protected ChartPanel chartPanel;\\
+protected JScrollPane chartHolder;
+}
+
+These correspond to major parts of the ChartGenerator proper.
+
+
 ChartGenerator
 TimeSeriesChartGenerator
 ScatterPlotGenerator
 HistogramGenerator
 
-\subsubsection{Data Culling}
-DataCuller
-MinGapDataCuller
 
-\subsection{Series}
+
+\subsection{Series Attributes}
 SeriesAttributes
 TimeSeriesAttributes
 ScatterPlotSeriesAttributes
 HistogramSeriesAttributes
+
+\subsection{Data Cullers}
+DataCuller
+MinGapDataCuller
+
 
 \cleardoublepage
 \footnotesize
