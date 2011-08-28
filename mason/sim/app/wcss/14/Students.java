@@ -74,7 +74,8 @@ public class Students extends SimState
         if (tempering)
             {
             randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
-            schedule.scheduleRepeating(new Steppable() { public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
+            schedule.scheduleRepeating(schedule.EPOCH, 1, new Steppable() 
+				{ public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
             }
                 
         // clear the yard
@@ -99,7 +100,7 @@ public class Students extends SimState
 					{
 					public void step(SimState state) { load3DStudents(); }
 					};
-			schedule.scheduleRepeating(steppable, 1, 1.0);
+			schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
             }
         
         // define like/dislike relationships

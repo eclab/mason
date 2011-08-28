@@ -60,7 +60,8 @@ public class Students extends SimState
         if (tempering)
             {
             randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
-            schedule.scheduleRepeating(new Steppable() { public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
+            schedule.scheduleRepeating(schedule.EPOCH, 1, new Steppable() 
+				{ public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
             }
                 
         // clear the yard

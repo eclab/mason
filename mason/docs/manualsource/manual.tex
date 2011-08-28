@@ -2075,7 +2075,7 @@ public class Students extends SimState
         if (tempering)
             \{
             randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
-            schedule.scheduleRepeating(new Steppable() 
+            schedule.scheduleRepeating(schedule.EPOCH, 1, new Steppable() 
                  \{
                  public void step(SimState state) \{ if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; \} 
                  \});
@@ -2362,8 +2362,8 @@ import sim.field.network.*;
 
 public class Students extends SimState
     \{
-    public Continuous2D yard = new Continuous2D(1.0,100,100);}
-    public Continuous3D agitatedYard = new Continuous3D(1.0, 100, 100);
+    public Continuous2D yard = new Continuous2D(1.0, 100, 100);}
+    public Continuous3D agitatedYard = new Continuous3D(1.0, 100, 100, 100);
     
     {\color{gray}public double TEMPERING_CUT_DOWN = 0.99;
     public double TEMPERING_INITIAL_RANDOM_MULTIPLIER = 10.0;
@@ -2403,8 +2403,10 @@ Modify the \method{start()} method in \file{Students.java} like this:
         if (tempering)
             \{
             randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
-            schedule.scheduleRepeating(new Steppable() \{ public void step(SimState state) 
-                \{ if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; \} \});
+            schedule.scheduleRepeating(schedule.EPOCH, 1, new Steppable() 
+                 \{
+                 public void step(SimState state) \{ if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; \} 
+                 \});
             \}
                 
         // clear the yard
@@ -2429,7 +2431,7 @@ Modify the \method{start()} method in \file{Students.java} like this:
                     \{
                     public void step(SimState state) \{ load3DStudents(); \}
                     \};
-            schedule.scheduleRepeating(steppable, 1, 1.0);
+            schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
             {\color{gray}\}
         
         // define like/dislike relationships
@@ -2463,10 +2465,10 @@ Modify the \method{start()} method in \file{Students.java} like this:
 Notice that we scheduled an anonymous agent which simply calls \method{load3DStudents();}.  But this piece of code may have been confusing:
 
 \java{%
-            schedule.scheduleRepeating(steppable, 1, 1.0);
+            schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
 }
 
-Here we're scheduling the anonymous agent every timestep (the 1.0) but with ordering 1, rather than the default, which is ordering 0.  This means that the agent will get stepped every timestep, but after the ordering-0 agents are stepped.  These include all the students.  That way we know the students have updated their agitation before we call the method (\method{load3DStudents()} which relocates them in the 3D field based on their agitation.
+Here we're scheduling the new anonymous agent with ordering 2, rather than the 0 the students use the 1 for previous anonymous agent.  This means that the agent will get stepped every timestep, but after all other agents are stepped.  That way we know the students have updated their agitation before we call the method (\method{load3DStudents()} which relocates them in the 3D field based on their agitation.
 
 \paragraph{Compile and Run}  If you compile and run the command-line simulation at this point...
 
@@ -2477,7 +2479,7 @@ java Students}
 
 \noindent ...you'll find that it should run fine.  But what does it look like?  Let's start in on the visualization.
 
-Java3D has a different collection of import needs than 2D Java.  Open the \file{StudentsWithUI.java} file and add the following imports:
+\paragraph{Add Visualization in 3D} Java3D has a different collection of import needs than 2D Java.  Open the \file{StudentsWithUI.java} file and add the following imports:
 
 {\footnotesize \begin{alltt}
 import sim.display3d.*;
@@ -2580,7 +2582,7 @@ Modify the \method{setupPortrayals()} method in \file{StudentsWithUI.java} as fo
         \}
 \end{alltt}}
 
-Now we need to set up the Display3D in the \method{init()} method.  It's exactly like setting up the Display2D except we're optionally translating and scaling the scene that's going to be displayed.  The translation moves it so that the X and Y portions are centered at the origin (just as they're centered in the middle of the 2D screen) but the Z portion stays as it is.   We typically scale Java3D scenes by \(1.0 / W\) or \(2.0 / W\) where \(W\) is the maximum extent of the scene -- perhaps the width of the field.  This sets them up to roughly fill a cube 1 or 2 units on a side, which looks good given the standard position of the 3D camera.
+Now we need to set up the Display3D in the \method{init()} method.  It's exactly like setting up the Display2D except we're optionally translating and scaling the scene that's going to be displayed.  The translation moves it so that the X and Y portions are centered at the origin (just as they're centered in the middle of the 2D screen) but the Z portion stays as it is.   We typically scale Java3D scenes by \(1.0 / W\) or \(2.0 / W\) where \(W\) is the maximum extent of the scene\,---\,perhaps the width of the field.  This sets them up to roughly fill a cube 1 or 2 units on a side, which looks good given the standard position of the 3D camera.
 
 Also we'll make the Display3D window smaller for no good reason (you can change it).  Modify the \method{init()} method as follows:
 
@@ -2775,12 +2777,13 @@ The classes are:
 \item \Class{sim.util.Double3D} and \Class{sim.util.MutableDouble3D}
 \end{itemize}
 
+\sidebar{Why aren't these classes subclasses of one another?}{Interesting you asked that.  Let's ignore the incompatibility issues with final versus non-final instance variables.  Imagine if Int2D was as subclass of MutableInt2D.  Then Int2D would have to have various \method{set...()} methods because MutableInt2D had them, and it'd have to throw an exception on calling them, which would be ugly indeed.  Now imagine if MutableInt2D instead subclassed from Int2D.  Unfortunately then you couldn't make guarantees such as Int2D being safe for hashtables, because a subclass of it (MutableInt2D) wouldn't be.  It'd be plausible to have them subclass from a common class, but that runs the risk of the superclass again being misused as safe in hashtables.  So MASON keeps 'em separate.}
 Though the classes have a zillion utility methods, in fact they are {\bf very simple wrappers over just two or three variables.}  Each of these classes has the following variables, which you can read and write directly (or at least read: in the immutable classes they're final):
 
 \java{%
-int \textit{(or double)} x;\\
-int \textit{(or double)} y;\\
-int \textit{(or double)} z;  // only in the 3D classes
+\hbox{int \textit{(or double)} x;}\\
+\hbox{int \textit{(or double)} y;}\\
+\hbox{int \textit{(or double)} z;  // in the 3D classes}
 }
 
 You should access these variables with abandon: they're designed for it.    Additionally the classes have many accessor methods.  We will show methods of the 2D versions of the classes below: the 3D classes are nearly identical (minus a few inappropriate methods here and there).  First up is Int2D:
@@ -3177,7 +3180,7 @@ public double getTemperature();\\
 public void setTemperature(float val);\\
 }
 
-If you name methods with the proper rules, MASON will automatically recognize them as Java Bean Properties: you need do nothing further.\footnote{Java by convention has since used Java Bean Properties as the ``standard'' pattern for getters and setters.  You will notice that a number of MASON objects violate this convention in one fashion or another.  This is by design: usually because MASON explicitly doesn't want those methods to show up as properties in user interfaces by default.}
+If you name methods with the proper rules, MASON will automatically recognize them as Java Bean Properties: you need do nothing further.\footnote{Java by convention has since used Java Bean Properties as the ``standard'' pattern for getters and setters.  You will notice that a number of MASON objects violate this convention in one fashion or another.  This is occasionally historical error, but more often it's by design: because MASON explicitly doesn't want those methods to show up as properties in user interfaces by default.}
 
 \paragraph{MASON Extensions to Java Bean Properties} 
 
@@ -9598,7 +9601,7 @@ A SpatialNetwork3D has two other methods, which you'll rarely need to override, 
 \mthd{public Double3D getDimensions()} Returns the dimensions of the primary spatial field in 3D space.
 \end{methods}
 
-NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  These are discussed later in Section \ref{sim.portrayal3d.network.SimplePortrayal3D}.
+NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  These are discussed later in Section \ref{sim.portrayal3d.network.SimpleEdgePortrayal3D}.
 
 \section{3D Simple Portrayals}
 
@@ -9847,7 +9850,7 @@ BranchGroupPortrayal3D bgp = new BranchGroupPortrayal3D(scene.getSceneGroup()); 
 
 Using \Class{sim.portrayal3d.simple.ImagePortrayal3D}, you can portray objects in fields with images floating in space.  The images can either be unoriented (facing arbitrarily), or always oriented directly facing the user.  If you don't understand this, then you want the second of the two.
 
-Images can be semitransparent or fully opaque. If an image is fully opaque, be sure to specify this fact in the constructor, as semi-transparent images and produce Java3D bugs.  Specifically, semitransparent images may not be drawn in the correct order if they're piled up on top of one another.  Thus a portrayal in the background may incorrectly appear in front of a portrayal in the foreground.
+Images can be semitransparent or fully opaque. If an image is fully opaque, be sure to specify this fact in the constructor, as semi-transparent images produce Java3D bugs.  Specifically, semitransparent images may not be drawn in the correct order if they're piled up on top of one another.  Thus a portrayal in the background may incorrectly appear in front of a portrayal in the foreground.
 
 ImagePortrayal3D provides constructors for images loaded in various ways, including using Java's \code{Class.getResource} procedure.  This last constructor lets you pass in a class and a filename for the image file.  MASON will then look for a file of that filename located right next to the \file{.class} file for the class.  For example, you could say:
 
@@ -9917,7 +9920,7 @@ The other kind of Value Simple Portrayal is a \Class{sim.portrayal3d.simple.Valu
 ValuePortrayal3D is a Shape3DPortrayal3D in the form of a simple {\bf cube} or as a simple {\bf square}, one of:
 
 \java{%
-    public static final int SHAPE\_CUBE;
+    public static final int SHAPE\_CUBE;\\
     public static final int SHAPE\_SQUARE;
 }
 
