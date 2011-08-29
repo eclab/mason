@@ -56,6 +56,12 @@ public class MinGapDataCuller implements DataCuller
         return currentPointCount >maxPointCount;
         }
         
+	void setMaxAndMinCounts(int maxPointCount, int pointCountAfterCulling)
+        {
+        this.maxPointCount = maxPointCount;
+        this.pointCountAfterCulling = pointCountAfterCulling;
+        }
+
     // O(maxPoints)
 	static void sort(IntBag indices, int maxPoints)
         {
@@ -175,7 +181,7 @@ public class MinGapDataCuller implements DataCuller
             }
         //I prefer to drop the point the leaves behind the smallest gap (key=leftGap+rightGap)
         //In case of a tie, I prefer to dop the first point (so I keep more of the fresh data on)
-		int compareTo(Object o) 
+		public int compareTo(Object o) 
             {
             Record r = (Record)o;
             double keydiff = key-r.key;
