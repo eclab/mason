@@ -73,7 +73,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user.  The series should have a key
         in the form of a String.  Returns the series attributes. */
-    public TimeSeriesAttributes addSeries( final XYSeries series, final org.jfree.data.general.SeriesChangeListener stopper)
+    public TimeSeriesAttributes addSeries( final XYSeries series, final SeriesChangeListener stopper)
         {
         XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
 
@@ -108,11 +108,11 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         }
 
 
-    protected JCheckBox useCullingCheckBox;
-    protected NumberTextField maxPointsPerSeriesTextField;
-    protected DataCuller dataCuller;
-    public DataCuller getDataCuller(){return dataCuller;}
-    public void setDataCuller(DataCuller dataCuller){this.dataCuller = dataCuller;}
+	JCheckBox useCullingCheckBox;
+	NumberTextField maxPointsPerSeriesTextField;
+	DataCuller dataCuller;
+    public DataCuller getDataCuller() {return dataCuller;}
+    public void setDataCuller(DataCuller dataCuller) {this.dataCuller = dataCuller;}
     
     public TimeSeriesChartGenerator()
         {
@@ -158,5 +158,4 @@ public class TimeSeriesChartGenerator extends ChartGenerator
             }); 
 
         }
-
     }

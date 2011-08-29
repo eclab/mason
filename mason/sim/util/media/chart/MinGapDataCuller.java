@@ -32,29 +32,24 @@ import sim.util.*;
  * 
  * @author Gabriel Balan
  */
+ 
 public class MinGapDataCuller implements DataCuller
     {
     int maxPointCount;
     int pointCountAfterCulling;
     IntBag reusableIntBag;
         
-    public MinGapDataCuller(int maxPointCount, int pointCountAfterCulling)
+    public MinGapDataCuller(int maxPointCount)
+        {
+        this(maxPointCount, maxPointCount/2+1);
+        }
+		
+	public MinGapDataCuller(int maxPointCount, int pointCountAfterCulling)
         {
         setMaxAndMinCounts(maxPointCount, pointCountAfterCulling);
         this.reusableIntBag = new IntBag(maxPointCount-pointCountAfterCulling+1);
         //+1 cause you need 1 over maxPointCount to trigger the culling
         }
-        
-    public MinGapDataCuller(int maxPointCount)
-        {
-        this(maxPointCount, maxPointCount/2+1);
-        }
-    public void setMaxAndMinCounts(int maxPointCount, int pointCountAfterCulling)
-        {
-        this.maxPointCount = maxPointCount;
-        this.pointCountAfterCulling = pointCountAfterCulling;
-        }
-        
         
     public boolean tooManyPoints(int currentPointCount)
         {
@@ -62,7 +57,7 @@ public class MinGapDataCuller implements DataCuller
         }
         
     // O(maxPoints)
-    public static void sort(IntBag indices, int maxPoints)
+	static void sort(IntBag indices, int maxPoints)
         {
         boolean[] map = new boolean[maxPoints];
         for(int i=0;i<indices.numObjs;i++)
@@ -78,12 +73,13 @@ public class MinGapDataCuller implements DataCuller
         return cull(xValues, reusableIntBag, sortedOutput);
         }
         
-    public IntBag cull(double[] xValues, IntBag droppedIndices, boolean sortOutput)
+	IntBag cull(double[] xValues, IntBag droppedIndices, boolean sortOutput)
         {
         return cull(xValues, pointCountAfterCulling, droppedIndices, sortOutput);
         }
+		
     //this ignores size!!!
-    public IntBag cull(double[] xValues, int size, IntBag droppedIndices, boolean sortOutput)
+	IntBag cull(double[] xValues, int size, IntBag droppedIndices, boolean sortOutput)
         {
         IntBag bag =  cullToSize(xValues, size, droppedIndices);
         if(sortOutput)
@@ -169,7 +165,7 @@ public class MinGapDataCuller implements DataCuller
 //                      " rr="+(rightRecord==null?rightRecord:"R"+rightRecord.xValueIndex)+
 //                      "}";
 //              }
-        public Record(int xValueIndex, double leftGap, double rightGap, int heapPosition)
+		Record(int xValueIndex, double leftGap, double rightGap, int heapPosition)
             {
             this.xValueIndex = xValueIndex;
             this.leftGap = leftGap;
@@ -179,7 +175,7 @@ public class MinGapDataCuller implements DataCuller
             }
         //I prefer to drop the point the leaves behind the smallest gap (key=leftGap+rightGap)
         //In case of a tie, I prefer to dop the first point (so I keep more of the fresh data on)
-        public int      compareTo(Object o) 
+		int compareTo(Object o) 
             {
             Record r = (Record)o;
             double keydiff = key-r.key;
@@ -188,12 +184,12 @@ public class MinGapDataCuller implements DataCuller
             else
                 return keydiff<=0?-1:1;
             }
-        public void setLeftGap(double lg)
+		void setLeftGap(double lg)
             {
             leftGap = lg;
             key = leftGap+rightGap;
             }
-        public void setRightGap(double rg)
+		void setRightGap(double rg)
             {
             rightGap = rg;
             key = leftGap+rightGap;
@@ -204,7 +200,7 @@ public class MinGapDataCuller implements DataCuller
         {
         int heapsize;
         Record[] heap;
-        public Heap(double[] xValues)
+		Heap(double[] xValues)
             {
             this.heapsize = xValues.length-2;
             //of all the data points I can delete, the first and last are taboo.
@@ -238,7 +234,7 @@ public class MinGapDataCuller implements DataCuller
                 heapify(i);
             }
                 
-        public Record extractMin()
+		Record extractMin()
             {
             if( heapsize == 0 )
                 return null;
@@ -281,13 +277,6 @@ public class MinGapDataCuller implements DataCuller
             return result;
             }
                 
-        void printHeap()
-            {
-            System.out.println("------------------------------------");
-            for(int i=0;i<heapsize;i++)
-                System.out.println(heap[i]);
-            }
-            
         void heapify(int i)
             {
             while(true)

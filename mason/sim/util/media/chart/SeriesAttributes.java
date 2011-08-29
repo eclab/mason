@@ -25,19 +25,18 @@ import org.jfree.data.general.*;
     control individual series' features.  SeriesAttributes will be placed in the list at the bottom-left of
     the ChartGenerator window, and series will be assigned a unique SeriesAttributes to control it.
         
-    <p>SeriesAttributes need to override the getSeriesName and setName methods, as well as the rebuildGraphicsDefinitions
-    and buildAttributes methods. */
+    <p>SeriesAttributes need to override the rebuildGraphicsDefinitions and buildAttributes methods. */
 
 public abstract class SeriesAttributes extends LabelledList
     {
-    protected SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
+	SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
     public SeriesChangeListener getStoppable() { return stoppable; }
     public void setStoppable(SeriesChangeListener obj) { stoppable = obj; }
         
     /** The index of the series that this SeriesAttributes is responsible for. */
-    protected int seriesIndex;
+	int seriesIndex;
     /** The ChartGenerator which holds the series that this SeriesAttributes is responsible for. */
-    protected ChartGenerator generator;
+	ChartGenerator generator;
     
     /** Sets the name of the series. */
     public void setName(String val) { super.setName(val); }  // this just uses Component's setName
@@ -53,7 +52,7 @@ public abstract class SeriesAttributes extends LabelledList
 
     /** Given an opaque color and a desired opacity (from 0.0 to 1.0), returns a new color of the same tint but with
         the given opacity. */
-    protected Color reviseColor(Color c, double opacity)
+    public Color reviseColor(Color c, double opacity)
         {
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),(int)(opacity*255));
         }
@@ -74,7 +73,7 @@ public abstract class SeriesAttributes extends LabelledList
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
                 
-    protected XYItemRenderer getRenderer()
+    public XYItemRenderer getRenderer()
         {
         return getPlot().getRenderer();
         }
@@ -86,19 +85,14 @@ public abstract class SeriesAttributes extends LabelledList
     public static final ImageIcon I_UP = iconFor("UpArrow.png");
     public static final ImageIcon I_UP_PRESSED = iconFor("UpArrowPressed.png");
 
-    public static ImageIcon iconFor(String name)
+	static ImageIcon iconFor(String name)
         {
         return new ImageIcon(SeriesAttributes.class.getResource(name));
         }
         
-    public Box manipulators;
-        
-    public void setManipulatorsVisible(boolean visible)
-        {
-        manipulators.setVisible(visible);
-        }
-        
-    public void buildManipulators()
+	Box manipulators;
+	        
+	void buildManipulators()
         {
         JButton removeButton = new JButton(I_CLOSE);
         removeButton.setPressedIcon(I_CLOSE_PRESSED);

@@ -73,8 +73,8 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
 				{
 				// take control
 				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-				getGenerator().setRangeAxisLabel("Frequency");
-				getGenerator().setDomainAxisLabel(properties.getName(index));
+				getGenerator().setYAxisLabel("Frequency");
+				getGenerator().setXAxisLabel(properties.getName(index));
 				}
 
             // add our series

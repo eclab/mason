@@ -64,16 +64,6 @@ import sim.util.IntBag;
  */
 public interface DataCuller
     {
-    boolean tooManyPoints(int currentPointCount);
-    IntBag cull(double[] xValues, IntBag droppedIndices, boolean sortOutput);
-    IntBag cull(double[] xValues, boolean sortOutput);
-
-    /**
-     * This must keep <code>size</code> elements and use the <code>droppedIndices<code> IntBag to store the indices of the 
-     * <code>xValues.length - size</code> elements that do NOT survive the culling.
-     * 
-     * The implementators can expect the xValues to be sorted!
-     * The implementators must be prepared to sort output bag if so requested.
-     */
-    IntBag cull(double[] xValues, int size, IntBag droppedIndices, boolean sortOutput);
+    public boolean tooManyPoints(int currentPointCount);
+    public IntBag cull(double[] xValues, boolean sortOutput);
     }

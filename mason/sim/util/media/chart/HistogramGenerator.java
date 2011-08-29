@@ -126,7 +126,7 @@ public class HistogramGenerator extends ChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
-    public HistogramSeriesAttributes addSeries(double[] vals, int bins, String name, final org.jfree.data.general.SeriesChangeListener stopper)
+    public HistogramSeriesAttributes addSeries(double[] vals, int bins, String name, SeriesChangeListener stopper)
         {
         if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
         HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
@@ -160,6 +160,11 @@ public class HistogramGenerator extends ChartGenerator
     
     public void setHistogramType(HistogramType type) 
 		{
-		this.histogramType = type;
+		histogramType = type;
+		}
+		
+	public HistogramType getHistogramType() 
+		{
+		return histogramType;
 		}
     }

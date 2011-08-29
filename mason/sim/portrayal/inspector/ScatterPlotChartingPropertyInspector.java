@@ -54,8 +54,8 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
 				{
 				// take control
 				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-				getGenerator().setRangeAxisLabel("" + properties.getName(index));
-				getGenerator().setDomainAxisLabel("Time");
+				getGenerator().setYAxisLabel("Y " + properties.getName(index));
+				getGenerator().setXAxisLabel("X " + properties.getName(index));
 				}
 
             // add our series
@@ -124,6 +124,6 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
         // at this point we're committed to do an update
         previousValues = vals;
                 
-        ((ScatterPlotGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), vals, true); 
+        ((ScatterPlotGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), vals); 
         }
     }

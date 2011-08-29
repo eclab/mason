@@ -2301,3 +2301,34 @@ Version 16
 	Font size reduced in LabelledPortrayal3D and EdgePortrayal3D in order to save memory.
 	Added setScale() and getScale() methods to LabelledPortrayal3D and EdgePortrayal3D
 	Added wcss tutorials
+	Added tutorial 14 to wcss (3D)
+	Made various ChartGenerator variables private
+	Made various TimeSeriesChartGenerator variables private
+	Made ChartGenerator.createFrame(...) deprecated and added ChartGenerator.createFrame()
+	Deprecated ChartGenerator.getGlobalAttributeCount(), renamed to getNumGlobalAttributes()
+	Deprecated ChartGenerator.[get|set][Range|Domain]AxisLabel() in favor of X/Y versions.
+	Deprecated ChartGenerator.set[Range|Domain}AxisRange(...) in favor of X/Y versions.
+	X and Y axis labels changed in ScatterPlotChartGenerator to more rational labels.
+	JFreeChart.generatePDF rolled into PDFEncoder. 
+	Made ChartGenerator.rebuildAttributeIndices() private
+	ScatterPlotGenerator.updateSeries(...) has its arguments trimmed
+	SeriesAttributes.manipulators made private
+	SeriesAttributes.seriesIndex, stoppable, and generator now private
+	Certain SeriesAttributes protected methods now public
+	SeriesAttributes.iconFor(...) made private
+	SeriesAttributes.setManipulatorsVisible(...) deleted
+	SeriesAttributes.buildManipulators() made private
+	Made TimeSeriesAttributes.series private
+	TimeSeriesAttributes.[get|set][Thickness|Stretch]() now uses doubles, not floats
+	TimeSeriesAttributes.getDashPattern() now properly returns an int, not a float
+	ScatterPlotSeriesAttributes no longer has 'fill' methods and objects.
+	ScatterPlotSeriesAttributes and HistogramSeriesAttributes.[get|set]Values() 
+		made package-level private
+	HistogramSeriesAttributes.[get|set]LineOpacity() renamed to [get|set]StrokeOpacity()
+	HistogramSeriesAttributes.[get|set]Thickness() now uses doubles
+	TimeSeriesChartingPropertyInspector.addToMainSeries(...) made private
+	Moved data culling tasks from TimeSeriesChartingPropertyInspector to 
+		TimeSeriesAttributes
+	Removed two methods from DataCuller
+	Methods in DataCuller made public
+	Various MinGapDataCuller methods made private

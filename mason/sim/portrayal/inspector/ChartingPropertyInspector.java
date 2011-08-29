@@ -137,7 +137,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     GlobalAttributes findGlobalAttributes()
         {
         if (generator == null) return null;  // got a problem
-        int len = generator.getGlobalAttributeCount();
+        int len = generator.getNumGlobalAttributes();
         for(int i = 0; i < len ; i ++)
             {
             // Global Attributes are members of DisclosurePanels
@@ -308,7 +308,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
 		getCharts(simulation).add( generator );			// put me in the global charts list
-        chartFrame = generator.createFrame(simulation);
+        chartFrame = generator.createFrame();
 
         WindowListener wl = new WindowListener()
             {

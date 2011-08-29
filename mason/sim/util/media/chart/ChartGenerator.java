@@ -18,7 +18,9 @@ import java.awt.image.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.*;
+import sim.util.*;
 import sim.display.*;
+import sim.util.media.*;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.chart.*;
@@ -44,8 +46,11 @@ import com.lowagie.text.pdf.*;
    The facility allows multiple time series to be displayed at one time, to be exported to PDF,
    and to be dynamically added and removed.
    
-   <p>Subclasses need to override at least four methods: getSeriesDataset(), update(), removeSeries(index), and buildChart().
-   Note that ChartGenerator has no standard API for <i>adding</i> a series to the chart, nor any standard way to modify
+   <p>Subclasses only really need to override one method: buildChart(), which creates the chart and the chartPanel and loads
+   them into the chartHolder, then finally sets the series dataset.  Subclasses will also find it convenient to override
+   update() to update the chart specially each time it's repainted, removeSeries(index) to remove a series, or moveSeries(index, boolean)
+   to change the order of series.  In a subclass's constructor it may also modify the global attributes to make ones special
+   to its kind of chart as well.  Finally, note that ChartGenerator has no standard API for <i>adding</i> a series to the chart, nor any standard way to modify
    this series once it has been added.  This is because JFreeChart has non-standard, non-consistent APIs for different
    kinds of charts.  You will need to implement these on a per-chart basis as you see fit.
    
@@ -65,9 +70,6 @@ import com.lowagie.text.pdf.*;
 
 public abstract class ChartGenerator extends JPanel
     {
-    public XYDataset getSeriesDataset() { return ((XYPlot)(chart.getPlot())).getDataset(); }
-    public void setSeriesDataset(XYDataset obj) { ((XYPlot)(chart.getPlot())).setDataset(obj); }
-
     /** A holder for global attributes components */
     protected Box globalAttributes = Box.createVerticalBox();
     /** A holder for series attributes components */
@@ -79,30 +81,35 @@ public abstract class ChartGenerator extends JPanel
     protected ChartPanel chartPanel;
     /** The JScrollPane which holdw the ChartPanel */
     protected JScrollPane chartHolder = new JScrollPane();
-    /** The JFrame which stores the whole chart.  Set in createFrame(), else null. */
-    protected JFrame frame;
+    
+	
+	JFrame frame;
+	/** Returns the JFrame which stores the whole chart.  Set in createFrame(), else null. */
     public JFrame getFrame() { return frame; }
+	
     /** The global attributes chart title field. */
-    protected PropertyField titleField;
+	PropertyField titleField;
     /** The global attributes domain axis field. */
-    protected PropertyField xLabel;
+	PropertyField xLabel;
     /** The global attributes range axis field. */
-    protected  PropertyField yLabel;
+	PropertyField yLabel;
         
-    JButton movieButton = new JButton("Create Movie");
-    
     /** The global attributes logarithmic range axis check box. */
-    protected JCheckBox yLog;
+	JCheckBox yLog;
     /** The global attributes logarithmic domain axis check box. */
-    protected JCheckBox xLog;
+	JCheckBox xLog;
     
-    protected BufferedImage buffer;
+    JButton movieButton = new JButton("Create Movie");
+	BufferedImage buffer;
         
     public void setXAxisLogScaled(boolean isLogScaled){xLog.setSelected(isLogScaled);}
     public boolean isXAxisLogScaled(){return xLog.isSelected();}
     public void setYAxisLogScaled(boolean isLogScaled){yLog.setSelected(isLogScaled);}
     public boolean isYAxisLogScaled(){return yLog.isSelected();}
         
+    public XYDataset getSeriesDataset() { return ((XYPlot)(chart.getPlot())).getDataset(); }
+    public void setSeriesDataset(XYDataset obj) { ((XYPlot)(chart.getPlot())).setDataset(obj); }
+
     BufferedImage getBufferedImage()
         {
         // make a buffer
@@ -121,8 +128,8 @@ public abstract class ChartGenerator extends JPanel
         }
         
     MovieMaker movieMaker = null;
-        
-    public static final long INITIAL_KEY = -1;
+
+	static final long INITIAL_KEY = -1;
     public static final long FORCE_KEY = -2;
     long oldKey = INITIAL_KEY;
         
@@ -153,7 +160,7 @@ public abstract class ChartGenerator extends JPanel
     /** Override this to update the chart to reflect new data. */
     protected void update() { }
         
-    protected void rebuildAttributeIndices()
+	void rebuildAttributeIndices()
         {
         SeriesAttributes[] c = getSeriesAttributes();
         for(int i = 0; i < c.length; i++)
@@ -341,8 +348,11 @@ public abstract class ChartGenerator extends JPanel
         return globalAttributes.getComponent(index+2);
         }
 
+	/** @deprecated Use getNumGlobalAttributes */
+    public int getGlobalAttributeCount() { return getNumGlobalAttributes(); }
+	
     /** Returns the number of global attribute panels. */
-    public int getGlobalAttributeCount()
+    public int getNumGlobalAttributes()
         {
         // at present we have a PDF button and a chart global panel --
         // then the global seriesAttributes start
@@ -371,9 +381,13 @@ public abstract class ChartGenerator extends JPanel
         {
         return chart.getTitle().getText();
         }
-                
-    /** Sets the name of the Range Axis label -- usually this is the Y axis. */
-    public void setRangeAxisLabel(String val)
+			
+    /** @deprecated
+		Sets the name of the Range Axis label -- usually this is the Y axis. */
+    public void setRangeAxisLabel(String val) { setYAxisLabel(val); }
+	
+    /** Sets the name of the Y Axis label. */
+	public void setYAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setLabel(val);
@@ -381,14 +395,22 @@ public abstract class ChartGenerator extends JPanel
         yLabel.setValue(val);
         }
                 
-    /** Returns the name of the Range Axis Label -- usually this is the Y axis. */
-    public String getRangeAxisLabel()
+    /** @deprecated
+		Returns the name of the Range Axis Label -- usually this is the Y axis. */
+    public String getRangeAxisLabel() { return getYAxisLabel(); }
+	
+    /** Returns the name of the Y Axis label. */
+	public String getYAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getRangeAxis().getLabel();
         }
                 
-    /** Sets the name of the Domain Axis label  -- usually this is the X axis. */
-    public void setDomainAxisLabel(String val)
+    /** @deprecated
+		Sets the name of the Domain Axis label  -- usually this is the X axis. */
+    public void setDomainAxisLabel(String val) { setXAxisLabel(val); }
+	
+    /** Sets the name of the X Axis label. */
+	public void setXAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setLabel(val);
@@ -396,14 +418,17 @@ public abstract class ChartGenerator extends JPanel
         xLabel.setValue(val);
         }
                 
-    /** Returns the name of the Domain Axis label -- usually this is the X axis. */
-    public String getDomainAxisLabel()
+    /** @deprecated Returns the name of the Domain Axis label -- usually this is the X axis. */
+    public String getDomainAxisLabel() { return getXAxisLabel(); } 
+
+    /** Returns the name of the X Axis label. */
+	public String getXAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getDomainAxis().getLabel();
         }
     
     /** Returns the underlying chart. **/
-    final public JFreeChart getChart()
+	public JFreeChart getChart()
         {
         return chart;
         }
@@ -461,12 +486,12 @@ public abstract class ChartGenerator extends JPanel
             {
             public String newValue(String newValue)
                 {
-                setDomainAxisLabel(newValue);
+                setXAxisLabel(newValue);
                 getChartPanel().repaint();
                 return newValue;
                 }
             };
-        xLabel.setValue(getDomainAxisLabel());
+        xLabel.setValue(getXAxisLabel());
 
         list.add(new JLabel("X Label"), xLabel);
         
@@ -474,12 +499,12 @@ public abstract class ChartGenerator extends JPanel
             {
             public String newValue(String newValue)
                 {
-                setRangeAxisLabel(newValue);
+                setYAxisLabel(newValue);
                 getChartPanel().repaint();
                 return newValue;
                 }
             };
-        yLabel.setValue(getRangeAxisLabel());
+        yLabel.setValue(getYAxisLabel());
         
         list.add(new JLabel("Y Label"), yLabel);
         
@@ -609,7 +634,8 @@ public abstract class ChartGenerator extends JPanel
                 if (fileName!=null)
                     {
                     Dimension dim = chartPanel.getPreferredSize();
-                    generatePDF( chart, dim.width, dim.height, fd.getDirectory() + fileName );
+                    PDFEncoder.generatePDF( chart, dim.width, dim.height, 
+						new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
                     } 
                 }
             });
@@ -651,7 +677,7 @@ public abstract class ChartGenerator extends JPanel
     
     /** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when
         the JFrame is being closed. */
-    public JFrame createFrame( final sim.display.GUIState state )
+    public JFrame createFrame( )
         {
         frame = new JFrame()
             {
@@ -662,16 +688,6 @@ public abstract class ChartGenerator extends JPanel
                 }
             };
             
-        // these bugs are tickled by our constant redraw requests.
-        frame.addComponentListener(new ComponentAdapter()
-            {
-            // Bug in MacOS X Java 1.3.1 requires that we force a repaint.
-            public void componentResized (ComponentEvent e) 
-                {
-                // Utilities.doEnsuredRepaint(ChartGenerator.this);
-                }
-            });
-
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this,BorderLayout.CENTER);
@@ -680,32 +696,13 @@ public abstract class ChartGenerator extends JPanel
         frame.setTitle(chart.getTitle().getText());
         return frame;
         }
-    
-    /* Generates PDF from the chart, saving out to the given file.  width and height are the
-       desired width and height of the chart in points. */
-    public void generatePDF( JFreeChart chart, int width, int height, String fileName )
-        {
-        try
-            {
-            Document document = new Document(new com.lowagie.text.Rectangle(width,height));
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(fileName));
-            document.addAuthor("MASON");
-            document.open();
-            PdfContentByte cb = writer.getDirectContent();
-            PdfTemplate tp = cb.createTemplate(width, height); 
-            Graphics2D g2 = tp.createGraphics(width, height, new DefaultFontMapper());
-            Rectangle2D rectangle2D = new Rectangle2D.Double(0, 0, width, height); 
-            chart.draw(g2, rectangle2D);
-            g2.dispose();
-            cb.addTemplate(tp, 0, 0);
-            document.close();
-            }
-        catch( Exception e )
-            {
-            e.printStackTrace();
-            }
-        }
-    
+	
+	/** @deprecated, use createFrame() */
+	public JFrame createFrame(Object simulation)
+		{
+		return createFrame();
+		}
+        
     static
         {
         // quaquaify
@@ -738,13 +735,19 @@ public abstract class ChartGenerator extends JPanel
         chart.addLegend(title);
         }
 
-    public void setRangeAxisRange(double lower, double upper)
+	/** @deprecated */
+    public void setRangeAxisRange(double lower, double upper) { setYAxisRange(lower, upper); }
+
+	public void setYAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setRange(lower, upper);
         }
-
-    public void setDomainAxisRange(double lower, double upper)
+		
+	/** @deprecated */
+    public void setDomainAxisRange(double lower, double upper) { setXAxisRange(lower, upper); }
+	
+	public void setXAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setRange(lower, upper);

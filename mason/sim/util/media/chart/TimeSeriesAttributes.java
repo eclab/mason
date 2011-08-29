@@ -12,6 +12,7 @@ import javax.swing.border.*;
 import java.awt.event.*;
 import java.util.*;
 import sim.util.gui.*;
+import sim.util.*;
 
 // From JFreeChart (jfreechart.org)
 import org.jfree.data.xy.*;
@@ -37,21 +38,11 @@ public class TimeSeriesAttributes extends SeriesAttributes
     /** A long space */
     static final float SKIP = DASH;
 
-    static final public int PATTERN_DASH = 0;
-    static final public int PATTERN_DASH_SKIP = 1;
-    static final public int PATTERN_DASH_SPACE = 2;
-    static final public int PATTERN_DASH_SPACE_DASH_SPACE_DOT_SPACE = 3;
-    static final public int PATTERN_DASH_SPACE_DOT_SPACE = 4;
-    static final public int PATTERN_DASH_SPACE_DOT_SPACE_DOT_SPACE = 5;
-    static final public int PATTERN_DOT_SPACE =6;
-    static final public int PATTERN_DOT_SKIP = 7;
-
-                
     /** Nine dash combinations that the user might find helpful. */
-    static final float[][] dashPatterns = 
+	static final float[][] dashPatterns = 
         { 
-        { DASH, 0.0f }, // --------
-            { DASH * 2, SKIP }, 
+			{ DASH, 0.0f }, // --------
+            { DASH * 2, SKIP }, // -- -- --
             { DASH, SKIP } , // -  -  -  
             { DASH, SPACE } , // - - - -
             { DASH, SPACE, DASH, SPACE, DOT, SPACE },  // - - . - - . 
@@ -74,11 +65,11 @@ public class TimeSeriesAttributes extends SeriesAttributes
     Color strokeColor;
     ColorWell strokeColorWell;
                 
-    public void setThickness(float value) { thicknessField.setValue(thicknessField.newValue(value));  }
-    public float getThickness() { return (float)(thicknessField.getValue()); }
+    public void setThickness(double value) { thicknessField.setValue(thicknessField.newValue(value));  }
+    public double getThickness() { return (double)(thicknessField.getValue()); }
 
-    public void setStretch(float value) { stretchField.setValue(stretchField.newValue(value));  }
-    public float getStretch() { return (float)(stretchField.getValue()); }
+    public void setStretch(double value) { stretchField.setValue(stretchField.newValue(value));  }
+    public double getStretch() { return (double)(stretchField.getValue()); }
 
     public void setDashPattern(int value) 
         { 
@@ -88,18 +79,18 @@ public class TimeSeriesAttributes extends SeriesAttributes
             dashPattern = dashPatterns[value];
             }
         }
-    public float getDashPattern() { return dashPatternList.getSelectedIndex(); }
+    public int getDashPattern() { return dashPatternList.getSelectedIndex(); }
 
     public void setStrokeColor(Color value) { strokeColorWell.setColor(strokeColor = value);}
     public Color getStrokeColor() { return strokeColor; }
 
     /** The time series in question.  */
-    public XYSeries series;
+	XYSeries series;
     public void setName(String val) { series.setKey(val); }
     public String getSeriesName() { return "" + series.getKey(); }
                 
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
-    public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, org.jfree.data.general.SeriesChangeListener stoppable)
+    public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, SeriesChangeListener stoppable)
         { 
         super(generator, "" + series.getKey(), index, stoppable);
         this.series = series;
@@ -133,12 +124,14 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
         XYItemRenderer renderer = getRenderer();
-        //Paint paint = renderer.getSeriesPaint(getSeriesIndex());
-        
-        //In jfc 1.0.6 getSeriesPaint returns null!!!
-        //You need lookupSeriesPaint(), but that's not backward compatible.
-        //The only thing consistent in all versions is getItemPaint 
-        //(which looks like a gross miss-use, but gets the job done)
+
+		// NOTE:
+        // Paint paint = renderer.getSeriesPaint(getSeriesIndex());        
+        // In JFreeChart 1.0.6 getSeriesPaint returns null!!!
+        // You need lookupSeriesPaint(), but that's not backward compatible.
+        // The only thing consistent in all versions is getItemPaint 
+        // (which looks like a gross miss-use, but gets the job done)
+		
         Paint paint = renderer.getItemPaint(getSeriesIndex(), -1);
         
         strokeColor = (Color)paint;
@@ -195,4 +188,72 @@ public class TimeSeriesAttributes extends SeriesAttributes
             };
         addLabelled("Stretch",stretchField);
         }
+
+
+	public boolean possiblyCull()
+        {
+        DataCuller dataCuller = ((TimeSeriesChartGenerator)generator).getDataCuller();
+        if(dataCuller!=null && dataCuller.tooManyPoints(series.getItemCount()))
+            {
+			deleteItems(dataCuller.cull(getXValues(), true));
+			return true;
+			}
+        else
+			return false;
+        }
+		
+    static Bag tmpBag = new Bag();
+    void deleteItems(IntBag items)
+        {
+        if(items.numObjs==0)
+            return;
+
+        tmpBag.clear();
+        int currentTabooIndex = 0;
+        int currentTaboo = items.objs[0];
+        Iterator iter = series.getItems().iterator();
+        int index=0;
+        while(iter.hasNext())
+            {
+            Object o = iter.next();
+            if(index==currentTaboo)
+                {
+                //skip the copy, let's move on to next taboo index
+                if(currentTabooIndex<items.numObjs-1)
+                    {
+                    currentTabooIndex++;
+                    currentTaboo = items.objs[currentTabooIndex];
+                    }
+                else
+                    currentTaboo=-1;//no more taboos
+                }
+            else//save o
+                tmpBag.add(o);
+            index++;
+            }
+        //now we clear the series and then put back the saved objects only.
+        series.clear();
+        //In my test this did not cause the chart to flicker.
+        //But if it does, one could do an update for the part the will be refill and 
+        //only clear the rest using delete(start, end).
+        for(int i=0;i<tmpBag.numObjs;i++)
+            series.add((XYDataItem)(tmpBag.objs[i]), false);//no notifying just yet.
+        tmpBag.clear();
+        //it doesn't matter that I clear this twice in a row 
+        //(once here, once at next time through this fn), the second time is O(1).
+        series.fireSeriesChanged();
+        }
+		
+    double[] getXValues()
+        {
+        double[] xValues = new double[series.getItemCount()];
+        for(int i=0;i<xValues.length;i++)
+            xValues[i]=series.getX(i).doubleValue();
+        return xValues;
+        }
+
+
+
+
+
     }

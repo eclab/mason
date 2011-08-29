@@ -103,7 +103,7 @@ public class ScatterPlotGenerator extends ChartGenerator
         return csa;
         }
 
-    public void updateSeries(int index, double[][] vals, boolean waitUntilUpdate)
+    public void updateSeries(int index, double[][] vals)
         {
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
             return;

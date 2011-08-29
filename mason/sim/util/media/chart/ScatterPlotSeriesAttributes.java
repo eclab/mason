@@ -75,20 +75,19 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
     };
                 
     double[][] values; 
-    public double[][] getValues() { return values; }
-    public void setValues(double[][] vals) { values = vals; }
+	double[][] getValues() { return values; }
+	void setValues(double[][] vals) { values = vals; }
 
-    /** The color of the histogram bar. */
-    Color fillColor;
-    ColorWell fillColorWell;
-    double fillOpacity;
-    NumberTextField fillOpacityField;
+    Color color;
+    ColorWell colorWell;
+    double opacity;
+    NumberTextField opacityField;
                     
-    public void setFillOpacity(double value) { fillOpacityField.setValue(fillOpacityField.newValue(value));  }
-    public double getFillOpacity() { return fillOpacityField.getValue(); }
+    public void setSymbolOpacity(double value) { opacityField.setValue(opacityField.newValue(value));  }
+    public double getSymbolOpacity() { return opacityField.getValue(); }
     
-    public void setFillColor(Color value) { fillColorWell.setColor(fillColor = value); }
-    public Color getFillColor() { return fillColor; }
+    public void setSymbolColor(Color value) { colorWell.setColor(color = value); }
+    public Color getSymbolColor() { return color; }
 
     int shapeNum = 0;
     Shape shape = shapes[shapeNum];
@@ -109,7 +108,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
 
     /** Produces a ScatterPlotSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
-    public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, org.jfree.data.general.SeriesChangeListener stoppable)
+    public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, SeriesChangeListener stoppable)
         { 
         super(generator, name, index, stoppable);
                 
@@ -139,7 +138,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
     public void rebuildGraphicsDefinitions()
         {
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
-        renderer.setSeriesPaint(getSeriesIndex(),reviseColor(fillColor, fillOpacity));
+        renderer.setSeriesPaint(getSeriesIndex(), reviseColor(color, opacity));
         renderer.setSeriesShape(getSeriesIndex(), shape);
         renderer.setAutoPopulateSeriesShape(false);
         repaint();
@@ -149,36 +148,36 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         {
         // The following three variables aren't defined until AFTER construction if
         // you just define them above.  So we define them below here instead.
-        fillOpacity = 1.0;
+        opacity = 1.0;
 
-        fillColor = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
+        color = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
         // second argument does not matter
 
-        fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
-        fillColorWell = new ColorWell(fillColor)
+        color = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
+        colorWell = new ColorWell(color)
             {
             public Color changeColor(Color c) 
                 {
-                fillColor = c;
+                color = c;
                 rebuildGraphicsDefinitions();
                 return c;
                 }
             };
 
-        addLabelled("Fill",fillColorWell);
+        addLabelled("Color", colorWell);
 
-        fillOpacityField = new NumberTextField("Opacity ", fillOpacity,1.0,0.125)
+        opacityField = new NumberTextField("Opacity ", opacity,1.0,0.125)
             {
             public double newValue(double newValue) 
                 {
                 if (newValue < 0.0 || newValue > 1.0) 
                     newValue = currentValue;
-                fillOpacity = (float)newValue;
+                opacity = (float)newValue;
                 rebuildGraphicsDefinitions();
                 return newValue;
                 }
             };
-        addLabelled("",fillOpacityField);
+        addLabelled("",opacityField);
 
         shapeList = new JComboBox();
         shapeList.setEditable(false);

@@ -32,8 +32,8 @@ import org.jfree.data.general.*;
 public class HistogramSeriesAttributes extends SeriesAttributes
     {
     double[] values; 
-    public double[] getValues() { return values; }
-    public void setValues(double[] vals) { values = vals; }
+	double[] getValues() { return values; }
+	void setValues(double[] vals) { values = vals; }
                 
     /** Border thickness */
     float thickness;
@@ -53,17 +53,16 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         Sun doesn't have a proper color selector.  */
     double lineOpacity;
     NumberTextField lineOpacityField;
-    
     NumberTextField numBinsField;
                 
     public void setFillOpacity(double value) { fillOpacityField.setValue(fillOpacityField.newValue(value));  }
     public double getFillOpacity() { return fillOpacityField.getValue(); }
     
-    public void setLineOpacity(double value) { lineOpacityField.setValue(lineOpacityField.newValue(value));  }
-    public double getLineOpacity() { return lineOpacityField.getValue(); }
+    public void setStrokeOpacity(double value) { lineOpacityField.setValue(lineOpacityField.newValue(value));  }
+    public double getStrokeOpacity() { return lineOpacityField.getValue(); }
 
-    public void setThickness(float value) { thicknessField.setValue(thicknessField.newValue(value));  }
-    public float getThickness() { return (float)(thicknessField.getValue()); }
+    public void setThickness(double value) { thicknessField.setValue(thicknessField.newValue(value));  }
+    public double getThickness() { return (double)(thicknessField.getValue()); }
     
     // we need to store numBins here so update() gets it properly, see later
     int numBins;
@@ -78,7 +77,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     /** Produces a HistogramSeriesAttributes object with the given generator, series name, series index,
         and desire to display margin options. */
-    public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, int bins, org.jfree.data.general.SeriesChangeListener stoppable)  // , boolean includeMargin)
+    public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, int bins, SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
         super(generator, name, index, stoppable);
         setValues(values);
@@ -139,15 +138,16 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("Bins",numBinsField);
 
+		// NOTES:
         // fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
         // this returns null, cause getSeriesPaint returns whatever was set through setSeriesPaint;
         // for the default colors, you need "lookupSeriesPaint()".
-        //fillColor = (Color) (getRenderer().lookupSeriesPaint(getSeriesIndex()));
+        // fillColor = (Color) (getRenderer().lookupSeriesPaint(getSeriesIndex()));
         // getRenderer returns an object implementing the XYItemRenderer interface.
         // either you cast that object to AbstractRenderer, and call lookupSeriesPaint()
         // or you call getItemPaint() on it directly; all getItemPaint does is call lookupSeriesPaint(),
         // but that looks bad, cause getItemPaint() seems to be meant for category data).
-        //On the other hand, lookupSeriesPaint() does not show up before 1.0.6, so 
+        // On the other hand, lookupSeriesPaint() does not show up before 1.0.6, so 
         // in the interest of backward compatibility:
         fillColor = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
         // second argument does not matter
@@ -178,7 +178,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("",fillOpacityField);
 
-        strokeColor = Color.black; //(Color)(getRenderer().getSeriesOutlinePaint(getSeriesIndex()));
+        strokeColor = Color.black;
         strokeColorWell = new ColorWell(strokeColor)
             {
             public Color changeColor(Color c) 
