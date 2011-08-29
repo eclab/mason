@@ -4244,8 +4244,6 @@ Though you'll never call them, there are three methods you should be aware of wh
 \chapter{Grids}
 \label{sim.field.grid}
 
-%\begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{ants.pdf}\vspace{2em}\end{figure}
-
 \begin{figure}[h]\vspace{-26em}\hspace{25.3em}\includegraphics[width=4in]{hexabugs.pdf}\vspace{2em}\end{figure}
 
 \noindent A {\bf grid} is MASON's name for objects arrange in a 2-dimensional or 3-dimensional array or equivalent.  MASON supports a wide range of grid environments as fields (representations of space).  This includes most any combination of the following:
@@ -5337,6 +5335,8 @@ Returns an adjacency matrix of Edges for a multigraph.  If you have \(N\) nodes,
 
 \chapter{Making a GUI}
 
+\begin{figure}[h]\vspace{-26.5em}\hspace{25.5em}\includegraphics[width=4in]{Particles3D.png}\vspace{1em}\end{figure}
+
 MASON's GUI control and visualization facilities are divided into five major packages:
 
 \begin{itemize}
@@ -5347,7 +5347,7 @@ MASON's GUI control and visualization facilities are divided into five major pac
 \item \Package{sim.portrayal.inspector}: {\it inspectors} to inspect, track, and tweak model parameters and field objects.
 \end{itemize}
 
-\begin{wrapfigure}{r}[0in]{3.1in}\vspace{-1em}\hfill\includegraphics[width=3.0in]{ModelAndVisualization.pdf}\caption{Primary relationships between model and GUI visualization/control.}\vspace{-1em}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{2.7in}\vspace{-1em}\hfill\includegraphics[width=2.6in]{ModelAndVisualization.pdf}\caption{Primary relationships between model and GUI visualization/control.}\vspace{-1em}\end{wrapfigure}
 
 MASON enforces a very strict separation of model from GUI control and visualization.  MASON models generally know nothing of visualization (unless you have endowed certain objects with the ability to portray themselves visually, as discussed in the Section \ref{sim.portrayal.SimplePortrayal2D}).  {\bf This is a good thing.}  It allows MASON models to be run with or without visualization, to be separated at any time from visualization and moved to a non-visualization environment (a back-end supercomputer server, say), or have visualization changed at any time mid-model.  It's a basic feature of any good high-performance modeling library.
 
@@ -6137,6 +6137,9 @@ If you're using Eclipse or NetBeans, you'll need to change the compiler target a
 \chapter{Visualization in 2D}
 \label{2d}
 
+\begin{figure}[h]\vspace{-31em}\hspace{16em}\includegraphics[width=6in]{SwarmGame.pdf}\vspace{-2em}\end{figure}
+
+
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6.5in]{2DUML.pdf}\end{center}
 \caption{UML diagram of  MASON's Top-Level  2D Visualization Code.  Notice the three sections.  The Visualization section is divided into 2D Display and 2D Portrayal facilities.}
@@ -6153,13 +6156,13 @@ MASON provides a wide range of 2D visualization options for your underlying mode
 \item {\bf 2D Simple Portrayals} (subclasses of \class{sim.portrayal.SimplePortrayal2D}) are registered with each Field Portrayal  and are responsible for performing actual drawing or selection of a given object stored in the field.  Simple Portrayals may be registered for various kinds of objects in a field: and in fact objects in the field may act as their own Simple Portrayals.  In some cases (so-called {\bf ``fast field portrayals''} the Field Portrayal eschews calling forward Simple Portrayals to do its dirty work, and instead just draws the objects directly using simple visualization (colored rectangles, for example).
 \end{itemize}
 
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{Display2DNew.pdf}\vspace{-7em}\end{wrapfigure}
+
 The general structure of MASON's 2D visualization facility is shown in Figure \ref{Visualization2DUML}.
 
 \section{The 2D Display}
 \label{sim.display.Display2D}
-
-\begin{wrapfigure}{r}[0in]{3in}
-\vspace{-3em}\hfill\includegraphics[width=2.8in]{Display2DNew.pdf}\vspace{-5em}\end{wrapfigure}
 
 Your simulation can have as many Display2Ds as you like.  Each Display2D is registered with the Console and appears in its ``displays'' tab.  If you close the Display2D window, it's not gone permanently\,---\,just double-click on it in the ``displays'' tab and it'll reappear.  However, closing a Display2D has the benefit of not requiring it to repaint itself, which will allow the simulation to run much faster.
 
@@ -6293,28 +6296,28 @@ Next you'll want to attach Field Portrayals and certain global Inspectors to the
 
 \label{attachingfields}
 \begin{methods}{\class{sim.display.Display2D}}
-\mthd{ public void attach(sim.portrayal.Inspector inspector, String name)}
+\mthd{public void attach(sim.portrayal.Inspector inspector, String name)}
 	Attaches the given Inspector to the Display, assigning it the provided name.  The user can call forth this Inspector by choosing that name from the Display's ``layers'' menu.
-\mthd{ public void attach(FieldPortrayal2D portrayal, String name )}
+\mthd{public void attach(FieldPortrayal2D portrayal, String name )}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible, and placing it at the \(\langle 0,0\rangle\) position in the InnerDisplay (in pixels).  The width and height of the FieldPortrayal2D is set to that of the Inner Display.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public void attach(FieldPortrayal2D portrayal, String name, Rectangle2D.Double bounds )}
+\mthd{public void attach(FieldPortrayal2D portrayal, String name, Rectangle2D.Double bounds )}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible, and placing it at the given bounds in the InnerDisplay (in pixels).    This allows both translation and prescaling of the FieldPortrayal2D relative to others.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public void attach(FieldPortrayal2D portrayal, String name, boolean visible )}
+\mthd{public void attach(FieldPortrayal2D portrayal, String name, boolean visible )}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible or not, and placing it at the \(\langle 0,0\rangle\) position in the InnerDisplay (in pixels).  The width and height of the FieldPortrayal2D is set to that of the Inner Display.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
-	\mthd{ public void attach(FieldPortrayal2D portrayal, String name, double x, double y, boolean visible)}
+	\mthd{public void attach(FieldPortrayal2D portrayal, String name, double x, double y, boolean visible)}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible or not, and placing it at the given \(\langle x, y\rangle\) position in the InnerDisplay (in pixels).  The width and height of the FieldPortrayal2D is set to that of the Inner Display. This merely translates the FieldPortrayal2D relative to others.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public void attach(FieldPortrayal2D portrayal, String name, Rectangle2D.Double bounds, boolean visible )}
+\mthd{public void attach(FieldPortrayal2D portrayal, String name, Rectangle2D.Double bounds, boolean visible )}
 	Attaches a FieldPortrayal2D to this Display, assigning it the given name, setting it initially visible or not, and placing it at the given bounds in the InnerDisplay (in pixels).    This allows both translation and prescaling of the FieldPortrayal2D relative to others.  The user can toggle the FieldPortrayal2D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public ArrayList detatchAll()}
+\mthd{public ArrayList detatchAll()}
 	Detatches all FieldPortrayal2Ds from the Display.
 \end{methods}
 
 When a simulation is begun, you'll want to reset the Display.  This causes it to clear all its selected objects and reschedule itself on the GUIState's minischedule.  When you quit the entire simulation, you'll want to quit the Display as well so it can free resources and finish any movies.
 
 \begin{methods}{\class{sim.display.Display2D}}
-\mthd{ public void reset()}
+\mthd{public void reset()}
 	Causes the Display to clear all of its current selected objects and reschedule itself in the GUIState's minischedule.
-\mthd{ public void quit()}
+\mthd{public void quit()}
 	Quits the display, stopping it and finishing any movies and freeing resources.
 \end{methods}
 
@@ -6357,9 +6360,9 @@ This key is used to store preferences information associated with the Display2D 
 
 
 \begin{methods}{\class{sim.display.Display2D}}
-\mthd{ public void setPreferencesKey(String s)}
+\mthd{public void setPreferencesKey(String s)}
 	Sets the preferences key for the Display2D to the given string.
-\mthd{ public String getPreferencesKey()}
+\mthd{public String getPreferencesKey()}
 	Returns the current preferences key (the default is DEFAULT\_PREFERENCES\_KEY, set to ``Display2D'').
 \end{methods}
   
@@ -6470,13 +6473,13 @@ Display2D {\bf inspects} objects by first clearing all Inspectors from the Contr
 Display2D's relevant methods are:
 
 \begin{methods}{\class{sim.display.Display2D}}
-\mthd{ public Bag[] objectsHitBy( Rectangle2D.Double rect )} Returns an array of Bags of LocationWrappers for every object which is hit by the given rectangular region.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
-\mthd{ public Bag[] objectsHitBy( Point2D point )} Returns an array of Bags of LocationWrappers for every object which is hit by the given point.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
-\mthd{ public void performSelection( LocationWrapper wrapper)}Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method.
-\mthd{ public void performSelection( Bag locationWrappers )}Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
-\mthd{ public void performSelection( Rectangle2D.Double rect )}Selects all objects hit by the given rectangle, by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
-\mthd{ public void clearSelections()}Instructs all Field Portrayals to clear all selections on all objects.
-\mthd{ public void createInspectors( Rectangle2D.Double rect, GUIState simulation )}Generates and submits to the Console inspectors for each object hit by the given rectangle, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
+\mthd{public Bag[] objectsHitBy( Rectangle2D.Double rect )} Returns an array of Bags of LocationWrappers for every object which is hit by the given rectangular region.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
+\mthd{public Bag[] objectsHitBy( Point2D point )} Returns an array of Bags of LocationWrappers for every object which is hit by the given point.  The size and order of the array is exactly that of the Field Portrayals registered with the Display2D, and each Bag represents the objects in one Field.
+\mthd{public void performSelection( LocationWrapper wrapper)}Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method.
+\mthd{public void performSelection( Bag locationWrappers )}Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
+\mthd{public void performSelection( Rectangle2D.Double rect )}Selects all objects hit by the given rectangle, by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
+\mthd{public void clearSelections()}Instructs all Field Portrayals to clear all selections on all objects.
+\mthd{public void createInspectors( Rectangle2D.Double rect, GUIState simulation )}Generates and submits to the Console inspectors for each object hit by the given rectangle, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
 \end{methods}
 
 
@@ -6484,10 +6487,10 @@ Display2D also uses hit testing to compute tool tip information.  Tool tips are 
 
 
 \begin{methods}{\class{sim.display.InnerDisplay2D}}
-\mthd{ public JToolTip createToolTip() } Generates a tool tip.
-\mthd{ public String getToolTipText(MouseEvent event) } Creates the tool tip text for a given mouse event.
-\mthd{ public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation ) } Creates the tool tip text for a given rectangle and simulation.  Used by \method{getToolTipText(...)}.
-\mthd{ public void updateToolTips() } Revises the tool tip text information as the model changes.
+\mthd{public JToolTip createToolTip() } Generates a tool tip.
+\mthd{public String getToolTipText(MouseEvent event) } Creates the tool tip text for a given mouse event.
+\mthd{public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation ) } Creates the tool tip text for a given rectangle and simulation.  Used by \method{getToolTipText(...)}.
+\mthd{public void updateToolTips() } Revises the tool tip text information as the model changes.
 \end{methods}
 
 
@@ -6526,16 +6529,16 @@ This isn't to say that objects {\it can't} portray themselves: in fact occasiona
 All portrayals, both in 2D and 3D, and for both fields and the objects they contain, implement the interface \Class{sim.portrayal.Portrayal}.  This interface has the following methods:
 
 \begin{methods}{\class{sim.portrayal.Portrayal}}
-\mthd{ public Inspector getInspector(LocationWrapper wrapper, GUIState state) } Produces an Inspector for the object stored in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
-\mthd{ public String getName(LocationWrapper wrapper) } Returns an appropriate name for the object in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
-\mthd{ public String getStatus(LocationWrapper wrapper) } Returns an appropriate status (a short string description of the object's current state) for the object in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
-\mthd{ public boolean setSelected(LocationWrapper wrapper, boolean selected) } Sets the object in the given wrapper to be selected or deselected.  If the portrayal is a Field Portrayal, it might do this by storing this status and later, when the object is being drawn, calling the \method{setSelected(...)} method on an appropriate Simple Portrayal prior to having the Simple Portrayal draw the object.  Or it might store the selected state in the Object somewhere or in the Simple Portrayal.
+\mthd{public Inspector getInspector(LocationWrapper wrapper, GUIState state) } Produces an Inspector for the object stored in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
+\mthd{public String getName(LocationWrapper wrapper) } Returns an appropriate name for the object in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
+\mthd{public String getStatus(LocationWrapper wrapper) } Returns an appropriate status (a short string description of the object's current state) for the object in the given wrapper.  If the portrayal is a Field Portrayal, it will typically do this by calling forth a Simple Portrayal appropriate for the object and calling the same method on it.
+\mthd{public boolean setSelected(LocationWrapper wrapper, boolean selected) } Sets the object in the given wrapper to be selected or deselected.  If the portrayal is a Field Portrayal, it might do this by storing this status and later, when the object is being drawn, calling the \method{setSelected(...)} method on an appropriate Simple Portrayal prior to having the Simple Portrayal draw the object.  Or it might store the selected state in the Object somewhere or in the Simple Portrayal.
 \end{methods}
 
 Notice what's missing: {\bf drawing}.  The \class{sim.portrayal.Portrayal} interface doesn't define any method for drawing objects or fields: this is entirely up to the particular mechanism used by the drawing facility (for example, AWT/Java2D versus Java3D).  These and other details are handled by subclasses of Portrayal.  In the 2D case, drawing is handled by the Interface \Class{sim.portrayal.Portrayal2D}, which extends Portrayal.  It adds the single method:
 
 \begin{methods}{\class{sim.portrayal.Portrayal2D}}
-\mthd{ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) } Draws the given Object according to the arguments in the provided DrawInfo2D.
+\mthd{public void draw(Object object, Graphics2D graphics, DrawInfo2D info) } Draws the given Object according to the arguments in the provided DrawInfo2D.
 \end{methods}
 
 DrawInfo2D describes where to draw objects and how large, and also the clip rectangle and various other information.  It's described next.
@@ -6577,23 +6580,23 @@ These six variables are publicly accessible:
 Beyond the variables above, DrawInfo2D is mostly constructors:
 
 \begin{methods}{\class{sim.portrayal.DrawInfo2D Constructor}}
-\mthd{ public DrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip) } Builds a DrawInfo2D from the given draw and clip rectangles.  precise and selected are both set to false and location is set to null.
-\mthd{ public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)} Builds a DrawInfo2D with its draw and clip rectangles translated by a certain factor from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
-\mthd{ public DrawInfo2D(DrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
+\mthd{public DrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip) } Builds a DrawInfo2D from the given draw and clip rectangles.  precise and selected are both set to false and location is set to null.
+\mthd{public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)} Builds a DrawInfo2D with its draw and clip rectangles translated by a certain factor from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
+\mthd{public DrawInfo2D(DrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
 \end{methods}
 
 There are only a few methods:
 
 \begin{methods}{\class{sim.portrayal.DrawInfo2D}}
-\mthd{ public boolean equals(Object obj) } Compares against another DrawInfo2D's draw and clip rectangles and precise flag.
-\mthd{ public String toString() } Prints the DrawInfo2D to a string in a pleasing fashion.
+\mthd{public boolean equals(Object obj) } Compares against another DrawInfo2D's draw and clip rectangles and precise flag.
+\mthd{public String toString() } Prints the DrawInfo2D to a string in a pleasing fashion.
 \end{methods}
 
 The primary reason you might need to create a DrawInfo2D is for custom hit-testing on fields.  If you need to create a DrawInfo2D object for this reason, don't make one from scratch: let Display2D do it for you:
 
 \begin{methods}{\class{sim.portrayal.Display2D}}
-\mthd{ public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Rectangle2D clip) } Produces a DrawInfo2D suitable for hit-testing.  The hit-test region is provided in clip.  The Draw rectangle is set to the bounds of the entire Field Portrayal.
-\mthd{ public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point) } Produces a DrawInfo2D suitable for hit-testing.  The hit-test region is a single point as provided.  The Draw rectangle is set to the bounds of the entire Field Portrayal.
+\mthd{public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Rectangle2D clip) } Produces a DrawInfo2D suitable for hit-testing.  The hit-test region is provided in clip.  The Draw rectangle is set to the bounds of the entire Field Portrayal.
+\mthd{public DrawInfo2D getDrawInfo2D(FieldPortrayal2D portrayal, Point2D point) } Produces a DrawInfo2D suitable for hit-testing.  The hit-test region is a single point as provided.  The Draw rectangle is set to the bounds of the entire Field Portrayal.
 \end{methods}
 
 
@@ -6618,7 +6621,7 @@ Note that these elements may change within a given LocationWrapper as the object
 The constructor for a LocationWrapper is straightforward:
 
 \begin{methods}{\class{sim.portrayal.LocationWrapper Constructor}}
-\mthd{ LocationWrapper(Object object, Object location, FieldPortrayal fieldPortrayal) } Produces a LocationWrapper with the given object, its location in a field, and the field portrayal for that field.
+\mthd{LocationWrapper(Object object, Object location, FieldPortrayal fieldPortrayal) } Produces a LocationWrapper with the given object, its location in a field, and the field portrayal for that field.
 \end{methods}
 
 This LocationWrapper handes the default case.  However this constructor is really pro-forma: almost all LocationWrappers are custom subclasses: rarely if ever is the default used in practice.
@@ -6626,10 +6629,10 @@ This LocationWrapper handes the default case.  However this constructor is reall
 The methods are also quite simple:
 
 \begin{methods}{\class{sim.portrayal.LocationWrapper}}
-\mthd{ getObject() } Returns the current object associated with this LocationWrapper.   In LocationWrappers generated by certain Field Portrayals, this may change over time. 
-\mthd{ getLocation() }  Returns the current location of the object associated with this LocationWrapper.   In LocationWrappers generated by certain Field Portrayals, this may change over time.
-\mthd{ getLocationName() } Returns a simple name for the location of the object returned by \method{getLocation()}.
-\mthd{ getFieldPortrayal() }  Returns the field portrayal associated with this LocationWrapper.
+\mthd{getObject() } Returns the current object associated with this LocationWrapper.   In LocationWrappers generated by certain Field Portrayals, this may change over time. 
+\mthd{getLocation() }  Returns the current location of the object associated with this LocationWrapper.   In LocationWrappers generated by certain Field Portrayals, this may change over time.
+\mthd{getLocationName() } Returns a simple name for the location of the object returned by \method{getLocation()}.
+\mthd{getFieldPortrayal() }  Returns the field portrayal associated with this LocationWrapper.
 \end{methods}
 
 Again the default implementations of these methods are straightforward, but custom subclasses do many variations on them according to the needs of their particular Field Portrayal.
@@ -6657,12 +6660,12 @@ You can also specify that the field is {\bf immutable}, meaning that the FieldPo
 Last, even if a FieldPortrayal is declared immutable, you can still force it to requery its field next time around, by setting the ``dirty'' flag with \method{setDirtyField(...)}.  This flag is later cleared.  This is done sometimes by the FieldPortrayals themselves when appropriate (for example \method{setField(...)} sets the flag), but you can also use this to create a FieldPortrayal which {\it usually} doesn't update the flag except very rarely when occasional changes are made to the field.  In this latter case, it's helpful that the ``dirty'' flag getter and setter methods are synchronized.
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal}}
-\mthd{ public void setField(Object field) } Sets the FieldPortrayal's field.  Also sets the ``dirty'' flag to true.
-\mthd{ public Object getField() }  Returns the FieldPortrayal's field.
-\mthd{ public void setImmutableField(boolean val) } Makes the FieldPortrayal assume the field is immutable (or not).
-\mthd{ public boolean isImmutableField() }  Returns whether the FieldPortrayal assumes the field is immutable.
-\mthd{ public synchronized void setDirtyField(boolean val) } Makes the FieldPortrayal dirty (or not).
-\mthd{ public synchronized boolean isDirtyFlag() }  Returns whether the FieldPortrayal is dirty.
+\mthd{public void setField(Object field) } Sets the FieldPortrayal's field.  Also sets the ``dirty'' flag to true.
+\mthd{public Object getField() }  Returns the FieldPortrayal's field.
+\mthd{public void setImmutableField(boolean val) } Makes the FieldPortrayal assume the field is immutable (or not).
+\mthd{public boolean isImmutableField() }  Returns whether the FieldPortrayal assumes the field is immutable.
+\mthd{public synchronized void setDirtyField(boolean val) } Makes the FieldPortrayal dirty (or not).
+\mthd{public synchronized boolean isDirtyFlag() }  Returns whether the FieldPortrayal is dirty.
 \end{methods}
 
 Many Field Portrayals rely on {\bf simple portrayals}, discussed in Section \ref{sim.portrayal.SimplePortrayal2D}, to actually portray the individual objects in the field.  These Field Portrayals take advantage of a facility in \class{sim.portrayal.FieldPortrayal} by which one can register Simple Portrayals and associate them with objects in the field: when told to (say) draw an object, the Field Portrayal looks up the appropriate registered Simple Portrayal, then asks it to do the task.
@@ -6695,26 +6698,26 @@ The default portrayals for null and non-null objects are defined in abstract met
 FieldPortrayal does this lookup with a method called \method{getPortrayalForObject(...)}.  This method, plus the various methods for registering Simple Portrayals, are:
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal}}
-\mthd{ public Portrayal getPortrayalForObject(Object obj) } Returns the Simple Portrayal registered for the given object.  This runs through multiple checks to determine what Simple Portrayal to use: see the text above for an explanation as to how the method operates and what checks it uses.
-\mthd{ public void setPortrayalForAll(Portrayal portrayal) } Sets the ``portrayalForAll'' of the Field Portrayal.
-\mthd{ public Portrayal getPortrayalForAll() } Returns the ``portrayalForAll'' of the Field Portrayal, or null if not set.
-\mthd{ public void setPortrayalForNull(Portrayal portrayal) } Sets the ``portrayalForNull'' of the Field Portrayal.
-\mthd{ public Portrayal getPortrayalForNull() } Returns the ``portrayalForNull'' of the Field Portrayal, or null if not set.
-\mthd{ public void setPortrayalForNonNull(Portrayal portrayal) } Sets the ``portrayalForNonNull'' of the Field Portrayal.
-\mthd{ public Portrayal getPortrayalForNonNull() } Returns the ``portrayalForNonNull'' of the Field Portrayal, or null if not set.
-\mthd{ public void setPortrayalForRemainder(Portrayal portrayal) } Sets the ``portrayalForRemainder'' of the Field Portrayal.
-\mthd{ public Portrayal getPortrayalForRemainder() } Returns the ``portrayalForRemainder'' of the Field Portrayal, or null if not set.
-\mthd{ public void setPortrayalForObject(Object obj, Portrayal portrayal) } Registers the portrayal for the given Object.
-\mthd{ public void setPortrayalForClass(Class cls, Portrayal portrayal) } Registers the portrayal all Objects of a given class.  The Object's class must be {\it exactly} this class: subclasses will not trigger this portrayal.
-\mthd{ public Portrayal getDefaultNullPortrayal() } Returns the ``default portrayal for null'': by default this method simply calls \method{getDefaultPortrayal()}.
-\mthd{ public abstract Portrayal getDefaultPortrayal() } Returns the ``default portrayal for non-null objects''.  Field Portrayals are required to implement this method to provide at {\it least} some fallback Simple Portrayal.
+\mthd{public Portrayal getPortrayalForObject(Object obj) } Returns the Simple Portrayal registered for the given object.  This runs through multiple checks to determine what Simple Portrayal to use: see the text above for an explanation as to how the method operates and what checks it uses.
+\mthd{public void setPortrayalForAll(Portrayal portrayal) } Sets the ``portrayalForAll'' of the Field Portrayal.
+\mthd{public Portrayal getPortrayalForAll() } Returns the ``portrayalForAll'' of the Field Portrayal, or null if not set.
+\mthd{public void setPortrayalForNull(Portrayal portrayal) } Sets the ``portrayalForNull'' of the Field Portrayal.
+\mthd{public Portrayal getPortrayalForNull() } Returns the ``portrayalForNull'' of the Field Portrayal, or null if not set.
+\mthd{public void setPortrayalForNonNull(Portrayal portrayal) } Sets the ``portrayalForNonNull'' of the Field Portrayal.
+\mthd{public Portrayal getPortrayalForNonNull() } Returns the ``portrayalForNonNull'' of the Field Portrayal, or null if not set.
+\mthd{public void setPortrayalForRemainder(Portrayal portrayal) } Sets the ``portrayalForRemainder'' of the Field Portrayal.
+\mthd{public Portrayal getPortrayalForRemainder() } Returns the ``portrayalForRemainder'' of the Field Portrayal, or null if not set.
+\mthd{public void setPortrayalForObject(Object obj, Portrayal portrayal) } Registers the portrayal for the given Object.
+\mthd{public void setPortrayalForClass(Class cls, Portrayal portrayal) } Registers the portrayal all Objects of a given class.  The Object's class must be {\it exactly} this class: subclasses will not trigger this portrayal.
+\mthd{public Portrayal getDefaultNullPortrayal() } Returns the ``default portrayal for null'': by default this method simply calls \method{getDefaultPortrayal()}.
+\mthd{public abstract Portrayal getDefaultPortrayal() } Returns the ``default portrayal for non-null objects''.  Field Portrayals are required to implement this method to provide at {\it least} some fallback Simple Portrayal.
 \end{methods}
 
 
 FieldPortrayal implements all the methods in Portrayal discussed above (\method{getName(...)}, \method{getStatus(...)}, \method{getInspector(...)}, \method{setSelected(...)}), implemented by calling \method{getPortrayalForObject(...)} to extract the Simple Portrayal, then calling the equivalent-named method on the Simple Portrayal.  ``Fast'' Field Portrayals override these methods to handle things themselves.  Field Portrayals also have one additional convenience version of \method{setSelected(...)}, which selects a whole Bag of objects at once:
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal}}
-\mthd{ setSelected(Bag locationWrappers, boolean selected) } Selects (or deselects) all object found in the LocationWrappers in the provided Bag.
+\mthd{setSelected(Bag locationWrappers, boolean selected) } Selects (or deselects) all object found in the LocationWrappers in the provided Bag.
 \end{methods}. 
 
 \subsection{2D Field Portrayals}
@@ -6725,15 +6728,15 @@ FieldPortrayal implements all the methods in Portrayal discussed above (\method{
 These two methods often share nearly identical code at the FieldPortrayal level.  As a result the default implementation of these two methods call a single method called \method{hitOrDraw(...)}: the \method{hitObjects(...)} version passes in null as the Graphics2D.  Quite a lot of FieldPortrayals in MASON simply implement the \method{hitOrDraw(...}) method only.
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal2D}}
-\mthd{ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) }  Draws the underlying Field.  Note that {\it object} is ignored (Display2D presently passes in the Field but could as well pass in null).  The default implementation simply calls \method{hitOrDraw(...)}.
-\mthd{ public void hitObjects(DrawInfo2D range, Bag putInHere) }  Places into the provided Bag all objects hit by the Clip rectangle of the given DrawInfo2D.  The default implementation simply calls \method{hitOrDraw(...)}.
-\mthd{ protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere) }  Either draws the underlying field or places into the Bag all objects hit by the clip rectangle of the given DrawInfo2D.  If graphics is null, then performs the hit-testing function: else performs the drawing function.
+\mthd{public void draw(Object object, Graphics2D graphics, DrawInfo2D info) }  Draws the underlying Field.  Note that {\it object} is ignored (Display2D presently passes in the Field but could as well pass in null).  The default implementation simply calls \method{hitOrDraw(...)}.
+\mthd{public void hitObjects(DrawInfo2D range, Bag putInHere) }  Places into the provided Bag all objects hit by the Clip rectangle of the given DrawInfo2D.  The default implementation simply calls \method{hitOrDraw(...)}.
+\mthd{protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere) }  Either draws the underlying field or places into the Bag all objects hit by the clip rectangle of the given DrawInfo2D.  If graphics is null, then performs the hit-testing function: else performs the drawing function.
 \end{methods}
 
 Field Portrayals are also {\bf scaled} in the X and Y dimensions to fit within the expected region of the Display2D when the user zooms in and out.  Sometimes it's helpful to know what the current scaling is:
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal2D}}
-\mthd{ public Double2D getScale(DrawInfo2D fieldPortrayalInfo) }  Returns, as a Double2D, the width and height of a \(1 \times 1\) unit in the Field Portrayal as specified by the given DrawInfo2D.  The default implementation throws a RuntimeException: but overriden versions will return a proper value.
+\mthd{public Double2D getScale(DrawInfo2D fieldPortrayalInfo) }  Returns, as a Double2D, the width and height of a \(1 \times 1\) unit in the Field Portrayal as specified by the given DrawInfo2D.  The default implementation throws a RuntimeException: but overriden versions will return a proper value.
 \end{methods}
 
 \sidebar{Why have methods for location?  Why not just query the field?}{Because certain fields may not have locations for objects, and thus no ``getLocation'' method.  Notably, Network doesn't have ``locations'' for its objects or edges.}
@@ -6747,12 +6750,12 @@ Field Portrayals are also {\bf scaled} in the X and Y dimensions to fit within t
 \end{itemize}
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal2D}}
-\mthd{ public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo) } Attempts to move the object to a new location in the Field to reflect a new position as provided.  The default implementation does nothing.
-\mthd{ public Point2D.Double getObjectPosition(Object object, DrawInfo2D fieldPortrayalInfo) } Returns the position of the given object, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole.  Returns null if the object does not exist or has no location which corresponds to a position.  
-\mthd{ public Point2D.Double getRelativeObjectPosition(Object location, Object otherObjectLocation, DrawInfo2D otherObjectInfo) } Returns the position of an object on-screen, using {\it another} object's location and the DrawInfo2D set up for that second object to draw itself.  This is used in unusual cases when there is no DrawInfo2D available for the field as a whole.
-\mthd{ public Object getObjectLocation(Object object, GUIState state) } Returns the location of the Object in the field, or null if this is not appropriate for the field or if the object does not exist.  The default implementation simply returns null.
-\mthd{ public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo) } Returns the position on-screen of a given location in the field, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole.  If locations are not appropriate for the field, returns null.  The default implementation simply returns null.
-\mthd{ public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo) } Returns the location in the field corresponding to a position on-screen, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole,  If locations are not appropriate for the field, returns null.  The default implementation simply returns null.
+\mthd{public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo) } Attempts to move the object to a new location in the Field to reflect a new position as provided.  The default implementation does nothing.
+\mthd{public Point2D.Double getObjectPosition(Object object, DrawInfo2D fieldPortrayalInfo) } Returns the position of the given object, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole.  Returns null if the object does not exist or has no location which corresponds to a position.  
+\mthd{public Point2D.Double getRelativeObjectPosition(Object location, Object otherObjectLocation, DrawInfo2D otherObjectInfo) } Returns the position of an object on-screen, using {\it another} object's location and the DrawInfo2D set up for that second object to draw itself.  This is used in unusual cases when there is no DrawInfo2D available for the field as a whole.
+\mthd{public Object getObjectLocation(Object object, GUIState state) } Returns the location of the Object in the field, or null if this is not appropriate for the field or if the object does not exist.  The default implementation simply returns null.
+\mthd{public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo) } Returns the position on-screen of a given location in the field, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole.  If locations are not appropriate for the field, returns null.  The default implementation simply returns null.
+\mthd{public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo) } Returns the location in the field corresponding to a position on-screen, given a DrawInfo2D currently appropriate for the Field Portrayal as a whole,  If locations are not appropriate for the field, returns null.  The default implementation simply returns null.
 \end{methods}
 
 Some ``fast'' Field Portrayals draw grids of rectangles.  There are two ways this can be done:
@@ -6771,8 +6774,8 @@ In some operating systems (notably MacOS X), the second approach is {\it much} f
 }
 
 \begin{methods}{\class{sim.portrayal.FieldPortrayal2D}}
-\mthd{ public void setBuffering(int val) } Sets the grid drawing approach to one of the three values above.
-\mthd{ public int getBuffering() } Returns the current drawing approach, one of the three above.
+\mthd{public void setBuffering(int val) } Sets the grid drawing approach to one of the three values above.
+\mthd{public int getBuffering() } Returns the current drawing approach, one of the three above.
 \end{methods}
 
 \subsection{Standard Field Portrayals}
@@ -6784,7 +6787,7 @@ MASON provides at one standard Field Portrayal for each of its fields: and speci
 \Class{sim.portrayal.grid.ObjectGridPortrayal2D} portrays fields of the form \class{sim.field.grid.ObjectGrid2D}.  ObjectGridPortrayal2D generates wrappers by fixing the Object but allowing it to change location.  If the object has moved, the wrapper will look nearby (no more than 3 units in any direction) to find the new location, and report this new location.  If the object has moved further than this, it's too expensive to track and the wrapper will simply report that the object's location is ``unknown''.
 
 \begin{methods}{\class{sim.portrayal.grid.ObjectGridPortrayal2D}}
-\mthd{ public LocationWrapper getWrapper(Object object, Int2D location) } Produces a wrapper which allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 3 grid cells away at any one time.
+\mthd{public LocationWrapper getWrapper(Object object, Int2D location) } Produces a wrapper which allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 3 grid cells away at any one time.
 \end{methods}
 
 \Class{sim.portrayal.grid.HexaObjectGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.ObjectGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility as ObjectGridPortrayal2D.
@@ -6802,9 +6805,9 @@ You can use the default draw policy (arbitrary ordering of Objects) or you can c
 SparseGridPortrayal2D also makes its own LocationWrappers: in this case, the Object stays fixed but its location may change.  Note that the location isn't provided in the method, as SparseGrid2D can look it up efficiently.   Unlike ObjectGridPortrayal2D, these LocationWrappers won't lose track of an object unless it has actually left the field.
 
 \begin{methods}{\class{sim.portrayal.grid.SparseGrid2D}}
-\mthd{ public LocationWrapper getWrapper(Object object) } Produces a wrapper which allows the location to change but which fixes the object.
-\mthd{ public void setDrawPolicy(DrawPolicy policy) } Sets the draw policy of the field portrayal.
-\mthd{ public DrawPolicy getDrawPolicy() } Returns the draw policy of the field portrayal.
+\mthd{public LocationWrapper getWrapper(Object object) } Produces a wrapper which allows the location to change but which fixes the object.
+\mthd{public void setDrawPolicy(DrawPolicy policy) } Sets the draw policy of the field portrayal.
+\mthd{public DrawPolicy getDrawPolicy() } Returns the draw policy of the field portrayal.
 \end{methods}
 
 \Class{sim.portrayal.grid.HexaSparseGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.SparseGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility and draw policy mechanism as SparseGridPortrayal2D.
@@ -6814,9 +6817,9 @@ SparseGridPortrayal2D also makes its own LocationWrappers: in this case, the Obj
 \Class{sim.portrayal.grid.DenseGridPortrayal2D} portrays fields of the form \class{sim.field.grid.DenseGrid2D}.  Just as in SparseGridPortrayal2D, these grids allow Objects to pile up at the same location, and so require a draw policy. But DenseGridPortrayal2D's LocationWrappers aren't like those in SparseGridPortrayal2D: they're instead exactly like those in ObjectGridPortrayal2D, and so can't track objects if they've moved too far away.
 
 \begin{methods}{\class{sim.portrayal.grid.DenseGrid2D}}
-\mthd{ public LocationWrapper getWrapper(Object object, Int2D location) } Produces a wrapper which allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 3 grid cells away at any one time.
-\mthd{ public void setDrawPolicy(DrawPolicy policy) } Sets the draw policy of the field portrayal.
-\mthd{ public DrawPolicy getDrawPolicy() } Returns the draw policy of the field portrayal.
+\mthd{public LocationWrapper getWrapper(Object object, Int2D location) } Produces a wrapper which allows the object to change but which loses the location of the object (it becomes ``unknown'') if it's moved more than 3 grid cells away at any one time.
+\mthd{public void setDrawPolicy(DrawPolicy policy) } Sets the draw policy of the field portrayal.
+\mthd{public DrawPolicy getDrawPolicy() } Returns the draw policy of the field portrayal.
 \end{methods}
 
 \Class{sim.portrayal.grid.HexaDenseGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.DenseGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility and draw policy mechanism as DenseGridPortrayal2D.
@@ -6833,17 +6836,17 @@ Last but not least, the ValueGridPortrayal2D portrayal must give a name to the n
 Relevant methods:
 
 \begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D}}
-\mthd{ public LocationWrapper getWrapper(double value, Int2D location) } Produces a wrapper which allows the value to change (it's the ``object'') but fixes the location.
-\mthd{ public void setMap(ColorMap map) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
-\mthd{ public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
-\mthd{ public void setValueName(String name) } Sets the name used to describe the values in the grid.
-\mthd{ public String getValueName() } Returns the name used to describe the values in the grid.
+\mthd{public LocationWrapper getWrapper(double value, Int2D location) } Produces a wrapper which allows the value to change (it's the ``object'') but fixes the location.
+\mthd{public void setMap(ColorMap map) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public void setValueName(String name) } Sets the name used to describe the values in the grid.
+\mthd{public String getValueName() } Returns the name used to describe the values in the grid.
 \end{methods}
 
 ValueGridPortrayal2D also has a special constructor which sets the value name:
 
 \begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D Constructor}}
-\mthd{ public ValueGridPortrayal2D(String valueName) } Constructs the ValueGridPortrayal2D, setting the name used to describe the values in the grid.
+\mthd{public ValueGridPortrayal2D(String valueName) } Constructs the ValueGridPortrayal2D, setting the name used to describe the values in the grid.
 \end{methods}
 
 When the user attempts to change the value in the grid, via an Inspector or some other GUI mechanism, this attempt is routed through a special method called \method{newValue(...)} which allows you to constrain what values the user can set.  The default constraints the values to within those permitted by the ColorMap, which is usually a good choice. But you can override it to do anything you like:
@@ -6866,11 +6869,11 @@ Objects in continuous space, unlike objects in grids, can wrap around if the fie
 It's also not quite clear where the boundary {\it is} in a continuous space, particularly if the Display2D's clipping has been turned off.  So ContinuousPortrayal2D has the option of drawing a {\it frame} around the boundary of the field.
 
 \begin{methods}{\class{sim.portrayal.continuous.ContinuousPortrayal2D}}
-\mthd{ public void setFrame(Paint p) } Causes the portrayal to draw a frame around the bounds of the field with the given paint.  If the paint is null, nothing is drawn.
-\mthd{ public Paint getFame() } Returns the paint with which the portrayal is drawing the frame.
-\mthd{ public void setDisplayingToroidally(boolean val) } Causes the portrayal to display wrap-around objects on both sides (or if in a corner, potentially four times), or clears this feature.
-\mthd{ public boolean isDisplayingToroidally() } Returns whether or not the portrayal is displaying objects toroidally.
-\mthd{ public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
+\mthd{public void setFrame(Paint p) } Causes the portrayal to draw a frame around the bounds of the field with the given paint.  If the paint is null, nothing is drawn.
+\mthd{public Paint getFame() } Returns the paint with which the portrayal is drawing the frame.
+\mthd{public void setDisplayingToroidally(boolean val) } Causes the portrayal to display wrap-around objects on both sides (or if in a corner, potentially four times), or clears this feature.
+\mthd{public boolean isDisplayingToroidally() } Returns whether or not the portrayal is displaying objects toroidally.
+\mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
 \end{methods}
 
 \begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at \(\langle 0, 0\rangle\) in a grid and in continuous space. }\label{mixingcontinuousandgrids}\vspace{-4em}\end{wrapfigure}
@@ -6893,17 +6896,17 @@ Most Fast Field Portrayals draw their grid of rectangles either by drawing separ
 The most common Fast Field Portrayal is \Class{sim.display.grid.FastValueGridPortrayal2D}, which draws grids of numbers as colored rectangles.  
 
 \begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D Constructor}}
-\mthd{ public FastValueGridPortrayal2D(String valueName, boolean immutableField) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid, and whether it's immutable.
-\mthd{ public FastValueGridPortrayal2D(String valueName) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid.  The field is assumed to not be immutable.
-\mthd{ public FastValueGridPortrayal2D(boolean immutable) } Constructs the FastValueGridPortrayal2D, using a default name to describe the values in the grid, and and specifying whether it's immutable.
-\mthd{ public FastValueGridPortrayal2D() } Constructs the FastValueGridPortrayal2D, using a default name to describe the values in the grid.  The field is assumed to not be immutable.
+\mthd{public FastValueGridPortrayal2D(String valueName, boolean immutableField) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid, and whether it's immutable.
+\mthd{public FastValueGridPortrayal2D(String valueName) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid.  The field is assumed to not be immutable.
+\mthd{public FastValueGridPortrayal2D(boolean immutable) } Constructs the FastValueGridPortrayal2D, using a default name to describe the values in the grid, and and specifying whether it's immutable.
+\mthd{public FastValueGridPortrayal2D() } Constructs the FastValueGridPortrayal2D, using a default name to describe the values in the grid.  The field is assumed to not be immutable.
 \end{methods}
 
 FastValueGridPortrayal2D shares the same methods with ValueGridPortrayal2D for setting the Color Map:
 
 \begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D}}
-\mthd{ public void setMap(ColorMap map) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
-\mthd{ public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public void setMap(ColorMap map) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
 \end{methods}
 
 There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.
@@ -6917,7 +6920,7 @@ In order to be converted into numbers, the Objects in the ObjectGrid2D must be e
 Alternatively, you can override the following method to convert the Objects as you see fit:
 
 \begin{methods}{\class{sim.portrayal.grid.FastObjectGridPortrayal2D}}
-\mthd{ public double doubleValue(Object obj) } Returns the double value associated with the given object in the field.  The default implementation returns the number value if the Object is a Number or is sim.util.Valuable. Else if the Object is null, 0.0 is returned, else 1.0 is returned.  Customize this as you see fit if necessary.
+\mthd{public double doubleValue(Object obj) } Returns the double value associated with the given object in the field.  The default implementation returns the number value if the Object is a Number or is sim.util.Valuable. Else if the Object is null, 0.0 is returned, else 1.0 is returned.  Customize this as you see fit if necessary.
 \end{methods}
 
 Once they're numbers, ObjectGrid2D uses exactly the same Color Map methods as FastValueGridPortrayal2D to convert them into colors.
@@ -6925,8 +6928,8 @@ Once they're numbers, ObjectGrid2D uses exactly the same Color Map methods as Fa
 FastObjectGridPortrayal2D has the following constructors:
 
 \begin{methods}{\class{sim.portrayal.grid.FastObjectGridPortrayal2D Constructor}}
-\mthd{ public FastObjectGridPortrayal2D(boolean immutable) } Constructs the FastObjectGridPortrayal2D, specifying whether it's immutable.
-\mthd{ public FastValueGridPortrayal2D() } Constructs the FastObjectGridPortrayal2D.  The field is assumed to not be immutable.
+\mthd{public FastObjectGridPortrayal2D(boolean immutable) } Constructs the FastObjectGridPortrayal2D, specifying whether it's immutable.
+\mthd{public FastValueGridPortrayal2D() } Constructs the FastObjectGridPortrayal2D.  The field is assumed to not be immutable.
 \end{methods}
 
 Again, there is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastObjectGridPortrayal2D}. It has exactly the same constructors and issues as FastObjectGridPortrayal2D.
@@ -6958,7 +6961,7 @@ The problem here is that NetworkPortrayal2D thus needs {\it two} fields: the Net
 A SpatialNetwork2D is constructed like this:
 
 \begin{methods}{\class{sim.portrayal.network.SpatialNetwork2D Constructor}}
-\mthd{ public SpatialNetwork2D(SparseField2D field, Network network) } Constructs the field with the given sparse field (either SparseGrid2D or Continuous2D) and a Network.
+\mthd{public SpatialNetwork2D(SparseField2D field, Network network) } Constructs the field with the given sparse field (either SparseGrid2D or Continuous2D) and a Network.
 \end{methods}
 
 In fact, if you're careful, you can embed the {\bf from} nodes in one sparse grid or continuous field, and embed the {\bf to} nodes in {\it another} field.  This might be useful, for example, for modeling a set of observers who observe a set of targets.
@@ -6966,8 +6969,8 @@ In fact, if you're careful, you can embed the {\bf from} nodes in one sparse gri
 To set the {\bf auxillary field} (the field of ``to'' nodes, if you want to differentiate them from the ``from'' nodes), and to get a given Object's location and the dimensions of the field, you have the methods:
  
 \begin{methods}{\class{sim.portrayal.network.SpatialNetwork2D}}
-\mthd{ public setAuxillaryField(SparseField2D field) } Sets the auxiliary field (the field for the ``to'' nodes) if it is different than the primary SparseField2D.
-\mthd{ public Double2D getDimensions() } Returns the width and height of the primary field.
+\mthd{public setAuxillaryField(SparseField2D field) } Sets the auxiliary field (the field for the ``to'' nodes) if it is different than the primary SparseField2D.
+\mthd{public Double2D getDimensions() } Returns the width and height of the primary field.
 \end{methods}
 
 Drawing edges isn't the same as drawing objects at single locations: edges require a start point and an endpoint.  Thus NetworkPortrayal2D sends to its SimplePortrayals a special subclass of DrawInfo2D, called \Class{sim.portrayal.network.EdgeDrawInfo2D}, which adds the second point (the endpoint):
@@ -6980,18 +6983,18 @@ The EdgeDrawInfo2D class has several constructors which extend the standard Draw
 
 
 \begin{methods}{\class{sim.portrayal.EdgeDrawInfo2D Constructor}}
-\mthd{ public EdgeDrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip,}
+\mthd{public EdgeDrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip,}
 \hsp{\fill}{\sf Point2D.Double other) } \\
 Builds a DrawInfo2D from the given draw and clip rectangles.  precise and selected are both set to false and location is set to null.   The second point is provided by ``other''.
-\mthd{ public EdgeDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double other)} Builds a DrawInfo2D with its draw and clip rectangles translated by a certain factor from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.   The second point is provided by ``other''.
-\mthd{ public EdgeDrawInfo2D(DrawInfo2D other, Point2D.Double other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.   The second point is provided by ``other''.
-\mthd{ public EdgeDrawInfo2D(EdgeDrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D, as well as the second point.   precise is copied from the other, but selected is set to false and location is set to null.
+\mthd{public EdgeDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double other)} Builds a DrawInfo2D with its draw and clip rectangles translated by a certain factor from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.   The second point is provided by ``other''.
+\mthd{public EdgeDrawInfo2D(DrawInfo2D other, Point2D.Double other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.   The second point is provided by ``other''.
+\mthd{public EdgeDrawInfo2D(EdgeDrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D, as well as the second point.   precise is copied from the other, but selected is set to false and location is set to null.
 \end{methods}
 
 EdgeDrawInfo2D has the following method:
 
 \begin{methods}{\class{sim.portrayal.EdgeDrawInfo2D}}
-\mthd{ public String toString()) } Produces a String describing the EdgeDrawInfo2D, essentially an extension to \method{DrawInfo2D.toString()}.
+\mthd{public String toString()) } Produces a String describing the EdgeDrawInfo2D, essentially an extension to \method{DrawInfo2D.toString()}.
 \end{methods} 
 
 \subsection{Implementing a Field Portrayal}
@@ -7165,7 +7168,7 @@ The problem is that the location is an immutable object such as \class{sim.util.
 StableLocations implement the \Class{sim.portrayal.inspector.StableLocation} interface, which defines a single method (though you'll need to implement more methods than this):
 
 \begin{methods}{\class{sim.portrayal.inspector.StableLocation}}
-\mthd{ public String toString() } Returns the current location as a String.
+\mthd{public String toString() } Returns the current location as a String.
 \end{methods}
 
 Additionally, a StableLocation will provide various Java Bean Properties (get/set methods) for each of the features of the location.  For example, MASON provides the StableLocation \class{sim.portrayal.inspector.StableDouble2D}, which provides three properties: the present or last known X value, the present or last known Y value, and whether or not the object presently exists in the field.
@@ -7529,12 +7532,12 @@ ImagePortrayal2D is a subclass of RectanglePortrayal2D, so it has an \variable{p
 ImagePortrayal2D has a number of unusual constructors, so it's worthwhile explaining them here.  
 
 \begin{methods}{\class{sim.portrayal.simple.ImagePortrayal Constructor}}
-\mthd{ public ImagePortrayal(javax.swing.ImageIcon icon) } Creates an ImagePortrayal at a scale of 1.0, and using the image from the provided ImageIcon.
-\mthd{ public ImagePortrayal(javax.swing.ImageIcon icon, double scale) } Creates an ImagePortrayal at the provided scale, and using the image from the provided ImageIcon.
-\mthd{ public ImagePortrayal(Class cls, String resourceName) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is 1.0.
-\mthd{ public ImagePortrayal(Class cls, String resourceName, double scale) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is provided.
-\mthd{ public ImagePortrayal(Image image) } Creates an ImagePortrayal from the given image, and a scale of 1.0.
-\mthd{ public ImagePortrayal(Image image, double scale) } Creates an ImagePortrayal from the given image, using the given scale.
+\mthd{public ImagePortrayal(javax.swing.ImageIcon icon) } Creates an ImagePortrayal at a scale of 1.0, and using the image from the provided ImageIcon.
+\mthd{public ImagePortrayal(javax.swing.ImageIcon icon, double scale) } Creates an ImagePortrayal at the provided scale, and using the image from the provided ImageIcon.
+\mthd{public ImagePortrayal(Class cls, String resourceName) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is 1.0.
+\mthd{public ImagePortrayal(Class cls, String resourceName, double scale) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is provided.
+\mthd{public ImagePortrayal(Image image) } Creates an ImagePortrayal from the given image, and a scale of 1.0.
+\mthd{public ImagePortrayal(Image image, double scale) } Creates an ImagePortrayal from the given image, using the given scale.
 \end{methods}
 
 You could override ImagePortrayal2D to change its image to reflect a change in status of the underlying object, but it's not very efficient.  Instead I'd use a special wrapper portrayal, \class{sim.portrayal.simple.FacetedPortrayal2D} instead.  See Section \ref{sim.portrayal.simple.FacetedPortrayal2D}.
@@ -7582,10 +7585,10 @@ The ``paint'' of the edge is {\it fromPaint}.  When two paints are required (as 
 You can set all these in a constructor:
 
 \begin{methods}{\class{sim.portrayal.network.SimpleEdgePortrayal2D Constructor}}
-\mthd{ public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint, Font labelFont) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, label paint, and label font.  If the label paint is \variable{null}, no label will be drawn.
-\mthd{ public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
-\mthd{ public SimpleEdgePortrayal2D(Paint edgePaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given edge paint (used for both the from-paint and the to-paint) and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
-\mthd{ public SimpleEdgePortrayal2D() } Creates a SimpleEdgePortrayal which draws using black as its edge color, and no label.
+\mthd{public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint, Font labelFont) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, label paint, and label font.  If the label paint is \variable{null}, no label will be drawn.
+\mthd{public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
+\mthd{public SimpleEdgePortrayal2D(Paint edgePaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given edge paint (used for both the from-paint and the to-paint) and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
+\mthd{public SimpleEdgePortrayal2D() } Creates a SimpleEdgePortrayal which draws using black as its edge color, and no label.
 \end{methods}
 
 Two other variables control how the edge is drawn:
@@ -7617,12 +7620,12 @@ The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger 
 Various methods can be used to set these values:
 
 \begin{methods}{\class{sim.portrayal.network.SimpleEdgePortrayal2D}}
-\mthd{ public int getShape() } Returns the edge shape, one of \variable{SHAPE\_LINE} and \variable{SHAPE\_TRIANGLE}.
-\mthd{ public void setShape(int shape) } Sets the edge shape, one of \variable{SHAPE\_LINE} and \variable{SHAPE\_TRIANGLE}.
-\mthd{ public double getBaseWidth() } Returns the base width of the edge (0.0 by default).
-\mthd{ public void setBaseWidth(double width) } Sets the base width of the edge.  This must be \(\geq 0.0\).  You must set the base width of a triangle in order to see a triangle.
-\mthd{ public int getScaling() } Returns the scaling of the edge, one of \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE} (the default).
-\mthd{ public void setScaling(int scaling) } Returns the scaling of the edge to one of \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE} (the default).
+\mthd{public int getShape() } Returns the edge shape, one of \variable{SHAPE\_LINE} and \variable{SHAPE\_TRIANGLE}.
+\mthd{public void setShape(int shape) } Sets the edge shape, one of \variable{SHAPE\_LINE} and \variable{SHAPE\_TRIANGLE}.
+\mthd{public double getBaseWidth() } Returns the base width of the edge (0.0 by default).
+\mthd{public void setBaseWidth(double width) } Sets the base width of the edge.  This must be \(\geq 0.0\).  You must set the base width of a triangle in order to see a triangle.
+\mthd{public int getScaling() } Returns the scaling of the edge, one of \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE} (the default).
+\mthd{public void setScaling(int scaling) } Returns the scaling of the edge to one of \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE} (the default).
 \end{methods}
 
 \paragraph{Edge Labels and Weights}
@@ -7636,10 +7639,10 @@ If you set \method{setAdjustsThickness(true)}, you can also turn on SimpleEdgePo
 To determine the numerical value of the edge weight, SimpleEdgePortrayal2D calls a method called \method{getPositiveWeight(...)}, which you can override if you like.  Here are the methods in question:
 
 \begin{methods}{\class{sim.portrayal.network.SimpleEdgePortrayal2D}}
-\mthd{ public String getLabel(Edge edge, EdgeDrawInfo2D info) } Returns a label for the edge.  The default implementation returns the empty String if the \variable{edge.info} is null, else it calls \method{edge.info.toString()}.
-\mthd{ public double getPositiveWeight(Edge edge, EdgeDrawInfo2D info) } Returns a positive weight for the edge.  The default implementation returns the absolute value of the \variable{edge.info} object if it is a \class{java.lang.Number} or if it is \class{sim.util.Valuable}, else it returns 1.0.
-\mthd{ public boolean getAdjustsThickness() } Returns whether or not the portrayal is adjusting the edge width to reflect the edge label interpreted as a weight.
-\mthd{ public void setAdjustsThickness(boolean val) } Sets whether or not the portrayal is adjusting the edge width to reflect the edge label interpreted as a weight.
+\mthd{public String getLabel(Edge edge, EdgeDrawInfo2D info) } Returns a label for the edge.  The default implementation returns the empty String if the \variable{edge.info} is null, else it calls \method{edge.info.toString()}.
+\mthd{public double getPositiveWeight(Edge edge, EdgeDrawInfo2D info) } Returns a positive weight for the edge.  The default implementation returns the absolute value of the \variable{edge.info} object if it is a \class{java.lang.Number} or if it is \class{sim.util.Valuable}, else it returns 1.0.
+\mthd{public boolean getAdjustsThickness() } Returns whether or not the portrayal is adjusting the edge width to reflect the edge label interpreted as a weight.
+\mthd{public void setAdjustsThickness(boolean val) } Sets whether or not the portrayal is adjusting the edge width to reflect the edge label interpreted as a weight.
 \end{methods}
 
 If you'd like to (say) change the edge {\it color} to reflect a weight or label, an easy way is to subclass the edge in a manner similar to the example given for the Basic Simple Portrayals.  For example, the following code might change color based on whether or not the \variable{edge.info} value is null:
@@ -7715,10 +7718,10 @@ The baseline (the bottom of the letters) of the text is drawn relative to this p
 The constructors should now be clear:
 
 \begin{methods}{\class{sim.portrayal.simple.LabelledPortrayal2D Constructor}}
-\mthd{ public LabelledPortrayal2D(SimplePortrayal2D child, String label)}  Creates a LabelledPortrayal2D which always draws its label at the default location, color and font, and left-alignment.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ LabelledPortrayal2D(SimplePortrayal2D child, String label, Paint paint, boolean onlyLabelWhenSelected)}  Creates a LabelledPortrayal2D with default location values, left-aligned, with the given paint and label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public LabelledPortrayal2D(SimplePortrayal2D child, double scaley, String label, Paint paint, boolean onlyLabelWhenSelected)} Creates a LabelledPortrayal2D with the given child, Y scale value to specify the location of the label (plus a 10 pixel y offset), left-aligned, and providing the text paint, label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public LabelledPortrayal2D(SimplePortrayal2D child, int offsetx, int offsety, double scalex, double scaley,}
+\mthd{public LabelledPortrayal2D(SimplePortrayal2D child, String label)}  Creates a LabelledPortrayal2D which always draws its label at the default location, color and font, and left-alignment.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{LabelledPortrayal2D(SimplePortrayal2D child, String label, Paint paint, boolean onlyLabelWhenSelected)}  Creates a LabelledPortrayal2D with default location values, left-aligned, with the given paint and label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public LabelledPortrayal2D(SimplePortrayal2D child, double scaley, String label, Paint paint, boolean onlyLabelWhenSelected)} Creates a LabelledPortrayal2D with the given child, Y scale value to specify the location of the label (plus a 10 pixel y offset), left-aligned, and providing the text paint, label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public LabelledPortrayal2D(SimplePortrayal2D child, int offsetx, int offsety, double scalex, double scaley,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf Font font, int align, String label, Paint paint, boolean onlyLabelWhenSelected)}\\
 Creates a LabelledPortrayal2D with the given child, using the offset and scale values to specify the location of the label, and providing the font, text alignment (one of \variable{ALIGN\_CENTER}, \variable{ALIGN\_LEFT}, or \variable{ALIGN\_RIGHT}), text paint, label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \end{methods}
@@ -7736,14 +7739,14 @@ Label scaling works much like the scaling in EdgePortrayal2D.  By default, the f
 Here are LabelledPortrayal's (few) methods of interest:
 
 \begin{methods}{\class{sim.portrayal.simple.LabelledPortrayal2D}}
-\mthd{ public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
-\mthd{ public String getLabel(Object object, DrawInfo2D info)}  Returns the label string to draw.
-\mthd{ public boolean isLabelShowing()}  Returns whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
-\mthd{ public void setLabelShowing(boolean val)}  Sets whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
-\mthd{ public boolean getOnlyLabelWhenSelected()} Returns whether the label will be shown only if the object is selected.
-\mthd{ public void setOnlyLabelWhenSelected(boolean val)} Sets whether the label will be shown only if the object is selected.
-\mthd{ public int getLabelScaling()}  Returns the label scaling setting, either \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE}.
-\mthd{ public void setLabelScaling(int val)}  Sets the label scaling setting, either \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE}.
+\mthd{public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
+\mthd{public String getLabel(Object object, DrawInfo2D info)}  Returns the label string to draw.
+\mthd{public boolean isLabelShowing()}  Returns whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
+\mthd{public void setLabelShowing(boolean val)}  Sets whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
+\mthd{public boolean getOnlyLabelWhenSelected()} Returns whether the label will be shown only if the object is selected.
+\mthd{public void setOnlyLabelWhenSelected(boolean val)} Sets whether the label will be shown only if the object is selected.
+\mthd{public int getLabelScaling()}  Returns the label scaling setting, either \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE}.
+\mthd{public void setLabelScaling(int val)}  Sets the label scaling setting, either \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE}.
 \end{methods}
 
 \paragraph{Highlighting}
@@ -7757,19 +7760,19 @@ MASON also provides a class for doing simple highlighting as well: \Class{sim.po
 The constructors should be straightforward:
 
 \begin{methods}{\class{sim.portrayal.simple.CircledPortrayal2D Constructor}}
-\mthd{ public CircledPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and the size of the ring in both pixel offset and model scale.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public CircledPortrayal2D(SimplePortrayal2D child, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and default size settings.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public CircledPortrayal2D(SimplePortrayal2D child)}  Creates a CircledPortrayal2D with the given child, and default settings for the ring size and paint (blue).  The ring is always shown.   If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public CircledPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and the size of the ring in both pixel offset and model scale.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public CircledPortrayal2D(SimplePortrayal2D child, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and default size settings.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public CircledPortrayal2D(SimplePortrayal2D child)}  Creates a CircledPortrayal2D with the given child, and default settings for the ring size and paint (blue).  The ring is always shown.   If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \end{methods}
 
 Methods of interest are likewise similar to LabelledPortrayal2D:
 
 \begin{methods}{\class{sim.portrayal.simple.CircledPortrayal2D}}
-\mthd{ public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
-\mthd{ public boolean isCircleShowing()}  Returns whether CircledPortrayal2D will show its circle.  If false, then CircledPortrayal2D will not show its circle no matter what its settings are regarding object selection.  If true, then CircledPortrayal2D may still not show its circle depending on object selection settings.
-\mthd{ public void setCircleShowing(boolean val)}  Sets whether portrayal will show its circle.  If false, then CircledPortrayal2D will not show its circle no matter what its settings are regarding object selection.  If true, then CircledPortrayal2D may still not show its circle depending on object selection settings.
-\mthd{ public boolean getOnlyCircleWhenSelected()} Returns whether the circle will be shown only if the object is selected..
-\mthd{ public void setOnlyCircleWhenSelected(boolean val)} Sets whether the circle will be shown only if the object is selected..
+\mthd{public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
+\mthd{public boolean isCircleShowing()}  Returns whether CircledPortrayal2D will show its circle.  If false, then CircledPortrayal2D will not show its circle no matter what its settings are regarding object selection.  If true, then CircledPortrayal2D may still not show its circle depending on object selection settings.
+\mthd{public void setCircleShowing(boolean val)}  Sets whether portrayal will show its circle.  If false, then CircledPortrayal2D will not show its circle no matter what its settings are regarding object selection.  If true, then CircledPortrayal2D may still not show its circle depending on object selection settings.
+\mthd{public boolean getOnlyCircleWhenSelected()} Returns whether the circle will be shown only if the object is selected..
+\mthd{public void setOnlyCircleWhenSelected(boolean val)} Sets whether the circle will be shown only if the object is selected..
 \end{methods}
 
 
@@ -7781,7 +7784,7 @@ Last but not least, MASON can add an {\bf orientation marker} to your SimplePort
 In order to display an orientation, OrientedPortrayal2D must know what the orientation {\it is}.  To do this, it expects that the underlying object in the model implements the \Class{sim.portrayal.Oriented2D} interface.  This interface defines a single method:
 
 \begin{methods}{\class{sim.portrayal.Oriented2D}}
-\mthd{ public double orientation2D()} Returns the current orientation of the object, in radians.
+\mthd{public double orientation2D()} Returns the current orientation of the object, in radians.
 \end{methods}
 
 \sidebara{Why isn't this method a proper Java Bean Property, that is, \method{\textbf{get}Orientation2D()}?}{Because MASON doesn't want to require the simulation designer to have this orientation appear in an Inspector when the object is inspected.  You can always create a property called \method{getOrientation2D()} which calls \method{orientation2D()}.  We won't claim this is a {\it good} reason: but it {\it is} a reason, so there.}{2em}  If the object implements this method, then OrientedPortrayal2D queries it to determine how to specify the orientation of the object.  If not, then the orientation is assumed to be 0.0.
@@ -7824,28 +7827,28 @@ One thing to be aware of is that Oriented2D responds to hit-testing on its orien
 OrientedPortrayal2D's constructors:
 
 \begin{methods}{\class{sim.portrayal.simple.OrientedPortrayal2D Constructor}}
-\mthd{ public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, int shape)}  Creates a OrientedPortrayal2D with the given child, shape, shape paint, and the size of the shape in both pixel offset and model scale.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint)}  Creates a OrientedPortrayal2D with the given child, shape paint, and the size of the shape in both pixel offset and model scale.  The shape is a line.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale)}  Creates a OrientedPortrayal2D with the given child, and the size of the shape in both pixel offset and model scale.  The shape is a line, and drawn in red.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public OrientedPortrayal2D(SimplePortrayal2D child, Paint paint)}  Creates a OrientedPortrayal2D with the given child and shape paint.  The shape is a line, and drawn with the default scale and offset.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
-\mthd{ public OrientedPortrayal2D(SimplePortrayal2D child)}  Creates a OrientedPortrayal2D with the given child.  The shape is a line, and drawn with the default scale and offset, and in red.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, int shape)}  Creates a OrientedPortrayal2D with the given child, shape, shape paint, and the size of the shape in both pixel offset and model scale.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint)}  Creates a OrientedPortrayal2D with the given child, shape paint, and the size of the shape in both pixel offset and model scale.  The shape is a line.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale)}  Creates a OrientedPortrayal2D with the given child, and the size of the shape in both pixel offset and model scale.  The shape is a line, and drawn in red.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public OrientedPortrayal2D(SimplePortrayal2D child, Paint paint)}  Creates a OrientedPortrayal2D with the given child and shape paint.  The shape is a line, and drawn with the default scale and offset.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
+\mthd{public OrientedPortrayal2D(SimplePortrayal2D child)}  Creates a OrientedPortrayal2D with the given child.  The shape is a line, and drawn with the default scale and offset, and in red.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \end{methods}
 
 OrientedPortrayal2D has certain important methods needed to set features:
 
 
 \begin{methods}{\class{sim.portrayal.simple.OrientedPortrayal2D}}
-\mthd{ public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
-\mthd{ public int getShape()}  Returns the shape being drawn.  The default is \variable{SHAPE\_LINE}.
-\mthd{ public void setShape(int shape)}  Sets the shape being drawn.  The default is \variable{SHAPE\_LINE}.
-\mthd{ public boolean isDrawFilled()}  Returns whether OrientedPortrayal2D will fill (versus draw the outline of) its orientation marker shape.  Lines are never filled regardless of the setting of this property.  The default is true (shapes are drawn filled).
-\mthd{ public void setDrawFilled(boolean val)}  Sets whether OrientedPortrayal2D will fill (versus draw the outline of) its orientation marker shape.  Lines are never filled regardless of the setting of this property.  The default is true (shapes are drawn filled).
-\mthd{ public boolean isOrientationShowing()}  Returns whether OrientedPortrayal2D will show its orientation marker shape.  If false, then OrientedPortrayal2D will not show its shape no matter what its settings are regarding object selection.  If true, then OrientedPortrayal2D may still not show its shape depending on object selection settings.
-\mthd{ public void setOrientationShowing(boolean val)}  Sets whether portrayal will show its orientation marker shape.  If false, then OrientedPortrayal2D will not show its shape no matter what its settings are regarding object selection.  If true, then OrientedPortrayal2D may still not show its shape depending on object selection settings.
-\mthd{ public boolean getOnlyDrawWhenSelected()} Returns whether the orientation marker shape will be shown only if the object is selected.
-\mthd{ public void setOnlyDrawWhenSelected(boolean val)} Sets whether the orientation marker shape will be shown only if the object is selected.
-\mthd{ public boolean isOrientationHittable()} Returns whether the orientation marker shape will respond to hit testing in addition to the underlying portrayal.
-\mthd{ public void setOrientationHittable(boolean val)} Sets whether the orientation marker shape will respond to hit testing in addition to the underlying portrayal.
+\mthd{public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
+\mthd{public int getShape()}  Returns the shape being drawn.  The default is \variable{SHAPE\_LINE}.
+\mthd{public void setShape(int shape)}  Sets the shape being drawn.  The default is \variable{SHAPE\_LINE}.
+\mthd{public boolean isDrawFilled()}  Returns whether OrientedPortrayal2D will fill (versus draw the outline of) its orientation marker shape.  Lines are never filled regardless of the setting of this property.  The default is true (shapes are drawn filled).
+\mthd{public void setDrawFilled(boolean val)}  Sets whether OrientedPortrayal2D will fill (versus draw the outline of) its orientation marker shape.  Lines are never filled regardless of the setting of this property.  The default is true (shapes are drawn filled).
+\mthd{public boolean isOrientationShowing()}  Returns whether OrientedPortrayal2D will show its orientation marker shape.  If false, then OrientedPortrayal2D will not show its shape no matter what its settings are regarding object selection.  If true, then OrientedPortrayal2D may still not show its shape depending on object selection settings.
+\mthd{public void setOrientationShowing(boolean val)}  Sets whether portrayal will show its orientation marker shape.  If false, then OrientedPortrayal2D will not show its shape no matter what its settings are regarding object selection.  If true, then OrientedPortrayal2D may still not show its shape depending on object selection settings.
+\mthd{public boolean getOnlyDrawWhenSelected()} Returns whether the orientation marker shape will be shown only if the object is selected.
+\mthd{public void setOnlyDrawWhenSelected(boolean val)} Sets whether the orientation marker shape will be shown only if the object is selected.
+\mthd{public boolean isOrientationHittable()} Returns whether the orientation marker shape will respond to hit testing in addition to the underlying portrayal.
+\mthd{public void setOrientationHittable(boolean val)} Sets whether the orientation marker shape will respond to hit testing in addition to the underlying portrayal.
 \end{methods}
 
 
@@ -7857,8 +7860,8 @@ OrientedPortrayal2D has certain important methods needed to set features:
 FacetedPortrayal2D is different than other wrapper portrayals because it takes more than one SimplePortrayal.  To create a FacetedPortrayal2D you need to provide all those children, plus whether you'd like to portray with {\it all} of them or with a particular one depending on the current object status.  
 
 \begin{methods}{\class{sim.portrayal.simple.FacetedPortrayal2D Constructor}}
-\mthd{ public FacetedPortrayal2D(SimplePortrayal2D[] children)}  Creates a FacetedPortrayal2D with the given children, set up to select one at a time based on the current object value.
-\mthd{ public FacetedPortrayal2D(SimplePortrayal2D[] children, boolean portrayAllChildren)}  Creates a FacetedPortrayal2D with the given children, and whether or not to portray all of them, or rather one selected at a time based on the current object value.
+\mthd{public FacetedPortrayal2D(SimplePortrayal2D[] children)}  Creates a FacetedPortrayal2D with the given children, set up to select one at a time based on the current object value.
+\mthd{public FacetedPortrayal2D(SimplePortrayal2D[] children, boolean portrayAllChildren)}  Creates a FacetedPortrayal2D with the given children, and whether or not to portray all of them, or rather one selected at a time based on the current object value.
 \end{methods}
 
 \paragraph{Portraying all SimplePortrayal2Ds at Once}  Why would you want to do this?  Mostly to concatenate two shapes together in a simple way.  For example: to portray an object as a circle plus a rectangle.  I agree though, it's not going to be used much.  Which leads us to...
@@ -7872,7 +7875,7 @@ Or you could use this to make a SimplePortrayal2D appear and disappear.  Here, y
 FacetedPortrayal2D also doesn't at present pass on mouse events to its children.
 
 \begin{methods}{\class{sim.portrayal.simple.FacetedPortrayal2D}}
-\mthd{ public int getChildIndex(Object object, int numIndices)}  Returns the child index to use based on the given object.  The index must be \(\geq 0\) but less than {\it numIndices}.
+\mthd{public int getChildIndex(Object object, int numIndices)}  Returns the child index to use based on the given object.  The index must be \(\geq 0\) but less than {\it numIndices}.
 AdjustablePortrayal2D does {\it not} pass through the \method{handleMouseEvent(...)} method by :
 \mthd{public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, LocationWrapper wrapper,}\hsp{\fill}{\sf MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)}
 Always returns false: no mouse events are passed to children.
@@ -7890,14 +7893,14 @@ A note about AffineTransforms: they change {\it everything}: the text, the thick
 At any rate, the constructors:
 
 \begin{methods}{\class{sim.portrayal.simple.TransformedPortrayal2D Constructor}}
-\mthd{ public TransformedPortrayal2D(SimplePortrayal2D child, AffineTransform transform)}  Creates a TransformedPortrayal2D with the given child and affine transform.
+\mthd{public TransformedPortrayal2D(SimplePortrayal2D child, AffineTransform transform)}  Creates a TransformedPortrayal2D with the given child and affine transform.
 \end{methods}
 
 And the methods of interest:
 
 \begin{methods}{\class{sim.portrayal.simple.TransformedPortrayal2D}}
-\mthd{ public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
-\mthd{ public boolean hitObject(Object object, DrawInfo2D range)}  Always returns false.
+\mthd{public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
+\mthd{public boolean hitObject(Object object, DrawInfo2D range)}  Always returns false.
 \mthd{public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, LocationWrapper wrapper,}\hsp{\fill}{\sf MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)}
 Always returns false: no mouse events are passed its child.
 \end{methods}
@@ -7914,7 +7917,7 @@ The wrapper portrayals \Class{sim.portrayal.simple.MovablePortrayal2D} and \Clas
 Let's start with MovablePortrayal2D.  If you wrap a SimplePortrayal2D with this object, the user will be able to move the object by dragging it with the mouse.  When you move an object, you also select it (and thus deselect other objects).  If you use a MovablePortrayal2D in conjunction with an AdjustablePortrayal2D (discussed next), you must wrap the MovablePortrayal2D inside the AdjustablePortrayal2D, not the other way around.  MovablePortrayal takes a single, simple Constructor: 
 
 \begin{methods}{\class{sim.portrayal.simple.MovablePortrayal2D Constructor}}
-\mthd{ public MovablePortrayal2D(SimplePortrayal2D child)}  Creates a MovablePortrayal2D with the given child.
+\mthd{public MovablePortrayal2D(SimplePortrayal2D child)}  Creates a MovablePortrayal2D with the given child.
 \end{methods}
 
 How do you {\it prevent} objects from being moved?  Ordinarily, without a MovablePortrayal2D the user can't move an object by dragging it.  But consider the following example.  All the objects in your field, even though they're different classes, use the same SimplePortrayal2D.  You have wrapped this in a MovablePortrayal2D and installed the MovablePortrayal2D with \method{setPortrayalForAll()}.  So now all of your objects are movable.  But what if you didn't want some of them movable?
@@ -7922,7 +7925,7 @@ How do you {\it prevent} objects from being moved?  Ordinarily, without a Movabl
 Of course, you could break your SimplePortrayal2Ds out by object or by class, some with MovablePortrayal2D and some without.  This might be irritating though.  But there's an alternative.  You can make your objects \Class{sim.portrayal.Fixed2D}.  This interface declares a single method which controls whether the object may be moved by MovablePortrayal2D.  You can also use this interface to keep track of where your object is being moved as the user drags it about, and to adjust the user's desired drag location (for example, to constrain the object to only be moved along a line).  Fixed2D defines a single method:
 
 \begin{methods}{\class{sim.portrayal.Fixed2D}}
-\mthd{ public boolean maySetLocation(Object field, Object newObjectLocation)}  Given the field and the proposed new location of the object in the field, dictates how a MovablePortrayal2D interacts with this object.  If you don't want this object to be movable by a MovablePortrayal2D, simply return false.  If you are fine with being moved, return true.  If you would simply like to be informed of where you are being moved\,---\,for example, to update internal belief about your location\,---\,update this information using {\it newObjectLocation} and return true.  If you would like to modify the proposed location, move the object yourself to the modified location in the field, then return false.
+\mthd{public boolean maySetLocation(Object field, Object newObjectLocation)}  Given the field and the proposed new location of the object in the field, dictates how a MovablePortrayal2D interacts with this object.  If you don't want this object to be movable by a MovablePortrayal2D, simply return false.  If you are fine with being moved, return true.  If you would simply like to be informed of where you are being moved\,---\,for example, to update internal belief about your location\,---\,update this information using {\it newObjectLocation} and return true.  If you would like to modify the proposed location, move the object yourself to the modified location in the field, then return false.
 \end{methods}
 
 The \class{sim.portrayal.simple.AdjustablePortayal2D} wrapper portrayal gives the user an easy way to rotate and/or scale your object.  You're responsible for defining what ``rotation'' and ``scaling'' mean: for example, you could use these hooks for something else, like changing the age and temperature of your object.  But usually they're used for exactly what you'd expect.
@@ -7930,7 +7933,7 @@ The \class{sim.portrayal.simple.AdjustablePortayal2D} wrapper portrayal gives th
 Like MovablePortrayal2D, AdjustablePortrayal2D has a single straightforward constructor:
 
 \begin{methods}{\class{sim.portrayal.simple.AdjustablePortrayal2D Constructor}}
-\mthd{ public AdjustablePortrayal2D(SimplePortrayal2D child)}  Creates a AdjustablePortrayal2D with the given child.
+\mthd{public AdjustablePortrayal2D(SimplePortrayal2D child)}  Creates a AdjustablePortrayal2D with the given child.
 \end{methods}
 
 If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-and-knob widget whenever the object is selected (see Figure \ref{trailandring} below).  If the user rotates the knob on the ring, the object will be asked to reorient itself.  If the user drags the knob {\it off} of the ring (the knob doesn't presently move off the ring, but MASON will understand) the object will be asked to rescale itself.  
@@ -7938,8 +7941,8 @@ If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-a
 \sidebar{Oriented2D doesn't define a proper Java Property!}{We don't want to require the user to display orientation information in inspectors.  If you'd like to do so, just implement an additional method, \method{public double getOrientation2D()}, which simply calls \method{orientation2D()}.}AdjustablePortrayal2D only bothers to ask objects to orient themselves if they implement the \Class{sim.portrayal.Orientable2D} interface, which is an extension of the \class{sim.portrayal.Oriented2D}, an interface defined earlier in Section \ref{sim.portrayal.Oriented2D}.  The Orientable2D interface defines two methods:
  
 \begin{methods}{\class{sim.portrayal.Orientable2D}}
-\mthd{ public double orientation2D()} Returns the object's orientation.
-\mthd{ public void setOrientation2D(double val)} Sets the object's orientation.
+\mthd{public double orientation2D()} Returns the object's orientation.
+\mthd{public void setOrientation2D(double val)} Sets the object's orientation.
 \end{methods}
 
 It's up to you to implement these methods in your object to reorient itself or provide orientation information (or not).  You also have the option of just implementing the \class{sim.portrayal.Oriented2D} interface, which simply returns the object's orientation.    In this case, the ring will rotate helpfully to reflect your object's current orientation, but the user won't be able to reorient the object. This could be used instead of \class{sim.portrayal.simple.OrientedPortrayal2D} to indicate the current orientation.
@@ -7950,8 +7953,8 @@ Speaking of OrientedPortayal2D: AdjustablePortrayal2D doesn't change how the und
 Last but not least, the user can {\it scale} (notionally resize) an object by dragging the knob.  To do this, your object must implement the \Class{sim.portrayal.Scalable2D} interface.  This interface defines two methods which form a Java Bean Property:
 
 \begin{methods}{\class{sim.portrayal.Scalable2D}}
-\mthd{ public double getScale2D()} Returns the object's scale.
-\mthd{ public void setScale2D(double val)} Sets the object's scale.
+\mthd{public double getScale2D()} Returns the object's scale.
+\mthd{public void setScale2D(double val)} Sets the object's scale.
 \end{methods}
 
 It's up to you to define how your object looks when it's rescaled.
@@ -8072,7 +8075,7 @@ The only one you really have to implement is drawing: though it's not hard to im
 Drawing is expensive, and so Field Portrayals try hard to avoid drawing objects unless they must.  But when a Field Portrayal determines that it is {\it likely} that a given object lies within the Display2D's clip region and ought to be drawn, it calls for the the Simple Portrayal and calls the following method on it:
 
 \begin{methods}{\class{sim.portrayal.SimplePortrayal2D}}
-\mthd{ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) } Draws the Object on-screen.  The object should be centered at \(\langle\)\variable{info.draw.x, info.draw.y}\(\rangle\).  One unit of width in the model's world is equivalent to \variable{info.draw.width} pixels, and likewise one unit of height in the model's world is equivalent to \variable{info.draw.height} pixels.  \variable{info.clip} provides the clip rectangle, in pixels, of objects which must be drawn: if the object does not fall within this rectangle, it need not be drawn.  If \variable{info.precise} is true, then the object should be drawn using high-quality floating-point operations; else (potentially faster) integer operations will suffice.   If \variable{info.selected} is true, the object should assume it has been ``selected'' and draw itself differently accordingly if it feels the need.  \variable{object} provides the object in question: and \variable{info.fieldPortrayal} provides the field portrayal.  In some cases, \variable{info.location} may provide the location of the object in the field, though this is optional and should not be relied on.
+\mthd{public void draw(Object object, Graphics2D graphics, DrawInfo2D info) } Draws the Object on-screen.  The object should be centered at \(\langle\)\variable{info.draw.x, info.draw.y}\(\rangle\).  One unit of width in the model's world is equivalent to \variable{info.draw.width} pixels, and likewise one unit of height in the model's world is equivalent to \variable{info.draw.height} pixels.  \variable{info.clip} provides the clip rectangle, in pixels, of objects which must be drawn: if the object does not fall within this rectangle, it need not be drawn.  If \variable{info.precise} is true, then the object should be drawn using high-quality floating-point operations; else (potentially faster) integer operations will suffice.   If \variable{info.selected} is true, the object should assume it has been ``selected'' and draw itself differently accordingly if it feels the need.  \variable{object} provides the object in question: and \variable{info.fieldPortrayal} provides the field portrayal.  In some cases, \variable{info.location} may provide the location of the object in the field, though this is optional and should not be relied on.
 \end{methods}
 
 \sidebar{What are all these draw and clip rectangles?}{For a refresher, see Section \ref{sim.portrayal.DrawInfo2D}.}MASON assumes that most objects are drawn roughly as \(1\times 1\) in model coordinates: thus when an object draws itself on-screen, it'll usually be drawn to approximately fill the rectangle from  \(\langle\)\variable{info.draw.x, info.draw.y}\(\rangle\) to  \(\langle\)\variable{info.draw.x \(+\) info.draw.width, info.draw.y \(+\) info.draw.height}\(\rangle\).  If this rectangle doesn't intersect with the clip rectangle (in \variable{info.clip}), then the Field Portrayal will likely not even bother to ask the SimplePortrayal2D to draw itself.
@@ -8109,7 +8112,7 @@ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 Hit testing is {\it very} similar to drawing.  Instead of drawing a shape, we'll create the shape, then do an intersection test on it.  The method is:
 
 \begin{methods}{\class{sim.portrayal.SimplePortrayal2D}}
-\mthd{ public boolean hitObject(Object object, DrawInfo2D range) } Returns true if the object intersected with the clip rectangle in the DrawInfo2D.  The object is assumed to have be located on-screen centered at the origin of the DrawInfo2D's draw rectangle, and with a width and height specified by the DrawInfo2D's draw rectangle.  It is possible in certain rare situations that the object may be null.  Even if the object intersects with the clip rectangle, you may still return false if you don't wish the object to be hit (normally for selection, inspection, adjustment, or moving with the mouse).  The default implementation simply returns false.
+\mthd{public boolean hitObject(Object object, DrawInfo2D range) } Returns true if the object intersected with the clip rectangle in the DrawInfo2D.  The object is assumed to have be located on-screen centered at the origin of the DrawInfo2D's draw rectangle, and with a width and height specified by the DrawInfo2D's draw rectangle.  It is possible in certain rare situations that the object may be null.  Even if the object intersects with the clip rectangle, you may still return false if you don't wish the object to be hit (normally for selection, inspection, adjustment, or moving with the mouse).  The default implementation simply returns false.
 \end{methods}
 
 You'll generally find it more helpful to use Java2D rather than Java AWT graphics to do your hit testing.
@@ -8241,6 +8244,8 @@ Selects the Object represented by the given LocationWrapper by calling the relev
 
 \chapter{Inspectors}
 \label{sim.portrayal.Inspector}
+
+\begin{figure}[h]\vspace{-26.5em}\hspace{25em}\includegraphics[width=4in]{Robots.pdf}\vspace{0em}\end{figure}
 
 An Inspector is a GUI widget that lets a user inspect, track, chart, and modify a specific model object, value, or the property of an object.\footnote{SWARM and Repast call these things {\it probes}.  MASON gets the term {\it inspector} from the same concept found in the NeXTSTEP and Mac OS X GUI libraries.}  Inspectors are subclasses of the class \Class{sim.portrayal.Inspector}, and with the exception of \class{sim.portrayal.SimpleInspector}, they're all found in the package \Package{sim.portrayal.inspector}.   Figure \ref{InspectorUML} shows a UML diagram of the primary Inspector classes.
 
@@ -8754,6 +8759,10 @@ You'll need to add the class name to the \file{sim/portrayal/inspector/propertyi
 \chapter{Visualization in 3D}
 \label{3d}
 
+
+\begin{figure}[h]\vspace{-26.5em}\hspace{25.5em}\includegraphics[width=4in]{Celegans.png}\vspace{2em}\end{figure}
+
+
 MASON has extensive 3D visualization facilities using the Java3D toolkit.  This toolkit is standard on Mac OS X but is an optional install on Linux or Windows.
 
 Despite its moniker, Java3D is not like Java2D or Java AWT Graphics.  Java's standard 2D facilities are quite low-level (``draw a line'', ``put some text here''), but Java3D is very high level (``place a rabbit shape in this region of space'').  Java3D is a {\bf scene graph library}, in which you describe a {\bf scene graph} structure (not necessarily a graph: usually just a tree) which defines the location of objects in space and various attributes they have, such as reflectivity, color, and so on.  Scene graph libraries are higher-level than say, OpenGL, which is more akin to the low-level 2D instructions.
@@ -8971,22 +8980,22 @@ Too technical?  Here's all you need to know: the default value for the scaling i
 Attaching Field Portrayals and global Inspectors to the Display is done identically to Display2D.  A Field Portrayal can in theory be attached to multiple Displays but it rarely makes sense to do so.  In Display2D Field Portrayals can be translated and scaled when attached: not so in Display3D.  But don't despair: if you want to perform a transformation on the Field Portrayal, it's done with Field Portrayal methods themselves (see Section \ref{sim.portrayal3d.FieldPortrayal3D}).  Also one big difference between Display3D and Display2D is that Display3D can attach {\it any Portrayal3D class} to the Display, not just FieldPortrayal3D.  But in truth it's rare to attach anything other than field portrayals.
 
 \begin{methods}{\class{sim.display.Display3D}}
-\mthd{ public void attach(sim.portrayal.Inspector inspector, String name)}
+\mthd{public void attach(sim.portrayal.Inspector inspector, String name)}
 	Attaches the given Inspector to the Display, assigning it the provided name.  The user can call forth this Inspector by choosing that name from the Display's ``layers'' menu.
-\mthd{ public void attach(Portrayal3D portrayal, String name, boolean visible )}
+\mthd{public void attach(Portrayal3D portrayal, String name, boolean visible )}
 	Attaches a Portrayal3D to this Display, assigning it the given name, setting it initially visible or not, and placing its origin at the \(\langle 0,0, 0\rangle\) position of the Display, oriented with the Display's axes.   The Portrayal3D is sized so that its width, height, and depth are in the same units as the 3D space.  The user can toggle the Portrayal3D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public void attach(Portrayal3D portrayal, String name )}
+\mthd{public void attach(Portrayal3D portrayal, String name )}
 	Attaches a Portrayal3D to this Display, assigning it the given name, setting it initially visible, and placing its origin at the \(\langle 0,0, 0\rangle\) position of the Display, oriented with the Display's axes.   The Portrayal3D is sized so that its width, height, and depth are in the same units as the 3D space.  The user can toggle the Portrayal3D's visibility by choosing its name in the Display's ``layers'' menu. 
-\mthd{ public ArrayList detatchAll()}
+\mthd{public ArrayList detatchAll()}
 	Detatches all Portrayals from the Display.
 \end{methods}
 
 When a simulation is begun, you'll want to reset the Display.  This causes it to clear all its selected objects and reschedule itself on the GUIState's minischedule.  When you quit the entire simulation, you'll want to quit the Display as well so it can free resources and finish any movies.  The Display3D is \class{sim.engine.Steppable}.  When the simulation is running, every iteration the Display3D is stepped: it first calls \method{shouldUpdate()} to determine if it should update and redraw itself.  If the answer is yes, then it redraws itself, including writing out to any movie.  Display3D makes movies and screenshots in a manner similar to that of Display2D, though note that Display3D cannot generate PDF vector images in its screenshots.
 
 \begin{methods}{\class{sim.display.Display3D}}
-\mthd{ public void reset()}
+\mthd{public void reset()}
 	Causes the Display to clear all of its current selected objects and reschedule itself in the GUIState's minischedule.
-\mthd{ public void quit()}
+\mthd{public void quit()}
 	Quits the display, stopping it and finishing any movies and freeing resources.
 \mthd{public void step(final SimState state)} Called every model iteration to pulse the Display, ultimately causing it to (if appropriate) update and repaint itself, and write out movies.
 \mthd{public void takeSnapshot(File file, int type)} Takes a snapshot of the given type and saves it to the given file.  Throws an IOException if the file could not be written.
@@ -9007,9 +9016,9 @@ This key is used to store preferences information associated with the Display3D.
 
 
 \begin{methods}{\class{sim.display.Display3D}}
-\mthd{ public void setPreferencesKey(String s)}
+\mthd{public void setPreferencesKey(String s)}
 	Sets the preferences key for the Display3D to the given string.
-\mthd{ public String getPreferencesKey()}
+\mthd{public String getPreferencesKey()}
 	Returns the current preferences key (the default is DEFAULT\_PREFERENCES\_KEY, set to ``Display3D'').
 \end{methods}
 
@@ -9022,12 +9031,12 @@ The Display3D manages the Java3D scene graph which ultimately holds all of the m
 These three tasks are handled by three methods, respectively.  The \method{createSceneGraph()} function either builds or rebuilds the scene graph from scratch, discarding the old one, and then calls the hook \method{sceneGraphCreated()}.\footnote{Note that the lights, and their \class{Switch}, are not rebuilt, but are transferred to the new scene.  So if you hang material under the light switch, in \method{sceneGraphCreated()}, you should remove it first, if it exists yet, before adding revised material.  This may change in the future.}  The \method{updateSceneGraph(...)} method triggers an update in the scene graph if any, either asynchronously (when Java3D gets around to it) or synchronously (blocking until it's been updated and redrawn).  The \method{destroySceneGraph()} method cleans up any existing scene graph and is called by MASON when you quit the program.  %You'll also often call it yourself when creating a new scene graph at the start of a simulation, just to be sure.
 
 \begin{methods}{\class{sim.display.Display3D}}
-\mthd{ public void createSceneGraph()}
+\mthd{public void createSceneGraph()}
 	Builds a new scene graph, destroying the old one.  This method is typically called when starting or restarting a simulation.  This method then calls a hook, \method{sceneGraphCreated()}.
 \mthd{protected void sceneGraphCreated()} Called after a scene graph has been created or recreated, to give you an opportunity to add custom material to the new scene.
-\mthd{ public void destroySceneGraph()}
+\mthd{public void destroySceneGraph()}
 	Destroys the scene graph, freeing its resources.  This method is typically called when quitting a simulation.
-\mthd{ public void updateSceneGraph(boolean waitForRenderer)}
+\mthd{public void updateSceneGraph(boolean waitForRenderer)}
 	Revises the scene graph to reflect changes in the underlying simulation model.  If \variable{waitForRenderer} is \variable{true}, then this method blocks until the resulting updated scene graph has been redisplayed onscreen.  Else, the scene graph may be redisplayed at some time in the near future.  This method is typically called each model tick, and \variable{waitForRenderer} is set to \variable{true} to guarantee frames for movie output, etc.  This method may call \method{createSceneGraph()} to rebuild the graph if the model has changed too much (it is ``dirty'').  This happens, for example, if new FieldPortrayals have been attached to the Display3D.
 \end{methods}
 
@@ -9035,23 +9044,23 @@ As discussed earlier, the Display3D can transform the entire scene, ultimately u
 
 
 \begin{methods}{\class{sim.display.Display3D}}
-\mthd{ public void setTransform(Transform3D transform)}
+\mthd{public void setTransform(Transform3D transform)}
 	Sets the current transformation of the scene.
-\mthd{ public Transform3D getTransform()}
+\mthd{public Transform3D getTransform()}
 	Returns the current transformation of the scene.
-\mthd{ public void transform(Transform3D transform)}
+\mthd{public void transform(Transform3D transform)}
 	Modifies the existing transform by concatenating it to the given the Transform3D.  This is essentially the equivalent of multiplying the existing transformation against the provided new transformation matrix.
-\mthd{ public void rotateX(double degrees)}
+\mthd{public void rotateX(double degrees)}
 	Modifies the existing transform by rotating it around the X axis by the provided degrees.
-\mthd{ public void rotateY(double degrees)}
+\mthd{public void rotateY(double degrees)}
 	Modifies the existing transform by rotating it around the Y axis by the provided degrees.
-\mthd{ public void rotateZ(double degrees)}
+\mthd{public void rotateZ(double degrees)}
 	Modifies the existing transform by rotating it around the Z axis by the provided degrees.
-\mthd{ public void translate(double dx, double dy, double dz)}
+\mthd{public void translate(double dx, double dy, double dz)}
 	Modifies the existing transform by translating it by the given values in each dimension
-\mthd{ public void scale(double sx, double sy, double sz)}
+\mthd{public void scale(double sx, double sy, double sz)}
 	Modifies the existing transform by scaling it by the given values in each dimension.
-\mthd{ public void scale(double value)}
+\mthd{public void scale(double value)}
 	Modifies the existing transform by scaling it by the given value.  Each dimension is scaled the same amount.
 \mthd{public void resetTransform()}
 	Clears the current transform.  Equivalent to \method{setTransform(null)}.
@@ -9114,7 +9123,7 @@ Here are the relevant Display3D methods, many quite like equivalent Display2D me
 \mthd{public void performSelection( Bag locationWrappers )} Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
 \mthd{public void clearSelections()} Instructs all Field Portrayals to clear all selections on all objects.
 \mthd{public void setSelectsAll(boolean selection, boolean inspection)} Instructs the Display3D to select and/or inspect {\it all} or merely the {\it closest} object hit by the pick ray.  Call this method immediately after constructing the Display3D.
-\mthd{ public SelectionBehavior getSelectionBehavior()} Returns the current SelectionBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
+\mthd{public SelectionBehavior getSelectionBehavior()} Returns the current SelectionBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
 \end{methods}
 
 If you want you can access the SelectionBehavior directly (as mentioned above, do so by calling \method{getSelectionBehavior()} during the \method{sceneGraphCreated()} hook).  But there's not a lot there:
@@ -9142,14 +9151,14 @@ Tool tips are turned on via the Display3D Option Pane, just as they are in Displ
 If you wish, you can access current ToolTipBehavior directly via the Display3D method:
 
 \begin{methods}{\class{sim.display3d.Display3D}}
-\mthd{ public ToolTipBehavior getToolTipBehavior()} Returns the current ToolTipBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
+\mthd{public ToolTipBehavior getToolTipBehavior()} Returns the current ToolTipBehavior in the scene graph.  Note that this object may change if the scene graph has been reconstructed, and may be null if the scene graph has not been built yet.  Thus your best bet is to access this object during the \method{Display3D.sceneGraphCreated()} hook.
 \end{methods}
 
 It's pretty rare to do so.  Really there are only two methods of relevance, neither of which are often used except by Display3D directly via it Option Pane:
 
 \begin{methods}{\class{sim.display3d.ToolTipBehavior}}
-\mthd{ public void setCanShowToolTips(boolean val)} Sets whether or not tool tips may be shown.  This method is triggered by the user clicking on the relevant button in the OptionPane3D.
-\mthd{ public boolean getCanShowToolTips()} Returns whether or not tool tips may be shown.
+\mthd{public void setCanShowToolTips(boolean val)} Sets whether or not tool tips may be shown.  This method is triggered by the user clicking on the relevant button in the OptionPane3D.
+\mthd{public boolean getCanShowToolTips()} Returns whether or not tool tips may be shown.
 \end{methods}
 
 And for good measure, ToolTipBehavior's constructor is largely the same format as SelectionBehavior's constructor:
@@ -9195,8 +9204,8 @@ The optional method is \method{polygonAttributes()}, which returns the \class{ja
 Portrayals also have a {\bf display} set, and from this display they may access the {\bf guistate} using methods below.  These methods largely exist to give the Portrayals access to the GUIState's GUI-level random number generator.
 
 \begin{methods}{\class{sim.display3d.Portrayal3D}}
-\mthd{ public TransformGroup getModel(Object object, TransformGroup prev)} Builds a scene graph for the Portrayal.  If \variable{prev} is \variable{null}, creates a new TransformGroup and then hangs all the scene graph off of that TransformGroup as child 0 of the group.  Else assumes that \variable{prev} was the previously constructed TransformGroup: and modifies the existing scene graph hanging as child 0 as appropriate.  Returns the TransformGroup.
-\mthd{ public PolygonAttributes polygonAttributes()} Returns the PolygonAttributes used by the Portrayal3D (which may be freely modified by the Display3D or the user) or returns \variable{null}, indicating that there are no PolygonAttributes which may be modified.
+\mthd{public TransformGroup getModel(Object object, TransformGroup prev)} Builds a scene graph for the Portrayal.  If \variable{prev} is \variable{null}, creates a new TransformGroup and then hangs all the scene graph off of that TransformGroup as child 0 of the group.  Else assumes that \variable{prev} was the previously constructed TransformGroup: and modifies the existing scene graph hanging as child 0 as appropriate.  Returns the TransformGroup.
+\mthd{public PolygonAttributes polygonAttributes()} Returns the PolygonAttributes used by the Portrayal3D (which may be freely modified by the Display3D or the user) or returns \variable{null}, indicating that there are no PolygonAttributes which may be modified.
 \mthd{public void setCurrentDisplay(Display3D display)} Sets the current Display3D for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple displays.  The display will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
 \mthd{public Display3D getCurrentDisplay()} Returns the current Display3D for the Portrayal3D.  This value may change if the Portrayal3D is used in multiple displays.  The display will be set at least immediately prior to \method{getModel(...)}, and possibly not prior to that.
 \mthd{public GUIState getCurrentGUIState(GUIState)} Queries the current Display to extract the current GUIState.  If there is no such display, then \variable{null} will be returned.
@@ -9261,23 +9270,23 @@ The default implementation of a 3D Field Portrayal has no PolygonAttributes, tho
 
 
 \begin{methods}{\class{sim.display.FieldPortrayal3D}}
-\mthd{ public void setTransform(Transform3D transform)}
+\mthd{public void setTransform(Transform3D transform)}
 	Sets the current transformation of the scene for the field.
-\mthd{ public Transform3D getTransform()}
+\mthd{public Transform3D getTransform()}
 	Returns the current transformation of the scene for the field.
-\mthd{ public void transform(Transform3D transform)}
+\mthd{public void transform(Transform3D transform)}
 	Modifies the existing transform by concatenating it to the given the Transform3D.  This is essentially the equivalent of multiplying the existing transformation against the provided new transformation matrix.
-\mthd{ public void rotateX(double degrees)}
+\mthd{public void rotateX(double degrees)}
 	Modifies the existing transform by rotating it around the X axis by the provided degrees.
-\mthd{ public void rotateY(double degrees)}
+\mthd{public void rotateY(double degrees)}
 	Modifies the existing transform by rotating it around the Y axis by the provided degrees.
-\mthd{ public void rotateZ(double degrees)}
+\mthd{public void rotateZ(double degrees)}
 	Modifies the existing transform by rotating it around the Z axis by the provided degrees.
-\mthd{ public void translate(double dx, double dy, double dz)}
+\mthd{public void translate(double dx, double dy, double dz)}
 	Modifies the existing transform by translating it by the given values in each dimension
-\mthd{ public void scale(double sx, double sy, double sz)}
+\mthd{public void scale(double sx, double sy, double sz)}
 	Modifies the existing transform by scaling it by the given values in each dimension.
-\mthd{ public void scale(double value)}
+\mthd{public void scale(double value)}
 	Modifies the existing transform by scaling it by the given value.  Each dimension is scaled the same amount.
 \mthd{public void resetTransform()}
 	Clears the current transform.  Equivalent to \method{setTransform(getDefaultTransform())}.
@@ -9292,9 +9301,9 @@ The default implementation of a 3D Field Portrayal has no PolygonAttributes, tho
 FieldPortrayal3D has two constructors: one which takes a Transform3D (applied using \method{setTransform(...)}) and a default constructor which simply uses the default transform.
 
 \begin{methods}{\class{sim.display.FieldPortrayal3D} Constructor}
-\mthd{ FieldPortrayal3D()}
+\mthd{FieldPortrayal3D()}
 	Creates a FieldPortrayal3D using the default transform as the initial transform.
-\mthd{ FieldPortrayal3D(Transform3D transform)}
+\mthd{FieldPortrayal3D(Transform3D transform)}
 	Creates a FieldPortrayal3D with the given initial transform.  Note that this is not the default transform: it's the transform used via \method{setTransform(...)}.
 \end{methods}
 
@@ -9309,9 +9318,9 @@ The \method{createModel()} method is called when the FieldPortrayal3D must build
 The \method{updateModel(...)} is similar.  It takes a single TransformGroup (again, the ``inner'' transform group), and modifies the model hanging off of it (as child 0) to reflect changes in the field.
 
 \begin{methods}{\class{sim.display.FieldPortrayal3D}}
-\mthd{ protected abstract TransformGroup createModel()}
+\mthd{protected abstract TransformGroup createModel()}
 	Called to create a scene graph for the field from scratch.  Creates a scene graph which portrays the field, then creates a single TransformGroup (which should not be modified) and hangs the scene graph off of it as child 0 of the TransformGroup.  This TransformGroup will be used to perform internal transformations via the FieldPortrayal3D's various transformation methods.
-\mthd{ protected abstract void updateModel(TransformGroup previousTransformGroup)}
+\mthd{protected abstract void updateModel(TransformGroup previousTransformGroup)}
 	Called to update an existing a scene graph to reflect changes in the field.  The scene graph in question will have been hung off of the TransformGroup as child 0.  The provided TransformGroup should itself not be modified: only child 0.
 \end{methods}
 
@@ -9320,7 +9329,7 @@ The \method{updateModel(...)} is similar.  It takes a single TransformGroup (aga
 There's one last method which handles the location of picked objects in the field.  When the user selects or inspects an object in the field by double-clicking on it, the Display3D constructs a LocationWrapper (for a refresher, see Section \ref{sim.portrayal.LocationWrapper}) which holds the relevant picked object.  It then calls a specific method in the FieldPortrayal3D called \method{completedWrapper(...)}, passing in the LocationWrapper plus various picking information.  This method must modify the LocationWrapper to set the location of the object.  Alternatively, it can provide its own entirely new LocationWrapper if it pleases.
 
 \begin{methods}{\class{sim.display.FieldPortrayal3D}}
-\mthd{ public abstract LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)}  Revises the provided wrapper to reflect the location of the object stored therein, or entirely replaced the wrapper with a new completed wrapper.  Returns either the wrapper or the replacement.
+\mthd{public abstract LocationWrapper completedWrapper(LocationWrapper wrapper, PickIntersection pi, PickResult pr)}  Revises the provided wrapper to reflect the location of the object stored therein, or entirely replaced the wrapper with a new completed wrapper.  Returns either the wrapper or the replacement.
 \end{methods}
 		
 \subsection{Sparse 3D Field Portrayals}
@@ -9329,9 +9338,9 @@ There's one last method which handles the location of picked objects in the fiel
 The most common 3D Field Portrayals are {\bf Sparse 3D Field Portrayals} which portray Sparse Fields, such as continuous space and sparse grids.  These field portrayals share a lot in common, and so the abstract class \Class{sim.portrayal3d.SparseFieldPortrayal3D} handles much of the machinery for them automatically.  It implements the \method{updateModel(...)} and \method{createModel()} methods, and in turn requires its subclasses to implement \method{setField()} (of course), \method{completedWrapper(...)}, and the following new, and trivial, method:
 
 \begin{methods}{\class{sim.display.SparseFieldPortrayal3D}}
-\mthd{ public abstract Vector3d getLocationOfObjectAsVector3d(Object location, Vector3d putInHere)}
+\mthd{public abstract Vector3d getLocationOfObjectAsVector3d(Object location, Vector3d putInHere)}
 	Coverts the provided location (as a Double3D, Double2D, Int3D, or Int2D most likely) into a \class{javax.vecmath.Vector3d} and places the relevant coordinates in the provided Vector3d.
-\mthd{ public void updateModel(TransformGroup previousTransformGroup)}
+\mthd{public void updateModel(TransformGroup previousTransformGroup)}
 \end{methods}
 
 \sidebar{Aren't Branch Groups expensive?}{Indeed they are.  Branch Groups use a lot of memory.  But due to stupidities in Java3D, we really don't have much of a choice in the matter.}In some cases subclasses may still wish to override the \method{updateModel(...)} or \method{createModel()} methods.  In these cases, Sparse3DFieldPortrayal also has one utility method available to subclasses.  Objects in Sparse Fields often come and go as they please.  Once a scene graph is live, adding new objects to an existing scene graph isn't a problem: but removing objects is (in Java3D anyway).  The only things which may be removed from scenes in real time are {\bf BranchGroups}, that is, scenes rooted by an instance of \class{javax.media.j3d.BranchGroup}.  But 3D Simple Portrayals don't provide BranchGroups: they provide TransformGroups, just like every other 3D Portrayal.  
@@ -9339,7 +9348,7 @@ The most common 3D Field Portrayals are {\bf Sparse 3D Field Portrayals} which p
 Thus SparseFieldPortrayal has a utility method which does all this for you: it identifies the SimplePortrayal for a given object, calls \method{setParentPortrayal(this)} and \method{getModel(...)} on that SimplePortrayal to get a new scene graph, transforms the scene graph according to the provided Transform3D to place it in the right spot in the field, then finally wraps the resulting scene graph in a BranchGroup suitable to be added or removed at any time from the field.
 
 \begin{methods}{\class{sim.display.SparseFieldPortrayal3D}}
-\mthd{ protected BranchGroup wrapModelForNewObject(Object object, Transform3D localTransform)}
+\mthd{protected BranchGroup wrapModelForNewObject(Object object, Transform3D localTransform)}
 	Queries the underlying SimplePortraryal3D for the given object to produce a new scene graph, then transforms the scene graph according to the provided \variable{localTransform}, then wraps the result in a BranchGroup suitable to add to the field.
 \end{methods}
 
@@ -10240,7 +10249,11 @@ public class ColorCubePortrayal3D extends SimplePortrayal3D
 \end{verbatim}}
 
 
-\chapter{GUI and Media Utility Classes}
+\chapter{GUI and Media Utilities}
+
+\begin{figure}[h]\vspace{-26.5em}\hspace{28.9em}\includegraphics[width=3.5in]{LightCycles.pdf}\vspace{0em}\end{figure}
+
+
 
 MASON has quite a lot of utility classes for performing GUI tasks, generating pictures and movies, and producing charts and histograms of different kinds.  These utility classes are largely independent of MASON: you can perfectly well use them for other non-MASON projects if you like.
 
@@ -10601,7 +10614,7 @@ There are no constructors: it's all just static methods.
 \mthd{public boolean getScrollableTracksViewportHeight()} Returns false.
 \end{methods}
 
-\paragraph{Random Utility Functions}  
+\paragraph{Miscellaneous Utility Functions}  
 
 The class \Class{sim.util.gui.Utilities} collects various random but useful utility functions used in a variety of spots throughout MASON's visualization facilities.
 
@@ -10729,10 +10742,13 @@ stream.write(encoder.pngEncode());
 
 MASON doesn't just produce bitmaps: it also has the capability of producing publication-quality vector PDF images directly from the visualization system.  This is done using the iText library, which generates PDF from Java Graphics objects. iText is a little complex, so MASON provides a simple wrapper to make emitting PDF easy.  This wrapper is the class \Class{sim.util.media.PDFEncoder}.
 
-PDFEncoder has a single method, which takes a \class{java.awt.Component} and a file.  It then tells the Component to repaint itself into a special Graphics object.  This Graphics object redirects all the paint directives directly into the file, to produce a PDF file. Piece of cake!
+PDFEncoder has two methods, the first which takes a \class{java.awt.Component} and a file.  It then tells the Component to repaint itself into a special Graphics object.  This Graphics object redirects all the paint directives directly into the file, to produce a PDF file. Piece of cake!
+
+The other method takes a JFreeChart chart, a width and height for that chart, and a file, and does the same.  JFreeChart is the facility used for charting (see Section \ref{sim.util.media.chart.ChartGenerator}).  If you're confused, use the first method.
 
 \begin{methods}{\class{sim.util.media.PDFEncoder} Utility}
 \mthd{public static void generatePDF(Component component, File file)} Repaints the component and redirects the result into the file, producing a PDF file.
+\mthd{public static void generatePDF(JFreeChart chart, int width, int height, File file )} Repaints the JFreeChart of the given width and height, and redirects the result into the file, producing a PDF file.
 \end{methods}
 
 
@@ -10740,11 +10756,6 @@ PDFEncoder has a single method, which takes a \class{java.awt.Component} and a f
 \label{sim.util.media.chart.ChartGenerator}
 \label{sim.util.media.chart.SeriesAttributes}
 
-\begin{figure}[t]
-\begin{center}\includegraphics[width=6.4in]{ChartUML.pdf}\end{center}
-\caption{UML diagram of MASON's charting facility.}
-\label{ChartUML}
-\end{figure}
 
 MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) throw up Histograms, Time-Series Charts, and Scatter Plots of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
 
@@ -10764,10 +10775,16 @@ Chart Generators and Series Attributes are presently provided for three kinds of
 \item Scatter Plots
 \end{itemize}
 
+\begin{figure}[t]
+\begin{center}\includegraphics[width=6.4in]{ChartUML.pdf}\end{center}
+\caption{UML diagram of MASON's charting facility.}
+\label{ChartUML}
+\end{figure}
+
 \subsection{Chart Generators}
 \label{sim.util.media.chart.HistogramGenerator}
 
-Chart Generators are all subclasses of the abstract class \Class{sim.util.media.chart.ChartGenerator}.  This class provides most of the heavy lifting for creating a JPanel which encapsulates JFreeChart's charts and provides a user interface to modifying or manipulating them.  A Chart Generator also holds a visible list ol some \(N\) Series Attributes, one for each chart being layered in its display.
+Chart Generators are all subclasses of the abstract class \Class{sim.util.media.chart.ChartGenerator}.  This class provides most of the heavy lifting for creating a JPanel which encapsulates JFreeChart's charts and provides a user interface to modifying or manipulating them.  A Chart Generator also holds a visible list of some \(N\) Series Attributes, one for each chart being layered in its display.
 
 In an important sense, a ChartGenerator is like a Display2D or Display3D.  You can think of its relationships to its Series Attributes as similar to the relationship between a Display2D and its Field Portrayals.   Like the displays, ChartGenerator can create movies and publication-quality vector PDFs.
 
@@ -10783,25 +10800,372 @@ protected ChartPanel chartPanel;\\
 protected JScrollPane chartHolder;
 }
 
-These correspond to major parts of the ChartGenerator proper.
+These correspond to major parts of the ChartGenerator proper, as shown in Figure \ref{ChartGenerator}.  The \variable{globalAttributes} holds widgets for global attributes of the chart as a whole.  The \variable{seriesAttributes} holds local per-chart SeriesAttributes objects.  The \variable{chartHolder} holds a \variable{chartPanel}, which in turn holds the \variable{chart} object proper, which holds the charts for each series as a group.
 
+\begin{figure}[t]
+\begin{center}\includegraphics[height=2.25in]{Chart.pdf}\includegraphics[height=2.25in]{ChartExpanded.pdf}\end{center}
+\caption{Screenshots of the TimeSeriesChartGenerator (other ChartGenerators are similar) with three series (charts).  A ChartGenerator has three regions, shown above: a Global Attributes (expandable as shown at right), a Local Attributes, and a JFreeChart chart, stored in ChartPanel, stored in a JScrollPane.}
+\label{ChartGenerator}
+\end{figure}
 
-ChartGenerator
-TimeSeriesChartGenerator
-ScatterPlotGenerator
-HistogramGenerator
+You create a ChartGenerator with a simple constructor:
 
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator} Constructor}
+\mthd{public ChartGenerator()} Creates a ChartGenerator.
+\end{methods}
+
+... but since ChartGenerator is abstract, in fact you'll create it using more concrete constructors in subclasses.
+
+Like Display2D and Display3D, ChartGenerator can sprout its own JFrame.  You can use your own JFrame, but you'll need to remember to call \method{quit()} on the ChartGenerator when the frame is disposed.  You can also directly access the JFreeChart chartPanel or the JFreeChart chart.
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public JFrame createFrame() } Causes the ChartGenerator to sprout a JFrame suitable for use.  Returns the JFrame.
+\mthd{public JFrame getFrame() } Returns the JFrame created in \method{createFrame(...)}.
+\mthd{public ChartPanel getChartPanel() } Returns the ChartGenerator's ChartPanel.
+\mthd{public JFreeChart getChart() } Returns the ChartGenerator's JFreeChart.
+\end{methods}
+
+JFreeChart stores all of its series data is a \class{org.jfree.data.xy.XYDataset} of some sort.  You can access the ChartGenerator's dataset with 
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void setSeriesDataset(XYDataset obj)} Sets the XYDataset used by the ChartGenerator.
+\mthd{public XYDataset getSeriesDataset()} Returns the XYDataset used by the ChartGenerator.
+\end{methods}
+
+The ChartGenerator has both a {\bf global attributes} area (for widgets affecting the whole ChartGenerator) and a {\bf series} or {\bf local attributes} area (for SeriesAttributes objects, one per chart being displayed in the ChartGenerator).  You can add to both of these; and you can also move the series attributes around relative to one another, which changes the order of display of their respective charts.
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void addGlobalAttribute(Component component)}  Adds a component to the end of the global attributes list.
+\mthd{public Component getGlobalAttribute(int index)} Returns a component in the global attributes list.
+\mthd{public int getNumGlobalAttributes()} Returns the number of components in the global attributes list.
+\mthd{public Component removeGlobalAttribute(int index)}  Removes a component from the global attributes list.
+\mthd{public int getNumSeriesAttributes()} Returns the number of series attributes in the series attributes list.
+\mthd{public void removeSeries(int index)} Removes a series attribute from the series attributes list.
+\mthd{public void removeAllSeries()} Removes all series attributes from the series attributes list.
+\mthd{public void moveSeries(int index, boolean up)} Moves a series attribute one step up or down in the series attributes list.
+\end{methods}
+
+Notice what's missing: there's now way to add or retrieve series attributes.  This is because JFreeChart isn't consistent in how it handles different kinds of charts.  For example, histograms have a completely different API from time series.  As a result, adding or accessing series attributes is handled in the concrete subclasses of ChartGenerator. 
+
+A number of global attributes can be set directly too:
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void setXAxisLogScaled(boolean isLogScaled)} Sets whether or not the X axis is on a log scale.
+\mthd{public boolean isXAxisLogScaled()} Returns whether or not the X axis is on a log scale.
+\mthd{public void setYAxisLogScaled(boolean isLogScaled)} Sets whether or not the Y axis is on a log scale.
+\mthd{public boolean isYAxisLogScaled()} Returns whether or not the Y axis is on a log scale.
+\mthd{public void setXAxisLabel(String val)} Sets the label of the X axis.
+\mthd{public String getXAxisLabel()} Returns the label of the X axis.
+\mthd{public void setYAxisLabel(String val)}  Sets the label of the Y axis.
+\mthd{public String getYAxisLabel()} Returns the label of the Y axis.
+\mthd{public void addLegend()} Adds a legend.  Once this is done, it can't be undone.
+\mthd{public void setYAxisRange(double lower, double upper)} Sets the numerical range of the Y axis.
+\mthd{public void setXAxisRange(double lower, double upper)} Sets the numerical range of the X axis.
+\mthd{public void setTitle(String title)} Sets the title displayed.
+\mthd{public String getTitle()} Returns the title displayed.
+\end{methods}
+
+Finally, ChartGenerator has methods for starting and stopping movies, and a special method which is called when the window is disposed.
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void startMovie()} Start a movie.
+\mthd{public void stopMovie()} Finish and write out a previously started movie.
+\mthd{public void quit()} Called when the JFrame is being disposed to give the ChartGenerator a chance to clean itself up.
+\end{methods}
+
+\paragraph{Making a ChartGenerator}
+
+Want to create, say, a PieChartGenerator?  Here's some hints.  Most ChartGenerator subclasses do the following:
+
+\begin{itemize}
+\item Modify the global attributes in their constructor to add global attributes appropriate to the kind of chart.
+\item ({\it Required}) Override the \method{buildChart()} method to create a JFreeChart and a ChartPanel, then add the ChartPanel to the JScrollPane (chartHolder), then finally set the series dataset.  It's important to add the series dataset {\it after} the chart and panel have been added to the chartHolder.
+\item Hook into the the \method{moveSeries(...)} method to adjust the dataset after the series has been moved.
+\item Hook into the the \method{removeSeries(...)} method to adjust the dataset after the series has been removed.
+\item Create some kind of \method{addSeries(...)} method to add to the dataset, then add SeriesAttributes.
+\item Possibly override the \method{update(...)} method to update the chart when asked.  Some ChartGenerators don't override this method because their charting facility automatically updates stuff.  Others, like HistogramChartGenerator, must override it.
+\end{itemize}
+
+I am afraid to say that dealing with the complexity of JFreeChart is a bit of a black art.  But the above should give you some idea of what's involved.  Beyond that, it's best to read the source code for HistogramChartGenerator, TimeSeriesChartGenerator, and perhaps ScatterPlotChartGenerator.
+
+Below are certain internal methods for updating a chart, adding or removing series attributes, or building the chart, which you may find handy in implementing the items above.  Note the various \method{update(...)} methods, which take {\bf keys}.  By passing in (for example) the current MASON simulation steps as a key, this mechanism allows you to ensure that the chart won't update itself if the simulation hasn't actually iterated.  You can also force an update regardless by passing in:
+
+\java{%
+    public static final long FORCE\_KEY;
+}
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{protected abstract void buildChart()} Creates and sets the JFreeChart, then adds it to a ChartPanel, then sets the ChartPanel and adds it to the JScrollPane.  Finally (and always at the end) sets the series dataset.
+\mthd{protected void update()} Updates the chart to reflect new data.
+\mthd{public void update(long key, boolean newData)} Calls \method{update()} immediately, but only if the key passed in is different than the immediately previously passed-in key, or if the key is \variable{FORCE\_KEY}.    If \variable{newData} is true, then the chart will also be written out to  a movie if appropriate.  Keys should always be integers 0 or greater.
+\mthd{public void updateChartWithin(long key, long milliseconds)} Calls \code{update(key, true)} within the given number of milliseconds.   Keys should always be integers 0 or greater.
+\mthd{public void updateChartLater(long key)} Schedules an event in the Swing event queue to call \code{update(key, true)} at some point in the immediate future.  Keys should always be integers 0 or greater.
+\mthd{protected SeriesAttributes getSeriesAttribute(int i)} Returns the SeriesAttributes of the given index.
+\mthd{protected SeriesAttributes[] getSeriesAttributes()} Returns all the SeriesAttributes as an array.
+\mthd{protected void setSeriesAttributes(SeriesAttributes[] c)} Sets all the series attributes to the given array.
+\end{methods}
+
+We'll get to SeriesAttributes later on in Section \ref{sim.util.media.chart.SeriesAttributes}
+
+\paragraph{Generating Time Series}  
+The class \Class{sim.util.media.chart.TimeSeriesChartGenerator} produces time series charts.  A Time Series chart with three shown in Figure \ref{ChartGenerator}.
+
+Like all generators, the TimeSeriesChartGenerator must implement some method for adding series.  In JFreeChart, time series data is stored in an \class{org.jfree.data.xy.XYSeries}, and when the series is updated, a \class{org.jfree.data.general.SeriesChangeListener} is called as a callback.  These are the elements which must be included when adding a series.
+
+Unlike other generators, the TimeSeriesChartGenerator has a {\bf data culler} (we'll get to them in Section \ref{sim.util.media.chart.DataCuller}) which trims the size of the series so it doesn't overwhelm drawing.  The default data culler used is a \class{sim.util.media.chart.MinGapDataCuller}, which deletes series data which is most crowded in time with respect to its neighbors.  This is usually a good choice.
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesChartGenerator}}
+\mthd{public TimeSeriesAttributes addSeries(XYSeries series, SeriesChangeListener stopper)} Adds a series to the chart, and produces a TimeSeriesAttributes controlling that series.
+\mthd{public void setDataCuller(DataCuller culler)} Sets the current data culler. If \variable{null} is passed in, no data is culled (this is probably not as good an idea as you think).
+\mthd{public DataCuller getDataCuller()} returns the current data culler.
+\end{methods}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-2em}\hfill\includegraphics[width=3in]{ScatterPlot.png}\vspace{-3em}\end{wrapfigure}
+
+\paragraph{Generating Scatter Plots}
+Scatter plots aren't like time series: they must be revised in their entirety each timestep, and they tend not to grow in size (hence no need for a DataCuller).  In MASON, scatter plots are handled by \Class{sim.util.media.chart.ScatterPlotGenerator}, which overrides \method{update(...)} to completely revise the scatter plot.
+
+JFreeChart isn't as fast as MASON.  So if you're debating whether to use a scatter plot or a ContinuousPortrayal2D, I suggest using a ContinuousPortrayal2D.
+
+\sidebar{Why a double array rather than two arrays?}{JFreeChart.}Thus the most important custom method is the one for adding new series.  Like TimeSeriesChartGenerator, ScatterPlotGenerator passes in a SeriesChangeListener as a callback.  But instead of an XYSeries holding data, instead a double array of values is passed in.  This double array is in fact just an array of two arrays, one holding X values and one holding Y values.
+
+ScatterPlotGenerator also lets you revise the series manually via \method{updateSeries(...)}.
+
+\begin{methods}{\class{sim.util.media.chart.ScatterPlotGenerator}}
+\mthd{public ScatterPlotSeriesAttributes addSeries(double[][] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.  The name of the series is also provided.
+\mthd{public void updateSeries(int index, double[][] values)} Modifies the series data of a given series in the chart.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}. 
+\end{methods}
+
+\paragraph{Generating Histograms}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-2em}\hfill\includegraphics[width=3in]{Histogram.png}\vspace{-3em}\end{wrapfigure}
+
+Creating Histograms is similar to creating Scatter Plots: MASON replaces the entire dataset each time with a custom update method, and for obvious reasons there's no DataCuller.  The series in a Histogram is just an array of doubles representing the samples of the histogram, plus the number of bins to use to bin them.  You can add new series and revise the data in existing ones.
+
+Histograms in JFreeChart come in different forms:  by frequency, by relative frequency, and scaling the area to 1.0.  You can pick any of these:
+
+\java{%
+org.jfree.data.statistics.HistogramType.FREQUENCY\\
+org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY\\
+org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1
+}
+
+\begin{methods}{\class{sim.util.media.chart.HistogramGenerator}}
+\mthd{public HistogramSeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
+\mthd{public void updateSeries(int index, double[] values)} Modifies the series data of a given series in the chart.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.
+\mthd{public void setHistogramType(HistogramType type)} Sets the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY}, \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
+\mthd{public HistogramType getHistogramType(HistogramType type)} Returns the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY}, \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
+\end{methods}
 
 
 \subsection{Series Attributes}
-SeriesAttributes
-TimeSeriesAttributes
-ScatterPlotSeriesAttributes
-HistogramSeriesAttributes
+\label{sim.util.media.chart.SeriesAttributes}
+
+For each series producing a chart in a ChartGenerator, there is one and exactly one {\bf Series Attributes} object, a subclass of \Class{sim.util.media.chart.SeriesAttributes}.  This object, ultimately a subclass of \class{sim.util.gui.LabelledList}, is the user's interface to how the series is presented in the ChartGenerator: its color, the thickness of its lines, its name, and so on.  SeriesAttributes can also be ordered by the user with respect to one another, which in turn changes the drawing order of the series as they are charted.  Finally, SeriesAttributes can be deleted, which then deletes the underlying series from the ChartGenerator.
+
+The icons SeriesAttributes uses for closing (deleting) the SeriesAttributes, moving it up (sooner) in order, or moving it down (later) in order, are public:
+
+\java{%
+    public static final ImageIcon I\_DOWN;\\
+    public static final ImageIcon I\_DOWN\_PRESSED;\\
+    public static final ImageIcon I\_CLOSE;\\
+    public static final ImageIcon I\_CLOSE\_PRESSED;\\
+    public static final ImageIcon I\_UP;\\
+    public static final ImageIcon I\_UP\_PRESSED;
+}
+
+Normally you don't build a SeriesAttributes: the ChartGenerator does that for you.  But here's the constructor nonetheless:
+
+
+\begin{methods}{\class{sim.util.media.chart.SeriesAttributes} Constructor}
+\mthd{public SeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)} Creates a SeriesAttributes attached to the given generator, of the given name and located at the given index in the attributes list.  The stoppable will be called when the SeriesAttributes is deleted.
+\end{methods}
+
+SeriesAttributes has various straightforward getters and setters:
+
+\begin{methods}{\class{sim.util.media.chart.SeriesAttributes}}
+\mthd{public void setStoppable(SeriesChangeListener obj)} Sets the SeriesChangeListener which will get called when the attributes are deleted.
+\mthd{public SeriesChangeListener getStoppable()}  Returns the SeriesChangeListener which will get called when the attributes are deleted.
+\mthd{public void setName(String val)} Sets the name of the attributes.
+\mthd{public String getName()} Returns the name of the attributes.
+\mthd{public void setSeriesIndex(int val)}  Sets the index of the attributes.  Be sure that this agrees with the actual index position.
+\mthd{public int getSeriesIndex()} Returns the index of the attributes.
+\mthd{public XYPlot getPlot()} Returns the JFreeChart's XYPlot used for drawing the chart.
+\mthd{public XYItemRenderer getRenderer()} Returns the JFreeChart's XYItemRenderer used for drawing the chart.
+\mthd{public ChartGenerator getGenerator()} Returns the ChartGenerator associated with this SeriesAttributes.
+\end{methods}
+
+Additionally, SeriesAttributes provides one utility method for subclasses:
+
+\begin{methods}{\class{sim.util.media.chart.SeriesAttributes}}
+\mthd{public Color reviseColor(Color c, double opacity)} Given a color and an opacity (between 0.0 and 1.0, where 1.0 of fully opaque), revises the color so that it has the given opacity and returns it.
+\end{methods}
+    
+\paragraph{Making a SeriesAttributes}
+
+When you build a SeriesAttributes, you're essentially adding various widgets which allow the user to manipulate the color, line thickness, name, etc., of the series as it's being drawn.  Doing so entails at least overriding the following two methods:
+
+\begin{methods}{\class{sim.util.media.chart.SeriesAttributes}}
+\mthd{public abstract void buildAttributes()} Constructs the SeriesAttributes by adding items to the LabelledList.  This method will be called during the SeriesAttributes constructor.
+\mthd{public abstract void rebuildGraphicsDefinitions()} Updates features of the series to reflect the current widget settings as specified by the user.  This method should be called each time a widget is modified.
+\end{methods}
+
+Additionally, you may need to override the \method{setName()} method: in some cases to change the name of a series, JFreeChart requires that the entire series be rebuilt.
+
+\paragraph{Attributes for Time Series}
+
+Time Series are controlled by the class \Class{sim.util.media.chart.TimeSeriesAttributes}, which has the following constructor, solely called by TimeSeriesChartGenerator:
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes} Constructor}
+\mthd{public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, SeriesChangeListener stoppable)} Creates a TimeSeriesAttributes attached to the given generator, with the provided series, and located at the given index in the attributes list.  The stoppable will be called when the TimeSeriesAttributes is deleted.
+\end{methods}
+
+TimeSeriesAttributes allows the user to modify the following features:
+
+\begin{itemize}
+\item The series name
+\item The color of the line
+\item The width of the line
+\item The dash pattern of the line
+\item The ``stretch'' of the dash pattern
+\end{itemize}
+
+The dash pattern is one of the following nine patterns, indexed as follows:
+
+\newcommand{\idash}{\rule[0.5ex]{1.2em}{0.5pt}}
+\newcommand{\iskip}{\rule[0.5ex]{1.2em}{0pt}}
+\newcommand{\ispace}{\rule[0.5ex]{0.6em}{0pt}}
+\newcommand{\idot}{\rule[0.5ex]{0.2em}{0.5pt}}
+
+\begin{itemize}
+\item[0] \idash\idash\idash\idash\idash\idash\idash\idash
+\item[1] \idash\idash\iskip\idash\idash\iskip\idash\idash
+\item[2] \idash\iskip\idash\iskip\idash\iskip\idash\iskip
+\item[3] \idash\ispace\idash\ispace\idash\ispace\idash\ispace\idash\ispace
+\item[4] \idash\ispace\idash\ispace\idot\ispace\idash\ispace\idash\ispace\idot\ispace
+\item[5] \idash\ispace\idot\ispace\idash\ispace\idot\ispace\idash\ispace\idot\ispace
+\item[6] \idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace
+\item[7] \idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace
+\item[8] \idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip
+\end{itemize}
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\mthd{public void setThickness(double val)} Sets the line thickness.
+\mthd{public double getThickness()} Returns the line thickness.
+\mthd{public void setStretch(double val)} Sets the dash pattern stretch.
+\mthd{public double getStretch()} Returns the dash pattern stretch.
+\mthd{public void setDashPattern(int val)} Sets the dash pattern, one of the 9 patterns described earlier.
+\mthd{public int getDashPattern()} Returns the dash pattern, one of the 9 patterns described earlier.
+\mthd{public void setStrokeColor(Color color)} Sets the line color.
+\mthd{public Color getStrokeColor()} Returns the line color.
+\end{methods}
+
+TimeSeriesAttributes do not automatically cull their data: you have to call a certain method to see if the data must be culled, and if so, cull it.  That method is:
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\mthd{public boolean possiblyCull()} If the data is ready to be culled, culls the data and returns \variable{true}, else returns \variable{false}.
+\end{methods}
+
+
+\paragraph{Attributes for Scatter Plots}
+
+Scatter Plots are controlled by the class \Class{sim.util.media.chart.ScatterPlotSeriesAttributes}, which has the following constructor, solely called by ScatterPlotGenerator:
+
+\begin{methods}{\class{sim.util.media.chart.ScatterPlotSeriesAttributes} Constructor}
+\mthd{public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, SeriesChangeListener stoppable)} Creates a ScatterPlotSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.
+\end{methods}
+
+ScatterPlotSeriesAttributes allows the user to modify the following features of the underlying series:
+
+\begin{itemize}
+\item The series name
+\item The color of the symbols used to plot the series
+\item The opacity of the symbols used to plot the series
+\item The shape of the symbols used to plot the series
+\end{itemize}
+
+The symbol shape can be one of seven symbols, as follows:
+
+\begin{itemize}
+\item[0] Circle
+\item[1] Square
+\item[2] Diamond
+\item[3] Cross
+\item[4] X
+\item[5] Upward-pointing Triangle
+\item[6] Downward-pointing Triangle
+\end{itemize}
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\mthd{public void setSymbolColor(Color color)} Sets the symbol color.
+\mthd{public Color getSymbolColor()} Returns the symbol color.
+\mthd{public void setSymbolOpacity(double val)} Sets the symbol opacity.
+\mthd{public double getSymbolOpacity()} Returns the symbol opacity.
+\mthd{public void setShapeNum(int val)} Sets the symbol shape to one of the seven values described earlier.
+\mthd{public int getShapeNum()} Returns the symbol shape as one of the seven values described earlier.
+\mthd{public Shape getShape()} Returns the symbol shape as a \class{java.awt.geom.Shape}.
+\end{methods}
+
+\paragraph{Attributes for Histograms}
+
+Histograms are controlled by the class \Class{sim.util.media.char.HistogramSeriesAttributes}, which has the following constructor, solely called by HistogramGenerator:
+
+\begin{methods}{\class{sim.util.media.chart.HistogramSeriesAttributes} Constructor}
+\mthd{public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, int bins,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
+Creates a ScatterPlotSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  
+\end{methods}
+
+HistogramSeriesAttributes allows the user to modify the following features of the underlying series:
+
+\begin{itemize}
+\item The series name
+\item The number of bins in the histogram
+\item The fill color for histogram bars
+\item The fill opacity for the histogram bars
+\item The outline color for the histogram bars
+\item The outline opacity for the histogram bars
+\item The thickness of the outline
+\end{itemize}
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\mthd{public void setFillColor(Color color)} Sets the fill color.
+\mthd{public Color getFillColor()} Returns the fill color.
+\mthd{public void setFillOpacity(double val)} Sets the fill opacity.
+\mthd{public double getFillOpacity()} Returns the fill opacity.
+\mthd{public void setStrokeColor(Color color)} Sets the outline stroke color.
+\mthd{public Color getStrokeColor()} Returns the outline stroke color.
+\mthd{public void setStrokeOpacity(double val)} Sets the outline stroke opacity.
+\mthd{public double getStrokeOpacity()} Returns the outline stroke opacity.
+\mthd{public void setThickness(double val)} Sets the outline thickness.
+\mthd{public double getThickness()} Returns the outline thickness.
+\mthd{public void setNumBins(int val)} Sets the number of bins in the histogram.
+\mthd{public int getNumBins()} Returns the number of bins in the histogram.
+\end{methods}
 
 \subsection{Data Cullers}
-DataCuller
-MinGapDataCuller
+\label{sim.util.media.chart.DataCuller}
+
+Classes which use TimeSeriesChartGenerator must occasionally cull values from its series in order to keep graphics drawing efficient.  To do this they employ its \Class{sim.util.media.chart.DataCuller}.  DataCuller is just an interface: MASON provides a single but effective concrete subclass called \Class{sim.util.media.chart.MinGapDataCuller} to perform culling.
+
+Culling isn't automatic: after you enter new data into a series, you must manually call \method{possiblyCull()} on the associated TimeSeriesAttributes object to see if the totality of the data should now undergo culling.
+
+DataCuller has two basic methods to implement:
+
+\begin{methods}{\class{sim.util.media.chart.DataCuller} Abstract}
+\mthd{public boolean tooManyPoints(int pointCount)} Returns \variable{true} if the provided point count is over the threshold and points should be culled.
+\mthd{public IntBag cull(double[] xValues, boolean sortOutput)} Culls points from the given X values, and optionally sorts the result.
+\end{methods}
+
+TimeSeriesAttributes uses this as follows: when \(\langle X, Y\rangle\) points are added to the time series, TimeSeriesAttributes first checks the culler to see if there are too many points.  If so, it extracts just the \(X\) values and sends them to the culler to be culled.  It then goes through all the points and removes the ones whose \(X\) values are not among the survivers.
+
+TimeSeriesChartGenerator at present uses a culler called MinGapDataCuller, which strives to remove \(X\) values so as to leave the smallest gaps between their left and right siblings.  It is largely defined by its construtors:
+
+\begin{methods}{\class{sim.util.media.chart.MinGapDataCuller} Constructor}
+\mthd{public MinGapDataCuller(int maxPointCount, int pointCountAfterCulling)} Constructs a MinGapDataCuller which agrees to cull after the point count has exceeded \variable{maxPointCount}, and then culls back to \variable{pointCountAfterCulling}.
+\mthd{public MinGapDataCuller(int maxPointCount)} Constructs a MinGapDataCuller which agrees to cull after the point count has exceeded \variable{maxPointCount}, and then culls back to half that amount, plus 1.
+\end{methods}
 
 
 \cleardoublepage
