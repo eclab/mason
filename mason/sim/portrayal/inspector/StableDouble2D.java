@@ -24,7 +24,7 @@ public class StableDouble2D implements StableLocation
         
     public String toString()
         {
-		update();
+        update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ")"; 
         }
@@ -34,8 +34,8 @@ public class StableDouble2D implements StableLocation
         this.field = field;
         this.object = object;
         }
-	
-	void update()
+        
+    void update()
         {
         Double2D pos = null;
         if (field != null) pos = field.getObjectLocation(object);
@@ -50,15 +50,15 @@ public class StableDouble2D implements StableLocation
     public void setX(double val)
         {
         if (field!=null) field.setObjectLocation(object, new Double2D(val,getY()));
-		x = val;
-		exists = true;
+        x = val;
+        exists = true;
         }
 
     public void setY(double val)
         {
         if (field!=null) field.setObjectLocation(object, new Double2D(getX(),val));
-		y = val;
-		exists = true;
+        y = val;
+        exists = true;
         }
 
 // playing with too much fire

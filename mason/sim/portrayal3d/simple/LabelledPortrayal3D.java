@@ -46,16 +46,16 @@ import sim.display3d.*;
 public class LabelledPortrayal3D extends SimplePortrayal3D
     {
     public static final Transform3D DEFAULT_LABEL_OFFSET;
-	
-	// A larger font size makes the label bigger but also uses much more memory
-	static final int FONT_SIZE = 18;
-	// A smaller scaling factor reduces the label size
-	static final double SCALING_MODIFIER = 1.0 / 5.0; 
-	
-	double labelScale = 1.0;
-	public double getLabelScale() { return labelScale; }
-	public void setLabelScale(double s) { labelScale = Math.abs(s); }
-	
+        
+    // A larger font size makes the label bigger but also uses much more memory
+    static final int FONT_SIZE = 18;
+    // A smaller scaling factor reduces the label size
+    static final double SCALING_MODIFIER = 1.0 / 5.0; 
+        
+    double labelScale = 1.0;
+    public double getLabelScale() { return labelScale; }
+    public void setLabelScale(double s) { labelScale = Math.abs(s); }
+        
     static
         {
         DEFAULT_LABEL_OFFSET = transformForOffset(0.5f,0.5f,0.5f);
@@ -68,12 +68,12 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         return offset;
         }
         
-	Color color;
-	Transform3D offset;
-	Font font;
-	Font3D font3D;	// only used if we're doing Text3D
-	SimplePortrayal3D child;
-	String label;
+    Color color;
+    Transform3D offset;
+    Font font;
+    Font3D font3D;  // only used if we're doing Text3D
+    SimplePortrayal3D child;
+    String label;
     
     public LabelledPortrayal3D(SimplePortrayal3D child)
         {
@@ -107,12 +107,12 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         {
         this.child = child;
         this.color = color; 
-		this.offset = offset;
+        this.offset = offset;
         this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         this.label = label;
-		if (font == null) font = new Font("SansSerif",Font.PLAIN, FONT_SIZE);
+        if (font == null) font = new Font("SansSerif",Font.PLAIN, FONT_SIZE);
         this.font = font;
-		font3D = new Font3D(font, new FontExtrusion());
+        font3D = new Font3D(font, new FontExtrusion());
         }
         
     public PolygonAttributes polygonAttributes()
@@ -130,17 +130,17 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         return child.getName(wrapper);
         }
     
-	/** Sets the current display both here and in the child. */
-	public void setCurrentDisplay(Display3D display)
-		{
-		super.setCurrentDisplay(display);
-		child.setCurrentDisplay(display);
-		}
-		
-	/** Sets the current field portrayal both here and in the child. */
+    /** Sets the current display both here and in the child. */
+    public void setCurrentDisplay(Display3D display)
+        {
+        super.setCurrentDisplay(display);
+        child.setCurrentDisplay(display);
+        }
+                
+    /** Sets the current field portrayal both here and in the child. */
     public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-		super.setCurrentFieldPortrayal(p);
+        super.setCurrentFieldPortrayal(p);
         child.setCurrentFieldPortrayal(p);
         }
 
@@ -182,7 +182,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             }
         }
         
-	void updateSwitch(Switch jswitch, Object object)
+    void updateSwitch(Switch jswitch, Object object)
         {
         // we do it this way rather than the obvious if/else
         // statement because it gets inlined this way (32 bytes vs. 36 bytes).
@@ -256,8 +256,8 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
             o.addChild(o3d);         // Add label to the offset TransformGroup
             jswitch.addChild(o);    // Add offset TransformGroup to the Switch
             
-			j3dModel.addChild(n);   // Add the underlying model as child 0
-			j3dModel.addChild(jswitch);  // Add the switch as child 1
+            j3dModel.addChild(n);   // Add the underlying model as child 0
+            j3dModel.addChild(jswitch);  // Add the switch as child 1
             updateSwitch(jswitch, obj);       // turn the switch on/off
             }
         else

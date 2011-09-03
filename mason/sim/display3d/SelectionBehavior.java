@@ -47,7 +47,7 @@ public class SelectionBehavior extends MouseBehavior
     
     public void setTolerance(double tolerance) { pickCanvas.setTolerance((float)tolerance); }
     
-	/** Detaches the Selection Behavior from the Canvas properly, so leaks don't occur. */
+    /** Detaches the Selection Behavior from the Canvas properly, so leaks don't occur. */
     public void detach()
         {
         // the objective here is to remove me from the canvas so that I don't cause leaks

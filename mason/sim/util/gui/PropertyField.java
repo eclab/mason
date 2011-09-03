@@ -30,40 +30,40 @@ import sim.util.*;
 
 public class PropertyField extends JComponent
     {
-	JComboBox list = new JComboBox();
-	JTextField valField = new JTextField();
-	JCheckBox checkField = new JCheckBox();
-	JButton viewButton = new JButton("View");  // optionally displayed instead of valField (array or Object)
-	JLabel viewLabel = new JLabel();
-	JLabel optionalLabel = new JLabel();
+    JComboBox list = new JComboBox();
+    JTextField valField = new JTextField();
+    JCheckBox checkField = new JCheckBox();
+    JButton viewButton = new JButton("View");  // optionally displayed instead of valField (array or Object)
+    JLabel viewLabel = new JLabel();
+    JLabel optionalLabel = new JLabel();
     static final int SLIDER_MAX = 1000;
     static final int SLIDER_WIDTH = 80;
-	JSlider slider = new JSlider(0,SLIDER_MAX)
+    JSlider slider = new JSlider(0,SLIDER_MAX)
         {
         public Dimension getMaximumSize() { return new Dimension(SLIDER_WIDTH, super.getMaximumSize().height); }
         public Dimension getPreferredSize() { return getMaximumSize(); }
         };
 
-    DecimalFormat sliderFormatter = new DecimalFormat();	// to control the slider's number of decimal places
+    DecimalFormat sliderFormatter = new DecimalFormat();        // to control the slider's number of decimal places
         
-	public JTextField getField() { return valField; }
+    public JTextField getField() { return valField; }
 
-	Border valFieldBorder;
-	Border emptyBorder;
-	String currentValue;
-	boolean isReadWrite;
-	Object domain;
+    Border valFieldBorder;
+    Border emptyBorder;
+    String currentValue;
+    boolean isReadWrite;
+    Object domain;
     
-	int displayState;
-	public static final int SHOW_CHECKBOX = 0;
-	public static final int SHOW_TEXTFIELD = 1;
-	public static final int SHOW_VIEWBUTTON = 2;
-	public static final int SHOW_SLIDER = 3;
-	public static final int SHOW_LIST = 4;
+    int displayState;
+    public static final int SHOW_CHECKBOX = 0;
+    public static final int SHOW_TEXTFIELD = 1;
+    public static final int SHOW_VIEWBUTTON = 2;
+    public static final int SHOW_SLIDER = 3;
+    public static final int SHOW_LIST = 4;
 
-	Color defaultColor;
-	Color editedColor = new Color(225,225,255);
-	
+    Color defaultColor;
+    Color editedColor = new Color(225,225,255);
+        
     public void setEditedColor(Color c) { editedColor = c; }
     public Color getEditedColor() { return editedColor; }
     
@@ -93,7 +93,7 @@ public class PropertyField extends JComponent
             }
         }
     
-	KeyListener listener = new KeyListener()
+    KeyListener listener = new KeyListener()
         {
         public void keyReleased(KeyEvent keyEvent) { }
         public void keyTyped(KeyEvent keyEvent) { }
@@ -114,7 +114,7 @@ public class PropertyField extends JComponent
             }
         };
         
-	ActionListener checkListener = new ActionListener()
+    ActionListener checkListener = new ActionListener()
         {
         public void actionPerformed ( ActionEvent e )
             {
@@ -122,7 +122,7 @@ public class PropertyField extends JComponent
             }
         };
 
-	ActionListener viewButtonListener = new ActionListener()
+    ActionListener viewButtonListener = new ActionListener()
         {
         public void actionPerformed ( ActionEvent e )
             {
@@ -130,7 +130,7 @@ public class PropertyField extends JComponent
             }
         };
         
-	FocusAdapter focusAdapter = new FocusAdapter()
+    FocusAdapter focusAdapter = new FocusAdapter()
         {
         public void focusLost ( FocusEvent e )
             {
@@ -149,13 +149,13 @@ public class PropertyField extends JComponent
      * @return the number of decimal places to show
      * @author jharrison
      */
-	int calcDecimalPlacesForInterval(double low, double high, int ticks)
-    	{
-    	double epsilon = (high - low) / (double)ticks;
-    	return (int)Math.ceil(Math.log10(1/epsilon));
-    	}
+    int calcDecimalPlacesForInterval(double low, double high, int ticks)
+        {
+        double epsilon = (high - low) / (double)ticks;
+        return (int)Math.ceil(Math.log10(1/epsilon));
+        }
       
-	ChangeListener sliderListener = new ChangeListener()
+    ChangeListener sliderListener = new ChangeListener()
         {
         public void stateChanged (ChangeEvent e)
             {
@@ -183,7 +183,7 @@ public class PropertyField extends JComponent
             }
         };
     
-	ActionListener listListener = new ActionListener()
+    ActionListener listListener = new ActionListener()
         {
         public void actionPerformed ( ActionEvent e )
             {
@@ -241,7 +241,7 @@ public class PropertyField extends JComponent
                 double max = domain.getMax().doubleValue();
                 int i = (int)((d - min) / (max - min) * SLIDER_MAX);
                 if (!domain.isDouble())
-                	i = (int)d;
+                    i = (int)d;
                 slider.setValue(i);
                 }
             }
@@ -322,21 +322,21 @@ public class PropertyField extends JComponent
         viewButton.putClientProperty("Quaqua.Button.style","square");
         
         if ((domain != null) && (domain instanceof Interval)) 
-		{
-        	Interval interval = (Interval)domain;
-        	if (interval.isDouble())
-			 { 
-			 // nothing
-			 }
-        	else 
-			{
+            {
+            Interval interval = (Interval)domain;
+            if (interval.isDouble())
+                { 
+                // nothing
+                }
+            else 
+                {
 
                 slider.setMinimum(interval.getMin().intValue());
                 slider.setMaximum(interval.getMax().intValue());
-        	}
-        }
+                }
+            }
         
-        sliderFormatter.setGroupingUsed(false);	// no commas
+        sliderFormatter.setGroupingUsed(false); // no commas
                 
         // set values
         setValues(label, initialValue, isReadWrite, domain, show);
@@ -360,7 +360,7 @@ public class PropertyField extends JComponent
        which the user has checked.  newValue(...) must also return a String with the desired index for the list to be
        set to.
     */
-	void setValues(String label, String initialValue, boolean isReadWrite, Object domain, int show)
+    void setValues(String label, String initialValue, boolean isReadWrite, Object domain, int show)
         {
         this.domain = domain;
         removeAll();
@@ -461,7 +461,7 @@ public class PropertyField extends JComponent
         return s;
         }
  
-	public void setEnabled(boolean b)
+    public void setEnabled(boolean b)
         {
         super.setEnabled(b);
         valField.setEnabled(b);
@@ -472,4 +472,4 @@ public class PropertyField extends JComponent
         slider.setEnabled(b);
         list.setEnabled(b);
         }
-   }
+    }

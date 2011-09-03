@@ -30,9 +30,9 @@ import java.awt.*;
  **/
 public class WireFrameBoxPortrayal3D extends SimplePortrayal3D
     {
-	Appearance appearance;
+    Appearance appearance;
     
-	static final float[] verts = 
+    static final float[] verts = 
         {
         1f, 0f,  1f,     1f,  1f,  1f,  0f,  1f,  1f,   0f, 0f,  1f,     1f, 0f,  1f, /* front face*/    
         0f, 0f, 0f,     0f,  1f, 0f,     1f,  1f, 0f,    1f, 0f, 0f,    0f, 0f, 0f, /* back face*/       

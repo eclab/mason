@@ -58,7 +58,7 @@ public abstract class PropertyInspector extends Inspector
     public GUIState simulation;
     
     static Bag classes = null;
-	boolean validInspector = false;
+    boolean validInspector = false;
     protected Stoppable stopper;
         
     public void setStopper(Stoppable stopper)
@@ -71,9 +71,9 @@ public abstract class PropertyInspector extends Inspector
         return stopper;
         }
 
-	/** Sets whether the inspector is valid or not. */
-	protected void setValidInspector(boolean val) { validInspector = val; }
-	
+    /** Sets whether the inspector is valid or not. */
+    protected void setValidInspector(boolean val) { validInspector = val; }
+        
     /** Returns true if the inspector is valid.  By default this returns false. */
     public boolean isValidInspector() { return validInspector; }
         

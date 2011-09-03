@@ -33,7 +33,7 @@ import sim.display3d.*;
 
 public class TransformedPortrayal3D extends SimplePortrayal3D
     {
-	SimplePortrayal3D child;
+    SimplePortrayal3D child;
     
     public TransformedPortrayal3D(SimplePortrayal3D child, Transform3D transform)
         {
@@ -61,17 +61,17 @@ public class TransformedPortrayal3D extends SimplePortrayal3D
         return child.getName(wrapper);
         }
     
-	/** Sets the current display both here and in the child. */
-	public void setCurrentDisplay(Display3D display)
-		{
-		super.setCurrentDisplay(display);
-		child.setCurrentDisplay(display);
-		}
-		
-	/** Sets the current field portrayal both here and in the child. */
+    /** Sets the current display both here and in the child. */
+    public void setCurrentDisplay(Display3D display)
+        {
+        super.setCurrentDisplay(display);
+        child.setCurrentDisplay(display);
+        }
+                
+    /** Sets the current field portrayal both here and in the child. */
     public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-		super.setCurrentFieldPortrayal(p);
+        super.setCurrentFieldPortrayal(p);
         child.setCurrentFieldPortrayal(p);
         }
 

@@ -72,7 +72,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                             o + " -- expecting a SimplePortrayal3D");
                     SimplePortrayal3D p3d = (SimplePortrayal3D)p;
-					p3d.setCurrentFieldPortrayal(this);
+                    p3d.setCurrentFieldPortrayal(this);
                     TransformGroup newTransformGroup = p3d.getModel(o, null);
                     newTransformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
                     newTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -112,7 +112,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                                 o + " -- expecting a SimplePortrayal3D");
                         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
-						p3d.setCurrentFieldPortrayal(this);
+                        p3d.setCurrentFieldPortrayal(this);
                         TransformGroup newTransformGroup = p3d.getModel(o, null);
                         newTransformGroup.setCapability(TransformGroup.ALLOW_CHILDREN_READ);
                         newTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -171,7 +171,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                         throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                             o + " -- expecting a SimplePortrayal3D");
                     SimplePortrayal3D p3d = (SimplePortrayal3D)p;
-					p3d.setCurrentFieldPortrayal(this);
+                    p3d.setCurrentFieldPortrayal(this);
                     BranchGroup bg = (BranchGroup)(global.getChild(count++));
                     TransformGroup originalTransformGroup = null;
                     if (bg.numChildren() > 0) originalTransformGroup = (TransformGroup)(bg.getChild(0));  // could be null if we've stubbed
@@ -179,8 +179,8 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                     Object originalData = bg.getUserData();
                     if (originalData == o)
                         {
-						newTransformGroup = p3d.getModel(o, originalTransformGroup);
-						}
+                        newTransformGroup = p3d.getModel(o, originalTransformGroup);
+                        }
                     else 
                         {
                         Bag b = (Bag)(models.get(o));
@@ -189,13 +189,13 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                             // yay, we can reuse an existing model
                             BranchGroup replacementBranchGroup = (BranchGroup)(b.remove(0));
                             originalTransformGroup = (TransformGroup)(replacementBranchGroup.getChild(0));
-							newTransformGroup = p3d.getModel(o,originalTransformGroup);
+                            newTransformGroup = p3d.getModel(o,originalTransformGroup);
                             if (newTransformGroup == originalTransformGroup)  // we can stick the BranchGroup in
                                 global.setChild(replacementBranchGroup,count-1);
                             }
                         else 
                             // shoot, we have to create a new model.  Rebuild.
-							newTransformGroup = p3d.getModel(o, null);
+                            newTransformGroup = p3d.getModel(o, null);
                         }
                                                 
                     // is the new transformGroup different?
@@ -246,7 +246,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                                 o + " -- expecting a SimplePortrayal3D");
                         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
-						p3d.setCurrentFieldPortrayal(this);
+                        p3d.setCurrentFieldPortrayal(this);
                         BranchGroup bg = (BranchGroup)(global.getChild(count++));
                         TransformGroup originalTransformGroup = null;
                         if (bg.numChildren() > 0) originalTransformGroup = (TransformGroup)(bg.getChild(0));  // could be null if we've stubbed
@@ -254,8 +254,8 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                         Object originalData = bg.getUserData();
                         if (originalData == o)
                             {
-							newTransformGroup = p3d.getModel(o, originalTransformGroup);
-							}
+                            newTransformGroup = p3d.getModel(o, originalTransformGroup);
+                            }
                         else
                             {
                             Bag b = (Bag)(models.get(o));
@@ -264,15 +264,15 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                                 // yay, we can reuse an existing model
                                 BranchGroup replacementBranchGroup = (BranchGroup)(b.remove(0));
                                 originalTransformGroup = (TransformGroup)(replacementBranchGroup.getChild(0));
-								newTransformGroup = p3d.getModel(o,originalTransformGroup);
+                                newTransformGroup = p3d.getModel(o,originalTransformGroup);
                                 if (newTransformGroup == originalTransformGroup)  // we can stick the BranchGroup in
                                     global.setChild(replacementBranchGroup,count-1);
                                 }
                             else
                                 {
-								// shoot, we have to create a new model.  Rebuild.
+                                // shoot, we have to create a new model.  Rebuild.
                                 newTransformGroup = p3d.getModel(o, null);
-								}
+                                }
                             }
                                                 
                         // is the new transformGroup different?
@@ -318,7 +318,7 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
                 
     // searches for an object within a short distance of a location
     final int SEARCH_DISTANCE = 2;
-	final int bagsize = (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1);  // 125
+    final int bagsize = (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1);  // 125
     IntBag xPos = new IntBag(bagsize);
     IntBag yPos = new IntBag(bagsize);
     IntBag zPos = new IntBag(bagsize);

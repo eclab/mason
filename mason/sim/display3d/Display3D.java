@@ -136,7 +136,7 @@ public class Display3D extends JPanel implements Steppable
     ArrayList portrayals = new ArrayList();
     Stoppable stopper;
     GUIState simulation;
-	
+        
     /** The component bar at the top of the Display3D. */
     public Box header;
     /** The button which starts or stops a movie */
@@ -168,9 +168,9 @@ public class Display3D extends JPanel implements Steppable
         This is a good place to hang things you don't want auto-rotated nor transformed by the Display3D.  Hang things off of here
         in the sceneGraphCreated() hook. */
     public BranchGroup root = null;
-	/** An additional root scene graph node which is attached to the viewing transform of the universe, and thus
-		stays in the same location regardless of the placement of the camera. */
-	public BranchGroup viewRoot = null;
+    /** An additional root scene graph node which is attached to the viewing transform of the universe, and thus
+        stays in the same location regardless of the placement of the camera. */
+    public BranchGroup viewRoot = null;
 
     // these really don't need to be public...
 
@@ -194,14 +194,14 @@ public class Display3D extends JPanel implements Steppable
     /** Holds two lights located at the camera: in slot 0, a white PointLight, and in slot 1, a white AmbientLight.
         You may change these lights to different colored lights, but please keep them PointLights and AmbientLights
         respectively.  These lights are turned on and off by the Options pane. */
-	Switch lightSwitch = null;
+    Switch lightSwitch = null;
     BitSet lightSwitchMask = new BitSet(NUM_LIGHT_ELEMENTS);
     final static int NUM_LIGHT_ELEMENTS = 2;
     final static int SPOTLIGHT_INDEX = 0;
     final static int AMBIENT_LIGHT_INDEX = 1;
 
     /* The MovieMaker.  If null, we're not shooting a movie. */
-	MovieMaker movieMaker = null;    
+    MovieMaker movieMaker = null;    
 
     /** The popup layers menu */
     public JPopupMenu popup;
@@ -336,13 +336,13 @@ public class Display3D extends JPanel implements Steppable
     
     class Portrayal3DHolder
         {
-		Portrayal3D portrayal;
-		String name;
-		JCheckBoxMenuItem menuItem;
-		int subgraphIndex;
-		boolean visible = true;  // added -- Sean
-		public String toString() { return name; }
-		Portrayal3DHolder(Portrayal3D p, String n, boolean visible)
+        Portrayal3D portrayal;
+        String name;
+        JCheckBoxMenuItem menuItem;
+        int subgraphIndex;
+        boolean visible = true;  // added -- Sean
+        public String toString() { return name; }
+        Portrayal3DHolder(Portrayal3D p, String n, boolean visible)
             {
             portrayal=p; 
             name=n;
@@ -432,7 +432,7 @@ public class Display3D extends JPanel implements Steppable
         portrayals.add(p);
         popup.add(p.menuItem);
         dirty = true;
-		portrayal.setCurrentDisplay(this);
+        portrayal.setCurrentDisplay(this);
 
         createSceneGraph();
         }
@@ -456,7 +456,7 @@ public class Display3D extends JPanel implements Steppable
             });
         }
     
-	void createConsoleMenu()
+    void createConsoleMenu()
         {
         if (simulation != null && simulation.controller != null &&
             simulation.controller instanceof Console)
@@ -488,20 +488,20 @@ public class Display3D extends JPanel implements Steppable
         return old;
         }
     
-	public GUIState getSimulation() { return simulation; }
-	
+    public GUIState getSimulation() { return simulation; }
+        
     /**
        Creates a Display3D with the provided width and height for its portrayal region, 
        attached to the provided simulation.  The interval is ignored.
-	   @deprecated
+       @deprecated
     */
     // width and height are actually ints, but we're being consistent with Display2D
     public Display3D(final double width, final double height, GUIState simulation, long interval)
-		{
-		this(width, height, simulation);
-		}
+        {
+        this(width, height, simulation);
+        }
 
-	
+        
     /**
        Creates a Display3D with the provided width and height for its portrayal region, 
        attached to the provided simulation.
@@ -729,7 +729,7 @@ public class Display3D extends JPanel implements Steppable
         setShowsBackdrop(true);
         }
         
-		
+                
     void rebuildAuxillarySwitch()
         {
         auxillarySwitch = new Switch(Switch.CHILD_MASK);
@@ -741,7 +741,7 @@ public class Display3D extends JPanel implements Steppable
         // Add Axes to position 0 of switch
         AxesPortrayal3D x = new AxesPortrayal3D(0.01f, true);
         x.setCurrentDisplay(this);
-		auxillarySwitch.insertChild(x.getModel(null, null), AXES_AUX_INDEX);
+        auxillarySwitch.insertChild(x.getModel(null, null), AXES_AUX_INDEX);
                 
         
         // Add Backdrop Sphere to position 1 of switch
@@ -808,7 +808,7 @@ public class Display3D extends JPanel implements Steppable
     // This ensures that something in the scene changes, which is important because for bizarre
     // reasons Java3D won't redraw otherwise -- so we can't write out a movie frame etc. if it so
     // happened that nothing in the scene changed in-between time steps.
-	static final float[] bogusPosition = new float[]{0,0,0};
+    static final float[] bogusPosition = new float[]{0,0,0};
     PointArray bogusMover;
     void moveBogusMover()
         {
@@ -1037,9 +1037,9 @@ public class Display3D extends JPanel implements Steppable
             }
         else // reset the canvas
             {
-			// detatches the root and the selection behavior from the universe.
-			// we'll need to reattach those.  Everything else: the canvas and lights etc.,
-			// will stay connected.
+            // detatches the root and the selection behavior from the universe.
+            // we'll need to reattach those.  Everything else: the canvas and lights etc.,
+            // will stay connected.
             destroySceneGraph();
             }
         
@@ -1078,7 +1078,7 @@ public class Display3D extends JPanel implements Steppable
             Portrayal3DHolder p3h = (Portrayal3DHolder)(iter.next());
             Portrayal3D p = p3h.portrayal;
             Object obj = (p instanceof FieldPortrayal3D)? ((FieldPortrayal3D)p).getField(): null;
-			p.setCurrentDisplay(this);
+            p.setCurrentDisplay(this);
             portrayalSwitch.addChild(p.getModel(obj,null));
             if (p3h.visible)
                 portrayalSwitchMask.set(count);
@@ -1218,10 +1218,10 @@ public class Display3D extends JPanel implements Steppable
     TransformGroup autoSpinBackgroundTransformGroup = new TransformGroup();
 
     OrbitBehavior mOrbitBehavior = null;
-	SelectionBehavior mSelectBehavior = null; 
-	
-	public SelectionBehavior getSelectionBehavior() { return mSelectBehavior; }
-	public ToolTipBehavior getToolTipBehavior() { return toolTipBehavior; }
+    SelectionBehavior mSelectBehavior = null; 
+        
+    public SelectionBehavior getSelectionBehavior() { return mSelectBehavior; }
+    public ToolTipBehavior getToolTipBehavior() { return toolTipBehavior; }
 
     boolean selectionAll = true;
     boolean inspectionAll = true;
@@ -1230,7 +1230,7 @@ public class Display3D extends JPanel implements Steppable
     public void setSelectsAll(boolean selection, boolean inspection)
         {
         selectionAll = selection;
-		inspectionAll = inspection;
+        inspectionAll = inspection;
         mSelectBehavior.setSelectsAll(selectionAll, inspectionAll);
         }
 
@@ -1298,7 +1298,7 @@ public class Display3D extends JPanel implements Steppable
        Updates the scene graph to reflect changes in the simulation.  If <i>waitForRenderer</i> is
        true, we block until the renderer has finished producing the scene on-screen.
     */
-	public void updateSceneGraph(boolean waitForRenderer)
+    public void updateSceneGraph(boolean waitForRenderer)
         {
         /* 
          * So far, the Canvas3D is not rendering off-screen, so new frames are not
@@ -1334,7 +1334,7 @@ public class Display3D extends JPanel implements Steppable
             if(portrayalSwitchMask.get(ph.subgraphIndex))
                 {
                 // update model ONLY on what is actually on screen. 
-				ph.portrayal.setCurrentDisplay(this);
+                ph.portrayal.setCurrentDisplay(this);
                 ph.portrayal.getModel(
                     (ph.portrayal instanceof FieldPortrayal3D)? ((FieldPortrayal3D)ph.portrayal).getField(): null,
                     (TransformGroup)portrayalSwitch.getChild(ph.subgraphIndex));
@@ -1388,12 +1388,12 @@ public class Display3D extends JPanel implements Steppable
     public void takeSnapshot(File file) throws IOException
         {
         canvas.beginCapturing(false);
-		BufferedImage image = canvas.getLastImage();
-		PNGEncoder tmpEncoder = new PNGEncoder(image, false,PNGEncoder.FILTER_NONE,9);
-		OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
-		stream.write(tmpEncoder.pngEncode());
-		stream.close();
-		image.flush();  // just in case -- OS X bug?
+        BufferedImage image = canvas.getLastImage();
+        PNGEncoder tmpEncoder = new PNGEncoder(image, false,PNGEncoder.FILTER_NONE,9);
+        OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+        stream.write(tmpEncoder.pngEncode());
+        stream.close();
+        image.flush();  // just in case -- OS X bug?
         }
 
 
@@ -1412,7 +1412,7 @@ public class Display3D extends JPanel implements Steppable
             return;
             }
 
-	// start the image
+        // start the image
         canvas.beginCapturing(false);
         
         // NOW pop up the save window
@@ -1747,11 +1747,11 @@ public class Display3D extends JPanel implements Steppable
 
 
 
-	JButton systemPreferences = new JButton("MASON");
-	JButton appPreferences = new JButton("Simulation");
+    JButton systemPreferences = new JButton("MASON");
+    JButton appPreferences = new JButton("Simulation");
     public class OptionPane3D extends JFrame
         {
-		OptionPane3D(String label)
+        OptionPane3D(String label)
             {
             super(label);
                         
@@ -2077,7 +2077,7 @@ public class Display3D extends JPanel implements Steppable
         static final String DRAW_FACES_KEY = "Draw Faces";
                 
         /** Resets the Option Pane Preferences by loading from the preference database */
-		void resetToPreferences()
+        void resetToPreferences()
             {
             try
                 {
@@ -2144,7 +2144,7 @@ public class Display3D extends JPanel implements Steppable
         
         
         
-	void rebuildSkipFrame()
+    void rebuildSkipFrame()
         {
         skipFrame.getContentPane().removeAll();
         skipFrame.getContentPane().invalidate();
@@ -2243,7 +2243,7 @@ public class Display3D extends JPanel implements Steppable
         skipListener.actionPerformed(null);  // have it update the text field accordingly
         }
 
-	void rebuildRefreshPopup()
+    void rebuildRefreshPopup()
         {
         refreshPopup.removeAll();
         String s = "";

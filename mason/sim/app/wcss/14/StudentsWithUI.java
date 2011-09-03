@@ -29,11 +29,11 @@ public class StudentsWithUI extends GUIState
 
     ContinuousPortrayal2D yardPortrayal = new ContinuousPortrayal2D();
     NetworkPortrayal2D buddiesPortrayal = new NetworkPortrayal2D();
-	
-	
-	public Display3D display3d;
-	public JFrame displayFrame3d;
-	ContinuousPortrayal3D agitatedYardPortrayal = new ContinuousPortrayal3D();
+        
+        
+    public Display3D display3d;
+    public JFrame displayFrame3d;
+    ContinuousPortrayal3D agitatedYardPortrayal = new ContinuousPortrayal3D();
     NetworkPortrayal3D agitatedBuddiesPortrayal = new NetworkPortrayal3D();
 
 
@@ -106,25 +106,25 @@ public class StudentsWithUI extends GUIState
 
         // redraw the display
         display.repaint();
-		
-		
-		agitatedYardPortrayal.setField( students.agitatedYard );
-		agitatedYardPortrayal.setPortrayalForAll(new ConePortrayal3D(Color.red, 2.0));
+                
+                
+        agitatedYardPortrayal.setField( students.agitatedYard );
+        agitatedYardPortrayal.setPortrayalForAll(new ConePortrayal3D(Color.red, 2.0));
 
-		agitatedBuddiesPortrayal.setField( new SpatialNetwork3D( students.agitatedYard, students.buddies ) );
-		SimpleEdgePortrayal3D ep = new CylinderEdgePortrayal3D()
-			{
-			DecimalFormat format = new DecimalFormat("#.##");
-				
-			public String getLabel(Edge edge)
-				{
-				return "" + format.format(edge.getWeight());
-				}
-			};
-			
-		ep.setLabelScale(0.5);
-		agitatedBuddiesPortrayal.setPortrayalForAll(ep);
-		
+        agitatedBuddiesPortrayal.setField( new SpatialNetwork3D( students.agitatedYard, students.buddies ) );
+        SimpleEdgePortrayal3D ep = new CylinderEdgePortrayal3D()
+            {
+            DecimalFormat format = new DecimalFormat("#.##");
+                                
+            public String getLabel(Edge edge)
+                {
+                return "" + format.format(edge.getWeight());
+                }
+            };
+                        
+        ep.setLabelScale(0.5);
+        agitatedBuddiesPortrayal.setPortrayalForAll(ep);
+                
         display3d.createSceneGraph(); 
         display3d.reset();
         }
@@ -147,9 +147,9 @@ public class StudentsWithUI extends GUIState
 
 
         display3d = new Display3D(300, 300,this);
-		double width = 100;
-		display3d.translate(-width / 2.0, -width / 2.0, 0);
-		display3d.scale(2.0 / width);
+        double width = 100;
+        display3d.translate(-width / 2.0, -width / 2.0, 0);
+        display3d.scale(2.0 / width);
 
         displayFrame3d = display3d.createFrame();
         displayFrame3d.setTitle("Schoolyard Display... NOW IN 3-D!");
@@ -166,7 +166,7 @@ public class StudentsWithUI extends GUIState
         if (displayFrame!=null) displayFrame.dispose();
         displayFrame = null;
         display = null;
-		
+                
         if (displayFrame3d!=null) displayFrame3d.dispose();
         displayFrame3d = null;
         display3d = null;

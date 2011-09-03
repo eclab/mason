@@ -71,9 +71,9 @@ public class SpherePortrayal3D extends PrimitivePortrayal3D
 
     /** Constructs a SpherePortrayal3D with the given appearance, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
     public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale)
-		{
-		this(appearance, generateNormals, generateTextureCoordinates, scale, DEFAULT_DIVISIONS);
-		}
+        {
+        this(appearance, generateNormals, generateTextureCoordinates, scale, DEFAULT_DIVISIONS);
+        }
 
     /** Constructs a SpherePortrayal3D with the given appearance, divisions, and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
     public SpherePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale, int divisions)

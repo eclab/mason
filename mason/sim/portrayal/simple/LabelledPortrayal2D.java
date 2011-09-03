@@ -90,7 +90,7 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     boolean showLabel = true;
     
     public boolean onlyLabelWhenSelected;
-	
+        
     public void setOnlyLabelWhenSelected(boolean val) { onlyLabelWhenSelected = val; }
     public boolean getOnlyLabelWhenSelected() { return onlyLabelWhenSelected; }
     
@@ -114,15 +114,15 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
     public LabelledPortrayal2D(SimplePortrayal2D child, double offsetx, double offsety, double scalex, double scaley, Font font, int align, String label, Paint paint, boolean onlyLabelWhenSelected)
         {
         this.offsetx = offsetx; 
-		this.offsety = offsety; 
-		this.scalex = scalex; 
-		this.scaley = scaley;
+        this.offsety = offsety; 
+        this.scalex = scalex; 
+        this.scaley = scaley;
         this.font = font; 
-		this.align = align; 
-		this.label = label; 
-		this.child = child;
+        this.align = align; 
+        this.label = label; 
+        this.child = child;
         this.paint = paint;  
-		this.onlyLabelWhenSelected = onlyLabelWhenSelected;
+        this.onlyLabelWhenSelected = onlyLabelWhenSelected;
         }
 
     /** Draws 10 pixels down from the [dx=0, dy=0.5] prescaled position of the Portrayal2D, 

@@ -33,13 +33,13 @@ import org.jfree.data.general.*;
     the aggregated data over time), AGGREGATIONMETHOD_MAX (use the maximum), or AGGREGATIONMETHOD_MEAN (use
     the mean).   The aggregation interval -- how much time you should wait for before dumping the aggregated
     results into the time series -- will be stored in globalAttriutes.interval. 
-	
-	<p>The ChartingPropertyInspector maintains a Bag of global charts presently on-screen.  This isn't a static variable, but
-	rather is stored in GUIState.storage under the key chartKey ("sim.portrayal.inspector.ChartingPropertyInspector")
+        
+    <p>The ChartingPropertyInspector maintains a Bag of global charts presently on-screen.  This isn't a static variable, but
+    rather is stored in GUIState.storage under the key chartKey ("sim.portrayal.inspector.ChartingPropertyInspector")
 */
 
 public abstract class ChartingPropertyInspector extends PropertyInspector
-    {	
+    {   
     /** The ChartGenerator used by this ChartingPropertyInspector */
     protected ChartGenerator generator;
     public ChartGenerator getGenerator() { return generator; }
@@ -150,33 +150,33 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             }
         return null;
         }
-	
-	public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
+        
+    public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
 
-	/** Returns the global charts Bag which holds all charts on-screen for this simulation instance. */
-	protected Bag getCharts(GUIState simulation)
-		{
-		Bag c = (Bag)(simulation.storage.get(chartKey));
-		if (c == null)
-			{
-			c = new Bag();
-			simulation.storage.put(chartKey, c);
-			}
-		return c;
-		}
-		
+    /** Returns the global charts Bag which holds all charts on-screen for this simulation instance. */
+    protected Bag getCharts(GUIState simulation)
+        {
+        Bag c = (Bag)(simulation.storage.get(chartKey));
+        if (c == null)
+            {
+            c = new Bag();
+            simulation.storage.put(chartKey, c);
+            }
+        return c;
+        }
+                
     /** Used to find the global attributes that another inspector has set so I can share it. */
     ChartGenerator chartToUse( final String sName, Frame parent, final GUIState simulation )
         {
-        Bag charts = new Bag(getCharts(simulation));		// make a copy so I can reduce it
+        Bag charts = new Bag(getCharts(simulation));            // make a copy so I can reduce it
 
-		// reduce the charts to ones I can use
-		for(int i = 0; i < charts.numObjs; i++)
-			{
-			ChartGenerator g = (ChartGenerator)(charts.objs[i]);
-			if (!validChartGenerator(g))  // I can't use this chart
-				{ charts.remove(g); i--; }
-			}
+        // reduce the charts to ones I can use
+        for(int i = 0; i < charts.numObjs; i++)
+            {
+            ChartGenerator g = (ChartGenerator)(charts.objs[i]);
+            if (!validChartGenerator(g))  // I can't use this chart
+                { charts.remove(g); i--; }
+            }
 
         if( charts.numObjs == 0 )
             return createNewChart(simulation);
@@ -226,9 +226,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     protected static final int REDRAW_DONT = 7;
         
     /* The Global Attributes panel (the top-left panel) of this ChartingPropertyInspector.  Note that this
-        panel is shared with other inspectors using the same chart. */
-	GlobalAttributes globalAttributes;
-	public GlobalAttributes getGlobalAttributes() { return globalAttributes; }
+       panel is shared with other inspectors using the same chart. */
+    GlobalAttributes globalAttributes;
+    public GlobalAttributes getGlobalAttributes() { return globalAttributes; }
 
     /** The Global Attributes panel (the top-left panel) of ChartingPropertyInspectors. */
     protected class GlobalAttributes extends JPanel
@@ -297,9 +297,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             else list.add(optionsBox2);
             }
         }
-	
-	JFrame chartFrame = null;
-	
+        
+    JFrame chartFrame = null;
+        
     ChartGenerator createNewChart( final GUIState simulation)
         {
         generator = createNewGenerator();
@@ -307,7 +307,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         DisclosurePanel pan = new DisclosurePanel(globalAttributes.title, globalAttributes);
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
-		getCharts(simulation).add( generator );			// put me in the global charts list
+        getCharts(simulation).add( generator );                 // put me in the global charts list
         chartFrame = generator.createFrame();
 
         WindowListener wl = new WindowListener()
@@ -398,16 +398,16 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             public void stop()
                 {
                 if (newStopper!=null) newStopper.stop();  // wraps the stopper
-                // give the movie a chance to write out				
+                // give the movie a chance to write out                         
                 generator.stopMovie();
                 }
             };
         }
-		
-	public void disposeFrame()
-		{
-		if (chartFrame != null)
-			chartFrame.dispose();
-		chartFrame = null;
-		}
+                
+    public void disposeFrame()
+        {
+        if (chartFrame != null)
+            chartFrame.dispose();
+        chartFrame = null;
+        }
     }

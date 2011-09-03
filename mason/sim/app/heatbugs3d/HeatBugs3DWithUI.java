@@ -104,7 +104,7 @@ public class HeatBugs3DWithUI extends GUIState
         
     public void setupPortrayals()
         {
-		// display.destroySceneGraph();
+        // display.destroySceneGraph();
 
         // determine 
         SimpleColorMap cm = new SimpleColorMap();

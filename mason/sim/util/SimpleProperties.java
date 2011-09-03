@@ -155,115 +155,115 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         if (object != null && auxillary == null) 
-		try
-                                                     {
-                                                     // generate the properties
-                                                     Class c = object.getClass();
+            try
+                {
+                // generate the properties
+                Class c = object.getClass();
 
-													// handle integers
-													if (object instanceof Long || object instanceof Integer || object instanceof Short || object instanceof Byte)
-														{
-														Method meth = c.getMethod("longValue", new Class[0]);
-														getMethods.add(meth);
-														setMethods.add(null);
-														domMethods.add(null);
-														hideMethods.add(null);
-														}
-														
-													// handle other kinds of numbers
-													else if (object instanceof Number)
-														{
-														Method meth = c.getMethod("doubleValue", new Class[0]);
-														getMethods.add(meth);
-														setMethods.add(null);
-														domMethods.add(null);
-														hideMethods.add(null);
-														}
-														
-													// handle Booleans
-													if (object instanceof Boolean)
-														{
-														Method meth = c.getMethod("booleanValue", new Class[0]);
-														getMethods.add(meth);
-														setMethods.add(null);
-														domMethods.add(null);
-														hideMethods.add(null);
-														}
-														
-													// handle Strings
-													if (object instanceof String || object instanceof StringBuffer)
-														{
-														Method meth = c.getMethod("toString", new Class[0]);
-														getMethods.add(meth);
-														setMethods.add(null);
-														domMethods.add(null);
-														hideMethods.add(null);
-														}
+                // handle integers
+                if (object instanceof Long || object instanceof Integer || object instanceof Short || object instanceof Byte)
+                    {
+                    Method meth = c.getMethod("longValue", new Class[0]);
+                    getMethods.add(meth);
+                    setMethods.add(null);
+                    domMethods.add(null);
+                    hideMethods.add(null);
+                    }
+                                                                                                                
+                // handle other kinds of numbers
+                else if (object instanceof Number)
+                    {
+                    Method meth = c.getMethod("doubleValue", new Class[0]);
+                    getMethods.add(meth);
+                    setMethods.add(null);
+                    domMethods.add(null);
+                    hideMethods.add(null);
+                    }
+                                                                                                                
+                // handle Booleans
+                if (object instanceof Boolean)
+                    {
+                    Method meth = c.getMethod("booleanValue", new Class[0]);
+                    getMethods.add(meth);
+                    setMethods.add(null);
+                    domMethods.add(null);
+                    hideMethods.add(null);
+                    }
+                                                                                                                
+                // handle Strings
+                if (object instanceof String || object instanceof StringBuffer)
+                    {
+                    Method meth = c.getMethod("toString", new Class[0]);
+                    getMethods.add(meth);
+                    setMethods.add(null);
+                    domMethods.add(null);
+                    hideMethods.add(null);
+                    }
 
-													// handle general properties
-                                                     Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
-                                                     for(int x = 0 ; x < m.length; x++)
-                                                         {
-                                                         if (!("get".equals(m[x].getName())) && !("is".equals(m[x].getName())) &&  // "get()" and "is()" aren't properties
-																(m[x].getName().startsWith("get") || m[x].getName().startsWith("is"))) // corrrect syntax?
-                                                             {
-                                                             int modifier = m[x].getModifiers();
-                                                             if ((includeGetClass || !m[x].getName().equals("getClass")) &&
-                                                                 m[x].getParameterTypes().length == 0 &&
-                                                                 Modifier.isPublic(modifier)) // no arguments, and public, non-abstract?
-                                                                 {
-                                                                 //// Add all properties...
-                                                                 Class returnType = m[x].getReturnType();
-                                                                 if (returnType!= Void.TYPE)
-                                                                     {
-                                                                     getMethods.add(m[x]);
-                                                                     setMethods.add(getWriteProperty(m[x],c));
-                                                                     domMethods.add(getDomain(m[x],c,includeExtensions));
-                                                                     hideMethods.add(getHidden(m[x], c, includeExtensions));
-																	 
-																	 // simple check for invalid Interval domains
-																	int lastIndex = domMethods.size() - 1;
-																	Object domain = getDomain(lastIndex);
-																	 if (returnType == Float.TYPE || returnType == Double.TYPE)
-																		{
-																		if (domain != null && domain instanceof Interval)
-																			{
-																			Interval interval = (Interval) domain;
-																			if (!interval.isDouble())
-																				{
-																				System.err.println("WARNING: Property is double or float valued, but the Interval provided for the property's domain is byte/short/integer/long valued: " + 
-																						getName(lastIndex) + " on Object " + object);
-																				// get rid of the domain
-																				domMethods.set(lastIndex, null);
-																				}
-																			}
-																		}
-																	else if (returnType == Byte.TYPE || returnType == Short.TYPE || returnType == Integer.TYPE || returnType == Long.TYPE)
-																		{
-																		if (domain != null && domain instanceof Interval)
-																			{
-																			Interval interval = (Interval) domain;
-																			if (interval.isDouble())
-																				{
-																				System.err.println("WARNING: Property is byte/short/integer/long valued, but the Interval provided for the property's domain is double or float valued: " + 
-																						getName(lastIndex) + " on Object " + object);
-																				// get rid of the domain
-																				domMethods.set(lastIndex, null);
-																				}
-																			}
-																		}
-																	else if (domain != null && domain instanceof Interval)
-																		{
-																		System.err.println("WARNING: Property is not a basic number type, but an Interval was provided for the property's domain: " + 
-																				getName(lastIndex) + " on Object " + object);
-																		// get rid of the domain
-																		domMethods.set(lastIndex, null);
-																		}
-																	}
-                                                                 }
-                                                             }
-                                                         }
-                                                     }
+                // handle general properties
+                Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
+                for(int x = 0 ; x < m.length; x++)
+                    {
+                    if (!("get".equals(m[x].getName())) && !("is".equals(m[x].getName())) &&  // "get()" and "is()" aren't properties
+                        (m[x].getName().startsWith("get") || m[x].getName().startsWith("is"))) // corrrect syntax?
+                        {
+                        int modifier = m[x].getModifiers();
+                        if ((includeGetClass || !m[x].getName().equals("getClass")) &&
+                            m[x].getParameterTypes().length == 0 &&
+                            Modifier.isPublic(modifier)) // no arguments, and public, non-abstract?
+                            {
+                            //// Add all properties...
+                            Class returnType = m[x].getReturnType();
+                            if (returnType!= Void.TYPE)
+                                {
+                                getMethods.add(m[x]);
+                                setMethods.add(getWriteProperty(m[x],c));
+                                domMethods.add(getDomain(m[x],c,includeExtensions));
+                                hideMethods.add(getHidden(m[x], c, includeExtensions));
+                                                                                                                                         
+                                // simple check for invalid Interval domains
+                                int lastIndex = domMethods.size() - 1;
+                                Object domain = getDomain(lastIndex);
+                                if (returnType == Float.TYPE || returnType == Double.TYPE)
+                                    {
+                                    if (domain != null && domain instanceof Interval)
+                                        {
+                                        Interval interval = (Interval) domain;
+                                        if (!interval.isDouble())
+                                            {
+                                            System.err.println("WARNING: Property is double or float valued, but the Interval provided for the property's domain is byte/short/integer/long valued: " + 
+                                                getName(lastIndex) + " on Object " + object);
+                                            // get rid of the domain
+                                            domMethods.set(lastIndex, null);
+                                            }
+                                        }
+                                    }
+                                else if (returnType == Byte.TYPE || returnType == Short.TYPE || returnType == Integer.TYPE || returnType == Long.TYPE)
+                                    {
+                                    if (domain != null && domain instanceof Interval)
+                                        {
+                                        Interval interval = (Interval) domain;
+                                        if (interval.isDouble())
+                                            {
+                                            System.err.println("WARNING: Property is byte/short/integer/long valued, but the Interval provided for the property's domain is double or float valued: " + 
+                                                getName(lastIndex) + " on Object " + object);
+                                            // get rid of the domain
+                                            domMethods.set(lastIndex, null);
+                                            }
+                                        }
+                                    }
+                                else if (domain != null && domain instanceof Interval)
+                                    {
+                                    System.err.println("WARNING: Property is not a basic number type, but an Interval was provided for the property's domain: " + 
+                                        getName(lastIndex) + " on Object " + object);
+                                    // get rid of the domain
+                                    domMethods.set(lastIndex, null);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             catch (Exception e)
                 {
                 e.printStackTrace();
@@ -354,17 +354,17 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         if (auxillary!=null) return auxillary.getName(index);
         if (index < 0 || index > numProperties()) return null;
-		String name = ((Method)(getMethods.get(index))).getName();
+        String name = ((Method)(getMethods.get(index))).getName();
         if (name.startsWith("is"))
             return name.substring(2);
-		else if (name.equals("longValue"))   // Integers of various kinds
-			return "Value";
-		else if (name.equals("doubleValue"))   // Other Numbers
-			return "Value";
-		else if (name.equals("booleanValue"))   // Booleans
-			return "Value";
-		else if (name.equals("toString"))   // Strings, StringBuffers
-			return "Value";
+        else if (name.equals("longValue"))   // Integers of various kinds
+            return "Value";
+        else if (name.equals("doubleValue"))   // Other Numbers
+            return "Value";
+        else if (name.equals("booleanValue"))   // Booleans
+            return "Value";
+        else if (name.equals("toString"))   // Strings, StringBuffers
+            return "Value";
         else return name.substring(3);  // "get", "set"
         }
         

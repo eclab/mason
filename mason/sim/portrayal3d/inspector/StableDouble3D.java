@@ -26,7 +26,7 @@ public class StableDouble3D implements StableLocation
 
     public String toString()
         {
-		update();
+        update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
@@ -43,7 +43,7 @@ public class StableDouble3D implements StableLocation
         this.object = object;
         }
         
-	void update()
+    void update()
         {
         Double3D pos = null;
         if (field == null) return;
@@ -69,7 +69,7 @@ public class StableDouble3D implements StableLocation
             { ((Continuous2D)field).setObjectLocation(object, new Double2D(val,getY()));  z = 0; }
         else ((Continuous3D)field).setObjectLocation(object, new Double3D(val,getY(),getZ()));
         x = val;
-		exists = true;
+        exists = true;
         }
             
     public void setY(double val)
@@ -79,7 +79,7 @@ public class StableDouble3D implements StableLocation
             { ((Continuous2D)field).setObjectLocation(object, new Double2D(getX(),val));  z = 0; }
         else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),val,getZ()));
         y = val;
-		exists = true;
+        exists = true;
         }
             
     public void setZ(double val)
@@ -87,7 +87,7 @@ public class StableDouble3D implements StableLocation
         if (field == null) return;
         if (field instanceof Continuous2D) { z = 0; return; }  // won't set anything anyway
         else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),getY(),val));
-		z = val;
-		exists = true;
+        z = val;
+        exists = true;
         }
     }

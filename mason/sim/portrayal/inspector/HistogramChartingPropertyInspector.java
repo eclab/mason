@@ -69,13 +69,13 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
         {
         if (isValidInspector())
             {
-			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-				{
-				// take control
-				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-				getGenerator().setYAxisLabel("Frequency");
-				getGenerator().setXAxisLabel(properties.getName(index));
-				}
+            if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+                {
+                // take control
+                getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+                getGenerator().setYAxisLabel("Frequency");
+                getGenerator().setXAxisLabel(properties.getName(index));
+                }
 
             // add our series
             seriesAttributes = ((HistogramGenerator)generator).addSeries(previousValues, DEFAULT_BINS, properties.getName(index), 
@@ -98,7 +98,7 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
 
                 // remove the chart from the GUIState's charts
                 getCharts(simulation).remove(this);
-				}
+                }
             };
         }
 

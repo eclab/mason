@@ -82,8 +82,8 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
         return p;
         }
 
-     // must be static or else we can't call super() below
-	 static GeometryArray processArray(int shape) 
+    // must be static or else we can't call super() below
+    static GeometryArray processArray(int shape) 
         {
         float[] verts = (shape == SHAPE_CUBE ? verts_cube : verts_square);
         GeometryArray ga = new QuadArray(verts.length/3, QuadArray.COORDINATES);
@@ -123,15 +123,15 @@ public class ValuePortrayal3D extends Shape3DPortrayal3D
     public TransformGroup getModel(Object obj, TransformGroup j3dModel) 
         {
         //float[] c = ((ValueGridPortrayal3D)getCurrentFieldPortrayal()).getMap().getColor(((ValueWrapper)obj).lastVal).getRGBComponents(null);
-		Color color = ((ValueGridPortrayal3D)getCurrentFieldPortrayal()).getColorFor(obj);
-		
+        Color color = ((ValueGridPortrayal3D)getCurrentFieldPortrayal()).getColorFor(obj);
+                
         // make sure the polygon attributes are set
         if(j3dModel==null) 
             {
             j3dModel = super.getModel(obj, j3dModel);
                         
             /*
-			// [This may break things, so we don't do it.  Dunno about the speed really anyway.  Memory is our problem here, not speed.]
+            // [This may break things, so we don't do it.  Dunno about the speed really anyway.  Memory is our problem here, not speed.]
             // We dispense of our TransformGroup: it makes us about 20% faster.
                         
             Shape3D s = getShape(j3dModel, 0);
@@ -174,7 +174,7 @@ app.setTransparencyAttributes(ta);
             // extract color to use
             Appearance appearance = getAppearance(j3dModel);        
             float[] c = color.getRGBComponents(null);
-			appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
+            appearance.getColoringAttributes().setColor(c[0],c[1],c[2]);
             appearance.getTransparencyAttributes().setTransparency(1.0f - c[3]);  // duh, alpha's backwards
             }
         return j3dModel;
@@ -200,7 +200,7 @@ app.setTransparencyAttributes(ta);
         ValueGridPortrayal3D fieldPortrayal;
         Grid3D grid; 
         String name;
-		
+                
         public Filter(LocationWrapper wrapper)
             {
             fieldPortrayal = (ValueGridPortrayal3D)(wrapper.getFieldPortrayal());
@@ -211,7 +211,7 @@ app.setTransparencyAttributes(ta);
             z = loc.z; 
             name = fieldPortrayal.getValueName() + " at " + wrapper.getLocationName();
             }
-			
+                        
         public String toString() { return name; }
         }
 
@@ -241,7 +241,7 @@ app.setTransparencyAttributes(ta);
         public IntFilter(LocationWrapper wrapper) { super(wrapper); }
         
         public int getValue() 
-			{ 
+            { 
             if (grid instanceof IntGrid3D)
                 return ((IntGrid3D)grid).field[x][y][z];
             else //if (field instanceof IntGrid2D)
@@ -249,7 +249,7 @@ app.setTransparencyAttributes(ta);
             }
 
         public void setValue(int val) 
-			{ 
+            { 
             if (grid instanceof IntGrid3D)
                 ((IntGrid3D)grid).field[x][y][z] = (int)fieldPortrayal.newValue(x,y,z,val);
             else //if (field instanceof IntGrid2D)

@@ -25,9 +25,9 @@ import sim.util.*;
 
 public class SpatialNetwork2D
     {
-	SparseField2D field;
-	SparseField2D field2;
-	Network network;
+    SparseField2D field;
+    SparseField2D field2;
+    Network network;
 
     public SpatialNetwork2D( final SparseField2D field, final Network network )
         {
@@ -43,18 +43,18 @@ public class SpatialNetwork2D
         {
         field2 = f;
         }
-		
-	/**
-		@deprecated, misspelled name!  Use setAuxiliaryField instead.
-	*/
+                
+    /**
+       @deprecated, misspelled name!  Use setAuxiliaryField instead.
+    */
     public void setAuxillaryField( final SparseField2D f)
         {
-		setAuxiliaryField(f);
+        setAuxiliaryField(f);
         }
 
-	/**
-		@deprecated
-	*/
+    /**
+       @deprecated
+    */
     public Double2D getObjectLocation(Object node)
         {
         Double2D loc= field.getObjectLocationAsDouble2D(node);

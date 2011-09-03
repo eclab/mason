@@ -19,8 +19,8 @@ import sim.util.*;
  */
 public class ValueGridCellInfo {
     /* This could be Grid2D or Grid3D */
-	Object grid;
-	ValueGrid2DPortrayal3D fieldPortrayal;
+    Object grid;
+    ValueGrid2DPortrayal3D fieldPortrayal;
     public int x = 0;
     public int y = 0;
     

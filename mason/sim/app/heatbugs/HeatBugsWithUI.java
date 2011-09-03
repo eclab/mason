@@ -121,7 +121,7 @@ public class HeatBugsWithUI extends GUIState
 
         // specify the backdrop color  -- what gets painted behind the displays
         display.setBackdrop(Color.black);
-    }
+        }
         
     public void quit()
         {

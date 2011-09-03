@@ -25,13 +25,13 @@ import sim.portrayal3d.SimplePortrayal3D;
  */
 public class Arrow extends TransformGroup
     {
-	static final Color DEFAULT_ARROW_COLOR = Color.gray;
-	static final Font3D DEFAULT_FONT3D = new Font3D(new Font(null, Font.PLAIN, 1), null);
+    static final Color DEFAULT_ARROW_COLOR = Color.gray;
+    static final Font3D DEFAULT_FONT3D = new Font3D(new Font(null, Font.PLAIN, 1), null);
 
-	Cone arrowHead;
-	Cylinder arrowTail;
-	public Cylinder getArrowTail() { return arrowTail; }
-	public Cone getArrowHead() { return arrowHead; }
+    Cone arrowHead;
+    Cylinder arrowTail;
+    public Cylinder getArrowTail() { return arrowTail; }
+    public Cone getArrowHead() { return arrowHead; }
 
     /**
      * Creates a 3D arrow between points <code>startPoint</code> and
@@ -41,8 +41,8 @@ public class Arrow extends TransformGroup
     public Arrow(double arrowTailRadius, Double3D startPoint, Double3D endPoint, String stLabel,
         String endLabel, Appearance appearance)
         {
-		Vector3d stPt = new Vector3d(startPoint.x, startPoint.y, startPoint.z);
-		Vector3d endPt = new Vector3d(endPoint.x, endPoint.y, endPoint.z);
+        Vector3d stPt = new Vector3d(startPoint.x, startPoint.y, startPoint.z);
+        Vector3d endPt = new Vector3d(endPoint.x, endPoint.y, endPoint.z);
         Vector3d v = new Vector3d(stPt);
         v.negate();
         v.add(new Vector3d(endPt));

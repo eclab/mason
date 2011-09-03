@@ -23,6 +23,6 @@ public class Band implements java.io.Serializable, sim.util.Valuable
     public double getLaxDistance() { return laxDistance; }
 
     public double doubleValue() { return strength; }
-	
-	public String toString() { return "" + strength + " (" + laxDistance + ")"; }
+        
+    public String toString() { return "" + strength + " (" + laxDistance + ")"; }
     }

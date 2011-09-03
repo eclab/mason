@@ -41,9 +41,9 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     {
     public final static Appearance DEFAULT_CIRCLED_APPEARANCE = appearanceForColor(new Color(255,255,255,63));
     public final static double DEFAULT_SCALE = 2.0;
-	
-	double scale;
-	Appearance appearance;
+        
+    double scale;
+    Appearance appearance;
     SimplePortrayal3D child;
     
     public CircledPortrayal3D(SimplePortrayal3D child)
@@ -75,7 +75,7 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         {
         this.child = child;
         this.appearance = appearance; 
-		this.scale = scale;
+        this.scale = scale;
         this.onlyCircleWhenSelected = onlyCircleWhenSelected;
         }
 
@@ -94,17 +94,17 @@ public class CircledPortrayal3D extends SimplePortrayal3D
         return child.getName(wrapper);
         }
     
-	/** Sets the current display both here and in the child. */
-	public void setCurrentDisplay(Display3D display)
-		{
-		super.setCurrentDisplay(display);
-		child.setCurrentDisplay(display);
-		}
-		
-	/** Sets the current field portrayal both here and in the child. */
+    /** Sets the current display both here and in the child. */
+    public void setCurrentDisplay(Display3D display)
+        {
+        super.setCurrentDisplay(display);
+        child.setCurrentDisplay(display);
+        }
+                
+    /** Sets the current field portrayal both here and in the child. */
     public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-		super.setCurrentFieldPortrayal(p);
+        super.setCurrentFieldPortrayal(p);
         child.setCurrentFieldPortrayal(p);
         }
 
@@ -136,7 +136,7 @@ public class CircledPortrayal3D extends SimplePortrayal3D
     public boolean isCircleShowing() { return showCircle; }
     public void setCircleShowing(boolean val) { showCircle = val;  }
 
-	void updateSwitch(Switch jswitch, Object object)
+    void updateSwitch(Switch jswitch, Object object)
         {
         if (showCircle && (isSelected(object) || !onlyCircleWhenSelected))
             jswitch.setWhichChild( Switch.CHILD_ALL );

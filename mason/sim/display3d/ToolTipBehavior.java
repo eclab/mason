@@ -101,8 +101,8 @@ public class ToolTipBehavior extends PickMouseBehavior
 
     boolean showing = false;
     boolean canShow = false;
-	
-	/** Sets whether or not the behavior may show tool tips. */
+        
+    /** Sets whether or not the behavior may show tool tips. */
     public void setCanShowToolTips(boolean val)
         {
         canShow = val;
@@ -114,7 +114,7 @@ public class ToolTipBehavior extends PickMouseBehavior
             }
         }
                 
-	/** Returns whether or not the behavior may show tool tips. */
+    /** Returns whether or not the behavior may show tool tips. */
     public boolean getCanShowToolTips()
         {
         return canShow;
@@ -254,48 +254,48 @@ public class ToolTipBehavior extends PickMouseBehavior
         DialogToolTip.showToolTip(s, htmlText);
         }
 
- static class DialogToolTip extends JDialog 
-    {
-    static DialogToolTip tip = new DialogToolTip();
-    static JLabel label = new JLabel("",JLabel.CENTER);
-    static
+    static class DialogToolTip extends JDialog 
         {
-        tip.setUndecorated(true);
-        tip.getContentPane().setBackground(Color.yellow);  // or whatever it is
-        tip.getContentPane().setLayout(new BorderLayout());
-        tip.getContentPane().add(label);
-            
-        tip.setModal(false);
-            
-        label.setBorder(new EmptyBorder(2,2,2,2));
-        label.setBackground(Color.yellow);  // just in case
-        }
-
-    // you'll want the text to be "<font size=-1>" I think.  See
-    // the text I used in the 2D Display tooltip generator
-    // (which is compatible with JDK 1.3)
-	static void showToolTip(Point locationOnScreen, String htmlText)
-        {
-        if (htmlText == null)
-            tip.setVisible(false);
-        else
+        static DialogToolTip tip = new DialogToolTip();
+        static JLabel label = new JLabel("",JLabel.CENTER);
+        static
             {
-            label.setText(htmlText);
-            tip.pack();  // resize around the new label
-                        
-            // on Macs, sometimes the initial pack gets the wrong Y value -- pack again
-            tip.pack();  // resize around the new label
-            tip.setLocation(locationOnScreen);              
-            tip.setVisible(true);
+            tip.setUndecorated(true);
+            tip.getContentPane().setBackground(Color.yellow);  // or whatever it is
+            tip.getContentPane().setLayout(new BorderLayout());
+            tip.getContentPane().add(label);
+            
+            tip.setModal(false);
+            
+            label.setBorder(new EmptyBorder(2,2,2,2));
+            label.setBackground(Color.yellow);  // just in case
             }
-        }
 
-	static void hideToolTip()
-        {
-        tip.setVisible(false);
-        }
+        // you'll want the text to be "<font size=-1>" I think.  See
+        // the text I used in the 2D Display tooltip generator
+        // (which is compatible with JDK 1.3)
+        static void showToolTip(Point locationOnScreen, String htmlText)
+            {
+            if (htmlText == null)
+                tip.setVisible(false);
+            else
+                {
+                label.setText(htmlText);
+                tip.pack();  // resize around the new label
+                        
+                // on Macs, sometimes the initial pack gets the wrong Y value -- pack again
+                tip.pack();  // resize around the new label
+                tip.setLocation(locationOnScreen);              
+                tip.setVisible(true);
+                }
+            }
 
-    }
+        static void hideToolTip()
+            {
+            tip.setVisible(false);
+            }
+
+        }
 
 
     }

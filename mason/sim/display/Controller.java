@@ -64,12 +64,12 @@ public interface Controller
     /** Registers an inspector to be refreshed as appropriate and stopped when the model is restarted.
         Does not necessarily add the inspector to a list of inspectors like setInspectors(...) does. */
     public void registerInspector(Inspector inspector, Stoppable stopper);
-	
-	/** Returns a list of all current inspectors.  Some of these inspectors may be stored in
-		the Controller itself, and others may have been dragged out into their own JFrames.  You will
-		need to distinguish between these two on your own.  Note that some of these inspectors are stored as
-		weak keys in the Controller, so holding onto this list will prevent them from getting garbage
-		collected.  As a result, you should only use this list for temporary scans. */
-	public ArrayList getAllInspectors();
+        
+    /** Returns a list of all current inspectors.  Some of these inspectors may be stored in
+        the Controller itself, and others may have been dragged out into their own JFrames.  You will
+        need to distinguish between these two on your own.  Note that some of these inspectors are stored as
+        weak keys in the Controller, so holding onto this list will prevent them from getting garbage
+        collected.  As a result, you should only use this list for temporary scans. */
+    public ArrayList getAllInspectors();
     }
     

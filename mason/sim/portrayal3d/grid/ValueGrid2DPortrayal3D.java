@@ -53,10 +53,10 @@ import com.sun.j3d.utils.picking.*;
 
 public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     {
-	Image image;
+    Image image;
     /** Non-image transparency: 1.0f is fully opaque, 0.0f is fully transparent. */
-	double transparency = 1.0f;
-	PolygonAttributes mPolyAttributes = new PolygonAttributes();
+    double transparency = 1.0f;
+    PolygonAttributes mPolyAttributes = new PolygonAttributes();
     
     boolean useTriangles = false;
     public boolean isUsingTriangles() { return useTriangles; }
@@ -67,21 +67,21 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         return field;
         }
 
-	String valueName;
+    String valueName;
     
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }
     
-	public double getTransparency()
-		{
-		return transparency;
-		}
-		
+    public double getTransparency()
+        {
+        return transparency;
+        }
+                
     /** Sets non-image transparency: 1.0 is fully opaque, 0.0 is fully transparent. */
     public void setTransparency(double transparency)
         {
-		if (transparency >= 0.0f && transparency <= 1.0f)
-			this.transparency = transparency;
+        if (transparency >= 0.0f && transparency <= 1.0f)
+            this.transparency = transparency;
         }
     
     /** Set the appearance to a fully opaque image.  If image is null, then removes any image. */
@@ -89,14 +89,14 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         {
         this.image = image;
         }
-		
-	public Image getImage()
-		{
-		return image;
-		}
+                
+    public Image getImage()
+        {
+        return image;
+        }
     
     /** Use a fully opaque image as the appearance. The default portrayal is a simple 
-		TilePortrayal which ranges from blue to red.*/
+        TilePortrayal which ranges from blue to red.*/
     public ValueGrid2DPortrayal3D(String valueName, Image image)
         {
         this(valueName, 1.0f);
@@ -104,7 +104,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         }
 
     /** Be somewhat transparent (1.0 is fully opaque, 0.0f is fully transparent). 
-		The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
+        The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
     public ValueGrid2DPortrayal3D(String valueName, double transparency)
         {
         this.valueName = valueName;
@@ -112,7 +112,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         // no change in height
         sim.util.gui.SimpleColorMap cm = new sim.util.gui.SimpleColorMap();
         cm.setLevels(0.0,1.0,java.awt.Color.blue, java.awt.Color.red);
-		defaultPortrayal = new TilePortrayal(cm);
+        defaultPortrayal = new TilePortrayal(cm);
         this.transparency = transparency;
 
         mPolyAttributes.setCapability(PolygonAttributes.ALLOW_CULL_FACE_WRITE);
@@ -127,9 +127,9 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         this(valueName,1.0f);
         }
         
-     /** Be completely opaque, with a value name of "Value".
-		The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
-   public ValueGrid2DPortrayal3D()
+    /** Be completely opaque, with a value name of "Value".
+        The default portrayal is a simple TilePortrayal which ranges from blue to red.*/
+    public ValueGrid2DPortrayal3D()
         {
         this("Value");
         }
@@ -154,9 +154,9 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         if(getField() == grid) return;
         if (grid instanceof Grid2D) super.setField(grid);
         else throw new RuntimeException("ValueGridPortrayal2D3D cannot portray the object: " + grid);
-		
-		Grid2D field = (Grid2D)(this.field);
-		
+                
+        Grid2D field = (Grid2D)(this.field);
+                
         tmpGCI = new ValueGridCellInfo(this, field);
         coords = new float[field.getWidth()* field.getHeight()*4*3];    // 3 coordinates: x, y, z
         colors = new float[field.getWidth()* field.getHeight()*4*3];    // 3 color values -- alpha transparency doesn't work here :-(
@@ -196,8 +196,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         
         QuadPortrayal quadPortrayal = (QuadPortrayal)getPortrayalForObject(tmpGCI);
         
-		Grid2D field = (Grid2D)(this.field);
-		
+        Grid2D field = (Grid2D)(this.field);
+                
         GeometryArray ga;
         if(!useTriangles)
             ga = new QuadArray(4*field.getWidth()*field.getHeight(), 
@@ -306,7 +306,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
             }
         else
             {
-			Grid2D field = (Grid2D)(this.field);
+            Grid2D field = (Grid2D)(this.field);
 
             QuadPortrayal quadPortrayal = (QuadPortrayal)getPortrayalForObject(tmpGCI);         
             BranchGroup bg = (BranchGroup)modelTG.getChild(0);  
@@ -339,8 +339,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         {
         if (field instanceof IntGrid2D) value = (int) value;
        
-		tmpGCI.x = x;
-		tmpGCI.y = y;
+        tmpGCI.x = x;
+        tmpGCI.y = y;
         QuadPortrayal quadPortrayal = (QuadPortrayal)getPortrayalForObject(tmpGCI);
         if(quadPortrayal.getMap().validLevel(value)) return value;
 
@@ -349,8 +349,8 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
             {
             if (field instanceof DoubleGrid2D)
                 return ((DoubleGrid2D)field).field[x][y];
-			else if (field instanceof ObjectGrid2D)
-				return doubleValue(((ObjectGrid2D)field).field[x][y]);
+            else if (field instanceof ObjectGrid2D)
+                return doubleValue(((ObjectGrid2D)field).field[x][y]);
             else return ((IntGrid2D)field).field[x][y];
             }
         else return quadPortrayal.getMap().defaultValue(); // return *something*
@@ -358,7 +358,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
 
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)
         {
-		Grid2D field = (Grid2D)(this.field);
+        Grid2D field = (Grid2D)(this.field);
 
         return new LocationWrapper(new ValueGridCellInfo(ValueGrid2DPortrayal3D.this, field), 
             ((QuadPortrayal)getPortrayalForObject(tmpGCI)).getCellForIntersection(pi,field),

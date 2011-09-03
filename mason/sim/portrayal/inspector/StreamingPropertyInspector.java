@@ -46,7 +46,7 @@ public class StreamingPropertyInspector extends PropertyInspector
         add(new JLabel(streamName), BorderLayout.CENTER);
         streamingTo = CUSTOM;
         setValidInspector(true);
-		}
+        }
         
     public StreamingPropertyInspector(final Properties properties, final int index, final Frame parent, final GUIState simulation)
         {
@@ -108,7 +108,7 @@ public class StreamingPropertyInspector extends PropertyInspector
                                             b.add(Box.createGlue());
                                             add(b,BorderLayout.NORTH);
                                             setValidInspector(true);
-											}
+                                            }
                     catch (IOException e)
                         {
                         e.printStackTrace();
@@ -155,7 +155,7 @@ public class StreamingPropertyInspector extends PropertyInspector
                 box.add(Box.createGlue());
                 add(box, BorderLayout.SOUTH);
                 setValidInspector(true);
-				}
+                }
             else // s.equals(possibilities[3])
                 {
                 streamingTo = STDOUT;
@@ -168,7 +168,7 @@ public class StreamingPropertyInspector extends PropertyInspector
                 b.add(Box.createGlue());
                 add(b,BorderLayout.NORTH);
                 setValidInspector(true);
-				}
+                }
             }
         }
                 

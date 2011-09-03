@@ -14,10 +14,10 @@ import javax.media.j3d.*;
 import javax.vecmath.*;
 
 /** 
-	This class demonstrates that it is perfectly POSSIBLE to create a SimplePortrayal3D
-	which is also a Steppable in the model -- but it's not a good idea, because it's not serializable
-	and so you can't save your model out to a checkpoint.  In 3D, you should make separate portrayals
-	from model objects.
+    This class demonstrates that it is perfectly POSSIBLE to create a SimplePortrayal3D
+    which is also a Steppable in the model -- but it's not a good idea, because it's not serializable
+    and so you can't save your model out to a checkpoint.  In 3D, you should make separate portrayals
+    from model objects.
 */
 
 public class Woim3D extends SimplePortrayal3D implements Steppable 
@@ -245,7 +245,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     protected Vector3D acceleration = new Vector3D( 0, 0, 0 );
     
 
-	public static final float SKIP = 10.0f;
+    public static final float SKIP = 10.0f;
 
     public void computePositions()
         {
@@ -292,7 +292,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
             {
             // we set the number of divisions to 6 and it's quite a bit faster and
             // less memory-hungry.  The default is 15.  This is a sort of goofy way of
-			// doing things.
+            // doing things.
             SpherePortrayal3D s = new SpherePortrayal3D(colors[i], 4.0f , 6);
             s.setCurrentFieldPortrayal(getCurrentFieldPortrayal());
             TransformGroup localTG = s.getModel(obj, null);

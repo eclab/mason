@@ -30,8 +30,8 @@ public class MovieMaker
     Object encoder;
     Class encoderClass;
     boolean isRunning;
-	
-	static final float DEFAULT_FRAME_RATE = 10.0f;
+        
+    static final float DEFAULT_FRAME_RATE = 10.0f;
     
     public MovieMaker(Frame parent)
         {

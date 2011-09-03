@@ -49,7 +49,7 @@ import sim.util.gui.*;
 
 public class ValueGridPortrayal2D extends FieldPortrayal2D
     {
-	ColorMap map = new SimpleColorMap();
+    ColorMap map = new SimpleColorMap();
     public ColorMap getMap() { return map; }
     public void setMap(ColorMap m) { map = m; }
     
@@ -61,11 +61,11 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         }
         
     SimplePortrayal2D defaultPortrayal = new ValuePortrayal2D();
-	String valueName;
+    String valueName;
     
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }
-	
+        
     public ValueGridPortrayal2D()
         {
         this("Value");
@@ -98,18 +98,18 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
     public Double2D getScale(DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
 
-        int maxX = field.getWidth(); 
-        int maxY = field.getHeight();
+            int maxX = field.getWidth(); 
+            int maxY = field.getHeight();
 
-        final double xScale = info.draw.width / maxX;
-        final double yScale = info.draw.height / maxY;
-        return new Double2D(xScale, yScale);
-		}
+            final double xScale = info.draw.width / maxX;
+            final double yScale = info.draw.height / maxY;
+            return new Double2D(xScale, yScale);
+            }
         }
                 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
@@ -127,38 +127,38 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
         
-        final int maxX = field.getWidth(); 
-        final int maxY = field.getHeight();
-        if (maxX == 0 || maxY == 0) return null;
+            final int maxX = field.getWidth(); 
+            final int maxY = field.getHeight();
+            if (maxX == 0 || maxY == 0) return null;
         
-        final double xScale = info.draw.width / maxX;
-        final double yScale = info.draw.height / maxY;
+            final double xScale = info.draw.width / maxX;
+            final double yScale = info.draw.height / maxY;
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
 
-        Int2D loc = (Int2D) location;
-        if (location == null) return null;
+            Int2D loc = (Int2D) location;
+            if (location == null) return null;
                 
-        int x = loc.x;
-        int y = loc.y;
+            int x = loc.x;
+            int y = loc.y;
 
-        // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-        newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-        newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-        newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-        newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+            // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+            newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+            newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+            newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+            newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
         
-        // adjust drawX and drawY to center
-        newinfo.draw.x += newinfo.draw.width / 2.0;
-        newinfo.draw.y += newinfo.draw.height / 2.0;
+            // adjust drawX and drawY to center
+            newinfo.draw.x += newinfo.draw.width / 2.0;
+            newinfo.draw.y += newinfo.draw.height / 2.0;
 
-        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
-		}
+            return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+            }
         }
 
 
@@ -208,7 +208,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
         // the drawinfo that the object's portrayal will use -- we fill in the blanks later
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
         newinfo.location = locationToPass;
-        newinfo.fieldPortrayal = this;	// crucial for ValuePortrayal2D to get the parent out
+        newinfo.fieldPortrayal = this;  // crucial for ValuePortrayal2D to get the parent out
 
         Portrayal p = getPortrayalForObject(valueToPass);
         if (!(p instanceof SimplePortrayal2D))
@@ -266,9 +266,9 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
                 MutableDouble val = (MutableDouble) this.object;
                 // update the current value
                 if (field instanceof DoubleGrid2D) 
-					val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
+                    val.val = ((DoubleGrid2D)field).field[loc.x][loc.y];
                 else 
-					val.val = ((IntGrid2D)field).field[loc.x][loc.y];
+                    val.val = ((IntGrid2D)field).field[loc.x][loc.y];
                 return val;
                 }
             

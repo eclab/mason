@@ -468,8 +468,8 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
      * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
-	 * <b>Note that the order and size of the result Bag may not correspond to the X and Y bags.</b>  If you want
-	 * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsMaxDistance(...)
+     * <b>Note that the order and size of the result Bag may not correspond to the X and Y bags.</b>  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsMaxDistance(...)
      * Returns the result Bag.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
@@ -490,24 +490,24 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      * For each Object which falls within this distance, adds the X position, Y position, and Object into the
-	 * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
-	 * and that others may appear multiply if multiple objects share that positions.  Compare this function
-	 * with getNeighborsMaxDistance(...).
+     * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsMaxDistance(...).
      * Returns the result Bag.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      */
-	public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
-		{
+    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
+        {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
         getNeighborsMaxDistance( x, y, dist, toroidal, xPos, yPos );
-		reduceObjectsAtLocations( xPos,  yPos,  result);
-		return result;
-		}
+        reduceObjectsAtLocations( xPos,  yPos,  result);
+        return result;
+        }
 
 
 
@@ -518,8 +518,8 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * plus (X,Y) itself.
      * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
      * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
-	 * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
-	 * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
      * Returns the result Bag (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
@@ -543,24 +543,24 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
      * plus (X,Y) itself.
      * For each Object which falls within this distance, adds the X position, Y position, and Object into the
-	 * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
-	 * and that others may appear multiply if multiple objects share that positions.  Compare this function
-	 * with getNeighborsHamiltonianDistance(...).
+     * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsHamiltonianDistance(...).
      * Returns the result Bag.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      */
-	public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
-		{
+    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
+        {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
         getNeighborsHamiltonianDistance( x, y, dist, toroidal, xPos, yPos );
-		reduceObjectsAtLocations( xPos,  yPos,  result);
-		return result;
-		}
+        reduceObjectsAtLocations( xPos,  yPos,  result);
+        return result;
+        }
 
 
 
@@ -572,8 +572,8 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * plus (X,Y) itself.
      * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
      * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
-	 * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
-	 * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHexagonalDistance(...)
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHexagonalDistance(...)
      * Returns the result Bag (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
@@ -588,73 +588,73 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         getNeighborsHexagonalDistance( x, y, dist, toroidal, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
-		
-		
+                
+                
     /**
      * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
      * inclusive.
      * If dist==1, this is equivalent to the six neighbors immediately surrounding (X,Y), 
      * plus (X,Y) itself.
      * For each Object which falls within this distance, adds the X position, Y position, and Object into the
-	 * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
-	 * and that others may appear multiply if multiple objects share that positions.  Compare this function
-	 * with getNeighborsHexagonalDistance(...).
+     * xPos, yPos, and result Bag, clearing them first.  This means that some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsHexagonalDistance(...).
      * Returns the result Bag.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      */
-	public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
-		{
+    public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos)
+        {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
         getNeighborsHexagonalDistance( x, y, dist, toroidal, xPos, yPos );
-		reduceObjectsAtLocations( xPos,  yPos,  result);
-		return result;
-		}
+        reduceObjectsAtLocations( xPos,  yPos,  result);
+        return result;
+        }
 
 
-	// reduces xPos and yPos to just those positions used for result.  
-	void reduceObjectsAtLocations(final IntBag xPos, final IntBag yPos, Bag result)
+    // reduces xPos and yPos to just those positions used for result.  
+    void reduceObjectsAtLocations(final IntBag xPos, final IntBag yPos, Bag result)
         {
         if (result==null) result = new Bag();
         else result.clear();
 
-		// build new bags with <x,y> locations one per each result
-		IntBag newXPos = new IntBag();
-		IntBag newYPos = new IntBag();
+        // build new bags with <x,y> locations one per each result
+        IntBag newXPos = new IntBag();
+        IntBag newYPos = new IntBag();
 
         final int len = xPos.numObjs;
         final int[] xs = xPos.objs;
         final int[] ys = yPos.objs;
 
-		// for each location...
+        // for each location...
         for(int i=0; i < len; i++)
             {
             Bag temp = getObjectsAtLocation(xs[i],ys[i]);
-			final int size = temp.numObjs;
-			final Object[] os = temp.objs;
-			// for each object at that location...
-			for(int j = 0; j < size; j++)
-				{
-				// add the result, the x, and the y
-				result.add(os[j]);
-				newXPos.add(xs[i]);
-				newYPos.add(ys[i]);
-				}
+            final int size = temp.numObjs;
+            final Object[] os = temp.objs;
+            // for each object at that location...
+            for(int j = 0; j < size; j++)
+                {
+                // add the result, the x, and the y
+                result.add(os[j]);
+                newXPos.add(xs[i]);
+                newYPos.add(ys[i]);
+                }
             }
-		
-		// dump the new IntBags into the old ones
-		xPos.clear();
-		xPos.addAll(newXPos);
-		yPos.clear();
-		yPos.addAll(newYPos);
+                
+        // dump the new IntBags into the old ones
+        xPos.clear();
+        xPos.addAll(newXPos);
+        yPos.clear();
+        yPos.addAll(newYPos);
         }
-		
+                
 
-   /** For each <xPos,yPos> location, puts all such objects into the result bag.  Returns the result bag.
+    /** For each <xPos,yPos> location, puts all such objects into the result bag.  Returns the result bag.
         If the provided result bag is null, one will be created and returned. */
     public Bag getObjectsAtLocations(final IntBag xPos, final IntBag yPos, Bag result)
         {

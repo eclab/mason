@@ -64,14 +64,14 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         {
         if (isValidInspector())
             {
-			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-				{
-				// take control
-				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-				getGenerator().setYAxisLabel("" + properties.getName(index));
-				getGenerator().setXAxisLabel("Time");
-				}
-			
+            if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+                {
+                // take control
+                getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+                getGenerator().setYAxisLabel("" + properties.getName(index));
+                getGenerator().setXAxisLabel("Time");
+                }
+                        
             chartSeries = new XYSeries( properties.getName(index), false );
 
             // add our series
@@ -109,22 +109,22 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
         else return Double.NaN;  // unknown
         }
     
-	void addToMainSeries(double x, double y, boolean notify)
+    void addToMainSeries(double x, double y, boolean notify)
         {
         chartSeries.add(x, y, false);
-		TimeSeriesAttributes attributes = (TimeSeriesAttributes)(seriesAttributes);
-		if (!attributes.possiblyCull())
-			{
-			if (notify)	// do a notification anyway
+        TimeSeriesAttributes attributes = (TimeSeriesAttributes)(seriesAttributes);
+        if (!attributes.possiblyCull())
+            {
+            if (notify)     // do a notification anyway
                 chartSeries.fireSeriesChanged();
-			}
-		}
+            }
+        }
 
     protected void updateSeries(double time, double lastTime)
         {
         double d = 0;
-		
-		GlobalAttributes globalAttributes = getGlobalAttributes();
+                
+        GlobalAttributes globalAttributes = getGlobalAttributes();
                 
         // FIRST, load the aggregate series with the items
         aggregateSeries.add(time, d = valueFor(properties.getValue(index)), false);

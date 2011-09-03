@@ -46,13 +46,13 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
         }
 
 /*
-    public void reset()
-        {
-        synchronized(this)
-            {
-            buffer = null;
-            }
-        }
+  public void reset()
+  {
+  synchronized(this)
+  {
+  buffer = null;
+  }
+  }
 */
 
     // Determines if we should buffer
@@ -131,30 +131,30 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
             // create new buffer if needed
             boolean newBuffer = false;
             
-           //synchronized(this)
+            //synchronized(this)
             //    {
-                if (buffer==null || buffer.getWidth() != maxX || buffer.getHeight() != (2*maxY+1))
-                    {
-                    // interestingly, this is not quite as fast as just making a BufferedImage directly!
-                    // at present, transparent images can't take advantage of new Sun efficiency improvements.
-                    // Perhaps we should have a new option for opaque images...
-                    //buffer = graphics.getDeviceConfiguration().createCompatibleImage(maxX,(2*maxY+1),Transparency.TRANSLUCENT);
+            if (buffer==null || buffer.getWidth() != maxX || buffer.getHeight() != (2*maxY+1))
+                {
+                // interestingly, this is not quite as fast as just making a BufferedImage directly!
+                // at present, transparent images can't take advantage of new Sun efficiency improvements.
+                // Perhaps we should have a new option for opaque images...
+                //buffer = graphics.getDeviceConfiguration().createCompatibleImage(maxX,(2*maxY+1),Transparency.TRANSLUCENT);
                     
-                    // oops, it looks like createCompatibleImage has big-time HILARIOUS bugs on OS X Java 1.3.1!
-                    // So for the time being we're sticking with the (very slightly faster) 
-                    // new BufferedImage(...)
-                    if (buffer != null) buffer.flush();  // in case Java forgets to clear memory -- bug in OS X
-                    buffer = new BufferedImage(maxX,(2*maxY+1),BufferedImage.TYPE_INT_ARGB); // transparency allowed
+                // oops, it looks like createCompatibleImage has big-time HILARIOUS bugs on OS X Java 1.3.1!
+                // So for the time being we're sticking with the (very slightly faster) 
+                // new BufferedImage(...)
+                if (buffer != null) buffer.flush();  // in case Java forgets to clear memory -- bug in OS X
+                buffer = new BufferedImage(maxX,(2*maxY+1),BufferedImage.TYPE_INT_ARGB); // transparency allowed
                     
-                    // I had thought that TYPE_INT_ARGB_PRE would be faster because
-                    // it's natively supported by MacOS X CoreGraphics so no optimization needs to be done
-                    // in 1.4.1 -- but in fact it is SLOWER on 1.3.1 by 2/3.  So for the time being we're
-                    // going to stay with the orgiginal.
-                    // see http://developer.apple.com/documentation/Java/Reference/Java14SysProperties/System_Properties/chapter_2_section_6.html
-                    newBuffer = true;
-                    raster = buffer.getRaster();
-                    dbuffer = (DataBufferInt)(raster.getDataBuffer());
-                    }
+                // I had thought that TYPE_INT_ARGB_PRE would be faster because
+                // it's natively supported by MacOS X CoreGraphics so no optimization needs to be done
+                // in 1.4.1 -- but in fact it is SLOWER on 1.3.1 by 2/3.  So for the time being we're
+                // going to stay with the orgiginal.
+                // see http://developer.apple.com/documentation/Java/Reference/Java14SysProperties/System_Properties/chapter_2_section_6.html
+                newBuffer = true;
+                raster = buffer.getRaster();
+                dbuffer = (DataBufferInt)(raster.getDataBuffer());
+                }
             //    }
             //WritableRaster _raster = raster;
             DataBufferInt _dbuffer = dbuffer;

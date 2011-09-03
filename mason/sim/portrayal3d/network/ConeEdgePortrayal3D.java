@@ -18,37 +18,37 @@ import java.awt.*;
  
 public class ConeEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
-	/** @deprecated */
+    /** @deprecated */
     public ConeEdgePortrayal3D(double radius)
         {
-		this(null, Color.white, null, radius);
+        this(null, Color.white, null, radius);
         }
         
-	/** @deprecated */
+    /** @deprecated */
     public ConeEdgePortrayal3D(Color labelColor)
         {
-		this(null, labelColor, null, DEFAULT_RADIUS);
+        this(null, labelColor, null, DEFAULT_RADIUS);
         }
 
     public ConeEdgePortrayal3D()
         {
-		this(null, Color.white, null, DEFAULT_RADIUS);
+        this(null, Color.white, null, DEFAULT_RADIUS);
         }
 
     public ConeEdgePortrayal3D(Appearance appearance, Color labelColor)
         {
-		this(appearance, labelColor, null, DEFAULT_RADIUS);
+        this(appearance, labelColor, null, DEFAULT_RADIUS);
         }       
 
     public ConeEdgePortrayal3D(Color color, Color labelColor)
         {
-		this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
         }       
 
-	/** Assumes that the image is opaque */
+    /** Assumes that the image is opaque */
     public ConeEdgePortrayal3D(Image image, Color labelColor)
         {
-		this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
         }       
 
     public ConeEdgePortrayal3D(Appearance appearance, Color labelColor, Font labelFont, double radius)

@@ -17,43 +17,43 @@ import com.sun.j3d.utils.geometry.*;
  */
 public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {
-	/** @deprecated. */
+    /** @deprecated. */
     public CylinderEdgePortrayal3D(double radius)
         {
-		this(null, Color.white, null, radius);
+        this(null, Color.white, null, radius);
         }
 
-	/** @deprecated */
+    /** @deprecated */
     public CylinderEdgePortrayal3D(Color labelColor)
         {
-		this(null, labelColor, null, DEFAULT_RADIUS);
+        this(null, labelColor, null, DEFAULT_RADIUS);
         }
 
-	/** @deprecated */
+    /** @deprecated */
     public CylinderEdgePortrayal3D(double radius, Color labelColor)
         {
-		this(null, labelColor, null, radius);
+        this(null, labelColor, null, radius);
         }
 
     public CylinderEdgePortrayal3D()
         {
-		this(null, Color.white, null, DEFAULT_RADIUS);
+        this(null, Color.white, null, DEFAULT_RADIUS);
         }
 
     public CylinderEdgePortrayal3D(Appearance appearance, Color labelColor)
         {
-		this(appearance, labelColor, null, DEFAULT_RADIUS);
+        this(appearance, labelColor, null, DEFAULT_RADIUS);
         }       
 
     public CylinderEdgePortrayal3D(Color color, Color labelColor)
         {
-		this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
         }       
 
-	/** Assumes that the image is opaque */
+    /** Assumes that the image is opaque */
     public CylinderEdgePortrayal3D(Image image, Color labelColor)
         {
-		this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
         }       
 
     public CylinderEdgePortrayal3D(Appearance appearance, Color labelColor, Font labelFont, double radius)
@@ -70,7 +70,7 @@ public class CylinderEdgePortrayal3D extends PrimitiveEdgePortrayal3D
         PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.TOP));
         PrimitivePortrayal3D.setShape3DFlags(c.getShape(Cylinder.BOTTOM));
         }
-		
+                
     // top, bottom, body.
     protected int numShapes(){return 3;}
     }

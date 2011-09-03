@@ -39,8 +39,8 @@ public class SimState implements java.io.Serializable
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
     // Are we cleaning house and replacing the HashSet?
     public boolean cleaningAsynchronous = false;
-	
-	SimState(long seed, MersenneTwisterFast random, Schedule schedule)
+        
+    SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
         this.random = random;
         this.schedule = schedule;
@@ -51,30 +51,30 @@ public class SimState implements java.io.Serializable
         plus a new, empty schedule. */
     public SimState(long seed)
         {
-		this(seed, new MersenneTwisterFast(seed), new Schedule());
+        this(seed, new MersenneTwisterFast(seed), new Schedule());
         }
     
     /** Creates a SimState with the given random number generator and schedule, and
-		sets the seed to a bogus value (0).  This should only be used by SimState 
-		subclasses which need to use an existing random number generator and schedule.
+        sets the seed to a bogus value (0).  This should only be used by SimState 
+        subclasses which need to use an existing random number generator and schedule.
     */
     protected SimState(MersenneTwisterFast random, Schedule schedule)
         {
-		this(0, random, schedule);  // 0 is a bogus value.  In fact, MT can't have 0 as its seed value.
-		}
-		
+        this(0, random, schedule);  // 0 is a bogus value.  In fact, MT can't have 0 as its seed value.
+        }
+                
     /** Creates a SimState with the schedule, creating a new random number generator.
-		This should only be used by SimState subclasses which need
-		to use an existing schedule.
+        This should only be used by SimState subclasses which need
+        to use an existing schedule.
     */
     protected SimState(long seed, Schedule schedule)
         {
-		this(seed, new MersenneTwisterFast(seed), schedule);
+        this(seed, new MersenneTwisterFast(seed), schedule);
         }
 
     /** Creates a SimState with a new schedule, the provided random number generator,
-		and a bogus seed (0).  This should only be used by SimState subclasses which need
-		to use an existing random number generator.
+        and a bogus seed (0).  This should only be used by SimState subclasses which need
+        to use an existing random number generator.
     */
     protected SimState(MersenneTwisterFast random)
         {
@@ -126,8 +126,8 @@ public class SimState implements java.io.Serializable
     public void kill()
         {
         cleanupAsynchronous();
-		schedule.clear();
-		schedule.seal();
+        schedule.clear();
+        schedule.seal();
         }
 
     /** Registers an AsynchronousSteppable to get its pause() method called prior to checkpointing,

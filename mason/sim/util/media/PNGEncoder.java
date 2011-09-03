@@ -48,19 +48,19 @@ public class PNGEncoder extends Object
     public static final int FILTER_SUB = 1;
     public static final int FILTER_UP = 2;
 
-	byte[] pngBytes;
-	byte[] priorRow;
-	byte[] leftBytes;
-	Image image;
-	int width, height;
-	int bytePos, maxPos;
-	int hdrPos, dataPos, endPos;
-	CRC32 crc = new CRC32();
-	long crcValue;
-	boolean encodeAlpha;
-	int filter;
-	int bytesPerPixel;
-	int compressionLevel;
+    byte[] pngBytes;
+    byte[] priorRow;
+    byte[] leftBytes;
+    Image image;
+    int width, height;
+    int bytePos, maxPos;
+    int hdrPos, dataPos, endPos;
+    CRC32 crc = new CRC32();
+    long crcValue;
+    boolean encodeAlpha;
+    int filter;
+    int bytesPerPixel;
+    int compressionLevel;
 
     /**
      * Class constructor
@@ -148,7 +148,7 @@ public class PNGEncoder extends Object
      * @param encodeAlpha boolean false=no alpha, true=encode alpha
      * @return an array of bytes, or null if there was a problem
      */
-	public byte[] pngEncode()
+    public byte[] pngEncode()
         {
         byte[]  pngIdBytes = { -119, 80, 78, 71, 13, 10, 26, 10 };
 
@@ -261,7 +261,7 @@ public class PNGEncoder extends Object
      * @return Array of newly desired length. If shorter than the
      *         original, the trailing elements are truncated.
      */
-     byte[] resizeByteArray( byte[] array, int newLength )
+    byte[] resizeByteArray( byte[] array, int newLength )
         {
         byte[]  newArray = new byte[newLength];
         int     oldLength = array.length;

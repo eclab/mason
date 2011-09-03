@@ -545,7 +545,7 @@ public class SimpleController implements Controller
         }
 
 /**
-@deprecated
+   @deprecated
 */
     public synchronized void doChangeCode(Runnable r)
         {
@@ -686,17 +686,17 @@ public class SimpleController implements Controller
     /** Stops all inspectors.  If killDraggedOutWindowsToo is true, then the detatched inspectors are stopped as well. */
     public void stopAllInspectors(boolean killDraggedOutWindowsToo)
         {
-		// update all the inspectors before we delete some of them, so they get written out
-		// if necessary.
-		Iterator i = allInspectors.keySet().iterator();
-		while(i.hasNext())
-			{
-			Inspector insp = (Inspector)(i.next());
-			insp.updateInspector();  // one last time
-			insp.repaint();
-			}
+        // update all the inspectors before we delete some of them, so they get written out
+        // if necessary.
+        Iterator i = allInspectors.keySet().iterator();
+        while(i.hasNext())
+            {
+            Inspector insp = (Inspector)(i.next());
+            insp.updateInspector();  // one last time
+            insp.repaint();
+            }
 
-		// kill all the inspectors in the inspector window for sure
+        // kill all the inspectors in the inspector window for sure
         // inspectors may get stop() called on them multiple times
         for(int x=0;x<inspectorStoppables.size();x++)
             {
@@ -704,15 +704,15 @@ public class SimpleController implements Controller
             if (stopper!=null) stopper.stop();
             }
 
-		// possibly kill all inspectors detached in their own windows.
+        // possibly kill all inspectors detached in their own windows.
         if (killDraggedOutWindowsToo)
             {
-			i = allInspectors.keySet().iterator();
+            i = allInspectors.keySet().iterator();
             while(i.hasNext())
                 {
-				Inspector insp = (Inspector)(i.next());
+                Inspector insp = (Inspector)(i.next());
                 Stoppable stopper = (Stoppable)(allInspectors.get(insp));
-				if (stopper != null) stopper.stop();
+                if (stopper != null) stopper.stop();
                 }
             }
         }
@@ -745,27 +745,27 @@ public class SimpleController implements Controller
         {
         return Console.doNew(null, false);
         }
-		
+                
 
-	/** Returns a list of all current inspectors.  Some of these inspectors may be stored in
-		the SimpleController itself, and others may have been dragged out into their own JFrames.  You will
-		need to distinguish between these two on your own.  Note that some of these inspectors are stored as
-		weak keys in the SimpleController, so holding onto this list will prevent them from getting garbage
-		collected.  As a result, you should only use this list for temporary scans. */
-	public ArrayList getAllInspectors()
-		{
-		ArrayList list = new ArrayList();
-		Iterator i = allInspectors.keySet().iterator();
-		while(i.hasNext())
-			list.add((Inspector)(i.next()));
-		return list;
-		}
+    /** Returns a list of all current inspectors.  Some of these inspectors may be stored in
+        the SimpleController itself, and others may have been dragged out into their own JFrames.  You will
+        need to distinguish between these two on your own.  Note that some of these inspectors are stored as
+        weak keys in the SimpleController, so holding onto this list will prevent them from getting garbage
+        collected.  As a result, you should only use this list for temporary scans. */
+    public ArrayList getAllInspectors()
+        {
+        ArrayList list = new ArrayList();
+        Iterator i = allInspectors.keySet().iterator();
+        while(i.hasNext())
+            list.add((Inspector)(i.next()));
+        return list;
+        }
 
-	/** Returns a list of all displays.  You own the resulting list and can do what you like with it. */
-	public synchronized ArrayList getAllFrames()
-		{
-		return new ArrayList(frameList);
-		}
+    /** Returns a list of all displays.  You own the resulting list and can do what you like with it. */
+    public synchronized ArrayList getAllFrames()
+        {
+        return new ArrayList(frameList);
+        }
 
     }
 

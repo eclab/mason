@@ -18,9 +18,9 @@ import sim.util.*;
 
 public class SpatialNetwork3D
     {
-	Object field;
-	Object field2;
-	Network network;
+    Object field;
+    Object field2;
+    Network network;
 
     public SpatialNetwork3D(SparseField3D field, Network network)
         {
@@ -52,40 +52,40 @@ public class SpatialNetwork3D
         field2 = f;
         }
 
-	/** @deprecated Use setAuxiliaryField */
+    /** @deprecated Use setAuxiliaryField */
     public void setAuxillaryField(Continuous3D f)
         {
-		setAuxiliaryField(f);
+        setAuxiliaryField(f);
         }
 
-	/** @deprecated Use setAuxiliaryField */
+    /** @deprecated Use setAuxiliaryField */
     public void setAuxillaryField(SparseGrid3D f)
         {
-		setAuxiliaryField(f);
+        setAuxiliaryField(f);
         }
 
     public Double3D getObjectLocation(Object node)
         {
-		Double3D loc;
+        Double3D loc;
         if (field instanceof SparseField3D)
-			loc = ((SparseField3D)field).getObjectLocationAsDouble3D(node);
-		else
-			loc = new Double3D(((SparseField2D)field).getObjectLocationAsDouble2D(node));
+            loc = ((SparseField3D)field).getObjectLocationAsDouble3D(node);
+        else
+            loc = new Double3D(((SparseField2D)field).getObjectLocationAsDouble2D(node));
 
         if (loc == null && field2 != null)
-			{
-			if (field2 instanceof SparseField3D)
-				loc = ((SparseField3D)field2).getObjectLocationAsDouble3D(node);
-			else
-				loc = new Double3D(((SparseField2D)field2).getObjectLocationAsDouble2D(node));
-			}
+            {
+            if (field2 instanceof SparseField3D)
+                loc = ((SparseField3D)field2).getObjectLocationAsDouble3D(node);
+            else
+                loc = new Double3D(((SparseField2D)field2).getObjectLocationAsDouble2D(node));
+            }
         return loc;
         }
 
-	public Double3D getDimensions()
-		{
-		if (field instanceof SparseField3D)
-			return ((SparseField3D)field).getDimensions();
-		else return new Double3D(((SparseField2D)field).getDimensions());
-		}
+    public Double3D getDimensions()
+        {
+        if (field instanceof SparseField3D)
+            return ((SparseField3D)field).getDimensions();
+        else return new Double3D(((SparseField2D)field).getDimensions());
+        }
     }

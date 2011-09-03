@@ -23,8 +23,8 @@ import com.sun.j3d.utils.picking.*;
  **/
 public class MeshPortrayal extends QuadPortrayal
     {
-	float[] tmpCoords;
-	float[] tmpColor;
+    float[] tmpCoords;
+    float[] tmpColor;
     
     public MeshPortrayal(ColorMap colorDispenser)
         {

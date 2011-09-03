@@ -39,11 +39,11 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
     Appearance appearance;
 
     /** This is cloned to create the model.  Typically this group holds a single element,
-     either a Shape3D object or a Primitive of some sort.  The model, which is also a
-     TransformGroup, will then hold onto this object (or more properly, a clone).  Note
-     that the outer model TransformGroup (called j3dModel throughout this code) is not owned
-     by us once we create it.  So if we want to rotate or scale the Shape3D or Primitive,
-     we do it by transforming 'group' instead upon creation. */
+        either a Shape3D object or a Primitive of some sort.  The model, which is also a
+        TransformGroup, will then hold onto this object (or more properly, a clone).  Note
+        that the outer model TransformGroup (called j3dModel throughout this code) is not owned
+        by us once we create it.  So if we want to rotate or scale the Shape3D or Primitive,
+        we do it by transforming 'group' instead upon creation. */
     protected Node group;
         
     // This is the shape index used by getAppearance to fetch an appearance from.  It's usually
@@ -143,13 +143,13 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
         when the model is built.  Only call this method within getModel(). */
     public boolean setScale(TransformGroup j3dModel, double val)
         {
-		if (transform != null || val != 1.0)
-			{
-			Transform3D tr = new Transform3D();
-			tr.setScale((float)val);
-			return setTransform(j3dModel, tr);
-			}
-		else return setTransform(j3dModel, transform); // keep as is
+        if (transform != null || val != 1.0)
+            {
+            Transform3D tr = new Transform3D();
+            tr.setScale((float)val);
+            return setTransform(j3dModel, tr);
+            }
+        else return setTransform(j3dModel, transform); // keep as is
         }
         
         
@@ -160,9 +160,9 @@ public abstract class PrimitivePortrayal3D extends SimplePortrayal3D
     protected abstract int numShapes();
 
     /** Sets objects as pickable or not.  If you call setPickable prior to the model
-       being built in getModel(), then the model will be pickable or not as you specify. */
+        being built in getModel(), then the model will be pickable or not as you specify. */
     public void setPickable(boolean val) { pickable = val; }
-	
+        
     /** We suggest that if you wish to override this to change the appearance or scale or transform 
         of the underlying model, do the changes first and THEN call super.getModel(obj, j3dModel).
         Be sure to also set the appearance/scale/transform of the model the first time 

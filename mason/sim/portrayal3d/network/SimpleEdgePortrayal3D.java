@@ -21,27 +21,27 @@ import javax.media.j3d.*;
 
 public class SimpleEdgePortrayal3D extends SimplePortrayal3D
     {
-	Color fromColor;
-	Color toColor;
-	Color labelColor;
-	Font labelFont;
-	Font3D labelFont3D;	// only used if we're doing Text3D
-	boolean showLabels;
-	
-	// A larger font size makes the label bigger but also uses much more memory
-	static final int FONT_SIZE = 18;
-	// A smaller scaling factor reduces the label size
-	static final double SCALING_MODIFIER = 1.0 / 5.0; 
-	
-	double labelScale = 1.0;
-	public double getLabelScale() { return labelScale; }
-	public void setLabelScale(double s) { labelScale = Math.abs(s); }
-	
-	/** @deprecated */
-	public void setShowLabels(boolean val) { showLabels = val; }
+    Color fromColor;
+    Color toColor;
+    Color labelColor;
+    Font labelFont;
+    Font3D labelFont3D;     // only used if we're doing Text3D
+    boolean showLabels;
+        
+    // A larger font size makes the label bigger but also uses much more memory
+    static final int FONT_SIZE = 18;
+    // A smaller scaling factor reduces the label size
+    static final double SCALING_MODIFIER = 1.0 / 5.0; 
+        
+    double labelScale = 1.0;
+    public double getLabelScale() { return labelScale; }
+    public void setLabelScale(double s) { labelScale = Math.abs(s); }
+        
+    /** @deprecated */
+    public void setShowLabels(boolean val) { showLabels = val; }
 
-	/** @deprecated */
-	public boolean getShowLabels() { return showLabels; }
+    /** @deprecated */
+    public boolean getShowLabels() { return showLabels; }
 
     public SimpleEdgePortrayal3D()
         {
@@ -72,16 +72,16 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         this.fromColor = fromColor;
         this.toColor = toColor;
         this.labelColor = labelColor;
-		if (labelFont == null) 
-			labelFont = new Font("SansSerif", Font.PLAIN, FONT_SIZE);
+        if (labelFont == null) 
+            labelFont = new Font("SansSerif", Font.PLAIN, FONT_SIZE);
         this.labelFont = labelFont;
-		labelFont3D = new Font3D(labelFont, new FontExtrusion());
-		showLabels = (labelColor != null);
-		if (this.labelColor == null) 
-			this.labelColor = Color.white;  // just in case the user turns on labels again
+        labelFont3D = new Font3D(labelFont, new FontExtrusion());
+        showLabels = (labelColor != null);
+        if (this.labelColor == null) 
+            this.labelColor = Color.white;  // just in case the user turns on labels again
         }
 
-	Transform3D transformForOffset(double x, double y, double z)
+    Transform3D transformForOffset(double x, double y, double z)
         {
         Transform3D offset = new Transform3D();
         offset.setTranslation(new Vector3d(x, y, z));
@@ -116,7 +116,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         Transform3D trans = null;
         
         wrapper = (LocationWrapper) object;
-		Edge edge = (Edge)(wrapper.getLocation());
+        Edge edge = (Edge)(wrapper.getLocation());
         field = (SpatialNetwork3D) wrapper.fieldPortrayal.getField();
 
         secondPoint = field.getObjectLocation(edge.to());
@@ -172,7 +172,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                 text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
                 //text = new Shape3D(new Text3D(labelFont3D, ""));
-				
+                                
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
                     text.getAppearance(),
                     OrientedShape3D.ROTATE_ABOUT_POINT,
@@ -198,7 +198,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                 j3dModel.addChild(o);
                 }
             } 
-		else
+        else
             {
             Shape3D shape = (Shape3D)j3dModel.getChild(0);
             LineArray geo = (LineArray)shape.getGeometry(); 
@@ -223,10 +223,10 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
                         str, new Color3f(labelColor),
                         labelFont.getFamily(), labelFont.getSize(),
                         labelFont.getStyle());
-					text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
+                    text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
                     //Shape3D text = new Shape3D(new Text3D(labelFont3D, str));
-					
+                                        
                     // Grab the OrientedShape3D
                     OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 

@@ -69,22 +69,22 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public class OptionPane extends JFrame
         {
         // buffer stuff
-		int buffering;
+        int buffering;
         
-		JRadioButton useNoBuffer = new JRadioButton("By Drawing Separate Rectangles");
-		JRadioButton useBuffer = new JRadioButton("Using a Stretched Image");
-		JRadioButton useDefault = new JRadioButton("Let the Program Decide How");
-		ButtonGroup usageGroup = new ButtonGroup();
+        JRadioButton useNoBuffer = new JRadioButton("By Drawing Separate Rectangles");
+        JRadioButton useBuffer = new JRadioButton("Using a Stretched Image");
+        JRadioButton useDefault = new JRadioButton("Let the Program Decide How");
+        ButtonGroup usageGroup = new ButtonGroup();
         
-		JCheckBox antialias = new JCheckBox("Antialias Graphics");
-		JCheckBox alphaInterpolation = new JCheckBox("Better Transparency");
-		JCheckBox interpolation = new JCheckBox("Bilinear Interpolation of Images");
-		JCheckBox tooltips = new JCheckBox("Tool Tips");
+        JCheckBox antialias = new JCheckBox("Antialias Graphics");
+        JCheckBox alphaInterpolation = new JCheckBox("Better Transparency");
+        JCheckBox interpolation = new JCheckBox("Bilinear Interpolation of Images");
+        JCheckBox tooltips = new JCheckBox("Tool Tips");
         
-		JButton systemPreferences = new JButton("MASON");
-		JButton appPreferences = new JButton("Simulation");
+        JButton systemPreferences = new JButton("MASON");
+        JButton appPreferences = new JButton("Simulation");
                 
-		NumberTextField xOffsetField = new NumberTextField(0,1,50)
+        NumberTextField xOffsetField = new NumberTextField(0,1,50)
             {
             public double newValue(final double val)
                 {
@@ -95,7 +95,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             };
             
-		NumberTextField yOffsetField = new NumberTextField(0,1,50)
+        NumberTextField yOffsetField = new NumberTextField(0,1,50)
             {
             public double newValue(final double val)
                 {
@@ -108,7 +108,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
         ActionListener listener = null;
                 
-		OptionPane(String title)
+        OptionPane(String title)
             {
             super(title);
             useDefault.setSelected(true);
@@ -210,7 +210,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
                 
         /** Saves the Option Pane Preferences to a given Preferences Node */
-		void savePreferences(Preferences prefs)
+        void savePreferences(Preferences prefs)
             {
             try
                 {
@@ -240,7 +240,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         static final String TOOLTIPS_KEY = "Tool Tips";
                 
         /** Resets the Option Pane Preferences by loading from the preference database */
-		void resetToPreferences()
+        void resetToPreferences()
             {
             try
                 {
@@ -273,13 +273,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         }
                 
-	/** Removes all mouse listeners, mouse motion listeners, and Key listeners from this component.  Mostly used for kiosk mode stuff -- see the Howto */
-	public void removeListeners()
-		{
-		// moved to the Display2D ot be at the same level as handleEvent
-		insideDisplay.removeListeners();
-		}
-	
+    /** Removes all mouse listeners, mouse motion listeners, and Key listeners from this component.  Mostly used for kiosk mode stuff -- see the Howto */
+    public void removeListeners()
+        {
+        // moved to the Display2D ot be at the same level as handleEvent
+        insideDisplay.removeListeners();
+        }
+        
     /** The object which actually does all the drawing.  Perhaps we should move this out. */
     public class InnerDisplay2D extends JComponent
         {
@@ -287,16 +287,16 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         BufferedImage buffer = null;
 
         /** The width of the display when the scale is 1.0 */
-		public double width;
+        public double width;
         /** The height of the display when the scale is 1.0 */
-		public double height;
+        public double height;
         /** x offset */
-		public double xOffset;
+        public double xOffset;
         /** y offset */
-		public double yOffset;
+        public double yOffset;
                 
         /** @deprecated Use Display2D.removeListeners instead. */
-		public void removeListeners()
+        public void removeListeners()
             {
             MouseListener[] mls = (MouseListener[])(getListeners(MouseListener.class));
             for(int x = 0 ; x < mls.length; x++)
@@ -310,7 +310,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
                         
         /** Creates an InnerDisplay2D with the provided width and height. */
-		InnerDisplay2D(double width, double height)
+        InnerDisplay2D(double width, double height)
             {
             this.width = width;
             this.height = height;
@@ -446,29 +446,29 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
 
 
-    static final int MAX_TOOLTIP_LINES = 10;
-    public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation )
-        {
-        String s = "<html><font face=\"" +
-            getFont().getFamily() + "\" size=\"-1\">";
-        Bag[] hitObjects = objectsHitBy(rect);
-        int count = 0;
-        for(int x=0;x<hitObjects.length;x++)
+        static final int MAX_TOOLTIP_LINES = 10;
+        public String createToolTipText( Rectangle2D.Double rect, final GUIState simulation )
             {
-            FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(portrayals.get(x));
-            for( int i = 0 ; i < hitObjects[x].numObjs ; i++ )
+            String s = "<html><font face=\"" +
+                getFont().getFamily() + "\" size=\"-1\">";
+            Bag[] hitObjects = objectsHitBy(rect);
+            int count = 0;
+            for(int x=0;x<hitObjects.length;x++)
                 {
-                if (count > 0) s += "<br>";
-                if (count >= MAX_TOOLTIP_LINES) { return s + "...<i>etc.</i></font></html>"; }
-                count++;
-                String status = p.portrayal.getStatus((LocationWrapper) (hitObjects[x].objs[i]));
-                if (status != null) s += status;  // might return null, sort of meaning "leave me alone"
+                FieldPortrayal2DHolder p = (FieldPortrayal2DHolder)(portrayals.get(x));
+                for( int i = 0 ; i < hitObjects[x].numObjs ; i++ )
+                    {
+                    if (count > 0) s += "<br>";
+                    if (count >= MAX_TOOLTIP_LINES) { return s + "...<i>etc.</i></font></html>"; }
+                    count++;
+                    String status = p.portrayal.getStatus((LocationWrapper) (hitObjects[x].objs[i]));
+                    if (status != null) s += status;  // might return null, sort of meaning "leave me alone"
+                    }
                 }
+            if (count==0) return null;
+            s += "</font></html>";
+            return s;
             }
-        if (count==0) return null;
-        s += "</font></html>";
-        return s;
-        }
 
         
         boolean paintLock = false;
@@ -488,7 +488,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         /** The top-level repainting method.  If we're writing to a movie, we do a paintToMovie
             (which also does a buffered paint to the screen) else we do an ordinary paint.
             <tt>buffer</tt> determines if we do our ordinary paints buffered or not.
-			@deprecated use paintComponent() or paint(...) */
+            @deprecated use paintComponent() or paint(...) */
         public void paintComponent(Graphics g, boolean buffer)
             {
             synchronized(Display2D.this.simulation.state.schedule)  // for getTime()
@@ -691,19 +691,19 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         /** The translation and scale of the FieldPortrayal.  Presently this
             is always 0,0 translation and 1.0 scale, but we'll allow the
             user to change this soon. */
-		Rectangle2D.Double bounds;
+        Rectangle2D.Double bounds;
         /** The portrayal proper */
-		FieldPortrayal2D portrayal;
+        FieldPortrayal2D portrayal;
         /** The name of the portrayal, as shown in the Layers menu on the Display2D window */
-		String name;
+        String name;
         /** The menu item of the portrayal, in the Layers menu. */
-		JCheckBoxMenuItem menuItem;
+        JCheckBoxMenuItem menuItem;
         /** Whether we should draw the portrayal on updates */
-		boolean visible;
+        boolean visible;
         /** Returns the portrayal's name in the Layers menu */
-		public String toString() { return name; }
+        public String toString() { return name; }
         /** Creates a menu item which selects or unselects the portrayal for drawing. */
-		FieldPortrayal2DHolder(FieldPortrayal2D p, String n, Rectangle2D.Double bounds, boolean visible)
+        FieldPortrayal2DHolder(FieldPortrayal2D p, String n, Rectangle2D.Double bounds, boolean visible)
             {
             this.bounds = bounds;
             portrayal=p; 
@@ -828,17 +828,17 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public static final ImageIcon OPTIONS_ICON = iconFor("Options.png");
     public static final ImageIcon OPTIONS_ICON_P = iconFor("OptionsPressed.png");
     
-	public static final Object[] REDRAW_OPTIONS = new Object[] { "Steps/Redraw", "Model Secs/Redraw", "Real Secs/Redraw", "Always Redraw", "Never Redraw" };
+    public static final Object[] REDRAW_OPTIONS = new Object[] { "Steps/Redraw", "Model Secs/Redraw", "Real Secs/Redraw", "Always Redraw", "Never Redraw" };
 
     /** Use tool tips? */
-	boolean useTooltips;
+    boolean useTooltips;
 
     /** The last steps for a frame that was painted to the screen.  Keeping this
         variable around enables our movie maker to ensure that it doesn't write
         a frame twice to its movie stream. */
     long lastEncodedSteps = -1;  // because we want to encode the start of the simulation prior to any steps.  That's step 0.
     /** Our movie maker, if one is running, else null. */
-	MovieMaker movieMaker;
+    MovieMaker movieMaker;
 
     /** The 2D display inside the scroll view.  Does the actual drawing of the simulation. */
     public InnerDisplay2D insideDisplay;
@@ -1025,7 +1025,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             });
         }
     
-	void createConsoleMenu()
+    void createConsoleMenu()
         {
         if (simulation != null && simulation.controller != null &&
             simulation.controller instanceof Console)
@@ -1057,13 +1057,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
     /** Creates a Display2D with the provided width and height for its portrayal region, 
         attached to the provided simulation.   The interval is ignored.
-		
-		@deprecated
-		*/
+                
+        @deprecated
+    */
     public Display2D(final double width, final double height, GUIState simulation, long interval)
-		{
-		this(width, height, simulation);
-		}
+        {
+        this(width, height, simulation);
+        }
         
     /** Creates a Display2D with the provided width and height for its portrayal region, 
         attached to the provided simulation, and displaying itself with the given interval (which must be > 0). */
@@ -1443,7 +1443,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
         DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip);
-		d2d.gui = simulation;
+        d2d.gui = simulation;
         d2d.precise = precise;
         return d2d;
         }
@@ -1785,12 +1785,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         }
         
-	/** Used internally and by Display3D to indicate */
-	public final static int UPDATE_RULE_STEPS = 0;
-	public final static int UPDATE_RULE_INTERNAL_TIME = 1;
-	public final static int UPDATE_RULE_WALLCLOCK_TIME = 2;
-	public final static int UPDATE_RULE_ALWAYS = 3;
-	public final static int UPDATE_RULE_NEVER = 4;
+    /** Used internally and by Display3D to indicate */
+    public final static int UPDATE_RULE_STEPS = 0;
+    public final static int UPDATE_RULE_INTERNAL_TIME = 1;
+    public final static int UPDATE_RULE_WALLCLOCK_TIME = 2;
+    public final static int UPDATE_RULE_ALWAYS = 3;
+    public final static int UPDATE_RULE_NEVER = 4;
     int updateRule = UPDATE_RULE_ALWAYS;
     long stepInterval = 1;
     double timeInterval = 0;
@@ -1873,7 +1873,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         return false;
         }
 
-	void rebuildSkipFrame()
+    void rebuildSkipFrame()
         {
         skipFrame.getContentPane().removeAll();
         skipFrame.getContentPane().invalidate();
@@ -1972,7 +1972,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         skipListener.actionPerformed(null);  // have it update the text field accordingly
         }
 
-	void rebuildRefreshPopup()
+    void rebuildRefreshPopup()
         {
         refreshPopup.removeAll();
         String s = "";

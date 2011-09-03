@@ -38,7 +38,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         
     public void setField(Object field)
         {
-		if (field instanceof ObjectGrid2D ) super.setField(field);
+        if (field instanceof ObjectGrid2D ) super.setField(field);
         else throw new RuntimeException("Invalid field for ObjectGridPortrayal2D: " + field);
         }
         
@@ -54,18 +54,18 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 
     public Double2D getScale(DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
 
-        int maxX = field.getWidth(); 
-        int maxY = field.getHeight();
+            int maxX = field.getWidth(); 
+            int maxY = field.getHeight();
 
-        final double xScale = info.draw.width / maxX;
-        final double yScale = info.draw.height / maxY;
-        return new Double2D(xScale, yScale);
-		}
+            final double xScale = info.draw.width / maxX;
+            final double yScale = info.draw.height / maxY;
+            return new Double2D(xScale, yScale);
+            }
         }
                 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
@@ -82,61 +82,61 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
 
     public Object getObjectLocation(Object object, GUIState gui)
         {
-		synchronized(gui.state.schedule)
-			{
-        final ObjectGrid2D field = (ObjectGrid2D)this.field;
-        if (field==null) return null;
-
-        final int maxX = field.getWidth(); 
-        final int maxY = field.getHeight();
-
-        // find the object.
-        for(int x=0; x < maxX; x++)
+        synchronized(gui.state.schedule)
             {
-            Object[] fieldx = field.field[x];
-            for(int y = 0; y < maxY; y++)
-                if (object == fieldx[y])  // found it
-                    return new Int2D(x,y);
+            final ObjectGrid2D field = (ObjectGrid2D)this.field;
+            if (field==null) return null;
+
+            final int maxX = field.getWidth(); 
+            final int maxY = field.getHeight();
+
+            // find the object.
+            for(int x=0; x < maxX; x++)
+                {
+                Object[] fieldx = field.field[x];
+                for(int y = 0; y < maxY; y++)
+                    if (object == fieldx[y])  // found it
+                        return new Int2D(x,y);
+                }
+            return null;  // it wasn't there
             }
-        return null;  // it wasn't there
-		}
         }
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
         
-        final int maxX = field.getWidth(); 
-        final int maxY = field.getHeight();
-        if (maxX == 0 || maxY == 0) return null;
+            final int maxX = field.getWidth(); 
+            final int maxY = field.getHeight();
+            if (maxX == 0 || maxY == 0) return null;
         
-        final double xScale = info.draw.width / maxX;
-        final double yScale = info.draw.height / maxY;
+            final double xScale = info.draw.width / maxX;
+            final double yScale = info.draw.height / maxY;
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
-            info.clip);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
+                info.clip);  // we don't do further clipping 
 
-        Int2D loc = (Int2D) location;
-        if (location == null) return null;
+            Int2D loc = (Int2D) location;
+            if (location == null) return null;
                 
-        int x = loc.x;
-        int y = loc.y;
+            int x = loc.x;
+            int y = loc.y;
 
-        // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-        newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-        newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-        newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-        newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+            // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+            newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+            newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+            newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+            newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
         
-        // adjust drawX and drawY to center
-        newinfo.draw.x += newinfo.draw.width / 2.0;
-        newinfo.draw.y += newinfo.draw.height / 2.0;
+            // adjust drawX and drawY to center
+            newinfo.draw.x += newinfo.draw.width / 2.0;
+            newinfo.draw.y += newinfo.draw.height / 2.0;
 
-        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
-		}
+            return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+            }
         }
 
 
@@ -221,7 +221,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
     IntBag xPos = new IntBag(49);
     IntBag yPos = new IntBag(49);
         
-	Int2D searchForObject(Object object, Int2D loc)
+    Int2D searchForObject(Object object, Int2D loc)
         {
         ObjectGrid2D field = (ObjectGrid2D)(this.field);
         Object[][] grid = field.field;
@@ -234,7 +234,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
                 
                 
-	public static class Message
+    public static class Message
         {
         String message;
         public Message(String message) { this.message = message; }

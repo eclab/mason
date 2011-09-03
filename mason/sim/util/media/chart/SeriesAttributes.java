@@ -29,14 +29,14 @@ import org.jfree.data.general.*;
 
 public abstract class SeriesAttributes extends LabelledList
     {
-	SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
+    SeriesChangeListener stoppable;  // This is used by the ChartGenerator to store stoppables
     public SeriesChangeListener getStoppable() { return stoppable; }
     public void setStoppable(SeriesChangeListener obj) { stoppable = obj; }
         
     /** The index of the series that this SeriesAttributes is responsible for. */
-	int seriesIndex;
+    int seriesIndex;
     /** The ChartGenerator which holds the series that this SeriesAttributes is responsible for. */
-	ChartGenerator generator;
+    ChartGenerator generator;
     
     /** Sets the name of the series. */
     public void setName(String val) { super.setName(val); }  // this just uses Component's setName
@@ -85,14 +85,14 @@ public abstract class SeriesAttributes extends LabelledList
     public static final ImageIcon I_UP = iconFor("UpArrow.png");
     public static final ImageIcon I_UP_PRESSED = iconFor("UpArrowPressed.png");
 
-	static ImageIcon iconFor(String name)
+    static ImageIcon iconFor(String name)
         {
         return new ImageIcon(SeriesAttributes.class.getResource(name));
         }
         
-	Box manipulators;
-	        
-	void buildManipulators()
+    Box manipulators;
+                
+    void buildManipulators()
         {
         JButton removeButton = new JButton(I_CLOSE);
         removeButton.setPressedIcon(I_CLOSE_PRESSED);

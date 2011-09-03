@@ -31,11 +31,11 @@ import com.sun.j3d.utils.picking.*;
  
 public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
     {
-	public static BranchGroup getBranchGroupForResource(Class c, String resourceName) throws IllegalArgumentException, FileNotFoundException
-		{
-		return getBranchGroupForURL(c.getResource(resourceName));
-		}
-		
+    public static BranchGroup getBranchGroupForResource(Class c, String resourceName) throws IllegalArgumentException, FileNotFoundException
+        {
+        return getBranchGroupForURL(c.getResource(resourceName));
+        }
+                
     public static BranchGroup getBranchGroupForURL(URL url) throws IllegalArgumentException, FileNotFoundException
         {
         String s = url.getPath().trim();

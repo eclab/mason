@@ -51,8 +51,8 @@ public class CapturingCanvas3D extends Canvas3D
         return buffer_;
         }
 
-	// how big should the image be to draw?
-	Rectangle2D getImageSize()
+    // how big should the image be to draw?
+    Rectangle2D getImageSize()
         {
         Dimension s = getSize();
         Rectangle2D clip = new Rectangle2D.Double(0,0,s.width,s.height);
@@ -65,7 +65,7 @@ public class CapturingCanvas3D extends Canvas3D
     /** sets the capturing regime and area */
     public void beginCapturing(boolean movie)
         {
-		Rectangle2D r = getImageSize();
+        Rectangle2D r = getImageSize();
         synchronized(this)
             {
             x  = (int)r.getX();
@@ -80,8 +80,8 @@ public class CapturingCanvas3D extends Canvas3D
         fillBuffer(true);
         }
     
-	// doubleRasterRead is a workaround for a Java bug where the first
-	// image may be black.
+    // doubleRasterRead is a workaround for a Java bug where the first
+    // image may be black.
     void fillBuffer(boolean doubleRasterRead)
         {
         GraphicsContext3D  ctx = getGraphicsContext3D();

@@ -133,8 +133,8 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         return null;
         }
 
-	private final Object getObjectLocation(Object object) { return ""; }
-	
+    private final Object getObjectLocation(Object object) { return ""; }
+        
     /** Returns the first location in the underlying field of the given object, if such a thing
         is reasonable.  Largely used for getObjectPosition(...).     
         If null is returned, then the portrayal is unable to determine the position of the field location.
@@ -166,12 +166,12 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         action on the given object.  */
     public Point2D.Double getObjectPosition(Object object, DrawInfo2D fieldPortrayalInfo)
         {
-		synchronized(fieldPortrayalInfo.gui.state.schedule)
-			{
-			Object location = getObjectLocation(object, fieldPortrayalInfo.gui);
-			if (location == null) return null;
-			return getLocationPosition(location, fieldPortrayalInfo);
-			}
+        synchronized(fieldPortrayalInfo.gui.state.schedule)
+            {
+            Object location = getObjectLocation(object, fieldPortrayalInfo.gui);
+            if (location == null) return null;
+            return getLocationPosition(location, fieldPortrayalInfo);
+            }
         }
         
     /** Default buffering: let the program decide on its own (typically in a platform-dependent fashion) */

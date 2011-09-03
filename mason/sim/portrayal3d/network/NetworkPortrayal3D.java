@@ -43,8 +43,8 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
         globalTG.setCapability(Group.ALLOW_CHILDREN_EXTEND);
         
         
-		SpatialNetwork3D field = (SpatialNetwork3D)this.field;
-		
+        SpatialNetwork3D field = (SpatialNetwork3D)this.field;
+                
         if( field == null ) return globalTG;
         
         // draw ALL the edges -- one never knows if an edge will cross into our boundary
@@ -74,14 +74,14 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
     protected BranchGroup wrapModelForNewEdge(Edge edge)
         {
         LocationWrapper newwrapper = new LocationWrapper(edge.info, edge, this);
-		
+                
         Portrayal p = getPortrayalForObject(newwrapper);
         if (!(p instanceof SimpleEdgePortrayal3D)) 
             throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
                 edge + " -- expected a SimpleEdgePortrayal3D");
         SimpleEdgePortrayal3D portrayal = (SimpleEdgePortrayal3D) p; 
         
-		portrayal.setCurrentFieldPortrayal(this);
+        portrayal.setCurrentFieldPortrayal(this);
         TransformGroup localTG = portrayal.getModel(newwrapper, null); 
         localTG.setCapability(Group.ALLOW_CHILDREN_READ); 
         localTG.setUserData(newwrapper);                 
@@ -99,7 +99,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
 
     public void updateModel(TransformGroup globalTG) 
         {
-		SpatialNetwork3D field = (SpatialNetwork3D)this.field;
+        SpatialNetwork3D field = (SpatialNetwork3D)this.field;
 
         if (field == null) return;      
         HashMap hm = new HashMap();
@@ -114,7 +114,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
                 hm.put(edge,edge);
                 }
             }
-			
+                        
         // update children (edges) if they're still in the field (network),
         // else remove the children if they appear to have left.
         // We use a hashmap to efficiently mark out the children
@@ -123,8 +123,8 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
             {
             BranchGroup localBG = (BranchGroup)globalTG.getChild(t);
             LocationWrapper wrapper = (LocationWrapper)localBG.getUserData();
-			Object edge = wrapper.getLocation();
-			
+            Object edge = wrapper.getLocation();
+                        
             if(hm.remove(edge) != null) // hm.containsKey(edgeObj))  // object still in the field
                 {  // we can pull this off because valid edges can't be null -- Gabriel
                 TransformGroup localTG = (TransformGroup)localBG.getChild(0);
@@ -134,7 +134,7 @@ public class NetworkPortrayal3D extends FieldPortrayal3D
                         wrapper + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
                 
-				p3d.setCurrentFieldPortrayal(this);
+                p3d.setCurrentFieldPortrayal(this);
                 TransformGroup localTG2 = p3d.getModel(wrapper, localTG);
 
                 if(localTG != localTG2)

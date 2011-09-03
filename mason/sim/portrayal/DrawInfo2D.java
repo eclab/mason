@@ -51,7 +51,7 @@ import sim.display.*;
 
 public class DrawInfo2D
     {
-	public GUIState gui;
+    public GUIState gui;
     public FieldPortrayal2D fieldPortrayal;
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
@@ -59,19 +59,19 @@ public class DrawInfo2D
     public boolean precise;
     public Object location;
     
-	/*
-    public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
-        {
-        this.draw = draw; this.clip = clip; precise = false;
-        }
+    /*
+      public DrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip)
+      {
+      this.draw = draw; this.clip = clip; precise = false;
+      }
         
-    public DrawInfo2D(Rectangle draw, Rectangle clip)
-        {
-        this.draw = new Rectangle2D.Double(draw.x, draw.y, draw.width, draw.height);
-        this.clip = new Rectangle2D.Double(clip.x, clip.y, clip.width, clip.height);
-        precise = false;
-        } 
-	*/
+      public DrawInfo2D(Rectangle draw, Rectangle clip)
+      {
+      this.draw = new Rectangle2D.Double(draw.x, draw.y, draw.width, draw.height);
+      this.clip = new Rectangle2D.Double(clip.x, clip.y, clip.width, clip.height);
+      precise = false;
+      } 
+    */
 
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
         {
@@ -80,19 +80,19 @@ public class DrawInfo2D
         this.clip = new Rectangle2D.Double();
         this.clip.setRect(clip.getFrame());
         precise = false;
-		this.gui = gui;
-		this.fieldPortrayal = fieldPortrayal;
+        this.gui = gui;
+        this.fieldPortrayal = fieldPortrayal;
         }
 
 /*
-    public DrawInfo2D(RectangularShape draw, RectangularShape clip)
-        {
-        this.draw = new Rectangle2D.Double();
-        this.draw.setRect(draw.getFrame());
-        this.clip = new Rectangle2D.Double();
-        this.clip.setRect(clip.getFrame());
-        precise = false;
-        }
+  public DrawInfo2D(RectangularShape draw, RectangularShape clip)
+  {
+  this.draw = new Rectangle2D.Double();
+  this.draw.setRect(draw.getFrame());
+  this.clip = new Rectangle2D.Double();
+  this.clip.setRect(clip.getFrame());
+  precise = false;
+  }
 */
     public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)
         {
@@ -101,7 +101,7 @@ public class DrawInfo2D
         Rectangle2D.Double oclip = other.clip;
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
         precise = other.precise;
-		gui = other.gui;
+        gui = other.gui;
         }
         
     public DrawInfo2D(DrawInfo2D other)

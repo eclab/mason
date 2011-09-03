@@ -43,7 +43,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         defaultPortrayal = new HexagonalPortrayal2D();
         }
 
-	/** @deprecated Use setDrawPolicy. */
+    /** @deprecated Use setDrawPolicy. */
     public HexaSparseGridPortrayal2D (DrawPolicy policy)
         {
         super(policy);
@@ -74,22 +74,22 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
     public Double2D getScale(DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
 
-        int maxX = field.getWidth(); 
-        int maxY = field.getHeight();
-        if (maxX == 0 || maxY == 0) return null;
+            int maxX = field.getWidth(); 
+            int maxY = field.getHeight();
+            if (maxX == 0 || maxY == 0) return null;
 
-        final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
-        final double divideByY = (1.0+2.0*maxY);
+            final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
+            final double divideByY = (1.0+2.0*maxY);
 
-        final double xScale = info.draw.width / divideByX;
-        final double yScale = info.draw.height / divideByY;
-        return new Double2D(xScale, yScale);
-		}
+            final double xScale = info.draw.width / divideByX;
+            final double yScale = info.draw.height / divideByY;
+            return new Double2D(xScale, yScale);
+            }
         }
                 
                 
@@ -108,66 +108,66 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Grid2D field = (Grid2D) this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Grid2D field = (Grid2D) this.field;
+            if (field==null) return null;
 
-        int maxX = field.getWidth(); 
-        int maxY = field.getHeight();
-        if (maxX == 0 || maxY == 0) return null;
+            int maxX = field.getWidth(); 
+            int maxY = field.getHeight();
+            if (maxX == 0 || maxY == 0) return null;
 
-        final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
-        final double divideByY = (1.0+2.0*maxY);
+            final double divideByX = ((maxX%2==0)?(3.0*maxX/2.0+0.5):(3.0*maxX/2.0+2.0));
+            final double divideByY = (1.0+2.0*maxY);
 
-        final double xScale = info.draw.width / divideByX;
-        final double yScale = info.draw.height / divideByY;
-        int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-        int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
-        int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
-        int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+            final double xScale = info.draw.width / divideByX;
+            final double yScale = info.draw.height / divideByY;
+            int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+            int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+            int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+            int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
-                Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
-                Math.ceil(info.draw.height / (maxY + 0.5))),
-            info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
+                    Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
+                    Math.ceil(info.draw.height / (maxY + 0.5))),
+                info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
 
-        Int2D loc = (Int2D) location;
-        if (loc == null) return null;
+            Int2D loc = (Int2D) location;
+            if (loc == null) return null;
 
-        final int x = loc.x;
-        final int y = loc.y;
+            final int x = loc.x;
+            final int y = loc.y;
 
-        getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
-        getxyC( field.ulx(x,y), field.uly(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ul );
-        getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
-        getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
+            getxyC( x, y, xScale, yScale, info.draw.x, info.draw.y, xyC );
+            getxyC( field.ulx(x,y), field.uly(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ul );
+            getxyC( field.upx(x,y), field.upy(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_up );
+            getxyC( field.urx(x,y), field.ury(x,y), xScale, yScale, info.draw.x, info.draw.y, xyC_ur );
 
-        xPoints[0] = (int)Math.floor(xyC_ur[0]-0.5*xScale);
-        //yPoints[0] = (int)Math.floor(xyC_ur[1]+yScale);
-        //xPoints[1] = (int)Math.floor(xyC_up[0]+0.5*xScale);
-        yPoints[1] = (int)Math.floor(xyC_up[1]+yScale);
-        //xPoints[2] = (int)Math.floor(xyC_up[0]-0.5*xScale);
-        //yPoints[2] = (int)Math.floor(xyC_up[1]+yScale);
-        xPoints[3] = (int)Math.floor(xyC_ul[0]+0.5*xScale);
-        //yPoints[3] = (int)Math.floor(xyC_ul[1]+yScale);
-        //xPoints[4] = (int)Math.floor(xyC[0]-0.5*xScale);
-        yPoints[4] = (int)Math.floor(xyC[1]+yScale);
-        //xPoints[5] = (int)Math.floor(xyC[0]+0.5*xScale);
-        //yPoints[5] = (int)Math.floor(xyC[1]+yScale);
+            xPoints[0] = (int)Math.floor(xyC_ur[0]-0.5*xScale);
+            //yPoints[0] = (int)Math.floor(xyC_ur[1]+yScale);
+            //xPoints[1] = (int)Math.floor(xyC_up[0]+0.5*xScale);
+            yPoints[1] = (int)Math.floor(xyC_up[1]+yScale);
+            //xPoints[2] = (int)Math.floor(xyC_up[0]-0.5*xScale);
+            //yPoints[2] = (int)Math.floor(xyC_up[1]+yScale);
+            xPoints[3] = (int)Math.floor(xyC_ul[0]+0.5*xScale);
+            //yPoints[3] = (int)Math.floor(xyC_ul[1]+yScale);
+            //xPoints[4] = (int)Math.floor(xyC[0]-0.5*xScale);
+            yPoints[4] = (int)Math.floor(xyC[1]+yScale);
+            //xPoints[5] = (int)Math.floor(xyC[0]+0.5*xScale);
+            //yPoints[5] = (int)Math.floor(xyC[1]+yScale);
 
-        // compute the width of the object -- we tried computing the EXACT width each time, but
-        // it results in weird-shaped circles etc, so instead we precomputed a standard width
-        // and height, and just compute the x values here.
-        newinfo.draw.x = xPoints[3];
-        newinfo.draw.y = yPoints[1];
+            // compute the width of the object -- we tried computing the EXACT width each time, but
+            // it results in weird-shaped circles etc, so instead we precomputed a standard width
+            // and height, and just compute the x values here.
+            newinfo.draw.x = xPoints[3];
+            newinfo.draw.y = yPoints[1];
                     
-        // adjust drawX and drawY to center
-        newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
-        newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
+            // adjust drawX and drawY to center
+            newinfo.draw.x +=(xPoints[0]-xPoints[3]) / 2.0;
+            newinfo.draw.y += (yPoints[4]-yPoints[1]) / 2.0;
 
-        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
-		}
+            return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+            }
         }
     
     

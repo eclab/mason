@@ -50,13 +50,13 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
         {
         if (isValidInspector())
             {
-			if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
-				{
-				// take control
-				getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-				getGenerator().setYAxisLabel("Y " + properties.getName(index));
-				getGenerator().setXAxisLabel("X " + properties.getName(index));
-				}
+            if (getGenerator().getNumSeriesAttributes() == 0)  // recall that we've not been added yet
+                {
+                // take control
+                getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
+                getGenerator().setYAxisLabel("Y " + properties.getName(index));
+                getGenerator().setXAxisLabel("X " + properties.getName(index));
+                }
 
             // add our series
             seriesAttributes = ((ScatterPlotGenerator)generator).addSeries(previousValues, properties.getName(index), 

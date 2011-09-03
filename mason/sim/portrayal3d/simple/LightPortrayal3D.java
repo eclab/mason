@@ -49,7 +49,7 @@ import java.awt.*;
 
 public class LightPortrayal3D extends SimplePortrayal3D
     {
-	Light light;
+    Light light;
     
     Vector3f double3DToVector3f(Double3D d)
         {

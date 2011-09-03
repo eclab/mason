@@ -52,14 +52,14 @@ public class LabelledList extends JPanel
     GridBagConstraints gbc = new GridBagConstraints();
     int y =0;
     
-	/*
-    public void setBackground(Color c)
-        {
-        super.setBackground(c);
-        //if (consolePanel != null)  // may be null when Quaqua tries to set things up
-        //      consolePanel.setBackground(new Color(0,0,0,0));
-        }
-	*/
+    /*
+      public void setBackground(Color c)
+      {
+      super.setBackground(c);
+      //if (consolePanel != null)  // may be null when Quaqua tries to set things up
+      //      consolePanel.setBackground(new Color(0,0,0,0));
+      }
+    */
     
     public LabelledList()
         {
@@ -162,8 +162,8 @@ public class LabelledList extends JPanel
         }
         
     /** 
-	@deprecated Inserts a component spanning all five columns.  Synonym for add(comp) 
-	*/
+        @deprecated Inserts a component spanning all five columns.  Synonym for add(comp) 
+    */
     public void addComponent(Component comp)
         {
         // set as a "left" component, but spanning using HORIZONTAL/REMAINDER

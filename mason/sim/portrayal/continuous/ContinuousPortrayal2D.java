@@ -36,11 +36,11 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         {
         frame = p;
         }
-		
-	public Paint getFame()
-		{
-		return frame;
-		}
+                
+    public Paint getFame()
+        {
+        return frame;
+        }
 
     public void setField(Object field)
         {
@@ -69,15 +69,15 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         
     public Double2D getScale(DrawInfo2D info)
         {
-		synchronized(info.gui.state.schedule)
-			{
-        final Continuous2D field = (Continuous2D)this.field;
-        if (field==null) return null;
+        synchronized(info.gui.state.schedule)
+            {
+            final Continuous2D field = (Continuous2D)this.field;
+            if (field==null) return null;
                 
-        final double xScale = info.draw.width / field.width;
-        final double yScale = info.draw.height / field.height;
-        return new Double2D(xScale, yScale);
-		}
+            final double xScale = info.draw.width / field.width;
+            final double yScale = info.draw.height / field.height;
+            return new Double2D(xScale, yScale);
+            }
         }
                 
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
@@ -93,53 +93,53 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
-		synchronized(fieldPortrayalInfo.gui.state.schedule)
-			{
-        final Continuous2D field = (Continuous2D)this.field;
-        if (field==null) return;
-        if (field.getObjectLocation(object) == null) return;
-        Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
-        if (location != null)
+        synchronized(fieldPortrayalInfo.gui.state.schedule)
             {
-            if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-                return;  // this is deprecated and will be deleted
-            //if (object instanceof Constrained)
-            //      location = (Double2D)((Constrained)object).constrainLocation(field, location);
+            final Continuous2D field = (Continuous2D)this.field;
+            if (field==null) return;
+            if (field.getObjectLocation(object) == null) return;
+            Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
             if (location != null)
-                field.setObjectLocation(object, location);
+                {
+                if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+                    return;  // this is deprecated and will be deleted
+                //if (object instanceof Constrained)
+                //      location = (Double2D)((Constrained)object).constrainLocation(field, location);
+                if (location != null)
+                    field.setObjectLocation(object, location);
+                }
             }
-			}
         }
 
     public Object getObjectLocation(Object object, GUIState gui)
         {
-		synchronized(gui.state.schedule)
-			{
-        final Continuous2D field = (Continuous2D)this.field;
-        if (field==null) return null;
-        return field.getObjectLocation(object);
-		}
+        synchronized(gui.state.schedule)
+            {
+            final Continuous2D field = (Continuous2D)this.field;
+            if (field==null) return null;
+            return field.getObjectLocation(object);
+            }
         }
 
     public Point2D.Double getLocationPosition(Object location, DrawInfo2D fieldPortrayalInfo)
         {
-		synchronized(fieldPortrayalInfo.gui.state.schedule)
-			{
-        final Continuous2D field = (Continuous2D)this.field;
-        if (field==null) return null;
+        synchronized(fieldPortrayalInfo.gui.state.schedule)
+            {
+            final Continuous2D field = (Continuous2D)this.field;
+            if (field==null) return null;
                 
-        final double xScale = fieldPortrayalInfo.draw.width / field.width;
-        final double yScale = fieldPortrayalInfo.draw.height / field.height;
-        DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
+            final double xScale = fieldPortrayalInfo.draw.width / field.width;
+            final double yScale = fieldPortrayalInfo.draw.height / field.height;
+            DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
 
-        Double2D loc = (Double2D) location;
-        if (loc == null) return null;
+            Double2D loc = (Double2D) location;
+            if (loc == null) return null;
 
-        newinfo.draw.x = (fieldPortrayalInfo.draw.x + (xScale) * loc.x);
-        newinfo.draw.y = (fieldPortrayalInfo.draw.y + (yScale) * loc.y);
+            newinfo.draw.x = (fieldPortrayalInfo.draw.x + (xScale) * loc.x);
+            newinfo.draw.y = (fieldPortrayalInfo.draw.y + (yScale) * loc.y);
 
-        return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
-		}
+            return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
+            }
         }
 
     // values to multiply width or height by to add to a location to shift for toroidal drawing

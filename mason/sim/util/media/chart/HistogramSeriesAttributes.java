@@ -32,8 +32,8 @@ import org.jfree.data.general.*;
 public class HistogramSeriesAttributes extends SeriesAttributes
     {
     double[] values; 
-	double[] getValues() { return values; }
-	void setValues(double[] vals) { values = vals; }
+    double[] getValues() { return values; }
+    void setValues(double[] vals) { values = vals; }
                 
     /** Border thickness */
     float thickness;
@@ -138,7 +138,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("Bins",numBinsField);
 
-		// NOTES:
+        // NOTES:
         // fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
         // this returns null, cause getSeriesPaint returns whatever was set through setSeriesPaint;
         // for the default colors, you need "lookupSeriesPaint()".

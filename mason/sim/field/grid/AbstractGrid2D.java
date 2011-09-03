@@ -248,264 +248,264 @@ public abstract class AbstractGrid2D implements Grid2D
 
 
 
-	double dxForRadius(double dy, double radius)  // may return NaN
-		{
-		return Math.sqrt(radius*radius - dy*dy);
-		}
+    double dxForRadius(double dy, double radius)  // may return NaN
+        {
+        return Math.sqrt(radius*radius - dy*dy);
+        }
 
-	// still in real-valued space
-	double dxForAngle(double dy, double xa, double ya)
-		{
-		if (ya == 0 && dy == 0)  // horizontal line, push dx way out to the far edges of space, even if we're not in line with it
-			{ return xa > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY ; }
-		else if ((dy >= 0 && ya >= 0) || (dy <= 0 && ya <= 0))		// same side
-			{
-			// dx : dy :: xa : ya
-			return (xa * dy) / ya;
-			}
-		else return Double.NaN;
-		}
+    // still in real-valued space
+    double dxForAngle(double dy, double xa, double ya)
+        {
+        if (ya == 0 && dy == 0)  // horizontal line, push dx way out to the far edges of space, even if we're not in line with it
+            { return xa > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY ; }
+        else if ((dy >= 0 && ya >= 0) || (dy <= 0 && ya <= 0))          // same side
+            {
+            // dx : dy :: xa : ya
+            return (xa * dy) / ya;
+            }
+        else return Double.NaN;
+        }
 
-	// a is next to b (<) and c and d are not between them
-	boolean nextTo(double a, double b, double c, double d)
-		{
-		return (a <= b &&
-				!(c >= a && c <= b) &&
-				!(d >= a && d <= b));
-		}
-	
-	int pushLeft(double x, double y, double slope, double radiusSq)
-		{
-		System.err.println("<---- " + x + " " + y + " " + slope);
-		double xa = x;
-		double ya = y;
-		int xi = (int)xa;
-		int yi = (int)ya;
-		
-		while( 
-			((slope >= 0 && xi * slope >= yi) || 
-			(slope < 0 && xi * slope < (yi + 1))) &&
-			xi * xi + (xi * slope) * (xi * slope) < radiusSq)
-			{
-			xi--;
-			}
-		return xi;
-		}
+    // a is next to b (<) and c and d are not between them
+    boolean nextTo(double a, double b, double c, double d)
+        {
+        return (a <= b &&
+            !(c >= a && c <= b) &&
+            !(d >= a && d <= b));
+        }
+        
+    int pushLeft(double x, double y, double slope, double radiusSq)
+        {
+        System.err.println("<---- " + x + " " + y + " " + slope);
+        double xa = x;
+        double ya = y;
+        int xi = (int)xa;
+        int yi = (int)ya;
+                
+        while( 
+                ((slope >= 0 && xi * slope >= yi) || 
+                (slope < 0 && xi * slope < (yi + 1))) &&
+            xi * xi + (xi * slope) * (xi * slope) < radiusSq)
+            {
+            xi--;
+            }
+        return xi;
+        }
 
-	int pushRight(double x, double y, double slope, double radiusSq)  // radius limits our distance
-		{
-		System.err.println("----> " + x + " " + y + " " + slope);
-		double xa = x;
-		double ya = y;
-		int xi = (int)xa;
-		int yi = (int)ya;
+    int pushRight(double x, double y, double slope, double radiusSq)  // radius limits our distance
+        {
+        System.err.println("----> " + x + " " + y + " " + slope);
+        double xa = x;
+        double ya = y;
+        int xi = (int)xa;
+        int yi = (int)ya;
 
-		while(
-			((slope <= 0 && (xi + 1) * slope >= yi) ||
-			 (slope > 0 && (xi + 1) * slope < (yi + 1))) &&
-			(xi + 1) * (xi + 1) * ((xi + 1) * slope) * ((xi + 1) * slope) < radiusSq)
-			{
-			xi++;
-			}
-		return xi;
-		}
+        while(
+                ((slope <= 0 && (xi + 1) * slope >= yi) ||
+                (slope > 0 && (xi + 1) * slope < (yi + 1))) &&
+            (xi + 1) * (xi + 1) * ((xi + 1) * slope) * ((xi + 1) * slope) < radiusSq)
+            {
+            xi++;
+            }
+        return xi;
+        }
 
-	boolean scan(int x, int y, int dy, double radius, double xa, double ya, double xb, double yb, 
-					boolean crossesZero, boolean crossesPi, boolean toroidal, IntBag xPos, IntBag yPos)
-		{
-		// too high?
-		if (dy > radius || dy < -radius) return false;
+    boolean scan(int x, int y, int dy, double radius, double xa, double ya, double xb, double yb, 
+        boolean crossesZero, boolean crossesPi, boolean toroidal, IntBag xPos, IntBag yPos)
+        {
+        // too high?
+        if (dy > radius || dy < -radius) return false;
 
-		double r = dxForRadius(dy, radius);
-		double l = - r;
-		double s = dxForAngle(dy, xa, ya);
-		double e = dxForAngle(dy, xb, yb);
+        double r = dxForRadius(dy, radius);
+        double l = - r;
+        double s = dxForAngle(dy, xa, ya);
+        double e = dxForAngle(dy, xb, yb);
 
-		int min = 0;
-		int max = 0;
+        int min = 0;
+        int max = 0;
 
-		System.err.println("dy=" + dy + " radius=" + radius + " zero=" + crossesZero + " Pi=" + crossesPi);
-		System.err.println("xa " + xa + " ya " + ya + " xb " + xb + " yb " + yb);
-		System.err.println("r " + r + " l " + l + " s " + s + " e " + e);
-		
-		/*if (dy == 0) // special case dy == 0
-			{
-			if (crossesPi) min = (int) Math.round(l);
-			if (crossesZero) max = (int) Math.round(r);
-			System.err.println("MIN " + min + " MAX " + max);
-			if (toroidal)
-				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
-			else
-				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
-			return true;
-			}
-		else */
-		
-		if ((s==Double.POSITIVE_INFINITY && e == Double.POSITIVE_INFINITY) || (s == Double.NEGATIVE_INFINITY && e==Double.NEGATIVE_INFINITY))  // straight line in the same direction, handle specially
-			{ return false; }
-		else if (dy >= 0) 
-			{
-			if (l!=l)  // NaN, signifies out of bounds
-				return false;
-			// six cases:	(L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
-			if (s == e)  // line
-				{
-				System.err.println("S==E");
-				if (s * s + dy * dy > radius * radius) return false;
-				min = pushLeft(s, dy, ya / xa, radius * radius);
-				max = pushRight(s, dy, ya / xa, radius * radius);
-				}
-			// L S E R
-			else if (l <= s && s <= e && e <= r) 
-				{
-				System.err.println("LSER");
-				// draw first line
-				min = (int)Math.floor(l); max = (int)Math.ceil(s);
-				if (toroidal)
-					for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
-				else
-					for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
-				// set up second line
-				min = (int)Math.floor(e); max = (int)Math.ceil(r);
-				}
-			// L R
-			else if ((e <= l && l <= r && r <= s) || 
-					(l <= r && r <= s && s <= e))
-			
-//			nextTo(l, r, e, s) && e <= s)  // end must be less than start for this to be valid
-				{
-				System.err.println("LR");
-				min = (int)Math.floor(l); max = (int)Math.ceil(r);
-				}
-			// E S
-			else if //(nextTo(e, s, l, r))
-			(
-				(l <= e && e <= s && s <= r) 
-				//||
-				//(l <= e && e <= s && r <= e) ||
-				//(l >= e && e <= s && r >= e)
-				)
-				{
-				System.err.println("ES");
-				min = (int)Math.floor(e); max = (int)Math.ceil(s);
-				}
-			// E R
-			else if (nextTo(e, r, l, s))
-				{
-				System.err.println("ER");
-				min = (int)Math.floor(e); max = (int)Math.ceil(r);
-				}
-			// L S
-			else if (nextTo(l, s, e, r))
-				{
-				System.err.println("LS");
-				min = (int)Math.floor(l); max = (int)Math.ceil(s);
-				}
-			else return false;
-			
-			System.err.println("MIN " + min + " MAX " + max);
-			// draw line
-			if (toroidal)
-				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
-			else
-				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
-				
-			return true;
-			}
-		else // (dy < 0) 
-			{
-			if (l!=l)  // out of bounds
-				return false;
-			//double s = dxForAngle(dy, xa, ya);
-			//double e = dxForAngle(dy, xb, yb);
-		
-			// five cases:	(L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
-			// L E S R
-			if (l <= e && e <= s && s <= r) 
-				{
-				// draw first line
-				min = (int)Math.round(l); max = (int)Math.round(e);
-				if (toroidal)
-					for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
-				else
-					for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
-				// set up second line
-				min = (int)Math.round(s); max = (int)Math.round(r);
-				}
-			// L R
-			else if (nextTo(l, r, e, s) && s <= e)  // end must be greater than start for this to be valid
-				{
-				min = (int)Math.round(l); max = (int)Math.round(r);
-				}
-			// S E
-			else if (nextTo(s, e, l, r))
-				{
-				min = (int)Math.round(s); max = (int)Math.round(e);
-				}
-			// L E
-			else if (nextTo(l, e, r, s))
-				{
-				min = (int)Math.round(l); max = (int)Math.round(e);
-				}
-			// S R
-			else if (nextTo(s, r, l, e))
-				{
-				min = (int)Math.round(s); max = (int)Math.round(r);
-				}
-			else return false;
-			
-			// draw line
-			if (toroidal)
-				for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y));  }
-			else
-				for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y); }
-				
-			return true;
-			}
-		}
+        System.err.println("dy=" + dy + " radius=" + radius + " zero=" + crossesZero + " Pi=" + crossesPi);
+        System.err.println("xa " + xa + " ya " + ya + " xb " + xb + " yb " + yb);
+        System.err.println("r " + r + " l " + l + " s " + s + " e " + e);
+                
+        /*if (dy == 0) // special case dy == 0
+          {
+          if (crossesPi) min = (int) Math.round(l);
+          if (crossesZero) max = (int) Math.round(r);
+          System.err.println("MIN " + min + " MAX " + max);
+          if (toroidal)
+          for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+          else
+          for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+          return true;
+          }
+          else */
+                
+        if ((s==Double.POSITIVE_INFINITY && e == Double.POSITIVE_INFINITY) || (s == Double.NEGATIVE_INFINITY && e==Double.NEGATIVE_INFINITY))  // straight line in the same direction, handle specially
+            { return false; }
+        else if (dy >= 0) 
+            {
+            if (l!=l)  // NaN, signifies out of bounds
+                return false;
+            // six cases:   (L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
+            if (s == e)  // line
+                {
+                System.err.println("S==E");
+                if (s * s + dy * dy > radius * radius) return false;
+                min = pushLeft(s, dy, ya / xa, radius * radius);
+                max = pushRight(s, dy, ya / xa, radius * radius);
+                }
+            // L S E R
+            else if (l <= s && s <= e && e <= r) 
+                {
+                System.err.println("LSER");
+                // draw first line
+                min = (int)Math.floor(l); max = (int)Math.ceil(s);
+                if (toroidal)
+                    for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+                else
+                    for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+                // set up second line
+                min = (int)Math.floor(e); max = (int)Math.ceil(r);
+                }
+            // L R
+            else if ((e <= l && l <= r && r <= s) || 
+                (l <= r && r <= s && s <= e))
+                        
+//                      nextTo(l, r, e, s) && e <= s)  // end must be less than start for this to be valid
+                {
+                System.err.println("LR");
+                min = (int)Math.floor(l); max = (int)Math.ceil(r);
+                }
+            // E S
+            else if //(nextTo(e, s, l, r))
+                (
+                (l <= e && e <= s && s <= r) 
+                //||
+                //(l <= e && e <= s && r <= e) ||
+                //(l >= e && e <= s && r >= e)
+                )
+                {
+                System.err.println("ES");
+                min = (int)Math.floor(e); max = (int)Math.ceil(s);
+                }
+            // E R
+            else if (nextTo(e, r, l, s))
+                {
+                System.err.println("ER");
+                min = (int)Math.floor(e); max = (int)Math.ceil(r);
+                }
+            // L S
+            else if (nextTo(l, s, e, r))
+                {
+                System.err.println("LS");
+                min = (int)Math.floor(l); max = (int)Math.ceil(s);
+                }
+            else return false;
+                        
+            System.err.println("MIN " + min + " MAX " + max);
+            // draw line
+            if (toroidal)
+                for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+            else
+                for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+                                
+            return true;
+            }
+        else // (dy < 0) 
+            {
+            if (l!=l)  // out of bounds
+                return false;
+            //double s = dxForAngle(dy, xa, ya);
+            //double e = dxForAngle(dy, xb, yb);
+                
+            // five cases:  (L = negativeDXForRadius, R = positiveDXForRadius, S = start (Xa, Ya), E = end(Xb, Yb)
+            // L E S R
+            if (l <= e && e <= s && s <= r) 
+                {
+                // draw first line
+                min = (int)Math.round(l); max = (int)Math.round(e);
+                if (toroidal)
+                    for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y + dy));  }
+                else
+                    for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y + dy); }
+                // set up second line
+                min = (int)Math.round(s); max = (int)Math.round(r);
+                }
+            // L R
+            else if (nextTo(l, r, e, s) && s <= e)  // end must be greater than start for this to be valid
+                {
+                min = (int)Math.round(l); max = (int)Math.round(r);
+                }
+            // S E
+            else if (nextTo(s, e, l, r))
+                {
+                min = (int)Math.round(s); max = (int)Math.round(e);
+                }
+            // L E
+            else if (nextTo(l, e, r, s))
+                {
+                min = (int)Math.round(l); max = (int)Math.round(e);
+                }
+            // S R
+            else if (nextTo(s, r, l, e))
+                {
+                min = (int)Math.round(s); max = (int)Math.round(r);
+                }
+            else return false;
+                        
+            // draw line
+            if (toroidal)
+                for(int i = min; i <= max; i++) { xPos.add(stx(x + i)); yPos.add(sty(y));  }
+            else
+                for(int i = min; i <= max; i++) { xPos.add(x + i); yPos.add(y); }
+                                
+            return true;
+            }
+        }
 
-	public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, IntBag xPos, IntBag yPos)
-		{ getNeighborsWithinArc(x,y,radius,startAngle,endAngle,false,xPos,yPos); }
-		
-	public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, boolean toroidal, IntBag xPos, IntBag yPos)
-		{
-		if (radius < 0)
-			throw new RuntimeException("Radius must be positive");
-		xPos.clear();
-		yPos.clear();
-		
-		// move angles into [0...2 PI)
-		if (startAngle < 0) startAngle += Math.PI * 2; 
-		if (startAngle < 0) startAngle = ((startAngle % Math.PI * 2) + Math.PI * 2);
-		if (startAngle >= Math.PI * 2) startAngle = startAngle % Math.PI * 2;
-		
-		if (endAngle < 0) endAngle += Math.PI * 2; 
-		if (endAngle < 0) endAngle = ((endAngle % Math.PI * 2) + Math.PI * 2);
-		if (endAngle >= Math.PI * 2) endAngle = endAngle % Math.PI * 2;
+    public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, IntBag xPos, IntBag yPos)
+        { getNeighborsWithinArc(x,y,radius,startAngle,endAngle,false,xPos,yPos); }
+                
+    public void getNeighborsWithinArc(int x, int y, double radius, double startAngle, double endAngle, boolean toroidal, IntBag xPos, IntBag yPos)
+        {
+        if (radius < 0)
+            throw new RuntimeException("Radius must be positive");
+        xPos.clear();
+        yPos.clear();
+                
+        // move angles into [0...2 PI)
+        if (startAngle < 0) startAngle += Math.PI * 2; 
+        if (startAngle < 0) startAngle = ((startAngle % Math.PI * 2) + Math.PI * 2);
+        if (startAngle >= Math.PI * 2) startAngle = startAngle % Math.PI * 2;
+                
+        if (endAngle < 0) endAngle += Math.PI * 2; 
+        if (endAngle < 0) endAngle = ((endAngle % Math.PI * 2) + Math.PI * 2);
+        if (endAngle >= Math.PI * 2) endAngle = endAngle % Math.PI * 2;
 
-		// compute slopes -- avoid atan2
-		double xa = Math.cos(startAngle);
-		double ya = Math.sin(startAngle);
-		double xb = Math.cos(endAngle);
-		double yb = Math.sin(endAngle);
-		
-		// compute crossings
-		boolean crossesZero = false;
-		boolean crossesPi = false;
-		if (startAngle > endAngle || startAngle == 0 || endAngle == 0)  // crosses zero for sure
-			crossesZero = true;
-		else if (startAngle <= Math.PI && endAngle >= Math.PI)
-			crossesPi = true;
-		
-		// scan up
-		int dy = 0;
-		while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
-			dy++;
-		// scan down (not including zero)
-		dy = -1;
-		while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
-			dy--;
-		}
+        // compute slopes -- avoid atan2
+        double xa = Math.cos(startAngle);
+        double ya = Math.sin(startAngle);
+        double xb = Math.cos(endAngle);
+        double yb = Math.sin(endAngle);
+                
+        // compute crossings
+        boolean crossesZero = false;
+        boolean crossesPi = false;
+        if (startAngle > endAngle || startAngle == 0 || endAngle == 0)  // crosses zero for sure
+            crossesZero = true;
+        else if (startAngle <= Math.PI && endAngle >= Math.PI)
+            crossesPi = true;
+                
+        // scan up
+        int dy = 0;
+        while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
+            dy++;
+        // scan down (not including zero)
+        dy = -1;
+        while(scan(x, y, dy, radius, xa, ya, xb, yb, crossesZero, crossesPi, toroidal, xPos, yPos))
+            dy--;
+        }
 
 
 

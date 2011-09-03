@@ -1194,7 +1194,7 @@ public class Console extends JFrame implements Controller
             incrementSeedOnStop.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected())));
             repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
             setShouldRepeat(repeatButton.isSelected());
-			}
+            }
         catch (java.security.AccessControlException e) { } // it must be an applet
         }
 
@@ -1487,9 +1487,9 @@ public class Console extends JFrame implements Controller
      * Return the model inspector so simulations can do things like updating the properties.
      */
     public synchronized Inspector getModelInspector()
-    	{
-    	return modelInspector;
-    	}
+        {
+        return modelInspector;
+        }
         
 
     /////////////////////// MENU FUNCTIONS
@@ -1750,8 +1750,8 @@ public class Console extends JFrame implements Controller
                             {
                             if (!errout) 
                                 System.err.println("Not all classes loaded, due to error: probably no Java3D." 
-							// + " \nFirst problematic class: " + st.sval
-							);
+                                    // + " \nFirst problematic class: " + st.sval
+                                    );
                             errout = true;
                             }
                         }
@@ -2018,11 +2018,11 @@ public class Console extends JFrame implements Controller
 
     /////////////////////// SHOW/HIDE DISPLAY BUTTON FUNCTIONS
 
-	/** Returns a list of all displays.  You own the resulting list and can do what you like with it. */
-	public synchronized ArrayList getAllFrames()
-		{
-		return new ArrayList(frameList);
-		}
+    /** Returns a list of all displays.  You own the resulting list and can do what you like with it. */
+    public synchronized ArrayList getAllFrames()
+        {
+        return new ArrayList(frameList);
+        }
 
     /** Called when the "show" button is pressed in the Displays window.  */
     synchronized void showSelectedFrames()
@@ -2036,10 +2036,10 @@ public class Console extends JFrame implements Controller
         frameListDisplay.repaint();
         }
 
-	/** Shows and brings to front all JFrames registered with the Console.  Note that this method
-		should probably only be called from within the Swing event thread. */
-	public synchronized void showAllFrames()
-		{
+    /** Shows and brings to front all JFrames registered with the Console.  Note that this method
+        should probably only be called from within the Swing event thread. */
+    public synchronized void showAllFrames()
+        {
         Object[] vals = (Object[]) (frameList.toArray());
         for (int x = 0; x < vals.length; x++)
             {
@@ -2047,7 +2047,7 @@ public class Console extends JFrame implements Controller
             ((JFrame) (vals[x])).setVisible(true);
             }
         frameListDisplay.repaint();
-		}
+        }
 
     /** Called when the "hide" button is pressed in the Displays window */
     synchronized void hideSelectedFrames()
@@ -2060,8 +2060,8 @@ public class Console extends JFrame implements Controller
         frameListDisplay.repaint();
         }
 
-	/** Hides all JFrames registered with the Console.  Note that this method
-		should probably only be called from within the Swing event thread. */
+    /** Hides all JFrames registered with the Console.  Note that this method
+        should probably only be called from within the Swing event thread. */
     public synchronized void hideAllFrames()
         {
         Object[] vals = (Object[]) (frameList.toArray());
@@ -2716,7 +2716,7 @@ public class Console extends JFrame implements Controller
         }
 
 /**
-@deprecated
+   @deprecated
 */
     public synchronized void doChangeCode(Runnable r)
         {
@@ -2875,10 +2875,10 @@ public class Console extends JFrame implements Controller
         These bags must match in size, else an exception will be thrown. */
     public void setInspectors(final Bag inspectors, final Bag names)
         {
-    	Object oldSelectedInspector = null;
-    	if (inspectors.objs.length > preferredInspectorIndex)
-    		oldSelectedInspector = inspectors.objs[preferredInspectorIndex];
-    	
+        Object oldSelectedInspector = null;
+        if (inspectors.objs.length > preferredInspectorIndex)
+            oldSelectedInspector = inspectors.objs[preferredInspectorIndex];
+        
         // clear out old inspectors
         removeAllInspectors(false);
         
@@ -2937,8 +2937,8 @@ public class Console extends JFrame implements Controller
         
         
 //        if (oldInspectedObject != null) {
-//        	if ((inspectors.objs.length > preferredInspectorIndex) && 
-//        			(inspectors.objs[preferredInspectorIndex].getClass())  
+//              if ((inspectors.objs.length > preferredInspectorIndex) && 
+//                              (inspectors.objs[preferredInspectorIndex].getClass())  
 //        }
 
         resetInspectors(preferredInspectorIndex);
@@ -2962,35 +2962,35 @@ public class Console extends JFrame implements Controller
         }
 
 
-	/** Returns a list of all current inspectors.  Some of these inspectors may be stored in
-		the Console itself, and others may have been dragged out into their own JFrames.  You will
-		need to distinguish between these two on your own.  Note that some of these inspectors are stored as
-		weak keys in the Console, so holding onto this list will prevent them from getting garbage
-		collected.  As a result, you should only use this list for temporary scans. */
-	public ArrayList getAllInspectors()
-		{
-		ArrayList list = new ArrayList();
-		Iterator i = allInspectors.keySet().iterator();
-		while(i.hasNext())
-			list.add((Inspector)(i.next()));
-		return list;
-		}
+    /** Returns a list of all current inspectors.  Some of these inspectors may be stored in
+        the Console itself, and others may have been dragged out into their own JFrames.  You will
+        need to distinguish between these two on your own.  Note that some of these inspectors are stored as
+        weak keys in the Console, so holding onto this list will prevent them from getting garbage
+        collected.  As a result, you should only use this list for temporary scans. */
+    public ArrayList getAllInspectors()
+        {
+        ArrayList list = new ArrayList();
+        Iterator i = allInspectors.keySet().iterator();
+        while(i.hasNext())
+            list.add((Inspector)(i.next()));
+        return list;
+        }
 
     /** Stops all inspectors.  If killDraggedOutWindowsToo is true, then the detatched inspectors are stopped as well. 
-		Updates all inspectors once as well for good measure prior to stopping some.  */
+        Updates all inspectors once as well for good measure prior to stopping some.  */
     public void stopAllInspectors(boolean killDraggedOutWindowsToo)
         {
-		// update all the inspectors before we delete some of them, so they get written out
-		// if necessary.
-		Iterator i = allInspectors.keySet().iterator();
-		while(i.hasNext())
-			{
-			Inspector insp = (Inspector)(i.next());
-			insp.updateInspector();  // one last time
-			insp.repaint();
-			}
+        // update all the inspectors before we delete some of them, so they get written out
+        // if necessary.
+        Iterator i = allInspectors.keySet().iterator();
+        while(i.hasNext())
+            {
+            Inspector insp = (Inspector)(i.next());
+            insp.updateInspector();  // one last time
+            insp.repaint();
+            }
 
-		// kill all the inspectors in the inspector window for sure
+        // kill all the inspectors in the inspector window for sure
         // inspectors may get stop() called on them multiple times
         for(int x=0;x<inspectorStoppables.size();x++)
             {
@@ -2998,15 +2998,15 @@ public class Console extends JFrame implements Controller
             if (stopper!=null) stopper.stop();
             }
 
-		// possibly kill all inspectors detached in their own windows.
+        // possibly kill all inspectors detached in their own windows.
         if (killDraggedOutWindowsToo)
             {
-			i = allInspectors.keySet().iterator();
+            i = allInspectors.keySet().iterator();
             while(i.hasNext())
                 {
-				Inspector insp = (Inspector)(i.next());
+                Inspector insp = (Inspector)(i.next());
                 Stoppable stopper = (Stoppable)(allInspectors.get(insp));
-				if (stopper != null) stopper.stop();
+                if (stopper != null) stopper.stop();
                 }
             }
         }
@@ -3023,8 +3023,8 @@ public class Console extends JFrame implements Controller
             while(i.hasNext())
                 {
                 Inspector inspector = (Inspector)(i.next());
-				inspector.disposeFrame();
-				}
+                inspector.disposeFrame();
+                }
             allInspectors = new WeakHashMap();
             }
         inspectorStoppables = new Vector();

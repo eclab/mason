@@ -23,20 +23,20 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
     {
     double level;
     boolean isTransparent;
-	// public ValueGridPortrayal2D parent;  // no longer used
+    // public ValueGridPortrayal2D parent;  // no longer used
     
-	public ValuePortrayal2D() { }
-	
-	/** @deprecated
-	*/
+    public ValuePortrayal2D() { }
+        
+    /** @deprecated
+     */
     public ValuePortrayal2D(ValueGridPortrayal2D parent)
         {
         super(null);  // no color  -- we'll determine the color during portrayal
         // setParent(parent);
         }
     
-	/** @deprecated does nothing now
-	*/
+    /** @deprecated does nothing now
+     */
     public void setParent(ValueGridPortrayal2D parent)
         {
         // this.parent = parent;
@@ -44,7 +44,7 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
     
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-		ValueGridPortrayal2D parent = (ValueGridPortrayal2D) (info.fieldPortrayal);
+        ValueGridPortrayal2D parent = (ValueGridPortrayal2D) (info.fieldPortrayal);
         double levelHere = ((MutableDouble)object).val;
         if (paint==null || level != levelHere)
             {

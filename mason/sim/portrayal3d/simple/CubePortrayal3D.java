@@ -19,10 +19,10 @@ import java.awt.*;
  */
 public class CubePortrayal3D extends SimplePortrayal3D
     {
-	double scale = 1f;
-	Appearance appearance;
-	boolean generateNormals;
-	boolean generateTextureCoordinates;
+    double scale = 1f;
+    Appearance appearance;
+    boolean generateNormals;
+    boolean generateTextureCoordinates;
     
     /** Constructs a CubePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
     public CubePortrayal3D()
@@ -47,7 +47,7 @@ public class CubePortrayal3D extends SimplePortrayal3D
         {
         this(appearanceForColor(color), false, false, scale);
         }
-		
+                
     /** Constructs a CubePortrayal3D with the given (opaque) image and a scale of 1.0. */
     public CubePortrayal3D(Image image)
         {

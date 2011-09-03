@@ -39,9 +39,9 @@ public class TimeSeriesAttributes extends SeriesAttributes
     static final float SKIP = DASH;
 
     /** Nine dash combinations that the user might find helpful. */
-	static final float[][] dashPatterns = 
+    static final float[][] dashPatterns = 
         { 
-			{ DASH, 0.0f }, // --------
+        { DASH, 0.0f }, // --------
             { DASH * 2, SKIP }, // -- -- --
             { DASH, SKIP } , // -  -  -  
             { DASH, SPACE } , // - - - -
@@ -85,7 +85,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     public Color getStrokeColor() { return strokeColor; }
 
     /** The time series in question.  */
-	XYSeries series;
+    XYSeries series;
     public void setName(String val) { series.setKey(val); }
     public String getSeriesName() { return "" + series.getKey(); }
                 
@@ -125,13 +125,13 @@ public class TimeSeriesAttributes extends SeriesAttributes
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
         XYItemRenderer renderer = getRenderer();
 
-		// NOTE:
+        // NOTE:
         // Paint paint = renderer.getSeriesPaint(getSeriesIndex());        
         // In JFreeChart 1.0.6 getSeriesPaint returns null!!!
         // You need lookupSeriesPaint(), but that's not backward compatible.
         // The only thing consistent in all versions is getItemPaint 
         // (which looks like a gross miss-use, but gets the job done)
-		
+                
         Paint paint = renderer.getItemPaint(getSeriesIndex(), -1);
         
         strokeColor = (Color)paint;
@@ -190,18 +190,18 @@ public class TimeSeriesAttributes extends SeriesAttributes
         }
 
 
-	public boolean possiblyCull()
+    public boolean possiblyCull()
         {
         DataCuller dataCuller = ((TimeSeriesChartGenerator)generator).getDataCuller();
         if(dataCuller!=null && dataCuller.tooManyPoints(series.getItemCount()))
             {
-			deleteItems(dataCuller.cull(getXValues(), true));
-			return true;
-			}
+            deleteItems(dataCuller.cull(getXValues(), true));
+            return true;
+            }
         else
-			return false;
+            return false;
         }
-		
+                
     static Bag tmpBag = new Bag();
     void deleteItems(IntBag items)
         {
@@ -243,7 +243,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         //(once here, once at next time through this fn), the second time is O(1).
         series.fireSeriesChanged();
         }
-		
+                
     double[] getXValues()
         {
         double[] xValues = new double[series.getItemCount()];

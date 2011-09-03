@@ -23,38 +23,38 @@ public class AxesPortrayal3D extends SimplePortrayal3D
     {
     // thickness of the arrows
     double arrowRadius;
-	
+        
     // flag showing/hidding the letters
     boolean mLetters;
-	
+        
     public AxesPortrayal3D(double arrowRadius, boolean letters)
         {
         this.arrowRadius = arrowRadius;
-		mLetters = letters;       
+        mLetters = letters;       
         }
                 
-	void createAxes(Group group, double arrowRadius, boolean letters)
+    void createAxes(Group group, double arrowRadius, boolean letters)
         {
         float length = 1.1f;
         group.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
         group.addChild(new Arrow(arrowRadius, 
-					   new Double3D(0, 0, 0), 
-					   new Double3D(length,0,0),
-					   (letters? "O": null),
-                       (letters? "X": null),
-					   null));
+                new Double3D(0, 0, 0), 
+                new Double3D(length,0,0),
+                (letters? "O": null),
+                (letters? "X": null),
+                null));
         group.addChild(new Arrow(arrowRadius, 
                 new Double3D(0, 0, 0), 
                 new Double3D(0,length,0), 
                 null, 
                 (letters? "Y": null),
-				null));
+                null));
         group.addChild(new Arrow(arrowRadius, 
                 new Double3D(0, 0, 0), 
                 new Double3D(0,0,length), 
                 null, 
                 (letters? "Z": null),
-				null));
+                null));
         }
 
                 

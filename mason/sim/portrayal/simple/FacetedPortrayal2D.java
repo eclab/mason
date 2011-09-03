@@ -23,7 +23,7 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
     {
     public SimplePortrayal2D[] children;
     boolean portrayAllChildren = false;
-	boolean errorThrown;
+    boolean errorThrown;
     
     /** If child is null, then the underlying model object 
         is presumed to be a Portrayal2D and will be used. */
@@ -40,14 +40,14 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
         this(children, false);
         }
     
-	/** Returns the child index to use for the given object.
-		The value must be >= 0 and < numIndices.   The default implementation
-		returns the value of the object if it's a Number or is sim.util.Valuable
-		and if the value is within the given range (and is an integer).
-		Otherwise 0 is returned.
-	*/
-	public int getChildIndex(Object object, int numIndices)
-		{
+    /** Returns the child index to use for the given object.
+        The value must be >= 0 and < numIndices.   The default implementation
+        returns the value of the object if it's a Number or is sim.util.Valuable
+        and if the value is within the given range (and is an integer).
+        Otherwise 0 is returned.
+    */
+    public int getChildIndex(Object object, int numIndices)
+        {
         int element = 0;
         if( object instanceof Number )
             element = (int)(((Number)object).doubleValue());
@@ -55,19 +55,19 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
             element = (int)(((Valuable)object).doubleValue());
         if (element < 0 || element >= children.length)
             {
-			if (!errorThrown)
-				{
-				errorThrown = true;
-				System.err.println("FacetedPortrayal was given a value that doesn't correspond to any array element.");
-				}
-			element = 0;
-			}
-		return element;
-		}
-	
-	SimplePortrayal2D getChild(Object object)
+            if (!errorThrown)
+                {
+                errorThrown = true;
+                System.err.println("FacetedPortrayal was given a value that doesn't correspond to any array element.");
+                }
+            element = 0;
+            }
+        return element;
+        }
+        
+    SimplePortrayal2D getChild(Object object)
         {
-		int element = getChildIndex(object, children.length);
+        int element = getChildIndex(object, children.length);
         if (children[element] == null)
             if (object instanceof SimplePortrayal2D)
                 return (SimplePortrayal2D)object;

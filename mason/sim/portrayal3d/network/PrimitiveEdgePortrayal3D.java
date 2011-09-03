@@ -46,27 +46,27 @@ import sim.field.network.*;
 
 public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
     {
-	public static final double DEFAULT_RADIUS = 0.5;
-	public static final double DEFAULT_HEIGHT = 2.0;
-	
+    public static final double DEFAULT_RADIUS = 0.5;
+    public static final double DEFAULT_HEIGHT = 2.0;
+        
     Node edgeModelPrototype;
-	double[] transformData = new double[16];
-	
-	/** If labelColor is null, no labels will be shown. */
+    double[] transformData = new double[16];
+        
+    /** If labelColor is null, no labels will be shown. */
     public PrimitiveEdgePortrayal3D(Node model, Appearance appearance, Color labelColor, Font labelFont)
         {
         super(null, null, labelColor, labelFont);
 
-		// set initial values in transformData
+        // set initial values in transformData
         transformData[12] = 0;
         transformData[13] = 0;
         transformData[14] = 0;
         transformData[15] = 1;
 
-		if (appearance != null) setAppearance(null, appearance);
+        if (appearance != null) setAppearance(null, appearance);
         init(model);
         }
-		
+                
     
     // take this opportunity to call PrimitivePortrayal3D.setShape3DFlags()
     // on each of the shapes of the model    
@@ -84,7 +84,7 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
         Transform3D trans = null;
 
         wrapper = (LocationWrapper) object;
-		Edge edge = (Edge)(wrapper.getLocation());
+        Edge edge = (Edge)(wrapper.getLocation());
         field = (SpatialNetwork3D) wrapper.fieldPortrayal.getField();
 
         secondPoint = field.getObjectLocation(edge.to());
@@ -132,7 +132,7 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
                 text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
                 //text = new Shape3D(new Text3D(labelFont3D, ""));
-				
+                                
                 OrientedShape3D o3d = new OrientedShape3D(text.getGeometry(),
                     text.getAppearance(),
                     OrientedShape3D.ROTATE_ABOUT_POINT,
@@ -176,10 +176,10 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
                         str, new Color3f(labelColor),
                         labelFont.getFamily(), labelFont.getSize(),
                         labelFont.getStyle());
-					text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
+                    text.setRectangleScaleFactor((float)(labelScale * SCALING_MODIFIER));
 
                     //Shape3D text = new Shape3D(new Text3D(labelFont3D, str));
-					
+                                        
                     // Grab the OrientedShape3D
                     OrientedShape3D o3d = (OrientedShape3D) (tg.getChild(0));
 
@@ -199,7 +199,7 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
         return j3dModel;
         }
         
-	Transform3D transform = new Transform3D();
+    Transform3D transform = new Transform3D();
 
     /*
      * OVERALL-Transf = Translate(F)*Rot*Scale(1,|V|/2,1) * Translate(0,1,0)
@@ -334,7 +334,7 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
      * =======================================================================
      * 
      */
-	Transform3D getTransform(double[] from, double[] to)
+    Transform3D getTransform(double[] from, double[] to)
         {
         final double fx = from[0];
         final double fy = from[1];
@@ -454,12 +454,12 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
         (BODY=0, TOP=1, BOTTOM=2), while Cone has two shapes (BODY=0, CAP=1) and
         Sphere has a single shape (BODY=0).  */
     protected abstract int numShapes();
-	
+        
     /** 
      * Returns the shape by the given index.  For example, Cylinder has three shapes
      * (BODY=0, TOP=1, BOTTOM=2), while Cone has two shapes (BODY=0, CAP=1) and
      * Sphere has a single shape (BODY=0).  The default implementation assumes that
-	 * the model is a Primitive, and returns its shapes accordingly.
+     * the model is a Primitive, and returns its shapes accordingly.
      **/
     protected Shape3D getShape(TransformGroup j3dModel, int shapeIndex)
         {
@@ -472,7 +472,7 @@ public abstract class PrimitiveEdgePortrayal3D extends SimpleEdgePortrayal3D
        being built in getModel(), then the model will be pickable or not as you specify. */
     public void setPickable(boolean val) { pickable = val; }
 
-	void passWrapperToShapes(TransformGroup j3dModel, LocationWrapper wrapper)
+    void passWrapperToShapes(TransformGroup j3dModel, LocationWrapper wrapper)
         {
         if (j3dModel!= null) 
             {

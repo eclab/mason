@@ -24,46 +24,46 @@ import sim.portrayal3d.simple.*;
  
 public class ArrowEdgePortrayal3D extends PrimitiveEdgePortrayal3D
     {   
-	static Double3D dummyFrom = new Double3D(0f,-1f,0f);
-	static Double3D dummyTo = new Double3D(0f,1f,0f);
-	
+    static Double3D dummyFrom = new Double3D(0f,-1f,0f);
+    static Double3D dummyTo = new Double3D(0f,1f,0f);
+        
     public ArrowEdgePortrayal3D()
         {
-		this(null, Color.white, null, DEFAULT_RADIUS);
+        this(null, Color.white, null, DEFAULT_RADIUS);
         }
 
-	/** @deprecated */
+    /** @deprecated */
     public ArrowEdgePortrayal3D(double radius)
         {
-		this(null, Color.white, null, radius);
+        this(null, Color.white, null, radius);
         }
-	
-	/** @deprecated */
+        
+    /** @deprecated */
     public ArrowEdgePortrayal3D(double radius, Appearance ap)
         {
-		this(ap, Color.white, null, radius);
+        this(ap, Color.white, null, radius);
         }
 
-	/** @deprecated */
+    /** @deprecated */
     public ArrowEdgePortrayal3D(Color labelColor)
         {
-		this(null, labelColor, null, DEFAULT_RADIUS);
+        this(null, labelColor, null, DEFAULT_RADIUS);
         }
 
     public ArrowEdgePortrayal3D(Appearance appearance, Color labelColor)
         {
-		this(appearance, labelColor, null, DEFAULT_RADIUS);
+        this(appearance, labelColor, null, DEFAULT_RADIUS);
         }       
 
     public ArrowEdgePortrayal3D(Color color, Color labelColor)
         {
-		this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForColor(color), labelColor, null, DEFAULT_RADIUS);
         }       
 
-	/** Assumes that the image is opaque */
+    /** Assumes that the image is opaque */
     public ArrowEdgePortrayal3D(Image image, Color labelColor)
         {
-		this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
+        this(appearanceForImage(image, true), labelColor, null, DEFAULT_RADIUS);
         }       
 
     public ArrowEdgePortrayal3D(Appearance appearance, Color labelColor, Font labelFont, double radius)
@@ -73,10 +73,10 @@ public class ArrowEdgePortrayal3D extends PrimitiveEdgePortrayal3D
 
     /** the arrow body has 3 (body, top, bottom), arrow head has 2 (bottom and body) */ 
     protected int numShapes()
-		{
-		return 5;
-		}
-	
+        {
+        return 5;
+        }
+        
     /** 
      * Returns the shape by the given index.  Cylinder shapes come first
      * (BODY=0, TOP=1, BOTTOM=2), Cone chape come last (BODY=3, CAP=4) 

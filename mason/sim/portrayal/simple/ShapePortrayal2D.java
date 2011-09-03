@@ -16,7 +16,7 @@ import java.awt.geom.*;
 
 public class ShapePortrayal2D extends SimplePortrayal2D
     {
-	static final Stroke defaultStroke = new BasicStroke();
+    static final Stroke defaultStroke = new BasicStroke();
     public Paint paint;
     public double scale;
     public Shape shape;
@@ -85,7 +85,7 @@ public class ShapePortrayal2D extends SimplePortrayal2D
     public void setStroke(Stroke s)
         {
         stroke = s;
-		}
+        }
         
     // assumes the graphics already has its color set
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)

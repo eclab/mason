@@ -108,9 +108,9 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         }
 
 
-	JCheckBox useCullingCheckBox;
-	NumberTextField maxPointsPerSeriesTextField;
-	DataCuller dataCuller;
+    JCheckBox useCullingCheckBox;
+    NumberTextField maxPointsPerSeriesTextField;
+    DataCuller dataCuller;
     public DataCuller getDataCuller() {return dataCuller;}
     public void setDataCuller(DataCuller dataCuller) {this.dataCuller = dataCuller;}
     

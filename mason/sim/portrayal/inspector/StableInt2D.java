@@ -24,7 +24,7 @@ public class StableInt2D implements StableLocation
         
     public String toString()
         {
-		update();
+        update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ")"; 
         }
@@ -35,7 +35,7 @@ public class StableInt2D implements StableLocation
         this.object = object;
         }
         
-	void update()
+    void update()
         {
         Int2D pos = null;
         if (field != null) pos = field.getObjectLocation(object);

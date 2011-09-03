@@ -169,43 +169,43 @@ public class SimplePortrayal3D implements Portrayal3D
         return "" + wrapper.getObject();
         }
     
-	FieldPortrayal3D fieldPortrayal = null;        
+    FieldPortrayal3D fieldPortrayal = null;        
     public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
         fieldPortrayal = p;
         }
-		
-	public FieldPortrayal3D getCurrentFieldPortrayal()
-		{
-		return fieldPortrayal;
-		}
-
-	Display3D display = null;	
-	public void setCurrentDisplay(Display3D display)
-		{
-		this.display = display;
-		}
-	
-	/** If the current display has been set, returns it.
-		Else if the field portrayal is null, returns null.
-		Else queries the field portrayal for its current
-		display and returns that. */
-	public Display3D getCurrentDisplay()		
-		{
-		if (display == null) 
-			{
-			FieldPortrayal3D f = getCurrentFieldPortrayal();
-			if (f == null) return null;
-			else return f.getCurrentDisplay();
-			}
-		else return display;
-		}
                 
-	public GUIState getCurrentGUIState()
-		{
-		Display3D d = getCurrentDisplay(); 
-		return (d == null ? null : d.getSimulation());
-		}
+    public FieldPortrayal3D getCurrentFieldPortrayal()
+        {
+        return fieldPortrayal;
+        }
+
+    Display3D display = null;       
+    public void setCurrentDisplay(Display3D display)
+        {
+        this.display = display;
+        }
+        
+    /** If the current display has been set, returns it.
+        Else if the field portrayal is null, returns null.
+        Else queries the field portrayal for its current
+        display and returns that. */
+    public Display3D getCurrentDisplay()            
+        {
+        if (display == null) 
+            {
+            FieldPortrayal3D f = getCurrentFieldPortrayal();
+            if (f == null) return null;
+            else return f.getCurrentDisplay();
+            }
+        else return display;
+        }
+                
+    public GUIState getCurrentGUIState()
+        {
+        Display3D d = getCurrentDisplay(); 
+        return (d == null ? null : d.getSimulation());
+        }
 
     public boolean isSelected(Object obj)
         {
@@ -244,10 +244,10 @@ public class SimplePortrayal3D implements Portrayal3D
             selectedObjects.put(wrapper.getObject(), wrapper);
         else
             {
-			selectedObjects.remove(wrapper.getObject());
-			if (selectedObjects.isEmpty())
-				selectedObjects = null;
-			}
+            selectedObjects.remove(wrapper.getObject());
+            if (selectedObjects.isEmpty())
+                selectedObjects = null;
+            }
         return true;
         }
         

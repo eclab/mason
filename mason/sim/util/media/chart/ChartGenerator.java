@@ -82,25 +82,25 @@ public abstract class ChartGenerator extends JPanel
     /** The JScrollPane which holdw the ChartPanel */
     protected JScrollPane chartHolder = new JScrollPane();
     
-	
-	JFrame frame;
-	/** Returns the JFrame which stores the whole chart.  Set in createFrame(), else null. */
+        
+    JFrame frame;
+    /** Returns the JFrame which stores the whole chart.  Set in createFrame(), else null. */
     public JFrame getFrame() { return frame; }
-	
+        
     /** The global attributes chart title field. */
-	PropertyField titleField;
+    PropertyField titleField;
     /** The global attributes domain axis field. */
-	PropertyField xLabel;
+    PropertyField xLabel;
     /** The global attributes range axis field. */
-	PropertyField yLabel;
+    PropertyField yLabel;
         
     /** The global attributes logarithmic range axis check box. */
-	JCheckBox yLog;
+    JCheckBox yLog;
     /** The global attributes logarithmic domain axis check box. */
-	JCheckBox xLog;
+    JCheckBox xLog;
     
     JButton movieButton = new JButton("Create Movie");
-	BufferedImage buffer;
+    BufferedImage buffer;
         
     public void setXAxisLogScaled(boolean isLogScaled){xLog.setSelected(isLogScaled);}
     public boolean isXAxisLogScaled(){return xLog.isSelected();}
@@ -129,7 +129,7 @@ public abstract class ChartGenerator extends JPanel
         
     MovieMaker movieMaker = null;
 
-	static final long INITIAL_KEY = -1;
+    static final long INITIAL_KEY = -1;
     public static final long FORCE_KEY = -2;
     long oldKey = INITIAL_KEY;
         
@@ -160,7 +160,7 @@ public abstract class ChartGenerator extends JPanel
     /** Override this to update the chart to reflect new data. */
     protected void update() { }
         
-	void rebuildAttributeIndices()
+    void rebuildAttributeIndices()
         {
         SeriesAttributes[] c = getSeriesAttributes();
         for(int i = 0; i < c.length; i++)
@@ -176,8 +176,8 @@ public abstract class ChartGenerator extends JPanel
         {
         return (SeriesAttributes)(seriesAttributes.getComponent(i));
         }
-		
-	public int getNumSeriesAttributes() { return seriesAttributes.getComponents().length; }
+                
+    public int getNumSeriesAttributes() { return seriesAttributes.getComponents().length; }
 
     protected SeriesAttributes[] getSeriesAttributes()
         {
@@ -348,9 +348,9 @@ public abstract class ChartGenerator extends JPanel
         return globalAttributes.getComponent(index+2);
         }
 
-	/** @deprecated Use getNumGlobalAttributes */
+    /** @deprecated Use getNumGlobalAttributes */
     public int getGlobalAttributeCount() { return getNumGlobalAttributes(); }
-	
+        
     /** Returns the number of global attribute panels. */
     public int getNumGlobalAttributes()
         {
@@ -381,13 +381,13 @@ public abstract class ChartGenerator extends JPanel
         {
         return chart.getTitle().getText();
         }
-			
+                        
     /** @deprecated
-		Sets the name of the Range Axis label -- usually this is the Y axis. */
+        Sets the name of the Range Axis label -- usually this is the Y axis. */
     public void setRangeAxisLabel(String val) { setYAxisLabel(val); }
-	
+        
     /** Sets the name of the Y Axis label. */
-	public void setYAxisLabel(String val)
+    public void setYAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setLabel(val);
@@ -396,21 +396,21 @@ public abstract class ChartGenerator extends JPanel
         }
                 
     /** @deprecated
-		Returns the name of the Range Axis Label -- usually this is the Y axis. */
+        Returns the name of the Range Axis Label -- usually this is the Y axis. */
     public String getRangeAxisLabel() { return getYAxisLabel(); }
-	
+        
     /** Returns the name of the Y Axis label. */
-	public String getYAxisLabel()
+    public String getYAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getRangeAxis().getLabel();
         }
                 
     /** @deprecated
-		Sets the name of the Domain Axis label  -- usually this is the X axis. */
+        Sets the name of the Domain Axis label  -- usually this is the X axis. */
     public void setDomainAxisLabel(String val) { setXAxisLabel(val); }
-	
+        
     /** Sets the name of the X Axis label. */
-	public void setXAxisLabel(String val)
+    public void setXAxisLabel(String val)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setLabel(val);
@@ -422,13 +422,13 @@ public abstract class ChartGenerator extends JPanel
     public String getDomainAxisLabel() { return getXAxisLabel(); } 
 
     /** Returns the name of the X Axis label. */
-	public String getXAxisLabel()
+    public String getXAxisLabel()
         {
         return ((XYPlot)(chart.getPlot())).getDomainAxis().getLabel();
         }
     
     /** Returns the underlying chart. **/
-	public JFreeChart getChart()
+    public JFreeChart getChart()
         {
         return chart;
         }
@@ -635,7 +635,7 @@ public abstract class ChartGenerator extends JPanel
                     {
                     Dimension dim = chartPanel.getPreferredSize();
                     PDFEncoder.generatePDF( chart, dim.width, dim.height, 
-						new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
+                        new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
                     } 
                 }
             });
@@ -696,12 +696,12 @@ public abstract class ChartGenerator extends JPanel
         frame.setTitle(chart.getTitle().getText());
         return frame;
         }
-	
-	/** @deprecated, use createFrame() */
-	public JFrame createFrame(Object simulation)
-		{
-		return createFrame();
-		}
+        
+    /** @deprecated, use createFrame() */
+    public JFrame createFrame(Object simulation)
+        {
+        return createFrame();
+        }
         
     static
         {
@@ -735,19 +735,19 @@ public abstract class ChartGenerator extends JPanel
         chart.addLegend(title);
         }
 
-	/** @deprecated */
+    /** @deprecated */
     public void setRangeAxisRange(double lower, double upper) { setYAxisRange(lower, upper); }
 
-	public void setYAxisRange(double lower, double upper)
+    public void setYAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getRangeAxis().setRange(lower, upper);
         }
-		
-	/** @deprecated */
+                
+    /** @deprecated */
     public void setDomainAxisRange(double lower, double upper) { setXAxisRange(lower, upper); }
-	
-	public void setXAxisRange(double lower, double upper)
+        
+    public void setXAxisRange(double lower, double upper)
         {
         XYPlot xyplot = (XYPlot)(chart.getPlot());
         xyplot.getDomainAxis().setRange(lower, upper);
@@ -756,7 +756,7 @@ public abstract class ChartGenerator extends JPanel
 
     Thread timer = null;
     /** Updates the inspector asynchronously sometime before the given milliseconds have transpired.  Once
-		requested, further calls to request an update via this method will be ignored until the update occurs. */
+        requested, further calls to request an update via this method will be ignored until the update occurs. */
     public void updateChartWithin(final long key, final long milliseconds)
         {
         if (timer == null)
@@ -772,20 +772,20 @@ public abstract class ChartGenerator extends JPanel
                 });
             }
         }
-	
-	/** Posts a request to update the chart on the Swing event queue to happen next time repaints etc. happen. */
-	public void updateChartLater(final long key)
-		{
-		repaint();  // make sure a repaint happens first  -- this is probably unnecessary
+        
+    /** Posts a request to update the chart on the Swing event queue to happen next time repaints etc. happen. */
+    public void updateChartLater(final long key)
+        {
+        repaint();  // make sure a repaint happens first  -- this is probably unnecessary
 
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-			{
-			public void run()
-				{
-				update(key, true);
-				}
-			});
-		}
+        javax.swing.SwingUtilities.invokeLater(new Runnable()
+            {
+            public void run()
+                {
+                update(key, true);
+                }
+            });
+        }
     }
 
         

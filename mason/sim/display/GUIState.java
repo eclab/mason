@@ -70,13 +70,13 @@ import java.util.*;
 
 public abstract class GUIState
     {
-	/** An additional random number generator available for GUI and drawing purposes,
-		separate from the one used in the model.  If you use this generator to do things
-		like specify the colors of agents on-screen, rather than use the model's generator,
-		you can guarantee identical simulation results with the model regardless of whether
-		it runs under the model or the GUI. */
-	public MersenneTwisterFast guirandom = new MersenneTwisterFast();
-	
+    /** An additional random number generator available for GUI and drawing purposes,
+        separate from the one used in the model.  If you use this generator to do things
+        like specify the colors of agents on-screen, rather than use the model's generator,
+        you can guarantee identical simulation results with the model regardless of whether
+        it runs under the model or the GUI. */
+    public MersenneTwisterFast guirandom = new MersenneTwisterFast();
+        
     /** The underlying SimState */
     public SimState state;
     
@@ -84,7 +84,7 @@ public abstract class GUIState
         or no controller YET */
     public Controller controller;
 
-	public HashMap storage = new HashMap();
+    public HashMap storage = new HashMap();
 
     /** Override this constructor in your subclass to call <code>super(state)</code> where state is a
         properly constructed SimState appropriate to your problem -- do NOT call <code>super()</code>*/

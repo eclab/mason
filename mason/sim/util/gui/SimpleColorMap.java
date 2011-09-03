@@ -49,21 +49,21 @@ import sim.util.*;
 
 public class SimpleColorMap implements ColorMap 
     {
-	final Color clearColor = new Color(0,0,0,0);
-	static final int COLOR_DISCRETIZATION = 257;
+    final Color clearColor = new Color(0,0,0,0);
+    static final int COLOR_DISCRETIZATION = 257;
 
-	int minRed = 0;
-	int minBlue = 0;
-	int minGreen = 0;
-	int minAlpha = 0;
-	int maxRed = 0;
-	int maxBlue = 0;
-	int maxGreen = 0;
-	int maxAlpha = 0;
-	double maxLevel = 0;
-	double minLevel = 0;
-	Color minColor = clearColor;
-	Color maxColor = clearColor;
+    int minRed = 0;
+    int minBlue = 0;
+    int minGreen = 0;
+    int minAlpha = 0;
+    int maxRed = 0;
+    int maxBlue = 0;
+    int maxGreen = 0;
+    int maxAlpha = 0;
+    double maxLevel = 0;
+    double minLevel = 0;
+    Color minColor = clearColor;
+    Color maxColor = clearColor;
     
     /** User-provided color table */
     public Color[] colors;

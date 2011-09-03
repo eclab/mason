@@ -159,12 +159,12 @@ public class HistogramGenerator extends ChartGenerator
         }
     
     public void setHistogramType(HistogramType type) 
-		{
-		histogramType = type;
-		}
-		
-	public HistogramType getHistogramType() 
-		{
-		return histogramType;
-		}
+        {
+        histogramType = type;
+        }
+                
+    public HistogramType getHistogramType() 
+        {
+        return histogramType;
+        }
     }

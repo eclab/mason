@@ -13,7 +13,7 @@ import sim.field.network.*;
 public class Students extends SimState
     {
     public Continuous2D yard = new Continuous2D(1.0,100,100);
-	public Continuous3D agitatedYard = new Continuous3D(1.0, 100, 100, 100);
+    public Continuous3D agitatedYard = new Continuous3D(1.0, 100, 100, 100);
     
     public double TEMPERING_CUT_DOWN = 0.99;
     public double TEMPERING_INITIAL_RANDOM_MULTIPLIER = 10.0;
@@ -52,30 +52,30 @@ public class Students extends SimState
         {
         super(seed);
         }
-		
-	public void load3DStudents()
-		{
-		Bag students = buddies.getAllNodes();
-		for(int i = 0; i < students.size(); i++)
-			{
-			Student student = (Student)(students.get(i));
-			Double2D loc = (Double2D)(yard.getObjectLocation(student));
-			// we multiply by 5 in order to scale the agitation roughly with the student dispersion
-			// in the other two dimensions
-			agitatedYard.setObjectLocation(student, new Double3D(loc, student.getAgitation() * 5.0));
-			}
-		}
+                
+    public void load3DStudents()
+        {
+        Bag students = buddies.getAllNodes();
+        for(int i = 0; i < students.size(); i++)
+            {
+            Student student = (Student)(students.get(i));
+            Double2D loc = (Double2D)(yard.getObjectLocation(student));
+            // we multiply by 5 in order to scale the agitation roughly with the student dispersion
+            // in the other two dimensions
+            agitatedYard.setObjectLocation(student, new Double3D(loc, student.getAgitation() * 5.0));
+            }
+        }
 
     public void start()
         {
         super.start();
-		
+                
         // add the tempering agent
         if (tempering)
             {
             randomMultiplier = TEMPERING_INITIAL_RANDOM_MULTIPLIER;
             schedule.scheduleRepeating(schedule.EPOCH, 1, new Steppable() 
-				{ public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
+                { public void step(SimState state) { if (tempering) randomMultiplier *= TEMPERING_CUT_DOWN; } });
             }
                 
         // clear the yard
@@ -84,8 +84,8 @@ public class Students extends SimState
         // clear the buddies
         buddies.clear();
         
-		agitatedYard.clear();
-		
+        agitatedYard.clear();
+                
         // add some students to the yard
         for(int i = 0; i < numStudents; i++)
             {
@@ -96,11 +96,11 @@ public class Students extends SimState
 
             buddies.addNode(student);
             schedule.scheduleRepeating(student);
-			Steppable steppable = new Steppable() 
-					{
-					public void step(SimState state) { load3DStudents(); }
-					};
-			schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
+            Steppable steppable = new Steppable() 
+                {
+                public void step(SimState state) { load3DStudents(); }
+                };
+            schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
             }
         
         // define like/dislike relationships
@@ -126,8 +126,8 @@ public class Students extends SimState
             buddiness = random.nextDouble();
             buddies.addEdge(student, studentB, new Double( -buddiness));
             }
-			
-		load3DStudents();
+                        
+        load3DStudents();
         }
         
     public static void main(String[] args)

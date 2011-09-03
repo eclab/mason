@@ -26,7 +26,7 @@ public class StableInt3D implements StableLocation
         
     public String toString()
         {
-		update();
+        update();
         if (!exists) return "Gone";
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
@@ -43,7 +43,7 @@ public class StableInt3D implements StableLocation
         this.object = object;
         }
         
-	void update()
+    void update()
         {
         Int3D pos = null;
         if (field == null) return;
@@ -67,7 +67,7 @@ public class StableInt3D implements StableLocation
             { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(val,getY()));  z = 0; }
         else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(val,getY(),getZ()));
         x = val;
-		exists = true;
+        exists = true;
         }
 
     public void setY(int val)
@@ -77,7 +77,7 @@ public class StableInt3D implements StableLocation
             { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(getX(),val));  z = 0; }
         else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),val,getZ()));
         y = val;
-		exists = true;
+        exists = true;
         }
 
     public void setZ(int val)
@@ -86,7 +86,7 @@ public class StableInt3D implements StableLocation
         if (field instanceof SparseGrid2D) { z = 0; return; }
         else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),getY(),val));
         z = val;
-		exists = true;
+        exists = true;
         }
     }
 

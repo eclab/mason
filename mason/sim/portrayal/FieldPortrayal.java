@@ -23,7 +23,7 @@ import sim.util.*;
    the various objects in the SparseGrid2D.
 
    <p>The default version of the setField(...) method sets the field without checking
-    to see if it's a valid field or not; you'll want to override this to check.
+   to see if it's a valid field or not; you'll want to override this to check.
 
    <p>You can associate a Portrayal object with an object stored in the Field in several
    ways.  First, you can specify one Portrayal object to be used for ALL objects stored
@@ -183,7 +183,7 @@ public abstract class FieldPortrayal
         }
     
     protected Object field = null;
-	protected boolean immutableField = false;
+    protected boolean immutableField = false;
 
     /** This flag is available for field portrayals to set and clear as they like: but its
         intended function is to be set during setField(field) to warn drawing that even
@@ -191,14 +191,14 @@ public abstract class FieldPortrayal
         redrawn.  Similarly, typically this flag is cleared after drawing.  Initially true.
     */
     boolean dirtyField=true;
-	
-	public synchronized void setDirtyField(boolean val) { dirtyField = val; }
-	public synchronized boolean isDirtyField() { return dirtyField; }
-	
-	/**
-		@deprecated Use setDirtyField(false);
-	*/
-	public synchronized void reset() { dirtyField = true; }
+        
+    public synchronized void setDirtyField(boolean val) { dirtyField = val; }
+    public synchronized boolean isDirtyField() { return dirtyField; }
+        
+    /**
+       @deprecated Use setDirtyField(false);
+    */
+    public synchronized void reset() { dirtyField = true; }
     
     /** Returns true if the underlying field is assumed to be unchanging -- thus
         there's no reason to update once we're created.  Not all FieldPortrayals
@@ -217,14 +217,14 @@ public abstract class FieldPortrayal
         }
 
     /** Sets the field, and sets the dirtyField flag to true.  May throw an exception if the field is inappropriate. 
-		The default version just sets the field and sets the dirtyField flag. */
+        The default version just sets the field and sets the dirtyField flag. */
     public void setField(Object field)
-		{
-		this.field = field;
-		setDirtyField(true);
-		}
+        {
+        this.field = field;
+        setDirtyField(true);
+        }
 
-	class CustomInspector extends Inspector
+    class CustomInspector extends Inspector
         {
         public JLabel positions = new JLabel();
         public DisclosurePanel disclosurePanel;

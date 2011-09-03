@@ -38,7 +38,7 @@ public class PDFEncoder
             e.printStackTrace();
             }
         }
-		
+                
     /* Generates PDF from the chart, saving out to the given file.  width and height are the
        desired width and height of the chart in points. */
     public static void generatePDF( JFreeChart chart, int width, int height, File file )

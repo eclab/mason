@@ -90,32 +90,32 @@ public class DisclosurePanel extends JPanel
             {
             public void itemStateChanged(ItemEvent e)
                 {
-				setDisclosed(disclosureToggle.isSelected());
+                setDisclosed(disclosureToggle.isSelected());
                 }
             });
         }
-	
-	boolean disclosed = false;  // abridged
-	
-	public void setDisclosed(boolean disclosed)
-		{
-		this.disclosed = disclosed;
-		if (disclosed) // disclose
-			{
-			remove(abridgedComponent);
-			add(disclosedComponent, BorderLayout.CENTER);
-			revalidate();
-			}
-		else // hide
-			{
-			remove(disclosedComponent);
-			add(abridgedComponent, BorderLayout.CENTER);
-			revalidate();
-			}
-		disclosureToggle.setSelected(disclosed);
-		}
-		
-	public boolean isDisclosed() { return disclosed; }
+        
+    boolean disclosed = false;  // abridged
+        
+    public void setDisclosed(boolean disclosed)
+        {
+        this.disclosed = disclosed;
+        if (disclosed) // disclose
+            {
+            remove(abridgedComponent);
+            add(disclosedComponent, BorderLayout.CENTER);
+            revalidate();
+            }
+        else // hide
+            {
+            remove(disclosedComponent);
+            add(abridgedComponent, BorderLayout.CENTER);
+            revalidate();
+            }
+        disclosureToggle.setSelected(disclosed);
+        }
+                
+    public boolean isDisclosed() { return disclosed; }
         
     public Component getAbridgedComponent()
         {

@@ -24,27 +24,27 @@ public class EdgeDrawInfo2D extends DrawInfo2D
         super(state, fieldPortrayal, draw,clip);
         this.secondPoint = secondPoint;
         }
-		
-	/*
-    public EdgeDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint)
-        {
-        super(draw,clip);
-        this.secondPoint = secondPoint;
-        }
-		
-    public EdgeDrawInfo2D(Rectangle draw, Rectangle clip, Point2D.Double secondPoint)
-        {
-        super(draw,clip);
-        this.secondPoint = secondPoint;
-        }
+                
+    /*
+      public EdgeDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint)
+      {
+      super(draw,clip);
+      this.secondPoint = secondPoint;
+      }
+                
+      public EdgeDrawInfo2D(Rectangle draw, Rectangle clip, Point2D.Double secondPoint)
+      {
+      super(draw,clip);
+      this.secondPoint = secondPoint;
+      }
         
-    public EdgeDrawInfo2D(RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint)
-        {
-        super(draw,clip);
-        this.secondPoint = secondPoint;
-        }
-	*/
-	
+      public EdgeDrawInfo2D(RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint)
+      {
+      super(draw,clip);
+      this.secondPoint = secondPoint;
+      }
+    */
+        
     public EdgeDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double secondPoint)
         {
         super(other, translateX, translateY);
@@ -59,7 +59,7 @@ public class EdgeDrawInfo2D extends DrawInfo2D
 
     public EdgeDrawInfo2D(EdgeDrawInfo2D other)
         {
-		this(other, new Point2D.Double(other.secondPoint.x, other.secondPoint.y));
+        this(other, new Point2D.Double(other.secondPoint.x, other.secondPoint.y));
         }        
 
 

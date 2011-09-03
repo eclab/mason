@@ -49,24 +49,24 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
 
     Transform3D internalTransform;
     boolean updateInternalTransform = false;
-	
-	Display3D display = null;
-	public void setCurrentDisplay(Display3D display)
-		{
-		this.display = display;
-		}
-	
-	public Display3D getCurrentDisplay()		
-		{
-		return display;
-		}
+        
+    Display3D display = null;
+    public void setCurrentDisplay(Display3D display)
+        {
+        this.display = display;
+        }
+        
+    public Display3D getCurrentDisplay()            
+        {
+        return display;
+        }
     
-	public GUIState getCurrentGUIState()
-		{
-		Display3D d = getCurrentDisplay(); 
-		return (d == null ? null : d.getSimulation());
-		}
-	
+    public GUIState getCurrentGUIState()
+        {
+        Display3D d = getCurrentDisplay(); 
+        return (d == null ? null : d.getSimulation());
+        }
+        
     /** Sets the FieldPortrayal3D's internal Transform.  This is a user-modifiable
         transform which should be used primarily to adjust the location of the FieldPortrayal3D
         relative to <i>other FieldPortrayal3D</i> objects.  If null is provided, then
@@ -165,9 +165,9 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
      * for objects that do not have any other specified to them
      * 
      * Note that it is not final, so it can be replaced.
-	*/
-	
-	SimplePortrayal3D defaultPortrayal = new SpherePortrayal3D();
+     */
+        
+    SimplePortrayal3D defaultPortrayal = new SpherePortrayal3D();
         
     public Portrayal getDefaultPortrayal()
         {
@@ -203,7 +203,7 @@ public abstract class FieldPortrayal3D extends FieldPortrayal implements Portray
         if (updateInternalTransform)
             internalTransformGroup.setTransform(internalTransform);
         setDirtyField(false);
-		return previousTransformGroup;
+        return previousTransformGroup;
         }
 
     /** Returns a tree structure of the form

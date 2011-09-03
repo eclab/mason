@@ -62,7 +62,7 @@ import java.util.*;
     
     <p><b>Directed vs. Undirected Graphs.</b>  Networks are constructed to be either directed or undirected, and they cannot be changed
     afterwards without being entirely cleared first (using reset(...)).  If the network is directed, then an Edge's to() and from() nodes 
-	have explicit meaning: the Edge goes from() one node to()
+    have explicit meaning: the Edge goes from() one node to()
     another.  If the network is undirected, then to() and from() are simply the two nodes at each end of the Edge with no special meaning,
     though they're always consistent.  The convenience method <i>edge</i>.getOtherNode(<i>node</i>) will provide "other" node (if node is to(),
     then from() is returned, and vice versa).  This is particularly useful in undirected graphs where you could be entering an edge as to()
@@ -91,9 +91,9 @@ import java.util.*;
 
 public class Network implements java.io.Serializable
     {
-	boolean directed;
-	
-	public boolean isDirected() { return directed; }
+    boolean directed;
+        
+    public boolean isDirected() { return directed; }
     
     /** Constructs a directed or undirected graph. */
     public Network(boolean directed) { this.directed = directed; }
@@ -103,13 +103,13 @@ public class Network implements java.io.Serializable
     
     /** Constructs copy of an existing graph. */
     public Network(Network other) { this(); other.copyTo(this); }
-	
-	/** Resets the network, clearing it of nodes and edges. */
-	public void reset(boolean directed)
-		{
-		clear();
-		this.directed = directed;
-		}
+        
+    /** Resets the network, clearing it of nodes and edges. */
+    public void reset(boolean directed)
+        {
+        clear();
+        this.directed = directed;
+        }
                         
     /** Hashes Network.IndexOutIn structures by Node.  These structures
         contain the incoming edges of the Node, its outgoing edges, and the index of

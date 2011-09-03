@@ -73,7 +73,7 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
                 o + " -- expecting a SimplePortrayal3D");
         SimplePortrayal3D p3d = (SimplePortrayal3D)p;
 
-		p3d.setCurrentFieldPortrayal(this);
+        p3d.setCurrentFieldPortrayal(this);
         TransformGroup localTG = p3d.getModel(o, null);
         localTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         localTG.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
@@ -130,7 +130,7 @@ public abstract class SparseFieldPortrayal3D extends FieldPortrayal3D
                         fieldObj + " -- expecting a SimplePortrayal3D");
                 SimplePortrayal3D p3d = (SimplePortrayal3D)p;
 
-				p3d.setCurrentFieldPortrayal(this);
+                p3d.setCurrentFieldPortrayal(this);
                 TransformGroup localTG2 = p3d.getModel(fieldObj, localTG);
                 getLocationOfObjectAsVector3d(fieldObj, locationV3d);
                 tmpLocalT.setTranslation(locationV3d);

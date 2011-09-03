@@ -161,10 +161,10 @@ public class WordWrap implements java.io.Serializable
         String myText = "Here is the big text that we want to have word-wrapped";
         int myNumberOfPixels = 50; // our word-wrap pixel length
         JButton button = new JButton();
-		String wrappedText = sim.util.WordWrap.wrap(myText, myNumberOfPixels, button.getFontMetrics(button.getFont()));
+        String wrappedText = sim.util.WordWrap.wrap(myText, myNumberOfPixels, button.getFontMetrics(button.getFont()));
         button.setText("&lt;html>" + sim.util.WordWrap.toHTML(wrappedText) + "&lt;/html>");
         </tt></pre>
-	*/
+    */
     
     public static String toHTML(final String text)
         {

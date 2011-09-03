@@ -14,26 +14,26 @@ import sim.display.*;
  
 public class SharedPortrayal3D extends SimplePortrayal3D 
     {
-	SimplePortrayal3D child;
-	SharedGroup group = null;
+    SimplePortrayal3D child;
+    SharedGroup group = null;
     
-	/** Sets the current display both here and in the child. */
-	public void setCurrentDisplay(Display3D display)
-		{
-		super.setCurrentDisplay(display);
-		child.setCurrentDisplay(display);
-		}
-		
-	/** Sets the current field portrayal both here and in the child. */
+    /** Sets the current display both here and in the child. */
+    public void setCurrentDisplay(Display3D display)
+        {
+        super.setCurrentDisplay(display);
+        child.setCurrentDisplay(display);
+        }
+                
+    /** Sets the current field portrayal both here and in the child. */
     public void setCurrentFieldPortrayal(FieldPortrayal3D p)
         {
-		super.setCurrentFieldPortrayal(p);
+        super.setCurrentFieldPortrayal(p);
         child.setCurrentFieldPortrayal(p);
         }
 
     public SharedPortrayal3D(SimplePortrayal3D child)
         {
-		this.child = child;
+        this.child = child;
         }
 
     public PolygonAttributes polygonAttributes()
@@ -41,19 +41,19 @@ public class SharedPortrayal3D extends SimplePortrayal3D
         return child.polygonAttributes(); 
         }
 
-	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    /** Unlikely to be called, as SharedPortrayal3D is not pickable. */
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
         return child.getInspector(wrapper,state);
         }
         
-	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    /** Unlikely to be called, as SharedPortrayal3D is not pickable. */
     public String getName(LocationWrapper wrapper)
         {
         return child.getName(wrapper);
         }
     
-	/** Unlikely to be called, as SharedPortrayal3D is not pickable. */
+    /** Unlikely to be called, as SharedPortrayal3D is not pickable. */
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
         if (child.setSelected(wrapper,selected))
@@ -76,13 +76,13 @@ public class SharedPortrayal3D extends SimplePortrayal3D
         {
         if(j3dModel==null)
             {
-			// load the child
-			if (group == null)
-				{
-				group = new SharedGroup();
-				group.addChild(child.getModel(obj, null));
-				}
-			
+            // load the child
+            if (group == null)
+                {
+                group = new SharedGroup();
+                group.addChild(child.getModel(obj, null));
+                }
+                        
             j3dModel = new TransformGroup();
             j3dModel.setCapability(Group.ALLOW_CHILDREN_READ);
             
