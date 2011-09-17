@@ -2333,3 +2333,8 @@ Version 16
 	Methods in DataCuller made public
 	Various MinGapDataCuller methods made private
 	Reindented
+	SimpleInspector revised.  MAX_PROPERTIES deleted and replaced with
+		a private maximum properties variable and DEFAULT_MAX_PROPERTIES.
+		The constructors were revamped, and new ones added.  Children
+		SimpleInspectors now use the same max properties as their parents.
+	GUIState.getMaximumPropertiesForInspector() added

@@ -8318,12 +8318,13 @@ These kinds of Inspectors are fleeting: they're generated on request, and are st
 
 An Inspector is often commonly provided for the model as a whole, where it will appear permanently in the optional {\bf ``Model''  tab} of the Console.
 
-You can specify the Inspector in question in several ways.  First, you can indicate which object should be Inspected via the method \method{getSimulationInspectedObjet}: most commonly you'd provide the model itself, but you can give a proxy object of some sort if you like.  Second, you can specify a \class{sim.util.Properties} object which provides the properties for a SimpleInspector.  This is rare to do.  Third, you can provide a custom Inspector of your own design.  Here are the GUIState methods in question:
+You can specify the Inspector in question in several ways.  First, you can indicate which object should be Inspected via the method \method{getSimulationInspectedObject}: most commonly you'd provide the model itself, but you can give a proxy object of some sort if you like.  Second, you can specify a \class{sim.util.Properties} object which provides the properties for a SimpleInspector.  This is rare to do.  Third, you can provide a custom Inspector of your own design.  Here are the GUIState methods in question:
 
 \begin{methods}{\class{sim.display.GUIState}}
 \mthd{public Object getSimulationInspectedObject()} Returns the object to inspect to provide model features, or null.  Often you may override this method to return the GUIState itself, if you'd like the GUIState to be inspectable.
 \mthd{public Properties getSimulationProperties()} Returns a \class{sim.util.Properties} object for dynamic display of model properties. Overriding this method is extremely rare.
 \mthd{public Inspector getInspector()} Returns an inspector customized to display model features.  The default implementation first calls \method{getSimulationInspectedObject()} and returns a \Class{sim.portrayal.SimpleInspector} (Section \ref{sim.portrayal.SimpleInspector}) to inspect the returned object.  If the object was null, the default implementation then attempts to call \method{getSimulationProperties()} and builds a SimpleInspector to display those properties.  If {\it this} method returns null, then null is returned (and no model features are displayed by the Controller).
+\mthd{public int getMaximumPropertiesForInspector()} Returns the maximum number of properties displayed on a page by the model inspector.  By default this value is set to \variable{sim.portrayal.SimpleInspector.DEFAULT\_MAXIMUM\_PROPERTIES} (25).  Override this to return a different value as you like.
 \end{methods}
 
 The most common approach is to just tell MASON to inspect the model directly, using a SimpleInspector (which will examine the model's Java Bean Properties), by overriding the appropriate GUIState method like this:
@@ -8331,6 +8332,8 @@ The most common approach is to just tell MASON to inspect the model directly, us
 {\footnotesize\begin{verbatim}
 public Object getSimulationInspectedObject() { return state; }  // return the model
 \end{verbatim}}
+
+Sometimes your inspected object has more properties than can be displayed by default (that value is \variable{sim.portrayal.SimpleInspector.DEFAULT\_MAXIMUM\_PROPERTIES}, presently set to 25) and you'd prefer not to page through properties.  You can change the maximum number of properties shown at one time on the model page by overriding \method{getMaximumPropertiesForInspector()}.  
 
 \paragraph{Volatility}  Inspectors may or may not be {\it volatile}, meaning that they may be updated every simulation iteration.  Inspectors produced by Simple Portrayals and Field Portrayals are generally volatile.  But model inspectors often are not.  More often than not, a model inspector displays a set of model parameters which the user can change, rather than various variables which are updated each timestep to keep the user informed.
 

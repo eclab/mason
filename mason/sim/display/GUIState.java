@@ -224,6 +224,8 @@ public abstract class GUIState
         {
         return null;
         }
+        
+    public int getMaximumPropertiesForInspector() { return SimpleInspector.DEFAULT_MAX_PROPERTIES; }
 
     /** By default returns a non-volatile Inspector which wraps around
         getSimulationInspectedObject(); if getSimulationInspectedObject() returns null, then getInspector()
@@ -233,14 +235,14 @@ public abstract class GUIState
         Object object = getSimulationInspectedObject();
         if (object != null)
             {
-            Inspector i = new SimpleInspector(object, this);
+            Inspector i = new SimpleInspector(object, this, null, maximumPropertiesForInspector);
             i.setVolatile(false);
             return i;
             }
         sim.util.Properties prop = getSimulationProperties();
         if (prop != null)
             {
-            Inspector i = new SimpleInspector(prop, this, "");
+            Inspector i = new SimpleInspector(prop, this, null, maximumPropertiesForInspector);
             i.setVolatile(true);  // dynamic properties like this are likely volatile
             return i;
             }
