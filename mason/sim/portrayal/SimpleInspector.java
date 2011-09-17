@@ -24,62 +24,68 @@ import java.awt.event.*;
 
 public class SimpleInspector extends Inspector
     {
-    public static final int MAX_PROPERTIES = 25;
+    public static final int DEFAULT_MAX_PROPERTIES = 25;
+    int maxProperties = DEFAULT_MAX_PROPERTIES;
     /** The GUIState  of the simulation */
-    public GUIState state;
+    GUIState state;
     /** The object being inspected */
-    public Object object;
+    Object object;
     /** The property list displayed -- this may change at any time */
-    public LabelledList propertyList;
+    LabelledList propertyList;
     /** The generated object properties -- this may change at any time */
-    public Properties properties;
+    Properties properties;
     /** Each of the property fields in the property list, not all of which may exist at any time. */
-    public PropertyField[] members = new PropertyField[0];
+    PropertyField[] members = new PropertyField[0];
     /** The displayed name of the inspector */
-    public String name;
+    String name;
     /** The current index of the topmost element */
-    public int start = 0;
+    int start = 0;
     /** The number of items presently in the propertyList */
-    public int count = 0;
-    public JPanel header = new JPanel()
+    int count = 0;
+    JPanel header = new JPanel()
         {
         public Insets getInsets () { return new Insets(2,2,2,2); }
         };
 
-    public JLabel numElements = new JLabel();
-    public Box startField = null;
+    JLabel numElements = new JLabel();
+    Box startField = null;
     
+    public GUIState getGUIState() { return state; }
+    public Object getObject() { return object; }
+    public String getName() { return name; }
+    public int getMaxProperties() { return maxProperties; }
     
-    boolean fixedProperties = false;
-    public SimpleInspector(Properties properties, GUIState state, String name)
+    public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
         {
-        super();
+        this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
         this.object = null;
         this.state = state;
         this.name = name;
-        this.properties = properties;
-        this.fixedProperties = true;
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
+        this.properties = properties;
         generateProperties(0);
+        }
+        
+    public SimpleInspector(Properties properties, GUIState state, String name)
+        {
+        this(properties, state, name, DEFAULT_MAX_PROPERTIES);
         }
         
     public SimpleInspector(Object object, GUIState state)
         {
         this(object,state,null);
         }
-    
+        
     public SimpleInspector(Object object, GUIState state, String name) 
-        { 
-        super();
-        setLayout(new BorderLayout());
-        this.object = object;
-        this.state = state;
-        this.name = name;
-        header.setLayout(new BorderLayout());
-        add(header,BorderLayout.NORTH);
-        generateProperties(0);
+        {
+        this(object, state, name, DEFAULT_MAX_PROPERTIES);
+        }
+        
+    public SimpleInspector(Object object, GUIState state, String name, int maxProperties) 
+        {
+        this(Properties.getProperties(object), state, name, maxProperties);
         }
     
     /* Creates a JPopupMenu that possibly includes "View" to
@@ -97,7 +103,7 @@ public class SimpleInspector extends Inspector
                 public void actionPerformed(ActionEvent e)
                     {
                     Properties props = properties;
-                    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state);
+                    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state, null, maxProperties);
                     final Stoppable stopper = simpleInspector.reviseStopper(
                         SimpleInspector.this.state.scheduleRepeatingImmediatelyAfter(simpleInspector.getUpdateSteppable()));
                     SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
@@ -173,8 +179,6 @@ public class SimpleInspector extends Inspector
 
     void generateProperties(int start)
         {
-        if (!fixedProperties)
-            properties = Properties.getProperties(object);
         final int len = properties.numProperties();
         if (start < 0) start = 0;
         if (start > len) return;  // failed
@@ -183,12 +187,12 @@ public class SimpleInspector extends Inspector
             remove(propertyList);
         propertyList = new LabelledList(name);
 
-        if (len > MAX_PROPERTIES)
+        if (len > maxProperties)
             {
-            final String s = "Page forward/back through properties.  " + MAX_PROPERTIES + " properties shown at a time.";
+            final String s = "Page forward/back through properties.  " + maxProperties + " properties shown at a time.";
             if (startField == null)
                 {
-                NumberTextField f = new NumberTextField(" Go to ", start,1,MAX_PROPERTIES)
+                NumberTextField f = new NumberTextField(" Go to ", start,1,maxProperties)
                     {
                     public double newValue(double newValue)
                         {
@@ -220,7 +224,7 @@ public class SimpleInspector extends Inspector
 
         members = new PropertyField[len];
 
-        int end = start + MAX_PROPERTIES;
+        int end = start + maxProperties;
         if (end > len) end = len;
         count = end - start;
         for( int i = start ; i < end; i++ )

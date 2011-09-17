@@ -258,13 +258,13 @@ Many of these features are quite common among good simulation libraries.  But no
 \paragraph{What MASON is Not}
 MASON is {\it not} a distributed toolkit.  Yet.  MASON was designed to be efficient when running in a single process, albeit with multiple threads.  It requires a single unified memory space, and has no facilities for distributing models over multiple processes or multiple computers.  However, there are several projects underway towards developing distributed versions of MASON.
 
-MASON is {\it not} a easy toolkit for Java beginners.  MASON expects significant Java knowledge out of its users.  If you are a rank beginner, allow me to recommend NetLogo,\footnote{http:/\!/ccl.northwestern.edu/netlogo/} a good toolkit with an easy-to-learn language.
+MASON is {\it not} an easy toolkit for Java beginners.  MASON expects significant Java knowledge out of its users.  If you are a rank beginner, allow me to recommend NetLogo,\footnote{http:/\!/ccl.northwestern.edu/netlogo/} a good toolkit with an easy-to-learn language.
 
 Finally MASON does {\it not} have plug-in facilities for Eclipse or NetBeans, though it can be used quite comfortably with them.  If you're looking for a richer set of development tools, you might look into Repast.\footnote{http:/\!/repast.sourceforge.net/}
 
 \paragraph{MASON History}  In 1998, after using a variety of genetic programming and evolutionary computation toolkits for my thesis work, I decided to develop ECJ, a big evolutionary computation toolkit which was meant to support my own research for the next ten years or so.  ECJ turned out pretty well: it's used very widely in the evolutionary computation field and can run on a lot of machines in parallel.  ECJ was written in Java.
 
-One common task (for me anyway) for evolutionary computation is the optimization of agent behaviors in large multiagent simulations.  ECJ can distribute run many such simulations in parallel across simultaneous machines.  But the number of simulations that must be run (often around 100,000) makes it fairly important to run them very efficiently.  For this reason I and my students cooked up a plan to develop a multiagent simulation toolkit which could be used for various purposes, but which was fast and had a small and clean model, and so could easily be tied to ECJ to optimize, for example, swarm robotics behaviors.  Because ECJ was in Java, we expected our toolkit would be in Java as well.
+One common task (for me anyway) for evolutionary computation is the optimization of agent behaviors in large multiagent simulations.  ECJ can distribute many such simulations in parallel across simultaneous machines.  But the number of simulations that must be run (often around 100,000) makes it fairly important to run them very efficiently.  For this reason I and my students cooked up a plan to develop a multiagent simulation toolkit which could be used for various purposes, but which was fast and had a small and clean model, and so could easily be tied to ECJ to optimize, for example, swarm robotics behaviors.  Because ECJ was in Java, we expected our toolkit would be in Java as well.
 
 As we got started, I spoke with Claudio Cioffi-Revilla, who was also interested in developing a toolkit for the computational social sciences.  Whereas our needs tended to be more continuous movement in 2D and 3D, many of his needs involved gridworlds and social networks.  Claudio suggested we take apart Repast and examine it.  We did, but ultimately followed my instinct to reinvent the wheel, and started work on MASON.  Ultimately the computer science department (myself and my students) and the Center for Social Complexity (Claudio and his students and faculty) teamed up to develop and fund MASON.  When MASON debuted at the Agent 2003 conference, it had model separation and encapsulation, duplicability, checkpointing, and 3D graphics, all of which is pass\'e in simulators, but was new to the ultralight simulation field.
 
@@ -3392,6 +3392,7 @@ MASON's core simulation code is found in the package \Package{sim.engine}.  This
 \begin{itemize}
 \item \Class{sim.engine.SimState}: the global object responsible for holding your simulation {\bf model}.  
 \item \Class{sim.engine.Schedule}: a discrete-event schedule.
+\item \Class{sim.engine.Steppable}: an interface implemented by {\bf agents}: things which may be scheduled on the Schedule.
 \item Various utility classes for making the schedule more useful.
 \end{itemize}
 
@@ -3573,10 +3574,18 @@ Adding checkpointing complicates the top-level loop, particularly if you mix it 
 \end{alltt}
 }
 
+\subsubsection{Debugging Checkpointing}
 
-\paragraph{yo}
+Checkpoints rely on Java serialization, and Java serialization can be tough to debug.  For example, I once had a case where a colleague had placed an anonymous class on the Schedule, which naturally resulted in the anonymous class being serialized during checkpointing (along with the Schedule).  Unfortunately when an anonymous class is serialized, so is its outer class, and the outer class in question was a non-serializable visualization object.  ERROR.  Oops!
 
-java -Dsun.io.serialization.extendedDebugInfo=true
+We would have nailed this easily, except that when serialization throws an Exception, it just throws the backtrace, which isn't very helpful.  Instead we would like to know what object it was which was being serialized, and why.  This information isn't provided.  But you can get Java to divulge this information by running your program this way:
+
+{\footnotesize\begin{alltt}
+\textit{java -Dsun.io.serialization.extendedDebugInfo=true ... }
+\end{alltt}
+}
+
+This isn't a well-known Java option, but it's enormously useful.
 
 
 
@@ -8480,23 +8489,37 @@ Basic Inspectors can be separated from the Console's inspector list and placed i
     
 \Class{sim.portrayal.SimpleInspector} is the most common inspector: it's a basic inspector which exposes to the user all the properties defined by \class{sim.util.Properties} on a given object.  SimpleInspector also respects the extra gizmos that \class{sim.util.Properties} provides.  For example, if an object has defined a domain, SimpleInspector will draw either a slider or a pull-down menu.  If an object has a proxy, SimpleInspector will show that instead.   And so on.
 
+SimpleInspector only shows a certain number of properties at a time: if there are more properties than this, then SimpleInspector will allow the user to page through the properties.  You can specify how many properties SimpleInspector shows.  The default value for this maximum is:
+
+\java{%
+public static final int DEFAULT\_MAX\_PROPERTIES = 25;
+}
+
+When further SimpleInspectors are produced from this SimpleInspector, they will have the same maximum number of properties as you had set here.
+
 SimpleInspector's default \method{getTitle()} calls \method{toString()} on the underlying object and returns that.  However the SimpleInspector's list of properties can be bordered and given a name (like ``Properties'').  This name is passed in in the constructor.
 
 SimpleInspector is largely defined by its constructors:
     
 \begin{methods}{\class{sim.portrayal.SimpleInspector} Constructor}
-\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties. 
-\mthd{public SimpleInspector(Object object, GUIState state)} Builds a SimpleInspector based on the provided object, with no title for the SimpleInspector's list of properties. 
-\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties. 
+\mthd{public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties.  You also specify the maximum number of properties shown at a time.
+\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
+\mthd{public SimpleInspector(Object object, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties. You also specify the maximum number of properties shown at a time.
+\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
+\mthd{public SimpleInspector(Object object, GUIState state)} Builds a SimpleInspector based on the provided object, with no title for the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
 \end{methods}
 
 Note the third method: you don't {\it have} to inspect an actual object.  You can have the SimpleInspector actually use a Properties collection of your own devising.  This makes it possible to inspect dynamic or virtual objects, so to speak, which exist in name only.
 
-If SimpleInspector is inspecting a list or array, it will only display so many elements per page so as not to crowd the screen.  That value is set to:
+There are a few methods of interest to subclasses of SimpleInspector:
 
-\java{%
-public static final int MAX\_PROPERTIES = 25;
-}
+\begin{methods}{\class{sim.portrayal.SimpleInspector}}
+\mthd{public GUIState getGUIState()}  Returns the GUIState associated with this inspector.
+\mthd{public Object getObject()} Returns the object that this inspector is inspecting.  It may be that this inspector was generated directly from Properties, in which case this returns null.
+\mthd{public String getName()} Returns the name originally provided to the inspector.
+\mthd{public int getMaxProperties()} Returns the maximum number of properties displayed per page in the inspector.
+\end{methods}
+
     
 \subsection{TabbedInspector}
 \label{sim.portrayal.inspector.TabbedInspector}
@@ -10877,7 +10900,7 @@ Finally, ChartGenerator has methods for starting and stopping movies, and a spec
 
 \paragraph{Making a ChartGenerator}
 
-Want to create, say, a PieChartGenerator?  Here's some hints.  Most ChartGenerator subclasses do the following:
+Want to create, say, a PieChartGenerator?  Here are some hints.  Most ChartGenerator subclasses do the following:
 
 \begin{itemize}
 \item Modify the global attributes in their constructor to add global attributes appropriate to the kind of chart.
