@@ -61,9 +61,7 @@ import com.lowagie.text.pdf.*;
    <li>The <tt>globalAttributes</tt>, a collection of Components on the top-left which control global features
    of the chart (its title, axis labels, etc.)
    <li>The <tt>seriesAttributes</tt>, a scrollable collection of Components on the bottom-left which control features
-   of each separate series in the chart.  Each seriesAttribute is associated in turn with a Stoppable (stored in
-   the list <tt>stoppables</tt>) which will have its <tt>stop()</tt> method called when the series is deleted from
-   the chart.
+   of each separate series in the chart.
    </ul>
                 
 */
