@@ -235,14 +235,14 @@ public abstract class GUIState
         Object object = getSimulationInspectedObject();
         if (object != null)
             {
-            Inspector i = new SimpleInspector(object, this, null, maximumPropertiesForInspector);
+            Inspector i = new SimpleInspector(object, this, null, getMaximumPropertiesForInspector());
             i.setVolatile(false);
             return i;
             }
         sim.util.Properties prop = getSimulationProperties();
         if (prop != null)
             {
-            Inspector i = new SimpleInspector(prop, this, null, maximumPropertiesForInspector);
+            Inspector i = new SimpleInspector(prop, this, null, getMaximumPropertiesForInspector());
             i.setVolatile(true);  // dynamic properties like this are likely volatile
             return i;
             }
