@@ -18,6 +18,7 @@ import java.awt.image.*;
 
 // From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.*;
+import sim.util.gui.Utilities;
 import sim.util.*;
 import sim.display.*;
 import sim.util.media.*;
