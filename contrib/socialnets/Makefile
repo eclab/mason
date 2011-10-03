@@ -42,7 +42,7 @@ clean:
 	find . -name "*.checkpoint" -exec rm -f {} \;
 	find . -name "*.java*~" -exec rm -f {} \;
 	find . -name ".#*" -exec rm -rf {} \;
-	rm -rf docs/classdocs/resources docs/classdocs/ec docs/classdocs/sim docs/classdocs/*.html docs/classdocs/*.css docs/classdocs/package*
+	rm -rf jar/*.jar docs/classdocs/resources docs/classdocs/ec docs/classdocs/sim docs/classdocs/*.html docs/classdocs/*.css docs/classdocs/package*
 
 
 # Build the class docs.  They're located in docs/classdocs
