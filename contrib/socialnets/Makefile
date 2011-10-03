@@ -14,6 +14,8 @@ JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
 JIKESFLAGS = -target 1.4 +Pno-shadow ${FLAGS}
 FLAGS = -g -nowarn
 
+VERSION = 4
+
 
 # Main java files, not including the 3D stuff
 DIRS = \
@@ -49,9 +51,17 @@ doc:
 
 docs: doc
 
+# Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
+# files.  you'll probably want to strip this down some.
+jar: all
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	jar -cvfm jar/socialnets.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
+
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean all doc
+dist: clean all doc jar
 	find . -name ".svn" -exec rm -rf {} \;
 	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
