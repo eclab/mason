@@ -10,7 +10,7 @@ import sim.util.*;
 import java.util.*;
 
 /**
-Contributor:  Martin Pokropp <mapokropp@googlemail.com> 
+   Contributor:  Martin Pokropp <mapokropp@googlemail.com> 
 */
 
 public class NetworkStatistics
@@ -430,8 +430,8 @@ public class NetworkStatistics
        This method can be used if your machine does not provide enough heap memory to store the shortest 
        paths matrix required in NetworkStatistics.getMeanShortestPath above (which is much faster if enough memory 
        is provided). The problem is likely to occur with very large networks (some > 20k nodes??).
-	   
-	   @author  Martin Pokropp <mapokropp@googlemail.com>
+           
+       @author  Martin Pokropp <mapokropp@googlemail.com>
     */
     public static double getLargeNetworkMeanShortestPath( final Network network, final EdgeMetric computer )
         {
