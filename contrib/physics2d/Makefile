@@ -10,6 +10,8 @@ JAVAC = javac ${FLAGS}
 
 FLAGS = -target 1.4 -source 1.4 -g -nowarn
 
+VERSION = 4
+
 
 # Main java files, not including the 3D stuff
 DIRS = \
@@ -63,6 +65,14 @@ dist: clean all doc
 	find . -name "CVS" -exec rm -rf {} \;
 	@ echo "If there were CVS directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
+
+# Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
+# files.  you'll probably want to strip this down some.
+jar: all
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	jar -cvfm jar/physics.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
 
 # Indent to your preferred brace format using emacs.  MASON's default
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.
