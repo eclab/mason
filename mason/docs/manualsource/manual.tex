@@ -9759,7 +9759,9 @@ Many Basic and Decorative Simple Portrayals are subclasses of PrimitivePortrayal
 \sidebar{How do I orient a cylinder or cone or cube?}{You can either use the \method{setTransform(...)} method, or wrap the cylinder or cone in a TransformedPortrayal3D.  For the latter, see Section \ref{sim.portrayal3d.simple.TransformedPortrayal3D}}
 \paragraph{Spheres, Cylinders, Cubes, and Cones}
 
-The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portrayal3d.simple.CylinderPortrayal3D},  and \Class{sim.portrayal3d.simple.ConePortrayal3D} are all subclasses of PrimitivePortrayal3D and all share more or less the same constructors.  \paragraph{Cubes}  The class \Class{sim.portrayal3d.CubePortrayal3D} is not a subclass of PrimitivePortrayal3D, but rather a direct subclass of SimplePortrayal3D which provides its own geometry.  But its construction is essentially identical.  Here are the constructors for CylinderPortrayal3D for example:
+The classes \Class{sim.portrayal3d.simple.SpherePortrayal3D}, \Class{sim.portrayal3d.simple.CylinderPortrayal3D},  and \Class{sim.portrayal3d.simple.ConePortrayal3D} are all subclasses of PrimitivePortrayal3D and all share more or less the same constructors.   The class \Class{sim.portrayal3d.CubePortrayal3D} is not a subclass of PrimitivePortrayal3D, but rather a direct subclass of SimplePortrayal3D which provides its own geometry.  But its construction is essentially identical.  
+
+Here are the constructors for CylinderPortrayal3D for example:
 
 \begin{methods}{\class{sim.portrayal3d.simple.CylinderPortrayal3D} Constructor}
 \mthd{public CylinderPortrayal3D()} Creates a new CylinderPortrayal3D with the a scale of 1.0 and a flat unlit white color.
@@ -9875,7 +9877,7 @@ Java3D has a pretty limited collection of possible scene or object file types (\
 \java{%
 ncsa.j3d.loaders.ModelLoader loader = new ncsa.j3d.loaders.ModelLoader(); \\
 \\
-    // then either ... \\
+    // then ... \\
 com.sun.j3d.loaders.Scene scene = loader.load(new java.net.URL("URL to your file")); \\
     // or... \\
 com.sun.j3d.loaders.Scene scene = loader.load("File Name for your file"); \\
@@ -9883,6 +9885,8 @@ com.sun.j3d.loaders.Scene scene = loader.load("File Name for your file"); \\
 BranchGroupPortrayal3D bgp = new BranchGroupPortrayal3D(scene.getSceneGroup()); \\
     // or some other BranchGroupPortrayal3D constructor
 }
+
+I'd pick the first of the two options in the code above, as it's more portable.  You could use \method{Class.getResource(...)} to build a URL pointing to a specific file, in a manner similar to how \method{getBranchGroupForURL(...)} was used previously.
 
 \paragraph{Images}
 
@@ -10091,7 +10095,7 @@ Though they are not (presently) subclasses of a common class other than SimplePo
 \mthd{public void setCurrentFieldPortrayal(FieldPortrayal3D p)} Calls super.setCurrentFieldPortrayal(...) and also the same method on the child.
 \end{methods}
 
-\sidebar{Why is it called CircledPortrayal3D?  Why not SpheredPortrayal3D?}{To be consistent with CircledPortrayal3D.  Plus ``sphered'' isn't a word!} 
+\sidebar{Why is it called CircledPortrayal3D?  Why not SpheredPortrayal3D?}{To be consistent with CircledPortrayal2D.  Plus ``sphered'' isn't a word!} 
 \paragraph{Circles and Labels}
 Like its 2D counterpart, the 3D portrayal facility has ``circled'' and ``labelled'' portrayals, which either highlight (with a semitransparent sphere) or add a textual label to their child portrayal objects.
 
@@ -10566,7 +10570,7 @@ Like NumberTextField, PropertyField has a few methods to query and update the pa
 
 \begin{wrapfigure}{r}[0in]{2.5in}
 \vspace{0em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
-\caption{Several MiniHistograms at work.  The top two histograms are uniform. tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
+\caption{Several MiniHistograms at work.  The top two histograms are uniform. The tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
 \vspace{0em}
 \end{wrapfigure}
 
