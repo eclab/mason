@@ -69,11 +69,11 @@ public class Collisions extends SimState
         // WALLS
         // HORIZ
         
-		/*
-        pos = new Double2D(100,wallPos);
-        wall = new Wall(pos, 250, 8);
-        fieldEnvironment.setObjectLocation(wall, new sim.util.Double2D(pos.x, pos.y));
-        objPE.register(wall);
+        /*
+          pos = new Double2D(100,wallPos);
+          wall = new Wall(pos, 250, 8);
+          fieldEnvironment.setObjectLocation(wall, new sim.util.Double2D(pos.x, pos.y));
+          objPE.register(wall);
         */
         
         pos = new Double2D(100,wallPos);

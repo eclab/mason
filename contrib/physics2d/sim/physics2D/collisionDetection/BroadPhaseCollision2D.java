@@ -181,7 +181,7 @@ class BroadPhaseCollision2D
         {
         // go back until we find an EP less than this one       
         while (seekEPIndex >= 0 
-               && ((EndPoint)arList.objs[seekEPIndex]).getPos() > ((EndPoint)arList.objs[seekEPIndex + 1]).getPos())
+            && ((EndPoint)arList.objs[seekEPIndex]).getPos() > ((EndPoint)arList.objs[seekEPIndex + 1]).getPos())
             {               
             // Check if overlap status should change based on the
             // end point that is being reordered and the end point 

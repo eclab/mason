@@ -69,7 +69,7 @@ class Collision2D
         else if (s1 instanceof Polygon && s2 instanceof Polygon)
             testNarrowPhasePolyPoly(pair);
         else if (s1 instanceof Polygon && s2 instanceof Circle
-                 || s1 instanceof Circle && s2 instanceof Polygon)
+            || s1 instanceof Circle && s2 instanceof Polygon)
             testNarrowPhasePolyCircle(pair);
         else
             throw new Error("Unknown Shape!");
@@ -328,7 +328,7 @@ class Collision2D
                         leftVertex = vertices2[nextFeat2];
                         }
                     else if (testVR(vertices2[curFeat2], normals2[curFeat2], edges2[curFeat2], vertices1[curFeat1], true)
-                             && testVR(vertices2[nextFeat2], edges2[curFeat2].multiply(-1), normals2[curFeat2], vertices1[curFeat1], true))
+                        && testVR(vertices2[nextFeat2], edges2[curFeat2].multiply(-1), normals2[curFeat2], vertices1[curFeat1], true))
                         {
                         leftVertex = vertices1[curFeat1];
                         }
@@ -343,7 +343,7 @@ class Collision2D
                             rightVertex = vertices1[nextFeat1];
                             }
                         else if (testVR(vertices1[curFeat1], normals1[curFeat1], edges1[curFeat1], vertices2[curFeat2], true)
-                                 && testVR(vertices1[nextFeat1], edges1[curFeat1].multiply(-1), normals1[curFeat1], vertices2[curFeat2], true))
+                            && testVR(vertices1[nextFeat1], edges1[curFeat1].multiply(-1), normals1[curFeat1], vertices2[curFeat2], true))
                             {
                             rightVertex = vertices2[curFeat2];
                             }
