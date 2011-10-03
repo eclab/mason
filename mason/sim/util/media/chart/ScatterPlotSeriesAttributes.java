@@ -23,7 +23,6 @@ import org.jfree.data.general.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 import org.jfree.data.xy.*;
-import org.jfree.chart.util.*;
 
 public class ScatterPlotSeriesAttributes extends SeriesAttributes
     {

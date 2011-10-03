@@ -2338,3 +2338,4 @@ Version 16
 		The constructors were revamped, and new ones added.  Children
 		SimpleInspectors now use the same max properties as their parents.
 	GUIState.getMaximumPropertiesForInspector() added
+	Updated wcss tutorial organization

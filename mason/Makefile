@@ -34,6 +34,11 @@ sim/app/tutorial5/*.java \
 sim/app/schelling/*.java \
 sim/app/pacman/*.java \
 sim/app/pso/*.java \
+sim/app/wcss/tutorial0*/*.java \
+sim/app/wcss/tutorial10/*.java \
+sim/app/wcss/tutorial11/*.java \
+sim/app/wcss/tutorial12/*.java \
+sim/app/wcss/tutorial13/*.java \
 sim/display/*.java \
 sim/engine/*.java \
 sim/util/*.java \
@@ -66,6 +71,7 @@ sim/app/pso3d/*.java \
 sim/app/tutorial6/*.java \
 sim/app/tutorial7/*.java \
 sim/app/celegans/*.java \
+sim/app/wcss/tutorial14/*.java \
 sim/portrayal3d/*.java \
 sim/portrayal3d/simple/*.java \
 sim/portrayal3d/grid/*.java \

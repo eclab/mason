@@ -54,5 +54,7 @@ sim.app.tutorial5.Tutorial5WithUI
 sim.app.tutorial6.Tutorial6WithUI
 sim.app.tutorial7.Tutorial7WithUI
 sim.app.virus.VirusInfectionDemoWithUI
+sim.app.wcss.tutorial13.StudentsWithUI
+sim.app.wcss.tutorial14.StudentsWithUI
 sim.app.woims.WoimsDemoWithUI
 sim.app.woims3d.WoimsDemo3DWithUI
