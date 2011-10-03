@@ -56,7 +56,7 @@ public class StudentsWithUI extends GUIState
         return i;
         }
 
-    public static String getName() { return "WCSS 2008 Tutorial"; }
+    public static String getName() { return "WCSS Tutorial 14: Student Cliques (in 3D)"; }
     
     public void start()
         {
