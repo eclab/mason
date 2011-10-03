@@ -72,7 +72,7 @@ jar: all
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm jar/physics.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
+	jar -cvfm jar/physics2d.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"`
 
 # Indent to your preferred brace format using emacs.  MASON's default
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.
