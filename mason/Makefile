@@ -122,7 +122,7 @@ jar: 3d
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean 3d indent doc
+dist: clean 3d indent doc jar
 	touch TODO
 	rm TODO
 	find . -name ".svn" -exec rm -rf {} \;
