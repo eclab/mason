@@ -61,7 +61,6 @@ docs: doc
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes CVS directories
 dist: clean all doc
-	rm TODO
 	find . -name "CVS" -exec rm -rf {} \;
 	@ echo "If there were CVS directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
