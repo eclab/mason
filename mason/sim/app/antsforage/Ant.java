@@ -40,7 +40,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
         int x = location.x;
         int y = location.y;
                 
-        if (af.ALGORITHM == af.ALGORITHM_VALUE_ITERATION)
+        if (AntsForage.ALGORITHM == AntsForage.ALGORITHM_VALUE_ITERATION)
             {
             // test all around
             if (hasFoodItem)  // deposit food pheromone
@@ -51,7 +51,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                         {
                         int _x = dx+x;
                         int _y = dy+y;
-                        if (_x < 0 || _y < 0 || _x >= af.GRID_WIDTH || _y >= af.GRID_HEIGHT) continue;  // nothing to see here
+                        if (_x < 0 || _y < 0 || _x >= AntsForage.GRID_WIDTH || _y >= AntsForage.GRID_HEIGHT) continue;  // nothing to see here
                         double m = af.toFoodGrid.field[_x][_y] * 
                             (dx * dy != 0 ? // diagonal corners
                             af.diagonalCutDown : af.updateCutDown) +
@@ -68,7 +68,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                         {
                         int _x = dx+x;
                         int _y = dy+y;
-                        if (_x < 0 || _y < 0 || _x >= af.GRID_WIDTH || _y >= af.GRID_HEIGHT) continue;  // nothing to see here
+                        if (_x < 0 || _y < 0 || _x >= AntsForage.GRID_WIDTH || _y >= AntsForage.GRID_HEIGHT) continue;  // nothing to see here
                         double m = af.toHomeGrid.field[_x][_y] * 
                             (dx * dy != 0 ? // diagonal corners
                             af.diagonalCutDown : af.updateCutDown) +
@@ -91,7 +91,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                 
         if (hasFoodItem)  // follow home pheromone
             {
-            double max = af.IMPOSSIBLY_BAD_PHEROMONE;
+            double max = AntsForage.IMPOSSIBLY_BAD_PHEROMONE;
             int max_x = x;
             int max_y = y;
             int count = 2;
@@ -102,7 +102,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                     int _y = dy+y;
                     if ((dx == 0 && dy == 0) ||
                         _x < 0 || _y < 0 ||
-                        _x >= af.GRID_WIDTH || _y >= af.GRID_HEIGHT || 
+                        _x >= AntsForage.GRID_WIDTH || _y >= AntsForage.GRID_HEIGHT || 
                         af.obstacles.field[_x][_y] == 1) continue;  // nothing to see here
                     double m = af.toHomeGrid.field[_x][_y];
                     if (m > max)
@@ -123,7 +123,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                     {
                     int xm = x + (x - last.x);
                     int ym = y + (y - last.y);
-                    if (xm >= 0 && xm < af.GRID_WIDTH && ym >= 0 && ym < af.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
+                    if (xm >= 0 && xm < AntsForage.GRID_WIDTH && ym >= 0 && ym < AntsForage.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
                         { max_x = xm; max_y = ym; }
                     }
                 }
@@ -133,16 +133,16 @@ public class Ant extends OvalPortrayal2D implements Steppable
                 int yd = (state.random.nextInt(3) - 1);
                 int xm = x + xd;
                 int ym = y + yd;
-                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < af.GRID_WIDTH && ym >= 0 && ym < af.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
+                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < AntsForage.GRID_WIDTH && ym >= 0 && ym < AntsForage.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
                     { max_x = xm; max_y = ym; }
                 }
             af.buggrid.setObjectLocation(this, new Int2D(max_x, max_y));
-            if (af.sites.field[max_x][max_y] == af.HOME)  // reward me next time!  And change my status
+            if (af.sites.field[max_x][max_y] == AntsForage.HOME)  // reward me next time!  And change my status
                 { reward = af.reward ; hasFoodItem = ! hasFoodItem; }
             }
         else
             {
-            double max = af.IMPOSSIBLY_BAD_PHEROMONE;
+            double max = AntsForage.IMPOSSIBLY_BAD_PHEROMONE;
             int max_x = x;
             int max_y = y;
             int count = 2;
@@ -153,7 +153,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                     int _y = dy+y;
                     if ((dx == 0 && dy == 0) ||
                         _x < 0 || _y < 0 ||
-                        _x >= af.GRID_WIDTH || _y >= af.GRID_HEIGHT || 
+                        _x >= AntsForage.GRID_WIDTH || _y >= AntsForage.GRID_HEIGHT || 
                         af.obstacles.field[_x][_y] == 1) continue;  // nothing to see here
                     double m = af.toFoodGrid.field[_x][_y];
                     if (m > max)
@@ -174,7 +174,7 @@ public class Ant extends OvalPortrayal2D implements Steppable
                     {
                     int xm = x + (x - last.x);
                     int ym = y + (y - last.y);
-                    if (xm >= 0 && xm < af.GRID_WIDTH && ym >= 0 && ym < af.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
+                    if (xm >= 0 && xm < AntsForage.GRID_WIDTH && ym >= 0 && ym < AntsForage.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
                         { max_x = xm; max_y = ym; }
                     }
                 }
@@ -184,11 +184,11 @@ public class Ant extends OvalPortrayal2D implements Steppable
                 int yd = (state.random.nextInt(3) - 1);
                 int xm = x + xd;
                 int ym = y + yd;
-                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < af.GRID_WIDTH && ym >= 0 && ym < af.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
+                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < AntsForage.GRID_WIDTH && ym >= 0 && ym < AntsForage.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
                     { max_x = xm; max_y = ym; }
                 }
             af.buggrid.setObjectLocation(this, new Int2D(max_x, max_y));
-            if (af.sites.field[max_x][max_y] == af.FOOD)  // reward me next time!  And change my status
+            if (af.sites.field[max_x][max_y] == AntsForage.FOOD)  // reward me next time!  And change my status
                 { reward = af.reward; hasFoodItem = ! hasFoodItem; }
             }
         last = location;

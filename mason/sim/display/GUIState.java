@@ -74,7 +74,8 @@ public abstract class GUIState
         separate from the one used in the model.  If you use this generator to do things
         like specify the colors of agents on-screen, rather than use the model's generator,
         you can guarantee identical simulation results with the model regardless of whether
-        it runs under the model or the GUI. */
+        it runs under the model or the GUI.   Also, unlike state.random, using guirandom
+        doesn't require synchronizing on state.schedule first. */
     public MersenneTwisterFast guirandom = new MersenneTwisterFast();
         
     /** The underlying SimState */
