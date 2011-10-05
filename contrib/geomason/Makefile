@@ -7,6 +7,10 @@ JAVAC = javac ${JAVACFLAGS}
 JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
 FLAGS = -g -nowarn
 
+VERSION = 1
+
+JARFILE = geomason.${VERSION}.jar
+
 all: jar demos
 
 
@@ -16,14 +20,14 @@ sim/app/geo/nearbyworld/*.java			\
 sim/app/geo/networkworld/*.java			\
 sim/app/geo/touchingworld/*.java
 
-demos : geomason.jar
+demos : ${JARFILE}
 	@echo "Compiling examples..."
-	@$(JAVAC) -cp ${CLASSPATH}:geomason.jar $(FLAGS) $(DEMOS)
+	@$(JAVAC) -cp ${CLASSPATH}:${JARFILE} $(FLAGS) $(DEMOS)
 
 
 # Delete all the class files, checkpoints, and other various garbage
 clean:
-	rm -f geomason.jar
+	rm -f ${JARFILE}
 	find . -name "*.class" -exec rm -f {} \;
 	find . -name "jmf.log" -exec rm -f {} \;
 	find . -name ".DS_Store" -exec rm -f {} \;
@@ -76,21 +80,25 @@ GEOTOOL_FILES = sim/io/geo/GeoToolsImporter.java
 OGR_FILES = sim/io/geo/OGRImporter.java	
 
 # Add GDAL_FILES, GEOTOOL_FILES and/or OGR_FILES if you want support for those
-geomason.jar : $(BASE_FILES) # $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
-	@echo "Creating geomason.jar..."
+${JARFILE} : $(BASE_FILES) # $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
+	@echo "Creating ${JARFILE}..."
+	touch /tmp/manifest.add
+	rm /tmp/manifest.add
+	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	@javac $(FLAGS) $^
-	@jar -cvf $@ `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "index.html"`
+	@jar -cvmf /tmp/manifest.add $@ `find . -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+	rm /tmp/manifest.add
 
 
-jar : geomason.jar
+jar : ${JARFILE}
 
 #Print a help message
 help:
 	@echo MASON Geometry/GIS Module Makefile Options
 	@echo
 	@echo "make		Builds the code, jar file, and examples"
-	@echo "make all		Same thing"
-	@echo "make jar	    creates geomason.jar"
+	@echo "make all	Same thing"
+	@echo "make jar	creates ${JARFILE}"
 	@echo "make demos	Builds the GeoMason examples"
 	@echo "make docs	Builds the documentation"
 	@echo "make doc 	Same thing"
