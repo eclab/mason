@@ -29,5 +29,5 @@ java sim.app.geo.networkworld.NetworkWorldWithUI
 
 java sim.app.geo.nearbyworld.NearbyWorldWithUI
 
-java sim.app.geo.campusworld.CampusWorldWithGUI
+java sim.app.geo.campusworld.CampusWorldWithUI
 
