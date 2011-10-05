@@ -128,7 +128,7 @@ dist: clean 3d indent doc jar
 	touch TODO
 	rm TODO
 	touch docs/manualsource
-        rm -rf docs/manualsource
+	rm -rf docs/manualsource
 	touch docs/Java3D.graffle
 	rm -rf docs/*.graffle
 	find . -name ".svn" -exec rm -rf {} \;
