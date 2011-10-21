@@ -152,7 +152,7 @@ public class Person implements Steppable
         if (!acceptable(region))
         { // the current location is unacceptable
 
-            System.out.println("unacceptable!");
+//            System.out.println("unacceptable!");
 
             // try to find and move to a better location
             Polygon potentialNew = bestMove(((PolySchelling) state).polys);
@@ -162,7 +162,7 @@ public class Person implements Steppable
                 updateLocation(potentialNew);
             } else // no better location was found. Stay in place.
             {
-                System.out.println("...but immobile");
+//                System.out.println("...but immobile");
             }
         }
 

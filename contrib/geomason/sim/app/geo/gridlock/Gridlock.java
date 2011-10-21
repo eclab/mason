@@ -118,13 +118,13 @@ public class Gridlock extends SimState
 
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
-            importer.ingest("../../data/gridlock/roads.shp",roads, null);
+            importer.ingest("../../data/gridlock/roads.shp", Gridlock.class, roads, null);
 
             Envelope MBR = roads.getMBR();
 
             // read in the tracts to create the background
             System.out.println("reading tracts layer...");
-            importer.ingest("../../data/gridlock/areas.shp",censusTracts, null);
+            importer.ingest("../../data/gridlock/areas.shp", Gridlock.class, censusTracts, null);
 
 
             MBR.expandToInclude(censusTracts.getMBR());
@@ -220,7 +220,9 @@ public class Gridlock extends SimState
 
         try
         {
-            FileInputStream fstream = new FileInputStream(filename);
+            String filePath = Gridlock.class.getResource(filename).getPath();
+
+            FileInputStream fstream = new FileInputStream(filePath);
 
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
             String s;

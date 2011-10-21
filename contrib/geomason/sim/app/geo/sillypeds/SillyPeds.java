@@ -130,7 +130,7 @@ public class SillyPeds extends SimState
 
             GeomGridField floorPlan = new GeomGridField();
 
-            importer.ingest(filename, GridDataType.DOUBLE, floorPlan);
+            importer.ingest(filename, SillyPeds.class, GridDataType.DOUBLE, floorPlan);
 
             result = new Space(floorPlan);
         }

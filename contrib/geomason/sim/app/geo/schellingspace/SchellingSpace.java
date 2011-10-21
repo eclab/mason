@@ -215,7 +215,7 @@ public class SchellingSpace extends SimState
             // import the Geometries as our own special Polygons
             importer.masonGeometryClass = SchellingGeometry.class;
 
-            importer.ingest( "../../data/schellingPolygon/DCreprojected.shp", world, null);
+            importer.ingest( "../../data/schellingPolygon/DCreprojected.shp", SchellingSpace.class, world, null);
         }
         catch (FileNotFoundException ex)
         {

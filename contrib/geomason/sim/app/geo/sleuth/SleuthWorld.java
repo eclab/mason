@@ -741,8 +741,10 @@ public class SleuthWorld extends SimState
         try
         { // to read in a file
 
+            String filePath = SleuthWorld.class.getResource(filename).getPath();
+
             // Open the file
-            FileInputStream fstream = new FileInputStream(filename);
+            FileInputStream fstream = new FileInputStream(filePath);
 
             // Convert our input stream to a BufferedReader
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
@@ -834,6 +836,7 @@ public class SleuthWorld extends SimState
         catch (Exception e)
         {
             System.out.println(e);
+            System.exit(0);
         }
     }
 
@@ -849,8 +852,10 @@ public class SleuthWorld extends SimState
         try
         { // to read in a file
 
+            String filePath = SleuthWorld.class.getResource(filename).getPath();
+
             // Open the file
-            FileInputStream fstream = new FileInputStream(filename);
+            FileInputStream fstream = new FileInputStream(filePath);
 
             // Convert our input stream to a BufferedReader
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
@@ -941,6 +946,7 @@ public class SleuthWorld extends SimState
         catch (Exception e)
         {
             System.out.println(e);
+            System.exit(0);
         }
     }
 

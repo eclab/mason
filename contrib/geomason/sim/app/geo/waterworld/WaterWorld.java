@@ -114,7 +114,7 @@ public class WaterWorld extends SimState
 
             GeomGridField elevationsField = new GeomGridField();
 
-            importer.ingest(filename, GridDataType.INTEGER, elevationsField);
+            importer.ingest(filename, WaterWorld.class, GridDataType.INTEGER, elevationsField);
             
             grid_width = elevationsField.getGridWidth();
             grid_height = elevationsField.getGridHeight();

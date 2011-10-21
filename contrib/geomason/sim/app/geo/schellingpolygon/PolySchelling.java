@@ -120,6 +120,7 @@ public class PolySchelling extends SimState
 
             importer.ingest( //"schellingData/test/DC.shp",
                 "../../data/schellingPolygon/1991_wards_disolved_Project.shp",
+                PolySchelling.class,
                  world, null);
 
         } catch (FileNotFoundException ex)
