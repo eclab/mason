@@ -3,11 +3,13 @@
 # in the jar file rule if you want support for those importers.
 #
 
-JAVAC = javac ${JAVACFLAGS}
-JAVACFLAGS = -target 1.4 -source 1.4 ${FLAGS}
+JAVAC = javac 
+
+# GeoMason support Java 5; note that MASON is still behind the times and only supports Java 4.
+JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
-VERSION = 1
+VERSION = 1.1
 
 JARFILE = geomason.${VERSION}.jar
 
@@ -18,11 +20,18 @@ DEMOS = sim/app/geo/campusworld/*.java		\
 sim/app/geo/colorworld/*.java			\
 sim/app/geo/nearbyworld/*.java			\
 sim/app/geo/networkworld/*.java			\
-sim/app/geo/touchingworld/*.java
+sim/app/geo/touchingworld/*.java		\
+sim/app/geo/sleuth/*.java			\
+sim/app/geo/schellingspace/*.java		\
+sim/app/geo/schellingpolygon/*.java		\
+sim/app/geo/gridlock/*.java			\
+sim/app/geo/waterworld/*.java			\
+sim/app/geo/sillypeds/*.java
 
+# Note that we do not restrict demos to Java 1.4 as is this case with MASON
 demos : ${JARFILE}
 	@echo "Compiling examples..."
-	@$(JAVAC) -cp ${CLASSPATH}:${JARFILE} $(FLAGS) $(DEMOS)
+	@javac -cp ${CLASSPATH}:${JARFILE} $(DEMOS)
 
 
 # Delete all the class files, checkpoints, and other various garbage
@@ -85,8 +94,8 @@ ${JARFILE} : $(BASE_FILES) # $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	@javac $(FLAGS) $^
-	@jar -cvmf /tmp/manifest.add $@ `find . -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+	@javac ${JAVACFLAGS} $^
+	@jar -cvmf /tmp/manifest.add $@ `find sim/field sim/io sim/portrayal sim/util -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
 	rm /tmp/manifest.add
 
 

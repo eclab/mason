@@ -19,7 +19,7 @@ that it is included in your class path, too.
 
                                  ###
 
-To run demos:
+To run demos (presuming you've already done a "make demos"):
 
 java sim.app.geo.colorworld.ColorWorldWithUI
 
@@ -31,3 +31,14 @@ java sim.app.geo.nearbyworld.NearbyWorldWithUI
 
 java sim.app.geo.campusworld.CampusWorldWithUI
 
+java sim.app.geo.gridlock.GridlockWithUI
+
+java sim.app.geo.sillypeds.SillyPedsWithUI
+
+java sim.app.geo.waterworld.WaterWorldWithUI
+
+java sim.app.geo.schellingspace.SchellingSpaceWithUI
+
+java sim.app.geo.sleuth.SleuthWorldWithUI
+
+java sim.app.geo.schellingpolygon.PolySchellingWithUI
