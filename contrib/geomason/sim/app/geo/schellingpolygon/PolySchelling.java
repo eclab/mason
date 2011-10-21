@@ -1,0 +1,156 @@
+//***************************************************************
+//Copyright 2011 Center for Social Complexity, GMU
+//
+//Author: Andrew Crooks and Sarah Wise, GMU
+//
+//Contact: acrooks2@gmu.edu & swise5@gmu.edu
+//
+//
+//schellingpolygon is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+//
+//It is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+//
+//
+//***************************************************************
+package sim.app.geo.schellingpolygon;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
+import sim.engine.SimState;
+import sim.field.geo.GeomVectorField;
+import sim.io.geo.ShapeFileImporter;
+import sim.util.Bag;
+
+
+
+public class PolySchelling extends SimState
+{
+
+    private static final long serialVersionUID = 1L;
+    // storing the data
+    public GeomVectorField world = new GeomVectorField();
+    ArrayList<Polygon> polys = new ArrayList<Polygon>();
+    ArrayList<Person> people = new ArrayList<Person>();
+    // used by PolySchellingWithUI to keep track of the percent of unhappy Persons
+    int totalReds = 0;
+    int totalBlues = 0;
+
+
+
+    /**
+     *  constructor function
+     */
+    public PolySchelling(long seed)
+    {
+        super(seed);
+    }
+
+
+
+    /**
+     * Takes the geometries after they have been read in and constructs each Polygon's
+     * list of neighbors. Also extracts information about the mobile agents from the
+     * Polygons and sets up the list of Persons.
+     */
+    void setup()
+    {
+
+        // copy over the geometries into a list of Polygons
+        Bag ps = world.getGeometries();
+        polys.addAll(ps);
+
+        // process the polygons for neighbor and Person info
+        for (int i = 0; i < polys.size(); i++)
+        {
+            Polygon p1 = polys.get(i);
+            p1.init();
+
+            for (int j = i + 1; j < polys.size(); j++)
+            {
+                Polygon p2 = polys.get(j);
+                if (p1.geometry.touches(p2.geometry))
+                {
+                    p1.neighbors.add(p2);
+                    p2.neighbors.add(p1);
+                }
+            }
+
+            if (p1.soc == null) // no agent is initialized in this location
+            {
+                continue;
+            } else if (p1.soc.equals("RED"))
+            { // a red Person is initialized here
+                Person p = new Person("RED");
+                p.updateLocation(p1);
+                totalReds++;
+                people.add(p);
+            } else if (p1.soc.equals("BLUE"))
+            { // a blue Person is initialized here
+                Person p = new Person("BLUE");
+                p.updateLocation(p1);
+                totalBlues++;
+                people.add(p);
+            }
+        }
+
+        // schedule all of the Persons to update. One agent updates per tick,
+        // so agents start updating in the order they appear in the list of Persons
+        // and update every (number of Persons) ticks.
+        int i = 0;
+        for (Person p : people)
+        {
+            schedule.scheduleRepeating(i, p, people.size());
+            i++;
+        }
+
+    }
+
+
+
+    /** Import the data and then set up the simulation */
+    public void start()
+    {
+        super.start();
+
+        try // to import the data from the shapefile
+        {
+            // Extract ShapeFile data
+            ShapeFileImporter importer = new ShapeFileImporter();
+
+            // import the Geometries as Polygons
+            importer.masonGeometryClass = Polygon.class;
+
+            importer.ingest( //"schellingData/test/DC.shp",
+                "../../data/schellingPolygon/1991_wards_disolved_Project.shp",
+                 world, null);
+
+        } catch (FileNotFoundException ex)
+        {
+            System.out.println("Error opening shapefile!" + ex);
+            System.exit(-1);
+        }
+
+        // once the data is read in, set up the Polygons and Persons
+        setup();
+    }
+
+
+
+    /**
+     * Called to run PolySchelling without the GUI
+     * @param args
+     */
+    public static void main(String[] args)
+    {
+        doLoop(PolySchelling.class, args);
+        System.exit(0);
+    }
+
+}

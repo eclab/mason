@@ -108,6 +108,9 @@ public class CampusWorld extends SimState
                 masked.add("FLOORS");
                 masked.add("ADDR_NUM");
 
+//                System.out.println(System.getProperty("user.dir"));
+
+
                 // read in the buildings GIS file 
                 importer.ingest("../../data/bldg", CampusWorld.class, buildings, masked);
 
