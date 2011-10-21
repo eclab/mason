@@ -1,23 +1,15 @@
-//***************************************************************
-//Copyright 2011 Center for Social Complexity, GMU
-//
-//Author: Andrew Crooks and Sarah Wise, GMU
-//
-//Contact: acrooks2@gmu.edu & swise5@gmu.edu
-//
-//
-//sleuth is free software: you can redistribute it and/or modify
-//it under the terms of the GNU General Public License as published by
-//the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
-//
-//It is distributed in the hope that it will be useful,
-//but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//GNU General Public License for more details.
-//
-//
-//***************************************************************
+/*
+
+SleuthWorldWithUI.java
+
+Copyright 2011 by Andrew Crooks, Sarah Wise, Mark Coletti, and
+George Mason University Mason University.
+
+Licensed under the Academic Free License version 3.0
+
+See the file "LICENSE" for more information
+
+*/
 package sim.app.geo.sleuth;
 
 import java.awt.Color;
