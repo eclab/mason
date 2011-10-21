@@ -1,15 +1,14 @@
-/*
-
-Basin.java
-
-Copyright 2011 by Andrew Crooks, Sarah Wise, Mark Coletti, and
-George Mason University Mason University.
-
-Licensed under the Academic Free License version 3.0
-
-See the file "LICENSE" for more information
-
-*/
+/**
+ ** Basin.java
+ **
+ ** Copyright 2011 by Andrew Crooks, Sarah Wise, Mark Coletti, and
+ ** George Mason University.
+ **
+ ** Licensed under the Academic Free License version 3.0
+ **
+ ** See the file "LICENSE" for more information
+ **
+ **/
 package sim.app.geo.waterworld;
 
 import java.util.ArrayList;
