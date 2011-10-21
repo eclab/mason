@@ -30,12 +30,36 @@ import java.io.FileReader;
  */
 public class ArcInfoASCGridImporter extends GeomImporter
 {
+    /** Read Arc Info grid data from fileName into given field
+     * 
+     * @param fileName containing the grid data
+     * @param referenceClass used to find the data as a resource
+     * @param type to denote integer or double data
+     * @param field in which the data is to be loaded
+     * 
+     * @throws FileNotFoundException 
+     */
+    public void ingest(String fileName, Class<?> referenceClass, GridDataType type, GeomGridField field) throws FileNotFoundException
+    {
+        String filePath = null;
 
-    /** Read geospatial grid data from inputFile into field
+        try
+        {
+            filePath = referenceClass.getResource(fileName).getPath();
+        } catch (NullPointerException np1)
+        {
+            throw new FileNotFoundException(fileName);
+        }
+
+        ingest( filePath, type, field );
+    }
+
+
+    /** Read geospatial grid data from fileName into given field
      *
      * Note that NODATA values are read in as is without substitution.
      *
-     * @param inputFile is file name of data file
+     * @param fileName is file name of data file
      * @param type denotes the base type as either integer or double-based
      * @param field is field to populate
      * 
