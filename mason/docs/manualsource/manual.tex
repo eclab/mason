@@ -462,6 +462,9 @@ import sim.field.continuous.*;
         // clear the yard
         yard.clear();
         
+        // clear the buddies
+        buddies.clear();
+        
         // add some students to the yard
         for(int i = 0; i < numStudents; i++)
             \{
@@ -561,6 +564,9 @@ public class Students extends SimState
         
         // clear the yard
         yard.clear();
+        
+        // clear the buddies
+        buddies.clear();
         
         // add some students to the yard
         for(int i = 0; i < numStudents; i++)
@@ -960,6 +966,9 @@ import sim.field.network.*;
         
         // clear the yard
         yard.clear();
+        
+        // clear the buddies
+        buddies.clear();
         
         // add some students to the yard
         for(int i = 0; i < numStudents; i++)
@@ -2351,7 +2360,7 @@ When you do this, the Console window will look like it does at right.  Notice th
 
 \section{Go 3D} 
 
-MASON has as extensive a 3D model and visualization as it has a 3D one.  3D Visualization in MASON sits on top of Java3D, a scenegraph developed by Sun and widely available.  You don't need to know any Java3D at all to do visualization and model development in MASON, though just like AWT graphics and Java2D help in doing the 2D visualization, knowing a bit of Java3D will help to do advanced stuff in the 3D case.
+MASON has as extensive a 3D model and visualization as it has a 2D one.  3D Visualization in MASON sits on top of Java3D, a scenegraph developed by Sun and widely available.  You don't need to know any Java3D at all to do visualization and model development in MASON, though just like AWT graphics and Java2D help in doing the 2D visualization, knowing a bit of Java3D will help to do advanced stuff in the 3D case.
 
 Here we're going to add a simple 3D viewer to give you a taste of how to do visualization in 3D.  The 3D facility can visualize 2D fields, but obviously 3D fields are more fun.  So we'll start by creating a 3D field.  Let's make a 3D version of the playground, where the position of the student in the Z direction is the degree of agitation he presently has.
 
@@ -3186,7 +3195,7 @@ If you name methods with the proper rules, MASON will automatically recognize th
 
 \paragraph{MASON Extensions to Java Bean Properties} 
 
-Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: String and StringBuffer have \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
+Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: CharSequence subclasses (String, StringBuffer, StringBuilder, etc.) have \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
 
 In some cases you may wish to hide a property \method{Foo} so MASON GUI widgets don't display it to the user.  This is easy to do with MASON's special \method{hideFoo()} extension.  If this method returns \variable{true}, then MASON will ignore that property.  For example:
 
@@ -9433,9 +9442,9 @@ Just as MASON provides two classes for Sparse Grids, it also has two similar cla
 The first, and less useful, class, is \Class{sim.portrayal3d.grid.ValueGridPortrayal3D}.  This class portrays 2D and 3D Value Grids as 3-dimensional arrays of cubes or squares, each cube or square colored according to the value at that position.  Just like \Class{sim.portrayal3d.grid.ObjectGridPortrayal3D} and \Class{sim.portrayal3d.grid.SparseGridPortrayal3D}, ValueGridPortrayal3D treats 2D Object Grids as if  they were 3D Object Grids with a single layer in the {\it length}, that is, \(Z\), dimension.  Thus objects in 2D Object Grids are assumed to have a location with \(Z=0\) always, and if you'd like to change that you'll need to transform them using one of the affine transform methods available in FieldPortrayal3D.
 
 \begin{figure}[t]\noindent\begin{center}%
-\includegraphics[height=1.5in]{ValueGridPortrayal3D.png}\hfill%
-\includegraphics[height=1.5in]{ValueGridPortrayal3DEdges.png}\hfill%
-\includegraphics[height=1.5in]{ValueGridPortrayal3DSmaller.png}\hfill%
+\includegraphics[height=2in]{ValueGridPortrayal3D.png}\hfill%
+\includegraphics[height=2in]{ValueGridPortrayal3DEdges.png}\hfill%
+\includegraphics[height=2in]{ValueGridPortrayal3DSmaller.png}\hfill%
 \end{center}%
 \caption{Different ValueGridPortrayal3D effects (outer blue frame not included).  From left to right: (1) a normal ValueGridPortrayal3D, with a color map ranging from transparent to opaque black (2) a ValueGridPortrayal3D with its Polygon Attributes set by the user to display only edges (3) a ValueGridPortrayal3D with smaller scaled cubes.}%
 \label{ValueGridPortrayal3D}
@@ -9872,7 +9881,7 @@ Now that you're armed with a BranchGroup, you can make a BranchGroupPortrayal3D:
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, transform, and appearance (which overrides appearances specified in any loaded file).
 \end{methods}
 
-Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON website has a link to download {\bf NCSA Portfolio}, a free but not quite open source collection of loaders for a much wider range of files.  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
+Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON website has a link to download {\bf NCSA Portfolio}, a free but not quite open source collection of loaders for a much wider range of files.\footnote{NCSA Portfolio is not free for commercial use.  Furthermore, if you create a derivative work using NCSA Portfolio, you must notify NCSA of this fact and also add a disclaimer to this effect in your distributed package.}  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
 
 \java{%
 ncsa.j3d.loaders.ModelLoader loader = new ncsa.j3d.loaders.ModelLoader(); \\
@@ -10226,11 +10235,11 @@ If you want to know how to make your own custom Simple Portrayal for your model 
 
 Building a Java3D scene can be daunting.  But if you have Java3D chops, sticking it in MASON is actually quite simple.
 
-Simple Portrayals in 3D really have one major task: create a scene graph and hang certain LocationWrappers in shapes and geometry found in that graph.  The LocationWrappers indicate the object in the field that that portion of scene represents.  If you've set up the LocationWrappers right, you don't have to do anything further to handle selection or inspection, as SimplePortrayal3D does all the machinery for you.  Though you can override various SimplePortrayal3D methods to customize things if you like.
+Simple Portrayals in 3D really have one major task: create a scene graph and hang certain LocationWrappers off of the shapes and geometry found in that graph.  The LocationWrappers indicate the object in the field that that portion of scene represents.  If you've set up the LocationWrappers right, you don't have to do anything further to handle selection or inspection, as SimplePortrayal3D does all the machinery for you.  Though you can override various SimplePortrayal3D methods to customize things if you like.
 
-The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.    Often if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all, unless you want to change a color or size or whatnot to reflect some underlying change in the object status.
+The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.   Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
 
-Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
+If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
 
 \begin{wrapfigure}{r}[0in]{2in}
 \vspace{0em}\hfill\includegraphics[width=2in]{ColorCube.png}

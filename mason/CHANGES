@@ -2343,4 +2343,11 @@ Version 16
 
 Version 17
 	Minor tweaks to Ant.java.  Thanks to Amit Goel <subs@agoel.com>
-
+	Bug fix to tutorials in documentation.  Thanks to Jonathan Rowe
+		<J.E.Rowe@cs.bham.ac.uk>
+	SimpleProperties now treats toString() as a property for all CharSequence
+		subclasses.
+	Error in displaying "More Options" window in Display3D fixed.  Thanks to Jon
+		Rowe <J.E.Rowe@cs.bham.ac.uk>
+	Added sim.util.distribution to the Makefile (oops).  Thanks to Chris Hollander
+		<chris.hollander@gmail.com>

@@ -47,6 +47,7 @@ sim/util/*.java \
 sim/util/media/*.java \
 sim/util/media/chart/*.java \
 sim/util/gui/*.java \
+sim/util/distribution/*.java \
 sim/field/*.java \
 sim/field/grid/*.java \
 sim/field/continuous/*.java \

@@ -25,7 +25,7 @@ import java.lang.reflect.*;
  *  You can also hide a property by creating a boolean method called hideFoo() which returns true.
  *
  *  <p>A few classes have special hard-coded properties because they lack get() and set() methods.  Notably:
- *  Strings and StringBuffers have toString() considered a property, integer Numbers have longValue() considered
+ *  CharSequences (Strings, StringBuffers, StringBuilders, etc.) have toString() considered a property, integer Numbers have longValue() considered
  *  a property, other Numbers have doubleValue() considered a property, and Booleans have booleanValue() considered
  *  a property.  In all cases the name of the property is simply "Value" and it is read-only.
  *
@@ -191,7 +191,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     }
                                                                                                                 
                 // handle Strings
-                if (object instanceof String || object instanceof StringBuffer)
+                if (object instanceof CharSequence)
                     {
                     Method meth = c.getMethod("toString", new Class[0]);
                     getMethods.add(meth);

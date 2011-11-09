@@ -679,6 +679,10 @@ public class Display3D extends JPanel implements Steppable
         showBackgroundCheckBox.setSelected(true);
         
         createSceneGraph();
+        
+        skipFrame = new JFrame();
+        rebuildSkipFrame();
+        skipFrame.pack();
 
         createConsoleMenu();
         }
