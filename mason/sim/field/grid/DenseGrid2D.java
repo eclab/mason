@@ -23,6 +23,8 @@ import java.util.*;
 
 public class DenseGrid2D extends AbstractGrid2D
     {
+    private static final long serialVersionUID = 1;
+
     /** Should we remove bags in the field if they have been emptied, and let them GC, or should
         we keep them around? */
     public boolean removeEmptyBags = true;

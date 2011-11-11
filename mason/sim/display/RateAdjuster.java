@@ -18,6 +18,8 @@ import sim.engine.*;
 
 public class RateAdjuster implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     long initialTime;
     long totalTics;
     boolean started = false;

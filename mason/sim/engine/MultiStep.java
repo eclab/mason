@@ -22,6 +22,8 @@ package sim.engine;
 
 public class MultiStep implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     int current;
     final boolean countdown;
     final int n;

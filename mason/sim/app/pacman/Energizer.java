@@ -10,4 +10,6 @@ package sim.app.pacman;
 
 public class Energizer
     {
+    private static final long serialVersionUID = 1;
+
     }

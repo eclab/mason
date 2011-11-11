@@ -25,6 +25,8 @@ import sim.util.*;
 
 public class Cells extends Object
     {
+    private static final long serialVersionUID = 1;
+
     public HashMap cell_dictionary;
 //    public HashMap group_dictionary;
 //    public HashMap pattern_dictionary;

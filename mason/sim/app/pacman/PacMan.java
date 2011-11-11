@@ -21,6 +21,8 @@ import java.io.*;
 
 public class PacMan extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     /** Holds the ghosts and the Pac. */
     public Continuous2D agents;
         

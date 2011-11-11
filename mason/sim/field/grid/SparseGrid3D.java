@@ -47,6 +47,8 @@ import sim.util.*;
 
 public class SparseGrid3D extends SparseField implements SparseField3D
     {
+    private static final long serialVersionUID = 1;
+
     protected int width;
     protected int height;
     protected int length;

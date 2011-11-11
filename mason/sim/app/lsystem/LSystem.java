@@ -10,7 +10,8 @@ import sim.field.continuous.*;
 
 public  class LSystem extends SimState
     {
-    private static final long serialVersionUID = 1645219613363018777L;
+    private static final long serialVersionUID = 1;
+
     /** @todo handle realocation of grids when these two are changed */
     public double xMin = 0;
     public double xMax = 100;

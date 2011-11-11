@@ -30,6 +30,8 @@ import sim.util.*;
 */
 public class Edge implements java.io.Serializable, Comparable
     {
+    private static final long serialVersionUID = 1;
+
     // to prevent edges from breaking fields by being stored in two different fields.
     // if null, then no owner -- the Edge is free to be added to a field.
     Network owner;

@@ -23,6 +23,8 @@ import java.lang.reflect.*;
 
 public class CollectionProperties extends Properties
     {
+    private static final long serialVersionUID = 1;
+
     Collection collection;
     Map map;
     Indexed indexed;

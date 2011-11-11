@@ -18,6 +18,8 @@ import sim.field.grid.*;
 
 public /*strictfp*/ class ThreadedDiffuser implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public ParallelSequence diffusers;
         
     public ThreadedDiffuser()

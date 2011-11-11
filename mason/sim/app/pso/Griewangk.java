@@ -11,6 +11,8 @@ package sim.app.pso;
 */
 public class Griewangk implements Evaluatable 
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y) 
         {
         return (1000 - (1 + (x*x) / 4000 + (y*y) / 4000 - Math.cos(x) * Math.cos(y / Math.sqrt(2))));

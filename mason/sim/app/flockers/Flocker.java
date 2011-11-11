@@ -12,6 +12,8 @@ import ec.util.*;
 
 public class Flocker implements Steppable, sim.portrayal.Orientable2D
     {
+    private static final long serialVersionUID = 1;
+
     public Double2D loc = new Double2D(0,0);
     public Double2D lastd = new Double2D(0,0);
     public Continuous2D flockers;

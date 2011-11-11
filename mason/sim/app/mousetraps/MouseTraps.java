@@ -14,6 +14,8 @@ import ec.util.*;
 
 public class MouseTraps extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     /** the number of balls a trap will throw in the air when triggered */
     public static final int BALLS_PER_TRAP = 2;
     /** the initial velocity of a ball when thrown by a trap

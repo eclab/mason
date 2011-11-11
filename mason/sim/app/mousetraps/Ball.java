@@ -10,6 +10,8 @@ import sim.engine.*;
 
 public class Ball implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public double posX, posY, posZ;
     public double velocityX, velocityY, velocityZ;
         

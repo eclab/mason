@@ -91,6 +91,8 @@ import java.util.*;
 
 public class Network implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     boolean directed;
         
     public boolean isDirected() { return directed; }

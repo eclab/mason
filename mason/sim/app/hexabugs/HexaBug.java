@@ -11,6 +11,8 @@ import sim.engine.*;
 
 public /*strictfp*/ class HexaBug implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public double idealTemp;
     public double getIdealTemperature() { return idealTemp; }
     public void setIdealTemperature( double t ) { idealTemp = t; }

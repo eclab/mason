@@ -11,6 +11,8 @@ import sim.util.*;
 
 public class Tutorial6 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     static final int PLUTO = 9;  // Furthest-out body
     public Continuous2D bodies;
 

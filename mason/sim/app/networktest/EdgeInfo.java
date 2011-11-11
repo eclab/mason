@@ -8,6 +8,8 @@ package sim.app.networktest;
 
 public class EdgeInfo implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     String label;
     public String getLabel() { return label; }
     public void setLabel( final String id ) { label = id; }

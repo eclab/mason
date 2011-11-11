@@ -12,6 +12,8 @@ import sim.util.*;
 
 public class BigParticle extends Particle implements Proxiable
     {
+    private static final long serialVersionUID = 1;
+
     // we can't "turn off" setRandomize by making it protected or whatnot.
     // but we can tell SimpleProperties to use a proxy of our invention
     // rather than querying us directly.  The proxy class MUST be public;
@@ -24,11 +26,8 @@ public class BigParticle extends Particle implements Proxiable
         public int getXDir() { return xdir; }
         public int getYDir() { return ydir; }
         // because we are a non-static inner class
-        static final long serialVersionUID = -2815745192429358605L;
+        private static final long serialVersionUID = 1;
         }
-        
-    // because we contain a non-static inner class
-    static final long serialVersionUID = 7720089824883511682L;
 
     public Object propertiesProxy()
         {

@@ -11,6 +11,8 @@ import sim.field.continuous.*;
 
 public class Flockers extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D flockers;
     public double width = 150;
     public double height = 150;

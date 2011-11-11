@@ -11,6 +11,8 @@ import sim.field.continuous.*;
 
 public class SwarmGame extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D agents;
     public double width = 100;
     public double height = 100;

@@ -10,6 +10,7 @@ import sim.util.Double3D;
 
 public class Vector3D implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
 
     public double x;
     public double y;

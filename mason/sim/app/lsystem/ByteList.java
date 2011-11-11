@@ -8,6 +8,8 @@ package sim.app.lsystem;
 
 public class ByteList implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public byte[] b;
     public int length = 0;
     
@@ -64,6 +66,4 @@ public class ByteList implements java.io.Serializable
         b = new byte[16];
         length = 0;
         }
-                
-    static final long serialVersionUID = -7841332939713409966L; // hard-coded for backwards-compatability
     }

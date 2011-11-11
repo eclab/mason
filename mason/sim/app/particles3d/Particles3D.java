@@ -12,6 +12,8 @@ import sim.util.*;
 
 public class Particles3D extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     static public int gridWidth = 30;
     static public int gridHeight = 30;
     static public int gridLength = 30; 

@@ -34,6 +34,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class Empirical extends AbstractContinousDistribution {
+    private static final long serialVersionUID = 1;
+
     protected double[] cdf; // cumulative distribution function
     protected int interpolationType;
         

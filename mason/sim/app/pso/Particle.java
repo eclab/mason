@@ -14,7 +14,8 @@ import sim.util.MutableDouble2D;
 */
 public class Particle
     {       
-    static final public long serialVersionUID = 15L;
+    private static final long serialVersionUID = 1;
+
     double bestVal = 0;     
     MutableDouble2D bestPosition = new MutableDouble2D();
 

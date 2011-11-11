@@ -24,6 +24,8 @@ import sim.util.*;
 
 public class ObjectGrid3D extends AbstractGrid3D
     {
+    private static final long serialVersionUID = 1;
+
     public Object[/**x*/][/**y*/][/**z*/] field;
     
     public ObjectGrid3D (int width, int height, int length)

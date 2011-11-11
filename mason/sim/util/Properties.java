@@ -26,6 +26,8 @@ import java.util.*;
 
 public abstract class Properties implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     /** Returns a Properties object for the given object.  If the object is an array, Map, Indexed, or Collection,
         then it will be treated using CollectionProperties.  Otherwise it will be
         treated using SimpleProperties.  The returned SimpleProperties will include superclasses properties.

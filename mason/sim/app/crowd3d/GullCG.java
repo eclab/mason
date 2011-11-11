@@ -6,6 +6,8 @@ import javax.media.j3d.*;
 
 public class GullCG extends CompressedGeometry 
     {
+    private static final long serialVersionUID = 1;
+
     public GullCG() 
         {
         super(cgHeader, cgData) ;

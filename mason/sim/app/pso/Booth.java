@@ -11,6 +11,8 @@ package sim.app.pso;
 */
 public class Booth implements Evaluatable 
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y) 
         {
         return (1000 - ((x + 2*y - 7) * (x + 2*y - 7) + (2*x + y - 5) * (2*x + y - 5)));

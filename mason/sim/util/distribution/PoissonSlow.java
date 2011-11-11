@@ -30,6 +30,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class PoissonSlow extends AbstractDiscreteDistribution {
+    private static final long serialVersionUID = 1;
+
     protected double mean;
 
     // precomputed and cached values (for performance only)

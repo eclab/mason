@@ -11,6 +11,8 @@ import sim.field.grid.*;
 
 public class Fly implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public void step(SimState state)
         {
         Tutorial7 tut = (Tutorial7) state;

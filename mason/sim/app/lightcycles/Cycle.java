@@ -13,6 +13,8 @@ import sim.engine.*;
 
 public class Cycle implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     // Properties
     public int dir, my_id;
     boolean alive;

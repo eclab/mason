@@ -10,6 +10,8 @@ import sim.engine.*;
 
 public class Agent implements Steppable, Stoppable
     {
+    private static final long serialVersionUID = 1;
+
     public static double SIGHT = 5;
     public static double SPEED = .05;
     public static double WALL_AVERSION = 4.0;

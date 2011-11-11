@@ -44,6 +44,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public abstract class AbstractDistribution implements java.io.Serializable {
+    private static final long serialVersionUID = 1;
+
     protected MersenneTwisterFast randomGenerator;
 /**
  * Makes this class non instantiable, but still let's others inherit from it.

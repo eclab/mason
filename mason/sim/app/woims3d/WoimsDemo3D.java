@@ -14,6 +14,7 @@ import javax.swing.*;
 
 public class WoimsDemo3D extends SimState
     {
+    private static final long serialVersionUID = 1;
 
     public static final double XMIN = 0;
     public static final double XMAX = 200;

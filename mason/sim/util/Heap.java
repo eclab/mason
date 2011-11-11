@@ -25,6 +25,8 @@ package sim.util;
 
 public class Heap implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     // the keys
     Comparable[] keys = null;
 

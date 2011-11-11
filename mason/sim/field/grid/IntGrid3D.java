@@ -20,6 +20,8 @@ import sim.util.*;
 
 public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
     {
+    private static final long serialVersionUID = 1;
+
     public int[/**x*/][/**y*/][/**z*/] field;
     
     public IntGrid3D (int width, int height, int length)

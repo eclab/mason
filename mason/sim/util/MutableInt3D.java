@@ -19,6 +19,8 @@ package sim.util;
 
 public final class MutableInt3D implements java.io.Serializable, Cloneable
     {
+    private static final long serialVersionUID = 1;
+
     public int x;
     public int y;
     public int z;

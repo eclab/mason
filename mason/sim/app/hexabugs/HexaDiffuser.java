@@ -14,6 +14,7 @@ import sim.field.grid.*;
 */
 public /*strictfp*/ class HexaDiffuser implements Steppable
     {
+    private static final long serialVersionUID = 1;
 
     DoubleGrid2D updateGrid;
     DoubleGrid2D tempGrid;

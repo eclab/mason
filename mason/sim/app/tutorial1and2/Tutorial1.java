@@ -11,6 +11,8 @@ import sim.field.grid.*;
 
 public class Tutorial1 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Tutorial1(long seed)
         {
         super(seed);

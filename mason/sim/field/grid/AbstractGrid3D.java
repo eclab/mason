@@ -26,6 +26,8 @@ import sim.util.IntBag;
 
 public abstract class AbstractGrid3D implements Grid3D
     {
+    private static final long serialVersionUID = 1;
+
     // this should never change except via setTo
     protected int width;
     // this should never change except via setTo

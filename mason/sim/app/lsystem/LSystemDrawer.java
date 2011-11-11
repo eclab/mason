@@ -12,7 +12,7 @@ import sim.engine.*;
 
 public  class LSystemDrawer implements Steppable
     {
-    private static final long serialVersionUID = 2107788276155299189L;
+    private static final long serialVersionUID = 1;
 
     // copy the code over so that you can draw while calculating
     ByteList code;

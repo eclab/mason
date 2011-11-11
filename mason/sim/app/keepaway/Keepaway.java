@@ -12,6 +12,8 @@ import sim.util.*;
 
 public /*strictfp*/ class Keepaway extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     /** @todo handle realocation of grids when these two are changed */
     public double xMin = 0;
     public double xMax = 100;

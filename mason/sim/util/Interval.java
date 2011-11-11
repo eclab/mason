@@ -12,6 +12,8 @@ package sim.util;
 
 public class Interval
     {
+    private static final long serialVersionUID = 1;
+
     public Interval(long min, long max)
         {
         this.min = new Long(min);

@@ -15,6 +15,8 @@ import sim.util.*;
 
 public /*strictfp*/ class Mav implements Steppable, Oriented2D
     {
+    private static final long serialVersionUID = 1;
+
     public final static double[] theta = new double[/* 8 */]
     {
     0*(/*Strict*/Math.PI/180),

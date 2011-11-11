@@ -10,6 +10,8 @@ import sim.util.*;
 
 public class Body implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public double velocity; 
     public double distanceFromSun; 
     

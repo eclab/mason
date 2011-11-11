@@ -10,4 +10,6 @@ package sim.app.pacman;
 
 public class Dot
     {
+    private static final long serialVersionUID = 1;
+
     }

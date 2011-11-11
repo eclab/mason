@@ -37,6 +37,8 @@ import java.lang.ref.*;
 
 public class WeakStep implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     WeakReference weakStep;
     Stoppable stop;  // will be null unless setStoppable() called
     

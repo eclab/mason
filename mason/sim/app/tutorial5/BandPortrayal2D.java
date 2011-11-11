@@ -12,6 +12,8 @@ import java.awt.*;
 
 public class BandPortrayal2D extends SimpleEdgePortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     // how our strength should look
     java.text.NumberFormat strengthFormat;
     public BandPortrayal2D()

@@ -35,6 +35,8 @@ package sim.engine;
 
 public class TentativeStep implements Steppable, Stoppable
     {
+    private static final long serialVersionUID = 1;
+
     public Steppable step;
     public TentativeStep(Steppable step)
         {

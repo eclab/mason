@@ -59,6 +59,8 @@ import sim.util.*;
 
 public class MethodStep implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     Method method;
     Object object;
     boolean passInSimState;

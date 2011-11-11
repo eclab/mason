@@ -22,6 +22,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class BreitWignerMeanSquare extends BreitWigner {
+    private static final long serialVersionUID = 1;
+
     protected Uniform uniform; // helper
         
 /**

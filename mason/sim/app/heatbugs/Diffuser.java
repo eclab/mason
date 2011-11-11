@@ -12,6 +12,8 @@ import sim.field.grid.*;
 
 public /*strictfp*/ class Diffuser implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public void step(SimState state)
         {
         HeatBugs heatbugs = (HeatBugs)state;

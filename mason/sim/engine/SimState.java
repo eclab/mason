@@ -27,6 +27,8 @@ import java.text.*;
 
 public class SimState implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     /** The SimState's random number generator */
     public MersenneTwisterFast random;
     

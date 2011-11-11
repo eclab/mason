@@ -38,6 +38,8 @@ import java.lang.reflect.*;
 
 public class Bag implements java.util.Collection, java.io.Serializable, Cloneable, Indexed
     {
+    private static final long serialVersionUID = 1;
+
     public Object[] objs;
     public int numObjs;
     
@@ -484,6 +486,8 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
 
     static class BagIterator implements Iterator, java.io.Serializable
         {
+        private static final long serialVersionUID = 1;
+
         int obj = 0;
         Bag bag;
         boolean canRemove = false;
@@ -509,6 +513,5 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
             obj--;
             canRemove = false;
             }
-        // static inner class -- no need to add a serialVersionUID
         }
     }

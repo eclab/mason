@@ -12,6 +12,8 @@ import sim.engine.*;
 
 public /*strictfp*/ class Ball extends Entity implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     // used to determine if the ball is stuck
     public MutableDouble2D stillPos;                           // last position
     public double dt;                                   // delta time--how many steps it has been still

@@ -18,6 +18,8 @@ import ec.util.*;
 
 public class Clyde extends Blinky
     {
+    private static final long serialVersionUID = 1;
+
     public static final int DIST = 8;
         
     public Double2D getStartLocation() { return new Double2D(14.5, 16); }

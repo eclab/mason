@@ -16,6 +16,8 @@ import sim.portrayal.*;
 /** Fire is a simple Element which draws thrusting fire.  Used by Ship only.  */
 public class Fire extends Element
     {
+    private static final long serialVersionUID = 1;
+
     /** Creates a Fire. */
     public Fire()
         {

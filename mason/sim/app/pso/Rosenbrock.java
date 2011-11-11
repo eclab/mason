@@ -11,6 +11,8 @@ package sim.app.pso;
 */
 public class Rosenbrock implements Evaluatable 
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y) 
         {
         double expr1 = (x*x - y);

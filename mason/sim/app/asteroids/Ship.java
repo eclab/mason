@@ -31,6 +31,8 @@ import sim.portrayal.*;
 
 public class Ship extends Element
     {
+    private static final long serialVersionUID = 1;
+
     /** The ship's tag. */
     public int tag;
         

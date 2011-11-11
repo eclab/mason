@@ -18,6 +18,8 @@ import sim.util.MutableDouble2D;
 */
 public class PSO extends SimState 
     {       
+    private static final long serialVersionUID = 1;
+
     public Continuous2D space;
         
     public double width = 10.24;

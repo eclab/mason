@@ -11,6 +11,8 @@ package sim.app.pso3d;
 */
 public class Rastrigin3D implements Evaluatable3D 
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y, double z) 
         {
         return (1000 - (30 + x*x - 10*Math.cos(2*Math.PI*x) + y*y - 10*Math.cos(2*Math.PI*y) + z*z - 10*Math.cos(2*Math.PI*z)));

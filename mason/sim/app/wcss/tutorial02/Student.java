@@ -8,5 +8,7 @@ package sim.app.wcss.tutorial02;
 
 public class Student
     {
+    private static final long serialVersionUID = 1;
+
     } 
     

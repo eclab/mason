@@ -197,6 +197,8 @@ package sim.engine;
 
 public abstract class AsynchronousSteppable implements Stoppable
     {
+    private static final long serialVersionUID = 1;
+
     Thread thread;
     boolean running = false;
     boolean paused = false;

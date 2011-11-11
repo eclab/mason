@@ -14,6 +14,8 @@ import sim.field.grid.*;
         
 public class IntPBMGrid2D extends IntGrid2D
     {
+    private static final long serialVersionUID = 1;
+
     public IntPBMGrid2D(InputStream in)
         {
         this(new InputStreamReader(in));

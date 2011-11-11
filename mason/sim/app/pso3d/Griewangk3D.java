@@ -11,6 +11,8 @@ package sim.app.pso3d;
 */
 public class Griewangk3D implements Evaluatable3D 
     {
+    private static final long serialVersionUID = 1;
+
     private final double sqrt2 = Math.sqrt(2);
     private final double sqrt3 = Math.sqrt(3);
         

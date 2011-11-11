@@ -19,6 +19,8 @@ import java.io.*;
 
 public class CausedRuntimeException extends RuntimeException
     {
+    private static final long serialVersionUID = 1;
+
     private Throwable target;
     String message;
         

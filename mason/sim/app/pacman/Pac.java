@@ -15,6 +15,8 @@ import ec.util.*;
 
 public class Pac extends Agent implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     /** How long we wait while the Pac dies (not spinning). */
     public static final int WAIT_TIME = 100;
         

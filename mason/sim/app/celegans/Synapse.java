@@ -17,6 +17,8 @@ package sim.app.celegans;
 
 public class Synapse extends Object
     {
+    private static final long serialVersionUID = 1;
+
     static int type_chemical=0;
     static int type_gap=1;
     public Cell from;

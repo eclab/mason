@@ -112,6 +112,8 @@ import java.lang.reflect.*;
 
 public class SimpleProperties extends Properties implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     ArrayList getMethods = new ArrayList();
     ArrayList setMethods = new ArrayList(); // if no setters, that corresponding spot will be null
     ArrayList domMethods = new ArrayList(); // if no domain, that corresponding spot will be null

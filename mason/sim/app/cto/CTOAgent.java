@@ -12,6 +12,8 @@ import java.awt.*;
 
 public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public String id;
 
     public int intID = -1;

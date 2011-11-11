@@ -19,6 +19,8 @@ import ec.util.*;
         
 public class Pinky extends Ghost
     {
+    private static final long serialVersionUID = 1;
+
     public static final int DIST = 4;
         
     public Double2D getStartLocation() { return new Double2D(12.5, 16); }

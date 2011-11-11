@@ -10,6 +10,8 @@ import sim.util.*;
 
 public class Band implements java.io.Serializable, sim.util.Valuable
     {
+    private static final long serialVersionUID = 1;
+
     public double laxDistance;
     public double strength;
     

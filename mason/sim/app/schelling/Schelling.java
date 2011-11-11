@@ -11,6 +11,8 @@ import sim.util.*;
 
 public /*strictfp*/ class Schelling extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public int gridHeight;
     public int gridWidth;
     public int neighborhood = 1;

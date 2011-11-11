@@ -23,6 +23,8 @@ import sim.util.*;
 
 public class MazeCellPortrayal extends SimplePortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     IntGrid2D field;
         
     public MazeCellPortrayal(IntGrid2D field) { this.field = field; }

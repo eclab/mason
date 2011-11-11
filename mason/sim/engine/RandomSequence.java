@@ -15,6 +15,8 @@ package sim.engine;
 
 public class RandomSequence extends Sequence
     {
+    private static final long serialVersionUID = 1;
+
     final boolean shouldSynchronize;
     
     /** Does not synchronize before using the random number generator */

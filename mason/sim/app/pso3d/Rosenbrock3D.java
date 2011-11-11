@@ -11,6 +11,8 @@ package sim.app.pso3d;
 */
 public class Rosenbrock3D implements Evaluatable3D
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y, double z) 
         {
         return (1000 - (100 *                           

@@ -11,6 +11,8 @@ import sim.field.grid.*;
 
 public /*strictfp*/ class HexaBugs extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public double minIdealTemp = 17000;
     public double maxIdealTemp = 31000;
     public double minOutputHeat = 6000;

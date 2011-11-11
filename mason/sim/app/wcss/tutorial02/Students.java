@@ -11,6 +11,8 @@ import sim.field.continuous.*;
 
 public class Students extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D yard = new Continuous2D(1.0,100,100);
     
     public int numStudents = 50;

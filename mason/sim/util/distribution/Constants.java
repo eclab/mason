@@ -12,6 +12,8 @@ package sim.util.distribution;
  * Defines some useful constants.
  */
 public class Constants implements java.io.Serializable {
+    private static final long serialVersionUID = 1;
+
     /*
      * machine constants
      */

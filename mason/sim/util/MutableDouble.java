@@ -17,6 +17,8 @@ package sim.util;
 
 public class MutableDouble extends Number implements Valuable, Cloneable /* automatically java.io.Serializable */
     {
+    private static final long serialVersionUID = 1;
+
     public double val;
 
     public MutableDouble() { this.val = 0; }

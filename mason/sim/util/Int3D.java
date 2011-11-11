@@ -17,6 +17,8 @@ package sim.util;
 */
 public final class Int3D implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public final int x;
     public final int y;
     public final int z;

@@ -34,6 +34,8 @@ import sim.portrayal.*;
 
 public abstract class Element extends sim.portrayal.SimplePortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public Shape shape;
     public double orientation;
     public MutableDouble2D velocity;

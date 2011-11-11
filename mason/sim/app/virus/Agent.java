@@ -13,6 +13,7 @@ import java.awt.geom.*;
 
 public abstract /*strictfp*/ class Agent extends SimplePortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
 
     public String id;
 

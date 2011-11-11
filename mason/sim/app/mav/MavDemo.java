@@ -12,6 +12,8 @@ import sim.field.continuous.*;
 
 public /*strictfp*/ class MavDemo extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D ground;
     public Continuous2D mavs;
     

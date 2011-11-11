@@ -24,6 +24,8 @@ package sim.util;
 
 public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     {
+    private static final long serialVersionUID = 1;
+
     public double[] objs;
     public int numObjs;
     

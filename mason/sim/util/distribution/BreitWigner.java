@@ -23,6 +23,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class BreitWigner extends AbstractContinousDistribution {
+    private static final long serialVersionUID = 1;
+
     protected double mean;
     protected double gamma;
     protected double cut;

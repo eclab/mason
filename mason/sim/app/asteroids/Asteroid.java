@@ -20,6 +20,8 @@ import sim.portrayal.*;
 
 public class Asteroid extends Element
     {
+    private static final long serialVersionUID = 1;
+
     /** The Asteroid's size, a number from 0 ... MAXIMUM_SIZE - 1.  This size indicates
         the set of valid shapes in the shapes[] array, and also which sizes to break into
         when breaking apart (from the breakMap[] array). */

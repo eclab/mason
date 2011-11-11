@@ -29,6 +29,8 @@ import sim.util.*;
 
 public abstract class AbstractGrid2D implements Grid2D
     {
+    private static final long serialVersionUID = 1;
+
     // this should never change except via setTo
     protected int width;
     // this should never change except via setTo

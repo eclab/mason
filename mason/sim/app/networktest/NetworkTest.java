@@ -13,6 +13,8 @@ import sim.util.*;
 
 public /*strictfp*/ class NetworkTest extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public static final double XMIN = 0;
     public static final double XMAX = 800;
     public static final double YMIN = 0;

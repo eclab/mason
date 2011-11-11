@@ -17,6 +17,8 @@ package sim.util;
 */
 public final class Double2D implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public final double x;
     public final double y;
     

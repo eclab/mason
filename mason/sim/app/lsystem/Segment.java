@@ -12,7 +12,8 @@ import sim.util.*;
 
 public  class Segment extends SimplePortrayal2D
     {
-    private static final long serialVersionUID = 1519670365452291522L;
+    private static final long serialVersionUID = 1;
+
     public double x,y,x2,y2;
     
     public Segment(double x, double y, double dist, double theta)

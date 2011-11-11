@@ -125,6 +125,8 @@ import sim.field.continuous.*;
 
 public class Cell extends Object implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     /* Processed Information */
     public Cell parent;         // my parent in the cell lineage, else null
 

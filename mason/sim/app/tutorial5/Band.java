@@ -8,6 +8,8 @@ package sim.app.tutorial5;
 
 public class Band implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public double laxDistance;
     public double strength;
     

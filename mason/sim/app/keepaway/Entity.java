@@ -12,6 +12,8 @@ import java.awt.*;
 
 public abstract /*strictfp*/ class Entity extends OvalPortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     public MutableDouble2D loc, velocity, bump;
     public MutableDouble2D force = new MutableDouble2D();
     public MutableDouble2D accel = new MutableDouble2D();

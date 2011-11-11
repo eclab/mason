@@ -12,7 +12,9 @@ import ec.util.MersenneTwisterFast;
 /**
  * Arithmetic functions.
  */
-public class Arithmetic extends Constants {
+public class Arithmetic extends Constants implements java.io.Serializable {
+    private static final long serialVersionUID = 1;
+
     /*
      * machine constants
      */

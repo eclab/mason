@@ -22,6 +22,8 @@ import sim.util.*;
 
 public class ObjectGrid2D extends AbstractGrid2D
     {
+    private static final long serialVersionUID = 1;
+
     public Object[/**x*/][/**y*/] field;
     
     public ObjectGrid2D (int width, int height)

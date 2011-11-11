@@ -15,6 +15,8 @@ import ec.util.*;
         
 public class Blinky extends Ghost
     {
+    private static final long serialVersionUID = 1;
+
     public Double2D getStartLocation() { return new Double2D(13.5, 13); }
 
     public Blinky(PacMan pacman) 

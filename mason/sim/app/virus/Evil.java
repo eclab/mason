@@ -13,6 +13,7 @@ import sim.portrayal.*;
 
 public /*strictfp*/ class Evil extends Agent
     {
+    private static final long serialVersionUID = 1;
 
     protected boolean greedy = false;
     public final boolean getIsGreedy() { return greedy; }

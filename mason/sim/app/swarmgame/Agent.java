@@ -10,6 +10,8 @@ import sim.util.*;
 
 public class Agent implements Steppable, sim.portrayal.Oriented2D
     {
+    private static final long serialVersionUID = 1;
+
     public Agent a;
     public Agent b;
     public Double2D lastLoc = new Double2D(0,0);

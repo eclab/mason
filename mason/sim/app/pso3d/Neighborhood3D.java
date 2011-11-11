@@ -13,6 +13,8 @@ import sim.util.*;
 
 public class Neighborhood3D
     {
+    private static final long serialVersionUID = 1;
+
     public double bestVal = 0;
     MutableDouble3D bestPosition = new MutableDouble3D();
         

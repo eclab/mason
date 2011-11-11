@@ -15,7 +15,8 @@ import sim.util.MutableDouble3D;
 */
 public class Particle3D
     {       
-    static final public long serialVersionUID = 15L;
+    private static final long serialVersionUID = 1;
+
     double bestVal = 0;     
     MutableDouble3D bestPosition = new MutableDouble3D();
 

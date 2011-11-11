@@ -21,6 +21,8 @@ import sim.util.*;
 
 public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     {
+    private static final long serialVersionUID = 1;
+
     public double[/**x*/][/**y*/][/**z*/] field;
     
     public DoubleGrid3D (int width, int height, int length)

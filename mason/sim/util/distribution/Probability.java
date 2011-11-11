@@ -23,6 +23,8 @@ import ec.util.MersenneTwisterFast;
  * @version 0.91, 08-Dec-99
  */
 public class Probability extends Constants {
+    private static final long serialVersionUID = 1;
+
     /*************************************************
      *    COEFFICIENTS FOR METHOD  normalInverse()   *
      *************************************************/

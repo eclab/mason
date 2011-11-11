@@ -14,6 +14,7 @@ import java.awt.*;
 
 public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
 
     public String id;
     public String getID() { return id; }

@@ -13,6 +13,8 @@ import com.sun.j3d.utils.geometry.Sphere;
 
 public class Obstacle3D extends SimplePortrayal3D
     {
+    private static final long serialVersionUID = 1;
+
     double diameter;
     protected Color3f obstacleColor = new Color3f(192f/255,255f/255,192f/255);
 

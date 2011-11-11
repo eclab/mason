@@ -13,6 +13,8 @@ import javax.swing.*;
 
 public class Tutorial3WithUI extends GUIState
     {
+    private static final long serialVersionUID = 1;
+
     public Display2D display;
     public JFrame displayFrame;
 

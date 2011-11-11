@@ -31,6 +31,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class VonMises extends AbstractContinousDistribution {
+    private static final long serialVersionUID = 1;
+
     protected double my_k;
 
     // cached vars for method nextDouble(a) (for performance only)

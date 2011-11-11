@@ -10,6 +10,8 @@ import sim.field.grid.*;
 
 public class Tutorial7 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public SparseGrid3D flies;
     public DoubleGrid2D xProjection;
     public DoubleGrid2D yProjection;

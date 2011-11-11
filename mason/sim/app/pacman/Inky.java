@@ -18,6 +18,8 @@ import ec.util.*;
         
 public class Inky extends Pinky
     {
+    private static final long serialVersionUID = 1;
+
     Blinky blinky;
         
     public Double2D getStartLocation() { return new Double2D(13.5, 16); }

@@ -15,6 +15,8 @@ import java.awt.*;
 
 public class Ant extends OvalPortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public boolean getHasFoodItem() { return hasFoodItem; }
     public void setHasFoodItem(boolean val) { hasFoodItem = val; }
     public boolean hasFoodItem = false;

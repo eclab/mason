@@ -12,6 +12,8 @@ import sim.util.*;
 
 public class Particle implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public boolean randomize = false;
     public int xdir;  // -1, 0, or 1
     public int ydir;  // -1, 0, or 1

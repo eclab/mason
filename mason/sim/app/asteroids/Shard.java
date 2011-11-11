@@ -21,6 +21,8 @@ import sim.portrayal.*;
 
 public class Shard extends Element 
     {
+    private static final long serialVersionUID = 1;
+
     // current countdown of the Shard.  Used to determine the current color of the Shard.
     int count;
         

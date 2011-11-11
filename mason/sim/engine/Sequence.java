@@ -13,6 +13,8 @@ package sim.engine;
 
 public class Sequence implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public Steppable[] steps;
     
     /** Assumes all the steps are filled.  Will use the steps provided. */

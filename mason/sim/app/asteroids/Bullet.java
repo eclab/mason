@@ -21,6 +21,8 @@ import sim.portrayal.*;
 
 public class Bullet extends Element 
     {
+    private static final long serialVersionUID = 1;
+
     /** How much to translate the Bullet each timestep. */ 
     public static final double VELOCITY = 1;
 

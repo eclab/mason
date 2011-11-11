@@ -12,6 +12,8 @@ import sim.field.continuous.*;
 
 public class CrowdSim extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public double spaceHeight = 20;
     public double spaceWidth = 20;
     public double spaceDepth = 20;

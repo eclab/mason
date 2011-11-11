@@ -18,6 +18,8 @@ import java.awt.geom.*;
 
 public class Asteroids extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     /** How long, in ticks, should we wait after the asteroids and/or ship have been
         entirely destroyed before resetting? */
     public static final int WAIT_PERIOD = 60;

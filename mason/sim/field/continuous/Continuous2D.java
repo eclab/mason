@@ -86,6 +86,8 @@ import java.util.*;
 
 public /*strictfp*/ class Continuous2D extends SparseField implements SparseField2D
     {
+    private static final long serialVersionUID = 1;
+
     /** Where we store the Double2D values hashed by object */
     public HashMap doubleLocationHash = new HashMap();
     

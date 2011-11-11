@@ -9,6 +9,8 @@ import sim.engine.*;
 
 public class MouseTrap implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public int posx, posy;
     public MouseTrap( int x, int y) 
         {

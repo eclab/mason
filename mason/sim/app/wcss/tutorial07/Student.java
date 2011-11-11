@@ -12,6 +12,8 @@ import sim.field.network.*;
 
 public class Student implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public static final double MAX_FORCE = 3.0;
 
     public void step(SimState state)

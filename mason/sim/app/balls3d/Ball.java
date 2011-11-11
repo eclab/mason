@@ -13,6 +13,8 @@ import sim.field.continuous.*;
 
 public class Ball implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     // force on the Ball
     public double forcex;
     public double forcey;

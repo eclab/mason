@@ -13,6 +13,8 @@ import sim.util.*;
 
 public class Celegans extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous3D cells;
     public Continuous3D neurons;
     public Network synapses;

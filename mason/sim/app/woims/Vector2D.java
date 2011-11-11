@@ -10,6 +10,7 @@ import sim.util.Double2D;
 
 public /*strictfp*/ class Vector2D implements Serializable
     {
+    private static final long serialVersionUID = 1;
 
     public double x;
     public double y;

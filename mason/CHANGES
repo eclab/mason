@@ -2351,3 +2351,5 @@ Version 17
 		Rowe <J.E.Rowe@cs.bham.ac.uk>
 	Added sim.util.distribution to the Makefile (oops).  Thanks to Chris Hollander
 		<chris.hollander@gmail.com>
+	Made all classes in sim.util.distributions Serializable
+	Added a fixed serialVerUID (=1) to all Serializable classes

@@ -19,6 +19,8 @@ import sim.util.*;
 
 public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     {
+    private static final long serialVersionUID = 1;
+
     public double[/**x*/][/**y*/] field;
     
     public double[][] getField() { return field; }

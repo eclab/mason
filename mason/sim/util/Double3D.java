@@ -18,6 +18,8 @@ package sim.util;
 
 public final class Double3D implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public final double x;
     public final double y;
     public final double z;

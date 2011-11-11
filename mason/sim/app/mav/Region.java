@@ -14,6 +14,8 @@ import java.awt.font.*;
 
 public /*strictfp*/ class Region extends SimplePortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     // we hard-code the available shapes here.  The reason for this is simple: shapes
     // and areas aren't serializable.  ARGH.  So we can't save out a shape/area and
     // load it back in again.  Instead we have to save out a shape "number", and then

@@ -19,6 +19,8 @@ import sim.util.*;
 
 public class PacPortrayal extends SimplePortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     protected Color color;
     PacMan pacman;
     public static final int MOUTH_RATE = 10;

@@ -10,6 +10,7 @@ import sim.util.Double2D;
 
 public /*strictfp*/ class KMeansEngine
     {
+    private static final long serialVersionUID = 1;
 
     final static double ALFA = 0.25;
 

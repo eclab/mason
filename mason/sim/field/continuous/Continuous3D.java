@@ -75,6 +75,8 @@ import java.util.*;
 
 public /*strictfp*/ class Continuous3D extends SparseField implements SparseField3D
     {
+    private static final long serialVersionUID = 1;
+
     /** Where we store the Double3D values hashed by object */
     public HashMap doubleLocationHash = new HashMap();
     

@@ -24,6 +24,8 @@ package sim.util;
 
 public class IntBag implements java.io.Serializable, Cloneable, Indexed
     {
+    private static final long serialVersionUID = 1;
+
     public int[] objs;
     public int numObjs;
     

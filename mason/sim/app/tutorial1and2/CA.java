@@ -11,6 +11,8 @@ import sim.field.grid.*;
 
 public class CA implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     // the width and height will change later
     public IntGrid2D tempGrid = new IntGrid2D(0,0);
 

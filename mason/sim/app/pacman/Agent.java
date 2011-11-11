@@ -26,6 +26,7 @@ import sim.portrayal.*;
 
 public abstract class Agent implements Oriented2D
     {
+    private static final long serialVersionUID = 1;
 
     /** The Action "Go North" */
     public static final int N = 0;

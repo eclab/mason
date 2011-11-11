@@ -13,6 +13,8 @@ import sim.engine.*;
 
 public /*strictfp*/ class Bot extends Entity implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public Bot( final double x, final double y, Color c)
         {
         super(x,y,2,c);

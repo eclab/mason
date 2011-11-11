@@ -16,6 +16,8 @@ import sim.display.*;
 
 public class Overlay extends FieldPortrayal2D
     {
+    private static final long serialVersionUID = 1;
+
     PacManWithUI ui;
     public static final int GUTTER = 32;
     public static final int BORDER = 8;

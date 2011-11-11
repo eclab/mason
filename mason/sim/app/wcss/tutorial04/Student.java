@@ -11,6 +11,8 @@ import sim.util.*;
 
 public class Student implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     public void step(SimState state)
         {
         Students students = (Students) state;

@@ -14,6 +14,7 @@ import java.awt.geom.*;
 
 public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
 
     public static final double CENTROID_DISTANCE = 20 * WoimsDemo.DIAMETER;
     public static final double AVOID_DISTANCE = 16 * WoimsDemo.DIAMETER;

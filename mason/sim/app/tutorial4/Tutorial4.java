@@ -72,7 +72,7 @@ public class Tutorial4 extends SimState
             // anonymous class -- here's the serialVersionUID (see tutorial3)
             // by the way, notice it's DIFFERENT from tutorial3's due to new names of stuff.
             // No biggie -- as long as you have <i>some</i> serialVersionUID...
-            static final long serialVersionUID = 6976157378487763326L;
+            private static final long serialVersionUID = 1;
             };
             
         schedule.scheduleRepeating(Schedule.EPOCH,2,decreaser,1);
@@ -87,5 +87,5 @@ public class Tutorial4 extends SimState
     // contains an anonymous class -- here's the serialVersionUI (see tutorial3)
     // by the way, notice it's DIFFERENT from tutorial3's due to new names of stuff.
     // No biggie -- as long as you have <i>some</i> serialVersionUID...
-    static final long serialVersionUID = 6930440709111220430L;
+    private static final long serialVersionUID = 1;
     }

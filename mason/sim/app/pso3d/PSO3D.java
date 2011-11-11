@@ -18,6 +18,8 @@ import sim.util.MutableDouble3D;
 */
 public class PSO3D extends SimState 
     {       
+    private static final long serialVersionUID = 1;
+
     public Continuous3D space; // the final frontier
         
     public double width = 10.24;

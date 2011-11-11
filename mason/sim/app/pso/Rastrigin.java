@@ -11,6 +11,8 @@ package sim.app.pso;
 */
 public class Rastrigin implements Evaluatable 
     {
+    private static final long serialVersionUID = 1;
+
     public double calcFitness(double x, double y) 
         {
         return (1000 - (20 + x*x - 10*Math.cos(2*Math.PI*x) + y*y - 10*Math.cos(2*Math.PI*y)));

@@ -16,6 +16,8 @@ import java.awt.geom.*;
 
 public class Ball extends SimplePortrayal2D implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     // force on the Ball
     public double forcex;
     public double forcey;

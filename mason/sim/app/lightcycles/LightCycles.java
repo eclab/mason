@@ -10,6 +10,8 @@ import sim.field.grid.*;
 
 public class LightCycles extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public int gridHeight;
     public int gridWidth;
     public int cycleCount;

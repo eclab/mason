@@ -9,6 +9,8 @@ import sim.engine.*;
 
 public class Students extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Students(long seed)
         {
         super(seed);

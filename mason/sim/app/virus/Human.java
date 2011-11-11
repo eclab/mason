@@ -13,6 +13,7 @@ import sim.portrayal.*;
 
 public /*strictfp*/ class Human extends Agent
     {
+    private static final long serialVersionUID = 1;
 
     protected boolean infected = false;
     public final boolean isInfected() { return infected; }

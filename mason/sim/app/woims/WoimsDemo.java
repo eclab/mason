@@ -12,6 +12,7 @@ import sim.field.continuous.*;
 
 public /*strictfp*/ class WoimsDemo extends SimState
     {
+    private static final long serialVersionUID = 1;
 
     // dimensions of the environment
     public static final double XMIN = 0;

@@ -22,6 +22,8 @@ import javax.vecmath.*;
 
 public class Woim3D extends SimplePortrayal3D implements Steppable 
     {
+    private static final long serialVersionUID = 1;
+
     public static final double CENTROID_DISTANCE = 20 * WoimsDemo3D.DIAMETER;
     public static final double AVOID_DISTANCE = 16 * WoimsDemo3D.DIAMETER;
     public static final double COPY_SPEED_DISTANCE = 40 * WoimsDemo3D.DIAMETER;

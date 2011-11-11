@@ -10,6 +10,8 @@ import sim.engine.*;
 
 public /*strictfp*/ class Agent implements Steppable
     {
+    private static final long serialVersionUID = 1;
+
     Int2D loc;
     IntBag neighborsX = new IntBag(9);
     IntBag neighborsY = new IntBag(9);

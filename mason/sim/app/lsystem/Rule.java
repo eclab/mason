@@ -11,7 +11,7 @@ import java.io.*;
 
 public class Rule implements Serializable
     {
-    private static final long serialVersionUID = 6750008059574576396L;
+    private static final long serialVersionUID = 1;
 
     // what to replace
     public byte pattern;

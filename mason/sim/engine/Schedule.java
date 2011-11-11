@@ -92,6 +92,8 @@ import ec.util.*;
 
 public class Schedule implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     /** The first possible schedulable time. */
     public static final double EPOCH = 0.0;
     /** The time which indicates that the Schedule hasn't started yet. Less than EPOCH. */

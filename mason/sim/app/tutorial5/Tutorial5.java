@@ -63,7 +63,7 @@ public class Tutorial5 extends SimState
                 {
                 public void step(SimState state) { ball.computeForce(state); }
                 // see Tutorial 3 for why this is helpful
-                static final long serialVersionUID = -4269174171145445918L;
+                private static final long serialVersionUID = 1;
                 };
             }
             
@@ -101,5 +101,5 @@ public class Tutorial5 extends SimState
         }    
         
     // see Tutorial 3 for why this is helpful
-    static final long serialVersionUID = -7164072518609011190L;
+    private static final long serialVersionUID = 1;
     }

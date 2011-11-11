@@ -13,6 +13,8 @@ import sim.util.*;
 
 public class Balls3D extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous3D balls;
     public Network bands;
 

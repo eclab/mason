@@ -20,6 +20,8 @@ import sim.util.*;
 
 public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
     {
+    private static final long serialVersionUID = 1;
+
     public int[/**x*/][/**y*/] field;
     
     public IntGrid2D (int width, int height)

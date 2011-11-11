@@ -12,6 +12,8 @@ import sim.util.*;
 
 public class Tutorial3 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public DoubleGrid2D trails;
     public SparseGrid2D particles;
     
@@ -48,7 +50,7 @@ public class Tutorial3 extends SimState
                 // decrease the trails
                 trails.multiply(0.9);
                 }
-            static final long serialVersionUID = 6330208160095250478L;
+            private static final long serialVersionUID = 1;
             };
             
         schedule.scheduleRepeating(Schedule.EPOCH,2,decreaser,1);
@@ -59,6 +61,4 @@ public class Tutorial3 extends SimState
         doLoop(Tutorial3.class, args);
         System.exit(0);
         }    
-
-    static final long serialVersionUID = 9115981605874680023L;    
     }

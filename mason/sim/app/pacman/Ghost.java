@@ -37,6 +37,8 @@ import ec.util.*;
 
 public abstract class Ghost extends Agent implements Steppable, Valuable
     {
+    private static final long serialVersionUID = 1;
+
     /** How long the ghost stays frightened. */
     public static final int FRIGHTENED_PERIOD = 360;
         

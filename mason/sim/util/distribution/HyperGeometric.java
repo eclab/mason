@@ -35,6 +35,8 @@ import ec.util.MersenneTwisterFast;
  * @version 1.0, 09/24/99
  */
 public class HyperGeometric extends AbstractDiscreteDistribution {
+    private static final long serialVersionUID = 1;
+
     protected       int my_N;
     protected       int my_s;
     protected       int my_n;
