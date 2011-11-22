@@ -30,6 +30,13 @@ public class Tutorial2 extends GUIState
     public Tutorial2(SimState state) { super(state); }
 </tt></pre>
 
+<p>
+<table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Why no <tt>serialVerUID</tt>?</b>
+<p>This isn't a model object.  It's not serializable.  So no need.
+</font></td></tr></table>
+
+
 <p>This simulation library makes a very bright dividing line between the simulation model and visualizers of that model.  This enables us (as we'll discover later) to run the model without visualization, then hook visualizers to it and see how it's doing (on a different machine no less), then unhook them and let it continue running at that point.
 
 <p>To do this, we need to make certain that <i>no</i> visualization objects are mixed into the simulation.  We do this by wrapping the SimState in an external object, called a <tt>sim.display.<b>GUIState</b></tt>, which is the sole access point for external visualization tools.  The GUIState is constructed by passing in the SimState it's supposed to wrap.  In this case, that's a <b>Tutorial1</b> object.

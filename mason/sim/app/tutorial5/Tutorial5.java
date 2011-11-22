@@ -12,6 +12,8 @@ import sim.util.*;
 
 public class Tutorial5 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D balls;
     public Network bands;
 
@@ -61,9 +63,9 @@ public class Tutorial5 extends SimState
             // schedule the balls to compute their force after everyone's moved
             s[i] = new Steppable()
                 {
-                public void step(SimState state) { ball.computeForce(state); }
-                // see Tutorial 3 for why this is helpful
                 private static final long serialVersionUID = 1;
+
+                public void step(SimState state) { ball.computeForce(state); }
                 };
             }
             
@@ -99,7 +101,4 @@ public class Tutorial5 extends SimState
         doLoop(Tutorial5.class, args);
         System.exit(0);
         }    
-        
-    // see Tutorial 3 for why this is helpful
-    private static final long serialVersionUID = 1;
     }

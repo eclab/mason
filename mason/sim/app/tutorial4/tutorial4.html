@@ -151,6 +151,8 @@ import sim.util.*;
 
 public class BigParticle extends Particle
     {
+    private static final long serialVersionUID = 1;
+
     public BigParticle(int xdir, int ydir) { super(xdir,ydir); }
 
     public void step(SimState state)
@@ -276,21 +278,20 @@ public class BigParticle extends Particle implements Proxiable
     // as well as its inclosing class!</font>
     public class MyProxy
         {
+    	private static final long serialVersionUID = 1;
+
         public int getXDir() { return xdir; }
         public int getYDir() { return ydir; }
-        <font color=gray>// because we are a non-static inner class</font>
-        static final long serialVersionUID = -2815745192429358605L;
         }
         
-    <font color=gray>// because we contain a non-static inner class</font>
-    static final long serialVersionUID = 7720089824883511682L;
-
     public Object propertiesProxy()
         {
         return new MyProxy();
         }
 </font>
 </tt></pre></td></tr></table>
+
+<P>Note the comment in the code: if you declare a non-static inner class, you MUST declare the serialVersionUID in both the inner and the outer class in order for the checkpoint files to be portable across different Java implementations.  Here again we're just setting them to 1.
 
 <p>Save and compile the files, and run.  Notice that now the Randomize checkbox has disappeared for BigParticle.
 
@@ -554,16 +555,6 @@ particlesPortrayal.setPortrayalForClass(<font color="blue">
 <p>Yes, but it's not red there, or bigger than the others.  Can you figure out why?
 </font></td></tr></table>
 <p>Save the files, compile and run.  When you can, double-click on the BigParticle and note that its inspector now has a button.  Press the button and the inspector's location and direction changes.
-
-<h2>Optionally Update the Serial Versions</h2>
-
-<p><table width="25%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
-<b>Wait, there are other anonymous classes now!</b>
-<p>True.  BigParticleInspector has one, and Tutorial4WithUI has one.  But neither of them are part of the model (they're not serialized).  So no need to give them UIDs.
-</font></td></tr></table>
-<p>Classnames have changed, and so the <b>serialVersionUID</b> values are technically "incorrect".  If you really feel the need for it, you might re-run serialver and change the values.  On MacOS X, they're 
-6976157378487763326L for the Decreaser, and 6930440709111220430L for Tutorial4.
-
 <br>
 <br>
 <br>

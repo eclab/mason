@@ -25,6 +25,8 @@ import sim.field.grid.*;
 
 public class Fly implements Steppable
     {
+    static final long serialVersionUID = 1;
+
     public void step(SimState state)
         {
         Tutorial7 tut = (Tutorial7) state;
@@ -60,6 +62,8 @@ import ec.util.*;
 
 public class Tutorial7 extends SimState
     {
+    static final long serialVersionUID = 1;
+
     public SparseGrid3D flies;
     public DoubleGrid2D xProjection;
     public DoubleGrid2D yProjection;
@@ -105,7 +109,7 @@ public class Tutorial7 extends SimState
                 }
                 
             <font color=gray>// because I am an anonymous nested subclass (see Tutorial 3)...</font>
-            static final long serialVersionUID = -4596371762755892330L;
+            static final long serialVersionUID = 1;
             });
 
         <font color=gray>// make some random flies at ordering 1</font>
@@ -126,9 +130,6 @@ public class Tutorial7 extends SimState
         doLoop(Tutorial7.class, args);
         System.exit(0);
         }
-
-    <font color=gray>// because I have an anonymous nested subclass (see Tutorial 3)...</font>
-    static final long serialVersionUID = -7776187839992045098L;
     }
 </tt></pre>
 

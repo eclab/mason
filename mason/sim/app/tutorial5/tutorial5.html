@@ -21,6 +21,8 @@ package sim.app.tutorial5;
 
 public class Band implements java.io.Serializable
     {
+    private static final long serialVersionUID = 1;
+
     public double laxDistance;
     public double strength;
     
@@ -54,6 +56,8 @@ import ec.util.*;
 
 public class Tutorial5 extends SimState
     {
+    private static final long serialVersionUID = 1;
+
     public Continuous2D balls;
     public Network bands;
 
@@ -124,6 +128,8 @@ Now we'll create the balls.  Each ball will be its own agent.  When its step() m
             <font color=gray>// schedule the balls to compute their force after everyone's moved</font>
             s[i] = new Steppable()
                 {
+		private static final long serialVersionUID = 1;
+
                 public void step(SimState state) { ball.computeForce(state); }
                 <font color=gray>// see Tutorial 3 for why this is helpful</font>
                 static final long serialVersionUID = -4269174171145445918L;

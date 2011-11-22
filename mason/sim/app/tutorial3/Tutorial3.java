@@ -45,12 +45,13 @@ public class Tutorial3 extends SimState
         // Schedule the decreaser
         Steppable decreaser = new Steppable()
             {
-            public void step(SimState state)
+            private static final long serialVersionUID = 1;
+            
+           public void step(SimState state)
                 {
                 // decrease the trails
                 trails.multiply(0.9);
                 }
-            private static final long serialVersionUID = 1;
             };
             
         schedule.scheduleRepeating(Schedule.EPOCH,2,decreaser,1);

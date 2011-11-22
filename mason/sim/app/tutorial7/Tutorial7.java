@@ -52,7 +52,7 @@ public class Tutorial7 extends SimState
                 }
                 
             // because I am an anonymous nested subclass (see Tutorial 3)...
-            static final long serialVersionUID = -4596371762755892330L;
+            static final long serialVersionUID = 1;
             });
 
         // make some random flies at ordering 1
@@ -70,7 +70,4 @@ public class Tutorial7 extends SimState
         doLoop(Tutorial7.class, args);
         System.exit(0);
         }    
-
-    // because I have an anonymous nested subclass (see Tutorial 3)...
-    static final long serialVersionUID = -7776187839992045098L;
     }
