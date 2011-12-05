@@ -62,6 +62,4 @@ public class Particles3D extends SimState
         doLoop(Particles3D.class, args);
         System.exit(0);
         }    
-
-    static final long serialVersionUID = 9115981605874680023L;    
     }

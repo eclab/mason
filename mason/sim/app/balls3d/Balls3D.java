@@ -104,7 +104,4 @@ public class Balls3D extends SimState
         doLoop(Balls3D.class, args);
         System.exit(0);
         }    
-        
-    // see Tutorial 3 for why this is helpful
-    static final long serialVersionUID = -7164072518609011190L;
     }
