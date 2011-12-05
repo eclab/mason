@@ -8,21 +8,14 @@ package sim.util.media.chart;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 import java.util.*;
 import sim.util.gui.*;
 
 // From JFreeChart (jfreechart.org)
-import org.jfree.data.xy.*;
-import org.jfree.chart.*;
-import org.jfree.chart.event.*;
-import org.jfree.chart.plot.*;
-import org.jfree.data.general.*;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
-import org.jfree.data.xy.*;
 
 public class ScatterPlotSeriesAttributes extends SeriesAttributes
     {
@@ -130,7 +123,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
 
     public void setName(String val) 
         {
-        setName(val);
+        super.setName(val);
         ((ScatterPlotGenerator)generator).update();
         }
                         

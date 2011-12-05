@@ -247,7 +247,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 labelFont.getSize2D();
             if (scaledFont == null || 
                 scaledFont.getSize2D() != size || 
-                scaledFont.getFamily() != labelFont.getFamily() ||
+                !scaledFont.getFamily().equals(labelFont.getFamily()) ||
                 scaledFont.getStyle() != labelFont.getStyle())
                 scaledFont = this.scaledFont = labelFont.deriveFont(size);
             

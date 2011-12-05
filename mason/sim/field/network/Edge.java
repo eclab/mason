@@ -100,7 +100,7 @@ public class Edge implements java.io.Serializable, Comparable
         this.to = to;
         this.info = info;
         this.indexFrom = indexFrom;
-        this.indexFrom = indexTo;
+        this.indexTo = indexTo;
         }
 
     /**

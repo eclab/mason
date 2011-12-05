@@ -45,9 +45,11 @@ public class CausedRuntimeException extends RuntimeException
         if (target == null)  // duh, need to print our own stack trace
             super.printStackTrace();
         else
+            {
             stream.println("CausedRuntimeException: " + message);
-        stream.println("Caused By:");
-        target.printStackTrace(stream);
+            stream.println("Caused By:");
+            target.printStackTrace(stream);
+            }
         }
 
     public void printStackTrace(PrintWriter stream)
@@ -55,9 +57,11 @@ public class CausedRuntimeException extends RuntimeException
         if (target == null)  // duh, need to print our own stack trace
             super.printStackTrace();
         else
+            {
             stream.println("CausedRuntimeException: " + message);
-        stream.println("Caused By:");
-        target.printStackTrace(stream);
+            stream.println("Caused By:");
+            target.printStackTrace(stream);
+            }
         }
                 
     public void printStackTrace() { printStackTrace(System.err); }

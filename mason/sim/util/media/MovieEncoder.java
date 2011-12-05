@@ -464,7 +464,7 @@ class MovieEncoderDataStream implements PullBufferStream
     boolean endAcknowledged = false;
     float frameRate;
     
-    MovieEncoderDataStream(Format format, float frameRate) { frameRate = this.frameRate ;this.format = format; }
+    MovieEncoderDataStream(Format format, float frameRate) { this.frameRate = frameRate ;this.format = format; }
     
     void finish()
         {

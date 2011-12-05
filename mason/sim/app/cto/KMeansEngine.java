@@ -8,7 +8,7 @@ package sim.app.cto;
 
 import sim.util.Double2D;
 
-public /*strictfp*/ class KMeansEngine
+public /*strictfp*/ class KMeansEngine implements java.io.Serializable
     {
     private static final long serialVersionUID = 1;
 
@@ -34,7 +34,7 @@ public /*strictfp*/ class KMeansEngine
             {
             clusterPoints[i] = new Double2D();
             means[i] = new Double2D();
-            usable[i] = Boolean.FALSE;
+            usable[i] = new Boolean(false);  // Boolean.FALSE;
             }
         labels = new int[ CooperativeObservation.NUM_TARGETS ];
         n = new int[ CooperativeObservation.NUM_AGENTS ];
@@ -118,11 +118,11 @@ public /*strictfp*/ class KMeansEngine
                         means[i] = new Double2D( means[i].x/n[i], means[i].y/n[i] );
                         clusterPoints[i] = new Double2D( (1-ALFA)*clusterPoints[i].x + ALFA*means[i].x,
                             (1-ALFA)*clusterPoints[i].y + ALFA*means[i].y );
-                        usable[i] = Boolean.TRUE;
+                        usable[i] = new Boolean(true);  // Boolean.TRUE;
                         }
                     else
                         {
-                        usable[i] = Boolean.FALSE;
+                        usable[i] = new Boolean(false);  // Boolean.FALSE;
                         }
                     }
                 }

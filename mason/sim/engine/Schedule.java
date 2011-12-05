@@ -673,8 +673,12 @@ public class Schedule implements java.io.Serializable
                 
         public boolean equals(Object obj)
             {
-            Key o = (Key)obj;
-            return (o.time == time && o.ordering == ordering);
+            if (obj != null && obj instanceof Key)
+                {
+                Key o = (Key)obj;
+                return (o.time == time && o.ordering == ordering);
+                }
+            else return false;
             }
                         
         public int hashCode()

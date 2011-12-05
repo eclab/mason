@@ -2353,3 +2353,4 @@ Version 17
 		<chris.hollander@gmail.com>
 	Made all classes in sim.util.distributions Serializable
 	Added a fixed serialVerUID (=1) to all Serializable classes
+	Various tweaks and fixes.  Thanks to Richard Legendi <rlegendi@aitia.ai>
