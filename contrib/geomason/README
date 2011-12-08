@@ -42,3 +42,12 @@ java sim.app.geo.schellingspace.SchellingSpaceWithUI
 java sim.app.geo.sleuth.SleuthWorldWithUI
 
 java sim.app.geo.schellingpolygon.PolySchellingWithUI
+
+java sim.app.geo.turkana.TurkanaSouthModelWithUI
+
+Note that the following demo has a dependency on the
+Stochastic Simulation in Java library, which is found
+at http://www.iro.umontreal.ca/~simardr/ssj/indexe.html
+
+java sim.app.geo.sickStudents.SickStudentsModelWithUI
+
