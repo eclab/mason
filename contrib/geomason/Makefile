@@ -13,6 +13,10 @@ VERSION = 1.1
 
 JARFILE = geomason.${VERSION}.jar
 
+SRC_DISTRO  = geomason.src.${VERSION}.tgz
+DEMO_DISTRO = geomason.demos.${VERSION}.tgz
+DATA_DISTRO = geomason.data.${VERSION}.tgz
+
 all: jar demos
 
 
@@ -26,13 +30,26 @@ sim/app/geo/schellingspace/*.java		\
 sim/app/geo/schellingpolygon/*.java		\
 sim/app/geo/gridlock/*.java			\
 sim/app/geo/waterworld/*.java			\
-sim/app/geo/sillypeds/*.java
+sim/app/geo/sillypeds/*.java			\
+sim/app/geo/sickStudents/*.java			\
+sim/app/geo/turkana/*.java
 
 # Note that we do not restrict demos to Java 1.4 as is this case with MASON
 demos : ${JARFILE}
 	@echo "Compiling examples..."
 	@javac -cp ${CLASSPATH}:${JARFILE} $(DEMOS)
 
+
+dist : ${SRC_DISTRO} ${DEMO_DISTRO} ${DATA_DISTRO}
+
+${SRC_DISTRO} :
+	tar cvzf $@ `find sim/field sim/io sim/portrayal sim/util -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+
+${DEMO_DISTRO} :
+	tar cvzf $@ `find sim/app -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" -or -name "README"`
+
+${DATA_DISTRO} :
+	tar cvzf $@ `find sim/app/data -type f | grep -v '.svn'`
 
 # Delete all the class files, checkpoints, and other various garbage
 clean:
@@ -91,12 +108,12 @@ OGR_FILES = sim/io/geo/OGRImporter.java
 # Add GDAL_FILES, GEOTOOL_FILES and/or OGR_FILES if you want support for those
 ${JARFILE} : $(BASE_FILES) # $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
 	@echo "Creating ${JARFILE}..."
-	touch /tmp/manifest.add
-	rm /tmp/manifest.add
-	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	@touch /tmp/manifest.add
+	@rm /tmp/manifest.add
+	@echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	@javac ${JAVACFLAGS} $^
 	@jar -cvmf /tmp/manifest.add $@ `find sim/field sim/io sim/portrayal sim/util -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
-	rm /tmp/manifest.add
+	@rm /tmp/manifest.add
 
 
 jar : ${JARFILE}
