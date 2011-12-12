@@ -1,11 +1,21 @@
 #
+# GeoMason make file
+#
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
 #
+# To create jar file of GeoMason component:
+# make jar
+#
+# To make the demos:
+# make demos 
+#
+# See other make options:
+# make help
 
 JAVAC = javac 
 
-# GeoMason support Java 5; note that MASON is still behind the times and only supports Java 4.
+# GeoMason supports Java 5; note that MASON is still behind the times and only supports Java 4.
 JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
@@ -15,9 +25,8 @@ JARFILE = geomason.${VERSION}.jar
 
 SRC_DISTRO  = geomason.src.${VERSION}.tgz
 DEMO_DISTRO = geomason.demos.${VERSION}.tgz
-DATA_DISTRO = geomason.data.${VERSION}.tgz
 
-all: jar demos
+all: jar 
 
 
 DEMOS = sim/app/geo/campusworld/*.java		\
@@ -40,16 +49,21 @@ demos : ${JARFILE}
 	@javac -cp ${CLASSPATH}:${JARFILE} $(DEMOS)
 
 
-dist : ${SRC_DISTRO} ${DEMO_DISTRO} ${DATA_DISTRO}
+dist : ${SRC_DISTRO} ${DEMO_DISTRO}
 
 ${SRC_DISTRO} :
-	tar cvzf $@ `find sim/field sim/io sim/portrayal sim/util -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+	mkdir geomason-${VERSION}
+	cp Makefile README LICENSE CHANGES ChangeLog geomason-${VERSION}
+	(cd geomason-${VERSION}; ln -is ../sim .)
+	tar cvzf $@ geomason-${VERSION}/{README,Makefile,LICENSE,CHANGES,ChangeLog} `find geomason-${VERSION}/sim/field geomason-${VERSION}/sim/io geomason-${VERSION}/sim/portrayal geomason-${VERSION}/sim/util -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+	rm -rf geomason-${VERSION}
 
 ${DEMO_DISTRO} :
-	tar cvzf $@ `find sim/app -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" -or -name "README"`
+	mkdir geomason-${VERSION}
+	(cd geomason-${VERSION}; ln -is ../sim .)
+	tar cvzf $@ `find geomason-${VERSION}/sim/app -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" -or -name "README"` `find geomason-${VERSION}/sim/app/data -type f | grep -v '.svn'`
+	rm -rf geomason-${VERSION}
 
-${DATA_DISTRO} :
-	tar cvzf $@ `find sim/app/data -type f | grep -v '.svn'`
 
 # Delete all the class files, checkpoints, and other various garbage
 clean:
@@ -128,6 +142,7 @@ help:
 	@echo "make demos	Builds the GeoMason examples"
 	@echo "make docs	Builds the documentation"
 	@echo "make doc 	Same thing"
+	@echo "make dist	Builds distribution tarballs"
 	@echo "make clean	Cleans various gunk"
 	@echo "make help	This message!"
 	@echo "make indent	Uses emaces to re-indent all the java files"
