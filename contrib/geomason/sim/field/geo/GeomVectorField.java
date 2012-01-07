@@ -119,7 +119,9 @@ public class GeomVectorField extends GeomField
 
         // XXX is intersects() correct? Would covers be appropriate?
         if (convexHull.intersects(p))
+        {
             return true;
+        }
         return false; 
     }
         
@@ -153,8 +155,10 @@ public class GeomVectorField extends GeomField
     public boolean isInsideUnion(final Coordinate point)
     {
     	Point p = geomFactory.createPoint(point);
-    	if (globalUnion.intersects(p)) 
-    		return true;
+    	if (globalUnion.intersects(p))
+        {
+            return true;
+        }
         return false; 
     }
         
@@ -166,8 +170,10 @@ public class GeomVectorField extends GeomField
 		Bag geometries = new Bag(); 
 		List<?> gList = spatialIndex.query(e);
 		
-		if (gList.isEmpty()) 
-			gList = spatialIndex.queryAll();
+		if (gList.isEmpty())
+        {
+            gList = spatialIndex.queryAll();
+        }
 		
 		geometries.addAll(gList); 
 		return geometries; 
@@ -215,7 +221,9 @@ public class GeomVectorField extends GeomField
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
 			if (!g.equals(g1) && g1.covers(g))
-				coveringObjects.add(gm);
+            {
+                coveringObjects.add(gm);
+            }
 		}
         return coveringObjects;
     }
@@ -228,14 +236,18 @@ public class GeomVectorField extends GeomField
 		List<?> gList = spatialIndex.queryAll(); 
 		
 		if (g.preparedGeometry == null)
-			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry()); 
+        {
+            g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+        }
 	
         for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
-			if (g.preparedGeometry.covers(g1)) 
-				coveringObjects.add(gm); 
+			if (g.preparedGeometry.covers(g1))
+            {
+                coveringObjects.add(gm);
+            }
 		}
         return coveringObjects;
 	}
@@ -255,7 +267,9 @@ public class GeomVectorField extends GeomField
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
 			if (!g.equals(g1) && g1.contains(g))
-				containingObjects.add(gm);
+            {
+                containingObjects.add(gm);
+            }
 		}
         return containingObjects;
     }
@@ -269,14 +283,18 @@ public class GeomVectorField extends GeomField
 		Envelope e = g.getGeometry().getEnvelopeInternal();
 		List<?> gList = spatialIndex.query(e);
 		if (g.preparedGeometry == null)
-			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry()); 
+        {
+            g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+        }
 	
 		for (int i = 0; i < gList.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry)gList.get(i); 
 			Geometry g1 = gm.getGeometry();
 			if (!g.equals(g1) && g.preparedGeometry.touches(g1))
-				touchingObjects.add(gm);
+            {
+                touchingObjects.add(gm);
+            }
 		}
         return touchingObjects;
 	}
@@ -291,12 +309,16 @@ public class GeomVectorField extends GeomField
 		Envelope e = g.getGeometry().getEnvelopeInternal(); 
 		List<?> gList = spatialIndex.query(e);
 		if (g.preparedGeometry == null)
-			g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+        {
+            g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+        }
 		
 		for (int i=0; i < gList.size(); i++) {
 			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry();
 			if (!g.equals(g1) && g.preparedGeometry.covers(g1))
-				return true; 
+            {
+                return true;
+            }
 		}
 		return false; 
 	}
@@ -308,15 +330,18 @@ public class GeomVectorField extends GeomField
     */ 
     public boolean isCovered(final Coordinate point)
     {
-		Envelope e = new Envelope(point);
-		List<?> gList = spatialIndex.query(e);
-		PreparedPoint p = new PreparedPoint(geomFactory.createPoint(point));
-        for (int i=0; i < gList.size(); i++) {
-			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry();
-			if (p.intersects(g1))
-				return true;
+        Envelope e = new Envelope(point);
+        List<?> gList = spatialIndex.query(e);
+        PreparedPoint p = new PreparedPoint(geomFactory.createPoint(point));
+        for (int i = 0; i < gList.size(); i++)
+        {
+            Geometry g1 = ((MasonGeometry) gList.get(i)).getGeometry();
+            if (p.intersects(g1))
+            {
+                return true;
             }
-        return false; 
+        }
+        return false;
     }
 	
 	
@@ -325,8 +350,10 @@ public class GeomVectorField extends GeomField
 	public Point getGeometryLocation(Geometry g)
 	{
 		Geometry g1 = findGeometry(g);
-		if (g1.equals(g)) 
-			return g1.getCentroid(); 
+		if (g1.equals(g))
+        {
+            return g1.getCentroid();
+        }
 		return null; 
 	}
 	
@@ -341,17 +368,30 @@ public class GeomVectorField extends GeomField
 		 }
 	 }
 			
-	 /** Helper function to locate a specific geometry inside the quadtree */ 
-	 Geometry findGeometry(Geometry g)
-	 {
-		List<?> gList = spatialIndex.query(g.getEnvelopeInternal());
-		for (int i=0; i < gList.size(); i++) {
-			Geometry g1 = ((MasonGeometry)gList.get(i)).getGeometry(); 
-			if (g1.equals(g)) 
-				return g1;
-		}
-		return g; 	
-	 }
+     /** Locate a specific geometry inside the quadtree
+      * <p>
+      * XXX Is returning what we're looking for when the target geometry is
+      * not found the desired behavior?
+      * 
+      * @param g is geometry for which we're looking
+      * @return located geometry; will return g if not found.
+      */
+    public Geometry findGeometry(Geometry g)
+    {
+        List<?> gList = spatialIndex.query(g.getEnvelopeInternal());
+
+        for (int i = 0; i < gList.size(); i++)
+        {
+            Geometry g1 = ((MasonGeometry) gList.get(i)).getGeometry();
+            if (g1.equals(g))
+            {
+                return g1;
+            }
+        }
+        
+        return g;
+    }
+    
 
 	 public void updateTree(Geometry g, com.vividsolutions.jts.geom.util.AffineTransformation at)
 	 {
@@ -372,51 +412,80 @@ public class GeomVectorField extends GeomField
 		 } */
 	 }
 
-	 /**
-	  *  Searches the field for the object with attribute <i>name</i> that has value <i>value</i>. 
-	  *  Returns null if no such object exists 
-	  */
-	 @SuppressWarnings("unchecked")
-	public MasonGeometry getGeometry(String name, Object value)
-	 {
-		 AttributeField key = new AttributeField(name); 
-		 List<?> gList = spatialIndex.queryAll(); 
-		 for (int i=0; i < gList.size(); i++) { 
-			 MasonGeometry mg = (MasonGeometry)gList.get(i); 
-			 Geometry g = mg.getGeometry(); 
-			 ArrayList<AttributeField> attrs = (ArrayList<AttributeField>)g.getUserData(); 
-			 int index = Collections.binarySearch(attrs, key, GeometryUtilities.attrFieldCompartor); 
-			 if (index >= 0) { 
-				 if (attrs.get(index).value.equals(value))
-					 return mg; 
-			 }
-		 }
-		 return null; 
-	 }
+     
+
+	 /** Searches the field for the object with attribute <i>name</i> that has value <i>value</i>.
+      *
+      * @param name of attribute
+      * @param value of attribute
+      *
+      * @return MasonGeometry with specified attribute otherwise null
+      */
+    @SuppressWarnings("unchecked")
+    public MasonGeometry getGeometry(String name, Object value)
+    {
+        AttributeField key = new AttributeField(name);
+        List<?> gList = spatialIndex.queryAll();
+
+        for (int i = 0; i < gList.size(); i++)
+        {
+            MasonGeometry mg = (MasonGeometry) gList.get(i);
+            Geometry g = mg.getGeometry();
+            ArrayList<AttributeField> attrs = null;
+
+            // It may be that the object has no attributes.  If so, this
+            // will throw an exception.
+            try
+            {
+                attrs = (ArrayList<AttributeField>) g.getUserData();
+            } catch (Exception e)
+            {
+                return null;
+            }
+
+            int index = Collections.binarySearch(attrs, key, GeometryUtilities.attrFieldCompartor);
+
+            if (index >= 0)
+            {
+                if (attrs.get(index).value.equals(value))
+                {
+                    return mg;
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    
 	 
 	 public Envelope clipEnvelope; 
 	 DrawInfo2D myInfo; 
 	 public AffineTransform worldToScreen; 
 	 public com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform; 
-	 
-	 public void updateTransform(DrawInfo2D info) 
-	 {
-		 // need to update the transform 
-		 if (!info.equals(myInfo)) { 
-			 myInfo = info; 
-			 // compute the transform between world and screen coordinates, and
-			 // also construct a geom.util.AffineTransform for use in hit-testing
-			 // later
-			 Envelope MBR = getMBR();
-			 worldToScreen = GeometryUtilities.worldToScreenTransform(MBR, info);
-			 jtsTransform = GeometryUtilities.getPortrayalTransform(worldToScreen, this, info.draw);
-		
-			 Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y);
-			 Point2D p2 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x + info.clip.width,
-				info.clip.y + info.clip.height);
 
-			 clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
-		 }
-	 }
+
+
+    public void updateTransform(DrawInfo2D info)
+    {
+        // need to update the transform
+        if (! info.equals(myInfo))
+        {
+            myInfo = info;
+            // compute the transform between world and screen coordinates, and
+            // also construct a geom.util.AffineTransform for use in hit-testing
+            // later
+            Envelope myMBR = getMBR();
+            
+            worldToScreen = GeometryUtilities.worldToScreenTransform(myMBR, info);
+            jtsTransform = GeometryUtilities.getPortrayalTransform(worldToScreen, this, info.draw);
+
+            Point2D p1 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x, info.clip.y);
+            Point2D p2 = GeometryUtilities.screenToWorldPointTransform(worldToScreen, info.clip.x + info.clip.width,
+                                                                       info.clip.y + info.clip.height);
+
+            clipEnvelope = new Envelope(p1.getX(), p2.getX(), p1.getY(), p2.getY());
+        }
+    }
 	 
 }
