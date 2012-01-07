@@ -318,4 +318,81 @@ public final class Double3D implements java.io.Serializable
         final double dz = Math.abs((double)this.z - p.z);
         return dx + dy + dz;
         }
+
+    /** Adds Double3D "other" to current Double3D using 
+     * vector addition */
+    public final Double3D add(Double3D other)
+        {
+        return new Double3D(x + other.x, y + other.y, z + other.z);
+        }
+
+    /** Subtracts Double3D "other" from current Double3D using 
+     * vector subtraction */
+    public final Double3D subtract(Double3D other)
+        {
+        return new Double3D(x - other.x, y - other.y, z - other.z);
+        }
+        
+    /** Returns the vector length of the Double3D */
+    public final double length()
+        {
+        return Math.sqrt(x * x + y * y + z * z);
+        }
+        
+    /** Returns the vector length of the Double3D */
+    public final double lengthSq()
+        {
+        return x*x+y*y+z*z;
+        }
+        
+    /** Multiplies each element by scalar "val" */
+    public final Double3D multiply(double val)
+        {
+        return new Double3D(x * val, y * val, z * val);
+        }
+
+    /** Scales the vector to length "dist".  dist must be a finite value.  If the vector has
+        NaN or infinite values, then the vector cannot be resized to any length except for 0:
+        other lengths will throw an exception in this case. */
+    public final Double3D resize(double dist)
+        {
+        if (dist == 0)
+            return new Double3D(0, 0, 0);
+        else if (dist == infinity  || dist == -infinity || dist != dist /* nan */)
+            throw new ArithmeticException("Cannot resize to distance " + dist);
+        else if (   x == infinity || x == -infinity || x != x || 
+                    y == infinity || y == -infinity || y != y || 
+                    z == infinity || z == -infinity || z != z )
+            throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, except to length 0");
+
+        double temp = length();
+        return new Double3D(x * dist / temp, y * dist / temp, z * dist / temp);
+        }
+
+    static final double infinity = 1.0 / 0.0;
+
+    /** Normalizes the vector (sets its length to 1).  If the vector has NaN or infinite values,
+        then an exception will be thrown.*/
+    public final Double3D normalize()
+        {
+    /*
+        final double invertedlen = 1.0 / Math.sqrt(x * x + y * y + z * z);
+        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen)  // nan
+        throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y + z * z) + ", cannot normalize");
+        return new Double3D(x * invertedlen, y * invertedlen, z * invertedlen);
+    */
+        return resize(1.0);
+        } 
+
+    /** Takes the dot product this Double3D with another */
+    public final double dot(Double3D other)
+        {
+        return other.x * x + other.y * y + other.z * z;
+        }
+
+    /** Returns the negation of this Double3D. */
+    public final Double3D negate()
+        {
+            return new Double3D(-x, -y, -z);
+        }
     }

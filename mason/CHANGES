@@ -2356,3 +2356,6 @@ Version 17
 	Various tweaks and fixes.  Thanks to Richard Legendi <rlegendi@aitia.ai>
 	Added Interval.contains(Number) and Interval.contains(doube).  Thanks to
 		Benjamin Axelrod <baxelrod@irobot.com>
+	Added functions to Double3D.  Thanks to Benjamin Axelrod 
+		<baxelrod@irobot.com>
+	Tweaks to Double3D and Double2D's normalize() and resize() functions.

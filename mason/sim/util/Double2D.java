@@ -330,30 +330,37 @@ public final class Double2D implements java.io.Serializable
         return new Double2D(x * val, y * val);
         }
 
-    /** Scales the vector to length "dist" */
+
+
+    /** Scales the vector to length "dist".  dist must be a finite value.  If the vector has
+        NaN or infinite values, then the vector cannot be resized to any length except for 0:
+        other lengths will throw an exception in this case. */
     public final Double2D resize(double dist)
         {
-        if(dist == 0)
+        if (dist == 0)
             return new Double2D(0, 0);
-        if(x == 0 && y == 0)
-            return new Double2D(0, 0);
+        else if (dist == infinity  || dist == -infinity || dist != dist /* nan */)
+            throw new ArithmeticException("Cannot resize to distance " + dist);
+        else if (   x == infinity || x == -infinity || x != x || 
+                    y == infinity || y == -infinity || y != y )
+            throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, except to length 0");
 
         double temp = length();
         return new Double2D(x * dist / temp, y * dist / temp);
         }
 
-    /** Normalizes the vector (sets it length to 1) */
     static final double infinity = 1.0 / 0.0;
+    /** Normalizes the vector (sets its length to 1).  If the vector has NaN or infinite values,
+        then an exception will be thrown.*/
     public final Double2D normalize()
         {
-/*
-  double len = length();
-  return new Double2D(x / len, y / len);
-*/
+    /*
         final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
-        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen /* nan */)
+        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen) // nan
             throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
         return new Double2D(x * invertedlen,  y * invertedlen);
+    */
+        return resize(1.0);
         } 
 
     /** Takes the dot product this Double2D with another */
