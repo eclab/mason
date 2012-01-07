@@ -889,6 +889,8 @@ Many of the standard provided SimplePortrayal2D objects have a <b>paint</b> vari
         };
 </tt></pre>
 
+<p>Another option is to use <b>sim.portrayal.simple.FacetedPortrayal2D</b>.  This wrapper portrayal takes some number of subsidiary portrayals and chooses the one to draw based on a function which you can override (<b>getChildIndex(...)</b>).  The default implementation of the function an also be used if your object is a number or is <b>sim.util.Valuable</b>
+
 <a name="trails"><h2>How to Draw "Trails" or "Mouse Tails" Dragging Behind Objects</a></h2>
 
 You may wish to draw trails behind objects as they move about, thus showing where they've been in the past.  MASON has a special SimplePortrayal2D wrapper class which is designed for this purpose: <b>sim.portrayal.simple.TrailedPortrayal2D</b>.  The class comes with a lot of class documentation describing how you use it.  Also the HeatBugsWithUI and FlockersWithUI classes have (commented out) examples of using TrailedPortrayal2D.

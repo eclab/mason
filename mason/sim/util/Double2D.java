@@ -333,7 +333,7 @@ public final class Double2D implements java.io.Serializable
 
 
     /** Scales the vector to length "dist".  dist must be a finite value.  If the vector has
-        NaN or infinite values, then the vector cannot be resized to any length except for 0:
+        NaN, zero, or infinite values, then the vector cannot be resized to any length except for 0:
         other lengths will throw an exception in this case. */
     public final Double2D resize(double dist)
         {
@@ -341,17 +341,19 @@ public final class Double2D implements java.io.Serializable
             return new Double2D(0, 0);
         else if (dist == infinity  || dist == -infinity || dist != dist /* nan */)
             throw new ArithmeticException("Cannot resize to distance " + dist);
-        else if (   x == infinity || x == -infinity || x != x || 
+        else if (   (x == 0 && y == 0) ||
+                    x == infinity || x == -infinity || x != x || 
                     y == infinity || y == -infinity || y != y )
-            throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, except to length 0");
+            throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, or of length 0, except to length 0");
 
         double temp = length();
         return new Double2D(x * dist / temp, y * dist / temp);
         }
 
     static final double infinity = 1.0 / 0.0;
+
     /** Normalizes the vector (sets its length to 1).  If the vector has NaN or infinite values,
-        then an exception will be thrown.*/
+        or has all zero values, then an exception will be thrown.*/
     public final Double2D normalize()
         {
     /*
