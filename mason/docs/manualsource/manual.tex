@@ -2707,7 +2707,9 @@ MersenneTwisterFast has identical methods to \class{java.util.Random}, plus one 
 \mthd{public void setSeed(long seed)} Seeds the random number generator.  Note that only the first 32 bits of the seed are used.
 \mthd{public void setSeed(int[] vals)} Seeds the random number generator using the given array.  Only the first 624 integers in the array are used.  If the array is shorter than 624, then the integers are repeatedly used in a wrap-around fashion (not recommended).  The integers can be anything, but you should avoid too many zeros.
 \mthd{public double nextDouble()} Returns a random double drawn in the half-open interval from [0.0, 1.0).  That is, 0.0 may be drawn but 1.0 will never be drawn.
+\mthd{public double nextDouble(boolean includeZero, boolean includeOne)} Returns a random double drawn in interval from 0.0 to 1.0, possibly including 0.0 or 1.0 or both, as specified in the arguments.
 \mthd{public float nextFloat()} Returns a random float drawn in the half-open interval from [0.0f, 1.0f).  That is, 0.0f may be drawn but 1.0f will never be drawn.
+\mthd{public float nextFloat(boolean includeZero, boolean includeOne)} Returns a random float drawn in interval from 0.0f to 1.0f, possibly including 0.0f or 1.0f or both, as specified in the arguments.
 \mthd{public double nextGaussian()} Returns a random double drawn from the standard normal Gaussian distribution (that is, a Gaussian distribution with a mean of 0 and a standard deviation of 1).
 \mthd{public long nextLong()} Returns a random long.
 \mthd{public long nextLong(long n)} Returns a random long drawn from between 0 to \(n-1\) inclusive.
