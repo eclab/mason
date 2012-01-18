@@ -42,7 +42,7 @@ import java.util.*;
  *
  * <h3>About this Version</h3>
  *
- * <p><b>Changes since V16:<b> Added nextDouble(includeZero, includeOne) and
+ * <p><b>Changes since V16:</b> Added nextDouble(includeZero, includeOne) and
  * nextFloat(includeZero, includeOne) to allow for half-open, fully-closed, and
  * fully-open intervals.
  *
