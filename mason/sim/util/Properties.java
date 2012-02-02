@@ -5,6 +5,7 @@
 */
 
 package sim.util;
+import java.text.*;
 import java.util.*;
 
 /**
@@ -189,7 +190,7 @@ public abstract class Properties implements java.io.Serializable
                     }
                 }
             else if ( type == Float.TYPE ) return _setValue(index,Float.valueOf(value));
-            else if ( type == Double.TYPE ) return _setValue(index,Double.valueOf(value));
+            else if ( type == Double.TYPE ) return _setValue(index,betterDoubleValueOf(value));
             else if ( type == Character.TYPE ) return _setValue(index,new Character(value.charAt(0)));
             else if ( type == String.class ) return _setValue(index,value);
             else return null;
@@ -200,6 +201,29 @@ public abstract class Properties implements java.io.Serializable
             return null;
             }
         }
+    
+    /**
+     * Replaces <code>Double.valueOf()</code> for the GUI.
+     * 
+     * <p>
+     * For specific locals, the separator char may be other than <code>'.'</code> (like <code>','</code> for instance),
+     * and in these cases a simple <code>Double.valueOf()</code> code results in a <code>NumberFormatException</code>.
+     * </p>
+     * 
+     * <p>
+     * This cause an error when there is a double parameter with a <code>domFoo()</code> function returning an
+     * <code>Interval</code> object and the systems current local setting is non-US.
+     * </p>
+     * 
+     * @param s the string object to transform into a <code>Double</code>
+     * @return a <code>Double</code> instance representing <code>s</code>.
+     * @throws ParseException if the specified <code>s</code> string cannot be parsed as a <code>Double</code>
+     */
+    NumberFormat format = NumberFormat.getInstance();
+    Double betterDoubleValueOf(String s) throws ParseException
+    	{
+        return Double.valueOf( format.parse(s).doubleValue() );
+    	}
     
     /*
       f = new JFrame();

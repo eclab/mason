@@ -2361,4 +2361,5 @@ Version 17
 	Tweaks to Double3D and Double2D's normalize() and resize() functions.
         Updated MersenneTwister and MersenneTwisterFast to allow full-open, half-open 
 		(both directions) and fully-closed intervals for nextDouble and nextFloat
-
+	getDom() updated to reflect locale-specific number formatting.  Thanks to
+		Richard Legendi <rlegendi@aitia.ai>
