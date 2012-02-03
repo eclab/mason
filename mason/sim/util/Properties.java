@@ -202,6 +202,7 @@ public abstract class Properties implements java.io.Serializable
             }
         }
     
+    NumberFormat format = NumberFormat.getInstance();
     /**
      * Replaces <code>Double.valueOf()</code> for the GUI.
      * 
@@ -219,7 +220,6 @@ public abstract class Properties implements java.io.Serializable
      * @return a <code>Double</code> instance representing <code>s</code>.
      * @throws ParseException if the specified <code>s</code> string cannot be parsed as a <code>Double</code>
      */
-    NumberFormat format = NumberFormat.getInstance();
     Double betterDoubleValueOf(String s) throws ParseException
     	{
         return Double.valueOf( format.parse(s).doubleValue() );
