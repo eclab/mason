@@ -1838,12 +1838,33 @@ public class Console extends JFrame implements Controller
                     }
                 });
 
+
+            // The list of models will be placed into a Java dialog box.  When we double-click on a model,
+            // we'd like it to essentially click on the "Select" button, but we don't have much control over that.
+            // The best we can do is dispose the dialog window, but this looks like we've canceled things.
+            // So what we'll do here is create a boolean called doubleClick, and fill it out with 'true' if
+            // we're disposing the window because the user double-clicked on a list element rather than
+            // cancelling and closing the window.  Thus here are the possible situations:
+            //
+            // User hit the close box or pressed ESCAPE:    doubleClick[0] = false, reply = -1
+            // User hit the "Quit" button:                  doubleClick[0] = false, reply = 1
+            // User hit the "Selet" button:                 doubleClick[0] = false, reply = 0
+            // User double-clicked on a model:              doubleClick[0] = true, reply = -1
+            //
+            // ('reply' is the integer value that the modal dialog box returns after you call showOptionDialog below)
+            //
+            // So if doubleClick[0] = true OR if reply = 0, then we have a valid model to load
+            // Otherwise we want to cancel the dialog
+
+            final boolean[] doubleClick = new boolean[]{ false };
             list.addMouseListener(new MouseAdapter() 
                 {
                 public void mouseClicked(MouseEvent e) 
                     {
                     if (e.getClickCount() == 2) 
                         {
+                        doubleClick[0] = true;      // see long comment above
+                        
                         // prematurely get frame and close it
                         Component c = list;
                         while(c.getParent() != null)
@@ -1861,7 +1882,7 @@ public class Console extends JFrame implements Controller
                         
             int reply = showOptionDialog(null, p, "New Simulation", new Object[] {"Select", 
                                                                                   startingUp ? "Quit" : "Cancel"}, true);
-            if (reply == 1)  // not -1 -- caused by disposing the window, and not 0 -- caused by "Select"
+            if (reply != 0 && !doubleClick[0])  // see long comment above
                 {
                 return false;
                 }

@@ -2363,3 +2363,6 @@ Version 17
 		(both directions) and fully-closed intervals for nextDouble and nextFloat
 	getDom() updated to reflect locale-specific number formatting.  Thanks to
 		Richard Legendi <rlegendi@aitia.ai>
+	The Console's model-selection box no longer issues an error if you click on the
+		close box or press ESCAPE.  Thanks to Richard Legendi <rlegendi@aitia.ai>
+
