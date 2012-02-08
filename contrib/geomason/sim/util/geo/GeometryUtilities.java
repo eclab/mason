@@ -1,12 +1,9 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/**
- * GeometryUtilities.java
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
  * 
  * $Id: GeometryUtilities.java,v 1.4 2010-09-03 22:14:36 mcoletti Exp $
  * 
@@ -16,7 +13,6 @@ package sim.util.geo;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Comparator;
 
 import sim.portrayal.DrawInfo2D;
 import com.vividsolutions.jts.geom.Envelope;
@@ -110,14 +106,16 @@ public class GeometryUtilities
 
 	/**
 	 * Comparator to sort and search for AttributeFields by name in a Collection
+     *
+     * @deprecated because now we use a HashTable to sort AttributeValues
 	 */
-	public static Comparator<AttributeField> attrFieldCompartor = new Comparator<AttributeField>()
-	{
-		public int compare(AttributeField af1, AttributeField af2)
-		{
-			return af1.name.compareTo(af2.name);
-		}
-	};
+//	public static Comparator<AttributeValue> attrFieldCompartor = new Comparator<AttributeValue>()
+//	{
+//		public int compare(AttributeValue af1, AttributeValue af2)
+//		{
+//			return af1.getName().compareTo(af2.getName());
+//		}
+//	};
 
 	/**
 	 * compute the MBR for the grid field in display coordinates
@@ -180,8 +178,8 @@ public class GeometryUtilities
 	 * @param gridField
 	 *            for which we wish to find bounds in display coordinates
 	 * 
-	 * @returns true iff 'gridField' is within, intersects, or covers 'outer',
-	 *          else returns false
+	 * @return true iff 'gridField' is within, intersects, or covers 'outer',
+	 *         else returns false
 	 * 
 	 *          Can be used as check for computeBounds()
 	 */

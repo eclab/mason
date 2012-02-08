@@ -1,14 +1,12 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/*
- * Network.java
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
  *
  * $Id: GeomPlanarGraph.java,v 1.3 2010-08-25 20:05:25 mcoletti Exp $
+ * 
  */
 package sim.util.geo;
 
@@ -53,9 +51,7 @@ public class GeomPlanarGraph extends PlanarGraph
         {
             if (((MasonGeometry) geometries.get(i)).geometry instanceof LineString)
             {
-                LineString lineString = (LineString) ((MasonGeometry) geometries.get(i)).geometry;
-
-                addLineString(lineString);
+                addLineString((MasonGeometry)geometries.get(i));
             }
         }
 
@@ -82,13 +78,15 @@ public class GeomPlanarGraph extends PlanarGraph
 
     /** Add the given line to the graph
      * 
-     * @param line
+     * @param wrappedLine is MasonGeometry wrapping a JTS line
      *
      * @note Some code copied from JTS PolygonizeGraph.addEdge() and hacked
      * to fit
      */
-    private void addLineString(LineString line)
+    private void addLineString(MasonGeometry wrappedLine)
     {
+        LineString line = (LineString) wrappedLine.geometry;
+
         if (line.isEmpty())
         {
             return;
@@ -107,12 +105,14 @@ public class GeomPlanarGraph extends PlanarGraph
         Node nStart = getNode(startPt); // nodes added as necessary side-effect
         Node nEnd = getNode(endPt);
 
-        Edge edge = new GeomPlanarGraphEdge(line);
+        GeomPlanarGraphEdge edge = new GeomPlanarGraphEdge(line);
 
         GeomPlanarGraphDirectedEdge de0 = new GeomPlanarGraphDirectedEdge(nStart, nEnd, linePts[1], true);
         GeomPlanarGraphDirectedEdge de1 = new GeomPlanarGraphDirectedEdge(nEnd, nStart, linePts[linePts.length - 2], false);
 
         edge.setDirectedEdges(de0, de1);
+
+        edge.setAttributes(wrappedLine.getAttributes());
 
         add(edge);
     }
