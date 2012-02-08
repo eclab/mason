@@ -30,7 +30,7 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
  * The mobile agent in the simulation.
  * 
  */
-@SuppressWarnings("restriction")
+//@SuppressWarnings("restriction")
 public class Person implements Steppable
 {
     private static final long serialVersionUID = 1L;
@@ -92,7 +92,7 @@ public class Person implements Steppable
         double unlikeNeighbors = 0.;
         for (Object o : neighbors)
         {
-            Person neighbor = (Person) ((MasonGeometry) o).userData;
+            Person neighbor = (Person) ((MasonGeometry) o).getUserData();
             if (! neighbor.getAffiliation().equals(affiliation))
             {
                 unlikeNeighbors++;

@@ -13,17 +13,15 @@ package sim.app.geo.schellingpolygon;
 
 import java.util.ArrayList;
 
-import sim.util.geo.AttributeField;
 import sim.util.geo.MasonGeometry;
-
 
 
 
 public class Polygon extends MasonGeometry
 {
-
     int id = -1;
     String soc;
+
     ArrayList<Person> residents;
     ArrayList<Polygon> neighbors;
 
@@ -40,19 +38,23 @@ public class Polygon extends MasonGeometry
 
     public void init()
     {
-        ArrayList<AttributeField> attribs =
-            (ArrayList<AttributeField>) geometry.getUserData();
-        for (AttributeField af : attribs)
-        {
-            if (af.name.equals("ID_ID"))
-            {
-                Double d = (Double) af.value;
-                id = (int) Math.floor(d);
-            } else if (af.name.equals("SOC"))
-            {
-                soc = (String) af.value;
-            }
-        }
+        id = getDoubleAttribute("ID_ID").intValue();
+        soc = getStringAttribute("SOC");
+//
+//        ArrayList<AttributeValue> attribs =
+//            (ArrayList<AttributeValue>) geometry.getUserData();
+//
+//        for (AttributeValue af : attribs)
+//        {
+//            if (af.getName().equals("ID_ID"))
+//            {
+//                Double d = (Double) af.getValue();
+//                id = (int) Math.floor(d);
+//            } else if (af.getName().equals("SOC"))
+//            {
+//                soc = (String) af.getValue();
+//            }
+//        }
     }
 
 

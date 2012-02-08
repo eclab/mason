@@ -29,7 +29,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;
-import sim.util.geo.AttributeField;
+import sim.util.geo.AttributeValue;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
@@ -51,6 +51,7 @@ import sim.util.geo.MasonGeometry;
 //@SuppressWarnings("restriction")
 public class Gridlock extends SimState
 {
+    private static final long serialVersionUID = 1L;
 
     public GeomVectorField roads = new GeomVectorField();
     public GeomVectorField censusTracts = new GeomVectorField();
@@ -192,16 +193,22 @@ public class Gridlock extends SimState
         for (Object o : network.getEdges())
         {
             GeomPlanarGraphEdge e = (GeomPlanarGraphEdge) o;
-            ArrayList attributes = (ArrayList) e.getLine().getUserData();
-            for (Object att : attributes)
-            {
-                AttributeField a = (AttributeField) att;
-                if (a.name.equals("ID_ID"))
-                {
-                    int val = ((Double) a.value).intValue();
-                    idsToEdges.put(val, e);
-                }
-            }
+
+            idsToEdges.put(e.getDoubleAttribute("ID_ID").intValue(), e);
+            
+            // Below deprecated as now MasonGeometry attributes are copied to
+            // edges in constructed graph.
+            
+//            ArrayList attributes = (ArrayList) e.getLine().getUserData();
+//            for (Object att : attributes)
+//            {
+//                AttributeValue a = (AttributeValue) att;
+//                if (a.getName().equals("ID_ID"))
+//                {
+//                    int val = ((Double) a.getValue()).intValue();
+//                    idsToEdges.put(val, e);
+//                }
+//            }
 
             e.setData(new ArrayList<Agent>());
         }

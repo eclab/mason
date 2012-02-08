@@ -33,10 +33,11 @@ public class CatchmentPortrayal extends GeomPortrayal
 		this.model = model;
 	}
 	
+    @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
     {
     	MasonGeometry mg = (MasonGeometry)object;
-    	Integer num = (Integer)SickStudentsModel.getAttribute(mg, "SCHOOL_NUM");
+    	Integer num = mg.getIntegerAttribute("SCHOOL_NUM");
     	School s = model.schoolMap.get(num);
     	proportionSick = s.getProportionOfSickStudents();
     	paint = colorMap.getColor(proportionSick);

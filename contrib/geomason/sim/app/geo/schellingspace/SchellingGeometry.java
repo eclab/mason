@@ -13,20 +13,20 @@ package sim.app.geo.schellingspace;
 
 import java.util.ArrayList;
 
-import sim.util.geo.AttributeField;
 import sim.util.geo.MasonGeometry;
-
-
 
 
 public class SchellingGeometry extends MasonGeometry
 {
 
-    int id = -1;
-    String soc;
-    int initRed = 0, initBlue = 0;
-    ArrayList<Person> residents;
-    ArrayList<SchellingGeometry> neighbors;
+    private int id = -1;
+
+    private String soc;
+
+    public int initRed = 0, initBlue = 0;
+
+    public ArrayList<Person> residents;
+    public ArrayList<SchellingGeometry> neighbors;
 
 
 
@@ -41,45 +41,55 @@ public class SchellingGeometry extends MasonGeometry
 
     public void init()
     {
-        ArrayList<AttributeField> attribs =
-            (ArrayList<AttributeField>) geometry.getUserData();
+//        id = getDoubleAttribute("ID_ID").intValue();
+        initRed = getIntegerAttribute("RED");
+        initBlue = getIntegerAttribute("BLUE");
 
-        for (AttributeField af : attribs)
-        {
-            if (af.name.equals("ID_ID"))
-            {
-                Double d = (Double) af.value;
-                id = (int) Math.floor(d);
-            } else if (af.name.equals("RED"))
-            {
-                initRed = (Integer) af.value;
-            } else if (af.name.equals("BLUE"))
-            {
-                initBlue = (Integer) af.value;
-            }
-        }
+//        soc = getStringAttribute("SOC");
+//
+//
+//        ArrayList<AttributeValue> attribs =
+//            (ArrayList<AttributeValue>) geometry.getUserData();
+//
+//        for (AttributeValue af : attribs)
+//        {
+//            if (af.getName().equals("ID_ID"))
+//            {
+//                Double d = (Double) af.getValue();
+//                id = (int) Math.floor(d);
+//            } else if (af.getName().equals("RED"))
+//            {
+//                initRed = (Integer) af.getValue();
+//            } else if (af.getName().equals("BLUE"))
+//            {
+//                initBlue = (Integer) af.getValue();
+//            }
+//        }
     }
 
 
 
     int getID()
     {
-        if (id == -1)
-        {
-            init();
-        }
-        return id;
+        return getDoubleAttribute("ID_ID").intValue();
+//
+//        if (id == -1)
+//        {
+//            init();
+//        }
+//        return id;
     }
 
 
 
     String getSoc()
     {
-        if (soc == null)
-        {
-            init();
-        }
-        return soc;
+        return getStringAttribute("SOC");
+//        if (soc == null)
+//        {
+//            init();
+//        }
+//        return soc;
     }
 
 }

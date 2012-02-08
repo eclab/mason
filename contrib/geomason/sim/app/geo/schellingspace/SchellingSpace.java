@@ -202,6 +202,7 @@ public class SchellingSpace extends SimState
 
 
     /** Import the data and then set up the simulation */
+    @Override
     public void start()
     {
         super.start();
