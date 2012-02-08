@@ -102,10 +102,10 @@ public class ShapeFileExporter extends GeomExporter {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i]; 
                 String geomType = wrapper.toString();
                 
-                ArrayList<AttributeField> attributes = (ArrayList<AttributeField>)wrapper.geometry.getUserData(); 
+                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>)wrapper.geometry.getUserData();
                 
                 for (int j=0; j < attributes.size(); j++) 
-                	uniqueAttributes.add(attributes.get(j).name); 
+                	uniqueAttributes.add(attributes.get(j).getName());
                 
                 /////////
                 // first store the record header, in big-endian format
@@ -229,7 +229,7 @@ public class ShapeFileExporter extends GeomExporter {
                                                 
             // length of individual records 
             MasonGeometry w = (MasonGeometry)geometries.objs[0]; 
-            ArrayList<AttributeField> attrs = (ArrayList<AttributeField>)w.geometry.getUserData(); 
+            ArrayList<AttributeValue> attrs = (ArrayList<AttributeValue>)w.geometry.getUserData();
             
             int recordSize=0; 
             for (int i=0; i < attrs.size(); i++) 
@@ -277,20 +277,20 @@ public class ShapeFileExporter extends GeomExporter {
                                 
                 // field type 
                 w = (MasonGeometry)geometries.objs[0]; 
-                ArrayList<AttributeField> attr= (ArrayList<AttributeField>) w.geometry.getUserData(); 
+                ArrayList<AttributeValue> attr= (ArrayList<AttributeValue>) w.geometry.getUserData();
 
-                AttributeField f=null; 
+                AttributeValue f=null;
                 for (int i=0; i < attr.size(); i++) { 
                 	f = attr.get(i); 
-                	if (f.name.equals(key))
+                	if (f.getName().equals(key))
                 		break; 
                 }
                 
-                if (f.value instanceof String) 
+                if (f.getValue() instanceof String)
                 	fieldBuff.put((byte)'C'); 
-                else if (f.value instanceof Integer || f.value instanceof Double)
+                else if (f.getValue() instanceof Integer || f.getValue() instanceof Double)
                 	fieldBuff.put((byte)'N'); 
-                else if (f.value instanceof Boolean) 
+                else if (f.getValue() instanceof Boolean)
                 	fieldBuff.put((byte)'L'); 
                 
                 
@@ -298,7 +298,7 @@ public class ShapeFileExporter extends GeomExporter {
                 fieldBuff.putInt((byte)0); 
                                 
                 //field length 
-                fieldBuff.put((byte)getBytes(f.value).length); 
+                fieldBuff.put((byte)getBytes(f.getValue()).length);
                                 
                 // decimal count 
                 fieldBuff.put((byte)0); 
@@ -343,17 +343,17 @@ public class ShapeFileExporter extends GeomExporter {
                 ByteBuffer recordBuff = ByteBuffer.allocate(1+recordSize); 
                 recordBuff.put((byte)0x20);
                 
-                ArrayList<AttributeField> attributes = (ArrayList<AttributeField>)wrapper.geometry.getUserData(); 
+                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>)wrapper.geometry.getUserData();
                 
                 for (int i=0; i < attrs.size(); i++) { 
-                    AttributeField f = attributes.get(i); 
-                    StringBuffer value = new StringBuffer(String.valueOf(f.value)); 
+                    AttributeValue f = attributes.get(i);
+                    StringBuffer value = new StringBuffer(String.valueOf(f.getValue()));
                     
-                    int add = f.fieldSize - value.length(); 
+                    int add = f.getFieldSize() - value.length();
                     for (int k=0; k < add; k++) 
                         value.insert(0, ' '); 
                                         
-                    for (int k=0; k < f.fieldSize; k++ ) 
+                    for (int k=0; k < f.getFieldSize(); k++ )
                         recordBuff.put((byte)value.charAt(k));
                 }
                 attrFile.write(recordBuff.array()); 
