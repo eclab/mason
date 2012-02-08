@@ -1,9 +1,12 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
+ * 
 */
 package sim.portrayal.geo;
 
@@ -15,12 +18,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.*;
-import java.util.ArrayList;
 
 import sim.portrayal.*;
 import sim.display.*;
 import sim.util.geo.*;
 import sim.portrayal.inspector.*;
+import sim.util.Properties;
 
 /**
  * The portrayal for MasonGeometry objects. The class draws the JTS geometry
@@ -96,42 +99,40 @@ public class GeomPortrayal extends SimplePortrayal2D
 		TabbedInspector inspector = new TabbedInspector();
 
 		// for basic geometry information such as area, perimeter, etc.
+        // FIXME Need to fix this so that JTS detailed info is NOT propagated
 		inspector.addInspector(new SimpleInspector(wrapper.getObject(), state, null), "Geometry");
 
 		Object o = wrapper.getObject();
+
 		if (o instanceof MasonGeometry)
 		{
 			MasonGeometry gw = (MasonGeometry) o;
 
-			if (gw.geometry.getUserData() instanceof ArrayList<?>)
+			if (gw.hasAttributes())
 			{
-				@SuppressWarnings("unchecked")
-				ArrayList<AttributeField> aList = (ArrayList<AttributeField>) gw.geometry.getUserData();
+//				@SuppressWarnings("unchecked")
+//				ArrayList<AttributeValue> aList = (ArrayList<AttributeValue>) gw.geometry.getUserData();
 
-				boolean showAttrs = false;
-				for (int i = 0; i < aList.size(); i++)
-				{
-					if (!aList.get(i).hidden)
-					{
-						showAttrs = true;
-						break;
-					}
-				}
-
-				if (showAttrs)
+				if (! gw.hasHiddenAttributes())
 				{ // only add attributes tag if JTS geometry has attributes
-					GeometryProperties properties = new GeometryProperties(aList);
+//					GeometryProperties properties = new GeometryProperties(aList);
+
+                    // I.e., MASON already has a mechanism for dealing with
+                    // collections, so why not use it?
+                    Properties properties = Properties.getProperties(gw.getAttributes());
 					inspector.addInspector(new SimpleInspector(properties, state, null), "Attributes");
 				}
 			}
 
-			if (gw.userData != null)
+			if (gw.getUserData() != null)
             {
-                inspector.addInspector(new SimpleInspector(gw.userData, state, null), "User Data");
+                inspector.addInspector(new SimpleInspector(gw.getUserData(), state, null), "User Data");
             }
 		}
+
 		return inspector;
 	}
+    
 
 	// AffineTransform transform = new AffineTransform();
 	// com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform;
