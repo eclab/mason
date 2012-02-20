@@ -19,7 +19,7 @@ JAVAC = javac
 JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
-VERSION = 1.1
+VERSION = 1.2beta
 
 JARFILE = geomason.${VERSION}.jar
 
@@ -90,25 +90,28 @@ indent:
 
 
 # All the main GeoMason source files
+# FIXME: temporarily removed ShapeFileExporter.java
 BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/field/geo/GeomGridField.java			\
 ./sim/field/geo/GeomVectorField.java			\
 ./sim/io/geo/ArcInfoASCGridImporter.java		\
 ./sim/io/geo/GeomExporter.java				\
 ./sim/io/geo/GeomImporter.java				\
-./sim/io/geo/ShapeFileExporter.java			\
 ./sim/io/geo/ShapeFileImporter.java			\
 ./sim/portrayal/geo/GeomPortrayal.java			\
 ./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
 ./sim/portrayal/geo/GeomInfo2D.java			\
-./sim/util/geo/AttributeField.java			\
-./sim/util/geo/GeometryProperties.java			\
+./sim/util/geo/AttributeValue.java			\
 ./sim/util/geo/GeometryUtilities.java			\
 ./sim/util/geo/GeomPlanarGraph.java			\
 ./sim/util/geo/GeomPlanarGraphDirectedEdge.java		\
 ./sim/util/geo/GeomPlanarGraphEdge.java			\
 ./sim/util/geo/MasonGeometry.java			\
 ./sim/util/geo/PointMoveTo.java
+
+# FIXME add this back in once it's repaired
+#./sim/io/geo/ShapeFileExporter.java			
+
 
 # Optional GDAL based importer
 GDAL_FILES = ./sim/io/geo/GDALImporter.java

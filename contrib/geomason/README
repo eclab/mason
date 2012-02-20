@@ -31,15 +31,15 @@ java sim.app.geo.nearbyworld.NearbyWorldWithUI
 
 java sim.app.geo.campusworld.CampusWorldWithUI
 
-java sim.app.geo.gridlock.GridlockWithUI
+java -Xms1g -Xmx2g sim.app.geo.gridlock.GridlockWithUI
 
 java sim.app.geo.sillypeds.SillyPedsWithUI
 
 java sim.app.geo.waterworld.WaterWorldWithUI
 
-java sim.app.geo.schellingspace.SchellingSpaceWithUI
+java -Xms1g -Xmx2g sim.app.geo.schellingspace.SchellingSpaceWithUI
 
-java sim.app.geo.sleuth.SleuthWorldWithUI
+java -Xms1g -Xmx2g sim.app.geo.sleuth.SleuthWorldWithUI
 
 java sim.app.geo.schellingpolygon.PolySchellingWithUI
 
@@ -49,5 +49,7 @@ Note that the following demo has a dependency on the
 Stochastic Simulation in Java library, which is found
 at http://www.iro.umontreal.ca/~simardr/ssj/indexe.html
 
-java sim.app.geo.sickStudents.SickStudentsModelWithUI
+java -Xms1g -Xmx2g sim.app.geo.sickStudents.SickStudentsModelWithUI
 
+Naturally, you may want to adjust the command line stack and heap
+allocation parameters to better fit available memory.
