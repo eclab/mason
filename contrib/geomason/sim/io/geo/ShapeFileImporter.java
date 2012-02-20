@@ -377,7 +377,13 @@ public class ShapeFileImporter extends GeomImporter
 
                     AttributeValue attributeValue = new AttributeValue();
 
-                    if (type[k] == 'N') // Numeric
+                    if ( rawAttributeValue.isEmpty() )
+                    {
+                        // If we've gotten no data for this, then just add the
+                        // empty string.
+                        attributeValue.setString(rawAttributeValue);
+                    }
+                    else if (type[k] == 'N') // Numeric
                     {
                         if (rawAttributeValue.length() == 0)
                         {
