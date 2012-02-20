@@ -44,7 +44,7 @@ public class GeomGridField extends GeomField
     {
         super();
         
-        grid = wrappedGrid;
+        setGrid(wrappedGrid);
     }
 
     /** width of grid point in projection coordinate system
@@ -82,13 +82,13 @@ public class GeomGridField extends GeomField
     }
    
 
-    public Grid2D getGrid()
+    public final Grid2D getGrid()
     {
         return grid;
     }
 
     
-    public void setGrid(Grid2D newGrid)
+    public final void setGrid(Grid2D newGrid)
     {
         grid = newGrid;
 
@@ -105,7 +105,7 @@ public class GeomGridField extends GeomField
      *
      * @throws NullPointerException if grid not assigned
      */
-    public int getGridWidth()
+    public final int getGridWidth()
     {
         return grid.getWidth();
     }
@@ -118,7 +118,7 @@ public class GeomGridField extends GeomField
      *
      * @throws NullPointerException if grid not assigned
      */
-    public int getGridHeight()
+    public final int getGridHeight()
     {
         return grid.getHeight();
     }

@@ -13,7 +13,7 @@ import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.algorithm.*; 
 
 import sim.portrayal.DrawInfo2D;
-import sim.util.geo.AttributeField;
+import sim.util.geo.AttributeValue;
 import sim.util.geo.GeometryUtilities;
 import sim.util.geo.MasonGeometry;
 
@@ -414,43 +414,27 @@ public class GeomVectorField extends GeomField
 
      
 
-	 /** Searches the field for the object with attribute <i>name</i> that has value <i>value</i>.
+	 /** Searches the field for the first object with attribute <i>name</i> that has value <i>value</i>.
       *
       * @param name of attribute
       * @param value of attribute
       *
+      * TODO What if there is more than one such object?
+      *
       * @return MasonGeometry with specified attribute otherwise null
       */
-    @SuppressWarnings("unchecked")
     public MasonGeometry getGeometry(String name, Object value)
     {
-        AttributeField key = new AttributeField(name);
+        AttributeValue key = new AttributeValue(name);
         List<?> gList = spatialIndex.queryAll();
 
         for (int i = 0; i < gList.size(); i++)
         {
             MasonGeometry mg = (MasonGeometry) gList.get(i);
-            Geometry g = mg.getGeometry();
-            ArrayList<AttributeField> attrs = null;
 
-            // It may be that the object has no attributes.  If so, this
-            // will throw an exception.
-            try
+            if ( mg.hasAttribute(name) && mg.getAttribute(name).equals(value) )
             {
-                attrs = (ArrayList<AttributeField>) g.getUserData();
-            } catch (Exception e)
-            {
-                return null;
-            }
-
-            int index = Collections.binarySearch(attrs, key, GeometryUtilities.attrFieldCompartor);
-
-            if (index >= 0)
-            {
-                if (attrs.get(index).value.equals(value))
-                {
-                    return mg;
-                }
+                return  mg;
             }
         }
         
