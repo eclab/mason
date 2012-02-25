@@ -296,26 +296,17 @@ public class SimState implements java.io.Serializable
         return state;
         }
     
-/*
-  static int indexAfterArgumentForKey(String key, String[] args, int startingAt)
-  {
-  for(int x=0;x<args.length-1;x++)  // key can't be the last string
-  if (args[x].equalsIgnoreCase(key))
-  return x + 2;
-  return args.length;
-  }
-*/
-    static boolean keyExists(String key, String[] args, int startingAt)
+    static boolean keyExists(String key, String[] args)
         {
-        for(int x=0;x<args.length;x++)  // key can't be the last string
+        for(int x=0;x<args.length;x++)
             if (args[x].equalsIgnoreCase(key))
                 return true;
         return false;
         }
 
-    static String argumentForKey(String key, String[] args, int startingAt)
+    static String argumentForKey(String key, String[] args)
         {
-        for(int x=0;x<args.length-1;x++)  // key can't be the last string
+        for(int x=0;x<args.length-1;x++)  // if a key has an argument, it can't be the last string
             if (args[x].equalsIgnoreCase(key))
                 return args[x + 1];
         return null;
@@ -374,7 +365,7 @@ public class SimState implements java.io.Serializable
     public static void doLoop(MakesSimState generator, String[] args)
         {
         // print help?
-        if (keyExists("-help", args, 0))
+        if (keyExists("-help", args))
             {
             System.err.println(
                 "Format:           java " + generator.simulationClass().getName() + " \\\n" +
@@ -425,7 +416,7 @@ public class SimState implements java.io.Serializable
 
         // figure the checkpoint modulo
         double until = Double.POSITIVE_INFINITY;
-        String until_s = argumentForKey("-until", args, 0);
+        String until_s = argumentForKey("-until", args);
         if (until_s != null)
             try
                 {
@@ -438,7 +429,7 @@ public class SimState implements java.io.Serializable
                 }
 
         long seed = System.currentTimeMillis();
-        String seed_s = argumentForKey("-seed", args, 0);
+        String seed_s = argumentForKey("-seed", args);
         if (seed_s != null)
             try
                 {
@@ -451,7 +442,7 @@ public class SimState implements java.io.Serializable
                 }
         
         long _for = -1;
-        String _for_s = argumentForKey("-for", args, 0);
+        String _for_s = argumentForKey("-for", args);
         if (_for_s != null)
             try
                 {
@@ -464,7 +455,7 @@ public class SimState implements java.io.Serializable
                 }
         
         long time = -1;
-        String time_s = argumentForKey("-time", args, 0);
+        String time_s = argumentForKey("-time", args);
         if (time_s != null)
             try
                 {
@@ -477,7 +468,7 @@ public class SimState implements java.io.Serializable
                 }
         
         long cmod = 0;
-        String cmod_s = argumentForKey("-docheckpoint", args, 0);
+        String cmod_s = argumentForKey("-docheckpoint", args);
         if (cmod_s != null)
             try
                 {
@@ -490,7 +481,7 @@ public class SimState implements java.io.Serializable
                 }
         
         long repeat = 1;
-        String repeat_s = argumentForKey("-repeat", args, 0);
+        String repeat_s = argumentForKey("-repeat", args);
         if (repeat_s != null)
             try
                 {
@@ -510,7 +501,7 @@ public class SimState implements java.io.Serializable
             SimState state = null;
         
             // start from checkpoint?
-            String checkpointFile = argumentForKey("-checkpoint", args, 0);
+            String checkpointFile = argumentForKey("-checkpoint", args);
             if (rep == 0 && checkpointFile!=null)  // only job 0 loads from checkpoint
                 {
                 System.err.println("Loading from checkpoint " + checkpointFile);
