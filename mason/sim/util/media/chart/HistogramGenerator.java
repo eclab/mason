@@ -152,6 +152,9 @@ public class HistogramGenerator extends ChartGenerator
         {
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
             return;
+            
+        if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
+            return;
 
         if (vals == null || vals.length == 0) vals = new double[] { 0 };  // ya gotta have at least one val
         HistogramSeriesAttributes hsa = (HistogramSeriesAttributes)(getSeriesAttribute(index));

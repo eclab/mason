@@ -108,6 +108,9 @@ public class ScatterPlotGenerator extends ChartGenerator
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
             return;
 
+        if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
+            return;
+
         ScatterPlotSeriesAttributes series = (ScatterPlotSeriesAttributes)(getSeriesAttribute(index));
         series.setValues(vals);
         }
