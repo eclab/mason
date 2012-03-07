@@ -37,13 +37,14 @@ import ec.util.*;
    event for time getTime(), then actually this event will occur at time getTime()+epsilon, that is, the
    smallest possible slice of time greater than getTime().
 
-   <p><b>IMPORTANT NOTE:</b> we have disabled the setShuffling() procedure by making the methods private.  The reason for this is that although turning off shuffling causes the Steppables to be stepped in a <i>predictable order</i>, they will note necessarily be stepped in <i>the order in which they were submitted</i>, which was the whole point of the methods.  The reason for this is that a binary heap is not "stable": it doesn't break ties by returning elements in the same order in which they appeared.  This potentially could cause bugs in simulations and we want to make it very clear.
+   <p><b>IMPORTANT NOTE:</b> we have disabled the setShuffling() procedure by making the methods private.  The reason for this is that although turning off shuffling causes the Steppables to be stepped in a <i>predictable order</i>, they will not necessarily be stepped in <i>the order in which they were submitted</i>, which was the whole point of the methods.  The reason for this is that a binary heap is not "stable": it doesn't break ties by returning elements in the same order in which they appeared.  This potentially could cause bugs in simulations and we want to make it very clear.
   
-   <!-- 
    <p>Events at a step are further subdivided and scheduled according to their <i>ordering</i>, an integer.
    Objects for scheduled for lower orderings for a given time will be executed before objects with
    higher orderings for the same time.  If objects are scheduled for the same time and
-   have the same ordering value, their execution will be randomly ordered with respect to one another
+   have the same ordering value, their execution will be randomly ordered with respect to one another.
+   
+   <!-- 
    unless (in the very rare case) you have called setShuffling(false);.  Generally speaking, most experiments with
    good model methodologies will want random shuffling left on, and if you need an explicit ordering, it may be
    better to rely on Steppable's orderings or to use a Sequence.
@@ -323,7 +324,9 @@ public class Schedule implements java.io.Serializable
             {
             for(int x=0;x<len;x++)  // if we're not being killed...
                 {
+                assert sim.util.LocationLog.set(((Steppable)(objs[x])));
                 ((Steppable)(objs[x])).step(state);
+                assert sim.util.LocationLog.clear();
                 objs[x] = null;  // let gc even if being killed
                 }
             }
@@ -450,8 +453,7 @@ public class Schedule implements java.io.Serializable
     boolean _scheduleOnce(Key key, final Steppable event)
         {
         // locals are a teeny bit faster
-        double time = 0;
-        time = this.time;
+        double time = this.time;
         double t = key.time;
 
         // check to see if we're scheduling for the same exact time -- even if of different orderings, that doesn't matter
@@ -459,16 +461,13 @@ public class Schedule implements java.io.Serializable
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
             t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
 
-        if (sealed | t >= AFTER_SIMULATION)             // lighter weight and more common situations, no exception throwing
+        if (sealed | t >= AFTER_SIMULATION)             // situations where no further events can be added
             {
             return false;
             }
         else if (t < EPOCH)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
                 "\n\n...the time provided ("+t+") is < EPOCH (" + EPOCH + ")");
-        //else if (t >= AFTER_SIMULATION)
-        //      throw new IllegalArgumentException("For the Steppable...\n\n"+event+
-        //              "\n\n...the time provided ("+t+") is >= AFTER_SIMULATION (" + AFTER_SIMULATION + ")");
         else if (t != t /* NaN */)
             throw new IllegalArgumentException("For the Steppable...\n\n"+event+
                 "\n\n...the time provided ("+t+") is NaN");
@@ -477,9 +476,6 @@ public class Schedule implements java.io.Serializable
                 "\n\n...the time provided ("+t+") is less than the current time (" + time + ")");
         else if (event == null)
             throw new IllegalArgumentException("The provided Steppable is null");
-        //else if (sealed)
-        //      throw new IllegalArgumentException("The Steppable...\n\n"+event+
-        //              "\n\n...culd not be scheduled because the Schedule has been sealed.");
         
         queue.add(event, key);
         return true;
@@ -769,7 +765,9 @@ class Repeat implements Steppable, Stoppable
                 {
                 e.printStackTrace(); // something bad happened
                 }
+            assert sim.util.LocationLog.set(step);
             step.step(state);
+            assert sim.util.LocationLog.clear();
             }
         }
         

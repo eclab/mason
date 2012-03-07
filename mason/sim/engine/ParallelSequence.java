@@ -264,7 +264,9 @@ public class ParallelSequence extends Sequence
                 // but left it as a warning for others.  :-)
                 //if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
                 Thread.currentThread().setName("Parallel Sequence: " + step);
+                assert sim.util.LocationLog.set(step);
                 step.step(state);
+                assert sim.util.LocationLog.clear();
                 semaphore.V();
                 }
             }

@@ -27,7 +27,12 @@ public class Sequence implements Steppable
         {
         for(int x=0;x<steps.length;x++)
             {
-            if (steps[x]!=null) steps[x].step(state);
+            if (steps[x]!=null) 
+                {
+                assert sim.util.LocationLog.set(steps[x]);
+                steps[x].step(state);
+                assert sim.util.LocationLog.clear();
+                }
             }
         }
     }
