@@ -45,12 +45,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final int val)
         {
+        assert sim.util.LocationLog.it(this, new Int2D(x,y));
         field[x][y] = val;
         }
     
     /** Returns the element at location (x,y) */
     public final int get(final int x, final int y)
         {
+        assert sim.util.LocationLog.it(this, new Int2D(x,y));
         return field[x][y];
         }
 
@@ -64,7 +66,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]=thisMuch;
+                }
             }
         return this;
         }
@@ -74,6 +79,13 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         provided grid. */
     public final IntGrid2D setTo(IntGrid2D values)
         {
+        if (sim.util.LocationLog.assertsEnabled)
+            {
+            for(int x=0; x< values.width;x++)
+                for(int y =0; y <values.height; y++)
+                    assert sim.util.LocationLog.it(this, new Int2D(x,y));
+
+            }
         if (width != values.width || height != values.height)
             {
             final int width = this.width = values.width;
@@ -85,7 +97,9 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         else
             {
             for(int x =0 ; x < width; x++)
+                {
                 System.arraycopy(values.field[x],0,field[x],0,height);
+                }
             }
 
         return this;
@@ -106,6 +120,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             fieldx = field[x];
             for(int y = 0; y<height;y++)
                 {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 vals[i++] = fieldx[y];
                 }
             }
@@ -123,7 +138,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 if (max < fieldx[y]) max = fieldx[y];
+                }
             }
         return max;
         }
@@ -139,7 +157,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 if (min > fieldx[y]) min = fieldx[y];
+                }                
             }
         return min;
         }
@@ -156,7 +177,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
-                { mean += fieldx[y]; count++; }
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
+                mean += fieldx[y]; 
+                count++; 
+                }
             }
         return (count == 0 ? 0 : mean / count);
         }
@@ -173,8 +198,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 if (fieldx[y] > toNoMoreThanThisMuch)
                     fieldx[y] = toNoMoreThanThisMuch;
+                }
             }
         return this;
         }
@@ -192,8 +220,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 if (fieldx[y] < toNoLowerThanThisMuch)
                     fieldx[y] = toNoLowerThanThisMuch;
+                }
             }
         return this;
         }
@@ -212,7 +243,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]+=withThisMuch;
+                }
             }
         return this;
         }
@@ -233,7 +267,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             fieldx = field[x];
             ofieldx = ofield[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]+=ofieldx[y];
+                }
             }
         return this;
         }
@@ -252,7 +289,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]*=byThisMuch;
+                }
             }
         return this;
         }
@@ -273,7 +313,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             fieldx = field[x];
             ofieldx = ofield[x];
             for(int y=0;y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]*=ofieldx[y];
+                }
             }
         return this;
         }
@@ -304,7 +347,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             result = new IntBag(xPos.size());
 
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 
@@ -334,7 +380,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             result = new IntBag(xPos.size());
 
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 
@@ -364,7 +413,10 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             result = new IntBag(xPos.size());
 
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 

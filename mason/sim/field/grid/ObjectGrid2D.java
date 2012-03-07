@@ -47,12 +47,14 @@ public class ObjectGrid2D extends AbstractGrid2D
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final Object val)
         {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
         field[x][y] = val;
         }
 
     /** Returns the element at location (x,y) */
     public final Object get(final int x, final int y)
         {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
         return field[x][y];
         }
 
@@ -66,7 +68,10 @@ public class ObjectGrid2D extends AbstractGrid2D
             {
             fieldx = field[x];
             for(int y = 0; y<height;y++)
+                {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 fieldx[y]=thisObj;
+                }
             }
         return this;
         }
@@ -86,6 +91,7 @@ public class ObjectGrid2D extends AbstractGrid2D
             fieldx = field[x];
             for(int y = 0; y<height;y++)
                 {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 vals[i++] = fieldx[y];
                 }
             }
@@ -106,7 +112,10 @@ public class ObjectGrid2D extends AbstractGrid2D
             for(int y = 0; y<height;y++)
                 {
                 if (fieldx[y]!=null) 
+                    {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                     bag.add(fieldx[y]);
+                    }
                 }
             }
         return bag;
@@ -126,6 +135,7 @@ public class ObjectGrid2D extends AbstractGrid2D
             fieldx = field[x];
             for(int y = 0; y<height;y++)
                 {
+                assert sim.util.LocationLog.it(this, new Int2D(x,y));
                 if (fieldx[y]!=null) 
                     bag.add(fieldx[y]);
                 fieldx[y]=null;
@@ -139,6 +149,13 @@ public class ObjectGrid2D extends AbstractGrid2D
         provided grid. */
     public final ObjectGrid2D setTo(final ObjectGrid2D values)
         {
+        if (sim.util.LocationLog.assertsEnabled)
+            {
+            for(int x=0; x< values.width;x++)
+                for(int y =0; y <values.height; y++)
+                    assert sim.util.LocationLog.it(this, new Int2D(x,y));
+
+            }
         if (width != values.width || height != values.height)
             {
             final int width = this.width = values.width;
@@ -183,7 +200,10 @@ public class ObjectGrid2D extends AbstractGrid2D
             result = new Bag(xPos.size());
 
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 
@@ -213,7 +233,10 @@ public class ObjectGrid2D extends AbstractGrid2D
             result = new Bag(xPos.size());
 
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 
@@ -244,7 +267,10 @@ public class ObjectGrid2D extends AbstractGrid2D
 
         result.clear();
         for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
             result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            }
         return result;
         }
 

@@ -154,6 +154,7 @@ public abstract class SparseField implements java.io.Serializable
         {
         LocationAndIndex lai = ((LocationAndIndex)(locationAndIndexHash.get(obj)));
         if (lai == null) return null;
+        assert sim.util.LocationLog.it(this, lai.location);
         return lai.location;
         }
     
@@ -162,6 +163,7 @@ public abstract class SparseField implements java.io.Serializable
         {
         final Bag b = (Bag)(objectHash.get(location));
         if (b==null) return 0;
+        assert sim.util.LocationLog.it(this, location);
         return b.numObjs;
         }
     
@@ -192,6 +194,7 @@ public abstract class SparseField implements java.io.Serializable
         Bag b = (Bag)(objectHash.get(location));
         if (b==null) return null;
         if (b.numObjs == 0) return null;
+        assert sim.util.LocationLog.it(this, location);
         return b;
         }
                 
@@ -207,6 +210,7 @@ public abstract class SparseField implements java.io.Serializable
         {
         LocationAndIndex lai = ((LocationAndIndex)(locationAndIndexHash.get(obj)));
         if (lai == null) return null;
+        assert sim.util.LocationLog.it(this, lai.location);
         return lai.otherObjectsAtLocation;  // should be non-null
         }
                         
@@ -217,6 +221,7 @@ public abstract class SparseField implements java.io.Serializable
         {
         LocationAndIndex lai = ((LocationAndIndex)(locationAndIndexHash.get(obj)));
         if (lai == null) return 0;
+        assert sim.util.LocationLog.it(this, lai.location);
         return lai.otherObjectsAtLocation.numObjs;
         }
 
@@ -231,6 +236,7 @@ public abstract class SparseField implements java.io.Serializable
                 // remove location
                 LocationAndIndex lai = (LocationAndIndex)(locationAndIndexHash.remove(objs.objs[j]));
                 // remove object from allobjects bag
+                assert sim.util.LocationLog.it(this, lai.location);
                 allObjects.remove(lai.index);
                 if (allObjects.numObjs > lai.index)    // update the index of the guy who just got moved
                     ((LocationAndIndex)(locationAndIndexHash.get(allObjects.objs[lai.index]))).index = lai.index;
@@ -275,6 +281,7 @@ public abstract class SparseField implements java.io.Serializable
             if (allObjects.numObjs > lai.index)    // update the index of the guy who just got moved
                 ((LocationAndIndex)(locationAndIndexHash.get(allObjects.objs[lai.index]))).index = lai.index;
             
+            assert sim.util.LocationLog.it(this, lai.location);
             return lai.location;
             }
         else return null;
@@ -317,6 +324,7 @@ public abstract class SparseField implements java.io.Serializable
             ///// End commentable out
             
             // write in new location  -- we're reusing the LocationAndIndex
+            assert sim.util.LocationLog.it(this, lai.location);
             lai.location = location;
             }
         else   // add new object
@@ -329,6 +337,7 @@ public abstract class SparseField implements java.io.Serializable
             }
 
         // put into objectHash
+        assert sim.util.LocationLog.it(this, location);
         Bag objs = (Bag)(objectHash.get(location));                         // HASH
         if (objs==null)
             {
