@@ -175,6 +175,165 @@ public class ObjectGrid2D extends AbstractGrid2D
         return this;
         }
 
+
+
+    final Bag getImmediateNeighbors(int x, int y, boolean toroidal, Bag result)
+        {
+        if (result != null)
+            { result.clear();  result.resize(9); }  // not always 9 elements of course but it's the majority case by far
+        else
+            result = new Bag(9);  // likwise
+
+        int width = this.width;
+        int height = this.height;
+        
+        Object[] fieldx0 = null;
+        Object[] fieldx = null;
+        Object[] fieldx1 = null;
+        
+        if (x!=0 && y!=0 && x!=width && y!=height)  // the majority case
+            {
+            // toroidal or non-toroidal
+            // ---
+            // -x-
+            // ---
+
+            fieldx0 = field[x-1];
+            fieldx = field[x];
+            fieldx1 = field[x+1];
+
+            result.add(fieldx[y]);
+            result.add(fieldx[y-1]);
+            result.add(fieldx[y+1]);
+            result.add(fieldx1[y]);
+            result.add(fieldx1[y-1]);
+            result.add(fieldx1[y+1]);
+            result.add(fieldx0[y]);
+            result.add(fieldx0[y-1]);
+            result.add(fieldx0[y+1]);
+            return result;
+            }
+        
+        else if (toroidal)
+            {
+            if (x==0)
+                {
+                fieldx0 = field[width-1];
+                fieldx = field[0];
+                fieldx1 = field[1];
+                }
+            else if (x==width-1)
+                {
+                fieldx0 = field[0];
+                fieldx = field[width-1];
+                fieldx1 = field[width-2];
+                }
+            else
+                {
+                fieldx0 = field[x-1];
+                fieldx = field[x];
+                fieldx1 = field[x+1];
+                }
+
+            result.add(fieldx[y]);
+            result.add(fieldx[y-1]);
+            result.add(fieldx[y+1]);
+            result.add(fieldx1[y]);
+            result.add(fieldx1[y-1]);
+            result.add(fieldx1[y+1]);
+            result.add(fieldx0[y]);
+            result.add(fieldx0[y-1]);
+            result.add(fieldx0[y+1]);
+            }
+        
+        else  // non-toroidal
+            {
+            if (x==0)
+                {
+                fieldx = field[0];
+                fieldx1 = field[1];
+                }
+            else if (x==width-1)
+                {
+                fieldx = field[width-1];
+                fieldx1 = field[width-2];
+                }
+            else
+                {
+                fieldx = field[x];
+                fieldx1 = field[x+1];
+                }
+
+            if (y==0)
+                {
+                // x--  --x  -x-
+                // ---  ---  ---
+                // ---  ---  ---
+                result.add(fieldx[y]);
+                result.add(fieldx[y+1]);
+                result.add(fieldx1[y]);
+                result.add(fieldx1[y+1]);
+                }
+            else if (y==height-1)
+                {
+                // ---  ---  ---
+                // ---  ---  ---
+                // x--  --x  -x-
+                result.add(fieldx[y]);
+                result.add(fieldx[y-1]);
+                result.add(fieldx1[y]);
+                result.add(fieldx1[y-1]);
+                }
+            else
+                {
+                // ---  ---  ---  // the last of these cases will never happen because of the special case at the beginning
+                // x--  --x  -x-
+                // ---  ---  ---
+                result.add(fieldx[y]);
+                result.add(fieldx[y-1]);
+                result.add(fieldx[y+1]);
+                result.add(fieldx1[y]);
+                result.add(fieldx1[y-1]);
+                result.add(fieldx1[y+1]);
+                }
+            
+            if (x != 0 && x != width-1)
+                {
+                fieldx0 = field[x-1];
+                if (y==0)
+                    {
+                    // -x-
+                    // ---
+                    // ---
+                    result.add(fieldx0[y]);
+                    result.add(fieldx0[y+1]);
+                    }
+                else if (y==height-1)
+                    {
+                    // ---
+                    // ---
+                    // -x-
+                    result.add(fieldx0[y]);
+                    result.add(fieldx0[y-1]);
+                    }
+                else   // this will never happen because of the special case at the beginning
+                    {
+                    // ---
+                    // -x-
+                    // ---
+                    result.add(fieldx0[y]);
+                    result.add(fieldx0[y-1]);
+                    result.add(fieldx0[y+1]);
+                    }
+                }
+            }
+
+        return result;
+        }
+
+       
+        
+        
     /**
      * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist.  This region forms a
      * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
@@ -184,9 +343,17 @@ public class ObjectGrid2D extends AbstractGrid2D
      * Returns the result Bag (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
+     *
+     * <p>There is a faster special case when the distance = 1 and xPos and yPos are both null (you don't care about them).
+     * In this case, the neighbors are computed directly and put right into the Bag.  We suggest you use this if it dist=1
+     * is what you're interested in.
      */
     public final Bag getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
+        if (dist == 1 && xPos == null && yPos == null)  // special case this for speed
+            return getImmediateNeighbors(x, y, toroidal, result);
+
+        
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
