@@ -24,6 +24,16 @@ public class GeomGridField extends GeomField
 {
     private static final long serialVersionUID = 5804948960128647172L;
 
+
+    /**
+     * Used to determine the GeomGridField storage type.
+     */
+    public enum GridDataType
+    {
+        INTEGER, DOUBLE
+    }
+
+
 	/** Grid container
      * 
      * Allows for the user to use an arbitrary grid of integers, doubles, or objects.

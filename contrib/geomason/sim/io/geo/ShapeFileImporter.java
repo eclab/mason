@@ -20,8 +20,9 @@ import java.nio.channels.*;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.*;
+import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import sim.util.geo.AttributeValue;
@@ -32,8 +33,17 @@ import sim.util.geo.AttributeValue;
 A native Java importer to read ERSI shapefile data into the GeomVectorField.  We assume the input file follows the
 standard ESRI shapefile format.    
  */
-public class ShapeFileImporter extends GeomImporter
+public class ShapeFileImporter
 {
+
+    /** Not meant to be instantiated
+     *
+     */
+    private ShapeFileImporter()
+    {
+    }
+
+
     // Shape types included in ESRI Shapefiles. Not all of these are currently supported.
 
     final static int NULL_SHAPE = 0;
@@ -70,7 +80,7 @@ public class ShapeFileImporter extends GeomImporter
 
 
 
-    private String typeToString(int shapeType)
+    private static String typeToString(int shapeType)
     {
         switch (shapeType)
         {
@@ -121,32 +131,31 @@ public class ShapeFileImporter extends GeomImporter
      * @param masked
      * @throws FileNotFoundException
      */
-    @Override
-    public void ingest(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
-    {
-        String filePath = null;
-
-        try
-        {
-            filePath = referenceClass.getResource(fileName).getPath();
-        } catch (NullPointerException np1)
-        {
-            // getResource() was unable to find the file.  This is probably
-            // because 'fileName' doesn't have a '.shp' extension.  Try again
-            // after adding the '.shp' suffix.
-
-            try
-            {
-                filePath = referenceClass.getResource(fileName + ".shp").getPath();
-            } catch (NullPointerException np2)
-            {
-                throw new FileNotFoundException(fileName);
-            }
-        }
-
-        ingest(filePath, field, masked);
-    }
-
+//    public static void read(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
+//    {
+//        String filePath = null;
+//
+//        try
+//        {
+//            filePath = referenceClass.getResource(fileName).getPath();
+//        } catch (NullPointerException np1)
+//        {
+//            // getResource() was unable to find the file.  This is probably
+//            // because 'fileName' doesn't have a '.shp' extension.  Try again
+//            // after adding the '.shp' suffix.
+//
+//            try
+//            {
+//                filePath = referenceClass.getResource(fileName + ".shp").getPath();
+//            } catch (NullPointerException np2)
+//            {
+//                throw new FileNotFoundException(fileName);
+//            }
+//        }
+//
+//        read(filePath, field, masked);
+//    }
+//
 
 
     /**
@@ -156,7 +165,7 @@ public class ShapeFileImporter extends GeomImporter
      * counter-clockwise order) and if so, it creates a polygon with holes.
      * If there are no holes, it creates and returns a multi-part polygon.
      */
-    private Geometry createPolygon(LinearRing[] parts)
+    private static Geometry createPolygon(LinearRing[] parts)
     {
         GeometryFactory geomFactory = new GeometryFactory();
 
@@ -202,7 +211,7 @@ public class ShapeFileImporter extends GeomImporter
      * Wrapper function which creates a new array of LinearRings and calls 
      * the other function.
      */
-    private Geometry createPolygon(Geometry[] parts)
+    private static Geometry createPolygon(Geometry[] parts)
     {
         LinearRing[] rings = new LinearRing[parts.length];
         for (int i = 0; i < parts.length; i++)
@@ -214,29 +223,68 @@ public class ShapeFileImporter extends GeomImporter
     }
 
 
+    /** Populate field from the shape file given in fileName
+     * 
+     * @param shpFile to be read from
+     * @param field to contain read in data
+     * @throws FileNotFoundException
+     */
+    public static void read(final URL shpFile, GeomVectorField field) throws FileNotFoundException
+    {
+        read(shpFile, field, null, MasonGeometry.class);
+    }
+
+    
 
     /** Populate field from the shape file given in fileName
      *
-     * @param fileName is name of ShapeFile
+     * @param shpFile to be read from
+     * @param field to contain read in data
+     * @param masked dictates the subset of attributes we want
+     * @throws FileNotFoundException
+     */
+    public static void read(final URL shpFile, GeomVectorField field, final Bag masked) throws FileNotFoundException
+    {
+        read(shpFile, field, masked, MasonGeometry.class);
+    }
+
+
+    /** Populate field from the shape file given in fileName
+     *
+     * @param shpFile to be read from
+     * @param field to contain read in data
+     * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
+     * @throws FileNotFoundException
+     */
+    public static void read(final URL shpFile, GeomVectorField field, Class<?> masonGeometryClass) throws FileNotFoundException
+    {
+        read(shpFile, field, null, masonGeometryClass);
+    }
+
+
+    /** Populate field from the shape file given in fileName
+     *
+     * @param shpFile to be read from
      * @param field is GeomVectorField that will contain the ShapeFile's contents
      * @param masked dictates the subset of attributes we want
+     * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
      * 
      * @throws FileNotFoundException
      */
-    @Override
-    public void ingest(String fileName, GeomVectorField field, Bag masked) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field, final Bag masked, Class<?> masonGeometryClass) throws FileNotFoundException
     {
-        String shpFilename = "", dbfFilename = "";
+        if (! MasonGeometry.class.isAssignableFrom(masonGeometryClass))
+        {
+            throw new IllegalArgumentException("masonGeometryClass not a MasonGeometry class or subclass");
+        }
+
 
         try
         {
-            // Ensure the shape file name has the proper suffix
-            shpFilename = fileName.endsWith(".shp") ? fileName : fileName + ".shp";
-
             // Database file name is same as shape file name, except with '.dbf' extension
-            dbfFilename = shpFilename.substring(0, shpFilename.lastIndexOf('.')) + ".dbf";
+            String dbfFilename = shpFile.getFile().substring(0, shpFile.getFile().lastIndexOf('.')) + ".dbf";
 
-            FileInputStream shpFileInputStream = new FileInputStream(shpFilename);
+            FileInputStream shpFileInputStream = new FileInputStream(shpFile.getFile());
 
 
             FileChannel channel = shpFileInputStream.getChannel();
@@ -502,7 +550,7 @@ public class ShapeFileImporter extends GeomImporter
                     }
                 } else
                 {
-                    System.err.println("Unknown shape type in " + fileName);
+                    System.err.println("Unknown shape type in " + recordType);
                 }
 
                 if (geom != null)
@@ -511,8 +559,10 @@ public class ShapeFileImporter extends GeomImporter
 //                    geom.setUserData(attributeInfo);
                     try
                     {
-                        // XXX Why not just use 'new' instead?
-                        MasonGeometry masonGeometry = (MasonGeometry) masonGeometryClass.newInstance();
+                        // The user *may* have created their own MasonGeometry
+                        // class, so use the given masonGeometry class; by
+                        // default it's MasonGeometry.
+                        MasonGeometry masonGeometry =  (MasonGeometry) masonGeometryClass.newInstance();
                         masonGeometry.geometry = geom;
                         
                         if (!attributes.isEmpty())
@@ -530,8 +580,7 @@ public class ShapeFileImporter extends GeomImporter
         } catch (IOException e)
         {
             System.out.println("Error in ShapeFileImporter!!");
-            System.out.println("SHP filename: " + shpFilename);
-            System.out.println("DBF filename: " + dbfFilename);
+            System.out.println("SHP filename: " + shpFile);
             e.printStackTrace();
         }
     }

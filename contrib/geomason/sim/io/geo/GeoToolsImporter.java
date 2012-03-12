@@ -13,7 +13,6 @@ package sim.io.geo;
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 
-import java.io.File;
 import java.io.Serializable;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -24,13 +23,10 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.filter.BinaryComparisonOperator;
-import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import java.net.URL;
 import org.opengis.feature.Property;
 import sim.util.geo.AttributeValue;
 import sim.util.geo.MasonGeometry;
@@ -40,24 +36,20 @@ import sim.util.geo.MasonGeometry;
 /** 
     Use the GeoTools Java API to read geospatial data into the GeomVectorField.
  */
-public class GeoToolsImporter extends GeomImporter
+public class GeoToolsImporter
 {
+    private GeoToolsImporter()
+    {
+    }
 
-    @Override
-    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
+
+    public static void read(final URL input, GeomVectorField field, final Bag masked) throws FileNotFoundException
     {
         try
         {
-            File file = new File(input);
-
-            if (!file.exists())
-            {
-                throw new FileNotFoundException(file.getAbsolutePath());
-            }
-
             Map<String, Serializable> connectParameters = new HashMap<String, Serializable>();
 
-            connectParameters.put("url", file.toURI().toURL());
+            connectParameters.put("url", input);
             DataStore dataStore = DataStoreFinder.getDataStore(connectParameters);
 
             // we are now connected
@@ -100,7 +92,7 @@ public class GeoToolsImporter extends GeomImporter
 
 
 
-    public Map<String,AttributeValue> readAttributes(SimpleFeature feature, Bag masked)
+    public static Map<String,AttributeValue> readAttributes(SimpleFeature feature, Bag masked)
     {
         Map<String, AttributeValue> fields = new TreeMap<String, AttributeValue>();
 

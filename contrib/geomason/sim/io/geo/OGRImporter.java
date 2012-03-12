@@ -22,33 +22,39 @@ import sim.util.Bag;
 import sim.util.geo.AttributeValue;
 import sim.util.geo.MasonGeometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import java.net.URL;
 import java.util.Map;
 
 
 
 /** 
-OGRImportor uses the OGR JNI interface to read geospatial data into the GeomVectorField.
+ * OGRImportor uses the OGR JNI interface to read geospatial data into the GeomVectorField.
+ *
  */
-public class OGRImporter extends GeomImporter
+public class OGRImporter 
 {
 
-    /**  */
-    @Override
-    public void ingest(final String input, GeomVectorField field, Bag masked) throws FileNotFoundException
+    /**
+     * @param inputResource for the data
+     * @param field into which to place read in data
+     * @param masked specifies attributes we want
+     * @throws FileNotFoundException
+     */
+    public static void read(final URL inputResource, GeomVectorField field, Bag masked) throws FileNotFoundException
     {
         // register all the data format drivers
         ogr.RegisterAll();
 
-        DataSource dataSource = ogr.Open(input, false);
+        DataSource dataSource = ogr.Open(inputResource.toString(), false);
         if (dataSource == null)
         {
-            throw new FileNotFoundException(input + " not found");
+            throw new FileNotFoundException(inputResource + " not found");
         }
 
         Driver driver = dataSource.GetDriver();
         if (driver == null)
         {
-            throw new FileNotFoundException(input + " not found");
+            throw new FileNotFoundException(inputResource + " not found");
         }
 
 //        System.out.println("INFO: Open of `" + input + "'\n"
@@ -64,14 +70,14 @@ public class OGRImporter extends GeomImporter
                 return;
             } else
             {
-                ingestLayer(layer, field, masked);
+                readLayer(layer, field, masked);
             }
         }
     }
 
 
 
-    private void ingestLayer(Layer layer, GeomVectorField field, Bag masked)
+    private static void readLayer(Layer layer, GeomVectorField field, Bag masked)
     {
         FeatureDefn poDefn = layer.GetLayerDefn();
 
@@ -134,7 +140,7 @@ public class OGRImporter extends GeomImporter
 
 
 
-    public Map<String, AttributeValue> readAttributes(Feature feature, Bag masked)
+    public static Map<String, AttributeValue> readAttributes(Feature feature, Bag masked)
     {
         String key = "";
         Object val;
