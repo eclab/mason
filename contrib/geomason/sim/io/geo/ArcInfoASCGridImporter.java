@@ -18,7 +18,6 @@ import sim.field.geo.GeomGridField;
 import sim.field.grid.AbstractGrid2D;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Scanner;
 
@@ -129,7 +128,7 @@ public class ArcInfoASCGridImporter //extends GeomImporter
      *
      * @throws IOException if problem reading data
      * 
-     * @see ingest()
+     * @see read()
      */
     private static void readIntegerBased(Scanner scanner, int width, int height, IntGrid2D intGrid2D) throws IOException
     {
@@ -152,7 +151,7 @@ public class ArcInfoASCGridImporter //extends GeomImporter
      *
      * @throws IOException if problem reading data
      *
-     * @see ingest()
+     * @see read()
      */
     private static void readDoubleBased(Scanner scanner, int width, int height, DoubleGrid2D doubleGrid2D) throws IOException
     {
