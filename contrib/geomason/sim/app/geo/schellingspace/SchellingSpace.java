@@ -25,6 +25,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.net.URL;
 
 
 
@@ -210,13 +211,10 @@ public class SchellingSpace extends SimState
         try // to import the data from the shapefile
         {
             System.out.print("Reading boundary data ... ");
+            
+            URL wardsFile = SchellingSpace.class.getResource("../../data/schellingPolygon/DCreprojected.shp");
 
-            ShapeFileImporter importer = new ShapeFileImporter();
-
-            // import the Geometries as our own special Polygons
-            importer.masonGeometryClass = SchellingGeometry.class;
-
-            importer.ingest( "../../data/schellingPolygon/DCreprojected.shp", SchellingSpace.class, world, null);
+            ShapeFileImporter.read( wardsFile, world, SchellingGeometry.class);
         }
         catch (FileNotFoundException ex)
         {

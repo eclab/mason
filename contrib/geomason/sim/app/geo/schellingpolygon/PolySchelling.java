@@ -12,6 +12,7 @@
 package sim.app.geo.schellingpolygon;
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import sim.engine.SimState;
@@ -112,16 +113,9 @@ public class PolySchelling extends SimState
 
         try // to import the data from the shapefile
         {
-            // Extract ShapeFile data
-            ShapeFileImporter importer = new ShapeFileImporter();
+            URL wardsFile = PolySchelling.class.getResource("../../data/schellingPolygon/1991_wards_disolved_Project.shp");
 
-            // import the Geometries as Polygons
-            importer.masonGeometryClass = Polygon.class;
-
-            importer.ingest( //"schellingData/test/DC.shp",
-                "../../data/schellingPolygon/1991_wards_disolved_Project.shp",
-                PolySchelling.class,
-                 world, null);
+            ShapeFileImporter.read(wardsFile, world, Polygon.class);
 
         } catch (FileNotFoundException ex)
         {

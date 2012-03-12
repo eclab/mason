@@ -11,14 +11,20 @@
  **/
 package sim.app.geo.sleuth;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 import sim.engine.SimState;
-import sim.engine.Steppable;
+import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
+import sim.field.grid.IntGrid2D;
 import sim.field.grid.ObjectGrid2D;
+import sim.io.geo.ArcInfoASCGridImporter;
 import sim.util.Bag;
 
 
@@ -37,6 +43,12 @@ import sim.util.Bag;
  */
 public class SleuthWorld extends SimState
 {
+    private static final String EXCLUDED_DATA_FILE_NAME = "../../data/sleuth/excluded.txt.gz";
+    private static final String HILLSIDE_DATA_FILE_NAME = "../../data/sleuth/hillshade.txt.gz";
+    private static final String LAND_USE_DATA_FILE_NAME = "../../data/sleuth/landuse.txt.gz";
+    private static final String SLOPE_DATA_FILE_NAME = "../../data/sleuth/reclass_slope.txt.gz";
+    private static final String TRANSPORT_DATA_FILE_NAME = "../../data/sleuth/roads_0_1.txt.gz";
+    private static final String URBAN_AREA_DATA_FILE_NAME = "../../data/sleuth/urban.txt.gz";
 
     ObjectGrid2D landscape;
     ArrayList<Tile> spreadingCenters = new ArrayList<Tile>();
@@ -148,127 +160,88 @@ public class SleuthWorld extends SimState
      * Starts a new run of the simulation. Reads in the data and schedules
      * the growth rules to fire every turn.
      */
+    @Override
     public void start()
     {
-        super.start();
-
-        // --- read in the various layers of data ---
-
-        // slope
-        System.out.println("Reading in slope data...");
-        setupLandscapeFromFileDoubles("../../data/sleuth/reclass_slope.txt", 1);
-
-        // land use
-        System.out.println("Reading in land use data...");
-        setupLandscapeFromFileDoubles("../../data/sleuth/landuse.txt", 2);
-
-        // excluded
-        System.out.println("Reading in excluded area data...");
-        setupLandscapeFromFileBoolean("../../data/sleuth/excluded.txt", 3);
-
-        // urban
-        System.out.println("Reading in urban area data...");
-        setupLandscapeFromFileBoolean("../../data/sleuth/urban.txt", 4);
-
-        // transport
-        System.out.println("Reading in transport data...");
-        setupLandscapeFromFileDoubles("../../data/sleuth/roads_0_1.txt", 5);
-
-        // hillshade
-        System.out.println("Reading in hillshade data...");
-        setupLandscapeFromFileDoubles("../../data/sleuth/hillshade.txt", 6);
-
-        System.out.println("Successfully read in all data!");
-
-        // -- process the data for efficiency and convenience --
-        for (int i = 0; i < grid_width; i++)
+        try
         {
-            for (int j = 0; j < grid_height; j++)
+            super.start();
+
+            readSlopeData(); // Also create initial landscape from slope data
+
+            readLandUseData();
+
+            readExcludedAreaData();
+
+            readUrbanAreaData();
+
+            readTransportData();
+
+            readHillShadeData();
+
+
+            System.out.println("Successfully read in all data!");
+
+            // Now count the initial total urban and non-urban areas.
+            for (int i = 0; i < grid_width; i++)
             {
-
-                Tile t = (Tile) landscape.get(i, j);
-
-                // remove all tiles that are not part of the simulation
-                if (t.slope == Integer.MIN_VALUE)
-                {
-                    landscape.set(i, j, null);
-                    continue;
-                } // compile a list of all "spreading urban center" tiles
-                else if (t.urbanized)
+                for (int j = 0; j < grid_height; j++)
                 {
 
-                    numUrban++;
+                    Tile tile = (Tile) landscape.get(i, j);
 
-                    int numUrbanizedNeighbors = getUrbanNeighbors(t).size();
-                    if (numUrbanizedNeighbors > 1 && numUrbanizedNeighbors < 6)
+                    if (tile != null && tile.urbanized)
                     {
-                        spreadingCenters.add(t);
+
+                        numUrban++;
+
+                        int numUrbanizedNeighbors = getUrbanNeighbors(tile).size();
+                        if (numUrbanizedNeighbors > 1 && numUrbanizedNeighbors < 6)
+                        {
+                            spreadingCenters.add(tile);
+                        }
+                    } else
+                    {
+                        numNonUrban++;
                     }
-                } else
-                {
-                    numNonUrban++;
                 }
             }
-        }
 
-        // schedule the growth cycle to happen every time step
-        Steppable grower = new Grower();
-        schedule.scheduleRepeating(grower);
-    }
+            // schedule the growth cycle to happen every time step
+            Grower grower = new Grower();
 
-
-
-    /** Implements the Sleuth growth rules in the appropriate order */
-    class Grower implements Steppable
-    {
-
-        @Override
-        public void step(SimState state)
+            schedule.scheduleRepeating(grower);
+        } catch (FileNotFoundException ex)
         {
-
-            // calculate the coefficients
-            double dispersion_value = ((dispersionCoefficient * 0.005)
-                                       * Math.sqrt(grid_width * grid_width + grid_height * grid_height));
-
-            double rg_value = (roadGravityCoefficient / maxCoefficient)
-                * ((grid_width + grid_height) / 16.0);
-
-            double max_search_index = 4 * (rg_value * (1 + rg_value));
-
-            // spontaneously urbanizes cells with some probability
-            ArrayList<Tile> spontaneouslyUrbanized = spontaneousGrowth(dispersion_value);
-
-            // determines whether any of the new, spontaneously urbanized cells will
-            // become new urban spreading centers. If the cell is allowed to become
-            // a spreading center, two additional cells adjacent to the new spreading
-            // center cell also have to be urbanized
-            ArrayList<Tile> spreadFromUrbanized =
-                newSpreadingCenters(spontaneouslyUrbanized);
-
-            // growth propagates both the new centers generated in newSpreadingCenters
-            // in this time step and the more established centers from earlier Steps
-            ArrayList<Tile> growthAroundCenters = edgeGrowth();
-
-            // compile a list of all cells urbanized this turn
-            ArrayList<Tile> allGrowthThisTurn = new ArrayList<Tile>();
-            allGrowthThisTurn.addAll(spontaneouslyUrbanized);
-            allGrowthThisTurn.addAll(spreadFromUrbanized);
-            allGrowthThisTurn.addAll(growthAroundCenters);
-
-            // newly urbanized cells search for nearby roads. If they encounter them,
-            // they build on this infrastructure by establishing a new urban area
-            // some random walk along the road away from themselves. If this area is
-            // prime for urbanization, two further neighbors of our new roadside cell
-            // are urbanized.
-            roadInfluencedGrowth(max_search_index, allGrowthThisTurn);
-
+            Logger.getLogger(SleuthWorld.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
-    //
-    // --- GROWTH RULES ---
-    //
+
+
+    private void readData(GeomGridField excludedGridField, final String fileName) throws FileNotFoundException
+    {
+        InputStream inputStream = SleuthWorld.class.getResourceAsStream(fileName);
+
+        if (inputStream == null)
+        {
+           throw new FileNotFoundException(fileName);
+        }
+
+        try
+        {
+            GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
+
+            ArcInfoASCGridImporter.read(compressedInputStream, GridDataType.INTEGER, excludedGridField);
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(SleuthWorld.class.getName()).log(Level.SEVERE, null, ex);
+
+            System.exit(-1);
+        }
+    }
+
 
 
     /**
@@ -437,7 +410,7 @@ public class SleuthWorld extends SimState
                 // urbanized Tile
                 ArrayList<Tile> neighboringRoads =
                     getNeighborsTransport(t, (int) max_search_index);
-                if (neighboringRoads.size() > 0)
+                if (! neighboringRoads.isEmpty() )
                 {
 
                     // if so, do a random walk along the road with number of steps
@@ -456,7 +429,7 @@ public class SleuthWorld extends SimState
                     ArrayList<Tile> potential =
                         getNeighborsAvailableForUrbanization(finalPoint);
 
-                    if (potential.size() == 0)
+                    if (potential.isEmpty())
                     {
                         continue; // no neighbors available
                     }
@@ -591,28 +564,37 @@ public class SleuthWorld extends SimState
      * @param width - the width of the landscape
      * @param height - the height of the landscape
      */
-    void setupLandscape(int width, int height)
+    void setupLandscape(final GeomGridField slope)
     {
-        grid_width = width;
-        grid_height = height;
+        grid_width = slope.getGridWidth();
+        grid_height = slope.getGridHeight();
 
-        landscape = new ObjectGrid2D(width, height);
+        landscape = new ObjectGrid2D(grid_width, grid_height);
 
         // populate the new landscape with new Tiles
         System.out.print("\nInitializing landscape...");
-        for (int i = 0; i < width; i++)
+        
+        for (int i = 0; i < grid_width; i++)
         {
             if (i % 500 == 0)
             {
                 System.out.print(".");
             }
-            for (int j = 0; j < height; j++)
+
+            for (int j = 0; j < grid_height; j++)
             {
-                landscape.set(i, j, new Tile(i, j));
+                // -9999 means "no data"
+                if ( ((IntGrid2D)slope.getGrid()).get(i, j) != -9999)
+                {
+                    Tile tile = new Tile(i,j);
+                    tile.slope = ((IntGrid2D)slope.getGrid()).get(i, j);
+
+                    landscape.set(i, j, tile);
+                }
             }
         }
-        System.out.println("completed!");
 
+        System.out.println("completed!");
     }
 
 
@@ -723,238 +705,7 @@ public class SleuthWorld extends SimState
     }
 
 
-    //
-
-    //
-    // --- END HELPFUL UTILITIES ---
-    //
-    //
-    // --- READING IN DATA FROM FILES ---
-    //
-    /**
-     * Read in the boolean portions of the landscape from a file.
-     * @param filename - the name of the file that holds the exclusion data
-     */
-    void setupLandscapeFromFileBoolean(String filename, int parameter)
-    {
-
-        try
-        { // to read in a file
-
-            String filePath = SleuthWorld.class.getResource(filename).getPath();
-
-            // Open the file
-            FileInputStream fstream = new FileInputStream(filePath);
-
-            // Convert our input stream to a BufferedReader
-            BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
-
-            // get the parameters from the file
-            String s;
-            int height = 0, width = 0;
-            int nodata = -1;
-            for (int i = 0; i < 6; i++)
-            {
-
-                s = d.readLine();
-
-                // format the line appropriately
-                String[] parts = s.split(" ", 2);
-                String trimmed = parts[1].trim();
-
-                // save the data in the appropriate place
-                if (i == 1)
-                {
-                    height = Integer.parseInt(trimmed);
-                } else if (i == 0)
-                {
-                    width = Integer.parseInt(trimmed);
-                } else if (i == 5)
-                {
-                    nodata = Integer.parseInt(trimmed);
-                } else
-                {
-                    continue;
-                }
-            }
-
-            // if the landscape has not already been set up, do so. Otherwise, ensure
-            // that the data in this file are in the same format at the data we have
-            // already read in
-            if (landscape == null)
-            {
-                setupLandscape(width, height);
-            } else if (landscape.getHeight() != height || landscape.getWidth() != width)
-            {
-                System.out.println("ERROR: incorrect grid height and width "
-                    + "passed in " + filename);
-                System.exit(0);
-            }
-
-
-            // read in the data from the file and store it in tiles
-            int i = 0, j = 0;
-            while ((s = d.readLine()) != null)
-            {
-                String[] parts = s.split(" ");
-
-                for (String p : parts)
-                {
-                    int value = Integer.parseInt(p);
-                    boolean tval = true;
-                    if (value == nodata) // no positive match
-                    {
-                        tval = false;
-                    }
-
-                    Tile t = (Tile) landscape.get(j, i);
-
-                    // update t's appropriate parameter
-                    if (parameter == 3) // excluded
-                    {
-                        t.excluded = tval;
-                    } else if (parameter == 4)
-                    { // urban
-
-                        // 1 is not urbanized, it is something else somehow? "not off screen"?
-                        if (value == 1)
-                        {
-                            tval = false;
-                        }
-                        t.urbanized = tval;
-                        t.urbanOriginally = tval;
-                    }
-
-                    j++; // increase the column count
-                }
-
-                j = 0; // reset the column count
-                i++; // increase the row count
-            }
-
-        } // if it messes up, print out the error
-        catch (Exception e)
-        {
-            System.out.println(e);
-            System.exit(0);
-        }
-    }
-
-
-
-    /**
-     * Read in the double values of the landscape from a file.
-     * @param filename - the name of the file that holds the data
-     */
-    void setupLandscapeFromFileDoubles(String filename, int parameter)
-    {
-
-        try
-        { // to read in a file
-
-            String filePath = SleuthWorld.class.getResource(filename).getPath();
-
-            // Open the file
-            FileInputStream fstream = new FileInputStream(filePath);
-
-            // Convert our input stream to a BufferedReader
-            BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
-
-            // get the parameters from the file
-            String s;
-            int width = 0, height = 0;
-            int nodata = -1;
-            for (int i = 0; i < 6; i++)
-            {
-
-                s = d.readLine();
-
-                // format the line appropriately
-                String[] parts = s.split(" ", 2);
-                String trimmed = parts[1].trim();
-
-                // save the data in the appropriate place
-                if (i == 1)
-                {
-                    height = Integer.parseInt(trimmed);
-                } else if (i == 0)
-                {
-                    width = Integer.parseInt(trimmed);
-                } else if (i == 5)
-                {
-                    nodata = Integer.parseInt(trimmed);
-                } else
-                {
-                    continue;
-                }
-            }
-
-            // if the landscape has not already been set up, do so. Otherwise, ensure
-            // that the data in this file are in the same format at the data we have
-            // already read in
-            if (landscape == null)
-            {
-                setupLandscape(width, height);
-            } else if (landscape.getHeight() != height || landscape.getWidth() != width)
-            {
-                System.out.println("ERROR: incorrect grid height and width "
-                    + "passed in " + filename);
-                System.exit(0);
-            }
-
-
-            // read in the data from the file and store it in tiles
-            int i = 0, j = 0;
-            while ((s = d.readLine()) != null)
-            {
-                String[] parts = s.split(" ");
-
-                for (String p : parts)
-                {
-
-                    int value = Integer.parseInt(p);
-                    if (value == nodata) // mark the tile as having no value
-                    {
-                        value = Integer.MIN_VALUE;
-                    }
-
-                    Tile t = (Tile) landscape.get(j, i);
-
-                    // update t's appropriate parameter
-                    if (parameter == 1) // slope
-                    {
-                        t.slope = value;
-                    } else if (parameter == 2) // landuse
-                    {
-                        t.landuse = value;
-                    } else if (parameter == 5) // transport
-                    {
-                        t.transport = value;
-                    } else if (parameter == 6) // hillshade
-                    {
-                        t.hillshade = value;
-                    }
-
-                    j++; // increase the column count
-                }
-
-                j = 0; // reset the column count
-                i++; // increase the row count
-            }
-
-        } // if it messes up, print out the error
-        catch (Exception e)
-        {
-            System.out.println(e);
-            System.exit(0);
-        }
-    }
-
-    //
-    // --- END READING IN DATA FROM FILES ---
-    //
-
-
+    
     /**
      * Main function, runs the simulation without any visualization.
      * @param args
@@ -963,6 +714,184 @@ public class SleuthWorld extends SimState
     {
         doLoop(SleuthWorld.class, args);
         System.exit(0);
+    }
+
+
+
+
+
+    private void readSlopeData() throws FileNotFoundException
+    {
+        System.out.println("Reading slope data ...");
+
+        // Let's read in all the slope data first.  Not only will that give us
+        // the dimensions, but we can use that to determine where to put new tiles.
+
+        GeomGridField slopeField = new GeomGridField();
+
+        readData(slopeField, SLOPE_DATA_FILE_NAME);
+
+        // Now setup this.landscape
+        setupLandscape(slopeField);
+    }
+
+
+    /**
+     * The land use flags each tile with one of four classifications.
+     *
+     * (And what are these?)
+     */
+    private void readLandUseData() throws FileNotFoundException
+    {
+        System.out.println("Reading land use data ...");
+        
+        GeomGridField landuseGridField = new GeomGridField();
+
+        readData(landuseGridField, LAND_USE_DATA_FILE_NAME);
+
+        // Now set all the tiles' land use vales
+
+        for (int y = 0; y < landscape.getHeight(); y++)
+        {
+            for (int x = 0; x < landscape.getWidth(); x++)
+            {
+                if (landscape.get(x, y) != null)
+                {
+                    Tile tile = (Tile) landscape.get(x, y);
+
+                    tile.landuse = ((IntGrid2D) landuseGridField.getGrid()).get(x, y);
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     * TODO: the excluded data area file appears to be either -9999 (no data)
+     * or zeroes.  Is this right?
+     */
+    private void readExcludedAreaData() throws FileNotFoundException
+    {
+        System.out.println("Reading excluded area data ...");
+        
+        GeomGridField excludedGridField = new GeomGridField();
+        
+        readData(excludedGridField, EXCLUDED_DATA_FILE_NAME);
+
+        // Now set all the tiles' land use vales
+
+        for (int y = 0; y < landscape.getHeight(); y++)
+        {
+            for (int x = 0; x < landscape.getWidth(); x++)
+            {
+                if (landscape.get(x, y) != null)
+                {
+                    Tile tile = (Tile) landscape.get(x, y);
+
+                    tile.excluded = ((IntGrid2D) excludedGridField.getGrid()).get(x, y) == 0;
+                }
+            }
+        }
+    }
+
+
+
+    private void readUrbanAreaData() throws FileNotFoundException
+    {
+        System.out.println("Reading urban area data ...");
+        
+        GeomGridField urbanAreaGridField = new GeomGridField();
+
+        readData(urbanAreaGridField,URBAN_AREA_DATA_FILE_NAME);
+
+        // Now set all the tiles' land use vales
+
+        for (int y = 0; y < landscape.getHeight(); y++)
+        {
+            for (int x = 0; x < landscape.getWidth(); x++)
+            {
+                if (landscape.get(x, y) != null)
+                {
+                    Tile tile = (Tile) landscape.get(x, y);
+                    
+                    int classification = ((IntGrid2D) urbanAreaGridField.getGrid()).get(x, y);
+
+                    switch (classification)
+                    {
+                        case 1:
+                            tile.urbanOriginally = false;
+                            tile.urbanized = false;
+                            break;
+                        case 2:
+                            tile.urbanOriginally = true;
+                            tile.urbanized = false;
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    
+                }
+            }
+        }
+    }
+
+
+
+    private void readTransportData() throws FileNotFoundException
+    {
+        System.out.println("Reading transport data ...");
+        
+        GeomGridField transportGridField = new GeomGridField();
+
+        readData(transportGridField, TRANSPORT_DATA_FILE_NAME);
+
+        // Now set all the tiles' land use vales
+
+        for (int y = 0; y < landscape.getHeight(); y++)
+        {
+            for (int x = 0; x < landscape.getWidth(); x++)
+            {
+                if (landscape.get(x, y) != null)
+                {
+                    Tile tile = (Tile) landscape.get(x, y);
+
+                    int classification = ((IntGrid2D) transportGridField.getGrid()).get(x, y);
+
+                    tile.transport = classification;
+                }
+            }
+        }
+
+    }
+
+
+
+    private void readHillShadeData() throws FileNotFoundException
+    {
+        System.out.println("Reading hill shade data ...");
+        
+        GeomGridField hillshadeGridField = new GeomGridField();
+
+        readData(hillshadeGridField, HILLSIDE_DATA_FILE_NAME);
+
+        // Now set all the tiles' land use vales
+
+        for (int y = 0; y < landscape.getHeight(); y++)
+        {
+            for (int x = 0; x < landscape.getWidth(); x++)
+            {
+                if (landscape.get(x, y) != null)
+                {
+                    Tile tile = (Tile) landscape.get(x, y);
+
+                    int classification = ((IntGrid2D) hillshadeGridField.getGrid()).get(x, y);
+
+                    tile.hillshade = classification;
+                }
+            }
+        }
+
     }
 
 }

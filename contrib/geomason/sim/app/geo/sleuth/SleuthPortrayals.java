@@ -46,7 +46,7 @@ class SlopePortrayal extends RectanglePortrayal2D
         Tile t = (Tile) object;
 
         // only draw areas for which we have data
-        if (t.slope != Integer.MIN_VALUE)
+        if (t.slope != -9999)
         {
             graphics.setColor(SleuthWorldWithUI.getSlopeColor().getColor(t.slope));
             graphics.fillRect(x, y, w, h);
@@ -80,7 +80,7 @@ class HillshadePortrayal extends RectanglePortrayal2D
         Tile t = (Tile) object;
 
         // only draw areas for which we have data
-        if (t.hillshade != Integer.MIN_VALUE)
+        if (t.hillshade != -9999)
         {
             graphics.setColor(SleuthWorldWithUI.getHillshadeColor().getColor(t.hillshade));
             graphics.fillRect(x, y, w, h);
@@ -179,7 +179,7 @@ class TransportPortrayal extends RectanglePortrayal2D
         final int h = (int) (height);
 
         Tile t = (Tile) object;
-        if (t.transport != Integer.MIN_VALUE)
+        if (t.transport != -9999)
         {
             graphics.setColor(Color.black);
             graphics.fillRect(x, y, w, h);

@@ -13,6 +13,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 import java.util.logging.Level;
@@ -46,13 +47,6 @@ public class CampusWorld extends SimState
 
     // where all the agents live
     public GeomVectorField agents = new GeomVectorField(WIDTH, HEIGHT);
-
-    // The Importer is responsible for reading in the GIS files.  If you have installed either 
-    // GeoTools and/or OGR on your system, you can use those importers.  The ShapeFileImporter does 
-    // not rely on external libraries.  
-    //OGRImporter importer = new OGRImporter();
-    //GeoToolsImporter importer = new GeoToolsImporter();
-    ShapeFileImporter importer = new ShapeFileImporter();
 
 
     // Stores the walkway network connections.  We represent the walkways as a PlanarGraph, which allows 
@@ -90,7 +84,6 @@ public class CampusWorld extends SimState
     public void finish()
     {
         super.finish();
-;
     }
 
     
@@ -111,20 +104,26 @@ public class CampusWorld extends SimState
 //                System.out.println(System.getProperty("user.dir"));
 
 
-                // read in the buildings GIS file 
-                importer.ingest("../../data/bldg", CampusWorld.class, buildings, masked);
+                // read in the buildings GIS file
+
+                URL bldgGeometry = CampusWorld.class.getResource("../../data/campusworld/bldg.shp");
+                ShapeFileImporter.read(bldgGeometry, buildings, masked);
 
                 // We want to save the MBR so that we can ensure that all GeomFields
                 // cover identical area.
                 Envelope MBR = buildings.getMBR();
 
                 System.out.println("reading roads layer");
-                importer.ingest("../../data/roads", CampusWorld.class, roads, null);
+
+                URL roadGeometry = CampusWorld.class.getResource("../../data/campusworld/roads.shp");
+                ShapeFileImporter.read(roadGeometry, roads);
 
                 MBR.expandToInclude(roads.getMBR());
 
                 System.out.println("reading walkways layer");
-                importer.ingest("../../data/walk_ways", CampusWorld.class, walkways, null);
+
+                URL walkWayGeometry = CampusWorld.class.getResource("../../data/campusworld/walk_ways.shp");
+                ShapeFileImporter.read(walkWayGeometry, walkways);
 
                 MBR.expandToInclude(walkways.getMBR());
 

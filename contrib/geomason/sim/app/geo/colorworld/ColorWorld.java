@@ -8,9 +8,10 @@ See the file "LICENSE" for more information
 package sim.app.geo.colorworld;
 
 import java.io.FileNotFoundException;
-import java.util.WeakHashMap;
-import com.vividsolutions.jts.geom.Geometry;
 
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sim.engine.*;
 import sim.field.geo.*;
 import sim.io.geo.ShapeFileImporter;
@@ -61,31 +62,25 @@ public class ColorWorld extends SimState
     public int getNumAgents() { return NUM_AGENTS; }
     public void setNumAgents(int a) { if (a > 0) NUM_AGENTS = a; }
 
-    
-    //public WeakHashMap<Geometry, Agent> regionCnt = new WeakHashMap<Geometry, Agent>(); 
-    public WeakHashMap regionCnt = new WeakHashMap(); 
-    
+
+
     public ColorWorld(long seed)
     {
         super(seed);
 
+        // this line allows us to replace the standard MasonGeometry with our
+        // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info.
+        // Note: this line MUST occur prior to ingesting the data
+        URL politicalBoundaries = ColorWorld.class.getResource("../../data/colorworld/pol.shp");
+
+        Bag empty = new Bag();
         try
-            {
-                // Open simple Shape file of county.
-                ShapeFileImporter importer = new ShapeFileImporter();
-
-                // this line allows us to replace the standard MasonGeometry with our
-                // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info.
-                // Note: this line MUST occur prior to ingesting the data
-                importer.masonGeometryClass = CountingGeomWrapper.class;
-
-                importer.ingest( "../../data/pol", ColorWorld.class, county, null);
-            }
-        catch (FileNotFoundException ex)
-            {
-                System.out.println("Error opening shapefile!" + ex);
-                System.exit(-1);
-            }
+        {
+            ShapeFileImporter.read(politicalBoundaries, county, empty, CountingGeomWrapper.class);
+        } catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(ColorWorld.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // we use either the ConvexHull or Union to determine if the agents are within
         // Fairfax county or not

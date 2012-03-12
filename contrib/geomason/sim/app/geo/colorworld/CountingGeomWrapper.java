@@ -17,9 +17,17 @@ import sim.util.geo.MasonGeometry;
  *  inside the voting district. 
  */
 
-public class CountingGeomWrapper extends MasonGeometry {
-
+public class CountingGeomWrapper extends MasonGeometry
+{
     private static final long serialVersionUID = 3186655744206152969L;
+
+
+
+    public CountingGeomWrapper()
+    {
+        super();
+    }
+
 
     public int numAgentsInGeometry()
     {

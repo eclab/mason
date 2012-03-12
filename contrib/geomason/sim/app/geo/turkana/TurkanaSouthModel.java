@@ -11,6 +11,8 @@
  **/
 package sim.app.geo.turkana;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 import sim.engine.SimState;
@@ -18,9 +20,10 @@ import sim.engine.Steppable;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.SparseGrid2D;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.IntGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
-import sim.io.geo.GeomImporter.GridDataType;
+import sim.io.geo.GDALImporter;
 
 
 /*
@@ -231,7 +234,6 @@ public class TurkanaSouthModel extends SimState
 
 
 
-    @SuppressWarnings("serial")
     @Override
     public void start()
     {
@@ -240,26 +242,29 @@ public class TurkanaSouthModel extends SimState
 
         try
         {
-            System.out.println(System.getProperty("user.dir"));
-            
-            ArcInfoASCGridImporter importer = new ArcInfoASCGridImporter();
-
             // Read the raster GIS data
             populationDensityGrid = new GeomGridField();
-            importer.ingest("../../data/tspop2007.txt", TurkanaSouthModel.class, GridDataType.INTEGER, populationDensityGrid);
-//            populationDensityGrid = RasterIntGrid2D.createFromFile("data/tspop2007.txt");
+
+            InputStream inputStream = TurkanaSouthModel.class.getResourceAsStream("../../data/turkana/tspop2007.txt");
+            ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, populationDensityGrid);
+
+            // Example of how to use GDAL to read the same dataset
+//            URL inputSource = TurkanaSouthModel.class.getResource("../../data/turkana/tspop2007.txt");
+//            GDALImporter.read(inputSource, GridDataType.INTEGER, populationDensityGrid);
 
             NdviGrid = new GeomGridField();
-            importer.ingest("../../data/ts_ndvi.txt", TurkanaSouthModel.class, GridDataType.DOUBLE, NdviGrid);
-//            NdviGrid = RasterDoubleGrid2D.createFromFile("data/ts_ndvi.txt");
+
+            inputStream = TurkanaSouthModel.class.getResourceAsStream("../../data/turkana/ts_ndvi.txt");
+            ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, NdviGrid);
 
             // Read all 144 months of rainfall data into an array
             monthlyRainGrids = new GeomGridField[monthsOfWeather];
             for (int i = 0; i < monthsOfWeather; i++)
             {
-//                monthlyRainGrids[i] = RasterDoubleGrid2D.createFromFile(String.format("data/RainDataClipped/%d.txt", i + 1));
                 monthlyRainGrids[i] = new GeomGridField();
-                importer.ingest(String.format("../../data/%d.txt", i + 1), TurkanaSouthModel.class, GridDataType.DOUBLE, monthlyRainGrids[i]);
+                
+                inputStream = TurkanaSouthModel.class.getResourceAsStream(String.format("../../data/turkana/%d.txt", i + 1));
+                ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, monthlyRainGrids[i]);
             }
 
             // rainGrid will hold the current month's rainfall data. Just need the dimensions for now.

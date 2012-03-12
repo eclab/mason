@@ -25,11 +25,11 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 
+import java.net.URL;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;
-import sim.util.geo.AttributeValue;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.GeomPlanarGraphEdge;
 import sim.util.geo.MasonGeometry;
@@ -108,6 +108,7 @@ public class Gridlock extends SimState
 
 
     /** Initialization */
+    @Override
     public void start()
     {
         super.start();
@@ -115,17 +116,21 @@ public class Gridlock extends SimState
         // read in data
         try
         {
-            ShapeFileImporter importer = new ShapeFileImporter();
 
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
-            importer.ingest("../../data/gridlock/roads.shp", Gridlock.class, roads, null);
+            
+            URL roadsFile = Gridlock.class.getResource("../../data/gridlock/roads.shp");
+            
+            ShapeFileImporter.read(roadsFile, roads);
 
             Envelope MBR = roads.getMBR();
 
             // read in the tracts to create the background
             System.out.println("reading tracts layer...");
-            importer.ingest("../../data/gridlock/areas.shp", Gridlock.class, censusTracts, null);
+            
+            URL areasFile = Gridlock.class.getResource("../../data/gridlock/areas.shp");
+            ShapeFileImporter.read(areasFile, censusTracts);
 
 
             MBR.expandToInclude(censusTracts.getMBR());

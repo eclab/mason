@@ -103,6 +103,7 @@ public class SleuthWorldWithUI extends GUIState
      * Called when starting a new run of the simulation. Sets up the portrayals
      * and chart data.
      */
+    @Override
     public void start()
     {
         super.start();

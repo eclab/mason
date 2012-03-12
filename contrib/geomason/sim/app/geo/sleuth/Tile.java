@@ -23,14 +23,21 @@ public class Tile
     int y;
 
 
-    double slope;
-    double landuse;
+    /**
+     * In range [1,51].  I have no idea why.
+     */
+    int slope;
+
+    /**
+     * One of four values to indicate how this tile is used.
+     */
+    int landuse;
 
     boolean excluded;
 
-    double transport;
+    int transport;
 
-    double hillshade;
+    int hillshade;
 
     boolean urbanOriginally;
 

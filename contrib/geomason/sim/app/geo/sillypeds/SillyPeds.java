@@ -11,12 +11,15 @@
  **/
 package sim.app.geo.sillypeds;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
  import java.util.ArrayList;
 
+import java.util.zip.GZIPInputStream;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
 import sim.io.geo.ArcInfoASCGridImporter;
-import sim.io.geo.GeomImporter.GridDataType;
 
 
 
@@ -58,12 +61,10 @@ public class SillyPeds extends SimState
 
     void scenarioSimpleRoom()
     {
-        System.out.println(System.getProperty("user.dir"));
-
         landscape = new ArrayList<Space>();
 
         // Read in the exit gradient corresponding to a single building floor
-        Space floor = setupLandscapeSpace("../../data/sillypeds/first.txt");
+        Space floor = setupLandscapeSpace("../../data/sillypeds/first.txt.gz");
 
         landscape.add(floor);
 
@@ -88,6 +89,7 @@ public class SillyPeds extends SimState
      * Starts a new run of the simulation. Sets up the landscape and adds
      * Pedestrians to every floor.
      */
+    @Override
     public void start()
     {
         super.start();
@@ -120,17 +122,24 @@ public class SillyPeds extends SimState
      * @param filename - the file containing gradients denoting exit paths
      * @return newly created Space
      */
-    Space setupLandscapeSpace(String filename)
+    Space setupLandscapeSpace(final String filename)
     {
         Space result = null;
 
         try
         {
-            ArcInfoASCGridImporter importer = new ArcInfoASCGridImporter();
-
             GeomGridField floorPlan = new GeomGridField();
 
-            importer.ingest(filename, SillyPeds.class, GridDataType.DOUBLE, floorPlan);
+            InputStream inputStream = SillyPeds.class.getResourceAsStream(filename);
+
+            if (inputStream == null)
+            {
+                throw new FileNotFoundException(filename);
+            }
+
+            GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
+
+            ArcInfoASCGridImporter.read(compressedInputStream, GridDataType.DOUBLE, floorPlan);
 
             result = new Space(floorPlan);
         }

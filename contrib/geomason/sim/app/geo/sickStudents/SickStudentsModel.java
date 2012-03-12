@@ -23,8 +23,6 @@ import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.Interval;
-import sim.util.geo.AttributeValue;
-import sim.util.geo.GeometryUtilities;
 import sim.util.geo.MasonGeometry;
 import umontreal.iro.lecuyer.probdist.LognormalDist;
 
@@ -33,9 +31,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import sim.io.geo.GeoToolsImporter;
-import sim.io.geo.GeomImporter;
-import sim.io.geo.OGRImporter;
 
 
 
@@ -305,20 +300,13 @@ public class SickStudentsModel extends SimState
     {
         try
         {
-
-//            ShapeFileImporter importer = new ShapeFileImporter();
-//            GeoToolsImporter importer = new GeoToolsImporter();
-            GeomImporter importer = new OGRImporter();
-            
-            System.out.println(System.getProperty("user.dir"));
-
             // read the data
-            importer.ingest("../../data/bndyschles/ES_ATTENDANCE_AREAS", SickStudentsModel.class, elementarySchoolZones, null);
-            importer.ingest("../../data/bndyschles/MS_ATTENDANCE_AREAS", SickStudentsModel.class, middleSchoolZones, null);
-            importer.ingest("../../data/bndyschles/HS_ATTENDANCE_AREAS", SickStudentsModel.class, highSchoolZones, null);
-            importer.ingest("../../data/bndyschles/ElementarySchools", SickStudentsModel.class, elementarySchools, null);
-            importer.ingest("../../data/bndyschles/MiddleSchools", SickStudentsModel.class, middleSchools, null);
-            importer.ingest("../../data/bndyschles/HighSchools", SickStudentsModel.class, highSchools, null);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/ES_ATTENDANCE_AREAS.shp"), elementarySchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/MS_ATTENDANCE_AREAS.shp"), middleSchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/HS_ATTENDANCE_AREAS.shp"),  highSchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/ElementarySchools.shp"),  elementarySchools);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/MiddleSchools.shp"), middleSchools);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/HighSchools.shp"), highSchools);
 
             // Make all the bounding rectangles match one another
             Envelope MBR = elementarySchoolZones.getMBR();
@@ -340,23 +328,6 @@ public class SickStudentsModel extends SimState
             System.exit(-1);
         }
     }
-
-//	@SuppressWarnings("unchecked")
-//	public static Object getAttribute(Geometry g, String attributeName) {
-//		ArrayList<AttributeValue> attrs = (ArrayList<AttributeValue>)g.getUserData();
-//		int index = Collections.binarySearch(attrs, new AttributeValue(attributeName),
-//				GeometryUtilities.attrFieldCompartor);
-//
-//		if (index < 0)
-//			return null;
-//
-//		return ((AttributeValue)(attrs.get(index))).getValue();
-//	}
-//
-//	public static Object getAttribute(MasonGeometry mg, String attributeName) {
-//		return getAttribute(mg.getGeometry(), attributeName);
-//	}
-//
 
 
     private void createSchoolsFromData(GeomVectorField schoolField)

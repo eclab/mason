@@ -7,20 +7,25 @@
  ** Licensed under the Academic Free License version 3.0
  **
  ** See the file "LICENSE" for more information
+ *
+ * $Id$
  **
  **/
 package sim.app.geo.waterworld;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import java.util.zip.GZIPInputStream;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
 import sim.field.geo.GeomGridField;
+import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.IntGrid2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
-import sim.io.geo.GeomImporter.GridDataType;
 
 
 
@@ -55,6 +60,7 @@ public class WaterWorld extends SimState
      * Starts a new run of the simulation. Refreshes the landscape and
      * schedules the addition of new Raindrops to the system.
      */
+    @Override
     public void start()
     {
         super.start();
@@ -62,7 +68,7 @@ public class WaterWorld extends SimState
         // various options for setting up the landscape
         //landscape = setupLandscape(); // uniform landscape, completely flat
         //landscape = setupLandscapeGradientIn(); // landscape that slopes in
-        landscape = setupLandscapeReadIn("../../data/waterworld/elevation.txt"); // read landscape from file
+        landscape = setupLandscapeReadIn("../../data/waterworld/elevation.txt.gz"); // read landscape from file
 
         drops = new ArrayList<Raindrop>();
 
@@ -103,18 +109,24 @@ public class WaterWorld extends SimState
      * @param filename - the name of the file that holds the landscape data
      * @return new landscape
      */
-    ObjectGrid2D setupLandscapeReadIn(String filename)
+    ObjectGrid2D setupLandscapeReadIn(final String filename)
     {
-
         ObjectGrid2D result = null;
 
         try
         {
-            ArcInfoASCGridImporter importer = new ArcInfoASCGridImporter();
-
             GeomGridField elevationsField = new GeomGridField();
 
-            importer.ingest(filename, WaterWorld.class, GridDataType.INTEGER, elevationsField);
+            InputStream inputStream = WaterWorld.class.getResourceAsStream(filename);
+
+            if (inputStream == null)
+            {
+                throw new FileNotFoundException(filename);
+            }
+
+            GZIPInputStream compressedInputStream = new GZIPInputStream(inputStream);
+
+            ArcInfoASCGridImporter.read(compressedInputStream, GridDataType.INTEGER, elevationsField);
             
             grid_width = elevationsField.getGridWidth();
             grid_height = elevationsField.getGridHeight();

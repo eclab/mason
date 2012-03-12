@@ -23,6 +23,8 @@ public class CatchmentPortrayal extends GeomPortrayal
 	private static final long serialVersionUID = 6026649920581400781L;
 
 	SimpleColorMap colorMap = null;
+
+    // FIXME: this should be using Mason's RNG
 	public double proportionSick = Math.random();
 	SickStudentsModel model;
 	
@@ -39,8 +41,14 @@ public class CatchmentPortrayal extends GeomPortrayal
     	MasonGeometry mg = (MasonGeometry)object;
     	Integer num = mg.getIntegerAttribute("SCHOOL_NUM");
     	School s = model.schoolMap.get(num);
-    	proportionSick = s.getProportionOfSickStudents();
-    	paint = colorMap.getColor(proportionSick);
+
+        // FIXME: why is this occasionally null?
+        if (s != null)
+        {
+            proportionSick = s.getProportionOfSickStudents();
+            paint = colorMap.getColor(proportionSick);
+        }
+
         super.draw(object, graphics, info);    
     }
 }
