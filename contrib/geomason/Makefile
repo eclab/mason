@@ -96,7 +96,6 @@ BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/field/geo/GeomVectorField.java			\
 ./sim/io/geo/ArcInfoASCGridImporter.java		\
 ./sim/io/geo/GeomExporter.java				\
-./sim/io/geo/GeomImporter.java				\
 ./sim/io/geo/ShapeFileImporter.java			\
 ./sim/portrayal/geo/GeomPortrayal.java			\
 ./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
