@@ -12,7 +12,6 @@
 package sim.app.geo.turkana;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 
 import sim.engine.SimState;
@@ -23,7 +22,6 @@ import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.IntGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
-import sim.io.geo.GDALImporter;
 
 
 /*
