@@ -1756,7 +1756,7 @@ MASON has a concept called {\bf wrapper portrayals}, which are special SimplePor
 \item \Class{sim.portrayal.simple.TransformedPortrayal2D} scales, rotates, or translates the object with respect to the underlying portrayal.
 \end{itemize}
 
-Notice the theme?  All wrapper portrayals end in ``ed''.  
+Notice the theme?  All wrapper portrayal names are adjectives like ``circled'' or ``movable'' or ``transformed''. 
 
 In the code below we wrap the OvalPortrayal2D in not one, not two, but {\it three} wrapper portrayals: MovablePortrayal2D,  CircledPortrayal2D, and LabelledPortrayal2D. It's easy:
 
@@ -3055,6 +3055,16 @@ while(iter.hasNext()) System.out.println(iter.next());
 
 \java{%
 for(Object o :\ bag) System.out.println(o);
+}
+
+\sidebar{Why not just do \class{ArrayList\(<\)Integer\(>\)} instead of IntBag?}{Let's put aside the fact that in IntBag you can access the underlying array.  Even with the recent advances in Java 1.6 to fix ArrayLists's inlining mistakes, \class{ArrayList\(<\)Integer\(>\)} is still a less than good idea.  Let's say that you want to put the ints 0 through 1000 into the list.  You could do it for either IntBag or \class{ArrayList\(<\)Integer\(>\)} along these lines:
+
+\java{%
+for(int i = 0 ; i < 1000; i++)
+myList.add(i); 
+}
+
+However while IntBag is just sticking integers in its array, \class{ArrayList\(<\)Integer\(>\)}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing} is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is well over twice the speed of \class{ArrayList\(<\)Integer\(>\)}, and likewise DoubleBag is over twice the speed of \class{ArrayList\(<\)Double\(>\)}.
 }
 
 \noindent ... but you should be warned: Java's iterators are very slow.  They involve un-linlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.

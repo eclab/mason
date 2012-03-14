@@ -342,8 +342,8 @@ public final class Double2D implements java.io.Serializable
         else if (dist == infinity  || dist == -infinity || dist != dist /* nan */)
             throw new ArithmeticException("Cannot resize to distance " + dist);
         else if (   (x == 0 && y == 0) ||
-                    x == infinity || x == -infinity || x != x || 
-                    y == infinity || y == -infinity || y != y )
+            x == infinity || x == -infinity || x != x || 
+            y == infinity || y == -infinity || y != y )
             throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, or of length 0, except to length 0");
 
         double temp = length();
@@ -356,12 +356,12 @@ public final class Double2D implements java.io.Serializable
         or has all zero values, then an exception will be thrown.*/
     public final Double2D normalize()
         {
-    /*
-        final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
-        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen) // nan
-            throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
-        return new Double2D(x * invertedlen,  y * invertedlen);
-    */
+        /*
+          final double invertedlen = 1.0 / Math.sqrt(x * x + y * y);
+          if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen) // nan
+          throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y) + ", cannot normalize");
+          return new Double2D(x * invertedlen,  y * invertedlen);
+        */
         return resize(1.0);
         } 
 

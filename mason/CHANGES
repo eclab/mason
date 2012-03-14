@@ -2365,4 +2365,8 @@ Version 17
 		Richard Legendi <rlegendi@aitia.ai>
 	The Console's model-selection box no longer issues an error if you click on the
 		close box or press ESCAPE.  Thanks to Richard Legendi <rlegendi@aitia.ai>
-
+	HistogramGenerator and ScatterPlotGenerator no longer issue an error when a
+		display is closed which contains either generator as a component.
+        Removed vestigial references to 0xffffffff in MersenneTwister and 
+                MersenneTwisterFast.  Thanks to Bruce Haxton <bruce.haxton@yahoo.com>
+	Tweaks to Woims3D to make the woims slightly less elongated.

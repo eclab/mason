@@ -361,9 +361,9 @@ public final class Double3D implements java.io.Serializable
         else if (dist == infinity  || dist == -infinity || dist != dist /* nan */)
             throw new ArithmeticException("Cannot resize to distance " + dist);
         else if (   (x == 0 && y == 0 && z == 0) ||
-                    x == infinity || x == -infinity || x != x || 
-                    y == infinity || y == -infinity || y != y || 
-                    z == infinity || z == -infinity || z != z )
+            x == infinity || x == -infinity || x != x || 
+            y == infinity || y == -infinity || y != y || 
+            z == infinity || z == -infinity || z != z )
             throw new ArithmeticException("Cannot resize a vector with infinite or NaN values, or of length 0, except to length 0");
 
         double temp = length();
@@ -376,12 +376,12 @@ public final class Double3D implements java.io.Serializable
         or has all zero values, then an exception will be thrown.*/
     public final Double3D normalize()
         {
-    /*
-        final double invertedlen = 1.0 / Math.sqrt(x * x + y * y + z * z);
-        if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen)  // nan
-        throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y + z * z) + ", cannot normalize");
-        return new Double3D(x * invertedlen, y * invertedlen, z * invertedlen);
-    */
+        /*
+          final double invertedlen = 1.0 / Math.sqrt(x * x + y * y + z * z);
+          if (invertedlen == infinity || invertedlen == -infinity || invertedlen == 0 || invertedlen != invertedlen)  // nan
+          throw new ArithmeticException("" + this + " length is " + Math.sqrt(x * x + y * y + z * z) + ", cannot normalize");
+          return new Double3D(x * invertedlen, y * invertedlen, z * invertedlen);
+        */
         return resize(1.0);
         } 
 
@@ -394,6 +394,6 @@ public final class Double3D implements java.io.Serializable
     /** Returns the negation of this Double3D. */
     public final Double3D negate()
         {
-            return new Double3D(-x, -y, -z);
+        return new Double3D(-x, -y, -z);
         }
     }
