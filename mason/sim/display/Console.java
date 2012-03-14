@@ -1624,7 +1624,7 @@ public class Console extends JFrame implements Controller
             spacer.setFont(new Font("Dialog",0,6));
             b.add(spacer);
                         
-            j = new JLabel("MASON is (c) 2005-2011 Sean Luke and George Mason University,");
+            j = new JLabel("MASON is (c) 2005-2012 Sean Luke and George Mason University,");
             j.setFont(small);
             b.add(j);
 

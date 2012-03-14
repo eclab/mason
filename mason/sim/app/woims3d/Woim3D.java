@@ -237,7 +237,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public double y;
     public double z;
     
-    final static int numLinks = 15;
+    final static int numLinks = 12;
     Vector3d[] lastPos = new Vector3d[numLinks];
     Vector3d[] lastPosRel = new Vector3d[numLinks];
     java.awt.Color[] colors = new java.awt.Color[numLinks];
@@ -247,7 +247,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     protected Vector3D acceleration = new Vector3D( 0, 0, 0 );
     
 
-    public static final float SKIP = 10.0f;
+    public static final float SKIP = 4.0f;
 
     public void computePositions()
         {

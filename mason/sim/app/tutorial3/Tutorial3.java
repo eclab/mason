@@ -47,7 +47,7 @@ public class Tutorial3 extends SimState
             {
             private static final long serialVersionUID = 1;
             
-           public void step(SimState state)
+            public void step(SimState state)
                 {
                 // decrease the trails
                 trails.multiply(0.9);

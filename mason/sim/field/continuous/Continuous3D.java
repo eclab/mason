@@ -311,7 +311,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         }
 
     /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
-        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.  */
+        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance)
         {
@@ -320,7 +324,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
 
     /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
         using a circle of radius 'distance' around the given position.  If 'toroidal' is true, then the
-        distance is measured assuming the environment is toroidal.  Assumes point objects.  */
+        distance is measured assuming the environment is toroidal.  Assumes point objects.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal)
         {
@@ -333,7 +341,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
         distance is measured assuming the environment is toroidal.  If the Bag 'result' is provided, it will be cleared and objects
         placed in it and it will be returned, else if it is null, then this method will create a new Bag and use that instead. 
-        Assumes point objects. */
+        Assumes point objects.  
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal, 
         final boolean radial, final boolean inclusive, Bag result)
@@ -386,7 +398,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         true, we extend the search space by one extra discretization in all directions.  For small distances within
         a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
         actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes non-toroidal, point objects]   */
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes non-toroidal, point objects]    
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance)
         { return getObjectsWithinDistance(position,distance,false,false, new Bag()); }
 
@@ -397,7 +413,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         true, we extend the search space by one extra discretization in all directions.  For small distances within
         a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
         actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes point objects]   */
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes point objects]    
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal)
         { return getObjectsWithinDistance(position,distance,toroidal,false, new Bag()); }
 
@@ -411,7 +431,11 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
          true, we extend the search space by one extra discretization in all directions.  For small distances within
          a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
          actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
-         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.  */
+         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
         
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects)
@@ -428,11 +452,19 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         true, we extend the search space by one extra discretization in all directions.  For small distances within
         a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
         actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
-        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.  */
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
         
-    public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+            to within the boundaries before computation.
+        */
+        
+    public Bag getObjectsWithinDistance( Double3D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects, Bag result)
         {
+        // push location to within legal boundaries
+        if (toroidal && (position.x >= width || position.y >= height || position.z >= length || position.x < 0 || position.y < 0 || position.z < 0))
+            position = new Double3D(tx(position.x), ty(position.y), tz(position.z));
+
         double discDistance = distance / discretization;
         double discX = position.x / discretization;
         double discY = position.y / discretization;
@@ -447,28 +479,13 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
             discDistance++;
             }
         
-        // we're using StrictMath.floor instead of Math.floor because
-        // Math.floor just calls StrictMath.floor, and so using the
-        // StrictMath version may help in the inlining (one function
-        // to inline, not two).  They should be identical in function anyway.
-        
-        int minX = (int) StrictMath.floor(discX - discDistance);
-        int maxX = (int) StrictMath.floor(discX + discDistance);
-        int minY = (int) StrictMath.floor(discY - discDistance);
-        int maxY = (int) StrictMath.floor(discY + discDistance);
-        int minZ = (int) StrictMath.floor(discZ - discDistance);
-        int maxZ = (int) StrictMath.floor(discZ + discDistance);
-
-        final int expectedBagSize = 1; // in the future, pick a smarter bag size?
-        if (result!=null)
-            {
-            result.clear();
-            // result.resize(expectedBagSize);  // presently 1, why bother?
-            }
+        final int expectedBagSize = 1;  // in the future, pick a smarter bag size?
+        if (result!=null) result.clear();
         else result = new Bag(expectedBagSize);
         Bag temp;
     
         MutableInt3D speedyMutableInt3D = this.speedyMutableInt3D;  // a little faster (local)
+
 
         // do the loop
         if( toroidal )
@@ -476,6 +493,29 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
             final int iWidth = (int)(StrictMath.ceil(width / discretization));
             final int iHeight = (int)(StrictMath.ceil(height / discretization));
             final int iLength = (int)(StrictMath.ceil(length / discretization));
+
+            // we're using StrictMath.floor instead of Math.floor because
+            // Math.floor just calls StrictMath.floor, and so using the
+            // StrictMath version may help in the inlining (one function
+            // to inline, not two).  They should be identical in function anyway.
+            
+            int minX = (int) StrictMath.floor(discX - discDistance);
+            int maxX = (int) StrictMath.floor(discX + discDistance);
+            int minY = (int) StrictMath.floor(discY - discDistance);
+            int maxY = (int) StrictMath.floor(discY + discDistance);
+            int minZ = (int) StrictMath.floor(discZ - discDistance);
+            int maxZ = (int) StrictMath.floor(discZ + discDistance);
+
+            if (position.x + distance >= width && maxX == iWidth - 1)  // oops, need to recompute wrap-around if width is not a multiple of discretization
+                maxX = 0;
+
+            if (position.y + distance >= height && maxY == iHeight - 1)  // oops, need to recompute wrap-around if height is not a multiple of discretization
+                maxY = 0;
+
+            if (position.z + distance >= length && maxZ == iLength - 1)  // oops, need to recompute wrap-around if length is not a multiple of discretization
+                maxZ = 0;
+
+
 
             // we promote to longs so that maxX - minX can't totally wrap around by accident
             if ((long)maxX - (long)minX >= iWidth)  // total wrap-around.
@@ -546,6 +586,18 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
             }
         else
             {
+            // we're using StrictMath.floor instead of Math.floor because
+            // Math.floor just calls StrictMath.floor, and so using the
+            // StrictMath version may help in the inlining (one function
+            // to inline, not two).  They should be identical in function anyway.
+            
+            int minX = (int) StrictMath.floor(discX - discDistance);
+            int maxX = (int) StrictMath.floor(discX + discDistance);
+            int minY = (int) StrictMath.floor(discY - discDistance);
+            int maxY = (int) StrictMath.floor(discY + discDistance);
+            int minZ = (int) StrictMath.floor(discZ - discDistance);
+            int maxZ = (int) StrictMath.floor(discZ + discDistance);
+
             // for non-toroidal, it is easier to do the inclusive for-loops
             for(int x = minX; x<= maxX; x++)
                 for(int y = minY ; y <= maxY; y++)
