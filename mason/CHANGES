@@ -2370,3 +2370,8 @@ Version 17
         Removed vestigial references to 0xffffffff in MersenneTwister and 
                 MersenneTwisterFast.  Thanks to Bruce Haxton <bruce.haxton@yahoo.com>
 	Tweaks to Woims3D to make the woims slightly less elongated.
+	Bugfix to Continuous2D and Continuous3D's getObjectsWithinDistance() method.
+		When the width, height, or length is not a mutiple of the discretization,
+		and the field is toroidal, then neighborhood lookups near the width, 
+		height, or length edges of the field may not wrap around properly to the
+		0 bucket on the other side.  Thanks to Tom White <tom@sixdozen.com>

@@ -430,8 +430,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects. 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-         */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance)
         {
@@ -443,8 +443,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         distance is measured assuming the environment is toroidal.  Assumes point objects.  
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal)
         {
@@ -460,8 +460,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         Assumes point objects. 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double2D position, final double distance, final boolean toroidal, 
         final boolean radial, final boolean inclusive, Bag result)
@@ -515,8 +515,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE. [assumes non-toroidal, point objects] 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
     public Bag getObjectsWithinDistance( final Double2D position, final double distance)
         { return getObjectsWithinDistance(position,distance,false,false, null); }
 
@@ -531,8 +531,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE. [assumes point objects] 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
     public Bag getObjectsWithinDistance( final Double2D position, final double distance, final boolean toroidal)
         { return getObjectsWithinDistance(position,distance,toroidal,false, null); }
 
@@ -549,8 +549,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE. 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
         
     public Bag getObjectsWithinDistance( final Double2D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects)
@@ -571,8 +571,8 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE. 
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
     
     public Bag getObjectsWithinDistance( Double2D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects, Bag result)

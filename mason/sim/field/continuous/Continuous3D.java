@@ -314,8 +314,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.   
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance)
         {
@@ -327,8 +327,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         distance is measured assuming the environment is toroidal.  Assumes point objects.   
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal)
         {
@@ -344,8 +344,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         Assumes point objects.  
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal, 
         final boolean radial, final boolean inclusive, Bag result)
@@ -354,40 +354,42 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         int numObjs = result.numObjs;
         Object[] objs = result.objs;
         double distsq = distance*distance;
-        if (radial) for(int i=0;i<numObjs;i++)
-                        {
-                        double d = 0;
-                        Double3D loc = getObjectLocation(objs[i]);
-                        if (toroidal) d = tds(position, loc);
-                        else d = position.distanceSq(loc);
-                        if (d > distsq || (!inclusive && d >= distsq)) 
-                            { result.remove(i); i--; numObjs--; }
-                        }
-        else for(int i=0;i<numObjs;i++)
-                 {
-                 Double3D loc = getObjectLocation(objs[i]);
-                 double minx = 0;
-                 double miny = 0;
-                 double minz = 0;
-                 if (toroidal)
-                     {
-                     minx = tdx(loc.x, position.x);
-                     miny = tdy(loc.y, position.y);
-                     minz = tdz(loc.z, position.z);
-                     }
-                 else
-                     {
-                     minx = loc.x - position.x;
-                     miny = loc.y - position.y;
-                     minz = loc.z - position.z;
-                     }
-                 if (minx < 0) minx = -minx;
-                 if (miny < 0) miny = -miny;
-                 if (minz < 0) minz = -minz;
-                 if ((minx > distance || miny > distance || minz > distance) ||
-                     (!inclusive && (minx >= distance || miny >= distance || minz >= distance)))
-                     { result.remove(i); i--;  numObjs--; }
-                 }
+        if (radial) 
+            for(int i=0;i<numObjs;i++)
+                {
+                double d = 0;
+                Double3D loc = getObjectLocation(objs[i]);
+                if (toroidal) d = tds(position, loc);
+                else d = position.distanceSq(loc);
+                if (d > distsq || (!inclusive && d >= distsq)) 
+                    { result.remove(i); i--; numObjs--; }
+                }
+        else 
+            for(int i=0;i<numObjs;i++)
+                {
+                Double3D loc = getObjectLocation(objs[i]);
+                double minx = 0;
+                double miny = 0;
+                double minz = 0;
+                if (toroidal)
+                    {
+                    minx = tdx(loc.x, position.x);
+                    miny = tdy(loc.y, position.y);
+                    minz = tdz(loc.z, position.z);
+                    }
+                else
+                    {
+                    minx = loc.x - position.x;
+                    miny = loc.y - position.y;
+                    minz = loc.z - position.z;
+                    }
+                if (minx < 0) minx = -minx;
+                if (miny < 0) miny = -miny;
+                if (minz < 0) minz = -minz;
+                if ((minx > distance || miny > distance || minz > distance) ||
+                    (!inclusive && (minx >= distance || miny >= distance || minz >= distance)))
+                    { result.remove(i); i--;  numObjs--; }
+                }
         return result;
         }
 
@@ -401,8 +403,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes non-toroidal, point objects]    
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance)
         { return getObjectsWithinDistance(position,distance,false,false, new Bag()); }
 
@@ -416,8 +418,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes point objects]    
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal)
         { return getObjectsWithinDistance(position,distance,toroidal,false, new Bag()); }
 
@@ -433,9 +435,9 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
          actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
          you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
         
-        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+         to within the boundaries before computation.
+    */
         
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects)
@@ -455,8 +457,8 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
-            to within the boundaries before computation.
-        */
+        to within the boundaries before computation.
+    */
         
     public Bag getObjectsWithinDistance( Double3D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects, Bag result)
