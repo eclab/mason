@@ -301,12 +301,12 @@ public class SickStudentsModel extends SimState
         try
         {
             // read the data
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/ES_ATTENDANCE_AREAS.shp"), elementarySchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/MS_ATTENDANCE_AREAS.shp"), middleSchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/HS_ATTENDANCE_AREAS.shp"),  highSchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/ElementarySchools.shp"),  elementarySchools);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/MiddleSchools.shp"), middleSchools);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("../../data/sickstudents/HighSchools.shp"), highSchools);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/ES_ATTENDANCE_AREAS.shp"), elementarySchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/MS_ATTENDANCE_AREAS.shp"), middleSchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/HS_ATTENDANCE_AREAS.shp"),  highSchoolZones);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/ElementarySchools.shp"),  elementarySchools);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/MiddleSchools.shp"), middleSchools);
+            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/HighSchools.shp"), highSchools);
 
             // Make all the bounding rectangles match one another
             Envelope MBR = elementarySchoolZones.getMBR();

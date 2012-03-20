@@ -64,7 +64,7 @@ public class SillyPeds extends SimState
         landscape = new ArrayList<Space>();
 
         // Read in the exit gradient corresponding to a single building floor
-        Space floor = setupLandscapeSpace("../../data/sillypeds/first.txt.gz");
+        Space floor = setupLandscapeSpace("data/first.txt.gz");
 
         landscape.add(floor);
 

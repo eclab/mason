@@ -212,7 +212,7 @@ public class SchellingSpace extends SimState
         {
             System.out.print("Reading boundary data ... ");
             
-            URL wardsFile = SchellingSpace.class.getResource("../../data/schellingPolygon/DCreprojected.shp");
+            URL wardsFile = SchellingSpace.class.getResource("data/DCreprojected.shp");
 
             ShapeFileImporter.read( wardsFile, world, SchellingGeometry.class);
         }

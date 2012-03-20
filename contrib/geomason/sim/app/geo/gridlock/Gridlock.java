@@ -120,7 +120,7 @@ public class Gridlock extends SimState
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
             
-            URL roadsFile = Gridlock.class.getResource("../../data/gridlock/roads.shp");
+            URL roadsFile = Gridlock.class.getResource("data/roads.shp");
             
             ShapeFileImporter.read(roadsFile, roads);
 
@@ -129,7 +129,7 @@ public class Gridlock extends SimState
             // read in the tracts to create the background
             System.out.println("reading tracts layer...");
             
-            URL areasFile = Gridlock.class.getResource("../../data/gridlock/areas.shp");
+            URL areasFile = Gridlock.class.getResource("data/areas.shp");
             ShapeFileImporter.read(areasFile, censusTracts);
 
 
@@ -142,7 +142,7 @@ public class Gridlock extends SimState
             censusTracts.setMBR(MBR);
 
             // initialize agents
-            populate("../../data/gridlock/roads_points_place.csv");
+            populate("data/roads_points_place.csv");
             agents.setMBR(MBR);
 
             /** Steppable that flips Agent paths once everyone reaches their destinations*/

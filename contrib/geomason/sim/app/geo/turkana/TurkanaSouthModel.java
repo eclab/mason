@@ -243,16 +243,16 @@ public class TurkanaSouthModel extends SimState
             // Read the raster GIS data
             populationDensityGrid = new GeomGridField();
 
-            InputStream inputStream = TurkanaSouthModel.class.getResourceAsStream("../../data/turkana/tspop2007.txt");
+            InputStream inputStream = TurkanaSouthModel.class.getResourceAsStream("data/tspop2007.txt");
             ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, populationDensityGrid);
 
             // Example of how to use GDAL to read the same dataset
-//            URL inputSource = TurkanaSouthModel.class.getResource("../../data/turkana/tspop2007.txt");
+//            URL inputSource = TurkanaSouthModel.class.getResource("data/turkana/tspop2007.txt");
 //            GDALImporter.read(inputSource, GridDataType.INTEGER, populationDensityGrid);
 
             NdviGrid = new GeomGridField();
 
-            inputStream = TurkanaSouthModel.class.getResourceAsStream("../../data/turkana/ts_ndvi.txt");
+            inputStream = TurkanaSouthModel.class.getResourceAsStream("data/ts_ndvi.txt");
             ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, NdviGrid);
 
             // Read all 144 months of rainfall data into an array
@@ -261,7 +261,7 @@ public class TurkanaSouthModel extends SimState
             {
                 monthlyRainGrids[i] = new GeomGridField();
                 
-                inputStream = TurkanaSouthModel.class.getResourceAsStream(String.format("../../data/turkana/%d.txt", i + 1));
+                inputStream = TurkanaSouthModel.class.getResourceAsStream(String.format("data/%d.txt", i + 1));
                 ArcInfoASCGridImporter.read(inputStream, GridDataType.DOUBLE, monthlyRainGrids[i]);
             }
 

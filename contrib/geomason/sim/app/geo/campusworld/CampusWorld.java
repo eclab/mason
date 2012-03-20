@@ -106,7 +106,7 @@ public class CampusWorld extends SimState
 
                 // read in the buildings GIS file
 
-                URL bldgGeometry = CampusWorld.class.getResource("../../data/campusworld/bldg.shp");
+                URL bldgGeometry = CampusWorld.class.getResource("data/bldg.shp");
                 ShapeFileImporter.read(bldgGeometry, buildings, masked);
 
                 // We want to save the MBR so that we can ensure that all GeomFields
@@ -115,14 +115,14 @@ public class CampusWorld extends SimState
 
                 System.out.println("reading roads layer");
 
-                URL roadGeometry = CampusWorld.class.getResource("../../data/campusworld/roads.shp");
+                URL roadGeometry = CampusWorld.class.getResource("data/roads.shp");
                 ShapeFileImporter.read(roadGeometry, roads);
 
                 MBR.expandToInclude(roads.getMBR());
 
                 System.out.println("reading walkways layer");
 
-                URL walkWayGeometry = CampusWorld.class.getResource("../../data/campusworld/walk_ways.shp");
+                URL walkWayGeometry = CampusWorld.class.getResource("data/walk_ways.shp");
                 ShapeFileImporter.read(walkWayGeometry, walkways);
 
                 MBR.expandToInclude(walkways.getMBR());

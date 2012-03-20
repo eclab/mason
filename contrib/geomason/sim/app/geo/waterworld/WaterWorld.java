@@ -68,7 +68,7 @@ public class WaterWorld extends SimState
         // various options for setting up the landscape
         //landscape = setupLandscape(); // uniform landscape, completely flat
         //landscape = setupLandscapeGradientIn(); // landscape that slopes in
-        landscape = setupLandscapeReadIn("../../data/waterworld/elevation.txt.gz"); // read landscape from file
+        landscape = setupLandscapeReadIn("data/elevation.txt.gz"); // read landscape from file
 
         drops = new ArrayList<Raindrop>();
 

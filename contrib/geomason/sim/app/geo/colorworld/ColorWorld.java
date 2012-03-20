@@ -71,7 +71,7 @@ public class ColorWorld extends SimState
         // this line allows us to replace the standard MasonGeometry with our
         // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info.
         // Note: this line MUST occur prior to ingesting the data
-        URL politicalBoundaries = ColorWorld.class.getResource("../../data/colorworld/pol.shp");
+        URL politicalBoundaries = ColorWorld.class.getResource("data/pol.shp");
 
         Bag empty = new Bag();
         try

@@ -113,7 +113,7 @@ public class PolySchelling extends SimState
 
         try // to import the data from the shapefile
         {
-            URL wardsFile = PolySchelling.class.getResource("../../data/schellingPolygon/1991_wards_disolved_Project.shp");
+            URL wardsFile = PolySchelling.class.getResource("data/1991_wards_disolved_Project.shp");
 
             ShapeFileImporter.read(wardsFile, world, Polygon.class);
 
