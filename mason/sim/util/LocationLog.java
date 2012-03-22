@@ -4,7 +4,7 @@ import sim.engine.*;
 
 /** An experimental test object for performing assertions which log all location accesses in fields.  */
 
-class LocationLog
+public class LocationLog
     {
     static ThreadLocal local = new ThreadLocal();
     public static boolean assertsEnabled = false;
