@@ -2375,3 +2375,5 @@ Version 17
 		and the field is toroidal, then neighborhood lookups near the width, 
 		height, or length edges of the field may not wrap around properly to the
 		0 bucket on the other side.  Thanks to Tom White <tom@sixdozen.com>
+	Certain methods and instances in Display2D and Display3D made protected to help out
+		customization of the update menu.	

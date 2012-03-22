@@ -1245,10 +1245,10 @@ public class Display3D extends JPanel implements Steppable
         } 
 
 
-    int updateRule = Display2D.UPDATE_RULE_ALWAYS;
-    long stepInterval = 1;
-    double timeInterval = 0;
-    long wallInterval = 0;
+    protected int updateRule = Display2D.UPDATE_RULE_ALWAYS;
+    protected long stepInterval = 1;
+    protected double timeInterval = 0;
+    protected long wallInterval = 0;
     long lastStep = -1;
     double lastTime = Schedule.BEFORE_SIMULATION;
     long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
@@ -2148,7 +2148,7 @@ public class Display3D extends JPanel implements Steppable
         
         
         
-    void rebuildSkipFrame()
+    protected void rebuildSkipFrame()
         {
         skipFrame.getContentPane().removeAll();
         skipFrame.getContentPane().invalidate();
@@ -2247,7 +2247,7 @@ public class Display3D extends JPanel implements Steppable
         skipListener.actionPerformed(null);  // have it update the text field accordingly
         }
 
-    void rebuildRefreshPopup()
+    protected void rebuildRefreshPopup()
         {
         refreshPopup.removeAll();
         String s = "";
