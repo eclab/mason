@@ -104,7 +104,7 @@ public class Network implements java.io.Serializable
     public Network() { this(true); }
     
     /** Constructs copy of an existing graph. */
-    public Network(Network other) { this(); other.copyTo(this); }
+    public Network(Network other) { this(); other.copyTo(this); this.directed = other.directed; }
         
     /** Resets the network, clearing it of nodes and edges. */
     public void reset(boolean directed)
@@ -487,6 +487,22 @@ public class Network implements java.io.Serializable
         // return the edge
         return edge;
         }
+    
+    /**
+     * Remove all the edges in the network.
+     */
+    public void removeAllEdges() {
+        int n = allNodes.numObjs;
+        Iterator i = indexOutInHash.values().iterator();
+        for(int k=0;k<n;k++)
+            {
+            IndexOutIn ioi= (IndexOutIn)i.next();
+            if (ioi.in != null)
+            	ioi.in.clear();
+            if (ioi.out != null)
+            	ioi.out.clear();
+            }
+    }
 
     /** Removes a node, deleting all incoming and outgoing edges from the Field as well.  Returns the node,
         or null if there is no such node in the field. 
