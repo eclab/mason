@@ -227,9 +227,11 @@ public class ShapeFileImporter
      * 
      * @param shpFile to be read from
      * @param field to contain read in data
-     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
      */
-    public static void read(final URL shpFile, GeomVectorField field) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field) throws IOException, InstantiationException, IllegalAccessException
     {
         read(shpFile, field, null, MasonGeometry.class);
     }
@@ -254,7 +256,7 @@ public class ShapeFileImporter
      * @param shpFile to be read from
      * @param field to contain read in data
      * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException 
      */
     public static void read(final URL shpFile, GeomVectorField field, Class<?> masonGeometryClass) throws FileNotFoundException
     {
@@ -268,11 +270,16 @@ public class ShapeFileImporter
      * @param field is GeomVectorField that will contain the ShapeFile's contents
      * @param masked dictates the subset of attributes we want
      * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
+     * @throws FileNotFoundException 
      * 
-     * @throws FileNotFoundException
      */
     public static void read(final URL shpFile, GeomVectorField field, final Bag masked, Class<?> masonGeometryClass) throws FileNotFoundException
     {
+        if (shpFile == null)
+        {
+            throw new IllegalArgumentException("shpFile is null; likely file not found");
+        }
+
         if (! MasonGeometry.class.isAssignableFrom(masonGeometryClass))
         {
             throw new IllegalArgumentException("masonGeometryClass not a MasonGeometry class or subclass");
@@ -281,15 +288,20 @@ public class ShapeFileImporter
 
         try
         {
-            // Database file name is same as shape file name, except with '.dbf' extension
-            String dbfFilename = shpFile.getFile().substring(0, shpFile.getFile().lastIndexOf('.')) + ".dbf";
-
             FileInputStream shpFileInputStream = new FileInputStream(shpFile.getFile());
+
+            if (shpFileInputStream == null)
+            {
+                throw new FileNotFoundException(shpFile.getFile());
+            }
 
 
             FileChannel channel = shpFileInputStream.getChannel();
             ByteBuffer byteBuf = channel.map(FileChannel.MapMode.READ_ONLY, 0, (int) channel.size());
             channel.close();
+
+            // Database file name is same as shape file name, except with '.dbf' extension
+            String dbfFilename = shpFile.getFile().substring(0, shpFile.getFile().lastIndexOf('.')) + ".dbf";
 
             FileInputStream dbFileInputStream = new FileInputStream(dbfFilename);
 
@@ -313,6 +325,11 @@ public class ShapeFileImporter
             FieldDirEntry fields[] = new FieldDirEntry[fieldCnt];
 
             RandomAccessFile inFile = new RandomAccessFile(dbfFilename, "r");
+
+            if (inFile == null)
+            {
+                throw new FileNotFoundException(dbfFilename);
+            }
 
             inFile.seek(32);
 
@@ -577,7 +594,8 @@ public class ShapeFileImporter
                     }
                 }
             }
-        } catch (IOException e)
+        }
+  catch (IOException e)
         {
             System.out.println("Error in ShapeFileImporter!!");
             System.out.println("SHP filename: " + shpFile);
