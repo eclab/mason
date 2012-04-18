@@ -227,11 +227,9 @@ public class ShapeFileImporter
      * 
      * @param shpFile to be read from
      * @param field to contain read in data
-     * @throws IOException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @throws FileNotFoundException 
      */
-    public static void read(final URL shpFile, GeomVectorField field) throws IOException, InstantiationException, IllegalAccessException
+    public static void read(final URL shpFile, GeomVectorField field) throws FileNotFoundException
     {
         read(shpFile, field, null, MasonGeometry.class);
     }
