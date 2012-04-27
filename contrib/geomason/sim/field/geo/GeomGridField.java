@@ -150,8 +150,11 @@ public class GeomGridField extends GeomField
         super.setMBR(MBR);
 
         // update pixelWidth and pixelHeight iff grid is set
-        setPixelWidth(MBR.getWidth() / getGridWidth());
-        setPixelHeight(MBR.getHeight() / getGridHeight());
+        if (grid != null)
+        {
+            setPixelWidth(MBR.getWidth() / getGridWidth());
+            setPixelHeight(MBR.getHeight() / getGridHeight());
+        }
     }
 
 
