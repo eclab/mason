@@ -13,10 +13,13 @@ package sim.engine;
     you're responsible for that if you need it.
     
     <p>For example, keep in mind that the random number generator is unsynchronized.
-    You should not embed RandomSequences inside a ParallelSequence unless
-    you've set their shouldSynchronize value to true, and elsewhere in your
-    embedded steppables you're synchronizing on the Schedule first (the Schedule
-    is the basic lock point for MASON's models).
+    If you access the random number generator from within a ParallelSequence, or
+    indeed from multiple threads you've spawned in other situations, you need
+    to remember to lock on the random number generator itself.
+    
+    <p>In the same vein, if you use a RandomSequence within a ParallelSequence, you need
+    to let the RandomSequence know this so that it will lock on the random number generator
+    properly.  This is done by setting the <b>shouldSynchronize</b> flag in the RandomSequence.
     
     <p>ParallelSequences are lightweight: they reuse the same threads
     if stepped repeatedly.  This means that you must never attach a ParallelSequence

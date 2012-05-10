@@ -2377,3 +2377,19 @@ Version 17
 		0 bucket on the other side.  Thanks to Tom White <tom@sixdozen.com>
 	Certain methods and instances in Display2D and Display3D made protected to help out
 		customization of the update menu.	
+	Modified LocationLog not to dump out its log unless BOTH assertions and the
+		parameter 'LocationLog' are turned on, that is running like
+		java -enableassertions -DLocationLog ...
+	Changed the rule for multiple threads synchronizing on the random number generator.
+		Previously the rule was that the threads should first synchronize on the
+		schedule (state.schedule) prior to using the random number generator in
+		parallel.  That turns out to cause deadlocks because when running under the
+		GUI the Console holds onto the lock at the top level.  Instead the rule is
+		that threads should lock on the random number generator directly.  This
+		also affects RandomSequence, which is now locking on the generator rather
+		than on the schedule when "shouldSynchronize" is true.  We have updated
+		RandomSequence's code, plus documentation in RandomSequence,
+		ParallelSequence, and the manual.  NOTE that this does NOT affect the rule
+		that GUI objects should lock on state.schedule in order to synchronize
+		with the underlying model thread.  That's a different issue.  Thanks to
+		Mark Coletti <mcoletti@gmu.edu>

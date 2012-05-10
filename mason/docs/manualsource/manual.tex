@@ -3445,13 +3445,13 @@ public Schedule schedule;
 
 We'll get to the \variable{schedule} in Section \ref{sim.engine.Schedule}.  \variable{random} is an \Class{ec.util.MersenneTwisterFast}, a random number generator which (true to its name) is a fast-operating implementation of the Mersenne Twister algorithm.  Unlike \Class{java.util.Random}, this is a high-quality random number generator, and as discussed in Section \ref{ec.util}, its methods are essentially identical to \Class{java.util.Random}.  {\bf Do not use \class{java.util.Random} or \method{java.lang.Math.random() in your simulation}.  You should always use \variable{random}.}
 
-\sidebar{Why do you lock on the schedule instead of the random number generator?}{Because MASON needs to guarantee thread-safeness for other tasks than just random number generation.  For example, access to fields or global model parameters.  We use the schedule because it's synchronized already, and so makes a good central lock.  Always use the schedule as your lock point for threadsafe access in MASON simulations.}
-\paragraph{\Class{ec.util.MersenneTwisterFast} is not thread synchronized}  Ordinarily your MASON simulation will involve a single thread, so there's no issue.  But if you break your simulation into multiple threads, you'll need to make sure that when you access the random number generator you do so in a threadsafe manner.  This is done by locking on \variable{schedule}. For example, imagine if you need a random double.  You should do something like this:
+\sidebar{Didn't MASON use to recommend locking on the schedule instead of the generator?}{Yes.  MASON acquires a lock on the schedule to synchronize the underlying model thread and the visualization/GUI thread.  You'll see MASON locking on the schedule in this manner later on in the visualization sections.  It used to be the case that we recommended locking on the schedule for accessing the random number generator as well, but this turns out to be an error: typically the model has a lock on the schedule already, and if you then try to acquire the lock from various threads, you'll get a deadlock.}
+\paragraph{\Class{ec.util.MersenneTwisterFast} is not thread synchronized}  Ordinarily your MASON simulation will involve a single thread, so there's no issue.  But if you break your simulation into multiple threads, you'll need to make sure that when you access the random number generator you do so in a threadsafe manner.  This is done by locking on the random number generator (\variable{random}). For example, imagine if you need a random double.  You should do something like this:
 
 \begin{verbatim}
 SimState mySimState = ...
 double val = 0;
-synchronized(state.schedule) { val = random.nextDouble(); }
+synchronized(state.random) { val = random.nextDouble(); }
 \end{verbatim}
 
 You can add anything you need to your custom subclass of SimState: fields, global parameters, etc.
@@ -3933,11 +3933,11 @@ This is a subclass of Sequence: the difference is that, when stepped, it first u
 
 
 \paragraph{\Class{sim.engine.ParallelSequence}}
-This is a subclass of Sequence which, instead of stepping each agent in turn, instead steps all of them simultaneously in separate threads.  Be careful when using ParallelSequence: as you have multiple threads, it's up to you to make sure that you don't create race conditions as they access various parts of your model simultaneously.  Notably if your agents use the random number generator, they should lock on the Schedule first, for example like this:
+This is a subclass of Sequence which, instead of stepping each agent in turn, instead steps all of them simultaneously in separate threads.  Be careful when using ParallelSequence: as you have multiple threads, it's up to you to make sure that you don't create race conditions as they access various parts of your model simultaneously.  Notably if your agents use the random number generator from different threads, they should lock on the generator first, for example like this:
 
 \java{%
 double val = 0;\\
-synchronized(state.schedule) \{ val = state.random.nextDouble(); \}\\
+synchronized(state.random) \{ val = state.random.nextDouble(); \}\\
 // now use val here....
 }
 
