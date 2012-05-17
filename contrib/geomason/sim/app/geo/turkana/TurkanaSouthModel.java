@@ -11,16 +11,18 @@
  **/
 package sim.app.geo.turkana;
 
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.grid.DoubleGrid2D;
-import sim.field.grid.SparseGrid2D;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
+import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
+import sim.field.grid.SparseGrid2D;
+import sim.io.geo.ArcInfoASCGridExporter;
 import sim.io.geo.ArcInfoASCGridImporter;
 
 
@@ -228,6 +230,23 @@ public class TurkanaSouthModel extends SimState
     public void finish()
     {
         super.finish();
+
+        // This is an example of how to automatically write grid data when the 
+        // simulation finishes.
+        try
+        {
+            // Write out the population density grid field; it should be exactly
+            // like "data/tspop2007.txt".
+            BufferedWriter fos = new BufferedWriter( new FileWriter("newpop.asc") );
+
+            ArcInfoASCGridExporter.write(this.populationDensityGrid, fos);
+
+            fos.close();
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(TurkanaSouthModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 
