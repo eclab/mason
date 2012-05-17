@@ -7,13 +7,10 @@ See the file "LICENSE" for more information
 */
 package sim.field.geo;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
+import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.Grid2D;
+import sim.field.grid.IntGrid2D;
 
 /** A georeferenced area represented by a grid
  *
@@ -31,6 +28,25 @@ public class GeomGridField extends GeomField
     public enum GridDataType
     {
         INTEGER, DOUBLE
+    }
+
+
+    /**
+     *
+     * @return the data type of the grid cells; null if there is no assigned grid
+     */
+    public GridDataType getGridDataType()
+    {
+        if (getGrid() instanceof IntGrid2D)
+        {
+            return GridDataType.INTEGER;
+        }
+        else if (getGrid() instanceof DoubleGrid2D)
+        {
+            return GridDataType.DOUBLE;
+        }
+
+        return null;
     }
 
 
