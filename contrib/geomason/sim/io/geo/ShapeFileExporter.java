@@ -12,10 +12,9 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 import sim.util.geo.AttributeValue;
@@ -243,7 +242,7 @@ public class ShapeFileExporter //extends GeomExporter
             shxFile.close();
 
             //////////
-            // now we need to save the attributed in XBase format, 
+            // now we need to save the attributes in XBase format,
             // see http://www.clicketyclick.dk/databases/xbase/format/dbf.html#DBF_STRUCT
             String attrFileName = baseFileName + ".dbf";
             RandomAccessFile attrFile = new RandomAccessFile(new File(attrFileName), "rw");
@@ -251,138 +250,170 @@ public class ShapeFileExporter //extends GeomExporter
             /////// 
             // xBase header 
 
-            ByteBuffer dataBuff = ByteBuffer.allocate(32);
-            dataBuff.order(ByteOrder.LITTLE_ENDIAN);
+            ByteBuffer headerBuffer = ByteBuffer.allocate(32);
+            headerBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
             // version dBASE v. III - 5
-            dataBuff.put((byte) 0x03);
+            headerBuffer.put((byte) 0x03);
 
             // today's date for last date of modification 
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
             String d = sdf.format(cal.getTime());
-            dataBuff.put(Integer.valueOf(d.substring(0, 2)).byteValue());
-            dataBuff.put(Integer.valueOf(d.substring(2, 4)).byteValue());
-            dataBuff.put(Integer.valueOf(d.substring(4, 6)).byteValue());
+            headerBuffer.put(Integer.valueOf(d.substring(0, 2)).byteValue());
+            headerBuffer.put(Integer.valueOf(d.substring(2, 4)).byteValue());
+            headerBuffer.put(Integer.valueOf(d.substring(4, 6)).byteValue());
 
             // add number of records to dataBuff 
-            dataBuff.putInt(geometries.size());
+            headerBuffer.putInt(geometries.size());
 
             // length of header structure, minus database container
-            dataBuff.putShort((short) (32 + uniqueAttributes.size() * 32 + 1));
+            headerBuffer.putShort((short) (32 + uniqueAttributes.size() * 32 + 1));
 
-            // length of individual records 
-            MasonGeometry w = (MasonGeometry) geometries.objs[0];
-            ArrayList<AttributeValue> attrs = (ArrayList<AttributeValue>) w.geometry.getUserData();
+            // This associates the storage needed for each attribute.  We need
+            // this to calculate the total space taken up for each record.
+            Map<String,Integer> attributeSizes = determineAttributeSizes(geometries);
+
+            // Bytes 10 and 11 is the record length.  Since the attribute record
+            // structure is the same for all attribute records, we calculate this by arbitrarily
+            // taking the first attribute record and summing all its constitutent
+            // attributes.
+            // FIXME this doesn't work any more; need to change to new attribute model!!
+//            MasonGeometry w = (MasonGeometry) geometries.objs[0];
+//            ArrayList<AttributeValue> attrs = (ArrayList<AttributeValue>) w.geometry.getUserData();
 
             int recordSize = 0;
-            for (int i = 0; i < attrs.size(); i++)
+//            for (int i = 0; i < attrs.size(); i++)
+//            {
+//                recordSize += getBytes(attrs.get(i)).length;
+//            }
+
+            for (String attributeName : attributeSizes.keySet())
             {
-                recordSize += getBytes(attrs.get(i)).length;
+                recordSize += attributeSizes.get(attributeName);
             }
 
-            dataBuff.putShort((short) (1 + recordSize));
+            headerBuffer.putShort((short) (1 + recordSize));
 
             // reserved
-            dataBuff.putShort((byte) 0);
+            headerBuffer.putShort((byte) 0);
 
             // incomplete transaction 
-            dataBuff.put((byte) 0);
+            headerBuffer.put((byte) 0);
 
-            // encyrption flag 
-            dataBuff.put((byte) 0);
+            // encryption flag
+            headerBuffer.put((byte) 0);
 
             // free record thread 
-            dataBuff.putInt((byte) 0);
+            headerBuffer.putInt((byte) 0);
 
             // reserved 
-            dataBuff.putDouble((byte) 0);
+            headerBuffer.putDouble((byte) 0);
 
             // MDX flag
-            dataBuff.put((byte) 0);
+            headerBuffer.put((byte) 0);
 
             // language driver 
-            dataBuff.put((byte) 0x01);
+            headerBuffer.put((byte) 0x01);
 
             // reserved 
-            dataBuff.putShort((byte) 0);
+            headerBuffer.putShort((byte) 0);
 
-            attrFile.write(dataBuff.array());
+            attrFile.write(headerBuffer.array());
+
+            // Now write out the field descriptor array, which describes each
+            // attribute type.
 
             Iterator<String> iter = uniqueAttributes.iterator();
             while (iter.hasNext())
             {
-                ByteBuffer fieldBuff = ByteBuffer.allocate(32);
+                ByteBuffer fieldDescriptorArrayBuffer = ByteBuffer.allocate(32);
+
                 String key = iter.next();
 
+                // Write out the field name, and pad it out with zeroes up
+                // to byte 10
                 for (int i = 0; i < 11; i++)
                 {
                     if (i >= key.length())
                     {
-                        fieldBuff.put((byte) 0);
+                        fieldDescriptorArrayBuffer.put((byte) 0);
                     } else
                     {
-                        fieldBuff.put((byte) key.charAt(i));
+                        fieldDescriptorArrayBuffer.put((byte) key.charAt(i));
                     }
                 }
 
-                // field type 
+                // write out the field type; we do this by arbitrarily grabbing
+                // the first record, finding the current attribute for which
+                // we want the type, identifying the type, and then writing
+                // that out
                 w = (MasonGeometry) geometries.objs[0];
-                ArrayList<AttributeValue> attr = (ArrayList<AttributeValue>) w.geometry.getUserData();
+// DEPRECATED means of doing this
+//                ArrayList<AttributeValue> attr = (ArrayList<AttributeValue>) w.geometry.getUserData();
+//
+//                AttributeValue f = null;
+//                for (int i = 0; i < attr.size(); i++)
+//                {
+//                    f = attr.get(i);
+//                    if (f.getName().equals(key))
+//                    {
+//                        break;
+//                    }
+//                }
 
-                AttributeValue f = null;
-                for (int i = 0; i < attr.size(); i++)
+                // Directly get the attribute value
+                AttributeValue value = (AttributeValue) w.getAttribute(key);
+
+                // And then ask what type it is
+                if (value.getValue() instanceof String)
                 {
-                    f = attr.get(i);
-                    if (f.getName().equals(key))
-                    {
-                        break;
-                    }
+                    fieldDescriptorArrayBuffer.put((byte) 'C');
+                } else if (value.getValue() instanceof Integer)
+                {
+                    fieldDescriptorArrayBuffer.put((byte) 'N');
                 }
-
-                if (f.getValue() instanceof String)
+                else if (value.getValue() instanceof Double)
                 {
-                    fieldBuff.put((byte) 'C');
-                } else if (f.getValue() instanceof Integer || f.getValue() instanceof Double)
+                    fieldDescriptorArrayBuffer.put((byte) 'F');
+                } else if (value.getValue() instanceof Boolean)
                 {
-                    fieldBuff.put((byte) 'N');
-                } else if (f.getValue() instanceof Boolean)
-                {
-                    fieldBuff.put((byte) 'L');
+                    fieldDescriptorArrayBuffer.put((byte) 'L');
                 }
 
 
                 // field data address 
-                fieldBuff.putInt((byte) 0);
+                fieldDescriptorArrayBuffer.putInt((byte) 0);
 
-                //field length 
-                fieldBuff.put((byte) getBytes(f.getValue()).length);
+                //field length
+                // TODO Keith read in length; how do I compute this?
+                fieldDescriptorArrayBuffer.put((byte) getBytes(f.getValue()).length);
 
                 // decimal count 
-                fieldBuff.put((byte) 0);
+                fieldDescriptorArrayBuffer.put((byte) 0);
 
                 // reserved 
-                fieldBuff.putShort((byte) 0);
+                fieldDescriptorArrayBuffer.putShort((byte) 0);
 
                 // work area ID 
-                fieldBuff.put((byte) 1);
+                fieldDescriptorArrayBuffer.put((byte) 1);
 
                 // reserved 
-                fieldBuff.putShort((byte) 0);
+                fieldDescriptorArrayBuffer.putShort((byte) 0);
 
                 // flag for SET FIELD 
-                fieldBuff.put((byte) 0);
+                fieldDescriptorArrayBuffer.put((byte) 0);
 
                 // reserved 
                 for (int i = 0; i < 7; i++)
                 {
-                    fieldBuff.put((byte) 0);
+                    fieldDescriptorArrayBuffer.put((byte) 0);
                 }
 
                 // index field flag
-                fieldBuff.put((byte) 0);
+                fieldDescriptorArrayBuffer.put((byte) 0);
 
-                attrFile.write(fieldBuff.array());
+                attrFile.write(fieldDescriptorArrayBuffer.array());
             }
 
             // terminator 
@@ -402,6 +433,9 @@ public class ShapeFileExporter //extends GeomExporter
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[j];
 
                 ByteBuffer recordBuff = ByteBuffer.allocate(1 + recordSize);
+
+                // 0x20 in the first byte indicates that this record is valid.
+                // (I.e., it hasn't been deleted.)
                 recordBuff.put((byte) 0x20);
 
                 ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
@@ -457,6 +491,61 @@ public class ShapeFileExporter //extends GeomExporter
             System.out.println(e);
         }
         return null;
+    }
+
+
+
+    /** Calculate the space needed for each attribute type
+     * 
+     * @param geometries through which we'll be scanning
+     *
+     * @return map of attribute name to its respective size requirements
+     */
+    private static Map<String, Integer> determineAttributeSizes(Bag geometries)
+    {
+        Map<String,Integer> attributeSizes = new HashMap<String,Integer>();
+
+        for (int i = 0; i < geometries.size(); i++)
+        {
+            MasonGeometry mg = (MasonGeometry) geometries.objs[i];
+
+            // Update the attribute sizes by iterating through all the attributes
+            // and taking their string conversion lengths as their sizes; if the
+            // stored size for that attribute is smaller, then update that size
+            // with the larger.
+            // TODO enforce 256 and 18 upper bound for lengths for strings and
+            // numeric values.
+            // TODO better handle logical/boolean data type
+            for ( String attributeName : mg.getAttributes().keySet() )
+            {
+                Integer attributeSize = null;
+                
+                try
+                {
+                    attributeSize = mg.getAttribute(attributeName).toString().getBytes("US-ASCII").length;
+                } catch (UnsupportedEncodingException ex)
+                {
+                    Logger.getLogger(ShapeFileExporter.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                if (attributeSizes.containsKey(attributeName))
+                {
+                    Integer storedSize = attributeSizes.get(attributeName);
+
+                    if (storedSize < attributeSize)
+                    {
+                        attributeSizes.put(attributeName, attributeSize);
+                    }
+                }
+                else
+                {
+                    attributeSizes.put(attributeName, attributeSize);
+                }
+            }
+
+        }
+
+        return attributeSizes;
     }
 
 
