@@ -442,25 +442,57 @@ public class ShapeFileExporter //extends GeomExporter
                 // (I.e., it hasn't been deleted.)
                 recordBuff.put((byte) 0x20);
 
+                // DEPRECATED, old way
 //                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
 
                 for (String attributeName : wrapper.getAttributes().keySet())
                 {
                     AttributeValue f = (AttributeValue) wrapper.getAttribute(attributeName);
 
-                    StringBuilder value = new StringBuilder(String.valueOf(f.getValue()));
+                    Object value = f.getValue();
 
-                    int add = f.getFieldSize() - value.length();
-                    for (int k = 0; k < add; k++)
+                    // DEPRECATED, old way
+//                    StringBuilder value = new StringBuilder(String.valueOf(f.getValue()));
+
+                    if (value instanceof Boolean)
                     {
-                        value.insert(0, ' ');
+                        Boolean truthiness = (Boolean) value;
+
+                        if (truthiness)
+                        {
+                            recordBuff.putChar('T');
+                        }
+                        else
+                        {
+                            recordBuff.putChar('F');
+                        }
+                    }
+                    else
+                    {
+                        byte [] rawValue = value.toString().getBytes("US-ASCII");
+
+                        // Pad the field with blanks so that it meets its field
+                        // size.
+                        int padding = attributeSizes.get(attributeName) - rawValue.length;
+
+                        assert padding >= 0 : "padding: " + padding;
+                        
+                        for (int k = 0; k < padding; k++)
+                        {
+//                        value.insert(0, ' '); DEPRECATED
+                            recordBuff.putChar(' ');
+                        }                    
+                        
+                        recordBuff.put(rawValue);
                     }
 
-                    for (int k = 0; k < f.getFieldSize(); k++)
-                    {
-                        recordBuff.put((byte) value.charAt(k));
-                    }
+// DEPRECATED, old way
+//                    for (int k = 0; k < f.getFieldSize(); k++)
+//                    {
+//                        recordBuff.put((byte) value.charAt(k));
+//                    }
                 }
+
                 attrFile.write(recordBuff.array());
             }
             attrFile.close();
@@ -527,7 +559,15 @@ public class ShapeFileExporter //extends GeomExporter
                 
                 try
                 {
-                    attributeSize = mg.getAttribute(attributeName).toString().getBytes("US-ASCII").length;
+                    Object av = mg.getAttribute(attributeName);
+
+                    if (av instanceof Boolean)
+                    {
+                    }
+                    else
+                    {
+                        attributeSize = mg.getAttribute(attributeName).toString().getBytes("US-ASCII").length;
+                    }
                 } catch (UnsupportedEncodingException ex)
                 {
                     Logger.getLogger(ShapeFileExporter.class.getName()).log(Level.SEVERE, null, ex);
