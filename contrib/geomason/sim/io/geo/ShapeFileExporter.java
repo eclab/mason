@@ -348,7 +348,7 @@ public class ShapeFileExporter //extends GeomExporter
                 // the first record, finding the current attribute for which
                 // we want the type, identifying the type, and then writing
                 // that out
-                w = (MasonGeometry) geometries.objs[0];
+                MasonGeometry w = (MasonGeometry) geometries.objs[0];
 // DEPRECATED means of doing this
 //                ArrayList<AttributeValue> attr = (ArrayList<AttributeValue>) w.geometry.getUserData();
 //
@@ -375,7 +375,10 @@ public class ShapeFileExporter //extends GeomExporter
                 }
                 else if (value.getValue() instanceof Double)
                 {
-                    fieldDescriptorArrayBuffer.put((byte) 'F');
+                    // Note that we don't write 'F' as that's a Dbase IV
+                    // artifact.  The 'N'umeric type is adequate for
+                    // floating point values.
+                    fieldDescriptorArrayBuffer.put((byte) 'N');
                 } else if (value.getValue() instanceof Boolean)
                 {
                     fieldDescriptorArrayBuffer.put((byte) 'L');
@@ -387,7 +390,8 @@ public class ShapeFileExporter //extends GeomExporter
 
                 //field length
                 // TODO Keith read in length; how do I compute this?
-                fieldDescriptorArrayBuffer.put((byte) getBytes(f.getValue()).length);
+//                fieldDescriptorArrayBuffer.put((byte) getBytes(f.getValue()).length);
+                fieldDescriptorArrayBuffer.put(attributeSizes.get(key).byteValue());
 
                 // decimal count 
                 fieldDescriptorArrayBuffer.put((byte) 0);
@@ -438,11 +442,12 @@ public class ShapeFileExporter //extends GeomExporter
                 // (I.e., it hasn't been deleted.)
                 recordBuff.put((byte) 0x20);
 
-                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
+//                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
 
-                for (int i = 0; i < attrs.size(); i++)
+                for (String attributeName : wrapper.getAttributes().keySet())
                 {
-                    AttributeValue f = attributes.get(i);
+                    AttributeValue f = (AttributeValue) wrapper.getAttribute(attributeName);
+
                     StringBuilder value = new StringBuilder(String.valueOf(f.getValue()));
 
                     int add = f.getFieldSize() - value.length();
