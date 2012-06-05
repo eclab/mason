@@ -733,6 +733,7 @@ public class Console extends JFrame implements Controller
                         Utilities.inform("Seed Will Be Truncated",
                             "The random number generator only uses 32 bits of a given seed.  You've specified a longer seed than this." + 
                             "Not all the bits of this seed will be used.", Console.this);           
+                    l = (int) l;  // force to 32 bits
                     randomSeed = l;
                     // setRandomNumberGenerator(randomSeed);
                     lock = false;
@@ -2183,7 +2184,7 @@ public class Console extends JFrame implements Controller
             // increment the random number seed if the user had said to do so
             if (incrementSeedOnStop.isSelected())
                 {
-                randomSeed++;
+                randomSeed = (int)(randomSeed + 1);  // 32 bits only
                 randomField.setValue("" + randomSeed);
                 }
 //            setRandomNumberGenerator(randomSeed);

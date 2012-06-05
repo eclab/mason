@@ -249,7 +249,7 @@ public class SimpleController implements Controller
             // increment the random number seed if the user had said to do so
             if (getIncrementSeedOnStop())
                 {
-                randomSeed++;
+                randomSeed = (int)(randomSeed + 1);  // 32 bits only
                 }
             }
         }

@@ -2393,3 +2393,11 @@ Version 17
 		that GUI objects should lock on state.schedule in order to synchronize
 		with the underlying model thread.  That's a different issue.  Thanks to
 		Mark Coletti <mcoletti@gmu.edu>
+	Modifications to Console, SimpleController, and SimState which force the internal 
+		seed to be 32 bits.  MersenneTwisterFast only uses 32 bits of its seed, 
+		but we were allowing the user to specify and display 64 bits.  This was 
+		confusing because the user would see 64-bit numbers in the Console but if 
+		he tried to *set* those same values in the Console he'd get a message 
+		indicating that the seed would be truncated.  This was also error-prone 
+		because users would see a different seed (64 bits) than was actually being 
+		used (truncated 32 bits).	

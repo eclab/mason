@@ -46,7 +46,7 @@ public class SimState implements java.io.Serializable
         {
         this.random = random;
         this.schedule = schedule;
-        this.seed = seed;
+        this.seed = (int) seed;   // force to 32 bits since that's what MTF will be using anyway
         }
 
     /** Creates a SimState with a new random number generator initialized to the given seed,
@@ -85,8 +85,9 @@ public class SimState implements java.io.Serializable
 
     public void setSeed(long seed)
         {
+        seed = (int) seed;  // force to 32 bits since that's what MTF will be using anyway
         random = new MersenneTwisterFast(seed);
-        this.seed= seed;
+        this.seed = seed;
         }
                 
     /* @deprecated use setSeed */
@@ -319,7 +320,7 @@ public class SimState implements java.io.Serializable
         Only to be used for GUIs to display possible seed values.  */
     public long seed()
         {
-        return seed;
+        return (int) seed;
         }
 
     public void setJob(long job)
