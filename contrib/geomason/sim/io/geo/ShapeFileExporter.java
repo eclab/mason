@@ -573,21 +573,26 @@ public class ShapeFileExporter //extends GeomExporter
                 
                 try
                 {
-                    Object av = mg.getAttribute(attributeName);
+                    AttributeValue av = (AttributeValue) mg.getAttribute(attributeName);
 
-                    if (av instanceof Boolean)
+                    if (av.getValue() instanceof Boolean)
                     {
                         attributeSize = 1;
                     }
                     else
                     {
-                        attributeSize = mg.getAttribute(attributeName).toString().getBytes("US-ASCII").length;
+                        Object value = av.getValue();
+                        String stringValue = value.toString();
+                        byte [] rawValue = stringValue.getBytes("US-ASCII");
+
+                        attributeSize = rawValue.length;
                     }
                 } catch (UnsupportedEncodingException ex)
                 {
                     Logger.getLogger(ShapeFileExporter.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+                
                 if (attributeSizes.containsKey(attributeName))
                 {
                     Integer storedSize = attributeSizes.get(attributeName);
