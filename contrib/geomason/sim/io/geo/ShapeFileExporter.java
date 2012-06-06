@@ -585,7 +585,14 @@ public class ShapeFileExporter //extends GeomExporter
                         String stringValue = value.toString();
                         byte [] rawValue = stringValue.getBytes("US-ASCII");
 
-                        attributeSize = rawValue.length;
+                        if (value instanceof String)
+                        { // Strings limited to 256 characters
+                            attributeSize = Math.min(rawValue.length,256);
+                        }
+                        else
+                        { // Numeric values limited to 18 characters
+                            attributeSize = Math.min(rawValue.length,18);
+                        }
                     }
                 } catch (UnsupportedEncodingException ex)
                 {
