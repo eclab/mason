@@ -81,7 +81,7 @@ public class HistogramGenerator extends ChartGenerator
         setSeriesDataset(dataset);
         }
  
-    public void update()
+    protected void update()
         {
         // We have to rebuild the dataset from scratch (deleting and replacing it) because JFreeChart's
         // histogram facility doesn't have a way to remove or move elements.  Stupid stupid stupid.

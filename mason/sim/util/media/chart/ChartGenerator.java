@@ -764,7 +764,7 @@ public abstract class ChartGenerator extends JPanel
                 {
                 public void run()
                     {
-                    update(key , true);  // keep up-to-date
+                    update(key, true);  // keep up-to-date
                     // this is in the Swing thread, so it's okay
                     timer = null;
                     }

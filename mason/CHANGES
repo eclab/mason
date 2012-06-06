@@ -2401,3 +2401,6 @@ Version 17
 		indicating that the seed would be truncated.  This was also error-prone 
 		because users would see a different seed (64 bits) than was actually being 
 		used (truncated 32 bits).	
+	HistogramGenerator and ScatterPlotGenerator were incorrectly changing update()
+		from protected to public.  It's supposed to be protected and not called
+		directly.  Instead, call update(..,...).

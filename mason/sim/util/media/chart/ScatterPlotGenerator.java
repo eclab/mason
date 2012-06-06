@@ -67,7 +67,7 @@ public class ScatterPlotGenerator extends ChartGenerator
         }
 
 
-    public void update()
+    protected void update()
         {
         // we'll rebuild the plot from scratch
                 
