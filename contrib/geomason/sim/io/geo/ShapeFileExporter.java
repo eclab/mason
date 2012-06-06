@@ -37,7 +37,7 @@ public class ShapeFileExporter //extends GeomExporter
      * @param field to be exported
      * @throws FileNotFoundException
      */
-    public static void write(String baseFileName, GeomVectorField field) throws FileNotFoundException
+    public static void write(String baseFileName, GeomVectorField field) //throws FileNotFoundException
     {
         try
         {
@@ -125,7 +125,9 @@ public class ShapeFileExporter //extends GeomExporter
             int fileSize = 100; 
 
             Bag geometries = field.getGeometries();
-            TreeSet<String> uniqueAttributes = new TreeSet<String>();
+
+            //TreeSet<String> uniqueAttributes = new TreeSet<String>();
+
             for (int i = 0; i < geometries.size(); i++)
             {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i];
@@ -140,7 +142,7 @@ public class ShapeFileExporter //extends GeomExporter
 //
                 // Add any new attribute names that are associated with this
                 // geometry instance.
-                uniqueAttributes.addAll(wrapper.getAttributes().keySet());
+                //uniqueAttributes.addAll(wrapper.getAttributes().keySet());
 
                 /////////
                 // first store the record header, in big-endian format
@@ -268,7 +270,12 @@ public class ShapeFileExporter //extends GeomExporter
             headerBuffer.putInt(geometries.size());
 
             // length of header structure, minus database container
-            headerBuffer.putShort((short) (32 + uniqueAttributes.size() * 32 + 1));
+            // (Presuming all the geometries have the same attribute sets, we
+            // can arbitrarily pick the first geometry and ask the number of
+            // attributes it has.)
+            int numAttributes = ((MasonGeometry)geometries.objs[0]).getAttributes().size();
+
+            headerBuffer.putShort((short) (32 + numAttributes * 32 + 1));
 
             // This associates the storage needed for each attribute.  We need
             // this to calculate the total space taken up for each record.
@@ -324,12 +331,13 @@ public class ShapeFileExporter //extends GeomExporter
             // Now write out the field descriptor array, which describes each
             // attribute type.
 
-            Iterator<String> iter = uniqueAttributes.iterator();
-            while (iter.hasNext())
+//            Iterator<String> iter = uniqueAttributes.iterator();
+//            while (iter.hasNext())
+            for( String key : attributeSizes.keySet() )
             {
                 ByteBuffer fieldDescriptorArrayBuffer = ByteBuffer.allocate(32);
 
-                String key = iter.next();
+//                String key = iter.next();
 
                 // Write out the field name, and pad it out with zeroes up
                 // to byte 10
@@ -445,7 +453,7 @@ public class ShapeFileExporter //extends GeomExporter
                 // DEPRECATED, old way
 //                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
 
-                for (String attributeName : wrapper.getAttributes().keySet())
+                for (String attributeName : attributeSizes.keySet())
                 {
                     AttributeValue f = (AttributeValue) wrapper.getAttribute(attributeName);
 
@@ -471,19 +479,26 @@ public class ShapeFileExporter //extends GeomExporter
                     {
                         byte [] rawValue = value.toString().getBytes("US-ASCII");
 
+                        byte [] outValue = new byte [attributeSizes.get(attributeName)];
+
+                        // pad with blanks
+                        Arrays.fill(outValue,(byte)0x20);
+
+                        System.arraycopy(rawValue, 0, outValue, 0, rawValue.length);
+
                         // Pad the field with blanks so that it meets its field
                         // size.
-                        int padding = attributeSizes.get(attributeName) - rawValue.length;
-
-                        assert padding >= 0 : "padding: " + padding;
+//                        int padding = attributeSizes.get(attributeName) - rawValue.length;
+//
+//                        assert padding >= 0 : "padding: " + padding;
+//
+//                        for (int k = 0; k < padding; k++)
+//                        {
+////                        value.insert(0, ' '); DEPRECATED
+//                            recordBuff.putChar(' ');
+//                        }
                         
-                        for (int k = 0; k < padding; k++)
-                        {
-//                        value.insert(0, ' '); DEPRECATED
-                            recordBuff.putChar(' ');
-                        }                    
-                        
-                        recordBuff.put(rawValue);
+                        recordBuff.put(outValue);
                     }
 
 // DEPRECATED, old way
@@ -552,7 +567,6 @@ public class ShapeFileExporter //extends GeomExporter
             // with the larger.
             // TODO enforce 256 and 18 upper bound for lengths for strings and
             // numeric values.
-            // TODO better handle logical/boolean data type
             for ( String attributeName : mg.getAttributes().keySet() )
             {
                 Integer attributeSize = null;
@@ -563,6 +577,7 @@ public class ShapeFileExporter //extends GeomExporter
 
                     if (av instanceof Boolean)
                     {
+                        attributeSize = 1;
                     }
                     else
                     {
