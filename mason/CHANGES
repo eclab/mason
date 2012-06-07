@@ -2400,7 +2400,14 @@ Version 17
 		he tried to *set* those same values in the Console he'd get a message 
 		indicating that the seed would be truncated.  This was also error-prone 
 		because users would see a different seed (64 bits) than was actually being 
-		used (truncated 32 bits).	
+		used (truncated 32 bits).  Thanks to Joey Harrison <jharri1@gmu.edu>
 	HistogramGenerator and ScatterPlotGenerator were incorrectly changing update()
 		from protected to public.  It's supposed to be protected and not called
-		directly.  Instead, call update(..,...).
+		directly.  Instead, call update(..,...), or better, call
+		updateChartLater(...) or updateChartWithin(...,...).
+	ChartGenerator.createFrame() now produces frames which by default are set to
+		hide, not dispose, when closed.  This makes it consistent with displays.
+		Correspondingly, ChartingPropertyInspector modifies the default to
+		dispose when closed, since inspectors are intended to dispose themselves
+		when they are closed, unlike displays.  Thanks to Ahmed Elmolla
+		<aelmolla@gmu.edu>

@@ -675,7 +675,7 @@ public abstract class ChartGenerator extends JPanel
         }
     
     /** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when
-        the JFrame is being closed. */
+        the JFrame is being closed.  By default the JFrame will HIDE itself (not DISPOSE itself) when closed.  */
     public JFrame createFrame( )
         {
         frame = new JFrame()
@@ -687,7 +687,7 @@ public abstract class ChartGenerator extends JPanel
                 }
             };
             
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this,BorderLayout.CENTER);
         frame.setResizable(true);

@@ -309,6 +309,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                 
         getCharts(simulation).add( generator );                 // put me in the global charts list
         chartFrame = generator.createFrame();
+        chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);  //  by default it's HIDE_ON_CLOSE
 
         WindowListener wl = new WindowListener()
             {
