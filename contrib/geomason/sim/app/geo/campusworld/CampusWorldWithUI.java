@@ -23,8 +23,8 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.simple.OvalPortrayal2D;
 
 
@@ -52,6 +52,7 @@ public class CampusWorldWithUI extends GUIState
         super(new CampusWorld(System.currentTimeMillis()));
     }
 
+    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -69,6 +70,7 @@ public class CampusWorldWithUI extends GUIState
     }
 
 
+    @Override
     public void start()
     {
         super.start();

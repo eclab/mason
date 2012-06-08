@@ -68,10 +68,11 @@ public class CampusWorld extends SimState
         for (int i = 0; i < numAgents; i++)
             {
                 Agent a = new Agent();
-                MasonGeometry mg = new MasonGeometry(a.getGeometry()); 
-                mg.isMovable = true; 
-                agents.addGeometry(mg);
+
+                agents.addGeometry(a.getGeometry());
+
                 a.start(this);
+
                 schedule.scheduleRepeating(a);
                 
                 // we can set the userData field of any MasonGeometry.  If the userData is inspectable, 
@@ -81,12 +82,19 @@ public class CampusWorld extends SimState
             }
     }
 
+    @Override
     public void finish()
     {
         super.finish();
+
+        // Write out one of the vector layers that was read from a shape file
+        // as a test of the native shape file exporter.
+
+        ShapeFileExporter.write("myroads", roads);
     }
 
     
+    @Override
     public void start()
     {
         super.start();
