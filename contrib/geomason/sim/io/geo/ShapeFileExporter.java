@@ -35,9 +35,8 @@ public class ShapeFileExporter //extends GeomExporter
      * 
      * @param baseFileName is the prefix for the ".shp", ".shx", and ".dbf" files
      * @param field to be exported
-     * @throws FileNotFoundException
      */
-    public static void write(String baseFileName, GeomVectorField field) //throws FileNotFoundException
+    public static void write(String baseFileName, GeomVectorField field)
     {
         try
         {
@@ -281,6 +280,13 @@ public class ShapeFileExporter //extends GeomExporter
             // this to calculate the total space taken up for each record.
             Map<String,Integer> attributeSizes = determineAttributeSizes(geometries);
 
+            // Precision of real value attributes
+            // Arbitrarily used 11 based on what I've seen in the wild
+            // TODO a better job of calculating this based on the
+            // actual data values.
+            final int decimalCount = 11;
+
+
             // Bytes 10 and 11 is the record length.  Since the attribute record
             // structure is the same for all attribute records, we calculate this by arbitrarily
             // taking the first attribute record and summing all its constitutent
@@ -328,8 +334,12 @@ public class ShapeFileExporter //extends GeomExporter
 
             attrFile.write(headerBuffer.array());
 
+            
+
+            //
             // Now write out the field descriptor array, which describes each
             // attribute type.
+            //
 
 //            Iterator<String> iter = uniqueAttributes.iterator();
 //            while (iter.hasNext())
@@ -383,10 +393,7 @@ public class ShapeFileExporter //extends GeomExporter
                 }
                 else if (value.getValue() instanceof Double)
                 {
-                    // Note that we don't write 'F' as that's a Dbase IV
-                    // artifact.  The 'N'umeric type is adequate for
-                    // floating point values.
-                    fieldDescriptorArrayBuffer.put((byte) 'N');
+                    fieldDescriptorArrayBuffer.put((byte) 'F');
                 } else if (value.getValue() instanceof Boolean)
                 {
                     fieldDescriptorArrayBuffer.put((byte) 'L');
@@ -397,12 +404,17 @@ public class ShapeFileExporter //extends GeomExporter
                 fieldDescriptorArrayBuffer.putInt((byte) 0);
 
                 //field length
-                // TODO Keith read in length; how do I compute this?
-//                fieldDescriptorArrayBuffer.put((byte) getBytes(f.getValue()).length);
                 fieldDescriptorArrayBuffer.put(attributeSizes.get(key).byteValue());
 
-                // decimal count 
-                fieldDescriptorArrayBuffer.put((byte) 0);
+                // decimal count
+                if (value.getValue() instanceof Double)
+                {
+                    fieldDescriptorArrayBuffer.put((byte) decimalCount);
+                }
+                else
+                {
+                    fieldDescriptorArrayBuffer.put((byte) 0);
+                }
 
                 // reserved 
                 fieldDescriptorArrayBuffer.putShort((byte) 0);
@@ -474,6 +486,15 @@ public class ShapeFileExporter //extends GeomExporter
                         {
                             recordBuff.putChar('F');
                         }
+                    }
+                    else if (value instanceof Double)
+                    {
+                        // FIXME make 19 and 11 variable values
+                        String doubleValueString = String.format("%19.11E", f.getDouble());
+
+                        byte [] rawValue = doubleValueString.getBytes("US-ASCII");
+
+                        recordBuff.put(rawValue);
                     }
                     else
                     {
@@ -565,8 +586,6 @@ public class ShapeFileExporter //extends GeomExporter
             // and taking their string conversion lengths as their sizes; if the
             // stored size for that attribute is smaller, then update that size
             // with the larger.
-            // TODO enforce 256 and 18 upper bound for lengths for strings and
-            // numeric values.
             for ( String attributeName : mg.getAttributes().keySet() )
             {
                 Integer attributeSize = null;
@@ -588,6 +607,17 @@ public class ShapeFileExporter //extends GeomExporter
                         if (value instanceof String)
                         { // Strings limited to 256 characters
                             attributeSize = Math.min(rawValue.length,256);
+                        }
+                        else if (value instanceof Double)
+                        {
+                            // Arbitrarily basing this what I've seen actual
+                            // shape values use for real value attributes.
+                            // XXX So there's probably a more intelligent way
+                            // to calculate this. :P
+                            // FIXME And, yes, this means we've wasted time
+                            // doing string conversions and byte counts for
+                            // real value attributes.
+                            attributeSize = 19;
                         }
                         else
                         { // Numeric values limited to 18 characters
