@@ -8,6 +8,7 @@ open source: you cannot resell them.  Thus MASON can't include them.
 
 
 monkey.obj
+[and monkey.mtl]
 
 A version of the "Suzanne" monkey character, originally used in Blender
 (see http://en.wikipedia.org/wiki/Blender_(software)#Suzanne)  This
@@ -22,6 +23,7 @@ The Utah Teapot (see http://en.wikipedia.org/wiki/Utah_teapot)
 
 
 palmtree.obj
+[and palmtree.mtl]
 
 A palm tree.  This version is from  the "autobots3d" project at
 Google Code.
