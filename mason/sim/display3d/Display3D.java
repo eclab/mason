@@ -1666,7 +1666,7 @@ public class Display3D extends JPanel implements Steppable
         Mode can be PolygonAttributes.POLYGON_FILL, PolygonAttributes.POLYGON_LINE, 
         or PolygonAttributes.POLYGON_POINT. */
     int rasterizationMode = PolygonAttributes.POLYGON_FILL;
-    void setRasterizationMode(int mode)
+    public void setRasterizationMode(int mode)
         {
         rasterizationMode = mode;
         polyFill.setSelected(mode==PolygonAttributes.POLYGON_FILL);
@@ -1690,7 +1690,7 @@ public class Display3D extends JPanel implements Steppable
         Mode can be PolygonAttributes.CULL_BACK, PolygonAttributes.CULL_FRONT, 
         or PolygonAttributes.CULL_NONE. */
     int cullingMode = PolygonAttributes.CULL_NONE;
-    void setCullingMode(int mode)
+    public void setCullingMode(int mode)
         {
         cullingMode = mode;
         polyCullNone.setSelected(mode==PolygonAttributes.CULL_NONE);
