@@ -2411,3 +2411,4 @@ Version 17
 		dispose when closed, since inspectors are intended to dispose themselves
 		when they are closed, unlike displays.  Thanks to Ahmed Elmolla
 		<aelmolla@gmu.edu>
+	Made Display3D.setRasterizationMode(...) and Display3D.setCullingMode(...) public.
