@@ -6290,7 +6290,7 @@ When constructing a Display2D, it automatically connects to the GUIState and add
 
 Once you set up a Display2D, your next task is usually to arrange its display parameters and put it in a JFrame.  Display2D is capable of sprouting its own JFrame.  If you choose to use your own JFrame instead, be sure to call \code{Display2D.quit()} when the frame is disposed.   
 
-\sidebar{Why isn't this just a standard Java {\it background}?}{Because the Display2D's \method{setBackground(...)} method would set the background color of the Display2D, not of the model being displayed in the Inner Display.}Display2D can also add a {\bf backdrop} color or other paint: furthermore, you can set this value to \variable{null}, which instructs MASON not to draw a background at all: the actual backdrop will be undefined.  Why would you want to do this?  Because if your fields are being drawn opaquely (such as a grid of values), there's no reason to draw a backdrop and it's faster not to do so.  The Display2D can also change the scale of the display, and can {\bf clip} the display to the bounds of the field: for fields with infinite space (such as \class{sim.field.grid.SparseGrid2D}, you'll probably want to turn the clipping off\,---\,it's on by default.
+\sidebar{Why isn't this just a standard Java {\it background}?}{Because the Display2D's \method{setBackground(...)} method would set the background color of the Display2D, not of the model being displayed in the Inner Display.}Display2D can also add a {\bf backdrop} color or other paint: furthermore, you can set this value to \variable{null}, which instructs MASON not to draw a background at all: the actual backdrop will be undefined.  Why would you want to do this?  Because if your fields are being drawn opaquely (such as a grid of values), there's no reason to draw a backdrop and it's faster not to do so.  The Display2D can also change the scale of the display, and can {\bf clip} the display to the bounds of the field: for fields with infinite space (such as \class{sim.field.grid.SparseGrid2D}, you'll probably want to turn the clipping off\,---\,it's on by default.  Last but not least, the Display2D can request objects to draw themselves either {\bf precisely} (using Java2D and floating-point graphics) or {\bf imprecisely} (using AWT Graphics).  Imprecise drawing is often faster.  Objects are free to ignore the request.  Display2D will make this request based on the value of \method{setPrecise(...)}, or if the output media benefits from precision (such as a PDF file).  See Section \ref{sim.portrayal.DrawInfo2D} for more information.
 
 \begin{methods}{\class{sim.display.Display2D}}
 \mthd{public void setScale(double val)}  Sets the scale (zoom factor), which must be a positive number \(\geq 0\).
@@ -6301,6 +6301,10 @@ Once you set up a Display2D, your next task is usually to arrange its display pa
 \mthd{public Paint getBackdrop()}  Returns the backdrop paint of the Display.
 \mthd{public JFrame createFrame()} Directs the Display2D to spout a JFrame and put itself in it.  The JFrame has not been set visible yet.
 \mthd{public Frame getFrame()} Returns the Display2D's current JFrame (whether it created it or not).
+\mthd{public boolean getPrecise()} Returns whether the Display2D is being forced to draw precisely.  By default it is not.  Display2D uses precision (floating-point) drawing when this flag is turned on, or when it outputs to PDFs and other media
+which benefit from precise drawing.  Otherwise it uses imprecise (integer) but typically faster drawing.  See Section \ref{sim.portrayal.DrawInfo2D} for more information.
+\mthd{public void setPrecise(boolean val)} Sets whether the Display2D is being forced to draw precisely.  By default it is not.  Display2D uses precision (floating-point) drawing when this flag is turned on, or when it outputs to PDFs and other media
+which benefit from precise drawing.  Otherwise it uses imprecise (integer) but typically faster drawing.  See Section \ref{sim.portrayal.DrawInfo2D} for more information.
 \end{methods}
 
 Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  You can also get a list of all the registered JFrames.  Here are the relevant Controller methods:
@@ -6589,7 +6593,7 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \begin{itemize}
 \item The {\bf clip rectangle}: this rectangle specifies the clip region of the Display (the portion of the field which is visible to the user).  If an object does not fall within the clip rectangle, there's no need to draw it at all: in fact, Field Portrayals may omit sending drawing requests to objects that they know fall outside the clip. The Clip rectangle is also used for hit-testing: it specifies the hit region.  If an object overlaps this region, it is considered to be hit.
 \item Whether or not the object has been {\bf selected} and should draw itself appropriately.  This is a temporary setting.
-\item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.
+\item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.  It is also set if the Display2D which created this DrawInfo2D is being forced to draw precisely (via \method{Display2D.setPrecise(...)}).
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
 \item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the Display2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
 \item The {\bf GUIState}.
@@ -9972,7 +9976,8 @@ Last but not least, MASON provides axes as a Decorative Simple Portrayal.  This 
 Axes use a special class underneath which is exposed in MASON because it's also used in one of the 3D Edge Portrayals (Section \ref{sim.portrayal3d.network.SimpleEdgePortrayal3D}).  This class draws arrows, and not surprisingly, it's called \Class{sim.portrayal3d.simple.Arrow}.  It is {\it not} a SimplePortrayal, just a utility class, and you'll probably never need to know about it.  Arrow is a subclass of \class{javax.media.j3d.TransformGroup}.
 
 \begin{methods}{\class{sim.portrayal3d.simple.Arrow} Constructor}
-\mthd{public Arrow(double arrowRadius, Double3D startPoint, Double3D endPoint, String startLabel, String endLabel, Appearance appearance)} Creates an arrow of the given radius from startPoint to endPoint.  The two ends may be labeled (else you can pass in \variable{null}, and the arrow can be assigned an Appearance (or you can pass in \variable{null}).
+\mthd{public Arrow(double arrowRadius, Double3D startPoint, Double3D endPoint, String startLabel, String endLabel,}\rule{0pt}{0pt}\hspace{\fill}{\sf Appearance appearance)}\\
+Creates an arrow of the given radius from startPoint to endPoint.  The two ends may be labeled (else you can pass in \variable{null}, and the arrow can be assigned an Appearance (or you can pass in \variable{null}).
 \end{methods}
 
 
@@ -10255,13 +10260,13 @@ Simple Portrayals in 3D really have one major task: create a scene graph and han
 
 The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.   Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
 
-If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
-
 \begin{wrapfigure}{r}[0in]{2in}
 \vspace{0em}\hfill\includegraphics[width=2in]{ColorCube.png}
 \caption{Our ColorCube Portrayal.}
 \vspace{0em}
 \end{wrapfigure}
+
+If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
 
 And that's more or less all there's to it.  Here's an example using the \class{com.sun.j3d.utils.geometry.ColorCube} class, which defines a simple Shape3D in the form of a multicolored cube.  In this example we create a cube and then leave it alone\,---\,thecube doesn't change size or color, etc. to reflect some feature of the underlying model object.  It just draws it as a cube.  This example is pickable, and creates a LocationWrapper as necessary.  Note the various Java3D capability bits turned on (both explicitly and via \method{setPickableFlags(...)}): in more complex scene graphs, getting all the bits turned on to allow the object to be pickable or change in color or appearance, etc., can be a frustrating experience of trial and error.  It's Java3D's worst feature.
 
@@ -11131,7 +11136,8 @@ TimeSeriesAttributes do not automatically cull their data: you have to call a ce
 Scatter Plots are controlled by the class \Class{sim.util.media.chart.ScatterPlotSeriesAttributes}, which has the following constructor, solely called by ScatterPlotGenerator:
 
 \begin{methods}{\class{sim.util.media.chart.ScatterPlotSeriesAttributes} Constructor}
-\mthd{public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, SeriesChangeListener stoppable)} Creates a ScatterPlotSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.
+\mthd{public ScatterPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\ Creates a ScatterPlotSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.
 \end{methods}
 
 ScatterPlotSeriesAttributes allows the user to modify the following features of the underlying series:
