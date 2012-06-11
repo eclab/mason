@@ -49,7 +49,18 @@ import java.util.prefs.*;
 
 public class Display2D extends JComponent implements Steppable, Manipulating2D
     {
-    protected boolean precise = false;
+    boolean forcePrecise = false;  // PDF sets this
+    boolean precise = false;
+    
+    /** Returns true if this display has been set to always draw precisely.  Note that even if this 
+        function returns false, the display may draw precisely in certain circumstances, such as
+        when outputting to a PDF. */
+    public boolean getPrecise() { return precise; }
+
+    /** Sets this display to always draw precisely (or not).  Note that even if this display has
+        been set to not display precisely, it may still draw precisely in certain circumstances, such as
+        when outputting to a PDF. */
+    public void setPrecise(boolean precise) { this.precise = precise; }
         
     public String DEFAULT_PREFERENCES_KEY = "Display2D";
     String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
@@ -1444,7 +1455,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             (int)(holder.bounds.height * scale));
         DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip);
         d2d.gui = simulation;
-        d2d.precise = precise;
+        d2d.precise = forcePrecise || precise;
         return d2d;
         }
                 
@@ -1596,10 +1607,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         else // type == TYPE_PDF
             {
-            boolean oldprecise = precise;
-            precise = true;
+            boolean oldprecise = forcePrecise;
+            forcePrecise = true;
             PDFEncoder.generatePDF(port, file);
-            precise = oldprecise;
+            forcePrecise = oldprecise;
             }
         }
         
@@ -1677,13 +1688,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 fd.setVisible(true);
                 if (fd.getFile()!=null) try
                                             {
-                                            boolean oldprecise = precise;
-                                            precise = true;
+                                            boolean oldprecise = forcePrecise;
+                                            forcePrecise = true;
                                             Paint b = getBackdrop();
                                             if (result == PDF_NO_BACKDROP_BUTTON)  // temporarily remove backdrop
                                                 setBackdrop(null);
                                             PDFEncoder.generatePDF(port, new File(fd.getDirectory(), Utilities.ensureFileEndsWith(fd.getFile(),".pdf")));
-                                            precise = oldprecise;
+                                            forcePrecise = oldprecise;
                                             if (result == PDF_NO_BACKDROP_BUTTON)
                                                 setBackdrop(b);
                                             }
