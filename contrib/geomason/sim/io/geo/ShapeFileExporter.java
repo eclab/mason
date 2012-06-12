@@ -87,7 +87,6 @@ public class ShapeFileExporter //extends GeomExporter
             // looking at the first geometry.
             Geometry g = ((MasonGeometry)geometries.objs[0]).geometry;
 
-            // XXX I don't suppose we'll ever encounter any other types  :P
             if (g instanceof Point)
             {
                 shapeType = 1;
@@ -232,8 +231,8 @@ public class ShapeFileExporter //extends GeomExporter
 
                     // get the MBR
                     polyBufferLittle.putDouble(en.getMinX());
-                    polyBufferLittle.putDouble(en.getMaxX());
                     polyBufferLittle.putDouble(en.getMinY());
+                    polyBufferLittle.putDouble(en.getMaxX());
                     polyBufferLittle.putDouble(en.getMaxY());
 
                     // GeomImporter converts multi-* into single versions, so we only have one part
