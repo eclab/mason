@@ -12,7 +12,10 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.field.geo.GeomVectorField;
@@ -40,7 +43,6 @@ public class ShapeFileExporter //extends GeomExporter
     {
         try
         {
-            // First write the geometry
             String shpFileName = baseFileName + ".shp";
             RandomAccessFile shpFile = new RandomAccessFile(new File(shpFileName), "rw");
 
@@ -77,7 +79,30 @@ public class ShapeFileExporter //extends GeomExporter
             headerLittle.putInt(1000);
 
             // bytes 32 - 35 are the shapefile type
-            headerLittle.putInt(5);
+            int shapeType = 0;
+
+            Bag geometries = field.getGeometries();
+
+            // Determine the geometry associated with this file by arbitrarily
+            // looking at the first geometry.
+            Geometry g = ((MasonGeometry)geometries.objs[0]).geometry;
+
+            // XXX I don't suppose we'll ever encounter any other types  :P
+            if (g instanceof Point)
+            {
+                shapeType = 1;
+            }
+            else if (g instanceof LineString)
+            {
+                shapeType = 3;
+            }
+            else if (g instanceof Polygon)
+            {
+                shapeType = 5;
+            }
+
+
+            headerLittle.putInt(shapeType);
 
             // bytes 36 - 67 are the MBR in min x, min y, max x, max y format (double) 
             Envelope e = field.getMBR();
@@ -123,7 +148,6 @@ public class ShapeFileExporter //extends GeomExporter
             // record size for each record.
             int fileSize = 100; 
 
-            Bag geometries = field.getGeometries();
 
             //TreeSet<String> uniqueAttributes = new TreeSet<String>();
 
@@ -190,7 +214,7 @@ public class ShapeFileExporter //extends GeomExporter
                     shpFile.write(pointBufferLittle.array());
                 } else
                 {
-                    Geometry g = wrapper.getGeometry();
+                    g = wrapper.getGeometry();
                     Coordinate coords[] = g.getCoordinates();
                     Envelope en = g.getEnvelopeInternal();
 
