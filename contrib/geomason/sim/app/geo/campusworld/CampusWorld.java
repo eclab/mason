@@ -12,16 +12,16 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
-import java.io.*;
+import java.io.FileNotFoundException;
 import java.net.URL;
-import java.util.*;
-
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
-import sim.io.geo.*;
-import sim.util.*;
+import sim.io.geo.ShapeFileExporter;
+import sim.io.geo.ShapeFileImporter;
+import sim.util.Bag;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 
@@ -87,10 +87,15 @@ public class CampusWorld extends SimState
     {
         super.finish();
 
-        // Write out one of the vector layers that was read from a shape file
+        // Write out some of the vector layers that were read from a shape file
         // as a test of the native shape file exporter.
-
         ShapeFileExporter.write("myroads", roads);
+
+        ShapeFileExporter.write("walkways", walkways);
+
+        // Now write out the agents layer, which has no corresponding originating
+        // shape file.
+        ShapeFileExporter.write("agents", agents);
     }
 
     
