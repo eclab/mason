@@ -1,35 +1,38 @@
-/* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+/*
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.field.geo;
 
+import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.prep.*; 
-
-import com.vividsolutions.jts.algorithm.*; 
-
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.geom.prep.PreparedPoint;
+import com.vividsolutions.jts.geom.prep.PreparedPolygon;
+import com.vividsolutions.jts.index.quadtree.Quadtree;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import sim.portrayal.DrawInfo2D;
+import sim.util.Bag;
 import sim.util.geo.AttributeValue;
 import sim.util.geo.GeometryUtilities;
 import sim.util.geo.MasonGeometry;
 
-import com.vividsolutions.jts.index.quadtree.*; 
-
-import sim.util.*; 
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.*;
 
 /** 
-   A GeomVectorField contains one or more MasonGeometry objects.  The field stores the geometries as a quadtree
-   and used the quadtree during various queries.  As objects are inserted into the field, the minimum 
-   bounding rectangle (MBR) is expanded to include the new object.  This allows a determination of the area 
-   of the field.    
+   A GeomVectorField contains one or more MasonGeometry objects.  The field 
+   stores the geometries as a quadtree and used the quadtree during various
+   queries.  As objects are inserted into the field, the minimum bounding
+   rectangle (MBR) is expanded to include the new object.  This allows a
+   determination of the area of the field.
    
    <p>Note that the field assumes the geometries use the same coordinate system.  
 */
@@ -184,7 +187,8 @@ public class GeomVectorField extends GeomField
         nor the Geometries inside the bag, as this will have undefined 
         consequences for drawing and inspecting. 
     */
-	public Bag getGeometries() { 
+	public Bag getGeometries()
+    {
 		Bag geometries = new Bag(); 
 		List<?> gList = spatialIndex.queryAll();
 		geometries.addAll(gList); 
@@ -203,7 +207,8 @@ public class GeomVectorField extends GeomField
 		e.expandBy(dist); 
 		
 		List<?> gList = spatialIndex.query(e);
-		nearbyObjects.addAll(gList); 
+		nearbyObjects.addAll(gList);
+
         return nearbyObjects;
     }
 
@@ -357,7 +362,7 @@ public class GeomVectorField extends GeomField
 		return null; 
 	}
 	
-	/** Moves the centriod of the given geometry to the provided point.  Note that the provided point 
+	/** Moves the centroid of the given geometry to the provided point.  Note that the provided point
 	 * must be in the same coordinate system as the geometry.  */
 	 public void setGeometryLocation(Geometry g, CoordinateSequenceFilter p)
 	 {
