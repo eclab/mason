@@ -10,20 +10,19 @@
  */
 package sim.io.geo;
 
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.io.WKTReader;
 import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.gdal.ogr.*;
-
 import sim.field.geo.GeomVectorField;
 import sim.util.Bag;
 import sim.util.geo.AttributeValue;
 import sim.util.geo.MasonGeometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import java.net.URL;
-import java.util.Map;
 
 
 

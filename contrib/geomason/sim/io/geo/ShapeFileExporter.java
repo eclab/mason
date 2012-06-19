@@ -1,9 +1,13 @@
 /*
- Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
- George Mason University Mason University Licensed under the Academic
- Free License version 3.0
-
- See the file "LICENSE" for more information
+ *
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
+ * 
  */
 package sim.io.geo;
 
@@ -27,8 +31,10 @@ import sim.util.geo.MasonGeometry;
 
 /** Writes a GeomVectorField to a Shape file.
  *
+ * TODO: consider writing a coordinate reference system/projection file
+ *
  */
-public class ShapeFileExporter //extends GeomExporter
+public class ShapeFileExporter
 {
 
     /** Write the given vector field to a shape file.
@@ -154,17 +160,6 @@ public class ShapeFileExporter //extends GeomExporter
             {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i];
                 String geomType = wrapper.toString();
-
-//                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
-//
-//                for (int j = 0; j < attributes.size(); j++)
-//                {
-//                    uniqueAttributes.add(attributes.get(j).getName());
-//                }
-//
-                // Add any new attribute names that are associated with this
-                // geometry instance.
-                //uniqueAttributes.addAll(wrapper.getAttributes().keySet());
 
                 /////////
                 // first store the record header, in big-endian format
@@ -314,15 +309,8 @@ public class ShapeFileExporter //extends GeomExporter
             // structure is the same for all attribute records, we calculate this by arbitrarily
             // taking the first attribute record and summing all its constitutent
             // attributes.
-            // FIXME this doesn't work any more; need to change to new attribute model!!
-//            MasonGeometry w = (MasonGeometry) geometries.objs[0];
-//            ArrayList<AttributeValue> attrs = (ArrayList<AttributeValue>) w.geometry.getUserData();
 
             int recordSize = 0;
-//            for (int i = 0; i < attrs.size(); i++)
-//            {
-//                recordSize += getBytes(attrs.get(i)).length;
-//            }
 
             for (String attributeName : attributeSizes.keySet())
             {
@@ -364,13 +352,9 @@ public class ShapeFileExporter //extends GeomExporter
             // attribute type.
             //
 
-//            Iterator<String> iter = uniqueAttributes.iterator();
-//            while (iter.hasNext())
             for( String key : attributeSizes.keySet() )
             {
                 ByteBuffer fieldDescriptorArrayBuffer = ByteBuffer.allocate(32);
-
-//                String key = iter.next();
 
                 // Write out the field name, and pad it out with zeroes up
                 // to byte 10
@@ -390,18 +374,6 @@ public class ShapeFileExporter //extends GeomExporter
                 // we want the type, identifying the type, and then writing
                 // that out
                 MasonGeometry w = (MasonGeometry) geometries.objs[0];
-// DEPRECATED means of doing this
-//                ArrayList<AttributeValue> attr = (ArrayList<AttributeValue>) w.geometry.getUserData();
-//
-//                AttributeValue f = null;
-//                for (int i = 0; i < attr.size(); i++)
-//                {
-//                    f = attr.get(i);
-//                    if (f.getName().equals(key))
-//                    {
-//                        break;
-//                    }
-//                }
 
                 // Directly get the attribute value
                 AttributeValue value = (AttributeValue) w.getAttribute(key);
@@ -485,17 +457,11 @@ public class ShapeFileExporter //extends GeomExporter
                 // (I.e., it hasn't been deleted.)
                 recordBuff.put((byte) 0x20);
 
-                // DEPRECATED, old way
-//                ArrayList<AttributeValue> attributes = (ArrayList<AttributeValue>) wrapper.geometry.getUserData();
-
                 for (String attributeName : attributeSizes.keySet())
                 {
                     AttributeValue f = (AttributeValue) wrapper.getAttribute(attributeName);
 
                     Object value = f.getValue();
-
-                    // DEPRECATED, old way
-//                    StringBuilder value = new StringBuilder(String.valueOf(f.getValue()));
 
                     if (value instanceof Boolean)
                     {
@@ -512,7 +478,7 @@ public class ShapeFileExporter //extends GeomExporter
                     }
                     else if (value instanceof Double)
                     {
-                        // FIXME make 19 and 11 variable values
+                        // TODO make 19 and 11 variable values
                         String doubleValueString = String.format("%19.11E", f.getDouble());
 
                         byte [] rawValue = doubleValueString.getBytes("US-ASCII");
@@ -529,27 +495,9 @@ public class ShapeFileExporter //extends GeomExporter
                         Arrays.fill(outValue,(byte)0x20);
 
                         System.arraycopy(rawValue, 0, outValue, 0, rawValue.length);
-
-                        // Pad the field with blanks so that it meets its field
-                        // size.
-//                        int padding = attributeSizes.get(attributeName) - rawValue.length;
-//
-//                        assert padding >= 0 : "padding: " + padding;
-//
-//                        for (int k = 0; k < padding; k++)
-//                        {
-////                        value.insert(0, ' '); DEPRECATED
-//                            recordBuff.putChar(' ');
-//                        }
                         
                         recordBuff.put(outValue);
                     }
-
-// DEPRECATED, old way
-//                    for (int k = 0; k < f.getFieldSize(); k++)
-//                    {
-//                        recordBuff.put((byte) value.charAt(k));
-//                    }
                 }
 
                 attrFile.write(recordBuff.array());

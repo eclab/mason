@@ -10,24 +10,23 @@
  */
 package sim.io.geo;
 
-import sim.field.geo.GeomVectorField;
-import sim.util.Bag;
-
-import java.io.Serializable;
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-import java.net.URL;
-import org.opengis.feature.Property;
+import sim.field.geo.GeomVectorField;
+import sim.util.Bag;
 import sim.util.geo.AttributeValue;
 import sim.util.geo.MasonGeometry;
 

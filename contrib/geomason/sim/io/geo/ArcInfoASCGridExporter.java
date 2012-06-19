@@ -99,7 +99,7 @@ public class ArcInfoASCGridExporter
     }
 
 
-    /** Like write() with default NODATA value of 9999.
+    /** Like write() with default NODATA value of -9999.
      *
      * @param gridField
      * @param outputStream

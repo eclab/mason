@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
  * George Mason University Mason University Licensed under the Academic
  * Free License version 3.0
@@ -9,35 +9,34 @@
  */
 package sim.io.geo;
 
-import java.io.*;
-
-import sim.util.*;
-import sim.util.geo.*;
-import sim.field.geo.*;
-
-import java.nio.*;
-import java.nio.channels.*;
-
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.*;
-import java.lang.reflect.Constructor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import sim.field.geo.GeomVectorField;
+import sim.util.Bag;
 import sim.util.geo.AttributeValue;
+import sim.util.geo.MasonGeometry;
 
 
 
-/** 
-A native Java importer to read ERSI shapefile data into the GeomVectorField.  We assume the input file follows the
-standard ESRI shapefile format.    
+/**
+ * A native Java importer to read ERSI shapefile data into the GeomVectorField.
+ * We assume the input file follows the standard ESRI shapefile format.
  */
 public class ShapeFileImporter
 {
 
     /** Not meant to be instantiated
-     *
      */
     private ShapeFileImporter()
     {
@@ -119,51 +118,15 @@ public class ShapeFileImporter
 
 
 
-    /** Read the given shape file into the field.
-     *
-     * Unlike the super().ingest() this will try to get the resource twice; the
-     * first time with the plain file name, and possibly a second with the name
-     * with ".shp" appended.
-     *
-     * @param fileName
-     * @param referenceClass
-     * @param field
-     * @param masked
-     * @throws FileNotFoundException
-     */
-//    public static void read(String fileName, Class<?> referenceClass, GeomVectorField field, Bag masked) throws FileNotFoundException
-//    {
-//        String filePath = null;
-//
-//        try
-//        {
-//            filePath = referenceClass.getResource(fileName).getPath();
-//        } catch (NullPointerException np1)
-//        {
-//            // getResource() was unable to find the file.  This is probably
-//            // because 'fileName' doesn't have a '.shp' extension.  Try again
-//            // after adding the '.shp' suffix.
-//
-//            try
-//            {
-//                filePath = referenceClass.getResource(fileName + ".shp").getPath();
-//            } catch (NullPointerException np2)
-//            {
-//                throw new FileNotFoundException(fileName);
-//            }
-//        }
-//
-//        read(filePath, field, masked);
-//    }
-//
 
-
-    /**
-     * Create a polygon from an array of LinearRings. If there is only one ring,
-     * the function will create and return a simple polygon. If there are multiple
-     * rings, the function checks to see if any of them are holes (which are in 
-     * counter-clockwise order) and if so, it creates a polygon with holes.
-     * If there are no holes, it creates and returns a multi-part polygon.
+    /** Create a polygon from an array of LinearRings.
+     *
+     * If there is only one ring the function will create and return a simple
+     * polygon. If there are multiple rings, the function checks to see if any
+     * of them are holes (which are in counter-clockwise order) and if so, it
+     * creates a polygon with holes.  If there are no holes, it creates and
+     * returns a multi-part polygon.
+     * 
      */
     private static Geometry createPolygon(LinearRing[] parts)
     {
@@ -402,7 +365,7 @@ public class ShapeFileImporter
 
                 // Contains all the attribute values keyed by name that will eventually
                 // be copied over to a corresponding MasonGeometry wrapper.
-                Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();
+                Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>(fieldCnt);
 
                 //attributeInfo = new ArrayList<AttributeValue>();
 
@@ -436,8 +399,6 @@ public class ShapeFileImporter
                     String rawAttributeValue = new String(r, start1, fields[k].fieldSize);
                     rawAttributeValue = rawAttributeValue.trim();
 
-//                    Object o = rawAttributeValue;  // fields[k].type == 'C'
-
                     AttributeValue attributeValue = new AttributeValue();
 
                     if ( rawAttributeValue.isEmpty() )
@@ -450,22 +411,17 @@ public class ShapeFileImporter
                     {
                         if (rawAttributeValue.length() == 0)
                         {
-//                            rawAttributeValue = "0";
                             attributeValue.setString("0");
                         }
                         if (rawAttributeValue.indexOf('.') != -1)
                         {
-//                            o = new Double(rawAttributeValue);
                             attributeValue.setDouble(Double.valueOf(rawAttributeValue));
                         } else
                         {
-//                            o = new Integer(rawAttributeValue);
                             attributeValue.setInteger(Integer.valueOf(rawAttributeValue));
                         }
                     } else if (type[k] == 'L') // Logical
                     {
-//                        o = new Boolean(rawAttributeValue);
-                        // TODO add boolean support to AttributeValue
                         attributeValue.setValue(Boolean.valueOf(rawAttributeValue));
                     } else if (type[k] == 'F') // Floating point
                     {
@@ -476,14 +432,6 @@ public class ShapeFileImporter
                         attributeValue.setString(rawAttributeValue);
                     }
 
-                    attributeValue.setFieldSize(fields[k].fieldSize);
-
-//                    AttributeValue fld = (AttributeValue) fields[k].clone();
-
-//                    fld.setValue(o);
-
-
-//                    attributeInfo.add(fld);
                     attributes.put(fields[k].name, attributeValue);
 
                     start1 += fields[k].fieldSize;
@@ -570,8 +518,6 @@ public class ShapeFileImporter
 
                 if (geom != null)
                 {
-//                    Collections.sort(attributeInfo, GeometryUtilities.attrFieldCompartor);
-//                    geom.setUserData(attributeInfo);
                     try
                     {
                         // The user *may* have created their own MasonGeometry

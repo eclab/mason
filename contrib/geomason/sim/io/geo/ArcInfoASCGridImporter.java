@@ -12,14 +12,14 @@ package sim.io.geo;
 
 import com.vividsolutions.jts.geom.Envelope;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.AbstractGrid2D;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
-import java.io.InputStream;
-import java.util.Scanner;
 
 
 

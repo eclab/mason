@@ -5,7 +5,7 @@
  *
  * See the file "LICENSE" for more information
  *
- * $Id: GDALImporter.java,v 1.2 2010-09-22 01:20:08 mcoletti Exp $
+ * $Id$
  *
  */
 package sim.io.geo;
