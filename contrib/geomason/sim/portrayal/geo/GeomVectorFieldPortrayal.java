@@ -1,23 +1,27 @@
-/* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+/*
+ *
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.portrayal.geo;
 
-import com.vividsolutions.jts.geom.*;
-
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.util.HashMap;
 import sim.field.geo.GeomVectorField;
 import sim.portrayal.*;
-import sim.util.*;
-import sim.util.geo.*;
-import java.awt.image.*;
-import java.util.HashMap;
+import sim.util.Bag;
+import sim.util.geo.MasonGeometry;
 
 /**
  * Portrayal for MasonGeometry objects. The portrayal handles drawing and
@@ -68,7 +72,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	{
 		// return the portrayal-for-all if any
 		if (portrayalForAll != null)
-			return portrayalForAll;
+        {
+            return portrayalForAll;
+        }
 
 		MasonGeometry mg = (MasonGeometry) obj;
 		Geometry geometry = mg.getGeometry();
@@ -80,9 +86,13 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		// one in FieldPortrayal
 
 		if (user != null && user instanceof Portrayal)
-			return (Portrayal) user;
+        {
+            return (Portrayal) user;
+        }
 		if (portrayalForNonNull != null)
-			return portrayalForNonNull;
+        {
+            return portrayalForNonNull;
+        }
 		if ((portrayals != null /* && !portrayals.isEmpty() */) && // a little
 				// efficiency
 				// -- avoid
@@ -90,7 +100,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 				// weak keys
 				// etc.
 				((tmp = ((Portrayal) (portrayals.get(user)))) != null))
-			return tmp;
+        {
+            return tmp;
+        }
 		if ((portrayals != null /* && !portrayals.isEmpty() */) && // a little
 				// efficiency
 				// -- avoid
@@ -98,7 +110,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 				// weak keys
 				// etc.
 				((tmp = ((Portrayal) (portrayals.get(geometry)))) != null))
-			return tmp;
+        {
+            return tmp;
+        }
 		if (user != null && (classPortrayals != null /*
 		 * &&
 		 * !classPortrayals.isEmpty
@@ -108,7 +122,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		 // avoid making weak
 		 // keys etc.
 		 ((tmp = ((Portrayal) (classPortrayals.get(user.getClass())))) != null))
-			return tmp;
+        {
+            return tmp;
+        }
 		if (geometry != null && (classPortrayals != null /*
 		 * &&
 		 * !classPortrayals.isEmpty
@@ -119,9 +135,14 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		 // weak keys
 		 // etc.
 		 ((tmp = ((Portrayal) (classPortrayals.get(geometry.getClass())))) != null))
-			return tmp;
+        {
+            return tmp;
+        }
 		if (portrayalForRemainder != null)
-			return portrayalForRemainder;
+        {
+            return portrayalForRemainder;
+        }
+        
 		return getDefaultPortrayal();
 	}
 
@@ -159,7 +180,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
 	{
 		if (field == null)
-			return;
+        {
+            return;
+        }
 
 		// If we're drawing (and not inspecting), re-fresh the buffer if the
 		// associated field is immutable.
@@ -224,7 +247,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		WritableRaster raster = image.getRaster();
 		int[] data = new int[len];
 		for (int i = 0; i < len; i++)
-			data[i] = 0;
+        {
+            data[i] = 0;
+        }
 		raster.setDataElements(0, 0, image.getWidth(), image.getHeight(), data);
 	}
 
@@ -241,7 +266,9 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	{
 		GeomVectorField geomField = (GeomVectorField) field;
 		if (geomField == null)
-			return;
+        {
+            return;
+        }
 
 		boolean objectSelected = !selectedWrappers.isEmpty();
 
@@ -261,20 +288,26 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 			Geometry geom = gm.getGeometry();
 			Portrayal p = getPortrayalForObject(gm);
 			if (!(p instanceof SimplePortrayal2D))
-				throw new RuntimeException("Unexpected Portrayal " + p + " for object " + geom
-						+ " -- expected a SimplePortrayal2D or a GeomPortrayal");
+            {
+                throw new RuntimeException("Unexpected Portrayal " + p + " for object " + geom
+                        + " -- expected a SimplePortrayal2D or a GeomPortrayal");
+            }
 
 			SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
 
 			if (graphics == null)
 			{
 				if (portrayal.hitObject(gm, info))
-					putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+                {
+                    putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+                }
 			}
 			else
 			{
 				if (portrayal instanceof GeomPortrayal)
-					portrayal.draw(gm, graphics, gInfo);
+                {
+                    portrayal.draw(gm, graphics, gInfo);
+                }
 				else
 				{ // have a SimplePortrayal2D,
 					Point pt = geom.getCentroid();
@@ -294,9 +327,13 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	public void setField(Object field)
 	{
 		if (field instanceof GeomVectorField)
-			super.setField(field);  // sets dirty field already 
+        {
+            super.setField(field);
+        }  // sets dirty field already
 		else
-			throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
+        {
+            throw new RuntimeException("Invalid field for GeomFieldPortrayal: " + field);
+        }
 	}
 
 	HashMap<Object, LocationWrapper> selectedWrappers = new HashMap<Object, LocationWrapper>();
@@ -305,20 +342,28 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 	public boolean setSelected(LocationWrapper wrapper, boolean selected)
 	{
 		if (wrapper == null)
-			return true;
+        {
+            return true;
+        }
 		if (wrapper.getFieldPortrayal() != this)
-			return true;
+        {
+            return true;
+        }
 
 		Object obj = wrapper.getObject();
 		boolean b = getPortrayalForObject(obj).setSelected(wrapper, selected);
 		if (selected)
 		{
 			if (b == false)
-				return false;
+            {
+                return false;
+            }
 			selectedWrappers.put(obj, wrapper);
 		}
 		else
-			selectedWrappers.remove(obj);
+        {
+            selectedWrappers.remove(obj);
+        }
 		return true;
 	}
 

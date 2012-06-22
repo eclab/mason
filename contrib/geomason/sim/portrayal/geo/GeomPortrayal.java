@@ -10,20 +10,18 @@
 */
 package sim.portrayal.geo;
 
-// we can't do a mass import of java.awt.* since java.awt.Polygon and
-// com.vividsolutions.jts.geom.Polygon will conflict
 import com.vividsolutions.jts.geom.*;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
-import java.awt.geom.*;
-
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import sim.display.GUIState;
 import sim.portrayal.*;
-import sim.display.*;
-import sim.util.geo.*;
-import sim.portrayal.inspector.*;
+import sim.portrayal.inspector.TabbedInspector;
 import sim.util.Properties;
+import sim.util.geo.MasonGeometry;
 
 /**
  * The portrayal for MasonGeometry objects. The class draws the JTS geometry
@@ -110,12 +108,8 @@ public class GeomPortrayal extends SimplePortrayal2D
 
 			if (gw.hasAttributes())
 			{
-//				@SuppressWarnings("unchecked")
-//				ArrayList<AttributeValue> aList = (ArrayList<AttributeValue>) gw.geometry.getUserData();
-
 				if (! gw.hasHiddenAttributes())
 				{ // only add attributes tag if JTS geometry has attributes
-//					GeometryProperties properties = new GeometryProperties(aList);
 
                     // I.e., MASON already has a mechanism for dealing with
                     // collections, so why not use it?
@@ -133,9 +127,6 @@ public class GeomPortrayal extends SimplePortrayal2D
 		return inspector;
 	}
     
-
-	// AffineTransform transform = new AffineTransform();
-	// com.vividsolutions.jts.geom.util.AffineTransformation jtsTransform;
 
 	/**
 	 * Draw a JTS geometry object. The JTS geometries are converted to Java
@@ -242,9 +233,9 @@ public class GeomPortrayal extends SimplePortrayal2D
         {
             graphics.draw(gm.shape);
         }
-		return;
-
 	}
+
+
 
 	/**
 	 * Helper function for drawing a JTS polygon.
