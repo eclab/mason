@@ -1,18 +1,23 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.colorworld;
 
-import sim.display.*;
-import sim.portrayal.simple.*;
-import sim.portrayal.geo.GeomVectorFieldPortrayal;
-import sim.engine.*;
 import java.awt.Color;
-import javax.swing.*;
+import javax.swing.JFrame;
+import sim.display.Console;
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
+import sim.engine.SimState;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
+import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.gui.SimpleColorMap;
 
 
@@ -22,9 +27,8 @@ import sim.util.gui.SimpleColorMap;
  *  voting districts to handle the shading.    
  *
  */
-
-public class ColorWorldWithUI extends GUIState {
-
+public class ColorWorldWithUI extends GUIState
+{
     Display2D display;
     JFrame displayFrame;
 
@@ -43,8 +47,11 @@ public class ColorWorldWithUI extends GUIState {
     }
 
     public static String getName() { return "GeoMASON: Color World"; }
+    
+    @Override
     public Object getSimulationInspectedObject() { return state; }
 
+    @Override
     public void init(Controller controller)
     {
         super.init(controller);
@@ -59,15 +66,21 @@ public class ColorWorldWithUI extends GUIState {
         displayFrame.setVisible(true);
     }
 
+    @Override
     public void quit()
     {
         super.quit();
 
-        if (displayFrame!=null) displayFrame.dispose();
+        if (displayFrame!=null)
+        {
+            displayFrame.dispose();
+        }
+
         displayFrame = null;
         display = null;
     }
 
+    @Override
     public void start()
     {
         super.start();
@@ -76,18 +89,18 @@ public class ColorWorldWithUI extends GUIState {
 
     private void setupPortrayals()
     {
-        ColorWorld world = (ColorWorld)state;
+        ColorWorld world = (ColorWorld) state;
 
-        agentPortrayal.setField(world.agents);
-        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        agentPortrayal.setField(ColorWorld.agents);
+        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED, 6.0));
 
         // the county portrayal (ie, the voting districts) to use our custom portrayal 
         countyPortrayal.setField(world.county);
         countyPortrayal.setPortrayalForAll(new ColorWorldPortrayal(
-        		new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE))); 
+            new SimpleColorMap(0.0, ColorWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
 
         display.reset();
-	display.setBackdrop(Color.WHITE); 
+        display.setBackdrop(Color.WHITE);
         display.repaint();
     }
 

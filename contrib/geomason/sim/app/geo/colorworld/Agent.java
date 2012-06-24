@@ -1,16 +1,21 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.colorworld;
 
-import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.util.*;
-import sim.engine.*;
-import sim.field.geo.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.util.AffineTransformation;
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import sim.field.geo.GeomVectorField;
 
 /**
  *  Our simple agent for the ColorWorld GeoMASON example.  The agents move in one of the eight cardinal directions 

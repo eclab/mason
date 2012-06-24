@@ -1,22 +1,23 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.colorworld;
 
 import java.io.FileNotFoundException;
-
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sim.engine.*;
-import sim.field.geo.*;
+import sim.engine.SimState;
+import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
-import sim.util.geo.*;
+import sim.util.geo.MasonGeometry;
 
 
 
@@ -121,6 +122,7 @@ public class ColorWorld extends SimState
 
 
 
+    @Override
     public void start()
     {
         super.start();

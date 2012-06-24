@@ -1,9 +1,11 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.colorworld;
 
@@ -16,11 +18,9 @@ import sim.util.geo.MasonGeometry;
  *  agents.  All this class does, is add the ability to count the number of agents currently 
  *  inside the voting district. 
  */
-
 public class CountingGeomWrapper extends MasonGeometry
 {
     private static final long serialVersionUID = 3186655744206152969L;
-
 
 
     public CountingGeomWrapper()
