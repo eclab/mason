@@ -1,13 +1,18 @@
 /*
- Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
- George Mason University Mason University Licensed under the Academic
- Free License version 3.0
-
- See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
  */
 package sim.app.geo.campusworld;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
@@ -64,9 +69,10 @@ public class Agent implements Steppable
         return location;
     }
 
-    // true if the agent has arrived at the target intersection
 
-
+    
+    /** true if the agent has arrived at the target intersection
+     */
     private boolean arrived()
     {
         // If we have a negative move rate the agent is moving from the end to

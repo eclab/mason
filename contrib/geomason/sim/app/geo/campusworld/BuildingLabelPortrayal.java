@@ -6,13 +6,10 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
- * 
  */
 package sim.app.geo.campusworld;
 
 import java.awt.Paint;
-
-
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.simple.LabelledPortrayal2D;

@@ -1,14 +1,11 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/*
- * CampusWorldWithGUI
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
  *
- * $Id: CampusWorldWithUI.java,v 1.2 2010-08-25 20:46:49 mcoletti Exp $
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
  */
 
 package sim.app.geo.campusworld;
