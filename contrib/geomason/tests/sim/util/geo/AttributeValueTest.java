@@ -1,14 +1,16 @@
 /*
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
  * $Id$
  */
 package tests.sim.util.geo;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import org.junit.*;
 import sim.util.geo.AttributeValue;
 
 
@@ -65,9 +67,8 @@ public class AttributeValueTest
         
         instance.setInteger(42);
         instance.setHidden(true);
-        instance.setFieldSize(99);
 
-        String expResult = "Value: 42 Field size: 99 Hidden: true";
+        String expResult = "Value: 42 Hidden: true";
         String result = instance.toString();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -87,7 +88,6 @@ public class AttributeValueTest
         
         instance.setInteger(42);
         instance.setHidden(true);
-        instance.setFieldSize(99);
 
         Object expResult = instance;
         Object result = instance.clone();
@@ -271,40 +271,6 @@ public class AttributeValueTest
         // TODO review the generated test code and remove the default call to fail.
 //        fail("The test case is a prototype.");
         assertEquals(hidden,instance.isHidden());
-    }
-
-
-
-    /**
-     * Test of getFieldSize method, of class AttributeValue.
-     */
-    @Test
-    public void testGetFieldSize()
-    {
-        System.out.println("getFieldSize");
-        AttributeValue instance = new AttributeValue();
-        int expResult = 0;
-        int result = instance.getFieldSize();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-    }
-
-
-
-    /**
-     * Test of setFieldSize method, of class AttributeValue.
-     */
-    @Test
-    public void testSetFieldSize()
-    {
-        System.out.println("setFieldSize");
-        int fieldSize = 99;
-        AttributeValue instance = new AttributeValue();
-        instance.setFieldSize(fieldSize);
-        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
-        assertEquals(fieldSize,instance.getFieldSize());
     }
 
 }
