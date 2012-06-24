@@ -10,20 +10,20 @@
  */
 package sim.util.geo;
 
-import java.awt.geom.*;
-
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import java.util.Collections;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.util.HashMap;
 import java.util.Map;
 
 
 
 /** 
- * A MasonGeometry is a wrapper for a JTS geometry and an associated userData field.  The userData field
- * can be any MASON object, or general Java object, which will be included in the inspector by default.
+ * A MasonGeometry is a wrapper for a JTS geometry and an associated userData 
+ * field.  The userData field can be any MASON object, or general Java object,
+ * which will be included in the inspector by default.
  *
  * <p> MasonGeometry implements sim.util.Proxiable to allow the hiding of various getXXX and setXXX methods
  * from the inspectors.
@@ -171,7 +171,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
         transform = new AffineTransform();
         preparedGeometry = null;
         
-        attributes = Collections.synchronizedMap(new HashMap<String,AttributeValue>());
+        attributes = new HashMap<String,AttributeValue>();
 
         if (geometry != null)
         {

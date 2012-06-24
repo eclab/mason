@@ -1,9 +1,11 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.util.geo;
 
@@ -18,13 +20,14 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
  */
 public class PointMoveTo implements CoordinateSequenceFilter, java.io.Serializable
 {
-
     private static final long serialVersionUID = -2029180922944093196L;
+    
 	Coordinate newValue = null;
     boolean isDone = false;
     boolean geometryChanged = false;
     
-    public PointMoveTo() { super(); } 
+    public PointMoveTo() { super(); }
+    
     public PointMoveTo(Coordinate c)
     {
         super();

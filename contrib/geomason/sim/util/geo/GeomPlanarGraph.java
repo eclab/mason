@@ -5,7 +5,7 @@
  *
  * See the file "LICENSE" for more information
  *
- * $Id: GeomPlanarGraph.java,v 1.3 2010-08-25 20:05:25 mcoletti Exp $
+ * $Id$
  * 
  */
 package sim.util.geo;
@@ -14,7 +14,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateArrays;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.planargraph.DirectedEdge;
-import com.vividsolutions.jts.planargraph.Edge;
 import com.vividsolutions.jts.planargraph.Node;
 import com.vividsolutions.jts.planargraph.PlanarGraph;
 import sim.field.geo.GeomVectorField;

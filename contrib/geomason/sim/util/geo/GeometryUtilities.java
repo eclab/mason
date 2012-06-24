@@ -5,20 +5,19 @@
  *
  * See the file "LICENSE" for more information
  * 
- * $Id: GeometryUtilities.java,v 1.4 2010-09-03 22:14:36 mcoletti Exp $
+ * $Id$
  * 
  */
 package sim.util.geo;
 
+import com.vividsolutions.jts.geom.Envelope;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-
-import sim.portrayal.DrawInfo2D;
-import com.vividsolutions.jts.geom.Envelope;
 import sim.display.Display2D;
 import sim.field.geo.GeomField;
 import sim.field.geo.GeomGridField;
+import sim.portrayal.DrawInfo2D;
 
 public class GeometryUtilities
 {
@@ -104,19 +103,8 @@ public class GeometryUtilities
 		return p;
 	}
 
-	/**
-	 * Comparator to sort and search for AttributeFields by name in a Collection
-     *
-     * @deprecated because now we use a HashTable to sort AttributeValues
-	 */
-//	public static Comparator<AttributeValue> attrFieldCompartor = new Comparator<AttributeValue>()
-//	{
-//		public int compare(AttributeValue af1, AttributeValue af2)
-//		{
-//			return af1.getName().compareTo(af2.getName());
-//		}
-//	};
 
+    
 	/**
 	 * compute the MBR for the grid field in display coordinates
 	 * 
@@ -133,8 +121,9 @@ public class GeometryUtilities
 	 * @return grid field bounds in display coordinates; will return viewport if
 	 *         grid does not intersect given outer MBR
 	 */
-	static public java.awt.geom.Rectangle2D.Double computeBounds(final Envelope outer, final Display2D display,
-			final GeomGridField gridField)
+	static public java.awt.geom.Rectangle2D.Double computeBounds(final Envelope outer,
+                                                                 final Display2D display,
+                                                                 final GeomGridField gridField)
 	{
 		Display2D.InnerDisplay2D innerDisplay = display.insideDisplay;
 
@@ -144,7 +133,7 @@ public class GeometryUtilities
 
 		AffineTransform transform = GeometryUtilities.worldToScreenTransform(outer, bounds);
 
-		if (outer.contains(gridField.MBR) || gridField.MBR.contains(outer) || outer.intersects(gridField.MBR))
+        if (isWithinBounds(outer, gridField))
 		{
 			// Pretty straightforward; just translate all the corners into
 			// display coordinates
@@ -163,15 +152,15 @@ public class GeometryUtilities
 		// badness happened
 		{
 			// not good if the grid isn't even within the outer MBR; this likely
-			// means that
-			// 'outer' and 'gridField' are using different spatial reference
-			// systems
+			// means that 'outer' and 'gridField' are using different spatial
+            // reference systems
 			System.err.println("Warning: raster not in display");
 		}
 
 		return bounds;
 	}
 
+    
 	/**
 	 * @param outer
 	 *            denotes MBR that maps to display window in world coordinates

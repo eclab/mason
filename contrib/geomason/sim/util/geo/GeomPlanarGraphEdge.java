@@ -5,7 +5,7 @@
  *
  * See the file "LICENSE" for more information
  *
- * $Id: GeomPlanarGraphEdge.java,v 1.2 2010-08-20 18:28:03 mcoletti Exp $
+ * $Id$
  * 
  */
 
