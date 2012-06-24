@@ -1,21 +1,19 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.nearbyworld;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.util.GeometricShapeFactory;
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
-import sim.util.geo.*; 
+import sim.util.geo.MasonGeometry;
 
 /** 
  *  The NearbyWorld GeoMASON example show how to add Geometries to a field, and also how to query 
@@ -33,13 +31,13 @@ public class NearbyWorld extends SimState
     // Contains the objects in which the agent will be wandering
 	public GeomVectorField objects = new GeomVectorField(WIDTH, HEIGHT);
 
-//    // Field for just the agent
+    // Field for just the agent
     public GeomVectorField agentField = new GeomVectorField(WIDTH, HEIGHT);
-//
-//    // Field that's used to highlight nearby objects
+
+    // Field that's used to highlight nearby objects
     public GeomVectorField nearbyField = new GeomVectorField(WIDTH, HEIGHT);
-//
-//    // Agent that moves around the objects
+
+    // Agent that moves around the objects
     Agent agent;
 
 	// size of the display 
