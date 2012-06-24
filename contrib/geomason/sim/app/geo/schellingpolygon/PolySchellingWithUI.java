@@ -8,16 +8,14 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingpolygon;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -78,7 +76,7 @@ public class PolySchellingWithUI extends GUIState
     {
         super.init(controller);
 
-        display = new Display2D(800, 600, this, 1);
+        display = new Display2D(800, 600, this);
 
         display.attach(polyPortrayal, "Polys");
 
@@ -192,9 +190,9 @@ public class PolySchellingWithUI extends GUIState
                 }
             }
             // add this data to the chart
-            happyReds.add(state.schedule.time() / ps.people.size(),
+            happyReds.add(state.schedule.getTime() / ps.people.size(),
                           hReds / ps.totalReds, true);
-            happyBlues.add(state.schedule.time() / ps.people.size(),
+            happyBlues.add(state.schedule.getTime() / ps.people.size(),
                            hBlues / ps.totalBlues, true);
         }
 
@@ -240,11 +238,12 @@ public class PolySchellingWithUI extends GUIState
 
 
 
+        @Override
         public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
             Polygon poly = (Polygon) object;
 
-            if (poly.residents.size() == 0)
+            if (poly.residents.isEmpty())
             {
                 paint = Color.gray;
             } else if (poly.getSoc().equals("RED"))

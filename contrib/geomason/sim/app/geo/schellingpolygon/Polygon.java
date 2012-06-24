@@ -8,11 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingpolygon;
 
 import java.util.ArrayList;
-
 import sim.util.geo.MasonGeometry;
 
 
@@ -40,21 +40,6 @@ public class Polygon extends MasonGeometry
     {
         id = getDoubleAttribute("ID_ID").intValue();
         soc = getStringAttribute("SOC");
-//
-//        ArrayList<AttributeValue> attribs =
-//            (ArrayList<AttributeValue>) geometry.getUserData();
-//
-//        for (AttributeValue af : attribs)
-//        {
-//            if (af.getName().equals("ID_ID"))
-//            {
-//                Double d = (Double) af.getValue();
-//                id = (int) Math.floor(d);
-//            } else if (af.getName().equals("SOC"))
-//            {
-//                soc = (String) af.getValue();
-//            }
-//        }
     }
 
 

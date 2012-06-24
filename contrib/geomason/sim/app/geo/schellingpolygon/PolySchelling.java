@@ -8,13 +8,13 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingpolygon;
 
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;

@@ -8,11 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingpolygon;
 
 import java.util.ArrayList;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
