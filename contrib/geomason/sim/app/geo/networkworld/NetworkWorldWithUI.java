@@ -1,13 +1,14 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.networkworld;
 
-import com.vividsolutions.jts.geom.Envelope;
 import java.awt.Color;
 import javax.swing.JFrame;
 import sim.display.Console;
@@ -15,9 +16,8 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
-import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.geo.GeomPortrayal;
-import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 
 
 /** 

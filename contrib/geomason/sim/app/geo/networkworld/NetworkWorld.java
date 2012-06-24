@@ -1,30 +1,24 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/**
- * NetworkWorld.java
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
  *
  * $Id: NetworkWorld.java,v 1.6 2010-08-25 20:06:50 mcoletti Exp $
  * 
  */
 package sim.app.geo.networkworld;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.planargraph.Node;
 import java.util.Iterator;
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
-import sim.util.geo.*;
+import sim.util.geo.GeomPlanarGraph;
+import sim.util.geo.MasonGeometry;
 
 /**
  *  The NetworkWorld GeoMASON example shows how to add geometries into a GeomVectorField as a network.  We add several 
