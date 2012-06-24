@@ -8,24 +8,24 @@
  **
  ** See the file "LICENSE" for more information
  **
+ * $Id$
+ * 
  **/
 package sim.app.geo.gridlock;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
-
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
@@ -48,7 +48,6 @@ import sim.util.geo.MasonGeometry;
  * With smaller simulations this chunk of memory is obviously not necessary. You can 
  * take it down to -Xmx800M or some such. If you get an OutOfMemory error, push it up.
  */
-//@SuppressWarnings("restriction")
 public class Gridlock extends SimState
 {
     private static final long serialVersionUID = 1L;
@@ -200,20 +199,6 @@ public class Gridlock extends SimState
             GeomPlanarGraphEdge e = (GeomPlanarGraphEdge) o;
 
             idsToEdges.put(e.getDoubleAttribute("ID_ID").intValue(), e);
-            
-            // Below deprecated as now MasonGeometry attributes are copied to
-            // edges in constructed graph.
-            
-//            ArrayList attributes = (ArrayList) e.getLine().getUserData();
-//            for (Object att : attributes)
-//            {
-//                AttributeValue a = (AttributeValue) att;
-//                if (a.getName().equals("ID_ID"))
-//                {
-//                    int val = ((Double) a.getValue()).intValue();
-//                    idsToEdges.put(val, e);
-//                }
-//            }
 
             e.setData(new ArrayList<Agent>());
         }

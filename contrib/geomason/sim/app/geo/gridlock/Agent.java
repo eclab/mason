@@ -7,19 +7,22 @@
  ** Licensed under the Academic Free License version 3.0
  **
  ** See the file "LICENSE" for more information
+ *
+ * $Id$
  **
  **/
 package sim.app.geo.gridlock;
 
-import java.util.ArrayList;
-
-import sim.util.geo.*;
-
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;
 import com.vividsolutions.jts.planargraph.Node;
+import java.util.ArrayList;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.util.geo.GeomPlanarGraphDirectedEdge;
+import sim.util.geo.GeomPlanarGraphEdge;
+import sim.util.geo.MasonGeometry;
+import sim.util.geo.PointMoveTo;
 
 
 

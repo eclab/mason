@@ -8,17 +8,16 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.gridlock;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import sim.util.geo.GeomPlanarGraphDirectedEdge;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
 import com.vividsolutions.jts.planargraph.Node;
+import java.util.ArrayList;
+import java.util.HashMap;
+import sim.util.geo.GeomPlanarGraphDirectedEdge;
 
 
 

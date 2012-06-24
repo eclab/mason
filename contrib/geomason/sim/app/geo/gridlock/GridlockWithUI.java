@@ -7,17 +7,15 @@
  ** Licensed under the Academic Free License version 3.0
  **
  ** See the file "LICENSE" for more information
+ *
+ * $Id$
  **
  **/
 package sim.app.geo.gridlock;
 
 import java.awt.Color;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -209,41 +207,4 @@ public class GridlockWithUI extends GUIState
         display = null; // let gc
     }
 
-//    class PolyPortrayal extends GeomPortrayal {
-//
-//		private static final long serialVersionUID = 1L;
-//
-//        public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-//        {
-//        	paint = Color.green;
-//        	filled = true;
-//            super.draw(object, graphics, info);
-//        }
-//    }
-//
-//    class RoadPortrayal extends GeomPortrayal {
-//
-//    	double scale = .001;
-//
-//    	private static final long serialVersionUID = 1L;
-//
-//		BasicStroke regularRoad = new BasicStroke((float).001);
-//
-//        public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-//        {
-//            MasonGeometry gm = (MasonGeometry)object;
-//            Geometry geometry = gm.getGeometry();
-//            if (geometry.isEmpty()) return;
-//
-//            int size = 0;//((Gridlock) state).edgePops.get((LineString)geometry).size();
-//            if( size > 0 )
-//            	size *= 10;
-//
-//        	graphics.setStroke( new BasicStroke((float) scale * size) );
-//        	graphics.setColor( Color.black );
-//
-//        	super.drawGeometry(geometry, graphics, false);
-//            //super.draw(object, graphics, info);
-//        }
-//    }
 }
