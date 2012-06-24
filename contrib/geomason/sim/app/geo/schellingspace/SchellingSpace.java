@@ -8,28 +8,23 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingspace;
 
+import com.vividsolutions.jts.geom.*;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
-
 import sim.engine.SimState;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import java.net.URL;
 
 
-
-@SuppressWarnings("restriction")
+//@SuppressWarnings("restriction")
 public class SchellingSpace extends SimState
 {
     private static final long serialVersionUID = 1L;

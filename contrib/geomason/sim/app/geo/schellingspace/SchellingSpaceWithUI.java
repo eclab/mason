@@ -8,13 +8,12 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingspace;
 
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -46,7 +45,6 @@ public class SchellingSpaceWithUI extends GUIState
 
 
 
-    /** constructor function */
     protected SchellingSpaceWithUI(SimState state)
     {
         super(state);
@@ -54,7 +52,6 @@ public class SchellingSpaceWithUI extends GUIState
 
 
 
-    /** constructor function */
     public SchellingSpaceWithUI()
     {
         super(new SchellingSpace(System.currentTimeMillis()));
@@ -75,7 +72,7 @@ public class SchellingSpaceWithUI extends GUIState
     {
         super.init(controller);
 
-        display = new Display2D(600, 600, this, 1);
+        display = new Display2D(600, 600, this);
 
         display.attach(polyPortrayal, "Polys");
         display.attach(peoplePortrayal, "People");

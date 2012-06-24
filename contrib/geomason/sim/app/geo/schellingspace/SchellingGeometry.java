@@ -8,11 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingspace;
 
 import java.util.ArrayList;
-
 import sim.util.geo.MasonGeometry;
 
 
@@ -41,30 +41,8 @@ public class SchellingGeometry extends MasonGeometry
 
     public void init()
     {
-//        id = getDoubleAttribute("ID_ID").intValue();
         initRed = getIntegerAttribute("RED");
         initBlue = getIntegerAttribute("BLUE");
-
-//        soc = getStringAttribute("SOC");
-//
-//
-//        ArrayList<AttributeValue> attribs =
-//            (ArrayList<AttributeValue>) geometry.getUserData();
-//
-//        for (AttributeValue af : attribs)
-//        {
-//            if (af.getName().equals("ID_ID"))
-//            {
-//                Double d = (Double) af.getValue();
-//                id = (int) Math.floor(d);
-//            } else if (af.getName().equals("RED"))
-//            {
-//                initRed = (Integer) af.getValue();
-//            } else if (af.getName().equals("BLUE"))
-//            {
-//                initBlue = (Integer) af.getValue();
-//            }
-//        }
     }
 
 
@@ -72,12 +50,6 @@ public class SchellingGeometry extends MasonGeometry
     int getID()
     {
         return getDoubleAttribute("ID_ID").intValue();
-//
-//        if (id == -1)
-//        {
-//            init();
-//        }
-//        return id;
     }
 
 
@@ -85,11 +57,6 @@ public class SchellingGeometry extends MasonGeometry
     String getSoc()
     {
         return getStringAttribute("SOC");
-//        if (soc == null)
-//        {
-//            init();
-//        }
-//        return soc;
     }
 
 }

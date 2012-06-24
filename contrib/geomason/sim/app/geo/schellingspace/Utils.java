@@ -8,13 +8,12 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.schellingspace;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.util.geo.MasonGeometry;
@@ -106,7 +105,7 @@ class PersonPortrayal extends GeomPortrayal
 /** The portrayal used to render the wards with color based on relative
  * proportions of Red and Blue Persons within boundaries
  */
-@SuppressWarnings("restriction")
+//@SuppressWarnings("restriction")
 class WardPortrayal extends GeomPortrayal
 {
     private static final long serialVersionUID = 1L;
