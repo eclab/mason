@@ -8,6 +8,7 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.turkana;
 
@@ -59,11 +60,13 @@ public class Turkanian implements Steppable
 			
 			double bestVeg = Double.MIN_VALUE;
 			int bestVegIndex = -1;
-			for (int i = 0; i < result.numObjs; i++) 
-				if (result.objs[i] > bestVeg) {
-					bestVeg = result.objs[i];
-					bestVegIndex = i;
-				}
+			for (int i = 0; i < result.numObjs; i++)
+            {
+                if (result.objs[i] > bestVeg) {
+                    bestVeg = result.objs[i];
+                    bestVegIndex = i;
+                }
+            }
 			
 			if (bestVegIndex != -1) {
 				// move to the best spot
@@ -78,13 +81,19 @@ public class Turkanian implements Steppable
 		
 		// consider reproducing
 		if (energy > model.birthEnergy)
-			model.createOffspring(this);
+        {
+            model.createOffspring(this);
+        }
 		
 		// consider starving to death
 		if (energy < model.starvationLevel)
-			model.removeAgent(this);	// starved to death :(
+        {
+            model.removeAgent(this);
+        }	// starved to death :(
 		else
-			model.schedule.scheduleOnce(this);	// live to graze another day
+        {
+            model.schedule.scheduleOnce(this);
+        }	// live to graze another day
 	}
 
 }

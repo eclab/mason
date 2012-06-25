@@ -8,28 +8,26 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.turkana;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import javax.swing.JFrame;
-
+import org.jfree.data.xy.XYSeries;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.field.grid.IntGrid2D;
 import sim.portrayal.grid.FastValueGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.gui.SimpleColorMap;
 import sim.util.media.chart.TimeSeriesChartGenerator;
-
-import org.jfree.data.xy.XYSeries;
-import sim.field.grid.IntGrid2D;
 
 /*
  * TurkanaSouthModelWithUI
@@ -163,7 +161,7 @@ public class TurkanaSouthModelWithUI extends GUIState
         // since we're running the GUI, don't print stats
         model.printStats = false;
 
-        display = new Display2D(model.windowWidth, model.windowHeight, this, 1); // at 400x400, we've got 4x4 per array position
+        display = new Display2D(model.windowWidth, model.windowHeight, this); // at 400x400, we've got 4x4 per array position
         displayFrame = display.createFrame();
         displayFrame.setTitle("Turkana South");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
