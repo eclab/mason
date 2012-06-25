@@ -19,7 +19,7 @@ JAVAC = javac
 JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
-VERSION = 1.3beta
+VERSION = 1.4
 
 JARFILE = geomason.${VERSION}.jar
 
@@ -95,8 +95,9 @@ BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/field/geo/GeomGridField.java			\
 ./sim/field/geo/GeomVectorField.java			\
 ./sim/io/geo/ArcInfoASCGridImporter.java		\
-./sim/io/geo/GeomExporter.java				\
 ./sim/io/geo/ShapeFileImporter.java			\
+./sim/io/geo/ArcInfoASCGridExporter.java		\
+./sim/io/geo/ShapeFileExporter.java			\
 ./sim/portrayal/geo/GeomPortrayal.java			\
 ./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
 ./sim/portrayal/geo/GeomInfo2D.java			\
