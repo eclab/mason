@@ -52,16 +52,17 @@ demos : ${JARFILE}
 dist : ${SRC_DISTRO} ${DEMO_DISTRO}
 
 ${SRC_DISTRO} :
+	rm -rf geomason-${VERSION}
 	mkdir geomason-${VERSION}
 	cp Makefile README LICENSE CHANGES ChangeLog geomason-${VERSION}
 	(cd geomason-${VERSION}; ln -is ../sim .)
-	tar cvzf $@ geomason-${VERSION}/{README,Makefile,LICENSE,CHANGES,ChangeLog} `find geomason-${VERSION}/sim/field geomason-${VERSION}/sim/io geomason-${VERSION}/sim/portrayal geomason-${VERSION}/sim/util -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
+	tar cvzf $@ geomason-${VERSION}/{README,Makefile,LICENSE,CHANGES,ChangeLog} `find geomason-${VERSION}/sim/field geomason-${VERSION}/sim/io geomason-${VERSION}/sim/portrayal geomason-${VERSION}/sim/util -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" `
 	rm -rf geomason-${VERSION}
 
 ${DEMO_DISTRO} :
 	mkdir geomason-${VERSION}
 	(cd geomason-${VERSION}; ln -is ../sim .)
-	tar cvzf $@ `find geomason-${VERSION}/sim/app -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" -or -name "README"` `find geomason-${VERSION}/sim/app/data -type f | grep -v '.svn'`
+	tar cvzf $@ `find geomason-${VERSION}/sim/app -name "*.java" -or -name "*.jpg" -or -name "*.png" -or -name "index.html" -or -name "README" -or -name "*.shp" -or -name "*.shx" -or -name "*.dbf" -or -name "*.txt" -or -name "*.prj" | grep -v '.svn'`
 	rm -rf geomason-${VERSION}
 
 
