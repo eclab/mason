@@ -8,15 +8,13 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sleuth;
 
 import java.awt.Color;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -120,7 +118,7 @@ public class SleuthWorldWithUI extends GUIState
             public void step(SimState state)
             {
                 SleuthWorld sw = (SleuthWorld) state;
-                numUrban.add(state.schedule.time(), sw.numUrban
+                numUrban.add(state.schedule.getTime(), sw.numUrban
                     / (double) (sw.numUrban + sw.numNonUrban));
             }
 
