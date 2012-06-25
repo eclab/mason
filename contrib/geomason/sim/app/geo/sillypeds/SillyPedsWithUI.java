@@ -8,6 +8,7 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sillypeds;
 
@@ -15,11 +16,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -110,7 +108,7 @@ public class SillyPedsWithUI extends GUIState
 
             public void step(SimState state)
             {
-                numPedestrians.add(state.schedule.time(),
+                numPedestrians.add(state.schedule.getTime(),
                                    ((SillyPeds) state).peds.size(),
                                    true);
             }
@@ -233,9 +231,8 @@ public class SillyPedsWithUI extends GUIState
     Color offwhite = new Color(253, 253, 253);
     Color backdropColor = new Color(237, 246, 250);
 
+    
     // elevation-based portrayal
-
-
     class FloorPortrayal extends RectanglePortrayal2D
     {
 
@@ -262,8 +259,6 @@ public class SillyPedsWithUI extends GUIState
     }
 
     // water depth-based portrayal
-
-
     class PedPortrayal extends RectanglePortrayal2D
     {
 
@@ -289,8 +284,6 @@ public class SillyPedsWithUI extends GUIState
     }
 
     // portrayal of traffic over a given tile
-
-
     class TracePortrayal extends RectanglePortrayal2D
     {
 

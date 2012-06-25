@@ -8,12 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sillypeds;
 
 import java.util.ArrayList;
-import java.util.Random;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
@@ -25,7 +24,7 @@ import sim.util.Bag;
  *  A Steppable object that updates its position on the landscape as a function
  *  of its local cost surface.
  */
-class Pedestrian implements Steppable
+public class Pedestrian implements Steppable
 {
 
     SillyPeds world;		// the simulation of which the Pedestrian is a part
@@ -40,7 +39,7 @@ class Pedestrian implements Steppable
      * Constructor function.
      * @param ww - the WaterWorld object, kept so the Pedestrian can update the
      * 		simulation if it exits the simulation
-     * @param l - the ObjectGrid2D landscape object, kept so the Pedestrian can
+     * @param s - the ObjectGrid2D landscape object, kept so the Pedestrian can
      * 		determine its local cost surface
      * @param t - the Basin in which the Pedestrian finds itself
      */

@@ -8,6 +8,8 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
+ **
  **/
 package sim.app.geo.sillypeds;
 
@@ -58,7 +60,6 @@ public class Tile
     //
 
     // add a Pedestrian and update the height accordingly
-
     public void addPed(Pedestrian r)
     {
         peds.add(r);

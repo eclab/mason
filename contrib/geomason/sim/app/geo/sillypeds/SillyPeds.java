@@ -8,13 +8,13 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sillypeds;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
- import java.util.ArrayList;
-
+import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import sim.engine.SimState;
 import sim.field.geo.GeomGridField;

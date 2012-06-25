@@ -8,6 +8,7 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sillypeds;
 
@@ -15,16 +16,12 @@ package sim.app.geo.sillypeds;
 
 public class Entrance
 {
-
     Space space;
     Tile entrance;
-
-
 
     public Entrance(Space s, Tile t)
     {
         space = s;
         entrance = t;
     }
-
 }

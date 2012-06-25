@@ -8,13 +8,13 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sillypeds;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
 import java.util.Random;
 import sim.field.geo.GeomGridField;
 import sim.field.grid.DoubleGrid2D;
