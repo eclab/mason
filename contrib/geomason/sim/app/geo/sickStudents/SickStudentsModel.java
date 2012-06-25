@@ -8,15 +8,16 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sickStudents;
 
+import com.vividsolutions.jts.geom.*;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
@@ -25,12 +26,6 @@ import sim.util.Bag;
 import sim.util.Interval;
 import sim.util.geo.MasonGeometry;
 import umontreal.iro.lecuyer.probdist.LognormalDist;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 
 
@@ -237,30 +232,8 @@ public class SickStudentsModel extends SimState
      * panel. The movie-making tool works better there than through the custom chart.
      */
     int sCount = 0, iCount = 0, rCount = 0;
-//	public double getSusceptible() { 
-//		if (students.size() == 0)
-//			return 0;
-//		return sCount / (double)students.size();
-//	}
-//	public double getInfected() { 
-//		if (students.size() == 0)
-//			return 0;
-//		return iCount / (double)students.size();
-//	}
-//	public double getRecovered() { 
-//		if (students.size() == 0)
-//			return 0;
-//		return rCount / (double)students.size();
-//	}
-//	
-//	public int[] getNumberOfChildren() {
-//		int[] numberOfChildren = new int[households.size()];
-//		for (int i = 0; i < households.size(); i++)
-//			numberOfChildren[i] = households.get(i).students.size();
-//		
-//		return numberOfChildren;
-//			
-//	}
+
+    
     /**
      * Member variables.
      */
@@ -392,36 +365,6 @@ public class SickStudentsModel extends SimState
 
 
 
-    /**
-     * Remove the unused schools. Note: this is no long necessary after removing them from the shapefiles
-     */
-//	private void removeUnusedSchools() {
-//		countCatchments(elementarySchoolZones);
-//		countCatchments(middleSchoolZones);
-//		countCatchments(highSchoolZones);
-//		
-//		for (int i = schools.size()-1; i >= 0; i--)
-//			if (schools.get(i).catchmentCount == 0)
-//				schools.remove(i);
-//
-//		Bag geoms = schoolLocations.getGeometries();
-//		for (int i = geoms.numObjs-1; i >= 0; i--) {
-//			MasonGeometry mg = (MasonGeometry)geoms.get(i);
-//			Geometry g = mg.getGeometry();
-//			
-//			Integer num = (Integer)getAttribute(g, "SCHOOL_NUM");
-//			
-//			if (num != null) {
-//				School s = schoolMap.get(num);
-//				if (s.catchmentCount == 0) {
-//					System.out.format("Removing school %4d, %-20s, %s\n", num, s.type, s.name);
-//					Envelope e = g.getEnvelopeInternal();
-//					schoolLocations.spatialIndex.remove(e, mg);
-//					schools.remove(s);
-//				}					
-//			}
-//		}
-//	}
     private void printSchools()
     {
 

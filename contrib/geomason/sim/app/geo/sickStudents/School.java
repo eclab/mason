@@ -8,11 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sickStudents;
 
 import java.util.ArrayList;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -38,41 +38,66 @@ public class School implements Steppable
 		this.model = model;
 		this.name = name;
 		
-		if (schoolType.equals("ES"))		type = SchoolType.ElementarySchool;
-		else if (schoolType.equals("MS"))	type = SchoolType.MiddleSchool;
-		else if (schoolType.equals("HS"))	type = SchoolType.HighSchool;
-		else								type = SchoolType.Other;
+		if (schoolType.equals("ES"))
+        {
+            type = SchoolType.ElementarySchool;
+        }
+		else if (schoolType.equals("MS"))
+        {
+            type = SchoolType.MiddleSchool;
+        }
+		else if (schoolType.equals("HS"))
+        {
+            type = SchoolType.HighSchool;
+        }
+		else
+        {
+            type = SchoolType.Other;
+        }
 	}
 	
 	private Student getRandomStudent(Student butNotThisStudent) {
 		Student s;
 		do
-			s = students.get(model.random.nextInt(students.size()));
-		while (!(!s.homebound && (s != butNotThisStudent)));
+        {
+            s = students.get(model.random.nextInt(students.size()));
+        } while (!(!s.homebound && (s != butNotThisStudent)));
 		
 		return s;
 	}
 	
 	public double getProportionOfSickStudents() {
-		if (students.size() == 0)
-			return 0;
+		if (students.isEmpty())
+        {
+            return 0;
+        }
 		
 		int sick = 0;
 		for (Student s : students)
-			if (s.status == Status.INFECTED)
-				sick++;
+        {
+            if (s.status == Status.INFECTED)
+            {
+                sick++;
+            }
+        }
 		
 		return sick / (double)students.size();
 	}
 	
 	public double getProportionOfHomeboundStudents() {
-		if (students.size() == 0)
-			return 0;
+		if (students.isEmpty())
+        {
+            return 0;
+        }
 		
 		int homebound = 0;
 		for (Student s : students)
-			if (s.homebound)
-				homebound++;
+        {
+            if (s.homebound)
+            {
+                homebound++;
+            }
+        }
 		
 		return homebound / (double)students.size();
 	}
@@ -80,15 +105,23 @@ public class School implements Steppable
 	@Override
 	public void step(SimState state) {
 		if (closed)
-			return;
+        {
+            return;
+        }
 		
 		int inAttendence = 0;
 		for (Student s : students)
-			if (!s.homebound)
-				inAttendence++;
+        {
+            if (!s.homebound)
+            {
+                inAttendence++;
+            }
+        }
 		
 		if (inAttendence < 2)
-			return;
+        {
+            return;
+        }
 
 		// TODO the number of interactions should have some justification
 		for (int i = 0; i < students.size(); i++) {
@@ -97,10 +130,14 @@ public class School implements Steppable
 			Student s2 = getRandomStudent(s1);
 	
 			if (s1.status == Status.INFECTED)
-				s2.expose();
+            {
+                s2.expose();
+            }
 	
 			if (s2.status == Status.INFECTED)
-				s1.expose();
+            {
+                s1.expose();
+            }
 		}
 	}
 }

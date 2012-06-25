@@ -8,13 +8,13 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
+ **
  **/
 package sim.app.geo.sickStudents;
 
-import java.util.ArrayList;
-
 import com.vividsolutions.jts.geom.Point;
-
+import java.util.ArrayList;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 
@@ -32,10 +32,14 @@ public class Household implements Steppable
 	@Override
 	public void step(SimState state) {
 		for (Student s : students)
-			if (s.status == Status.INFECTED) {	// if any children are sick
-				for (Student s2 : students)	// expose the rest
-					s2.expose();
-				break;
-			}
+        {
+            if (s.status == Status.INFECTED) {	// if any children are sick
+                for (Student s2 : students)
+                {
+                    s2.expose();
+                }
+                break;
+            }
+        }
 	}
 }

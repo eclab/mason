@@ -8,16 +8,15 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
+ * 
  **/
 package sim.app.geo.sickStudents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -87,7 +86,7 @@ public class SickStudentsModelWithUI extends GUIState {
     public void init(final Controller c) {
         super.init(c);
 
-        display = new Display2D(model.width, model.height, this, 1);
+        display = new Display2D(model.width, model.height, this);
 
         display.attach(elementarySchoolCatchmentsPortrayal, "Elementary School Catchments");
         display.attach(middleSchoolCatchmentsPortrayal, "Middle School Catchments");
@@ -111,7 +110,7 @@ public class SickStudentsModelWithUI extends GUIState {
     @SuppressWarnings("serial")
     public void setupPortrayals() {
 
-//		// setup GIS portrayals
+		// setup GIS portrayals
 
         elementarySchoolCatchmentsPortrayal.setField(model.elementarySchoolZones);
         elementarySchoolCatchmentsPortrayal.setPortrayalForAll(new CatchmentPortrayal(

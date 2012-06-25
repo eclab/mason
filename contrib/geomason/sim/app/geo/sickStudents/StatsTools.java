@@ -8,6 +8,7 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** *$Id$
  **/
 package sim.app.geo.sickStudents;
 

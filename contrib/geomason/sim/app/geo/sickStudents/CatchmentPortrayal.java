@@ -8,11 +8,11 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.sickStudents;
 
 import java.awt.Graphics2D;
-
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.util.geo.MasonGeometry;
