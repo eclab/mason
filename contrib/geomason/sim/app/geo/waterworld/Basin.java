@@ -8,6 +8,7 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.waterworld;
 
@@ -25,8 +26,6 @@ public class Basin
     double raindropFactor = 1;
 
     // initialize a Basin
-
-
     public Basin(int x, int y)
     {
         loc_x = x;
@@ -34,8 +33,6 @@ public class Basin
     }
 
     // initialize a Basin at a certain altitude
-
-
     public Basin(int x, int y, int h)
     {
         loc_x = x;
@@ -49,7 +46,6 @@ public class Basin
     //
 
     // add a Raindrop and update the height accordingly
-
     public void addDrop(Raindrop r)
     {
         drops.add(r);
@@ -57,8 +53,6 @@ public class Basin
     }
 
     // add some Raindrops and update the height accordingly
-
-
     public void addDrops(ArrayList<Raindrop> rs)
     {
         drops.addAll(rs);
@@ -66,8 +60,6 @@ public class Basin
     }
 
     // remove a Raindrop and update the height accordingly
-
-
     public void removeDrop(Raindrop r)
     {
         drops.remove(r);
@@ -75,8 +67,6 @@ public class Basin
     }
 
     // remove some Raindrops and update the height accordingly
-
-
     public void removeDrops(ArrayList<Raindrop> rs)
     {
         drops.removeAll(rs);

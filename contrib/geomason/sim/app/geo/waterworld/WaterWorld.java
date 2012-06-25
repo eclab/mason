@@ -7,8 +7,8 @@
  ** Licensed under the Academic Free License version 3.0
  **
  ** See the file "LICENSE" for more information
- *
- * $Id$
+ **
+ ** $Id$
  **
  **/
 package sim.app.geo.waterworld;
@@ -16,7 +16,6 @@ package sim.app.geo.waterworld;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
 import java.util.zip.GZIPInputStream;
 import sim.engine.SimState;
 import sim.engine.Steppable;

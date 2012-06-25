@@ -8,17 +8,15 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.waterworld;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-
 import javax.swing.JFrame;
-
 import org.jfree.data.xy.XYSeries;
-
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -106,7 +104,7 @@ public class WaterWorldWithUI extends GUIState
 
             public void step(SimState state)
             {
-                numRaindrops.add(state.schedule.time(),
+                numRaindrops.add(state.schedule.getTime(),
                                  ((WaterWorld) state).drops.size(),
                                  true);
             }

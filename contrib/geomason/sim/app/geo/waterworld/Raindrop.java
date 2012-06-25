@@ -8,12 +8,12 @@
  **
  ** See the file "LICENSE" for more information
  **
+ ** $Id$
  **/
 package sim.app.geo.waterworld;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
@@ -26,7 +26,7 @@ import sim.util.Bag;
  *  A Steppable object that updates its position on the landscape as a function
  *  of its local cost surface.
  */
-class Raindrop implements Steppable
+public class Raindrop implements Steppable
 {
 
     WaterWorld world;		// the simulation of which the Raindrop is a part
