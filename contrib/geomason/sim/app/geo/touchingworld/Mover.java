@@ -1,13 +1,16 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
+ *
+ * See the file "LICENSE" for more information
+ *
+ * $Id$
 */
 package sim.app.geo.touchingworld;
 
-import sim.engine.*;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
@@ -69,8 +72,6 @@ public class Mover implements Steppable
 //        System.out.println("\tselected " + nextShape);
 
         // And then do the swap
-        
         world.selectShape(nextShape);
-
     }
 }

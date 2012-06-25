@@ -1,14 +1,11 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/*
- * TouchingWorld.java
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
  *
- * $Id: TouchingWorld.java,v 1.3 2010-08-20 00:52:37 mcoletti Exp $
+ * See the file "LICENSE" for more information
+ * 
+ * $Id$
  */
 package sim.app.geo.touchingworld;
 
@@ -17,9 +14,9 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sim.engine.*; 
-import sim.field.geo.*; 
-import sim.util.geo.*; 
+import sim.engine.SimState;
+import sim.field.geo.GeomVectorField;
+import sim.util.geo.MasonGeometry;
 
 /** This demonstrates use of touching geometries.
  *

@@ -1,27 +1,25 @@
 /* 
-Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
-George Mason University Mason University Licensed under the Academic
-Free License version 3.0
-
-See the file "LICENSE" for more information
-*/
-/*
- * TouchingWorldWithUI
+ * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
+ * George Mason University Mason University Licensed under the Academic
+ * Free License version 3.0
  *
- *  
- *
- * $Id: TouchingWorldWithUI.java,v 1.2 2010-08-20 20:30:12 kemsulli Exp $
+ * See the file "LICENSE" for more information
+ * 
+ * $Id$
  * 
  */
 
 package sim.app.geo.touchingworld;
 
-import sim.display.*; 
-import sim.portrayal.geo.GeomVectorFieldPortrayal;
-import sim.engine.*; 
-import java.awt.Color; 
-import javax.swing.*; 
+import java.awt.Color;
+import javax.swing.JFrame;
+import sim.display.Console;
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
+import sim.engine.SimState;
 import sim.portrayal.geo.GeomPortrayal;
+import sim.portrayal.geo.GeomVectorFieldPortrayal;
 
 
 /** MASON GUI wrapper for TouchingWorld
@@ -67,7 +65,10 @@ public class TouchingWorldWithUI extends GUIState {
 	{
         super.quit();
         
-        if (displayFrame!=null) displayFrame.dispose();
+        if (displayFrame!=null)
+        {
+            displayFrame.dispose();
+        }
         displayFrame = null;
         display = null;
 	}
