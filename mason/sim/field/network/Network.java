@@ -498,11 +498,11 @@ public class Network implements java.io.Serializable
             {
             IndexOutIn ioi= (IndexOutIn)i.next();
             if (ioi.in != null)
-            	ioi.in.clear();
+                ioi.in.clear();
             if (ioi.out != null)
-            	ioi.out.clear();
+                ioi.out.clear();
             }
-    }
+        }
 
     /** Removes a node, deleting all incoming and outgoing edges from the Field as well.  Returns the node,
         or null if there is no such node in the field. 
