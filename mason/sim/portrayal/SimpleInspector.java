@@ -231,12 +231,23 @@ public class SimpleInspector extends Inspector
             {
             if (!properties.isHidden(i))  // don't show if the user asked that it be hidden
                 {
+                JLabel label = new JLabel(properties.getName(i) + " ");
+                JToggleButton toggle = PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i));
                 members[i] = makePropertyField(i);
                 propertyList.add(null,
-                    new JLabel(properties.getName(i) + " "), 
-                    PropertyInspector.getPopupMenu(properties,i,state, makePreliminaryPopup(i)), 
+                    label, 
+                    toggle, 
                     members[i], 
                     null);
+                
+                // load tooltips
+                String description = properties.getDescription(i);
+                if (description != null)
+                    {
+                    if (label != null) label.setToolTipText(description);
+                    if (toggle != null) toggle.setToolTipText(description);    // do we want this one?
+                    if (members[i] != null) members[i].setToolTipText(description);  // do we want this one?
+                    }
                 }
             else members[i] = null;
             }
