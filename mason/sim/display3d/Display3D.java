@@ -116,6 +116,7 @@ import java.util.prefs.*;
 
    @author Gabriel Balan 
 **/
+
 public class Display3D extends JPanel implements Steppable
     {
     public String DEFAULT_PREFERENCES_KEY = "Display3D";
