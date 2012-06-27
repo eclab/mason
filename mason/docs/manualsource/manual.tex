@@ -3161,7 +3161,7 @@ There are several classes and interfaces in the Properties system:
 \subsection{Java Bean Property Methods and Extensions}
 \label{sim.util.Interval}
 
-\paragraph{The Standard Java Definition} Java has a convention called {\bf Java Bean Properties} where Objects define features by which they may be manipulated, typically by a graphical user interface widget.  MASON uses Java Bean Properties, and certain MASON-only extensions, to allow the user to inspect and manipulate objects.
+Java has a convention called {\bf Java Bean Properties} where Objects define features by which they may be manipulated, typically by a graphical user interface widget.  MASON uses Java Bean Properties, and certain MASON-only extensions, to allow the user to inspect and manipulate objects.
 
 Every public non-static non-void method of the form \method{getFoo()} Java defines a {\it readable Java Bean Property} called \code{Foo}.  If the return type of the property is \variable{boolean}, the method can be either called \method{getFoo()} or \method{isFoo()}.  You can access readable Java Bean Properties to get their current values.   For example, here are some readable Java Bean Properties:
 
@@ -3200,15 +3200,25 @@ public void getItAll();\\
 public boolean get();\\
 \\
 public double getTemperature();\\
-public void setTemperature(float val);\\
+public void setTemperature(float val);
 }
 
 If you name methods with the proper rules, MASON will automatically recognize them as Java Bean Properties: you need do nothing further.\footnote{Java by convention has since used Java Bean Properties as the ``standard'' pattern for getters and setters.  You will notice that a number of MASON objects violate this convention in one fashion or another.  This is occasionally historical error, but more often it's by design: because MASON explicitly doesn't want those methods to show up as properties in user interfaces by default.}
 
-\paragraph{MASON Extensions to Java Bean Properties} 
+\subsection{MASON Extensions} 
 
+\paragraph{Special Cases}
 Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: CharSequence subclasses (String, StringBuffer, StringBuilder, etc.) have \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
 
+\paragraph{Descriptions of Properties}
+One common function (in MASON anyway) of the Properties package is to display and manipulate properties via widgets in Inspectors.  To this end, you can add a {\it description} of your property which will appear as a Java Tooltip over the widgets in questions.  This description is a String which can hold either text or HTML (and will be rendered as such).   If you have a property called \method{Foo}, then the function looks like \method{domFoo()}.  For example:
+
+\java{%
+public int getAge() \{ return myAge; \}\\
+public String desAge() \{ return "The age of the hippopotamus in the simulation."; \}
+}
+
+\paragraph{Hiding Properties}
 In some cases you may wish to hide a property \method{Foo} so MASON GUI widgets don't display it to the user.  This is easy to do with MASON's special \method{hideFoo()} extension.  If this method returns \variable{true}, then MASON will ignore that property.  For example:
 
 \java{%
@@ -3216,6 +3226,9 @@ public int getSecretValue() \{ return secretValue; \} \\
 public boolean hideSecretValue() \{ return true; \} 
 }
 
+Another way to control which properties are viewed is to force MASON to examine the properties of {\it another object} instead of the one in question.  This is done via a {\bf properties proxy}, and is discussed in Section~\ref{PropertiesProxy}.
+
+\paragraph{Property Domains}
 Many Java widgets which interpret Java Bean Properties take the form of text fields (for read/write properties), labels (for read-only properties), or perhaps checkboxes (for read/write boolean properties).  But what about numerical properties?  Couldn't they be sliders or pop-up menus?  Unfortunately no: these usually just show up as text fields because Java doesn't know what the {\bf domain} of the numerical property is.
 
 MASON has an extension to Java Bean Properties which allows you to set the domain of a numerical property.  If your property type is a {\it double}, you can specify minimum and maximum values of the property.  For example, if you had the following {\it Angle} property which could only be between 0 and \(2 \pi\), as below:
@@ -3271,6 +3284,7 @@ public Object domParty()\\
 What MASON GUI widgets will do is present the user with a pop-up menu from which he may choose a party.  Each String value in the domain will be shown as a separate menu item.  When the user chooses an item, the Property will be set to the index value in the array.  For example, if the user chooses "Independent", the party property value will be set to 2.
 
 \subsection{Object Properties}
+\label{PropertiesProxy}
 
 To extract the Java Bean Properties from an object, you merely need to pass it into one of the following methods:
 
@@ -8515,7 +8529,14 @@ Basic Inspectors can be separated from the Console's inspector list and placed i
    
 \subsection{SimpleInspector}
     
-\Class{sim.portrayal.SimpleInspector} is the most common inspector: it's a basic inspector which exposes to the user all the properties defined by \class{sim.util.Properties} on a given object.  SimpleInspector also respects the extra gizmos that \class{sim.util.Properties} provides.  For example, if an object has defined a domain, SimpleInspector will draw either a slider or a pull-down menu.  If an object has a proxy, SimpleInspector will show that instead.   And so on.
+\Class{sim.portrayal.SimpleInspector} is the most common inspector: it's a basic inspector which exposes to the user all the properties defined by \class{sim.util.Properties} on a given object, both read-Properties and read/write-Properties.  SimpleInspector also respects the extra gizmos that \class{sim.util.Properties} provides:
+
+\begin{itemize}
+\item If a property has defined a domain, SimpleInspector will draw either a slider or a pull-down menu.
+\item If an object has a proxy, SimpleInspector will show that instead. 
+\item If a property is declared to be hidden, SimpleInspector will not display it.
+\item If a property has a declared description, SimpleInspector will make a tooltip with that description (plain text or HTML) and display it when the mouse hovers over the SimpleInspector's widgets for that property.
+\end{itemize}
 
 SimpleInspector only shows a certain number of properties at a time: if there are more properties than this, then SimpleInspector will allow the user to page through the properties.  You can specify how many properties SimpleInspector shows.  The default value for this maximum is:
 
@@ -8578,17 +8599,15 @@ TabbedInspector's methods are likewise obvious:
 
 Basic inspectors don't always inspect objects: sometimes they inspect values (usually numbers).  For example,  when you double-click on a {\it value} in ValueGrid2D, FastValueGrid2D, or similar field, up will come an inspector for the value at that position.  What is being shown you?  
 
-Answer: ValueGrid2D\,---\,or more properly, ValuePortrayal2D\,---\,created a special SimpleInspector which inspects a custom object which displays the value.  When SimpleInspector modifies the properties of the object, the value will be changed in the field.
+Answer: ValueGrid2D\,---\,or more properly, ValuePortrayal2D\,---\,created a special SimpleInspector which inspects a custom object which displays the value.  When SimpleInspector modifies the properties of the object, the value will be changed in the field.  This object is called a {\bf filter}.  ValuePortrayal2D has two filters, one for integers (\Class{sim.portrayal.simple.ValuePortrayal2D.IntFilter}) and one for doubles (\Class{sim.portrayal.simple.ValuePortrayal2D.DoubleFilter}).  Both are subclasses of the abstract class \Class{sim.portrayal.simple.ValuePortrayal2D.Filter}.
 
-This object is called a {\bf value filter}.  ValuePortrayal2D has two value filter, one for integers (\Class{sim.portrayal.simple.ValuePortrayal2D.IntFilter}) and one for doubles (\Class{sim.portrayal.simple.ValuePortrayal2D.DoubleFilter}).  Both are subclasses of the abstract class \Class{sim.portrayal.simple.ValuePortrayal2D.Filter}.
-
-Value filters have a simple constructor,  Here's the one for Filter:
+Filters have a simple constructor:
 
 \begin{methods}{\class{sim.portrayal.simple.ValuePortrayal2D.Filter} Constructor}
 \mthd{public Filter(LocationWrapper wrapper)} Creates a filter for the value stored in the given wrapper.
 \end{methods}
 
-If you think about it, the object in the LocationWrapper is really immaterial for our purposes\,---\,it's just a dummy (a MutableDouble) holding the current number value.  For us, what matters is the {\it location} stored in the LocationWrapper, which the Filter uses to extract and/or change the current value in the field.
+If you think about it, the {\it object} in the LocationWrapper is really immaterial for our purposes\,---\,it's just a dummy (a MutableDouble) holding the current number value.  For us, what matters is the {\it location} stored in the LocationWrapper, which the Filter uses to extract and/or change the current value in the field.
 
 IntFilter and DoubleFilter both have getters and setters for the value.  Here's the ones for DoubleFilter:
 
@@ -8608,7 +8627,7 @@ You probably will never need to use these classes, but it's useful to understand
 \section{Property Inspectors}
 \label{sim.portrayal.inspector.PropertyInspector}
 
-All Property Inspectors are subclasses of the abstract class \Class{sim.portrayal.inspector.PropertyInspector}.  A Property Inspector is not like a basic Inspector.  While a basic Inspector inspects a given {\it object} (or in some cases {\it value}), a Property Inspector inspects a {\it property of an object}.  While objects can't change, their properties can change.  
+All Property Inspectors are subclasses of the abstract class \Class{sim.portrayal.inspector.PropertyInspector}.  A Property Inspector is not like a basic Inspector.  While a basic Inspector inspects a given {\it object} (or in some cases {\it value}), a Property Inspector inspects {\it a property of an object}.  While objects can't change, their properties can change.  
 
 Otherwise, Property Inspectors have many similarities to Basic Inspectors (which is natural, as they also ultimately subclass \class{sim.portrayal.Inspector}).  Specifically, they respond to the \method{updateInspector()} method to update themselves, handle volatility in the same way as basic inspectors, and handle steppables and JFrames in the same way.  In short, they basically have the same functionality that was found in Sections \ref{sim.portrayal.SimpleInspector} (introduction), \ref{volatility}, and \ref{inspectorssteppablesandwindows}.  You should review those Sections now if you've not recently read them.
 
@@ -8657,7 +8676,7 @@ Produces a popup menu attached to a JToggleButton which shows all valid Property
 
 This multi-step process allows PropertyInspectors to, among other things, pop up modal dialog boxes to more specifically determine user preferences, or cancel his option.  For example, \class{sim.portrayal.inspector.StreamingPropertyInspector} pops up a window asking the user where he'd like to stream to (a file?  a window?).  And \class{sim.portrayal.inspector.HistogramChartingPropertyInspector} pops up a window asking the user if he'd like to create the histogram on a new chart, or add it to an existing chart owned by another HistogramChartingPropertyInspector.  
 
-\sidebar{Why is \method{shouldCreateFrame()} overridden but \method{isValidInspector()} is set?}{Oh, you saw that, did you?  The excuse for this seeming disparity is that PropertyInspector classes nearly always have a fixed value to return for \method{shouldCreateFrame}, but the value returned by \method{isValidInspector()} varies from instance to instance.}
+\sidebar{Why is \method{shouldCreateFrame()} overridden but \method{isValidInspector()} isn't?}{Oh, you saw that, did you?  The excuse for this seeming disparity is that PropertyInspector classes nearly always have a fixed value to return for \method{shouldCreateFrame}, but the value returned by \method{isValidInspector()} varies from instance to instance.}
 Some PropertyInspectors want to be automatically displayed in windows: others do not, but rather do their work hidden (perhaps creating their own windows).  MASON will query the PropertyInspector regarding this using \method{shouldCreateFrame()} and display the PropertyInspector (or not) accordingly.  By default \method{shouldCreateFrame(} returns true.  Override it to return false if you like.
 
 \sidebar{Why have both \method{reviseStopper(...)} and \method{set/getStopper(...)}?}{Sure, you could have done this with just \method{reviseStopper(...)}.  But it's convenient to have a separate method.  Think of it this way: \method{reviseStopper(...)} is mostly used to revise the Stoppable so as to remain {\it informed} that the Inspector is being stopped.  Whereas \method{set/getStopper(...)} are used to enable the PropertyInspector to conveniently {\it stop itself}.  What's unexpected is the fact that Inspector doesn't have \method{set/getStopper(...)}.  Perhaps we'll refactor it one day (it's less useful for basic Inspectors).}
