@@ -9,13 +9,13 @@ package sim.engine;
 /**
    RandomSequence is a Sequence which executes its Steppable objects in random order each time.
 
-    <p>The RandomSequence uses the random number generator to do its shuffling.   
-    If you use a RandomSequence within a ParallelSequence, or inside an AsynchronousSteppable,
-    or in some other multithreaded condition, you should let the RandomSequence know this so that 
-    it will lock on the random number generator
-    properly.  This is done by setting the <b>shouldSynchronize</b> flag in the RandomSequence.
-    Likewise, whenever in other threads you access the generator in a multithreaded context, you
-    should have them synchronize on the generator first.
+   <p>The RandomSequence uses the random number generator to do its shuffling.   
+   If you use a RandomSequence within a ParallelSequence, or inside an AsynchronousSteppable,
+   or in some other multithreaded condition, you should let the RandomSequence know this so that 
+   it will lock on the random number generator
+   properly.  This is done by setting the <b>shouldSynchronize</b> flag in the RandomSequence.
+   Likewise, whenever in other threads you access the generator in a multithreaded context, you
+   should have them synchronize on the generator first.
 
 */
 
