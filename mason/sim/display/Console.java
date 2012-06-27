@@ -2353,7 +2353,7 @@ public class Console extends JFrame implements Controller
     /** updates the time and frame rate labels to the provided strings and color */
     void updateTimeText(final String timeString)
         {
-        if (!(timeString.equals(lastText)))  // only update if we're changing
+        //if (!(timeString.equals(lastText)))  // only update if we're changing
             {
             lastText = timeString;
             // invokeLater is required in J3D mode or it'll lock -- dunno why
