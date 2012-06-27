@@ -47,6 +47,11 @@ import sim.display.*;
    Fields are free to not store anything here if they see fit.  Further, this
    object may not be the actual kind of object used to store the location (for example,
    it might be a MutableDouble2D, even though the object is associated with a Double2D). 
+   
+   <p>Note that DrawInfo2D overrides equals() to compare by value, but does NOT override
+   hashcode(), since it makes little sense to do so.  This is technically a violation of
+   the hashcode contract in Object.java.  So don't use DrawInfo2D as a key in a hashtable
+   or hashset.
 */
 
 public class DrawInfo2D
