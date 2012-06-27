@@ -2500,16 +2500,19 @@ public class Console extends JFrame implements Controller
 
             public void run()
                 {
+                double currentRate = 0.0;
                 try
                     {
                     // set up the step history
                     //long v = System.currentTimeMillis();
                     //for (int x = 0; x < STEPHISTORY; x++)
                     //    stephistory[x] = v;
-                    long lastStepTime = System.currentTimeMillis();
+                    long lastRateDisplayStepTime = System.currentTimeMillis();
+                    long lastTimeDisplayStepTime = lastRateDisplayStepTime;
+                    
                     int currentSteps = 0;
-                    double currentRate = 0.0;
-                    final long RATE_UPDATE_INTERVAL = 500;
+                    final long RATE_UPDATE_INTERVAL = 500;  // 1/2 second
+                    final long TIME_UPDATE_INTERVAL = 40;   // 1/25 second
 
                     // we begin by doing a blocker on the swing event loop.  This gives any
                     // existing repaints a chance to do their thing.  See comments below as to
@@ -2552,6 +2555,10 @@ public class Console extends JFrame implements Controller
                             break;
 
                         result = simulation.step();
+                        
+                        
+                        // update time JLabel
+                        
                         double t = simulation.state.schedule.getTime();
                         long s = simulation.state.schedule.getSteps();
                         //setTime(t);
@@ -2577,15 +2584,19 @@ public class Console extends JFrame implements Controller
                         // now we do something different instead anyway, so the above bug fix is immaterial
                         currentSteps++;
                         long l = System.currentTimeMillis();
-                        if (l - lastStepTime >= RATE_UPDATE_INTERVAL)
+                        if (l - lastRateDisplayStepTime >= RATE_UPDATE_INTERVAL)
                             {
-                            currentRate = currentSteps / ((double) (l - lastStepTime) / 1000.0);
+                            currentRate = currentSteps / ((double) (l - lastRateDisplayStepTime) / 1000.0);
                             currentSteps = 0;
-                            lastStepTime = l;
+                            lastRateDisplayStepTime = l;
                             }
-                                                        
-                        updateTime(s, t, currentRate);  // 1000 / (a / (double) numSteps));
-
+                        
+                        if (l - lastTimeDisplayStepTime >= TIME_UPDATE_INTERVAL)
+                            {
+                            updateTime(s, t, currentRate);  // 1000 / (a / (double) numSteps));
+                            lastTimeDisplayStepTime = l;
+                            }
+                            
                         // Some steps (notably 2D displays and the timer) call repaint()
                         // to update themselves.  We need to try to guarantee that this repaint()
                         // actually gets fulfilled and not bundled up with other repaints
@@ -2695,6 +2706,9 @@ public class Console extends JFrame implements Controller
                             });
                     }
                 catch(Exception e) {e.printStackTrace();}
+
+                // before we quit, do a final update
+                updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), currentRate);
                 }
             };
         playThread = new Thread(run);

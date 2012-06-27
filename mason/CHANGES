@@ -2414,3 +2414,7 @@ Version 17
 	Made Display3D.setRasterizationMode(...) and Display3D.setCullingMode(...) public.
 	Reindented
 	Added the ability to force precision in Display2D.
+	Console's time/step/rate/none display now updates itself no more often than
+		every 1/25 second, since faster updating is pointless given human
+		perception and it just gums up MacOS X's graphics queue to the point that
+		it starts slowing down weirdly.  Thanks to Joey Harrison <jharri1@gmu.edu>
