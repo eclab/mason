@@ -117,6 +117,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList getMethods = new ArrayList();
     ArrayList setMethods = new ArrayList(); // if no setters, that corresponding spot will be null
     ArrayList domMethods = new ArrayList(); // if no domain, that corresponding spot will be null
+    ArrayList desMethods = new ArrayList(); // if no description, that corresponding spot will be null
     ArrayList hideMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
     Properties auxillary = null;  // if non-null, we use this properties instead
     
@@ -221,6 +222,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                 getMethods.add(m[x]);
                                 setMethods.add(getWriteProperty(m[x],c));
                                 domMethods.add(getDomain(m[x],c,includeExtensions));
+                                desMethods.add(getDescription(m[x],c,includeExtensions));
                                 hideMethods.add(getHidden(m[x], c, includeExtensions));
                                                                                                                                          
                                 // simple check for invalid Interval domains
@@ -340,6 +342,28 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             return null;
             }
         }
+
+    Method getDescription(Method m, Class c, boolean includeExtensions)
+        {
+        if (!includeExtensions) return null;
+        try
+            {
+            if (m.getName().startsWith("get"))
+                {
+                return c.getMethod("des" + (m.getName().substring(3)), new Class[] {});
+                }
+            else if (m.getName().startsWith("is"))
+                {
+                return c.getMethod("des" + (m.getName().substring(2)), new Class[] { });
+                }
+            else return null;
+            }
+        catch (Exception e)
+            {
+            // couldn't find a domain
+            return null;
+            }
+        }
     
     public boolean isVolatile() { if (auxillary!=null) return auxillary.isVolatile(); return false; }
 
@@ -417,6 +441,22 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             if (setMethods.get(index) == null) return null;
             ((Method)(setMethods.get(index))).invoke(object, new Object[] { value });
             return getValue(index);
+            }
+        catch (Exception e)
+            {
+            e.printStackTrace();
+            return null;
+            }
+        }
+
+    public String getDescription(int index)
+        {
+        if (auxillary!=null) return auxillary.getDescription(index);
+        if (index < 0 || index > numProperties()) return null;
+        try
+            {
+            if (desMethods.get(index) == null) return null;
+            return (String)(((Method)(desMethods.get(index))).invoke(object, new Object[0]));
             }
         catch (Exception e)
             {
