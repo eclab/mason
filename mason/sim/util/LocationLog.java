@@ -12,7 +12,7 @@ public class LocationLog
     
     static {
         assert assertsEnabled = true; // Intentional side effect!!!
-    } 
+        } 
 
     public static boolean test()
         {
