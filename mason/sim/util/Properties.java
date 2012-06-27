@@ -105,6 +105,14 @@ public abstract class Properties implements java.io.Serializable
     */
     public Object getDomain(int index) { return null; }
 
+    /** Returns the description of the property at the given index. 
+        Descriptions are defined by methods of the form <tt>des<i>Property</i>()</tt>
+        and are either <tt>null</tt> (no description), or are Strings, possibly
+        including HTML data.  The primary function of description methods is to provide
+        tooltip information for widgets describing the Property.
+    */
+    public String getDescription(int index) { return null; }
+
     /** Returns true if the property at the given index is both readable and writable (as opposed to read-only). */
     public abstract boolean isReadWrite(int index);
 
