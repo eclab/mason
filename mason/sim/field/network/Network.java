@@ -137,7 +137,9 @@ public class Network implements java.io.Serializable
         removeNode(), removeAllNodes(), etc.), the adjacency list data is invalid and should not be used.  Instead, request
         a new adjacency list. 
         
-        <p>You can modify these edge arrays any way you like, though the Edge objects are the actual Edges.
+        <p>You can modify these edge arrays any way you like, though the Edge objects are the actual Edges
+        used in the Network.  This means you can't add them to another Nework, though you can add copies
+        of them (as in myNewNetwork.add(new Edge(myAdjacencyList[i][j])); )
     */
     public Edge[][] getAdjacencyList(boolean outEdges)
         {
@@ -173,7 +175,9 @@ public class Network implements java.io.Serializable
         removeNode(), removeAllNodes(), etc.), the adjacency matrix data is invalid and should not be used.  Instead, request
         a new adjacency matrix. 
         
-        <p>You can modify the array returned any way you like, though the Edge objects are the actual Edges.
+        <p>You can modify these edge arrays any way you like, though the Edge objects are the actual Edges
+        used in the Network.  This means you can't add them to another Nework, though you can add copies
+        of them (as in myNewNetwork.add(new Edge(myAdjacencyList[i][j])); )
     */
     public Edge[][] getAdjacencyMatrix()
         {
@@ -218,7 +222,9 @@ public class Network implements java.io.Serializable
         removeNode(), removeAllNodes(), etc.), the adjacency matrix data is invalid and should not be used.  Instead, request
         a new adjacency matrix. 
         
-        <p>You can modify the array returned any way you like, though the Edge objects are the actual Edges.
+        <p>You can modify these edge arrays any way you like, though the Edge objects are the actual Edges
+        used in the Network.  This means you can't add them to another Nework, though you can add copies
+        of them (as in myNewNetwork.add(new Edge(myAdjacencyList[i][j])); )
     */
     public Edge[][][] getMultigraphAdjacencyMatrix()
         {
