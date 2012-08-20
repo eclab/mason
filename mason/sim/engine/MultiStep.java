@@ -47,6 +47,14 @@ public class MultiStep implements Steppable
         current = n;
         }
     
+    /** If we're counting down, then this resets the countdown to the given value, which should be > 0 and &lt;= n. 
+        Note that if n = 0, this method has no valid value you can pass in. */
+    public synchronized void resetCountdown(int val)
+        {
+        if (val <= n && val > 0)
+            current = val;
+        }
+    
     // this allows us to jump in and out of the steppable so that the
     // MultiStep can be reset() even in the middle of a step(state)...
     synchronized boolean go() 

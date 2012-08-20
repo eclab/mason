@@ -5,6 +5,9 @@
 */
 
 package sim.engine;
+import java.util.concurrent.*;
+import java.util.*;
+import sim.util.*;
 
 /** Spawns all the sequence elements in parallel on separate threads.
     This should ONLY be used if you know that all of the elements in
@@ -30,13 +33,6 @@ package sim.engine;
     ever think to use them is if you actually HAVE multiple CPUs on your computer.  Otherwise
     they're almost certainly not the solution to your odd multiple-thread needs.
 
-    <!-- This is no longer true: we're now setting the thread to be a daemon thread
-    <p><b>Important Note 1:</b>
-    Because ParallelSequences are lightweight, their threads are persistent -- even
-    after your main() loop exits!  So if you use ParallelSequences, you have to remember to call
-    System.exit(0); to exit your program instead.
-    -->
-
     <p><b>Important Note</b>
     Because ParallelSequences are lightweight, their threads are persistent, even after your step()
     method has completed (this allows them to be reused for the next step() method.  If the ParallelSequence
@@ -53,17 +49,24 @@ package sim.engine;
     method completes.  This is expensive but you don't have to keep track of the ParallelSequence
     at the end of the run to call cleanup() on it.  It's not a bad idea for a ParallelSequence which
     is one-shot rather than repeating.
+    
+   <p>Be sure to read the class documentation on sim.engine.Sequence</b>
 */
 
 public class ParallelSequence extends Sequence
     {
-    Semaphore semaphore = new Semaphore(0);
-    Worker[] workers;
-    Thread[] threads;
+    ThreadPool threads;
     boolean pleaseDie = false;
+    Object operatingLock = new Object();
     boolean operating = false;  // checking for circularity
     boolean destroysThreads = false;
-
+    int numThreads = 0;
+    
+    /** Indicates that MASON should determine how many threads to use based on the number of CPUs. */ 
+    public static final int CPUS = -1;
+    public static final int COLLECTION_SIZE = -2;
+    static int availableProcessors = Runtime.getRuntime().availableProcessors();
+        
     public boolean getDestroysThreads() { return destroysThreads; }
     public void setDestroysThreads(boolean val) { destroysThreads = val; }
         
@@ -71,59 +74,28 @@ public class ParallelSequence extends Sequence
     private void writeObject(java.io.ObjectOutputStream p)
         throws java.io.IOException
         {
-        p.writeObject(semaphore);
-        p.writeObject(workers);
-        // don't write the threads
         p.writeBoolean(pleaseDie);
+        p.writeBoolean(destroysThreads);
+        // don't write operating
+        // dont' write threads
         }
         
     /// Threads are not serializable, so we must manually rebuild here
     private void readObject(java.io.ObjectInputStream p)
         throws java.io.IOException, ClassNotFoundException
         {
-        semaphore = (Semaphore)(p.readObject());
-        workers = (Worker[])(p.readObject());
         pleaseDie = p.readBoolean();
-        // recreate threads
-        buildThreads();
-        }
-
-    // creates the worker threads. used in the constructor and when reading the object from serialization.
-    // We presume that the existing threads are nonexistent -- we're loading from readObject or constructing.
-    void buildThreads()
-        {
-        threads = new Thread[steps.length];
-        for (int i = 0; i < steps.length; i++)
-            {
-            threads[i] = new Thread( workers[i] );
-            threads[i].setDaemon(true);
-            threads[i].start();
-            }
-        }
-
-    // sends all worker threads an EXIT signal
-    void gatherThreads()
-        {
-        pleaseDie = true;
-        for(int x=0;x<steps.length;x++)
-            workers[x].V();
-        for(int x=0;x<steps.length;x++)
-            {
-            try { threads[x].join(); }  
-            catch (InterruptedException e) 
-                {
-                // This could happen every 50ms if the Console tries to kill the play thread to stop or pause me.
-                // For model consistency, I will refuse to be interrupted.
-                x--;  // retry joining
-                }
-            }
-        pleaseDie = false;
-        threads = null;
+        destroysThreads = p.readBoolean();
+        numThreads = p.readInt();
+        // don't write operating
+        // dont' write threads
+        // rebuild locks
+        operatingLock = new Object();
         }
         
     public Steppable getCleaner()
         {
-        return new Steppable() { public void step(SimState state) { gatherThreads(); } };
+        return new Steppable() { public void step(SimState state) { cleanup(); } };
         }
                 
     /** Call this just before you get rid of a ParallelSequence: for example, one good place is the stop() method of
@@ -134,7 +106,10 @@ public class ParallelSequence extends Sequence
         Window's dispose() method.  */
     public void cleanup()
         {
-        gatherThreads();
+        pleaseDie = true;
+        threads.killThreads();
+        pleaseDie = false;
+        threads = null;
         }
 
     protected void finalize() throws Throwable
@@ -143,58 +118,42 @@ public class ParallelSequence extends Sequence
         finally { super.finalize(); }
         }
 
-    static int availableProcessors = Runtime.getRuntime().availableProcessors();
-        
-    /** Indicates that MASON should determine how many threads to use based on the number of CPUs. */ 
-    public static final int CPUS = -1;
-        
-    /** Creates a ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
-        at runtime based on the number of CPUs or cores on the system.  The steppable objects are divided approximately evenly among the
-        various threads. */
-    public ParallelSequence(Steppable[] sequence, int threads)
+    /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
+        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.COLLECTION_SIZE, then the number of threads
+        is the size of the steps array passed in. */
+    public ParallelSequence(Steppable[] steps, int threads)
         {
-        super(sequence);  // temporarily  -- we may change it later
-                
-        if (threads == CPUS)
-            threads = availableProcessors;
-
-        if (threads < sequence.length)    // not enough threads, restructure into an array of Sequences
-            {
-            this.steps = new Steppable[threads];
-
-            int len = sequence.length / threads;  // num sequence elts per thread.  Note: integer division
-            if (len * threads < sequence.length) len++; // make len a bit bigger
-                        
-            for(int i = 0 ; i < threads; i++)
-                {
-                int start = i * len;
-                if (len > sequence.length - start)  // the last thread may be short
-                    len = sequence.length - start;
-                Steppable[] currentSteppable = new Steppable[len];
-                System.arraycopy(sequence, start, currentSteppable, 0, len);
-                this.steps[i] = new Sequence(currentSteppable);
-                }
-            }
-                
-        // build workers
-        workers = new Worker[this.steps.length];
-        for( int i = 0 ; i < this.steps.length ; i++ )
-            workers[i] = new Worker();
-        buildThreads();
+        super(steps);
+        numThreads = threads;
         }
 
-    /** Creates a ParallelSequence with one thread per steppable. */
-    // sets up the worker threads. the number of steppable things the ParallelSequence handles cannot be modified after the constructor is called
+    /** Creates an immutable ParallelSequence with one thread per steppable. */
     public ParallelSequence(Steppable[] steps)
         {
-        this(steps, steps.length);
+        this(steps, COLLECTION_SIZE);
         }
+
+    /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
+        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.COLLECTION_SIZE, then the number of threads
+        is the size of the collection passed in (and may change as the collection grows or shrinks). */
+    public ParallelSequence(Collection steps, int threads)
+        {
+        super(steps);
+        numThreads = threads;
+        }
+
+    /** Creates an immutable  ParallelSequence with one thread per steppable in the collection. */
+    public ParallelSequence(Collection steps)
+        {
+        this(steps, COLLECTION_SIZE);
+        }
+
 
     // steps once (in parallel) through the steppable things
     public void step(final SimState state)
         {
         // just to be safe, we'll avoid the HIGHLY unlikely race condition of being stepped in parallel or nested here
-        synchronized(workers)  // some random object we own
+        synchronized(operatingLock)  // some random object we own
             {
             if (operating) 
                 throw new RuntimeException("ParallelSequence stepped, but it's already in progress.\n" +
@@ -203,74 +162,72 @@ public class ParallelSequence extends Sequence
             operating = true;
             }
 
-        if (threads == null)
-            buildThreads();
-                
-        for(int x=0;x<steps.length;x++)
+        loadSteps();
+
+        if (threads == null)  // rebuild threads
+            threads = new ThreadPool();
+
+        // How many threads?
+        int size = this.size;
+        int n = numThreads;
+        if (n == CPUS)
+            n = availableProcessors;
+        else if (n == COLLECTION_SIZE)
+            n = size;
+        if (n > size)
+            n = size;
+        
+        int jump = size / n;
+        for(int i = 0; i < n; i++)
             {
-            workers[x].step = steps[x];
-            workers[x].state = state;
-            workers[x].V();
+            // The commented out code interleaves the threads with regard to the steppables,
+            // which is a bad idea with multiple CPUs because it causes cache contention (generally
+            // you want to have different CPUs working on completely different areas of memory). 
+            // But in fact it makes almost no difference at all.
+            
+            // this.threads.startThread(new Worker(state, i, numSteps, n));
+            
+            // This code instead starts each thread on a different chunk of the steppables array
+            this.threads.startThread(new Worker(state, i * jump, Math.min( (i+1) * jump, size), 1),
+                                    "ParallelSequence");
             }
-        for(int x=0;x<steps.length;x++)
-            semaphore.P();
 
         if (destroysThreads)
             cleanup();
+        else
+            threads.joinThreads();
 
         // don't need to synchronize to turn operating off
         operating = false;
         }
 
-    // a small semaphore class
-    static class Semaphore implements java.io.Serializable
-        {
-        private int count;
-        public Semaphore(int c) { count = c; }
-        public synchronized void V()
-            {
-            if (count == 0)
-                this.notify();
-            count++;
-            }
-        public synchronized void P()
-            {
-            while (count == 0)
-                try{ this.wait(); } 
-            // we will do nothing if interrupted: just wait again.  Note that
-            // the interrupted flag will be raised however when we leave.  That
-            // should be fine.
-                catch(InterruptedException e) { }
-            count--;
-            }
-        // static inner classes don't need serialVersionUIDs
-        }
 
     // a worker is a semaphore and also implements a runnable
-    class Worker extends Semaphore implements Runnable
+    class Worker implements Runnable
         {
-        Steppable step;
         SimState state;
-                
-        // Thread currentThread = null;
-        public Worker()
+        int start;
+        int end;
+        int modulo;
+        public Worker(SimState state, int start, int end, int modulo)
             {
-            super(0);
+            this.state = state;
+            this.start = start;
+            this.end = end;
+            this.modulo = modulo;
             }
+        
         public void run()
             {
-            while(true)
+            Steppable[] steps = ParallelSequence.this.steps;
+            int modulo = this.modulo;
+            for(int s = start; s < end; s += modulo)
                 {
-                P();
-                if (pleaseDie) return;
-                // this line was BAD -- because Thread is not serializable.  So I've commented it out 
-                // but left it as a warning for others.  :-)
-                //if (currentThread == null) currentThread = Thread.currentThread();  // a little efficiency?
-                Thread.currentThread().setName("Parallel Sequence: " + step);
+                if (pleaseDie) break;
+                Steppable step = steps[s];
                 assert sim.util.LocationLog.set(step);
-                step.step(state);
+                steps[s].step(state);
                 assert sim.util.LocationLog.clear();
-                semaphore.V();
                 }
             }
 
@@ -279,7 +236,117 @@ public class ParallelSequence extends Sequence
         // of different UIDs for inner classes and their parents.
         private static final long serialVersionUID = 1;
         }
+        
+        
+    // Why do we have a ThreadPool object here instead of using Java's thread
+    // pool facility in java.util.concurrent?  Two reasons.  First, this is
+    // faster and far simpler.  Second, java.util.concurrent has ridiculous
+    // design errors in it -- it's nearly impossible to do basic tasks like
+    // join threads etc.  Was Sun's code written by monkeys?  It appears so.
+    // Seriously, how screwed up a company do you have to be to mess up a
+    // ** thread pool ** ?
 
+
+    class ThreadPool
+        {
+        class Node implements Runnable
+            {
+            boolean die = false;
+            boolean go = false;
+            public Thread thread;
+            public Runnable toRun;
+            
+            public Node(String name) 
+                {
+                thread = new Thread(this); 
+                thread.setDaemon(true);
+                thread.setName(name);
+                }
+            
+            public void run()
+                {
+                while(true)
+                    {
+                    synchronized(this) 
+                        {
+                        while(!go && !die)
+                            {
+                            try { wait(); }
+                            catch (InterruptedException e) { } // ignore
+                            }
+                        go = false;
+                        if (die) { die = false; return; }
+                        }
+                    toRun.run();
+                    toRun = null;
+                    // add myself back in the list
+                    synchronized(threads)
+                        {
+                        ThreadPool.this.threads.push(this);
+                        if (totalThreads == threads.size())  // we're all in the bag, let the pool know if it's joining
+                            ThreadPool.this.threads.notify();
+                        }
+                    // let the pool know I'm home
+                    }
+                }
+            }
+        
+        Bag threads = new Bag();
+        int totalThreads = 0;  // synchronize on threads first
+                
+        // Joins and kills all threads, both those running and those sitting in the pool
+        void killThreads()
+            {
+            synchronized(threads)
+                {
+                joinThreads();
+                while(!threads.isEmpty())
+                    {
+                    Node node = (Node)(threads.pop());
+                    synchronized(node) { node.die = true; node.notify(); }  // reel it in
+                    try { node.thread.join(); }
+                    catch (InterruptedException e) { } // ignore
+                    totalThreads--;
+                    }
+                }
+            }
+            
+        // Waits for all presently running threads to complete
+        void joinThreads()
+            {
+            synchronized(threads)
+                {
+                if(totalThreads > threads.size())  // there are still outstanding threads
+                    try { threads.wait(); }
+                    catch (InterruptedException e) { }  // ignore
+                }
+            }
+        
+        // Starts a thread running on the given runnable
+        void startThread(Runnable run) { startThread(run, "ThreadPool"); }
+        void startThread(Runnable run, String name)
+            {
+            Node node;
+            // ensure we have at least one thread
+            synchronized(threads) 
+                {
+                if (threads.isEmpty())
+                    {
+                    node = new Node(name + " Thread " + totalThreads);
+                    node.thread.start();
+                    totalThreads++;
+                    }
+                else  // pull a thread
+                    {
+                    node = (Node)(threads.pop());
+                    }
+                }
+            synchronized(node) { node.toRun = run; node.go = true; node.notify(); }  // get it running
+            }
+
+        private static final long serialVersionUID = 1;
+        }
+    
     // explicitly state a UID in order to be 'cross-platform' serializable
     // because we contain an inner class and compilers come up with all
     // sorts of different UIDs for inner classes and their parents.
