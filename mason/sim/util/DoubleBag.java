@@ -67,9 +67,11 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public boolean addAll(final int index, final double[] other)
         {
         // throws NullPointerException if other == null,
-        // ArrayIndexOutOfBoundsException if index < 0,
-        // and IndexOutOfBoundsException if index > numObjs
-        if (index > numObjs) { throwIndexOutOfBoundsException(index); }
+        // ArrayArrayIndexOutOfBoundsException if index < 0,
+        // and ArrayIndexOutOfBoundsException if index > numObjs
+        if (index > numObjs) 
+            throw new ArrayIndexOutOfBoundsException(index);
+            // { throwArrayIndexOutOfBoundsException(index); }
         if (other.length == 0) return false;
         // make DoubleBag big enough
         if (numObjs+other.length > objs.length)
@@ -86,9 +88,11 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public boolean addAll(final int index, final DoubleBag other)
         {
         // throws NullPointerException if other == null,
-        // ArrayIndexOutOfBoundsException if index < 0,
-        // and IndexOutOfBoundsException if index > numObjs
-        if (index > numObjs) { throwIndexOutOfBoundsException(index); }
+        // ArrayArrayIndexOutOfBoundsException if index < 0,
+        // and ArrayIndexOutOfBoundsException if index > numObjs
+        if (index > numObjs) 
+            throw new ArrayIndexOutOfBoundsException(index);
+            //{ throwArrayIndexOutOfBoundsException(index); }
         if (other.numObjs <= 0) return false;
         // make DoubleBag big enough
         if (numObjs+other.numObjs > objs.length)
@@ -205,7 +209,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public double get(final int index)
         {
         if (index>=numObjs) //  || index < 0)
-            throwIndexOutOfBoundsException(index);
+            throw new ArrayIndexOutOfBoundsException(index);
+            //throwArrayIndexOutOfBoundsException(index);
         return objs[index];
         }
 
@@ -217,7 +222,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public double set(final int index, final double element)
         {
         if (index>=numObjs) // || index < 0)
-            throwIndexOutOfBoundsException(index);
+            throw new ArrayIndexOutOfBoundsException(index);
+            //throwArrayIndexOutOfBoundsException(index);
         double returnval = objs[index];
         objs[index] = element;
         return returnval;
@@ -237,7 +243,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
     public double removeNondestructively(final int index)
         {
         if (index>=numObjs) // || index < 0)
-            throwIndexOutOfBoundsException(index);
+            throw new ArrayIndexOutOfBoundsException(index);
+            // throwArrayIndexOutOfBoundsException(index);
         double ret = objs[index];
         if (index < numObjs - 1)  // it's not the topmost double, must swap down
             System.arraycopy(objs, index+1, objs, index, numObjs - index - 1);
@@ -250,7 +257,8 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         {
         int _numObjs = numObjs;
         if (index>=_numObjs) // || index < 0)
-            throwIndexOutOfBoundsException(index);
+            throw new ArrayIndexOutOfBoundsException(index);
+            //throwArrayIndexOutOfBoundsException(index);
         double[] _objs = this.objs;
         double ret = _objs[index];
         _objs[index] = _objs[_numObjs-1];
@@ -325,10 +333,10 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
             }
         }
 
-    protected void throwIndexOutOfBoundsException(final int index)
-        {
-        throw new IndexOutOfBoundsException(""+index);
-        }
+    //protected void throwArrayIndexOutOfBoundsException(final int index)
+    //    {
+    //    throw new ArrayIndexOutOfBoundsException(""+index);
+    //    }
         
     /** Removes all numbers in the DoubleBag.  This is done by clearing the internal array but 
         not replacing it with a new, smaller one. */
@@ -337,6 +345,16 @@ public class DoubleBag implements java.io.Serializable, Cloneable, Indexed
         numObjs = 0;
         }
         
+    /**    
+        Copies 'len' elements from the Bag into the provided array.
+        The 'len' elements start at index 'fromStart' in the Bag, and
+        are copied into the provided array starting at 'toStat'.
+    */ 
+    public void copyIntoArray(int fromStart, double[] to, int toStart, int len)
+        {
+        System.arraycopy(objs, fromStart, to, toStart, len);
+        }
+
     public double[] toArray()
         {
         double[] o = new double[numObjs];

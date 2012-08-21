@@ -194,7 +194,7 @@ public class SimpleColorMap implements ColorMap
             
             final double interpolation = (level - minLevel) / (maxLevel - minLevel);
             
-            // the +1's beow are because the only way you can get the maxColor is if you have EXACTLY the maxLevel --
+            // the +1's below are because the only way you can get the maxColor is if you have EXACTLY the maxLevel --
             // that's an incorrect discretization distribution.  Instead we return the maxColor if you have the maxLevel,
             // and otherwise we'd like to round it.
             // ... hope that's right!  -- Sean
