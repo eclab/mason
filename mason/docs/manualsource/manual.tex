@@ -1985,7 +1985,7 @@ new \textit{SuperclassOrInterface}()
     \}
 \end{alltt}
 
-This pattern is an {\it expression} which creates a single expression, and you can assign it to a variable or whatnot.  For example, we might create a subclass of \Class{javax.swing.JPanel} which overrides the method \method{paintComponent(...)}:
+This pattern is an {\it expression} which creates a single instance of a nameless class which subclasses from (or implements) \texttt{\textit{SuperclassOrInterface}}, and you can assign it to a variable or whatnot which is of the type \texttt{\textit{SuperclassOrInterface}}.  For example, we might create a subclass of \Class{javax.swing.JPanel} which overrides the method \method{paintComponent(...)}:
 
 \begin{alltt}\small
 JPanel myJPanel = new JPanel()
@@ -2008,7 +2008,7 @@ public JPanel makeJPanel(final Color color)
 
 This creates new JPanel subclasses on the fly with custom \method{paintComponent(...)} methods, produces single instances of them, and returns those instances.  Nifty.
 
-Notice that \variable{color} had to be declared {\bf final}.  This isn't the case for outer instance variables used by anonymous classes, but it is the case for local variables and method parameters.\footnote{Why is this the case?  Beats me.  Any decent modern language contains {\bf closures}\,---\,non-final outer local variables usable by anonymous classes (or in many other languages, anonymous functions).  Closures are very useful, but require cleverness in compilation.  Sun's apparently not very clever.  The amazing thing is that you can hack the same thing with a work-around: instead of making a local variable \variable{final int foo = 4;}, you can make the variable \variable{final int[] foo = new int[] \{4\};}  Then you can modify \variable{foo}, from within the inner class, or more correctly, you can modify the value stored inside the array even if you can't change the array.  Why Sun didn't just bake this into the compiler, instead of requiring a hack work-around, is utterly beyond me.}
+Notice that \variable{color} had to be declared {\bf final}.  This isn't the case for outer instance variables used by anonymous classes, but it is the case for local variables and method parameters.\footnote{Why is this the case?  Beats me.  Any decent modern language contains {\bf closures}\,---\,which translate to {\it non}-final outer local variables usable by anonymous classes (or in many other languages, anonymous functions).  Closures are very useful, but require cleverness in compilation.  Sun's apparently not very clever.  The amazing thing is that you can hack the same thing with a work-around: instead of making a local variable \variable{final int foo = 4;}, you can make the variable \variable{final int[] foo = new int[] \{4\};}  Then you can modify \variable{foo}, from within the inner class, or more correctly, you can modify the value stored inside the array even if you can't change the array.  Why Sun didn't just bake this into the compiler, instead of requiring a hack work-around, is utterly beyond me.}
 
 An anonymous class will save us the tedium of creating a new file for our class, and various casts or constructors.  So we're going with it.\footnote{Anonymous classes also make it possible to create an agent which is scheduled {\it twice} on the schedule, with different methods called each time, even though there's only {\it one} \method{step(...)} method.  If you have an agent with methods like this:\\
 
@@ -2677,7 +2677,7 @@ MASON has a large number of utility classes which can be used independently of t
 \item \package{sim.util.gui}\quad Graphical interface utility classes
 \item \package{sim.util.media}\quad Utility classes for generating various media (movies, pictures)
 \item \package{sim.util.media.chart}\quad Utility classes for generating charts
-\item \package{sim.util.distribution}\quad Utility classes for creating distributions
+\item \package{sim.util.distribution}\quad Utility classes for sampling from distributions
 \end{itemize} 
 
 This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \package{sim.util.distribution}.  Many classes in the core simulation code rely on these packages (well the first two anyway), so it's important to cover them. 
@@ -2753,7 +2753,7 @@ There are two kinds of distributions: (1) distributions which require their own 
 \item Normal (Gaussian)\,---\,not very useful as it's built into Mersenne Twister\hspace{\fill} \Class{sim.util.distribution.Normal}
 \item Poisson (two kinds)\hspace{\fill} \Class{sim.util.distribution.Poisson} and \Class{sim.util.distribution.PoissonSlow} 
 \item Student's T\hspace{\fill} \Class{sim.util.distribution.StudentT}
-\item Uniform\,---\,again, not particularly useful\hspace{\fill} \Class{sim.util.distribution.Uniform}
+\item Uniform\,---\,again, not very useful as it's built into Mersenne Twister\hspace{\fill} \Class{sim.util.distribution.Uniform}
 \item Von Mises\hspace{\fill} \Class{sim.util.distribution.VonMises}
 \item Zeta\hspace{\fill} \Class{sim.util.distribution.Zeta}
 \end{itemize}
@@ -2834,7 +2834,7 @@ You should access these variables with abandon: they're designed for it.    Addi
 \mthd{public long manhattanDistance(MutableInt2D p)} Returns the manhattan distance from the Int2D to the given coordinates.
 \end{methods}
 
-The squared distance between two points \(\langle x_1, y_1\rangle\) and \(\langle x_2, y_2\rangle\) is simply \((x_1 - x_2)^2 + (y_1 - y_2)^2\).  The distance is  defined as \(\sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}\).  The manhattan distance is defined as \(| x_1 - x_2|+ |y_1 - y_2|\)
+The distance between two points  \(\langle x_1, y_1\rangle\) and \(\langle x_2, y_2\rangle\) is defined as \(\sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}\).  The squared distance is defined as \((x_1 - x_2)^2 + (y_1 - y_2)^2\).  .  The manhattan distance is defined as \(| x_1 - x_2|+ |y_1 - y_2|\).
 
 MutableInt2D has all these methods and constructors, plus a few more:
 
@@ -3007,7 +3007,7 @@ MASON has four collections classes special to it:
  \item \Class{sim.util.Heap} is a binary heap, similar to \class{java.util.PriorityQueue}.  Heap is discussed later in Section \ref{sim.util.Heap}.
  \end{itemize}
  
- \paragraph{Why create a new ArrayList?}  \Class{sim.util.Bag} was created because at the time most ArrayList operations were quite slow.  For years ArrayList's \method{get()}, \method{set()}, and \method{add()} operations were not inlinable!  In fact now they're inlinable only because of advances in Hotspot technology and not because of simple bug-fixes that could have been made in the class years ago (the bugs are still there).  
+ \paragraph{Why create a new ArrayList?}  \Class{sim.util.Bag} was created because at the time (2004) most ArrayList operations were quite slow.  For years ArrayList's \method{get()}, \method{set()}, and \method{add()} operations were not inlinable!  In fact now they're inlinable only because of advances in Hotspot technology and not because of simple bug-fixes that could have been made in the class years ago (the bugs are still there).  
  
 Bag is an extensible array like ArrayList but with four major differences:
 
@@ -3057,14 +3057,14 @@ while(iter.hasNext()) System.out.println(iter.next());
 for(Object o :\ bag) System.out.println(o);
 }
 
-\sidebar{Why not just do \class{ArrayList\(<\)Integer\(>\)} instead of IntBag?}{Let's put aside the fact that in IntBag you can access the underlying array.  Even with the recent advances in Java 1.6 to fix ArrayLists's inlining mistakes, \class{ArrayList\(<\)Integer\(>\)} is still a less than good idea.  Let's say that you want to put the ints 0 through 1000 into the list.  You could do it for either IntBag or \class{ArrayList\(<\)Integer\(>\)} along these lines:
+\sidebar{Why not just do \class{ArrayList$<$Integer$>$} instead of IntBag?}{Let's put aside the fact that in IntBag you can access the underlying array.  Even with the recent advances in Java 1.6 to fix ArrayLists's inlining mistakes, \class{ArrayList$<$Integer$>$} is still a less than good idea.  Let's say that you want to put the ints 0 through 1000 into the list.  You could do it for either IntBag or \class{ArrayList$<$Integer$>$} along these lines:
 
 \java{%
 for(int i = 0 ; i < 1000; i++)
 myList.add(i); 
 }
 
-However while IntBag is just sticking integers in its array, \class{ArrayList\(<\)Integer\(>\)}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing} is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is well over twice the speed of \class{ArrayList\(<\)Integer\(>\)}, and likewise DoubleBag is over twice the speed of \class{ArrayList\(<\)Double\(>\)}.
+However while IntBag is just sticking integers in its array, \class{ArrayList$<$Integer$>$}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing}, is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is well over twice the speed of \class{ArrayList$<$Integer$>$}, and likewise DoubleBag is over twice the speed of \class{ArrayList$<$Double$>$}.
 }
 
 \noindent ... but you should be warned: Java's iterators are very slow.  They involve un-linlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.
@@ -3110,6 +3110,7 @@ However while IntBag is just sticking integers in its array, \class{ArrayList\(<
 \mthd{public boolean removeAll(Collection c)} Removes from the Bag all elements from the given collection.  If there were no such elements in the Bag, returns false, else returns true.
 \mthd{public boolean retainAll(Collection c)} Removes from the Bag all elements {\it except} those from the given collection.  If there were no such elements in the Bag, returns false, else returns true.
 \mthd{public void clear()} Empties the Bag.
+\mthd{public void copyIntoArray(int fromStart, Object[] to, int toStart, int len)} Copies {\it len} elements from the Bag into the array provided 
 \mthd{public Object[] toArray()} Copies all elements in the Bag to an array and returns it.
 \mthd{public Object[] toArray(Object[] o)} Copies all elements in the Bag to an array of the same type as the one provided.  If the passed-in array is sufficiently large, it is used, else a new one is used.  Returns the resulting array.
 \mthd{public Iterator iterator()} Returns an iterator over the Bag. This iterator is NOT fail-fast. 
@@ -3231,7 +3232,7 @@ Another way to control which properties are viewed is to force MASON to examine 
 \paragraph{Property Domains}
 Many Java widgets which interpret Java Bean Properties take the form of text fields (for read/write properties), labels (for read-only properties), or perhaps checkboxes (for read/write boolean properties).  But what about numerical properties?  Couldn't they be sliders or pop-up menus?  Unfortunately no: these usually just show up as text fields because Java doesn't know what the {\bf domain} of the numerical property is.
 
-MASON has an extension to Java Bean Properties which allows you to set the domain of a numerical property.  If your property type is a {\it double}, you can specify minimum and maximum values of the property.  For example, if you had the following {\it Angle} property which could only be between 0 and \(2 \pi\), as below:
+MASON has an extension to Java Bean Properties which allows you to set the domain of a numerical property.  If your property type is a {\it double}, you can specify minimum and maximum values of the property.  For example, if you had the following {\it Angle} property which could only be between 0 and \(2 \pi\) inclusive, as below:
 
 \java{%
 double angle = 0;\\
@@ -3292,7 +3293,7 @@ To extract the Java Bean Properties from an object, you merely need to pass it i
 \mthd{public static Properties getProperties(Object object)} Creates a Properties object for the given object with default values. The same as \method{getProperties(object, true, true, false, true);}
 \mthd{public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf boolean includeGetClass, boolean includeExtensions)}\\
-Creates a Properties object for the given object.  If the object is an array, or if {\it expandCollections} is true and the object is a List, Indexed, Collection, or Map, then a Properties object will be constructed treating each of the slots in the object as properties.  If {\it includeSuperclasses} is true, then properties from superclasses will be included.  If {\it includeGetClass} is true as well as {\it includeSuperclasses}, then the \variable{Class} property (derived from \class{java.lang.Object.getClass()}) will be included.  If {\it includeExtensions} is true, then if the Object has MASON-style property extension methods (like \method{domFoo()} or \method{hideFoo()} they will be respected, else they will be ingored.
+Creates a Properties object for the given object.  If the object is an array, or if {\it expandCollections} is true and the object is a List, Indexed, Collection, or Map, then a Properties object will be constructed treating each of the slots in the object as properties.  If {\it includeSuperclasses} is true, then properties from superclasses will be included.  If {\it includeGetClass} is true as well as {\it includeSuperclasses}, then the \variable{Class} property (derived from \method{java.lang.Object.getClass()}) will be included.  If {\it includeExtensions} is true, then if the Object has MASON-style property extension methods (like \method{domFoo()} or \method{hideFoo()} they will be respected, else they will be ingored.
 \end{methods}
 
 If you pass in an ordinary Object (not an array, List, Indexed, Collection, or Map), then you will receive back a \Class{sim.util.SimpleProperties}.  This subclass of Properties implements all of the following basic Properties methods which enable you to query and set property values on the object programmatically:
@@ -3895,7 +3896,7 @@ MASON uses a binary heap because we don't know beforehand how you'll be using th
 \mthd{protected Heap createHeap()} Creates and returns a new Heap for the Schedule to use.
 \end{methods}
 
-So what kind of key does the Schedule use to represent order in the Heap?  By default, it uses an object called \Class{sim.engine.Schedule.Key}.  This is a protected class available only to subclasses of Schedule, and it holds the a timestamp and an ordering.  The Key is \class{java.lang.Comparable} with other Keys.  A Key \(A\) is {\it less} than a Key \(B\) if the timestamp for \(A\) is less than that of \(B\), or if the two timestamps are equal but the ordering of \(A\) is less than \(B\).  If the timestamps and orderings are identical then \(A\) and \(B\) are considered equal to each other.
+So what kind of key does the Schedule use to represent order in the Heap?  By default, it uses an object called \Class{sim.engine.Schedule.Key}.  This is a protected class available only to subclasses of Schedule, and it holds the a timestamp and an ordering.  The Key is \class{java.lang.Comparable} with other Keys.  A Key \(A\) is {\it less} than a Key \(B\) if the timestamp for \(A\) is less than (that is, ``before'') that of \(B\), or if the two timestamps are equal but the ordering of \(A\) is less than (that is, ``before'') \(B\).  If the timestamps and orderings are identical then \(A\) and \(B\) are considered equal to each other.
 
 
 \begin{methods}{\class{sim.engine.Schedule.Key} Constructor}
@@ -3915,12 +3916,13 @@ The Key's methods are pretty straightforward:
 
 \subsection{Utility Agent Classes}
 
-MASON provides a variety of utility subclasses of Steppable which you may find useful to expand on the basic capabilities of the Schedule.  Most of these subclasses are designed to hold other Steppables witin them, and when stepped, step those Steppables in various ways:
+MASON provides a variety of utility subclasses of Steppable which you may find useful to expand on the basic capabilities of the Schedule.  Most of these subclasses are designed to hold other Steppables within them, and when stepped, step those Steppables in various ways:
 
 \begin{itemize}
 \item \class{sim.engine.Sequence} holds an array of Steppables and when stepped it steps each of them in turn.
 \item \class{sim.engine.RandomSequence} is like Sequence, but when stepped it first shuffles the order of the Steppables in its array.
 \item \class{sim.engine.ParallelSequence} is like Sequence, but when stepped it steps each of its Steppables in parallel in separate threads.
+\item \class{sim.engine.Repeat} is both Steppable and Stoppable.  It holds a subsidiary Steppable, and when stepped, it steps its Steppable, then reschedules itself in the Schedule according to a procedure you define.
 \item \class{sim.engine.TentativeStep} is both Steppable and Stoppable.  It holds a subsidiary Steppable, and when stepped, it steps its Steppable, unless you have first called \method{stop()} on the TentativeStep.
 \item \class{sim.engine.WeakStep} holds a subsidiary Steppable weakly (meaning it can be garbage collected at any time), and when stepped, it steps its Steppable only if it still exists.
 \item \class{sim.engine.MultiStep} holds a subsidiary Steppable, and when stepped, it either steps its subsidiary \(N\) times in a row, or once every \(N\) steps.
@@ -3931,14 +3933,37 @@ MASON provides a variety of utility subclasses of Steppable which you may find u
 We next go through each of these in turn.
 
 \paragraph{\Class{sim.engine.Sequence}}
-This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.
+This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add, remove, and replace agents while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the agents.
+
+To remove agents, Sequence will modify the order of the sequence by default.  If you want to guarantee that the Sequence order remains unmodified, you can call \method{setEnsuresOrder(true)}.
+
+Removing agents can be costly: it's an \(O(n)\) search through the array to find an agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  This option is turned on with \method{setUsesSets(true)}.
 
 \begin{methods}{\class{sim.engine.Sequence} Constructor}
-\mthd{public Sequence(Steppable[] agents)} Builds a Sequence for the given array of agents (there should be no null values, and the array ought not be modified later).
+\mthd{public Sequence(Steppable[] agents)} Builds a Sequence for the given array of agents.  The agents will be copied to an internal array.
+\mthd{public Sequence(Collection agents)} Builds a Sequence for the given array of agents.  The agents will be copied to an internal array,
 \end{methods}
+
+\begin{methods}{\class{sim.engine.Sequence}}
+\mthd{public void replaceSteppables(Steppable[] agents)} Replaces all the steppables in the internal array with those provided.  This will not happen until the next \method{step(...)} call.
+\mthd{public void replaceSteppables(Collection agents)} Replaces all the steppables in the internal array with those provided.  This will not happen until the next \method{step(...)} call.
+\mthd{public void removeSteppable(Steppable[] agents)} Adds the given agents to a collection to be removed from the internal array prior to the next \method{step(...)} call.
+\mthd{public void removeSteppables(Collection agents)} Adds the given agents to a collection to be removed from the internal array prior to the next \method{step(...)} call.
+\mthd{public void removeSteppable(agent)} Adds the given agent to a collection to be removed from the internal array prior to the next \method{step(...)} call.
+\mthd{public void addSteppable(Steppable[] agents)} Adds the given agents to a collection to be added to the internal array prior to the next \method{step(...)} call.  If the Sequence is using Sets (see \method{setUsesSets(...)}) and there are duplicates among the provided agents to add, then an exception may be triggered later in the \method{step(...)} call.
+\mthd{public void addSteppables(Collection agents)} Adds the given agents to a collection to be added to the internal array prior to the next \method{step(...)} call.  If the Sequence is using Sets (see \method{setUsesSets(...)}) and there are duplicates among the provided agents to add, then an exception may be triggered later in the \method{step(...)} call.
+\mthd{public void addSteppable(agent)} Adds the given agent to a collection to be added to the internal array prior to the next \method{step(...)} call.  If the Sequence is using Sets (see \method{setUsesSets(...)}) and there are duplicates among the provided agents to add, then an exception may be triggered later in the \method{step(...)} call.
+\mthd{public boolean getEnsuresOrder()} Returns whether removing agent from the Sequence retains the order of the remaining agents in the Sequence.  By default this is \variable{false}.  Note that subclasses are free to ignore this setting (and in fact do).
+\mthd{public void setEnsuresOrder(boolean val)} Returns whether removing agent from the Sequence retains the order of the remaining agents in the Sequence.  By default this is \variable{false}.  Note that subclasses are free to ignore this setting (and in fact do).
+\mthd{public boolean getUsesSets()} Returns whether the Sequence uses a Set internally for faster removals (if you remove more than 4 or so at a given time).  Note that Sequences using Sets may not have agents appearing multiple times in the internal array.
+\mthd{public setUsesSets(boolean val)} Returns whether the Sequence uses a Set internally for faster removals (if you remove more than 4 or so at a given time).  Note that Sequences using Sets may not have agents appearing multiple times in the internal array. If the Sequence is using Sets and there are duplicates in the internal array, then an exception will be triggered.
+\end{methods}
+
 
 \paragraph{\Class{sim.engine.RandomSequence}}
 This is a subclass of Sequence: the difference is that, when stepped, it first uniformly shuffles the order of the agents in the array, then calls calls \method{step(...)} on each of them in turn.  In order to shuffle the agents, RandomSequence uses the simulation's random number generator.  As a result, you have the option of the RandomSequence first locking on the Schedule prior to using the random number generator.  If your simulation is single-threaded when the RandomSequence is fired, then this is unnecessary and (slightly) slower.  Since most simulations are single-threaded, the default is to not lock.  On the other hand, if you've got multiple threads going on\,---\,notably, if you're using the RandomSequence from within a ParallelSequence (see below), you should turn locking on.
+
+Be sure to read and understand \class{sim.engine.Sequence}.
 
 \begin{methods}{\class{sim.engine.RandomSequence} Constructor}
 \mthd{public RandomSequence(Steppable[] agents)} Builds a RandomSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  Prior to stepping the agents, the RandomSequence will first shuffle the order of the array using the model's random number generator.  The sequence will not synchronize on the random number generator prior to calling it.
@@ -3956,6 +3981,8 @@ synchronized(state.random) \{ val = state.random.nextDouble(); \}\\
 }
 
 Notably the RandomSequence described above needs to be used carefully when in combination with ParallelSequence: make certain that it is set to synchronize if used inside one of the ParallelSequence's threads.
+
+Be sure to read and understand \class{sim.engine.Sequence}.
 
 \begin{methods}{\class{sim.engine.ParallelSequence} Constructor}
 \mthd{public ParallelSequence(Steppable[] agents)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called ParallelSequence will step each of these agents in parallel in separate threads, then wait for them to complete before returning.
@@ -3983,7 +4010,7 @@ The ParallelSequence makes any of these options easy with the following methods:
 \mthd{public Steppable getCleaner()} Returns a Steppable which, when stepped, will call \method{cleanup()} on the ParallelSequence.  This can be scheduled at some point in the future to clean up threads after the ParallelSequence has been terminated. 
 \end{methods}
 
-See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of how to use ParallelSequence to dramatically speed up a simulation.
+See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of how to use ParallelSequence to double the speed of a simulation.
 
 \paragraph{\Class{sim.engine.TentativeStep}}  Let's suppose you want to schedule an agent one-shot, but it's possible that in the future you'd need to prevent it from having its \method{step(...)} method called.  TentativeStep to the rescue!  Create a TentativeStep wrapped around your agent and schedule the TentativeStep instead.   When the TentativeStep is stepped, it'll call \method{step(...)} on the underlying agent.  But TentativeStep is \Class{sim.engine.Stoppable}, so you can call \method{stop()} on it at any time to prevent this from happening. 
 
@@ -3997,7 +4024,7 @@ See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of ho
 
 TentativeStep's \method{step(...)} and \method{stop()} methods are synchronized: different methods can call them safely.
 
-\paragraph{\Class{sim.engine.WeakStep}}  In some rare cases you may need to schedule an agent {\it weakly}, meaning that if Java is running low on memory, it should feel free to garbage collect the agent before its \method{step(...)} method is called.  WeakStep enables this: create the WeakStep, passing in the agent you wish to be held weakly.  Then schedule the WeakStep on the schedule.  If the agent is garbage collected early, when it comes time to step it, the WeakStep will simply do nothing.  Note that even if the agent is garbage collected, {\it the WeakStep is still on the schedule until removed.}  Thus this is really useful for agents which consume significant memory and are worthwhile garbage collecting if necessary.
+\paragraph{\Class{sim.engine.WeakStep}}  In some rare cases you may need to schedule an agent {\it weakly}, meaning that if Java is running low on memory, it should feel free to garbage collect the agent before its \method{step(...)} method is called.  WeakStep enables this: create the WeakStep, passing in the agent you wish to be held weakly.  Then schedule the WeakStep on the schedule.  If the agent is garbage collected early, when it comes time to step it, the WeakStep will simply do nothing.  Note that even if the agent is garbage collected, {\it the WeakStep is still on the schedule until removed.}  Thus this is primarily useful for agents which consume significant memory and are worthwhile garbage-collecting if necessary.
 
 \begin{methods}{\class{sim.engine.WeakStep} Constructor}
 \mthd{public WeakStep(Steppable agent)} Builds a WeakStep for a given agent.  The agent will be held as a weak reference.
@@ -4032,29 +4059,40 @@ The action taken depends on what you provide to the constructor:
 If you choose the second option, MultiStep sets a countdown timer to \(n\).  Each time \method{step(...)} is called, \(n\) is decreased by one.  When it reaches zero, it's reset to \(n\) and the subsidiary agent is stepped.  You can reset the timer to \(n\) at any time by calling:
 
 \begin{methods}{\class{sim.engine.MultiStep}}
-\mthd{public void resetCountdown()} Resets the internal countdown timer for MultiStep.
+\mthd{public void resetCountdown()} Resets the internal countdown timer for MultiStep (to \(n\)).
+\mthd{public void resetCountdown(int val)} Resets the internal countdown timer for MultiStep to {\it val}, which should be \(>0\) and \(\leq n\).  Note that if \(n=0\), there is no valid setting for {\it val}.
 \end{methods}
 
-This method is threadsafe.
+These methods are threadsafe.
 
 
 \paragraph{\Class{sim.engine.MethodStep}}  This convenience class allows you to call specific methods on your agent rather than calling its \method{step(...)} method.  Before we get into this, let's talk first about the issues raised, some history, and alternative solutions.
 
 The seminal multiagent simulation toolkit was SWARM, written in a combination of Objective-C and TCL/TK.  Objective-C has a procedure which enables you to call methods on objects by just specifying   the method name as a string.\footnote{
-Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages correspond to methods in those objects but they don't have to.  One effect of this is that in Objective-C you can specify what method you want to call dynamically, using Objective-C's SEL data type:
+Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages correspond to methods in those objects but they don't have to.  If an object receives a message for which it has no corresponding method, it has the option to deal with this how it likes rather than issue an error.
+
+One effect of this is that in Objective-C you can specify what method you want to call dynamically, using Objective-C's SEL data type:
 
 \java{\footnotesize\tt%
 	char* fooName = "foo";\\
 	SEL callFoo = NSSelectorFromString([NSString stringWithUTF8String:fooName]);
 }
 
-Now \variable{callFoo} contains a message corresponding to a method with the name ``foo''.  You can then send any object this message.  In Objective-C anyway.
+Now \variable{callFoo} contains a message corresponding to a method with the name ``foo''.  You can then send any object this message regardless of whether it has a method called \method{foo} or not.  In Objective-C anyway.  This stems from Objective-C's heritage: it was inspired by Smalltalk.  This is {\it not} the same as Java's reflection API.  We can extract a method dynamically in Java, like this:
+
+\java{\footnotesize\tt%
+	try \{ Method callFoo = MyClass.class.getMethod("foo", null); \}  // we assume no arguments\\
+	catch (NoSuchMethodException nsme) \{ ... \}\\
+	catch (SecurityException se) \{ ... \} 
+}
+
+... but note that the method is tied to the class MyClass.  It can't be invoked on arbitrary objects.
 }
 SWARM's scheduler took advantage of this: when an agent was scheduled, SWARM would store not just the agent and the time to step the agent, but also the method to call when the agent was to be stepped.
 
 Repast's scheduler, following the SWARM tradition, does things the same way: when you schedule an agent, you specify the agent, the timestamp, and the method name to call (as a string).  In Objective-C this makes sense, but Repast is written in Java and this operation (1) breaks all sorts of Java contracts and (2) is quite slow.
 
-MASON's approach is more rudimentary and much more Java-like: each agent has a {\it single} dedicated method, called \method{step(...)}, which can be called.  But what if you want to schedule an agent to do different things at different times?  For example, what if your agent has a method \method{foo} and another \method{bar}, and \method{foo} must be called on even times, and \method{bar} on odd times?  You can't name both of them \method{step(...)}, of course,... right?
+MASON's approach is more rudimentary, faster, and much more Java-like: each agent has a {\it single} dedicated method, called \method{step(...)}, which can be called.  But what if you want to schedule an agent to do different things at different times?  For example, what if your agent has a method \method{foo} and another \method{bar}, and \method{foo} must be called on even times, and \method{bar} on odd times?  You can't name both of them \method{step(...)}, of course,... right?
 
 Actually you can.  Just create an anonymous wrapper Steppable and schedule it instead, like this:
 
@@ -4129,7 +4167,7 @@ schedule.scheduleOnce(stopper....);
 
 But usually you just let MASON do it:  AsynchronousSteppables register themselves with your SimState and are automatically stopped when \method{super.finish()} is called, and likewise paused or resumed when checkpoints are saved out or restarted from.  That's the primary reason for having pausing, resuming, and killing in the first place.
 
-Use of AsynchronousSteppable is quite rare.  Here most common scenarios in which you might need it, plus some template code to help you:
+Use of AsynchronousSteppable is quite rare.  Here are the most common scenarios in which you might need it, plus some template code to help you:
 
 \begin{itemize}
 \item The AsynchronousSteppable fires off a task of some sorts which will run for a little bit, on its own CPU, and then die on its own.  The time is so short that it's not a big deal if MASON for some reason must wait for it to complete.  For example, you might need to write something big out to a file in the background but wish to continue the simulation while it's writing.  The typical template for writing code like this would be:
@@ -4653,13 +4691,13 @@ The class \Class{sim.field.grid.DenseGrid2D}\footnote{Note that this class is st
 
 \begin{itemize}
 \item Place an Object in more than one Location.
-\item Place an Object at a given Location more than once (a rare need).
+\item Place an Object at the same Location more than once (a rare need).
 \item Place multiple Objects in the same Location.
 \end{itemize}
 
 DenseGrid2D isn't used all that much: more common is using the class \class{sim.field.grid.SparseGrid2D}, discussed next, which allows similar functionality.  In Section \ref{GridComparison} we compare ObjectGrid2D, DenseGrid2D, and SparseGrid2D to give you an idea of when you should pick each over the others.
 
-Because DenseGrid2D holds Objects in Bags, you can't just stick them in places manually (well you {\it can}, but it's not recommended). Instead there are a variety of methods and variables provided for you to do such things.  To begin with, let's cover the variables:
+Because DenseGrid2D holds Objects in Bags, you can't just stick the Objects in places manually by accessing the array (well you {\it can}, but it's not recommended). Instead there are a variety of methods and variables provided for you to do such things.  To begin with, let's cover the variables:
 
 {\footnotesize\begin{verbatim}
 public Bag[][] field;
@@ -4940,7 +4978,7 @@ Dense Grids are best when you have any of:
 \end{itemize}
 
 \paragraph{}
-Sparse Grids are good for situations where you have:
+Sparse Grids are good for situations where you have any of:
 
 \begin{itemize}
 \item A very large or unbounded grid.
@@ -5148,13 +5186,14 @@ Returns an Iterator over all {\bf discretized locations} at which Objects are st
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=4in]{DiscretizationExample.pdf}\end{center}
-\caption{Example of discretization of various continuous (real-valued) 2-dimensional coordinates into grid cells.  Discretization is ten units.  Notice that the \(\langle 0,0\rangle\) grid cell is to the upper right of the \(\langle 0,0\rangle\) real-valued origin.  {\bf Important Note:} in order to retain some semblance of sanity, this example retains the Cartesian coordinate system; but MASON will draw Continuous space onscreen in the same way as grids: with the Y-axis flipped and the origin in the top-left corner of the window (per Java coordinate space tradition).  It's probably best to keep this in mind. }
+\caption{Example of discretization of various continuous (real-valued) 2-dimensional coordinates into grid cells.  Discretization is ten units.  Notice that the $\langle 0,0\rangle$ grid cell is to the upper right of the $\langle 0,0\rangle$ real-valued origin.  {\bf Important Note:} in order to retain some semblance of sanity, this example retains the Cartesian coordinate system; but MASON will draw Continuous space onscreen in the same way as grids: with the Y-axis flipped and the origin in the top-left corner of the window (per Java coordinate space tradition).  It's probably best to keep this in mind. }
 \label{Discretization}
 \end{figure}
 
 Internally, Continuous2D and Continuous3D do not actually store Objects at their Double2D or Double3D locations.  Instead, they define a virtual grid of Int2D or Int3D locations and store Objects in this grid.  The Objects still are related with their Double2D and Double3D locations, so it's more or less transparent.
 
-Why do this?  Because it's MASON's approach to doing relatively fast neighborhood lookup.  Let's say that you typically need to look up agents within a distance of \(N\) away from a query point.  If MASON has discretized the environment into rectangular cells \(2 \times N\) across, then you'd only need to look up (for Continuous2D) four cells to find all possible neighbors in that distance.   If MASON has discretized the environment into cells \(N\) across, you'd need to look up nine cells.  Note that when you receive Objects from a neighborhood lookup, it'll also include Objects which were in the relevant cells but were actually further than \(N\) away.  Figure \ref{Discretization} shows the general idea of Objects stored at discretized locations and associated with real-valued locations.
+
+\sidebar{Why discretize?  Couldn't you use a data structure like a Quadtree?}{Quadtrees and their ilk are designed for static data.  MASON cannot make that assumption, and indeed it's nearly always wrong in simulation models: objects move around a lot.  So discretization it is.}Why do this?  Because it's MASON's approach to doing relatively fast neighborhood lookup.  Let's say that you typically need to look up agents within a distance of \(N\) away from a query point.  If MASON has discretized the environment into rectangular cells \(2 \times N\) across, then you'd only need to look up (for Continuous2D) four cells to find all possible neighbors in that distance.   If MASON has discretized the environment into cells \(N\) across, you'd need to look up nine cells.  Note that when you receive Objects from a neighborhood lookup, it'll also include Objects which were in the relevant cells but were actually further than \(N\) away.  Figure \ref{Discretization} shows the general idea of Objects stored at discretized locations and associated with real-valued locations.
 
 When you create a Continuous2D or Continuous3D object, you'll be required to set this discretization size.  The size you want is largely based on your typical neighborhood lookup requirements.  You'll want to pick a size which isn't so small that a great many cells are looked up (each lookup of a cell incurs a hash overhead), but not so large that high percentage of Objects in the cell or cells are in fact further than \(N\) and thus not of interest to you.  
 
@@ -5544,7 +5583,7 @@ Here are the methods in question:
 
 Okay, so we can schedule an event.  But this event runs in the model thread, not the Swing Event thread.   How do we guarantee the GUI is updated in a threadsafe way?  Before using any of these methods, {\bf be sure to read the next section carefully.}
 
-\subsection{Calling GUI Elements From Schedule/Mini-Schedule Thread (and Vice Versa)}
+\subsection{Calling GUI Elements From the Schedule/Mini-Schedule Thread (and Vice Versa)}
 \label{minischedule}
 
 This is an advanced topic, so if you want you can skip it for now.\\
@@ -6107,7 +6146,7 @@ Display3D's namespace, stored in \variable{sim.display3d.Display3D.DEFAULT\_PREF
 
 \section{Producing a Consistent Framerate}
 
-In certain rare cases you may wish to guarantee that your simulation runs no faster than a given frame rate.  Almost invariably this would be used if you're using MASON to develop a game: and occasionally you might need it to make certain movies. The Console has a facility for specifying the amount of sleep time between iterations, but if each iteration takes a variable amount of time, this can't be used to guarantee a certain speed.
+In certain rare cases you may wish to guarantee that your simulation runs no faster than a given frame rate.  Almost invariably this would be used if you're using MASON to develop a game. The Console has a facility for specifying the amount of sleep time between iterations, but if each iteration takes a variable amount of time, this can't be used to guarantee a certain speed.
 
 MASON has a simple class you can add to your simulation which will do the trick.  The class, \Class{sim.display.RateAdjuster}, attempts to  guarantee that your simulation will maintain a frame rate fixed to no more than a given number of iterations per second.  The class is a \class{sim.engine.Steppable}.  All that matters to you is the constructor:
 
@@ -6596,7 +6635,7 @@ DrawInfo2D describes where to draw objects and how large, and also the clip rect
 \subsection{DrawInfo2D}
 \label{sim.portrayal.DrawInfo2D}
 
-\begin{wrapfigure}{r}[0in]{2.7in}\vspace{-4em}\hfill\includegraphics[width=2.5in]{DrawInfo2D.pdf}\caption{The Clip and Draw Rectangles, and their relationship to an object being drawn.  Recall that in Java graphics, \(0,0\) is the top-left corner of the environment and Y increases as you go {\it down}.  The object is scaled to the width and height of the Draw rectangle and centered at its origin.  If the object doesn't overlap the Clip rectangle, it need not be drawn at all.}\vspace{-4em}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{2.7in}\vspace{-4em}\hfill\includegraphics[width=2.5in]{DrawInfo2D.pdf}\caption{The Clip and Draw Rectangles, and their relationship to an object being drawn.  Recall that in Java graphics, $0,0$ is the top-left corner of the environment and Y increases as you go {\it down}.  The object is scaled to the width and height of the Draw rectangle and centered at its origin.  If the object doesn't overlap the Clip rectangle, it need not be drawn at all.}\vspace{-4em}\end{wrapfigure}
 
 When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.DrawInfo2D} object which details the where and how to do the drawing.  This object contains several pieces of information:
 
@@ -6926,7 +6965,7 @@ It's also not quite clear where the boundary {\it is} in a continuous space, par
 \mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
 \end{methods}
 
-\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at \(\langle 0, 0\rangle\) in a grid and in continuous space. }\label{mixingcontinuousandgrids}\vspace{-4em}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at $\langle 0, 0\rangle$ in a grid and in continuous space. }\label{mixingcontinuousandgrids}\vspace{-4em}\end{wrapfigure}
 
 \paragraph{A Note on Mixing Continuous and Grid Space}
 
@@ -7161,7 +7200,7 @@ You'll notice in the code below the use of a ``slop'' variable.  What's going on
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0, 0, scale.x, scale.y), info.clip);
         newinfo.fieldPortrayal = this;
         
-        // hit or draw each object
+        // draw each object
         Bag objs = field.getAllObjects();
         int len = objs.size();
         for(int i = 0; i < len; i++)
@@ -7332,7 +7371,7 @@ So: delete the \method{draw(...)} method in the code and replace it with:
         DrawInfo2D newinfo = new DrawInfo2D(new Rectangle2D.Double(0, 0, scale.x, scale.y), info.clip);
         newinfo.fieldPortrayal = this;
         
-        // hit or draw each object
+        // }hit or {\color{gray}draw each object
         Bag objs = field.getAllObjects();
         int len = objs.size();
         for(int i = 0; i < len; i++)
@@ -7506,7 +7545,7 @@ Here are the implementations:
         \}
 \end{alltt}}
 
-You'll notice some similarity between this code and the drawing code.  Perhaps this is an opportunity for merging code, though in MASON's implementations they're broken out to guarantee inlining speed.
+You'll notice some similarity between this code and the drawing code.  Perhaps this is an opportunity for merging code, though in MASON's implementations they're broken out.
 
 
 \section{2D Simple Portrayals}
@@ -7746,7 +7785,7 @@ What if your object portrays itself?  No problem: just use \variable{null} as th
 MASON provides three default wrapper portrayals for adding more visual information to an existing SimplePortrayal: \class{sim.portrayal.simple.LabelledPortrayal2D} adds a textual label, \class{sim.portrayal.simple.CircledPortrayal2D} highlights an object by drawing a circle around it, and \class{sim.portrayal.simple.OrientedPortrayal2D} adds a compass orientation marker.  The figure at right shows all three in action at once, wrapping a simple, gray OvalPortrayal2D.  (The label wasn't particularly well chosen).
 
 \paragraph{Labelling}
-\Class{sim.portrayal.simple.LabelledPortrayal2D} Adds an optional label to a portrayed object.  The origin of the label is directly below the object by a small amount.   There are a lot of options.  First, you you may specify the {\bf paint} and {\bf font} of the label, the {\bf text alignment} (left, right, center) of the label, and whether or not it's only {\bf displayed when the object is selected}.  You an indicate whether the size of the font {\bf changes when you zoom in}.  
+\Class{sim.portrayal.simple.LabelledPortrayal2D} adds an optional label to a portrayed object.  The origin of the label is directly below the object by a small amount.   There are a lot of options.  First, you you may specify the {\bf paint} and {\bf font} of the label, the {\bf text alignment} (left, right, center) of the label, and whether or not it's only {\bf displayed when the object is selected}.  You an indicate whether the size of the font {\bf changes when you zoom in}.  
 
 And you can specify the location of the label in two ways.  First, you can state where the origin of the label is to be placed in model units.  For example, assuming the object is typically to be drawn within a \(1 \times 1\) rectangle in model units, you can specify that the label is to be drawn directly to the right of the object by placing the location at \(\langle 1.5, 0\rangle\).  As the user zooms in in the Display2D, the label changes its distance proportionally.  Second, you can add an additional {\bf offset}, in pixels, to the label location.  The default label location is ten pixels down from right at the expected lower edge of the object, horizontally dead center:
 
@@ -7978,7 +8017,7 @@ Of course, you could break your SimplePortrayal2Ds out by object or by class, so
 \mthd{public boolean maySetLocation(Object field, Object newObjectLocation)}  Given the field and the proposed new location of the object in the field, dictates how a MovablePortrayal2D interacts with this object.  If you don't want this object to be movable by a MovablePortrayal2D, simply return false.  If you are fine with being moved, return true.  If you would simply like to be informed of where you are being moved\,---\,for example, to update internal belief about your location\,---\,update this information using {\it newObjectLocation} and return true.  If you would like to modify the proposed location, move the object yourself to the modified location in the field, then return false.
 \end{methods}
 
-The \class{sim.portrayal.simple.AdjustablePortayal2D} wrapper portrayal gives the user an easy way to rotate and/or scale your object.  You're responsible for defining what ``rotation'' and ``scaling'' mean: for example, you could use these hooks for something else, like changing the age and temperature of your object.  But usually they're used for exactly what you'd expect.
+The \class{sim.portrayal.simple.AdjustablePortrayal2D} wrapper portrayal gives the user an easy way to rotate and/or scale your object.  You're responsible for defining what ``rotation'' and ``scaling'' mean: for example, you could use these hooks for something else, like changing the age and temperature of your object.  But usually they're used for exactly what you'd expect.
 
 Like MovablePortrayal2D, AdjustablePortrayal2D has a single straightforward constructor:
 
@@ -8064,7 +8103,7 @@ A trail is made up of {\bf segments}, each segment representing a movement of th
         public double value;		// this is in sim.portrayal.simple.TrailedPortrayal2D.TrailDrawInfo2D
 }
 
-TrailDrawInfo2D is a subclass of \class{sim.portrayal.network.EdgePortrayal2D}, meaning that you have access not to just one point but two points: these represent the start and end of your segment.  So if you want to draw a line, you can get the points to draw just as you access the two points from EdgeDrawInfo2D.  Alternatively you could just draw a single object (creating a sort of ``dotted'' trail), in which case you'd just draw at the draw origin like any SimplePortayal2D.  Try using \class{sim.portrayal.simple.OvalPortrayal2D} as your trail portrayal some time.
+TrailDrawInfo2D is a subclass of \class{sim.portrayal.network.EdgeDrawInfo2D}, meaning that you have access not to just one point but two points: these represent the start and end of your segment.  So if you want to draw a line, you can get the points to draw just as you access the two points from EdgeDrawInfo2D.  Alternatively you could just draw a single object (creating a sort of ``dotted'' trail), in which case you'd just draw at the draw origin like any SimplePortayal2D.  Try using \class{sim.portrayal.simple.OvalPortrayal2D} as your trail portrayal some time.
 
 Armed with this knowledge, you should now be able to understand the TrailedPortrayal2D constructors:
 
@@ -8652,7 +8691,7 @@ sim.portrayal.inspector.ScatterPlotChartingPropertyInspector
 
 When a MASON simulation is fired up, these classes are loaded from the file and queried about what {\bf types} of properties they are capable of examining.  Not all Property Inspectors can inspect all properties.  For example, a Property Inspector designed to chart numerical values wouldn't make sense being registered for properties which return Strings.  The Inspectors are also queried regarding their {\bf name}, a String which will appear in the pop-up menu by which a Property Inspector is chosen.  These aren't really names per se, but rather menu options.  For example the name for \class{sim.portrayal.inspector.HistogramChartingPropertyInspector} is ``Make Histogram''.
 
-These are defined in the static methods:
+These are defined in the static methods (which you should override in your subclass):
 
 \begin{methods}{\class{sim.portrayal.inspector.PropertyInspector}}
 \mthd{public static String name()} Returns the PropertyInspector's preferred name.
@@ -10432,7 +10471,7 @@ LabelledList has only two simple constructors.  One adds an optional bordered ar
 \mthd{public LabelledList()}  Creates a LabelledList with no labelled border.
 \end{methods}
 
-\sidebar{Why is LabelledList spelled British-style (``labelled') rather than American-Style (``labeled'')?}{I have absolutely no idea.} A LabelledList defines five columns.  The center column is stretched to fill all available space not taken up by the other columns.  The leftmost column are sized and justified like this:
+\sidebar{Why is LabelledList spelled British-style (``labelled') rather than American-Style (``labeled'')?}{I have absolutely no idea.} A LabelledList defines five columns.  The columns are stretched and text-justified like this (note that Column 3 takes up all available extra space):
 
 {\footnotesize\begin{center}\begin{tabular}{|l|r|c|l|r|}
 \hline
