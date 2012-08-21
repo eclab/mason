@@ -67,12 +67,14 @@ public class MovablePortrayal2D extends SimplePortrayal2D
         synchronized(guistate.state.schedule)
             {
             int id = event.getID();
-            if (id == MouseEvent.MOUSE_PRESSED)
-                {
-                originalMousePosition = event.getPoint();       
-                originalObjectPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
+            Point2D.Double objPos = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
 
-                // we need to determine if we were actually hit, rather than simply being selected
+            if (id == MouseEvent.MOUSE_PRESSED && objPos != null)
+                {
+                originalMousePosition = event.getPoint();     
+                originalObjectPosition = objPos;  
+
+                // we need to determine if we were actually hit
                 DrawInfo2D hitRange = new DrawInfo2D(range);
                 Double2D scale = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getScale(range);
 
@@ -89,10 +91,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
                                                         
                 if (hitObject(wrapper.getObject(), hitRange))
                     {
-                    if (originalObjectPosition != null)
-                        {
-                        manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
-                        }
+                    manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
                     return true;  // will cause a refresh
                     }
                 else { originalMousePosition = originalObjectPosition = null; }  // clean up
