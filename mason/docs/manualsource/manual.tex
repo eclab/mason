@@ -3963,7 +3963,7 @@ If you would like to subclass Sequence for some reason (very rare), here's what 
 
 \java{%
 protected Steppable[] steps;\\
-protected int size;
+protected int size; 
 }
 
 The Steppables you'll be stepping are found in \variable{steps[0]} through \variable{steps[size-1]} inclusive.   If you may not always step the Steppables in that order (perhaps you're randomizing the array order, or stepping in parallel threads), you should override the method \method{canEnsureOrder()} to return \variable{false}.  Do not add or delete from this array, though you can change the order of its elements during \method{step(...)}.
