@@ -46,14 +46,8 @@ Sequence.java
 
 A Steppable which holds an array of Steppables.  When the Sequence is
 stepped, it iterates through this array and stepps each of the subsidiary
-Steppables in turn.
-
-
-BagSequence.java
-
-A Sequence which holds a Bag (extensible array) rather than fixed-array
-of Steppables.  This allows the number of elements in the BagSequence
-to change over time.
+Steppables in turn.  You can add to, remove from, replace, and extend
+this array if necessary.
 
 
 RandomSequence.java
