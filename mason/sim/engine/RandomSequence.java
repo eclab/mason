@@ -59,6 +59,8 @@ public class RandomSequence extends Sequence
             { return state.random.nextInt(n); }
         }
     
+    protected boolean canEnsureOrder() { return false; }
+    
     public void step(SimState state)
         {
         final boolean shouldSynchronize = this.shouldSynchronize;

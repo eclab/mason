@@ -45,10 +45,11 @@ import sim.util.*;
  *
  * <p>This approach is dramatically faster than the default approach when a large number of Steppables
  * are in the Sequence and at least a moderate number (5 or greater typically) is removed at a time.
- * It has two disadvantages however.   First, it is slower when the number of Steppables is very
+ * It has three disadvantages however.   First, it is slower when the number of Steppables is very
  * small, or when the number of Steppables removed is small (less than 5 perhaps).  Second, because
  * a Set is used, the Steppables in the Sequence must be unique: you cannot insert the same Steppable
- * multiple times in the array.  To turn on this option, call setUsesSets(true).
+ * multiple times in the array.  To turn on this option, call setUsesSets(true).  Third, using sets
+ * does not ensure order regardless of what is set in setEnsuresOrder(...).
  *
  * @author Mark Coletti
  * @author Sean Luke
@@ -81,7 +82,7 @@ public class Sequence implements Steppable
     
     // True if the order is maintained when removing Stepables
     boolean ensuresOrder = false;
-
+    
     public Sequence(Steppable[] steps)
         {
         this.steps = (Steppable[])(steps.clone());
@@ -95,13 +96,21 @@ public class Sequence implements Steppable
         }
 
     /** Returns whether the order among the remaining Steppables in the internal array is maintained after removing
-        Steppables via removeSteppable() or removeSteppables() */
+        Steppables via removeSteppable() or removeSteppables().  Note that this value may be entirely ignored
+        by subclasses for which maintaining order doesn't make sense (such as parallel or random sequences).  Also
+        if you use sets (via setUsesSets(true)), then order is never ensured regardless. */
     public boolean getEnsuresOrder() { return ensuresOrder; }
 
     /** Sets whether the order among the remaining Steppables in the internal array is maintained after removing
-        Steppables via removeSteppable() or removeSteppables() */
+        Steppables via removeSteppable() or removeSteppables().  Note that this value may be entirely ignored
+        by subclasses for which maintaining order doesn't make sense (such as parallel or random sequences).  Also
+        if you use sets (via setUsesSets(true)), then order is never ensured regardless. */
     public void setEnsuresOrder(boolean val) { ensuresOrder = val; }
     
+    /** If your subclass does not respect order, override this method to return
+        false, and Sequence will ignore the ensuresOrder result. */
+    protected boolean canEnsureOrder() { return true; }
+
     /** Returns whether the Sequence uses a Set internally to manage the internal array.  
         This is faster, often much faster, for large numbers of removals (perhaps
         more than 5 or so), but requires that each Steppable in the internal array be unique.  */
@@ -203,7 +212,7 @@ public class Sequence implements Steppable
         int toBeRemovedSize = toBeRemoved.size();
         if (toBeRemovedSize > 0)
             {
-            boolean ensuresOrder = this.ensuresOrder;
+            boolean ensuresOrder = this.ensuresOrder && canEnsureOrder(); 
             Steppable[] steps = this.steps;
             Bag toBeRemoved = this.toBeRemoved;
             int stepsSize = this.size;

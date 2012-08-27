@@ -148,6 +148,7 @@ public class ParallelSequence extends Sequence
         this(steps, COLLECTION_SIZE);
         }
 
+    protected boolean canEnsureOrder() { return false; }
 
     // steps once (in parallel) through the steppable things
     public void step(final SimState state)
