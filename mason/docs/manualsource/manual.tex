@@ -3970,7 +3970,7 @@ The Steppables you'll be stepping are found in \variable{steps[0]} through \vari
 
 \begin{methods}{\class{sim.engine.Sequence}}
 \mthd{protected void loadSteps()} Subclasses should call this this as the first item in their \method{step(...)} methods.  It reconstructs the \variable{steps} array and prepares it to be stepped as appropriate.
-\mthd{public boolean canEnsureOrder()} If you cannot ensure that the order of the \variable{step} array will be maintained after calling the \method{step(...)} method, override this method to return \variable{false}.
+\mthd{protected boolean canEnsureOrder()} If you cannot ensure that the order of the \variable{step} array will be maintained after calling the \method{step(...)} method, override this method to return \variable{false}.
 \end{methods}
 
 
