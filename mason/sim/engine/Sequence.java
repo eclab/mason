@@ -59,14 +59,27 @@ public class Sequence implements Steppable
     {
     private static final long serialVersionUID = 1L;
 
+    /** The internal Steppables to be stepped.  Only steps[0...size-1] are valid.
+        This array will be populated after loadSteps() is called. */
     protected Steppable[] steps;
+    
+    /** The number of actual Steppables in the steps array. */
     protected int size;
 
+    // Loaded it up and used temporarily to remove and add elements from the steps[] array
+    // If you're using steps.
     LinkedHashSet stepsHash = null;
-    
+
+    // Collection of Steppables to remove from steps array
     Bag toBeRemoved = new Bag();
+
+    // Collection of Steppables to add to steps array
     Bag toBeAdded = new Bag();
+
+    // Collection of Steppables to replace the steps array with
     Steppable[] toReplace = null;
+    
+    // True if the order is maintained when removing Stepables
     boolean ensuresOrder = false;
 
     public Sequence(Steppable[] steps)
@@ -81,10 +94,22 @@ public class Sequence implements Steppable
         steps = (Steppable[])(collection.toArray(steps));
         }
 
+    /** Returns whether the order among the remaining Steppables in the internal array is maintained after removing
+        Steppables via removeSteppable() or removeSteppables() */
     public boolean getEnsuresOrder() { return ensuresOrder; }
+
+    /** Sets whether the order among the remaining Steppables in the internal array is maintained after removing
+        Steppables via removeSteppable() or removeSteppables() */
     public void setEnsuresOrder(boolean val) { ensuresOrder = val; }
     
+    /** Returns whether the Sequence uses a Set internally to manage the internal array.  
+        This is faster, often much faster, for large numbers of removals (perhaps
+        more than 5 or so), but requires that each Steppable in the internal array be unique.  */
     public boolean getUsesSets() { return stepsHash != null; }
+
+    /** Sets whether the Sequence uses a Set internally to manage the internal array.  
+        This is faster, often much faster, for large numbers of removals (perhaps
+        more than 5 or so), but requires that each Steppable in the internal array be unique.  */
     public void setUsesSets(boolean val) 
         { 
         if (val && stepsHash == null) 
@@ -100,6 +125,7 @@ public class Sequence implements Steppable
             }
         }
 
+    // Internal version of loadSteps() which uses sets instead of scanning through the array directly
     void loadStepsSet()
         {
         boolean stepsHashChanged = false;
@@ -153,6 +179,10 @@ public class Sequence implements Steppable
         }
         
 
+    /** Subclasses should call this method as more or less the first thing in their step(...) method.
+        This method replaces, removes, and adds new Steppables to the internal array as directed by the
+        user.  After calling this method, the Sequence is ready to have the Steppables in its internal
+        array stepped. */
     protected void loadSteps()
         {
         if (stepsHash != null)
@@ -249,6 +279,7 @@ public class Sequence implements Steppable
         }
 
 
+    /** Requests that the provided Steppables replace the existing Steppables in the internal array prior to the next step() call. */
     public void replaceSteppables(Collection collection)
         {
         if (toReplace == null)
@@ -256,31 +287,43 @@ public class Sequence implements Steppable
         toReplace = (Steppable[])(collection.toArray(toReplace));
         }
 
+    /** Requests that the provided Steppables replace the existing Steppables in the internal array prior to the next step() call. */
     public void replaceSteppables(Steppable[] steppables)
         {
         toReplace = (Steppable[])(steppables.clone());
         }
 
+    /** Requests that the provided Steppable be added to the Sequence prior to the next step() call. */
     public void addSteppable(Steppable steppable)
         {
         toBeAdded.add(steppable);
         }
 
+    /** Requests that the provided Steppables be added to the Sequence prior to the next step() call. */
     public void addSteppables(Steppable[] steppables)
         {
         toBeAdded.addAll(steppables);
         }
 
-    public void removeSteppables(Steppable[] steppables)
-        {
-        toBeRemoved.addAll(steppables);
-        }
-
+    /** Requests that the provided Steppables be added to the Sequence prior to the next step() call. */
     public void addSteppables(Collection steppables)
         {
         toBeAdded.addAll(steppables);
         }
 
+    /** Requests that the provided Steppable be removed from the Sequence prior to the next step() call. */
+    public void removeSteppable(Steppable steppable)
+        {
+        toBeRemoved.add(steppable);
+        }
+
+    /** Requests that the provided Steppables be removed from the Sequence prior to the next step() call. */
+    public void removeSteppables(Steppable[] steppables)
+        {
+        toBeRemoved.addAll(steppables);
+        }
+
+    /** Requests that the provided Steppables be removed from the Sequence prior to the next step() call. */
     public void removeSteppables(Collection steppables)
         {
         toBeRemoved.addAll(steppables);
