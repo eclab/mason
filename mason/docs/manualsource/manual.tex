@@ -3937,7 +3937,7 @@ This class holds an array of agents, and when it is stepped, it calls \method{st
 
 To remove agents, Sequence will modify the order of the sequence by default.  If you want to guarantee that the Sequence order remains unmodified, you can call \method{setEnsuresOrder(true)}.
 
-Removing agents can be costly: it's an \(O(n)\) search through the array to find an agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  This option is turned on with \method{setUsesSets(true)}.
+Removing agents can be costly: it's an \(O(n)\) search through the array to find an agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  Another consequence is that order is not preserved regardless of the setting of \method{setEnsuresOrder(...)}.  This option is turned on with \method{setUsesSets(true)}.
 
 \begin{methods}{\class{sim.engine.Sequence} Constructor}
 \mthd{public Sequence(Steppable[] agents)} Builds a Sequence for the given array of agents.  The agents will be copied to an internal array.
@@ -3957,6 +3957,20 @@ Removing agents can be costly: it's an \(O(n)\) search through the array to find
 \mthd{public void setEnsuresOrder(boolean val)} Returns whether removing agent from the Sequence retains the order of the remaining agents in the Sequence.  By default this is \variable{false}.  Note that subclasses are free to ignore this setting (and in fact do).
 \mthd{public boolean getUsesSets()} Returns whether the Sequence uses a Set internally for faster removals (if you remove more than 4 or so at a given time).  Note that Sequences using Sets may not have agents appearing multiple times in the internal array.
 \mthd{public setUsesSets(boolean val)} Returns whether the Sequence uses a Set internally for faster removals (if you remove more than 4 or so at a given time).  Note that Sequences using Sets may not have agents appearing multiple times in the internal array. If the Sequence is using Sets and there are duplicates in the internal array, then an exception will be triggered.
+\end{methods}
+
+If you would like to subclass Sequence for some reason (very rare), here's what you need to know.  At the beginning of your \method{step(...)} call, you should first call \method{loadSteps()}. This method will rebuild (if necessary) the internal Steppable array and get it ready for you to to step.  The Steppables in question are stored like this:
+
+\java{%
+protected Steppable[] steps;\\
+protected int size;
+}
+
+The Steppables you'll be stepping are found in \variable{steps[0]} through \variable{steps[size-1]} inclusive.   If you may not always step the Steppables in that order (perhaps you're randomizing the array order, or stepping in parallel threads), you should override the method \method{canEnsureOrder()} to return \variable{false}.  Do not add or delete from this array, though you can change the order of its elements during \method{step(...)}.
+
+\begin{methods}{\class{sim.engine.Sequence}}
+\mthd{protected void loadSteps()} Subclasses should call this this as the first item in their \method{step(...)} methods.  It reconstructs the \variable{steps} array and prepares it to be stepped as appropriate.
+\mthd{public boolean canEnsureOrder()} If you cannot ensure that the order of the \variable{step} array will be maintained after calling the \method{step(...)} method, override this method to return \variable{false}.
 \end{methods}
 
 
@@ -3986,17 +4000,17 @@ Be sure to read and understand \class{sim.engine.Sequence}.
 
 \begin{methods}{\class{sim.engine.ParallelSequence} Constructor}
 \mthd{public ParallelSequence(Steppable[] agents)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called ParallelSequence will step each of these agents in parallel in separate threads, then wait for them to complete before returning.
-\mthd{public ParallelSequence(Steppable[] agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.
+\mthd{public ParallelSequence(Steppable[] agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.  If you instead pass in \variable{ParallelSequence.STEPPABLES}, then ParallelSequence will spawn one thread for each Steppable in the internal array.
 \end{methods}
 
-Allocating and starting threads is very expensive.  To be efficient, ParallelSequence allocates the threads when constructed, then holds them ready in reserve in a semaphore until the \method{step(...)} method is called.  It then sets them going, and when they are done, they once again are held waiting in the semaphore.  The threads are set to be daemon threads so they die if MASON exits.  This is far faster than creating and destroying them every time.  
+Allocating and starting threads is very expensive.  To be efficient, ParallelSequence allocates the threads when constructed, then holds them ready in reserve in a pool until the \method{step(...)} method is called.  It then sets them going, and when they are done, they once again are held waiting in the pool.  The threads are set to be daemon threads so they die if MASON exits.  This is far faster than creating and destroying them every time.  
 
-There's a downside however: if the Schedule gets rid of the ParallelSequence, and it is garbage collected, the threads will still be hanging around in memory, producing a serious memory leak and consuming precious resources.  \method{ParallelSequence.finalize()} is set to destroy the threads, but there's no guarantee that method will be called.  What to do?
+There's a downside however: if the Schedule gets rid of the ParallelSequence, and it is garbage collected, the threads will still be hanging around in memory, producing a serious memory leak and consuming precious resources.  \method{ParallelSequence.finalize()} is set to destroy the threads, but there's no guarantee that this method will be called.  What to do?
 
 You have three options:
 
 \begin{itemize}
-\item Set the ParallelSequence to destroy its threads each and every time its \method{step(...)} method finishes.  This is expensive but requires no further thought.
+\item Set the ParallelSequence to destroy its threads each and every time its \method{step(...)} method finishes.  This is very expensive but requires no further thought.
 \item In your SimState's \method{finish()} method, manually call \method{cleanup()} on each of your ParallelSequences to destroy their threads after the simulation has concluded.
 \item Sometime mid-simulation, after a ParallelSequence has outlived its usefulness, schedule a special Steppable which, when its \method{step(...)} method is called, will call \method{cleanup()} on the ParallelSequence.  You can your own Steppable or use a convenience method provided by ParallelSequence below.
 \end{itemize}
@@ -4006,7 +4020,7 @@ The ParallelSequence makes any of these options easy with the following methods:
 \begin{methods}{\class{sim.engine.ParallelSequence}}
 \mthd{public boolean getDestroysThreads()} Returns true if the ParallelSequence is set to destroy its threads each and every time its \method{step(...)} method completes.
 \mthd{public void setDestroysThreads(boolean val)} Sets the ParallelSequence to destroy its threads (or not) each and every time its \method{step(...)} method completes.
-\mthd{public void cleanup()} Destroys all the threads presently held in reserve.  Note that if the ParallelSequence again has its \method{step(...)} method called, the threads will be recreated (necessitating further calls to \method{cleanup()}.
+\mthd{public void cleanup()} Destroys all the threads presently held in reserve.  Note that if the ParallelSequence again has its \method{step(...)} method called, the threads will be recreated (necessitating a later call to \method{cleanup()}.
 \mthd{public Steppable getCleaner()} Returns a Steppable which, when stepped, will call \method{cleanup()} on the ParallelSequence.  This can be scheduled at some point in the future to clean up threads after the ParallelSequence has been terminated. 
 \end{methods}
 
@@ -4126,7 +4140,7 @@ Note that \method{foo()} and \method{bar()}, in this example, must take no argum
 	schedule.scheduleRepeating(1.0, odd, 2.0);
 }
 
-I recommend you use the anonymous Steppable instead of MethodStep.  It's likely faster and more Java-like.  But MethodStep is available for you if you prefer.
+I recommend you use an anonymous Steppable instead of MethodStep.  It's likely faster and more Java-like.  But MethodStep is available for you if you prefer.
 
 \begin{methods}{\class{sim.engine.MethodStep} Constructor}
 \mthd{public MethodStep(Object target, String methodName)} Constructs the MethodStep such that when \method{step(...)} is called, the method with the name {\it methodName} is called on the {\it target}, passing in zero arguments.
@@ -4170,7 +4184,7 @@ But usually you just let MASON do it:  AsynchronousSteppables register themselve
 Use of AsynchronousSteppable is quite rare.  Here are the most common scenarios in which you might need it, plus some template code to help you:
 
 \begin{itemize}
-\item The AsynchronousSteppable fires off a task of some sorts which will run for a little bit, on its own CPU, and then die on its own.  The time is so short that it's not a big deal if MASON for some reason must wait for it to complete.  For example, you might need to write something big out to a file in the background but wish to continue the simulation while it's writing.  The typical template for writing code like this would be:
+\item The AsynchronousSteppable fires off a task of some sorts which will run for a little bit, on its own CPU, and then die on its own.  The time is so short that it's not a big deal if MASON must wait for it to complete prior to stopping or pausing the simulation.  For example, you might need to write something moderately big out to a file in the background but wish to continue the simulation while it's writing.  The typical template for writing code like this would be:
 
 {\footnotesize \begin{alltt}
 AsynchronousSteppable s = new AsynchronousSteppable()
@@ -4308,7 +4322,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
 \end{itemize}
 
 
-\subsubsection{Under the Hood}
+\paragraph{Under the Hood}
 
 AsynchronousSteppable adds itself to a {\bf registry} maintained by the SimState.  When the SimState is saved to checkpoint, all registered AsynchronousSteppables are paused, then resumed after saving is complete.  When restoring from a checkpoint, AsynchronousSteppables are again resumed.  Finally, when the simulation is over, in the \method{finish()} method all AsynchronousSteppables are killed off and the registry is cleaned out.
 
@@ -6130,7 +6144,7 @@ Once you've picked out a Namespace, Prefs will make it easy for you to get the \
 \mthd{public static boolean removeAppPreferences(GUIState simulation, String namespace)} Deletes the \class{java.util.prefs.Preferences} object corresponding to the name space {\it namespace} within the application preferences of the given simulation.  Returns false if an exception occurred when deleting the object: for example, when your file system does not support preferences.  This is most often the case if you're running as an applet.  Else returns true.
 \end{methods}
 
-\paragraph{MASON'S Widgets} MASON's Console and MASON's \class{sim.display.Display2D} and \class{sim.display3d.Display3D} classes use the Prefs object to save preferences.  These widgets use MASON-level and simualtion-level preferences in the following way:
+\paragraph{MASON'S Widgets} MASON's Console and MASON's \class{sim.display.Display2D} and \class{sim.display3d.Display3D} classes use the Prefs object to save preferences.  These widgets use MASON-level and simulation-level preferences in the following way:
 
 	\begin{enumerate}
 	\item If a user has specified a simulation-level preference for a given value, that preference is used. 
@@ -6635,7 +6649,7 @@ DrawInfo2D describes where to draw objects and how large, and also the clip rect
 \subsection{DrawInfo2D}
 \label{sim.portrayal.DrawInfo2D}
 
-\begin{wrapfigure}{r}[0in]{2.7in}\vspace{-4em}\hfill\includegraphics[width=2.5in]{DrawInfo2D.pdf}\caption{The Clip and Draw Rectangles, and their relationship to an object being drawn.  Recall that in Java graphics, $0,0$ is the top-left corner of the environment and Y increases as you go {\it down}.  The object is scaled to the width and height of the Draw rectangle and centered at its origin.  If the object doesn't overlap the Clip rectangle, it need not be drawn at all.}\vspace{-4em}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{2.7in}\vspace{-5em}\hfill\includegraphics[width=2.5in]{DrawInfo2D.pdf}\caption{The Clip and Draw Rectangles, and their relationship to an object being drawn.  Recall that in Java graphics, $0,0$ is the top-left corner of the environment and Y increases as you go {\it down}.  The object is scaled to the width and height of the Draw rectangle and centered at its origin.  If the object doesn't overlap the Clip rectangle, it need not be drawn at all.}\vspace{-3em}\end{wrapfigure}
 
 When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.DrawInfo2D} object which details the where and how to do the drawing.  This object contains several pieces of information:
 
@@ -6867,7 +6881,7 @@ In some operating systems (notably MacOS X), the second approach is {\it much} f
 \mthd{public int getBuffering() } Returns the current drawing approach, one of the three above.
 \end{methods}
 
-\subsection{Standard Field Portrayals}
+\subsection{Standard 2D Field Portrayals}
 
 MASON provides at one standard Field Portrayal for each of its fields: and special standard Field Portrayals for hexagonal representations of grid fields.  They are:
 
