@@ -64,7 +64,7 @@ public class ParallelSequence extends Sequence
     
     /** Indicates that MASON should determine how many threads to use based on the number of CPUs. */ 
     public static final int CPUS = -1;
-    public static final int COLLECTION_SIZE = -2;
+    public static final int STEPPABLES = -2;
     static int availableProcessors = Runtime.getRuntime().availableProcessors();
         
     public boolean getDestroysThreads() { return destroysThreads; }
@@ -119,7 +119,7 @@ public class ParallelSequence extends Sequence
         }
 
     /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
-        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.COLLECTION_SIZE, then the number of threads
+        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.STEPPABLES, then the number of threads
         is the size of the steps array passed in. */
     public ParallelSequence(Steppable[] steps, int threads)
         {
@@ -130,11 +130,11 @@ public class ParallelSequence extends Sequence
     /** Creates an immutable ParallelSequence with one thread per steppable. */
     public ParallelSequence(Steppable[] steps)
         {
-        this(steps, COLLECTION_SIZE);
+        this(steps, STEPPABLES);
         }
 
     /** Creates an immutable ParallelSequence with the specified number of threads, or if threads==ParallelSequence.CPUS, then the number of threads is determined
-        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.COLLECTION_SIZE, then the number of threads
+        at runtime based on the number of CPUs or cores on the system, or if threads == ParallelSequence.STEPPABLES, then the number of threads
         is the size of the collection passed in (and may change as the collection grows or shrinks). */
     public ParallelSequence(Collection steps, int threads)
         {
@@ -145,7 +145,7 @@ public class ParallelSequence extends Sequence
     /** Creates an immutable  ParallelSequence with one thread per steppable in the collection. */
     public ParallelSequence(Collection steps)
         {
-        this(steps, COLLECTION_SIZE);
+        this(steps, STEPPABLES);
         }
 
     protected boolean canEnsureOrder() { return false; }
@@ -173,7 +173,7 @@ public class ParallelSequence extends Sequence
         int n = numThreads;
         if (n == CPUS)
             n = availableProcessors;
-        else if (n == COLLECTION_SIZE)
+        else if (n == STEPPABLES)
             n = size;
         if (n > size)
             n = size;
