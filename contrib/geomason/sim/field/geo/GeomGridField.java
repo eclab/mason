@@ -217,7 +217,7 @@ public class GeomGridField extends GeomField
     public int toYCoord(final Point p)
     {
         // Note that we have to flip the y coordinate because the origin in
-        // Java is in the upper left corner.
+        // MASON is in the upper left corner.
         return (int) Math.floor((getMBR().getMaxY() - p.getY()) / getPixelHeight());
     }
 
@@ -229,8 +229,7 @@ public class GeomGridField extends GeomField
     public int toYCoord(final double y)
     {
         // Note that we have to flip the y coordinate because the origin in
-        // Java is in the upper left corner.
-//        return (int) Math.floor((y - getMBR().getMinY()) / getPixelHeight());
+        // MASON is in the upper left corner.
         return (int) Math.floor((getMBR().getMaxY() - y) / getPixelHeight());
     }
 
@@ -251,14 +250,18 @@ public class GeomGridField extends GeomField
             throw new IndexOutOfBoundsException();
         }
 
+        // Invert the y axis to map from MASON coordinate system, which has
+        // the origin in the upper left, to real world coordinate systems that
+        // have the origin in the lower left.
+        int inverted_y = getGridHeight() - y - 1;
+
         Coordinate coordinate = new Coordinate();
 
         double x_orig = getMBR().getMinX();
-        double y_orig = getMBR().getMinY(); // XXX getMaxY() instead?
+        double y_orig = getMBR().getMinY();
 
         coordinate.x = x_orig + (x * getPixelWidth() + 0.5 * getPixelWidth());
-        // XXX should invert y?
-        coordinate.y = y_orig + (y * getPixelHeight() + 0.5 * getPixelHeight());
+        coordinate.y = y_orig + (inverted_y * getPixelHeight() + 0.5 * getPixelHeight());
         coordinate.z = 0.0;
 
         Point point = geometryFactory.createPoint(coordinate);
