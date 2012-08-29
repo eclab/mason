@@ -22,6 +22,8 @@ import java.util.*;
    <li><b>Type</b> (Readable).  The type of the object as a Class.  ints return Integer.TYPE, etc.
    <li><b>Composite Nature</b> (Readable).  Whether or not the Property is composite or atomic.  Atomic types are int, float, etc., plus String.
    <li><b>Domain</b> (Readable).  Whether or not the object has defined a Domain (a set or range of legal values) for the Property.  Domains allow a GUI to set up sliders, pull-down menus and combo-boxes, etc.
+   <li><b>Description</b> (Readable).  A string describing an extended description of the property.  Returns null (the default) if there is no extended description. 
+   <li><b>Hiddenness</b> (Readable).  A boolean indicating whether the property should be shown to the user. 
    </ul>
 */
 
