@@ -3211,13 +3211,22 @@ If you name methods with the proper rules, MASON will automatically recognize th
 \paragraph{Special Cases}
 Certain classes have been given special dispensation to permit other methods to act as read-only properties because they lack useful \method{get...()} methods.  Namely: CharSequence subclasses (String, StringBuffer, StringBuilder, etc.) have \method{toString()} as a property, integer Numbers have \method{longValue()}, non-integer Numbers have \method{doubleValue()}, and Booleans have \method{booleanValue()}.  In all cases the property is named ``Value''.
 
-\paragraph{Descriptions of Properties}
-One common function (in MASON anyway) of the Properties package is to display and manipulate properties via widgets in Inspectors.  To this end, you can add a {\it description} of your property which will appear as a Java Tooltip over the widgets in questions.  This description is a String which can hold either text or HTML (and will be rendered as such).   If you have a property called \method{Foo}, then the function looks like \method{domFoo()}.  For example:
+\paragraph{Names and Descriptions of Properties}
+One common function (in MASON anyway) of the Properties package is to display and manipulate properties via widgets in Inspectors.  To this end, you can add a {\it description} of your property which will appear as a Java Tooltip over the widgets in questions.  This description is a String which can hold either text or HTML (and will be rendered as such).   If you have a property called \method{Age} (say), then the function looks like \method{domFoo()}.  For example:
 
 \java{%
 public int getAge() \{ return myAge; \}\\
 public String desAge() \{ return "The age of the hippopotamus in the simulation."; \}
 }
+
+By default the name of the property is the method name (minus the ``get'', ``set'', or ``is'' part).  Perhaps you would like a different or nicer property name.  If so, you can specify a {\it name} for the property which will be used instead in widgets.  For the property \method{Age}, you can revise the name like this:
+
+\java{%
+public String nameAge() \{ return "Age in Years"; \}
+}
+
+Try to keep the name short\---\,it takes up a horizontal space in tables.
+
 
 \paragraph{Hiding Properties}
 In some cases you may wish to hide a property \method{Foo} so MASON GUI widgets don't display it to the user.  This is easy to do with MASON's special \method{hideFoo()} extension.  If this method returns \variable{true}, then MASON will ignore that property.  For example:
