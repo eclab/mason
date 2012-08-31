@@ -103,8 +103,7 @@ public class Raindrop implements Steppable
         }
 
         // select randomly from the eligible neighbors
-        Random rand = new Random();
-        Basin newbasin = mins.get(rand.nextInt(mins.size()));
+        Basin newbasin = mins.get(state.random.nextInt(mins.size()));
 
         // move to this new spot
         basin.removeDrop(this);
