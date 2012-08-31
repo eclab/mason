@@ -55,7 +55,7 @@ public class GeomVectorField extends GeomField
 
     public GeomVectorField()
     {
-        this(0,0);
+        this(0, 0);
     }
 
 

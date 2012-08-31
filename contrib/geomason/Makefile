@@ -19,7 +19,7 @@ JAVAC = javac
 JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
-VERSION = 1.4
+VERSION = 1.4.1
 
 JARFILE = geomason.${VERSION}.jar
 
