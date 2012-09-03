@@ -2454,8 +2454,7 @@ Version 17
 		different from DoubleGrid2D and IntGrid2D.
 	Added "name" property option to properties.
 	Fixed bug in SimpleProperties where property indexes were allowed to
-		equal numProperties (rather than numProperties -1).  Fixed
-		a similar bug in SimpleInspector which had triggered this.
+		equal numProperties (rather than numProperties -1).  
 	Fixed documentation errors in the Manual describing the WCSS Tutorial.  Thanks to
 		Stephen Davies <stephen@umw.edu>
 	Updated JFreeChart to refer to http://jfree.org/jfreechart/.  Thanks to Stephen
