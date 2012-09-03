@@ -172,6 +172,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     setMethods.add(null);
                     domMethods.add(null);
                     hideMethods.add(null);
+                    desMethods.add(null);
+                    nameMethods.add(null);
                     }
                                                                                                                 
                 // handle other kinds of numbers
@@ -182,6 +184,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     setMethods.add(null);
                     domMethods.add(null);
                     hideMethods.add(null);
+                    desMethods.add(null);
+                    nameMethods.add(null);
                     }
                                                                                                                 
                 // handle Booleans
@@ -192,6 +196,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     setMethods.add(null);
                     domMethods.add(null);
                     hideMethods.add(null);
+                    desMethods.add(null);
+                    nameMethods.add(null);
                     }
                                                                                                                 
                 // handle Strings
@@ -202,6 +208,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     setMethods.add(null);
                     domMethods.add(null);
                     hideMethods.add(null);
+                    desMethods.add(null);
+                    nameMethods.add(null);
                     }
 
                 // handle general properties
@@ -223,9 +231,9 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                 getMethods.add(m[x]);
                                 setMethods.add(getWriteProperty(m[x],c));
                                 domMethods.add(getDomain(m[x],c,includeExtensions));
+                                hideMethods.add(getHidden(m[x], c, includeExtensions));
                                 desMethods.add(getDescription(m[x],c,includeExtensions));
                                 nameMethods.add(getName(m[x],c,includeExtensions));
-                                hideMethods.add(getHidden(m[x], c, includeExtensions));
                                                                                                                                          
                                 // simple check for invalid Interval domains
                                 int lastIndex = domMethods.size() - 1;
