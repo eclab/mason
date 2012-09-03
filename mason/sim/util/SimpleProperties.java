@@ -403,7 +403,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public String getName(int index)
         {
         if (auxillary!=null) return auxillary.getName(index);
-        if (index < 0 || index > numProperties()) return null;
+        if (index < 0 || index >= numProperties()) return null;
 
         try
             {
@@ -435,7 +435,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public boolean isReadWrite(int index)
         {
         if (auxillary!=null) return auxillary.isReadWrite(index);
-        if (index < 0 || index > numProperties()) return false;
+        if (index < 0 || index >= numProperties()) return false;
         if (isComposite(index)) return false;
         return (setMethods.get(index)!=null);
         }
@@ -445,7 +445,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public Class getType(int index)
         {
         if (auxillary!=null) return auxillary.getType(index);
-        if (index < 0 || index > numProperties()) return null;
+        if (index < 0 || index >= numProperties()) return null;
         Class returnType = ((Method)(getMethods.get(index))).getReturnType();
 
         return getTypeConversion(returnType);
@@ -457,7 +457,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public Object getValue(int index)
         {
         if (auxillary!=null) return auxillary.getValue(index);
-        if (index < 0 || index > numProperties()) return null;
+        if (index < 0 || index >= numProperties()) return null;
         try
             {
             return ((Method)(getMethods.get(index))).invoke(object, new Object[0]);
@@ -488,7 +488,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public String getDescription(int index)
         {
         if (auxillary!=null) return auxillary.getDescription(index);
-        if (index < 0 || index > numProperties()) return null;
+        if (index < 0 || index >= numProperties()) return null;
         try
             {
             if (desMethods.get(index) == null) return null;
@@ -504,7 +504,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public Object getDomain(int index)
         {
         if (auxillary!=null) return auxillary.getDomain(index);
-        if (index < 0 || index > numProperties()) return null;
+        if (index < 0 || index >= numProperties()) return null;
         try
             {
             if (domMethods.get(index) == null) return null;
@@ -520,7 +520,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     public boolean isHidden(int index)
         {
         if (auxillary!=null) return auxillary.isHidden(index);
-        if (index < 0 || index > numProperties()) return false;
+        if (index < 0 || index >= numProperties()) return false;
         try
             {
             if (hideMethods.get(index) == null) return false;

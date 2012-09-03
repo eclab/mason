@@ -225,7 +225,7 @@ public class SimpleInspector extends Inspector
         members = new PropertyField[len];
 
         int end = start + maxProperties;
-        if (end > len) end = len;
+        if (end >= len) end = len-1;
         count = end - start;
         for( int i = start ; i < end; i++ )
             {
