@@ -16,14 +16,13 @@ import java.io.*;
 
 import java.awt.image.*;
 
-// From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.*;
 import sim.util.gui.Utilities;
 import sim.util.*;
 import sim.display.*;
 import sim.util.media.*;
 
-// From JFreeChart (jfreechart.org)
+// From JFreeChart
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;

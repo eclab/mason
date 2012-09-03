@@ -13,7 +13,7 @@ import java.awt.event.*;
 import java.util.*;
 import sim.util.gui.*;
 
-// From JFreeChart (jfreechart.org)
+// From JFreeChart
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 

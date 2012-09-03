@@ -2453,3 +2453,10 @@ Version 17
 		makes the methods consistent with DenseGrid2D and SparseGrid2D but a bit
 		different from DoubleGrid2D and IntGrid2D.
 	Added "name" property option to properties.
+	Fixed bug in SimpleProperties where property indexes were allowed to
+		equal numProperties (rather than numProperties -1).  Fixed
+		a similar bug in SimpleInspector which had triggered this.
+	Fixed documentation errors in the Manual describing the WCSS Tutorial.  Thanks to
+		Stephen Davies <stephen@umw.edu>
+	Updated JFreeChart to refer to http://jfree.org/jfreechart/.  Thanks to Stephen
+		Davies <stephen@umw.edu>

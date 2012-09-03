@@ -11,10 +11,9 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-// From MASON (cs.gmu.edu/~eclab/projects/mason/)
 import sim.util.gui.*;
 
-// From JFreeChart (jfreechart.org)
+// From JFreeChart
 import org.jfree.data.xy.*;
 import org.jfree.chart.*;
 import org.jfree.chart.plot.*;

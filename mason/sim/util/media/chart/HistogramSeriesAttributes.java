@@ -14,7 +14,7 @@ import java.awt.geom.*;
 import java.util.*;
 import sim.util.gui.*;
 
-// From JFreeChart (jfreechart.org)
+// From JFreeChart
 import org.jfree.data.xy.*;
 import org.jfree.chart.*;
 import org.jfree.chart.event.*;
