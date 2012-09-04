@@ -2459,3 +2459,5 @@ Version 17
 		Stephen Davies <stephen@umw.edu>
 	Updated JFreeChart to refer to http://jfree.org/jfreechart/.  Thanks to Stephen
 		Davies <stephen@umw.edu>
+	Display2D.setScale() now resets the viewport so the scroll bars are properly 
+		updated.
