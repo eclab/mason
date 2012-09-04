@@ -223,14 +223,15 @@ public class Sequence implements Steppable
                     {
                         if (steps[s] == toBeRemoved.get(r))
                         {
-                            // remove from steps, possibly nondestructively
-                            if (ensuresOrder && s < stepsSize - 1)
-                            {
-                                System.arraycopy(steps, s + 1, steps, s, stepsSize - s - 1);
-                            } else
-                            {
-                                steps[s] = steps[stepsSize - 1];
-                            }
+                            if (s < stepsSize -1)  // I'm not already at top
+                                {
+                                // remove from steps, possibly nondestructively
+                                if (ensuresOrder)
+                                    System.arraycopy(steps, s + 1, steps, s, stepsSize - s - 1);
+                                else
+                                    steps[s] = steps[stepsSize - 1];
+                                }
+                            // else we don't bother moving me
 
                             steps[stepsSize - 1] = null;  // let top element GC
                             stepsSize--;
