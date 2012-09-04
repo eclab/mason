@@ -142,11 +142,18 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             p2.setLayout(new BorderLayout());
             p2.add(p,BorderLayout.NORTH);
 
-            LabelledList l = new LabelledList("Offset in Pixels");
+            LabelledList l = new LabelledList("Origin Offset in Pixels");
             l.addLabelled("X Offset", xOffsetField);
             l.addLabelled("Y Offset", yOffsetField);
             p2.add(l,BorderLayout.CENTER);
             getContentPane().add(p2,BorderLayout.NORTH);
+            String text = "<html>Sets the offset of the origin of the display.  This is <b>independent of the scrollbars</b>." + 
+                                "<br><br>If the simulation has enabled it, you can also change the offset by dragging with the" +
+                                "<br>right mouse button down (or on the Mac, a two finger tap-drag or Command-drag)." +
+                                "<br><br>Additionally, you can reset the origin to (0,0) with a right-mouse button double-click.</html>"; 
+            l.setToolTipText(text);
+            xOffsetField.setToolTipText(text);
+            yOffsetField.setToolTipText(text);
 
             b = new Box(BoxLayout.Y_AXIS);
             b.add(antialias);
@@ -618,6 +625,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             return buffer;
             }
         
+    
+        
+        
         /** Paints an image unbuffered inside the provided clip. Not synchronized.
             You should probably call paintComponent() instead. */
         void paintUnbuffered(Graphics2D g, Rectangle2D clip)
@@ -625,12 +635,11 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             if (g==null) return;
             
             g.setRenderingHints(unbufferedHints);
-
+            
             // dunno if we want this
             if (isClipping()) g.setClip(clip);
             if (clip.getWidth()!=0 && clip.getHeight()!=0)
                 {
-                // presently not scaled
                 if (backdrop!=null)
                     {
                     g.setPaint(backdrop);
@@ -843,7 +852,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
     /** Use tool tips? */
     boolean useTooltips;
-
+    
     /** The last steps for a frame that was painted to the screen.  Keeping this
         variable around enables our movie maker to ensure that it doesn't write
         a frame twice to its movie stream. */
@@ -896,7 +905,18 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     double scale = 1.0;
     final Object scaleLock = new Object();  // scale lock
     /** Sets the scale (the zoom value) of the Display2D */
-    public void setScale(double val) { synchronized (scaleLock)  { if (val > 0.0) scale = val; } }
+    public void setScale(double val) 
+        { 
+        synchronized (scaleLock)  
+            { 
+            if (val > 0.0) scale = val; 
+            }
+        // The JScrollPane doesn't know so we gotta inform it.
+        if (port != null) 
+            port.setView(insideDisplay);
+        repaint();  // for good measure
+        }
+        
     /** Returns the scale (the zoom value) of the Display2D */
     public double getScale() { synchronized (scaleLock) { return scale; } }
 
@@ -928,6 +948,26 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** Returns the backdrop color or paint.  The backdrop is the region behind where the simulation actually draws.
         If set to null, no color/paint is used. */
     public Paint getBackdrop() { return backdrop; }
+        
+    /** Sets the offset of the origin of the display.  By default the offset is (0,0). */
+    public void setOffset(double x, double y)
+        {
+        insideDisplay.xOffset = x;
+        insideDisplay.yOffset = y;
+        repaint();
+        }
+        
+    /** Sets the offset of the origin of the display.  By default the offset is (0,0). */
+    public void setOffset(Point2D.Double d)
+        {
+        setOffset(d.getX(), d.getY());
+        }
+    
+    /** Returns the offset of the origin of the display.  By default the offset is (0,0). */
+    public Point2D.Double getOffset()
+        {
+        return new Point2D.Double(insideDisplay.xOffset, insideDisplay.yOffset);
+        }
         
     /** Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
         We're not.  But it's an additional cargo-cult programming measure just in case. */
@@ -1337,7 +1377,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 setScale(newValue);
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
                 optionPane.yOffsetField.setValue(insideDisplay.yOffset * newValue);
-                port.setView(insideDisplay);
+                //port.setView(insideDisplay);  // now done by setScale
                 
                 // now release the paint lock and repaint
                 insideDisplay.paintLock = false;
@@ -1367,7 +1407,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // update preferences
         optionPane.resetToPreferences();
         }
-
+        
+        
     /** Returns LocationWrappers for all the objects which fall within the coordinate rectangle specified by rect.  This 
         rectangle is in the coordinate system of the (InnerDisplay2D) component inside the scroll
         view of the Display2D class.  The return value is an array of Bags.  For each FieldPortrayal
@@ -1436,10 +1477,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         int origindx = 0;
         int origindy = 0;
 
-        // offset according to user's specification
-        origindx += (int)(insideDisplay.xOffset*scale);
-        origindy += (int)(insideDisplay.yOffset*scale);
-
         // for information on why we use getViewRect, see computeClip()
         Rectangle2D fullComponent = insideDisplay.getViewRect();
         if (fullComponent.getWidth() > (insideDisplay.width * scale))
@@ -1447,6 +1484,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         if (fullComponent.getHeight() > (insideDisplay.height*scale))
             origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
                                 
+        // offset according to user's specification
+        origindx += (int)(insideDisplay.xOffset*scale);
+        origindy += (int)(insideDisplay.yOffset*scale);
+
         Rectangle2D.Double region = new Rectangle2D.Double(
             // we floor to an integer because we're dealing with exact pixels at this point
             (int)(holder.bounds.x * scale) + origindx,
@@ -1579,12 +1620,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** Takes a snapshot of the Display2D's currently displayed simulation.
         Ought only be done from the main event loop. */
         
-    // Why are we using PNG?  For a couple of reasons.  First, GIF only supports 256 colors.  That had begun
-    // to bite us.  Second, JPEG is good for photos but quite poor for screenshots which have lots of
-    // straight lines and aliased stuff.  PNG is the RIGHT choice for what we need to do.  Unfortunately
-    // it's not properly supported by old versions Internet Exploder, and so to make web-ready snapshots 
-    // you may need to convert it.  :-(
-
     // We're using our own small PNG package (see sim.util.media) because the JAI isn't standard across
     // all platforms (notably 1.3.1) and at the time we made the call, it wasn't available on the Mac at all.
 
@@ -1843,9 +1878,62 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         return val;
         }
 
+
+    double originalXOffset;
+    double originalYOffset;
+    Point originalMousePoint = null;
+    String originalText = "";
+    
+    boolean mouseChangesOffset = false;
+    
+    /** Sets whether the user can change the offset by right-mouse-button-dragging,
+        (or on OS X) Command-dragging or two-finger-click-dragging.  By default FALSE. */
+    public void setMouseChangesOffset(boolean val) { mouseChangesOffset = val; }
+
+    /** Sets whether the user can change the offset by right-mouse-button-dragging,
+        (or on OS X) Command-dragging or two-finger-click-dragging.  By default FALSE. */
+    public boolean getMouseChangesOffset() { return mouseChangesOffset; }
+    
     public boolean handleMouseEvent(MouseEvent event)
         {
-        // first, let's propagate the event to selected objects
+        // first, we handle our own facilities
+        if (mouseChangesOffset && (event.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK)
+            {
+            if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() >= 2)
+                {
+                insideDisplay.xOffset = 0;
+                insideDisplay.yOffset = 0;
+                Display2D.this.repaint();
+                }
+            else if (event.getID() == MouseEvent.MOUSE_PRESSED)  // middle button
+                {
+                event = SwingUtilities.convertMouseEvent(this, event, display);
+                originalXOffset = insideDisplay.xOffset;
+                originalYOffset = insideDisplay.yOffset;
+                originalMousePoint = event.getPoint();
+                originalText = scaleField.getText();
+                return true;
+                }
+            else if (event.getID() == MouseEvent.MOUSE_RELEASED)  // middle button
+                {
+                scaleField.setText(originalText);
+                originalMousePoint = null;
+                return true;
+                }
+            else if (event.getID() == MouseEvent.MOUSE_DRAGGED)  // middle button
+                {
+                event = SwingUtilities.convertMouseEvent(this, event, display);  // do we need to do this?
+                insideDisplay.xOffset =  originalXOffset - (originalMousePoint.x - event.getX()) / scale;
+                insideDisplay.yOffset =  originalYOffset - (originalMousePoint.y - event.getY()) / scale;
+                optionPane.xOffsetField.setValue(insideDisplay.xOffset);
+                optionPane.yOffsetField.setValue(insideDisplay.yOffset);
+                scaleField.setText("Translating Origin to (" + insideDisplay.xOffset + ", " + insideDisplay.yOffset + ")");
+                Display2D.this.repaint();
+                return true;
+                }
+            }
+        
+        // next, let's propagate the event to selected objects
                 
         Point2D.Double p = new Point2D.Double(event.getX(), event.getY());
         for(int x=0;x<selectedWrappers.size();x++)
