@@ -63,7 +63,7 @@ public class SimpleInspector extends Inspector
         setLayout(new BorderLayout());
         this.object = null;
         this.state = state;
-        setInspectorName(name);
+        this.inspectorName = name;
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
         this.properties = properties;
