@@ -2461,3 +2461,4 @@ Version 17
 		Davies <stephen@umw.edu>
 	Display2D.setScale() now resets the viewport so the scroll bars are properly 
 		updated.
+	Added Display2D.getScroll() and Display2D.setScroll()

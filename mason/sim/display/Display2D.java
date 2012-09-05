@@ -911,10 +911,18 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             { 
             if (val > 0.0) scale = val; 
             }
+            
         // The JScrollPane doesn't know so we gotta inform it.
         if (port != null) 
-            port.setView(insideDisplay);
-        repaint();  // for good measure
+            {
+            if (SwingUtilities.isEventDispatchThread())
+                port.setView(insideDisplay);
+            else
+                {
+                SwingUtilities.invokeLater(new Runnable() { public void run() { port.setView(insideDisplay); } });
+                }
+            }
+        repaint();  // probably not needed
         }
         
     /** Returns the scale (the zoom value) of the Display2D */
@@ -948,7 +956,110 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** Returns the backdrop color or paint.  The backdrop is the region behind where the simulation actually draws.
         If set to null, no color/paint is used. */
     public Paint getBackdrop() { return backdrop; }
+    
+    
+    /// SCROLLING FACILITY
+    /// First off, yes, yes, we could have done this with scrollRectToVisible, but what's the fun in that?  Actually
+    /// scrollRectToVisible is just as complex and also has serious flashing problems as well due to the background
+    /// being painted even if set to empty.  What fun!
+    
+    /// The general idea here is that we collect the minimum, maximum, and current values of the scroll bars either
+    /// to return percentage information or to set it.  But there are bugs in JScrollPane: its scroll bars don't return
+    /// valid minimum or maximum values.  So we have to test for them by setting the biggest and smallest we can set
+    /// and see what we're bounded to.  This causes repaints so we have to watch for flashing problems, hence the hack.
+    /// The hack is that we set the scroll mode to the costly "backing store" mode (double-buffered), then do the testing
+    /// and/or additional setting of the scroll bars, then force a repaint, then AFTERWARDS set the scroll mode back to 
+    /// "blit" mode (the fast mode).  Total ugly hack, I know.
+    
+    int horizontalMaximum;
+    int horizontalMinimum;
+    int horizontalCurrent;
+    int verticalMaximum;
+    int verticalMinimum;
+    int verticalCurrent;
+    
+    final Object scrollLock = new Object();  // scroll lock
+    void loadScrollValues()
+        {
+        // first change the scroll mode so the hack below works right
+        port.setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+
+        // JScrollPane's JScrollBars do not report correct minimum and maximum values.  So we have to just
+        // test it by setting them and seeing what they go to.  What a hack.
+        JScrollBar horizontal = display.getHorizontalScrollBar();
+        horizontalCurrent = horizontal.getValue();
+        horizontal.setValue(Integer.MAX_VALUE);
+        horizontalMaximum = horizontal.getValue();
+        horizontal.setValue(Integer.MIN_VALUE);
+        horizontalMinimum = horizontal.getValue();
+        horizontal.setValue(horizontalCurrent);
+
+        JScrollBar vertical = display.getVerticalScrollBar();
+        verticalCurrent = vertical.getValue();
+        vertical.setValue(Integer.MAX_VALUE);
+        verticalMaximum = vertical.getValue();
+        vertical.setValue(Integer.MIN_VALUE);
+        verticalMinimum = vertical.getValue();
+        vertical.setValue(verticalCurrent);
+        }
         
+    void loadScrollValuesHack() 
+        {         
+        // the following hack ensures we redraw without filling the screen with flashy stuff
+        repaint();
+        // issue something which changes the background again
+        SwingUtilities.invokeLater(new Runnable() { public void run() { port.setScrollMode(JViewport.BLIT_SCROLL_MODE); } });
+        // ugh, what a hack
+        }
+    
+    /** Returns the current scroll positions (x and y) as proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
+    public Double2D getScroll()
+        {
+        synchronized(scrollLock)
+            {
+            loadScrollValues();
+            loadScrollValuesHack();
+            
+            return new Double2D(
+            
+                horizontalMaximum - (double)horizontalMinimum <= 0 ? 0 :
+                (horizontalCurrent - (double)horizontalMinimum) / (horizontalMaximum - (double)horizontalMinimum),
+                
+                verticalMaximum - (double)verticalMinimum <= 0 ? 0 :
+                (verticalCurrent - (double)verticalMinimum) / (verticalMaximum - (double)verticalMinimum)
+                );
+            }
+        }
+    
+    /** Sets the current scroll positions (x and y) to proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
+    public void setScroll(Double2D vals) { setScrollProportions(vals.x, vals.y); }
+
+    /** Sets the current scroll positions (x and y) to proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
+    public void setScroll(double x, double y)
+        {
+        synchronized(scrollLock)
+            {
+            if (x < 0.0 || x > 1.0 || y < 0.0 || y > 1.0)
+                throw new RuntimeException("X or Y value out of bounds.  Must be >= 0.0 and <= 1.0.");
+            
+            loadScrollValues();
+            int h = (int)(horizontalMinimum + x * (horizontalMaximum - (double) horizontalMinimum));
+            int v = (int)(verticalMinimum + y * (verticalMaximum - (double) verticalMinimum));
+            
+            // set values
+            
+            JScrollBar horizontal = display.getHorizontalScrollBar();
+            horizontal.setValue(h);
+            JScrollBar vertical = display.getVerticalScrollBar();
+            vertical.setValue(v);
+            
+            loadScrollValuesHack();
+            }
+        }
+    
+    
+    
+    
     /** Sets the offset of the origin of the display.  By default the offset is (0,0). */
     public void setOffset(double x, double y)
         {
@@ -968,7 +1079,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         {
         return new Point2D.Double(insideDisplay.xOffset, insideDisplay.yOffset);
         }
-        
+    
+    
+    
     /** Quits the Display2D.  Okay, so finalize is evil and we're not supposed to rely on it.
         We're not.  But it's an additional cargo-cult programming measure just in case. */
     protected void finalize() throws Throwable
