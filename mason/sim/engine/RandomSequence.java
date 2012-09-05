@@ -63,13 +63,14 @@ public class RandomSequence extends Sequence
     
     public void step(SimState state)
         {
+        // first load the steps
+        loadSteps();
+
         final boolean shouldSynchronize = this.shouldSynchronize;
         int size = this.size;
         Steppable[] steps = this.steps;
-        
-        // first load the steps
-        loadSteps();
-        
+
+
         // Then shuffle steps
         Steppable temp;
         for(int x=size-1; x>=1 ; x--)
