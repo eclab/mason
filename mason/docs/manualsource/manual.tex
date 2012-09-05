@@ -6366,11 +6366,35 @@ When constructing a Display2D, it automatically connects to the GUIState and add
 
 Once you set up a Display2D, your next task is usually to arrange its display parameters and put it in a JFrame.  Display2D is capable of sprouting its own JFrame.  If you choose to use your own JFrame instead, be sure to call \code{Display2D.quit()} when the frame is disposed.   
 
-\sidebar{Why isn't this just a standard Java {\it background}?}{Because the Display2D's \method{setBackground(...)} method would set the background color of the Display2D, not of the model being displayed in the Inner Display.}Display2D can also add a {\bf backdrop} color or other paint: furthermore, you can set this value to \variable{null}, which instructs MASON not to draw a background at all: the actual backdrop will be undefined.  Why would you want to do this?  Because if your fields are being drawn opaquely (such as a grid of values), there's no reason to draw a backdrop and it's faster not to do so.  The Display2D can also change the scale of the display, and can {\bf clip} the display to the bounds of the field: for fields with infinite space (such as \class{sim.field.grid.SparseGrid2D}, you'll probably want to turn the clipping off\,---\,it's on by default.  Last but not least, the Display2D can request objects to draw themselves either {\bf precisely} (using Java2D and floating-point graphics) or {\bf imprecisely} (using AWT Graphics).  Imprecise drawing is often faster.  Objects are free to ignore the request.  Display2D will make this request based on the value of \method{setPrecise(...)}, or if the output media benefits from precision (such as a PDF file).  See Section \ref{sim.portrayal.DrawInfo2D} for more information.
+\sidebar{Why isn't this just a standard Java {\it background}?}{Because the Display2D's \method{setBackground(...)} method would set the background color of the Display2D, not of the model being displayed in the Inner Display.}Display2D can also add a {\bf backdrop} color or other paint: furthermore, you can set this value to \variable{null}, which instructs MASON not to draw a background at all: the actual backdrop will be undefined.  Why would you want to do this?  Because if your fields are being drawn opaquely (such as a grid of values), there's no reason to draw a backdrop and it's faster not to do so.  The Display2D can also change the scale of the display, can scroll to a certain position in the display (as a percentage), and can {\bf clip} the display to the bounds of the field: for fields with infinite space (such as \class{sim.field.grid.SparseGrid2D}, you'll probably want to turn the clipping off\,---\,it's on by default.
+
+Infinite displays present an obvious problem for scroll bars.  To deal with this, MASON has an additional {\bf offset} you can add to the location of the origin in the underlying field portrayals' display space.  This effectively permanently translates all the field portrayals by that amount.  The user can change this offset in the Options Pane, or he can change the offset by right-mouse-button-dragging (or on OS X, command-dragging or two-finger dragging).  Furthermore, right-mouse-button double-clicking will reset the offset to \(\langle 0, 0\rangle\) again.  The Options Pane feature is always available, but the dragging options are turned off by default.  Turn them on with \method{setMouseChangesOffset(...)}.  You can also change the offset programmatically.
+
+If you enable the mouse to change the offset, you'll probably want to get rid of the scroll bars, as it could be very confusing to have the field apparently scroll but the scrollbars not change.  To do this, you can say:
+
+\java{%
+    import javax.swing.ScrollPaneConstants;\\
+    \\
+    Display2D myDisplay = ... ; \\
+    myDisplay.display.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL\_SCROLLBAR\_NEVER);\\
+    myDisplay.display.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL\_SCROLLBAR\_NEVER);
+}
+
+You can restore them with \variable{ScrollPaneConstants.HORIZONTAL\_SCROLLBAR\_ALWAYS} and \variable{ScrollPaneConstants.VERTICAL\_SCROLLBAR\_ALWAYS}, respectively.
+
+Last but not least, the Display2D can request objects to draw themselves either {\bf precisely} (using Java2D and floating-point graphics) or {\bf imprecisely} (using AWT Graphics).  Imprecise drawing is often faster.  Objects are free to ignore the request.  Display2D will make this request based on the value of \method{setPrecise(...)}, or if the output media benefits from precision (such as a PDF file).  See Section \ref{sim.portrayal.DrawInfo2D} for more information.
 
 \begin{methods}{\class{sim.display.Display2D}}
 \mthd{public void setScale(double val)}  Sets the scale (zoom factor), which must be a positive number \(\geq 0\).
 \mthd{public double getScale()}  Returns the scale (zoom factor).
+\mthd{public void setScrollPosition(Double2D d)}  Sets the scroll position of the scrollbars as a percentage (for both the x and y dimensions), between fully minimum position (0.0) and fully maximum position (1.0).
+\mthd{public void setScrollPosition(double x, double y)}  Sets the scroll position of the scrollbars as a percentage (for both the x and y dimensions), between fully minimum position (0.0) and fully maximum position (1.0).
+\mthd{public Double2D getScrollPosition(double x, double y)}  Returns the scroll position of the scrollbars as a percentage (for both the x and y dimensions), between fully minimum position (0.0) and fully maximum position (1.0).
+\mthd{public void setOffset(Point2D.Double d)}  Sets the translational offset of the origin of the underlying Field Portrayals.  Largely used to maneuver about in infinite fields.  If you're trying to scroll, don't use this method: instead use setScrollPosition(...).
+\mthd{public void setOffset(double x, double y)}  Sets the translational offset of the origin of the underlying Field Portrayals.  Largely used to maneuver about in infinite fields.  If you're trying to scroll, don't use this method: instead use setScrollPosition(...).
+\mthd{public Point2D.Double getOffset()}  Returns the translational offset of the origin of the underlying Field Portrayals.  Largely used to maneuver about in infinite fields.  If you're trying to scroll, don't use this method: instead use getScrollPosition(...).
+\mthd{public void setMouseChangesOffset(boolean val)}  Sets whether the mouse can change the origin offset via right-mouse-button-drag.  By default this is false. 
+\mthd{public boolean getMouseChangesOffset()}  Returns whether the mouse can change the origin offset via right-mouse-button-drag.  By default this is false.
 \mthd{public void setClipping(boolean val)}  Sets the display to clip to the bounds of its fields.
 \mthd{public boolean isClipping()} Returns whether or not the display is clipping to the bounds of its fields (the default is \variable{true}).
 \mthd{public void setBackdrop(Paint c)}  Sets the backdrop paint of the Display.  Set to null to instruct MASON not to draw the backdrop at all, which is faster if your fields are opaque and the backdrop wouldn't be seen anyway. 
@@ -6455,8 +6479,8 @@ Speaking of movies, the Display2D is capable of generating movies and taking scr
 For no particularly good reason, the Display2D is the source of certain variables MASON sets, then uses to determine how to draw properly (different versions of Java, on different platforms, have different optimal settings).  They're accessed like this:
 
 \java{%
-    public static final boolean isMacOSX;
-    public static final boolean isWindows;
+    public static final boolean isMacOSX;\\
+    public static final boolean isWindows;\\
     public static final String javaVersion;
 }
 
@@ -6978,11 +7002,13 @@ For more information on this procedure, see Section \ref{sim.portrayal.simple.Va
  
 Objects in continuous space, unlike objects in grids, can wrap around if the field is considered to be toroidal.  Thus ContinuousPortrayal2D has the option of displaying an overlapping object on {\it both} sides in which it overlaps to create the illusion of wrapping around in a toroidal fashion.
 
-It's also not quite clear where the boundary {\it is} in a continuous space, particularly if the Display2D's clipping has been turned off.  So ContinuousPortrayal2D has the option of drawing a {\it frame} around the boundary of the field.
+It's also not quite clear where the boundary {\it is} in a continuous space, particularly if the Display2D's clipping has been turned off.  So ContinuousPortrayal2D has the option of drawing a {\it frame} around the boundary of the field.  ContinuousPortrayal2D also can draw the {\bf axes} marking the origin of the space.
 
 \begin{methods}{\class{sim.portrayal.continuous.ContinuousPortrayal2D}}
 \mthd{public void setFrame(Paint p) } Causes the portrayal to draw a frame around the bounds of the field with the given paint.  If the paint is null, nothing is drawn.
 \mthd{public Paint getFame() } Returns the paint with which the portrayal is drawing the frame.
+\mthd{public void setAxes(Paint p) } Causes the portrayal to draw simple axes which meet at its origin, using the given paint.
+\mthd{public Paint getAxes() } Returns the paint with which the axes are being drawn.
 \mthd{public void setDisplayingToroidally(boolean val) } Causes the portrayal to display wrap-around objects on both sides (or if in a corner, potentially four times), or clears this feature.
 \mthd{public boolean isDisplayingToroidally() } Returns whether or not the portrayal is displaying objects toroidally.
 \mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
@@ -8627,7 +8653,7 @@ There are a few methods of interest to subclasses of SimpleInspector:
 \begin{methods}{\class{sim.portrayal.SimpleInspector}}
 \mthd{public GUIState getGUIState()}  Returns the GUIState associated with this inspector.
 \mthd{public Object getObject()} Returns the object that this inspector is inspecting.  It may be that this inspector was generated directly from Properties, in which case this returns null.
-\mthd{public String getName()} Returns the name originally provided to the inspector.
+\mthd{public String getInspectorName()} Returns the name originally provided to the inspector.
 \mthd{public int getMaxProperties()} Returns the maximum number of properties displayed per page in the inspector.
 \end{methods}
 
@@ -10616,6 +10642,8 @@ NumberTextField has a few methods to query and update the parameters it uses int
 \mthd{public void setEnabled(boolean b)}  Enables or disables GUI events on the field.
 \mthd{public void setEditedColor(Color c)}  Sets the color used to indicate that the text is being edited (by default a light blue).
 \mthd{public Color getEditedColor()}  Returns the color used to indicate that the text is being edited (by default a light blue).
+\mthd{public void setText(String val)} Sets the current text of the field.  If you are contemplating this method, you probably want  \code{setValue(newValue(val));} instead. 
+\mthd{public String getText()} Return the current text of the field.  
 \end{methods}
 
 The second editable field provided by MASON is a {\bf property field}, of the class \Class{sim.util.gui.PropertyField}.  This widget is designed to allow the user to query and modify a Java Bean Property of a class.  PropertyField doesn't actually edit properties. Instead, it really allows you to maintain a String, much as NumberTextField lets you maintain a double value.  PropertyField also allows you to view that String in different ways:
@@ -11131,8 +11159,8 @@ SeriesAttributes has various straightforward getters and setters:
 \begin{methods}{\class{sim.util.media.chart.SeriesAttributes}}
 \mthd{public void setStoppable(SeriesChangeListener obj)} Sets the SeriesChangeListener which will get called when the attributes are deleted.
 \mthd{public SeriesChangeListener getStoppable()}  Returns the SeriesChangeListener which will get called when the attributes are deleted.
-\mthd{public void setName(String val)} Sets the name of the attributes.
-\mthd{public String getName()} Returns the name of the attributes.
+\mthd{public void setSeriesName(String val)} Sets the name of the attributes.
+\mthd{public String getSeriesName()} Returns the name of the attributes.
 \mthd{public void setSeriesIndex(int val)}  Sets the index of the attributes.  Be sure that this agrees with the actual index position.
 \mthd{public int getSeriesIndex()} Returns the index of the attributes.
 \mthd{public XYPlot getPlot()} Returns the JFreeChart's XYPlot used for drawing the chart.
