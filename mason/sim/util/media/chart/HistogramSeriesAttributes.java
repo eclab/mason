@@ -81,7 +81,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         { 
         super(generator, name, index, stoppable);
         setValues(values);
-        super.setName(name);  // just set the name, don't update
+        super.setSeriesName(name);  // just set the name, don't update
         numBins = bins;
         numBinsField.setValue(bins);  // otherwise it'd call newValue(), which would in turn try to update the series, which hasn't been made yet
         numBinsField.setInitialValue(bins);  // make this the default
@@ -89,9 +89,9 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     /** It's very expensive to call this function (O(n)) because JFreeChart has no way of changing the
         name of a histogram dataset series, and so we must rebuild all of it from scratch. */
-    public void setName(String val) 
+    public void setSeriesName(String val) 
         {
-        super.setName(val); // call this first to set it
+        super.setSeriesName(val); // call this first to set it
         ((HistogramGenerator)generator).update();
         }
 

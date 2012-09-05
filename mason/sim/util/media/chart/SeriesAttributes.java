@@ -38,11 +38,18 @@ public abstract class SeriesAttributes extends LabelledList
     /** The ChartGenerator which holds the series that this SeriesAttributes is responsible for. */
     ChartGenerator generator;
     
-    /** Sets the name of the series. */
+    String seriesName;
+    /** @deprecated
+    Sets the name of the series. */
     public void setName(String val) { super.setName(val); }  // this just uses Component's setName
-    /** Returns the name of the series. */
+    public void setSeriesName(String val) { seriesName = val; }  // this just uses Component's setName
+    /** @deprecated 
+    Returns the name of the series. */
     public String getName() { return super.getName(); } // this just uses Component's getName
-                
+    public String getSeriesName() { return seriesName; } // this just uses Component's getName
+    
+    
+    
     /** Updates features of the series to reflect the current widget settings as specified by the user. */
     public abstract void rebuildGraphicsDefinitions();
                 
@@ -104,7 +111,7 @@ public abstract class SeriesAttributes extends LabelledList
             public void actionPerformed ( ActionEvent e )
                 {
                 if (JOptionPane.showOptionDialog(
-                        null,"Remove the Series " + getName() + "?","Confirm",
+                        null,"Remove the Series " + getSeriesName() + "?","Confirm",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,null,
                         new Object[] { "Remove", "Cancel" },
@@ -180,7 +187,7 @@ public abstract class SeriesAttributes extends LabelledList
             {
             public String newValue(String newValue)
                 {
-                SeriesAttributes.this.setName(newValue);
+                SeriesAttributes.this.setSeriesName(newValue);
                 getGenerator().getChartPanel().repaint();
                 return newValue;
                 }

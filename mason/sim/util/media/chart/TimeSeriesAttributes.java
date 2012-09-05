@@ -86,8 +86,8 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
     /** The time series in question.  */
     XYSeries series;
-    public void setName(String val) { series.setKey(val); }
-    public String getSeriesName() { return "" + series.getKey(); }
+    public void setSeriesName(String val) { series.setKey(val); }  // bypasses super.setSeriesName
+    public String getSeriesName() { return "" + series.getKey(); }  // bypasses super.getSeriesName
                 
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
     public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, SeriesChangeListener stoppable)

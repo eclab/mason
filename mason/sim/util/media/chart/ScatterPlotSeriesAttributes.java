@@ -105,8 +105,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         super(generator, name, index, stoppable);
                 
         setValues(values);
-        //setName(name);
-        super.setName(name);  // just set the name, don't update
+        super.setSeriesName(name);  // just set the name, don't update.  Bypasses standard method below.
 
         // increment shape counter
         shapeCounter++;
@@ -121,9 +120,9 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         renderer.setAutoPopulateSeriesShape(false);
         }
 
-    public void setName(String val) 
+    public void setSeriesName(String val) 
         {
-        super.setName(val);
+        super.setSeriesName(val);
         ((ScatterPlotGenerator)generator).update();
         }
                         

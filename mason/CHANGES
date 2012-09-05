@@ -2473,3 +2473,4 @@ Version 17
 		model inspectors will be in a tab called "Model", no matter what. 
 	Added ContinuousPortrayal2D.getAxes(), ContinuousPortrayal2D.setAxes(), and
 		getDrawsFrameAndAxesInFront() and setDrawsFrameAndAxesInFront(...)
+	Added NumberTextField.getText(...) and setText(...)

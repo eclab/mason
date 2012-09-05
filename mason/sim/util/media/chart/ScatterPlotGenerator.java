@@ -77,7 +77,7 @@ public class ScatterPlotGenerator extends ChartGenerator
         for(int i=0; i < sa.length; i++)
             {
             ScatterPlotSeriesAttributes attributes = (ScatterPlotSeriesAttributes)(sa[i]);
-            dataset.addSeries(attributes.getName(), attributes.getValues());
+            dataset.addSeries(attributes.getSeriesName(), attributes.getValues());
             }
 
         setSeriesDataset(dataset);

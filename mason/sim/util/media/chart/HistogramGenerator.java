@@ -93,7 +93,7 @@ public class HistogramGenerator extends ChartGenerator
         for(int i=0; i < sa.length; i++)
             {
             HistogramSeriesAttributes attributes = (HistogramSeriesAttributes)(sa[i]);
-            dataset.addSeries(attributes.getName(), attributes.getValues(), attributes.getNumBins());
+            dataset.addSeries(attributes.getSeriesName(), attributes.getValues(), attributes.getNumBins());
             }
                         
         setSeriesDataset(dataset);

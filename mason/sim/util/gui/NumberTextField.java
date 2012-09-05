@@ -305,4 +305,15 @@ public class NumberTextField extends JComponent
         if (valField!=null) valField.setEnabled(b);
         if (fieldLabel!=null) fieldLabel.setEnabled(b);
         }
+        
+    /** Only call this to access the value field directly */
+    public void setText(String val)
+        {
+        valField.setText(val);
+        }
+    
+    public String getText()
+        {
+        return valField.getText();
+        }
     }
