@@ -37,7 +37,7 @@ public class SimpleInspector extends Inspector
     /** Each of the property fields in the property list, not all of which may exist at any time. */
     PropertyField[] members = new PropertyField[0];
     /** The displayed name of the inspector */
-    String name;
+    String inspectorName;
     /** The current index of the topmost element */
     int start = 0;
     /** The number of items presently in the propertyList */
@@ -52,7 +52,9 @@ public class SimpleInspector extends Inspector
     
     public GUIState getGUIState() { return state; }
     public Object getObject() { return object; }
-    public String getName() { return name; }
+    public String getInspectorName() { return inspectorName; }
+    /** @deprecated */ 
+    public String getName() { return inspectorName; }
     public int getMaxProperties() { return maxProperties; }
     
     public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
@@ -61,7 +63,7 @@ public class SimpleInspector extends Inspector
         setLayout(new BorderLayout());
         this.object = null;
         this.state = state;
-        this.name = name;
+        setInspectorName(name);
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
         this.properties = properties;
@@ -185,7 +187,7 @@ public class SimpleInspector extends Inspector
                 
         if (propertyList != null) 
             remove(propertyList);
-        propertyList = new LabelledList(name);
+        propertyList = new LabelledList(getInspectorName());
 
         if (len > maxProperties)
             {

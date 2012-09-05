@@ -42,6 +42,24 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         return frame;
         }
 
+    Paint axes = null;
+    /** If you provide a Paint, a thin frame of this paint will be drawn around the (0,0,width,height) space of
+        the field.  This is mostly useful for seeing the frame of the field when clipping is turned off and you're zoomed out. */ 
+    public void setAxes(Paint p)
+        {
+        axes = p;
+        }
+                
+    public Paint getAxes()
+        {
+        return axes;
+        }
+        
+    boolean drawsFrameAndAxesInFront = true;
+    public boolean getDrawsFrameAndAxesInFront() { return drawsFrameAndAxesInFront; }
+    public void setDrawsFrameAndAxesInFront(boolean val) { drawsFrameAndAxesInFront = val; }
+    
+
     public void setField(Object field)
         {
         if (field instanceof Continuous2D) super.setField(field);
@@ -162,6 +180,8 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return;
                 
+        if (!drawsFrameAndAxesInFront) drawFrameAndAxes(graphics, info);
+                
         boolean objectSelected = !selectedWrappers.isEmpty();
                 
 //        Rectangle2D.Double cliprect = (Rectangle2D.Double)(info.draw.createIntersection(info.clip));
@@ -244,13 +264,32 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                     }
                 }
             }
-                        
-        // finally draw the frame
+            
+        if (drawsFrameAndAxesInFront) drawFrameAndAxes(graphics, info);
+        }
+
+
+    void drawFrameAndAxes(Graphics2D graphics, DrawInfo2D info)
+        {
         if (frame != null && graphics != null)
             {
             graphics.setPaint(frame);
-            Rectangle2D rect = new Rectangle2D.Double(info.draw.x - 1, info.draw.y - 1, info.draw.width + 1, info.draw.height + 1);
-            graphics.draw(rect);
+            graphics.draw(new Rectangle2D.Double(info.draw.x - 1, info.draw.y - 1, info.draw.width + 1, info.draw.height + 1));
+            }
+
+        if (axes != null && graphics != null)
+            {
+            graphics.setPaint(axes);
+            
+            // Bugs in OS X's graphics handling prevent any line extending beyond
+            // (Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 52),
+            // even when the line being drawn is real-valued.  Also, if the line endpoints are
+            // well outside the clip region it's clipped entirely even if the line intersects
+            // with the clip region.  Grrrrrr......  
+            graphics.draw(new Line2D.Double(info.clip.x, info.draw.y + (info.draw.height) / 2.0, 
+                                            info.clip.x + info.clip.width, info.draw.y + (info.draw.height) / 2.0));
+            graphics.draw(new Line2D.Double(info.draw.x + (info.draw.width) / 2.0, info.clip.y, 
+                                            info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
             }
         }
 

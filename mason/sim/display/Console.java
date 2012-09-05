@@ -1119,8 +1119,6 @@ public class Console extends JFrame implements Controller
         modelInspector = simulation.getInspector();
         if (modelInspector!=null)
             {
-            String name = modelInspector.getName();
-            if (name==null || name.length() == 0) name = "Model";
             modelInspectorScrollPane = new JScrollPane(modelInspector)
                 {
                 Insets insets = new Insets(0,0,0,0);  // MacOS X adds a border
@@ -1131,7 +1129,7 @@ public class Console extends JFrame implements Controller
                 };
             modelInspectorScrollPane.getViewport().
                 setBackground(new JPanel().getBackground()); // UIManager.getColor("window"));  // make nice stripes on MacOS X
-            tabPane.addTab(name,modelInspectorScrollPane);
+            tabPane.addTab("Model",modelInspectorScrollPane);
             }
         tabPane.revalidate();
         }
