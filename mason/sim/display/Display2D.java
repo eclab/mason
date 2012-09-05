@@ -1013,7 +1013,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         }
     
     /** Returns the current scroll positions (x and y) as proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
-    public Double2D getScroll()
+    public Double2D getScrollPosition()
         {
         synchronized(scrollLock)
             {
@@ -1032,10 +1032,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         }
     
     /** Sets the current scroll positions (x and y) to proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
-    public void setScroll(Double2D vals) { setScrollProportions(vals.x, vals.y); }
+    public void getScrollPosition(Double2D vals) { getScrollPosition(vals.x, vals.y); }
 
     /** Sets the current scroll positions (x and y) to proportional values between 0.0 (minimum scroll position) and 1.0 (maximum scroll position). */
-    public void setScroll(double x, double y)
+    public void getScrollPosition(double x, double y)
         {
         synchronized(scrollLock)
             {
