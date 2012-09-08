@@ -28,15 +28,13 @@ public class SimpleInspector extends Inspector
     int maxProperties = DEFAULT_MAX_PROPERTIES;
     /** The GUIState  of the simulation */
     GUIState state;
-    /** The object being inspected */
-    Object object;
     /** The property list displayed -- this may change at any time */
     LabelledList propertyList;
     /** The generated object properties -- this may change at any time */
     Properties properties;
     /** Each of the property fields in the property list, not all of which may exist at any time. */
     PropertyField[] members = new PropertyField[0];
-    /** The displayed name of the inspector */
+    /** The displayed name of the inspector.  If this name is null, then properties.getObject().toString() is used instead. */
     String inspectorName;
     /** The current index of the topmost element */
     int start = 0;
@@ -51,7 +49,6 @@ public class SimpleInspector extends Inspector
     Box startField = null;
     
     public GUIState getGUIState() { return state; }
-    public Object getObject() { return object; }
     public String getInspectorName() { return inspectorName; }
     /** @deprecated */ 
     public String getName() { return inspectorName; }
@@ -61,7 +58,6 @@ public class SimpleInspector extends Inspector
         {
         this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
-        this.object = null;
         this.state = state;
         this.inspectorName = name;
         header.setLayout(new BorderLayout());
@@ -306,6 +302,8 @@ public class SimpleInspector extends Inspector
                 
     public String getTitle()
         {
-        return "" + object;
+        String n = getInspectorName();
+        if (n != null) return n;
+        return "" + properties.getObject();
         }
     }

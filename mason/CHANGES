@@ -2474,3 +2474,4 @@ Version 17
 	Added ContinuousPortrayal2D.getAxes(), ContinuousPortrayal2D.setAxes(), and
 		getDrawsFrameAndAxesInFront() and setDrawsFrameAndAxesInFront(...)
 	Added NumberTextField.getText(...) and setText(...)
+	SimpleInspector now has a smarter approach to its getTitle() method.
