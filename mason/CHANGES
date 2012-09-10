@@ -2472,3 +2472,4 @@ Version 17
 		getDrawsFrameAndAxesInFront() and setDrawsFrameAndAxesInFront(...)
 	Added NumberTextField.getText(...) and setText(...)
 	SimpleInspector now has a smarter approach to its getTitle() method.
+	Bug fix to TabbedInspector.  Thanks to Joey Harrison <jharri1@gmu.edu>

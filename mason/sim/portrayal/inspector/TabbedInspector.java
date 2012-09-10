@@ -58,7 +58,7 @@ public class TabbedInspector extends Inspector
     /** Calls updateInspector() and repaint() on the currently-displayed inspector */
     void updateDisplayedInspector()
         {
-        if (inspectors.size() > 0)
+        if (tabs.getTabCount() > 0)
             {
             Inspector i = ((Inspector)(inspectors.get(tabs.getSelectedIndex())));
             i.updateInspector();
