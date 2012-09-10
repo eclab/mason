@@ -34,8 +34,6 @@ public class SimpleInspector extends Inspector
     Properties properties;
     /** Each of the property fields in the property list, not all of which may exist at any time. */
     PropertyField[] members = new PropertyField[0];
-    /** The displayed name of the inspector.  If this name is null, then properties.getObject().toString() is used instead. */
-    String inspectorName;
     /** The current index of the topmost element */
     int start = 0;
     /** The number of items presently in the propertyList */
@@ -49,9 +47,8 @@ public class SimpleInspector extends Inspector
     Box startField = null;
     
     public GUIState getGUIState() { return state; }
-    public String getInspectorName() { return inspectorName; }
-    /** @deprecated */ 
-    public String getName() { return inspectorName; }
+    /** @deprecated use getInspectorName() */ 
+    public String getName() { return getInspectorName(); }
     public int getMaxProperties() { return maxProperties; }
     
     public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
@@ -59,7 +56,7 @@ public class SimpleInspector extends Inspector
         this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
         this.state = state;
-        this.inspectorName = name;
+        setInspectorName(name);
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
         this.properties = properties;
@@ -299,11 +296,14 @@ public class SimpleInspector extends Inspector
                  if (members[i] != null) 
                      members[i].setValue(properties.betterToString(properties.getValue(i)));
         }
-                
+
+    /** Called by the system to come up with an appropriate title for a free-floating inspector window.
+        By default this method returns the inspector name,
+        if it is non-null, else it returns the toString() version of the object being inspected. */
     public String getTitle()
         {
-        String n = getInspectorName();
+        String n = super.getTitle();
         if (n != null) return n;
-        return "" + properties.getObject();
+        else return "" + properties.getObject();
         }
     }

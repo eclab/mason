@@ -79,6 +79,9 @@ public abstract class Inspector extends JPanel
     {
     boolean _volatile = true;
         
+    /** The displayed name of the inspector.  If this name is null, then properties.getObject().toString() is used instead. */
+    String inspectorName;
+
     /** Set to true (default) if the inspector should be updated every time step.  Else set to false. */
     public void setVolatile(boolean val) {_volatile = val;}
         
@@ -91,8 +94,17 @@ public abstract class Inspector extends JPanel
         
     /** Called by the system to come up with an appropriate title for a free-floating inspector window.
         Often this is toString() on the underlying object.  Some inspectors never become free-floating
-        and so don't need to override this method.  By default this method returns an empty String. */
-    public String getTitle() { return ""; } 
+        and so don't need to override this method.  By default this method returns the inspector name,
+        if it is non-null, else it returns an empty String. */
+    public String getTitle()
+        {
+        String n = getInspectorName();
+        if (n != null) return n;
+        else return "";
+        }
+        
+    public String getInspectorName() { return inspectorName; }
+    public void setInspectorName(String name) { inspectorName = name; }
     
     /**
        Called whenever the system needs to get a Steppable which, when stepped, will update the inspector and
