@@ -8610,6 +8610,7 @@ Basic Inspectors can be separated from the Console's inspector list and placed i
  
 \begin{methods}{\class{sim.portrayal.Inspector}}
 \mthd{public String getTitle()} Returns the string which should fill the title bar of the Inspector's window. By default returns the empty String.
+\mthd{public void setTitle(String val)} Sets the string which should fill the title bar of the Inspector's window.  Some Inspectors may override getTitle() and completely ignore setTitle(...).
 \mthd{public JFrame createFrame(Stoppable stopper)} Produces a scrollable JFrame, with the Inspector in it, which will stop the Stoppable when the JFrame is closed.
 \end{methods}
    
@@ -8639,10 +8640,10 @@ SimpleInspector's default \method{getTitle()} calls \method{toString()} on the u
 SimpleInspector is largely defined by its constructors:
     
 \begin{methods}{\class{sim.portrayal.SimpleInspector} Constructor}
-\mthd{public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties.  You also specify the maximum number of properties shown at a time.
-\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
-\mthd{public SimpleInspector(Object object, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties. You also specify the maximum number of properties shown at a time.
-\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
+\mthd{public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).  You also specify the maximum number of properties shown at a time.
+\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.  
+\mthd{public SimpleInspector(Object object, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title). You also specify the maximum number of properties shown at a time. 
+\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.  
 \mthd{public SimpleInspector(Object object, GUIState state)} Builds a SimpleInspector based on the provided object, with no title for the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
 \end{methods}
 
@@ -8653,7 +8654,8 @@ There are a few methods of interest to subclasses of SimpleInspector:
 \begin{methods}{\class{sim.portrayal.SimpleInspector}}
 \mthd{public GUIState getGUIState()}  Returns the GUIState associated with this inspector.
 \mthd{public Object getObject()} Returns the object that this inspector is inspecting.  It may be that this inspector was generated directly from Properties, in which case this returns null.
-\mthd{public String getInspectorName()} Returns the name originally provided to the inspector.
+\mthd{public String getInspectorName()} Returns the name originally provided to the inspector.  This is often \variable{null}, indicating that the string to be used ought to be a printed version of the inspected object itself.
+\mthd{public String getTitle()} Returns a string appropriate to appear in the window title bar.  By default, returns the inspector name, or if the inspector name is null, calls \method{toString()} on the inspected object and returns that.
 \mthd{public int getMaxProperties()} Returns the maximum number of properties displayed per page in the inspector.
 \end{methods}
 

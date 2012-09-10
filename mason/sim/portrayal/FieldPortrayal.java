@@ -255,6 +255,9 @@ public abstract class FieldPortrayal
             updateInspector();
             }
 
+
+    // setTitle is not overridden but is just ignored.
+    
         public String getTitle()
             {
             return objectInspector.getTitle();

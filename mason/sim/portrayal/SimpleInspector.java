@@ -20,6 +20,8 @@ import java.awt.event.*;
    
    <p>SimpleInspector automatically creates an UpdateButton and adds it to itself at position BorderLayout.NORTH
    whenever you set it to be non-volatile, and when you set it to be volatile, it removes the UpdateButton.
+   
+   <p>SimpleInspector automatically sets the title of the inspetor to the object name.
 */
 
 public class SimpleInspector extends Inspector
@@ -42,42 +44,55 @@ public class SimpleInspector extends Inspector
         {
         public Insets getInsets () { return new Insets(2,2,2,2); }
         };
+    String listName;  // used internally
 
     JLabel numElements = new JLabel();
     Box startField = null;
     
     public GUIState getGUIState() { return state; }
-    /** @deprecated use getInspectorName() */ 
-    public String getName() { return getInspectorName(); }
     public int getMaxProperties() { return maxProperties; }
     
+    /** Creates a new SimpleInspector with the given properties, state, maximum number of properties, and
+        "name".  The name is what's shown in the labelled list of the SimpleInspector.  It is not the
+        title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
         {
         this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
         this.state = state;
-        setInspectorName(name);
+        listName = name;
         header.setLayout(new BorderLayout());
         add(header,BorderLayout.NORTH);
         this.properties = properties;
         generateProperties(0);
+        setTitle("" + properties.getObject());
         }
         
+    /** Creates a new SimpleInspector with the given properties, state, and
+        "name".  The name is what's shown in the labelled list of the SimpleInspector.  It is not the
+        title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Properties properties, GUIState state, String name)
         {
         this(properties, state, name, DEFAULT_MAX_PROPERTIES);
         }
         
+    /** Creates a new SimpleInspector with the given properties and state. */
     public SimpleInspector(Object object, GUIState state)
         {
         this(object,state,null);
         }
         
+    /** Creates a new SimpleInspector with the given object, state, and
+        "name".  The name is what's shown in the labelled list of the SimpleInspector.  It is not the
+        title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Object object, GUIState state, String name) 
         {
         this(object, state, name, DEFAULT_MAX_PROPERTIES);
         }
         
+    /** Creates a new SimpleInspector with the given object, state, maximum number of properties, and
+        "name".  The name is what's shown in the labelled list of the SimpleInspector.  It is not the
+        title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Object object, GUIState state, String name, int maxProperties) 
         {
         this(Properties.getProperties(object), state, name, maxProperties);
@@ -180,7 +195,7 @@ public class SimpleInspector extends Inspector
                 
         if (propertyList != null) 
             remove(propertyList);
-        propertyList = new LabelledList(getInspectorName());
+        propertyList = new LabelledList(listName);
 
         if (len > maxProperties)
             {
@@ -295,15 +310,5 @@ public class SimpleInspector extends Inspector
         else for( int i = start ; i < start+count ; i++ )
                  if (members[i] != null) 
                      members[i].setValue(properties.betterToString(properties.getValue(i)));
-        }
-
-    /** Called by the system to come up with an appropriate title for a free-floating inspector window.
-        By default this method returns the inspector name,
-        if it is non-null, else it returns the toString() version of the object being inspected. */
-    public String getTitle()
-        {
-        String n = super.getTitle();
-        if (n != null) return n;
-        else return "" + properties.getObject();
         }
     }

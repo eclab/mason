@@ -2466,11 +2466,8 @@ Version 17
 		and getSeriesName() and made the original method names deprecated.  These
 		methods had overridden an obscure method in Component which is used for
 		obscure other reasons and we wanted to make sure we stayed clear of that.
-	Similarly, renamed SimpleInspector.getName() to SimpleInspector.getInspectorName()
-		Also deleted the ability
-		of Console.java to look up the inspector name using getName() (which would
-		have accessed the Swing method, a no-no) for the model inspector, so all
-		model inspectors will be in a tab called "Model", no matter what. 
+	Deleted SimpleInspector.getName().
+	Inspector now has getTitle() and setTitle() methods.
 	Added ContinuousPortrayal2D.getAxes(), ContinuousPortrayal2D.setAxes(), and
 		getDrawsFrameAndAxesInFront() and setDrawsFrameAndAxesInFront(...)
 	Added NumberTextField.getText(...) and setText(...)
