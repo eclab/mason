@@ -67,6 +67,7 @@
 \newcommand\character[1]{\texttt{"{#1}"}}
 \newcommand\textstr[1]{\texttt{"{#1}"}}
 \newcommand\code[1]{\textsf{#1}}
+%\newcommand\code[1]{\texttt{#1}}
 
 \newcommand\ignore[1]{}
 
@@ -254,16 +255,89 @@ At right is a general overview of the MASON architecture.
 \chapter{Reading and Writing Geospatial Data}
 \label{ch:io}
 
+This chapter covers recipes for reading and writing vector and grid based geospatial data.
+
 \section{Reading Geospatial Data}
 \label{sec:readingdata}
-\subsection{Reading vector data}
-\subsection{Reading grid data}
+This section covers reading geospatial data into MASON using GeoMason.
+
+\subsection{Reading a Shape File}
+\label{sub:readingshapefiles}
+
+\begin{description}
+\item[Problem] 
+You want to read vector geospatial data stored in a Shape file.
+
+\item[Solution]~\\
+Create a \code{GeomVectorField} and use \code{ShapeFileImporter.read()} to load data into it.
+\begin{verbatim}
+GeomVectorField vectorField = new GeomVectorField();
+
+try {
+   ShapeFileImporter.read("file:foo.shp", vectorField);
+} catch (FileNotFoundException ex)
+{  /* handle exception */  }
+\end{verbatim}
+
+\end{description}
+
+\paragraph{Discussion}
+
+
+\subsection{Reading an ARC/Info ASCII Grid File}
+\label{sub:readinggridfile}
+
+\begin{description}
+\item[Problem]
+You want to read an Arc/Info ASCII Grid file.
+
+\item[Solution]~\\
+Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file, then use \code{ArcInfoASCGridImporter()} to load the data into the grid field from the open input stream.
+\begin{verbatim}
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{verbatim}
+
+\item[Discussion ]
+\end{description}
+
 
 
 \section{Writing Geospatial Data}
 \label{sec:writingdata}
-\subsection{Writing vector data}
-\subsection{Writing grid data}
+
+\subsection{Writing a Shape File}
+\label{sub:writingshapefile}
+
+\subsection{Writing an ARC/Info ASCII Grid File}
+\label{sub:writinggridfile}
+
+\begin{description}
+\item[Problem]You want to write grid data to an ARC/Info ASCII Grid file.
+
+\item[Solution]~\\
+Create a \code{Writer} for the grid file and use \code{ArcInfoASCGridExporter.write()} to write the \code{GeomGridField}.
+\begin{verbatim}
+try {
+   BufferedWriter writer = new BufferedWriter( new FileWriter("foo.asc") );
+   ArcInfoASCGridExporter.write(gridField, writer);
+   writer.close();
+} catch (IOException ex)  {
+   /* handle exception */
+}
+\end{verbatim}
+
+\item[Discussion] 
+
+\end{description}
+
+
+
+
+
+
 %\begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{ants.pdf}\vspace{2em}\end{figure}
 
 
