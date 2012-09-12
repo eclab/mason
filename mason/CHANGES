@@ -2474,3 +2474,4 @@ Version 17
 	SimpleInspector now has a smarter approach to its getTitle() method.
 	Bug fix to TabbedInspector.  Thanks to Joey Harrison <jharri1@gmu.edu>
 	Added Display2D.setSelectionMode(...) and Display2D.getSelectionMode()
+	Added Display2D.performSelection(Point2D)

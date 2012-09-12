@@ -1634,7 +1634,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         selectedWrappers.clear();
         }
         
-    public void performSelection( final Rectangle2D.Double rect )
+    public void performSelection( Point2D point )
+        {
+        performSelection(new Rectangle2D.Double(point.getX(), point.getY(), 1, 1));
+        }
+
+    public void performSelection( Rectangle2D.Double rect )
         {
         // gather objects hit and select them, and put in selectedObjects
         Bag[] hitObjects = objectsHitBy(rect);
