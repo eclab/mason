@@ -6602,7 +6602,7 @@ The first task is to handle the mouse event. Display2D has consolidated the \met
 
 Let's presume that the mouse event resulted attempting to select or inspect objects. Next we need to do some hit testing to gather all the objects in all FIelds hit by the mouse or rectangular region.  Display2D returns an array of Bags, one per Field, holding these object.  Or more correctly, the Bags hold {\bf Location Wrappers} (instances of \class{sim.portrayal.LocationWrapper}).  A Location Wrapper, discussed later in Section \ref{sim.portrayal.LocationWrapper}, contains various information about the Object, including the Object itself, the Field Portrayal (and thus Field) it's located in, its location in the Field, and so on.
 
-Display2D {\bf selects} objects by first clearing all selections, then hit-testing for objects, then calling \method{setSelected(...)} on each Field Portrayal for each object.  
+Display2D {\bf selects} objects by first clearing all selections, then hit-testing for objects, then calling \method{setSelected(...)} on each Field Portrayal for each object.   Optionally, Display2D will only call \method{setSelected(...)} on at most a single object at a time if you so set it.
 
 Display2D {\bf inspects} objects by first clearing all Inspectors from the Controller, then hit-testing for objects, then calling \method{getInspector(...)} on each Field Portrayal for each object, then submitting the resulting Inspectors to the Controller.  The details of how Inspectors work and how they're constructed is discussed in a later Section (\ref{sim.portrayal.Inspector}).
 
@@ -6614,6 +6614,8 @@ Display2D's relevant methods are:
 \mthd{public void performSelection( LocationWrapper wrapper)}Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method.
 \mthd{public void performSelection( Bag locationWrappers )}Selects the Objects represented by the given LocationWrappers by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
 \mthd{public void performSelection( Rectangle2D.Double rect )}Selects all objects hit by the given rectangle, by calling each of their relevant FieldPortrayals' \method{setSelected(...)} methods.
+\mthd{public int getSelectionMode()} Returns how objects are selected when \method{performSelection(...)} is called.  At present there are two options: \variable{Display2D.SELECTION\_MODE\_MULTI}, in which all hit objects are selected, or \variable{Display2D.SELECTION\_MODE\_SINGLE}, in which at most a single hit object is selected.  The default is \variable{Display2D.SELECTION\_MODE\_MULTI}.
+\mthd{public void setSelectionMode( int mode )} Sets how objects are selected when \method{performSelection(...)} is called.  At present there are two options: \variable{Display2D.SELECTION\_MODE\_MULTI}, in which all hit objects are selected, or \variable{Display2D.SELECTION\_MODE\_SINGLE}, in which at most a single hit object is selected.  The default is \variable{Display2D.SELECTION\_MODE\_MULTI}.
 \mthd{public void clearSelections()}Instructs all Field Portrayals to clear all selections on all objects.
 \mthd{public void createInspectors( Rectangle2D.Double rect, GUIState simulation )}Generates and submits to the Console inspectors for each object hit by the given rectangle, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
 \end{methods}

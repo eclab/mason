@@ -1634,21 +1634,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         selectedWrappers.clear();
         }
         
-    public void performSelection( Bag locationWrappers )
-        {
-        clearSelections();
-                
-        if (locationWrappers == null) return;  // deselect everything
-        
-        // add new wrappers
-        for(int x=0;x < locationWrappers.size(); x++)
-            {
-            LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
-            wrapper.getFieldPortrayal().setSelected(wrapper, true);
-            selectedWrappers.add(wrapper);
-            }
-        }
-        
     public void performSelection( final Rectangle2D.Double rect )
         {
         // gather objects hit and select them, and put in selectedObjects
@@ -1659,6 +1644,41 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         performSelection(collection);
         }
 
+
+    public static int SELECTION_MODE_MULTI = 0;
+    public static int SELECTION_MODE_SINGLE = 1;
+    
+    int selectionMode = SELECTION_MODE_MULTI;
+    /** Returns whether selecting a region will select all the objects within that region (the default), or instead a single object. */
+    public int getSelectionMode() { return selectionMode; }
+    /** Sets whether selecting a region will select all the objects within that region (the default), or instead a single object. */
+    public void setSelectionMode(int val) { selectionMode = val; }
+
+    public void performSelection( Bag locationWrappers )
+        {
+        clearSelections();
+                
+        if (locationWrappers == null) return;  // deselect everything
+        
+        // add new wrappers
+        if (selectionMode == SELECTION_MODE_SINGLE )
+            {
+            if (locationWrappers.size() > 0)
+                {
+                LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(locationWrappers.size() - 1)));  // get the top one, it's likely the agent drawn last, thus on top.  Maybe?
+                wrapper.getFieldPortrayal().setSelected(wrapper, true);
+                selectedWrappers.add(wrapper);
+                }
+            }
+        else // SELECTION_MODE_MULTI
+            for(int x=0;x < locationWrappers.size(); x++)
+            {
+            LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+            wrapper.getFieldPortrayal().setSelected(wrapper, true);
+            selectedWrappers.add(wrapper);
+            }
+        }
+        
     /** Determines the inspectors appropriate for the given selection region (rect), and sends
         them on to the Controller. */
     public void createInspectors( final Rectangle2D.Double rect, final GUIState simulation )
