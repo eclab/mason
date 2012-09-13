@@ -835,6 +835,11 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         return new ImageIcon(Display2D.class.getResource(name));
         }
     
+    // Unfortunately OS X does not properly display the Move and Hand cursors.  :-(  We have to draw our
+    // own.  I'm using the old-style MacOS ones.
+    public static final ImageIcon OPEN_HAND_CURSOR_P = iconFor("OpenHand.png");
+    public static final ImageIcon CLOSED_HAND_CURSOR_P = iconFor("ClosedHand.png");
+    
     public static final ImageIcon LAYERS_ICON = iconFor("Layers.png");
     public static final ImageIcon LAYERS_ICON_P = iconFor("LayersPressed.png");
     public static final ImageIcon REFRESH_ICON = iconFor("Reload.png");
@@ -905,13 +910,39 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     double scale = 1.0;
     final Object scaleLock = new Object();  // scale lock
     /** Sets the scale (the zoom value) of the Display2D */
+
     public void setScale(double val) 
         { 
+        double oldScale = scale;
+
         synchronized (scaleLock)  
             { 
-            if (val > 0.0) scale = val; 
+            if (val > 0.0) 
+                {
+                scale = val; 
+                scaleField.setValue(scale);
+                }
+            else throw new RuntimeException("setScale requires a value which is > 0.");  // don't bother rescaling
             }
-            
+        
+
+                // lock the paint lock so we don't try repainting until we request it.
+                // JScrollView tries to jump the gun, making things flashy.
+                insideDisplay.paintLock = true;
+                
+                // grab the original location
+                Rectangle r = port.getViewRect();
+
+                // scroll to keep the zoomed-in region centered -- this is prettier
+                double centerx = r.x + r.width/2.0;
+                double centery = r.y + r.height/2.0;
+                centerx *= scale / oldScale;
+                centery *= scale / oldScale;
+                Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
+                if (topleft.x < 0) topleft.x = 0;
+                if (topleft.y < 0) topleft.y = 0;
+
+
         // The JScrollPane doesn't know so we gotta inform it.
         if (port != null) 
             {
@@ -922,7 +953,17 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 SwingUtilities.invokeLater(new Runnable() { public void run() { port.setView(insideDisplay); } });
                 }
             }
-        repaint();  // probably not needed
+
+
+                optionPane.xOffsetField.setValue(insideDisplay.xOffset * scale);
+                optionPane.yOffsetField.setValue(insideDisplay.yOffset * scale);
+                 
+                // now release the paint lock and repaint
+                insideDisplay.paintLock = false;
+                
+                port.setViewPosition(topleft);
+                Display2D.this.repaint();
+
         }
         
     /** Returns the scale (the zoom value) of the Display2D */
@@ -1395,12 +1436,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // can't add this because Java thinks I no longer want to scroll
         // the window via the scroll wheel, oops.  
         /*
-          insideDisplay.addMouseWheelListener(new MouseWheelListener()
+        insideDisplay.addMouseWheelListener(new MouseWheelListener()
           {
           public void mouseWheelMoved(MouseWheelEvent e)
-          {
-          if (handleMouseEvent(e)) { repaint(); return; }
-          }
+            {
+            System.err.println(e);
+            if (handleMouseEvent(e)) { repaint(); return; }
+            }
           });
         */
 
@@ -1470,36 +1512,11 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             public double newValue(double newValue)
                 {
                 if (newValue <= 0.0) newValue = currentValue;
-
-                // lock the paint lock so we don't try repainting until we request it.
-                // JScrollView tries to jump the gun, making things flashy.
-                insideDisplay.paintLock = true;
-                
-                // grab the original location
-                Rectangle r = port.getViewRect();
-
-                // scroll to keep the zoomed-in region centered -- this is prettier
-                double centerx = r.x + r.width/2.0;
-                double centery = r.y + r.height/2.0;
-                centerx *= (newValue / (double) currentValue);
-                centery *= (newValue / (double) currentValue);
-                Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
-                if (topleft.x < 0) topleft.x = 0;
-                if (topleft.y < 0) topleft.y = 0;
-
                 setScale(newValue);
-                optionPane.xOffsetField.setValue(insideDisplay.xOffset * newValue);
-                optionPane.yOffsetField.setValue(insideDisplay.yOffset * newValue);
-                //port.setView(insideDisplay);  // now done by setScale
-                
-                // now release the paint lock and repaint
-                insideDisplay.paintLock = false;
-                
-                port.setViewPosition(topleft);
-                Display2D.this.repaint();
                 return newValue;
                 }
             };
+            
         scaleField.setToolTipText("Zoom in and out");
         scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         header.add(scaleField);
@@ -2032,19 +2049,35 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         (or on OS X) Command-dragging or two-finger-click-dragging.  By default FALSE. */
     public boolean getMouseChangesOffset() { return mouseChangesOffset; }
     
+    boolean openHand = false;
+    Cursor OPEN_HAND_CURSOR_C = getToolkit().createCustomCursor(OPEN_HAND_CURSOR_P.getImage(), new Point(8,8), "Open Hand");
+    Cursor CLOSED_HAND_CURSOR_C = getToolkit().createCustomCursor(CLOSED_HAND_CURSOR_P.getImage(), new Point(8,8), "Closed Hand");
     public boolean handleMouseEvent(MouseEvent event)
         {
-        // first, we handle our own facilities
+        // first, we handle our own facility for handling offsets
         if (mouseChangesOffset && (event.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK)
             {
             if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() >= 2)
                 {
+                // reset
                 insideDisplay.xOffset = 0;
                 insideDisplay.yOffset = 0;
+                setScale(1.0);
+                Display2D.this.repaint();
+                }
+            else if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() == 1)
+                {
+                // scroll and scale
+                MouseEvent m = SwingUtilities.convertMouseEvent(insideDisplay, event, port);
+                insideDisplay.xOffset -= m.getX() - port.getWidth() / 2 ;
+                insideDisplay.yOffset -= m.getY() - port.getHeight() / 2 ;
+                setScale(getScale() * 2);
                 Display2D.this.repaint();
                 }
             else if (event.getID() == MouseEvent.MOUSE_PRESSED)  // middle button
                 {
+                setCursor(OPEN_HAND_CURSOR_C);
+                openHand = true;
                 event = SwingUtilities.convertMouseEvent(this, event, display);
                 originalXOffset = insideDisplay.xOffset;
                 originalYOffset = insideDisplay.yOffset;
@@ -2054,12 +2087,21 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             else if (event.getID() == MouseEvent.MOUSE_RELEASED)  // middle button
                 {
+                setCursor(new Cursor(Cursor.MOVE_CURSOR));
+                openHand = false;
+                
                 scaleField.setText(originalText);
                 originalMousePoint = null;
                 return true;
                 }
             else if (event.getID() == MouseEvent.MOUSE_DRAGGED)  // middle button
                 {
+                if (openHand)
+                    {
+                    setCursor(CLOSED_HAND_CURSOR_C);
+                    openHand = false;
+                    }
+
                 event = SwingUtilities.convertMouseEvent(this, event, display);  // do we need to do this?
                 insideDisplay.xOffset =  originalXOffset - (originalMousePoint.x - event.getX()) / scale;
                 insideDisplay.yOffset =  originalYOffset - (originalMousePoint.y - event.getY()) / scale;

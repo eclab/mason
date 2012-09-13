@@ -2475,3 +2475,4 @@ Version 17
 	Bug fix to TabbedInspector.  Thanks to Joey Harrison <jharri1@gmu.edu>
 	Added Display2D.setSelectionMode(...) and Display2D.getSelectionMode()
 	Added Display2D.performSelection(Point2D)
+	Added Display2D.setMouseChangesOffset and Display2D.getMouseChangesOffset
