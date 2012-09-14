@@ -618,6 +618,18 @@ public class SimState implements java.io.Serializable
             n = n*10;
             }
         }
+    
+    /**
+     * This function returns a type-specific SimState. The purpose of this
+     * function is that it can be overridden by SimStates with submodels. When
+     * the agents of a submodel are expecting the submodel, the supermodel
+     * can pass it to them.
+     * @param c The type of the expected SimState
+     * @return
+     */
+    public SimState getSimulation(Class<?> c) 
+    	{
+    	return this;
+    	}
 
     }
-
