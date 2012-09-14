@@ -220,5 +220,36 @@ public class Heap implements java.io.Serializable
                         
         numElem = 0;
         }
+    
+    /**
+     * Merge the given heap with this one to create a new heap, which is returned.
+     */
+    public Heap merge(Heap other) {
+    	//TODO this might need to protect against a self-merge
+    	int n = this.numElem + other.numElem;
+    	Comparable[] combinedKeys = new Comparable[n];
+    	Object[] combinedObjects = new Object[n];
+    	
+    	System.arraycopy(keys, 0, combinedKeys, 0, this.numElem);
+    	System.arraycopy(other.keys, 0, combinedKeys, this.numElem, other.numElem);
+
+    	System.arraycopy(objects, 0, combinedObjects, 0, this.numElem);
+    	System.arraycopy(other.objects, 0, combinedObjects, this.numElem, other.numElem);
+
+    	return new Heap(combinedKeys, combinedObjects);
+    }
+    
+//    public Heap merge1(Heap other) {
+//    	if (other.equals(this)) {
+//    		System.err.println("Error: Cannot merge a heap with itself.");
+//    		new Exception().printStackTrace();
+//    		return this;
+//    	}
+//
+//    	for (int i = 0; i < other.numElem; i++)
+//    		this.add(other.objects[i], other.keys[i]);
+//    	
+//    	return this;
+//    }
 
     }
