@@ -253,6 +253,21 @@ public class Schedule implements java.io.Serializable
             return queue.isEmpty();
             }
         }
+    
+    /**
+     * Merge a given schedule into this one.
+     */
+	public void merge(Schedule other) {
+		if (inStep || other.inStep) {
+			throw new RuntimeException("Can't merge schedules while inside a step method.");
+		}
+		
+		if (sealed || other.sealed) {
+			throw new RuntimeException("Sealed scheduled may not be merged.");
+		}
+		
+		queue = queue.merge(other.queue);
+	}
 
     Bag currentSteps = new Bag();
     Bag substeps = new Bag();
