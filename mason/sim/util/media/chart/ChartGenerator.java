@@ -425,6 +425,26 @@ public abstract class ChartGenerator extends JPanel
         return ((XYPlot)(chart.getPlot())).getDomainAxis().getLabel();
         }
     
+    /**
+     * Set the minimum size at which the chart will be drawn. If the chart is 
+     * smaller than this, the chart will be rendered at this size, then scaled 
+     * down to fit the window.
+     */
+    public void setMinimumChartDrawSize(int width, int height) 
+    	{
+    	chartPanel.setMinimumDrawWidth(width);
+    	chartPanel.setMinimumDrawHeight(height);
+    	}
+    
+    /**
+     * Set the preferred size of the chart. This determines the size at which 
+     * the scroll bars appear when resizing.
+     */
+    public void setPreferredChartSize(int width, int height) 
+    	{
+    	chartPanel.setPreferredSize(new Dimension(width, height));
+    	}
+    
     /** Returns the underlying chart. **/
     public JFreeChart getChart()
         {
