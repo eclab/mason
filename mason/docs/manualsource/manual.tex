@@ -3878,6 +3878,13 @@ schedule.scheduleOnceIn(0,\\
 \rule{4em}{0pt} new Steppable() \{ public void step(SimState state) \{ state.kill(); \} \} );
 }
 
+For certain esoteric you may need to merge the agents of two schedules.  To do this, you can use:
+
+\begin{methods}{\class{sim.engine.SimState}}
+\mthd{public void merge(Schedule second)} Merges a second schedule into the first Schedule, modifying it (but leaving the second Schedule untouched).  Schedules may not be merged if either of them is sealed, if the merging request occurs somewhere within the step() method of the first Schedule, or if the second schedule has agents scheduled for earlier than the current timestamp of the first Schedule.  This procedure is \(O(n))\) in the number of agents.
+\end{methods}
+
+
 \subsubsection{Under the Hood}
 \label{sim.util.Heap}
 \label{sim.engine.Schedule.Key}
@@ -3897,6 +3904,7 @@ The Schedule employs a binary heap: specifically the MASON utility class \Class{
 \mthd{public Comparable getMinKey()} Returns the minimum key in the heap.
 \mthd{public Object extractMin()} Removes the minimum object and its key from the heap, and returns the object.  If the heap is empty, null is returned.
 \mthd{public Bag extractMin(Bag putInHere)} Removes all objects (and their keys) whose keys are equal to that of the minimum object.  Places the objects in the provided Bag and returns it (not clearing it first). If the Bag is null, a new Bag is created.  If the heap is empty, the Bag will be empty.
+\mthd{public Heap merge(Heap other)} Merges this heap with another, returning a new resulting Heap.  Neither of the original heaps is modified.  This procedure is \(O(n))\) in the number of keyed elements.
 \end{methods}
 
 MASON uses a binary heap because we don't know beforehand how you'll be using the Schedule, and so need something general-purpose.  Binary heaps are fast enough for most purposes, but if you have a lot of agents and know something about how they'll be scheduled, you may be able to do significantly better, with a smarter {\bf calendar queue} tuned for your application. All you have to do is write a subclass of Heap which overrides above methods. Then override Schedule's \method{createHeap()} method to return your special kind of calendar queue instead of the standard Heap.  Then in SimState's constructor, set the Schedule to your special subclass to use it instead of the standard Schedule.
@@ -6698,7 +6706,7 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \item Whether or not the object has been {\bf selected} and should draw itself appropriately.  This is a temporary setting.
 \item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.  It is also set if the Display2D which created this DrawInfo2D is being forced to draw precisely (via \method{Display2D.setPrecise(...)}).
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
-\item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the Display2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
+\item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the DrawInfo2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
 \item The {\bf GUIState}.
 \end{itemize}
 
@@ -8682,7 +8690,8 @@ TabbedInspector's methods are likewise obvious:
 \begin{methods}{\class{sim.portrayal.inspector.TabbedInspector}}
 \mthd{public void setUpdatingInspectors(boolean val)} Sets whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
 \mthd{public boolean isUpdatingInspectors()} Returns whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
-\mthd{public void addInspector(Inspector insp, String tab)} Adds an inspector, with a tab with the given name. 
+\mthd{public void addInspector(Inspector insp, String tab)} Adds an inspector, with a tab with the given name.   This method sets the title of the inspector (via \method{setTitle(...)}) to that name.
+\mthd{public void addInspector(Inspector insp)} Adds an inspector, using the inspector's title (from \method{getTitle(...)}) as the name.
 \mthd{public void remove(Inspector insp)} Removes an inspector. 
 \mthd{public void clear()} Removes all inspectors. 
 \end{methods}
