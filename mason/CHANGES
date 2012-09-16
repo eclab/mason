@@ -2476,3 +2476,5 @@ Version 17
 	Added Display2D.setSelectionMode(...) and Display2D.getSelectionMode()
 	Added Display2D.performSelection(Point2D)
 	Added Display2D.setMouseChangesOffset and Display2D.getMouseChangesOffset
+	Added proportions and scaling to charting.  Charts no longer auto-resize on 
+		window resizing.
