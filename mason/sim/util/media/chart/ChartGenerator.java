@@ -737,6 +737,7 @@ public abstract class ChartGenerator extends JPanel
         chartPanel.setMaximumDrawHeight((int)DEFAULT_CHART_HEIGHT);
         chartPanel.setMinimumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
         chartPanel.setMaximumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
+        chartPanel.setPreferredSize(new java.awt.Dimension((int)(DEFAULT_CHART_HEIGHT * DEFAULT_CHART_PROPORTION), (int)(DEFAULT_CHART_HEIGHT)));
         }
     
     public double DEFAULT_CHART_HEIGHT = 480;
@@ -909,6 +910,8 @@ public abstract class ChartGenerator extends JPanel
             }
         public boolean getScrollableTracksViewportHeight() { return false; }
         public boolean getScrollableTracksViewportWidth() { return false; }
+
+        public Dimension getMaximumSize() { return getPreferredSize(); }
         }
         
         
