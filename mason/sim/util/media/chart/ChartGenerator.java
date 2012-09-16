@@ -91,7 +91,10 @@ public abstract class ChartGenerator extends JPanel
     PropertyField xLabel;
     /** The global attributes range axis field. */
     PropertyField yLabel;
-        
+    
+    NumberTextField scaleField;
+    NumberTextField proportionField;
+    
     /** The global attributes logarithmic range axis check box. */
     JCheckBox yLog;
     /** The global attributes logarithmic domain axis check box. */
@@ -520,8 +523,6 @@ public abstract class ChartGenerator extends JPanel
                     chart.getXYPlot().setDomainAxis(new NumberAxis(xLabel.getValue()));
                 }
             });
-        list.add(new JLabel("Log X axis"), xLog);
-        
 
         yLog = new JCheckBox();
         yLog.addChangeListener(new ChangeListener(){
@@ -537,7 +538,14 @@ public abstract class ChartGenerator extends JPanel
                     chart.getXYPlot().setRangeAxis(new NumberAxis(yLabel.getValue()));
                 }
             });
-        list.add(new JLabel("Log Y axis"), yLog);
+
+        Box box = Box.createHorizontalBox();
+        box.add(new JLabel("X"));
+        box.add(xLog);
+        box.add(new JLabel(" Y"));
+        box.add(yLog);
+        box.add(Box.createGlue());
+        list.add(new JLabel("Log Axis"), box);
 
         final JCheckBox xgridlines = new JCheckBox();
         xgridlines.setSelected(false);
@@ -556,8 +564,6 @@ public abstract class ChartGenerator extends JPanel
                 }
             };
         xgridlines.addItemListener(il);
-        list.add(new JLabel("X Grid Lines"), xgridlines);
-
 
         final JCheckBox ygridlines = new JCheckBox();
         ygridlines.setSelected(false);
@@ -576,7 +582,15 @@ public abstract class ChartGenerator extends JPanel
                 }
             };
         ygridlines.addItemListener(il);
-        list.add(new JLabel("Y Grid Lines"), ygridlines);
+
+
+        box = Box.createHorizontalBox();
+        box.add(new JLabel("X"));
+        box.add(xgridlines);
+        box.add(new JLabel(" Y"));
+        box.add(ygridlines);
+        box.add(Box.createGlue());
+        list.add(new JLabel("Grid Lines"), box);
 
         final JCheckBox legendCheck = new JCheckBox();
         legendCheck.setSelected(false);
@@ -664,13 +678,100 @@ public abstract class ChartGenerator extends JPanel
         p.setPreferredSize(new Dimension(200,0));
         split.setLeftComponent(p);
                 
+
+
+        // Add scale and proportion fields
+        Box header = Box.createHorizontalBox();
+
+        final double MAXIMUM_SCALE = 8;
+        
+         // add the scale field
+        scaleField = new NumberTextField("  Scale: ", 1.0, true)
+            {
+            public double newValue(double newValue)
+                {
+                if (newValue <= 0.0) newValue = currentValue;
+                if (newValue > MAXIMUM_SCALE) newValue = currentValue;
+                scale = newValue;
+                resizeChart();
+                return newValue;
+                }
+            };
+        scaleField.setToolTipText("Zoom in and out");
+        scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
+        header.add(scaleField);
+       
+         // add the proportion field
+        proportionField = new NumberTextField("  Proportion: ", 1.5, true)
+            {
+            public double newValue(double newValue)
+                {
+                if (newValue <= 0.0) newValue = currentValue;
+                proportion = newValue;
+                resizeChart();
+                return newValue;
+                }
+            };
+        proportionField.setToolTipText("Change the chart proportions (ratio of width to height)");
+        proportionField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
+        header.add(proportionField);
+
+
         chartHolder.setMinimumSize(new Dimension(0,0));
-        split.setRightComponent(chartHolder);
+        chartHolder.getViewport().setBackground(Color.gray);
+        JPanel p2 = new JPanel();
+        p2.setLayout(new BorderLayout());
+        p2.add(chartHolder, BorderLayout.CENTER);
+        p2.add(header, BorderLayout.NORTH);
+        split.setRightComponent(p2);
         setLayout(new BorderLayout());
         add(split,BorderLayout.CENTER);
         
         // set the default to be white, which looks good when printed
         chart.setBackgroundPaint(Color.WHITE);
+
+        // JFreeChart has a hillariously broken way of handling font scaling.
+        // It allows fonts to scale independently in X and Y.  We hack a workaround
+        // here.
+        chartPanel.setMinimumDrawHeight((int)DEFAULT_CHART_HEIGHT);
+        chartPanel.setMaximumDrawHeight((int)DEFAULT_CHART_HEIGHT);
+        chartPanel.setMinimumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
+        chartPanel.setMaximumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
+        }
+    
+    public double DEFAULT_CHART_HEIGHT = 480;
+    public double DEFAULT_CHART_PROPORTION = 1.5;
+    
+    double scale = 1.0;
+    double proportion = 1.5;
+    
+    public double getScale() { return scale; }
+    public double getProportion() { return proportion; }
+    public void setScale(double val) { scale = val; scaleField.setValue(val); resizeChart(); }
+    public void setProportion(double val) { proportion = val; proportionField.setValue(val); resizeChart(); }
+    
+    
+    void resizeChart()
+        {
+        double w = DEFAULT_CHART_HEIGHT * scale * proportion;
+        double h = DEFAULT_CHART_HEIGHT * scale;
+        Dimension d = new java.awt.Dimension(
+                (int)(w),
+                (int)(h));
+
+        chartPanel.setSize(
+            new java.awt.Dimension(d));
+        chartPanel.setPreferredSize(chartPanel.getSize());
+        
+        // JFreeChart has a hillariously broken way of handling font scaling.
+        // It allows fonts to scale independently in X and Y.  We hack a workaround
+        // here.
+        chartPanel.setMinimumDrawHeight((int)DEFAULT_CHART_HEIGHT);
+        chartPanel.setMaximumDrawHeight((int)DEFAULT_CHART_HEIGHT);
+        chartPanel.setMinimumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
+        chartPanel.setMaximumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
+        
+        chartPanel.repaint();
         }
     
     /** Returns a JFrame suitable or housing the ChartGenerator.  This frame largely calls chart.quit() when
@@ -784,6 +885,38 @@ public abstract class ChartGenerator extends JPanel
                 }
             });
         }
+    
+    static int DEFAULT_UNIT_FRACTION = 16;
+    static int DEFAULT_BLOCK_FRACTION = 4;
+    
+    class ScrollableChartPanel extends ChartPanel implements Scrollable
+        {
+        public ScrollableChartPanel(JFreeChart chart, boolean useBuffer)
+            { super(chart, useBuffer); }
+        public Dimension getPreferredScrollableViewportSize()
+            { return getPreferredSize(); }
+        public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
+            { 
+            return (int)((orientation == SwingConstants.HORIZONTAL) ?
+                    ( visibleRect.getWidth() / DEFAULT_UNIT_FRACTION ) :
+                    ( visibleRect.getHeight() / DEFAULT_UNIT_FRACTION ));
+            }
+        public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
+            { 
+            return (int)((orientation == SwingConstants.HORIZONTAL) ?
+                    ( visibleRect.getWidth() / DEFAULT_BLOCK_FRACTION ) :
+                    ( visibleRect.getHeight() / DEFAULT_BLOCK_FRACTION ));
+            }
+        public boolean getScrollableTracksViewportHeight() { return false; }
+        public boolean getScrollableTracksViewportWidth() { return false; }
+        }
+        
+        
+    public ChartPanel buildChartPanel(JFreeChart chart)
+        {
+        return new ScrollableChartPanel(chart, false); 
+        }
+        
     }
 
         

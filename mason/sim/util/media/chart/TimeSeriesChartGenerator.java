@@ -96,10 +96,10 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         chart.setAntiAlias(true);
         chartPanel = new ChartPanel(chart, true);                       
         chartPanel.setPreferredSize(new java.awt.Dimension(640,480));
-        chartPanel.setMinimumDrawHeight(10);
-        chartPanel.setMaximumDrawHeight(2000);
-        chartPanel.setMinimumDrawWidth(20);
-        chartPanel.setMaximumDrawWidth(2000);
+        chartPanel.setMinimumDrawHeight(200);
+        chartPanel.setMaximumDrawHeight(5000000);
+        chartPanel.setMinimumDrawWidth(200);
+        chartPanel.setMaximumDrawWidth(5000000);
         chartHolder.getViewport().setView(chartPanel);
                 
         // this must come last because the chart must exist for us to set its dataset

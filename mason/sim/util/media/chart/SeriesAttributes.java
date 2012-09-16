@@ -119,6 +119,7 @@ public abstract class SeriesAttributes extends LabelledList
                     getGenerator().removeSeries(getSeriesIndex());
                 }
             });
+        removeButton.setToolTipText("Remove this series");
         
         JButton upButton = new JButton(I_UP);
         upButton.setPressedIcon(I_UP_PRESSED);
@@ -132,6 +133,7 @@ public abstract class SeriesAttributes extends LabelledList
                 getGenerator().moveSeries(getSeriesIndex(), true);
                 }
             });
+        upButton.setToolTipText("Draw this series higher in the series order");
         
         JButton downButton = new JButton(I_DOWN);
         downButton.setPressedIcon(I_DOWN_PRESSED);
@@ -145,6 +147,7 @@ public abstract class SeriesAttributes extends LabelledList
                 getGenerator().moveSeries(getSeriesIndex(), false);
                 }
             });
+        downButton.setToolTipText("Draw this series lower in the series order");
         
         manipulators.add(removeButton);
         manipulators.add(upButton);
