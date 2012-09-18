@@ -76,6 +76,7 @@ public class ParallelSequence extends Sequence
         {
         p.writeBoolean(pleaseDie);
         p.writeBoolean(destroysThreads);
+        p.writeInt(numThreads);
         // don't write operating
         // dont' write threads
         }
