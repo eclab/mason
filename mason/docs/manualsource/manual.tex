@@ -4002,12 +4002,20 @@ Be sure to read and understand \class{sim.engine.Sequence}.
 \end{methods}
 
 
-\paragraph{\Class{sim.engine.ParallelSequence}}
+\sidebar{I don't get the speedup I was expecting with ParallelSequence.}{Multithreading is a fickle thing.  Just because you have multiple CPUs, or a CPU with multiple cores, doesn't mean you're going to get a multiple-times speedup (or in fact {\it any} speedup) from going multithreaded. You still only have one memory subsystem which must be shared among the CPUs, and threads also wreak havoc on your CPU cache performance.  On my laptop, for example, parallelizing the diffuser in Heatbugs by 2x gives an almost 2x speedup, but further parallelizing only increases by a little bit.
+
+You will see the most performance gains if the parallelized portion of your code mostly deals with complex computations rather than reading and writing memory.  Unfortunately many multiagent simulation tasks involve a great deal of reading and writing to memory (such as reading or writing to fields).    You can also get some (less impressive) performance gains if your parallelized agents are reading/writing memory that's very distant from one another, so they don't incur cache hits.  The HeatBugs ParallelDiffuser attempts this, for example.
+
+Multithreaded coding is hardly a panacea, and multiagent simulations' tendency to be highly memory-driven is a worst-case scenario for it.    So ParallelSequence is a useful tool in some cases, but far from a magic wand for speeding up your simulation.
+}\paragraph{\Class{sim.engine.ParallelSequence}}
 This is a subclass of Sequence which, instead of stepping each agent in turn, instead steps all of them simultaneously in separate threads.  Be careful when using ParallelSequence: as you have multiple threads, it's up to you to make sure that you don't create race conditions as they access various parts of your model simultaneously.  Notably if your agents use the random number generator from different threads, they should lock on the generator first, for example like this:
 
 \java{%
 double val = 0;\\
-synchronized(state.random) \{ val = state.random.nextDouble(); \}\\
+synchronized(state.random)\\
+\indent\ \ \ \  \{\\
+\indent\ \ \ \  val = state.random.nextDouble();\\
+\indent\ \ \ \  \}\\
 // now use val here....
 }
 
@@ -5340,7 +5348,7 @@ First, there's MASON's own SocialNetworks plug-in, which subclasses Network to p
 Second, MASON can be integrated with Jung, a large and well-regarded Java-based social networks library.  You can get more information about both options on the MASON web page at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/mason/}
 Graphs in general have two elements: {\bf nodes} and {\bf edges}.  Each edge connects two nodes (the two nodes can be the same node).  An edge can be optionally {\bf directed}, that is, it specifies that one of its nodes is the ``{\it from}'' node and the other is the ``{\it to}'' node.  An edge can also optionally be {\bf labeled} with an Object.  If this Object is a number, the edge is said to be {\bf weighted} with that number.
 
-At right, Figure \ref{NetworkUML} shows the \Package{sim.field.network} package in its entire two-class glory, consisting of the class \Class{sim.field.network.Network}, which holds the graph (or network),\footnote{They're synonymous.  I'm a computer science guy: we tend to say {\it graph}.} and the class \Class{sim.field.network.Edge}.  Notice the item that's missing: a class for {\it nodes}.  This is because in the Network class, any Object except for null can be a node in the graph.  Edges on the other hand require the distinctive Edge class: however this class can hold an Object as its label or weight.
+At right, Figure \ref{NetworkUML} shows the \Package{sim.field.network} package in its entire two-class glory, consisting of the class \Class{sim.field.network.Network}, which holds the graph (or network),\footnote{They're synonymous.  I'm a computer science guy: we tend to say {\it graph}.} and the class \Class{sim.field.network.Edge}.  Notice the item that's missing: a class for {\it nodes}.  This is because in the Network class, any Object except for null can be a node in the graph.  Edges on the other hand require the distinctive Edge class: however this class can hold any Object as its label or weight.
 
 \section{Edges}
 
@@ -5430,7 +5438,7 @@ Returns in a Bag all the incoming edges to the given node (that is, those for wh
 \mthd{public Bag getEdgesOut(Object node)}
 Returns in a Bag all the outgoing edges from the given node (that is, those for which the node is the ``from'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesOut(myNode));}
 \mthd{public Bag getEdges(Object node, Bag result)}
-Returns in the Bag {\it result}, or (if  all the outgoing edges from the given node (that is, those for which the node is the ``from'' object).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesOut(myNode));}
+Returns in the Bag {\it result}, or (if  all the outgoing edges from the given node (that is, those for which the node is the ``from'' object).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdges(myNode));}
 \end{methods}
 
 
@@ -5472,7 +5480,7 @@ But this division can be confusing to people coming from environments, such as N
 
 The Figure at right shows the basic elements of the {\bf model} (the {\bf schedule} with its {\bf agents}, the {\bf random number generator}, and {\bf fields} holding various {\bf objects}. All these elements are encapsulated, ultimately, within a single instance of a subclass of \Class{sim.engine.SimState}.  More detail of the controller section (discussed in this Chapter) is shown in Figure \ref{GUIUML}.
 
-When we build a GUI for the model, we pair with many of these model objects an object whose job is to control or visualize them.  The schedule and random number generator are controlled by a {\bf controller}, the most common of which is the \Class{sim.display.Console}.  One or more {\bf displays} show whole fields in a GUI window. Displays are capable of producing movies or screenshots of their fields.  The fields are drawn by {\bf field portrayals}, possibly overlaid on one another.  In order to draw the fields, the Field Portrayals often (but not always) rely on the services of {\bf simple portrayals} designed to draw or control specific kinds of objects.  When the user wishes to {\bf inspect}\footnote{SWARM and Repast users would call this {\it probing}  object.  Coming from a NeXTSTEP and MacOS X background, I was more comfortable with the term {\it inspection}.} an object, the associated SimplePortrayal might produce an {\bf inspector} to provide the GUI widgets to do the job.  Inspectors can call forth other inspectors to track the object, chart it, etc.
+When we build a GUI for the model, we pair with many of these model objects an object whose job is to control or visualize them.  The schedule and random number generator are controlled by a {\bf controller}, the most common of which is the \Class{sim.display.Console}.  One or more {\bf displays} show whole fields in a GUI window. Displays are capable of producing movies or screenshots of their fields.  The fields are drawn by {\bf field portrayals}, possibly overlaid on one another.  In order to draw the fields, the Field Portrayals often (but not always) rely on the services of {\bf simple portrayals} designed to draw or control specific kinds of objects.  When the user wishes to {\bf inspect}\footnote{SWARM and Repast users would call this {\it probing} an  object.  Coming from a NeXTSTEP and MacOS X background, I was more comfortable with the term {\it inspection}.} an object, the associated SimplePortrayal might produce an {\bf inspector} to provide the GUI widgets to do the job.  Inspectors can call forth other inspectors to track the object, chart it, etc.
 
 All GUI elements in a visualized MASON model are also encapsulated by an instance of a subclass of a special class: in this case, the class \class{sim.display.GUIState}.  The GUIState object knows about the SimState model object, but not the other way around, and ultimately encapsulates all the elements mentioned above to visualize and control the model.
 
@@ -5494,7 +5502,7 @@ The first item is a pointer to the model itself.  The second item is a pointer t
 
 At present the only widgets which use the \variable{storage} variable are certain charting inspectors which need to retain the charts open at a given time.  You probably shouldn't mess around with the \variable{storage} variable unless you're making plug-in inspectors as well.  In that case, the rule is: you can put things in the HashMap, and take them out and change them, but you can't modify or take out anything someone {\it else} put in there.
 
-\sidebar{Why not just have a single random number generator?}{Since the generator would be used for both visualization and the model, you'd get different results with the same seed if you ran the simulation under visualization than you'd get if you ran it on the command line.  See the {\bf flockers} demo for an example which uses both generators.}  The final item is a random number generator, separate from the one provided in the model (the SimState), which can be used by GUIState, displays, inspectors, or portrayals in the rare case that they need a random number.  For example, if each of your agents needs a random color, you could use guirandom to pick this color.  In general, you {\bf must} use the SimState random number generator for all random number generation regarding your model, and {\bf ought to} use the GUIState random number generator for random number generation regarding your visualization which is entirely separate from the model.
+\sidebar{Why not just have a single random number generator?}{Since the generator would be used for both visualization and the model, you'd get different results with the same seed if you ran the simulation under visualization than you'd get if you ran it on the command line.  See the {\bf flockers} demo for an example which uses both generators.}  The final item is a random number generator, separate from the one provided in the model (the SimState), which can be used by GUIState, displays, inspectors, or portrayals in those rare cases when they need a random number.  For example, if each of your agents needs a random color, you could use the GUIState random number generator to pick this color.  In general, you {\bf must} use the SimState random number generator for all random number generation regarding your model, and {\bf ought to} use the GUIState random number generator for random number generation regarding your visualization which is entirely separate from the model. 
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6in]{GUIUML.pdf}\end{center}
@@ -5624,7 +5632,7 @@ When the simulation runs, it does so in its own separate thread independent of t
 Four common situations are:
 
 \begin{itemize}
-\item {\bf Modifying a GUI widget each time the model iterates} \quad In this scenario, you have scheduled an event on the GUIState mini-schedule to change (for example) the value of text field.  The mini-schedule runs in the model thread, but the GUI runs in the Swing Event thread.
+\item {\bf Modifying a GUI widget each time the model iterates} \quad In this scenario, you have scheduled an event on the GUIState mini-schedule to change (for example) the value of a text field.  The mini-schedule runs in the model thread, but the GUI runs in the Swing Event thread.
 \item {\bf Asking a GUI widget to repaint each time the model iterates} \quad In this scenario, you have scheduled an event on the GUIState mini-schedule send a \method{repaint()} request to a widget. \method{repaint()} is threadsafe, but the \method{paintComponent} method which is ultimately called in response still needs to be careful about race conditions.
 \item {\bf Updating the model synchronously in response to the user changing a GUI widget} \quad Perhaps you need to update the model in response to the user modifying a widget, and prevent the user from doing further modifications until this has happened.
 \item {\bf Updating the model asynchronously in response to the user changing a GUI widget} \quad This is much less common than the synchronous situation.  Suppose that every time the user presses a button you need to send a message to the model, but the model doesn't have to respond to it immediately, just before the next time tick.  Several such requests can pile up.
@@ -5734,9 +5742,9 @@ protected void paintComponent(Graphics g)
     \{
     synchronized(state.schedule)
         \{
-        /* gather information from the model */ 
+        // gather information from the model
         \}
-    /* do repaint code using that information */
+    // do repaint code using that information
     \}
 \end{alltt}
 }
@@ -8398,7 +8406,7 @@ Selects the Object represented by the given LocationWrapper by calling the relev
 
 An Inspector is a GUI widget that lets a user inspect, track, chart, and modify a specific model object, value, or the property of an object.\footnote{SWARM and Repast call these things {\it probes}.  MASON gets the term {\it inspector} from the same concept found in the NeXTSTEP and Mac OS X GUI libraries.}  Inspectors are subclasses of the class \Class{sim.portrayal.Inspector}, and with the exception of \class{sim.portrayal.SimpleInspector}, they're all found in the package \Package{sim.portrayal.inspector}.   Figure \ref{InspectorUML} shows a UML diagram of the primary Inspector classes.
 
-Inspectors are generally {\it produced} by other Inspectors or widgets to inspect objects in the model as needed.  Most inspectors are produced in one of the following five ways.
+Inspectors are generally {\it produced} by widgets or by other Inspectors, and their job is to inspect objects in the model as needed.  Most inspectors are produced in one of the following five ways.
 
 \begin{itemize}
 \item When you double-click on an object, its Field Portrayal or Simple Portrayal may bring forth an inspector for that object or value.
@@ -10822,14 +10830,15 @@ MASON can make movies, PNG bitmaps, and vector PDF files of its simulation visua
 
 MASON creates movies by setting up a \Class{sim.util.media.MovieEncoder} and then submitting bitmaps to it one by one.  These bitmaps are then encoded into a video stream.  MovieEncoder is little more than a thin wrapper over Sun's JMF media utilities.
 
-The biggest downside to encoding with JMF is the size of the movies produced.  JMF has few generic options for producing movies: most of its encoders are outdated and operating-system-specific.  As a result MASON has opted to encode movies with the Motion JPEG codec: they are essentially streams of JPEG images.  It wouldn't surprise you to hear that this makes for some really gigantic files.  However, it's a simple task to re-encode these movies into something more useful.  For example, Quicktime on OS X 1.6 and later can load these movies and save them out under a smarter encoding (H.264 for example), resulting in radically smaller files.
+The biggest downside to encoding with JMF is the size of the movies produced.  JMF has few generic options for producing movies: most of its encoders are outdated and operating-system-specific.  As a result MASON has opted to encode movies with the Motion JPEG codec: they are essentially streams of JPEG images.  It wouldn't surprise you to hear that this makes for some really gigantic files.  However, it's a simple task to re-encode these movies into something more useful.  For example, Quicktime on OS X 10.6 and later can load these movies and save them out under a smarter encoding (H.264 for example), resulting in radically smaller files.
 
-Note that JMF produces Motion JPEG files with broken headers, and this will irritate certain movie-playing programs which are trying to get a handle on them.  This is another good reason to re-encode the videos.
+\sidebar{iMovie doesn't like my video.}{iMovie breaks when trying to load JMF files with formats using 32 bits.  Choose a 16-bit or 24-bit format.}
+JMF also produces Motion JPEG files with broken headers, and this will irritate certain movie-playing programs which are trying to get a handle on them.  This is another good reason to re-encode the videos.
 
 To create a movie, MovieEncoder requires four things up front:
 
 \begin{itemize}
-\item A {\bf frame rate} (images per second)
+\item A {\bf frame rate} (in images per second)
 \item The file to write out to
 \item A typical image, from which MovieEncoder will extract size information
 \item A {\bf format} for the movie: the color depth in bits, etc.
@@ -10838,13 +10847,13 @@ To create a movie, MovieEncoder requires four things up front:
 The last item is chosen from an array of formats provided by JMF itself.  MovieEncoder has a utility method which can give you the complete list of available formats (usually three):
 
 \begin{methods}{\class{sim.util.media.MovieEncoder} Utility}
-\mthd{public static Format[] getEncodingFormats(float framerate, BufferedImage typicalImage)} Returns all available formats for the provided frame rate and a typical image.
+\mthd{public static javax.media.Format[] getEncodingFormats(float framerate, BufferedImage typicalImage)} Returns all available formats for the provided frame rate and a typical image.
 \end{methods}
 
 Once you have chosen a Format, you can set up the MovieEncoder:
 
 \begin{methods}{\class{sim.util.media.MovieEncoder} Constructor}
-\mthd{public MovieEncoder(float frameRate, File file, BufferedImage typicalImage, Format encodeFormat)} Creates a MovieEncoder with the given frame rate, file to write to, typical image, and chosen encoding format.
+\mthd{public MovieEncoder(float frameRate, File file, BufferedImage typicalImage, javax.media.Format encodeFormat)} Creates a MovieEncoder with the given frame rate, file to write to, typical image, and chosen encoding format.
 \end{methods}
 
 You can now start stuffing the MovieEncoder with images, one after another.  The images should probably be of the same size and format as the typical image provided earlier.  When you are done, call \method{stop()} and the MovieEncoder will produce the movie.  You should then throw the MovieEncoder away and create a new one if you wish to make another movie.
@@ -10942,7 +10951,7 @@ The other method takes a JFreeChart chart, a width and height for that chart, an
 \label{sim.util.media.chart.SeriesAttributes}
 
 
-MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) throw up Histograms, Time-Series Charts, and Scatter Plots of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
+MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) display Histograms, Time-Series Charts, and Scatter Plots of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
 
 This package, which is laid out in Figure \ref{ChartUML}, provides three kinds of items:
 
@@ -11140,8 +11149,8 @@ org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1
 \begin{methods}{\class{sim.util.media.chart.HistogramGenerator}}
 \mthd{public HistogramSeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
 \mthd{public void updateSeries(int index, double[] values)} Modifies the series data of a given series in the chart.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.
-\mthd{public void setHistogramType(HistogramType type)} Sets the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY}, \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
-\mthd{public HistogramType getHistogramType(HistogramType type)} Returns the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY}, \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
+\mthd{public void setHistogramType(HistogramType type)} Sets the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
+\mthd{public HistogramType getHistogramType(HistogramType type)} Returns the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
 \end{methods}
 
 
