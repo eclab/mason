@@ -266,8 +266,8 @@ public class Schedule implements java.io.Serializable
 			throw new RuntimeException("May not merge with a sealed schedule.");
         if (!other.queue.isEmpty())
             {
-            long minkey = ((Key)(other.queue.getMinKey())).time;
-            if (minkey <= time)  // uh oh
+            double minKey = ((Key)(other.queue.getMinKey())).time;
+            if (minKey <= time)  // uh oh
                 throw new RuntimeException("May not merge with a schedule which has Steppables scheduled for an earlier time than my current time value."); 
             }
         
