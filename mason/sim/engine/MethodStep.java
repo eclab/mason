@@ -76,7 +76,7 @@ public class MethodStep implements Steppable
         this.passInSimState = passInSimState;
         if (object==null)
             {
-            throw new NullPointerException("MethodStep asked to call the method " + method + (passInSimState ? "\"(SimState state)" : "\"") + " on a null object");
+            throw new NullPointerException("MethodStep asked to call the method " + methodName + (passInSimState ? "\"(SimState state)" : "\"") + " on a null object");
             }
         try
             {
@@ -87,11 +87,11 @@ public class MethodStep implements Steppable
             }
         catch (NoSuchMethodException ex)  // make runtime exception
             {
-            throw new RuntimeException("Could not find a public method called \"" + method + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass());
+            throw new RuntimeException("Could not find a public method called \"" + methodName + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass());
             }
         catch (SecurityException ex)
             {
-            throw new RuntimeException("Could not find a public method called \"" + method + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass());
+            throw new RuntimeException("Could not find a public method called \"" + methodName + (passInSimState ? "\"(SimState state)" : "\"") + " in the class " + object.getClass());
             }
         }
                 

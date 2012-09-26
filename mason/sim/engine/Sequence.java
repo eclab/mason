@@ -250,9 +250,6 @@ public class Sequence implements Steppable
                     }
                 }
 
-            //if (!toBeRemoved.isEmpty())  // hmmmm
-            //    System.err.println("Some elements not found in removal list for SequenceMark");
-
             // finish up
             toBeRemoved.clear();
             this.size = stepsSize;

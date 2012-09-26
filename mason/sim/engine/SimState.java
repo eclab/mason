@@ -407,7 +407,10 @@ public class SimState implements java.io.Serializable
                 "                  job will be set to 0. Further jobs and seeds are incremented\n" +
                 "                  from the recovered job and seed.\n" +
                 "                  Default: starts a new simulation rather than loading one, at\n" +
-                "                  job 0 and with the seed given in -seed.\n");
+                "                  job 0 and with the seed given in -seed.\n"
+                // + "\n" + 
+                //"-quiet            MASON won't print out anything, though your model is free to.\n"
+                );
             System.exit(0);
             }
 
