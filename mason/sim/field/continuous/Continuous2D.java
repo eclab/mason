@@ -618,8 +618,6 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
             int minY = (int) StrictMath.floor(discY - discDistance);
             int maxY = (int) StrictMath.floor(discY + discDistance);
 
-            //System.err.println("??? " + (position.y + distance) + ">= " + height + " and " + maxY + "==" + iHeight);
-
             if (position.x + distance >= width && maxX == iWidth - 1)  // oops, need to recompute wrap-around if width is not a multiple of discretization
                 maxX = 0;
 
@@ -634,19 +632,12 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
             if ((long)maxY - (long)minY >= iHeight) // similar
                 { minY = 0; maxY = iHeight-1; }
 
-
-            //System.err.println("minY + " + minY);
-            //System.err.println("maxY + " + maxY);
-
             // okay, now tx 'em.
             final int tmaxX = toroidal(maxX,iWidth);
             final int tmaxY = toroidal(maxY,iHeight);
             final int tminX = toroidal(minX,iWidth);
             final int tminY = toroidal(minY,iHeight);
                         
-                        
-            //System.err.println("iWidth = " + iWidth + "   iHeight = " + iHeight);
-            //System.err.println("tminX = " + tminX + "   tminY = " + tminY + "tMaxX = " + tmaxX + " tmaxY = " + tmaxY);
             int x = tminX ;
             do
                 {
@@ -656,7 +647,6 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
                     // grab location
                     speedyMutableInt2D.x=x;
                     speedyMutableInt2D.y=y;
-                    //System.err.println(speedyMutableInt2D);
                     temp = getRawObjectsAtLocation(speedyMutableInt2D);
                     if( temp != null && !temp.isEmpty())
                         {
