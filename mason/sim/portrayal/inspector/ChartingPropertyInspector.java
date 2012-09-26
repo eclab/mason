@@ -107,6 +107,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         {
         //the parent is ignored in PropertyInspector anyway, so I just sent a null
         super(properties,index,null,simulation);
+        
         if(generator!=null)
             {
             if(!validChartGenerator(generator))
@@ -127,7 +128,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             public void windowIconified(WindowEvent e) {}
             public void windowOpened(WindowEvent e) {}
             };
-        generator.getFrame().addWindowListener(wl);
+        this.generator.getFrame().addWindowListener(wl);
 
         globalAttributes = findGlobalAttributes();  // so we share timer information.  If null, we're in trouble.
         setValidInspector(this.generator!=null); //this should always be true.
