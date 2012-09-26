@@ -3668,7 +3668,7 @@ If you run the \class{MyModel} program from the command line with the given para
 
 {\footnotesize \begin{alltt}
 Format:           java MyModel \textbackslash
-                       [-help] [-repeat R] [-seed S] [-until U] \textbackslash
+                       [-help] [-repeat R] [-seed S] [-until U] [-quiet] \textbackslash
                        [-for F] [-time T] [-docheckpoint D] [-checkpoint C] 
 
 -help             Shows this message and exits.
@@ -3712,6 +3712,10 @@ Format:           java MyModel \textbackslash
                   from the recovered job and seed.
                   Default: starts a new simulation rather than loading one, at
                   job 0 and with the seed given in -seed.
+
+-quiet            Does not print messages except for errors and warnings.
+                  This option implies -time 0.
+                  Default: prints all messages.
 \end{alltt}
 }
 
@@ -4108,7 +4112,7 @@ These methods are threadsafe.
 \paragraph{\Class{sim.engine.MethodStep}}  This convenience class allows you to call specific methods on your agent rather than calling its \method{step(...)} method.  Before we get into this, let's talk first about the issues raised, some history, and alternative solutions.
 
 The seminal multiagent simulation toolkit was SWARM, written in a combination of Objective-C and TCL/TK.  Objective-C has a procedure which enables you to call methods on objects by just specifying   the method name as a string.\footnote{
-Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages correspond to methods in those objects but they don't have to.  If an object receives a message for which it has no corresponding method, it has the option to deal with this how it likes rather than issue an error.
+Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages correspond to methods in those objects but they don't have to.  If an object receives a message for which it has no corresponding method, it has the option to deal with this however it likes rather than issue an error.
 
 One effect of this is that in Objective-C you can specify what method you want to call dynamically, using Objective-C's SEL data type:
 
@@ -4143,7 +4147,7 @@ Actually you can.  Just create an anonymous wrapper Steppable and schedule it in
 	schedule.scheduleRepeating(1.0, odd, 2.0);
 }
 
-Piece of cake.  (Note that \variable{myObject} is final.)
+Piece of cake.  (Note that \variable{myObject} must be declared final.)
 
 But maybe you don't like this approach and would prefer something more like Repast's, even if it proves slower and a bit funky Java-wise.  You can do that with MethodStep.  When MethodStep is stepped, it calls a method (which you specify as a string) on a target object.  So you could write the above like this:
 
@@ -4440,7 +4444,7 @@ Returns the width of the field (Z dimension).
 \end{methods}
 
 \subsection{Rectangular Grids}
-Unless they are unbounded grids (notably \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}, which can have negative values), all rectangular grids start at coordinate 0 and proceed in a positive direction.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
+Unless they are unbounded grids (notably \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}), all rectangular grids start at coordinate 0 and proceed in a positive direction.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
 
 All rectangular grids have neighborhood lookup facilities which gather all the locations (not their values) in the grid lying within some region a distance away from a given point.  MASON provides two such methods:
 
@@ -4525,7 +4529,7 @@ Computes the neighboring locations lying within the hexagon centered at \(\text{
 \paragraph{How to Combine Toroidal and Hexagonal Methods}  Like this:
 
 \java{%
-int upperLeftToroidal = tx(ulx(x,y));
+int upperLeftToroidalX = tx(ulx(x,y));
 }
 
 \paragraph{3-Dimensional Toroidal Grids} 3-dimensional grids have no hexagonal or triangular functions: they just have toroidal functions.
@@ -4995,7 +4999,7 @@ The (max/Hamiltonian/hexagonal) neighborhood methods and various other utility m
 \subsubsection{Sparse Grids Versus Object Grids Versus Dense Grids}
 \label{GridComparison}
 
-Sparse Grids, Dense Grids, and Object Grids store objects at locations.  Sparse Grids create a many-to-one mapping using hash tables.  Object Grids store objects in arrays.  Dense Grids store objects in arrays of Bags, why use one or the other?
+Sparse Grids, Dense Grids, and Object Grids store objects at locations.  Sparse Grids create a many-to-one mapping using hash tables.  Object Grids store objects in arrays.  Dense Grids store objects in arrays of Bags. Why use one or the other?
 
 \paragraph{}
 Object Grids are best when you have any of:
