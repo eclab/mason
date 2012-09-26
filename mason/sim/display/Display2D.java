@@ -943,16 +943,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 if (topleft.y < 0) topleft.y = 0;
 
 
-        // The JScrollPane doesn't know so we gotta inform it.
-        if (port != null) 
-            {
             if (SwingUtilities.isEventDispatchThread())
                 port.setView(insideDisplay);
             else
                 {
                 SwingUtilities.invokeLater(new Runnable() { public void run() { port.setView(insideDisplay); } });
                 }
-            }
 
 
                 optionPane.xOffsetField.setValue(insideDisplay.xOffset * scale);
