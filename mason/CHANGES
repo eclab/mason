@@ -2479,3 +2479,6 @@ Version 17
 	Added proportions and scaling to charting.  Charts no longer auto-resize on 
 		window resizing.
 	ParallelSequence now properly checkpoints again
+	Added a -quiet option to silence MASON's doLoop messages.  Made sure that all 
+		error messages in the MASON core used System.err instead of System.out.
+		Preceded most warning messages with "WARNING"
