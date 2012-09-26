@@ -370,7 +370,7 @@ public class SimState implements java.io.Serializable
             {
             System.err.println(
                 "Format:           java " + generator.simulationClass().getName() + " \\\n" +
-                "                       [-help] [-repeat R] [-seed S] [-until U] \\\n" +
+                "                       [-help] [-repeat R] [-seed S] [-until U] [-quiet] \\\n" +
                 "                       [-for F] [-time T] [-docheckpoint D] [-checkpoint C] \n\n" +
                 "-help             Shows this message and exits.\n\n" +
                 "-repeat R         Long value > 0: Runs the job R times.  Unless overridden by a\n" +
@@ -407,16 +407,19 @@ public class SimState implements java.io.Serializable
                 "                  job will be set to 0. Further jobs and seeds are incremented\n" +
                 "                  from the recovered job and seed.\n" +
                 "                  Default: starts a new simulation rather than loading one, at\n" +
-                "                  job 0 and with the seed given in -seed.\n"
-                // + "\n" + 
-                //"-quiet            MASON won't print out anything, though your model is free to.\n"
+                "                  job 0 and with the seed given in -seed.\n\n" + 
+                "-quiet            Does not print messages except for errors and warnings.\n" + 
+                "                  This option implies -time 0.\n" +
+                "                  Default: prints all messages.\n"
                 );
             System.exit(0);
             }
 
+        boolean quiet = keyExists("-quiet", args);
+
         java.text.NumberFormat n = java.text.NumberFormat.getInstance();
         n.setMinimumFractionDigits(0);
-        System.err.println("MASON Version " + n.format(version()) + ".  For further options, try adding ' -help' at end.");
+        if (!quiet) System.err.println("MASON Version " + n.format(version()) + ".  For further options, try adding ' -help' at end.");
 
         // figure the checkpoint modulo
         double until = Double.POSITIVE_INFINITY;
@@ -497,6 +500,7 @@ public class SimState implements java.io.Serializable
                 throw new RuntimeException("Invalid repeat value: " + repeat + ", must be a positive integer");
                 }
        
+       
         // okay, now we actually get down to brass tacks
         
         long job = 0;
@@ -508,7 +512,7 @@ public class SimState implements java.io.Serializable
             String checkpointFile = argumentForKey("-checkpoint", args);
             if (rep == 0 && checkpointFile!=null)  // only job 0 loads from checkpoint
                 {
-                System.err.println("Loading from checkpoint " + checkpointFile);
+                if (!quiet) System.err.println("Loading from checkpoint " + checkpointFile);
                 state = SimState.readFromCheckpoint(new File(checkpointFile));
                 if (state == null)   // there was an error -- it got printed out to the screen, so just quit
                     System.exit(1);
@@ -524,9 +528,9 @@ public class SimState implements java.io.Serializable
                 if (state.seed() != 0) // likely good seed from the command line earlier
                     {
                     seed = state.seed();
-                    System.err.println("Recovered job: " + state.job() + " Seed: " + state.seed());
+                    if (!quiet) System.err.println("Recovered job: " + state.job() + " Seed: " + state.seed());
                     }
-                else System.err.println("Renamed job: " + state.job() + " (unknown seed)");
+                else if (!quiet) System.err.println("Renamed job: " + state.job() + " (unknown seed)");
                 }
 
             // ...or should we start fresh?
@@ -536,8 +540,8 @@ public class SimState implements java.io.Serializable
                 state.nameThread();
                 state.job = job;
                 state.seed = seed;
-                System.err.println("Job: " + state.job() + " Seed: " + state.seed());
-                System.err.println("Starting " + state.getClass().getName());
+                if (!quiet) System.err.println("Job: " + state.job() + " Seed: " + state.seed());
+                if (!quiet) System.err.println("Starting " + state.getClass().getName());
                 state.start();
                 }
             
@@ -574,22 +578,22 @@ public class SimState implements java.io.Serializable
                 if (time > 0 && steps % time == 0)
                     {
                     clock = System.currentTimeMillis();
-                    System.err.println("Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)));
+                    if (!quiet) System.err.println("Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)));
                     firstSteps = steps;
                     oldClock = clock;
                     }
                 if (cmod > 0 && steps % cmod == 0)
                     {
                     String s = "" + steps + "." + state.job() +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
-                    System.err.println("Checkpointing to file: " + s);
+                    if (!quiet) System.err.println("Checkpointing to file: " + s);
                     state.writeToCheckpoint(new File(s));
                     }
                 }
                 
             state.finish();
             
-            if (retval) System.err.println("Exhausted");
-            else System.err.println("Quit");
+            if (retval) if (!quiet) System.err.println("Exhausted");
+            else if (!quiet) System.err.println("Quit");
             }
         }
     
