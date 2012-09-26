@@ -500,11 +500,11 @@ public class PNGEncoder extends Object
                     pg.grabPixels();
                     }
                 catch (Exception e) {
-                    System.err.println("PNG image write interrupted waiting for pixels\n\n" + e);
+                    System.err.println("WARNING: PNG image write interrupted waiting for pixels\n\n" + e);
                     return false;
                     }
                 if ((pg.getStatus() & ImageObserver.ABORT) != 0) {
-                    System.err.println("PNG Image fetch aborted or errored\m\n" + e);
+                    System.err.println("WARNING: PNG Image fetch aborted or errored.");
                     return false;
                     }
 
@@ -583,7 +583,7 @@ public class PNGEncoder extends Object
             }
         catch (IOException e)
             {
-            System.err.println("IO Error while trying to write PNG image.\n\n" + e.toString());
+            System.err.println("WARNING: IO Error while trying to write PNG image.\n\n" + e.toString());
             return false;
             }
         }

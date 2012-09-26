@@ -139,9 +139,7 @@ public class HTMLBrowser extends JPanel
                     }
                 catch (Exception e)
                     {
-                    System.err.println("This should not have happened.");
-                    e.printStackTrace();
-                    /* should never happen */
+                    System.err.println("WARNING: This should never happen." + e);
                     }
                 }
             });

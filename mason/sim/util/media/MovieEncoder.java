@@ -230,7 +230,7 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
                 { evt.getSourceController().close(); }
             catch (Exception e) 
                 {
-                System.err.println("Spurious Sun JMF Error?\n\n"); e.printStackTrace(); 
+                System.err.println("WARNING: Spurious Sun JMF Error?\n\n"); e.printStackTrace(); 
                     
                 // system sometimes gives no further event updates, so the waiter hangs, 
                 // and I'm not sure why -- so here we make it fail.  I wonder if this will work -- Sean
