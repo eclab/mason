@@ -756,12 +756,9 @@ public abstract class ChartGenerator extends JPanel
         {
         double w = DEFAULT_CHART_HEIGHT * scale * proportion;
         double h = DEFAULT_CHART_HEIGHT * scale;
-        Dimension d = new java.awt.Dimension(
-                (int)(w),
-                (int)(h));
+        Dimension d = new java.awt.Dimension((int)(w), (int)(h));
 
-        chartPanel.setSize(
-            new java.awt.Dimension(d));
+        chartPanel.setSize(new java.awt.Dimension(d));
         chartPanel.setPreferredSize(chartPanel.getSize());
         
         // JFreeChart has a hillariously broken way of handling font scaling.
@@ -887,8 +884,8 @@ public abstract class ChartGenerator extends JPanel
             });
         }
     
-    static int DEFAULT_UNIT_FRACTION = 16;
-    static int DEFAULT_BLOCK_FRACTION = 4;
+    static int DEFAULT_UNIT_FRACTION = 20;
+    static int DEFAULT_BLOCK_FRACTION = 2;
     
     class ScrollableChartPanel extends ChartPanel implements Scrollable
         {

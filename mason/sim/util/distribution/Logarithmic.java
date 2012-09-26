@@ -102,7 +102,6 @@ public class Logarithmic extends AbstractContinousDistribution {
             k = 1;
             p = t;
             while (u > p) {
-                //System.out.println("u="+u+", p="+p);
                 u -= p;
                 k++;
                 p *= a * (k-1.0)/(double)k;

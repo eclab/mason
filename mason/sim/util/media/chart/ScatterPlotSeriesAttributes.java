@@ -130,6 +130,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         {
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
         renderer.setSeriesPaint(getSeriesIndex(), reviseColor(color, opacity));
+        // shape may be null at this point, that's fine
         renderer.setSeriesShape(getSeriesIndex(), shape);
         renderer.setAutoPopulateSeriesShape(false);
         repaint();

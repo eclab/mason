@@ -313,15 +313,6 @@ public class MovieEncoder implements DataSinkListener, ControllerListener, java.
     
         TrackControl tcs[] = processor.getTrackControls();
         
-        // old -- just take first one
-        /*
-          Format f[] = tcs[0].getSupportedFormats();
-          if (f == null || f.length <= 0)
-          throw new RuntimeException("The mux does not support the input format: " + tcs[0].getFormat());
-          tcs[0].setFormat(f[0]);
-          System.out.println(tcs[0]);
-          System.out.println(f[0]);*/
-        
         // new - set by requested format
         tcs[0].setFormat(encodeFormat);
 

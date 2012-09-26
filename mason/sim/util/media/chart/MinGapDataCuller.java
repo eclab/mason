@@ -108,7 +108,6 @@ public class MinGapDataCuller implements DataCuller
             return droppedIndices;
         if(xValues.length<=2)
             {
-            System.err.println("Your plot can't hold more than 2 points? Really?");
             //I shouldn't be in this situation. I'll just drop something and get out.
             for(int i=0;i<pointsToDrop;i++)
                 droppedIndices.add(i);
@@ -142,17 +141,8 @@ public class MinGapDataCuller implements DataCuller
         Heap h = new Heap(xValues);
         for(int i=0;i<pointsToDrop;i++)
             {
-//                      h.printHeap();
             droppedIndices.add(h.extractMin().xValueIndex);
-//                      System.out.println("Delete "+droppedIndices.objs[i]);
             }
-                
-//              System.out.print("Xvalues:");
-//              for(int i=0;i<xValues.length;i++)
-//                      System.out.print("\t"+xValues[i]);
-//              System.out.print("\nDropIndices:");
-//              for(int i=0;i<droppedIndices.numObjs;i++)
-//                      System.out.print("\t"+droppedIndices.objs[i]);
         return droppedIndices;
         }
         
@@ -164,13 +154,6 @@ public class MinGapDataCuller implements DataCuller
         Record leftRecord, rightRecord;
         int heapPosition;//actually, it's the index in 1based counting.
                 
-//              public String toString()
-//              {
-//                      return "R{xi="+xValueIndex+" hp="+heapPosition+" lg="+leftGap+" rg="+rightGap+
-//                      " lr="+(leftRecord==null?leftRecord:"R"+leftRecord.xValueIndex)+
-//                      " rr="+(rightRecord==null?rightRecord:"R"+rightRecord.xValueIndex)+
-//                      "}";
-//              }
         Record(int xValueIndex, double leftGap, double rightGap, int heapPosition)
             {
             this.xValueIndex = xValueIndex;
