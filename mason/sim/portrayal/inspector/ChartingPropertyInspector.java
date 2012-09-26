@@ -382,7 +382,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                 case REDRAW_DONT:  // do nothing
                     break;
                 default:
-                    System.err.println("Unknown redraw time specified");
+                    throw new RuntimeException("Unknown redraw time specified.");
                 }
             }
         }

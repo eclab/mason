@@ -58,7 +58,7 @@ public class FacetedPortrayal2D extends SimplePortrayal2D
             if (!errorThrown)
                 {
                 errorThrown = true;
-                System.err.println("FacetedPortrayal was given a value that doesn't correspond to any array element.");
+                System.err.println("WARNING: FacetedPortrayal was given a value that doesn't correspond to any array element.");
                 }
             element = 0;
             }

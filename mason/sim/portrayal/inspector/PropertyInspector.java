@@ -165,7 +165,7 @@ public abstract class PropertyInspector extends Inspector
                 }
             catch (Throwable e)
                 {
-                System.err.println("Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+                System.err.println("WARNING: Couldn't load the Propertyinspector.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
                 e.printStackTrace();
                 }
             }

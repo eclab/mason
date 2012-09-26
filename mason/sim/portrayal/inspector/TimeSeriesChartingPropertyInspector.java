@@ -182,11 +182,13 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                     n++;
                     }
                 if (n == 0)
-                    System.err.println( "No element????" );
+                    {
+                    // System.err.println( "No element????" );
+                    }
                 else addToMainSeries(sumX / n, y, false);
                 break;
             default:
-                System.err.println( "There are only four aggregation method implemented" );
+                throw new RuntimeException("No valid aggregation method provided");
             }
         aggregateSeries.clear();
         }
