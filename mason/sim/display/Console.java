@@ -1748,7 +1748,7 @@ public class Console extends JFrame implements Controller
                         catch (Throwable e) 
                             {
                             if (!errout) 
-                                System.err.println("Not all classes loaded, due to error: probably no Java3D." 
+                                System.err.println("WARNING: Not all classes loaded, due to error: probably no Java3D." 
                                     // + " \nFirst problematic class: " + st.sval
                                     );
                             errout = true;
@@ -1763,12 +1763,12 @@ public class Console extends JFrame implements Controller
                         }
                     }
                 }
-            if (nextName != null) System.err.println("Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
+            if (nextName != null) System.err.println("WARNING: Spurious NAME tag at end of simulation.classes file:\n\tNAME: " + nextName);
             s.close();
             }
         catch (Exception e)
             {
-            System.err.println("Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
+            System.err.println("WARNING: Couldn't load the simulation.classes file because of error. \nLikely the file does not exist or could not be opened.\nThe error was:\n");
             e.printStackTrace();
             }
         }
@@ -2464,7 +2464,7 @@ public class Console extends JFrame implements Controller
                 }
             } 
         catch (InterruptedException e)
-            { System.err.println("This should never happen: " + e); }
+            { System.err.println("WARNING: This should never happen: " + e); }
         }
 
 
@@ -2532,7 +2532,7 @@ public class Console extends JFrame implements Controller
                             }                    
                         catch (java.lang.reflect.InvocationTargetException e)
                             {
-                            System.err.println("This should never happen: " + e);
+                            System.err.println("WARNING: This should never happen: " + e);
                             }                    
                         catch (Exception e)
                             {
@@ -2622,7 +2622,7 @@ public class Console extends JFrame implements Controller
                                 }                        
                             catch (java.lang.reflect.InvocationTargetException e)
                                 {
-                                System.err.println("This should never happen" + e);
+                                System.err.println("WARNING: This should never happen" + e);
                                 }                        
                             catch (Exception e)
                                 {
@@ -2677,7 +2677,7 @@ public class Console extends JFrame implements Controller
                                     }                        
                                 catch (Exception e)
                                     {  
-                                    System.err.println("This should never happen: " + e);
+                                    System.err.println("WARNING: This should never happen: " + e);
                                     } // On X Windows, if we close the window during an invokeLater, we get a spurious exception
                                 }
                             });
@@ -2698,7 +2698,7 @@ public class Console extends JFrame implements Controller
                                     }                        
                                 catch (Exception e)
                                     {  
-                                    System.err.println("This should never happen: " + e);
+                                    System.err.println("WARNING: This should never happen: " + e);
                                     } // On X Windows, if we close the window during an invokeLater, we get a spurious exception
                                 }
                             });

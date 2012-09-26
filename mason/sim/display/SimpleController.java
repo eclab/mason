@@ -368,7 +368,7 @@ public class SimpleController implements Controller
                 }
             } 
         catch (InterruptedException e)
-            { System.err.println("This should never happen: " + e); }
+            { System.err.println("WARNING: This should never happen: " + e); }
         }
 
 

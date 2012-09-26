@@ -35,14 +35,12 @@ public class Prefs
     /** Returns the global preferences for MASON, with the given additional prefix as a namespace. */
     public static Preferences getGlobalPreferences(String namespace)
         {
-//              System.err.println("Getting " + MASON_PREFERENCES + namespace);
         return Preferences.userRoot().node(MASON_PREFERENCES + namespace);
         }
 
     /** Returns app-specific preferences for MASON, with the given additional prefix as a namespace. */
     public static Preferences getAppPreferences(GUIState simulation, String namespace)
         {
-//              System.err.println("Getting " + APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + namespace);
         return Preferences.userRoot().node(
             APP_PREFERENCES + simulation.getClass().getName().replace('.','/') + "/" + namespace); 
         }
@@ -80,7 +78,6 @@ public class Prefs
         {
         try 
             {
-            // System.err.println("Saving " + prefs);
             prefs.flush();
             return true;
             }

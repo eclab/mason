@@ -1436,7 +1436,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
           {
           public void mouseWheelMoved(MouseWheelEvent e)
             {
-            System.err.println(e);
             if (handleMouseEvent(e)) { repaint(); return; }
             }
           });
