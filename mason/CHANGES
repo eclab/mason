@@ -2482,3 +2482,4 @@ Version 17
 	Added a -quiet option to silence MASON's doLoop messages.  Made sure that all 
 		error messages in the MASON core used System.err instead of System.out.
 		Preceded most warning messages with "WARNING"
+	Updated MersenneTwister and MersenneTwisterFast
