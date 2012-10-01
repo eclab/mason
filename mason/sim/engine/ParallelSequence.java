@@ -108,7 +108,8 @@ public class ParallelSequence extends Sequence
     public void cleanup()
         {
         pleaseDie = true;
-        threads.killThreads();
+        if (threads != null)
+        	threads.killThreads();
         pleaseDie = false;
         threads = null;
         }
