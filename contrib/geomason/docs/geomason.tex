@@ -35,7 +35,9 @@
 \usepackage{microtype}
 \usepackage{afterpage}
 \usepackage{color}\definecolor{gray}{gray}{0.5}
+\usepackage{xcolor}
 \usepackage{alltt}
+\usepackage{fancyvrb}
 \usepackage[font=footnotesize,labelsep=quad,labelfont=it]{caption}
 %%% Added in order to use hyperref -- this stuff has to appear before bibentry,x
 %%% which has a conflict with regard to \bibitem.  See later in this file for more stuff that has
@@ -265,7 +267,7 @@ This section covers reading geospatial data into MASON using GeoMason.
 \label{sub:readingshapefiles}
 
 \begin{description}
-\item[Problem] 
+\item[Problem] ~\\
 You want to read vector geospatial data stored in a Shape file.
 
 \item[Solution]~\\
@@ -284,11 +286,80 @@ try {
 \paragraph{Discussion}
 
 
+
+\subsection{Reading Multiple Vector Layers}
+\label{sub:multiplevectorlayers}
+
+\begin{description}
+\item[Problem]~\\
+You want to read in more than one thematic layer of vector data.
+
+\item[Solution]~\\
+After ensuring that each layer uses the same coordinate reference
+system, read in each layer, and then synchronize the minimum bounding
+rectangles for all the layers.
+\begin{verbatim}
+GeomVectorField firstVectorField = new GeomVectorField();
+GeomVectorField secondVectorField = new GeomVectorField();
+GeomVectorField thirdVectorField = new GeomVectorField();
+
+try {
+   ShapeFileImporter.read("file:foo.shp", firstVectorField);
+   ShapeFileImporter.read("file:bar.shp", secondVectorField);
+   ShapeFileImporter.read("file:baz.shp", thirdVectorField);
+} catch (FileNotFoundException ex)
+{  /* handle exception */  }
+
+Envelope globalMBR = firstVectorField.getMBR();
+
+globalMBR.expandToInclude(secondVectorField.getMBR());
+globalMBR.expandToInclude(thirdVectorField.getMBR());
+
+firstVectorField.setMBR(globalMBR);
+secondVectorField.setMBR(globalMBR);
+thirdVectorField.setMBR(globalMBR);
+\end{verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+\subsection{Reading a Shape File and Some of Its Attributes}
+\label{sub:readingshapefileattributes}
+
+\begin{description}
+\item[Problem]~\\
+You want to read a Shape file and only some of its associated attributes.
+
+\item[Solution]~\\
+Read in a shape file as in section \ref{sub:readingshapefiles}, but specify the desired attributes.
+\begin{verbatim}
+GeomVectorField vectorField = new GeomVectorField();
+
+Bag desiredAttributes = new Bag();
+desiredAttributes.add("NAME");
+desiredAttributes.add("TYPE");
+
+try {
+   ShapeFileImporter.read("file:foo.shp", vectorField, desiredAttributes);
+} catch (FileNotFoundException ex)
+{  /* handle exception */  }
+\end{verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
+
+
 \subsection{Reading an ARC/Info ASCII Grid File}
 \label{sub:readinggridfile}
 
 \begin{description}
-\item[Problem]
+\item[Problem]~\\
 You want to read an Arc/Info ASCII Grid file.
 
 \item[Solution]~\\
@@ -304,6 +375,40 @@ Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file,
 \end{description}
 
 
+\subsection{Reading a Mix of Grid and Vector Data}
+\label{sub:readingmixofdata}
+
+\begin{description}
+\item[Problem]~\\
+You want to read in multiple layers that are a mix of vector and grid geospatial data.
+
+\item[Solution]~\\
+After ensuring that all the layers have the same coordinate reference system, read all the layers into GeomVectorField or GeomGridFields, as appropriate, and then synchronize their respective minimum bounding rectangles.
+\begin{verbatim}
+GeomVectorField vectorField = new GeomVectorField();
+GeomGridField gridField = new GeomGridField();
+
+try {
+   ShapeFileImporter.read("file:vector.shp", firstVectorField);
+
+   InputStream inputStream = new FileInputStream("grid.asc");
+   ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+} catch (FileNotFoundException ex)
+{  /* handle exception */  }
+
+Envelope globalMBR = vectorField.getMBR();
+
+globalMBR.expandToInclude(gridField.getMBR());
+
+vectorField.setMBR(globalMBR);
+gridField.setMBR(globalMBR);
+\end{verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
 
 \section{Writing Geospatial Data}
 \label{sec:writingdata}
@@ -311,11 +416,25 @@ Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file,
 \subsection{Writing a Shape File}
 \label{sub:writingshapefile}
 
+\begin{description}
+\item[Problem]~\\
+You want to save a GeoMason vector field to a Shape file.
+
+\item[Solution]~\\
+Use \code{ShapeFileExporter.write()} to save the vector field to a Shape file.
+\begin{verbatim}
+ShapeFileExporter.write("foo", vectorField);
+\end{verbatim}
+\item[Discussion]
+ foo
+\end{description}
+
 \subsection{Writing an ARC/Info ASCII Grid File}
 \label{sub:writinggridfile}
 
 \begin{description}
-\item[Problem]You want to write grid data to an ARC/Info ASCII Grid file.
+\item[Problem]~\\
+You want to write GeoMason grid data to an ARC/Info ASCII Grid file.
 
 \item[Solution]~\\
 Create a \code{Writer} for the grid file and use \code{ArcInfoASCGridExporter.write()} to write the \code{GeomGridField}.
@@ -384,6 +503,8 @@ try {
 \chapter{Displaying Geospatial Data}
 \label{ch:displaying}
 
+This chapter gives recipes for displaying GeoMason fields in MASON displays.
+
 %\begin{figure}[h]\vspace{-26em}\hspace{25.3em}\includegraphics[width=4in]{hexabugs.pdf}\vspace{2em}\end{figure}
 
 %\noindent A {\bf grid} is MASON's name for objects arrange in a 2-dimensional or 3-dimensional array or equivalent.  MASON supports a wide range of grid environments as fields (representations of space).  This includes most any combination of the following:
@@ -391,8 +512,80 @@ try {
 \section{Displaying Vector Data}
 \label{sec:displayingvector}
 
+\subsection{Displaying a \code{GeomVectorField}}
+\label{sub:displayingGeomVectorField}
+
+\begin{description}
+\item[Problem]~\\
+You want to show the contents of a \code{GeomVectorField} in a
+MASON display.
+
+\item[Solution]~\\
+Create a \code{GeomVectorFieldPortrayal} in the MASON \code{GUIState}
+subclass, associate it with its corresponding \code{GeomVectorField},
+set up an appropriate MASON or GeoMason field portrayal, and attach it
+to a MASON \code{Display2D} object.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+public class MyMasonGUI extends GUIState
+{
+    private Display2D display;
+    private JFrame displayFrame;
+
+    +color[red]private GeomVectorFieldPortrayal myPortrayal = new GeomVectorFieldPortrayal();
+
+    @Override
+    public void init(Controller controller)
+    {
+        super.init(controller);
+
+        display = new Display2D(ARBITRARY_WIDTH, ARBITRARY_HEIGHT, this);
+
+        +color[red]display.attach(myPortrayal, "My Vector Layer");
+
+        displayFrame = display.createFrame();
+        controller.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
+    }
+
+    @Override
+    public void start()
+    {
+        super.start();
+        setupPortrayals();
+    }
+
+    private void setupPortrayals()
+    {
+        MyState world = (MyState)state;
+
+        +color[red]myPortrayal.setField(world.vectorLayer);
+        +color[red]myPortrayal.setPortrayalForAll(new GeomPortrayal(Color.CYAN, true));+label[ex:trueforfill]
+
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+
+        display.repaint();
+    }
+}
+\end{Verbatim}
+
+\item[Discussion ]~\\
+
+Line \ref{ex:trueforfill} creates a portrayal that draws all the lines
+in cyan; the second parameter, which is set to \code{true}, indicates
+that polygons should be filled.
+\end{description}
+
+
+
+
+
 \section{Displaying Grid Data}
 \label{sec:displayinggrid}
+
+
+
 
 \chapter{Common Problems}
 \label{ch:commonprobs}
