@@ -272,14 +272,14 @@ You want to read vector geospatial data stored in a Shape file.
 
 \item[Solution]~\\
 Create a \code{GeomVectorField} and use \code{ShapeFileImporter.read()} to load data into it.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField vectorField = new GeomVectorField();
 
 try {
    ShapeFileImporter.read("file:foo.shp", vectorField);
 } catch (FileNotFoundException ex)
 {  /* handle exception */  }
-\end{verbatim}
+\end{Verbatim}
 
 \end{description}
 
@@ -298,7 +298,7 @@ You want to read in more than one thematic layer of vector data.
 After ensuring that each layer uses the same coordinate reference
 system, read in each layer, and then synchronize the minimum bounding
 rectangles for all the layers.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField firstVectorField = new GeomVectorField();
 GeomVectorField secondVectorField = new GeomVectorField();
 GeomVectorField thirdVectorField = new GeomVectorField();
@@ -318,7 +318,7 @@ globalMBR.expandToInclude(thirdVectorField.getMBR());
 firstVectorField.setMBR(globalMBR);
 secondVectorField.setMBR(globalMBR);
 thirdVectorField.setMBR(globalMBR);
-\end{verbatim}
+\end{Verbatim}
 
 \item[Discussion ]
 \end{description}
@@ -334,7 +334,7 @@ You want to read a Shape file and only some of its associated attributes.
 
 \item[Solution]~\\
 Read in a shape file as in section \ref{sub:readingshapefiles}, but specify the desired attributes.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField vectorField = new GeomVectorField();
 
 Bag desiredAttributes = new Bag();
@@ -345,7 +345,7 @@ try {
    ShapeFileImporter.read("file:foo.shp", vectorField, desiredAttributes);
 } catch (FileNotFoundException ex)
 {  /* handle exception */  }
-\end{verbatim}
+\end{Verbatim}
 
 \item[Discussion ]
 \end{description}
@@ -364,12 +364,12 @@ You want to read an Arc/Info ASCII Grid file.
 
 \item[Solution]~\\
 Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file, then use \code{ArcInfoASCGridImporter()} to load the data into the grid field from the open input stream.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 	GeomGridField gridField = new GeomGridField();
 	
 	InputStream inputStream = new FileInputStream("foo.asc");
 	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
-\end{verbatim}
+\end{Verbatim}
 
 \item[Discussion ]
 \end{description}
@@ -384,7 +384,7 @@ You want to read in multiple layers that are a mix of vector and grid geospatial
 
 \item[Solution]~\\
 After ensuring that all the layers have the same coordinate reference system, read all the layers into GeomVectorField or GeomGridFields, as appropriate, and then synchronize their respective minimum bounding rectangles.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField vectorField = new GeomVectorField();
 GeomGridField gridField = new GeomGridField();
 
@@ -402,7 +402,7 @@ globalMBR.expandToInclude(gridField.getMBR());
 
 vectorField.setMBR(globalMBR);
 gridField.setMBR(globalMBR);
-\end{verbatim}
+\end{Verbatim}
 
 \item[Discussion ]
 \end{description}
@@ -438,7 +438,7 @@ You want to write GeoMason grid data to an ARC/Info ASCII Grid file.
 
 \item[Solution]~\\
 Create a \code{Writer} for the grid file and use \code{ArcInfoASCGridExporter.write()} to write the \code{GeomGridField}.
-\begin{verbatim}
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 try {
    BufferedWriter writer = new BufferedWriter( new FileWriter("foo.asc") );
    ArcInfoASCGridExporter.write(gridField, writer);
@@ -446,7 +446,7 @@ try {
 } catch (IOException ex)  {
    /* handle exception */
 }
-\end{verbatim}
+\end{Verbatim}
 
 \item[Discussion] 
 
@@ -503,16 +503,13 @@ try {
 \chapter{Displaying Geospatial Data}
 \label{ch:displaying}
 
-This chapter gives recipes for displaying GeoMason fields in MASON displays.
+This chapter gives recipes for displaying GeoMason fields in MASON.
 
 %\begin{figure}[h]\vspace{-26em}\hspace{25.3em}\includegraphics[width=4in]{hexabugs.pdf}\vspace{2em}\end{figure}
 
 %\noindent A {\bf grid} is MASON's name for objects arrange in a 2-dimensional or 3-dimensional array or equivalent.  MASON supports a wide range of grid environments as fields (representations of space).  This includes most any combination of the following:
 
-\section{Displaying Vector Data}
-\label{sec:displayingvector}
-
-\subsection{Displaying a \code{GeomVectorField}}
+\section{Displaying a \code{GeomVectorField}}
 \label{sub:displayingGeomVectorField}
 
 \begin{description}
@@ -531,6 +528,8 @@ public class MyMasonGUI extends GUIState
 {
     private Display2D display;
     private JFrame displayFrame;
+
+    // ... other variable declarations
 
     +color[red]private GeomVectorFieldPortrayal myPortrayal = new GeomVectorFieldPortrayal();
 
@@ -567,13 +566,15 @@ public class MyMasonGUI extends GUIState
 
         display.repaint();
     }
+
+    // ... other code
 }
 \end{Verbatim}
 
 \item[Discussion ]~\\
 
 Line \ref{ex:trueforfill} creates a portrayal that draws all the lines
-in cyan; the second parameter, which is set to \code{true}, indicates
+in cyan; the optional second parameter, which is set to \code{true}, indicates
 that polygons should be filled.
 \end{description}
 
@@ -581,14 +582,78 @@ that polygons should be filled.
 
 
 
-\section{Displaying Grid Data}
-\label{sec:displayinggrid}
+\section{Displaying a \code{GeomGridField}}
+\label{sec:displayinggridfield}
 
+\begin{description}
+\item[Problem]~\\
+You want to show the contents of a \code{GeomGridField} in a MASON display
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+\section{Displaying a Boundary Over a Grid Field}
+\label{sec:boundaryovergrid}
+
+\begin{description}
+\item[Problem]~\\
+You want to overlay political boundaries on grid data.
+
+\item[Solution]~\\
+Problem Solution
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
 
 
 
 \chapter{Common Problems}
 \label{ch:commonprobs}
+
+
+\section{Display All One Color}
+\label{sec:OneColorDisplay}
+
+\begin{description}
+\item[Problem]~\\
+Rendering a \code{GeomField} just shows one solid color.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+\section{Layers Do Not Align}
+\label{sec:NonAlignedLayers}
+
+\begin{description}
+\item[Problem]~\\
+The data between layers does not match.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
 
 
 \cleardoublepage
