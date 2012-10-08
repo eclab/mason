@@ -42,6 +42,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         setTo(values);
         }
 
+    public IntGrid2D(int[][] values)
+        {
+        setTo(values);
+        }
+        
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final int val)
         {
@@ -71,6 +76,30 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
                 fieldx[y]=thisMuch;
                 }
             }
+        return this;
+        }
+
+    /** Sets the grid to a copy of the provided array, which must be rectangular. */
+    public IntGrid2D setTo(int[][] field)
+        {
+        // check info
+        
+        if (field == null)
+            throw new RuntimeException("IntGrid2D set to null field.");
+        int w = field.length;
+        int h = 0;
+        if (w != 0) h = field[0].length;
+        for(int i = 0; i < w; i++)
+            if (field[i].length != h) // uh oh
+                throw new RuntimeException("IntGrid2D initialized with a non-rectangular field.");
+
+        // load
+
+        this.field = new int[w][h];
+        for(int i = 0; i < width; i++)
+            this.field[i] = (int[]) field[i].clone();
+        width = w;
+        height = h;
         return this;
         }
 

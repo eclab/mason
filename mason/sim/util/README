@@ -160,3 +160,10 @@ A simple RuntimeException which stores an additional Throwable as its
 CausedRuntimeException has now been deprecated since MASON is leaving
 compatability with 1.3.
 
+
+TableLoader.java
+
+A collection of utility methods for loading tables into int[][] and
+double[][] arrays, suitable for then inserting into DoubleGrid2D and
+IntGrid2D files.
+

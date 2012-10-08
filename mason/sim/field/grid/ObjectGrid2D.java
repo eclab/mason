@@ -44,6 +44,11 @@ public class ObjectGrid2D extends AbstractGrid2D
         setTo(values);
         }
     
+    public ObjectGrid2D(Object[][] values)
+        {
+        setTo(values);
+        }
+        
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final Object val)
         {
@@ -73,6 +78,31 @@ public class ObjectGrid2D extends AbstractGrid2D
                 fieldx[y]=thisObj;
                 }
             }
+        return this;
+        }
+
+     /** Sets the grid to a copy of the provided array, which must be rectangular.  <b>WARNING:
+        this may conflict with setTo(Object) -- make sure you have casted properly.  */
+    public ObjectGrid2D setTo(Object[][] field)
+        {
+        // check info
+        
+        if (field == null)
+            throw new RuntimeException("ObjectGrid2D set to null field.");
+        int w = field.length;
+        int h = 0;
+        if (w != 0) h = field[0].length;
+        for(int i = 0; i < w; i++)
+            if (field[i].length != h) // uh oh
+                throw new RuntimeException("ObjectGrid2D initialized with a non-rectangular field.");
+
+        // load
+
+        this.field = new Object[w][h];
+        for(int i = 0; i < width; i++)
+            this.field[i] = (Object[]) field[i].clone();
+        width = w;
+        height = h;
         return this;
         }
 

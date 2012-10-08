@@ -43,6 +43,11 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         setTo(values);
         }
 
+    public DoubleGrid2D(double[][] values)
+        {
+        setTo(values);
+        }
+        
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final double val)
         {
@@ -67,6 +72,30 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
             for(int y=0;y<height;y++)
                 fieldx[y]=thisMuch;
             }
+        return this;
+        }
+
+    /** Sets the grid to a copy of the provided array, which must be rectangular. */
+    public DoubleGrid2D setTo(double[][] field)
+        {
+        // check info
+        
+        if (field == null)
+            throw new RuntimeException("DoubleGrid2D set to null field.");
+        int w = field.length;
+        int h = 0;
+        if (w != 0) h = field[0].length;
+        for(int i = 0; i < w; i++)
+            if (field[i].length != h) // uh oh
+                throw new RuntimeException("DoubleGrid2D initialized with a non-rectangular field.");
+
+        // load
+
+        this.field = new double[w][h];
+        for(int i = 0; i < width; i++)
+            this.field[i] = (double[]) field[i].clone();
+        width = w;
+        height = h;
         return this;
         }
 
