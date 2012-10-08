@@ -2483,3 +2483,5 @@ Version 17
 		error messages in the MASON core used System.err instead of System.out.
 		Preceded most warning messages with "WARNING"
 	Updated MersenneTwister and MersenneTwisterFast
+	Added sim/util/TableLoader.java and various array methods to DoubleGrid2D and
+		IntGrid2D.
