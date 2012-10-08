@@ -4576,6 +4576,8 @@ Creates a DoubleGrid2D with the given width and height, and an initial value of 
 Creates a DoubleGrid2D with the given width and height, and the given initial value for all cells.
 \mthd{public DoubleGrid2D(DoubleGrid2D values)}
 Creates a DoubleGrid2D which is a copy of the provided DoubleGrid2D.  
+\mthd{public DoubleGrid2D(double[][] values)}
+Creates a DoubleGrid2D which is a copy of the provided array.  
 \end{methods}
 
 Here are some DoubleGrid2D methods which are likewise common to all the above classes: 
@@ -4589,6 +4591,8 @@ Sets \code{field[x][y]} to \variable{val}.
 Sets all values of the field to \variable{val}.  Returns the grid.
 \mthd{public final DoubleGrid2D setTo(DoubleGrid2D values)}
 Sets all values of the field to those found in \variable{values}.  If \variable{values} differs in dimensions, the grid is first reallocated to reflect the dimensions in \variable{values}.  Returns the grid.
+\mthd{public final DoubleGrid2D setTo(double[][] values)}
+Sets all values of the field to those found in \variable{values}.  The grid is first reallocated to reflect the dimensions in \variable{values}.  Returns the grid.
 \mthd{public final double[] toArray()}
 Flattens the grid by row-major order into a single array of values and returns it.
 \mthd{public DoubleBag getNeighborsMaxDistance(int x, int y, int dist, boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos)}
@@ -5274,6 +5278,8 @@ Additionally, Continuous2D and Continuous3D have certain utility methods for acc
 Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
 \mthd{public Int2D discretize(Double2D location)}
 Discretizes the given Double2D location according to the Continuous field's discretization.
+\mthd{public Int2D discretize(Double2D location, int discretization)}
+Discretizes the given Double2D location according to the provided discretization.
 \end{methods}
 
 \begin{methods}{\class{sim.field.continuous.Continuous3D} Utility}
@@ -5281,6 +5287,8 @@ Discretizes the given Double2D location according to the Continuous field's disc
 Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
 \mthd{public Int3D discretize(Double3D location)}
 Discretizes the given Double3D location according to the Continuous field's discretization.
+\mthd{public Int3D discretize(Double3D location, int discretization)}
+Discretizes the given Double3D location according to the provided discretization.
 \end{methods}
 
    
@@ -7168,7 +7176,7 @@ Fields are easy to implement: but Field Portrayals are not.  They're complicated
 
 That's what we'll do here.  In the following example, we'll create a Field Portrayal for the 1D Sparse Field we built in Section \ref{SparseFieldUnderTheHood}.  The 1D Sparse Field allowed the user to associate objects with real-valued numbers ranging from 0.0 to 1.0 inclusive.  Our Field Portrayal will draw these objects in circle.  The Figure at right shows the general idea of what it'll look like in the end.
 
-\paragraph{Note} Most 2D Fields have a natural width and height which the Field Portrayal naturally exploits to scale to the Draw rectangle of the Display.  Ours does not have a natural width and height (what's the ``height'' of a range from 0.0 to 1.0? Is it 1?  If so, then what's the ``width''?).  So we're going to define an arbitrary width and height for our circle in``field units'': 20 by 20.  Since individual objects in a Field are generally displayed to roughly fill a \(1 \times 1\) square, this will make nice big objects on our circle.
+\paragraph{Note} Most 2D Fields have a natural width and height which the Field Portrayal  exploits to scale to the Draw rectangle of the Display.  Ours does not have a natural width and height (what's the ``height'' of a range from 0.0 to 1.0? Is it 1?  If so, then what's the ``width''?).  So we're going to define an arbitrary width and height for our circle in``field units'': 20 by 20.  Since individual objects in a Field are generally displayed to roughly fill a \(1 \times 1\) square, this will make nice big objects on our circle.
 
 \subsubsection{Drawing}  Let's start by implementing a Field Portrayal which only does drawing.  No hit-testing or selection, no mouse handling, no translation of positions to locations.  Let's start with the boilerplate (which will include some classes we'll need for later sections too):
 
@@ -7213,7 +7221,7 @@ Portrayal to use when none else can be determined for a given Object.  Here we'l
           \}	
 \end{alltt}}
 
-Next we'll handle the \method{getScale(...)} method.  This method takes a DrawInfo2D for the FieldPortayal as a whole and returns a \class{sim.util.Double2D} containing the width and height, in pixels of 1 unit of width and height in the field coordinate space.  The FieldPortrayal provided has as its Draw rectangle the expected bounds for the Field as a whole.  So usually the scale is computed by simply dividing the FieldPortrayal's Draw width and height by the underlying Field's width and height.
+Next we'll handle the \method{getScale(...)} method.  This method takes a DrawInfo2D for the FieldPortayal as a whole and returns a \class{sim.util.Double2D} containing the width and height, in pixels of 1 unit of width and height in the field coordinate space.  The DrawInfo2D provided has as its Draw rectangle the expected bounds for the Field as a whole.  So usually the scale is computed by simply dividing the DrawInfo2D Draw width and height by the underlying Field's width and height.
 
 However we can't do that in this case: our Field (a 1-dimensional range of numbers) doesn't have a ``width'' or ``height''.  What we're planning to do is draw, on a ring, all the objects in the Field: objects stored at 0.0 would be at the 12-o'clock position, objects at 0.5 would be at the 6-o'clock position, and so on.  So let's imagine a width and height for our ring: 20.0 ``units'', so to speak, in Field coordinates.   20 is a nice number for another reason: objects will be drawn to roughly fill a \(1 \times 1\) space of field coordinates, so our field will have nice big objects being drawn (1/20 of the ``height'' of the field).
 
@@ -7402,8 +7410,6 @@ Armed with a StableLocation, we can now create our LocationWrapper.  Back to the
             \{
             public Object getLocation()
                 \{
-                // always call update just in case
-                loc.update();
                 return loc;
                 \}
 
