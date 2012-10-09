@@ -455,9 +455,106 @@ try {
 
 
 
+\chapter{Using Geospatial Data}
+\label{ch:using}
 
+In this chapter we discuss interacting with geospatial data using
+GeoMason.  These kinds of interactions are mostly queries such as
+asking in what political boundaries an agent is located or determining
+nearby entities.
 
 %\begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{ants.pdf}\vspace{2em}\end{figure}
+
+\section{Determining What Political Entity an Agent is In}
+\label{sec:politicalentity}
+
+\begin{description}
+\item[Problem]~\\
+You have a simulation with boundaries that delineate political
+entities such as countries,
+counties, or voting districts.  In that simulation you also have
+agents that move across these kinds of boundaries and you would like to know the
+political entity in which that agent is located.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+\section{Locating Nearby Geospatial Objects}
+\label{sec:nearbyobjects}
+
+\begin{description}
+\item[Problem]~\\
+You want to find all the objects within a certain distance from a
+specific thing.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+\section{Finding Adjacent Geospatial Objects}
+\label{sec:findingadjacent}
+
+\begin{description}
+\item[Problem]~\\
+You want to find adjacent geospatial objects. For example, for a given
+country, you want to get a list of neighboring countries that share a
+common border.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+\section{Moving Agents Along Paths}
+\label{sec:movingalongpaths}
+
+\begin{description}
+\item[Problem]~\\
+You have a path, such as a road or trail, along which you want to move
+an agent.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
 
 
 %MASON has a large number of utility classes which can be used independently of the toolkit.  These classes fall in six packages:
@@ -510,7 +607,7 @@ This chapter gives recipes for displaying GeoMason fields in MASON.
 %\noindent A {\bf grid} is MASON's name for objects arrange in a 2-dimensional or 3-dimensional array or equivalent.  MASON supports a wide range of grid environments as fields (representations of space).  This includes most any combination of the following:
 
 \section{Displaying a \code{GeomVectorField}}
-\label{sub:displayingGeomVectorField}
+\label{sec:displayingGeomVectorField}
 
 \begin{description}
 \item[Problem]~\\
@@ -599,7 +696,7 @@ Problem Solution
 
 
 
-\section{Displaying a Boundary Over a Grid Field}
+\section{Displaying Boundary Lines Over a Grid Field}
 \label{sec:boundaryovergrid}
 
 \begin{description}
@@ -614,6 +711,29 @@ Problem Solution
 
 \item[Discussion ]
 \end{description}
+
+
+
+\section{Displaying a Dynamic Choropleth Map}
+\label{sec:chroplethmap}
+
+\begin{description}
+\item[Problem]~\\
+You want to create a dynamic choropleth map with colors changing based
+on agent behavior.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
 
 
 
