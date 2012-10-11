@@ -408,6 +408,30 @@ gridField.setMBR(globalMBR);
 \end{description}
 
 
+\subsection{Reading Other Kinds of Geospatial Data}
+\label{sub:readingother}
+
+\begin{description}
+\item[Problem]~\\
+GeoMason natively supports shape files and ARC/Info ASCII Grid files.
+However, you have geospatial data that is in neither one of those
+formats you would like to use.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
 
 
 \section{Writing Geospatial Data}
@@ -470,7 +494,7 @@ nearby entities.
 
 \begin{description}
 \item[Problem]~\\
-You have a simulation with boundaries that delineate political
+You have a simulation with polygons for boundaries that delineate political
 entities such as countries,
 counties, or voting districts.  In that simulation you also have
 agents that move across these kinds of boundaries and you would like to know the
@@ -554,48 +578,100 @@ Problem Solution
 
 
 
+\section{Computing Line Intersections}
+\label{sec:lineintersection}
+
+\begin{description}
+\item[Problem]~\\
+You want to find all the intersections for a set of lines.  For
+example, you may want to locate all road junctions.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
 
 
 
-%MASON has a large number of utility classes which can be used independently of the toolkit.  These classes fall in six packages:
-%
-%\begin{itemize}
-%\item \package{ec.util}\quad The Mersenne Twister random number generator
-%\item \package{sim.util}\quad Basic utility classes
-%\item \package{sim.util.gui}\quad Graphical interface utility classes
-%\item \package{sim.util.media}\quad Utility classes for generating various media (movies, pictures)
-%\item \package{sim.util.media.chart}\quad Utility classes for generating charts
-%\item \package{sim.util.distribution}\quad Utility classes for creating distributions
-%\end{itemize} 
-%
-%This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \package{sim.util.distribution}.  Many classes in the core simulation code rely on these packages (well the first two anyway), so it's important to cover them. 
-%
-%\begin{methods}{\class{ec.util.MersenneTwisterFast}}
-%\mthd{public void setSeed(long seed)} Seeds the random number generator.  Note that only the first 32 bits of the seed are used.
-%\mthd{public void setSeed(int[] vals)} Seeds the random number generator using the given array.  Only the first 624 integers in the array are used.  If the array is shorter than 624, then the integers are repeatedly used in a wrap-around fashion (not recommended).  The integers can be anything, but you should avoid too many zeros.
-%\mthd{public double nextDouble()} Returns a random double drawn in the half-open interval from [0.0, 1.0).  That is, 0.0 may be drawn but 1.0 will never be drawn.
-%\mthd{public double nextDouble(boolean includeZero, boolean includeOne)} Returns a random double drawn in interval from 0.0 to 1.0, possibly including 0.0 or 1.0 or both, as specified in the arguments.
-%\mthd{public float nextFloat()} Returns a random float drawn in the half-open interval from [0.0f, 1.0f).  That is, 0.0f may be drawn but 1.0f will never be drawn.
-%\mthd{public float nextFloat(boolean includeZero, boolean includeOne)} Returns a random float drawn in interval from 0.0f to 1.0f, possibly including 0.0f or 1.0f or both, as specified in the arguments.
-%\mthd{public double nextGaussian()} Returns a random double drawn from the standard normal Gaussian distribution (that is, a Gaussian distribution with a mean of 0 and a standard deviation of 1).
-%\mthd{public long nextLong()} Returns a random long.
-%\mthd{public long nextLong(long n)} Returns a random long drawn from between 0 to \(n-1\) inclusive.
-%\mthd{public int nextInt()} Returns a random integer.
-%\mthd{public int nextInt(int n)} Returns a random integer drawn from between 0 to \(n-1\) inclusive.
-%\mthd{public short nextShort()} Returns a random short.
-%\mthd{public char nextChar()} Returns a random character.
-%\mthd{public byte nextByte()} Returns a random byte.
-%\mthd{public void nextBytes(byte[] bytes)} Fills the given array with random bytes.
-%\mthd{public boolean nextBoolean()} Returns a random boolean.
-%\mthd{public boolean nextBoolean(float probability)} Returns a random boolean which is true with the given probability, else false.  Note that you must carefully pass in a {\it float} here, else it'll use the {\it double} version below (which is twice as slow).
-%\mthd{public boolean nextBoolean(double probability)} Returns a random boolean which is true with the given probability, else false.
-%\mthd{public Object clone()}  Clones the generator.
-%\mthd{public boolean stateEquals(Object o)}  Returns true if the given Object is a MersenneTwisterFast and if its internal state is identical to this one.
-%\mthd{public void writeState(DataOutputStream stream)}  Writes the state to a stream.
-%\mthd{public void readState(DataInputStream stream)}  Reads the state from a stream as written by \method{writeState(...)}.
-%\mthd{public static void main(String[] args)} Performs a test of the code.
-%\end{methods}
+\section{How to Calculate the Shortest Path on a Network}
+\label{sec:shortestpaths}
 
+\begin{description}
+\item[Problem]~\\
+You want to find the shortest path between two points in a network
+such as set of roads.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
+\section{Calculating Agent Information from Underlying Grid Data}
+\label{sec:gridtoagentdata}
+
+\begin{description}
+\item[Problem]~\\
+You wish to to compute something based on values found in a grid an
+agent occupies.  For example, a grid may represent a hectare and an
+agent may want to consume certain amount of vegetation and water found there.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+\section{Having an Agent Follow a Gradient}
+\label{sec:followinggradients}
+
+\begin{description}
+\item[Problem]~\\
+You have slope information that you would like an agent to follow.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
+
+%%
+%%
+%%
 
 \chapter{Displaying Geospatial Data}
 \label{ch:displaying}
@@ -736,6 +812,33 @@ Problem Solution
 
 
 
+\section{Displaying Raster Overlays}
+\label{sec:displayingrasteroverlays}
+
+\begin{description}
+\item[Problem]~\\
+You have raster overlays you wish to render over vector data.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion ]
+\end{description}
+
+
+
+
+
+
+%%
+%%
+%%
 
 \chapter{Common Problems}
 \label{ch:commonprobs}
