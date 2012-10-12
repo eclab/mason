@@ -8,6 +8,7 @@ package sim.app.pacman;
 import sim.engine.*;
 import sim.util.*;
 import sim.field.continuous.*;
+import sim.field.grid.*;
 import java.io.*;
 
 /** PacMan is the model for the game.  The model contains three fields: a Continuous2D for the
@@ -30,7 +31,7 @@ public class PacMan extends SimState
     public Continuous2D dots;
         
     /** The maze proper. */
-    public IntPBMGrid2D maze;
+    public IntGrid2D maze;
         
     /** A signal to indicate to the ghosts that they should become frightened next step around. */
     boolean frightenGhosts;  // signal for the ghosts
@@ -67,7 +68,10 @@ public class PacMan extends SimState
                 
         // String mazefile = PacMan.class.getResource("images/maze0.pbm").getPath();
         // maze = new IntPBMGrid2D(mazefile);
-        maze = new IntPBMGrid2D(PacMan.class.getResourceAsStream("images/maze0.pbm"));
+        maze = new IntGrid2D(0,0);
+        try { maze.setTo(TableLoader.loadPNMFile(PacMan.class.getResourceAsStream("images/maze0.pbm"))); }
+        catch (Exception e) { e.printStackTrace(); }
+        
         agents = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
         dots = new Continuous2D(1.0, maze.getWidth(), maze.getHeight());
 
@@ -83,7 +87,9 @@ public class PacMan extends SimState
                 
         //String mazefile = PacMan.class.getResource("images/maze" + (level - 1) % MAX_MAZES + ".pbm").getPath();
         //maze.read(mazefile);
-        maze.read(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"));
+        //maze.read(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"));
+        try { maze.setTo(TableLoader.loadPNMFile(PacMan.class.getResourceAsStream("images/maze" + (level - 1) % MAX_MAZES + ".pbm"))); }
+        catch (Exception e) { e.printStackTrace(); }
 
         // add energizers
         dots.setObjectLocation(new Energizer(), new Double2D(1, 5));

@@ -107,9 +107,20 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         return (Double3D) doubleLocationHash.get(obj);
         }
     
+    /** Discretizes the location according to the internal discretization of the Continuous3D.  You can use this to determine what
+        internal grid slot the continuous point would fall in.  */
     public final Int3D discretize(final Double3D location)
         {
         final double discretization = this.discretization;  // gets us below 35 bytes so we can be inlined
+        return new Int3D((int)(location.x / discretization), 
+            (int)(location.y / discretization), 
+            (int)(location.z / discretization));
+        }
+    
+    /** Discretizes the location according to the provided discretization, which may or may not be the discretization used internally by the Continuous3D.
+        If you're trying to determine what grid slot a continuous point would fall in, you probably want discretize(location) instead. */
+    public final Int3D discretize(final Double3D location, int discretization)
+        {
         return new Int3D((int)(location.x / discretization), 
             (int)(location.y / discretization), 
             (int)(location.z / discretization));

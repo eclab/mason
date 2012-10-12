@@ -3917,6 +3917,12 @@ MASON uses a binary heap because we don't know beforehand how you'll be using th
 \mthd{protected Heap createHeap()} Creates and returns a new Heap for the Schedule to use.
 \end{methods}
 
+Once the Schedule has created its heap, it stores it in a variable:
+
+\java{%
+protected Heap queue;
+}
+
 So what kind of key does the Schedule use to represent order in the Heap?  By default, it uses an object called \Class{sim.engine.Schedule.Key}.  This is a protected class available only to subclasses of Schedule, and it holds the a timestamp and an ordering.  The Key is \class{java.lang.Comparable} with other Keys.  A Key \(A\) is {\it less} than a Key \(B\) if the timestamp for \(A\) is less than (that is, ``before'') that of \(B\), or if the two timestamps are equal but the ordering of \(A\) is less than (that is, ``before'') \(B\).  If the timestamps and orderings are identical then \(A\) and \(B\) are considered equal to each other.
 
 

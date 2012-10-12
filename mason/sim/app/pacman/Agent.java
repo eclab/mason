@@ -11,6 +11,7 @@ import sim.field.continuous.*;
 import sim.util.*;
 import ec.util.*;
 import sim.portrayal.*;
+import sim.field.grid.*;
 
 /** An agent is either a Pac or a Ghost -- something which is capable of moving about.
     Agents have a previous action they've done which determines their "orientation".
@@ -152,7 +153,7 @@ public abstract class Agent implements Oriented2D
             {
             return false;  // no way
             }
-        IntPBMGrid2D maze = pacman.maze;
+        IntGrid2D maze = pacman.maze;
         int[][] field = maze.field;
 
         // the Agents grid is discretized exactly on 1x1 boundaries so we can use floor rather than divide

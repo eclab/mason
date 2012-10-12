@@ -125,7 +125,16 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         
     public final Double2D getDimensions() { return new Double2D(width, height); }
         
+    /** Discretizes the location according to the internal discretization of the Continuous2D.  You can use this to determine what
+        internal grid slot the continuous point would fall in.  */
     public final Int2D discretize(final Double2D location)
+        {
+        return new Int2D((int)(location.x / discretization), (int)(location.y / discretization));
+        }
+    
+    /** Discretizes the location according to the provided discretization, which may or may not be the discretization used internally by the Continuous2D.
+        If you're trying to determine what grid slot a continuous point would fall in, you probably want discretize(location) instead. */
+    public final Int2D discretize(final Double2D location, int discretization)
         {
         return new Int2D((int)(location.x / discretization), (int)(location.y / discretization));
         }

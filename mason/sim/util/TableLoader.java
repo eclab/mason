@@ -2,6 +2,10 @@ package sim.util;
 
 import java.io.*;
 import java.util.*;
+import java.awt.*;
+import java.awt.image.*;
+import sun.awt.image.*;
+import javax.swing.*;
 
 /****
 
@@ -17,10 +21,11 @@ it's particularly useful for loading files of numbers or graphics into an IntGri
 <li>"Raw" PBM files.  These store binary (1 and 0) bitmaps in a somewhat more compressed binary format.
 <li>"Plain" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a text-readable format.
 <li>"Raw" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a somewhat more compressed binary format.
+<li>PNG and GIF files which store binary, 8-bit grayscale, or 8-bit indexed data.
 <li>Whitespace-delimited text files.  These store each array row as a single line of numbers.  The numbers are set off with spaces or tabs.
 </ul>
 
-<p></b>PBM And PGM ("PNM" files)</b>&nbsp;&nbsp;&nbsp;&nbsp;The first four formats are defined by the <a href="http://netpbm.sourceforge.net/doc/">Netpbm</a>
+<p><b>PBM And PGM ("PNM" files)</b>&nbsp;&nbsp;&nbsp;&nbsp;The first four formats are defined by the <a href="http://netpbm.sourceforge.net/doc/">Netpbm</a>
 file format specification.  Various graphics programs can emit PBM or PGM files.  These files are collectively known as <b>PNM files</b>.
 MASON reads these files into int[][] arrays.   Note that
 graphics programs typically emit PBM (black and white) files in the opposite numerical format than you'd expect: 1 is black, and 0 is white.
@@ -30,6 +35,9 @@ you've set it to, being white.
 <p>If you're constructing these files by hand, note that MASON is a bit more generous about plain formats than
 the specification allows: MASON permits lines of any length, and you can have a MAXVAL of any size you like, as long as its within the integer
 data type range (normally, PGM only allows lines of about 70 chars and a MAXVAL of no more than 2^16).
+
+<p><b>PNG and GIF files</b>&nbsp;&nbsp;&nbsp;&nbsp;These files must have colors stored as binary (black and white), 8-bit grayscale,
+or 8-bit indexed color.
 
 <p><b>Whitespace-delimited text files</b>nbsp;&nbsp;&nbsp;&nbsp;These files consist of rows of numbers, each row delimited with newlines.  
 The numbers in each row are delimited with spaces or tabs.  Unlike the PBM/PGM format, you cannot at present have comments in the file.  The
@@ -161,6 +169,7 @@ public class TableLoader
                 
         return field;
         }
+    
 
     // Loads raw PGM files after the first-line header is stripped
     static int[][] loadRawPGM(InputStream stream) throws IOException
@@ -327,6 +336,119 @@ public class TableLoader
         }
 
 
+
+    /** Loads GIF files and returns the result as an int[][], where each integer value represents
+        the color table index of the pixel.  If flipY is true, then the Y dimension is flipped. */
+    public static int[][] loadGIFFile(InputStream str, boolean flipY) throws IOException
+        {
+        return loadPNGFile(str, flipY);
+        }
+
+    /** Loads GIF files and returns the result as an int[][], where each integer value represents
+        the color table index of the pixel.  The Y dimension is not flipped. */
+    public static int[][] loadGIFFile(InputStream str) throws IOException
+        {
+        return loadPNGFile(str);
+        }
+
+    /** Loads PNG files and returns the result as an int[][].  The only PNG formats permitted are those
+        with up to 256 grays (including simple black and white) or indexed colors from an up to 
+        256-sized color table.  Each integer value represents the gray level or the color table index
+        value of the pixel.  flipY is true, then the Y dimension is flipped. */
+    public static int[][] loadPNGFile(InputStream str, boolean flipY) throws IOException
+        {
+        int[][] vals = loadPNGFile(str);
+        if (flipY)
+            {
+            for(int i = 0 ; i < vals.length; i++)
+                {
+                int height = vals[i].length;
+                for(int j = 0; j < height/2; j++)
+                    {
+                    int temp = vals[i][j];
+                    vals[i][j] = vals[i][height-j+1];
+                    vals[i][height-j+1] = temp;
+                    }
+                }
+            }
+        return vals;
+        }
+        
+    /** Loads PNG files and returns the result as an int[][].  The only PNG formats permitted are those
+        with up to 256 grays (including simple black and white) or indexed colors from an up to 
+        256-sized color table.  Each integer value represents the gray level or the color table index
+        value of the pixel.  The Y dimension is not flipped.  */
+    public static int[][] loadPNGFile(InputStream str) throws IOException
+        {
+        // read the bytes into a byte array
+        BufferedInputStream stream = new BufferedInputStream(str);
+        ArrayList list = new ArrayList();
+        int count = 0;
+        while(true)
+            {
+            byte[] buffer = new byte[16384 * 16];
+            int len = stream.read(buffer);
+            if (len <= 0) // all done
+                break;
+            else if (len < buffer.length)
+                {
+                byte[] buf2 = new byte[len];
+                System.arraycopy(buffer, 0, buf2, 0, len);
+                buffer = buf2;
+                }
+            count += len;
+            list.add(buffer);
+            }
+        byte[] data = new byte[count];
+        int cur = 0;
+        for(int i = 0; i < list.size(); i++)
+            {
+            byte[] b = (byte[])(list.get(i));
+            System.arraycopy(b, 0, data, cur, b.length);
+            cur += b.length;
+            }
+            
+        // Next convert the byte array to a buffered image
+        BufferedImage image = ((ToolkitImage)(new ImageIcon(data).getImage())).getBufferedImage();
+        
+        // Is the color model something we can use?
+        int type = image.getType();
+        if (type == BufferedImage.TYPE_BYTE_BINARY || type == BufferedImage.TYPE_BYTE_GRAY)
+            {
+            int w = image.getWidth();
+            int h = image.getHeight();
+            int[][] result = new int[w][h];
+            // obviously this could be done more efficiently
+            for(int i = 0; i < w; i++)
+                for(int j = 0; j < h; j ++)
+                    result[i][j] = (image.getRGB(i,j) & 0xFF);
+            return result;
+            }
+        else if (type == BufferedImage.TYPE_BYTE_INDEXED)
+            {
+            Raster raster = image.getRaster();
+            if (raster.getTransferType() != DataBuffer.TYPE_BYTE)  // uh oh
+                throw new IOException ("Input Stream must contain an image with byte data if indexed.");
+            byte[] pixel = new byte[1];
+            int w = image.getWidth();
+            int h = image.getHeight();
+            int[][] result = new int[w][h];
+            // obviously this could be done more efficiently
+            for(int i = 0; i < w; i++)
+                for(int j = 0; j < h; j ++)
+                    {
+                    result[i][j] = ((byte[])(raster.getDataElements(i,j,pixel)))[0];
+                    if (result[i][j] < 0) result[i][j] += 256;
+                    }
+            return result;
+            }
+        //else if (type == TYPE_USHORT_GRAY)   // at present we don't handle shorts
+        //    {
+        //    }
+        else throw new IOException("Input Stream must contain a binary, byte-sized grayscale, or byte-sized indexed color scheme: " + image);
+        }
+
+
     /** Converts a double[][] array to an int[][] array to ints only if they're all integer values within the int range.
         If not, returns null. */
     public static int[][] convertToIntArray(double[][] vals)
@@ -347,4 +469,17 @@ public class TableLoader
         return ret;
         }
 
+    /** Converts an int[][] array to a double[][] array. */
+    public static double[][] convertToDoubleArray(int[][] vals)
+        {
+        double[][] ret = new double[vals.length][];
+        for(int i = 0; i < vals.length; i++)
+            {
+            int[] valsi = vals[i];
+            double[] reti = ret[i] = new double[valsi.length];
+            for(int j = 0; j < valsi.length; j++)
+                reti[j] = valsi[j];
+            }
+        return ret;
+        }
     }

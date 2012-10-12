@@ -109,7 +109,7 @@ public class Schedule implements java.io.Serializable
     // should we shuffle individuals with the same timestep and ordering?
     boolean shuffling = true;  // by default, we WANT to shuffle
 
-    Heap queue = createHeap();
+    protected Heap queue = createHeap();
     
     /** Returns a Heap to be used by the Schedule.  By default, returns a
         binary heap.  Override this to provide your own
@@ -164,7 +164,7 @@ public class Schedule implements java.io.Serializable
     /** Returns the current timestep 
         @deprecated use getTime()
     */
-    public double time() { synchronized(lock) { return time; } }
+    public double time() { return getTime(); }
 
     /** Returns the current timestep */
     public double getTime() { synchronized(lock) { return time; } }
@@ -188,10 +188,11 @@ public class Schedule implements java.io.Serializable
     // could be static, but why not let it be overridden?
     public String getTimestamp(double time, final String beforeSimulationString, final String afterSimulationString)
         {
-        if (time < EPOCH) return beforeSimulationString;
-        if (time >= AFTER_SIMULATION) return afterSimulationString;
-        if (time == (long)time) return Long.toString((long)time);
-        return Double.toString(time);
+        double _time = getTime();
+        if (_time < EPOCH) return beforeSimulationString;
+        if (_time >= AFTER_SIMULATION) return afterSimulationString;
+        if (_time == (long)_time) return Long.toString((long)_time);
+        return Double.toString(_time);
         }
 
     /** Returns the number of steps the Schedule has pulsed so far. */
@@ -266,8 +267,8 @@ public class Schedule implements java.io.Serializable
 			throw new RuntimeException("May not merge with a sealed schedule.");
         if (!other.queue.isEmpty())
             {
-            double minKey = ((Key)(other.queue.getMinKey())).time;
-            if (minKey <= time)  // uh oh
+            double minKey = ((Key)(other.queue.getMinKey())).getTime();
+            if (minKey <= getTime())  // uh oh
                 throw new RuntimeException("May not merge with a schedule which has Steppables scheduled for an earlier time than my current time value."); 
             }
         

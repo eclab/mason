@@ -2485,3 +2485,5 @@ Version 17
 	Updated MersenneTwister and MersenneTwisterFast
 	Added sim/util/TableLoader.java and various array methods to DoubleGrid2D and
 		IntGrid2D.
+	Modifications made to Schedule to make it easier to subclass it.
+	Added discretize(location, discretization) to Continuous2D and Continuous3D
