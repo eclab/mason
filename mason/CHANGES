@@ -2484,6 +2484,7 @@ Version 17
 		Preceded most warning messages with "WARNING"
 	Updated MersenneTwister and MersenneTwisterFast
 	Added sim/util/TableLoader.java and various array methods to DoubleGrid2D and
-		IntGrid2D.
+		IntGrid2D.  Deleted sim/app/pacman/IntPBMGrid2D and moved PacMan to
+		use TableLoader instead.
 	Modifications made to Schedule to make it easier to subclass it.
 	Added discretize(location, discretization) to Continuous2D and Continuous3D
