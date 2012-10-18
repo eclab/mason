@@ -2482,9 +2482,10 @@ Version 17
 	Added a -quiet option to silence MASON's doLoop messages.  Made sure that all 
 		error messages in the MASON core used System.err instead of System.out.
 		Preceded most warning messages with "WARNING"
-	Updated MersenneTwister and MersenneTwisterFast
+	Updated MersenneTwisterFast
 	Added sim/util/TableLoader.java and various array methods to DoubleGrid2D and
 		IntGrid2D.  Deleted sim/app/pacman/IntPBMGrid2D and moved PacMan to
 		use TableLoader instead.
 	Modifications made to Schedule to make it easier to subclass it.
 	Added discretize(location, discretization) to Continuous2D and Continuous3D
+	Updated MersenneTwisterFast again

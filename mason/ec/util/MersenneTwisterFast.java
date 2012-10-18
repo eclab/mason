@@ -4,7 +4,7 @@ import java.util.*;
 
 /** 
  * <h3>MersenneTwister and MersenneTwisterFast</h3>
- * <p><b>Version 19</b>, based on version MT199937(99/10/29)
+ * <p><b>Version 20</b>, based on version MT199937(99/10/29)
  * of the Mersenne Twister algorithm found at 
  * <a href="http://www.math.keio.ac.jp/matumoto/emt.html">
  * The Mersenne Twister Home Page</a>, with the initialization
@@ -41,6 +41,9 @@ import java.util.*;
  * Vol. 8, No. 1, January 1998, pp 3--30.
  *
  * <h3>About this Version</h3>
+ *
+ * <p><b>Changes since V19:</b> nextFloat(boolean, boolean) now returns float,
+ * not double.
  *
  * <p><b>Changes since V18:</b> Removed old final declarations, which used to
  * potentially speed up the code, but no longer.
@@ -1133,7 +1136,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
         
         <p>This version preserves all possible random values in the float range.
     */
-    public double nextFloat(boolean includeZero, boolean includeOne)
+    public float nextFloat(boolean includeZero, boolean includeOne)
         {
         float d = 0.0f;
         do
