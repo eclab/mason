@@ -55,6 +55,7 @@
 \renewcommand\topfraction{1.0}
 \renewcommand\bottomfraction{1.0}
 
+\makeindex
 
 \newcommand\file[1]{\textsf{#1}}
 \newcommand\variable[1]{\textsf{#1}}
@@ -268,10 +269,11 @@ This section covers reading geospatial data into MASON using GeoMason.
 
 \begin{description}
 \item[Problem] ~\\
-You want to read vector geospatial data stored in a Shape file.
+You want to read vector geospatial data stored in a Shape
+file.\index{Shape files!reading|(}
 
 \item[Solution]~\\
-Create a \code{GeomVectorField} and use \code{ShapeFileImporter.read()} to load data into it.
+Create a \class{GeomVectorField} and use \method{ShapeFileImporter.read()} to load data into it.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField vectorField = new GeomVectorField();
 
@@ -281,9 +283,21 @@ try {
 {  /* handle exception */  }
 \end{Verbatim}
 
-\end{description}
+\item[Discussion]~\\
+Though there exist other GeoMason classes capable of reading Shape
+files --- \class{GeoToolsImporter} and \class{OGRImporter} --- the
+native GeoMason shape file importer, \class{ShapeFileImporter}, is
+recommended, especially given that it has no third party dependencies
+as the other importer classes do.
 
-\paragraph{Discussion}
+Given the general static nature of shape files, the above code snippet
+is likely to be in a \class{SimState} subclass constructor.
+Alternatively you may place it in the \method{start()} though be mindful
+that means that the shape file will be loaded again each time the
+simulation is restarted.
+
+
+\end{description}
 
 
 
@@ -292,12 +306,13 @@ try {
 
 \begin{description}
 \item[Problem]~\\
-You want to read in more than one thematic layer of vector data.
+You want to read in more than one thematic layer of vector
+data.
 
 \item[Solution]~\\
 After ensuring that each layer uses the same coordinate reference
 system, read in each layer, and then synchronize the minimum bounding
-rectangles for all the layers.
+rectangles for all the layers.\index{minimum bounding rectangle}
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField firstVectorField = new GeomVectorField();
 GeomVectorField secondVectorField = new GeomVectorField();
@@ -320,7 +335,18 @@ secondVectorField.setMBR(globalMBR);
 thirdVectorField.setMBR(globalMBR);
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion]~\\
+It is important to ensure that all the layers have the same MBR
+otherwise they will not align properly when displayed.  Naturally, this
+is optional if you do not intend on rendering the layers.  Regardless
+it would be prudent to do so anyway on the chance that later you
+change your mind and want to see the \class{GeoVectorField}s.
+
+As noted in recipe \ref{sub:readingshapefiles}, given the general
+static nature of shape files, this code snippet is likely to be done
+in the \class{SimState} constructor; however, again, the layers could
+also be loaded via \method{start()}, though that means loading the shape
+files every time the simulation is re-run.
 \end{description}
 
 
@@ -330,24 +356,71 @@ thirdVectorField.setMBR(globalMBR);
 
 \begin{description}
 \item[Problem]~\\
-You want to read a Shape file and only some of its associated attributes.
+You want to read a Shape file and only some of its associated
+attributes.\index{Shape files!reading|)}\index{Shape files!attributes}
 
 \item[Solution]~\\
-Read in a shape file as in section \ref{sub:readingshapefiles}, but specify the desired attributes.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+Read in a shape file as in recipe \ref{sub:readingshapefiles}, but
+specify the desired attributes by creating a \class{Bag} of \code{String}s
+containing attribute names, and then passing that \class{Bag} to
+\method{ShapeFileImporter.read()}.
+
+\begin{Verbatim}[frame=lines,label=\textsf{Reading Attributes},framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField vectorField = new GeomVectorField();
 
-Bag desiredAttributes = new Bag();
-desiredAttributes.add("NAME");
-desiredAttributes.add("TYPE");
++color[red]Bag desiredAttributes = new Bag();+label[ex:attributestart]
++color[red]desiredAttributes.add("NAME");
++color[red]desiredAttributes.add("TYPE");+label[ex:attributeend]
 
 try {
-   ShapeFileImporter.read("file:foo.shp", vectorField, desiredAttributes);
+   +color[red]ShapeFileImporter.read("file:foo.shp", vectorField, desiredAttributes);+label[ex:attributeread]
 } catch (FileNotFoundException ex)
 {  /* handle exception */  }
 \end{Verbatim}
 
-\item[Discussion ]
+Each spatial object is wrapped in a \class{MasonGeometry} object
+which, in turn, also stores any associated attributes.  Use the
+appropriate \class{MasonGeometry} \code{get*Attribute()} method to
+retrieve the attribute value.
+
+\begin{Verbatim}[frame=lines,label=\textsf{Using Attributes},framesep=5mm,numbers=left]
+Bag geometries = vectorField.getGeometries();
+
+for (int i = 0; i < geometries.size(); i++)
+{
+    MasonGeometry geometry = (MasonGeometry) geometries.objs[i];
+
+    int type = geometry.getIntegerAttribute("TYPE");
+    String name = geometry.getStringAttribute("NAME");
+}
+\end{Verbatim}
+
+\item[Discussion]~\\
+Most shape files have an associated set of attributes describing each
+feature.  For example, buildings will have names, roads will have a
+number of lanes, bridges will have a type, and so on.  These
+attributes can be strings, numbers, or boolean values.
+
+By default GeoMason will not load any associated attributes --- if you
+want any attributes you will have to ask for them by name.  You do
+this by filling a \code{Bag} with strings of desired attribute names,
+and then passing that \code{Bag} to a
+\method{ShapeFileImporter.read()} invocation, as shown in the
+highlighted lines
+\ref{ex:attributestart}-\ref{ex:attributeend} and
+\ref{ex:attributeread} in the code example ``Reading Attributes.'' This will then load
+each \class{MasonGeometry} object that corresponds to each spatial
+entity with a set of attribute/value pairs.  These attributes can be
+later retrieved with an appropriate call to
+\method{getStringAttribute()}, \method{getIntegerAttribute()}, or
+\method{getDoubleAttribute()}; you can also invoke
+\method{getAttribute()} to retrieve the value object directly.  An
+example of using these methods is shown in the code snippet ``Using Attributes.''
+
+Unfortunately this does mean you have to know ahead of time the
+available attributes and their respective names.  If you do not know
+the available attributes, you can use a GIS such as QuantumGIS or
+ArcGIS to discover the attribute names.
 \end{description}
 
 
@@ -876,8 +949,19 @@ Problem Solution
 \end{description}
 
 
+%%
+%%
+%%
+\chapter{Acknowledgements}
+\label{ch:ack}
 
+%TODO add grant number and flesh out.
+Thank the MURI project for their support via NSF grant #.  For Andrew Crooks for
+valuable feedback.  For Sean Luke, et al, for MASON.
 
+%%
+%%
+%%
 
 \cleardoublepage
 \footnotesize
