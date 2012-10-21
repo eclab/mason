@@ -247,12 +247,14 @@ GeoMason is a MASON extension that adds basic geospatial capability.
 %\begin{wrapfigure}{r}[0in]{3.7in}
 %\vspace{-4em}\hfill\includegraphics[width=3.7in]{MASONLayout.pdf}\vspace{-3em}\end{wrapfigure}
 
-MASON is broken into two pieces.  The first part is the {\bf model} (the simulation proper) and the second part is the {\bf visualization}, presently either in 2D or in 3D.  Except when you choose to have model objects display themselves, the model and visualization are entirely separated.  This means that the model can be run without visualization; run with visualization of different sorts; and have its visualization changed, added, or removed at any time.  The model can also be {\bf checkpointed}, meaning it can be frozen and written out to disk, to be thawed out and continued even on another kind of computer.
+% TODO Greatly expand this introduction.
 
-At right is a general overview of the MASON architecture.
-
-\paragraph{Model}  MASON's model is entirely encapsulated in a special object called \class{sim.engine.SimState}.  It contains a discrete event {\bf schedule} on which you can schedule various {\bf agents} to be called at some time in the future.  This facility is a MASON model's representation of {\bf time}. Additionally, the model contains one or more {\bf fields} to represent {\bf space}.  A field is nothing more than an arbitrary data structure relating various {\bf objects} or {\bf values} together.  MASON provides a number of built-in fields, such as networks, continuous space, and grids.  Last but not least, MASON's model contains a high-quality {\bf random number generator}.
-
+MASON is a sophisticated multi-agent simulation library.
+Unfortunately it does not natively support geospatial data.  GeoMason
+is a MASON extension that embues MASON with some limited geospatial
+awareness.  With GeoMason one is able to load, display, and manipulate
+data that is, in some way, grounded to the Earth's surface.  This
+Cookbook provides a set of ``recipes'' for using GeoMason.
 
 
 \chapter{Reading and Writing Geospatial Data}
@@ -296,7 +298,17 @@ Alternatively you may place it in the \method{start()} though be mindful
 that means that the shape file will be loaded again each time the
 simulation is restarted.
 
-
+Note that the units of the loaded vector layer will be those of the
+underyling coordinate reference system.  So if the shape file is
+in meters, such as is found in data in Universal Transverse Mercator (UTM), then all loaded
+geometry will similarly be in meters.   Also note that GeoMason uses
+the \idx{Java Topology Suite} (JTS) to store all the geometry.  JTS uses a
+flat Cartesian plane for all points; so be aware of this when loading
+data from a non-planar reference system.  That is, if you na\"{i}vely
+load, say, native lat/lon data, which corresponds to coordinates along
+a ellipsoid, that you will have introduced distortions in the implicit
+projection you have just done to a 2D plane.  Moreover, these
+distortions will be more pronounced for large surface areas.
 \end{description}
 
 
@@ -312,7 +324,7 @@ data.
 \item[Solution]~\\
 After ensuring that each layer uses the same coordinate reference
 system, read in each layer, and then synchronize the minimum bounding
-rectangles for all the layers.\index{minimum bounding rectangle}
+rectangles (MBR) for all the layers.\index{minimum bounding rectangle}
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 GeomVectorField firstVectorField = new GeomVectorField();
 GeomVectorField secondVectorField = new GeomVectorField();
@@ -325,22 +337,40 @@ try {
 } catch (FileNotFoundException ex)
 {  /* handle exception */  }
 
-Envelope globalMBR = firstVectorField.getMBR();
++color[red]Envelope globalMBR = firstVectorField.getMBR();+label[ex:MBRstart]
 
-globalMBR.expandToInclude(secondVectorField.getMBR());
-globalMBR.expandToInclude(thirdVectorField.getMBR());
++color[red]globalMBR.expandToInclude(secondVectorField.getMBR());
++color[red]globalMBR.expandToInclude(thirdVectorField.getMBR());
 
-firstVectorField.setMBR(globalMBR);
-secondVectorField.setMBR(globalMBR);
-thirdVectorField.setMBR(globalMBR);
++color[red]firstVectorField.setMBR(globalMBR);
++color[red]secondVectorField.setMBR(globalMBR);
++color[red]thirdVectorField.setMBR(globalMBR);+label[ex:MBRend]
 \end{Verbatim}
 
 \item[Discussion]~\\
+It is possible that the disparate shape files may have different
+coordinate reference systems, as can happen if the shape files came
+from different sources.  It is vitally important to ensure that all
+the layers have the same coordinate reference system before being
+loaded into GeoMason.  For example, a vector layer that uses lat/lon coordinates
+will have radically different geometry values from another vector layer that
+uses UTM even though they may cover the same area on Earth.
+Essentially, GeoMason is not a GIS so it will not do
+on-the-fly projections of the data.  Users can use a real GIS tool,
+such as QuantumGIS \footnote{http://www.qgis.org/}, to manually
+reproject data prior to loading into GeoMason.
+
 It is important to ensure that all the layers have the same MBR
 otherwise they will not align properly when displayed.  Naturally, this
 is optional if you do not intend on rendering the layers.  Regardless
 it would be prudent to do so anyway on the chance that later you
-change your mind and want to see the \class{GeoVectorField}s.
+change your mind and want to see the \class{GeoVectorField}s.  The
+highlighted lines \ref{ex:MBRstart}-\ref{ex:MBRend} show how to
+synchronize the MBRs between loaded \class{GeomVectorField}s.
+Basically, you get the MBR of the first \class{GeomVectorField}, expand
+it to include the area of the MBRs for the remaining
+\class{GeomVectorField}s, and then set them all to the one
+all-inclusive MBR.
 
 As noted in recipe \ref{sub:readingshapefiles}, given the general
 static nature of shape files, this code snippet is likely to be done
@@ -838,6 +868,7 @@ You want to show the contents of a \code{GeomGridField} in a MASON display
 \item[Solution]~\\
 Problem Solution
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+foo
 \end{Verbatim}
 
 \item[Discussion ]
@@ -856,6 +887,7 @@ You want to overlay political boundaries on grid data.
 Problem Solution
 
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+foo
 \end{Verbatim}
 
 \item[Discussion ]
@@ -927,6 +959,7 @@ Rendering a \code{GeomField} just shows one solid color.
 \item[Solution]~\\
 Problem Solution
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+foo
 \end{Verbatim}
 
 \item[Discussion ]
@@ -943,6 +976,7 @@ The data between layers does not match.
 \item[Solution]~\\
 Problem Solution
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+foo
 \end{Verbatim}
 
 \item[Discussion ]
@@ -956,7 +990,7 @@ Problem Solution
 \label{ch:ack}
 
 %TODO add grant number and flesh out.
-Thank the MURI project for their support via NSF grant #.  For Andrew Crooks for
+Thanks the MURI project for their support via NSF grant \#.  For Andrew Crooks for
 valuable feedback.  For Sean Luke, et al, for MASON.
 
 %%
