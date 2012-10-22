@@ -466,7 +466,7 @@ ArcGIS to discover the attribute names.
 You want to read an Arc/Info ASCII Grid file.
 
 \item[Solution]~\\
-Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file, then use \code{ArcInfoASCGridImporter()} to load the data into the grid field from the open input stream.
+Create a \class{GeomGridField} and an \code{InputStream} opened on the grid file, then use \class{ArcInfoASCGridImporter()} to load the data into the grid field from the open input stream.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 	GeomGridField gridField = new GeomGridField();
 	
@@ -474,7 +474,31 @@ Create a \code{GeomGridField} and an \code{InputStream} opened on the grid file,
 	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion ]~\\
+Essentially a \class{GeomGridField} is a wrapper round a MASON
+\class{Grid2D} object that embues some limited geospatial
+characteristics -- essentially it's a georeferenced  MASON \class{Grid2D}.
+
+\method{ArcInfoASCGridImporter.read()} will use one of two
+\class{Grid2D} MASON subclasses, \class{IntGrid2D} or
+\class{DoubleGrid2D},  depending
+on whether integer or real-value data is used, respectively.  Unfornately GeoMason is not smart enough to
+figure out ahead of time which underlying MASON \class{Grid2D}
+subclass to use so you have to specify that via the \class{GridDataType}
+argument to \method{ArcInfoASCGridImporter.read()}; i.e.,
+\code{GridDataType.INTEGER} for integer based grid data or
+GridDataType.DOUBLE for real-value based grid data.  
+
+Many times you can readily intuit the underlying data type of an
+ASC/Grid file.  E.g., a grid of population values such as Landscan
+values \footnote{http://www.ornl.gov/sci/landscan/} will likely use integers,
+wheres one of elevation postings, such as found in \idx{Digital Elevation
+Models}, will likely use floating point values.  However, if you do not know
+whether integers or floats are used in a given grid file, you can peep
+at it with a text editor to find out.  If you have a UNIX-like command line, you
+can use ``\code{head -7}'' to look at the first seven lines of text in an
+ASC/Grid file. Regardless of how you look at the data, it
+should be readily apparently whether the file contains all integers or floats.
 \end{description}
 
 
@@ -507,10 +531,22 @@ vectorField.setMBR(globalMBR);
 gridField.setMBR(globalMBR);
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion ]~\\
+The same issues apply here as noted in recipe
+\ref{sub:multiplevectorlayers} --- i.e., not only do the coordinate
+reference systems need to be identical between layers, but the MBRs
+also need to be synchronized.  Also, as in recipe
+\ref{sub:readinggridfile}, you will have to specify the appropriate
+\class{GridDataType} that corresponds to type of data found in the
+grid file.
+
+One typical scenario this recipe covers is overlaying political
+boundaries over grid data.
 \end{description}
 
 
+
+% TODO finish this recipe
 \subsection{Reading Other Kinds of Geospatial Data}
 \label{sub:readingother}
 
@@ -521,12 +557,9 @@ However, you have geospatial data that is in neither one of those
 formats you would like to use.
 
 \item[Solution]~\\
-Problem Solution
+(To be written)
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+(To be written)
 \end{Verbatim}
 
 \item[Discussion ]
@@ -540,6 +573,9 @@ Problem Solution
 \section{Writing Geospatial Data}
 \label{sec:writingdata}
 
+This section covers recipes involving saving geospatial data from
+GeoMason constructs to files.
+
 \subsection{Writing a Shape File}
 \label{sub:writingshapefile}
 
@@ -552,9 +588,57 @@ Use \code{ShapeFileExporter.write()} to save the vector field to a Shape file.
 \begin{verbatim}
 ShapeFileExporter.write("foo", vectorField);
 \end{verbatim}
-\item[Discussion]
- foo
+\item[Discussion]~\\
+Obviously it doesn't make sense to write a shape file for shape files
+you've already read in because the data presumably hasn't changed.  This recipe is, instead, useful for scenarios
+where you have a vector layer of data that you've created wholly
+within your simulation and wish to save so that you can load it into a
+proper GIS.  
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\textwidth]{CampusWorld2.png}
+  \caption{Snapshot of ``Campus World'' demo .}
+  \label{fig:campusworld}
+\end{figure}
+
+Consider the GeoMason ``Campus World'' demo that has
+agents moving along walkways.\footnote{This demo is included with
+  GeoMason, and can be found as \file{sim.app.geo.campusworld}}  The buildings, walkways, and roads were
+loaded from shape files, but the agents were created stochastically
+from within the simulation and stored in their own \class{GeomVectorField}.  When the simulation ends a shape file
+describing these agents is written out to a shape file that can be
+loaded along with the original shape files for analysis.  These agents
+have the following three attributes: their age, movement rate, and whether they are
+student or faculty. Fig. \ref{fig:campusworld} depicts these shape files
+after they were loaded into a GIS with the faculty agents rendered as blue triangles, students as
+red dots, and their relative sizes scaled to their respective movement rates.
+
+Shape files are not single files but are instead comprised of a few mandatory files with
+the extensions \file{.shp}, \file{.dbf}, and \file{.idx}.  The first
+argument to \method{ShapeFileExporter.write()} specifies the file name
+prefix used to generate these files from the given
+\class{GeomVectorField}.
+
+There is an optional shape file that contains the coordinate reference
+system and uses the file name extension \file{.prj}.  This function
+does not write this file.\footnote{However, a future incarnation of
+  GeoMason may do so.}  However, if the \class{GeomVectorField} was
+itself sourced from a shape file, then its corresponding \file{.prj}
+file can be copied over using the new file extension used in the call
+to \method{write()}.  Alternatively, if the \class{GeomVectorField} was
+\emph{not} read from a shape file, and so does not have a corresponding
+\file{.prj} file, you may still be in luck if you loaded other vector
+layers from shape files.  If that's the case, you can likely
+arbitrarily use one of their \file{.prj} files.
+
+If you want to automatically save a snapshot of a
+\class{GeomVectorField} after each simulation run, you can place this
+call to \method{write()} within \method{finish()} inside your
+\class{SimState} subclass.
 \end{description}
+
+
 
 \subsection{Writing an ARC/Info ASCII Grid File}
 \label{sub:writinggridfile}
@@ -575,8 +659,18 @@ try {
 }
 \end{Verbatim}
 
-\item[Discussion] 
+\item[Discussion] ~\\
+This recipe is useful for saving grid data from a simulation run such
+that you can later import it into a GIS for analysis.
 
+Unlike calls to \method{ArcInfoASCGridImporter.read()}, you do not
+have to specify a data type.  Instead, the call to
+\method{ArcInfoASCGridExporter.write()} automatically handles that
+detail for you.
+
+As in recipe \ref{sub:writingshapefile} you can place this snippet into
+\method{finish()} to automatically write a grid file when the
+simulation ends.
 \end{description}
 
 
