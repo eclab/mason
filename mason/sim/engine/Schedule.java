@@ -256,15 +256,15 @@ public class Schedule implements java.io.Serializable
         }
     
     /**
-     Merge a given schedule into this one.  The other schedule is not modified, but the queue of the
-     original schedule is changed.
-     */
-	public void merge(Schedule other) 
-    {
-		if (inStep || other.inStep) 
-			throw new RuntimeException("May not merge with another schedule while inside a step method.");
+       Merge a given schedule into this one.  The other schedule is not modified, but the queue of the
+       original schedule is changed.
+    */
+    public void merge(Schedule other) 
+        {
+        if (inStep || other.inStep) 
+            throw new RuntimeException("May not merge with another schedule while inside a step method.");
         if (sealed || other.sealed)
-			throw new RuntimeException("May not merge with a sealed schedule.");
+            throw new RuntimeException("May not merge with a sealed schedule.");
         if (!other.queue.isEmpty())
             {
             double minKey = ((Key)(other.queue.getMinKey())).getTime();
@@ -273,7 +273,7 @@ public class Schedule implements java.io.Serializable
             }
         
         queue = queue.merge(other.queue);
-	}
+        }
 
     Bag currentSteps = new Bag();
     Bag substeps = new Bag();

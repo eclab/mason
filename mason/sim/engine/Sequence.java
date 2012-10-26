@@ -217,36 +217,36 @@ public class Sequence implements Steppable
             Bag toBeRemoved = this.toBeRemoved;
             int stepsSize = this.size;
             
-                for (int s = stepsSize - 1; s >= 0; s--)
+            for (int s = stepsSize - 1; s >= 0; s--)
                 {
-                    for (int r = 0; r < toBeRemovedSize; r++)
+                for (int r = 0; r < toBeRemovedSize; r++)
                     {
-                        if (steps[s] == toBeRemoved.get(r))
+                    if (steps[s] == toBeRemoved.get(r))
                         {
-                            if (s < stepsSize -1)  // I'm not already at top
-                                {
-                                // remove from steps, possibly nondestructively
-                                if (ensuresOrder)
-                                    System.arraycopy(steps, s + 1, steps, s, stepsSize - s - 1);
-                                else
-                                    steps[s] = steps[stepsSize - 1];
-                                }
-                            // else we don't bother moving me
+                        if (s < stepsSize -1)  // I'm not already at top
+                            {
+                            // remove from steps, possibly nondestructively
+                            if (ensuresOrder)
+                                System.arraycopy(steps, s + 1, steps, s, stepsSize - s - 1);
+                            else
+                                steps[s] = steps[stepsSize - 1];
+                            }
+                        // else we don't bother moving me
 
-                            steps[stepsSize - 1] = null;  // let top element GC
-                            stepsSize--;
+                        steps[stepsSize - 1] = null;  // let top element GC
+                        stepsSize--;
 
-                            // remove from toBeRemoved, always destructively
-                            toBeRemoved.remove(r);
-                            toBeRemovedSize--;
+                        // remove from toBeRemoved, always destructively
+                        toBeRemoved.remove(r);
+                        toBeRemovedSize--;
 
-                            break;  // all done
+                        break;  // all done
                         }
                     }
 
-                    if (toBeRemovedSize == 0)      // nothing left
+                if (toBeRemovedSize == 0)      // nothing left
                     {
-                        break;
+                    break;
                     }
                 }
 

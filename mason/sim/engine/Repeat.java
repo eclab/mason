@@ -31,14 +31,14 @@ import ec.util.*;
    <pre><tt>
    Steppable step = ...
    Repeat repeat = new Repeat(step, 1)
-       {
-       double jump = 2;
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           jump = (jump == 1 ? 2 : 1);
-           return currentTime + jump;
-           }
-       };
+   {
+   double jump = 2;
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   jump = (jump == 1 ? 2 : 1);
+   return currentTime + jump;
+   }
+   };
    schedule.scheduleOnce(0.0, 1, repeat);
    </tt></pre>
 
@@ -50,12 +50,12 @@ import ec.util.*;
    <pre><tt>
    Steppable step = ...
    Repeat repeat = new Repeat(step, 1)
-       {
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
-           }
-       };
+   {
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+   }
+   };
    schedule.scheduleOnce(0.0, 1, repeat);
    </tt></pre>
    
@@ -67,15 +67,15 @@ import ec.util.*;
    <pre><tt>
    Steppable step = ...
    Repeat repeat = new Repeat(step, 1)
-       {
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           synchronized(state.random)
-               { 
-               return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
-               }
-           }
-       };
+   {
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   synchronized(state.random)
+   { 
+   return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+   }
+   }
+   };
    schedule.scheduleOnce(0.0, 1, repeat);
    </tt></pre>
    
@@ -86,13 +86,13 @@ import ec.util.*;
    <pre><tt>
    Steppable step = ...
    Repeat repeat = new Repeat(step, 1)
-       {
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           setOrdering(getOrdering() + 1);
-           return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
-           }
-       };
+   {
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   setOrdering(getOrdering() + 1);
+   return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+   }
+   };
    schedule.scheduleOnce(0.0, 1, repeat);
    </tt></pre>
    
@@ -106,12 +106,12 @@ import ec.util.*;
    SimState state = ...
    final sim.util.distributions.Poisson poisson = new sim.util.distributions.Poisson(10.0, state);
    Repeat repeat = new Repeat(step, 1)
-       {
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           return currentTime + 1.0 + poisson.nextInt();
-           }
-       };
+   {
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   return currentTime + 1.0 + poisson.nextInt();
+   }
+   };
    schedule.scheduleOnce(0.0, 1, repeat);
    </tt></pre>
    
@@ -127,12 +127,12 @@ import ec.util.*;
    SimState state = ...
    final sim.util.distributions.Poisson poisson = new sim.util.distributions.Poisson(10.0, state);
    Repeat repeat = new Repeat(step, 1)
-       {
-       protected double getNextTime(SimState state, double currentTime)
-           {
-           return currentTime + 1.0 + poisson.nextInt();
-           }
-       };
+   {
+   protected double getNextTime(SimState state, double currentTime)
+   {
+   return currentTime + 1.0 + poisson.nextInt();
+   }
+   };
    schedule.scheduleOnce(state.random.nextDouble(true, true) * 10.0, 1, repeat);
    </tt></pre>
 */

@@ -50,7 +50,7 @@ import sim.util.*;
     at the end of the run to call cleanup() on it.  It's not a bad idea for a ParallelSequence which
     is one-shot rather than repeating.
     
-   <p>Be sure to read the class documentation on sim.engine.Sequence</b>
+    <p>Be sure to read the class documentation on sim.engine.Sequence</b>
 */
 
 public class ParallelSequence extends Sequence
@@ -109,7 +109,7 @@ public class ParallelSequence extends Sequence
         {
         pleaseDie = true;
         if (threads != null)
-        	threads.killThreads();
+            threads.killThreads();
         pleaseDie = false;
         threads = null;
         }
@@ -192,7 +192,7 @@ public class ParallelSequence extends Sequence
             
             // This code instead starts each thread on a different chunk of the steppables array
             this.threads.startThread(new Worker(state, i * jump, Math.min( (i+1) * jump, size), 1),
-                                    "ParallelSequence");
+                "ParallelSequence");
             }
 
         if (destroysThreads)

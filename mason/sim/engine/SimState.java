@@ -593,7 +593,7 @@ public class SimState implements java.io.Serializable
             state.finish();
             
             if (retval) if (!quiet) System.err.println("Exhausted");
-            else if (!quiet) System.err.println("Quit");
+                else if (!quiet) System.err.println("Quit");
             }
         }
     
