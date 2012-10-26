@@ -71,7 +71,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         // and ArrayIndexOutOfBoundsException if index > numObjs
         if (index > numObjs) 
             throw new ArrayIndexOutOfBoundsException(index);
-            // { throwArrayIndexOutOfBoundsException(index); }
+        // { throwArrayIndexOutOfBoundsException(index); }
         if (other.length == 0) return false;
         // make IntBag big enough
         if (numObjs+other.length > objs.length)
@@ -92,7 +92,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         // and ArrayIndexOutOfBoundsException if index > numObjs
         if (index > numObjs) 
             throw new ArrayIndexOutOfBoundsException(index);
-            // { throwArrayIndexOutOfBoundsException(index); }
+        // { throwArrayIndexOutOfBoundsException(index); }
         if (other.numObjs <= 0) return false;
         // make IntBag big enough
         if (numObjs+other.numObjs > objs.length)
@@ -209,7 +209,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         return objs[index];
         }
 
@@ -222,7 +222,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         int returnval = objs[index];
         objs[index] = element;
         return returnval;
@@ -243,7 +243,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         int ret = objs[index];
         if (index < numObjs - 1)  // it's not the topmost int, must swap down
             System.arraycopy(objs, index+1, objs, index, numObjs - index - 1);
@@ -257,7 +257,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         int _numObjs = numObjs;
         if (index>=_numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         int[] _objs = this.objs;
         int ret = _objs[index];
         _objs[index] = _objs[_numObjs-1];
@@ -344,9 +344,9 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         }
         
     /**    
-        Copies 'len' elements from the Bag into the provided array.
-        The 'len' elements start at index 'fromStart' in the Bag, and
-        are copied into the provided array starting at 'toStat'.
+           Copies 'len' elements from the Bag into the provided array.
+           The 'len' elements start at index 'fromStart' in the Bag, and
+           are copied into the provided array starting at 'toStat'.
     */ 
     public void copyIntoArray(int fromStart, int[] to, int toStart, int len)
         {

@@ -685,7 +685,7 @@ public abstract class ChartGenerator extends JPanel
 
         final double MAXIMUM_SCALE = 8;
         
-         // add the scale field
+        // add the scale field
         scaleField = new NumberTextField("  Scale: ", 1.0, true)
             {
             public double newValue(double newValue)
@@ -701,7 +701,7 @@ public abstract class ChartGenerator extends JPanel
         scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         header.add(scaleField);
        
-         // add the proportion field
+        // add the proportion field
         proportionField = new NumberTextField("  Proportion: ", 1.5, true)
             {
             public double newValue(double newValue)
@@ -896,14 +896,14 @@ public abstract class ChartGenerator extends JPanel
         public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
             { 
             return (int)((orientation == SwingConstants.HORIZONTAL) ?
-                    ( visibleRect.getWidth() / DEFAULT_UNIT_FRACTION ) :
-                    ( visibleRect.getHeight() / DEFAULT_UNIT_FRACTION ));
+                ( visibleRect.getWidth() / DEFAULT_UNIT_FRACTION ) :
+                ( visibleRect.getHeight() / DEFAULT_UNIT_FRACTION ));
             }
         public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
             { 
             return (int)((orientation == SwingConstants.HORIZONTAL) ?
-                    ( visibleRect.getWidth() / DEFAULT_BLOCK_FRACTION ) :
-                    ( visibleRect.getHeight() / DEFAULT_BLOCK_FRACTION ));
+                ( visibleRect.getWidth() / DEFAULT_BLOCK_FRACTION ) :
+                ( visibleRect.getHeight() / DEFAULT_BLOCK_FRACTION ));
             }
         public boolean getScrollableTracksViewportHeight() { return false; }
         public boolean getScrollableTracksViewportWidth() { return false; }

@@ -2489,3 +2489,7 @@ Version 17
 	Modifications made to Schedule to make it easier to subclass it.
 	Added discretize(location, discretization) to Continuous2D and Continuous3D
 	Updated MersenneTwisterFast again
+	New versions of Java introduce a bug in dash patterns for BasicStroke, such that
+		you can't define a solid stroke as a BasicStroke having a dash pattern
+		of { x, 0.0f }.  We have a workaround in TimeSeriesAttributes.
+		Thanks to David Masad <dmasad@gmu.edu>

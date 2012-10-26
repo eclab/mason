@@ -101,7 +101,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         // and ArrayIndexOutOfBoundsException if index > numObjs
         if (index > numObjs)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         if (other.length == 0) return false;
         // make Bag big enough
         if (numObjs+other.length > objs.length)
@@ -122,7 +122,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         // and ArrayIndexOutOfBoundsException if index > numObjs
         if (index > numObjs) 
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         if (other.numObjs <= 0) return false;
         // make Bag big enough
         if (numObjs+other.numObjs > objs.length)
@@ -249,7 +249,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            //throwArrayIndexOutOfBoundsException(index);
+        //throwArrayIndexOutOfBoundsException(index);
         return objs[index];
         }
 
@@ -258,7 +258,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            //throwArrayIndexOutOfBoundsException(index);
+        //throwArrayIndexOutOfBoundsException(index);
         return objs[index];
         }
 
@@ -266,7 +266,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         Object returnval = objs[index];
         objs[index] = element;
         return returnval;
@@ -277,7 +277,7 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         {
         if (index>=numObjs) // || index < 0)
             throw new ArrayIndexOutOfBoundsException(index);
-            // throwArrayIndexOutOfBoundsException(index);
+        // throwArrayIndexOutOfBoundsException(index);
         Object returnval = objs[index];
         objs[index] = element;
         return returnval;
@@ -378,11 +378,11 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         return ret;
         }
     
-   /*
-    protected void throwArrayIndexOutOfBoundsException(int index)
-        {
-        throw new ArrayIndexOutOfBoundsException(""+index);
-        }
+    /*
+      protected void throwArrayIndexOutOfBoundsException(int index)
+      {
+      throw new ArrayIndexOutOfBoundsException(""+index);
+      }
     */
 
     /** Removes all objects in the Bag.  This is done by clearing the internal array but 
@@ -420,9 +420,9 @@ public class Bag implements java.util.Collection, java.io.Serializable, Cloneabl
         }
 
     /**    
-        Copies 'len' elements from the Bag into the provided array.
-        The 'len' elements start at index 'fromStart' in the Bag, and
-        are copied into the provided array starting at 'toStat'.
+           Copies 'len' elements from the Bag into the provided array.
+           The 'len' elements start at index 'fromStart' in the Bag, and
+           are copied into the provided array starting at 'toStat'.
     */ 
     public void copyIntoArray(int fromStart, Object[] to, int toStart, int len)
         {

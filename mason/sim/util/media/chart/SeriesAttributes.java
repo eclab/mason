@@ -40,11 +40,11 @@ public abstract class SeriesAttributes extends LabelledList
     
     String seriesName;
     /** @deprecated
-    Sets the name of the series. */
+        Sets the name of the series. */
     public void setName(String val) { super.setName(val); }  // this just uses Component's setName
     public void setSeriesName(String val) { seriesName = val; }  // this just uses Component's setName
     /** @deprecated 
-    Returns the name of the series. */
+        Returns the name of the series. */
     public String getName() { return super.getName(); } // this just uses Component's getName
     public String getSeriesName() { return seriesName; } // this just uses Component's getName
     

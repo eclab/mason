@@ -59,7 +59,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     float thickness;
     NumberTextField thicknessField;
     /** Line dash pattern (one of the dashPatterns above). */
-    float[] dashPattern;
+    int dashPattern;
     JComboBox dashPatternList;
     /** Line color. */
     Color strokeColor;
@@ -76,7 +76,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         if (value >= 0 && value < dashPatterns.length) 
             { 
             dashPatternList.setSelectedIndex(value);
-            dashPattern = dashPatterns[value];
+            dashPattern = value;
             }
         }
     public int getDashPattern() { return dashPatternList.getSelectedIndex(); }
@@ -98,16 +98,23 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
     public void rebuildGraphicsDefinitions()
         {
-        float[] newDashPattern = new float[dashPattern.length];
-        for(int x=0;x<dashPattern.length;x++)
+        float[] newDashPattern = new float[dashPatterns[dashPattern].length];
+        for(int x=0;x<newDashPattern.length;x++)
             if (stretch*thickness > 0)
-                newDashPattern[x] = dashPattern[x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
+                newDashPattern[x] = dashPatterns[dashPattern][x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
                 
         XYItemRenderer renderer = getRenderer();
             
+        // we do two different BasicStroke options here because recent versions of Java (for example, 1.6.0_35_b10-428-11M3811 on Retina Displays)
+        // break when defining solid strokes as { X, 0.0 } even though that's perfecty cromulent.  So instead we hack it so that the "solid" stroke
+        // is done using a different constructor.
+            
         renderer.setSeriesStroke(getSeriesIndex(),
-            new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
-                BasicStroke.JOIN_ROUND,0,newDashPattern,0));
+                ((dashPattern == 0) ? // solid
+                new BasicStroke(thickness, BasicStroke.CAP_ROUND,
+                    BasicStroke.JOIN_ROUND, 0) :
+                new BasicStroke(thickness, BasicStroke.CAP_ROUND, 
+                    BasicStroke.JOIN_ROUND,0,newDashPattern,0)));
 
         renderer.setSeriesPaint(getSeriesIndex(),strokeColor);
         repaint();
@@ -118,7 +125,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         // The following three variables aren't defined until AFTER construction if
         // you just define them above.  So we define them below here instead.
                                                 
-        dashPattern = dashPatterns[0];
+        dashPattern = 0; // dashPatterns[0];
         stretch = 1.0f;
         thickness = 2.0f;
 
@@ -170,7 +177,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
             {
             public void actionPerformed ( ActionEvent e )
                 {
-                dashPattern = dashPatterns[dashPatternList.getSelectedIndex()];
+                dashPattern = dashPatternList.getSelectedIndex(); // dashPatterns[dashPatternList.getSelectedIndex()];
                 rebuildGraphicsDefinitions();
                 }
             });

@@ -9,43 +9,43 @@ import javax.swing.*;
 
 /****
 
-TABLELOADER.java
+     TABLELOADER.java
 
-<p>This class provides utility methods for loading tables from files into int[][] or double[][] arrays.  In MASON
-it's particularly useful for loading files of numbers or graphics into an IntGrid2D or DoubleGrid2D to display.
+     <p>This class provides utility methods for loading tables from files into int[][] or double[][] arrays.  In MASON
+     it's particularly useful for loading files of numbers or graphics into an IntGrid2D or DoubleGrid2D to display.
 
-<p>TableLoader at present can load the following kinds of files:
+     <p>TableLoader at present can load the following kinds of files:
 
-<P><ul>
-<li>"Plain" PBM files.  These store binary (1 and 0) bitmaps in a text-readable format.
-<li>"Raw" PBM files.  These store binary (1 and 0) bitmaps in a somewhat more compressed binary format.
-<li>"Plain" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a text-readable format.
-<li>"Raw" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a somewhat more compressed binary format.
-<li>PNG and GIF files which store binary, 8-bit grayscale, or 8-bit indexed data.
-<li>Whitespace-delimited text files.  These store each array row as a single line of numbers.  The numbers are set off with spaces or tabs.
-</ul>
+     <P><ul>
+     <li>"Plain" PBM files.  These store binary (1 and 0) bitmaps in a text-readable format.
+     <li>"Raw" PBM files.  These store binary (1 and 0) bitmaps in a somewhat more compressed binary format.
+     <li>"Plain" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a text-readable format.
+     <li>"Raw" PGM files.  These store grayscale images (from 0 to under some MAXVAL you can define) in a somewhat more compressed binary format.
+     <li>PNG and GIF files which store binary, 8-bit grayscale, or 8-bit indexed data.
+     <li>Whitespace-delimited text files.  These store each array row as a single line of numbers.  The numbers are set off with spaces or tabs.
+     </ul>
 
-<p><b>PBM And PGM ("PNM" files)</b>&nbsp;&nbsp;&nbsp;&nbsp;The first four formats are defined by the <a href="http://netpbm.sourceforge.net/doc/">Netpbm</a>
-file format specification.  Various graphics programs can emit PBM or PGM files.  These files are collectively known as <b>PNM files</b>.
-MASON reads these files into int[][] arrays.   Note that
-graphics programs typically emit PBM (black and white) files in the opposite numerical format than you'd expect: 1 is black, and 0 is white.
-On the other hand, PGM (monochrome) files are emitted however your graphics program sees fit, typically with 0 being black and MAXVAL-1, whatever
-you've set it to, being white.  
+     <p><b>PBM And PGM ("PNM" files)</b>&nbsp;&nbsp;&nbsp;&nbsp;The first four formats are defined by the <a href="http://netpbm.sourceforge.net/doc/">Netpbm</a>
+     file format specification.  Various graphics programs can emit PBM or PGM files.  These files are collectively known as <b>PNM files</b>.
+     MASON reads these files into int[][] arrays.   Note that
+     graphics programs typically emit PBM (black and white) files in the opposite numerical format than you'd expect: 1 is black, and 0 is white.
+     On the other hand, PGM (monochrome) files are emitted however your graphics program sees fit, typically with 0 being black and MAXVAL-1, whatever
+     you've set it to, being white.  
 
-<p>If you're constructing these files by hand, note that MASON is a bit more generous about plain formats than
-the specification allows: MASON permits lines of any length, and you can have a MAXVAL of any size you like, as long as its within the integer
-data type range (normally, PGM only allows lines of about 70 chars and a MAXVAL of no more than 2^16).
+     <p>If you're constructing these files by hand, note that MASON is a bit more generous about plain formats than
+     the specification allows: MASON permits lines of any length, and you can have a MAXVAL of any size you like, as long as its within the integer
+     data type range (normally, PGM only allows lines of about 70 chars and a MAXVAL of no more than 2^16).
 
-<p><b>PNG and GIF files</b>&nbsp;&nbsp;&nbsp;&nbsp;These files must have colors stored as binary (black and white), 8-bit grayscale,
-or 8-bit indexed color.
+     <p><b>PNG and GIF files</b>&nbsp;&nbsp;&nbsp;&nbsp;These files must have colors stored as binary (black and white), 8-bit grayscale,
+     or 8-bit indexed color.
 
-<p><b>Whitespace-delimited text files</b>nbsp;&nbsp;&nbsp;&nbsp;These files consist of rows of numbers, each row delimited with newlines.  
-The numbers in each row are delimited with spaces or tabs.  Unlike the PBM/PGM format, you cannot at present have comments in the file.  The
-files are loaded into double[][] arrays, though TableLoader provides a simple utility conversion function to int[][] if you're sure that all
-the values are actually integers and would like an int array.
+     <p><b>Whitespace-delimited text files</b>nbsp;&nbsp;&nbsp;&nbsp;These files consist of rows of numbers, each row delimited with newlines.  
+     The numbers in each row are delimited with spaces or tabs.  Unlike the PBM/PGM format, you cannot at present have comments in the file.  The
+     files are loaded into double[][] arrays, though TableLoader provides a simple utility conversion function to int[][] if you're sure that all
+     the values are actually integers and would like an int array.
 
-<P>MASON determines the row width of the first row by parsing through the first line.  Thereafter it checks to make sure that all subsequent
-rows are the same width (in terms of number of elements) and thus that the int[][] array is rectangular.
+     <P>MASON determines the row width of the first row by parsing through the first line.  Thereafter it checks to make sure that all subsequent
+     rows are the same width (in terms of number of elements) and thus that the int[][] array is rectangular.
 */
 
 
@@ -295,12 +295,12 @@ public class TableLoader
                         firstRow.add(new Double(rowScan.nextDouble()));  // ugh, boxed
                         w++;
                         }
-                   width = w;
-                   double[] row = new double[width];
-                   for(int i = 0; i < width; i++)
+                    width = w;
+                    double[] row = new double[width];
+                    for(int i = 0; i < width; i++)
                         row[i] = ((Double)(firstRow.get(i))).doubleValue();
-                   rows.add(row);
-                   }
+                    rows.add(row);
+                    }
                 else
                     {
                     double[] row = new double[width];
