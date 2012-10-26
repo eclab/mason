@@ -148,9 +148,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             p2.add(l,BorderLayout.CENTER);
             getContentPane().add(p2,BorderLayout.NORTH);
             String text = "<html>Sets the offset of the origin of the display.  This is <b>independent of the scrollbars</b>." + 
-                                "<br><br>If the simulation has enabled it, you can also change the offset by dragging with the" +
-                                "<br>right mouse button down (or on the Mac, a two finger tap-drag or Command-drag)." +
-                                "<br><br>Additionally, you can reset the origin to (0,0) with a right-mouse button double-click.</html>"; 
+                "<br><br>If the simulation has enabled it, you can also change the offset by dragging with the" +
+                "<br>right mouse button down (or on the Mac, a two finger tap-drag or Command-drag)." +
+                "<br><br>Additionally, you can reset the origin to (0,0) with a right-mouse button double-click.</html>"; 
             l.setToolTipText(text);
             xOffsetField.setToolTipText(text);
             yOffsetField.setToolTipText(text);
@@ -926,39 +926,39 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         
 
-                // lock the paint lock so we don't try repainting until we request it.
-                // JScrollView tries to jump the gun, making things flashy.
-                insideDisplay.paintLock = true;
+        // lock the paint lock so we don't try repainting until we request it.
+        // JScrollView tries to jump the gun, making things flashy.
+        insideDisplay.paintLock = true;
                 
-                // grab the original location
-                Rectangle r = port.getViewRect();
+        // grab the original location
+        Rectangle r = port.getViewRect();
 
-                // scroll to keep the zoomed-in region centered -- this is prettier
-                double centerx = r.x + r.width/2.0;
-                double centery = r.y + r.height/2.0;
-                centerx *= scale / oldScale;
-                centery *= scale / oldScale;
-                Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
-                if (topleft.x < 0) topleft.x = 0;
-                if (topleft.y < 0) topleft.y = 0;
-
-
-            if (SwingUtilities.isEventDispatchThread())
-                port.setView(insideDisplay);
-            else
-                {
-                SwingUtilities.invokeLater(new Runnable() { public void run() { port.setView(insideDisplay); } });
-                }
+        // scroll to keep the zoomed-in region centered -- this is prettier
+        double centerx = r.x + r.width/2.0;
+        double centery = r.y + r.height/2.0;
+        centerx *= scale / oldScale;
+        centery *= scale / oldScale;
+        Point topleft = new Point((int)(centerx - r.width/2.0), (int)(centery - r.height/2.0));
+        if (topleft.x < 0) topleft.x = 0;
+        if (topleft.y < 0) topleft.y = 0;
 
 
-                optionPane.xOffsetField.setValue(insideDisplay.xOffset * scale);
-                optionPane.yOffsetField.setValue(insideDisplay.yOffset * scale);
+        if (SwingUtilities.isEventDispatchThread())
+            port.setView(insideDisplay);
+        else
+            {
+            SwingUtilities.invokeLater(new Runnable() { public void run() { port.setView(insideDisplay); } });
+            }
+
+
+        optionPane.xOffsetField.setValue(insideDisplay.xOffset * scale);
+        optionPane.yOffsetField.setValue(insideDisplay.yOffset * scale);
                  
-                // now release the paint lock and repaint
-                insideDisplay.paintLock = false;
+        // now release the paint lock and repaint
+        insideDisplay.paintLock = false;
                 
-                port.setViewPosition(topleft);
-                Display2D.this.repaint();
+        port.setViewPosition(topleft);
+        Display2D.this.repaint();
 
         }
         
@@ -1432,12 +1432,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // can't add this because Java thinks I no longer want to scroll
         // the window via the scroll wheel, oops.  
         /*
-        insideDisplay.addMouseWheelListener(new MouseWheelListener()
+          insideDisplay.addMouseWheelListener(new MouseWheelListener()
           {
           public void mouseWheelMoved(MouseWheelEvent e)
-            {
-            if (handleMouseEvent(e)) { repaint(); return; }
-            }
+          {
+          if (handleMouseEvent(e)) { repaint(); return; }
+          }
           });
         */
 
@@ -1689,11 +1689,11 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
         else // SELECTION_MODE_MULTI
             for(int x=0;x < locationWrappers.size(); x++)
-            {
-            LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
-            wrapper.getFieldPortrayal().setSelected(wrapper, true);
-            selectedWrappers.add(wrapper);
-            }
+                {
+                LocationWrapper wrapper = ((LocationWrapper)(locationWrappers.get(x)));
+                wrapper.getFieldPortrayal().setSelected(wrapper, true);
+                selectedWrappers.add(wrapper);
+                }
         }
         
     /** Determines the inspectors appropriate for the given selection region (rect), and sends
