@@ -946,6 +946,9 @@ public class MyMasonGUI extends GUIState
 Line \ref{ex:trueforfill} creates a portrayal that draws all the lines
 in cyan; the optional second parameter, which is set to \code{true}, indicates
 that polygons should be filled.
+
+% TODO Explain that legacy MASON portrayals can be used.  Also, make a
+% note of the scale factor given the units of the coordinate reference system.
 \end{description}
 
 
@@ -960,9 +963,55 @@ that polygons should be filled.
 You want to show the contents of a \code{GeomGridField} in a MASON display
 
 \item[Solution]~\\
-Problem Solution
+Set up an appropriate field portrayal for the wrapped \class{Grid2D}
+object found inside the \class{GeomGridField} .
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-foo
+public class MyMasonGUI extends GUIState
+{
+    private Display2D display;
+    private JFrame displayFrame;
+
+    // ... other variable declarations
+
+    +color[red]private FastValueGridPortrayal2D myPortrayal = new FastValueGridPortrayal2D();
+
+    @Override
+    public void init(Controller controller)
+    {
+        super.init(controller);
+
+        display = new Display2D(ARBITRARY_WIDTH, ARBITRARY_HEIGHT, this);
+
+        +color[red]display.attach(myPortrayal, "My Grid Layer");
+
+        displayFrame = display.createFrame();
+        controller.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
+    }
+
+    @Override
+    public void start()
+    {
+        super.start();
+        setupPortrayals();
+    }
+
+    private void setupPortrayals()
+    {
+        MyState world = (MyState)state;
+
+        +color[red]myPortrayal.setField(world.gridLayer.getGrid());
+        myPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white));
+
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+
+        display.repaint();
+    }
+
+    // ... other code
+}
+
 \end{Verbatim}
 
 \item[Discussion ]
