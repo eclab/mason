@@ -109,13 +109,13 @@ public class TabbedInspector extends Inspector
         i.setVolatile(isVolatile());
         }
     
-	/** Adds an inspector. Inspector must already have its name field set. */
-	public void addInspector(Inspector i)
-	    {
-	    inspectors.add(i);
-	    tabs.addTab(i.getTitle(),i);
-	    i.setVolatile(isVolatile());
-	    }
+    /** Adds an inspector. Inspector must already have its name field set. */
+    public void addInspector(Inspector i)
+        {
+        inspectors.add(i);
+        tabs.addTab(i.getTitle(),i);
+        i.setVolatile(isVolatile());
+        }
         
     /** Removes and returns the inspector, or null if there is no such inspector in the TabbedInspector */
     public Inspector removeInspector(Inspector i)

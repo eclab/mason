@@ -287,9 +287,9 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             // well outside the clip region it's clipped entirely even if the line intersects
             // with the clip region.  Grrrrrr......  
             graphics.draw(new Line2D.Double(info.clip.x, info.draw.y + (info.draw.height) / 2.0, 
-                                            info.clip.x + info.clip.width, info.draw.y + (info.draw.height) / 2.0));
+                    info.clip.x + info.clip.width, info.draw.y + (info.draw.height) / 2.0));
             graphics.draw(new Line2D.Double(info.draw.x + (info.draw.width) / 2.0, info.clip.y, 
-                                            info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
+                    info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
             }
         }
 

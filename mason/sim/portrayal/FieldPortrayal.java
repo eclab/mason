@@ -256,7 +256,7 @@ public abstract class FieldPortrayal
             }
 
 
-    // setTitle is not overridden but is just ignored.
+        // setTitle is not overridden but is just ignored.
     
         public String getTitle()
             {
