@@ -597,7 +597,7 @@ proper GIS.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.75\textwidth]{CampusWorld2.png}
+  \includegraphics[width=0.75\textwidth]{CampusWorld.pdf}
   \caption{Snapshot of ``Campus World'' demo .}
   \label{fig:campusworld}
 \end{figure}
@@ -973,7 +973,7 @@ public class MyMasonGUI extends GUIState
 
     // ... other variable declarations
 
-    +color[red]private FastValueGridPortrayal2D myPortrayal = new FastValueGridPortrayal2D();
+    +color[red]private FastValueGridPortrayal2D myPortrayal = new FastValueGridPortrayal2D();+label[ex:gridportrayal]
 
     @Override
     public void init(Controller controller)
@@ -1000,8 +1000,8 @@ public class MyMasonGUI extends GUIState
     {
         MyState world = (MyState)state;
 
-        +color[red]myPortrayal.setField(world.gridLayer.getGrid());
-        myPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white));
+        +color[red]myPortrayal.setField(world.gridLayer.getGrid());+label[ex:getgrid]
+        +color[red]myPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white)); +label[ex:gridcolormap]
 
         display.reset();
         display.setBackdrop(Color.WHITE);
@@ -1014,7 +1014,24 @@ public class MyMasonGUI extends GUIState
 
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion ]~\\
+A \class{GeomGridField} is effectively a wrapper round a MASON
+\class{Grid2D} object, which means you can use the display techniques
+for \class{Grid2D} objects.  Just use the
+\method{GeomGridField.getGrid()} method to fetch the underlying
+\class{IntGrid2D} or \class{DoubleGrid2D} object, as appropriate for
+the data type you specified when you read the grid data.  (See recipe
+\ref{sub:readinggridfile} for how to specify the grid data
+representation.)
+
+The above code sample is for reading a grid layer that's presumably
+comprised of just ones and zeroes.  So a
+\class{FastValueGridPortrayal2D} will suffice to render that layer, as
+shown in line \ref{ex:gridportrayal}, along with an associated \class{SimpleColorMap} to show the zeros in
+black and the ones in white, as seen in line \ref{ex:gridcolormap}.
+The grid is attached to the field as in non-GeoMason MASON simulations;
+line \ref{ex:getgrid} shows the \method{getGrid()} call necessary to get at the underyling
+MASON \class{IntGrid2D}.
 \end{description}
 
 
@@ -1027,7 +1044,9 @@ public class MyMasonGUI extends GUIState
 You want to overlay political boundaries on grid data.
 
 \item[Solution]~\\
-Problem Solution
+Load the vector and grid layers as per recipe
+\ref{sub:readingmixofdata}.  Then set up the portrayals such that the
+vector layer is rendered on top of the raster layer.
 
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 foo
