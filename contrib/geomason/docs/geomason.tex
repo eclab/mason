@@ -1048,11 +1048,95 @@ Load the vector and grid layers as per recipe
 \ref{sub:readingmixofdata}.  Then set up the portrayals such that the
 vector layer is rendered on top of the raster layer.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-foo
+\begin{Verbatim}[frame=lines,label=Reading the layers,framesep=5mm,numbers=left,commandchars=+\[\]]
+GeomVectorField boundaries = new GeomVectorField();
+GeomGridField gridField = new GeomGridField();
+
+try {
+   ShapeFileImporter.read("file:boundaries.shp", boundaries);
+
+   InputStream inputStream = new FileInputStream("grid.asc");
+   ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+} catch (FileNotFoundException ex)
+{  /* handle exception */  }
+
+Envelope globalMBR = boundaries.getMBR();
+
+globalMBR.expandToInclude(gridField.getMBR());
+
+boundaries.setMBR(globalMBR);
+gridField.setMBR(globalMBR);
 \end{Verbatim}
 
-\item[Discussion ]
+\begin{Verbatim}[frame=lines,label=Displaying boundaries over the grid,framesep=5mm,numbers=left,commandchars=+\[\]]
+public class MyMasonGUI extends GUIState
+{
+    private Display2D display;
+    private JFrame displayFrame;
+
+    // ... other variable declarations
+
+    private FastValueGridPortrayal2D gridPortrayal = new FastValueGridPortrayal2D();
+    private GeomVectorFieldPortrayal boundariesPortrayal = new GeomVectorFieldPortrayal();
+
+    @Override
+    public void init(Controller controller)
+    {
+        super.init(controller);
+
+        display = new Display2D(ARBITRARY_WIDTH, ARBITRARY_HEIGHT, this);
+
+        display.attach(gridPortrayal, "My Grid Layer");
+        display.attach(boundariesPortrayal, "Political Boundaries");
+
+        displayFrame = display.createFrame();
+        controller.registerFrame(displayFrame);
+        displayFrame.setVisible(true);
+    }
+
+    @Override
+    public void start()
+    {
+        super.start();
+        setupPortrayals();
+    }
+
+    private void setupPortrayals()
+    {
+        MyState world = (MyState)state;
+
+        myPortrayal.setField(world.gridField.getGrid());
+        myPortrayal.setMap(new SimpleColorMap(0, 1, Color.black, Color.white));
+
+        myPortrayal.setField(world.boundaries);
+        myPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY, true));
+
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+
+        display.repaint();
+    }
+
+    // ... other code
+}
+\end{Verbatim}
+
+\item[Discussion]~\\
+From the perspective of the \class{GUIState}, the vector layer of boundaries are just
+yet another field portrayal rendered on top of another showing grid
+data.  If the minimum bounding rectangles (MBR) of the two fields were
+properly aligned --- and that they have the same coordinate reference
+system! --- then the boundaries should match up with the grid
+layer geospatial features.
+
+You can load additional grid layers before the vector layer, and you can
+toggle their visibility in the MASON \class{Display2D} window.  It's
+similarly possible to load multiple boundaries, though admittedly
+displaying them all at once may be confusing; however, this confusion
+may be somewhat mitigated with good choices for line colors and
+widths.  Just ensure that the vector layers always are
+\method{attach()}'d \emph{after} all the grid layers because otherwise
+the grid layers will obscure the boundaries.
 \end{description}
 
 
