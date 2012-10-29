@@ -1150,15 +1150,116 @@ You want to create a dynamic choropleth map with colors changing based
 on agent behavior.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+Have one \class{GeomVectorLayer} for agents and another containing
+political boundary polygons. Create a \class{MasonGeometry} subclass
+to be used for the political boundary polygons that will count the
+agents that are within its borders.  Create a corresponding
+\class{GeomPortrayal} subclass that scales the color according to the
+agent count reported by that \class{MasonGeometry} subclass.
+
+\begin{Verbatim}[frame=lines,label=In Your \class{SimState},framesep=5mm,numbers=left,commandchars=+\[\]]
+public class MyWorld extends SimState {
+
+    // used in GUIState to set up ColorMap
+    public static int NUM_AGENTS = 20;
+
+    public GeomVectorField borders = new GeomVectorField();
+
+    // public static so CountingMasonGeometry can access
+    public static GeomVectorField agents = new GeomVectorField();
+
+    public MyWorld(long seed) {
+        super(seed);
+
+        URL politicalBoundaries = MyWorld.class.getResource("borders.shp");
+
+        try {
+            ShapeFileImporter.read(politicalBoundaries, border, CountingGeomWrapper.class);
+        } catch (FileNotFoundException ex) {
+            // handle exception
+        }
+    }
+
+    // ... other code
+}
 \end{Verbatim}
 
-\item[Discussion ]
+\begin{Verbatim}[frame=lines,label=\class{MasonGeometry} subclass that
+  counts agents,framesep=5mm,numbers=left,commandchars=+\[\]]
+public class CountingGeomWrapper extends MasonGeometry {
+    public CountingGeomWrapper()  {
+        super();
+    }
+
+    public int numAgentsInGeometry()  {
+        Bag coveredAgents = MyWorld.agents.getCoveredObjects(this);
+        return coveredAgents.numObjs;
+    }
+}
+\end{Verbatim}
+
+
+\begin{Verbatim}[frame=lines,label=Portrayal that renders choropleth,framesep=5mm,numbers=left,commandchars=+\[\]]
+public class WorldPortrayal extends GeomPortrayal {
+
+    SimpleColorMap colorMap = null; 
+	
+    public WorldPortrayal(SimpleColorMap map) {
+        super(true); 
+        colorMap = map; 
+    }
+	
+    @Override
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+       CountingGeomWrapper gm = (CountingGeomWrapper)object;
+       paint = colorMap.getColor(gm.numAgentsInGeometry());
+       super.draw(object, graphics, info);    
+    }
+}
+\end{Verbatim}
+
+
+\begin{Verbatim}[frame=lines,label=Set up portrayal in \class{GUIState},framesep=5mm,numbers=left,commandchars=+\[\]]
+
+    GeomVectorFieldPortrayal borderPortrayal = new GeomVectorFieldPortrayal();
+    GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
+
+    private void setupPortrayals()   {
+        MyWorld world = (MyWorld) state;
+
+        agentPortrayal.setField(MyWorld.agents);
+        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED, 6.0));
+
+        countyPortrayal.setField(world.borders);
+        countyPortrayal.setPortrayalForAll(new MyWorldPortrayal(
+            new SimpleColorMap(0.0, MyWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
+
+        display.reset();
+        display.setBackdrop(Color.WHITE);
+        display.repaint();
+    }
+\end{Verbatim}
+
+
+\item[Discussion]~\\
+Fig. \ref{fig:colorworld} shows a snapshot of the ``ColorWorld'' demo
+the shows a choropleth of the Fairfax County voting districts; the
+blue shading is in proportion to the number of agents that happen to
+be within a given voting district at each time step.  This demo can be
+found as \file{sim.app.geo.colorworld}.
+
+Again, this is the approach that the ``ColorWorld'' demo uses ---
+almost certainly there are other equally viable approaches to
+implementing dynamic choropleths in GeoMason.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.75\textwidth]{ColorWorld.pdf}
+  \caption{Snapshot of ``Color World'' demo showing polygon shading in
+    proportion to number of agents.}
+  \label{fig:colorworld}
+\end{figure}
+
 \end{description}
 
 
