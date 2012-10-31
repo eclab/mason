@@ -3067,7 +3067,7 @@ myList.add(i);
 However while IntBag is just sticking integers in its array, \class{ArrayList$<$Integer$>$}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing}, is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is well over twice the speed of \class{ArrayList$<$Integer$>$}, and likewise DoubleBag is over twice the speed of \class{ArrayList$<$Double$>$}.
 }
 
-\noindent ... but you should be warned: Java's iterators are very slow.  They involve un-linlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.
+\noindent ... but you should be warned: Java's iterators are very slow.  They involve un-inlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.
 
 \paragraph{IntBag and DoubleBag}  These classes are very similar to Bag, except that instead of Objects, they store ints or doubles respectively.  They are missing methods involving Collections, Comparators, and Iterators (boxing and unboxing is just too slow to be of value), but otherwise follow the identical template as Bag.  We won't write them out here\,---\,too redundant. Refer to the Bag methods below.
 
@@ -3149,7 +3149,7 @@ Many MASON inspectors and other GUI classes must be able to extract the Java Bea
 \item Objects which provide Java Bean Properties on behalf of other objects 
 \end{itemize}
 
-There are several classes and interfaces in the Properties system:
+\noindent There are several classes and interfaces in the Properties system:
 
 \begin{itemize}
 \item \Class{sim.util.Properties} is the top-level abstract class, and also the factory class for property objects.
@@ -3375,6 +3375,7 @@ You'll probably want to also implement the \method{setValue(...)} method for rea
 \section{Other Classes}
 \label{sim.util.MutableDouble}
 \label{sim.util.Valuable}
+\label{sim.util.TableLoader}
 
 MASON's basic utility classes also contain a few random classes which fit in no other place.  They're defined here:
 
@@ -3414,8 +3415,29 @@ Java has no mutable wrapper for doubles, only the immutable class \class{java.la
 \mthd{public boolean isInfinite()} Returns true if the MutableDouble is holding a positive or negative infinite value.
 \end{methods}
 
-\paragraph{The Heap}
+\paragraph{Loading Tables}
 
+MASON has various 2D integer and double arrays which can benefit from easy loading of tabular data.  To assist in this loading, MASON provides the class \Class{sim.util.TableLoader}.
+
+TableLoader is a utility class of various static methods which can create 2D integer, long, and double arrays from monochrome PBM and PGM graphics files, from monochrome or indexed-color PNG graphics files, from monochrome or indexed color GIF files, and from text files containing whitespace-delimited rows of numbers.
+
+\begin{methods}{\class{sim.util.TableLoader}}
+\mthd{public static int[][] loadPNMFile(InputStream str, boolean flipY)} Loads a plain or raw PGM graphics file, or a plain or raw PBM graphics file, and returns the result as an int[][].  In PBM files, 1 is (unfortunately) black and 0 is whilte.  In PGM files black is 0 and higher numbers are progressively whiter.  If flipY is true, then the Y dimension is flipped.  
+\mthd{public static int[][] loadPNMFile(InputStream str)} Loads a plain or raw PGM graphics file, or a plain or raw PBM graphics file, and returns the result as an int[][].  In PBM files, 1 is black and 0 is whilte.  In PGM files black is 0 and higher numbers are progressively whiter.  The Y dimension is not flipped.  
+\mthd{public static int[][] loadGIFFile(InputStream str, boolean flipY)} Loads a 256-monochrome (or less) or 256-indexed color (or less) GIF file, returns the result as an int[][].  Indexed colors are converted into integers as their index value.  Monochrome files assume that 0 is black and higher values are progressively whiter. If flipY is true, then the Y dimension is flipped.  
+\mthd{public static int[][] loadGIFFile(InputStream str)} Loads a 256-monochrome (or less) or 256-indexed color (or less) GIF file, returns the result as an int[][].  Indexed colors are converted into integers as their index value.  Monochrome files assume that 0 is black and higher values are progressively whiter. The Y dimension is not flipped.  
+\mthd{public static int[][] loadPNGFile(InputStream str, boolean flipY)} Loads a 256-monochrome (or less) or 256-indexed color (or less) PNG file, returns the result as an int[][].  Indexed colors are converted into integers as their index value.  Monochrome files assume that 0 is black and higher values are progressively whiter. If flipY is true, then the Y dimension is flipped.  
+\mthd{public static int[][] loadPNGFile(InputStream str)} Loads a 256-monochrome (or less) or 256-indexed color (or less) PNG file, returns the result as an int[][].  Indexed colors are converted into integers as their index value.  Monochrome files assume that 0 is black and higher values are progressively whiter. The Y dimension is not flipped.  
+\mthd{public static double[][] loadTextFile(InputStream str, boolean flipY)} Loads a text file with a rectangular table of numbers and returns the result as a double[][].  The text file consists of newline-separated rows of numbers (blank rows are skipped).  Each row consists of tab- or space-delimited double-valued text numbers.  If flipY is true, then the Y dimension is flipped.  
+\mthd{public static double[][] loadTextFile(InputStream str)} Loads a text file with a rectangular table of numbers and returns the result as a double[][].  The text file consists of newline-separated rows of numbers (blank rows are skipped).  Each row consists of tab- or space-delimited double-valued text numbers.  The Y dimension is not flipped.  
+\mthd{public static int[][] convertToIntArray(double[][] vals)} Creates a new int[][] array consisting of the numbers stored in vals, and returns it.  The numbers in vals must all be integers, else null will be returned instead.
+\mthd{public static long[][] convertToLongArray(double[][] vals)} Creates a new long[][] array consisting of the numbers stored in vals, and returns it.  The numbers in vals must all be longs, else null will be returned instead.
+\mthd{public static double[][] convertToDoubleArray(int[][] vals)} Creates a new double[][] array consisting of the numbers stored in vals, and returns it.
+\mthd{public static long[][] convertToLongArray(int[][] vals)} Creates a new long[][] array consisting of the numbers stored in vals, and returns it. 
+\end{methods}
+
+\paragraph{The Heap}
+ 
 MASON has a basic binary heap, found in \Class{sim.util.Heap}.  Since it is primarily used by the Schedule, description of the Heap may be found in Section \ref{sim.util.Heap}, coming up.
 
 
@@ -4686,6 +4708,8 @@ Multiplies the value provided against every cell in the grid.  Returns the grid.
 \mthd{public IntGrid2D multiply(IntGrid2D withThis)}
 Multiplies the provided IntGrid2D values to the grid values.  This is {\it not a matrix multiply}, but an element-by-element multiply. The two grids must be identical in dimension.  Returns the grid.
 \end{methods}
+
+Additionally, if you want to load a file into your integer array 
 
 \subsection{Grids of Doubles}
 
@@ -6732,7 +6756,7 @@ When a Portrayal is told to draw itself, it's passed a \Class{sim.portrayal.Draw
 \item Whether or not the object has been {\bf selected} and should draw itself appropriately.  This is a temporary setting.
 \item Whether or not the object should be drawn {\bf precisely}, that is, using double-floating-point resolution Java2D primitives instead of (often faster) AWT integer primitives.  This will be set when the object is being drawn to a high-quality PDF file for example.  It is also set if the Display2D which created this DrawInfo2D is being forced to draw precisely (via \method{Display2D.setPrecise(...)}).
 \item The {\bf FieldPortrayal2D} which is being asked to draw objects.
-\item The {\bf location} of the object in the FieldPortayal.  This is set by the Field Portrayal before the DrawInfo2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
+\item The {\bf location} of the object in the FieldPortrayal.  This is set by the Field Portrayal before the DrawInfo2D is sent to the SimplePortrayal, and FieldPortrayals are free to set this or not: it's useful to some Field Portrayals but not others.  Furthermore, the object may not necessarily be the actual location object (for example, it might be a \class{sim.util.MutableDouble2D} when the actual location is a \class{sim.util.Double2D}).
 \item The {\bf GUIState}.
 \end{itemize}
 
@@ -8059,7 +8083,7 @@ Always returns false: no mouse events are passed to children.
 \subsubsection{Applying a Geometric Transformation}
 \label{sim.portrayal.simple.TransformedPortrayal2D}
 
-\sidebar{This class doesn't feel fully baked}{It's not.}\Class{sim.portrayal.simple.TransformedPortrayal2D} is pretty straightforward: it allows you to rotate, translate, scale, shear, or otherwise transform the way the subsidiary portrayal is drawn using a \class{java.awt.geom.AffineTransform}.  But there's a tradeoff: you're not allowed to perform hit-testing on the object, thus no selection or inspection.  Also, TransformedPortrayal2D doesn't at present pass on mouse events to its child.
+\sidebar{This class doesn't feel fully baked.}{It's not.}\Class{sim.portrayal.simple.TransformedPortrayal2D} is pretty straightforward: it allows you to rotate, translate, scale, shear, or otherwise transform the way the subsidiary portrayal is drawn using a \class{java.awt.geom.AffineTransform}.  But there's a tradeoff: you're not allowed to perform hit-testing on the object, thus no selection or inspection.  Also, TransformedPortrayal2D doesn't at present pass on mouse events to its child.
 
 A note about AffineTransforms: they change {\it everything}: the text, the thickness of the lines, the scale of the patterns in the paint being used.    This class is rarely used.  I'd instead just build a new SimplePortrayal2D.
 
@@ -8138,15 +8162,15 @@ A final note about interaction between AdjustablePortrayal2D and MovablePortraya
 \subsubsection{Adding a Trail}
 \label{sim.portrayal.simple.TrailedPortrayal2D}
 
+It's often nice to display a {\bf trail} dragging behind an object to show where it's been in the recent past.  MASON provides a wrapper portrayal, \Class{sim.portrayal.simple.TrailedPortrayal2D}, which provides exactly this.
+
+\sidebar{TrailedPortrayal2D is complicated.  Any examples?}{Check out \class{sim.app.flockers.FlockersWithUI}.}  TrailedPortrayal2D generally requires not one but {\bf two} FieldPortrayals: one to draw the object itself (via its subsidiary SimplePortrayal), and one to draw its trail.  You provide the ``trail'' FieldPortrayal, and the subsidiary, in the TrailPortrayal2D's constructor.   Then you add the TrailedPortrayal2D to {\it both} FieldPortrayals.
+
 \begin{wrapfigure}{r}[0in]{2.9in}
 \hfill\includegraphics[width=2.8in]{AdjustableTrailed.pdf}
 \caption{A flocker with a trail and an adjustment ring.}
 \label{trailandring}
 \end{wrapfigure}
-
-It's often nice to display a {\bf trail} dragging behind an object to show where it's been in the recent past.  MASON provides a wrapper portrayal, \Class{sim.portrayal.simple.TrailedPortrayal2D}, which provides exactly this.
-
-\sidebar{TrailedPortrayal2D is complicated.  Any examples?}{Check out \class{sim.app.flockers.FlockersWithUI}.}  TrailedPortrayal2D generally requires not one but {\bf two} FieldPortrayals: one to draw the object itself (via its subsidiary SimplePortrayal), and one to draw its trail.  You provide the ``trail'' FieldPortrayal, and the subsidiary, in the TrailPortrayal2D's constructor.   Then you add the TrailedPortrayal2D to {\it both} FieldPortrayals.
 
 You should probably attach the ``trail'' FieldPortrayal to the Display2D before you attach the ``object'' FieldPortrayal: this way, the trail is drawn behind the object.  The TrailedPortrayal2D won't be drawn in both FieldPortrayals: it'll recognize the ``trail'' FieldPortrayal and only draw itself there.  In the other (``object'') FieldPortrayal, it'll ask its subsidiary to draw.
 
@@ -8160,8 +8184,8 @@ TrailedPortrayal2D needs to store the trail it's building for its underlying obj
 You have several options, in increasing memory usage:
 
 \begin{itemize}
-\item If you don't mind if {\bf only one} object will draw a trail at a time, chosen from among the objects currently {\bf selected}, and that the trail will be {\bf grown only once the object is selected}, then you can get away with using a single TrailedPortrayal2D for your two FieldPortrayals: for example you can set it as their \method{portrayalForAll()}.  In this case you must also call \method{setOnlyGrowTrailWhenSelected(true)} (otherwise the behavior will be undefined).  
-\item If you want {\bf every selected object} to draw its trail, and don't mind that the trail will be  {\bf grown only once the object is selected}, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).  You fortunately still can call \method{setOnlyGrowTrailWhenSelected(true)}, which will save some memory.
+\item If you don't mind if {\bf only one} object will draw a trail at a time, chosen from among the objects currently {\bf selected}, and that the trail will {\bf start growing only once the object is selected}, then you can get away with using a single TrailedPortrayal2D for your two FieldPortrayals: for example you can set it as their \method{portrayalForAll()}.  In this case you must also call \method{setOnlyGrowTrailWhenSelected(true)} (otherwise the behavior will be undefined).  
+\item If you want {\bf every selected object} to draw its trail, and don't mind that the trail will  {\bf start growing only once the object is selected}, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).  You fortunately still can call \method{setOnlyGrowTrailWhenSelected(true)}, which will save some memory.
 \item If you want {\bf every selected object} to draw its trail, and each object (selected or no) must {\bf retain knowledge of its trail} even when it's not being displayed, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).
 \item If you want {\bf every object to draw its trail at all times}, then you'll need to assign a unique TrailedPortrayal2D for every such object (that is, you'll have to use something like \method{portrayalForObject()}).  You will have to call \method{setOnlyShowTrailWhenSelected(false)}, which will potentially be {\it very} slow.
 \end{itemize}
