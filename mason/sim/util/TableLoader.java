@@ -449,7 +449,7 @@ public class TableLoader
         }
 
 
-    /** Converts a double[][] array to an int[][] array to ints only if they're all integer values within the int range.
+    /** Converts a double[][] array to an int[][] array only if all values are within the int range.
         If not, returns null. */
     public static int[][] convertToIntArray(double[][] vals)
         {
@@ -462,7 +462,7 @@ public class TableLoader
                 {
                 int a = (int)valsi[j];
                 if (a == valsi[j])
-                    reti[j] = 1 - a / 255;
+                    reti[j] = a;
                 else return null;
                 }
             }
@@ -477,6 +477,40 @@ public class TableLoader
             {
             int[] valsi = vals[i];
             double[] reti = ret[i] = new double[valsi.length];
+            for(int j = 0; j < valsi.length; j++)
+                reti[j] = valsi[j];
+            }
+        return ret;
+        }
+
+    /** Converts a double[][] array to a long[][] array only if all values are within the long range.
+        If not, returns null. */
+    public static long[][] convertToLongArray(double[][] vals)
+        {
+        long[][] ret = new long[vals.length][];
+        for(int i = 0; i < vals.length; i++)
+            {
+            double[] valsi = vals[i];
+            long[] reti = ret[i] = new long[valsi.length];
+            for(int j = 0; j < valsi.length; j++)
+                {
+                long a = (long)valsi[j];
+                if (a == valsi[j])
+                    reti[j] = a;
+                else return null;
+                }
+            }
+        return ret;
+        }
+
+    /** Converts an int[][] array to a long[][] array. */
+    public static long[][] convertToLongArray(int[][] vals)
+        {
+        long[][] ret = new long[vals.length][];
+        for(int i = 0; i < vals.length; i++)
+            {
+            int[] valsi = vals[i];
+            long[] reti = ret[i] = new long[valsi.length];
             for(int j = 0; j < valsi.length; j++)
                 reti[j] = valsi[j];
             }
