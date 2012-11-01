@@ -4709,7 +4709,7 @@ Multiplies the value provided against every cell in the grid.  Returns the grid.
 Multiplies the provided IntGrid2D values to the grid values.  This is {\it not a matrix multiply}, but an element-by-element multiply. The two grids must be identical in dimension.  Returns the grid.
 \end{methods}
 
-Additionally, if you want to load a file into your integer array 
+Additionally, if you wanted to load a file of numbers into your IntGrid2D, you could use the utility methods in \class{sim.util.TableLoader} (Section \ref{sim.util.TableLoader}) to create an int[][] array, then set the IntGrid2D to that array.
 
 \subsection{Grids of Doubles}
 
@@ -4745,6 +4745,7 @@ Multiplies the value provided against every cell in the grid.  Returns the grid.
 Multiplies the provided DoubleGrid2D values to the grid values.  This is {\it not a matrix multiply}, but an element-by-element multiply. The two grids must be identical in dimension.  Returns the grid.
 \end{methods}
 
+Additionally, if you wanted to load a file of numbers into your DoubleGrid2D, you could use the utility methods in \class{sim.util.TableLoader} (Section \ref{sim.util.TableLoader}) to create a double[][] array, then set the DoubleGrid2D to that array.
 
 
 
@@ -4776,11 +4777,11 @@ DenseGrid2D isn't used all that much: more common is using the class \class{sim.
 
 Because DenseGrid2D holds Objects in Bags, you can't just stick the Objects in places manually by accessing the array (well you {\it can}, but it's not recommended). Instead there are a variety of methods and variables provided for you to do such things.  To begin with, let's cover the variables:
 
-{\footnotesize\begin{verbatim}
-public Bag[][] field;
-public boolean removeEmptyBags = true;
+\java{%
+public Bag[][] field;\\
+public boolean removeEmptyBags = true;\\
 public boolean replaceLargeBags = true;
-\end{verbatim}}
+}
 
 The \variable{field} variable is the actual field.  It's just as we said: a double-array of Bags.  Some cells in this field may be \variable{null}; and some Bags in the field may be empty.
 
