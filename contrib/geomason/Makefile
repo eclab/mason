@@ -26,7 +26,7 @@ JARFILE = geomason.${VERSION}.jar
 SRC_DISTRO  = geomason.src.${VERSION}.tgz
 DEMO_DISTRO = geomason.demos.${VERSION}.tgz
 
-all: jar 
+all: jar demos
 
 
 DEMOS = sim/app/geo/campusworld/*.java		\
