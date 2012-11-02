@@ -945,9 +945,28 @@ public class MyMasonGUI extends GUIState
 
 Line \ref{ex:trueforfill} creates a portrayal that draws all the lines
 in cyan; the optional second parameter, which is set to \code{true}, indicates
-that polygons should be filled.
+that polygons should be filled.  
 
-% TODO Explain that legacy MASON portrayals can be used.  Also, make a
+Another optional parameter, which is not shown in the above example,
+is for the scale to which geometry should be drawn.  Care should be
+given when setting this parameter as the scale is in the units of the
+underling coordinate reference system. For example, this means that if
+you are using UTM all geometry will be in scaled to a be in meters, or
+in degrees if you are using lat/lon coordinates.  If you are not
+careful, you can have scale values that either render geometry so
+small so as to not be visible, or so large as to obscure the entire
+display. Note that by default the scale value is 1, which may be too
+small if the simulation area is quite large and the units are in
+meters; conversely it may be too large if the units are in degrees.
+Some experimentation for the correct scale value may be
+necessary. Recipe \ref{sec:OneColorDisplay} addresses problems
+associated with bad \class{GeomPortrayal} scale factor values.
+
+Note that legacy MASON potrayals can be used.  E.g., if you have
+agents represented as points in a \class{GeomVectorField} you might
+decide to use a MASON \class{RectanglePortrayal2D} instead of \class{GeomPortrayal}.
+
+% Also, make a
 % note of the scale factor given the units of the coordinate reference system.
 \end{description}
 
@@ -1157,6 +1176,12 @@ agents that are within its borders.  Create a corresponding
 \class{GeomPortrayal} subclass that scales the color according to the
 agent count reported by that \class{MasonGeometry} subclass.
 
+The following code shows how to use the special \class{MasonGeometry} subclass
+when reading the shape file.  The highlighted lines shows that the
+\code{class} object for the counting wrapper \class{MasonGeometry} is
+passed in to \method{read()} so that that class is used instead of the
+default \class{MasonGeometry}.
+
 \begin{Verbatim}[frame=lines,label=In Your \class{SimState},framesep=5mm,numbers=left,commandchars=+\[\]]
 public class MyWorld extends SimState {
 
@@ -1174,7 +1199,7 @@ public class MyWorld extends SimState {
         URL politicalBoundaries = MyWorld.class.getResource("borders.shp");
 
         try {
-            ShapeFileImporter.read(politicalBoundaries, border, CountingGeomWrapper.class);
+            +color[red]ShapeFileImporter.read(politicalBoundaries, border, CountingGeomWrapper.class);
         } catch (FileNotFoundException ex) {
             // handle exception
         }
@@ -1183,6 +1208,10 @@ public class MyWorld extends SimState {
     // ... other code
 }
 \end{Verbatim}
+
+This is the class that is a wrapper round \class{MasonGeometry}.  It
+just counts the number of agents that the given geometry ``covers'';
+i.e., the agents that are within the boundaries of this object.
 
 \begin{Verbatim}[frame=lines,label=\class{MasonGeometry} subclass that
   counts agents,framesep=5mm,numbers=left,commandchars=+\[\]]
@@ -1198,6 +1227,10 @@ public class CountingGeomWrapper extends MasonGeometry {
 }
 \end{Verbatim}
 
+This portrayal doesn't do anything special.  It just takes the number
+of agents from the special counting \code{MasonGeometry} object to
+lookup the appropriate color in the color map, and then renders the
+overall geometry using that color.
 
 \begin{Verbatim}[frame=lines,label=Portrayal that renders choropleth,framesep=5mm,numbers=left,commandchars=+\[\]]
 public class WorldPortrayal extends GeomPortrayal {
@@ -1211,16 +1244,18 @@ public class WorldPortrayal extends GeomPortrayal {
 	
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-       CountingGeomWrapper gm = (CountingGeomWrapper)object;
-       paint = colorMap.getColor(gm.numAgentsInGeometry());
+       +color[red]CountingGeomWrapper gm = (CountingGeomWrapper)object;
+       +color[red]paint = colorMap.getColor(gm.numAgentsInGeometry());
        super.draw(object, graphics, info);    
     }
 }
 \end{Verbatim}
 
+And, finally, in the \class{GUIState} class, the appropriate
+\class{GeomVectorFieldPortrayal} is set up to use our special field
+portrayal with a color map based on the total number of agents in the simulation.
 
 \begin{Verbatim}[frame=lines,label=Set up portrayal in \class{GUIState},framesep=5mm,numbers=left,commandchars=+\[\]]
-
     GeomVectorFieldPortrayal borderPortrayal = new GeomVectorFieldPortrayal();
     GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
@@ -1230,9 +1265,9 @@ public class WorldPortrayal extends GeomPortrayal {
         agentPortrayal.setField(MyWorld.agents);
         agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED, 6.0));
 
-        countyPortrayal.setField(world.borders);
-        countyPortrayal.setPortrayalForAll(new MyWorldPortrayal(
-            new SimpleColorMap(0.0, MyWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
+       +color[red] countyPortrayal.setField(world.borders);
+       +color[red] countyPortrayal.setPortrayalForAll(new MyWorldPortrayal(
+            +color[red]new SimpleColorMap(0.0, MyWorld.NUM_AGENTS, Color.WHITE, Color.BLUE)));
 
         display.reset();
         display.setBackdrop(Color.WHITE);
@@ -1248,7 +1283,7 @@ blue shading is in proportion to the number of agents that happen to
 be within a given voting district at each time step.  This demo can be
 found as \file{sim.app.geo.colorworld}.
 
-Again, this is the approach that the ``ColorWorld'' demo uses ---
+Again, this above code exemplifies the approach that the ``ColorWorld'' demo uses ---
 almost certainly there are other equally viable approaches to
 implementing dynamic choropleths in GeoMason.
 
@@ -1264,24 +1299,30 @@ implementing dynamic choropleths in GeoMason.
 
 
 
-\section{Displaying Raster Overlays}
-\label{sec:displayingrasteroverlays}
+% TODO MASON does support alpha transparency, which would be used for
+% raster overlays; but I don't think there exist a GeoMason demo that
+% uses this capability.  I've temporarily commented out this recipe
+% until such time that there exists a GeoMason demo showcasing raster overlays.
 
-\begin{description}
-\item[Problem]~\\
-You have raster overlays you wish to render over vector data.
 
-\item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
+% \section{Displaying Raster Overlays}
+% \label{sec:displayingrasteroverlays}
+
+% \begin{description}
+% \item[Problem]~\\
+% You have raster overlays you wish to render over vector data.
+
+% \item[Solution]~\\
+% Problem Solution
+% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% 	GeomGridField gridField = new GeomGridField();
 	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
-\end{Verbatim}
+% 	InputStream inputStream = new FileInputStream("foo.asc");
+% 	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+% \end{Verbatim}
 
-\item[Discussion ]
-\end{description}
+% \item[Discussion ]
+% \end{description}
 
 
 
