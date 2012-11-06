@@ -1345,7 +1345,8 @@ implementing dynamic choropleths in GeoMason.
 Rendering a \code{GeomField} just shows one solid color.
 
 \item[Solution]~\\
-Problem Solution
+It is likely that the scale factor you are using for your
+\class{GeomPortrayal} is too large.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 foo
 \end{Verbatim}
@@ -1362,12 +1363,36 @@ foo
 The data between layers does not match.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-foo
-\end{Verbatim}
+You probably did not align the minimum bonding rectangles between all
+the \class{GeomField} layers as directed by recipe \ref{sub:multiplevectorlayers}.
 
-\item[Discussion ]
+% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% foo
+% \end{Verbatim}
+
+\item[Discussion]~\\
+Fig. \ref{fig:colorworldMBR} shows what happens when the minimum
+bounding rectangles (MBR) between layers are not synchronized. Both figures
+show the GeoMason Campus World demo.  The one on the left shows the
+demo with the MBRs properly synchronized.  The figure on the right
+shows the same demo, but this time all the code that is responsible
+for synchronizing the MBRs has been removed.  Note that the buildings
+are no longer inside the roads and that the agents are not even
+visible. More specifically, given that the underlying coordinate reference system for
+this demo is UTM, the units are in meters.  The unmodified building MBR is a
+rectangle with defining corner coordinates (1182163, 6986772),
+(1182361, 6988786) and the corresponding default agent MBR is (10,
+10), (10, 10), which would explain why the agents are not visible.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\textwidth]{campusworldnormal.pdf}
+  \includegraphics[width=0.45\textwidth]{campusworldbroken.pdf}
+  \caption{Showss proper MBR
+    alignment on the left, and on the right what happens when the MBRs are not set
+    at all}
+  \label{fig:colorworldMBR}
+\end{figure}
+
 \end{description}
 
 
