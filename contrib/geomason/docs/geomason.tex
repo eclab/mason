@@ -1346,12 +1346,34 @@ Rendering a \code{GeomField} just shows one solid color.
 
 \item[Solution]~\\
 It is likely that the scale factor you are using for your
-\class{GeomPortrayal} is too large.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-foo
-\end{Verbatim}
+\class{GeomPortrayal} is too large.  Try using a scale factor that
+makes sense for the underlying coordinate reference system.  E.g., if
+you are using UTM, the units will be in meters; calculate the total
+display area in meters and scale the agents accordingly.
 
-\item[Discussion ]
+See also recipe \ref{sec:displayingGeomVectorField}.
+% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% foo
+% \end{Verbatim}
+
+\item[Discussion]~\\
+Fig. \ref{fig:properscalefactor} shows the GeoMason Grid Lock demo. The left
+subfigure shows the demo with the scale factor properly tailored to
+the scale of the underlying coordinate reference system.  The right
+subfigure shows what happens if you go with the default scale factor
+of 1.0: the agents now obscure most of the display.  You can hopefully
+see pathological variants where the agents cover the entire display in
+a single color.  In this case we at least have a clue with part of the
+Virginia road network peeping out from behind the rendered agents.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\textwidth]{gridlocknormal.pdf}
+  \includegraphics[width=0.45\textwidth]{gridlockbroken.pdf}
+  \caption{The left subfigure shows proper scaling of the agents; the
+    right shows what happens when the default of 1.0 is used.}
+  \label{fig:properscalefactor}
+\end{figure}
+
 \end{description}
 
 
@@ -1387,7 +1409,7 @@ rectangle with defining corner coordinates (1182163, 6986772),
   \centering
   \includegraphics[width=0.45\textwidth]{campusworldnormal.pdf}
   \includegraphics[width=0.45\textwidth]{campusworldbroken.pdf}
-  \caption{Showss proper MBR
+  \caption{Shows proper MBR
     alignment on the left, and on the right what happens when the MBRs are not set
     at all}
   \label{fig:colorworldMBR}
