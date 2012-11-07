@@ -691,22 +691,88 @@ nearby entities.
 
 \begin{description}
 \item[Problem]~\\
-You have a simulation with polygons for boundaries that delineate political
-entities such as countries,
-counties, or voting districts.  In that simulation you also have
-agents that move across these kinds of boundaries and you would like to know the
-political entity in which that agent is located.
+  You have a simulation with polygons for boundaries that delineate
+  political entities such as countries, counties, or voting districts.
+  In that simulation you also have agents that move across these kinds
+  of boundaries, and you would like to know the political entity in
+  which that agent is located.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+  Assume that a \class{GeomVectorField} contains the political
+  boundary polygons.  If the agents are points in a
+  \class{GeomVectorField}, then directly use their representative
+  geometry to find what geometry covers them in the boundary vector
+  field.  Alternatively, if the agents are in a \class{GeomGridField},
+  then you can use the GeoMason grid field's \method{toPoint()} to
+  convert from the grid coordinate to the underlying coordinate
+  reference system, and then use that coordinate to find the boundary
+  polygon that covers that point.
+
+\begin{Verbatim}[frame=lines,label=Agents as Vector Field,framesep=5mm,numbers=left]
+GeomVectorField boundaries = new GeomVectorField();
+GeomVectorField agents = new GeomVectorField();
+
+// ...
+
+// Arbitrarily select first agent
+MasonGeometry agent = (MasonGeometry) agents.getGeometries().objs[0];
+
+// Bag should contain a single MasonGeometry object for polity in
+// which agent is located.
+Bag polity = boundaries.getCoveringObjects(agent.geometry);
+
+if ( polity.isEmpty() ) {
+   // the agent is not in any polity defined in boundaries
+}
 \end{Verbatim}
 
-\item[Discussion ]
+\begin{Verbatim}[frame=lines,label=Agents as Grid Field,framesep=5mm,numbers=left,commandchars=+\[\]]
+GeomVectorField boundaries = new GeomVectorField();
+GeomGridField agents = new GeomGridField();
+
+// ...
+
+// (x,y) denotes an arbitrary valid location within the grid field, agents
++color[red]Point p = agents.toPoint(x, y);+label[ex:topoint]
+
+// Again, Bag should contain a single MasonGeometry object for polity
+// in which everything in that grid cell is located.
+Bag polity = boundaries.getCoveringObjects(p);
+
+if ( polity.isEmpty() ) {
+   // the agent is not in any polity defined in boundaries
+}
+\end{Verbatim}
+
+\item[Discussion ]~\\
+Naturally all the various vector and grid layers should use the same
+underlying coordinate reference system and should have their
+respective \idx{minimum bounding rectangles} (MBR) synchronized as per
+recipe \ref{sub:multiplevectorlayers}.
+
+Note that the \code{isEmpty()} check may return true even if you think
+that an agent should be in a given polity due to errors in the
+underylying data.  E.g., the polygons between adjacent political
+entities may not align perfectly leaving little ``void'' gaps in which
+an agent can fall.  
+
+% TODO this could benefit from ancillary graphic examples
+
+Also, the center points of grids are used as reference points to
+determine in which region a particular grid-based agent falls; some
+grid cells that overlap polygon edges may have center points that fall
+outside region polygons.  This sometimes means that the wrong
+political region may be reported for a given grid cell.  If more
+precision is required to avoid those scenarios, then instead of the
+\method{toPoint()} call, which is highlighted above on line
+\ref{ex:topoint}, you can use \method{toPolygon()} to return the
+polygon outlining the corresponding grid cell.  You can then use that
+polygon in the call to \method{getCoveringObjects()}.  However, be
+aware that the returned \class{Bag} may contain multiple polygons
+corresponding to regions that cover that grid cell's rectangular
+coverage.  In which case you must then figure out which of the regions
+the cell actually best covers.
+
 \end{description}
 
 
@@ -1421,12 +1487,24 @@ rectangle with defining corner coordinates (1182163, 6986772),
 %%
 %%
 %%
-\chapter{Acknowledgements}
-\label{ch:ack}
+\cleardoublepage % especially in a document where chapters start at right-hand pages
+%\phantomsection % for an anchor if you use hyperref
+\addcontentsline{toc}{chapter}{Acknowledgements} % if you wish to have a TOC entry
+\chapter*{Acknowledgements} % for the actuall unnumbered heading
+\thispagestyle{empty} % or plain etc.
+\markboth{Acknowledgements}{Acknowledgements} % relevant depending on page style
 
-%TODO add grant number and flesh out.
-Thanks the MURI project for their support via NSF grant \#.  For Andrew Crooks for
-valuable feedback.  For Sean Luke, et al, for MASON.
+Thanks to the support of the Office of Naval Research (ONR) under a
+Multidisciplinary University Research Initiative (MURI) Grant
+No. N00014-08-1-0921, the Joint Improvised Explosive Device Defeat
+Ofﬁce (JIEDDO) J-9 Division and the Ofﬁce of Naval Research (ONR)
+under Government Contract number N00014-09-C-0419, and also NSF grant
+0916870 for supporting this work. I would also like to thank the
+entire MASON development team and the GMU Center for Social Complexity
+without whom this work would not have been possible.  I also would
+like to give special thanks to Andrew Crooks for valuable feedback and
+for providing most of the GeoMason demos that originated as student
+class projects from his classes.
 
 %%
 %%
