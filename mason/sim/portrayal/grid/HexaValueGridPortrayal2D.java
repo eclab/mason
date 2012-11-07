@@ -219,10 +219,23 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
 
                 if (graphics == null)
                     {
+                    xPointsf[0] = (float)(xyC_urx-0.5*xScale);
+                    yPointsf[0] = (float)(xyC_ury+yScale);
+                    xPointsf[1] = (float)(xyC_upx+0.5*xScale);
+                    yPointsf[1] = (float)(xyC_upy+yScale);
+                    xPointsf[2] = (float)(xyC_upx-0.5*xScale);
+                    yPointsf[2] = (float)(xyC_upy+yScale);
+                    xPointsf[3] = (float)(xyC_ulx+0.5*xScale);
+                    yPointsf[3] = (float)(xyC_uly+yScale);
+                    xPointsf[4] = (float)(xyC_x-0.5*xScale);
+                    yPointsf[4] = (float)(xyC_y+yScale);
+                    xPointsf[5] = (float)(xyC_x+0.5*xScale);
+                    yPointsf[5] = (float)(xyC_y+yScale);
+
                     generalPath.reset();
-                    generalPath.moveTo( xPoints[0], yPoints[0] );
+                    generalPath.moveTo( xPointsf[0], yPointsf[0] );
                     for( int i = 1 ; i < 6 ; i++ )
-                        generalPath.lineTo( xPoints[i], yPoints[i] );
+                        generalPath.lineTo( xPointsf[i], yPointsf[i] );
                     generalPath.closePath();
                     Area area = new Area( generalPath );
                     if( area.intersects( info.clip.x, info.clip.y, info.clip.width, info.clip.height ) )

@@ -2493,3 +2493,8 @@ Version 17
 		you can't define a solid stroke as a BasicStroke having a dash pattern
 		of { x, 0.0f }.  We have a workaround in TimeSeriesAttributes.
 		Thanks to David Masad <dmasad@gmu.edu>
+	Added OrientedPortrayal2D.getOrientation(...)
+	Fixed bug in OrientedPortrayal2D which wouldn't draw underlying shapes in certain
+		cases.
+	Bug fix in HexaValueGridPortrayal2D which was preventing proper hit testing, hence
+		selection or inspection.
