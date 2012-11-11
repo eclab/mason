@@ -18,13 +18,13 @@
 \documentclass[twoside,10pt]{book}
 \usepackage{fullpage}
 \usepackage{mathpazo}
-\usepackage[noend]{algpseudocode}
+%\usepackage[noend]{algpseudocode}
 \usepackage{amsmath}
 \usepackage{latexsym}
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \usepackage{bm}
-\usepackage{qtree}
+%\usepackage{qtree}
 \usepackage{array}
 \usepackage{eurosym}
 \usepackage{textcomp}
@@ -785,15 +785,25 @@ You want to find all the objects within a certain distance from a
 specific thing.
 
 \item[Solution]~\\
-Problem Solution
+You can use \method{getObjectsWithinDistance()} to find all
+objects within a certain distance from a given object.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
+GeomVectorField objects = new GeomVectorField();
+Point location; // assume later set to desired location
+
+// ...
 	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+Bag nearestObjects = objects.getObjectsWithinDistance(location,distance);
+
+if (nearestObjects.isEmpty()) { System.out.println("Nothing nearby"); }
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion]~\\
+This recipe addresses finding geospatial objects in vector space.
+Naturally if you want to locate nearby objects in a grid, you can use
+the legacy MASON grid functions to locate nearby cells. \footnote{Do
+  note that the MASON nearest neighbor functions are currently in
+  flux, so use with caution.}
 \end{description}
 
 
@@ -807,15 +817,29 @@ country, you want to get a list of neighboring countries that share a
 common border.
 
 \item[Solution]~\\
-Problem Solution
+This is very similar to recipe \ref{sec:nearbyobjects}.  Instead of
+using \method{getObjectsWithinDistance()}  to find nearby objects, use
+\method{getTouchingObjects()}, instead, to find bordering objects.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
+GeomVectorField objects = new GeomVectorField();
+Point location; // assume later set to desired location
+
+// ...
 	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+Bag nearestObjects = objects.getTouchingObjects(location);
+
+if (nearestObjects.isEmpty()) { System.out.println("Nothing nearby"); }
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion]~\\
+  As for recipe \ref{sec:nearbyobjects}., this is for the vector
+  domain.  Determining nearby objects in a grid is trivial to compute
+  as they are just the adjacent grid cells.
+
+  Again, as the description stated, this recipe can be used to compute
+  adjacent polities.  Since those are generally static, you can
+  compute the political entity adjacencies once when the simulation
+  starts, and then store the values in a look-up table.
 \end{description}
 
 
