@@ -887,7 +887,7 @@ Problem Solution
 
 
 
-\section{How to Calculate the Shortest Path on a Network}
+\section{Calculating the Shortest Path on a Network}
 \label{sec:shortestpaths}
 
 \begin{description}
@@ -920,15 +920,38 @@ agent occupies.  For example, a grid may represent a hectare and an
 agent may want to consume certain amount of vegetation and water found there.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+Assume that you have an agent in a \class{GeomVectorField} and a
+corresponding \class{GeomGridField} layer that has information that
+agent needs to get or modify.  First, you need to determine the
+grid cell coordinate for the agent.  Then you can use that coordinate
+to fetch the grid cell contents.
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+GeomVectorField agent = new GeomVectorField();
+GeomGridField gridField = new GeomGridField();
+
+// ... assume agent and gridField populated at this point
+
+// assume first object in agent layer corresponds to agent of interest
+Point location = agent.getGeometries().objs[0];
+
+int x = gridField.toX(location);
+int y = gridField.toY(location);
+
+// assume grid field is of integers
+int value = ((IntGrid2D)gridField.getGrid()).get(x,y);
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion]~\\
+Naturally the above code example can be generalized to cover the other
+MASON 2D grid types.
+
+This assumes that the grid and vector layers have the same underlying
+coordinate reference system and have had their minimum bounding
+rectangles synchronized as per recipe \ref{sub:readingmixofdata}.
+
+In a way, this is the inverse of recipe \ref{sec:politicalentity} ---
+that is, instead of going from a grid layer to a vector, we're going
+from a vector to the grid.
 \end{description}
 
 
@@ -941,15 +964,119 @@ Problem Solution
 You have slope information that you would like an agent to follow.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+  Let's assume that you have grid file containing elevation postings;
+  i.e., essentially a matrix of floating point values that denote a
+  height.  The notion of an agent can merely be that of arbitrary
+  point associated with the elevation grid that's initialized at some
+  random location.  For each time step, the agent can get the height
+  from its corresponding grid cell, and then find the adjacent cell
+  with the smallest height and then move to that cell.  The code below
+  is a simple implementation of this idea.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,label=Your SimStateClass,numbers=left,commandchars=^\[\]]
+public class Gradient extends SimState
+{
+    // field of elevation data
+    GeomGridField elevation = new GeomGridField();
+
+    // denotes agent's location
+    int agentX;
+    int agentY;
+
+    public Gradient(long seed)
+    {
+        super(seed);
+
+        InputStream elevationInputStream = null;
+
+        try
+        {
+            elevationInputStream = new FileInputStream("elevations.asc");
+        } catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(Gradient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        ArcInfoASCGridImporter.read(elevationInputStream, GridDataType.DOUBLE, elevation);
+    }
+
+
+    @Override
+    public void start()
+    {
+        super.start();
+
+        // randomly place agent
+        agentX = random.nextInt(elevation.getGridWidth());
+        agentY = random.nextInt(elevation.getGridHeight());
+
+        schedule.scheduleRepeating(new Mover());
+    }
+
+
+    // Steppable that moves the agent down slope
+    private class Mover implements Steppable
+    {
+        public Mover()
+        {}
+
+        // heights of nearby cells
+        DoubleBag heights = new DoubleBag();^label[ex:doublebag]
+
+        // Xs of nearby cells
+        IntBag Xs = new IntBag();^label[ex:intbag1]
+
+        // Ys of nearby cells
+        IntBag Ys = new IntBag();^label[ex:intbag2]
+
+
+        @Override
+        public void step(SimState state)
+        {
+            Gradient gradient = (Gradient) state;
+
+            // first get the adjacent eight cells
+
+            heights = ((DoubleGrid2D)
+            elevation.getGrid()).getNeighborsHamiltonianDistance(gradient.agentX,
+                                                                 gradient.agentY,
+                                                                 1, // distance
+                                                                 false, // not torodial
+                                                                 heights, Xs, Ys);
+
+            // now find the cell with the lowest height
+
+            int indexOfMin = 0; // index of heights with lowest elevation
+
+            double currentMin = heights.get(0); // current lowest elevation
+
+            for (int i = 1; i < heights.size(); i++)
+            {
+                if (heights.get(i) < currentMin) { indexOfMin = i; }
+            }
+
+            // Now set agent coordinate to minimum
+            gradient.agentX = Xs.get(indexOfMin);
+            gradient.agentY = Ys.get(indexOfMin);
+        }
+    }
+}
 \end{Verbatim}
 
-\item[Discussion ]
+Note that the \class{DoubleBag} and \class{IntBag} objects in
+\code{Mover} in lines \ref{ex:doublebag}, \ref{ex:intbag1}, and
+\ref{ex:intbag2} are declared outside of \method{step()} so that they
+are re-used instead of recreated with each simulation step as an
+optimization.
+
+\item[Discussion]~\\
+  The Water World demo, found as \code{sim.app.geo.waterworld}, gives
+  an example of how to follow a gradient.  This demo uses elevation
+  data for Crater Lake, Oregon, in a water flow model.  In this model,
+  rain drops are randomly dropped onto the grid and then follows the
+  gradient to the cadera, which then accumulates water.  Once the
+  water exceeds the height of the rim, the water then flows down
+  streams from the crater.
 \end{description}
 
 
@@ -1526,9 +1653,12 @@ under Government Contract number N00014-09-C-0419, and also NSF grant
 0916870 for supporting this work. I would also like to thank the
 entire MASON development team and the GMU Center for Social Complexity
 without whom this work would not have been possible.  I also would
-like to give special thanks to Andrew Crooks for valuable feedback and
+like to give thanks to Andrew Crooks for valuable feedback and
 for providing most of the GeoMason demos that originated as student
-class projects from his classes.
+class projects from his classes.  And, finally, I would like to thank
+Keith Sullivan for his contribution to GeoMason; he did yeoman
+service in writing the initial incarnations of the native GeoMason shape file reader
+and writer classes as well as getting GeoMason portrayals up to speed.
 
 %%
 %%
