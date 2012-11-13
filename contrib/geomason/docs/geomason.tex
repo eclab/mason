@@ -854,45 +854,97 @@ an agent.
 \item[Solution]~\\
   Presuming you are representing the paths as \class{LineString}s, you
   can create a corresponding \idx{Java Topology Suite} (JTS)
-  \class{LengthIndexedLine} for each \class{LineString}. The
-  \class{LengthIndexedLine} allows you to ``index'' along its length;
-  i.e., you can get a JTS \class{Point} for any position along a
-  \class{LengthIndexedLine}.  So agents, which are represented as points,
-  can get their current point position by indexing along a given
-  \class{LengthIndexedLine}.  Each agent knows its index value for the
-  current line it is on.  To move, it increments or decrements that
-  index by some value corresponding to a movement rate --- the higher
-  the value the faster the agent moves.  It then gets the point for
-  the position from its associated \class{LengthIndexedLine} and
-  effects its movement by setting its point position to that value.
+  \class{LengthIndexedLine} for each \class{LineString}.\footnote{If
+    you have read in these line strings via a GeoMason importer, note
+    that these \class{LineString}s will be wrapped in
+    \class{MasonGeometry} objects stored in a
+    \class{GeomVectorField}.} \class{LengthIndexedLine} allows you to
+  ``index'' along its length; i.e., you can get a JTS
+  \class{Coordinate} for any position along a
+  \class{LengthIndexedLine}.  So agents that are represented as points
+  (i.e., coordianates), can get their current point position by
+  indexing along a given \class{LengthIndexedLine}.  Each agent knows
+  its index value for the current line it is on.  To move, the agent
+  increments or decrements that index by some value corresponding to a
+  movement rate --- the higher the value the faster the agent moves.
+  It then gets the point for the position from its associated
+  \class{LengthIndexedLine} and effects its movement by setting its
+  point position to that value.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+The following code is for a simple agent that moves back and forth along a single line segment.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+public class LineFollower implements Steppable
+{
+    // current position in 2D space
+    private Coordinate position;
+
+    // current index position along line
+    private double currentIndex;
+
+    // line along which agent is moving
+    private LengthIndexedLine line;
+
+    // how fast the agent moves along line
+    private double moveRate = 1.0;
+
+    public LineFollower(MasonGeometry geometry)
+    {
+        LineString lineString = (LineString) geometry.geometry;
+
+        line = new LengthIndexedLine(lineString);
+
+        // arbitrarily start at one end of the line
+        currentIndex = line.getStartIndex();
+
+        // update the 2D coordinate for that end of the line
+        position = line.extractPoint(currentIndex);
+    }
+
+    @Override
+    public void step(SimState state)
+    {
+        // If the next step takes us off the line, reverse course
+        ^color[red]if (! line.isValidIndex(currentIndex + moveRate)) {^label[ex:validindex]
+            moveRate *= -1;
+        }
+
+        currentIndex += moveRate;
+
+        position = line.extractPoint(currentIndex);
+    }
+}
 \end{Verbatim}
+
+This example covers moving along a single line segment, which is
+admittedly not very interesting. The next recipe,
+\ref{sec:shortestpaths}, addresses navigating along line segment
+networks.
 
 \item[Discussion]~\\
   When incrementing or decrementing the \class{LengthIndexedLine}
-  indices, ensure that you don't exceed the end point index values.
-  I.e., truncate them to the line end point value when a increment or
-  decrement exceeds that value.
+  indices, ensure that you don't exceed the start or end point index
+  values.  I.e., truncate them to the line start or end point value
+  when a increment or decrement exceeds that value.  The highlighted
+  line \ref{ex:validindex} demonstrates checking for stepping off the
+  line segment.  If you want to move the agent on to a connecting line
+  segment, then take the truncated balance and apply that to the index
+  for the next \class{LengthIndexedLine}.
 
-  The \code{sim.app.geo.campusworld}, \code{sim.app.geo.gridlock}, and
-  \code{sim.app.geo.networkworld} are examples of agents moving along
-  a line.
+  \code{sim.app.geo.campusworld}, \code{sim.app.geo.gridlock}, and
+  \code{sim.app.geo.networkworld} are GeoMason examples of agents
+  moving along a line.
 \end{description}
 
 
 
-\section{Computing Line Intersections}
-\label{sec:lineintersection}
+\section{Calculating the Shortest Path on a Network}
+\label{sec:shortestpaths}
 
 \begin{description}
 \item[Problem]~\\
-You want to find all the intersections for a set of lines.  For
-example, you may want to locate all road junctions.
+You want to find the shortest path between two points in a network
+such as set of roads.
 
 \item[Solution]~\\
 Problem Solution
@@ -908,13 +960,13 @@ Problem Solution
 
 
 
-\section{Calculating the Shortest Path on a Network}
-\label{sec:shortestpaths}
+\section{Computing Line Intersections}
+\label{sec:lineintersection}
 
 \begin{description}
 \item[Problem]~\\
-You want to find the shortest path between two points in a network
-such as set of roads.
+You want to find all the intersections for a set of lines.  For
+example, you may want to locate all road junctions.
 
 \item[Solution]~\\
 Problem Solution
