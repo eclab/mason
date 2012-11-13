@@ -364,7 +364,7 @@ It is important to ensure that all the layers have the same MBR
 otherwise they will not align properly when displayed.  Naturally, this
 is optional if you do not intend on rendering the layers.  Regardless
 it would be prudent to do so anyway on the chance that later you
-change your mind and want to see the \class{GeoVectorField}s.  The
+change your mind and want to see the \class{GeomVectorField}s.  The
 highlighted lines \ref{ex:MBRstart}-\ref{ex:MBRend} show how to
 synchronize the MBRs between loaded \class{GeomVectorField}s.
 Basically, you get the MBR of the first \class{GeomVectorField}, expand
@@ -852,7 +852,20 @@ You have a path, such as a road or trail, along which you want to move
 an agent.
 
 \item[Solution]~\\
-Problem Solution
+  Presuming you are representing the paths as \class{LineString}s, you
+  can create a corresponding \idx{Java Topology Suite} (JTS)
+  \class{LengthIndexedLine} for each \class{LineString}. The
+  \class{LengthIndexedLine} allows you to ``index'' along its length;
+  i.e., you can get a JTS \class{Point} for any position along a
+  \class{LengthIndexedLine}.  So agents, which are represented as points,
+  can get their current point position by indexing along a given
+  \class{LengthIndexedLine}.  Each agent knows its index value for the
+  current line it is on.  To move, it increments or decrements that
+  index by some value corresponding to a movement rate --- the higher
+  the value the faster the agent moves.  It then gets the point for
+  the position from its associated \class{LengthIndexedLine} and
+  effects its movement by setting its point position to that value.
+
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
 	GeomGridField gridField = new GeomGridField();
 	
@@ -860,7 +873,15 @@ Problem Solution
 	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
 \end{Verbatim}
 
-\item[Discussion ]
+\item[Discussion]~\\
+  When incrementing or decrementing the \class{LengthIndexedLine}
+  indices, ensure that you don't exceed the end point index values.
+  I.e., truncate them to the line end point value when a increment or
+  decrement exceeds that value.
+
+  The \code{sim.app.geo.campusworld}, \code{sim.app.geo.gridlock}, and
+  \code{sim.app.geo.networkworld} are examples of agents moving along
+  a line.
 \end{description}
 
 
@@ -964,22 +985,22 @@ from a vector to the grid.
 You have slope information that you would like an agent to follow.
 
 \item[Solution]~\\
-  Let's assume that you have grid file containing elevation postings;
+  Let's assume that you have a grid file containing elevation postings;
   i.e., essentially a matrix of floating point values that denote a
-  height.  The notion of an agent can merely be that of arbitrary
-  point associated with the elevation grid that's initialized at some
-  random location.  For each time step, the agent can get the height
-  from its corresponding grid cell, and then find the adjacent cell
-  with the smallest height and then move to that cell.  The code below
-  is a simple implementation of this idea.
+  height.  An agent can be an arbitrary point associated with the
+  elevation grid that's initialized at some random location.  For each
+  time step, the agent can get the height from its corresponding grid
+  cell, and then find the adjacent cell with the smallest height and
+  then move to that cell.  The code below is a simple implementation
+  of this approach.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,label=Your SimStateClass,numbers=left,commandchars=^\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
 public class Gradient extends SimState
 {
     // field of elevation data
     GeomGridField elevation = new GeomGridField();
 
-    // denotes agent's location
+    // denotes agent's location; randomly set in start()
     int agentX;
     int agentY;
 
@@ -1035,7 +1056,7 @@ public class Gradient extends SimState
         {
             Gradient gradient = (Gradient) state;
 
-            // first get the adjacent eight cells
+            // first get the adjacent eight cells and current cell
 
             heights = ((DoubleGrid2D)
             elevation.getGrid()).getNeighborsHamiltonianDistance(gradient.agentX,
@@ -1050,9 +1071,11 @@ public class Gradient extends SimState
 
             double currentMin = heights.get(0); // current lowest elevation
 
-            for (int i = 1; i < heights.size(); i++)
-            {
-                if (heights.get(i) < currentMin) { indexOfMin = i; }
+            for (int i = 1; i < heights.size(); i++) {
+                if (heights.get(i) < currentMin) { 
+                  indexOfMin = i;
+                  currentMin = heights.get(i);
+                }
             }
 
             // Now set agent coordinate to minimum
@@ -1063,21 +1086,36 @@ public class Gradient extends SimState
 }
 \end{Verbatim}
 
-Note that the \class{DoubleBag} and \class{IntBag} objects in
-\code{Mover} in lines \ref{ex:doublebag}, \ref{ex:intbag1}, and
-\ref{ex:intbag2} are declared outside of \method{step()} so that they
-are re-used instead of recreated with each simulation step as an
-optimization.
+Note that as an optimization the \class{DoubleBag} and \class{IntBag}
+objects in \code{Mover} in lines \ref{ex:doublebag}, \ref{ex:intbag1},
+and \ref{ex:intbag2} are declared outside of \method{step()} so that
+they are re-used instead of being recreated with each simulation step.
 
 \item[Discussion]~\\
   The Water World demo, found as \code{sim.app.geo.waterworld}, gives
-  an example of how to follow a gradient.  This demo uses elevation
-  data for Crater Lake, Oregon, in a water flow model.  In this model,
-  rain drops are randomly dropped onto the grid and then follows the
-  gradient to the cadera, which then accumulates water.  Once the
-  water exceeds the height of the rim, the water then flows down
-  streams from the crater.
+  a more elaborate example of how to follow a gradient.  This demo
+  uses elevation data for Crater Lake, Oregon, in a water flow model.
+  In this model, rain drops are randomly dropped onto the grid; some
+  of the rain drops fill the cadera while the rest runs down the
+  gradients. Additionally, once the water level exceeds the height of
+  the rim, the crater water then flows down streams from the crater.
+
+  The silly peds model is another gradient descent-based model.  It
+  overlays a building floor plan onto a grid of heights; the agents
+  follow the height gradient out of the building.  This demo can be
+  found as \code{sim.app.geo.sillypeds}.
+
+  Fig. \ref{fig:gradients} shows screenshots of both of these demos.
 \end{description}
+
+\begin{figure}[th]
+  \centering
+  \includegraphics[width=0.45\textwidth]{WaterWorld.png}
+  \includegraphics[width=0.45\textwidth]{SillyPeds.png}
+  \caption{Screenshots of WaterWorld and SillyPeds models.}
+  \label{fig:gradients}
+\end{figure}
+
 
 
 
@@ -1386,7 +1424,7 @@ You want to create a dynamic choropleth map with colors changing based
 on agent behavior.
 
 \item[Solution]~\\
-Have one \class{GeomVectorLayer} for agents and another containing
+Have one \class{GeomVectorField} for agents and another containing
 political boundary polygons. Create a \class{MasonGeometry} subclass
 to be used for the political boundary polygons that will count the
 agents that are within its borders.  Create a corresponding
