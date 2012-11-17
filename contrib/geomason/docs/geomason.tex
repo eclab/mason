@@ -66,6 +66,7 @@
 \newcommand\class[1]{\index{Classes!{#1}}\textsf{#1}}
 \newcommand\Class[1]{\index{Classes!{#1}|textbf}\textsf{#1}}
 \newcommand\method[1]{\textsf{#1}}
+\newcommand\member[1]{\textsf{#1}}
 \newcommand\parameter[1]{\texttt{#1}}
 \newcommand\character[1]{\texttt{"{#1}"}}
 \newcommand\textstr[1]{\texttt{"{#1}"}}
@@ -862,7 +863,7 @@ an agent.
   ``index'' along its length; i.e., you can get a JTS
   \class{Coordinate} for any position along a
   \class{LengthIndexedLine}.  So agents that are represented as points
-  (i.e., coordianates), can get their current point position by
+  (i.e., coordinates), can get their current point position by
   indexing along a given \class{LengthIndexedLine}.  Each agent knows
   its index value for the current line it is on.  To move, the agent
   increments or decrements that index by some value corresponding to a
@@ -969,15 +970,77 @@ You want to find all the intersections for a set of lines.  For
 example, you may want to locate all road junctions.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+  Use the \idx{Java Topology Suite} (JTS) \class{Geometry} method
+  \method{intersection()} to compute the intersecting
+  \class{Point}. The following code gives an example of using
+  \method{intersection()}.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+GeometryFactory geometryFactory = new GeometryFactory();
+WKTReader reader = new WKTReader(geometryFactory);
+
+LineString firstLine =
+    (LineString) reader.read("LINESTRING (0 10, 10 10)");
+LineString secondLine =
+    (LineString) reader.read("LINESTRING (5 20, 5 0)");
+
+^color[red]Geometry intersection = firstLine.intersection(secondLine);
+
+System.out.println("Intersection of " + firstLine + " and " + secondLine + " is " + intersection);
 \end{Verbatim}
 
-\item[Discussion ]
+The output of this code is ``Intersection of LINESTRING (0 10, 10 10)
+and LINESTRING (5 20, 5 0) is POINT (5 10)'', as you would expect.
+
+However, generally we're more interested in taking a set of lines and
+breaking them up by their intersections.  This can be done by creating
+a \class{MultiLineString} from the set of lines of interest and then
+computing their \method{union()}.  I've used the same two lines from
+the previous example and break them up into four sub-lines by their
+common point in the following example.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+GeometryFactory geometryFactory = new GeometryFactory();
+WKTReader reader = new WKTReader(geometryFactory);
+
+ArrayList<LineString> rawlines = new ArrayList<LineString>();
+
+rawlines.add((LineString) reader.read("LINESTRING (0 10,10 10)"));
+rawlines.add((LineString) reader.read("LINESTRING (5 20, 5 0)"));
+
+MultiLineString newLines = new MultiLineString(rawlines.toArray(new LineString[0]), geometryFactory);
+
+System.out.println("Before computing intersection:\n" + newLines);
+
+Geometry brokenUpLines = newLines.union();
+
+System.out.println("Broken up by intersection:\n" + brokenUpLines);
+\end{Verbatim}
+
+The output from this is:
+
+\begin{Verbatim}
+Before computing intersection: 
+MULTILINESTRING ((0 10, 10 10), (5 20, 5 0))
+Broken up by intersection: 
+MULTILINESTRING ((0 10, 5 10), (5 10, 10 10), (5 20, 5 10), (5 10, 5 0))
+\end{Verbatim}
+
+\item[Discussion]~\\
+  GeoMason uses the \idx{Java Topology Suite} (JTS) to represent the
+  underlying geometry and to provide geometry operations.  One such
+  operation is for computing intersections.  To that end, each
+  \idx{JTS} \class{Geometry} has a method, \method{intersection()},
+  that returns a \class{Geometry} object that corresponds to the
+  intersection between the two given geometries; in the case of a
+  \class{LineString} the returned intersecting object is a
+  \class{Point}.  The returned \class{Geometry} will be empty, which
+  is checked by calling \method{isEmpty()}, if the two geometries do
+  not intersect.  
+
+  Note that the JTS \class{Geometry} can be directly accessed from
+  wrapping \class{MasonGeometry} objects as the \member{geometry}
+  member.
 \end{description}
 
 
