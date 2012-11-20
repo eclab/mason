@@ -992,12 +992,17 @@ System.out.println("Intersection of " + firstLine + " and " + secondLine + " is 
 The output of this code is ``Intersection of LINESTRING (0 10, 10 10)
 and LINESTRING (5 20, 5 0) is POINT (5 10)'', as you would expect.
 
-However, generally we're more interested in taking a set of lines and
-breaking them up by their intersections.  This can be done by creating
-a \class{MultiLineString} from the set of lines of interest and then
-computing their \method{union()}.  I've used the same two lines from
-the previous example and break them up into four sub-lines by their
-common point in the following example.
+However, generally we're more interested in finding the intersections
+for a set of lines.  Unfortnately we're not guaranteed that our data
+is \emph{coplanar}; that is, that when lines cross one another that
+they have an explicit vertex at that intersection. Before we can
+compute the points for all the intersections, we must first ensure all
+the data is coplanar.  Fortunately JTS has ways of breaking up lines
+by their intersections.  This can be done by creating a
+\class{MultiLineString} from the set of lines of interest and then
+computing their \method{union()}.  The following is an example that
+uses this technique to split two lines that intersect in a 'T'
+formation into three line segments.
 
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
 GeometryFactory geometryFactory = new GeometryFactory();
@@ -1005,10 +1010,11 @@ WKTReader reader = new WKTReader(geometryFactory);
 
 ArrayList<LineString> rawlines = new ArrayList<LineString>();
 
-rawlines.add((LineString) reader.read("LINESTRING (0 10,10 10)"));
-rawlines.add((LineString) reader.read("LINESTRING (5 20, 5 0)"));
+rawlines.add((LineString) reader.read("LINESTRING (0 1, 1 1)"));
+rawlines.add((LineString) reader.read("LINESTRING (1 0, 1 3)"));
 
-MultiLineString newLines = new MultiLineString(rawlines.toArray(new LineString[0]), geometryFactory);
+MultiLineString newLines = 
+    new MultiLineString(rawlines.toArray(new LineString[0]), geometryFactory);
 
 System.out.println("Before computing intersection:\n" + newLines);
 
@@ -1017,14 +1023,89 @@ Geometry brokenUpLines = newLines.union();
 System.out.println("Broken up by intersection:\n" + brokenUpLines);
 \end{Verbatim}
 
-The output from this is:
+The output from this code shows the two lines are now broken into three
+lines split by the original two lines' intersection:
 
 \begin{Verbatim}
-Before computing intersection: 
-MULTILINESTRING ((0 10, 10 10), (5 20, 5 0))
-Broken up by intersection: 
-MULTILINESTRING ((0 10, 5 10), (5 10, 10 10), (5 20, 5 10), (5 10, 5 0))
+Before computing intersections:
+MULTILINESTRING ((0 1, 1 1), (1 0, 1 3))
+Broken up by intersection:
+MULTILINESTRING ((0 1, 1 1), (1 0, 1 1), (1 1, 1 3))
 \end{Verbatim}
+
+JTS offers a third approach to computing line intersections.  You can
+use a ``Noder'' that explicitly calculates the intersections between
+all the given geometry as shown in the following example.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+GeometryFactory geometryFactory = new GeometryFactory();
+WKTReader reader = new WKTReader(geometryFactory);
+
+MultiLineString multiLine = 
+    (MultiLineString) reader.read("MULTILINESTRING ((0 1, 1 1),(1 3, 1 0))");
+
+System.out.println("Before computing intersections: " + multiLine);
+
+List lines = SegmentStringUtil.extractSegmentStrings(multiLine);
+
+System.out.println("Converted to segmented lines: " + lines);
+
+RobustLineIntersector RLI = new RobustLineIntersector();
+IntersectionAdder SI = new IntersectionAdder(RLI);
+
+MCIndexNoder noder = new MCIndexNoder();
+noder.setSegmentIntersector(SI);
+
+noder.computeNodes(lines);
+
+System.out.println("Noded Noded Substrings: " + noder.getNodedSubstrings());
+\end{Verbatim}
+
+This code produces the following output:
+
+\begin{Verbatim}
+Before computing intersections: MULTILINESTRING ((0 1, 1 1), (1 3, 1 0))
+Converted to segmented lines: [LINESTRING (0.0 1.0, 1.0 1.0), LINESTRING (1.0 3.0, 1.0 0.0)]
+Noded Substrings: [LINESTRING (0.0 1.0, 1.0 1.0), LINESTRING (1.0 3.0, 1.0 1.0), 
+   LINESTRING (1.0 1.0, 1.0 0.0)]}
+\end{Verbatim}
+
+Note that the noder returns a list of \class{LineString}s, which may
+be more convenient.  Further note that the output differs from the
+approach that uses \method{union()}.  The noder approach adds the line
+(5 10, 5 20), which is found in reverse in the previous approach.
+
+Once we're guaranteed that the lines are coplanar, we then need to
+find the points that define the line network intersections.  You can
+do this getting all the line coordinates, and then noting which
+coordinates occur more than once; those would be the points
+corresponding to line intersections.
+
+The following code takes lines noded from the previous code example
+that uses \method{union()} and prints the intersection value.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+Coordinate [] vertices = brokenUpLines.getCoordinates();
+
+Set<Coordinate> intersectionVertices = new HashSet<Coordinate>();
+Set<Coordinate> visitedCoordinates = new HashSet<Coordinate>();
+
+for (int i = 0; i < vertices.length; i++) {
+    if (!visitedCoordinates.contains(vertices[i])) {
+        visitedCoordinates.add(vertices[i]);
+    } else {
+        intersectionVertices.add(vertices[i]);
+    }
+}
+
+for (Coordinate c : intersectionVertices.toArray(new Coordinate[0])) {
+    System.out.println(c);
+}
+\end{Verbatim}
+
+The output is (1.0, 1.0, NaN), which is what we'd expect.  (The NaN is
+for the Z coordinate, which isn't used.)
+
 
 \item[Discussion]~\\
   GeoMason uses the \idx{Java Topology Suite} (JTS) to represent the
