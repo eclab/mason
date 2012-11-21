@@ -117,13 +117,13 @@ public class Schedule implements java.io.Serializable
     protected Heap createHeap() { return new Heap(); }
     
     // the time
-    double time;
+    protected double time;
     
     // the number of times step() has been called on me
-    long steps;
+    protected long steps;
         
     // is the Schedule sealed?
-    boolean sealed = false;
+    protected boolean sealed = false;
                 
     // time steps lock  -- the objective here is to enable synchronization on a different lock
     // so people can read the time and the steps without having to wait on the general schedule lock
