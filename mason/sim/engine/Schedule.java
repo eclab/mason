@@ -109,6 +109,7 @@ public class Schedule implements java.io.Serializable
     // should we shuffle individuals with the same timestep and ordering?
     boolean shuffling = true;  // by default, we WANT to shuffle
 
+    /** The Schedule's queue. */
     protected Heap queue = createHeap();
     
     /** Returns a Heap to be used by the Schedule.  By default, returns a
@@ -116,17 +117,19 @@ public class Schedule implements java.io.Serializable
         subclass of Heap tuned for your particular problem. */
     protected Heap createHeap() { return new Heap(); }
     
-    // the time
+    /** The current time, as returned by getTime().  
+        If you modify this in a subclass, be sure to synchronize on Schedule.lock first. */
     protected double time;
     
-    // the number of times step() has been called on me
+    /** The current steps, as returned by getSteps().  
+        If you modify this in a subclass, be sure to synchronize on Schedule.lock first. */
     protected long steps;
         
-    // is the Schedule sealed?
+    /** Whether the schedule is sealed, as returned by isSealed().  
+        If you modify this in a subclass, be sure to synchronize on Schedule.lock first. */
     protected boolean sealed = false;
                 
-    // time steps lock  -- the objective here is to enable synchronization on a different lock
-    // so people can read the time and the steps without having to wait on the general schedule lock
+    /** The schedule lock.  Many methods synchronize on this lock before modifying internal variables. */
     protected Object lock = new boolean[1];  // an array is a unique, serializable object
     
     /** Sets the schedule to randomly shuffle the order of Steppables (the default), or to not do so, when they

@@ -2498,3 +2498,4 @@ Version 17
 		cases.
 	Bug fix in HexaValueGridPortrayal2D which was preventing proper hit testing, hence
 		selection or inspection.
+	Schedule.time and Schedule.steps are now protected.
