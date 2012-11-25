@@ -76,6 +76,9 @@
 \newcommand\ignore[1]{}
 
 
+\newcommand\JTS{\index{JTS Topology Suite}JTS Topology Suite }
+\newcommand\JTSshort{\index{JTS Topology Suite}JTS }
+
 \newcommand\sidebara[3]{\begin{wrapfigure}{r}[0in]{3.2in}%
 \vspace{-1.1em}\hfill\framebox{\begin{minipage}{3in}\setlength\parindent{1.5em}\footnotesize{\noindent\textit{#1}
 
@@ -303,7 +306,7 @@ Note that the units of the loaded vector layer will be those of the
 underyling coordinate reference system.  So if the shape file is
 in meters, such as is found in data in Universal Transverse Mercator (UTM), then all loaded
 geometry will similarly be in meters.   Also note that GeoMason uses
-the \idx{Java Topology Suite} (JTS) to store all the geometry.  JTS uses a
+the \JTS to store all the geometry.  \JTS uses a
 flat Cartesian plane for all points; so be aware of this when loading
 data from a non-planar reference system.  That is, if you na\"{i}vely
 load, say, native lat/lon data, which corresponds to coordinates along
@@ -854,13 +857,13 @@ an agent.
 
 \item[Solution]~\\
   Presuming you are representing the paths as \class{LineString}s, you
-  can create a corresponding \idx{Java Topology Suite} (JTS)
+  can create a corresponding \JTS
   \class{LengthIndexedLine} for each \class{LineString}.\footnote{If
     you have read in these line strings via a GeoMason importer, note
     that these \class{LineString}s will be wrapped in
     \class{MasonGeometry} objects stored in a
     \class{GeomVectorField}.} \class{LengthIndexedLine} allows you to
-  ``index'' along its length; i.e., you can get a JTS
+  ``index'' along its length; i.e., you can get a \JTSshort
   \class{Coordinate} for any position along a
   \class{LengthIndexedLine}.  So agents that are represented as points
   (i.e., coordinates), can get their current point position by
@@ -970,7 +973,7 @@ You want to find all the intersections for a set of lines.  For
 example, you may want to locate all road junctions.
 
 \item[Solution]~\\
-  Use the \idx{Java Topology Suite} (JTS) \class{Geometry} method
+  Use the \JTS \class{Geometry} method
   \method{intersection()} to compute the intersecting
   \class{Point}. The following code gives an example of using
   \method{intersection()}.
@@ -997,7 +1000,7 @@ for a set of lines.  Unfortnately we're not guaranteed that our data
 is \emph{coplanar}; that is, that when lines cross one another that
 they have an explicit vertex at that intersection. Before we can
 compute the points for all the intersections, we must first ensure all
-the data is coplanar.  Fortunately JTS has ways of breaking up lines
+the data is coplanar.  Fortunately \JTSshort has ways of breaking up lines
 by their intersections.  This can be done by creating a
 \class{MultiLineString} from the set of lines of interest and then
 computing their \method{union()}.  The following is an example that
@@ -1033,7 +1036,7 @@ Broken up by intersection:
 MULTILINESTRING ((0 1, 1 1), (1 0, 1 1), (1 1, 1 3))
 \end{Verbatim}
 
-JTS offers a third approach to computing line intersections.  You can
+\JTSshort offers a third approach to computing line intersections.  You can
 use a ``Noder'' that explicitly calculates the intersections between
 all the given geometry as shown in the following example.
 
@@ -1070,31 +1073,42 @@ Noded Substrings: [LINESTRING (0.0 1.0, 1.0 1.0), LINESTRING (1.0 3.0, 1.0 1.0),
    LINESTRING (1.0 1.0, 1.0 0.0)]}
 \end{Verbatim}
 
-Note that the noder returns a list of \class{LineString}s, which may
-be more convenient.  Further note that the output differs from the
-approach that uses \method{union()}.  The noder approach adds the line
-(5 10, 5 20), which is found in reverse in the previous approach.
+Note that the noder returns a list of \class{NodedSegmentString}s, which may
+be inconvenient. 
 
 Once we're guaranteed that the lines are coplanar, we then need to
 find the points that define the line network intersections.  You can
-do this getting all the line coordinates, and then noting which
-coordinates occur more than once; those would be the points
-corresponding to line intersections.
+do this getting the line start and end point coordinates, and then
+noting which of those occur more than once; those would be the
+points corresponding to line intersections.
 
 The following code takes lines noded from the previous code example
-that uses \method{union()} and prints the intersection value.
+that uses the \class{MCIndexNoder} and prints the intersection value.
 
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
-Coordinate [] vertices = brokenUpLines.getCoordinates();
+// contains noded line strings
+Collection nodedLines = noder.getNodedSubstrings();
 
 Set<Coordinate> intersectionVertices = new HashSet<Coordinate>();
 Set<Coordinate> visitedCoordinates = new HashSet<Coordinate>();
 
-for (int i = 0; i < vertices.length; i++) {
-    if (!visitedCoordinates.contains(vertices[i])) {
-        visitedCoordinates.add(vertices[i]);
+for (Object line : nodedLines.toArray()) {
+    NodedSegmentString curLine = (NodedSegmentString) line;
+
+    Coordinate [] coordinates = curLine.getCoordinates();
+
+    // Start point
+    if (! visitedCoordinates.contains(coordinates[0])) {
+        visitedCoordinates.add(coordinates[0]);
     } else {
-        intersectionVertices.add(vertices[i]);
+        intersectionVertices.add(coordinates[0]);
+    }
+
+    // End point
+    if (! visitedCoordinates.contains(coordinates[coordinates.length - 1])) {
+        visitedCoordinates.add(coordinates[coordinates.length - 1]);
+    } else {
+        intersectionVertices.add(coordinates[coordinates.length - 1]);
     }
 }
 
@@ -1104,14 +1118,33 @@ for (Coordinate c : intersectionVertices.toArray(new Coordinate[0])) {
 \end{Verbatim}
 
 The output is (1.0, 1.0, NaN), which is what we'd expect.  (The NaN is
-for the Z coordinate, which isn't used.)
+for the Z coordinate, which isn't used in GeoMason.)
 
+\JTSshort does provide a simple one off means of getting line segment
+intersections.  The following code demonstrates this;
+\code{brokenUpLines} is the noded \JTSshort \class{MultiLineString}
+from the example that used \method{union()}.\footnote{Thanks to Martin
+  Davis, the JTS author, for this example.}
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+System.out.println("Noded Substrings: " + brokenUpLines);
+
+Geometry intPoints = (new BoundaryOp(brokenUpLines, BoundaryNodeRule.MULTIVALENT_ENDPOINT_BOUNDARY_RULE)).getBoundary();
+
+System.out.println("Intersection: " + intPoints);
+\end{Verbatim}
+
+The output from this is: 
+\begin{Verbatim}
+Noded Substrings: MULTILINESTRING ((0 1, 1 1), (1 3, 1 1), (1 1, 1 0))
+Intersection: POINT (1 1)
+\end{Verbatim}
 
 \item[Discussion]~\\
-  GeoMason uses the \idx{Java Topology Suite} (JTS) to represent the
+GeoMason uses the \JTS to represent the
   underlying geometry and to provide geometry operations.  One such
   operation is for computing intersections.  To that end, each
-  \idx{JTS} \class{Geometry} has a method, \method{intersection()},
+  \JTSshort \class{Geometry} has a method, \method{intersection()},
   that returns a \class{Geometry} object that corresponds to the
   intersection between the two given geometries; in the case of a
   \class{LineString} the returned intersecting object is a
@@ -1119,7 +1152,7 @@ for the Z coordinate, which isn't used.)
   is checked by calling \method{isEmpty()}, if the two geometries do
   not intersect.  
 
-  Note that the JTS \class{Geometry} can be directly accessed from
+  Note that the \JTSshort \class{Geometry} can be directly accessed from
   wrapping \class{MasonGeometry} objects as the \member{geometry}
   member.
 \end{description}
@@ -1887,12 +1920,15 @@ under Government Contract number N00014-09-C-0419, and also NSF grant
 0916870 for supporting this work. I would also like to thank the
 entire MASON development team and the GMU Center for Social Complexity
 without whom this work would not have been possible.  I also would
-like to give thanks to Andrew Crooks for valuable feedback and
-for providing most of the GeoMason demos that originated as student
-class projects from his classes.  And, finally, I would like to thank
-Keith Sullivan for his contribution to GeoMason; he did yeoman
-service in writing the initial incarnations of the native GeoMason shape file reader
-and writer classes as well as getting GeoMason portrayals up to speed.
+like to give thanks to Andrew Crooks for valuable feedback and for
+providing most of the GeoMason demos that originated as student class
+projects from his classes.  I would also like to thank Martin Davis
+for writing JTS Topology Suite and for providing valuable help and
+feedback in its use.  And, finally, I would like to thank Keith
+Sullivan for his contribution to GeoMason; he did yeoman service in
+writing the initial incarnations of the native GeoMason shape file
+reader and writer classes as well as getting GeoMason portrayals up to
+speed.
 
 %%
 %%
