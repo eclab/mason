@@ -941,6 +941,29 @@ networks.
 \end{description}
 
 
+\section{Creating a Network Graph from Lines}
+\label{sec:GraphFromLines}
+
+\begin{description}
+\item[Problem]~\\
+You have a lines describing a network, such as roads, that you would like to have as a single network, or graph.
+
+\item[Solution]~\\
+Problem Solution
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+	GeomGridField gridField = new GeomGridField();
+	
+	InputStream inputStream = new FileInputStream("foo.asc");
+	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+\end{Verbatim}
+
+\item[Discussion]~\\
+Once you have such a graph, it then becomes easier to compute shortest paths as in recipe \ref{sec:shortestpaths}.
+\end{description}
+
+
+
+
 
 \section{Calculating the Shortest Path on a Network}
 \label{sec:shortestpaths}
@@ -963,49 +986,18 @@ Problem Solution
 \end{description}
 
 
-
-\section{Computing Line Intersections}
-\label{sec:lineintersection}
+\section{Breaking Up Lines By Intersections}
+\label{sec:NodingLines}
 
 \begin{description}
 \item[Problem]~\\
-You want to find all the intersections for a set of lines.  For
-example, you may want to locate all road junctions.
+You want to ensure that lines are broken up by their intersections, which in \JTSshort parlance is otherwise known as ``noding''.
 
 \item[Solution]~\\
-  Use the \JTS \class{Geometry} method
-  \method{intersection()} to compute the intersecting
-  \class{Point}. The following code gives an example of using
-  \method{intersection()}.
-
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
-GeometryFactory geometryFactory = new GeometryFactory();
-WKTReader reader = new WKTReader(geometryFactory);
-
-LineString firstLine =
-    (LineString) reader.read("LINESTRING (0 10, 10 10)");
-LineString secondLine =
-    (LineString) reader.read("LINESTRING (5 20, 5 0)");
-
-^color[red]Geometry intersection = firstLine.intersection(secondLine);
-
-System.out.println("Intersection of " + firstLine + " and " + secondLine + " is " + intersection);
-\end{Verbatim}
-
-The output of this code is ``Intersection of LINESTRING (0 10, 10 10)
-and LINESTRING (5 20, 5 0) is POINT (5 10)'', as you would expect.
-
-However, generally we're more interested in finding the intersections
-for a set of lines.  Unfortnately we're not guaranteed that our data
-is \emph{coplanar}; that is, that when lines cross one another that
-they have an explicit vertex at that intersection. Before we can
-compute the points for all the intersections, we must first ensure all
-the data is coplanar.  Fortunately \JTSshort has ways of breaking up lines
-by their intersections.  This can be done by creating a
-\class{MultiLineString} from the set of lines of interest and then
-computing their \method{union()}.  The following is an example that
-uses this technique to split two lines that intersect in a 'T'
-formation into three line segments.
+  Create a \class{MultiLineString} from the set of lines of interest
+  and then computing their \method{union()}.  The following is an
+  example that uses this technique to split two lines that intersect
+  in a 'T' formation into three line segments.
 
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
 GeometryFactory geometryFactory = new GeometryFactory();
@@ -1073,9 +1065,56 @@ Noded Substrings: [LINESTRING (0.0 1.0, 1.0 1.0), LINESTRING (1.0 3.0, 1.0 1.0),
    LINESTRING (1.0 1.0, 1.0 0.0)]}
 \end{Verbatim}
 
-Note that the noder returns a list of \class{NodedSegmentString}s, which may
-be inconvenient. 
+Note that the noder returns a list of \class{NodedSegmentString}s,
+which may be inconvenient.
 
+\item[Discussion]~\\
+  This is usually a prerequsite for computing line intersections,
+  which is described in recipe \ref{sec:lineintersection}.  Though the
+  examples are comprised entirely of \JTSshort objects, recall that
+  you can access JTS \class{Geometry} objects via the
+  \method{MasonGeometry.geometry} data member.
+\end{description}
+
+
+\section{Computing Line Intersections}
+\label{sec:lineintersection}
+
+\begin{description}
+\item[Problem]~\\
+  You want to find all the intersections for a set of lines.  For
+  example, you may want to locate all road junctions.
+
+\item[Solution]~\\
+  Use the \JTS \class{Geometry} method
+  \method{intersection()} to compute the intersecting
+  \class{Point}. The following code gives an example of using
+  \method{intersection()}.
+
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+GeometryFactory geometryFactory = new GeometryFactory();
+WKTReader reader = new WKTReader(geometryFactory);
+
+LineString firstLine =
+    (LineString) reader.read("LINESTRING (0 10, 10 10)");
+LineString secondLine =
+    (LineString) reader.read("LINESTRING (5 20, 5 0)");
+
+^color[red]Geometry intersection = firstLine.intersection(secondLine);
+
+System.out.println("Intersection of " + firstLine + " and " + secondLine + " is " + intersection);
+\end{Verbatim}
+
+The output of this code is ``Intersection of LINESTRING (0 10, 10 10)
+and LINESTRING (5 20, 5 0) is POINT (5 10)'', as you would expect.
+
+However, generally we're more interested in finding the intersections
+for a set of lines.  Unfortnately we're not guaranteed that our data
+is \emph{coplanar}; that is, that when lines cross one another that
+they have an explicit vertex at that intersection. Before we can
+compute the points for all the intersections, we must first ensure all
+the data is coplanar.  Fortunately \JTSshort has ways of breaking up lines
+by their intersections.  This can be done by 
 Once we're guaranteed that the lines are coplanar, we then need to
 find the points that define the line network intersections.  You can
 do this getting the line start and end point coordinates, and then
@@ -1129,7 +1168,8 @@ from the example that used \method{union()}.\footnote{Thanks to Martin
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
 System.out.println("Noded Substrings: " + brokenUpLines);
 
-Geometry intPoints = (new BoundaryOp(brokenUpLines, BoundaryNodeRule.MULTIVALENT_ENDPOINT_BOUNDARY_RULE)).getBoundary();
+Geometry intPoints = (new BoundaryOp(brokenUpLines, 
+    BoundaryNodeRule.MULTIVALENT_ENDPOINT_BOUNDARY_RULE)).getBoundary();
 
 System.out.println("Intersection: " + intPoints);
 \end{Verbatim}
@@ -1141,17 +1181,16 @@ Intersection: POINT (1 1)
 \end{Verbatim}
 
 \item[Discussion]~\\
-GeoMason uses the \JTS to represent the
-  underlying geometry and to provide geometry operations.  One such
-  operation is for computing intersections.  To that end, each
-  \JTSshort \class{Geometry} has a method, \method{intersection()},
-  that returns a \class{Geometry} object that corresponds to the
-  intersection between the two given geometries; in the case of a
-  \class{LineString} the returned intersecting object is a
-  \class{Point}.  The returned \class{Geometry} will be empty, which
-  is checked by calling \method{isEmpty()}, if the two geometries do
-  not intersect.  
-
+% GeoMason uses the \JTS to represent the
+%   underlying geometry and to provide geometry operations.  One such
+%   operation is for computing intersections.  To that end, each
+%   \JTSshort \class{Geometry} has a method, \method{intersection()},
+%   that returns a \class{Geometry} object that corresponds to the
+%   intersection between the two given geometries; in the case of a
+%   \class{LineString} the returned intersecting object is a
+%   \class{Point}.  The returned \class{Geometry} will be empty, which
+%   is checked by calling \method{isEmpty()}, if the two geometries do
+%   not intersect.  
   Note that the \JTSshort \class{Geometry} can be directly accessed from
   wrapping \class{MasonGeometry} objects as the \member{geometry}
   member.
