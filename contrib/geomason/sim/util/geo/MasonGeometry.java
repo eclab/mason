@@ -25,8 +25,8 @@ import java.util.Map;
  * field.  The userData field can be any MASON object, or general Java object,
  * which will be included in the inspector by default.
  *
- * <p> MasonGeometry implements sim.util.Proxiable to allow the hiding of various getXXX and setXXX methods
- * from the inspectors.
+ * <p> MasonGeometry implements sim.util.Proxiable to allow the hiding of 
+ * various getXXX and setXXX methods from the inspectors.
  *
  * TODO may have to move new AttributeValue convenience functions to inner
  * proxy class.
@@ -251,12 +251,12 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
 
     /** 
-     * @return type of the internal JTS geometry object (Point, Polygon, Linestring, etc)
+     * @return geometry type and coordinates
      */
     @Override
     public String toString()
     {
-        return geometry.getGeometryType();
+        return geometry.toString();
     }
 
 
