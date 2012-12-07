@@ -457,6 +457,10 @@ public class GeomVectorField extends GeomField
 
     public void updateTransform(DrawInfo2D info)
     {
+    	
+    	//if (info.draw.width == 4800)
+    	//	System.out.println("here"); 
+    	
         // need to update the transform
         if (! info.equals(myInfo))
         {
