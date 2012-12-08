@@ -82,8 +82,8 @@ public class GeomVectorFieldTest
         
         Bag geometries = instance.getGeometries();
 
-        assert(geometries.size() == 1);
-        assert(geometries.objs[0].equals(g));
+        assertTrue(geometries.size() == 1);
+        assertTrue(geometries.objs[0].equals(g));
     }
 
 
@@ -100,12 +100,12 @@ public class GeomVectorFieldTest
         GeomVectorField instance = new GeomVectorField();
         instance.addGeometry(g);
 
-        assert(instance.getGeometries().size() == 1);
+        assertTrue(instance.getGeometries().size() == 1);
         
         instance.clear();
         Bag geometries = instance.getGeometries();
 
-        assert(geometries.isEmpty());
+        assertTrue(geometries.isEmpty());
     }
 
 //
@@ -184,18 +184,19 @@ public class GeomVectorFieldTest
     {
         System.out.println("queryField");
 
-        Envelope e = new Envelope(0, 10, 0, 10);
+        Envelope e = new Envelope(40, 60, 40, 60);
         GeomVectorField instance = new GeomVectorField();
 
         addEvenlySpacedPoints(100, 100, 10, instance);
 
         Bag result = instance.queryField(e);
 
-        assert( ! result.isEmpty() );
+        // We *should* get nine points
+        // TODO ensure that besides the correct # of points, that we also
+        // have *the correct* points.
+        assertTrue( result.size() == 9 );
     }
 
-//
-//
 //    /**
 //     * Test of getGeometries method, of class GeomVectorField.
 //     */
@@ -220,14 +221,18 @@ public class GeomVectorFieldTest
     public void testGetObjectsWithinDistance()
     {
         System.out.println("getObjectsWithinDistance");
-//        Geometry g = null;
-//        double dist = 0.0;
-//        GeomVectorField instance = new GeomVectorField();
-//        Bag expResult = null;
-//        Bag result = instance.getObjectsWithinDistance(g, dist);
-//        assertEquals(expResult, result);
-//        // TODO review the generated test code and remove the default call to fail.
-//        fail("The test case is a prototype.");
+
+        GeomVectorField instance = new GeomVectorField();
+
+        addEvenlySpacedPoints(100, 100, 10, instance);
+
+        Point testPoint = createPoint(50,50);
+
+        Bag result = instance.getObjectsWithinDistance(testPoint, 10.0);
+
+        // Essentially the points immediately above, below, to either side, and
+        // the point centered at (50,50).
+        assertTrue( result.size() == 5 );
     }
 
 //
