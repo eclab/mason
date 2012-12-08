@@ -166,21 +166,30 @@ public class GeomVectorField extends GeomField
     }
         
 	
-	/** Returns all the geometries that <i>might</i> intersect the provided envelope.  If the intersection is 
-	 * empty, then return all the objects in the field.  */
+	/** @return all the geometries that intersect the provided
+     * envelope; will be empty if none intersect  */
 	public Bag queryField(Envelope e)
 	{
 		Bag geometries = new Bag(); 
 		List<?> gList = spatialIndex.query(e);
-		
-		if (gList.isEmpty())
+
+        // However, the JTS QuadTree query is a little sloppy, which means it
+        // may return objects that are still outside the range.  We need to do
+        // a second pass to trim out the objects that are further than distance.
+
+        for (int i = 0; i < gList.size(); i++)
         {
-            gList = spatialIndex.queryAll();
+            MasonGeometry tempGeometry = (MasonGeometry) gList.get(i);
+
+            if (e.intersects(tempGeometry.getGeometry().getEnvelopeInternal()))
+            {
+                geometries.add(tempGeometry);
+            }
         }
-		
-		geometries.addAll(gList); 
+
 		return geometries; 
 	}
+    
 
     /** 
         Returns all the field's geometry objects.  Do not modify the Bag, 
@@ -207,7 +216,20 @@ public class GeomVectorField extends GeomField
 		e.expandBy(dist); 
 		
 		List<?> gList = spatialIndex.query(e);
-		nearbyObjects.addAll(gList);
+
+        // However, the JTS QuadTree query is a little sloppy, which means it
+        // may return objects that are still outside the range.  We need to do
+        // a second pass to trim out the objects that are further than distance.
+
+        for (int i = 0; i < gList.size(); i++)
+        {
+            MasonGeometry tempGeometry = (MasonGeometry) gList.get(i);
+
+            if (g.isWithinDistance(tempGeometry.getGeometry(), dist))
+            {
+                nearbyObjects.add(tempGeometry);
+            }
+        }
 
         return nearbyObjects;
     }
