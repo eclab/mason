@@ -249,10 +249,21 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		boolean objectSelected = !selectedWrappers.isEmpty();
 
 		geomField.updateTransform(info);
-		// Bag geometries = geomField.queryField(geomField.clipEnvelope);
-		Bag geometries = geomField.getGeometries();
 
-		GeomInfo2D gInfo = new GeomInfo2D(info, geomField.worldToScreen);
+        Bag geometries;
+
+        geometries = geomField.queryField(geomField.clipEnvelope);
+
+        if (geometries == null || geometries.isEmpty())
+        {
+            geometries = geomField.getGeometries();
+        }
+//        else
+//        {
+//            System.out.println("clipped: " + geometries.size());
+//        }
+
+        GeomInfo2D gInfo = new GeomInfo2D(info, geomField.worldToScreen);
 
 		final double xScale = info.draw.width / geomField.getFieldWidth();
 		final double yScale = info.draw.height / geomField.getFieldHeight();
@@ -262,15 +273,15 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		
 		// use this for determining which objects we should be concerned with 
 		GeometryFactory geomFactory = ((MasonGeometry)geometries.objs[0]).getGeometry().getFactory(); 
-		Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope); 
+//		Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope);
 		
 		for (int i = 0; i < geometries.numObjs; i++)
 		{
 			MasonGeometry gm = (MasonGeometry) geometries.objs[i];
 			Geometry geom = gm.getGeometry();
 			
-			if (clipGeometry.intersects(geom.getEnvelope()))
-			{
+//			if (clipGeometry.intersects(geom.getEnvelope()))
+//			{
 				Portrayal p = getPortrayalForObject(gm);
 
 				if (!(p instanceof SimplePortrayal2D)) { throw new RuntimeException("Unexpected Portrayal " + p
@@ -303,7 +314,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 						portrayal.draw(gm, graphics, newinfo);
 					}
 				}
-			}
+//			}
 		}
 	}
 
