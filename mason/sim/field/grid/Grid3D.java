@@ -165,7 +165,7 @@ public interface Grid3D extends java.io.Serializable
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public void getNeighborsMaxDistance( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
+    public void getMooreLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
 
 
     /**
@@ -218,6 +218,6 @@ public interface Grid3D extends java.io.Serializable
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public void getNeighborsHamiltonianDistance( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
+    public void getVonNeumannLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
     }
 

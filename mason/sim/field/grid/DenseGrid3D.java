@@ -259,7 +259,7 @@ public class DenseGrid3D extends AbstractGrid3D
      */
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
+        getMooreNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
         }
 
 
@@ -288,7 +288,7 @@ public class DenseGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getMooreNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -297,7 +297,7 @@ public class DenseGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
+        getMooreLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 
@@ -328,7 +328,7 @@ public class DenseGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getMooreNeighborsAndLocations(final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -337,7 +337,7 @@ public class DenseGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
+        getMooreLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
         reduceObjectsAtLocations( xPos,  yPos,  zPos, result);
         return result;
         }
@@ -376,7 +376,7 @@ public class DenseGrid3D extends AbstractGrid3D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
-        getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
+        getVonNeumannNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
         }
 
 
@@ -406,7 +406,7 @@ public class DenseGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHamiltonianDistance( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getVonNeumannNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -415,7 +415,7 @@ public class DenseGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
+        getVonNeumannLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 
@@ -448,7 +448,7 @@ public class DenseGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getVonNeumannNeighborsAndLocations(final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -457,7 +457,7 @@ public class DenseGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
+        getVonNeumannLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
         reduceObjectsAtLocations( xPos,  yPos, zPos, result);
         return result;
         }

@@ -549,7 +549,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
      */
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
+        getMooreNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
         }
 
 
@@ -578,7 +578,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public DoubleBag getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public DoubleBag getMooreNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -587,7 +587,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
+        getMooreLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 
@@ -628,7 +628,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
-        getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
+        getVonNeumannNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
         }
 
 
@@ -659,7 +659,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public DoubleBag getNeighborsHamiltonianDistance( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public DoubleBag getVonNeumannNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -668,7 +668,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
+        getVonNeumannLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 

@@ -173,10 +173,10 @@ public abstract class AbstractGrid2D implements Grid2D
     /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getMooreLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
-    public void getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getMooreLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -263,11 +263,11 @@ public abstract class AbstractGrid2D implements Grid2D
     /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getVonNeumannLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
 
-    public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getVonNeumannLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -366,10 +366,10 @@ public abstract class AbstractGrid2D implements Grid2D
     /** @deprecated */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getHexagonalLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
-    public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getHexagonalLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);

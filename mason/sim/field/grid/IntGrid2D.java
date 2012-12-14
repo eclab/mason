@@ -567,7 +567,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -594,14 +594,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public IntBag getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
+    public IntBag getMooreNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -638,7 +638,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
+        getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
         }
 
 
@@ -666,14 +666,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public IntBag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
+    public IntBag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -712,7 +712,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -740,14 +740,14 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public IntBag getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
+    public IntBag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 

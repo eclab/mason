@@ -333,10 +333,10 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
     /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
+        getMooreLocations(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
         }
 
-    public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
+    public void getMooreLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -417,14 +417,14 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         else // not toroidal
             {
             // compute xmin and xmax for the neighborhood such that they are within boundaries
-            final int xmin = ((x-dist>=0)?x-dist:0);
-            final int xmax =((x+dist<=width-1)?x+dist:width-1);
+            final int xmin = ((x-dist>=0 || !bounded)?x-dist:0);
+            final int xmax =((x+dist<=width-1 || !bounded)?x+dist:width-1);
             // compute ymin and ymax for the neighborhood such that they are within boundaries
-            final int ymin = ((y-dist>=0)?y-dist:0);
-            final int ymax = ((y+dist<=height-1)?y+dist:height-1);
+            final int ymin = ((y-dist>=0 || !bounded)?y-dist:0);
+            final int ymax = ((y+dist<=height-1 || !bounded)?y+dist:height-1);
                         
-            final int zmin = ((z-dist>=0)?z-dist:0);
-            final int zmax = ((z+dist<=length-1)?z+dist:length-1);
+            final int zmin = ((z-dist>=0 || !bounded)?z-dist:0);
+            final int zmax = ((z+dist<=length-1 || !bounded)?z+dist:length-1);
                         
             for( int x0 = xmin ; x0 <= xmax ; x0++ )
                 {
@@ -449,10 +449,10 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
     /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
+        getVonNeumannLocations(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
         }
 
-    public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
+    public void getVonNeumannLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -537,20 +537,20 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         else // not toroidal
             {
             // compute xmin and xmax for the neighborhood such that they are within boundaries
-            final int xmax = ((x+dist<=width-1)?x+dist:width-1);
-            final int xmin = ((x-dist>=0)?x-dist:0);
+            final int xmax = ((x+dist<=width-1 || !bounded)?x+dist:width-1);
+            final int xmin = ((x-dist>=0 || !bounded)?x-dist:0);
             for( int x0 = xmin ; x0 <= xmax ; x0++ )
                 {
                 final int x_0 = x0;
                 // compute ymin and ymax for the neighborhood such that they are within boundaries
                 // they depend on the curreny x0 value
-                final int ymax = ((y+(dist-((x0-x>=0)?x0-x:x-x0))<=height-1)?y+(dist-((x0-x>=0)?x0-x:x-x0)):height-1);
-                final int ymin = ((y-(dist-((x0-x>=0)?x0-x:x-x0))>=0)?y-(dist-((x0-x>=0)?x0-x:x-x0)):0);
+                final int ymax = ((y+(dist-((x0-x>=0)?x0-x:x-x0))<=height-1 || !bounded)?y+(dist-((x0-x>=0)?x0-x:x-x0)):height-1);
+                final int ymin = ((y-(dist-((x0-x>=0)?x0-x:x-x0))>=0 || !bounded)?y-(dist-((x0-x>=0)?x0-x:x-x0)):0);
                 for( int y0 =  ymin; y0 <= ymax; y0++ )
                     {
                     final int y_0 = y0;
-                    final int zmin = ((z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0))>=0)?z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0)):0);
-                    final int zmax = ((z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0))<=length-1)?z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0)):length-1) ;
+                    final int zmin = ((z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0))>=0 || !bounded)?z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0)):0);
+                    final int zmax = ((z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0))<=length-1 || !bounded)?z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0)):length-1) ;
                     for( int z0 = zmin; z0 <= zmax; z0++ )
                         {
                         final int z_0 = z0;
@@ -577,11 +577,11 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
 
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
+        getMooreNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
         }
 
 
-    public Bag getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getMooreNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -590,7 +590,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
+        getMooreLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 
@@ -624,7 +624,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getMooreNeighborsAndLocations(final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -633,7 +633,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
+        getMooreLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
         reduceObjectsAtLocations( xPos,  yPos,  zPos, result);
         return result;
         }
@@ -675,7 +675,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
-        getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
+        getVonNeumannNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos, zPos);
         }
 
 
@@ -708,7 +708,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHamiltonianDistance( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getVonNeumannNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -717,7 +717,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
+        getVonNeumannLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos);
         return getObjectsAtLocations(xPos,yPos,zPos, result);
         }
 
@@ -753,7 +753,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getVonNeumannNeighborsAndLocations(final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -762,7 +762,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         if( zPos == null )
             zPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
+        getVonNeumannLocations( x, y, z, dist, mode, includeOrigin, xPos, yPos, zPos );
         reduceObjectsAtLocations( xPos,  yPos, zPos, result);
         return result;
         }

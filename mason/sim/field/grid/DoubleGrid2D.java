@@ -638,7 +638,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -667,54 +667,15 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public DoubleBag getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
+    public DoubleBag getMooreNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
-        }
-
-
-    /**
-     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist.  This region forms a
-     * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
-     * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
-     *
-     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result DoubleBag, clearing them first.  
-     * Some <X,Y> positions may not appear
-     * and that others may appear multiply if multiple objects share that positions.  Compare this function
-     * with getNeighborsMaxDistance(...).
-     * Returns the result DoubleBag.
-     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
-     * each one.
-     *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
-     *
-     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
-     */
-    public DoubleBag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos)
-        {
-        if( xPos == null )
-            xPos = new IntBag();
-        if( yPos == null )
-            yPos = new IntBag();
-
-        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
-        reduceObjectsAtLocations( xPos,  yPos,  result);
-        return result;
         }
 
 
@@ -751,7 +712,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
+        getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
         }
 
 
@@ -781,56 +742,15 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public DoubleBag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
+    public DoubleBag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
-        }
-
-
-
-    /**
-     * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) <= dist.  This region forms a diamond
-     * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y).  If dist==1 this is
-     * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
-     * plus (X,Y) itself.
-     *
-     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result DoubleBag, clearing them first.  
-     * Some <X,Y> positions may not appear
-     * and that others may appear multiply if multiple objects share that positions.  Compare this function
-     * with getNeighborsMaxDistance(...).
-     * Returns the result DoubleBag.
-     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
-     * each one.
-     *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
-     *
-     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
-     */
-    public DoubleBag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos)
-        {
-        if( xPos == null )
-            xPos = new IntBag();
-        if( yPos == null )
-            yPos = new IntBag();
-
-        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
-        reduceObjectsAtLocations( xPos,  yPos,  result);
-        return result;
         }
 
 
@@ -868,7 +788,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, DoubleBag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -898,56 +818,17 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public DoubleBag getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
+    public DoubleBag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
-                
-    /**
-     * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
-     * inclusive.
-     * If dist==1, this is equivalent to the six neighbors immediately surrounding (X,Y), 
-     * plus (X,Y) itself.
-     *
-     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
-     * xPos, yPos, and result DoubleBag, clearing them first.  
-     * Some <X,Y> positions may not appear
-     * and that others may appear multiply if multiple objects share that positions.  Compare this function
-     * with getNeighborsMaxDistance(...).
-     * Returns the result DoubleBag.
-     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
-     * each one.
-     *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
-     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
-     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
-     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
-     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
-     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
-     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
-     *
-     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
-     */
-    public DoubleBag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, DoubleBag result, IntBag xPos, IntBag yPos)
-        {
-        if( xPos == null )
-            xPos = new IntBag();
-        if( yPos == null )
-            yPos = new IntBag();
-
-        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
-        reduceObjectsAtLocations( xPos,  yPos,  result);
-        return result;
-        }
 
 
         

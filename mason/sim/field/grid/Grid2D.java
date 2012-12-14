@@ -267,7 +267,7 @@ public interface Grid2D extends java.io.Serializable
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public void getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
+    public void getMooreLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
 
 
     /**
@@ -314,7 +314,7 @@ public interface Grid2D extends java.io.Serializable
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
+    public void getVonNeumannLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
 
     /**
      * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
@@ -360,5 +360,5 @@ public interface Grid2D extends java.io.Serializable
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
+    public void getHexagonalLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
     }

@@ -281,10 +281,10 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getMooreLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
-    public void getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getMooreLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -371,11 +371,11 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getVonNeumannLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
 
-    public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getVonNeumannLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -474,10 +474,10 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     /** @deprecated */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
+        getHexagonalLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
         }
 
-    public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
+    public void getHexagonalLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
         {
         boolean toroidal = (mode == TOROIDAL);
         boolean bounded = (mode == BOUNDED);
@@ -697,7 +697,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -726,14 +726,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getMooreNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, true, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, true, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -769,7 +769,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsAndCorrespondingLocationsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsAndCorrespondingPositionsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getMooreNeighborsAndLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -799,14 +799,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getMooreNeighborsAndLocations(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, true, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, true, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -845,7 +845,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -875,14 +875,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, true, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, true, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -921,7 +921,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsAndCorrespondingPositionsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getVonNeumannNeighborsAndLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -952,14 +952,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getVonNeumannNeighborsAndLocations(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, true, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, true, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -999,7 +999,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -1029,14 +1029,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, true, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, true, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
@@ -1074,7 +1074,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getNeighborsAndCorrespondingPositionsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getHexagonalNeighborsAndLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }
 
 
@@ -1105,14 +1105,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getHexagonalNeighborsAndLocations(final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, true, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, true, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }

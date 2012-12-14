@@ -253,7 +253,7 @@ public class DenseGrid2D extends AbstractGrid2D
      */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -282,14 +282,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getMooreNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -320,14 +320,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getMooreNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -366,7 +366,7 @@ public class DenseGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
+        getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
         }
 
 
@@ -396,14 +396,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -436,14 +436,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getVonNeumannNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
@@ -483,7 +483,7 @@ public class DenseGrid2D extends AbstractGrid2D
      */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -513,14 +513,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
@@ -552,14 +552,14 @@ public class DenseGrid2D extends AbstractGrid2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+    public Bag getHexagonalNeighborsAndLocations(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
