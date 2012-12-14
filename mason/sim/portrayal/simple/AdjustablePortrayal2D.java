@@ -105,7 +105,7 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
             Point2D.Double myPosition = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
             Object object = wrapper.getObject();
             if (!   // if any of this stuff is true, just drop out
-                    (object == null ||                                                   // something is very wrong!
+                    (myPosition == null || object == null ||                                                   // something is very wrong!
                     (adjusting && adjustingObject != object) || // we're not portraying the relevant object
                     !((object instanceof Scalable2D || object instanceof Orientable2D)))) // it's neither scalable nor orientable
                 {

@@ -116,8 +116,8 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
             final double xScale = info.draw.width / maxX;
             final double yScale = info.draw.height / maxY;
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
-                info.clip);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+            newinfo.precise = info.precise;
 
             Int2D loc = (Int2D) location;
             if (location == null) return null;
@@ -172,6 +172,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+            newinfo.precise = info.precise;
         newinfo.location = locationToPass;
         newinfo.fieldPortrayal = this;
 

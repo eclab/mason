@@ -149,6 +149,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             final double xScale = fieldPortrayalInfo.draw.width / field.width;
             final double yScale = fieldPortrayalInfo.draw.height / field.height;
             DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
+            newinfo.precise = fieldPortrayalInfo.precise;
 
             Double2D loc = (Double2D) location;
             if (loc == null) return null;
@@ -195,8 +196,8 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale),
-            info.clip);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+            newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 
         // hit/draw the objects one by one -- perhaps for large numbers of objects it would

@@ -2496,9 +2496,14 @@ Version 17
 	Added OrientedPortrayal2D.getOrientation(...)
 	Fixed bug in OrientedPortrayal2D which wouldn't draw underlying shapes in certain
 		cases.
+	Fixed bug in AdjustablePortrayal2D which would still try to draw even if the
+		underlying object was missing.
 	Bug fix in HexaValueGridPortrayal2D which was preventing proper hit testing, hence
 		selection or inspection.
 	Schedule.time and Schedule.steps are now protected.
 	Bug fixes to field portrayals which were not copying 'precise' over to new
 		DrawInfo2D objects
 	Added Display.getSelectedWrappers() and Display3D.getSelectedWrappers()
+	Major revision of grid methods [First step]: new neighborhood methods in Grid2D
+		and Grid3D have a "mode" which can be toroidal, unbounded, or bounded,
+		as opposed to just a boolean indicating toroidal or not.

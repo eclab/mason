@@ -146,6 +146,17 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     double lastLength = Double.NaN;
     AffineTransform transform = new AffineTransform();
     Stroke stroke = new BasicStroke();
+    
+    /** Returns the orientation of the underlying object, or NaN if there is no such orientation. 
+        The default implementation assumes that the object is non-null and is an instance of Oriented2D,
+        and calls orientation2D() on it; else it returns NaN. */
+        
+    public double getOrientation(Object object, DrawInfo2D info)
+        {
+        if (object != null && object instanceof Oriented2D)
+            return ((Oriented2D)object).orientation2D();
+        else return Double.NaN;
+        }
         
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
@@ -153,9 +164,11 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
         if (shape == SHAPE_LINE || !drawFilled)
             getChild(object).draw(object,graphics,info);
 
-        if (showOrientation && (info.selected || !onlyDrawWhenSelected) && (object!=null) && (object instanceof Oriented2D))
+        if (showOrientation && (info.selected || !onlyDrawWhenSelected))
             {
-            double theta = ((Oriented2D)object).orientation2D();
+            double theta = getOrientation(object, info);
+            if (theta == theta)  // NaN != NaN
+                {
             double length = (scale * (info.draw.width < info.draw.height ? 
                     info.draw.width : info.draw.height)) + offset;  // fit in smallest dimension
             if (length != lastLength) 
@@ -264,11 +277,12 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         break;
                     }
                 }
-
-            // draw the underlying object last?
-            if (shape != SHAPE_LINE && drawFilled)
-                getChild(object).draw(object,graphics,info);
             }
+        }
+            
+        // draw the underlying object last?
+        if (shape != SHAPE_LINE && drawFilled)
+            getChild(object).draw(object,graphics,info);
         }
         
         

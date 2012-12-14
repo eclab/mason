@@ -52,18 +52,19 @@ public class ObjectGrid2D extends AbstractGrid2D
     /** Sets location (x,y) to val */
     public final void set(final int x, final int y, final Object val)
         {
-                assert sim.util.LocationLog.it(this, new Int2D(x,y));
+        assert sim.util.LocationLog.it(this, new Int2D(x,y));
         field[x][y] = val;
         }
 
     /** Returns the element at location (x,y) */
     public final Object get(final int x, final int y)
         {
-                assert sim.util.LocationLog.it(this, new Int2D(x,y));
+        assert sim.util.LocationLog.it(this, new Int2D(x,y));
         return field[x][y];
         }
 
-    /** Sets all the locations in the grid the provided element */
+    /** Sets all the locations in the grid the provided element. <b>WARNING:
+        this may conflict with setTo(Object[][]) -- make sure you have casted properly.   */
     public final ObjectGrid2D setTo(Object thisObj)
         {
         Object[] fieldx = null;
@@ -81,7 +82,7 @@ public class ObjectGrid2D extends AbstractGrid2D
         return this;
         }
 
-     /** Sets the grid to a copy of the provided array, which must be rectangular.  <b>WARNING:
+    /** Sets the grid to a copy of the provided array, which must be rectangular.  <b>WARNING:
         this may conflict with setTo(Object) -- make sure you have casted properly.  */
     public ObjectGrid2D setTo(Object[][] field)
         {
@@ -143,7 +144,7 @@ public class ObjectGrid2D extends AbstractGrid2D
                 {
                 if (fieldx[y]!=null) 
                     {
-                assert sim.util.LocationLog.it(this, new Int2D(x,y));
+                    assert sim.util.LocationLog.it(this, new Int2D(x,y));
                     bag.add(fieldx[y]);
                     }
                 }
@@ -206,269 +207,577 @@ public class ObjectGrid2D extends AbstractGrid2D
         }
 
 
+/*
+  final Bag getImmediateNeighbors(int x, int y, boolean toroidal, Bag result)
+  {
+  if (result != null)
+  { result.clear();  result.resize(9); }  // not always 9 elements of course but it's the majority case by far
+  else
+  result = new Bag(9);  // likwise
 
-    final Bag getImmediateNeighbors(int x, int y, boolean toroidal, Bag result)
-        {
-        if (result != null)
-            { result.clear();  result.resize(9); }  // not always 9 elements of course but it's the majority case by far
-        else
-            result = new Bag(9);  // likwise
-
-        int width = this.width;
-        int height = this.height;
+  int width = this.width;
+  int height = this.height;
         
-        Object[] fieldx0 = null;
-        Object[] fieldx = null;
-        Object[] fieldx1 = null;
+  Object[] fieldx0 = null;
+  Object[] fieldx = null;
+  Object[] fieldx1 = null;
         
-        if (x!=0 && y!=0 && x!=width && y!=height)  // the majority case
-            {
-            // toroidal or non-toroidal
-            // ---
-            // -x-
-            // ---
+  if (x>0 && y>0 && x<width-1 && y<height-1)  // the majority case
+  {
+  // toroidal or non-toroidal
+  // ---
+  // -x-
+  // ---
 
-            fieldx0 = field[x-1];
-            fieldx = field[x];
-            fieldx1 = field[x+1];
+  fieldx0 = field[x-1];
+  fieldx = field[x];
+  fieldx1 = field[x+1];
 
-            result.add(fieldx[y]);
-            result.add(fieldx[y-1]);
-            result.add(fieldx[y+1]);
-            result.add(fieldx1[y]);
-            result.add(fieldx1[y-1]);
-            result.add(fieldx1[y+1]);
-            result.add(fieldx0[y]);
-            result.add(fieldx0[y-1]);
-            result.add(fieldx0[y+1]);
-            return result;
-            }
+  result.add(fieldx[y]);
+  result.add(fieldx[y-1]);
+  result.add(fieldx[y+1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y-1]);
+  result.add(fieldx1[y+1]);
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y-1]);
+  result.add(fieldx0[y+1]);
+  return result;
+  }
         
-        else if (toroidal)
-            {
-            if (x==0)
-                {
-                fieldx0 = field[width-1];
-                fieldx = field[0];
-                fieldx1 = field[1];
-                }
-            else if (x==width-1)
-                {
-                fieldx0 = field[0];
-                fieldx = field[width-1];
-                fieldx1 = field[width-2];
-                }
-            else
-                {
-                fieldx0 = field[x-1];
-                fieldx = field[x];
-                fieldx1 = field[x+1];
-                }
-
-            result.add(fieldx[y]);
-            result.add(fieldx[y-1]);
-            result.add(fieldx[y+1]);
-            result.add(fieldx1[y]);
-            result.add(fieldx1[y-1]);
-            result.add(fieldx1[y+1]);
-            result.add(fieldx0[y]);
-            result.add(fieldx0[y-1]);
-            result.add(fieldx0[y+1]);
-            }
+  else if (toroidal)
+  {
+  if (x==0)
+  {
+  fieldx0 = field[width-1];
+  fieldx = field[0];
+  fieldx1 = field[1];
+  }
+  else if (x==width-1)
+  {
+  fieldx0 = field[0];
+  fieldx = field[width-1];
+  fieldx1 = field[width-2];
+  }
+  else
+  {
+  fieldx0 = field[x-1];
+  fieldx = field[x];
+  fieldx1 = field[x+1];
+  }
+                
+  if (y==0)
+  {
+  result.add(fieldx[y]);
+  result.add(fieldx[y+1]);
+  result.add(fieldx[height-1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y+1]);
+  result.add(fieldx1[height-1]);
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y+1]);
+  result.add(fieldx0[height-1]);
+  }
+  else if (y==height-1)
+  {
+  result.add(fieldx[y]);
+  result.add(fieldx[y-1]);
+  result.add(fieldx[0]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y-1]);
+  result.add(fieldx1[0]);
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y-1]);
+  result.add(fieldx0[0]);
+  }
+  else  // code never reaches here
+  {
+  result.add(fieldx[y]);
+  result.add(fieldx[y-1]);
+  result.add(fieldx[y+1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y-1]);
+  result.add(fieldx1[y+1]);
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y-1]);
+  result.add(fieldx0[y+1]);
+  }
+  }
         
-        else  // non-toroidal
-            {
-            if (x==0)
-                {
-                fieldx = field[0];
-                fieldx1 = field[1];
-                }
-            else if (x==width-1)
-                {
-                fieldx = field[width-1];
-                fieldx1 = field[width-2];
-                }
-            else
-                {
-                fieldx = field[x];
-                fieldx1 = field[x+1];
-                }
+  else  // non-toroidal
+  {
+  if (x==0)
+  {
+  fieldx = field[0];
+  fieldx1 = field[1];
+  }
+  else if (x==width-1)
+  {
+  fieldx = field[width-1];
+  fieldx1 = field[width-2];
+  }
+  else
+  {
+  fieldx = field[x];
+  fieldx1 = field[x+1];
+  }
 
-            if (y==0)
-                {
-                // x--  --x  -x-
-                // ---  ---  ---
-                // ---  ---  ---
-                result.add(fieldx[y]);
-                result.add(fieldx[y+1]);
-                result.add(fieldx1[y]);
-                result.add(fieldx1[y+1]);
-                }
-            else if (y==height-1)
-                {
-                // ---  ---  ---
-                // ---  ---  ---
-                // x--  --x  -x-
-                result.add(fieldx[y]);
-                result.add(fieldx[y-1]);
-                result.add(fieldx1[y]);
-                result.add(fieldx1[y-1]);
-                }
-            else
-                {
-                // ---  ---  ---  // the last of these cases will never happen because of the special case at the beginning
-                // x--  --x  -x-
-                // ---  ---  ---
-                result.add(fieldx[y]);
-                result.add(fieldx[y-1]);
-                result.add(fieldx[y+1]);
-                result.add(fieldx1[y]);
-                result.add(fieldx1[y-1]);
-                result.add(fieldx1[y+1]);
-                }
+  if (y==0)
+  {
+  // x--  --x  -x-
+  // ---  ---  ---
+  // ---  ---  ---
+  result.add(fieldx[y]);
+  result.add(fieldx[y+1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y+1]);
+  }
+  else if (y==height-1)
+  {
+  // ---  ---  ---
+  // ---  ---  ---
+  // x--  --x  -x-
+  result.add(fieldx[y]);
+  result.add(fieldx[y-1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y-1]);
+  }
+  else
+  {
+  // ---  ---  ---  // the last of these cases will never happen because of the special case at the beginning
+  // x--  --x  -x-
+  // ---  ---  ---
+  result.add(fieldx[y]);
+  result.add(fieldx[y-1]);
+  result.add(fieldx[y+1]);
+  result.add(fieldx1[y]);
+  result.add(fieldx1[y-1]);
+  result.add(fieldx1[y+1]);
+  }
             
-            if (x != 0 && x != width-1)
-                {
-                fieldx0 = field[x-1];
-                if (y==0)
-                    {
-                    // -x-
-                    // ---
-                    // ---
-                    result.add(fieldx0[y]);
-                    result.add(fieldx0[y+1]);
-                    }
-                else if (y==height-1)
-                    {
-                    // ---
-                    // ---
-                    // -x-
-                    result.add(fieldx0[y]);
-                    result.add(fieldx0[y-1]);
-                    }
-                else   // this will never happen because of the special case at the beginning
-                    {
-                    // ---
-                    // -x-
-                    // ---
-                    result.add(fieldx0[y]);
-                    result.add(fieldx0[y-1]);
-                    result.add(fieldx0[y+1]);
-                    }
-                }
-            }
+  if (x != 0 && x != width-1)
+  {
+  fieldx0 = field[x-1];
+  if (y==0)
+  {
+  // -x-
+  // ---
+  // ---
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y+1]);
+  }
+  else if (y==height-1)
+  {
+  // ---
+  // ---
+  // -x-
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y-1]);
+  }
+  else   // this will never happen because of the special case at the beginning
+  {
+  // ---
+  // -x-
+  // ---
+  result.add(fieldx0[y]);
+  result.add(fieldx0[y-1]);
+  result.add(fieldx0[y+1]);
+  }
+  }
+  }
 
-        return result;
-        }
-
+  return result;
+  }
+*/
        
-        
-        
+
+
+
     /**
-     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist.  This region forms a
+     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist, This region forms a
      * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
      * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
      * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
-     * Then places into the result Bag the objects at each of those <x,y> locations clearning it first.  
-     * Returns the result Bag (constructing one if null had been passed in).
+     *
+     * <p>Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * <b>Note that the order and size of the result Bag may not correspond to the X and Y bags.</b>  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsMaxDistance(...)
+     * Returns the result Bag.
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>There is a faster special case when the distance = 1 and xPos and yPos are both null (you don't care about them).
-     * In this case, the neighbors are computed directly and put right into the Bag.  We suggest you use this if it dist=1
-     * is what you're interested in.
+     * <p> This function may only run in two modes: toroidal or bounded.  Unbounded lookup is not permitted, and so
+     * this function is deprecated: instead you should use the other version of this function which has more functionality.
+     * If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.   if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>The origin -- that is, the (x,y) point at the center of the neighborhood -- is always included in the results.
+     *
+     * <p>This function is equivalent to: <tt>getNeighborsMaxDistance(x,y,dist,toroidal ? Grid2D.TOROIDAL : Grid2D.BOUNDED, true, result, xPos, yPos);</tt>
+     * 
+     * @deprecated
      */
-    public final Bag getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+    public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        if (dist == 1 && xPos == null && yPos == null)  // special case this for speed
-            return getImmediateNeighbors(x, y, toroidal, result);
+        getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        }
 
-        
+
+    /**
+     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist, This region forms a
+     * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
+     * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
+     * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     *
+     * <p>Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * <b>Note that the order and size of the result Bag may not correspond to the X and Y bags.</b>  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsMaxDistance(...)
+     * Returns the result Bag.
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsMaxDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
+        {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsMaxDistance( x, y, dist, toroidal, xPos, yPos );
+        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
 
-        if (result != null)
-            { result.clear();  result.resize(xPos.size()); }
-        else
-            result = new Bag(xPos.size());
 
-        for( int i = 0 ; i < xPos.numObjs ; i++ )
-            {
-            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
-            result.add( field[xPos.objs[i]][yPos.objs[i]] );
-            }
+    /**
+     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist.  This region forms a
+     * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
+     * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
+     *
+     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
+     * xPos, yPos, and result Bag, clearing them first.  
+     * Some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsMaxDistance(...).
+     * Returns the result Bag.
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsAndCorrespondingPositionsMaxDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getNeighborsMaxDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
+
+
 
     /**
      * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) <= dist.  This region forms a diamond
      * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y).  If dist==1 this is
      * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
      * plus (X,Y) itself.
-     * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
-     * Then places into the result Bag the objects at each of those <x,y> locations, clearning it first.  
+     *
+     * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
      * Returns the result Bag (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
+     *
+     * <p> This function may only run in two modes: toroidal or bounded.  Unbounded lookup is not permitted, and so
+     * this function is deprecated: instead you should use the other version of this function which has more functionality.
+     * If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.   if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>The origin -- that is, the (x,y) point at the center of the neighborhood -- is always included in the results.
+     *
+     * <p>This function is equivalent to: <tt>getNeighborsHamiltonianDistance(x,y,dist,toroidal ? Grid2D.TOROIDAL : Grid2D.BOUNDED, true, result, xPos, yPos);</tt>
+     * 
+     * @deprecated
      */
-    public final Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+    public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+        {
+        getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true,result, xPos, yPos);
+        }
+
+
+    /**
+     * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) <= dist.  This region forms a diamond
+     * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y).  If dist==1 this is
+     * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
+     * plus (X,Y) itself.
+     *
+     * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
+     * Returns the result Bag (constructing one if null had been passed in).
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHamiltonianDistance( x, y, dist, toroidal, xPos, yPos );
+        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
 
-        if (result != null)
-            { result.clear();  result.resize(xPos.size()); }
-        else
-            result = new Bag(xPos.size());
 
-        for( int i = 0 ; i < xPos.numObjs ; i++ )
-            {
-            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
-            result.add( field[xPos.objs[i]][yPos.objs[i]] );
-            }
+
+    /**
+     * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) <= dist.  This region forms a diamond
+     * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y).  If dist==1 this is
+     * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
+     * plus (X,Y) itself.
+     *
+     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
+     * xPos, yPos, and result Bag, clearing them first.  
+     * Some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsMaxDistance(...).
+     * Returns the result Bag.
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsAndCorrespondingPositionsHamiltonianDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getNeighborsHamiltonianDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        reduceObjectsAtLocations( xPos,  yPos,  result);
         return result;
         }
+
+
+
 
     /**
      * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
      * inclusive.
      * If dist==1, this is equivalent to the six neighbors immediately surrounding (X,Y), 
      * plus (X,Y) itself.
-     * Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
-     * Then places into the result Bag the objects at each of those <x,y> locations clearning it first.  
+     *
+     * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
      * Returns the result Bag (constructing one if null had been passed in).
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
+     *
+     * <p> This function may only run in two modes: toroidal or bounded.  Unbounded lookup is not permitted, and so
+     * this function is deprecated: instead you should use the other version of this function which has more functionality.
+     * If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.   if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>The origin -- that is, the (x,y) point at the center of the neighborhood -- is always included in the results.
+     *
+     * <p>This function is equivalent to: <tt>getNeighborsHexagonalDistance(x,y,dist,toroidal ? Grid2D.TOROIDAL : Grid2D.BOUNDED, true, result, xPos, yPos);</tt>
+     * 
+     * @deprecated
      */
-    public final Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+    public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+        {
+        getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
+        }
+
+
+    /**
+     * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
+     * inclusive.
+     * If dist==1, this is equivalent to the six neighbors immediately surrounding (X,Y), 
+     * plus (X,Y) itself.
+     *
+     * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     * Then places into the result Bag any Objects which fall on one of these <x,y> locations, clearning it first.
+     * Note that the order and size of the result Bag may not correspond to the X and Y bags.  If you want
+     * all three bags to correspond (x, y, object) then use getNeighborsAndCorrespondingPositionsHamiltonianDistance(...)
+     * Returns the result Bag (constructing one if null had been passed in).
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getNeighborsHexagonalDistance( x, y, dist, toroidal, xPos, yPos );
+        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
+                
+                
+    /**
+     * Gets all neighbors located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
+     * inclusive.
+     * If dist==1, this is equivalent to the six neighbors immediately surrounding (X,Y), 
+     * plus (X,Y) itself.
+     *
+     * <p>For each Object which falls within this distance, adds the X position, Y position, and Object into the
+     * xPos, yPos, and result Bag, clearing them first.  
+     * Some <X,Y> positions may not appear
+     * and that others may appear multiply if multiple objects share that positions.  Compare this function
+     * with getNeighborsMaxDistance(...).
+     * Returns the result Bag.
+     * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
+     * each one.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public Bag getNeighborsAndCorrespondingPositionsHexagonalDistance(final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
 
-        if (result != null)
-            { result.clear();  result.resize(xPos.size()); }
-        else
-            result = new Bag(xPos.size());
+        getNeighborsHexagonalDistance( x, y, dist, mode, includeOrigin, xPos, yPos );
+        reduceObjectsAtLocations( xPos,  yPos,  result);
+        return result;
+        }
 
-        result.clear();
+
+        
+    // For each <xPos, yPos> location, puts all such objects into the result bag.  Modifies
+    // the xPos and yPos bags so that each position corresponds to the equivalent result in
+    // in the result bag.
+    void reduceObjectsAtLocations(final IntBag xPos, final IntBag yPos, Bag result)
+        {
+        if (result==null) result = new Bag();
+        else result.clear();
+
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             {
             assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
-            result.add( field[xPos.objs[i]][yPos.objs[i]] );
+            Object val = field[xPos.objs[i]][yPos.objs[i]] ;
+            if (val != null) result.add( val );
+            else
+                {
+                xPos.remove(i);
+                yPos.remove(i);
+                i--;  // back up and try the object now in the new slot
+                }
+            }
+        }
+                
+
+    /* For each <xPos,yPos> location, puts all such objects into the result bag.  Returns the result bag.
+       If the provided result bag is null, one will be created and returned. */
+    Bag getObjectsAtLocations(final IntBag xPos, final IntBag yPos, Bag result)
+        {
+        if (result==null) result = new Bag();
+        else result.clear();
+
+        for( int i = 0 ; i < xPos.numObjs ; i++ )
+            {
+            assert sim.util.LocationLog.it(this, new Int2D(xPos.objs[i],yPos.objs[i]));
+            Object val = field[xPos.objs[i]][yPos.objs[i]] ;
+            if (val != null) result.add( val );
             }
         return result;
         }
+
+
+
+
 
     }

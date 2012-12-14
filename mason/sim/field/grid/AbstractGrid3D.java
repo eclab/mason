@@ -6,7 +6,8 @@
 
 package sim.field.grid;
 
-import sim.util.IntBag;
+import sim.util.*;
+import java.util.*;
 
 /**
    A concrete implementation of the Grid3D methods; used by several subclasses.
@@ -125,21 +126,136 @@ public abstract class AbstractGrid3D implements Grid3D
     public final int stz(final int z, final int length) 
         { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
 
+
+
+    // this internal version of tx is arranged to be 34 bytes.  It first tries stx, then tx.
+    int tx(int x, int width, int widthtimestwo, int xpluswidth, int xminuswidth) 
+        {
+        if (x >= -width && x < widthtimestwo)
+            {
+            if (x < 0) return xpluswidth;
+            if (x < width) return x;
+            return xminuswidth;
+            }
+        return tx2(x, width);
+        }
+
+    // used internally by the internal version of tx above.  Do not call directly.
+    int tx2(int x, int width)
+        {
+        x = x % width;
+        if (x < 0) x = x + width;
+        return x;
+        }
+
+    // this internal version of ty is arranged to be 34 bytes.  It first tries sty, then ty.
+    int ty(int y, int height, int heighttimestwo, int yplusheight, int yminusheight) 
+        {
+        if (y >= -height && y < heighttimestwo)
+            {
+            if (y < 0) return yplusheight;
+            if (y < height) return y;
+            return yminusheight;
+            }
+        return ty2(y, height);
+        }
+        
+    // used internally by the internal version of ty above.  Do not call directly.
+    int ty2(int y, int height)
+        {
+        y = y % height;
+        if (y < 0) y = y + height;
+        return y;
+        }
+        
+    // this internal version of tz is arranged to be 34 bytes.  It first tries stz, then tz.
+    int tz(int z, int length, int lengthtimestwo, int zpluslength, int zminuslength) 
+        {
+        if (z >= -length && z < lengthtimestwo)
+            {
+            if (z < 0) return zpluslength;
+            if (z < length) return z;
+            return zminuslength;
+            }
+        return tz2(z, length);
+        }
+        
+    // used internally by the internal version of ty above.  Do not call directly.
+    int tz2(int z, int length)
+        {
+        z = z % length;
+        if (z < 0) z = z + length;
+        return z;
+        }
+        
+
+    protected void removeOrigin(int x, int y, int z, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        int size = xPos.size();
+        for(int i = 0; i <size; i++)
+            {
+            if (xPos.get(i) == x && yPos.get(i) == y && zPos.get(i) == z)
+                {
+                xPos.remove(i);
+                yPos.remove(i);
+                zPos.remove(i);
+                return;
+                }
+            }
+        }
+        
+    // only removes the first occurence
+    protected void removeOriginToroidal(int x, int y, int z, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        int size = xPos.size();
+        x = tx(x, width, width*2, x+width, x-width);
+        y = ty(y, height, height*2, y+height, y-height);
+        z = tz(z, length, length*2, z+length, z-length);
+        
+        for(int i = 0; i <size; i++)
+            {
+            if (tx(xPos.get(i), width, width*2, x+width, x-width) == x && 
+                ty(yPos.get(i), height, height*2, y+height, y-height) == y &&
+                tz(zPos.get(i), length, length*2, z+length, z-length) == z)
+                {
+                xPos.remove(i);
+                yPos.remove(i);
+                zPos.remove(i);
+                return;
+                }
+            }
+        }
+
+
+
+    public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
+        {
+        getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
+        }
+
     /*
      * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y), abs(z-Z) ) <= d
      * Returns the x, y and z positions of the neighbors.
      */
-    public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
+    public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
+        boolean toroidal = (mode == TOROIDAL);
+        boolean bounded = (mode == BOUNDED);
+
+        if (mode != BOUNDED && mode != UNBOUNDED && mode != TOROIDAL)
+            {
+            throw new RuntimeException("Mode must be either Grid3D.BOUNDED, Grid3D.UNBOUNDED, or Grid3D.TOROIDAL");
+            }
+        
         // won't work for negative distances
         if( dist < 0 )
             {
-            throw new RuntimeException( "Runtime exception in method getNeighborsMaxDistance: Distance must be positive" );
+            throw new RuntimeException( "Distance must be positive" );
             }
 
-        if( xPos == null || yPos == null || zPos == null )
+        if( xPos == null || yPos == null || zPos == null)
             {
-            throw new RuntimeException( "Runtime exception in method getNeighborsMaxDistance: xPos and yPos should not be null" );
+            throw new RuntimeException( "xPos and yPos and zPos should not be null" );
             }
 
         xPos.clear();
@@ -155,14 +271,28 @@ public abstract class AbstractGrid3D implements Grid3D
         if( toroidal )
             {
             // compute xmin and xmax for the neighborhood
-            final int xmin = x - dist;
-            final int xmax = x + dist;
+            int xmin = x - dist;
+            int xmax = x + dist;
+
+            // next: is xmax - xmin humongous?  If so, no need to continue wrapping around
+            if (xmax - xmin >= width)  // too wide
+                xmax = xmin + width - 1;
+            
             // compute ymin and ymax for the neighborhood
-            final int ymin = y - dist;
-            final int ymax = y + dist;
+            int ymin = y - dist;
+            int ymax = y + dist;
                         
-            final int zmin = z - dist;
-            final int zmax = z + dist;
+            // next: is ymax - ymin humongous?  If so, no need to continue wrapping around
+            if (ymax - ymin >= height)  // too wide
+                ymax = ymin + height - 1;
+
+            // compute zmin and zmax for the neighborhood
+            int zmin = z - dist;
+            int zmax = z + dist;
+
+            // next: is zmax - zmin humongous?  If so, no need to continue wrapping around
+            if (zmax - zmin >= length)  // too wide
+                zmax = zmin + length - 1;
                         
 
             for( int x0 = xmin; x0 <= xmax ; x0++ )
@@ -183,6 +313,7 @@ public abstract class AbstractGrid3D implements Grid3D
                         }
                     }
                 }
+            if (!includeOrigin) removeOriginToroidal(x,y,z,xPos,yPos,zPos); 
             }
         else // not toroidal
             {
@@ -211,25 +342,39 @@ public abstract class AbstractGrid3D implements Grid3D
                         }
                     }
                 }
+            if (!includeOrigin) removeOrigin(x,y,z,xPos,yPos,zPos); 
             }
         }
 
+
+    public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
+        {
+        getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
+        }
 
     /*
      * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) + abs(z-Z) <= d
      * Returns the x, y and z positions of the neighbors.
      */
-    public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
+    public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
+        boolean toroidal = (mode == TOROIDAL);
+        boolean bounded = (mode == BOUNDED);
+
+        if (mode != BOUNDED && mode != UNBOUNDED && mode != TOROIDAL)
+            {
+            throw new RuntimeException("Mode must be either Grid3D.BOUNDED, Grid3D.UNBOUNDED, or Grid3D.TOROIDAL");
+            }
+        
         // won't work for negative distances
         if( dist < 0 )
             {
-            throw new RuntimeException( "Runtime exception in method getNeighborsHamiltonianDistance: Distance must be positive" );
+            throw new RuntimeException( "Distance must be positive" );
             }
 
-        if( xPos == null || yPos == null || zPos == null )
+        if( xPos == null || yPos == null || zPos == null)
             {
-            throw new RuntimeException( "Runtime exception in method getNeighborsHamiltonianDistance: xPos and yPos should not be null" );
+            throw new RuntimeException( "xPos and yPos and zPos should not be null" );
             }
 
         xPos.clear();
@@ -270,6 +415,28 @@ public abstract class AbstractGrid3D implements Grid3D
                         }
                     }
                 }
+            if (dist * 2 >= width || dist * 2 >= height || dist * 2 >= length)  // too big, will have to remove duplicates
+                {
+                int sz = xPos.size();
+                HashMap map = new HashMap(sz);
+                for(int i = 0 ; i < sz; i++)
+                    {
+                    Double3D elem = new Double3D(xPos.get(i), yPos.get(i), zPos.get(i));
+                    if (map.containsKey(elem)) // already there
+                        {
+                        xPos.remove(i);
+                        yPos.remove(i);
+                        zPos.remove(i);
+                        i--;
+                        sz--;
+                        }
+                    else
+                        {
+                        map.put(elem, elem);
+                        }
+                    }
+                }
+            if (!includeOrigin) removeOriginToroidal(x,y,z,xPos,yPos,zPos); 
             }
         else // not toroidal
             {
@@ -300,6 +467,7 @@ public abstract class AbstractGrid3D implements Grid3D
                         }
                     }
                 }
+            if (!includeOrigin) removeOrigin(x,y,z,xPos,yPos,zPos); 
             }
         }
 
