@@ -2499,3 +2499,6 @@ Version 17
 	Bug fix in HexaValueGridPortrayal2D which was preventing proper hit testing, hence
 		selection or inspection.
 	Schedule.time and Schedule.steps are now protected.
+	Bug fixes to field portrayals which were not copying 'precise' over to new
+		DrawInfo2D objects
+	Added Display.getSelectedWrappers() and Display3D.getSelectedWrappers()
