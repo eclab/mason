@@ -2507,3 +2507,6 @@ Version 17
 	Major revision of grid methods [First step]: new neighborhood methods in Grid2D
 		and Grid3D have a "mode" which can be toroidal, unbounded, or bounded,
 		as opposed to just a boolean indicating toroidal or not.
+	Addition of new neighborhood object methods in all the Grid2D methods [Second step]
+		and tweaks to applications (HeatBugs, Schelling) to properly use the new
+		methods.

@@ -138,11 +138,15 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     // this internal version of tx is arranged to be 34 bytes.  It first tries stx, then tx.
     int tx(int x, int width, int widthtimestwo, int xpluswidth, int xminuswidth) 
         {
-        if (x >= 0 && x < width) return x;
-        if (x >= -width) return xpluswidth; 
-        if (x < widthtimestwo) return xminuswidth;
+        if (x >= -width && x < widthtimestwo)
+            {
+            if (x < 0) return xpluswidth;
+            if (x < width) return x;
+            return xminuswidth;
+            }
         return tx2(x, width);
         }
+
 
     // used internally by the internal version of tx above.  Do not call directly.
     int tx2(int x, int width)
@@ -155,9 +159,12 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     // this internal version of ty is arranged to be 34 bytes.  It first tries sty, then ty.
     int ty(int y, int height, int heighttimestwo, int yplusheight, int yminusheight) 
         {
-        if (y >= 0 && y < height) return y;
-        if (y >= -height) return yplusheight; 
-        if (y < heighttimestwo) return yminusheight;
+        if (y >= -height && y < heighttimestwo)
+            {
+            if (y < 0) return yplusheight;
+            if (y < height) return y;
+            return yminusheight;
+            }
         return ty2(y, height);
         }
         
@@ -169,6 +176,44 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         return y;
         }
         
+
+
+
+
+
+    protected void removeOrigin(int x, int y, IntBag xPos, IntBag yPos)
+        {
+        int size = xPos.size();
+        for(int i = 0; i <size; i++)
+            {
+            if (xPos.get(i) == x && yPos.get(i) == y)
+                {
+                xPos.remove(i);
+                yPos.remove(i);
+                return;
+                }
+            }
+        }
+        
+    // only removes the first occurence
+    protected void removeOriginToroidal(int x, int y, IntBag xPos, IntBag yPos)
+        {
+        int size = xPos.size();
+        x = tx(x, width, width*2, x+width, x-width);
+        y = ty(y, height, height*2, y+height, y-height);
+        
+        for(int i = 0; i <size; i++)
+            {
+            if (tx(xPos.get(i), width, width*2, x+width, x-width) == x && ty(yPos.get(i), height, height*2, y+height, y-height) == y)
+                {
+                xPos.remove(i);
+                yPos.remove(i);
+                return;
+                }
+            }
+        }
+
+
     MutableInt2D speedyMutableInt2D = new MutableInt2D();
     /** Returns the number of objects stored in the grid at the given location. */
     public int numObjectsAtLocation(final int x, final int y)
@@ -233,42 +278,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         
 
 
-
-
-
-
-    protected void removeOrigin(int x, int y, IntBag xPos, IntBag yPos)
-        {
-        int size = xPos.size();
-        for(int i = 0; i <size; i++)
-            {
-            if (xPos.get(i) == x && yPos.get(i) == y)
-                {
-                xPos.remove(i);
-                yPos.remove(i);
-                return;
-                }
-            }
-        }
-        
-    // only removes the first occurence
-    protected void removeOriginToroidal(int x, int y, IntBag xPos, IntBag yPos)
-        {
-        int size = xPos.size();
-        x = tx(x, width, width*2, x+width, x-width);
-        y = ty(y, height, height*2, y+height, y-height);
-        
-        for(int i = 0; i <size; i++)
-            {
-            if (tx(xPos.get(i), width, width*2, x+width, x-width) == x && ty(yPos.get(i), height, height*2, y+height, y-height) == y)
-                {
-                xPos.remove(i);
-                yPos.remove(i);
-                return;
-                }
-            }
-        }
-
+    /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
@@ -294,6 +304,9 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             {
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
+
+        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+            throw new RuntimeException( "Invalid initial position" );
 
         xPos.clear();
         yPos.clear();
@@ -324,10 +337,10 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 
             for( int x0 = xmin ; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = tx(x0, width, width*2, x+width, x-width);
+                final int x_0 = tx(x0, width, width*2, x0+width, x0-width);
                 for( int y0 = ymin ; y0 <= ymax ; y0++ )
                     {
-                    final int y_0 = ty(y0, height, height*2, y+height, y-height);
+                    final int y_0 = ty(y0, height, height*2, y0+height, y0-height);
                     xPos.add( x_0 );
                     yPos.add( y_0 );
                     }
@@ -355,6 +368,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         }
 
 
+    /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
@@ -382,6 +396,9 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
 
+        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+            throw new RuntimeException( "Invalid initial position" );
+
         xPos.clear();
         yPos.clear();
 
@@ -398,13 +415,13 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = tx(x0, width, width*2, x+width, x-width);
-                // compute ymin and ymax for the neighborhood; they depend on the curreny x0 value
+                final int x_0 = tx(x0, width, width*2, x0+width, x0-width);
+                // compute ymin and ymax for the neighborhood; they depend on the current x0 value
                 final int ymax = y+(dist-((x0-x>=0)?x0-x:x-x0));
                 final int ymin = y-(dist-((x0-x>=0)?x0-x:x-x0));
                 for( int y0 =  ymin; y0 <= ymax; y0++ )
                     {
-                    final int y_0 = ty(y0, height, height*2, y+height, y-height);
+                    final int y_0 = ty(y0, height, height*2, y0+height, y0-height);
                     xPos.add( x_0 );
                     yPos.add( y_0 );
                     }
@@ -454,6 +471,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         }
 
 
+    /** @deprecated */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
@@ -480,6 +498,9 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
 
+        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+            throw new RuntimeException( "Invalid initial position" );
+
         xPos.clear();
         yPos.clear();
 
@@ -498,7 +519,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x,y0) )
                 {
                 xPos.add( tx(x, width, width*2, x+width, x-width) );
-                yPos.add( ty(y0, height, height*2, y+height, y-height) );
+                yPos.add( ty(y0, height, height*2, y0+height, y0-height) );
                 }
             int x0 = x;
             for( int i = 1 ; i <= dist ; i++ )
@@ -509,8 +530,8 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 x0 = dlx( x0, temp_ymin );
                 for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x0,y0) )
                     {
-                    xPos.add( tx(x0, width, width*2, x+width, x-width) );
-                    yPos.add( ty(y0, height, height*2, y+height, y-height) );
+                    xPos.add( tx(x0, width, width*2, x0+width, x0-width) );
+                    yPos.add( ty(y0, height, height*2, y0+height, y0-height) );
                     }
                 }
             x0 = x;
@@ -524,8 +545,8 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 x0 = drx( x0, temp_ymin );
                 for( int y0 = ymin ; y0 <= ymax ; y0 = downy(x0,y0) )
                     {
-                    xPos.add( tx(x0, width, width*2, x+width, x-width) );
-                    yPos.add( ty(y0, height, height*2, y+height, y-height) );
+                    xPos.add( tx(x0, width, width*2, x0+width, x0-width) );
+                    yPos.add( ty(y0, height, height*2, y0+height, y0-height) );
                     }
                 }
 
@@ -553,29 +574,35 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             }
         else // not toroidal
             {
-            if( x < 0 || x >= width || y < 0 || y >= height )
-                throw new RuntimeException( "Invalid initial position" );
-
+            int ymin = y - dist;
+            int ymax = y + dist;
+            
             // compute ymin and ymax for the neighborhood
-            int ylBound = y - dist;
-            int yuBound = ((y+dist<height) || !bounded ?y+dist:height-1);
+            int ylBound = ((ymin >= 0 || !bounded) ? ymin : 0);
+            int yuBound = ((ymax < height || !bounded) ? ymax : height-1);
 
+            // add vertical center line of hexagon
             for( int y0 = ylBound ; y0 <= yuBound ; y0 = downy(x,y0) )
                 {
                 xPos.add( x );
                 yPos.add( y0 );
-
                 }
+            
+            // add right half of hexagon
             int x0 = x;
-            int ymin = y-dist;
-            int ymax = y+dist;
+            ymin = y - dist;
+            ymax = y + dist;
             for( int i = 1 ; i <= dist ; i++ )
                 {
                 final int temp_ymin = ymin;
                 ymin = dly( x0, ymin );
                 ymax = uly( x0, ymax );
                 x0 = dlx( x0, temp_ymin );
-                yuBound =  ((ymax<height) || !bounded ?ymax:height-1);
+                
+                ylBound = ((ymin >= 0 || !bounded) ? ymin : 0);
+                yuBound = ((ymax < height || !bounded) ? ymax : height-1);
+    
+               // yuBound =  (( ymax<height  || !bounded) ? ymax : height-1);
 
                 if( x0 >= 0 )
                     for( int y0 = ylBound ; y0 <= yuBound ; y0 = downy(x0,y0) )
@@ -589,15 +616,20 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 }
 
             x0 = x;
-            ymin = y-dist;
-            ymax = y+dist;
+            ymin = y - dist;
+            ymax = y + dist;
             for( int i = 1 ; i <= dist ; i++ )
                 {
                 final int temp_ymin = ymin;
                 ymin = dry( x0, ymin );
                 ymax = ury( x0, ymax );
                 x0 = drx( x0, temp_ymin );
-                yuBound =  ((ymax<height) || !bounded ?ymax:height);
+
+                ylBound = ((ymin >= 0 || !bounded) ? ymin : 0);
+                yuBound = ((ymax < height || !bounded) ? ymax : height-1);
+                
+                // yuBound =  ((ymax<height) || !bounded ?ymax:height);
+                
                 if( x0 < width )
                     for( int y0 = ymin ; y0 <= yuBound; y0 = downy(x0,y0) )
                         {

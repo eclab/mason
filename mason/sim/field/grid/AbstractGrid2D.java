@@ -170,6 +170,7 @@ public abstract class AbstractGrid2D implements Grid2D
             }
         }
 
+    /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsMaxDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
@@ -259,6 +260,7 @@ public abstract class AbstractGrid2D implements Grid2D
         }
 
 
+    /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsHamiltonianDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);
@@ -361,6 +363,7 @@ public abstract class AbstractGrid2D implements Grid2D
         }
 
 
+    /** @deprecated */
     public void getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos )
         {
         getNeighborsHexagonalDistance(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos);

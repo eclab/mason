@@ -54,7 +54,7 @@ public /*strictfp*/ class HexaDiffuser implements Steppable
         //            for(int y=0;y< _gridHeight;y++)
         //                {
         //                // Get neighbors
-        //                _valgrid.getNeighborsHexagonalDistance(x,y,1,true,temp,null,null);
+        //                _valgrid.getNeighborsHexagonalDistance(x,y,1,Grid2D.TOROIDAL,true,temp,null,null);
         //       
         //                //Go through neighbors and compute average
         //                for( int i = 0 ; i < temp.numObjs ; i++ ) average += temp.objs[i];

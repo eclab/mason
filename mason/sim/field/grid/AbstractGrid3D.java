@@ -228,15 +228,12 @@ public abstract class AbstractGrid3D implements Grid3D
 
 
 
+    /** @deprecated */
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         getNeighborsMaxDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
         }
 
-    /*
-     * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y), abs(z-Z) ) <= d
-     * Returns the x, y and z positions of the neighbors.
-     */
     public void getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         boolean toroidal = (mode == TOROIDAL);
@@ -297,13 +294,13 @@ public abstract class AbstractGrid3D implements Grid3D
 
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0, width);
+                final int x_0 = tx(x0, width, width*2, x0+width, x0-width);
                 for( int y0 = ymin ; y0 <= ymax ; y0++ )
                     {
-                    final int y_0 = sty(y0, height);
+                    final int y_0 = ty(y0, height, height*2, y0+height, y0-height);
                     for( int z0 = zmin ; z0 <= zmax ; z0++ )
                         {
-                        final int z_0 = stz(z0, length);
+                        final int z_0 = tz(z0, length, length*2, z0+length, z0-length);
                         if( x_0 != x || y_0 != y || z_0 != z )
                             {
                             xPos.add( x_0 );
@@ -347,15 +344,13 @@ public abstract class AbstractGrid3D implements Grid3D
         }
 
 
+    /** @deprecated */
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         getNeighborsHamiltonianDistance(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, xPos, yPos, zPos);
         }
 
-    /*
-     * Gets all neighbors of a location that satisfy abs(x-X) + abs(y-Y) + abs(z-Z) <= d
-     * Returns the x, y and z positions of the neighbors.
-     */
+
     public void getNeighborsHamiltonianDistance( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         boolean toroidal = (mode == TOROIDAL);
@@ -394,18 +389,18 @@ public abstract class AbstractGrid3D implements Grid3D
             final int xmin = x-dist;
             for( int x0 = xmin; x0 <= xmax ; x0++ )
                 {
-                final int x_0 = stx(x0, width);
+                final int x_0 = tx(x0, width, width*2, x0+width, x0-width);
                 // compute ymin and ymax for the neighborhood; they depend on the curreny x0 value
                 final int ymax = y+(dist-((x0-x>=0)?x0-x:x-x0));
                 final int ymin = y-(dist-((x0-x>=0)?x0-x:x-x0));
                 for( int y0 =  ymin; y0 <= ymax; y0++ )
                     {
-                    final int y_0 = sty(y0, height);
+                    final int y_0 = ty(y0, height, height*2, y0+height, y0-height);
                     final int zmax = z+(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0));
                     final int zmin = z-(dist-((x0-x>=0)?x0-x:x-x0)-((y0-y>=0)?y0-y:y-y0));
                     for( int z0 = zmin; z0 <= zmax; z0++ )
                         {
-                        final int z_0 = stz(z0, length);
+                        final int z_0 = tz(z0, length, length*2, z0+length, z0-length);
                         if( x_0 != x || y_0 != y || z_0 != z )
                             {
                             xPos.add( x_0 );
