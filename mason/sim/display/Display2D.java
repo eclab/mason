@@ -1628,8 +1628,18 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** */
     ArrayList selectedWrappers = new ArrayList();
     
+    /** Returns as LocationWrappers all the currently selected objects in the
+        display.  Do not modify these wrapper objects; they are used internally. 
+        These LocationWrappers may be invalid at any time in the near future if
+        the user deselects objects.
+    */
+    public LocationWrapper[] getSelectedWrappers()
+        {
+        return (LocationWrapper[]) selectedWrappers.toArray(new LocationWrapper[selectedWrappers.size()]);
+        }
+    
     /** Selects the following object, deselecting other objects if so asked. */
-    public void performSelection( LocationWrapper wrapper)
+    public void performSelection(LocationWrapper wrapper)
         {
         Bag b = new Bag();
         b.add(wrapper);

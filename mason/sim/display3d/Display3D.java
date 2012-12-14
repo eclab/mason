@@ -1713,6 +1713,17 @@ public class Display3D extends JPanel implements Steppable
     
     /** */
     ArrayList selectedWrappers = new ArrayList();
+
+    /** Returns as LocationWrappers all the currently selected objects in the
+        display.  Do not modify these wrapper objects; they are used internally. 
+        These LocationWrappers may be invalid at any time in the near future if
+        the user deselects objects.
+    */
+    public LocationWrapper[] getSelectedWrappers()
+        {
+        return (LocationWrapper[]) selectedWrappers.toArray(new LocationWrapper[selectedWrappers.size()]);
+        }
+    
     
     public void performSelection( LocationWrapper wrapper)
         {
