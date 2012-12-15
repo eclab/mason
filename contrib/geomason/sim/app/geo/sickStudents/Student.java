@@ -1,7 +1,7 @@
 /**
  ** Student.java
  **
- ** Copyright 2011 by Andrew Crooks, Joseph Harrison, Mark Coletti, Cristina Metgher
+ ** Copyright 2011 by Joseph Harrison, Mark Coletti, Cristina Metgher, Andrew Crooks
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0

@@ -1,7 +1,7 @@
 /**
  ** HouseHold.java
  **
- ** Copyright 2011 by Andrew Crooks, Joseph Harrison, Mark Coletti, Cristina Metgher
+ ** Copyright 2011 by Joseph Harrison, Mark Coletti, Cristina Metgher, Andrew Crooks
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0
@@ -34,10 +34,8 @@ public class Household implements Steppable
 		for (Student s : students)
         {
             if (s.status == Status.INFECTED) {	// if any children are sick
-                for (Student s2 : students)
-                {
+                for (Student s2 : students)  // expose the rest
                     s2.expose();
-                }
                 break;
             }
         }

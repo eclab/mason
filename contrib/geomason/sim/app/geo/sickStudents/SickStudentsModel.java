@@ -1,7 +1,7 @@
 /**
  ** SickStudentsModel.java
  **
- ** Copyright 2011 by Andrew Crooks, Joseph Harrison, Mark Coletti, Cristina Metgher
+ ** Copyright 2011 by Joseph Harrison, Andrew Crooks, Mark Coletti, Cristina Metgher
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0
@@ -25,207 +25,63 @@ import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.Interval;
 import sim.util.geo.MasonGeometry;
-import umontreal.iro.lecuyer.probdist.LognormalDist;
 
 
 
 @SuppressWarnings("serial")
 public class SickStudentsModel extends SimState
 {
-
     public int numHouseholds = 10000;
-
-
-
-    public int getNumHouseholds()
-    {
-        return numHouseholds;
-    }
-
-
-
-    public void setNumHouseholds(int val)
-    {
-        numHouseholds = val;
-        reInitHouseholds = true;
-    }
+    public int getNumHouseholds() { return numHouseholds; }
+    public void setNumHouseholds(int val) { numHouseholds = val; reInitHouseholds = true; }
 
     public boolean reInitHouseholds = true;
-
-
-
-    public boolean getReInitHouseholds()
-    {
-        return reInitHouseholds;
-    }
-
-
-
-    public void setReInitHouseholds(boolean val)
-    {
-        reInitHouseholds = val;
-    }
-
-    public double childrenPerHouseholdAve = 1.45;
-
-
-
-    public double getChildrenPerHouseholdAve()
-    {
-        return childrenPerHouseholdAve;
-    }
-
-
-
-    public void setChildrenPerHouseholdAve(double val)
-    {
-        childrenPerHouseholdAve = val;
-    }
-
-    public double childrenPerHouseholdStdev = 0.5;
-
-
-
-    public double getChildrenPerHouseholdStdev()
-    {
-        return childrenPerHouseholdStdev;
-    }
-
-
-
-    public void setChildrenPerHouseholdStdev(double val)
-    {
-        childrenPerHouseholdStdev = val;
-    }
-
-    public int numInitialInfections = 10;
-
-
-
-    public int getNumInitialInfections()
-    {
-        return numInitialInfections;
-    }
-
-
-
-    public void setNumInitialInfections(int val)
-    {
-        numInitialInfections = val;
-    }
-
-    public int diseaseDuration = 10;	// days
-
-
-
-    public int getDiseaseDuration()
-    {
-        return diseaseDuration;
-    }
-
-
-
-    public void setDiseaseDuration(int val)
-    {
-        diseaseDuration = val;
-    }
-
-    public int incubationPeriod = 2;	// days
-
-
-
-    public int getIncubationPeriod()
-    {
-        return incubationPeriod;
-    }
-
-
-
-    public void setIncubationPeriod(int val)
-    {
-        incubationPeriod = val;
-    }
-
-    public double diseaseTransmissionProb = 0.3;
-
-
-
-    public double getDiseaseTransmissionProb()
-    {
-        return diseaseTransmissionProb;
-    }
-
-
-
-    public void setDiseaseTransmissionProb(double val)
-    {
-        diseaseTransmissionProb = val;
-    }
-
-
-
-    public Object domDiseaseTransmissionProb()
-    {
-        return new Interval(0.0, 1.0);
-    }
-
-    public boolean closeSchoolUponOutbreak = false;
-
-
-
-    public boolean getCloseSchoolUponOutbreak()
-    {
-        return closeSchoolUponOutbreak;
-    }
-
-
-
-    public void setCloseSchoolUponOutbreak(boolean val)
-    {
-        closeSchoolUponOutbreak = val;
-    }
-
-    public boolean closeAllSchoolsUponOutbreak = false;
-
-
-
-    public boolean getCloseAllSchoolsUponOutbreak()
-    {
-        return closeAllSchoolsUponOutbreak;
-    }
-
-
-
-    public void setCloseAllSchoolsUponOutbreak(boolean val)
-    {
-        closeAllSchoolsUponOutbreak = val;
-    }
-
-    /**
-     * The proportion of students at a school who must get sick before all schools get closed.
-     */
-    public double outbreakThreshold = 0.20;
-
-
-
-    public double getOutbreakThreshold()
-    {
-        return outbreakThreshold;
-    }
-
-
-
-    public void setOutbreakThreshold(double val)
-    {
-        outbreakThreshold = val;
-    }
-
-
-
-    public Object domOutbreakThreshold()
-    {
-        return new Interval(0.0, 1.0);
-    }
+	public boolean getReInitHouseholds() { return reInitHouseholds; }
+	public void setReInitHouseholds(boolean val) { reInitHouseholds = val; }
+
+	public double childrenPerHouseholdAve = 1.45;
+	public double getChildrenPerHouseholdAve() { return childrenPerHouseholdAve; }
+	public void setChildrenPerHouseholdAve(double val) { childrenPerHouseholdAve = val; }
+
+	public double childrenPerHouseholdStdev = 0.5;
+	public double getChildrenPerHouseholdStdev() { return childrenPerHouseholdStdev; }
+	public void setChildrenPerHouseholdStdev(double val) { childrenPerHouseholdStdev = val; }
+
+	public int numInitialInfections = 10;
+	public int getNumInitialInfections() { return numInitialInfections; }
+	public void setNumInitialInfections(int val) { numInitialInfections = val; }
+
+	public int diseaseDuration = 10; // days
+	public int getDiseaseDuration() { return diseaseDuration; }
+	public void setDiseaseDuration(int val) { diseaseDuration = val; }
+
+	public int incubationPeriod = 2; // days
+	public int getIncubationPeriod() { return incubationPeriod; }
+	public void setIncubationPeriod(int val) { incubationPeriod = val; }
+
+	public double diseaseTransmissionProb = 0.3;
+	public double getDiseaseTransmissionProb() { return diseaseTransmissionProb; }
+	public void setDiseaseTransmissionProb(double val) { diseaseTransmissionProb = val;	}
+	public Object domDiseaseTransmissionProb() { return new Interval(0.0, 1.0); }
+
+	public boolean closeSchoolUponOutbreak = false;
+	public boolean getCloseSchoolUponOutbreak() { return closeSchoolUponOutbreak; }
+	public void setCloseSchoolUponOutbreak(boolean val) { closeSchoolUponOutbreak = val; }
+
+	public boolean closeAllSchoolsUponOutbreak = false;
+	public boolean getCloseAllSchoolsUponOutbreak() { return closeAllSchoolsUponOutbreak; }
+	public void setCloseAllSchoolsUponOutbreak(boolean val) {
+		closeAllSchoolsUponOutbreak = val;
+	}
+
+	/**
+	 * The proportion of students at a school who must get sick before all
+	 * schools get closed.
+	 */
+	public double outbreakThreshold = 0.20;
+	public double getOutbreakThreshold() { return outbreakThreshold; }
+	public void setOutbreakThreshold(double val) { outbreakThreshold = val; }
+	public Object domOutbreakThreshold() { return new Interval(0.0, 1.0); }
 
     /**
      * The following are to allow the tracking of SIR counts from the main simulation
@@ -341,7 +197,6 @@ public class SickStudentsModel extends SimState
 
     private void countCatchments(GeomVectorField catchments)
     {
-
         Bag geoms = catchments.getGeometries();
         for (int i = 0; i < geoms.numObjs; i++)
         {
@@ -367,16 +222,13 @@ public class SickStudentsModel extends SimState
 
     private void printSchools()
     {
-
         Collections.sort(schools, new Comparator<School>()
         {
-
             @Override
             public int compare(School arg0, School arg1)
             {
                 return arg0.name.compareTo(arg1.name);
             }
-
         });
         for (School s : schools)
         {
@@ -392,8 +244,6 @@ public class SickStudentsModel extends SimState
         double y = random.nextDouble() * bounds.getHeight() + bounds.getMinY();
         return new Coordinate(x, y);
     }
-
-
 
     private void createHouseholds()
     {
@@ -423,12 +273,9 @@ public class SickStudentsModel extends SimState
         }
     }
 
-
-
     private School findAppropriateSchool(int age, Point location)
     {
         GeomVectorField zones;
-        //TODO verify these ages are correct
         if (age < 11)
         {
             zones = elementarySchoolZones;
@@ -472,7 +319,7 @@ public class SickStudentsModel extends SimState
             int numKids;
             do
             {
-                numKids = (int) Math.round(LognormalDist.inverseF(mu, sigma, random.nextDouble()));
+                numKids = (int) Math.round(StatsTools.normalToLognormal(mu, sigma, random.nextGaussian()));
             } while (numKids == 0);
 
             for (int j = 0; j < numKids; j++)
@@ -483,12 +330,9 @@ public class SickStudentsModel extends SimState
                 // pick a school for this child
                 School school = findAppropriateSchool(age, h.location);
                 if (school != null)
-                {
                     school.students.add(s);
-                } else
-                {
+                else
                     System.out.println("Error: school is null.");
-                }
                 students.add(s);
                 h.students.add(s);
             }
@@ -514,16 +358,12 @@ public class SickStudentsModel extends SimState
     {
         // reopen the schools
         for (School s : schools)
-        {
             s.closed = false;
-        }
 
         if (reInitHouseholds)
         {
             for (School s : schools)
-            {
                 s.students.clear();
-            }
             createHouseholds();
             createStudents();
         } else	// at least reset the students
@@ -568,63 +408,44 @@ public class SickStudentsModel extends SimState
         init();
 
         for (Student s : students)
-        {
-            schedule.scheduleRepeating(s, 0, 1.0);
-        }
+        	schedule.scheduleRepeating(s, 0, 1.0);
 
         for (School s : schools)
-        {
             schedule.scheduleRepeating(s, 1, 1.0);
-        }
 
         for (Household h : households)
-        {
             schedule.scheduleRepeating(h, 2, 1.0);
-        }
 
         // at step 20, begin the infection
         schedule.scheduleOnce(20, 3, new Steppable()
         {
-
             public void step(SimState state)
             {
                 beginInfection();
             }
-
         });
 
         // containment strategy: if any school has an outbreak, close all the schools
         schedule.scheduleRepeating(0, 4, new Steppable()
         {
-
             public void step(SimState state)
             {
                 if (closeSchoolUponOutbreak || closeAllSchoolsUponOutbreak)
-                {
                     for (School s : schools)
-                    {
-                        if (s.getProportionOfHomeboundStudents() > outbreakThreshold)
-                        {		// if any school has an outbreak
+                        if (s.getProportionOfHomeboundStudents() > outbreakThreshold) {	// if any school has an outbreak                        	
                             s.closed = true;
-                            if (closeAllSchoolsUponOutbreak)
-                            {
+                            if (closeAllSchoolsUponOutbreak) {
                                 for (School s2 : schools) 	// close all the schools
-                                {
                                     s2.closed = true;
-                                }
                                 break;
                             }
                         }
-                    }
-                }
             }
-
         });
 
         // check for end condition and terminate
         schedule.scheduleRepeating(0, 5, new Steppable()
         {
-
             public void step(SimState state)
             {
                 sCount = 0;
@@ -664,11 +485,8 @@ public class SickStudentsModel extends SimState
                     state.kill();
                 }
             }
-
         });
     }
-
-
 
     public static void main(String[] args)
     {

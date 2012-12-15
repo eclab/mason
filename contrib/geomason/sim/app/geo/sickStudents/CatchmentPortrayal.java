@@ -1,14 +1,13 @@
 /**
  ** CatchmentPortrayal.java
  **
- ** Copyright 2011 by Andrew Crooks, Joseph Harrison, Mark Coletti, Cristina Metgher
+ ** Copyright 2011 by Joseph Harrison, Mark Coletti, Cristina Metgher, Andrew Crooks
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0
  **
  ** See the file "LICENSE" for more information
  **
- ** $Id$
  **/
 package sim.app.geo.sickStudents;
 
@@ -24,8 +23,7 @@ public class CatchmentPortrayal extends GeomPortrayal
 
 	SimpleColorMap colorMap = null;
 
-    // FIXME: this should be using Mason's RNG
-	public double proportionSick = Math.random();
+	public double proportionSick;
 	SickStudentsModel model;
 	
 	public CatchmentPortrayal(SimpleColorMap map, SickStudentsModel model) 
@@ -33,6 +31,7 @@ public class CatchmentPortrayal extends GeomPortrayal
 		super(true); 
 		colorMap = map;
 		this.model = model;
+		proportionSick = model.random.nextDouble();
 	}
 	
     @Override

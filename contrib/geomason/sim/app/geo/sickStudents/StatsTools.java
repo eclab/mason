@@ -1,7 +1,7 @@
 /**
  ** StatsTools.java
  **
- ** Copyright 2011 by Andrew Crooks, Joseph Harrison, Mark Coletti, Cristina Metgher
+ ** Copyright 2011 by Joseph Harrison, Mark Coletti, Cristina Metgher, Andrew Crooks
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0
@@ -20,5 +20,17 @@ public class StatsTools
 	
 	static public double calcLognormalSigma(double mean, double stdev) {
 		return Math.sqrt(Math.log((stdev*stdev) / (mean*mean) + 1.0));
+	}
+	
+	/**
+	 * Convert a random variable drawn from a normal (Gaussian) distribution to
+	 * one that is lognormally distributed.
+	 * @param mu 
+	 * @param sigma
+	 * @param normalVal random number drawn from a normal distribution.
+	 * @return
+	 */
+	static public double normalToLognormal(double mu, double sigma, double normalVal) {
+		return Math.exp(mu + sigma*normalVal);
 	}
 }
