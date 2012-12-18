@@ -88,22 +88,26 @@ public class GeomGridField extends GeomField
      * @see GeomGridField.setMBR()
      */
     private double pixelHeight = 0.0;
- 
+
+    /** Height of pixels in units of the underlying coordinate reference system */
     public double getPixelHeight()
     {
         return pixelHeight;
     }
 
+    /** Set heigh of pixels in units of the underlying coordinate reference system */
     public void setPixelHeight(double pixelHeight)
     {
         this.pixelHeight = pixelHeight;
     }
 
+    /** Width of pixels in units of the underlying coordinate reference system */
     public double getPixelWidth()
     {
         return pixelWidth;
     }
 
+    /** Set pixel width in units of underlying coordinate reference system */
     public void setPixelWidth(double pixelWidth)
     {
         this.pixelWidth = pixelWidth;

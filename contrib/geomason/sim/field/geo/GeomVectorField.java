@@ -41,7 +41,7 @@ public class GeomVectorField extends GeomField
 	private static final long serialVersionUID = -754748817928825708L;
 
 	/** A spatial index of all the geometries in the field. */ 
-	public Quadtree spatialIndex;
+	public  Quadtree spatialIndex = new Quadtree();
     
     /** The convex hull of all the geometries in this field */ 
     public PreparedPolygon convexHull; 
@@ -63,7 +63,6 @@ public class GeomVectorField extends GeomField
     public GeomVectorField(int w, int h)
     {
         super(w,h);
-		spatialIndex = new Quadtree();
         geomFactory = new GeometryFactory(); 
     }
 
@@ -168,10 +167,10 @@ public class GeomVectorField extends GeomField
 	
 	/** @return all the geometries that intersect the provided
      * envelope; will be empty if none intersect  */
-	public Bag queryField(Envelope e)
+	public synchronized Bag queryField(Envelope e)
 	{
-		Bag geometries = new Bag(); 
 		List<?> gList = spatialIndex.query(e);
+		Bag geometries = new Bag(gList.size());
 
         // However, the JTS QuadTree query is a little sloppy, which means it
         // may return objects that are still outside the range.  We need to do
@@ -233,6 +232,13 @@ public class GeomVectorField extends GeomField
 
         return nearbyObjects;
     }
+    
+    public Bag getObjectsWithinDistance(final MasonGeometry mg, final double dist)
+    {
+        return getObjectsWithinDistance(mg.getGeometry(), dist);
+    }
+
+
 
     /** 
         Returns geometries that cover the given object.  Cover here means completely 
@@ -253,6 +259,11 @@ public class GeomVectorField extends GeomField
             }
 		}
         return coveringObjects;
+    }
+
+    public final Bag getCoveringObjects(final MasonGeometry mg)
+    {
+        return getCoveringObjects(mg.getGeometry());
     }
 
     /** Return geometries that are covered by the given geometry. 
@@ -299,6 +310,11 @@ public class GeomVectorField extends GeomField
             }
 		}
         return containingObjects;
+    }
+
+    public final Bag getContainingObjectgs(final MasonGeometry mg)
+    {
+        return getContainingObjects(mg.getGeometry());
     }
 
     
@@ -374,26 +390,29 @@ public class GeomVectorField extends GeomField
 	
 	/** Get the centroid of the given Geometry.  Note that the returned location uses the 
 	 coordinate system of the underlying GIS data.  */
-	public Point getGeometryLocation(Geometry g)
+	public Point getGeometryLocation(MasonGeometry g)
 	{
-		Geometry g1 = findGeometry(g);
+		MasonGeometry g1 = findGeometry(g);
 		if (g1.equals(g))
         {
-            return g1.getCentroid();
+            return g1.geometry.getCentroid();
         }
 		return null; 
 	}
 	
 	/** Moves the centroid of the given geometry to the provided point.  Note that the provided point
 	 * must be in the same coordinate system as the geometry.  */
-	 public void setGeometryLocation(Geometry g, CoordinateSequenceFilter p)
+	 public synchronized void setGeometryLocation(MasonGeometry g, CoordinateSequenceFilter p)
 	 {
-		 Geometry g1 = findGeometry(g); 
-		 if (g1 != null) { 
-			 g1.apply(p); 
-			 g1.geometryChanged();
-		 }
-	 }
+         MasonGeometry g1 = findGeometry(g);
+         if (g1 != null)
+         {
+             spatialIndex.remove(g1.getGeometry().getEnvelopeInternal(), g1);
+             g1.geometry.apply(p);
+             g1.geometry.geometryChanged();
+             spatialIndex.insert(g1.geometry.getEnvelopeInternal(), g1);
+         }
+    }
 			
      /** Locate a specific geometry inside the quadtree
       * <p>
@@ -403,13 +422,13 @@ public class GeomVectorField extends GeomField
       * @param g is geometry for which we're looking
       * @return located geometry; will return g if not found.
       */
-    public Geometry findGeometry(Geometry g)
+    public synchronized MasonGeometry findGeometry(MasonGeometry g)
     {
-        List<?> gList = spatialIndex.query(g.getEnvelopeInternal());
+        List<?> gList = spatialIndex.query(g.getGeometry().getEnvelopeInternal());
 
         for (int i = 0; i < gList.size(); i++)
         {
-            Geometry g1 = ((MasonGeometry) gList.get(i)).getGeometry();
+            MasonGeometry g1 = ((MasonGeometry) gList.get(i));
             if (g1.equals(g))
             {
                 return g1;
