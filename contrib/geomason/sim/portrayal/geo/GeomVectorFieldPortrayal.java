@@ -256,7 +256,15 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
         if (geometries == null || geometries.isEmpty())
         {
+            // FIXME This is a hack to correct for situation where when
+            // doing hit, not drawing, the incorrect geometries are returned.
             geometries = geomField.getGeometries();
+
+            // Sometimes there really *isn't* anything to render.
+            if (geometries.isEmpty())
+            {
+                return;
+            }
         }
 //        else
 //        {
@@ -272,20 +280,24 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		newinfo.fieldPortrayal = this;
 		
 		// use this for determining which objects we should be concerned with 
-		GeometryFactory geomFactory = ((MasonGeometry)geometries.objs[0]).getGeometry().getFactory(); 
-//		Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope);
+		GeometryFactory geomFactory = ((MasonGeometry)geometries.objs[0]).getGeometry().getFactory();
+		Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope);
 		
-		for (int i = 0; i < geometries.numObjs; i++)
+		for (int i = 0; i < geometries.size(); i++)
 		{
 			MasonGeometry gm = (MasonGeometry) geometries.objs[i];
+
+            // FIXME: *Why* the hell would this happen?
+            if (gm == null) { continue; }
+
 			Geometry geom = gm.getGeometry();
 			
-//			if (clipGeometry.intersects(geom.getEnvelope()))
-//			{
+			if (clipGeometry.intersects(geom.getEnvelope()))
+			{
 				Portrayal p = getPortrayalForObject(gm);
 
 				if (!(p instanceof SimplePortrayal2D)) { throw new RuntimeException("Unexpected Portrayal " + p
-						+ " for object " + geom + " -- expected a SimplePortrayal2D or a GeomPortrayal"); }
+						+ " for object " + gm + " -- expected a SimplePortrayal2D or a GeomPortrayal"); }
 
 				SimplePortrayal2D portrayal = (SimplePortrayal2D) p;
 
@@ -293,7 +305,13 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 				{
 					if (portrayal.hitObject(gm, info))
 					{
-						putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(geom), this));
+                        // XXX getGeometryLocation merely returns the centroid of
+                        // the MasonGeometry object once it finds it in the GeomVectorField;
+                        // however, we *just got it* from that same field, so why
+                        // do we need to find it again?  Just directly get the
+                        // centroid of the object and be done with it.
+//						putInHere.add(new LocationWrapper(gm, geomField.getGeometryLocation(gm), this));
+						putInHere.add(new LocationWrapper(gm, gm.getGeometry().getCentroid(), this));
 					}
 				}
 				else
@@ -304,7 +322,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 					}
 					else
 					{ // have a SimplePortrayal2D,
-						Point pt = geom.getCentroid();
+						Point pt = gm.geometry.getCentroid();
 						pt.apply(geomField.jtsTransform);
 						pt.geometryChanged();
 
@@ -314,7 +332,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 						portrayal.draw(gm, graphics, newinfo);
 					}
 				}
-//			}
+			}
 		}
 	}
 
