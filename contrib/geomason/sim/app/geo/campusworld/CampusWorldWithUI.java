@@ -56,10 +56,10 @@ public class CampusWorldWithUI extends GUIState
 
         display = new Display2D(CampusWorld.WIDTH, CampusWorld.HEIGHT, this);
 
-        display.attach(walkwaysPortrayal, "Walkways");
-        display.attach(buildingPortrayal, "Buildings");
-        display.attach(roadsPortrayal, "Roads");
-        display.attach(agentPortrayal, "Agents");
+        display.attach(walkwaysPortrayal, "Walkways", true);
+        display.attach(buildingPortrayal, "Buildings", true);
+        display.attach(roadsPortrayal, "Roads", true);
+        display.attach(agentPortrayal, "Agents", true);
 
         displayFrame = display.createFrame();
         controller.registerFrame(displayFrame);

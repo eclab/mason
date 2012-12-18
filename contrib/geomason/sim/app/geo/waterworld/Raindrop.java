@@ -13,7 +13,6 @@
 package sim.app.geo.waterworld;
 
 import java.util.ArrayList;
-import java.util.Random;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;

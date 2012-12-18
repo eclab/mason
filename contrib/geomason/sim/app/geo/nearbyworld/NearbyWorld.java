@@ -95,7 +95,7 @@ public class NearbyWorld extends SimState
         agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT));
 //
         // Add the agent
-        agentField.addGeometry(new MasonGeometry(agent.getGeometry()));
+        agentField.addGeometry(agent.getGeometry());
 
         schedule.scheduleRepeating(agent);
     }

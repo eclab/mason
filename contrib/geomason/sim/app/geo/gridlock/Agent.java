@@ -44,7 +44,8 @@ public final class Agent implements Steppable
     Node homeNode = null;
     Node workNode = null;
     // point that denotes agent's position
-    private Point location;
+//    private Point location;
+    private MasonGeometry location;
     // How much to move the agent by in each step()
     private double moveRate = .001;
     // Used by agent to walk along line segment
@@ -65,21 +66,21 @@ public final class Agent implements Steppable
     /** This is the wrapper object in the agents layer.  We need a handle on
      * it so that we can update our location with each step().
      */
-    private MasonGeometry renderedGeometry;
-
-
-
-    public MasonGeometry getRenderedGeometry()
-    {
-        return renderedGeometry;
-    }
-
-
-
-    public void setRenderedGeometry(MasonGeometry renderedGeometry)
-    {
-        this.renderedGeometry = renderedGeometry;
-    }
+//    private MasonGeometry renderedGeometry;
+//
+//
+//
+//    public MasonGeometry getRenderedGeometry()
+//    {
+//        return renderedGeometry;
+//    }
+//
+//
+//
+//    public void setRenderedGeometry(MasonGeometry renderedGeometry)
+//    {
+//        this.renderedGeometry = renderedGeometry;
+//    }
 
     
 
@@ -99,7 +100,7 @@ public final class Agent implements Steppable
 
         // set the location to be displayed
         GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(10, 10));
+        location = new MasonGeometry(fact.createPoint(new Coordinate(10, 10))) ;
         Coordinate startCoord = null;
         startCoord = homeNode.getCoordinate();
         updatePosition(startCoord);
@@ -135,7 +136,7 @@ public final class Agent implements Steppable
     {
 
         // get the home and work Nodes with which this Agent is associated
-        Node currentJunction = geoTest.network.findNode(location.getCoordinate());
+        Node currentJunction = geoTest.network.findNode(location.geometry.getCoordinate());
         Node destinationJunction = workNode;
 
         if (currentJunction == null)
@@ -308,8 +309,8 @@ public final class Agent implements Steppable
         linkDirection = 1;
 
         // check to ensure that Agent is moving in the right direction
-        double distanceToStart = line.getStartPoint().distance(location),
-            distanceToEnd = line.getEndPoint().distance(location);
+        double distanceToStart = line.getStartPoint().distance(location.geometry),
+            distanceToEnd = line.getEndPoint().distance(location.geometry);
         if (distanceToStart <= distanceToEnd)
         { // closer to start
             currentIndex = startIndex;
@@ -328,15 +329,15 @@ public final class Agent implements Steppable
     public void updatePosition(Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
-        location.apply(pointMoveTo);
+        location.geometry.apply(pointMoveTo);
 
-        world.agents.setGeometryLocation(getGeometry(), pointMoveTo);
+        world.agents.setGeometryLocation(location, pointMoveTo);
     }
 
 
 
     /** return geometry representing agent location */
-    public Geometry getGeometry()
+    public MasonGeometry getGeometry()
     {
         return location;
     }

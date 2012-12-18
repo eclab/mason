@@ -49,7 +49,7 @@ public class ColorWorld extends SimState
 	public static final int HEIGHT = 300; 
 
 	// number of agents in the simulation
-    public static int NUM_AGENTS = 10;
+    public static int NUM_AGENTS = 20;
 
     // where all the county geometry lives
     public GeomVectorField county = new GeomVectorField(WIDTH, HEIGHT);

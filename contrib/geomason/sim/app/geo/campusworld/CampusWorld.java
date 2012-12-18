@@ -57,31 +57,88 @@ public class CampusWorld extends SimState
     public GeomVectorField junctions = new GeomVectorField(WIDTH, HEIGHT); // nodes for intersections
 
 
-    public CampusWorld(long seed) { super (seed); } 
-        
+
+    public CampusWorld(long seed)
+    {
+        super(seed);
+
+        try
+        {
+            System.out.println("reading buildings layer");
+
+            // this Bag lets us only display certain fields in the Inspector, the non-masked fields
+            // are not associated with the object at all
+            Bag masked = new Bag();
+            masked.add("NAME");
+            masked.add("FLOORS");
+            masked.add("ADDR_NUM");
+
+//                System.out.println(System.getProperty("user.dir"));
+
+            // read in the buildings GIS file
+
+            URL bldgGeometry = CampusWorld.class.getResource("data/bldg.shp");
+            ShapeFileImporter.read(bldgGeometry, buildings, masked);
+
+            // We want to save the MBR so that we can ensure that all GeomFields
+            // cover identical area.
+            Envelope MBR = buildings.getMBR();
+
+            System.out.println("reading roads layer");
+
+            URL roadGeometry = CampusWorld.class.getResource("data/roads.shp");
+            ShapeFileImporter.read(roadGeometry, roads);
+
+            MBR.expandToInclude(roads.getMBR());
+
+            System.out.println("reading walkways layer");
+
+            URL walkWayGeometry = CampusWorld.class.getResource("data/walk_ways.shp");
+            ShapeFileImporter.read(walkWayGeometry, walkways);
+
+            MBR.expandToInclude(walkways.getMBR());
+
+            System.out.println("Done reading data");
+
+            // Now synchronize the MBR for all GeomFields to ensure they cover the same area
+            buildings.setMBR(MBR);
+            roads.setMBR(MBR);
+            walkways.setMBR(MBR);
+
+            network.createFromGeomField(walkways);
+
+            addIntersectionNodes(network.nodeIterator(), junctions);
+
+        } catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
 
     public int getNumAgents() { return numAgents; } 
     public void setNumAgents(int n) { if (n > 0) numAgents = n; } 
 
-    /** Add agents to the simulation and to the agent GeomVectorField.  Note that each agent does not have
-     * any attributes.   */
+    /**
+     * Add agents to the simulation and to the agent GeomVectorField. Note that
+     * each agent does not have any attributes.
+     */
     void addAgents()
     {
         for (int i = 0; i < numAgents; i++)
-            {
-                Agent a = new Agent();
+        {
+            Agent a = new Agent(this);
 
-                agents.addGeometry(a.getGeometry());
+            agents.addGeometry(a.getGeometry());
 
-                a.start(this);
+            schedule.scheduleRepeating(a);
 
-                schedule.scheduleRepeating(a);
-                
-                // we can set the userData field of any MasonGeometry.  If the userData is inspectable, 
-                // then the inspector will show this information 
-                //if (i == 10) 
-                //	buildings.getGeometry("CODE", "JC").setUserData(a); 
-            }
+            // we can set the userData field of any MasonGeometry.  If the userData is inspectable,
+            // then the inspector will show this information
+            //if (i == 10)
+            //	buildings.getGeometry("CODE", "JC").setUserData(a);
+        }
     }
 
     @Override
@@ -105,63 +162,10 @@ public class CampusWorld extends SimState
     public void start()
     {
         super.start();
-        try
-            {
-                System.out.println("reading buildings layer");
 
-                // this Bag lets us only display certain fields in the Inspector, the non-masked fields
-                // are not associated with the object at all
-                Bag masked = new Bag();
-                masked.add("NAME");
-                masked.add("FLOORS");
-                masked.add("ADDR_NUM");
-
-//                System.out.println(System.getProperty("user.dir"));
-
-
-                // read in the buildings GIS file
-
-                URL bldgGeometry = CampusWorld.class.getResource("data/bldg.shp");
-                ShapeFileImporter.read(bldgGeometry, buildings, masked);
-
-                // We want to save the MBR so that we can ensure that all GeomFields
-                // cover identical area.
-                Envelope MBR = buildings.getMBR();
-
-                System.out.println("reading roads layer");
-
-                URL roadGeometry = CampusWorld.class.getResource("data/roads.shp");
-                ShapeFileImporter.read(roadGeometry, roads);
-
-                MBR.expandToInclude(roads.getMBR());
-
-                System.out.println("reading walkways layer");
-
-                URL walkWayGeometry = CampusWorld.class.getResource("data/walk_ways.shp");
-                ShapeFileImporter.read(walkWayGeometry, walkways);
-
-                MBR.expandToInclude(walkways.getMBR());
-
-                System.out.println("Done reading data");
-
-                // Now synchronize the MBR for all GeomFields to ensure they cover the same area
-                buildings.setMBR(MBR);
-                roads.setMBR(MBR);
-                walkways.setMBR(MBR);
-
-                network.createFromGeomField(walkways);
-
-                addIntersectionNodes( network.nodeIterator(), junctions ) ;
-
-                agents.clear(); // clear any existing agents from previous runs
-                addAgents();
-                agents.setMBR(MBR);
-
-            }
-        catch (FileNotFoundException ex)
-            {
-                Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        agents.clear(); // clear any existing agents from previous runs
+        addAgents();
+        agents.setMBR(buildings.getMBR());
     }
 
 

@@ -75,7 +75,7 @@ public class SchellingSpace extends SimState
         // copy over the geometries into a list of Polygons
         Bag ps = world.getGeometries();
         polys.addAll(ps);
-        GeometryFactory g = new GeometryFactory();
+        GeometryFactory geometryFactory = new GeometryFactory();
 
         System.out.println("Computing adjacencies and populating polygons");
         
@@ -105,14 +105,14 @@ public class SchellingSpace extends SimState
                 // initialize the Person
                 Person p = new Person(Person.Affiliation.RED);
                 p.region = p1;
-                p.location = randomPointInsidePolygon((Polygon) p1.geometry, g);
+                p.location = randomPointInsidePolygon((Polygon) p1.geometry, geometryFactory);
+                p.location.isMovable = true;
+                p.location.setUserData(p);
 
                 // place the Person in the GeomVectorField
-                MasonGeometry personGeom = new MasonGeometry(p.getGeometry(), p);
-                personGeom.isMovable = true;
 
                 // store information
-                agents.addGeometry(personGeom);
+                agents.addGeometry(p.location);
                 people.add(p);
                 p1.residents.add(p);
             }
@@ -124,13 +124,13 @@ public class SchellingSpace extends SimState
                 // initialize the Person
                 Person p = new Person(Person.Affiliation.BLUE);
                 p.region = p1;
-                p.location = randomPointInsidePolygon((Polygon) p1.geometry, g);
-
+                p.location = randomPointInsidePolygon((Polygon) p1.geometry, geometryFactory);
+                p.location.isMovable = true;
+                p.location.setUserData(p);
                 // place the Person in the GeomVectorField
-                MasonGeometry personGeom = new MasonGeometry(p.getGeometry(), p);
 
                 // store information
-                agents.addGeometry(personGeom);
+                agents.addGeometry(p.location);
                 people.add(p);
                 p1.residents.add(p);
             }
@@ -162,7 +162,7 @@ public class SchellingSpace extends SimState
      * @param gfact the GeometryFactory that will create new points
      * @return
      */
-    Point randomPointInsidePolygon(Polygon p, GeometryFactory gfact)
+    MasonGeometry randomPointInsidePolygon(Polygon p, GeometryFactory gfact)
     {
 
         if (p == null)
@@ -192,7 +192,7 @@ public class SchellingSpace extends SimState
         }
 
         // return the found point
-        return pnt;
+        return new MasonGeometry(pnt);
     }
 
 

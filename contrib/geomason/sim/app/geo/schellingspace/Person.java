@@ -41,7 +41,7 @@ public class Person implements Steppable
 
 
     // position information
-    Point location;
+    MasonGeometry location;
     SchellingGeometry region;
 
     // given parameters
@@ -110,7 +110,7 @@ public class Person implements Steppable
 
 
 
-    public Geometry getGeometry()
+    public MasonGeometry getGeometry()
     {
         return location;
     }
@@ -126,7 +126,7 @@ public class Person implements Steppable
     {
 
         // the current location
-        Coordinate coord = (Coordinate) location.getCoordinate().clone();
+        Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
 
         // find a new position
         Random rand = new Random();
@@ -147,11 +147,11 @@ public class Person implements Steppable
         }
 
         // once the location works, move to the new location
-        location.apply(AffineTransformation.translationInstance(xinc, yinc));
+        location.geometry.apply(AffineTransformation.translationInstance(xinc, yinc));
 
         // if the Person has moved to a different region, update the SchellingPolygons
         // about their current contents
-        if (!region.geometry.contains(location))
+        if (!region.geometry.contains(location.geometry))
         {
             region.residents.remove(this);
             determineCurrentRegion(region);
@@ -205,7 +205,7 @@ public class Person implements Steppable
         {
             SchellingGeometry p = toCheck.remove(0);
 
-            if (p.geometry.contains(location))
+            if (p.geometry.contains(location.geometry))
             { // ---successfully located!---
                 region = p;
                 return;

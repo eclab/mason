@@ -248,7 +248,8 @@ public class Gridlock extends SimState
                         continue; // DON'T ADD IT if it's bad
                     }
 
-                    MasonGeometry newGeometry = new MasonGeometry(a.getGeometry());
+//                    MasonGeometry newGeometry = new MasonGeometry(a.getGeometry());
+                    MasonGeometry newGeometry = a.getGeometry();
                     newGeometry.isMovable = true;
                     agents.addGeometry(newGeometry);
                     agentList.add(a);

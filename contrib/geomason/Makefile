@@ -15,7 +15,7 @@
 
 JAVAC = javac 
 
-# GeoMason supports Java 5; note that MASON is still behind the times and only supports Java 4.
+# GeoMason supports Java 5; note that MASON proper only supports Java 4.
 JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
 FLAGS = -g -nowarn
 
@@ -91,7 +91,6 @@ indent:
 
 
 # All the main GeoMason source files
-# FIXME: temporarily removed ShapeFileExporter.java
 BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/field/geo/GeomGridField.java			\
 ./sim/field/geo/GeomVectorField.java			\
@@ -108,10 +107,8 @@ BASE_FILES = ./sim/field/geo/GeomField.java		\
 ./sim/util/geo/GeomPlanarGraphDirectedEdge.java		\
 ./sim/util/geo/GeomPlanarGraphEdge.java			\
 ./sim/util/geo/MasonGeometry.java			\
-./sim/util/geo/PointMoveTo.java
-
-# FIXME add this back in once it's repaired
-#./sim/io/geo/ShapeFileExporter.java			
+./sim/util/geo/PointMoveTo.java				\
+./sim/io/geo/ShapeFileExporter.java			
 
 
 # Optional GDAL based importer

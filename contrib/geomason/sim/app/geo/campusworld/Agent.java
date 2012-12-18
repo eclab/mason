@@ -49,14 +49,40 @@ public class Agent implements Steppable
     double currentIndex = 0.0; // current location along line
     PointMoveTo pointMoveTo = new PointMoveTo();
 
+    static private GeometryFactory fact = new GeometryFactory();
 
-
-    public Agent()
+    public Agent(CampusWorld state)
     {
-        GeometryFactory fact = new GeometryFactory();
         location = new MasonGeometry(fact.createPoint(new Coordinate(10, 10))); // magic numbers
 
         location.isMovable = true;
+        
+                // Find the first line segment and set our position over the start coordinate.
+        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
+        MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
+        setNewRoute((LineString) mg.getGeometry(), true);
+
+        // Now set up attributes for this agent
+        if (state.random.nextBoolean())
+        {
+            location.addStringAttribute("TYPE", "STUDENT");
+
+            int age = (int) (20.0 + 2.0 * state.random.nextGaussian());
+
+            location.addIntegerAttribute("AGE", age);
+        }
+        else
+        {
+            location.addStringAttribute("TYPE", "FACULTY");
+
+            int age = (int) (40.0 + 9.0 * state.random.nextGaussian());
+
+            location.addIntegerAttribute("AGE", age);
+        }
+
+        // Not everyone walks at the same speed
+        basemoveRate *= Math.abs(state.random.nextGaussian());
+        location.addDoubleAttribute("MOVE RATE", basemoveRate);
     }
 
 
@@ -86,37 +112,6 @@ public class Agent implements Steppable
         return false;
     }
 
-
-
-    public void start(CampusWorld state)
-    {
-        // Find the first line segment and set our position over the start coordinate.
-        int walkway = state.random.nextInt(state.walkways.getGeometries().numObjs);
-        MasonGeometry mg = (MasonGeometry) state.walkways.getGeometries().objs[walkway];
-        setNewRoute((LineString) mg.getGeometry(), true);
-
-        // Now set up attributes for this agent
-        if (state.random.nextBoolean())
-        {
-            location.addStringAttribute("TYPE", "STUDENT");
-
-            int age = (int) (20.0 + 2.0 * state.random.nextGaussian());
-
-            location.addIntegerAttribute("AGE", age);
-        }
-        else
-        {
-            location.addStringAttribute("TYPE", "FACULTY");
-
-            int age = (int) (40.0 + 9.0 * state.random.nextGaussian());
-
-            location.addIntegerAttribute("AGE", age);
-        }
-
-        // Not everyone walks at the same speed
-        basemoveRate *= Math.abs(state.random.nextGaussian());
-        location.addDoubleAttribute("MOVE RATE", basemoveRate);
-    }
 
 
     /** @return string indicating whether we are "FACULTY" or a "STUDENT" */
@@ -204,7 +199,7 @@ public class Agent implements Steppable
     public void moveTo(Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
-        location.getGeometry().apply(pointMoveTo);
+//        location.getGeometry().apply(pointMoveTo);
     }
 
 
@@ -213,7 +208,7 @@ public class Agent implements Steppable
     {
         CampusWorld campState = (CampusWorld) state;
         move(campState);
-//        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
+        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
     }
 
 

@@ -31,13 +31,15 @@ public class Agent implements Steppable
     private static final long serialVersionUID = -7366623247320036818L;
 
 	// point that denotes agent's position
-    private Point location;
+    private MasonGeometry location;
 
     // How much to move the agent by in each step()
     private static double moveRate = 2.0;
 
     // DISTANCE for determining if objects are close
     public static double DISTANCE = 20.0;
+
+    private static GeometryFactory fact = new GeometryFactory();
 
     public Agent()
     {
@@ -46,13 +48,12 @@ public class Agent implements Steppable
     
     public Agent(int x, int y)
     {
-        GeometryFactory fact = new GeometryFactory();
-        location = fact.createPoint(new Coordinate(x,y));
-        System.out.println("agent: " + location);
+        location = new MasonGeometry( fact.createPoint(new Coordinate(x,y)) );
+//        System.out.println("agent: " + location);
     }
 
     // return geometry representing agent location
-    public Geometry getGeometry()
+    public MasonGeometry getGeometry()
     {
         return location;
     }
@@ -113,7 +114,7 @@ public class Agent implements Steppable
     // move the agent in a random direction within a bounds
     private void move(MersenneTwisterFast random)
     {
-        Coordinate coord = (Coordinate) location.getCoordinate().clone();
+        Coordinate coord = (Coordinate) location.geometry.getCoordinate().clone();
 
         int direction = random.nextInt(8);
 
@@ -163,7 +164,7 @@ public class Agent implements Steppable
 
         if (isValidMove(coord))
             {
-                location.apply(translate);
+                location.geometry.apply(translate);
 //                System.out.println("agent:" + location);
             }        
     }
