@@ -1,7 +1,7 @@
 /**
  ** SchellingGeometry.java
  **
- ** Copyright 2011 by Andrew Crooks, Sarah Wise, Mark Coletti, and
+ ** Copyright 2011 by Sarah Wise, Mark Coletti, Andrew Crooks, and
  ** George Mason University.
  **
  ** Licensed under the Academic Free License version 3.0
