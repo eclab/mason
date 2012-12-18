@@ -226,7 +226,7 @@ public class GeomVectorFieldTest
 
         addEvenlySpacedPoints(100, 100, 10, instance);
 
-        Point testPoint = createPoint(50,50);
+        MasonGeometry testPoint = new MasonGeometry(createPoint(50,50));
 
         Bag result = instance.getObjectsWithinDistance(testPoint, 10.0);
 
