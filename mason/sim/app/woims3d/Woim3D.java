@@ -67,7 +67,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     double[] distSqrTo;
     void preprocessWoims( final WoimsDemo3D state, Double3D pos, double distance )
         {
-        nearbyWoims = state.woimEnvironment.getObjectsWithinDistance( pos, distance );
+        nearbyWoims = state.woimEnvironment.getNeighborsWithinDistance( pos, distance );
         if( nearbyWoims == null )
             return;
         distSqrTo = new double[nearbyWoims.numObjs];

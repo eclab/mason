@@ -66,7 +66,7 @@ public /*strictfp*/ class VirusInfectionDemo extends SimState
         if( location.x < DIAMETER/2 || location.x > (XMAX-XMIN)/*environment.getXSize()*/-DIAMETER/2 ||
             location.y < DIAMETER/2 || location.y > (YMAX-YMIN)/*environment.getYSize()*/-DIAMETER/2 )
             return false;
-        Bag mysteriousObjects = environment.getObjectsWithinDistance( location, 2*DIAMETER );
+        Bag mysteriousObjects = environment.getNeighborsWithinDistance( location, 2*DIAMETER );
         if( mysteriousObjects != null )
             {
             for( int i = 0 ; i < mysteriousObjects.numObjs ; i++ )

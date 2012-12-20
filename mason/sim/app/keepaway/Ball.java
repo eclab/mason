@@ -34,7 +34,7 @@ public /*strictfp*/ class Ball extends Entity implements Steppable
     public MutableDouble2D getForces( final Keepaway keepaway)
         {
         sumVector.setTo(0,0);
-        Bag objs = keepaway.fieldEnvironment.getObjectsWithinDistance(new Double2D(loc.x, loc.y), 100);
+        Bag objs = keepaway.fieldEnvironment.getNeighborsWithinDistance(new Double2D(loc.x, loc.y), 100);
 
         double dist = 0;
 

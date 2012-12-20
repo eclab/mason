@@ -52,7 +52,7 @@ public /*strictfp*/ class CooperativeObservation extends SimState
         if( location.x < DIAMETER/2 || location.x > (XMAX-XMIN)/*environment.getXSize()*/-DIAMETER/2 ||
             location.y < DIAMETER/2 || location.y > (YMAX-YMIN)/*environment.getYSize()*/-DIAMETER/2 )
             return false;
-        Bag misteriousObjects = environment.getObjectsWithinDistance( location, /*Strict*/Math.max( 2*DIAMETER, 2*DIAMETER ) );
+        Bag misteriousObjects = environment.getNeighborsWithinDistance( location, /*Strict*/Math.max( 2*DIAMETER, 2*DIAMETER ) );
         if( misteriousObjects != null )
             {
             for( int i = 0 ; i < misteriousObjects.numObjs ; i++ )

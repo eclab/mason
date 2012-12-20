@@ -68,7 +68,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     double[] distSqrTo;
     void preprocessWoims( final WoimsDemo state, Double2D pos, double distance )
         {
-        nearbyWoims = state.woimsEnvironment.getObjectsWithinDistance( pos, distance );
+        nearbyWoims = state.woimsEnvironment.getNeighborsWithinDistance( pos, distance );
         if( nearbyWoims == null )
             {
             return;

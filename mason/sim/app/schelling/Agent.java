@@ -32,7 +32,7 @@ public /*strictfp*/ class Agent implements Steppable
         if (sch.emptySpaces.numObjs == 0) return;  // nowhere to move to!
         
         // get all the places I can go.  This will be slow as we have to rely on grabbing neighbors.
-        sch.neighbors.getNeighborsMaxDistance(loc.x,loc.y,sch.neighborhood,sch.neighbors.BOUNDED,true,neighborsX,neighborsY);
+        sch.neighbors.getMooreLocations(loc.x,loc.y,sch.neighborhood,sch.neighbors.BOUNDED,true,neighborsX,neighborsY);
         
         // compute value
         double val = 0;

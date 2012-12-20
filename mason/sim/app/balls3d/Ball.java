@@ -63,7 +63,7 @@ public class Ball implements Steppable
     public void computeCollision(Balls3D tut)
         {
         Double3D me = tut.balls.getObjectLocation(this);
-        Bag b = tut.balls.getObjectsExactlyWithinDistance(me,Balls3D.collisionDistance);
+        Bag b = tut.balls.getNeighborsExactlyWithinDistance(me,Balls3D.collisionDistance);
         collision = b.numObjs > 1;  // other than myself of course
         }
 

@@ -33,7 +33,7 @@ public class Agent implements Steppable, Stoppable
         tmpMyPosition.y = myPositionD3D.y;
         tmpMyPosition.z = myPositionD3D.z;
                 
-        Bag neighbors = hb.boidSpace.getObjectsWithinDistance(myPositionD3D, SIGHT);
+        Bag neighbors = hb.boidSpace.getNeighborsWithinDistance(myPositionD3D, SIGHT);
         tmpSumOfCrowdForces.x = tmpSumOfCrowdForces.y = tmpSumOfCrowdForces.z = 0;
         tmpSumOfWallForces.x = tmpSumOfWallForces.y = tmpSumOfWallForces.z = 0;
             

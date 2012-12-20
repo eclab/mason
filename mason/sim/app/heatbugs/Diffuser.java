@@ -33,7 +33,7 @@ public /*strictfp*/ class Diffuser implements Steppable
         // We begin with the naive way to do it: double-loop through each of the
         // grid values.  For each grid value, gather the eight neighbor positions
         // around that grid value, and compute the average of them.  Note that the
-        // getNeighborsMaxDistance function is set to include toroidal boundaries as well.
+        // getMooreLocations function is set to include toroidal boundaries as well.
         // Then set (in the new grid 'valgrid2') the new value to include some evaporation,
         // plus some of this diffused average.
                 
@@ -46,7 +46,7 @@ public /*strictfp*/ class Diffuser implements Steppable
         //                 {
         //                 average = 0.0;
         //                 // get all the neighbors
-        //                 heatbugs.valgrid.getNeighborsMaxDistance(x,y,1,Grid2D.TOROIDAL,true,xNeighbors,yNeighbors);
+        //                 heatbugs.valgrid.getMooreLocations(x,y,1,Grid2D.TOROIDAL,true,xNeighbors,yNeighbors);
                 
         //                 // for each neighbor...
         //                 for(int i = 0 ; i < xNeighbors.numObjs; i++)
@@ -65,7 +65,7 @@ public /*strictfp*/ class Diffuser implements Steppable
 
         // ----------------------------------------------------------------------
         // It turns out that this is quite slow for a variety of reasons.  First, 
-        // the getNeighborsMaxDistance loads and stores integers into a large array, 
+        // the getMooreLocations loads and stores integers into a large array, 
         // then clears them out, all so we can just do some simple computation with 
         // them.  Since we already know exactly what locations we want to grab, why 
         // are we asking the system to do it for us?  We can do it much faster by 

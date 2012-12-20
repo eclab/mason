@@ -49,7 +49,7 @@ public /*strictfp*/ class Good extends Agent
         desiredLocation = null;
         double distance2DesiredLocation = 1e30;
 
-        Bag mysteriousObjects = hb.environment.getObjectsWithinDistance( agentLocation, 50.0 * VirusInfectionDemo.HEALING_DISTANCE );
+        Bag mysteriousObjects = hb.environment.getNeighborsWithinDistance( agentLocation, 50.0 * VirusInfectionDemo.HEALING_DISTANCE );
         if( mysteriousObjects != null )
             {
             for( int i = 0 ; i < mysteriousObjects.numObjs ; i++ )

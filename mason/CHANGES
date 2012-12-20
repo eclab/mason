@@ -2510,3 +2510,22 @@ Version 17
 	Addition of new neighborhood object methods in all the Grid2D methods [Second step]
 		and tweaks to applications (HeatBugs, Schelling) to properly use the new
 		methods.
+	Renamed various grid methods.  The logic was to distinguish between neighbors
+		(actual objects or values) and locations.  All previous methods have been
+		deprecated.
+
+		IN GRID2D and GRID3D AND SUBCLASSES:
+		getNeighborsMaxDistance(...locations...)   ->   getMooreLocations
+		getNeighborsHamiltonianDistance(...locations...)   -> getVonNeumannLocations
+		getNeighborsHexagonalDistance(...locations...)   -> getHexagonalLocations
+		getNeighborsMaxDistance(...objects...)   ->   getMooreNeighbors
+		getNeighborsHamiltonianDistance(...objects...)   -> getVonNeumannNeighbors
+		getNeighborsHexagonalDistance(...objects...)   ->   getHexagonalNeighbors
+		getNeighborsAndCorrespondingPositionsMaxDistance(...)   -> getMooreNeighborsAndLocations
+		getNeighborsAndCorrespondingPositionsHamitonianDistance(...)  -> getVonNeumannNeighborsAndLocations
+		getNeighborsAndCorrespondingPositionsHexagonalDistance(...)   -> getHexagonalNeighborsAndLocations
+
+		IN CONTINUOUS2D and CONTINUOUS3D:
+		getObjectsExactlyWithinDistance(...)    ->	getNeighborsExactlyWithinDistance
+		getObjectsWithinDistance(...)           ->	getNeighborsWithinDistance
+	Added boundedness checks for 3D grid neighborhood lookup, oops	

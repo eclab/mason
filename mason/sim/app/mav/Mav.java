@@ -94,7 +94,7 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
         
         final double d = mavdemo.sensorRangeDistance * mavdemo.sensorRangeDistance;
         
-        final Bag nearbyMavs = mavdemo.mavs.getObjectsWithinDistance(new Double2D(x,y),16,false,false);
+        final Bag nearbyMavs = mavdemo.mavs.getNeighborsWithinDistance(new Double2D(x,y),16,false,false);
         for(int i=0;i<nearbyMavs.numObjs;i++)
             {
             final Mav mav = (Mav)(nearbyMavs.objs[i]);

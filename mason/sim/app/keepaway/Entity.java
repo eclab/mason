@@ -70,7 +70,7 @@ public abstract /*strictfp*/ class Entity extends OvalPortrayal2D
     
     public boolean isValidMove( final Keepaway keepaway, final MutableDouble2D newLoc)
         {
-        Bag objs = keepaway.fieldEnvironment.getObjectsWithinDistance(new Double2D(loc.x, loc.y), 10);
+        Bag objs = keepaway.fieldEnvironment.getNeighborsWithinDistance(new Double2D(loc.x, loc.y), 10);
 
         double dist = 0;
 

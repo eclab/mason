@@ -24,7 +24,7 @@ public class Flocker implements Steppable, sim.portrayal.Orientable2D
     
     public Bag getNeighbors()
         {
-        return flockers.getObjectsExactlyWithinDistance(loc, theFlock.neighborhood, true);
+        return flockers.getNeighborsExactlyWithinDistance(loc, theFlock.neighborhood, true);
         }
     
     public double getOrientation() { return orientation2D(); }

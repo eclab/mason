@@ -8,6 +8,8 @@ package sim.app.pso;
 
 import sim.util.Double2D;
 import sim.util.MutableDouble2D;
+import sim.field.network.*;
+import sim.portrayal.network.*;
 
 /**
    @author Ankur Desai and Joey Harrison
@@ -20,7 +22,9 @@ public class Particle
     MutableDouble2D bestPosition = new MutableDouble2D();
 
     MutableDouble2D position = new MutableDouble2D();
-    MutableDouble2D velocity = new MutableDouble2D();       
+    MutableDouble2D velocity = new MutableDouble2D();  
+    
+    Double[] obj;
                 
     PSO pso;
     Evaluatable fitnessFunction;
@@ -41,6 +45,9 @@ public class Particle
         this.pso = pso;
         this.fitnessFunction = f;
         pso.space.setObjectLocation(this,new Double2D(position));
+        Double ft = new Double(getFitness());
+        obj = new Double[] { ft };
+        pso.history.setObjectLocation(obj, new Double2D(position));
         this.index = index;
         }
 
@@ -107,6 +114,11 @@ public class Particle
         //              "Best: " + n.bestVal + " (" + n.bestPosition.x + ", " + n.bestPosition.y + ")");
         position.addIn(velocity);
         pso.space.setObjectLocation(this, new Double2D(position));
+        Double ft = new Double(getFitness());
+        Double[] o = new Double[] { ft };
+        pso.history.setObjectLocation(o, new Double2D(position));
+        pso.paths.addEdge(obj, o, o);
+        obj = o;
         }
 
     }

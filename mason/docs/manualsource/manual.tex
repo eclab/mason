@@ -7211,13 +7211,15 @@ It's also not quite clear where the boundary {\it is} in a continuous space, par
 \mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
 \end{methods}
 
-\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=2.0in]{ContinuousVsGrid.pdf}\caption{Centers of objects at $\langle 0, 0\rangle$ in a grid and in continuous space. }\label{mixingcontinuousandgrids}\vspace{-4em}\end{wrapfigure}
+\vbox{
+\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=1.5in]{ContinuousVsGrid.pdf}\vspace{-1em}\caption{Centers of objects at $\langle 0, 0\rangle$ in a grid and in continuous space. }\label{mixingcontinuousandgrids}\end{wrapfigure}
 
 \paragraph{A Note on Mixing Continuous and Grid Space}
 
 In an \(n \times m\) continuous space, an object at \(\langle 0,0\rangle\) is drawn so that its center lies on the origin of the bounding rectangle of the space.  But in a grid, an object at \(\langle 0,0\rangle\) is centered on the first grid square.  This is a different location, as shown in the Figure at right.
 
 When you overlap continuous and grid field portrayals, you'll want to be mindful of this.  You probably will want to translate one or the other so that these two locations line up.  The easiest way to do this is to translate the continuous portrayal by \(\frac{1}{2n}\) and \(\frac{1}{2m}\) when it's attached to the Display2D (see Section \ref{attachingfields}, page \pageref{attachingfields}).
+}
 
 \subsection{Fast Field Portrayals}
 \label{fastfieldportrayals}

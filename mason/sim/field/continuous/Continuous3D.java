@@ -41,7 +41,7 @@ import java.util.*;
    discretization.  In this case, you want to make certain that your discretization is at LEAST larger than
    the LARGEST dimension of any object you plan on putting in the Continuous3D.  The idea here is that if an
    any part of an object fell within the bounding box for your distance lookup task 
-   (see getObjectsWithinDistance(...)), you're guaranteed that the stored location of the object must be within
+   (see getNeighborsWithinDistance(...)), you're guaranteed that the stored location of the object must be within
    a bounding box 1 discretization larger in each direction.
 
    <p>Okay, so that gives you the minimum discretization you should use.  What about the maximum discretization?
@@ -53,9 +53,9 @@ import java.util.*;
    discretization equal to the maximum range distance you are likely to look up; but if your field is very sparse,
    then we recommend a discretization equal to twice the maximum range distance.  You have to tune it.  If you
    have <b>non-point-location</b> objects, then you have two choices.  One approach is to assume a discretization 
-   equal to the maximum range distance, but when doing lookups with getObjectsWithinDistance(...), you need to
+   equal to the maximum range distance, but when doing lookups with getNeighborsWithinDistance(...), you need to
    state that you're using non-point-location objects.  If you're fairly sparse and your objects aren't big, you
-   can set the discretization to twice the maximum range distance, and you should be safe calling getObjectsWithinDistance()
+   can set the discretization to twice the maximum range distance, and you should be safe calling getNeighborsWithinDistance()
    pretending that your objects are point-location; this saves you a lot of hash table lookups.
 
    <p>At any rate, do NOT go below the minimum discretization rules. 
@@ -321,11 +321,13 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         return new Double3D(tdx(d1.x,d2.x),tdy(d1.y,d2.y),tdz(d1.z,d2.z));
         }
 
+
     /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
         using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.   
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance)
@@ -339,6 +341,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal)
@@ -356,12 +359,58 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
 
     public Bag getObjectsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal, 
         final boolean radial, final boolean inclusive, Bag result)
         {
-        result = getObjectsWithinDistance(position, distance, toroidal, false, result);
+        return getNeighborsExactlyWithinDistance(position, distance, toroidal, radial, inclusive, result);
+        }
+
+
+
+    /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+        using a circle of radius 'distance' around the given position.  Assumes non-toroidal point objects.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+
+    public Bag getNeighborsExactlyWithinDistance(final Double3D position, final double distance)
+        {
+        return getObjectsExactlyWithinDistance(position, distance, false, true, true, null);
+        }
+
+    /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position, or equal to that distance, measuring
+        using a circle of radius 'distance' around the given position.  If 'toroidal' is true, then the
+        distance is measured assuming the environment is toroidal.  Assumes point objects.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+
+    public Bag getNeighborsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal)
+        {
+        return getNeighborsExactlyWithinDistance(position, distance, toroidal, true, true, null);
+        }
+
+    /** Returns a Bag containing EXACTLY those objects within a certain distance of a given position.  If 'radial' is true,
+        then the distance is measured using a circle around the position, else the distance is meaured using a square around
+        the position (that is, it's the maximum of the x and y distances).   If 'inclusive' is true, then objects that are
+        exactly the given distance away are included as well, else they are discarded.  If 'toroidal' is true, then the
+        distance is measured assuming the environment is toroidal.  If the Bag 'result' is provided, it will be cleared and objects
+        placed in it and it will be returned, else if it is null, then this method will create a new Bag and use that instead. 
+        Assumes point objects.  
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+
+    public Bag getNeighborsExactlyWithinDistance(final Double3D position, final double distance, final boolean toroidal, 
+        final boolean radial, final boolean inclusive, Bag result)
+        {
+        result = getNeighborsWithinDistance(position, distance, toroidal, false, result);
         int numObjs = result.numObjs;
         Object[] objs = result.objs;
         double distsq = distance*distance;
@@ -404,6 +453,9 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         return result;
         }
 
+
+
+
     /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
         specified distance of the specified position.  The bag could include other objects than this.
         In this case we include the object if
@@ -415,6 +467,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance)
         { return getObjectsWithinDistance(position,distance,false,false, new Bag()); }
@@ -430,6 +483,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal)
         { return getObjectsWithinDistance(position,distance,toroidal,false, new Bag()); }
@@ -448,6 +502,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
          <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
          to within the boundaries before computation.
+        @deprecated
     */
         
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
@@ -469,9 +524,85 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
         to within the boundaries before computation.
+        @deprecated
     */
         
     public Bag getObjectsWithinDistance( Double3D position, final double distance, final boolean toroidal,
+        final boolean nonPointObjects, Bag result)
+        {
+        return getNeighborsWithinDistance(position, distance, toroidal, nonPointObjects, result);
+        }
+
+
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
+        actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes non-toroidal, point objects]    
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+    public Bag getNeighborsWithinDistance( final Double3D position, final double distance)
+        { return getNeighborsWithinDistance(position,distance,false,false, new Bag()); }
+
+    /** Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
+        actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups. [assumes point objects]    
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+    public Bag getNeighborsWithinDistance( final Double3D position, final double distance, final boolean toroidal)
+        { return getNeighborsWithinDistance(position,distance,toroidal,false, new Bag()); }
+
+    /**  Returns a bag containing AT LEAST those objects within the bounding box surrounding the
+         specified distance of the specified position.  The bag could include other objects than this.
+         If toroidal, then wrap-around possibilities are also considered.
+         If nonPointObjects, then it is presumed that
+         the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+         could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+         any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+         true, we extend the search space by one extra discretization in all directions.  For small distances within
+         a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
+         actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
+         you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
+        
+         <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+         to within the boundaries before computation.
+    */
+        
+    public Bag getNeighborsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
+        final boolean nonPointObjects)
+        { return getNeighborsWithinDistance(position, distance, toroidal, nonPointObjects, new Bag()); }
+
+
+    /** Puts into the result Bag (and returns it) AT LEAST those objects within the bounding box surrounding the
+        specified distance of the specified position.  The bag could include other objects than this.
+        If toroidal, then wrap-around possibilities are also considered.
+        If nonPointObjects, then it is presumed that
+        the object isn't just a point in space, but in fact fills an area in space where the x/y point location
+        could be at the extreme corner of a bounding box of the object.  In this case we include the object if
+        any part of the bounding box could overlap into the desired region.  To do this, if nonPointObjects is
+        true, we extend the search space by one extra discretization in all directions.  For small distances within
+        a single bucket, this returns 27 bucket's worth rather than 1 (!!!), so if you know you only care about the
+        actual x/y/z points stored, rather than possible object overlap into the distance sphere you specified,
+        you'd want to set nonPointObjects to FALSE.   That's a lot of extra hash table lookups.   
+        
+        <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
+        to within the boundaries before computation.
+    */
+        
+    public Bag getNeighborsWithinDistance( Double3D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects, Bag result)
         {
         // push location to within legal boundaries
@@ -633,7 +764,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         return result;
         }
 
-    // used internally in getObjectsWithinDistance.  Note similarity to
+    // used internally in getNeighborsWithinDistance.  Note similarity to
     // AbstractGrid3D's tx method
     final int toroidal(final int x, final int width) 
         { 

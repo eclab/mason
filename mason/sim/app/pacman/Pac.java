@@ -84,7 +84,7 @@ public class Pac extends Agent implements Steppable
         doPolicyStep(state);
         // now maybe we eat a dot or energizer...
 
-        Bag nearby = pacman.dots.getObjectsWithinDistance(new Double2D(location), 0.3);  // 0.3 seems reasonable.  We gotta be right on top anyway
+        Bag nearby = pacman.dots.getNeighborsWithinDistance(new Double2D(location), 0.3);  // 0.3 seems reasonable.  We gotta be right on top anyway
         for(int i=0; i < nearby.numObjs; i++)
             {
             Object obj = nearby.objs[i];
@@ -125,7 +125,7 @@ public class Pac extends Agent implements Steppable
 
         // a ghost perhaps?
                 
-        nearby = pacman.agents.getObjectsWithinDistance(new Double2D(location), 0.3);  // 0.3 seems reasonable.  We gotta be right on top anyway
+        nearby = pacman.agents.getNeighborsWithinDistance(new Double2D(location), 0.3);  // 0.3 seems reasonable.  We gotta be right on top anyway
         for(int i=0; i < nearby.numObjs; i++)
             {
             Object obj = nearby.objs[i];

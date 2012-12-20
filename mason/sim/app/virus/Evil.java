@@ -49,7 +49,7 @@ public /*strictfp*/ class Evil extends Agent
         desiredLocation = null;
         double distance2DesiredLocation = 1e30;
 
-        Bag mysteriousObjects = hb.environment.getObjectsWithinDistance(agentLocation, 10.0 * VirusInfectionDemo.INFECTION_DISTANCE);
+        Bag mysteriousObjects = hb.environment.getNeighborsWithinDistance(agentLocation, 10.0 * VirusInfectionDemo.INFECTION_DISTANCE);
         if( mysteriousObjects != null )
             {
             for( int i = 0 ; i < mysteriousObjects.numObjs ; i++ )

@@ -12,6 +12,8 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
 import sim.util.MutableDouble2D;
+import sim.field.network.*;
+import sim.portrayal.network.*;
 
 /**
    @author Ankur Desai and Joey Harrison
@@ -21,6 +23,8 @@ public class PSO extends SimState
     private static final long serialVersionUID = 1;
 
     public Continuous2D space;
+    public Network paths;
+    public Continuous2D history;
         
     public double width = 10.24;
     public double height = 10.24;
@@ -123,6 +127,9 @@ public class PSO extends SimState
         super.start();
         particles = new Particle[numParticles];
         space = new Continuous2D(height, width, height);
+        history = new Continuous2D(height, width, height);
+        paths = new Network();
+        
         Evaluatable f = mapFitnessFunction(fitnessFunction);            
                         
         for (int i = 0; i < numParticles; i++)

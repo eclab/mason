@@ -19,6 +19,9 @@ import sim.portrayal.DrawInfo2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.gui.SimpleColorMap;
+import sim.field.network.*;
+import sim.portrayal.network.*;
+import java.awt.BasicStroke;
 
 /**
    @author Ankur Desai and Joey Harrison
@@ -38,6 +41,7 @@ public class PSOWithUI extends GUIState
     public static String getName() { return "Particle Swarm Optimization"; }
 
     ContinuousPortrayal2D swarmPortrayal = new ContinuousPortrayal2D();
+    NetworkPortrayal2D pathsPortrayal = new NetworkPortrayal2D();
     
     public PSOWithUI()
         {
@@ -64,6 +68,7 @@ public class PSOWithUI extends GUIState
     public void setupPortrayals()
         {
         PSO swarm = (PSO)state;
+        final BasicStroke stroke = new BasicStroke(0.1f);
         final SimpleColorMap map = new SimpleColorMap(
             swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);
          
@@ -81,6 +86,18 @@ public class PSOWithUI extends GUIState
                         }
                     });
             }
+        pathsPortrayal.setField(new SpatialNetwork2D(swarm.history, swarm.paths));
+        pathsPortrayal.setPortrayalForAll(
+            new SimpleEdgePortrayal2D()
+                {
+                public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+                    {
+                    graphics.setStroke(stroke);
+                    toPaint = fromPaint = map.getColor(
+                        ((Double[])(((Edge)object).getInfo()))[0].doubleValue());
+                    super.draw(object, graphics, info);
+                    }
+                });
         
         // update the size of the display appropriately.
         double w = swarm.space.getWidth();
@@ -111,6 +128,8 @@ public class PSOWithUI extends GUIState
         displayFrame.setTitle("Particle Swarm Optimization");
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
+        display.attach(pathsPortrayal, "paths",
+            (display.insideDisplay.width * 0.5), (display.insideDisplay.height * 0.5), true);
         display.attach(swarmPortrayal, "Behold the Swarm!", 
             (display.insideDisplay.width * 0.5), (display.insideDisplay.height * 0.5), true);
         }

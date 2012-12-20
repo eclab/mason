@@ -54,7 +54,7 @@ public /*strictfp*/ class HexaDiffuser implements Steppable
         //            for(int y=0;y< _gridHeight;y++)
         //                {
         //                // Get neighbors
-        //                _valgrid.getNeighborsHexagonalDistance(x,y,1,Grid2D.TOROIDAL,true,temp,null,null);
+        //                _valgrid.getMooreNeighbors(x,y,1,Grid2D.TOROIDAL,true,temp,null,null);
         //       
         //                //Go through neighbors and compute average
         //                for( int i = 0 ; i < temp.numObjs ; i++ ) average += temp.objs[i];
@@ -68,7 +68,7 @@ public /*strictfp*/ class HexaDiffuser implements Steppable
         
         
         
-        // The problem with this approach is that getNeighborsHexagonalDistance is simple
+        // The problem with this approach is that getMooreNeighbors is simple
         // and elegant but expensive.  Instead we can simply hard-code it as so:
         
         //        // locals are faster than instance variables

@@ -58,7 +58,7 @@ public /*strictfp*/ class HexaBug implements Steppable
         int bestx = START;
         int besty = 0;
 
-        hb.valgrid.getNeighborsHexagonalDistance(myx,myy,1,true,neighVal,neighX,neighY);
+        hb.valgrid.getHexagonalNeighbors(myx,myy,1,hb.valgrid.TOROIDAL,true,neighVal,neighX,neighY);
 
         if (state.random.nextBoolean(randomMovementProbability))  // go to random place
             {
