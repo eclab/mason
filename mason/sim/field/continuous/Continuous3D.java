@@ -857,10 +857,13 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
     public Bag removeObjectsAtLocation(final Double3D location)
         {
         Bag bag = getObjectsAtLocation(location);               // this bag is a copy so it won't be reduced as I remove objects
-        Object[] objs = bag.objs;
-        int numObjs = bag.numObjs;
-        for(int i = 0; i < bag.numObjs; i++)
-            remove(objs[i]);
+        if (bag != null)
+        	{
+			Object[] objs = bag.objs;
+			int numObjs = bag.numObjs;
+			for(int i = 0; i < bag.numObjs; i++)
+				remove(objs[i]);
+			}
         return bag;
         }
 
