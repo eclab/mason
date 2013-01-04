@@ -247,7 +247,7 @@ Most of these toolkits were developed for small jobs.  MASON is distinguished am
 \item MASON models are entirely serializable to disk.  This means that you can checkpoint files in case your back-end server goes down, and restart form your latest checkpoint.  It also means you can run a MASON model on a back-end Linux machine, pause and serialize it to disk, move it to your Mac, unpause it under visualization, modify it, pause it again, move it to a PC, unpause it under a {\it different} visualization, pause it again, then put it back out on a back-end Sun server, and it'll continue to run happily as if nothing had happened.  
 \item MASON models are entirely encapsulated.  This means you can run multiple MASON models in parallel in the same process, interleaved in a big for-loop, or in separate threads, and they'll not touch each other.
 \item MASON is written in Java in order to make it easy to run in heterogeneous computer environments.  But it also is written in very carefully written Java, with an eye firmly fixed towards efficiency.  Notably, a number of poorly-written standard Sun classes are replaced with properly written MASON equivalents.  Java has a reputation for being slow, but this is largely due to Sun's bad libraries and design decisions (generics and boxing, iterators, etc.).  MASON eschews these internally.
-\item MASON has a high-quality random number generator (Mersenne Twister) and uses the fastest known implementation of it (I know\,---\,I wrote it).
+\item MASON has a high-quality random number generator (Mersenne Twister) and uses the fastest known implementation of it.
 \item MASON models are largely {\it duplicable},\footnote{Not to be confused with {\it replicable}: where the model can be built again in (say) NetLogo and it'll more or less run the same.  That's also true for MASON, but it's in some sense a lower standard.} meaning that if you run the simulation with exactly the same parameters (including random number seed) it'll run exactly the same way, even on different machines.\footnote{Well, that's not quite true.  MASON doesn't use the \variable{strictfp} keyword or the \class{java.lang.StrictMath} class, so if you move to a different CPU you may get slightly different floating point results.  However if you want to guarantee full duplicability, you can add the \variable{strictfp} keyword and replace \class{java.lang.Math} references with \class{java.lang.StrictMath} and everything should be perfectly duplicable, albeit slower.}
 \item MASON dovetails nicely with ECJ\footnote{http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}, a very popular evolutionary computation (genetic algorithms, etc.) toolkit I wrote, which is designed (not surprisingly) for everything from single laptops to  large jobs involving thousands of machines.
 \item MASON is modular and consistent.  There is a high degree of separation and independence among elements of the system.  This allows you to use, and recombine, different parts of the system in unexpected ways.  MASON is very highly hackable.  Indeed, a number of MASON's classes are used, with our blessing, in MASON's competition.\footnote{Well, not really competition: we're all friends here.}
@@ -485,7 +485,7 @@ import sim.field.continuous.*;
 
 First notice that we have added two variables to the \class{Students} class: the yard where the students exist, and the number of students.  The yard will be one of our {\bf representations of space} (we'll add the network in a moment).  In MASON parlance, representations of space, which are typically displayed in the GUI, are called {\bf fields}.  A field is a generic term: you can make your own data structure if you like.  But MASON provides a number of built-in fields for your convenience, and this is one of them: the class \Class{sim.field.continuous.Continuous2D}.
 
-The Continuous2D class defines a 2-dimensional environment of real-valued (continuous) space.  The space may be bounded, toroidal, or infinite: here we're going to assume it's infinite, though we'll specify some bounds for drawing purposes later.  Our bounds are 100 by 100.  Furthermore, the Continuous2D discretizes its space into an underlying grid to make neighborhood lookups easier: we don't use that feature so we just use 1.0 as our discretization (it doesn't make any difference).
+The Continuous2D class defines a 2-dimensional environment of real-valued (continuous) space.  The space may be bounded, toroidal, or infinite (unbounded): here we're going to assume it's unbounded, though we'll specify some bounds for drawing purposes later.  Our bounds are 100 by 100.  Furthermore, the Continuous2D discretizes its space into an underlying grid to make neighborhood lookups easier: we don't use that feature so we just use 1.0 as our discretization (it doesn't make any difference).
 
 We have also added a \method{start()} method.  Recall that this method is called before the schedule is stepped in order to allow the simulation to set itself up.  The first thing we do in this method is call \code{super.start()}, which is very important.
 
@@ -1234,7 +1234,7 @@ As shown at right, we've now got edges being drawn.  Now let's modify how the no
 
 
 \bump
-\section{Inspect and Student Agitation and Customize its Visualizaion}
+\section{Inspect Student Agitation and Customize its Visualizaion}
 
 Before we can visualize how agitated the students are, we'll need to actually define what ``agitated'' means.  We'll define it in terms of the affinity forces: a student is happier if he has lower affinity forces on him (he's fine where he is), and more agitated if the forces are high.
 
@@ -4457,7 +4457,9 @@ Returns the location, as a Double3D, of a given Object stored in the field.
 
 \subsection{Extents}
 
-All grids, even unbounded ones, have a width, height, and (for 3-dimensional grids) length which define an extent for the grid.  For finite grids, this extent is the actual extent of the grid.  For unbounded grids, the width and height allow the grid to be used as a finite or toroidal grid, and also act as a convenience to let MASON know the appropriate default region to display on-screen.  The width and height do not prevent you from setting values outside the extent: but they are used in gathering neighbors when toroidal facilities are turned on.
+Unless they are unbounded grids (notably \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}), all grids start at coordinate 0.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
+
+All grids in MASON have a width, height, and (for 3-dimensional grids) length which define an extent for the grid.  In some cases this extent serves as an actual bound on the grid; in other cases it merely serves as a convenience to let MASON know the appropriate default region to display on-screen.  The extents can be determined like this:
 
 \begin{methods}{\class{sim.field.grid.Grid2D} and \Class{sim.field.grid.Grid3D} Utility}
 \mthd{public int getWidth()}
@@ -4471,32 +4473,15 @@ Returns the width of the field (Y dimension).
 Returns the width of the field (Z dimension). 
 \end{methods}
 
-\subsection{Rectangular Grids and Neighborhood Lookup}
-\label{RectangularGrids}
-Unless they are unbounded grids (notably \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}), all rectangular grids start at coordinate 0 and proceed in a positive direction.  It's also probably best to think of grids in traditional matrix format, that is, as having their origin in the top let corner, with the positive Y axis pointing down.  This is because of how MASON displays them with its portrayals, which in turn is because Java's graphics coordinate system is flipped in the Y axis and has \(\langle 0,0\rangle\) at the top left corner.
+You can use grids in three different ways with regard to these extents:
 
-All rectangular grids have neighborhood lookup facilities which gather all the coordinate locations (not their values) in the grid lying within some region a distance away from a given point.  MASON provides two such methods:
+\begin{itemize} 
+\item {\bf Bounded Grids}\quad The extents define the actual bounds for the grid.  That is, objects and values are only be stored in locations ranging from \(\langle 0,0\rangle\) to \(\langle\text{\it width}, \text{\it height}\rangle\) (or in the case of 3-dimensional grids, from  \(\langle 0,0,0\rangle\) to \(\langle\text{\it width}, \text{\it height}, \text{\it length}\rangle\).  All grids may be treated as bounded.
+\item {\bf Toroidal Grids}\quad The grid is ``wrap-around'', for example, the location  \(\langle 0,0\rangle\) is one diagonal grid point away from \(\langle\text{\it width}, \text{\it height}\rangle\).  The extents define the toroidal bounds for the grid.  All grids may be treated as toroidal.
+\item {\bf Unbounded Grids}\quad The extents merely serve as a guide for the visualization system: but in fact objects or values may be stored at any integer location whatsoever irrespective of the extents.  This includes negative coordinates.  The only grids which may be treated as unbounded are \Class{sim.field.SparseGrid2D} and \Class{sim.field.SparseGrid3D}.
+\end{itemize}
 
-\begin{methods}{\class{sim.field.grid.Grid2D} Utility}
-\mthd{public void getMooreLocations(int x, int y, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
-Computes the neighboring locations lying within the \((2\  \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) square centered at \(\text{\variable{x}}, \text{\variable{y}}\).  That is, all neighbors \(\langle X_i, Y_i\rangle\) of a location that satisfy \(\max(|(\text{\variable{x}} - X_i)|,  |(\text{\variable{y}} - Y_i)|) \leq \text{\variable{dist}}\).  If \variable{dist}\(=1\), this is equivalent to the center location itself and its eight neighbors (the ``Moore Neighborhood'').  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
-
-\mthd{public void getVonNeumannLocations(int x, int y, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
-Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) diamond centered at \(\text{\variable{x}}, \text{\variable{y}}\).  That is, all neighbors \(\langle X_i, Y_i\rangle\) of a location that satisfy \(|(\text{\variable{x}} - X_i)| +  |(\text{\variable{y}} - Y_i)| \leq \text{\variable{dist}}\). If \variable{dist}\(=1\), this is equivalent to the center location itself and its ``Von-Neuman Neighborhood'' (the four neighbors above, below, and to the left and right).  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
-
-\end{methods}
-
-Grid3D is similar:
-
-\begin{methods}{\class{sim.field.grid.Grid3D} Utility}
-\mthd{public void getMooreLocations(int x, int y, int z, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos)}
-Computes the neighboring locations lying within the \((2\  \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1) \times(2\ \text{\variable{dist}}+1)\) cube centered at \(\text{\variable{x}}, \text{\variable{y}}, \text{\variable{z}}\).  That is, all neighbors \(\langle X_i, Y_i, Z_i\rangle\) of a location that satisfy \(\max(|(\text{\variable{x}} - X_i)|,  |(\text{\variable{y}} - Y_i)|, |(\text{\variable{z}}- Z_i)|) \leq \text{\variable{dist}}\).  If \variable{dist}\(=1\), this is equivalent to the center location itself and its eight neighbors, the so-called ``Moore Neighborhood''.  If The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid3D.BOUNDED}, \variable{Grid3D.UNBOUNDED}, or \variable{Grid3D.TOROIDAL}.  Note that array grids  do not support \variable{Grid3D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
-
-\mthd{public void getVonNeumannLocations(int x, int y, int z, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos)}
-Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) diamond-shaped volume centered at \(\text{\variable{x}}, \text{\variable{y}}, \text{\variable{z}}\).  That is, all neighbors \(\langle X_i, Y_i, Z_i\rangle\) of a location that satisfy \(|(\text{\variable{x}} - X_i)| +  |(\text{\variable{y}} - Y_i)| + |(\text{\variable{z}}- Z_i)| \leq \text{\variable{dist}}\). If \variable{dist}\(=1\), this is equivalent to the center location itself and its ``Von-Neuman Neighborhood'' (the four neighbors above, below, and to the left and right).  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid3D.BOUNDED}, \variable{Grid3D.UNBOUNDED}, or \variable{Grid3D.TOROIDAL}.  Note that array grids  do not support \variable{Grid3D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
-\end{methods}
-
-These methods rely on three constants located in Grid2D (and also Grid3D):
+Grids are not set up to be bounded, unbounded, or toroidal: instead, you tell various neighborhood lookup functions how you are using the grid.  It is a convention only.  To inform these functions, you use one of the following constants, located in Grid2D (and also Grid3D):
 
 \java{%
 	public static final int BOUNDED;\\
@@ -4504,32 +4489,7 @@ These methods rely on three constants located in Grid2D (and also Grid3D):
 	public static final int TOROIDAL;
 }
 
-\variable{BOUNDED} implies that the width and height (and length) are respected\,---\,no elements may be stored outside those regions.  \variable{UNBOUNDED} implies that these bounds are {\it not} respected, and elements may be associated with any integer coordinate.  Obviously many grids, particularly arrays, do not support \variable{UNBOUNDED}.  Finally, \variable{TOROIDAL} implies that the environment is considered to be bounded but ``wrap-around'', like a torus.
-
-
-Additionally, rectangular grids have neighborhood lookup functions which return the {\it values} or {\it objects} stored within a neighborhood.  The exact details vary from grid to grid, as follows:
-
-\begin{itemize}
-\item DoubleGrid2D/3D and IntGrid2D/3D have the methods \method{getMooreNeighbors} and \method{getVonNeumannNeighbors}, which return all the coordinates normally returned by \method{getMooreLocations} and \method{getVonNeumannLocations}, plus an additional DoubleBag or IntBag (as appropriate) holding the {\bf value} stored at each of those locations.
-\item ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D have the methods \method{getMooreNeighbors} and \method{getVonNeumannNeighbors}, which return all the coordinates normally returned by \method{getMooreLocations} and \method{getVonNeumannLocations}, plus an additional Bag holding the {\bf all non-null objects} stored at each of those locations.  Note that this means that the objects bag could be smaller or larger than the coordinate bags, and its objects are not related to the corresponding coordinates.
-
-ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D also have the methods \method{getMooreNeighborsAndLocations} and \method{getVonNeumannNeighborsAndLocations}, which are like \method{getMooreNeighbors} and \method{getVonNeumanNeighbors}, but the coordinate bags have been modified so that, for each of the non-null returned objects, the coordinate bags hold the coordinate where that object was found. Thus all returned bags are the same length.
-\end{itemize}
-
-
-\begin{figure}[t]
-\begin{center}\includegraphics[width=5in]{grids.pdf}\end{center}
-\caption{Rectangular, triangular, and hexagonal grids topologies with coordinate equivalencies.}
-\label{GridEquivalencies}
-\end{figure}
-
-\subsection{Hexagonal, Triangular, and Toroidal Grids, and Neighborhood Lookup}
-
-MASON handles toroidal (wrap-around) grids via two kinds of methods to determine toroidal neighbors.  The slower general methods (\method{tx(..)}, \method{ty(..)}, and \method{tz(..)}) work for all toroidal situations.  The faster methods (\method{stx(..)}, \method{sty(..)}, and \method{stz(..)}) assume that you will never query locations far from the extent (width, height, length) of the grid.
-
-MASON doesn't have special classes for hexagonal or triangular grids. It just uses the regular bounded rectangular ones, and packs the hexagonal and triangular matrices into them.  Hexagons and triangles are quite easily packed into a rectangular matrix.  See Figure \ref{GridEquivalencies} to see how MASON does it.  Furthermore {\bf if your grid width is even, these packings work fine in toroidal fashion as well}.
-
-To use MASON's grids in triangular form or hexagonal form, your primary need is how to get around from cell to cell.  For hexagonal grids, this amounts to knowing how to get to your six neighbors.  For triangular grids, the left and right neighbors are obvious (just add or subtract 1 from your X value), but you need to know the {\it nature} of your triangle\,---\,is it pointing ``up'' or ``down''\,---\,to understand where your third neighbor is.  For these tasks, MASON provides utility methods described below.  Additionally, MASON provides a neighborhood lookup function for hexagonal grids:
+If you are treating a grid as toroidal, you may need to compute the immediate ``wrap-around'' neighboring locations to a cell location, in order to move from cell to cell.  MASON provides some utility methods to help you in this regard.  The slower general methods (\method{tx(..)}, \method{ty(..)}, and \method{tz(..)}) work for all toroidal situations.  The faster methods (\method{stx(..)}, \method{sty(..)}, and \method{stz(..)}) assume that you will never query locations far from the extent (width, height, length) of the grid.  Here are the Grid2D versions (Grid3D also has \method{tz(...)} and \method{stz(...)}).
 
 \begin{methods}{\class{sim.field.grid.Grid2D} Utility}
 \mthd{public int tx(int x)}
@@ -4540,6 +4500,22 @@ Returns the value of \variable{y} wrapped into within the height of the grid.
 Returns the value of \variable{x} wrapped into within the width of the grid.  Faster than \method{tx(...)}.  Assumes that \(- \text{\variable(width)} \leq \text{\variable{x}} \leq 2 \text{\variable(width)}\).
 \mthd{public int sty(int y)}
 Returns the value of \variable{y} wrapped into within the width of the grid.  Faster than \method{ty(...)}.  Assumes that \(- \text{\variable(height)} \leq \text{\variable{y}} \leq 2 \text{\variable(height)}\).
+\end{methods}
+
+
+\begin{figure}[t]
+\begin{center}\includegraphics[width=5in]{grids.pdf}\end{center}
+\caption{Rectangular, triangular, and hexagonal grids topologies with coordinate equivalencies.}
+\label{GridEquivalencies}
+\end{figure}
+
+\subsection{Hexagonal and Triangular Grids}
+
+MASON doesn't have special classes for 2-dimensional hexagonal or triangular grids. It just uses the regular rectangular ones, and packs the hexagonal and triangular matrices into them.  Hexagons and triangles are quite easily packed into a rectangular matrix.  See Figure \ref{GridEquivalencies} to see how MASON does it.  Furthermore {\bf if your grid width is even, these packings work fine in toroidal fashion as well}.
+
+To use MASON's grids in triangular form or hexagonal form, your primary need is how to get around from cell to cell.  For hexagonal grids, this amounts to knowing how to get to your six neighbors.  For triangular grids, the left and right neighbors are obvious (just add or subtract 1 from your X value), but you need to know the {\it nature} of your triangle\,---\,is it pointing ``up'' or ``down''\,---\,to understand where your third neighbor is.  For these tasks, MASON provides utility methods described below.  Additionally, MASON provides a neighborhood lookup function for hexagonal grids:
+
+\begin{methods}{\class{sim.field.grid.Grid2D} Utility}
 \mthd{public boolean trb(int x, int y)}
 Returns whether the triangular cell packed at \(\text{\variable{x}}, \text{\variable{y}}\) has its horizontal edge on the bottom.  Always true if \(\text{\variable{x}} + \text{\variable{y}}\) is odd.
 \mthd{public boolean trt(int x, int y)}
@@ -4568,24 +4544,9 @@ Returns the packed Y index of the  neighbor directly above the hexagonal cell fo
 Returns the packed X index of the neighbor directly below the hexagonal cell found at the packed location \(\langle\text{\variable{x}}, \text{\variable{y}}\rangle\).
 \mthd{public int downy(int x, int y)}
 Returns the packed Y index of the neighbor directly below the hexagonal cell found at the packed location \(\langle\text{\variable{x}}, \text{\variable{y}}\rangle\).
-\mthd{public void getHexagonalLocations(int x, int y, int dist, int mode, IntBag xPos, IntBag yPos)}
-Computes the neighboring locations located within the hexagon centered at \(x,y\) \(2 \times \text{variable{dist}} + 1\) cells from point to opposite point inclusive.   If \(\variable{dist}=1\), this is equivalent to the six neighbors immediately surrounding \(x,y\), plus \(x,y\) itself.
-The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.
 \end{methods}
 
-See the previous Section (\ref{RectangularGrids}) for explanations of \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, and \variable{Grid2D.TOROIDAL}.
-
-
-Additionally, hexagonal grids have neighborhood lookup functions which return the {\it values} or {\it objects} stored within a neighborhood.  The exact details vary from grid to grid, as follows:
-
-\begin{itemize}
-\item DoubleGrid2D and IntGrid2D have the method \method{getHexagonalNeighbors}, which returns all the coordinates normally returned by \method{getHexagonalLocations}, plus an additional DoubleBag or IntBag (as appropriate) holding the {\bf value} stored at each of those locations.
-\item ObjectGrid2D, DenseGrid2D, and SparseGrid2D have the method \method{getHexagonalNeighbors}, which returns all the coordinates normally returned by \method{getHexagonalLocations}, plus an additional Bag holding the {\bf all non-null objects} stored at each of those locations.  Note that this means that the objects bag could be smaller or larger than the coordinate bags, and its objects are not related to the corresponding coordinates.
-
-ObjectGrid2D, DenseGrid2D, and SparseGrid2D also have the method \method{getHexagonalNeighborsAndLocations} , which is like \method{getHexagonalNeighbors}, but the coordinate bags have been modified so that, for each of the non-null returned objects, the coordinate bags hold the coordinate where that object was found. Thus all returned bags are the same length.
-\end{itemize}
-
-
+3-dimensional grids have no hexagonal or triangular functions.
 
 \paragraph{How to Combine Toroidal and Hexagonal Methods}  Like this:
 
@@ -4593,22 +4554,59 @@ ObjectGrid2D, DenseGrid2D, and SparseGrid2D also have the method \method{getHexa
 int upperLeftToroidalX = tx(ulx(x,y));
 }
 
-\paragraph{3-Dimensional Toroidal Grids} 3-dimensional grids have no hexagonal or triangular functions: they just have toroidal functions.
+
+
+
+
+REVISE THIS ENTIRE SECTION
+AND ADD NEW DIAGRAM EXPLAINING ALL/ANY//CENTER
+
+
+
+
+
+
+
+\subsection{Neighborhood Lookup}
+To remove some drudgery from you, grids have various neighborhood lookup facilities which gather all the coordinate locations (not their values) in the grid lying within some region a distance away from a provided point.  Grid2D provides three such methods for lookups in rectangular grids, and one for lookups in hexagonal grids:
+
+\begin{methods}{\class{sim.field.grid.Grid2D} Utility}
+\mthd{public void getMooreLocations(int x, int y, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
+Computes the neighboring locations lying within the \((2\  \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) square centered at \(\text{\variable{x}}, \text{\variable{y}}\).  That is, all neighbors \(\langle X_i, Y_i\rangle\) of a location that satisfy \(\max(|(\text{\variable{x}} - X_i)|,  |(\text{\variable{y}} - Y_i)|) \leq \text{\variable{dist}}\).  If \variable{dist}\(=1\), this is equivalent to the center location itself and its eight neighbors (the ``Moore Neighborhood'').  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
+
+\mthd{public void getVonNeumannLocations(int x, int y, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
+Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) diamond centered at \(\text{\variable{x}}, \text{\variable{y}}\).  That is, all neighbors \(\langle X_i, Y_i\rangle\) of a location that satisfy \(|(\text{\variable{x}} - X_i)| +  |(\text{\variable{y}} - Y_i)| \leq \text{\variable{dist}}\). If \variable{dist}\(=1\), this is equivalent to the center location itself and its ``Von-Neuman Neighborhood'' (the four neighbors above, below, and to the left and right).  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
+
+\mthd{public void getRadialLocations(int x, int y, double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos)}
+Computes the neighboring locations lying in the circular region whose radius is {\it dist} away from the \(\langle X, Y\rangle\) location.  if {\it closed} is true, then the region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  Otherwise, locations are only members of the region is they are \(<\text{\it dist}\) away.  What constitutes neighborhood membership depends on the {\it measurement rule} being used.  There are three possible rules: \variable{Grid2D.ALL} implies that a grid cell is within the region if any of its 
+
+ \((2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) diamond centered at \(\text{\variable{x}}, \text{\variable{y}}\).  That is, all neighbors \(\langle X_i, Y_i\rangle\) of a location that satisfy \(|(\text{\variable{x}} - X_i)| +  |(\text{\variable{y}} - Y_i)| \leq \text{\variable{dist}}\). If \variable{dist}\(=1\), this is equivalent to the center location itself and its ``Von-Neuman Neighborhood'' (the four neighbors above, below, and to the left and right).  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
+
+\end{methods}
+
+Grid3D is similar:
 
 \begin{methods}{\class{sim.field.grid.Grid3D} Utility}
-\mthd{public int tx(int x)}
-Returns the value of \variable{x} wrapped into within the width of the grid.
-\mthd{public int ty(int y)}
-Returns the value of \variable{y} wrapped into within the height of the grid.
-\mthd{public int tz(int z)}
-Returns the value of \variable{z} wrapped into within the length of the grid.
-\mthd{public int stx(int x)}
-Returns the value of \variable{x} wrapped into within the width of the grid.  Faster than \method{tx(...)}.  Assumes that \(- \text{\variable(width)} \leq \text{\variable{x}} \leq 2 \text{\variable(width)}\).
-\mthd{public int sty(int y)}
-Returns the value of \variable{y} wrapped into within the width of the grid.  Faster than \method{ty(...)}.  Assumes that \(- \text{\variable(height)} \leq \text{\variable{y}} \leq 2 \text{\variable(height)}\).
-\mthd{public int stz(int z)}
-Returns the value of \variable{z} wrapped into within the width of the grid.  Faster than \method{tz(...)}.  Assumes that \(- \text{\variable(length)} \leq \text{\variable{z}} \leq 2 \text{\variable(length)}\).
+\mthd{public void getMooreLocations(int x, int y, int z, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos)}
+Computes the neighboring locations lying within the \((2\  \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1) \times(2\ \text{\variable{dist}}+1)\) cube centered at \(\text{\variable{x}}, \text{\variable{y}}, \text{\variable{z}}\).  That is, all neighbors \(\langle X_i, Y_i, Z_i\rangle\) of a location that satisfy \(\max(|(\text{\variable{x}} - X_i)|,  |(\text{\variable{y}} - Y_i)|, |(\text{\variable{z}}- Z_i)|) \leq \text{\variable{dist}}\).  If \variable{dist}\(=1\), this is equivalent to the center location itself and its eight neighbors, the so-called ``Moore Neighborhood''.  If The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid3D.BOUNDED}, \variable{Grid3D.UNBOUNDED}, or \variable{Grid3D.TOROIDAL}.  Note that array grids  do not support \variable{Grid3D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
+
+\mthd{public void getVonNeumannLocations(int x, int y, int z, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos)}
+Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\times(2\ \text{\variable{dist}}+1)\) diamond-shaped volume centered at \(\text{\variable{x}}, \text{\variable{y}}, \text{\variable{z}}\).  That is, all neighbors \(\langle X_i, Y_i, Z_i\rangle\) of a location that satisfy \(|(\text{\variable{x}} - X_i)| +  |(\text{\variable{y}} - Y_i)| + |(\text{\variable{z}}- Z_i)| \leq \text{\variable{dist}}\). If \variable{dist}\(=1\), this is equivalent to the center location itself and its ``Von-Neuman Neighborhood'' (the four neighbors above, below, and to the left and right).  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid3D.BOUNDED}, \variable{Grid3D.UNBOUNDED}, or \variable{Grid3D.TOROIDAL}.  Note that array grids  do not support \variable{Grid3D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
 \end{methods}
+
+
+
+
+
+Additionally, rectangular grids have neighborhood lookup functions which return the {\it values} or {\it objects} stored within a neighborhood.  The exact details vary from grid to grid, as follows:
+
+\begin{itemize}
+\item DoubleGrid2D/3D and IntGrid2D/3D have the methods \method{getMooreNeighbors} and \method{getVonNeumannNeighbors}, which return all the coordinates normally returned by \method{getMooreLocations} and \method{getVonNeumannLocations}, plus an additional DoubleBag or IntBag (as appropriate) holding the {\bf value} stored at each of those locations.
+\item ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D have the methods \method{getMooreNeighbors} and \method{getVonNeumannNeighbors}, which return all the coordinates normally returned by \method{getMooreLocations} and \method{getVonNeumannLocations}, plus an additional Bag holding the {\bf all non-null objects} stored at each of those locations.  Note that this means that the objects bag could be smaller or larger than the coordinate bags, and its objects are not related to the corresponding coordinates.
+
+ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D also have the methods \method{getMooreNeighborsAndLocations} and \method{getVonNeumannNeighborsAndLocations}, which are like \method{getMooreNeighbors} and \method{getVonNeumanNeighbors}, but the coordinate bags have been modified so that, for each of the non-null returned objects, the coordinate bags hold the coordinate where that object was found. Thus all returned bags are the same length.
+\end{itemize}
+
 
 \section{Array Grids}
 
@@ -5834,6 +5832,30 @@ guistate.scheduleImmediatelyAfter(
 
 Note that this modifies the simulation asynchronously.  So if the user presses the button twice, two things will be scheduled on the mini-schedule.
 
+It's important to note that inside the model-modifying code, you should not refer to the widget or any part of the GUI, since you're now in the model thread and not the GUI thread.  So what to do?   For example, let's say you have to modify some agent's behavior based on a slider that the user is modifying. What you can do is store away the slider value in a final variable, accessible by the Steppable.  Something like this:
+
+{\footnotesize \begin{alltt}
+final JSlider mySlider = ...
+final MyAgent myAgent = ...
+final GUIState guistate = ...
+mySlider.addChangeListener(ChangeListener l)
+    \{
+    public ChangeEvent(Object source)
+        \{
+        final int value  = mySlider.getValue();
+        guistate.scheduleImmediatelyAfter(new Steppable()
+            \{
+            public void step(SimState state)
+                \{
+                myAgent.setChinUpsRage(value);  // or whatever
+                \}
+            \});
+        \}
+    \});
+\end{alltt}
+}
+
+
 \paragraph{Updating the Model from the GUI Synchronously} You can grab a lock on the Schedule.  If the simulation presently holds the lock, you'll block until given it.  Then the simulation thread will wait until you're done.  This is the recommended approach.
 
 {\footnotesize \begin{alltt}
@@ -6184,7 +6206,7 @@ sim.app.crowd3d.Crowd3DWithUI
 \end{alltt}
 }
 
-The classes listed in this file are the ones shown in the window.  But there are two additional gizmos you should be aware of.  First off, note that the user is free to type in his own class name if he likes.  But if there is a line all by itself which says \variable{ONLY} then MASON will not allow this (the text file will simply be missing). You do it like this:
+The classes listed in this file are the ones shown in the window.  But there are two additional gizmos you should be aware of.  First off, note that the user is free to type in his own class name if he likes.  But if there is a line all by itself which says \variable{ONLY} then MASON will not allow this (the text field will simply be missing). You do it like this:
 
 {\footnotesize \begin{alltt}
 sim.app.antsforage.AntsForageWithUI
@@ -7942,7 +7964,7 @@ The {\it shape} variable determines whether the SimpleEdgePortrayal2D draws itse
 
 Finally, the {\it baseWidth} works as follows.  By default it is 0.0.  The baseWidth determines either the {\bf width of the line} or the {\bf width of the ``from'' end of the triangle}.  If you create a triangle, you'll need to change the base width, ideally to 1.0.
 
-When drawing as a triangle or a line of non-zero width, you have the option of specifying how the triangle or line width changes when you zoom in or out.  This is called the {\bf scaling} of the edge, and it's one of three constants:
+When drawing as a triangle or a line of non-zero width, you have the option of specifying how the triangle or line width changes when you zoom in or out.  This is called the {\bf scaling} of the edge, and it's one of three constants.  These constants also affect the scaling of the label (discussed later):
 
 \java{%
     public static final int NEVER\_SCALE;\\
@@ -7950,7 +7972,17 @@ When drawing as a triangle or a line of non-zero width, you have the option of s
     public static final int ALWAYS\_SCALE;
 }
 
+\sidebar{\variable{SCALE\_WHEN\_SMALLER} makes no sense as a name.}{Agreed.}
 The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger or smaller when you zoom in and out as if you're examining it closer.  This is {\it probably} what you want.  An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
+
+\sidebar{When I print the lines come out too thin.}{This is because the \variable{baseWidth} by default is 0.0, so the line thickness comes 0.0.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something like 1.0 (or whatever looks good).}
+
+The width of a line, or of the base of a triangle, is determined as follows.  First, we determine the current {\bf scale}: if we \variable{ALWAYS\_SCALE}, then the scale is equal to the number of pixels in width of a typical  \(1.0 \times 1.0\) object in the underlying Continuous2D or SparseGrid2D (that is, the \variable{info.draw.width}).  If we \variable{NEVER\_SCALE}, then the scale is 1.0.  If we \variable{SCALE\_WHEN\_SMALLER}, then the scale is the maximum of 1.0 and the number of pixels in width of a typical  \(1.0 \times 1.0\) object.   With this in hand, the width of a line or triangle base (in pixels) is simply:
+\[
+\text{\it line or triangle-base thickness in pixels} = \text{\it baseWidth} \times \text{\it scale} \times \text{\it weight}
+\]
+
+... where \variable{weight} is the edge weight, and will be discussed in a minute.
 
 Various methods can be used to set these values:
 
@@ -7968,6 +8000,8 @@ Various methods can be used to set these values:
 Underlying edges in graphs often have associated data (labels or weights), provided by their \variable{info} instance variables.  SimpleEdgePortrayal2D can portray this information in one of two ways. First, it can draw a {\bf label}: a string of text describing the edge.  Second, if the data is a weight, that is, it takes the form of a numerical value, SimpleEdgePortrayal2D can adjust the {\it thickness} of the line by multiplying the base width by the absolute value of this weight.
 
 Let's handle the first one first.  Labels are drawn if you specify the label color, as discussed earlier.  You can also specify a label font, though that's less common.  So how do you specify what the label {\it is?}  SimpleEdgePortrayal2D queries the method \method{getLabel(...)}, which you can override, to provide the label of an Edge.
+
+The font size of an edge label is determined by the three scaling constants described earlier, as specified by \method{setScaling(...)}.  Specifically, if the scaling is \variable{ALWAYS\_SCALE}, then the font will scale as you zoom in and out.  If the scaling is \variable{NEVER\_SCALE}, then the font will be fixed regardless of current zoom setting.  And if the scaling is \variable{SCALE\_WHEN\_SMALLER}, then the font will scale larger as you zoom in, but if you zoom out, the font will go no smaller than its prespecified font size.
 
 If you set \method{setAdjustsThickness(true)}, you can also turn on SimpleEdgePortrayal2D's ability to automatically adjust the thickness of the edge to reflect the underlying \variable{edge.info} value interpreted as a number.  You must also set the \variable{baseWidth} as well: I recommend setting it to 1.0.
 
@@ -8070,6 +8104,8 @@ Label scaling works much like the scaling in EdgePortrayal2D.  By default, the f
     public static final int SCALE\_WHEN\_SMALLER;\\
     public static final int ALWAYS\_SCALE;
 }
+
+The font size of a label is determined by the three scaling constants described earlier, as specified by \method{setScaling(...)}.  Specifically, if the scaling is \variable{ALWAYS\_SCALE}, then the font will scale as you zoom in and out.  If the scaling is \variable{NEVER\_SCALE}, then the font will be fixed regardless of current zoom setting.  And if the scaling is \variable{SCALE\_WHEN\_SMALLER}, then the font will scale larger as you zoom in, but if you zoom out, the font will go no smaller than its prespecified font size.
 
 Here are LabelledPortrayal's (few) methods of interest:
 
