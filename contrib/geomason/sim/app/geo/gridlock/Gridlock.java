@@ -146,7 +146,7 @@ public class Gridlock extends SimState
 
             // Ensure that the spatial index is updated after all the agents
             // move
-            agents.scheduleSpatialIndexUpdater(schedule);
+            schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
 
             /** Steppable that flips Agent paths once everyone reaches their destinations*/
             Steppable flipper = new Steppable()
