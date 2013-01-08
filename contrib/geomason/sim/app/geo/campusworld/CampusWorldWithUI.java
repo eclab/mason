@@ -89,8 +89,8 @@ public class CampusWorldWithUI extends GUIState
         roadsPortrayal.setPortrayalForAll(new GeomPortrayal(Color.GRAY,true));
 
         agentPortrayal.setField(world.agents);
-        //agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
-        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
+        agentPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,10.0,true));
+//        agentPortrayal.setPortrayalForAll(new OvalPortrayal2D(Color.RED,6.0));
         
         display.reset();
         display.setBackdrop(Color.WHITE);

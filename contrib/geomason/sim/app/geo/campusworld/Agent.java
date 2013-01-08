@@ -199,7 +199,9 @@ public class Agent implements Steppable
     public void moveTo(Coordinate c)
     {
         pointMoveTo.setCoordinate(c);
-//        location.getGeometry().apply(pointMoveTo);
+        location.getGeometry().apply(pointMoveTo);
+        getGeometry().geometry.geometryChanged();
+
     }
 
 
@@ -208,7 +210,7 @@ public class Agent implements Steppable
     {
         CampusWorld campState = (CampusWorld) state;
         move(campState);
-        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
+//        campState.agents.setGeometryLocation(getGeometry(), pointMoveTo);
     }
 
 

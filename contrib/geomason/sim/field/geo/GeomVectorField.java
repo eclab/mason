@@ -20,6 +20,10 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.portrayal.DrawInfo2D;
 import sim.util.Bag;
 import sim.util.geo.AttributeValue;
@@ -34,23 +38,28 @@ import sim.util.geo.MasonGeometry;
    rectangle (MBR) is expanded to include the new object.  This allows a
    determination of the area of the field.
    
-   <p>Note that the field assumes the geometries use the same coordinate system.  
+   <p>Note that the field assumes the geometries use the same coordinate system.
 */
 public class GeomVectorField extends GeomField
 {
 	private static final long serialVersionUID = -754748817928825708L;
 
-	/** A spatial index of all the geometries in the field. */ 
-	public  Quadtree spatialIndex = new Quadtree();
+	/** A spatial index of all the geometries in the field.
+
+     XXX Consider also storing Bag of MasonGeometry to make rebuilding
+     spatial index in updateSpatialIndex() a little more efficient; also would
+     make it easier to use alternative JTS spatial index.
+     */
+	private  Quadtree spatialIndex = new Quadtree();
     
     /** The convex hull of all the geometries in this field */ 
-    public PreparedPolygon convexHull; 
+    private PreparedPolygon convexHull;
         
     /** Helper factory for computing the union or convex hull */
-    public GeometryFactory geomFactory; 
+    private GeometryFactory geomFactory;
 
     /** Defines the outer shell of all the geometries within this field */ 
-    public PreparedPolygon globalUnion; 
+    private PreparedPolygon globalUnion;
 
 
     public GeomVectorField()
@@ -400,19 +409,81 @@ public class GeomVectorField extends GeomField
 		return null; 
 	}
 	
-	/** Moves the centroid of the given geometry to the provided point.  Note that the provided point
-	 * must be in the same coordinate system as the geometry.  */
-	 public synchronized void setGeometryLocation(MasonGeometry g, CoordinateSequenceFilter p)
+	/** Moves the centroid of the given geometry to the provided point.
+     * <p>
+     * <em>Note</em> that the spatial index is not notified of the geometry changes.
+     * It is strongly recommended that updateSpatialIndex() be invoked after all
+     * geometry position changes.
+     * 
+     * @see GeomVectorField#updateSpatialIndex() 
+     */
+	 public void setGeometryLocation(MasonGeometry g, CoordinateSequenceFilter p)
 	 {
          MasonGeometry g1 = findGeometry(g);
          if (g1 != null)
          {
-             spatialIndex.remove(g1.getGeometry().getEnvelopeInternal(), g1);
+             // 1/8/2013, spatial index no longer updated; use updateSpatialIndex()
+//             spatialIndex.remove(g1.getGeometry().getEnvelopeInternal(), g1);
              g1.geometry.apply(p);
              g1.geometry.geometryChanged();
-             spatialIndex.insert(g1.geometry.getEnvelopeInternal(), g1);
+//             spatialIndex.insert(g1.geometry.getEnvelopeInternal(), g1);
          }
     }
+
+     /** Rebuild the spatial index from the current set of geometry
+      * <p>
+      * If the objects contained in this field have moved, then the spatial
+      * index will have to be updated.  This is done by replacing the current
+      * spatial index with an entirely new one built from the same stored geometry.
+      */
+     public void updateSpatialIndex()
+     {
+         List objects = spatialIndex.queryAll();
+
+         spatialIndex = new Quadtree();
+
+         for (Object object : objects)
+         {
+             spatialIndex.insert(((MasonGeometry)object).geometry.getEnvelopeInternal(), object);
+         }
+     }
+
+
+
+     /** Schedules a repeating Steppable that updates spatial index
+      * <p>
+      * The spatial index for a GeomVectorField containing moving objects
+      * will need to be updated after all such objects have moved.  This methods schedules
+      * a Steppable that invokes updateSpatialIndex() that does this.
+      * 
+      * @return a Stoppable that can be used to remove this Steppable from the schedule
+      */
+     public Stoppable scheduleSpatialIndexUpdater(Schedule schedule, int ordering, double interval)
+     {
+        return schedule.scheduleRepeating(new Steppable()
+        {
+            public void step(SimState state)
+            {
+                updateSpatialIndex();
+            }
+
+        }, ordering, interval);
+    }
+     
+
+     /** Schedules a repeating Steppable that updates spatial index
+      * <p>
+      * Essentially invokes scheduleSpatialIndexUpdater() with default values
+      * such that it's the last thing run on the current simulation step.
+      *
+      * @return a Stoppable that can be used to remove this Steppable from the schedule
+      */
+     public Stoppable scheduleSpatialIndexUpdater(Schedule schedule)
+     {
+         return scheduleSpatialIndexUpdater(schedule, Integer.MAX_VALUE, 1.0);
+     }
+
+     
 			
      /** Locate a specific geometry inside the quadtree
       * <p>

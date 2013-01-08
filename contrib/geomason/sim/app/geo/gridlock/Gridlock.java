@@ -144,6 +144,10 @@ public class Gridlock extends SimState
             populate("data/roads_points_place.csv");
             agents.setMBR(MBR);
 
+            // Ensure that the spatial index is updated after all the agents
+            // move
+            agents.scheduleSpatialIndexUpdater(schedule);
+
             /** Steppable that flips Agent paths once everyone reaches their destinations*/
             Steppable flipper = new Steppable()
             {

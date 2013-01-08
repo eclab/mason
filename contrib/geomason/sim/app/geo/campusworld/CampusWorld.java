@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
 import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
@@ -141,18 +142,14 @@ public class CampusWorld extends SimState
         }
     }
 
+
+
     @Override
     public void finish()
     {
         super.finish();
 
-        // Write out some of the vector layers that were read from a shape file
-        // as a test of the native shape file exporter.
-        ShapeFileExporter.write("myroads", roads);
-
-        ShapeFileExporter.write("walkways", walkways);
-
-        // Now write out the agents layer, which has no corresponding originating
+        // Save the agents layer, which has no corresponding originating
         // shape file.
         ShapeFileExporter.write("agents", agents);
     }
@@ -166,6 +163,10 @@ public class CampusWorld extends SimState
         agents.clear(); // clear any existing agents from previous runs
         addAgents();
         agents.setMBR(buildings.getMBR());
+
+        // Ensure that the spatial index is made aware of the new agent
+        // positions.
+        agents.scheduleSpatialIndexUpdater(schedule);
     }
 
 
