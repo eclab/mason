@@ -453,35 +453,23 @@ public class GeomVectorField extends GeomField
      /** Schedules a repeating Steppable that updates spatial index
       * <p>
       * The spatial index for a GeomVectorField containing moving objects
-      * will need to be updated after all such objects have moved.  This methods schedules
-      * a Steppable that invokes updateSpatialIndex() that does this.
+      * will need to be updated after all such objects have moved.  This method
+      * returns a Steppable that invokes updateSpatialIndex() that does this.
       * 
-      * @return a Stoppable that can be used to remove this Steppable from the schedule
+      * @return a Steppable that can be used to remove this Steppable from the schedule
       */
-     public Stoppable scheduleSpatialIndexUpdater(Schedule schedule, int ordering, double interval)
+     public Steppable scheduleSpatialIndexUpdater()
      {
-        return schedule.scheduleRepeating(new Steppable()
+        return new Steppable()
         {
             public void step(SimState state)
             {
                 updateSpatialIndex();
             }
 
-        }, ordering, interval);
+        };
     }
      
-
-     /** Schedules a repeating Steppable that updates spatial index
-      * <p>
-      * Essentially invokes scheduleSpatialIndexUpdater() with default values
-      * such that it's the last thing run on the current simulation step.
-      *
-      * @return a Stoppable that can be used to remove this Steppable from the schedule
-      */
-     public Stoppable scheduleSpatialIndexUpdater(Schedule schedule)
-     {
-         return scheduleSpatialIndexUpdater(schedule, Integer.MAX_VALUE, 1.0);
-     }
 
      
 			
