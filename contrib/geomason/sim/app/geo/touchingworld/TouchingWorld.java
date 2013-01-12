@@ -35,20 +35,13 @@ public class TouchingWorld extends SimState
     public GeomVectorField selectedShape = new GeomVectorField(WIDTH, HEIGHT);
 
     // responsible for changing selected shape
-    public Mover mover = new Mover();
+    private Mover mover = new Mover();
 
 	
 
     public TouchingWorld(long seed)
     {
         super(seed);
-    }
-
-    
-    
-	public void start()
-    {
-        super.start();
 
         createWorld();
 
@@ -57,9 +50,18 @@ public class TouchingWorld extends SimState
 
 		// ensure both GeomFields cover same area
 		selectedShape.setMBR(shapes.getMBR());
+    }
 
-        // Randomly select a district as "current"
-        selectShape((MasonGeometry) shapes.getGeometries().objs[random.nextInt(shapes.getGeometries().size())]);
+    
+    
+    @Override
+	public void start()
+    {
+        super.start();
+
+        // Randomly select a shape as "current"
+//        selectShape((MasonGeometry) shapes.getGeometries().objs[random.nextInt(shapes.getGeometries().size())]);
+        selectShape((MasonGeometry) shapes.getGeometries().objs[0]); // select retangle
 
         schedule.scheduleRepeating(mover);
     }
@@ -77,23 +79,25 @@ public class TouchingWorld extends SimState
         {
             WKTReader rdr = new WKTReader();
             Polygon polygon = null;
-            
-            polygon = (Polygon) (rdr.read("POLYGON ((0 20, 10 30, 10 20, 0 20))"));
+
+            // Idea is to check for all "touches" conditions as dictated by
+            // DE-9IM matrices [FT*******] [F**T*****] [F***T****]
+            //
+            // See: http://en.wikipedia.org/wiki/DE-9IM
+
+            // Rectangle
+            polygon = (Polygon) (rdr.read("POLYGON ((0 0, 0 20, 10 20, 10 0, 0 0))"));
             this.shapes.addGeometry(new MasonGeometry(polygon));
 
-            polygon = (Polygon) (rdr.read("POLYGON ((10 10, 10 30, 15 30, 15 10, 10 10))"));
+            // Triangle with single common vertex with rectangle
+            polygon = (Polygon) (rdr.read("POLYGON ((0 20, 0 30, 10 30, 0 20))"));
             this.shapes.addGeometry(new MasonGeometry(polygon));
 
-            polygon = (Polygon) (rdr.read("POLYGON ((15 10, 15 15, 30 15, 30 10, 15 10))"));
+            // Triangle with common edge to rectangle
+            polygon = (Polygon) (rdr.read("POLYGON ((10 10, 10 20, 20 10, 10 10))"));
             this.shapes.addGeometry(new MasonGeometry(polygon));
 
-            polygon = (Polygon) (rdr.read("POLYGON ((15 10, 30 10, 25 5, 15 10))"));
-            this.shapes.addGeometry(new MasonGeometry(polygon));
-
-            polygon = (Polygon) (rdr.read("POLYGON ((25 15, 25 25, 30 15, 25 15))"));
-            this.shapes.addGeometry(new MasonGeometry(polygon));
-
-            polygon = (Polygon) (rdr.read("POLYGON ((30 15, 25 25, 30 25, 30 15))"));
+            polygon = (Polygon) (rdr.read("POLYGON ((2 0, 5 -3, 8 0, 2 0))"));
             this.shapes.addGeometry(new MasonGeometry(polygon));
         }
         catch (ParseException ex)

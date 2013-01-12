@@ -86,7 +86,7 @@ public class TouchingWorldWithUI extends GUIState {
 		// we use a GeomPortrayal for the agents also, since GeomPortrayal 
 		// handles the translation between screen and map coordinates gracefully
 		selectedDistrictPortrayal.setField(world.selectedShape);
-        selectedDistrictPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,false));
+        selectedDistrictPortrayal.setPortrayalForAll(new GeomPortrayal(Color.RED,true));
 		
         shapePortrayal.setField(world.shapes);
         shapePortrayal.setPortrayalForAll(new GeomPortrayal(Color.BLUE,false));
