@@ -20,10 +20,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.engine.Stoppable;
 import sim.portrayal.DrawInfo2D;
 import sim.util.Bag;
 import sim.util.geo.AttributeValue;
@@ -51,6 +49,15 @@ public class GeomVectorField extends GeomField
      make it easier to use alternative JTS spatial index.
      */
 	private  Quadtree spatialIndex = new Quadtree();
+//	private  STRtree spatialIndex = new STRtree();
+
+    /**
+     * Redundant container of MasonGeometry used to quickly rebuild spatial
+     * index and save some overhead with regards to returning all MasonGeometry.
+     * (I.e., one doesn't have to walk through a tree to get all the objects and
+     * convert a List to a Bag.
+     */
+    private Bag geometries = new Bag();
     
     /** The convex hull of all the geometries in this field */ 
     private PreparedPolygon convexHull;
@@ -82,6 +89,7 @@ public class GeomVectorField extends GeomField
 		Envelope e = g.getGeometry().getEnvelopeInternal();
         MBR.expandToInclude(e);
 		spatialIndex.insert(e, g);
+        geometries.add(g);
     }
 
     /** Removes all geometry objects and resets the MBR. */
@@ -90,6 +98,8 @@ public class GeomVectorField extends GeomField
     {
         super.clear();
 		spatialIndex = new Quadtree();
+        geometries.clear();
+//		spatialIndex = new STRtree();
     }
 
 
@@ -99,17 +109,17 @@ public class GeomVectorField extends GeomField
     public void computeConvexHull()
     {
         ArrayList<Coordinate> pts = new ArrayList<Coordinate>();
-        List<?> gList = spatialIndex.queryAll();
+//        List<?> gList = spatialIndex.queryAll();
 
-        if (gList.isEmpty())
+        if (geometries.isEmpty())
         {
             return;
         }
 
         // Accumulate all the Coordinates in all the geometry into 'pts'
-        for (int i = 0; i < gList.size(); i++)
+        for (int i = 0; i < geometries.size(); i++)
         {
-            Geometry g = ((MasonGeometry) gList.get(i)).getGeometry();
+            Geometry g = ((MasonGeometry) geometries.get(i)).getGeometry();
             Coordinate c[] = g.getCoordinates();
             pts.addAll(Arrays.asList(c));
         }
@@ -140,19 +150,18 @@ public class GeomVectorField extends GeomField
     /** Compute the union of the field's geometries.  The resulting Geometry is the outside points of 
         the field's geometries. Call this method only once.  
     */ 
-        
     public void computeUnion()
     {
         Geometry p = new Polygon(null, null, geomFactory);	
-		List<?> gList = spatialIndex.queryAll();
+//		List<?> gList = spatialIndex.queryAll();
 
-        if (gList.isEmpty())
+        if (geometries.isEmpty())
         {
             return;
         }
         
-        for (int i=0; i < gList.size(); i++) {
-            Geometry g = ((MasonGeometry)gList.get(i)).getGeometry(); 
+        for (int i=0; i < geometries.size(); i++) {
+            Geometry g = ((MasonGeometry)geometries.get(i)).getGeometry();
             p = p.union(g); 
         }
         
@@ -206,9 +215,9 @@ public class GeomVectorField extends GeomField
     */
 	public Bag getGeometries()
     {
-		Bag geometries = new Bag(); 
-		List<?> gList = spatialIndex.queryAll();
-		geometries.addAll(gList); 
+//		Bag geometries = new Bag();
+//		List<?> gList = spatialIndex.queryAll();
+//		geometries.addAll(gList);
 		return geometries; 
 	}
 
@@ -276,20 +285,24 @@ public class GeomVectorField extends GeomField
     }
 
     /** Return geometries that are covered by the given geometry. 
-     * Do not modify the returned Bag. */
+     * Do not modify the returned Bag.
+     * <p>
+     * XXX Could be made more efficient by using spatial index to narrow
+     * candidates.
+     */
     public final Bag getCoveredObjects( MasonGeometry g)
     {
 		Bag coveringObjects = new Bag(); 
-		List<?> gList = spatialIndex.queryAll(); 
+//		List<?> gList = spatialIndex.queryAll();
 		
 		if (g.preparedGeometry == null)
         {
             g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
         }
 	
-        for (int i = 0; i < gList.size(); i++)
+        for (int i = 0; i < geometries.size(); i++)
 		{
-			MasonGeometry gm = (MasonGeometry)gList.get(i); 
+			MasonGeometry gm = (MasonGeometry)geometries.get(i);
 			Geometry g1 = gm.getGeometry();
 			if (g.preparedGeometry.covers(g1))
             {
@@ -329,21 +342,23 @@ public class GeomVectorField extends GeomField
     
     /** Returns geometries that touch the given geometry.
      * Do not modify the returned Bag. */
-    public final Bag getTouchingObjects( MasonGeometry g)
+    public final Bag getTouchingObjects(MasonGeometry mg)
     {
 		Bag touchingObjects = new Bag(); 
-		Envelope e = g.getGeometry().getEnvelopeInternal();
+		Envelope e = mg.getGeometry().getEnvelopeInternal();
+        e.expandBy(java.lang.Math.max(e.getHeight(),e.getWidth()) * 0.01 );
 		List<?> gList = spatialIndex.query(e);
-		if (g.preparedGeometry == null)
+
+		if (mg.preparedGeometry == null)
         {
-            g.preparedGeometry =  PreparedGeometryFactory.prepare(g.getGeometry());
+            mg.preparedGeometry =  PreparedGeometryFactory.prepare(mg.getGeometry());
         }
 	
 		for (int i = 0; i < gList.size(); i++)
 		{
-			MasonGeometry gm = (MasonGeometry)gList.get(i); 
+			MasonGeometry gm = (MasonGeometry)gList.get(i);
 			Geometry g1 = gm.getGeometry();
-			if (!g.equals(g1) && g.preparedGeometry.touches(g1))
+			if (!mg.equals(gm) && mg.getGeometry().touches(g1))
             {
                 touchingObjects.add(gm);
             }
@@ -438,13 +453,14 @@ public class GeomVectorField extends GeomField
       */
      public void updateSpatialIndex()
      {
-         List objects = spatialIndex.queryAll();
+//         List objects = spatialIndex.queryAll();
 
+//         spatialIndex = new STRtree();
          spatialIndex = new Quadtree();
 
-         for (Object object : objects)
+         for (int i = 0; i < geometries.size(); i++)
          {
-             spatialIndex.insert(((MasonGeometry)object).geometry.getEnvelopeInternal(), object);
+             spatialIndex.insert(((MasonGeometry)geometries.get(i)).geometry.getEnvelopeInternal(), geometries.get(i));
          }
      }
 
@@ -531,11 +547,11 @@ public class GeomVectorField extends GeomField
     public MasonGeometry getGeometry(String name, Object value)
     {
         AttributeValue key = new AttributeValue(name);
-        List<?> gList = spatialIndex.queryAll();
+//        List<?> gList = spatialIndex.queryAll();
 
-        for (int i = 0; i < gList.size(); i++)
+        for (int i = 0; i < geometries.size(); i++)
         {
-            MasonGeometry mg = (MasonGeometry) gList.get(i);
+            MasonGeometry mg = (MasonGeometry) geometries.get(i);
 
             if ( mg.hasAttribute(name) && mg.getAttribute(name).equals(value) )
             {
