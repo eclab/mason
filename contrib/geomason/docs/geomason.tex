@@ -244,22 +244,58 @@ George Mason University}
 
 \begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{campus.pdf}\vspace{2em}\end{figure}
 
-GeoMason is a MASON extension that adds basic geospatial capability.
+%GeoMason is a MASON extension that adds basic geospatial capability.
 
-\section{Architectural Layout}
+\section{The Motivation Behind this Book}
 
 %\begin{wrapfigure}{r}[0in]{3.7in}
 %\vspace{-4em}\hfill\includegraphics[width=3.7in]{MASONLayout.pdf}\vspace{-3em}\end{wrapfigure}
 
-% TODO Greatly expand this introduction.
 
 MASON is a sophisticated multi-agent simulation library.
-Unfortunately it does not natively support geospatial data.  GeoMason
-is a MASON extension that embues MASON with some limited geospatial
-awareness.  With GeoMason one is able to load, display, and manipulate
-data that is, in some way, grounded to the Earth's surface.  This
-Cookbook provides a set of ``recipes'' for using GeoMason.
+Unfortunately it does not natively support geospatial data, which
+means that such support has to be hand crafted by users.  Providing
+such support can be error prone and tedious to implement.
 
+Fortunatey, there exists a MASON extension, GeoMason, that imbues
+MASON with some limited geospatial awareness.  With GeoMason one is
+able to load, display, and manipulate data that is, in some way,
+grounded to the Earth's surface.
+
+This ``cookbook'' provides a set of ``recipes'' for using GeoMason and is
+meant to fill in the documentation gap between javadoc generated API
+documentation and the GeoMason technical report.  I felt that a full
+blown manual would do little more than elaborate on what was found in
+the API documentation.  That is, a manual would explain the
+``what'' and still leave the ``how'' largely unanswered.  The ``cookbook''
+format is popular in technical literature because it provides an
+accessible ``use case'' oriented style.  In the cookbook format, it's
+easy for a reader to find a use case, or ``recipe,'' that best matches what
+they want to do, and then use that recipe as inspiration for their own
+tailored solution.  And so I felt that this format best addressed the ``how''.
+
+\section{What this Book Is Not}
+
+Unfortunately I have had to make a few assumptions with this book,
+which I hope are reasonable.  In particular, I presume that readers
+are familiar with MASON, Geospatial Information Systems (GIS), and,
+naturally, java.  This Cookbook is not intended to be a MASON, GIS, or
+java primer.  If you are unfamiliar with MASON, I recommend reading
+its manual
+\footnote{\url{http://cs.gmu.edu/~eclab/projects/mason/manual.pdf}}
+and working through its tutorials.  If you need to bone up on GIS,
+there exist many resources to get you up to speed.  The Wikipedia page
+for GIS is a good online starting
+point.\footnote{\url{http://en.wikipedia.org/wiki/Geographic_information_system}}
+The book \emph{Geographic Information Systems and Science} by Goodchild et al is also an
+accessible read.\footnote{Longley, P.A., Goodchild, M.F., Maguire,
+  D.J. and Rhind, D.W. (2005) Geographic Information Systems and
+  Science. Chichester: Wiley. 2nd edition.}
+
+
+%%
+%% Chapter 2
+%%
 
 \chapter{Reading and Writing Geospatial Data}
 \label{ch:io}
@@ -269,6 +305,7 @@ This chapter covers recipes for reading and writing vector and grid based geospa
 \section{Reading Geospatial Data}
 \label{sec:readingdata}
 This section covers reading geospatial data into MASON using GeoMason.
+% TODO expand this to address vector vs. raster data.  Address assumptions of GIS background of reader.
 
 \subsection{Reading a Shape File}
 \label{sub:readingshapefiles}
@@ -365,16 +402,17 @@ such as QuantumGIS \footnote{http://www.qgis.org/}, to manually
 reproject data prior to loading into GeoMason.
 
 It is important to ensure that all the layers have the same MBR
-otherwise they will not align properly when displayed.  Naturally, this
-is optional if you do not intend on rendering the layers.  Regardless
-it would be prudent to do so anyway on the chance that later you
-change your mind and want to see the \class{GeomVectorField}s.  The
-highlighted lines \ref{ex:MBRstart}-\ref{ex:MBRend} show how to
-synchronize the MBRs between loaded \class{GeomVectorField}s.
-Basically, you get the MBR of the first \class{GeomVectorField}, expand
-it to include the area of the MBRs for the remaining
-\class{GeomVectorField}s, and then set them all to the one
-all-inclusive MBR.
+otherwise they will not align properly when displayed.  Naturally,
+this is optional if you do not intend on rendering the layers.
+Regardless it would be prudent to do so anyway on the chance that
+later you change your mind and want to see the
+\class{GeomVectorField}s.  The highlighted lines
+\ref{ex:MBRstart}-\ref{ex:MBRend} show how to synchronize the MBRs
+between loaded \class{GeomVectorField}s.  Basically, you get the MBR
+of the first \class{GeomVectorField}, expand it to include the area of
+the MBRs for the remaining \class{GeomVectorField}s, and then set them
+all to the one all-inclusive MBR.  Note that the successive calles to
+\method{expandToInclude()} monotonically increase the returned MBRs.
 
 As noted in recipe \ref{sub:readingshapefiles}, given the general
 static nature of shape files, this code snippet is likely to be done
@@ -479,9 +517,10 @@ Create a \class{GeomGridField} and an \code{InputStream} opened on the grid file
 \end{Verbatim}
 
 \item[Discussion ]~\\
-Essentially a \class{GeomGridField} is a wrapper round a MASON
-\class{Grid2D} object that embues some limited geospatial
-characteristics -- essentially it's a georeferenced  MASON \class{Grid2D}.
+  Essentially a \class{GeomGridField} is a wrapper round a MASON
+  \class{Grid2D} object that imbues some limited geospatial
+  characteristics -- essentially it's a georeferenced MASON
+  \class{Grid2D}.
 
 \method{ArcInfoASCGridImporter.read()} will use one of two
 \class{Grid2D} MASON subclasses, \class{IntGrid2D} or
@@ -505,6 +544,8 @@ ASC/Grid file. Regardless of how you look at the data, it
 should be readily apparently whether the file contains all integers or floats.
 \end{description}
 
+
+% TODO Consider adding a recipe for reading a compressed raster file.
 
 \subsection{Reading a Mix of Grid and Vector Data}
 \label{sub:readingmixofdata}
@@ -551,23 +592,28 @@ boundaries over grid data.
 
 
 % TODO finish this recipe
-\subsection{Reading Other Kinds of Geospatial Data}
-\label{sub:readingother}
 
-\begin{description}
-\item[Problem]~\\
-GeoMason natively supports shape files and ARC/Info ASCII Grid files.
-However, you have geospatial data that is in neither one of those
-formats you would like to use.
+% Commented out on 1/13/2013 as this will be a bit involved; it could
+% even potentially be split into multiple recipes.  E.g., one for
+% reading GML, another for reading web based geospatial data, etc.
 
-\item[Solution]~\\
-(To be written)
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-(To be written)
-\end{Verbatim}
+% \subsection{Reading Other Kinds of Geospatial Data}
+% \label{sub:readingother}
 
-\item[Discussion ]
-\end{description}
+% \begin{description}
+% \item[Problem]~\\
+% GeoMason natively supports shape files and ARC/Info ASCII Grid files.
+% However, you have geospatial data that is in neither one of those
+% formats you would like to use.
+
+% \item[Solution]~\\
+% (To be written)
+% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% (To be written)
+% \end{Verbatim}
+
+% \item[Discussion ]
+% \end{description}
 
 
 
@@ -949,12 +995,12 @@ networks.
 You have a lines describing a network, such as roads, that you would like to have as a single network, or graph.
 
 \item[Solution]~\\
-Problem Solution
+GeoMason supplies a class, \class{GeomPlanarGraph}, that can be populated from a \class{GeomVectorField}.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
+GeomVectorField vectorField = new GeomVectorField();
+// ...
+GeomPlanarGraph graph = new GeomPlanarGraph();
+graph.createFromGeomField(vectorField);
 \end{Verbatim}
 
 \item[Discussion]~\\
@@ -974,15 +1020,15 @@ You want to find the shortest path between two points in a network
 such as set of roads.
 
 \item[Solution]~\\
-Problem Solution
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-	GeomGridField gridField = new GeomGridField();
-	
-	InputStream inputStream = new FileInputStream("foo.asc");
-	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
-\end{Verbatim}
+First, create a planar graph, as in recipe \ref{sec:GraphFromLines}.  Then use a shortest path algorithm, such as Dijkstra's\footnote{\url{http://en.wikipedia.org/wiki/Dijkstra\%27s_algorithm}} or $A^*$ \footnote{\url{http://en.wikipedia.org/wiki/A*_search_algorithm}} to compute the shortest route for each agent.
 
-\item[Discussion ]
+\item[Discussion]~\\
+Computing shortest paths in a network is a well studied problem for which there exist a number of solutions, including solutions oriented towards transportation networks.\footnote{\url{http://en.wikipedia.org/wiki/Shortest_path_problem}}
+
+Once the shortest path is computed you can use recipe \ref{sec:movingalongpaths} to move the agent along the route.
+
+\item[See Also]~\\
+The GridLock demo creates a GeomPlanarGraph and an $A^*$ algorithm to plot optimal commuter routes for agents.  This demo can be found at \file{sim.app.geo.gridlock}.
 \end{description}
 
 
@@ -1504,6 +1550,7 @@ decide to use a MASON \class{RectanglePortrayal2D} instead of \class{GeomPortray
 \item[Problem]~\\
 You want to show the contents of a \code{GeomGridField} in a MASON display
 
+% TODO Add in MyState to exemplify
 \item[Solution]~\\
 Set up an appropriate field portrayal for the wrapped \class{Grid2D}
 object found inside the \class{GeomGridField} .
@@ -1557,6 +1604,7 @@ public class MyMasonGUI extends GUIState
 \end{Verbatim}
 
 \item[Discussion ]~\\
+% TODO add reference to MASON manual and emphasize that usual MASON 
 A \class{GeomGridField} is effectively a wrapper round a MASON
 \class{Grid2D} object, which means you can use the display techniques
 for \class{Grid2D} objects.  Just use the
@@ -1821,31 +1869,30 @@ implementing dynamic choropleths in GeoMason.
 \end{description}
 
 
+% XXX This recipe could perhaps be fleshed out a little more
 
-% TODO MASON does support alpha transparency, which would be used for
-% raster overlays; but I don't think there exist a GeoMason demo that
-% uses this capability.  I've temporarily commented out this recipe
-% until such time that there exists a GeoMason demo showcasing raster overlays.
+\section{Displaying Raster Overlays}
+\label{sec:displayingrasteroverlays}
 
+\begin{description}
+\item[Problem]~\\
+  You have raster overlays you wish to render on top of other display
+  layers.  For example, you may wish to overlay a heatmap representing
+  population size, however you don't want the heatmap to hide details
+  beneath it.
 
-% \section{Displaying Raster Overlays}
-% \label{sec:displayingrasteroverlays}
+\item[Solution]~\\
+You can use alpha transparency when creating the grid field portrayal.  
 
-% \begin{description}
-% \item[Problem]~\\
-% You have raster overlays you wish to render over vector data.
+\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
+// Map population of grid cell from [0,25000] to shades of red from [0,255] with 
+// alpha transparency of 100/255.
+myPortrayal.setMap(new SimpleColorMap(0, 25000, new Color(0,0,0,100), new Color(255,0,0,100)));
+\end{Verbatim}
 
-% \item[Solution]~\\
-% Problem Solution
-% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-% 	GeomGridField gridField = new GeomGridField();
-	
-% 	InputStream inputStream = new FileInputStream("foo.asc");
-% 	ArcInfoASCGridImporter.read(inputStream, GridDataType.INTEGER, gridField);
-% \end{Verbatim}
-
-% \item[Discussion ]
-% \end{description}
+\item[Discussion]~\\
+Some experimentation may be necessary to determine the optimal alpha transparency level.
+\end{description}
 
 
 
