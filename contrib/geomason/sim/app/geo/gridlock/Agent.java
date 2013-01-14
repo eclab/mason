@@ -27,66 +27,58 @@ import sim.util.geo.PointMoveTo;
 
 
 /**
- *  Our simple agent for the CampusWorld GeoMASON example.  The agent randomly wanders
- *   around the campus walkways.  When
- *  the agent reaches an intersection, it chooses a random direction and continues on.   
- *
+ *  An agent that commutes from home to work.
  */
 @SuppressWarnings("restriction")
 public final class Agent implements Steppable
 {
-
     private static final long serialVersionUID = -1113018274619047013L;
+
     Gridlock world;
+
     // Residence/Work Attributes
     String homeTract = "";
     String workTract = "";
+
     Node homeNode = null;
     Node workNode = null;
+
     // point that denotes agent's position
-//    private Point location;
     private MasonGeometry location;
+
     // How much to move the agent by in each step()
     private double moveRate = .001;
+
     // Used by agent to walk along line segment
     private LengthIndexedLine segment = null;
+
     double startIndex = 0.0; // start position of current line
     double endIndex = 0.0; // end position of current line
     double currentIndex = 0.0; // current location along line
+
     GeomPlanarGraphEdge currentEdge = null;
+
     int linkDirection = 1;
-    double speed = 0; // useful for graph
+
+    // useful for graph
+    // XXX how does this differ from moveRate?
+    double speed = 0;
+
+    // XXX Presume this is the planned route
     ArrayList<GeomPlanarGraphDirectedEdge> pathFromHomeToWork =
         new ArrayList<GeomPlanarGraphDirectedEdge>();
     int indexOnPath = 0;
     int pathDirection = 1;
+
     boolean reachedDestination = false;
-    PointMoveTo pointMoveTo = new PointMoveTo();
 
-    /** This is the wrapper object in the agents layer.  We need a handle on
-     * it so that we can update our location with each step().
-     */
-//    private MasonGeometry renderedGeometry;
-//
-//
-//
-//    public MasonGeometry getRenderedGeometry()
-//    {
-//        return renderedGeometry;
-//    }
-//
-//
-//
-//    public void setRenderedGeometry(MasonGeometry renderedGeometry)
-//    {
-//        this.renderedGeometry = renderedGeometry;
-//    }
+    // Used to translate agent's location to next point along path
+    private PointMoveTo pointMoveTo = new PointMoveTo();
 
+    // Used to create all points for all Agents
+    static private GeometryFactory factory = new GeometryFactory();
     
 
-
-
-    /** Constructor Function */
     public Agent(Gridlock g, String home, String work,
                  GeomPlanarGraphEdge startingEdge, GeomPlanarGraphEdge goalEdge)
     {
@@ -99,10 +91,8 @@ public final class Agent implements Steppable
         workTract = work;
 
         // set the location to be displayed
-        GeometryFactory fact = new GeometryFactory();
-        location = new MasonGeometry(fact.createPoint(new Coordinate(10, 10))) ;
-        Coordinate startCoord = null;
-        startCoord = homeNode.getCoordinate();
+        Coordinate startCoord = homeNode.getCoordinate();
+        location = new MasonGeometry(factory.createPoint(startCoord));
         updatePosition(startCoord);
     }
 
@@ -179,8 +169,7 @@ public final class Agent implements Steppable
 
 
 
-    /** Called every tick by the scheduler */
-    /** moves the agent along the path */
+    /** moves the agent towards destination with each simulation tick */
     public void step(SimState state)
     {
         // check that we've been placed on an Edge

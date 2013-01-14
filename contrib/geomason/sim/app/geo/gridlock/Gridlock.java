@@ -26,6 +26,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
@@ -102,32 +104,20 @@ public class Gridlock extends SimState
     public Gridlock(long seed)
     {
         super(seed);
-    }
-
-
-
-    /** Initialization */
-    @Override
-    public void start()
-    {
-        super.start();
-
-        // read in data
         try
         {
-
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
-            
+
             URL roadsFile = Gridlock.class.getResource("data/roads.shp");
-            
+
             ShapeFileImporter.read(roadsFile, roads);
 
             Envelope MBR = roads.getMBR();
 
             // read in the tracts to create the background
             System.out.println("reading tracts layer...");
-            
+
             URL areasFile = Gridlock.class.getResource("data/areas.shp");
             ShapeFileImporter.read(areasFile, censusTracts);
 
@@ -139,52 +129,60 @@ public class Gridlock extends SimState
             // update so that everyone knows what the standard MBR is
             roads.setMBR(MBR);
             censusTracts.setMBR(MBR);
+        } catch (FileNotFoundException ex)
+        {
+            Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
-            // initialize agents
-            populate("data/roads_points_place.csv");
-            agents.setMBR(MBR);
 
-            // Ensure that the spatial index is updated after all the agents
-            // move
-            schedule.scheduleRepeating( agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
 
-            /** Steppable that flips Agent paths once everyone reaches their destinations*/
-            Steppable flipper = new Steppable()
+    /** Initialization */
+    @Override
+    public void start()
+    {
+        super.start();
+
+        // initialize agents
+        populate("data/roads_points_place.csv");
+        agents.setMBR(roads.getMBR());
+
+        // Ensure that the spatial index is updated after all the agents
+        // move
+        schedule.scheduleRepeating(agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
+
+        /**
+         * Steppable that flips Agent paths once everyone reaches their destinations
+         */
+        Steppable flipper = new Steppable()
+        {
+            @Override
+            public void step(SimState state)
             {
+                Gridlock gstate = (Gridlock) state;
 
-                @Override
-                public void step(SimState state)
+                // pass to check if anyone has not yet reached work
+                for (Agent a : gstate.agentList)
                 {
-
-                    Gridlock gstate = (Gridlock) state;
-
-                    // pass to check if anyone has not yet reached work
-                    for (Agent a : gstate.agentList)
+                    if (!a.reachedDestination)
                     {
-                        if (!a.reachedDestination)
-                        {
-                            return; // someone is still moving: let him do so
-                        }
-                    }
-                    // send everyone back in the opposite direction now
-                    boolean toWork = gstate.goToWork;
-                    gstate.goToWork = !toWork;
-
-                    // otherwise everyone has reached their latest destination:
-                    // turn them back
-                    for (Agent a : gstate.agentList)
-                    {
-                        a.flipPath();
+                        return; // someone is still moving: let him do so
                     }
                 }
+                // send everyone back in the opposite direction now
+                boolean toWork = gstate.goToWork;
+                gstate.goToWork = !toWork;
 
-            };
-            schedule.scheduleRepeating(flipper, 10);
+                // otherwise everyone has reached their latest destination:
+                // turn them back
+                for (Agent a : gstate.agentList)
+                {
+                    a.flipPath();
+                }
+            }
 
-        } catch (FileNotFoundException e)
-        {
-            System.out.println("Error: missing required data file");
-        }
+        };
+        schedule.scheduleRepeating(flipper, 10);
     }
 
 
