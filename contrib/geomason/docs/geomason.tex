@@ -198,8 +198,8 @@ George Mason University}
 \\
 \\
 \Large\bf Zeroth Edition\\
-\large\rm Online Version 0.0\\
-\large\rm September, 2012\\
+\large\rm Online Version 0.1\\
+\large\rm January, 2013\\
 
 \vspace{5in}
 \noindent\Large\bf Where to Obtain GeoMason\\
@@ -246,13 +246,13 @@ George Mason University}
 
 %GeoMason is a MASON extension that adds basic geospatial capability.
 
-\section{The Motivation Behind this Book}
+
 
 %\begin{wrapfigure}{r}[0in]{3.7in}
 %\vspace{-4em}\hfill\includegraphics[width=3.7in]{MASONLayout.pdf}\vspace{-3em}\end{wrapfigure}
 
-
-MASON is a sophisticated multi-agent simulation library.
+\section{What is GeoMason?}
+MASON is a sophisticated multi-agent discrete event simulation library.
 Unfortunately it does not natively support geospatial data, which
 means that such support has to be hand crafted by users.  Providing
 such support can be error prone and tedious to implement.
@@ -261,7 +261,7 @@ Fortunatey, there exists a MASON extension, GeoMason, that imbues
 MASON with some limited geospatial awareness.  With GeoMason one is
 able to load, display, and manipulate data that is, in some way,
 grounded to the Earth's surface.
-
+\section{The Motivation Behind this Book}
 This ``cookbook'' provides a set of ``recipes'' for using GeoMason and is
 meant to fill in the documentation gap between javadoc generated API
 documentation and the GeoMason technical report.  I felt that a full
@@ -272,7 +272,16 @@ format is popular in technical literature because it provides an
 accessible ``use case'' oriented style.  In the cookbook format, it's
 easy for a reader to find a use case, or ``recipe,'' that best matches what
 they want to do, and then use that recipe as inspiration for their own
-tailored solution.  And so I felt that this format best addressed the ``how''.
+tailored solution.  And so I felt that this format best addressed the
+``how''.
+
+For those unfamiliar with the ``Cookbook'' format, a technical
+``Cookbook'' is comprised of \emph{recipes}.  Again, these recipes
+embody a simple use case, and is summarized by its title such as
+``Moving Agents Along a Path.''  Each recipe is comprised of a simple
+problem statement, a simple solution statement optionally followed by
+code examples, and then lastly followed by a discussion section that
+elaborates on the problem and posed solution.
 
 \section{What this Book Is Not}
 
@@ -287,10 +296,28 @@ and working through its tutorials.  If you need to bone up on GIS,
 there exist many resources to get you up to speed.  The Wikipedia page
 for GIS is a good online starting
 point.\footnote{\url{http://en.wikipedia.org/wiki/Geographic_information_system}}
-The book \emph{Geographic Information Systems and Science} by Goodchild et al is also an
-accessible read.\footnote{Longley, P.A., Goodchild, M.F., Maguire,
-  D.J. and Rhind, D.W. (2005) Geographic Information Systems and
-  Science. Chichester: Wiley. 2nd edition.}
+The book \emph{Geographic Information Systems and Science} by
+Goodchild et al is also an accessible read.\footnote{Longley, P.A.,
+  Goodchild, M.F., Maguire, D.J. and Rhind, D.W. (2005) Geographic
+  Information Systems and Science. Chichester: Wiley. 2nd edition.}
+Naturally there exist numerous online resources on java.
+
+\section{Book Organization}
+
+I've divided the book into five chapters of which the first one
+you're reading now.  The second chapter provides I/O related recipes;
+i.e., recipes for reading and writing geospatial data using GeoMason.
+The third chapter is by far the most complex --- and, even then I
+confess it probably falls short of some needs.  This chapter deals
+with \emph{using} GeoMason to some end, whether it's as basic as
+finding nearby objects or moving agents along paths or having agents
+follow gradients. I hope to in the future expand some of the leaner
+recipes, particularly those involving shortest path computations, and
+to add new ones, especially ones suggested by the GeoMason community.
+The next chapter involves recipes for displaying geospatial data such
+as rendering boundary lines over grid data.  And, finally the last
+chapter has a couple recipes for common GeoMason problems; hopefully
+this chapter won't expand much over time!
 
 
 %%
@@ -317,8 +344,11 @@ file.\index{Shape files!reading|(}
 
 \item[Solution]~\\
 Create a \class{GeomVectorField} and use \method{ShapeFileImporter.read()} to load data into it.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField vectorField = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+// WIDTH and HEIGHT correspond to arbitrary display dimensions
+private final int WIDTH = 300;
+private final int HEIGHT = 300;
+GeomVectorField vectorField = new GeomVectorField(WIDTH, HEIGHT);
 
 try {
    ShapeFileImporter.read("file:foo.shp", vectorField);
@@ -350,6 +380,11 @@ load, say, native lat/lon data, which corresponds to coordinates along
 a ellipsoid, that you will have introduced distortions in the implicit
 projection you have just done to a 2D plane.  Moreover, these
 distortions will be more pronounced for large surface areas.
+
+Note that \code{WIDTH} and \code{HEIGHT} correspond to the display
+dimensions and are used to help properly scale the rendered field when
+panning and zooming. Note  that at some point the need for specifying
+the field width and height will be unnecessary.
 \end{description}
 
 
@@ -366,10 +401,10 @@ data.
 After ensuring that each layer uses the same coordinate reference
 system, read in each layer, and then synchronize the minimum bounding
 rectangles (MBR) for all the layers.\index{minimum bounding rectangle}
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField firstVectorField = new GeomVectorField();
-GeomVectorField secondVectorField = new GeomVectorField();
-GeomVectorField thirdVectorField = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+GeomVectorField firstVectorField = new GeomVectorField(WIDTH,HEIGHT);
+GeomVectorField secondVectorField = new GeomVectorField(WIDTH,HEIGHT);
+GeomVectorField thirdVectorField = new GeomVectorField(WIDTH,HEIGHT);
 
 try {
    ShapeFileImporter.read("file:foo.shp", firstVectorField);
@@ -437,8 +472,8 @@ specify the desired attributes by creating a \class{Bag} of \code{String}s
 containing attribute names, and then passing that \class{Bag} to
 \method{ShapeFileImporter.read()}.
 
-\begin{Verbatim}[frame=lines,label=\textsf{Reading Attributes},framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField vectorField = new GeomVectorField();
+\begin{Verbatim}[frame=lines,label=\textsf{Reading Attributes},framesep=5mm,commandchars=+\[\]]
+GeomVectorField vectorField = new GeomVectorField(WIDTH,HEIGHT);
 
 +color[red]Bag desiredAttributes = new Bag();+label[ex:attributestart]
 +color[red]desiredAttributes.add("NAME");
@@ -455,7 +490,7 @@ which, in turn, also stores any associated attributes.  Use the
 appropriate \class{MasonGeometry} \code{get*Attribute()} method to
 retrieve the attribute value.
 
-\begin{Verbatim}[frame=lines,label=\textsf{Using Attributes},framesep=5mm,numbers=left]
+\begin{Verbatim}[frame=lines,label=\textsf{Using Attributes},framesep=5mm]
 Bag geometries = vectorField.getGeometries();
 
 for (int i = 0; i < geometries.size(); i++)
@@ -509,7 +544,7 @@ You want to read an Arc/Info ASCII Grid file.
 
 \item[Solution]~\\
 Create a \class{GeomGridField} and an \code{InputStream} opened on the grid file, then use \class{ArcInfoASCGridImporter()} to load the data into the grid field from the open input stream.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 	GeomGridField gridField = new GeomGridField();
 	
 	InputStream inputStream = new FileInputStream("foo.asc");
@@ -556,8 +591,8 @@ You want to read in multiple layers that are a mix of vector and grid geospatial
 
 \item[Solution]~\\
 After ensuring that all the layers have the same coordinate reference system, read all the layers into GeomVectorField or GeomGridFields, as appropriate, and then synchronize their respective minimum bounding rectangles.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField vectorField = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+GeomVectorField vectorField = new GeomVectorField(WIDTH,HEIGHT);
 GeomGridField gridField = new GeomGridField();
 
 try {
@@ -608,7 +643,7 @@ boundaries over grid data.
 
 % \item[Solution]~\\
 % (To be written)
-% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% \begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 % (To be written)
 % \end{Verbatim}
 
@@ -699,7 +734,7 @@ You want to write GeoMason grid data to an ARC/Info ASCII Grid file.
 
 \item[Solution]~\\
 Create a \code{Writer} for the grid file and use \code{ArcInfoASCGridExporter.write()} to write the \code{GeomGridField}.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 try {
    BufferedWriter writer = new BufferedWriter( new FileWriter("foo.asc") );
    ArcInfoASCGridExporter.write(gridField, writer);
@@ -758,9 +793,9 @@ nearby entities.
   reference system, and then use that coordinate to find the boundary
   polygon that covers that point.
 
-\begin{Verbatim}[frame=lines,label=Agents as Vector Field,framesep=5mm,numbers=left]
-GeomVectorField boundaries = new GeomVectorField();
-GeomVectorField agents = new GeomVectorField();
+\begin{Verbatim}[frame=lines,label=Agents as Vector Field,framesep=5mm]
+GeomVectorField boundaries = new GeomVectorField(WIDTH,HEIGHT);
+GeomVectorField agents = new GeomVectorField(WIDTH,HEIGHT);
 
 // ...
 
@@ -776,8 +811,8 @@ if ( polity.isEmpty() ) {
 }
 \end{Verbatim}
 
-\begin{Verbatim}[frame=lines,label=Agents as Grid Field,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField boundaries = new GeomVectorField();
+\begin{Verbatim}[frame=lines,label=Agents as Grid Field,framesep=5mm,commandchars=+\[\]]
+GeomVectorField boundaries = new GeomVectorField(WIDTH,HEIGHT);
 GeomGridField agents = new GeomGridField();
 
 // ...
@@ -837,8 +872,8 @@ specific thing.
 \item[Solution]~\\
 You can use \method{getObjectsWithinDistance()} to find all
 objects within a certain distance from a given object.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField objects = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+GeomVectorField objects = new GeomVectorField(WIDTH,HEIGHT);
 Point location; // assume later set to desired location
 
 // ...
@@ -870,8 +905,8 @@ common border.
 This is very similar to recipe \ref{sec:nearbyobjects}.  Instead of
 using \method{getObjectsWithinDistance()}  to find nearby objects, use
 \method{getTouchingObjects()}, instead, to find bordering objects.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField objects = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+GeomVectorField objects = new GeomVectorField(WIDTH,HEIGHT);
 Point location; // assume later set to desired location
 
 // ...
@@ -923,7 +958,7 @@ an agent.
 
 The following code is for a simple agent that moves back and forth along a single line segment.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=^\[\]]
 public class LineFollower implements Steppable
 {
     // current position in 2D space
@@ -996,8 +1031,8 @@ You have a lines describing a network, such as roads, that you would like to hav
 
 \item[Solution]~\\
 GeoMason supplies a class, \class{GeomPlanarGraph}, that can be populated from a \class{GeomVectorField}.
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField vectorField = new GeomVectorField();
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
+GeomVectorField vectorField = new GeomVectorField(WIDTH,HEIGHT);
 // ...
 GeomPlanarGraph graph = new GeomPlanarGraph();
 graph.createFromGeomField(vectorField);
@@ -1137,7 +1172,7 @@ which may be inconvenient.
   \class{Point}. The following code gives an example of using
   \method{intersection()}.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=^\[\]]
 GeometryFactory geometryFactory = new GeometryFactory();
 WKTReader reader = new WKTReader(geometryFactory);
 
@@ -1261,7 +1296,7 @@ agent needs to get or modify.  First, you need to determine the
 grid cell coordinate for the agent.  Then you can use that coordinate
 to fetch the grid cell contents.
 \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left]
-GeomVectorField agent = new GeomVectorField();
+GeomVectorField agent = new GeomVectorField(WIDTH,HEIGHT);
 GeomGridField gridField = new GeomGridField();
 
 // ... assume agent and gridField populated at this point
@@ -1308,7 +1343,7 @@ You have slope information that you would like an agent to follow.
   then move to that cell.  The code below is a simple implementation
   of this approach.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=^\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=^\[\]]
 public class Gradient extends SimState
 {
     // field of elevation data
@@ -1462,7 +1497,7 @@ subclass, associate it with its corresponding \code{GeomVectorField},
 set up an appropriate MASON or GeoMason field portrayal, and attach it
 to a MASON \code{Display2D} object.
 
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 public class MyMasonGUI extends GUIState
 {
     private Display2D display;
@@ -1554,7 +1589,7 @@ You want to show the contents of a \code{GeomGridField} in a MASON display
 \item[Solution]~\\
 Set up an appropriate field portrayal for the wrapped \class{Grid2D}
 object found inside the \class{GeomGridField} .
-\begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 public class MyMasonGUI extends GUIState
 {
     private Display2D display;
@@ -1638,8 +1673,8 @@ Load the vector and grid layers as per recipe
 \ref{sub:readingmixofdata}.  Then set up the portrayals such that the
 vector layer is rendered on top of the raster layer.
 
-\begin{Verbatim}[frame=lines,label=Reading the layers,framesep=5mm,numbers=left,commandchars=+\[\]]
-GeomVectorField boundaries = new GeomVectorField();
+\begin{Verbatim}[frame=lines,label=Reading the layers,framesep=5mm,commandchars=+\[\]]
+GeomVectorField boundaries = new GeomVectorField(WIDTH,HEIGHT);
 GeomGridField gridField = new GeomGridField();
 
 try {
@@ -1658,7 +1693,7 @@ boundaries.setMBR(globalMBR);
 gridField.setMBR(globalMBR);
 \end{Verbatim}
 
-\begin{Verbatim}[frame=lines,label=Displaying boundaries over the grid,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,label=Displaying boundaries over the grid,framesep=5mm,commandchars=+\[\]]
 public class MyMasonGUI extends GUIState
 {
     private Display2D display;
@@ -1753,16 +1788,16 @@ when reading the shape file.  The highlighted lines shows that the
 passed in to \method{read()} so that that class is used instead of the
 default \class{MasonGeometry}.
 
-\begin{Verbatim}[frame=lines,label=In Your \class{SimState},framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,label=In Your \class{SimState},framesep=5mm,commandchars=+\[\]]
 public class MyWorld extends SimState {
 
     // used in GUIState to set up ColorMap
     public static int NUM_AGENTS = 20;
 
-    public GeomVectorField borders = new GeomVectorField();
+    public GeomVectorField borders = new GeomVectorField(WIDTH,HEIGHT);
 
     // public static so CountingMasonGeometry can access
-    public static GeomVectorField agents = new GeomVectorField();
+    public static GeomVectorField agents = new GeomVectorField(WIDTH,HEIGHT);
 
     public MyWorld(long seed) {
         super(seed);
@@ -1785,7 +1820,7 @@ just counts the number of agents that the given geometry ``covers'';
 i.e., the agents that are within the boundaries of this object.
 
 \begin{Verbatim}[frame=lines,label=\class{MasonGeometry} subclass that
-  counts agents,framesep=5mm,numbers=left,commandchars=+\[\]]
+  counts agents,framesep=5mm,commandchars=+\[\]]
 public class CountingGeomWrapper extends MasonGeometry {
     public CountingGeomWrapper()  {
         super();
@@ -1803,7 +1838,7 @@ of agents from the special counting \code{MasonGeometry} object to
 lookup the appropriate color in the color map, and then renders the
 overall geometry using that color.
 
-\begin{Verbatim}[frame=lines,label=Portrayal that renders choropleth,framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,label=Portrayal that renders choropleth,framesep=5mm,commandchars=+\[\]]
 public class WorldPortrayal extends GeomPortrayal {
 
     SimpleColorMap colorMap = null; 
@@ -1826,7 +1861,7 @@ And, finally, in the \class{GUIState} class, the appropriate
 \class{GeomVectorFieldPortrayal} is set up to use our special field
 portrayal with a color map based on the total number of agents in the simulation.
 
-\begin{Verbatim}[frame=lines,label=Set up portrayal in \class{GUIState},framesep=5mm,numbers=left,commandchars=+\[\]]
+\begin{Verbatim}[frame=lines,label=Set up portrayal in \class{GUIState},framesep=5mm,commandchars=+\[\]]
     GeomVectorFieldPortrayal borderPortrayal = new GeomVectorFieldPortrayal();
     GeomVectorFieldPortrayal agentPortrayal = new GeomVectorFieldPortrayal();
 
@@ -1922,7 +1957,7 @@ you are using UTM, the units will be in meters; calculate the total
 display area in meters and scale the agents accordingly.
 
 See also recipe \ref{sec:displayingGeomVectorField}.
-% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% \begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 % foo
 % \end{Verbatim}
 
@@ -1958,7 +1993,7 @@ The data between layers does not match.
 You probably did not align the minimum bonding rectangles between all
 the \class{GeomField} layers as directed by recipe \ref{sub:multiplevectorlayers}.
 
-% \begin{Verbatim}[frame=lines,framesep=5mm,numbers=left,commandchars=+\[\]]
+% \begin{Verbatim}[frame=lines,framesep=5mm,commandchars=+\[\]]
 % foo
 % \end{Verbatim}
 
