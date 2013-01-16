@@ -1,3 +1,14 @@
+Version 1.5:
+	- Bug fixes with regards to clipping window in GeomVectorFieldPortrayal
+	- GeomVectorField now more consistently uses MasonGeometry instead of JTS Geometry in interface
+	- Eliminated 3rd part dependency for sickStudents demo
+	- Added ability to update spatial index to GeomVectorField for dynamic fields (i.e., fields with moving geometry)
+	- GeomVectorField.getObjectsWithinDistance() now properly does second pass of objects returned from spatial index
+	- MasonGeometry toString() now returns meaningful geometry information
+	- Added GeoMason Cookbook LaTeX/PDF in docs
+	- Makefile by default now makes demos, too, instead of just src jar
+	- Minor bug fixes
+
 Version 1.4.1:
 	- Fixed bug in GeomGridField.toPoint() where Y axis was inverted.
 	- Minor fix to WaterWorld where Java RNG was used instead of SimState.random
