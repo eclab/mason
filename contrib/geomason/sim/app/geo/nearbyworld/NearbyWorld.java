@@ -87,17 +87,20 @@ public class NearbyWorld extends SimState
 
 
         
+    @Override
     public void start()
     {
         super.start();
 
         // position the agent at a random starting location
         agent = new Agent(random.nextInt(WIDTH), random.nextInt(HEIGHT));
-//
+
         // Add the agent
         agentField.addGeometry(agent.getGeometry());
 
         schedule.scheduleRepeating(agent);
+
+        schedule.scheduleRepeating(agentField.scheduleSpatialIndexUpdater(), 1, 1.0);
     }
 
 
