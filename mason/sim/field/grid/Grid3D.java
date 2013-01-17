@@ -100,24 +100,39 @@ public interface Grid3D extends java.io.Serializable
         objects are usually within the toroidal region. */
     public int stz(final int z);
 
-    /** Bounded Mode for neighborhood lookup.  Indicates that the Grid2D in question
+    /** Bounded Mode for neighborhood lookup.  Indicates that the Grid3D in question
         is being used in a way that assumes that it 
         has no valid locations outside of the rectangle starting at (0,0) and
         ending at (width-1, height-1) inclusive. */
     public static int BOUNDED = 0;
 
-    /** Bounded Mode for neighborhood lookup.  Indicates that the Grid2D in question
+    /** Bounded Mode for neighborhood lookup.  Indicates that the Grid3D in question
         is being used in a way that assumes that any numerical location is a valid
-        location.  Note that Grid2D subclasses based on arrays, such as DoubleGrid2D,
-        IntGrid2D, ObjectGrid2D, and DenseGrid2D, <b>cannot be used</b> in an unbounded
+        location.  Note that Grid3D subclasses based on arrays, such as DoubleGrid3D,
+        IntGrid3D, ObjectGrid3D, and DenseGrid3D, <b>cannot be used</b> in an unbounded
         fashion. */
     public static int UNBOUNDED = 1;
 
-    /** Bounded Mode for toroidal lookup.  Indicates that the Grid2D in question
+    /** Bounded Mode for toroidal lookup.  Indicates that the Grid3D in question
         is being used in a way that assumes that it is bounded, but wrap-around: for
         example, (0,0) is located one away diagonally from (width-1, height-1).
     */
     public static int TOROIDAL = 2;
+
+    /** Center measurement rule for raidal neighborhood lookup.  Indicates that
+        radial lookup will include locations whose grid cell centers overlap with 
+        the neighborhood region.  */
+    public static int CENTER = 1024;
+
+    /** "All" measurement rule for raidal neighborhood lookup.  Indicates that
+        radial lookup will include locations whose grid cells are entirely within 
+        the neighborhood region.  */
+    public static int ALL = 1025;
+
+    /** "Any" measurement rule for raidal neighborhood lookup.  Indicates that
+        radial lookup will include locations whose grid cells have any overlap
+        at all with the neighborhood region.  */
+    public static int ANY = 1026;
 
     /**
      * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y), abs(z-Z) ) <= dist.  This region forms a
@@ -130,16 +145,16 @@ public interface Grid3D extends java.io.Serializable
      * <p> This function may only run in two modes: toroidal or bounded.  Unbounded lookup is not permitted, and so
      * this function is deprecated: instead you should use the other version of this function which has more functionality.
      * If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
      * that is, the width and height of the grid.   if "toroidal",
      * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
      * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      *
-     * <p>The origin -- that is, the (x,y) point at the center of the neighborhood -- is always included in the results.
+     * <p>The origin -- that is, the (x,y,z) point at the center of the neighborhood -- is always included in the results.
      *
-     * <p>This function is equivalent to: <tt>getNeighborsMaxDistance(x,y,dist,toroidal ? Grid2D.TOROIDAL : Grid2D.BOUNDED, true, xPos, yPos, zPos);</tt>
+     * <p>This function is equivalent to: <tt>getNeighborsMaxDistance(x,y,dist,toroidal ? Grid3D.TOROIDAL : Grid3D.BOUNDED, true, xPos, yPos, zPos);</tt>
      * 
      * @deprecated
      */
@@ -153,17 +168,17 @@ public interface Grid3D extends java.io.Serializable
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * <p>This function may be run in one of three modes: Grid3D.BOUNDED, Grid3D.UNBOUNDED, and GrideD.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
      * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
      * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * SparseGrid3D permits this but ObjectGrid3D and DoubleGrid3D and IntGrid3D and DenseGrid3D do not.  Finally if "toroidal",
      * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
      * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      *
-     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
     public void getMooreLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
 
@@ -181,16 +196,16 @@ public interface Grid3D extends java.io.Serializable
      * <p> This function may only run in two modes: toroidal or bounded.  Unbounded lookup is not permitted, and so
      * this function is deprecated: instead you should use the other version of this function which has more functionality.
      * If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
      * that is, the width and height of the grid.   if "toroidal",
      * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
      * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      *
-     * <p>The origin -- that is, the (x,y) point at the center of the neighborhood -- is always included in the results.
+     * <p>The origin -- that is, the (x,y,z) point at the center of the neighborhood -- is always included in the results.
      *
-     * <p>This function is equivalent to: <tt>getNeighborsHamiltonianDistance(x,y,dist,toroidal ? Grid2D.TOROIDAL : Grid2D.BOUNDED, true, xPos, yPos, zPos);</tt>
+     * <p>This function is equivalent to: <tt>getNeighborsHamiltonianDistance(x,y,dist,toroidal ? Grid3D.TOROIDAL : Grid3D.BOUNDED, true, xPos, yPos, zPos);</tt>
      * 
      * @deprecated
      */
@@ -206,18 +221,44 @@ public interface Grid3D extends java.io.Serializable
      * null may be passed in for the various bags, though it is more efficient to pass in a 'scratch bag' for
      * each one.
      *
-     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
-     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * <p>This function may be run in one of three modes: Grid3D.BOUNDED, Grid3D.UNBOUNDED, and GrideD.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
      * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
      * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
-     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * SparseGrid3D permits this but ObjectGrid3D and DoubleGrid3D and IntGrid3D and DenseGrid3D do not.  Finally if "toroidal",
      * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
      * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      *
-     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
     public void getVonNeumannLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
+    
+    /**
+     * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
+     * If measurementRule is Grid3D.CENTER, then the measurement rule will be those cells whose centers
+     * overlap with the region.  If measurementRule is Grid3D.ALL, then the measurement rule will be those
+     * cells which entirely overlap with the region.  If measurementrule is Grid3D.ANY, then the measurement
+     * rule will be those cells which overlap at all with the region.  If closed is true, then the region will
+     * be considered "closed", that is, that points which touch on the outer surface of the circle will be 
+     * considered members of the region.  If closed is open, then the region will be considered "open", that is,
+     * that points which touch on the outer surface of the circle will NOT be considered members of the region.
+     *
+     * <p>Places each x, y, and z value of these locations in the provided IntBags xPos, yPos, and zPos, clearing the bags first.
+     *
+     * <p>This function may be run in one of three modes: Grid3D.BOUNDED, Grid3D.UNBOUNDED, and GrideD.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid3D permits this but ObjectGrid3D and DoubleGrid3D and IntGrid3D and DenseGrid3D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos, IntBag zPos );
     }
 

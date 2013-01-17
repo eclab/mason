@@ -673,6 +673,19 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         }
 
 
+    public DoubleBag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+        if( zPos == null )
+            zPos = new IntBag();
+
+        getRadialLocations( x, y, z, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos, zPos );
+        return getObjectsAtLocations(xPos,yPos,zPos,result);
+        }
+                
 
 
 

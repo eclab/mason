@@ -538,9 +538,242 @@ public abstract class AbstractGrid2D implements Grid2D
 
 
 
+    // some efficiency to avoid width lookups
+    double _stx(final double x, final double width) 
+        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
 
+    /** Minimum toroidal distance between two values in the X dimension. */
+    double tdx(final double x1, final double x2)
+        {
+        double width = this.width;
+        if (Math.abs(x1-x2) <= width / 2)
+            return x1 - x2;  // no wraparounds  -- quick and dirty check
+        
+        double dx = _stx(x1,width) - _stx(x2,width);
+        if (dx * 2 > width) return dx - width;
+        if (dx * 2 < -width) return dx + width;
+        return dx;
+        }
+    
+    // some efficiency to avoid height lookups
+    double _sty(final double y, final double height) 
+        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
 
+    /** Minimum toroidal distance between two values in the Y dimension. */
+    double tdy(final double y1, final double y2)
+        {
+        double height = this.height;
+        if (Math.abs(y1-y2) <= height / 2)
+            return y1 - y2;  // no wraparounds  -- quick and dirty check
 
+        double dy = _sty(y1,height) - _sty(y2,height);
+        if (dy * 2 > height) return dy - height;
+        if (dy * 2 < -height) return dy + height;
+        return dy;
+        }
+    
+
+    /*  More or less copied from Continuous2D.
+        Minimum Toroidal Distance Squared between two points. This computes the "shortest" (squared) distance between two points, considering wrap-around possibilities as well. */
+    double tds(double d1x, double d1y, double d2x, double d2y)
+        {
+        double dx = tdx(d1x, d2x);
+        double dy = tdy(d1y, d2y);
+        return (dx * dx + dy * dy);
+        }
+        
+    double ds(double d1x, double d1y, double d2x, double d2y)
+        {
+        return ((d1x - d2x) * (d1x - d2x) + (d1y - d2y) * (d1y - d2y));
+        }
+    
+    boolean within(double d1x, double d1y, double d2x, double d2y, double distanceSquared, boolean closed)
+        {
+        double d= ds(d1x, d1y, d2x, d2y);
+        return (d < distanceSquared || (d == distanceSquared && closed));
+        }
+        
+    boolean twithin(double d1x, double d1y, double d2x, double d2y, double distanceSquared, boolean closed)
+        {
+        double d= tds(d1x, d1y, d2x, d2y);
+        return (d < distanceSquared || (d == distanceSquared && closed));
+        }
+
+    public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos )
+        {
+        boolean toroidal = (mode == TOROIDAL);
+
+        // won't work for negative distances
+        if( dist < 0 )
+            {
+            throw new RuntimeException( "Distance must be positive" );
+            }
+            
+        if (measurementRule != Grid2D.ANY && measurementRule != Grid2D.ALL && measurementRule != Grid2D.CENTER)
+            {
+            throw new RuntimeException(" Measurement rule must be one of ANY, ALL, or CENTER" );
+            }
+                
+        // grab the rectangle
+        getMooreLocations(x,y, (int) Math.ceil(dist + 0.5), mode, includeOrigin, xPos, yPos);
+        int len = xPos.size();
+        double distsq = dist * dist;
+        
+        if (toroidal)
+            {
+            for(int i = 0; i < len; i++)
+                {
+                int xp = xPos.get(i);
+                int yp = yPos.get(i);
+                boolean remove = false;
+                
+                if (measurementRule == Grid2D.ANY)
+                    {
+                    if (x == xp)
+                        {
+                        if (y < yp)
+                            {
+                            double d = tdy(yp - 0.5, y);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -tdy(yp - 0.5, y);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    else if (y == yp)
+                        {
+                        if (x < xp)
+                            {
+                            double d = tdx(xp - 0.5, x);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -tdx(xp - 0.5, x);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    else if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !twithin(x,y,xp-0.5,yp-0.5,distsq,closed);
+                        else
+                            remove = !twithin(x,y,xp-0.5,yp+0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !twithin(x,y,xp+0.5,yp-0.5,distsq,closed);
+                        else
+                            remove = !twithin(x,y,xp+0.5,yp+0.5,distsq,closed);
+                        }
+                    }
+                else if (measurementRule == Grid2D.ALL)
+                    {
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !twithin(x,y,xp+0.5,yp+0.5,distsq,closed);
+                        else
+                            remove = !twithin(x,y,xp+0.5,yp-0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !twithin(x,y,xp-0.5,yp+0.5,distsq,closed);
+                        else
+                            remove = !twithin(x,y,xp-0.5,yp-0.5,distsq,closed);
+                        }
+                    }
+                else // (measurementRule == Grid2D.CENTER)
+                    {
+                    remove = !twithin(x,y,xp,yp,distsq,closed);
+                    }
+                
+                if (remove)
+                    { xPos.remove(i); yPos.remove(i); i--; }
+                }
+            }
+        else
+            {
+            for(int i = 0; i < len; i++)
+                {
+                int xp = xPos.get(i);
+                int yp = yPos.get(i);
+                boolean remove = false;
+                
+                if (measurementRule == Grid2D.ANY)
+                    {
+                    if (x == xp)
+                        {
+                        if (y < yp)
+                            {
+                            double d = (yp - 0.5) -  y;
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -((yp - 0.5) - y);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    else if (y == yp)
+                        {
+                        if (x < xp)
+                            {
+                            double d = (xp - 0.5) - x;
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -((xp - 0.5) - x);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
+                        }
+                    }
+                else if (measurementRule == Grid2D.ALL)
+                    {
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
+                        }
+                    }
+                else // (measurementRule == Grid2D.CENTER)
+                    {
+                    remove = !within(x,y,xp,yp,distsq,closed);
+                    }
+                
+                if (remove)
+                    { xPos.remove(i); yPos.remove(i); i--; }
+                }
+            }
+        }
 
 
 

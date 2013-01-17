@@ -450,7 +450,32 @@ public class ObjectGrid3D extends AbstractGrid3D
         return result;
         }
 
+    public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+        if( zPos == null )
+            zPos = new IntBag();
 
+        getRadialLocations( x, y, z, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos, zPos );
+        return getObjectsAtLocations(xPos,yPos,zPos,result);
+        }
+
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+        if( zPos == null )
+            zPos = new IntBag();
+
+        getRadialLocations( x, y, z, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos, zPos );
+        reduceObjectsAtLocations( xPos,  yPos, zPos, result);
+        return result;
+        }
 
     // the xPos and yPos bags so that each position corresponds to the equivalent result in
     // in the result bag.

@@ -830,6 +830,18 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         }
                 
 
+    public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos )
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
+                
+
 
         
     // For each <xPos, yPos> location, puts all such objects into the result DoubleBag.  Modifies

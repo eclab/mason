@@ -768,6 +768,32 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         }
 
 
+    public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+        if( zPos == null )
+            zPos = new IntBag();
+
+        getRadialLocations( x, y, z, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos, zPos );
+        return getObjectsAtLocations(xPos,yPos,zPos,result);
+        }
+
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+        if( zPos == null )
+            zPos = new IntBag();
+
+        getRadialLocations( x, y, z, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos, zPos );
+        reduceObjectsAtLocations( xPos,  yPos, zPos, result);
+        return result;
+        }
 
 
 
@@ -794,17 +820,20 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         for(int i=0; i < len; i++)
             {
             Bag temp = getObjectsAtLocation(xs[i],ys[i],zs[i]);
-            final int size = temp.numObjs;
-            final Object[] os = temp.objs;
-            // for each object at that location...
-            for(int j = 0; j < size; j++)
-                {
-                // add the result, the x, and the y
-                result.add(os[j]);
-                newXPos.add(xs[i]);
-                newYPos.add(ys[i]);
-                newZPos.add(zs[i]);
-                }
+            if (temp != null)
+            	{
+				final int size = temp.numObjs;
+				final Object[] os = temp.objs;
+				// for each object at that location...
+				for(int j = 0; j < size; j++)
+					{
+					// add the result, the x, and the y
+					result.add(os[j]);
+					newXPos.add(xs[i]);
+					newYPos.add(ys[i]);
+					newZPos.add(zs[i]);
+					}
+				}
             }
                 
         // dump the new IntBags into the old ones
@@ -843,6 +872,388 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
             }
         return result;
         }
+
+
+
+
+    // some efficiency to avoid width lookups
+    double _stx(final double x, final double width) 
+        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
+
+    /** Minimum toroidal distance between two values in the X dimension. */
+    double tdx(final double x1, final double x2)
+        {
+        double width = this.width;
+        if (Math.abs(x1-x2) <= width / 2)
+            return x1 - x2;  // no wraparounds  -- quick and dirty check
+        
+        double dx = _stx(x1,width) - _stx(x2,width);
+        if (dx * 2 > width) return dx - width;
+        if (dx * 2 < -width) return dx + width;
+        return dx;
+        }
+    
+    // some efficiency to avoid height lookups
+    double _sty(final double y, final double height) 
+        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
+
+    /** Minimum toroidal distance between two values in the Y dimension. */
+    double tdy(final double y1, final double y2)
+        {
+        double height = this.height;
+        if (Math.abs(y1-y2) <= height / 2)
+            return y1 - y2;  // no wraparounds  -- quick and dirty check
+
+        double dy = _sty(y1,height) - _sty(y2,height);
+        if (dy * 2 > height) return dy - height;
+        if (dy * 2 < -height) return dy + height;
+        return dy;
+        }
+    
+    // some efficiency to avoid length lookups
+    double _stz(final double z, final double length) 
+        { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
+
+    /** Minimum toroidal distance between two values in the Z dimension. */
+    double tdz(final double z1, final double z2)
+        {
+        double length = this.length;
+        if (Math.abs(z1-z2) <= length / 2)
+            return z1 - z2;  // no wraparounds  -- quick and dirty check
+
+        double dz = _stz(z1,length) - _stz(z2,length);
+        if (dz * 2 > length) return dz - length;
+        if (dz * 2 < -length) return dz + length;
+        return dz;
+        }
+    
+
+    /*  More or less copied from Continuous2D.
+        Minimum Toroidal Distance Squared between two points. This computes the "shortest" (squared) distance between two points, considering wrap-around possibilities as well. */
+    double tds(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z)
+        {
+        double dx = tdx(d1x, d2x);
+        double dy = tdy(d1y, d2y);
+        double dz = tdz(d1z, d2z);
+        return (dx * dx + dy * dy);
+        }
+        
+    double ds(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z)
+        {
+        return ((d1x - d2x) * (d1x - d2x) + (d1y - d2y) * (d1y - d2y) + (d1z - d2z) * (d1z - d2z));
+        }
+    
+    boolean within(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z, double distanceSquared, boolean closed)
+        {
+        double d= ds(d1x, d1y, d1z, d2x, d2y, d2z);
+        return (d < distanceSquared || (d == distanceSquared && closed));
+        }
+        
+    boolean twithin(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z, double distanceSquared, boolean closed)
+        {
+        double d= tds(d1x, d1y, d1z, d2x, d2y, d2z);
+        return (d < distanceSquared || (d == distanceSquared && closed));
+        }
+
+    public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos, IntBag zPos )
+        {
+        boolean toroidal = (mode == TOROIDAL);
+
+        // won't work for negative distances
+        if( dist < 0 )
+            {
+            throw new RuntimeException( "Distance must be positive" );
+            }
+            
+        if (measurementRule != Grid2D.ANY && measurementRule != Grid2D.ALL && measurementRule != Grid2D.CENTER)
+            {
+            throw new RuntimeException(" Measurement rule must be one of ANY, ALL, or CENTER" );
+            }
+                
+        // grab the rectangle
+        getMooreLocations(x,y, z, (int) Math.ceil(dist + 0.5), mode, includeOrigin, xPos, yPos, zPos);
+        int len = xPos.size();
+        double distsq = dist * dist;
+        
+        if (toroidal)
+            {
+            for(int i = 0; i < len; i++)
+                {
+                int xp = xPos.get(i);
+                int yp = yPos.get(i);
+                int zp = zPos.get(i);
+                boolean remove = false;
+                
+                if (measurementRule == Grid2D.ANY)
+                    {
+                    if (z == zp)
+                        {
+                        if (x == xp)
+                            {
+                            if (y < yp)
+                                {
+                                double d = tdy(yp - 0.5, y);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -tdy(yp - 0.5, y);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        else if (y == yp)
+                            {
+                            if (x < xp)
+                                {
+                                double d = tdx(xp - 0.5, x);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -tdx(xp - 0.5, x);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        }
+                    else if (x == xp)
+                        {
+                        if (y == yp)
+                            {
+                            if (z  < zp)
+                                {
+                                double d = tdz(zp - 0.5, z);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -tdz(zp - 0.5, z);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        }
+                    else if (z < zp)
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                            }
+                        }
+                    else
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
+                            }
+                        }
+                    }
+                else if (measurementRule == Grid2D.ALL)
+                    {
+                    if (z < zp)
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
+                            }
+                        }
+                    else
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                            }
+                        }
+                    }
+                else // (measurementRule == Grid2D.CENTER)
+                    {
+                    remove = !twithin(x,y,z,xp,yp,zp,distsq,closed);
+                    }
+                
+                if (remove)
+                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; }
+                }
+            }
+        else
+            {
+            for(int i = 0; i < len; i++)
+                {
+                int xp = xPos.get(i);
+                int yp = yPos.get(i);
+                int zp = zPos.get(i);
+                boolean remove = false;
+                
+                if (measurementRule == Grid2D.ANY)
+                    {
+                    if (z == zp)
+                        {
+                        if (x == xp)
+                            {
+                            if (y < yp)
+                                {
+                                double d = (yp - 0.5) -  y;
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -((yp - 0.5) - y);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        else if (y == yp)
+                            {
+                            if (x < xp)
+                                {
+                                double d = (xp - 0.5) - x;
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -((xp - 0.5) - x);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        }
+                    else if (x == xp)
+                        {
+                        if (y == yp)
+                            {
+                            if (z  < zp)
+                                {
+                                double d = (zp - 0.5) -  z;
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            else
+                                {
+                                double d = -((zp - 0.5) - z);
+                                remove = !(d < dist || (d == dist && closed));
+                                }
+                            }
+                        }
+                    else if (z < zp)
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                            }
+                        }
+                    else
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
+                            }
+                        }
+                    }
+                else if (measurementRule == Grid2D.ALL)
+                    {
+                    if (z < zp)
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
+                            }
+                        }
+                    else
+                        {
+                        if (x < xp)
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
+                            }
+                        else
+                            {
+                            if (y < yp)
+                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                            else
+                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                            }
+                        }
+
+                    }
+                else // (measurementRule == Grid2D.CENTER)
+                    {
+                    remove = !within(x,y,z,xp,yp,zp,distsq,closed);
+                    }
+                
+                if (remove)
+                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; }
+                }
+            }
+        }
+
+
+
 
     public final Double3D getDimensions() { return new Double3D(width, height, length); }
     }

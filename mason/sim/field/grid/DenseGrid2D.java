@@ -565,6 +565,32 @@ public class DenseGrid2D extends AbstractGrid2D
         }
 
 
+    public Bag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos )
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
+                
+
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos )
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        reduceObjectsAtLocations( xPos,  yPos,  result);
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
+
+
+
 
     // For each <xPos, yPos> location, puts all such objects into the result bag.  Modifies
     // the xPos and yPos bags so that each position corresponds to the equivalent result in

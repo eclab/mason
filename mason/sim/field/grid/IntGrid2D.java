@@ -752,6 +752,17 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         }
                 
                 
+    public IntBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  IntBag result, IntBag xPos, IntBag yPos )
+        {
+        if( xPos == null )
+            xPos = new IntBag();
+        if( yPos == null )
+            yPos = new IntBag();
+
+        getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
+        return getObjectsAtLocations(xPos,yPos,result);
+        }
+                
 
 
         
