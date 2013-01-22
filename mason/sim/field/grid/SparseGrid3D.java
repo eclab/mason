@@ -997,7 +997,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                                double d = -tdy(yp - 0.5, y);
+                            	double d = tdy(y, yp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -1010,7 +1010,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                                double d = -tdx(xp - 0.5, x);
+                         	    double d = tdx(x, xp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -1026,7 +1026,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                                double d = -tdz(zp - 0.5, z);
+                            	double d = tdz(z, zp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -1109,7 +1109,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
                 }
             }
         else
@@ -1247,7 +1247,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
                 }
             }
         }
