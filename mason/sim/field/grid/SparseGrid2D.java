@@ -1290,7 +1290,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                             }
                         else
                             {
-                            double d = -tdy(yp - 0.5, y);
+                            double d = tdy(y, yp + 0.5);
                             remove = !(d < dist || (d == dist && closed));
                             }
                         }
@@ -1303,7 +1303,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                             }
                         else
                             {
-                            double d = -tdx(xp - 0.5, x);
+                            double d = tdx(x, xp + 0.5);
                             remove = !(d < dist || (d == dist && closed));
                             }
                         }

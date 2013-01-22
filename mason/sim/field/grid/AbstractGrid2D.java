@@ -638,7 +638,7 @@ public abstract class AbstractGrid2D implements Grid2D
                             }
                         else
                             {
-                            double d = -tdy(yp - 0.5, y);
+                            double d = tdy(y, yp + 0.5);
                             remove = !(d < dist || (d == dist && closed));
                             }
                         }
@@ -651,7 +651,7 @@ public abstract class AbstractGrid2D implements Grid2D
                             }
                         else
                             {
-                            double d = -tdx(xp - 0.5, x);
+                            double d = tdx(x, xp + 0.5);
                             remove = !(d < dist || (d == dist && closed));
                             }
                         }
