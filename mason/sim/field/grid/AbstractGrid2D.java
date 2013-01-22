@@ -693,7 +693,7 @@ public abstract class AbstractGrid2D implements Grid2D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); i--; len--; }
                 }
             }
         else
@@ -770,7 +770,7 @@ public abstract class AbstractGrid2D implements Grid2D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); i--;  len--; }
                 }
             }
         }

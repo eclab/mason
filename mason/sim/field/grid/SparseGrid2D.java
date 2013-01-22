@@ -1345,7 +1345,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); i--;  len--; }
                 }
             }
         else
@@ -1422,7 +1422,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                     }
                 
                 if (remove)
-                    { xPos.remove(i); yPos.remove(i); i--; }
+                    { xPos.remove(i); yPos.remove(i); i--;  len--; }
                 }
             }
         }
