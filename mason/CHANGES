@@ -2529,3 +2529,12 @@ Version 17
 		getObjectsExactlyWithinDistance(...)    ->	getNeighborsExactlyWithinDistance
 		getObjectsWithinDistance(...)           ->	getNeighborsWithinDistance
 	Added boundedness checks for 3D grid neighborhood lookup, oops	
+	Bug fix to SparseGrid[2|3]D and Continuous[2|3]D, which were calling
+		getObjectsAtLocation() without checking to see if its return
+		value was null.  Thanks to Javier <kuu.kuu@gmail.com>
+	Added getRadialNeighbors, getRadialLocations, and getRadialNeighborsAndLocations
+		to the various grid classes.
+	Modified SimpleEdgePortrayal so that the basewidth is 1.0 and also to add
+		different kinds of line ends.
+	Added sim.util.distribution to classdocs.  Thanks to Stephen 
+		Davies <stephen@umw.edu>

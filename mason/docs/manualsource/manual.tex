@@ -4558,15 +4558,6 @@ int upperLeftToroidalX = tx(ulx(x,y));
 
 
 
-REVISE THIS ENTIRE SECTION
-AND ADD NEW DIAGRAM EXPLAINING ALL/ANY//CENTER
-
-
-
-
-
-
-
 \subsection{Neighborhood Lookup}
 To remove some drudgery from you, grids have various neighborhood lookup facilities which gather all the coordinate locations (not their values) in the grid lying within some region a distance away from a provided point.  Grid2D provides three such methods for lookups in rectangular grids, and one for lookups in hexagonal grids:
 
@@ -7959,10 +7950,15 @@ The {\it shape} variable determines whether the SimpleEdgePortrayal2D draws itse
 
 \java{%
     public static final int SHAPE\_LINE;\\
+    public static final int SHAPE\_LINE\_ROUND\_ENDS;\\
+    public static final int SHAPE\_LINE\_SQUARE\_ENDS;\\
+    public static final int SHAPE\_LINE\_BUTT\_ENDS;\\
     public static final int SHAPE\_TRIANGLE;
 }
 
-Finally, the {\it baseWidth} works as follows.  By default it is 0.0.  The baseWidth determines either the {\bf width of the line} or the {\bf width of the ``from'' end of the triangle}.  If you create a triangle, you'll need to change the base width, ideally to 1.0.
+\variable{SHAPE\_LINE} and \variable{SHAPE\_LINE\_ROUND\_ENDS} are the same thing.  
+
+Finally, the {\it baseWidth} works as follows.  The baseWidth determines either the {\bf width of the line} or the {\bf width of the ``from'' end of the triangle}.  By default it is 1.0.  
 
 When drawing as a triangle or a line of non-zero width, you have the option of specifying how the triangle or line width changes when you zoom in or out.  This is called the {\bf scaling} of the edge, and it's one of three constants.  These constants also affect the scaling of the label (discussed later):
 
@@ -7975,7 +7971,7 @@ When drawing as a triangle or a line of non-zero width, you have the option of s
 \sidebar{\variable{SCALE\_WHEN\_SMALLER} makes no sense as a name.}{Agreed.}
 The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger or smaller when you zoom in and out as if you're examining it closer.  This is {\it probably} what you want.  An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
 
-\sidebar{When I print the lines come out too thin.}{This is because the \variable{baseWidth} by default is 0.0, so the line thickness comes 0.0.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something like 1.0 (or whatever looks good).}
+\sidebar{When I print the lines come out too thin.}{If you set \variable{baseWidth} to 0.0, interesting things happen.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something non-zero.}
 
 The width of a line, or of the base of a triangle, is determined as follows.  First, we determine the current {\bf scale}: if we \variable{ALWAYS\_SCALE}, then the scale is equal to the number of pixels in width of a typical  \(1.0 \times 1.0\) object in the underlying Continuous2D or SparseGrid2D (that is, the \variable{info.draw.width}).  If we \variable{NEVER\_SCALE}, then the scale is 1.0.  If we \variable{SCALE\_WHEN\_SMALLER}, then the scale is the maximum of 1.0 and the number of pixels in width of a typical  \(1.0 \times 1.0\) object.   With this in hand, the width of a line or triangle base (in pixels) is simply:
 \[
@@ -7983,6 +7979,8 @@ The width of a line, or of the base of a triangle, is determined as follows.  Fi
 \]
 
 ... where \variable{weight} is the edge weight, and will be discussed in a minute.
+
+Finally, if you're drawing lines, you can specify 
 
 Various methods can be used to set these values:
 

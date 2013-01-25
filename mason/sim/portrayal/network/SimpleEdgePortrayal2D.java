@@ -210,7 +210,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
 
                     Stroke oldstroke = graphics.getStroke();
                     double weight = getPositiveWeight(object, e);
-                    graphics.setStroke(getBasicStroke((float)(width * weight * scale));  // duh, can't reset a stroke, have to make it new each time :-(
+                    graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, endXd, endYd);
                     graphics.draw(preciseLine);
                     graphics.setStroke(oldstroke);
@@ -229,7 +229,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
 
                     Stroke oldstroke = graphics.getStroke();
                     double weight = getPositiveWeight(object, e);
-                    graphics.setStroke(getBasicStroke((float)(width * weight * scale));  // duh, can't reset a stroke, have to make it new each time :-(
+                    graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
                     preciseLine.setLine(startXd, startYd, midXd, midYd); 
                     graphics.draw(preciseLine); 
                     graphics.setPaint(toPaint);
