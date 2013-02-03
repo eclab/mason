@@ -159,7 +159,7 @@ public class ShapeFileExporter
             for (int i = 0; i < geometries.size(); i++)
             {
                 MasonGeometry wrapper = (MasonGeometry) geometries.objs[i];
-                String geomType = wrapper.toString();
+                Geometry geometry = wrapper.getGeometry();
 
                 /////////
                 // first store the record header, in big-endian format
@@ -171,15 +171,15 @@ public class ShapeFileExporter
 
                 // content size, 48 is from p8 of the ESRI shapefile spec
                 int size = 20;
-                if ("LineString".equals(geomType))
+                if (geometry instanceof LineString)
                 {
                     LineString line = (LineString) wrapper.getGeometry();
                     size = line.getCoordinates().length * 16 + 48;
-                } else if ("Polygon".equals(geomType))
+                } else if (geometry instanceof Polygon)
                 {
                     Polygon poly = (Polygon) wrapper.getGeometry();
                     size = poly.getCoordinates().length * 16 + 48;
-                } else if ("MultiPolygon".equals(geomType))
+                } else if (geometry instanceof MultiPolygon)
                 {
                     MultiPolygon poly = (MultiPolygon) wrapper.getGeometry();
                     size = poly.getCoordinates().length * 16 + 48;
@@ -193,7 +193,7 @@ public class ShapeFileExporter
                 fileSize += 8 + size;
 
                 // now store the actual record information, in little-endian format
-                if ("Point".equals(geomType))
+                if (geometry instanceof Point)
                 {
                     ByteBuffer pointBufferLittle = ByteBuffer.allocate(20);
                     pointBufferLittle.order(ByteOrder.LITTLE_ENDIAN);
@@ -216,7 +216,7 @@ public class ShapeFileExporter
                     polyBufferLittle.order(ByteOrder.LITTLE_ENDIAN);
 
                     // record type, from spec
-                    if ("LineString".equals(geomType))
+                    if (g instanceof LineString)
                     {
                         polyBufferLittle.putInt(3);
                     } else
