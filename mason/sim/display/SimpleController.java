@@ -46,6 +46,7 @@ public class SimpleController implements Controller
     {
     /** Our simulation */
     GUIState simulation;
+    public GUIState getSimulation() { return simulation; }
     
     static 
         {
