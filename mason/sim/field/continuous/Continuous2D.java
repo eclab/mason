@@ -636,9 +636,9 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
     
     public Bag getObjectsWithinDistance( Double2D position, final double distance, final boolean toroidal,
         final boolean nonPointObjects, Bag result)
-            {
-            return getNeighborsWithinDistance(position, distance, toroidal, nonPointObjects, result);
-            }
+        {
+        return getNeighborsWithinDistance(position, distance, toroidal, nonPointObjects, result);
+        }
 
 
 
@@ -941,12 +941,12 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         {
         Bag bag = getObjectsAtLocation(location);               // this bag is a copy so it won't be reduced as I remove objects
         if (bag != null)
-        	{
-			Object[] objs = bag.objs;
-			int numObjs = bag.numObjs;
-			for(int i = 0; i < bag.numObjs; i++)
-				remove(objs[i]);
-			}
+            {
+            Object[] objs = bag.objs;
+            int numObjs = bag.numObjs;
+            for(int i = 0; i < bag.numObjs; i++)
+                remove(objs[i]);
+            }
         return bag;
         }
     }

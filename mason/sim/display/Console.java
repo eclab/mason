@@ -77,7 +77,7 @@ public class Console extends JFrame implements Controller
     public final static int MAXIMUM_STEPS = 20;
 
     /** Our simulation */
-	GUIState simulation;
+    GUIState simulation;
     public GUIState getSimulation() { return simulation; }
         
     /** List of fully qualified classnames to include in the Console's "New Simulation" combo box */

@@ -494,7 +494,7 @@ public abstract class AbstractGrid2D implements Grid2D
                 ylBound = ((ymin >= 0 || !bounded) ? ymin : 0);
                 yuBound = ((ymax < height || !bounded) ? ymax : height-1);
     
-               // yuBound =  (( ymax<height  || !bounded) ? ymax : height-1);
+                // yuBound =  (( ymax<height  || !bounded) ? ymax : height-1);
 
                 if( x0 >= 0 )
                     for( int y0 = ylBound ; y0 <= yuBound ; y0 = downy(x0,y0) )

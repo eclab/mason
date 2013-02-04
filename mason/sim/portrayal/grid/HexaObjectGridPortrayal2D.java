@@ -203,7 +203,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
             info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
-            newinfo.precise = info.precise;
+        newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
         newinfo.location = locationToPass;
 

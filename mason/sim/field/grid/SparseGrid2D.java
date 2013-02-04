@@ -602,7 +602,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 ylBound = ((ymin >= 0 || !bounded) ? ymin : 0);
                 yuBound = ((ymax < height || !bounded) ? ymax : height-1);
     
-               // yuBound =  (( ymax<height  || !bounded) ? ymax : height-1);
+                // yuBound =  (( ymax<height  || !bounded) ? ymax : height-1);
 
                 if( x0 >= 0 )
                     for( int y0 = ylBound ; y0 <= yuBound ; y0 = downy(x0,y0) )
@@ -1139,18 +1139,18 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             {
             Bag temp = getObjectsAtLocation(xs[i],ys[i]);
             if (temp != null)
-            	{
-				final int size = temp.numObjs;
-				final Object[] os = temp.objs;
-				// for each object at that location...
-				for(int j = 0; j < size; j++)
-					{
-					// add the result, the x, and the y
-					result.add(os[j]);
-					newXPos.add(xs[i]);
-					newYPos.add(ys[i]);
-					}
-				}
+                {
+                final int size = temp.numObjs;
+                final Object[] os = temp.objs;
+                // for each object at that location...
+                for(int j = 0; j < size; j++)
+                    {
+                    // add the result, the x, and the y
+                    result.add(os[j]);
+                    newXPos.add(xs[i]);
+                    newYPos.add(ys[i]);
+                    }
+                }
             }
                 
         // dump the new IntBags into the old ones

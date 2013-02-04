@@ -591,7 +591,7 @@ public abstract class AbstractGrid3D implements Grid3D
                                 }
                             else
                                 {
-                            	double d = tdy(y, yp + 0.5);
+                                double d = tdy(y, yp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -604,7 +604,7 @@ public abstract class AbstractGrid3D implements Grid3D
                                 }
                             else
                                 {
-                         	    double d = tdx(x, xp + 0.5);
+                                double d = tdx(x, xp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -620,7 +620,7 @@ public abstract class AbstractGrid3D implements Grid3D
                                 }
                             else
                                 {
-                            	double d = tdz(z, zp + 0.5);
+                                double d = tdz(z, zp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }

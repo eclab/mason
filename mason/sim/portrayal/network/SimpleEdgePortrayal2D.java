@@ -134,13 +134,13 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
         }
     
     BasicStroke getBasicStroke(float thickness)
-    	{
-		return new BasicStroke(thickness, 
-                    	(shape == SHAPE_LINE_ROUND_ENDS ? 
-                    		BasicStroke.CAP_ROUND :
-                    		(shape == SHAPE_LINE_SQUARE_ENDS ? 
-                    			BasicStroke.CAP_SQUARE : BasicStroke.CAP_BUTT)),
-                    	 BasicStroke.JOIN_MITER);
+        {
+        return new BasicStroke(thickness, 
+                (shape == SHAPE_LINE_ROUND_ENDS ? 
+                BasicStroke.CAP_ROUND :
+                    (shape == SHAPE_LINE_SQUARE_ENDS ? 
+                    BasicStroke.CAP_SQUARE : BasicStroke.CAP_BUTT)),
+            BasicStroke.JOIN_MITER);
         }
     
     int[] xPoints = new int[3];

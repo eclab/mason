@@ -502,7 +502,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         
          <p> Note: if the field is toroidal, and position is outside the boundaries, it will be wrapped
          to within the boundaries before computation.
-        @deprecated
+         @deprecated
     */
         
     public Bag getObjectsWithinDistance( final Double3D position, final double distance, final boolean toroidal,
@@ -858,12 +858,12 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         {
         Bag bag = getObjectsAtLocation(location);               // this bag is a copy so it won't be reduced as I remove objects
         if (bag != null)
-        	{
-			Object[] objs = bag.objs;
-			int numObjs = bag.numObjs;
-			for(int i = 0; i < bag.numObjs; i++)
-				remove(objs[i]);
-			}
+            {
+            Object[] objs = bag.objs;
+            int numObjs = bag.numObjs;
+            for(int i = 0; i < bag.numObjs; i++)
+                remove(objs[i]);
+            }
         return bag;
         }
 

@@ -169,116 +169,116 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             double theta = getOrientation(object, info);
             if (theta == theta)  // NaN != NaN
                 {
-            double length = (scale * (info.draw.width < info.draw.height ? 
-                    info.draw.width : info.draw.height)) + offset;  // fit in smallest dimension
-            if (length != lastLength) 
-                { lastLength = length; path = null; }  // redo shape
+                double length = (scale * (info.draw.width < info.draw.height ? 
+                        info.draw.width : info.draw.height)) + offset;  // fit in smallest dimension
+                if (length != lastLength) 
+                    { lastLength = length; path = null; }  // redo shape
             
-            graphics.setPaint(paint);
+                graphics.setPaint(paint);
                         
-            if (info.precise)               // real-valued drawing, slightly slower
-                {
-                transform.setToTranslation(info.draw.x, info.draw.y);
-                transform.rotate(theta);
+                if (info.precise)               // real-valued drawing, slightly slower
+                    {
+                    transform.setToTranslation(info.draw.x, info.draw.y);
+                    transform.rotate(theta);
                                                                 
-                final double lenx = 1.0 * length;               // oriented forwards
-                final double leny = 0.0 * length;
-                switch(shape)
-                    {
-                    default:
-                    case SHAPE_LINE:
-                        if (path == null)
-                            {
-                            path = new Line2D.Double(0,0,0,length);
-                            }
-                        graphics.setStroke(stroke);
-                        graphics.draw(transform.createTransformedShape(path));
-                        break;
-                    case SHAPE_KITE:
-                        if (path == null)
-                            {
-                            simplePolygonXd[0] = (0 + lenx);
-                            simplePolygonYd[0] = (0 + leny);
-                            simplePolygonXd[1] = (0 + -leny + -lenx);
-                            simplePolygonYd[1] = (0 + lenx + -leny);
-                            simplePolygonXd[2] = (0 + -lenx/2);
-                            simplePolygonYd[2] = (0 + -leny/2);
-                            simplePolygonXd[3] = (0 + leny + -lenx);
-                            simplePolygonYd[3] = (0 + -lenx + -leny);
-                            path = buildPolygon(simplePolygonXd, simplePolygonYd);
-                            }
-                        if (drawFilled) 
-                            graphics.fill(transform.createTransformedShape(path));
-                        else 
-                            {
+                    final double lenx = 1.0 * length;               // oriented forwards
+                    final double leny = 0.0 * length;
+                    switch(shape)
+                        {
+                        default:
+                        case SHAPE_LINE:
+                            if (path == null)
+                                {
+                                path = new Line2D.Double(0,0,0,length);
+                                }
                             graphics.setStroke(stroke);
                             graphics.draw(transform.createTransformedShape(path));
-                            }
-                        break;
-                    case SHAPE_COMPASS:
-                        if (path == null)
-                            {
-                            simplePolygonXd[0] = (0 + lenx);
-                            simplePolygonYd[0] = (0 + leny);
-                            simplePolygonXd[1] = (0 + -leny/2);
-                            simplePolygonYd[1] = (0 + lenx/2);
-                            simplePolygonXd[2] = (0 + -lenx/2);
-                            simplePolygonYd[2] = (0 + -leny/2);
-                            simplePolygonXd[3] = (0 + leny/2);
-                            simplePolygonYd[3] = (0 + -lenx/2);
-                            path = buildPolygon(simplePolygonXd, simplePolygonYd);
-                            }
-                        if (drawFilled) 
-                            graphics.fill(transform.createTransformedShape(path));  
-                        else 
-                            {
-                            graphics.setStroke(stroke);
-                            graphics.draw(transform.createTransformedShape(path));
-                            }
-                        break;
+                            break;
+                        case SHAPE_KITE:
+                            if (path == null)
+                                {
+                                simplePolygonXd[0] = (0 + lenx);
+                                simplePolygonYd[0] = (0 + leny);
+                                simplePolygonXd[1] = (0 + -leny + -lenx);
+                                simplePolygonYd[1] = (0 + lenx + -leny);
+                                simplePolygonXd[2] = (0 + -lenx/2);
+                                simplePolygonYd[2] = (0 + -leny/2);
+                                simplePolygonXd[3] = (0 + leny + -lenx);
+                                simplePolygonYd[3] = (0 + -lenx + -leny);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                                }
+                            if (drawFilled) 
+                                graphics.fill(transform.createTransformedShape(path));
+                            else 
+                                {
+                                graphics.setStroke(stroke);
+                                graphics.draw(transform.createTransformedShape(path));
+                                }
+                            break;
+                        case SHAPE_COMPASS:
+                            if (path == null)
+                                {
+                                simplePolygonXd[0] = (0 + lenx);
+                                simplePolygonYd[0] = (0 + leny);
+                                simplePolygonXd[1] = (0 + -leny/2);
+                                simplePolygonYd[1] = (0 + lenx/2);
+                                simplePolygonXd[2] = (0 + -lenx/2);
+                                simplePolygonYd[2] = (0 + -leny/2);
+                                simplePolygonXd[3] = (0 + leny/2);
+                                simplePolygonYd[3] = (0 + -lenx/2);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                                }
+                            if (drawFilled) 
+                                graphics.fill(transform.createTransformedShape(path));  
+                            else 
+                                {
+                                graphics.setStroke(stroke);
+                                graphics.draw(transform.createTransformedShape(path));
+                                }
+                            break;
+                        }
                     }
-                }
-            else                    // integer drawing
-                {
-                final double lenx = Math.cos(theta)*length;
-                final double leny = Math.sin(theta)*length;
-                switch(shape)
+                else                    // integer drawing
                     {
-                    default:
-                    case SHAPE_LINE:
-                        graphics.drawLine((int)info.draw.x,
-                            (int)info.draw.y,
-                            (int)(info.draw.x + lenx),
-                            (int)(info.draw.y + leny));
-                        break;
-                    case SHAPE_KITE:
-                        simplePolygonX[0] = (int)(info.draw.x + lenx);
-                        simplePolygonY[0] = (int)(info.draw.y + leny);
-                        simplePolygonX[1] = (int)(info.draw.x + -leny + -lenx);
-                        simplePolygonY[1] = (int)(info.draw.y + lenx + -leny);
-                        simplePolygonX[2] = (int)(info.draw.x + -lenx/2);
-                        simplePolygonY[2] = (int)(info.draw.y + -leny/2);
-                        simplePolygonX[3] = (int)(info.draw.x + leny + -lenx);
-                        simplePolygonY[3] = (int)(info.draw.y + -lenx + -leny);
-                        if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
-                        else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
-                        break;
-                    case SHAPE_COMPASS:
-                        simplePolygonX[0] = (int)(info.draw.x + lenx);
-                        simplePolygonY[0] = (int)(info.draw.y + leny);
-                        simplePolygonX[1] = (int)(info.draw.x + -leny/2);
-                        simplePolygonY[1] = (int)(info.draw.y + lenx/2);
-                        simplePolygonX[2] = (int)(info.draw.x + -lenx/2);
-                        simplePolygonY[2] = (int)(info.draw.y + -leny/2);
-                        simplePolygonX[3] = (int)(info.draw.x + leny/2);
-                        simplePolygonY[3] = (int)(info.draw.y + -lenx/2);
-                        if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
-                        else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
-                        break;
+                    final double lenx = Math.cos(theta)*length;
+                    final double leny = Math.sin(theta)*length;
+                    switch(shape)
+                        {
+                        default:
+                        case SHAPE_LINE:
+                            graphics.drawLine((int)info.draw.x,
+                                (int)info.draw.y,
+                                (int)(info.draw.x + lenx),
+                                (int)(info.draw.y + leny));
+                            break;
+                        case SHAPE_KITE:
+                            simplePolygonX[0] = (int)(info.draw.x + lenx);
+                            simplePolygonY[0] = (int)(info.draw.y + leny);
+                            simplePolygonX[1] = (int)(info.draw.x + -leny + -lenx);
+                            simplePolygonY[1] = (int)(info.draw.y + lenx + -leny);
+                            simplePolygonX[2] = (int)(info.draw.x + -lenx/2);
+                            simplePolygonY[2] = (int)(info.draw.y + -leny/2);
+                            simplePolygonX[3] = (int)(info.draw.x + leny + -lenx);
+                            simplePolygonY[3] = (int)(info.draw.y + -lenx + -leny);
+                            if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
+                            else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
+                            break;
+                        case SHAPE_COMPASS:
+                            simplePolygonX[0] = (int)(info.draw.x + lenx);
+                            simplePolygonY[0] = (int)(info.draw.y + leny);
+                            simplePolygonX[1] = (int)(info.draw.x + -leny/2);
+                            simplePolygonY[1] = (int)(info.draw.y + lenx/2);
+                            simplePolygonX[2] = (int)(info.draw.x + -lenx/2);
+                            simplePolygonY[2] = (int)(info.draw.y + -leny/2);
+                            simplePolygonX[3] = (int)(info.draw.x + leny/2);
+                            simplePolygonY[3] = (int)(info.draw.y + -lenx/2);
+                            if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
+                            else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
+                            break;
+                        }
                     }
                 }
             }
-        }
             
         // draw the underlying object last?
         if (shape != SHAPE_LINE && drawFilled)

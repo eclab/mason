@@ -197,7 +197,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
-            newinfo.precise = info.precise;
+        newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 
         // hit/draw the objects one by one -- perhaps for large numbers of objects it would

@@ -821,19 +821,19 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
             {
             Bag temp = getObjectsAtLocation(xs[i],ys[i],zs[i]);
             if (temp != null)
-            	{
-				final int size = temp.numObjs;
-				final Object[] os = temp.objs;
-				// for each object at that location...
-				for(int j = 0; j < size; j++)
-					{
-					// add the result, the x, and the y
-					result.add(os[j]);
-					newXPos.add(xs[i]);
-					newYPos.add(ys[i]);
-					newZPos.add(zs[i]);
-					}
-				}
+                {
+                final int size = temp.numObjs;
+                final Object[] os = temp.objs;
+                // for each object at that location...
+                for(int j = 0; j < size; j++)
+                    {
+                    // add the result, the x, and the y
+                    result.add(os[j]);
+                    newXPos.add(xs[i]);
+                    newYPos.add(ys[i]);
+                    newZPos.add(zs[i]);
+                    }
+                }
             }
                 
         // dump the new IntBags into the old ones
@@ -997,7 +997,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                            	double d = tdy(y, yp + 0.5);
+                                double d = tdy(y, yp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -1010,7 +1010,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                         	    double d = tdx(x, xp + 0.5);
+                                double d = tdx(x, xp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
@@ -1026,7 +1026,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                                 }
                             else
                                 {
-                            	double d = tdz(z, zp + 0.5);
+                                double d = tdz(z, zp + 0.5);
                                 remove = !(d < dist || (d == dist && closed));
                                 }
                             }
