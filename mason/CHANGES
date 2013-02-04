@@ -2536,5 +2536,6 @@ Version 17
 		to the various grid classes.
 	Modified SimpleEdgePortrayal so that the basewidth is 1.0 and also to add
 		different kinds of line ends.
-	Added sim.util.distribution to classdocs.  Thanks to Stephen 
-		Davies <stephen@umw.edu>
+	Added sim.util.distribution to classdocs.  Thanks to Stephen Davies <stephen@umw.edu>
+	Added SimpleController.getSimulation() and Console.getSimulation().  Not a big fan
+		of this, but it's necessary for some flexibility.

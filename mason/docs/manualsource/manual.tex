@@ -6276,6 +6276,18 @@ The Console can save running simulations out to a checkpoint file, and also load
 \mthd{public void doOpen()} Pops up the Open panel to enable the user to load a simulation from a checkpoint file.  If the simulation is loaded, it is then paused.
 \end{methods}
 
+\subsubsection{Extending the Console}
+
+Subclasses can access the GUIState directly using this method:
+
+\begin{methods}{\class{sim.display.SimpleController} Constructor}
+\mthd{public GUIState getSImulation()} Returns the current simulation GUIState.
+\end{methods}
+
+Be very careful accessing the GUIState directly, and particularly the underlying model; because MASON is multithreaded and the model thread may be active.  For some ideas about the interplay between the two, see Section \ref{minischedule}.
+
+
+
 \subsection{The Simple Controller}
 \label{sim.display.SimpleController}
 
@@ -6291,7 +6303,6 @@ SimpleControllers are generally made the same way as Consoles, though there's an
 \mthd{public SimpleController(GUIState simulation)} Creates a SimpleController to control the given simulation.
 \mthd{public SimpleController(GUIState simulation, boolean displayInspectors)} Creates a SimpleController to control the given simulation, displaying inspectors registered with it.
 \end{methods}
-
 
 \subsubsection{Running the Simulation}
 
@@ -6329,6 +6340,17 @@ Just like the Console, you ``quit'' your simulation by calling \method{doClose()
 \mthd{public void doClose()} ``Closes'' the SimpleController and shuts down the simulation, calling \method{quit()}.  This method can be called manually, and will also be called via \method{Console.doQuit()}.
 \mthd{public void doNew()} Fires up the Simulation-Chooser  box to allow the user to pick a simulation to create.
 \end{methods}
+
+\subsubsection{Extending the Simple Controller}
+
+Subclasses can access the GUIState directly using this method:
+
+\begin{methods}{\class{sim.display.SimpleController} Constructor}
+\mthd{public GUIState getSImulation()} Returns the current simulation GUIState.
+\end{methods}
+
+Be very careful accessing the GUIState directly, and particularly the underlying model; because MASON is multithreaded and the model thread may be active.  For some ideas about the interplay between the two, see Section \ref{minischedule}.
+
 
 
 \section{Preferences}
