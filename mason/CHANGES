@@ -2539,4 +2539,4 @@ Version 17
 	Added sim.util.distribution to classdocs.  Thanks to Stephen Davies <stephen@umw.edu>
 	Added SimpleController.getSimulation() and Console.getSimulation().  Not a big fan
 		of this, but it's necessary for some flexibility.
-
+	Removed vestigial nonsense from ValuePortayal2D
