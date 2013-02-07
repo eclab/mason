@@ -379,6 +379,29 @@ public interface Grid2D extends java.io.Serializable
 
     /**
      * Gets all neighbors overlapping with a circular region centered at (X,Y) and with a radius of dist.
+     * The measurement rule is Grid2D.ANY, meaning those cells which overlap at all with the region.  
+     * The region is closed, meaning that that points which touch on the outer surface of the circle will be 
+     * considered members of the region.
+     *
+     * <p>Places each x and y value of these locations in the provided IntBags xPos and yPos, clearing the bags first.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos );
+
+
+    /**
+     * Gets all neighbors overlapping with a circular region centered at (X,Y) and with a radius of dist.
      * If measurementRule is Grid2D.CENTER, then the measurement rule will be those cells whose centers
      * overlap with the region.  If measurementRule is Grid2D.ALL, then the measurement rule will be those
      * cells which entirely overlap with the region.  If measurementrule is Grid2D.ANY, then the measurement
@@ -402,4 +425,5 @@ public interface Grid2D extends java.io.Serializable
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
     public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos );
+
     }

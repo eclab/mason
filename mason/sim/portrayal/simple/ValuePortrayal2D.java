@@ -21,8 +21,6 @@ import sim.util.*;
 
 public class ValuePortrayal2D extends RectanglePortrayal2D
     {
-    double level;
-    boolean isTransparent;
     // public ValueGridPortrayal2D parent;  // no longer used
     
     public ValuePortrayal2D() { }
@@ -46,14 +44,12 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
         {
         ValueGridPortrayal2D parent = (ValueGridPortrayal2D) (info.fieldPortrayal);
         double levelHere = ((MutableDouble)object).val;
-        if (paint==null || level != levelHere)
-            {
-            level = levelHere;
-            Color c = parent.getMap().getColor(levelHere);
-            if (c.getAlpha() == 0) isTransparent = true;
-            else paint = c;
-            }
-        if (!isTransparent) super.draw(object, graphics, info);
+		Color c = parent.getMap().getColor(levelHere);
+        if (c.getAlpha() != 0) 
+        	{
+        	paint = c;
+        	super.draw(object, graphics, info);
+        	}
         }
     
     public static abstract class Filter

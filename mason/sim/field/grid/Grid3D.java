@@ -235,7 +235,30 @@ public interface Grid3D extends java.io.Serializable
      */
     public void getVonNeumannLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
     
-    /**
+     /**
+     * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
+     * The measurement rule is Grid2D.ANY, meaning those cells which overlap at all with the region.  
+     * The region is closed, meaning that that points which touch on the outer surface of the sphere will be 
+     * considered members of the region.
+     *
+     * <p>Places each x, y, and z value of these locations in the provided IntBags xPos, yPos, and zPos, clearing the bags first.
+     *
+     * <p>This function may be run in one of three modes: Grid3D.BOUNDED, Grid3D.UNBOUNDED, and GrideD.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0,0) to (width, height,length), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid3D permits this but ObjectGrid3D and DoubleGrid3D and IntGrid3D and DenseGrid3D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     *
+     * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
+     */
+    public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
+
+
+   /**
      * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
      * If measurementRule is Grid3D.CENTER, then the measurement rule will be those cells whose centers
      * overlap with the region.  If measurementRule is Grid3D.ALL, then the measurement rule will be those

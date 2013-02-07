@@ -876,68 +876,6 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
 
 
 
-    // some efficiency to avoid width lookups
-    double _stx(final double x, final double width) 
-        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
-
-    /** Minimum toroidal distance between two values in the X dimension. */
-    double tdx(final double x1, final double x2)
-        {
-        double width = this.width;
-        if (Math.abs(x1-x2) <= width / 2)
-            return x1 - x2;  // no wraparounds  -- quick and dirty check
-        
-        double dx = _stx(x1,width) - _stx(x2,width);
-        if (dx * 2 > width) return dx - width;
-        if (dx * 2 < -width) return dx + width;
-        return dx;
-        }
-    
-    // some efficiency to avoid height lookups
-    double _sty(final double y, final double height) 
-        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
-
-    /** Minimum toroidal distance between two values in the Y dimension. */
-    double tdy(final double y1, final double y2)
-        {
-        double height = this.height;
-        if (Math.abs(y1-y2) <= height / 2)
-            return y1 - y2;  // no wraparounds  -- quick and dirty check
-
-        double dy = _sty(y1,height) - _sty(y2,height);
-        if (dy * 2 > height) return dy - height;
-        if (dy * 2 < -height) return dy + height;
-        return dy;
-        }
-    
-    // some efficiency to avoid length lookups
-    double _stz(final double z, final double length) 
-        { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
-
-    /** Minimum toroidal distance between two values in the Z dimension. */
-    double tdz(final double z1, final double z2)
-        {
-        double length = this.length;
-        if (Math.abs(z1-z2) <= length / 2)
-            return z1 - z2;  // no wraparounds  -- quick and dirty check
-
-        double dz = _stz(z1,length) - _stz(z2,length);
-        if (dz * 2 > length) return dz - length;
-        if (dz * 2 < -length) return dz + length;
-        return dz;
-        }
-    
-
-    /*  More or less copied from Continuous2D.
-        Minimum Toroidal Distance Squared between two points. This computes the "shortest" (squared) distance between two points, considering wrap-around possibilities as well. */
-    double tds(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z)
-        {
-        double dx = tdx(d1x, d2x);
-        double dy = tdy(d1y, d2y);
-        double dz = tdz(d1z, d2z);
-        return (dx * dx + dy * dy);
-        }
-        
     double ds(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z)
         {
         return ((d1x - d2x) * (d1x - d2x) + (d1y - d2y) * (d1y - d2y) + (d1z - d2z) * (d1z - d2z));
@@ -948,13 +886,12 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         double d= ds(d1x, d1y, d1z, d2x, d2y, d2z);
         return (d < distanceSquared || (d == distanceSquared && closed));
         }
-        
-    boolean twithin(double d1x, double d1y, double d1z, double d2x, double d2y, double d2z, double distanceSquared, boolean closed)
-        {
-        double d= tds(d1x, d1y, d1z, d2x, d2y, d2z);
-        return (d < distanceSquared || (d == distanceSquared && closed));
-        }
 
+    public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
+    	{
+     getRadialLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos, zPos);
+    	}
+        
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         boolean toroidal = (mode == TOROIDAL);
@@ -975,145 +912,15 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         int len = xPos.size();
         double distsq = dist * dist;
         
-        if (toroidal)
-            {
-            for(int i = 0; i < len; i++)
-                {
-                int xp = xPos.get(i);
-                int yp = yPos.get(i);
-                int zp = zPos.get(i);
-                boolean remove = false;
-                
-                if (measurementRule == Grid2D.ANY)
-                    {
-                    if (z == zp)
-                        {
-                        if (x == xp)
-                            {
-                            if (y < yp)
-                                {
-                                double d = tdy(yp - 0.5, y);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = tdy(y, yp + 0.5);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        else if (y == yp)
-                            {
-                            if (x < xp)
-                                {
-                                double d = tdx(xp - 0.5, x);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = tdx(x, xp + 0.5);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        }
-                    else if (x == xp)
-                        {
-                        if (y == yp)
-                            {
-                            if (z  < zp)
-                                {
-                                double d = tdz(zp - 0.5, z);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = tdz(z, zp + 0.5);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        }
-                    else if (z < zp)
-                        {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
-                            }
-                        else
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
-                            }
-                        }
-                    else
-                        {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
-                            }
-                        else
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
-                            }
-                        }
-                    }
-                else if (measurementRule == Grid2D.ALL)
-                    {
-                    if (z < zp)
-                        {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
-                            }
-                        else
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
-                            }
-                        }
-                    else
-                        {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
-                            }
-                        else
-                            {
-                            if (y < yp)
-                                remove = !twithin(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !twithin(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
-                            }
-                        }
-                    }
-                else // (measurementRule == Grid2D.CENTER)
-                    {
-                    remove = !twithin(x,y,z,xp,yp,zp,distsq,closed);
-                    }
-                
-                if (remove)
-                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
-                }
-            }
-        else
-            {
+
+        int width = this.width;
+        int height = this.height;
+        int length = this.length;
+        int widthtimestwo = width * 2;
+        int heighttimestwo = height * 2;
+        int lengthtimestwo = length * 2;
+        
+
             for(int i = 0; i < len; i++)
                 {
                 int xp = xPos.get(i);
@@ -1248,9 +1055,30 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                 
                 if (remove)
                     { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
+                else if (toroidal) // need to convert to toroidal position
+                	{ 
+                	int _x = xPos.get(i);
+                	int _y = yPos.get(i);
+                	int _z = zPos.get(i);
+                	xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
+                	yPos.set(i, ty(_y, height, heighttimestwo, _y + width, _y - width));
+                	zPos.set(i, tz(_z, length, lengthtimestwo, _z + length, _z - length));
+                	}
+
                 }
-            }
         }
+
+
+    public Bag getRadialNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    	{
+    	return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+    	}
+
+
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    	{
+    	return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+    	}
 
 
 

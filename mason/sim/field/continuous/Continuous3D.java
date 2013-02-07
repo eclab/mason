@@ -260,7 +260,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
     double stx(final double x, final double width) 
         { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
 
-    /** Minimum toroidal distance between two values in the X dimension. */
+    /** Minimum toroidal difference between two values in the X dimension. */
     public double tdx(final double x1, final double x2)
         {
         double width = this.width;
@@ -277,7 +277,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
     double sty(final double y, final double height) 
         { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
 
-    /** Minimum toroidal distance between two values in the Y dimension. */
+    /** Minimum toroidal difference between two values in the Y dimension. */
     public double tdy(final double y1, final double y2)
         {
         double height = this.height;
@@ -293,7 +293,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
     double stz(final double z, final double length) 
         { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
 
-    /** Minimum toroidal distance between two values in the Z dimension. */
+    /** Minimum toroidal difference between two values in the Z dimension. */
     public double tdz(final double z1, final double z2)
         {
         double length = this.length;
