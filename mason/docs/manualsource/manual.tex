@@ -378,12 +378,12 @@ public class Students extends SimState
 \end{alltt}
 }
 
-Wow, it doesn't get a whole lot simpler than that.
+Wow, it doesn't get a whole lot simpler (and more useless) than that.
 
 When you create a MASON application, you define the simulation model as a subclass of \Class{sim.engine.SimState}.  MASON will create a single instance of this subclass and maintain it as the global state of your entire simulation.  SimState contains two important items:
 
 \begin{itemize}
-\item A {\bf random number generator}, specifically an instance of the class \class{ec.util.MersenneTwisterFast}.  This generator is far better than \Class{java.util.Random}. It is also not synchronized, which means that if you access it from multiple threads, you'll need to remember to acquire a lock on it first.  We'll get to that later.  Anyway, if you're serious about simulation, you should {\bf never use \Class{java.util.Random} nor \method{java.lang.Math.random()}.}  They're surprisingly poor quality.\footnote{\Class{java.util.Random} is highly non-random, and will ruin your experiments.  And \method{Math.random()} just uses \Class{java.util.Random}. Don't use them.  For a fun example of just how bad \Class{java.util.Random} is, check out ``Sun Reﬁnes Randomness'': http:/\!/alife.co.uk/nonrandom/}
+\item A {\bf random number generator}, specifically an instance of the class \class{ec.util.MersenneTwisterFast}.  This generator is far better than \Class{java.util.Random}. It is also not synchronized, which means that if you access it from multiple threads, you'll need to remember to acquire a lock on it first.  We'll get to that later.  Anyway, if you're serious about simulation, you should {\bf never use \Class{java.util.Random} nor \method{java.lang.Math.random()}.}  They're surprisingly poor quality.\footnote{\Class{java.util.Random} is highly non-random, and will ruin your experiments.  And \method{Math.random()} just uses \Class{java.util.Random}. Don't use them.  For a fun example of just how bad \Class{java.util.Random} is, check out ``Sun Redefines Randomness'': http:/\!/alife.co.uk/nonrandom/}
 
 The random number generator is seeded with a random number {\bf seed}, a long integer passed into the SimState's constructor as shown in the code above.  Note that MersenneTwisterFast only uses the first 32 bits of this seed.
 
@@ -2675,7 +2675,7 @@ MASON has a large number of utility classes which can be used independently of t
 \item \package{ec.util}\quad The Mersenne Twister random number generator
 \item \package{sim.util}\quad Basic utility classes
 \item \package{sim.util.gui}\quad Graphical interface utility classes
-\item \package{sim.util.media}\quad Utility classes for generating various media (movies, pictures)
+\item \package{sim.util.media}\quad Utility classes for generating movies and pictures
 \item \package{sim.util.media.chart}\quad Utility classes for generating charts
 \item \package{sim.util.distribution}\quad Utility classes for sampling from distributions
 \end{itemize} 
@@ -2687,7 +2687,7 @@ This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \
 \label{ec.util.MersenneTwisterFast}
 \label{sim.util.distribution}
 
-The \package{ec.util} package contains a single class called \Class{ec.util.MersenneTwisterFast}.  This is an efficient implementation of the MT199937 Mersenne Twister algorithm by Makoto Matsumoto and Takuji Nishimura.  The Mersenne Twister is a well-regarded random number generator with an ultra-long period and high quality statistical properties.  It's now the standard generator for R, Maple, MATLAB, Python, Ruby, several major implementations of Common Lisp (such as SBCL and CMUCL), and is part of the PHP library.  MASON uses Mersenne Twister as its only random number generator; it's possible to substitute another, but you'd need to subclass the MersenneTwisterFast class.
+The \package{ec.util} package contains a single class called \Class{ec.util.MersenneTwisterFast}.  This is an efficient implementation of the MT199937 Mersenne Twister algorithm by Makoto Matsumoto and Takuji Nishimura.  The Mersenne Twister is a well-regarded random number generator with an ultra-long period and high quality statistical properties.  It's now the standard generator for R, Maple, MATLAB, Python, Ruby, and several major implementations of Common Lisp (such as SBCL and CMUCL), and is part of the PHP library.  MASON uses Mersenne Twister as its only random number generator; it's possible to substitute another, but you'd need to subclass the MersenneTwisterFast class.
 
 \paragraph{Why not use \class{java.util.Random?}}  Because \class{java.util.Random} is {\it highly non-random}.  It is unquestionably inappropriate for use in a high-quality simulator.  Never use it, nor should you ever call \method{Math.random()} (which also uses it).
 
@@ -3064,7 +3064,7 @@ for(int i = 0 ; i < 1000; i++)
 myList.add(i); 
 }
 
-However while IntBag is just sticking integers in its array, \class{ArrayList$<$Integer$>$}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing}, is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is well over twice the speed of \class{ArrayList$<$Integer$>$}, and likewise DoubleBag is over twice the speed of \class{ArrayList$<$Double$>$}.
+However while IntBag is just sticking integers in its array, \class{ArrayList$<$Integer$>$}  is allocating \class{java.lang.Integer} objects, sticking ints in them, and sticking the objects in its array.  This process, known as {\it autoboxing}, is quite slow, and access and modification is similarly  slow.  At present on a good Java VM, highly optimized for ArrayList, IntBag is still well over twice the speed of \class{ArrayList$<$Integer$>$}, and likewise DoubleBag is over twice the speed of \class{ArrayList$<$Double$>$}.
 }
 
 \noindent ... but you should be warned: Java's iterators are very slow.  They involve un-inlinable method calls for every iteration.  If you're trying to write fast simulation code, I strongly suggest getting used to using a for-loop instead.
@@ -3281,7 +3281,7 @@ public static int OTHER = 3;\\
 public static int NONE = 4;\\
 public int party = OTHER;\\
 public int getParty() \{ return party; \} \\
-public void setParty(int val) \{ if (val <= NONE \&\& val > DEMOCRAT) party = val; \}
+public void setParty(int val) \{ if (val <= NONE \&\& val >= DEMOCRAT) party = val; \}
 }
 
 Create an array of \(i+1\) Strings and return them in your domain declaration method, like this:
@@ -3930,10 +3930,10 @@ The Schedule employs a binary heap: specifically the MASON utility class \Class{
 \mthd{public Comparable getMinKey()} Returns the minimum key in the heap.
 \mthd{public Object extractMin()} Removes the minimum object and its key from the heap, and returns the object.  If the heap is empty, null is returned.
 \mthd{public Bag extractMin(Bag putInHere)} Removes all objects (and their keys) whose keys are equal to that of the minimum object.  Places the objects in the provided Bag and returns it (not clearing it first). If the Bag is null, a new Bag is created.  If the heap is empty, the Bag will be empty.
-\mthd{public Heap merge(Heap other)} Merges this heap with another, returning a new resulting Heap.  Neither of the original heaps is modified.  This procedure is \(O(n))\) in the number of keyed elements.
+\mthd{public Heap merge(Heap other)} Merges this heap with another, returning a new resulting Heap.  Neither of the original heaps is modified.  This procedure is \(O(n)\) in the number of keyed elements.
 \end{methods}
 
-MASON uses a binary heap because we don't know beforehand how you'll be using the Schedule, and so need something general-purpose.  Binary heaps are fast enough for most purposes, but if you have a lot of agents and know something about how they'll be scheduled, you may be able to do significantly better, with a smarter {\bf calendar queue} tuned for your application. All you have to do is write a subclass of Heap which overrides above methods. Then override Schedule's \method{createHeap()} method to return your special kind of calendar queue instead of the standard Heap.  Then in SimState's constructor, set the Schedule to your special subclass to use it instead of the standard Schedule.
+MASON uses a binary heap because we don't know beforehand how you'll be using the Schedule, and so need something general-purpose.  Binary heaps are fast enough for many purposes, but if you have a lot of agents and know something about how they'll be scheduled, you may be able to do significantly better, with a smarter {\bf calendar queue} tuned for your application. All you have to do is write a subclass of Heap which overrides above methods. Then override Schedule's \method{createHeap()} method to return your special kind of calendar queue instead of the standard Heap.  Then in SimState's constructor, set the Schedule to your special subclass to use it instead of the standard Schedule.
 
 \begin{methods}{\class{sim.engine.Schedule}}
 \mthd{protected Heap createHeap()} Creates and returns a new Heap for the Schedule to use.
@@ -3982,9 +3982,9 @@ MASON provides a variety of utility subclasses of Steppable which you may find u
 We next go through each of these in turn.
 
 \paragraph{\Class{sim.engine.Sequence}}
-This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add, remove, and replace agents while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the agents.
+This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add and remove, or replace all the agents, while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the agents.
 
-To remove agents, Sequence will modify the order of the sequence by default.  If you want to guarantee that the Sequence order remains unmodified, you can call \method{setEnsuresOrder(true)}.
+To remove agents, Sequence will modify the order of the sequence by default.  If you want to guarantee that the Sequence order remains unmodified, you can call \method{setEnsuresOrder(true)}.  Note that this is slower (up to \(O(n)\) versus \(O(1)\) once the agent has been identified).
 
 Removing agents can be costly: it's an \(O(n)\) search through the array to find an agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  Another consequence is that order is not preserved regardless of the setting of \method{setEnsuresOrder(...)}.  This option is turned on with \method{setUsesSets(true)}.
 
@@ -10767,9 +10767,9 @@ Additionally, the various icons used in the NumberTextField are exposed:
     public static final ImageIcon I\_UP\_PRESSED;
 }
 
-When the user changes the number in the NumberTextField, the \method{submit()} is called. This method tries to parse the value out of the field.  It then calls the filter \method{newValue(...)} passing in this value and receiving a revised value, then finally calls \method{setValue(...)} to set the revised value and update the field.  Subclasses may override the \method{newValue(...)} method to filter or constrain the values the user can enter into the field, or be otherwise informed that the value is changing.
+When the user changes the number in the NumberTextField, the \method{submit()} method is called. This method tries to parse the value out of the field.  It then calls the filter \method{newValue(...)} passing in this value and receiving a revised value, then finally calls \method{setValue(...)} to set the revised value and update the field.  Subclasses may override the \method{newValue(...)} method to filter or constrain the values the user can enter into the field, or be otherwise informed that the value is changing.
 
-Similarly, when the user hits ESCAPE in the NumberTextField, the \method{update()} is called.  This method calls \method{getValue()} to retrieve the current internal value, then calls \method{setValue(...)} to set the value and update the field.
+Similarly, when the user hits ESCAPE in the NumberTextField, the \method{update()} method is called.  This method calls \method{getValue()} to retrieve the current internal value, then calls \method{setValue(...)} to set the value and update the field.
 
 \begin{methods}{\class{sim.util.gui.NumberTextField}}
 \mthd{public void submit()}  Triggers the NumberTextField to attempt to submit the current text in the field, by first parsing it into a number called \variable{val}, then calling \code{setValue(newValue(val));}
@@ -10855,7 +10855,7 @@ Like NumberTextField, PropertyField has a few methods to query and update the pa
 
 
 \begin{wrapfigure}{r}[0in]{2.5in}
-\vspace{0em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
+\vspace{-1em}\hfill\includegraphics[width=2.5in]{MiniHistogram.png}
 \caption{Several MiniHistograms at work.  The top two histograms are uniform. The tooltip shows the label displayed when you hover over a bucket in one of the MiniHistograms.}
 \vspace{0em}
 \end{wrapfigure}
@@ -10903,17 +10903,26 @@ You can change the text at any time:
 \mthd{public void setText(Object HTMLTextOrURL)}  Sets the text to either a String (HTML Text) or a URL from which it will download HTML text.
 \end{methods}
 
+\begin{wrapfigure}{r}[0in]{1.15in}
+\vspace{-1.5em}\hfill\includegraphics[width=1.15in]{WordWrap.png}
+\caption{Result of the WordWrap example code.}
+\vspace{-9em}
+\end{wrapfigure}
+
 \paragraph{Word Wrapping} Java doesn't provide an easy solution for specifying word wrapping to a number of pixels or a number of characters.\footnote{Admittedly, this isn't a major need, but we've used it a few times.}  MASON has a simple class, called \Class{sim.util.gui.WordWrap}, which performs this function.  Using WordWrap, you can force a collection of text to wrap to a certain number of pixels wide, for example:
 
 {\footnotesize\begin{verbatim}
 String myText = "Here is the big text that we want to have word-wrapped";
 int myNumberOfPixels = 50; // our word-wrap pixel length
 JButton button = new JButton();
-String wrappedText = sim.util.WordWrap.wrap(myText, myNumberOfPixels, button.getFontMetrics(button.getFont()));
-button.setText("&lt;html>" + sim.util.WordWrap.toHTML(wrappedText) + "&lt;/html>");
+String wrappedText = sim.util.gui.WordWrap.wrap(myText, myNumberOfPixels, 
+                                                button.getFontMetrics(button.getFont()));
+button.setText("<html>" + sim.util.gui.WordWrap.toHTML(wrappedText) + "</html>");
 \end{verbatim}}
 
-There are no constructors: it's all just static methods.
+Note that wrap are only presently done at whitespace, not hyphens.  Also note that if a word is too long, it's simply broken arbitrarily.  You can see both of these misfeatures illustrated at in the figure at right.
+
+There are no constructors to WordWrap: it's all just static methods.
 
 \begin{methods}{\class{sim.util.gui.WordWrap} Utility}
 \mthd{public static String wrap(String string, int numColumns)} Wraps a string to a given number of characters wide.
