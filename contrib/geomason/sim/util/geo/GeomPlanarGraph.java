@@ -14,8 +14,10 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateArrays;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.planargraph.DirectedEdge;
+import com.vividsolutions.jts.planargraph.Edge;
 import com.vividsolutions.jts.planargraph.Node;
 import com.vividsolutions.jts.planargraph.PlanarGraph;
+import java.util.Iterator;
 import sim.field.geo.GeomVectorField;
 import sim.field.network.Network;
 import sim.util.Bag;
@@ -146,10 +148,10 @@ public class GeomPlanarGraph extends PlanarGraph
     {
         Network network = new Network(false); // false == not directed
 
-        for ( Object object : getEdges() )
+        for (Iterator it = dirEdges.iterator(); it.hasNext();)
         {
-            DirectedEdge edge = (DirectedEdge) object;
-
+            Object object = it.next();
+            GeomPlanarGraphDirectedEdge edge = (GeomPlanarGraphDirectedEdge) object;
             network.addEdge(edge.getFromNode(), edge.getToNode(), edge);
         }
 
