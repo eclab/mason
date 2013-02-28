@@ -2541,3 +2541,4 @@ Version 17
 		of this, but it's necessary for some flexibility.
 	Removed vestigial nonsense from ValuePortayal2D
 	Updated MersenneTwisterFast to version 21
+	Changed usage of StringBuffer to StringBuilder

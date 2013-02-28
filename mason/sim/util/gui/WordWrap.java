@@ -13,14 +13,14 @@ interface WordWrapScanner
     // returns the index of the LAST character to fit within
     // the boundaries starting at startIndex and moving to a string
     // length defined by nextLoc
-    public int scan(StringBuffer buf, int startIndex, double nextLoc);
+    public int scan(StringBuilder buf, int startIndex, double nextLoc);
     }
 
 class CharColumnScanner implements WordWrapScanner
     {
     /** nextLoc is expected to be the number of columns */
     // presently does a simple linear search
-    public int scan(StringBuffer buf, int start, double nextLoc)
+    public int scan(StringBuilder buf, int start, double nextLoc)
         {
         int nextIndex = start + ((int)nextLoc) - 1;
         if (buf.length() <= nextIndex)
@@ -44,7 +44,7 @@ class FontMetricsScanner implements WordWrapScanner
         
     // nextLoc is expected to be the number of columns
     // presently does a simple linear search, very expensive.
-    public int scan(StringBuffer buf, int start, double nextLoc)
+    public int scan(StringBuilder buf, int start, double nextLoc)
         {
         // gather the array
         char[] chars = new char[buf.length() - start];
@@ -86,7 +86,7 @@ public class WordWrap implements java.io.Serializable
     
     static String wrap(String string, double desiredLength, WordWrapScanner scanner)
         {
-        StringBuffer buf = new StringBuffer(string);
+        StringBuilder buf = new StringBuilder(string);
         
         int s = 0;
         int e;
@@ -168,7 +168,7 @@ public class WordWrap implements java.io.Serializable
     
     public static String toHTML(final String text)
         {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         char[] c = text.toCharArray();
         for(int x=0;x<c.length;x++)
             {
