@@ -327,6 +327,7 @@ public class ParallelSequence extends Sequence
         
         // Starts a thread running on the given runnable
         void startThread(Runnable run) { startThread(run, "ThreadPool"); }
+        
         void startThread(Runnable run, String name)
             {
             Node node;

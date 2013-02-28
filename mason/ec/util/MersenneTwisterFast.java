@@ -4,7 +4,7 @@ import java.util.*;
 
 /** 
  * <h3>MersenneTwister and MersenneTwisterFast</h3>
- * <p><b>Version 20</b>, based on version MT199937(99/10/29)
+ * <p><b>Version 21</b>, based on version MT199937(99/10/29)
  * of the Mersenne Twister algorithm found at 
  * <a href="http://www.math.keio.ac.jp/matumoto/emt.html">
  * The Mersenne Twister Home Page</a>, with the initialization
@@ -41,6 +41,12 @@ import java.util.*;
  * Vol. 8, No. 1, January 1998, pp 3--30.
  *
  * <h3>About this Version</h3>
+ *
+ * <p><b>Changes since V20:</b> Added clearGuassian().  Modified stateEquals()
+ * to be synchronizd on both objects for MersenneTwister, and changed its 
+ * documentation.  Added synchronization to both setSeed() methods, to 
+ * writeState(), and to readState() in MersenneTwister.  Removed synchronization
+ * from readObject() in MersenneTwister. 
  *
  * <p><b>Changes since V19:</b> nextFloat(boolean, boolean) now returns float,
  * not double.
@@ -165,7 +171,7 @@ import java.util.*;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
  * POSSIBILITY OF SUCH DAMAGE.
  *
- @version 20
+ @version 21
 */
 
 
@@ -215,18 +221,24 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
         catch (CloneNotSupportedException e) { throw new InternalError(); } // should never happen
         }
     
-    public boolean stateEquals(Object o)
+	/** Returns true if the MersenneTwisterFast's current internal state is equal to another MersenneTwisterFast. 
+		This is roughly the same as equals(other), except that it compares based on value but does not
+		guarantee the contract of immutability (obviously random number generators are immutable).
+		Note that this does NOT check to see if the internal gaussian storage is the same
+		for both.  You can guarantee that the internal gaussian storage is the same (and so the
+		nextGaussian() methods will return the same values) by calling clearGaussian() on both
+		objects. */
+    public boolean stateEquals(MersenneTwisterFast other)
         {
-        if (o==this) return true;
-        if (o == null || !(o instanceof MersenneTwisterFast))
-            return false;
-        MersenneTwisterFast other = (MersenneTwisterFast) o;
-        if (mti != other.mti) return false;
-        for(int x=0;x<mag01.length;x++)
-            if (mag01[x] != other.mag01[x]) return false;
-        for(int x=0;x<mt.length;x++)
-            if (mt[x] != other.mt[x]) return false;
-        return true;
+        if (other == this) return true;
+        if (other == null)return false;
+
+		if (mti != other.mti) return false;
+		for(int x=0;x<mag01.length;x++)
+			if (mag01[x] != other.mag01[x]) return false;
+		for(int x=0;x<mt.length;x++)
+			if (mt[x] != other.mt[x]) return false;
+			return true;
         }
 
     /** Reads the entire state of the MersenneTwister RNG from the stream */
@@ -294,7 +306,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
      * only uses the first 32 bits for its seed).   
      */
 
-    synchronized public void setSeed(long seed)
+    public void setSeed(long seed)
         {
         // Due to a bug in java.util.Random clear up to 1.2, we're
         // doing our own Gaussian variable.
@@ -328,7 +340,7 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
      * integers are repeatedly used in a wrap-around fashion.
      */
 
-    synchronized public void setSeed(int[] array)
+    public void setSeed(int[] array)
         {
         if (array.length == 0)
             throw new IllegalArgumentException("Array length must be greater than zero");
@@ -936,6 +948,13 @@ public strictfp class MersenneTwisterFast implements Serializable, Cloneable
         return d;
         }
 
+
+	/** 
+		Clears the internal gaussian variable from the RNG.  You only need to do this
+		in the rare case that you need to guarantee that two RNGs have identical internal
+		state.  Otherwise, disregard this method.  See stateEquals(other).
+	*/
+    public void clearGaussian() { __haveNextNextGaussian = false; }
 
 
     public double nextGaussian()

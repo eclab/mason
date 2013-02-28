@@ -2540,3 +2540,4 @@ Version 17
 	Added SimpleController.getSimulation() and Console.getSimulation().  Not a big fan
 		of this, but it's necessary for some flexibility.
 	Removed vestigial nonsense from ValuePortayal2D
+	Updated MersenneTwisterFast to version 21
