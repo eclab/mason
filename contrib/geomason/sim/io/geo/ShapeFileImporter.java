@@ -192,7 +192,7 @@ public class ShapeFileImporter
      * @param field to contain read in data
      * @throws FileNotFoundException 
      */
-    public static void read(final URL shpFile, GeomVectorField field) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field) throws FileNotFoundException, IOException, Exception
     {
         read(shpFile, field, null, MasonGeometry.class);
     }
@@ -206,7 +206,7 @@ public class ShapeFileImporter
      * @param masked dictates the subset of attributes we want
      * @throws FileNotFoundException
      */
-    public static void read(final URL shpFile, GeomVectorField field, final Bag masked) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field, final Bag masked) throws FileNotFoundException, IOException, Exception
     {
         read(shpFile, field, masked, MasonGeometry.class);
     }
@@ -219,7 +219,7 @@ public class ShapeFileImporter
      * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
      * @throws FileNotFoundException 
      */
-    public static void read(final URL shpFile, GeomVectorField field, Class<?> masonGeometryClass) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field, Class<?> masonGeometryClass) throws FileNotFoundException, IOException, Exception
     {
         read(shpFile, field, null, masonGeometryClass);
     }
@@ -234,7 +234,7 @@ public class ShapeFileImporter
      * @throws FileNotFoundException 
      * 
      */
-    public static void read(final URL shpFile, GeomVectorField field, final Bag masked, Class<?> masonGeometryClass) throws FileNotFoundException
+    public static void read(final URL shpFile, GeomVectorField field, final Bag masked, Class<?> masonGeometryClass) throws FileNotFoundException, IOException, Exception
     {
         if (shpFile == null)
         {
@@ -535,6 +535,8 @@ public class ShapeFileImporter
                     } catch (Exception e)
                     {
                         e.printStackTrace();
+
+                        throw e;
                     }
                 }
             }
@@ -544,6 +546,8 @@ public class ShapeFileImporter
             System.out.println("Error in ShapeFileImporter!!");
             System.out.println("SHP filename: " + shpFile);
             e.printStackTrace();
+
+            throw e;
         }
     }
 
