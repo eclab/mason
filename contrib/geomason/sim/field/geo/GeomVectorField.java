@@ -92,6 +92,18 @@ public class GeomVectorField extends GeomField
         geometries.add(g);
     }
 
+    /** Removes the given geometry
+     * <p>
+     * <em>NOTE:</em> removing geometry can be computationally expensive as
+     * the significant chunks of the spatial index may have to be rebuilt
+     * depending on the removed geometry.
+     */
+    public void removeGeometry( final MasonGeometry g )
+    {
+        spatialIndex.remove(g.getGeometry().getEnvelopeInternal(), g);
+        geometries.remove(g); // TODO: O(n); maybe store Bag index w/ g?
+    }
+
     /** Removes all geometry objects and resets the MBR. */
     @Override
     public void clear()
