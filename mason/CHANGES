@@ -2542,3 +2542,5 @@ Version 17
 	Removed vestigial nonsense from ValuePortayal2D
 	Updated MersenneTwisterFast to version 21
 	Changed usage of StringBuffer to StringBuilder
+	Bug fix to deprecated versions of neighborhood methods in grids caused by refactoring
+		described earlier.  Wasn't returning Bags in some cases.
