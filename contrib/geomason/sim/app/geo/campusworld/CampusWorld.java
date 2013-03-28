@@ -110,7 +110,7 @@ public class CampusWorld extends SimState
 
             addIntersectionNodes(network.nodeIterator(), junctions);
 
-        } catch (FileNotFoundException ex)
+        } catch (Exception ex)
         {
             Logger.getLogger(CampusWorld.class.getName()).log(Level.SEVERE, null, ex);
         }

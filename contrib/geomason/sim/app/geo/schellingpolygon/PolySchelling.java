@@ -117,7 +117,7 @@ public class PolySchelling extends SimState
 
             ShapeFileImporter.read(wardsFile, world, Polygon.class);
 
-        } catch (FileNotFoundException ex)
+        } catch (Exception ex)
         {
             System.out.println("Error opening shapefile!" + ex);
             System.exit(-1);

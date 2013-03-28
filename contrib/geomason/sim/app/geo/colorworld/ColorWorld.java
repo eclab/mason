@@ -78,7 +78,7 @@ public class ColorWorld extends SimState
         try
         {
             ShapeFileImporter.read(politicalBoundaries, county, empty, CountingGeomWrapper.class);
-        } catch (FileNotFoundException ex)
+        } catch (Exception ex)
         {
             Logger.getLogger(ColorWorld.class.getName()).log(Level.SEVERE, null, ex);
         }

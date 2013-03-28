@@ -211,7 +211,7 @@ public class SchellingSpace extends SimState
 
             ShapeFileImporter.read( wardsFile, world, SchellingGeometry.class);
         }
-        catch (FileNotFoundException ex)
+        catch (Exception ex)
         {
             System.out.println("Error opening shapefile!" + ex);
             System.exit(-1);

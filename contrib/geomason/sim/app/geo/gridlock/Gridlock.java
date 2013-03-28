@@ -129,7 +129,7 @@ public class Gridlock extends SimState
             // update so that everyone knows what the standard MBR is
             roads.setMBR(MBR);
             censusTracts.setMBR(MBR);
-        } catch (FileNotFoundException ex)
+        } catch (Exception ex)
         {
             Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
         }

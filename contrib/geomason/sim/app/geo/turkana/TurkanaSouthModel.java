@@ -48,166 +48,47 @@ public class TurkanaSouthModel extends SimState
     DoubleGrid2D vegetationGrid;			// double [0,maxVegetationLevel]
     SparseGrid2D agentGrid;
     ArrayList<Turkanian> agents = new ArrayList<Turkanian>();
+    
+    
     public int ticksPerMonth = 1;
+    public int getTicksPerMonth() { return ticksPerMonth; }
+    public void setTicksPerMonth(int val) { ticksPerMonth = val; }
 
-
-
-    public int getTicksPerMonth()
-    {
-        return ticksPerMonth;
-    }
-
-
-
-    public void setTicksPerMonth(int val)
-    {
-        ticksPerMonth = val;
-    }
-
-    public int monthsOfWeather = 144;	// there are 144 files of monthly rainfall data
     public double vegetationGrowthRate = 0.1;	// for tweaking the vegetation growth
-
-
-
-    public double getVegetationGrowthRate()
-    {
-        return vegetationGrowthRate;
-    }
-
-
-
-    public void setVegetationGrowthRate(double val)
-    {
-        vegetationGrowthRate = val;
-    }
+    public double getVegetationGrowthRate() { return vegetationGrowthRate; }
+    public void setVegetationGrowthRate(double val) { vegetationGrowthRate = val; }
 
     public double vegetationConsumptionRate = 0.1; // how much vegetation a herd can eat in a month
-
-
-
-    public double getVegetationConsumptionRate()
-    {
-        return vegetationConsumptionRate;
-    }
-
-
-
-    public void setVegetationConsumptionRate(double val)
-    {
-        vegetationConsumptionRate = val;
-    }
+    public double getVegetationConsumptionRate() { return vegetationConsumptionRate; }
+    public void setVegetationConsumptionRate(double val) { vegetationConsumptionRate = val; }
 
     public double maxVegetationLevel = 1;
-
-
-
-    public double getMaxVegetationLevel()
-    {
-        return maxVegetationLevel;
-    }
-
-
-
-    public void setMaxVegetationLevel(double val)
-    {
-        maxVegetationLevel = val;
-    }
+    public double getMaxVegetationLevel() { return maxVegetationLevel; }
+    public void setMaxVegetationLevel(double val) { maxVegetationLevel = val; }
 
     public double energyPerUnitOfVegetation = 15;	// energy gained from eating one unit of vegetation
-
-
-
-    public double getEnergyPerUnitOfVegetation()
-    {
-        return energyPerUnitOfVegetation;
-    }
-
-
-
-    public void setEnergyPerUnitOfVegetation(double val)
-    {
-        energyPerUnitOfVegetation = val;
-    }
+    public double getEnergyPerUnitOfVegetation() { return energyPerUnitOfVegetation; }
+    public void setEnergyPerUnitOfVegetation(double val) { energyPerUnitOfVegetation = val; }
 
     public double birthEnergy = 20;	// new agents/herds begin with this much energy
-
-
-
-    public double getBirthEnergy()
-    {
-        return birthEnergy;
-    }
-
-
-
-    public void setBirthEnergy(double val)
-    {
-        birthEnergy = val;
-    }
+    public double getBirthEnergy() { return birthEnergy; }
+    public void setBirthEnergy(double val) { birthEnergy = val; }
 
     public double energyConsumptionRate = 1;	// energy used per month
-
-
-
-    public double getEnergyConsumptionRate()
-    {
-        return energyConsumptionRate;
-    }
-
-
-
-    public void setEnergyConsumptionRate(double val)
-    {
-        energyConsumptionRate = val;
-    }
+    public double getEnergyConsumptionRate() { return energyConsumptionRate; }
+    public void setEnergyConsumptionRate(double val) { energyConsumptionRate = val; }
 
     public double starvationLevel = -2;		// cows can survive for up to 60 days without food
-
-
-
-    public double getStarvationLevel()
-    {
-        return starvationLevel;
-    }
-
-
-
-    public void setStarvationLevel(double val)
-    {
-        starvationLevel = val;
-    }
+    public double getStarvationLevel() { return starvationLevel; }
+    public void setStarvationLevel(double val) { starvationLevel = val; }
 
     public boolean initWithNDVI = true;	// if false, the initial vegetaion will be zero
-
-
-
-    public boolean getInitWithNDVI()
-    {
-        return initWithNDVI;
-    }
-
-
-
-    public void setInitWithNDVI(boolean val)
-    {
-        initWithNDVI = val;
-    }
+    public boolean getInitWithNDVI() { return initWithNDVI; }
+    public void setInitWithNDVI(boolean val) { initWithNDVI = val; }
 
     public int numberOfAgents = 50;
-
-
-
-    public int getNumberOfAgents()
-    {
-        return numberOfAgents;
-    }
-
-
-
-    public void setNumberOfAgents(int val)
-    {
-        numberOfAgents = val;
-    }
+    public int getNumberOfAgents() { return numberOfAgents; }
+    public void setNumberOfAgents(int val) { numberOfAgents = val; }
 
     public int herderVision = 1;	// how far away herders look when considering where to go (not yet implemented)
 //	public int getHerderVision() { return herderVision; }
@@ -219,6 +100,8 @@ public class TurkanaSouthModel extends SimState
 //	public int getWindowHeight() { return windowHeight; }
 //	public void setWindowHeight(int val) { windowHeight = val; }
     public boolean printStats = true;	// useful for printing the stats when running from the cmd line but not the gui
+
+    public int monthsOfWeather = 144;	// there are 144 files of monthly rainfall data
     public int month = 0;	// current month
 
 

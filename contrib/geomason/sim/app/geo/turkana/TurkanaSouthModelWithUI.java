@@ -36,11 +36,8 @@ import sim.util.media.chart.TimeSeriesChartGenerator;
  * Author: Joey Harrison
  * 
  */
-
-
 public class TurkanaSouthModelWithUI extends GUIState
 {
-
     public Display2D display;
     public JFrame displayFrame;
     FastValueGridPortrayal2D populationDensityPortrayal = new FastValueGridPortrayal2D("Population Density");
@@ -53,14 +50,11 @@ public class TurkanaSouthModelWithUI extends GUIState
     TurkanaSouthModel model;
 
 
-
     public TurkanaSouthModelWithUI()
     {
         super(new TurkanaSouthModel(System.currentTimeMillis()));
         model = (TurkanaSouthModel) state;
     }
-
-
 
     public TurkanaSouthModelWithUI(SimState state)
     {
@@ -68,14 +62,10 @@ public class TurkanaSouthModelWithUI extends GUIState
         model = (TurkanaSouthModel) state;
     }
 
-
-
     public static String getName()
     {
         return "Turkana South";
     }
-
-
 
     @Override
     public Object getSimulationInspectedObject()
@@ -83,17 +73,12 @@ public class TurkanaSouthModelWithUI extends GUIState
         return state;
     }  // non-volatile
 
-
-
     @Override
     public void load(SimState state)
     {
         super.load(state);
-
         setupPortrayals();
     }
-
-
 
     @Override
     public void start()
@@ -103,8 +88,6 @@ public class TurkanaSouthModelWithUI extends GUIState
         populationSeries.clear();	// clear the data for the chart
     }
 
-
-
     @SuppressWarnings("serial")
     public void setupPortrayals()
     {
@@ -112,18 +95,14 @@ public class TurkanaSouthModelWithUI extends GUIState
             
         populationDensityPortrayal.setField(model.populationDensityGrid.getGrid());
         populationDensityPortrayal.setMap(
-            new SimpleColorMap(0, maxValue, Color.black, Color.white)
-            {
-
+            new SimpleColorMap(0, maxValue, Color.black, Color.white) {
                 @Override
-                public double filterLevel(double level)
-                {
+                public double filterLevel(double level) {
                     // since the population grid values are all very small except
                     // a few verge large values, scale the color map nonlinearly
                     // so the low values don't just appear black
                     return Math.sqrt(level);
                 }
-
             });
 
         rainPortrayal.setField(model.rainGrid);
@@ -135,23 +114,17 @@ public class TurkanaSouthModelWithUI extends GUIState
         agentPortrayal.setField(model.agentGrid);
         agentPortrayal.setPortrayalForAll(new MovablePortrayal2D(new OvalPortrayal2D(Color.blue, 0.7)));
 
-        this.scheduleRepeatingImmediatelyAfter(new Steppable()
-        {
-
+        this.scheduleRepeatingImmediatelyAfter(new Steppable() {
             @Override
-            public void step(SimState state)
-            {
+            public void step(SimState state) {
                 populationSeries.add(state.schedule.getTime() / model.ticksPerMonth, model.agents.size());
             }
-
         });
 
         populationStatsChart.repaint();
         display.reset();
         display.repaint();
     }
-
-
 
     @Override
     public void init(Controller c)
@@ -178,16 +151,14 @@ public class TurkanaSouthModelWithUI extends GUIState
 
     }
 
-
-
     public JFrame createPopulationStatsFrame()
     {
         populationSeries = new XYSeries("Population");
         populationStatsChart = new TimeSeriesChartGenerator();
         populationStatsChart.setTitle("Population Statistics");
         populationStatsChart.addSeries(populationSeries, null).setStrokeColor(Color.blue);
-        populationStatsChart.setDomainAxisLabel("Time in months");
-        populationStatsChart.setRangeAxisLabel("Population");
+        populationStatsChart.setXAxisLabel("Time in months");
+        populationStatsChart.setYAxisLabel("Population");
 
         populationStatsFrame = populationStatsChart.createFrame(this);
         populationStatsFrame.getContentPane().setLayout(new BorderLayout());
@@ -196,8 +167,6 @@ public class TurkanaSouthModelWithUI extends GUIState
 
         return populationStatsFrame;
     }
-
-
 
     public void quit()
     {
@@ -209,8 +178,6 @@ public class TurkanaSouthModelWithUI extends GUIState
         }
         populationStatsFrame = null;
     }
-
-
 
     /**
      * @param args
