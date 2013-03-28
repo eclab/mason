@@ -12,12 +12,11 @@
  **/
 package sim.app.geo.sickStudents;
 
-import com.vividsolutions.jts.geom.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomVectorField;
@@ -25,6 +24,12 @@ import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.Interval;
 import sim.util.geo.MasonGeometry;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 
 
 
@@ -151,7 +156,7 @@ public class SickStudentsModel extends SimState
             elementarySchools.setMBR(MBR);
             middleSchools.setMBR(MBR);
             highSchools.setMBR(MBR);
-        } catch (FileNotFoundException ex)
+        } catch (Exception ex)
         {
             System.out.println("Error opening shapefile!" + ex);
             System.exit(-1);
