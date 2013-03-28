@@ -1,16 +1,11 @@
 /**
- ** Gridlock.java
- **
- ** Copyright 2011 by Sarah Wise, Mark Coletti, Andrew Crooks, and
- ** George Mason University.
- **
- ** Licensed under the Academic Free License version 3.0
- **
- ** See the file "LICENSE" for more information
- **
- * $Id$
- * 
- **/
+ ** Gridlock.java * * Copyright 2011 by Sarah Wise, Mark Coletti, Andrew
+ * Crooks, and * George Mason University. * * Licensed under the Academic Free
+ * License version 3.0 * * See the file "LICENSE" for more information * $Id:
+ * Gridlock.java 878 2013-03-28 18:35:54Z joey.f.harrison $
+ * <p/>
+ *
+ */
 package sim.app.geo.gridlock;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -21,6 +16,7 @@ import com.vividsolutions.jts.planargraph.Node;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,56 +35,47 @@ import sim.util.geo.MasonGeometry;
 
 
 /**
- * The  simulation core.
- * 
- * The simulation can require a LOT of memory, so make sure the virtual machine has enough.
- * Do this by adding the following to the command line, or by setting up your run 
- * configuration in Eclipse to include the VM argument:
- * 
- * 		-Xmx2048M
- * 
- * With smaller simulations this chunk of memory is obviously not necessary. You can 
- * take it down to -Xmx800M or some such. If you get an OutOfMemory error, push it up.
+ * The simulation core.
+ * <p/>
+ * The simulation can require a LOT of memory, so make sure the virtual machine
+ * has enough. Do this by adding the following to the command line, or by
+ * setting up your run configuration in Eclipse to include the VM argument:
+ * <p/>
+ * -Xmx2048M
+ * <p/>
+ * With smaller simulations this chunk of memory is obviously not necessary. You
+ * can take it down to -Xmx800M or some such. If you get an OutOfMemory error,
+ * push it up.
  */
 public class Gridlock extends SimState
 {
+
     private static final long serialVersionUID = 1L;
 
+
+
+    /**
+     * Main function allows simulation to be run in stand-alone, non-GUI mode
+     */
+    public static void main(String[] args)
+    {
+        doLoop(Gridlock.class, args);
+        System.exit(0);
+    }
     public GeomVectorField roads = new GeomVectorField();
     public GeomVectorField censusTracts = new GeomVectorField();
-
     // traversable network
     public GeomPlanarGraph network = new GeomPlanarGraph();
-
     public GeomVectorField junctions = new GeomVectorField();
-
     // mapping between unique edge IDs and edge structures themselves
     HashMap<Integer, GeomPlanarGraphEdge> idsToEdges =
         new HashMap<Integer, GeomPlanarGraphEdge>();
-
     HashMap<GeomPlanarGraphEdge, ArrayList<Agent>> edgeTraffic =
         new HashMap<GeomPlanarGraphEdge, ArrayList<Agent>>();
-
     public GeomVectorField agents = new GeomVectorField();
-
     ArrayList<Agent> agentList = new ArrayList<Agent>();
-    
     // system parameter: can force agents to go to or from work at any time
     boolean goToWork = true;
-
-
-
-    public boolean getGoToWork()
-    {
-        return goToWork;
-    }
-
-
-
-    public void setGoToWork(boolean val)
-    {
-        goToWork = val;
-    }
 
     // cheap, hacky, hard-coded way to identify which edges are associated with
     // goal Nodes. Done because we cannot seem to read in .shp file for goal nodes because
@@ -100,10 +87,35 @@ public class Gridlock extends SimState
 
 
 
-    /** Constructor */
+    /**
+     * Constructor
+     */
     public Gridlock(long seed)
     {
         super(seed);
+    }
+
+
+    public boolean getGoToWork()
+    {
+        return goToWork;
+    }
+    
+
+    public void setGoToWork(boolean val)
+    {
+        goToWork = val;
+    }
+
+
+
+    /**
+     * Initialization
+     */
+    @Override
+    public void start()
+    {
+        super.start();
         try
         {
             // read in the roads to create the transit network
@@ -129,73 +141,76 @@ public class Gridlock extends SimState
             // update so that everyone knows what the standard MBR is
             roads.setMBR(MBR);
             censusTracts.setMBR(MBR);
+
+            // initialize agents
+            populate("data/roads_points_place.csv");
+            agents.setMBR(MBR);
+
+            // Ensure that the spatial index is updated after all the agents
+            // move
+            schedule.scheduleRepeating(agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
+
+            /**
+             * Steppable that flips Agent paths once everyone reaches their
+             * destinations
+             */
+            Steppable flipper = new Steppable()
+            {
+                @Override
+                public void step(SimState state)
+                {
+
+                    Gridlock gstate = (Gridlock) state;
+
+                    // pass to check if anyone has not yet reached work
+                    for (Agent a : gstate.agentList)
+                    {
+                        if (!a.reachedDestination)
+                        {
+                            return; // someone is still moving: let him do so
+                        }
+                    }
+                    // send everyone back in the opposite direction now
+                    boolean toWork = gstate.goToWork;
+                    gstate.goToWork = !toWork;
+
+                    // otherwise everyone has reached their latest destination:
+                    // turn them back
+                    for (Agent a : gstate.agentList)
+                    {
+                        a.flipPath();
+                    }
+                }
+
+            };
+            schedule.scheduleRepeating(flipper, 10);
+
+
+        } catch (FileNotFoundException ex)
+        {
+            System.out.println("Error: missing required data file");
+        } catch (IOException ex)
+        {
+            Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex)
         {
             Logger.getLogger(Gridlock.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
 
 
-    /** Initialization */
-    @Override
-    public void start()
-    {
-        super.start();
-
-        // initialize agents
-        populate("data/roads_points_place.csv");
-        agents.setMBR(roads.getMBR());
-
-        // Ensure that the spatial index is updated after all the agents
-        // move
-        schedule.scheduleRepeating(agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
-
-        /**
-         * Steppable that flips Agent paths once everyone reaches their destinations
-         */
-        Steppable flipper = new Steppable()
-        {
-            @Override
-            public void step(SimState state)
-            {
-                Gridlock gstate = (Gridlock) state;
-
-                // pass to check if anyone has not yet reached work
-                for (Agent a : gstate.agentList)
-                {
-                    if (!a.reachedDestination)
-                    {
-                        return; // someone is still moving: let him do so
-                    }
-                }
-                // send everyone back in the opposite direction now
-                boolean toWork = gstate.goToWork;
-                gstate.goToWork = !toWork;
-
-                // otherwise everyone has reached their latest destination:
-                // turn them back
-                for (Agent a : gstate.agentList)
-                {
-                    a.flipPath();
-                }
-            }
-
-        };
-        schedule.scheduleRepeating(flipper, 10);
-    }
-
-
-
-    /** Create the road network the agents will traverse
-     *
+    /**
+     * Create the road network the agents will traverse
+     * <p/>
      */
     private void createNetwork()
     {
         System.out.println("creating network...");
 
         network.createFromGeomField(roads);
-        
+
         for (Object o : network.getEdges())
         {
             GeomPlanarGraphEdge e = (GeomPlanarGraphEdge) o;
@@ -212,6 +227,7 @@ public class Gridlock extends SimState
 
     /**
      * Read in the population file and create an appropriate pop
+     * <p/>
      * @param filename
      */
     public void populate(String filename)
@@ -219,14 +235,17 @@ public class Gridlock extends SimState
 
         try
         {
-            String filePath = Gridlock.class.getResource(filename).getPath();
+            String filePath = Gridlock.class
+                .getResource(filename).getPath();
 
             FileInputStream fstream = new FileInputStream(filePath);
-
             BufferedReader d = new BufferedReader(new InputStreamReader(fstream));
             String s;
 
+
+
             d.readLine(); // get rid of the header
+
             while ((s = d.readLine()) != null)
             { // read in all data
                 String[] bits = s.split(",");
@@ -271,11 +290,12 @@ public class Gridlock extends SimState
 
 
 
-    /** adds nodes corresponding to road intersections to GeomVectorField
-     *
-     * @param nodeIterator Points to first node
+    /**
+     * adds nodes corresponding to road intersections to GeomVectorField
+     * <p/>
+     * @param nodeIterator  Points to first node
      * @param intersections GeomVectorField containing intersection geometry
-     *
+     * <p/>
      * Nodes will belong to a planar graph populated from LineString network.
      */
     private void addIntersectionNodes(Iterator<?> nodeIterator,
@@ -295,15 +315,6 @@ public class Gridlock extends SimState
             junctions.addGeometry(new MasonGeometry(point));
             counter++;
         }
-    }
-
-
-
-    /** Main function allows simulation to be run in stand-alone, non-GUI mode */
-    public static void main(String[] args)
-    {
-        doLoop(Gridlock.class, args);
-        System.exit(0);
     }
 
 }
