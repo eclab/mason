@@ -67,10 +67,9 @@ public class ShapeFileImporter
         switch (shapeType)
         {
             case POINT:
-                return true;
             case POLYLINE:
-                return true;
             case POLYGON:
+            case POINTZ:
                 return true;
             default:
                 return false;	// no other types are currently supported
@@ -231,7 +230,8 @@ public class ShapeFileImporter
      * @param field is GeomVectorField that will contain the ShapeFile's contents
      * @param masked dictates the subset of attributes we want
      * @param masonGeometryClass allows us to over-ride the default MasonGeometry wrapper
-     * @throws FileNotFoundException 
+     * @throws FileNotFoundException if unable to open shape file
+     * @throws IOException if problem reading files
      * 
      */
     public static void read(final URL shpFile, GeomVectorField field, final Bag masked, Class<?> masonGeometryClass) throws FileNotFoundException, IOException, Exception
@@ -445,6 +445,19 @@ public class ShapeFileImporter
                 {
                     Coordinate pt = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble());
                     geom = geomFactory.createPoint(pt);
+                }
+                else if (recordType == POINTZ)
+                {
+                    Coordinate pt = new Coordinate(byteBuf.getDouble(), byteBuf.getDouble(), byteBuf.getDouble());
+
+                    // Skip over the "measure" which we don't use.
+                    // Actually, this is an optional field that most don't
+                    // implement these days, so no need to skip over that
+                    // which doesn't exist.
+                    // XXX (Is there a way to detect that the M field exists?)
+//                    byteBuf.position(byteBuf.position() + 8);
+                    
+                    geom = geomFactory.createPoint(pt);
                 } else if (recordType == POLYLINE || recordType == POLYGON)
                 {
                     // advance past four doubles: minX, minY, maxX, maxY
@@ -518,26 +531,18 @@ public class ShapeFileImporter
 
                 if (geom != null)
                 {
-                    try
-                    {
-                        // The user *may* have created their own MasonGeometry
-                        // class, so use the given masonGeometry class; by
-                        // default it's MasonGeometry.
-                        MasonGeometry masonGeometry =  (MasonGeometry) masonGeometryClass.newInstance();
-                        masonGeometry.geometry = geom;
-                        
-                        if (!attributes.isEmpty())
-                        {
-                            masonGeometry.addAttributes(attributes);
-                        }
+                    // The user *may* have created their own MasonGeometry
+                    // class, so use the given masonGeometry class; by
+                    // default it's MasonGeometry.
+                    MasonGeometry masonGeometry = (MasonGeometry) masonGeometryClass.newInstance();
+                    masonGeometry.geometry = geom;
 
-                        field.addGeometry(masonGeometry);
-                    } catch (Exception e)
+                    if (!attributes.isEmpty())
                     {
-                        e.printStackTrace();
-
-                        throw e;
+                        masonGeometry.addAttributes(attributes);
                     }
+
+                    field.addGeometry(masonGeometry);
                 }
             }
         }
@@ -545,7 +550,7 @@ public class ShapeFileImporter
         {
             System.out.println("Error in ShapeFileImporter!!");
             System.out.println("SHP filename: " + shpFile);
-            e.printStackTrace();
+//            e.printStackTrace();
 
             throw e;
         }
