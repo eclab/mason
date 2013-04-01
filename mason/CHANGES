@@ -2544,3 +2544,5 @@ Version 17
 	Changed usage of StringBuffer to StringBuilder
 	Bug fix to deprecated versions of neighborhood methods in grids caused by refactoring
 		described earlier.  Wasn't returning Bags in some cases.
+	Further modifications to SimpleEdgePortrayal2D, adding in the concept of "thin lines".
+		Thanks to Joey Harrison <jharri1@gmu.edu.>

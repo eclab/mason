@@ -7860,18 +7860,39 @@ Two other variables control how the edge is drawn:
 The {\it shape} variable determines whether the SimpleEdgePortrayal2D draws itself as a line or as a triangle.  It can be set to one of the two constants:
 
 \java{%
-    public static final int SHAPE\_LINE;\\
+    public static final int SHAPE\_THIN\_LINE;\\
     public static final int SHAPE\_LINE\_ROUND\_ENDS;\\
     public static final int SHAPE\_LINE\_SQUARE\_ENDS;\\
     public static final int SHAPE\_LINE\_BUTT\_ENDS;\\
     public static final int SHAPE\_TRIANGLE;
 }
 
-\variable{SHAPE\_LINE} and \variable{SHAPE\_LINE\_ROUND\_ENDS} are the same thing.  
-
 Finally, the {\it baseWidth} works as follows.  The baseWidth determines either the {\bf width of the line} or the {\bf width of the ``from'' end of the triangle}.  By default it is 1.0.  
 
-When drawing as a triangle or a line of non-zero width, you have the option of specifying how the triangle or line width changes when you zoom in or out.  This is called the {\bf scaling} of the edge, and it's one of three constants.  These constants also affect the scaling of the label (discussed later):
+\paragraph{Drawing Thin Lines (the Default)}
+
+\variable{SHAPE\_THIN\_LINE} is the default setting: it means to completely ignore all scaling and width requests and always draw the line as a one-pixel thickness line.  If the line is directed, it will be split into two lines, one with the {\it from} color, and the other with the {\it to} color. 
+
+\paragraph{Drawing More Sophisticated Lines}
+
+You can draw lines that are thicker and have round, square, or butt ends to them using any of \variable{SHAPE\_LINE\_ROUND\_ENDS}, \variable{SHAPE\_LINE\_SQUARE\_ENDS}, or \variable{SHAPE\_LINE\_BUTT\_ENDS}.  The thickness of these lines is determined by a combination of three factors, which are multiplied together:
+
+\begin{itemize}
+\item The {\it weight} of the underlying edge, which is by default 1.0.  This is discussed below in a few paragraphs.
+\item The {\it baseWidth} of the line.  You set this as a constant, and it defaults to 1.0.
+\item The {\it scale} of the portrayal.  See scaling below.  Note that scaling is often a source of unexpectedly thick lines, so that's an important section to read.
+\end{itemize}
+
+These three factors are multiplied by each other to get the thickness of the line.   If the line is directed, it will be split into two lines, one with the {\it from} color, and the other with the {\it to} color. 
+
+
+\paragraph{Drawing Triangles}
+
+You can draw triangles to indicate directed edges, using \variable{SHAPE\_TRIANGLE}.  This differs from the ``sophisticated lines'' above only in one way: while the {\it from} end of the edge is full-width, the taper continues along the edge to the {\it to} end, which is 0 width, thus creating the triangle.
+
+\paragraph{Scaling}
+
+When drawing as a triangle or a ``sophisticated'' line, you have the option of specifying how the triangle or line width changes when you zoom in or out.  This is called the {\bf scaling} of the edge, and it's one of three constants.  These constants also affect the scaling of the label (discussed later):
 
 \java{%
     public static final int NEVER\_SCALE;\\
@@ -7880,18 +7901,13 @@ When drawing as a triangle or a line of non-zero width, you have the option of s
 }
 
 \sidebar{\variable{SCALE\_WHEN\_SMALLER} makes no sense as a name.}{Agreed.}
-The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger or smaller when you zoom in and out as if you're examining it closer.  This is {\it probably} what you want.  An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
+The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger or smaller when you zoom in and out as if you're examining it closer.  This is {\it probably} what you want.  The width of the line will be set to the ratio of pixels to units in the underlying field.  For example, if your field is 100 wide and your NetworkPortrayal is 100 wide, and you're not zoomed in, then the scale is 1.0.  This is often a source of confusion, however, because often demos will have a larger NetworkPortrayal window, which results in a bigger scale even if you're not zoomed in: for example, a 600 pixel wide NetworkPortrayal drawing a 100-unit wide network will result in lines that are six pixels wide.  Keep this in mind: you can always compensate by creating the inverse value (in this case, \(1.0 / 6.0)\) in the the {\it baseWidth} accordingly.
+
+An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
+
+Keep in mind that \variable{SHAPE\_THIN\_LINE} ignores all scaling.
 
 \sidebar{When I print the lines come out too thin.}{If you set \variable{baseWidth} to 0.0, interesting things happen.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something non-zero.}
-
-The width of a line, or of the base of a triangle, is determined as follows.  First, we determine the current {\bf scale}: if we \variable{ALWAYS\_SCALE}, then the scale is equal to the number of pixels in width of a typical  \(1.0 \times 1.0\) object in the underlying Continuous2D or SparseGrid2D (that is, the \variable{info.draw.width}).  If we \variable{NEVER\_SCALE}, then the scale is 1.0.  If we \variable{SCALE\_WHEN\_SMALLER}, then the scale is the maximum of 1.0 and the number of pixels in width of a typical  \(1.0 \times 1.0\) object.   With this in hand, the width of a line or triangle base (in pixels) is simply:
-\[
-\text{\it line or triangle-base thickness in pixels} = \text{\it baseWidth} \times \text{\it scale} \times \text{\it weight}
-\]
-
-... where \variable{weight} is the edge weight, and will be discussed in a minute.
-
-Finally, if you're drawing lines, you can specify 
 
 Various methods can be used to set these values:
 

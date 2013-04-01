@@ -47,12 +47,14 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public static final int ALWAYS_SCALE = 2;
     public double baseWidth = 1.0;
         
+    public static final int SHAPE_THIN_LINE = 0;
+	/** @deprecated Use SHAPE_LINE_ROUND_ENDS */
     public static final int SHAPE_LINE = 0;
-    public static final int SHAPE_LINE_ROUND_ENDS = 0;
-    public static final int SHAPE_LINE_SQUARE_ENDS = 1;
-    public static final int SHAPE_LINE_BUTT_ENDS = 2;
-    public static final int SHAPE_TRIANGLE = 3;
-    public int shape;
+    public static final int SHAPE_LINE_ROUND_ENDS = 1;
+    public static final int SHAPE_LINE_SQUARE_ENDS = 2;
+    public static final int SHAPE_LINE_BUTT_ENDS = 3;
+    public static final int SHAPE_TRIANGLE = 4;
+    public int shape = SHAPE_THIN_LINE;
         
     boolean adjustsThickness;
     
@@ -196,14 +198,29 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 graphics.drawPolygon(xPoints,yPoints,3);  // when you scale out, fillPolygon stops drawing anything at all.  Stupid.
                 }
             }
-        else // shape == SHAPE_LINE
+        else if (shape == SHAPE_THIN_LINE)
+        	{
+            if (fromPaint == toPaint)
+                {
+                graphics.setPaint (fromPaint);
+	            graphics.drawLine(startX, startY, endX, endY);
+                }
+            else
+                {
+                graphics.setPaint( fromPaint );
+                    graphics.drawLine(startX,startY,midX,midY);
+                    graphics.setPaint( toPaint );
+                    graphics.drawLine(midX,midY,endX,endY);
+                }
+        	}
+        else // shape == SHAPE_LINE etc.
             {
             if (fromPaint == toPaint)
                 {
                 graphics.setPaint (fromPaint);
                 double width = getBaseWidth();
-                if (info.precise || width != 0.0)
-                    { 
+                //if (info.precise || width != 0.0)
+                //    { 
                     double scale = info.draw.width;
                     if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                         scale = 1;
@@ -214,15 +231,15 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                     preciseLine.setLine(startXd, startYd, endXd, endYd);
                     graphics.draw(preciseLine);
                     graphics.setStroke(oldstroke);
-                    }
-                else graphics.drawLine (startX, startY, endX, endY);
+                //    }
+                //else graphics.drawLine(startX, startY, endX, endY);
                 }
             else
                 {
                 graphics.setPaint( fromPaint );
                 double width = getBaseWidth();
-                if (info.precise || width != 0.0)
-                    { 
+                //if (info.precise || width != 0.0)
+                //    { 
                     double scale = info.draw.width;
                     if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
                         scale = 1;
@@ -236,13 +253,13 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                     preciseLine.setLine(midXd, midYd, endXd, endYd); 
                     graphics.draw(preciseLine); 
                     graphics.setStroke(oldstroke);
-                    }
-                else
-                    {
-                    graphics.drawLine(startX,startY,midX,midY);
-                    graphics.setPaint( toPaint );
-                    graphics.drawLine(midX,midY,endX,endY);
-                    }
+                //    }
+                //else
+                //    {
+                //    graphics.drawLine(startX,startY,midX,midY);
+                //    graphics.setPaint( toPaint );
+                //    graphics.drawLine(midX,midY,endX,endY);
+                //    }
                 }
             }
                 
