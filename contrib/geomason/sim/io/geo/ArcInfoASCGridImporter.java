@@ -138,8 +138,15 @@ public class ArcInfoASCGridImporter //extends GeomImporter
         {
             for (int x = 0; x < width; x++)
             {
-                currentInt = scanner.nextInt();
-                intGrid2D.set(x, y, currentInt);
+                if (scanner.hasNextInt())
+                {
+                    currentInt = scanner.nextInt();
+                    intGrid2D.set(x, y, currentInt);
+                }
+                else
+                {   // Disturbing if we exhaust width x height ints prematurely
+                    return;
+                }
             }
         }
     }
@@ -161,8 +168,15 @@ public class ArcInfoASCGridImporter //extends GeomImporter
         {
             for (int x = 0; x < width; x++)
             {
-                currentDouble = scanner.nextDouble();
-                doubleGrid2D.set(x, y, currentDouble);
+                if (scanner.hasNextDouble())
+                {
+                    currentDouble = scanner.nextDouble();
+                    doubleGrid2D.set(x, y, currentDouble);
+                }
+                else
+                {   // Disturbing if we exhaust width x height doubles prematurely
+                    return;
+                }
             }
         }
     }
