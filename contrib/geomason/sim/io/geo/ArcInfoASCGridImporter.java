@@ -74,12 +74,15 @@ public class ArcInfoASCGridImporter //extends GeomImporter
             scanner.next(); // skip "cellsize"
             cellSize = scanner.nextDouble();
 
-            // This is the NODATA line, which we don't need.
-            // FIXME: NODATA is an optional line, but almost all
-            // ASCII GRID files contain it; however it might be nice to check
-            // just in case.
-            scanner.next(); // skip "NODATA"
-            int nodata = scanner.nextInt();
+            // Skip the optional NODATA line if it exists
+            if ( scanner.hasNext("NODATA_value") )
+            {
+                // Have to do this twice to get past the NODATA line
+                String nextLine = scanner.nextLine();
+                nextLine = scanner.nextLine();
+
+//                System.out.println("nextLine: " + nextLine);
+            }
 
             // We should now be at the first line of data.  Given how the user
             // wants to interpret the data (i.e., as integers or floats) we'll
@@ -138,15 +141,8 @@ public class ArcInfoASCGridImporter //extends GeomImporter
         {
             for (int x = 0; x < width; x++)
             {
-                if (scanner.hasNextInt())
-                {
-                    currentInt = scanner.nextInt();
-                    intGrid2D.set(x, y, currentInt);
-                }
-                else
-                {   // Disturbing if we exhaust width x height ints prematurely
-                    return;
-                }
+                currentInt = scanner.nextInt();
+                intGrid2D.set(x, y, currentInt);
             }
         }
     }
@@ -168,15 +164,8 @@ public class ArcInfoASCGridImporter //extends GeomImporter
         {
             for (int x = 0; x < width; x++)
             {
-                if (scanner.hasNextDouble())
-                {
-                    currentDouble = scanner.nextDouble();
-                    doubleGrid2D.set(x, y, currentDouble);
-                }
-                else
-                {   // Disturbing if we exhaust width x height doubles prematurely
-                    return;
-                }
+                currentDouble = scanner.nextDouble();
+                doubleGrid2D.set(x, y, currentDouble);
             }
         }
     }
