@@ -68,7 +68,6 @@ public class PSOWithUI extends GUIState
     public void setupPortrayals()
         {
         PSO swarm = (PSO)state;
-        final BasicStroke stroke = new BasicStroke(0.1f);
         final SimpleColorMap map = new SimpleColorMap(
             swarm.fitnessFunctionLowerBound[swarm.fitnessFunction], 1000, Color.blue, Color.red);
          
@@ -92,7 +91,7 @@ public class PSOWithUI extends GUIState
                 {
                 public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
                     {
-                    graphics.setStroke(stroke);
+                    baseWidth = 0.01;
                     toPaint = fromPaint = map.getColor(
                         ((Double[])(((Edge)object).getInfo()))[0].doubleValue());
                     super.draw(object, graphics, info);
