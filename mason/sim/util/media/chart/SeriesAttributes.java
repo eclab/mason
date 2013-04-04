@@ -64,10 +64,10 @@ public abstract class SeriesAttributes extends LabelledList
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),(int)(opacity*255));
         }
 
-    /** Returns the Chart's Plot cast into an XYPlot.  If it's not an XYPlot, this method will generate an error. */
-    public XYPlot getPlot()
+    /** Returns the Chart's Plot. */
+    public Plot getPlot()
         {
-        return generator.getChartPanel().getChart().getXYPlot();
+        return generator.getChartPanel().getChart().getPlot();
         }
                         
     /** Returns the ChartGenerator holding the series this SeriesAttributes is responsible for. */
@@ -79,10 +79,10 @@ public abstract class SeriesAttributes extends LabelledList
         in the Generator. */
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
-                
+    
     public XYItemRenderer getRenderer()
         {
-        return getPlot().getRenderer();
+        return ((XYPlot)getPlot()).getRenderer();
         }
         
     public static final ImageIcon I_DOWN = iconFor("DownArrow.png");
@@ -153,7 +153,18 @@ public abstract class SeriesAttributes extends LabelledList
         manipulators.add(upButton);
         manipulators.add(downButton);
         }
-        
+    
+    boolean plotVisible = true;
+	public void setPlotVisible(boolean val)
+		{
+		plotVisible = val;
+        getRenderer().setSeriesVisible(seriesIndex, new Boolean(val));
+		}
+	
+	public boolean isPlotVisible()
+		{
+		return plotVisible;
+		}
         
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()
@@ -170,8 +181,7 @@ public abstract class SeriesAttributes extends LabelledList
             {
             public void actionPerformed(ActionEvent e)
                 {
-                getRenderer().setSeriesVisible(getSeriesIndex(),
-                    new Boolean(check.isSelected()));  // why in the WORLD is it Boolean?
+                setPlotVisible(check.isSelected());
                 }
             });
 

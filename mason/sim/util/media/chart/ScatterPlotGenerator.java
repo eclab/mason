@@ -31,7 +31,7 @@ import com.lowagie.text.pdf.*;
     import com.itextpdf.text.pdf.*;
 */
 
-public class ScatterPlotGenerator extends ChartGenerator
+public class ScatterPlotGenerator extends XYChartGenerator
     {
     public void removeSeries(int index)
         {

@@ -40,7 +40,7 @@ import com.lowagie.text.pdf.*;
    the generator to properly update the chart to reflect changes the user has made to its display.
 */
 
-public class HistogramGenerator extends ChartGenerator
+public class HistogramGenerator extends XYChartGenerator
     {
     HistogramType histogramType = HistogramType.FREQUENCY;
 
@@ -81,7 +81,6 @@ public class HistogramGenerator extends ChartGenerator
         // histogram facility doesn't have a way to remove or move elements.  Stupid stupid stupid.
 
         SeriesAttributes[] sa = getSeriesAttributes();
-        XYPlot xyplot = (XYPlot)(chart.getPlot());
         HistogramDataset dataset = new HistogramDataset();
         dataset.setType(histogramType);
                 
@@ -98,7 +97,7 @@ public class HistogramGenerator extends ChartGenerator
         {
         // buildChart is called by super() first
                 
-        LabelledList list = new LabelledList("Show Histograms...");
+        LabelledList list = new LabelledList("Show Histogram...");
         DisclosurePanel pan1 = new DisclosurePanel("Show Histogram...", list);
                 
         final HistogramType[] styles = new HistogramType[] 

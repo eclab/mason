@@ -39,7 +39,7 @@ import com.lowagie.text.pdf.*;
    the generator to properly update the chart to reflect changes the user has made to its display.
 */
 
-public class TimeSeriesChartGenerator extends ChartGenerator
+public class TimeSeriesChartGenerator extends XYChartGenerator
     {
     public void removeSeries(int index)
         {
@@ -52,7 +52,7 @@ public class TimeSeriesChartGenerator extends ChartGenerator
         {
         super.moveSeries(index, up);
                 
-        if ((index > 0 && up) || (index < getSeriesDataset().getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
+        if ((index > 0 && up) || (index < getSeriesCount() - 1 && !up))  // it's not the first or the last given the move
             {
             XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
             // this requires removing everything from the dataset and resinserting, duh
