@@ -27,8 +27,7 @@ import sim.engine.Steppable;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.gui.SimpleColorMap;
-import sim.util.media.chart.ChartGenerator;
-import sim.util.media.chart.TimeSeriesChartGenerator;
+import sim.util.media.chart.*;
 
 public class SickStudentsModelWithUI extends GUIState {
 
@@ -180,8 +179,8 @@ public class SickStudentsModelWithUI extends GUIState {
         diseaseTimeSeriesChart.setTitle("Disease Statistics");
         diseaseTimeSeriesChart.setDomainAxisLabel("Days");
         diseaseTimeSeriesChart.setRangeAxisLabel("Proportion of Students");
-        diseaseTimeSeriesChart.addSeries(susceptibleSeries, null).setStrokeColor(Color.blue);
-        diseaseTimeSeriesChart.addSeries(infectedSeries, null).setStrokeColor(Color.red);
+        ((TimeSeriesAttributes)(diseaseTimeSeriesChart.addSeries(susceptibleSeries, null))).setStrokeColor(Color.blue);
+        ((TimeSeriesAttributes)(diseaseTimeSeriesChart.addSeries(infectedSeries, null))).setStrokeColor(Color.red);
         diseaseTimeSeriesChart.addSeries(recoveredSeries, null);
 
         diseaseTimeSeriesChart.setForeground(Color.black);

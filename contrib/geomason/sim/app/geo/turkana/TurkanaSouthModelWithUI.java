@@ -27,7 +27,7 @@ import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.gui.SimpleColorMap;
-import sim.util.media.chart.TimeSeriesChartGenerator;
+import sim.util.media.chart.*;
 
 /*
  * TurkanaSouthModelWithUI
@@ -156,7 +156,7 @@ public class TurkanaSouthModelWithUI extends GUIState
         populationSeries = new XYSeries("Population");
         populationStatsChart = new TimeSeriesChartGenerator();
         populationStatsChart.setTitle("Population Statistics");
-        populationStatsChart.addSeries(populationSeries, null).setStrokeColor(Color.blue);
+        ((TimeSeriesAttributes)(populationStatsChart.addSeries(populationSeries, null))).setStrokeColor(Color.blue);
         populationStatsChart.setXAxisLabel("Time in months");
         populationStatsChart.setYAxisLabel("Population");
 
