@@ -54,8 +54,8 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
                 {
                 // take control
                 getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-                getGenerator().setYAxisLabel("Y " + properties.getName(index));
-                getGenerator().setXAxisLabel("X " + properties.getName(index));
+                ((XYChartGenerator)getGenerator()).setYAxisLabel("Y " + properties.getName(index));
+                ((XYChartGenerator)getGenerator()).setXAxisLabel("X " + properties.getName(index));
                 }
 
             // add our series

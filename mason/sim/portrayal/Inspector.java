@@ -214,6 +214,7 @@ public abstract class Inspector extends JPanel
                 stopperHolder[0] = null;
                 }
             };
+        frame.getRootPane().putClientProperty("Window.style", "small");  // on the Mac
 
         frame.setTitle(getTitle());
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

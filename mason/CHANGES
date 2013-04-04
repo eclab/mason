@@ -2546,3 +2546,9 @@ Version 17
 		described earlier.  Wasn't returning Bags in some cases.
 	Further modifications to SimpleEdgePortrayal2D, adding in the concept of "thin lines".
 		Thanks to Joey Harrison <jharri1@gmu.edu.>
+	Antialiasing option removed from charting: they're now all antialiased.
+	Added Bar chart and pie chart facilities
+	Added (untested) SwitchedPortrayal3D
+	On Macs, inspectors now have small title bars
+	On Linux, FastValueGridPortrayal2D now uses stretched buffering like Macs
+	addSeries returns just SeriesAttributes on all ChartGenerators

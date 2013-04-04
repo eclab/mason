@@ -335,7 +335,7 @@ public class BarChartGenerator extends PieChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
- 	BarChartSeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
+ 	SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
         {
         int i = getSeriesCount();
         
@@ -354,7 +354,7 @@ public class BarChartGenerator extends PieChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
-    public BarChartSeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)
+    public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)
         {
         HashMap map = convertIntoAmountsAndLabels(objs);
         String[] labels = revisedLabels(map);

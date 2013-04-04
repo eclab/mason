@@ -8943,7 +8943,7 @@ Collectively, these methods are:
 \subsection{Charting Property Inspectors}
 \label{sim.portrayal.inspector.ChartingPropertyInspector}
 
-\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides three Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
+\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides five Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
 
 \java{%
 public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
@@ -8959,7 +8959,13 @@ The current Charting Property Inspectors are:
 \java{%
 public static final int DEFAULT\_BINS = 8;
 }
+
+\item \Class{sim.portrayal.inspector.BarChartChartingPropertyInspector} produces one or more bar charts of various kinds which change each iteration.  This class is capable of inspecing (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
+
+\item \Class{sim.portrayal.inspector.PieChartChartingPropertyInspector} produces one or more pie charts which change each iteration.  This class is capable of inspecing (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
+
 \end{itemize}
+
 
 Each PropertyInspector is created using the same constructors: the superclass versions are shown here:
 
@@ -10381,6 +10387,7 @@ In 2D, Wrapper Simple Portrayals held subsidiary portrayals as {\it children} an
 \item \class{sim.portrayal3d.simple.LabelledPortrayal3D} adds a textual label to its child.  It's the rough equivalent of \class{sim.portrayal.simple.LabelledPortrayal2D}.
 \item \class{sim.portrayal3d.simple.TransformedPortrayal3D} transforms its child through an Affine Transform.  It's the rough equivalent of \class{sim.portrayal.simple.TransformedPortrayal2D} (but without the heavy downsides).
 \item \class{sim.portrayal3d.simple.SharedPortrayal3D} allows sharing of the child's scene graph for multiple objects, potentially saving some memory.
+\item \class{sim.portrayal3d.simple.SwitchedPortrayal3D} allows displaying or hiding the child's scene graph depending on the state of the child.
 \end{itemize}
 
 Though they are not (presently) subclasses of a common class other than SimplePortrayal3D, 3D Wrapper Simple Portrayals all share certain methods in common due to their use of children.  Here are the versions of those methods for CircledPortrayal3D:
@@ -10507,6 +10514,34 @@ For this class to work properly, you should build a new one each time the simula
 
 You can't pick the objects in a Shared Group.  Thus SharedPortrayal3D has picking turned off.  This has certain implications for some methods: \method{getInspector(...)}, \method{getName(...)}, and \method{setSelected(...)} are implemented but unlikely to ever be called.
 
+
+\paragraph{Switches}
+
+MASON allows you to hide or show the scene graph associated with an object in a field based on that object's state, using \Class{sim.portrayal3d.SwitchedPortrayal3D}.   This class is called this because internally it uses a Java3D Switch class.  {\bf Warning:} this class has not been tested much.
+
+The rule for determining if the underlying object should have its scene graph displayed is as follows:
+
+\begin{enumerate}
+\item If the object is null, display the scene graph.
+\item Else If the object is a Number, display the scene graph if the value is non-zero.
+\item Else If the object is Valuable, display the scene graph if the value is non-zero.
+\item Otherwise, display the scene graph.
+\end{enumerate}
+
+You can override this method to customize things as you like:
+
+\begin{methods}{\class{sim.portrayal3d.SwitchedPortrayal3D}}
+\mthd{public boolean getShowsChild(Object obj)} Returns whether a given object should have its scene graph displayed.
+\end{methods}
+
+The constructor for SwitchedPortrayal3D is standard:
+
+\begin{methods}{\class{sim.portrayal3d.SwitchedPortrayal3D} Constructor}
+\mthd{public SwitchedPortrayal3D(SimplePortrayal3D child)} Creates a SwitchedPortrayal3D from the given child.
+\end{methods}
+
+
+
 \subsection{Objects Acting As Their Own Simple Portrayals}
 
 Don't do it.
@@ -10530,13 +10565,13 @@ Simple Portrayals in 3D really have one major task: create a scene graph and han
 
 The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.   Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
 
+If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
+
 \begin{wrapfigure}{r}[0in]{2in}
 \vspace{0em}\hfill\includegraphics[width=2in]{ColorCube.png}
 \caption{Our ColorCube Portrayal.}
 \vspace{0em}
 \end{wrapfigure}
-
-If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
 
 And that's more or less all there's to it.  Here's an example using the \class{com.sun.j3d.utils.geometry.ColorCube} class, which defines a simple Shape3D in the form of a multicolored cube.  In this example we create a cube and then leave it alone\,---\,thecube doesn't change size or color, etc. to reflect some feature of the underlying model object.  It just draws it as a cube.  This example is pickable, and creates a LocationWrapper as necessary.  Note the various Java3D capability bits turned on (both explicitly and via \method{setPickableFlags(...)}): in more complex scene graphs, getting all the bits turned on to allow the object to be pickable or change in color or appearance, etc., can be a frustrating experience of trial and error.  It's Java3D's worst feature.
 
@@ -11101,7 +11136,7 @@ The other method takes a JFreeChart chart, a width and height for that chart, an
 \label{sim.util.media.chart.SeriesAttributes}
 
 
-MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) display Histograms, Time-Series Charts, and Scatter Plots of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
+MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) display Histograms, Time-Series Charts, Scatter Plots, Bar Charts, and Pie Charts of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
 
 This package, which is laid out in Figure \ref{ChartUML}, provides three kinds of items:
 
@@ -11111,12 +11146,14 @@ This package, which is laid out in Figure \ref{ChartUML}, provides three kinds o
 \item {\bf Data Cullers} are simple objects whose job is to reduce a series to a more manageable size as it has grown over time, so fewer points are displayed on the chart.  Data Cullers are presently only used for Time Series Charts.
 \end{itemize}
 
-Chart Generators and Series Attributes are presently provided for three kinds of charts:
+Chart Generators and Series Attributes are presently provided for five kinds of charts:
 
 \begin{itemize}
 \item Time Series Charts
 \item Histograms
 \item Scatter Plots
+\item Bar Charts
+\item Pie Charts
 \end{itemize}
 
 \begin{figure}[t]
@@ -11169,11 +11206,12 @@ Like Display2D and Display3D, ChartGenerator can sprout its own JFrame.  You can
 \mthd{public JFreeChart getChart() } Returns the ChartGenerator's JFreeChart.
 \end{methods}
 
-JFreeChart stores all of its series data is a \class{org.jfree.data.xy.XYDataset} of some sort.  You can access the ChartGenerator's dataset with 
+JFreeChart stores all of its series data is a \class{org.jfree.data.general.Dataset} of some sort.  You can access the ChartGenerator's dataset with:
 
 \begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
-\mthd{public void setSeriesDataset(XYDataset obj)} Sets the XYDataset used by the ChartGenerator.
-\mthd{public XYDataset getSeriesDataset()} Returns the XYDataset used by the ChartGenerator.
+\mthd{public void setSeriesDataset(Dataset obj)} Sets the Dataset used by the ChartGenerator.
+\mthd{public Dataset getSeriesDataset()} Returns the Dataset used by the ChartGenerator.
+\mthd{public int getSeriesCount()} Returns the number of series in the dataset. Different datasets store series, and compute their number, in different ways.
 \end{methods}
 
 The ChartGenerator has both a {\bf global attributes} area (for widgets affecting the whole ChartGenerator) and a {\bf series} or {\bf local attributes} area (for SeriesAttributes objects, one per chart being displayed in the ChartGenerator).  You can add to both of these; and you can also move the series attributes around relative to one another, which changes the order of display of their respective charts.
@@ -11189,9 +11227,28 @@ The ChartGenerator has both a {\bf global attributes} area (for widgets affectin
 \mthd{public void moveSeries(int index, boolean up)} Moves a series attribute one step up or down in the series attributes list.
 \end{methods}
 
-Notice what's missing: there's now way to add or retrieve series attributes.  This is because JFreeChart isn't consistent in how it handles different kinds of charts.  For example, histograms have a completely different API from time series.  As a result, adding or accessing series attributes is handled in the concrete subclasses of ChartGenerator. 
+Notice what's missing: there's now way to add or retrieve series attributes.  This is because JFreeChart isn't consistent in how it handles different kinds of charts.  For example, histograms have a completely different API from time series, as do pie charts and bar charts.  As a result, adding or accessing series attributes is handled in the concrete subclasses of ChartGenerator. 
 
-A number of global attributes can be set directly too:
+A few global attributes can be set directly too:
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void addLegend()} Adds a legend.  Once this is done, it can't be undone.
+\mthd{public void setTitle(String title)} Sets the title displayed.
+\mthd{public String getTitle()} Returns the title displayed.
+\end{methods}
+
+
+Finally, ChartGenerator has methods for starting and stopping movies, and a special method which is called when the window is disposed.
+
+\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
+\mthd{public void startMovie()} Start a movie.
+\mthd{public void stopMovie()} Finish and write out a previously started movie.
+\mthd{public void quit()} Called when the JFrame is being disposed to give the ChartGenerator a chance to clean itself up.
+\end{methods}
+
+\paragraph{XYChartGenerators}
+
+A number of charts are meant to be displayed on a graph with two axes: these include histograms, time series, and scatter plots.  ChartGenerators of these kinds subclass from a further abstract class called \Class{sim.util.media.chart.XYChartGenerator} so as to group together redundant functionality.  These generators have additional methods meant to manipulate their axes:
 
 \begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
 \mthd{public void setXAxisLogScaled(boolean isLogScaled)} Sets whether or not the X axis is on a log scale.
@@ -11202,24 +11259,14 @@ A number of global attributes can be set directly too:
 \mthd{public String getXAxisLabel()} Returns the label of the X axis.
 \mthd{public void setYAxisLabel(String val)}  Sets the label of the Y axis.
 \mthd{public String getYAxisLabel()} Returns the label of the Y axis.
-\mthd{public void addLegend()} Adds a legend.  Once this is done, it can't be undone.
 \mthd{public void setYAxisRange(double lower, double upper)} Sets the numerical range of the Y axis.
 \mthd{public void setXAxisRange(double lower, double upper)} Sets the numerical range of the X axis.
-\mthd{public void setTitle(String title)} Sets the title displayed.
-\mthd{public String getTitle()} Returns the title displayed.
 \end{methods}
 
-Finally, ChartGenerator has methods for starting and stopping movies, and a special method which is called when the window is disposed.
-
-\begin{methods}{\class{sim.util.media.chart.ChartGenerator}}
-\mthd{public void startMovie()} Start a movie.
-\mthd{public void stopMovie()} Finish and write out a previously started movie.
-\mthd{public void quit()} Called when the JFrame is being disposed to give the ChartGenerator a chance to clean itself up.
-\end{methods}
 
 \paragraph{Making a ChartGenerator}
 
-Want to create, say, a PieChartGenerator?  Here are some hints.  Most ChartGenerator subclasses do the following:
+Want to create, say, a BoxPlotChartGenerator?  Here are some hints.  Most ChartGenerator subclasses do the following:
 
 \begin{itemize}
 \item Modify the global attributes in their constructor to add global attributes appropriate to the kind of chart.
@@ -11230,7 +11277,7 @@ Want to create, say, a PieChartGenerator?  Here are some hints.  Most ChartGener
 \item Possibly override the \method{update(...)} method to update the chart when asked.  Some ChartGenerators don't override this method because their charting facility automatically updates stuff.  Others, like HistogramChartGenerator, must override it.
 \end{itemize}
 
-I am afraid to say that dealing with the complexity of JFreeChart is a bit of a black art.  But the above should give you some idea of what's involved.  Beyond that, it's best to read the source code for HistogramChartGenerator, TimeSeriesChartGenerator, and perhaps ScatterPlotChartGenerator.
+I am afraid to say that dealing with the complexity of JFreeChart is a bit of a black art.  But the above should give you some idea of what's involved.  Beyond that, it's best to read the source code for HistogramChartGenerator, TimeSeriesChartGenerator, PieChartGenerator, and perhaps ScatterPlotChartGenerator.
 
 Below are certain internal methods for updating a chart, adding or removing series attributes, or building the chart, which you may find handy in implementing the items above.  Note the various \method{update(...)} methods, which take {\bf keys}.  By passing in (for example) the current MASON simulation steps as a key, this mechanism allows you to ensure that the chart won't update itself if the simulation hasn't actually iterated.  You can also force an update regardless by passing in:
 
@@ -11259,7 +11306,7 @@ Like all generators, the TimeSeriesChartGenerator must implement some method for
 Unlike other generators, the TimeSeriesChartGenerator has a {\bf data culler} (we'll get to them in Section \ref{sim.util.media.chart.DataCuller}) which trims the size of the series so it doesn't overwhelm drawing.  The default data culler used is a \class{sim.util.media.chart.MinGapDataCuller}, which deletes series data which is most crowded in time with respect to its neighbors.  This is usually a good choice.
 
 \begin{methods}{\class{sim.util.media.chart.TimeSeriesChartGenerator}}
-\mthd{public TimeSeriesAttributes addSeries(XYSeries series, SeriesChangeListener stopper)} Adds a series to the chart, and produces a TimeSeriesAttributes controlling that series.
+\mthd{public SeriesAttributes addSeries(XYSeries series, SeriesChangeListener stopper)} Adds a series to the chart, and produces a TimeSeriesAttributes controlling that series.
 \mthd{public void setDataCuller(DataCuller culler)} Sets the current data culler. If \variable{null} is passed in, no data is culled (this is probably not as good an idea as you think).
 \mthd{public DataCuller getDataCuller()} returns the current data culler.
 \end{methods}
@@ -11277,7 +11324,7 @@ JFreeChart isn't as fast as MASON.  So if you're debating whether to use a scatt
 ScatterPlotGenerator also lets you revise the series manually via \method{updateSeries(...)}.
 
 \begin{methods}{\class{sim.util.media.chart.ScatterPlotGenerator}}
-\mthd{public ScatterPlotSeriesAttributes addSeries(double[][] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.  The name of the series is also provided.
+\mthd{public SeriesAttributes addSeries(double[][] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.  The name of the series is also provided.
 \mthd{public void updateSeries(int index, double[][] values)} Modifies the series data of a given series in the chart.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}. 
 \end{methods}
 
@@ -11297,12 +11344,89 @@ org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1
 }
 
 \begin{methods}{\class{sim.util.media.chart.HistogramGenerator}}
-\mthd{public HistogramSeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
+\mthd{public SeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
 \mthd{public void updateSeries(int index, double[] values)} Modifies the series data of a given series in the chart.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.
 \mthd{public void setHistogramType(HistogramType type)} Sets the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
 \mthd{public HistogramType getHistogramType(HistogramType type)} Returns the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
 \end{methods}
 
+\paragraph{Generating Pie Charts}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-1em}\hfill\includegraphics[width=3in]{PieChart.png}\vspace{-1.5em}\end{wrapfigure}
+
+Pie Charts are created using \Class{sim.util.media.chart.PieChartGenerator}.  As was the case for histograms and scatter plots, MASON replaces the entire Pie Chart dataset each time with a custom update method.  A series in a Pie Chart is an array of objects with names (via their \method{toString()} methods).  MASON divides the objects into groups of objects that are \method{equal()} to one another, then plots on the Pie Chart the relative proportions of these groups.  
+
+You can create a Pie Chart programmatically this way, or you can alternatively create a Pie Chart by passing in an array of labels and a corresponding array of amounts (as doubles), which will be normalized to 1.  
+
+\begin{methods}{\class{sim.util.media.chart.PieChartGenerator}}
+\mthd{public SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)} Adds a series with the given series name, with the provided amounts and labels.
+\mthd{public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\end{methods}
+
+MASON can plot multiple series (hence multiple pie charts) on the same chart, and if these series have similar groups it will plot them with the same colors.  However, to protect MASON from bombing if your array is very large and has many unique elements (an array of 1000 unique words, say), it will allow no more than \variable{MAXIMUM\_PIE\_CHART\_ITEMS} unique kinds of groups among all the series in the chart:
+
+\java{%
+public static final int MAXIMUM\_PIE\_CHART\_ITEMS = 20;
+}
+
+If there are too many, the chart will be blank, and its title will indicate that there are too many unique items.  You'll have to delete the offending series.  To help them determine if the number of groups will be exceeded, Pie Charts have one special method:
+
+\begin{methods}{\class{sim.util.media.chart.PieChartGenerator}}
+\mthd{public int getProspectiveSeriesCount(Object[] objs)} Returns the expected number of unique groups among the provided objects.
+\end{methods}
+
+There are presently few options available to you for Pie Charts: notably, you cannot specify the colors or the order in which elements are presented (though they're sorted alphabetically by their labels).
+
+Because of internal misfeatures in JFreeChart that are not even worth getting into, Pie Charts must provide a way for String-like objects to be unique even if they contain the same string text.  It does this with a simple utility class called \Class{sim.util.media.chart.UniqueString} which is used internally.
+
+
+
+
+
+
+\begin{figure}[t]
+\includegraphics[width=3in]{BarChart0.png}\hfill\includegraphics[width=3in]{BarChart1.png}\\
+\\
+\hfill\includegraphics[width=3in]{BarChart2.png}\hfill\includegraphics[width=3in]{BarChart3.png}
+\caption{Four Bar Chart examples, showing horizontal and vertical separated charts, a stacked chart, and a stacked percentage chart.  All four examples use the same data.}
+\end{figure}
+
+\paragraph{Generating Bar Charts}
+
+Bar Charts are created using \Class{sim.util.media.chart.BarChartGenerator}, a subclass of \class{sim.util.media.chart.PieChartGenerator}.  Bar Charts are very much like Pie Charts: they replace the entire dataset each time, and a series is an array of objects with names (via their \method{toString()} methods).  Like Pie Charts, MASON divides the objects into groups of objects that are \method{equal()} to one another, then plots on the Bar Chart the relative proportions of these groups.  Alternatively, you can provide labels and amounts directly:
+
+\begin{methods}{\class{sim.util.media.chart.BarChartGenerator}}
+\mthd{public SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)} Adds a series with the given series name, with the provided amounts and labels.
+\mthd{public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The bar chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\end{methods}
+
+Bar Charts also, like Pie Charts, suffer from too many unique groups of objects, and have a maximum value: \variable{MAXIMUM\_BAR\_CHART\_ITEMS} unique kinds of groups among all the series in the chart:
+
+\java{%
+public static final int MAXIMUM\_BAR\_CHART\_ITEMS = 20;
+}
+
+Unlike Pie Charts, Bar Charts have axes like the various X-Y plotting charts (Time Series, Histograms, etc.).  As a result, they too have certain methods for manipulating axes:
+
+\begin{methods}{\class{sim.util.media.chart.BarChartGenerator}}
+\mthd{public void setXAxisLabel(String val)} Sets the label for the X Axis.
+\mthd{public String getXAxisLabel()} Returns the label for the X Axis.
+\mthd{public void setYAxisLabel(String val)} Sets the label for the Y Axis.
+\mthd{public String getYAxisLabel()} Returns the label for the Y Axis.
+\end{methods}
+
+The user can change whether a bar chart is drawn horizontally or vertically: if horizontally, the X and Y axes will be swapped.  Horizontal and vertical bar charts were displayed earlier.
+
+The user can also change whether grid lines are plotted, as well as the kind of the bar chart.  The bar chart styles, shown earlier, are one of:
+
+\begin{itemize}
+\item Separated.  An ordinary bar chart with each group in its own bar.
+\item Stacked.  A bar chart with all groups in a series stacked together in one bar.
+\item Percentage.  A bar chart with all groups in a series stacked together in one bar, and normalized to 1.0.
+\end{itemize}
+
+As we the case for Pie Charts, you don't have any control over the colors at present.
 
 \subsection{Series Attributes}
 \label{sim.util.media.chart.SeriesAttributes}
@@ -11488,6 +11612,21 @@ HistogramSeriesAttributes allows the user to modify the following features of th
 \mthd{public void setNumBins(int val)} Sets the number of bins in the histogram.
 \mthd{public int getNumBins()} Returns the number of bins in the histogram.
 \end{methods}
+
+
+
+
+\paragraph{Attributes for Pie Charts and Bar Charts}
+
+Pie and Bar Charts at present have basically no per-series attributes beyond the series name.   The constructor for \Class{sim.util.media.chart.PieChartSeriesAttributes} is straightforward:
+
+\begin{methods}{\class{sim.util.media.chart.PieChartSeriesAttributes} Constructor}
+\mthd{public PieChartSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, String[] labels,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
+Creates a PieChartSeriesAttributes attached to the given generator, with the provided name and series data in the form of labels and their associated values (amounts), and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  
+\end{methods}
+
+\Class{sim.util.media.chart.BarChartSeriesAttributes} has an identical constructor (as it is a subclass of PieChartSeriesAttributes).
+
 
 \subsection{Data Cullers}
 \label{sim.util.media.chart.DataCuller}

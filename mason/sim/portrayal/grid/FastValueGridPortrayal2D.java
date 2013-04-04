@@ -31,7 +31,7 @@ import sim.util.gui.ColorMap;
 
    FastValueGridPortrayal2D can draw a grid in two ways.  First, it can draw each of the rects individually ("USE_BUFFER").  Second, it can create a bitmap the size of the grid (one pixel per grid location), poke the colors into the bitmap, then stretch the bitmap over the area and draw it ("DONT_USE_BUFFER").  You can specify the method by calling the <b>setBuffering()</b> method; optionally you can just let FastValueGridPortrayal2D guess which to use ("DEFAULT").  But you should know what you're doing, as methods can be <i>much</i> faster than each other depending on the situation.  Use the following as guides
 
-   <dl><dt><b>MacOS X</b>
+   <dl><dt><b>MacOS X and X Windows</b>
    <dd>USE_BUFFER is much faster than DONT_USE_BUFFER in all cases, but can draw incorrectly aliased ("fuzzed out") rectangles when writing to media (a movie or a snapshot).  The DEFAULT is for MacOS X is set to USE_BUFFER in ordinary drawing, and DONT_USE_BUFFER when writing to media.
    <dt><b>Windows and X Windows</b>
    <dd>If you're not using any transparency (alpha), then DONT_USE_BUFFER is a tad faster than USE_BUFFER.  But if you're using transparency, then DONT_USE_BUFFER is <i>very</i> slow -- in this case, try USE_BUFFER.  Note however that in any case USE_BUFFER requires a <i>lot</i> of memory on Windows and X Windows due to poor implementation by Sun.  You'll want to increase the default memory capacity, and expect occasional pauses for full garbage collection.  You can test how often full garbage collection by running with <tt><b>java -verbose:gc ...</b></tt> and looking at how often
@@ -83,7 +83,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
         // We can either draw lots of rects, or we can pixels to a small bitmap, then
         // stretch the bitmap into rects using drawImage.  Which technique is faster depends
         // on the OS unfortunately.  Solaris prefers the bitmap.  Linux prefers the rects
-        // very much.  Windows prefers the rects,
+        // very much [ NOTE: Not true any more ].  Windows prefers the rects,
         // except for small draws where bitmaps have a slight edge (which we'll not consider).
         // MacOS X prefers bitmaps, but will not stretch and draw to an image buffer
         // without doing fancy-pants interpolation which looks horrible, so we have to check for that.
@@ -104,7 +104,10 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
         else if (sim.display.Display2D.isWindows)
             return (immutableField);
         else // it's Linux or Solaris
-            return false;
+            {
+            return (graphics.getDeviceConfiguration().
+                getDevice().getType() != GraphicsDevice.TYPE_IMAGE_BUFFER);
+            }
         }
         
     BufferedImage buffer;

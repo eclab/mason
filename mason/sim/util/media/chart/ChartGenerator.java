@@ -663,7 +663,7 @@ public abstract class ChartGenerator extends JPanel
 
 
         
-    /** @deprecated, use createFrame() */
+    /** @deprecated use createFrame() */
     public JFrame createFrame(Object simulation)
         {
         return createFrame();

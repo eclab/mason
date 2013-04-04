@@ -176,7 +176,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             {
             ChartGenerator g = (ChartGenerator)(charts.objs[i]);
             if (!validChartGenerator(g))  // I can't use this chart
-                { charts.remove(g); i--; }
+                { charts.remove(g); i--; 
+                System.err.println(g);
+                }
             }
 
         if( charts.numObjs == 0 )
@@ -309,7 +311,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         generator.addGlobalAttribute(pan);  // it'll be added last
                 
         getCharts(simulation).add( generator );                 // put me in the global charts list
-        chartFrame = generator.createFrame();
+        chartFrame = generator.createFrame(true);
         chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);  //  by default it's HIDE_ON_CLOSE
 
         WindowListener wl = new WindowListener()

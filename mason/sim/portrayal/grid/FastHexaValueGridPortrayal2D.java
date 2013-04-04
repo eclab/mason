@@ -82,7 +82,10 @@ public class FastHexaValueGridPortrayal2D extends HexaValueGridPortrayal2D
         else if (sim.display.Display2D.isWindows)
             return (immutableField);
         else // it's Linux or Solaris
-            return false;
+            {
+            return (graphics.getDeviceConfiguration().
+                getDevice().getType() != GraphicsDevice.TYPE_IMAGE_BUFFER);
+            }
         }
         
     BufferedImage buffer;

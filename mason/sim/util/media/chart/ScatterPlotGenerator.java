@@ -78,7 +78,7 @@ public class ScatterPlotGenerator extends XYChartGenerator
         setSeriesDataset(dataset);
         }
 
-    public ScatterPlotSeriesAttributes addSeries(double[][] values, String name, final org.jfree.data.general.SeriesChangeListener stopper)
+    public SeriesAttributes addSeries(double[][] values, String name, final org.jfree.data.general.SeriesChangeListener stopper)
         {
         DefaultXYDataset dataset = (DefaultXYDataset)(getSeriesDataset());
         int i = dataset.getSeriesCount();

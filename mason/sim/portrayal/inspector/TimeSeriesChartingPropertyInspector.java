@@ -68,8 +68,8 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                 {
                 // take control
                 getGenerator().setTitle("" + properties.getName(index) + " of " + properties.getObject());
-                getGenerator().setYAxisLabel("" + properties.getName(index));
-                getGenerator().setXAxisLabel("Time");
+                ((XYChartGenerator)getGenerator()).setYAxisLabel("" + properties.getName(index));
+                ((XYChartGenerator)getGenerator()).setXAxisLabel("Time");
                 }
                         
             chartSeries = new XYSeries( properties.getName(index), false );
