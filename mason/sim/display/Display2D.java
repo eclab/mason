@@ -754,7 +754,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public static final boolean isWindows = isWindows();
 
     /** Set to the version number */
-    public static final String javaVersion = getVersion();
+    public static final String javaVersion = getJavaVersion();
 
     static boolean isMacOSX() 
         {
@@ -774,7 +774,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         catch (Throwable e) { return false; }
         }
 
-    static String getVersion()
+    static String getJavaVersion()
         {
         try
             {

@@ -195,7 +195,8 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
             if (b.contains(object))
                 return new Int2D(loc.x, loc.y);
             }
-        field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+        //field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+        field.getMooreLocations(loc.x, loc.y, SEARCH_DISTANCE, Grid2D.TOROIDAL, false, xPos, yPos);  // we remove the origin: there might be a big useless bag there
         for(int i=0;i<xPos.numObjs;i++)
             {
             if (grid[xPos.get(i)][yPos.get(i)] != null)

@@ -228,7 +228,8 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         Object[][] grid = field.field;
         if (grid[loc.x][loc.y] == object)
             return new Int2D(loc.x, loc.y);
-        field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+        //field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
+        field.getMooreLocations(loc.x, loc.y, SEARCH_DISTANCE, Grid2D.TOROIDAL, true, xPos, yPos);  // we include the origin but it doesn't matter
         for(int i=0;i<xPos.numObjs;i++)
             if (grid[xPos.get(i)][yPos.get(i)] == object) return new Int2D(xPos.get(i), yPos.get(i));
         return null;

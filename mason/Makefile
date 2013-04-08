@@ -7,9 +7,9 @@
 
 JAVAC = javac ${FLAGS}
 
-FLAGS = -target 1.4 -source 1.4 -g -nowarn -Xlint:deprecation
+FLAGS = -target 1.6 -source 1.6 -g -nowarn -Xlint:deprecation
 
-VERSION = 16
+VERSION = 17
 
 
 # Main java files, not including the 3D stuff

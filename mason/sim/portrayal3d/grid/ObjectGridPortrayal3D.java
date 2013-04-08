@@ -329,7 +329,8 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
         Object[][][] grid = field.field;
         if (grid[loc.x][loc.y][loc.z] == object)
             return new Int3D(loc.x, loc.y, loc.z);
-        field.getNeighborsMaxDistance(loc.x, loc.y, loc.z, SEARCH_DISTANCE, true, xPos, yPos, zPos);
+        //field.getNeighborsMaxDistance(loc.x, loc.y, loc.z, SEARCH_DISTANCE, true, xPos, yPos, zPos);
+        field.getMooreLocations(loc.x, loc.y, loc.z, SEARCH_DISTANCE, Grid2D.TOROIDAL, true, xPos, yPos, yPos);  // we include the origin but it doesn't matter
         for(int i=0;i<xPos.numObjs;i++)
             if (grid[xPos.get(i)][yPos.get(i)][zPos.get(i)] == object) return new Int3D(xPos.get(i), yPos.get(i), zPos.get(i));
         return null;
