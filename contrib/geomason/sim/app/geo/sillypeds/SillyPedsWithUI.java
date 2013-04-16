@@ -25,7 +25,8 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.portrayal.DrawInfo2D;
-import sim.portrayal.grid.ObjectGridPortrayal2D;
+//import sim.portrayal.grid.ObjectGridPortrayal2D;
+import sim.portrayal.grid.FastObjectGridPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.gui.ColorMap;
 import sim.util.media.chart.TimeSeriesChartGenerator;
@@ -44,9 +45,9 @@ public class SillyPedsWithUI extends GUIState
     ArrayList<JFrame> displayFrames = new ArrayList<JFrame>();
     int numFrames = 1; // set when SillyPeds instance is read in
     // portrayal data
-    ArrayList<ObjectGridPortrayal2D> traces = new ArrayList<ObjectGridPortrayal2D>();
-    ArrayList<ObjectGridPortrayal2D> floors = new ArrayList<ObjectGridPortrayal2D>();
-    ArrayList<ObjectGridPortrayal2D> people = new ArrayList<ObjectGridPortrayal2D>();
+    ArrayList<FastObjectGridPortrayal2D> traces = new ArrayList<FastObjectGridPortrayal2D>();
+    ArrayList<FastObjectGridPortrayal2D> floors = new ArrayList<FastObjectGridPortrayal2D>();
+    ArrayList<FastObjectGridPortrayal2D> people = new ArrayList<FastObjectGridPortrayal2D>();
     // chart information
     TimeSeriesChartGenerator pedestrianChart;
     XYSeries numPedestrians;
@@ -118,17 +119,17 @@ public class SillyPedsWithUI extends GUIState
         // set up the portrayals
         for (int i = 0; i < displayFrames.size(); i++)
         {
-            ObjectGridPortrayal2D floor = floors.get(i);
+            FastObjectGridPortrayal2D floor = floors.get(i);
             floor.setField(pedworld.landscape.get(i).field);
-            floor.setPortrayalForAll(new FloorPortrayal());
+            //floor.setPortrayalForAll(new FloorPortrayal());
 
-            ObjectGridPortrayal2D trace = traces.get(i);
+            FastObjectGridPortrayal2D trace = traces.get(i);
             trace.setField(pedworld.landscape.get(i).field);
-            trace.setPortrayalForAll(new TracePortrayal());
+            //trace.setPortrayalForAll(new TracePortrayal());
 
-            ObjectGridPortrayal2D peeps = people.get(i);
+            FastObjectGridPortrayal2D peeps = people.get(i);
             peeps.setField(pedworld.landscape.get(i).field);
-            peeps.setPortrayalForAll(new PedPortrayal());
+            //peeps.setPortrayalForAll(new PedPortrayal());
         }
 
         // reschedule the displayers
@@ -168,15 +169,43 @@ public class SillyPedsWithUI extends GUIState
             displayFrames.add(frame);
 
             // do the attaching here
-            ObjectGridPortrayal2D newfloor = new ObjectGridPortrayal2D();
+            FastObjectGridPortrayal2D newfloor = new FastObjectGridPortrayal2D()
+            	{
+            	public double doubleValue(Object object)
+            		{
+            		return ((Tile)object).baseheight;
+            		}
+            	};
+            newfloor.setMap(gradientColor);
+            	
             floors.add(i, newfloor);
             display.attach(newfloor, "Floor " + (i + 1));
 
-            ObjectGridPortrayal2D newtrace = new ObjectGridPortrayal2D();
+            FastObjectGridPortrayal2D newtrace = new FastObjectGridPortrayal2D()
+            	{
+            	public double doubleValue(Object object)
+            		{
+					// Seriously, who writes Math.pow(foo, 2.0) ?  See TracePortrayal below, gagh...
+	            	//return Math.pow(((Tile)object).trace, 2.0);
+	            	double trace = ((Tile)object).trace;
+	            	if (trace < 0) return trace;
+	            	else return trace * trace;
+	            	}
+            	};
+            newtrace.setMap(traceColor);
+            	
             traces.add(i, newtrace);
             display.attach(newtrace, "Trace " + (i + 1));
 
-            ObjectGridPortrayal2D newpeople = new ObjectGridPortrayal2D();
+            FastObjectGridPortrayal2D newpeople = new FastObjectGridPortrayal2D()
+            	{
+            	public double doubleValue(Object object)
+            		{
+            		return (((Tile)object).peds.size() > 0) ? 1.0 : 0.0;
+            		}
+            	};
+            newpeople.setMap(pedColor);
+            
             people.add(i, newpeople);
             display.attach(newpeople, "People " + (i + 1));
         }
@@ -221,16 +250,69 @@ public class SillyPedsWithUI extends GUIState
     // PORTRAYALS
     /////////////////////
     // colormap for ground height, which is assumed to be between 0 and 300.
-    ColorMap gradientColor = new sim.util.gui.SimpleColorMap(
-        0, 2000,
-        new Color(237, 246, 250), new Color(36, 44, 53));
-    ColorMap traceColor = new sim.util.gui.SimpleColorMap(
-        0, 2000,
-        new Color(250, 250, 0, 50), new Color(250, 250, 0, 255));
-//			new Color(250, 0, 0, 50), new Color(250, 0, 0, 255));
+    ColorMap gradientColor = new sim.util.gui.SimpleColorMap(0, 2000, new Color(237, 246, 250), new Color(36, 44, 53))
+    	{
+    	public Color getColor(double level)
+    		{
+    		if (level == Double.MAX_VALUE)
+    			{
+    			return offwhite;
+    			}
+    		else return super.getColor(level);
+    		}
+    	
+    	public int getRGB(double level)
+    		{
+    		if (level == Double.MAX_VALUE)
+    			{
+    			return offwhite.getRGB();
+    			}
+    		else return super.getRGB(level);
+    		}
+    	
+    	public int getAlpha(double level)
+    		{
+    		if (level == Double.MAX_VALUE)
+    			{
+    			return offwhite.getAlpha();
+    			}
+    		else return super.getAlpha(level);
+    		}
+    	};
+    
+    static final Color EMPTY = new Color(0,0,0,0);
+ //   ColorMap traceColor = new sim.util.gui.SimpleColorMap(0, 2000, new Color(250, 250, 0, 50), new Color(250, 250, 0, 255));
+   ColorMap traceColor = new sim.util.gui.SimpleColorMap(0, 2000, new Color(250, 250, 0, 50), new Color(250, 250, 0, 255))
+   	{
+    	public Color getColor(double level)
+    		{
+    		if (level >= 0)
+    			return super.getColor(level);
+    		else return EMPTY;
+    		}
+    	
+    	public int getRGB(double level)
+    		{
+    		if (level >= 0)
+    			return super.getRGB(level);
+    		else return EMPTY.getRGB();
+    		}
+    		
+    	public int getAlpha(double level)
+    		{
+    		if (level >= 0)
+    			return super.getAlpha(level);
+    		else return EMPTY.getAlpha();
+    		}
+   	};
+    
+    ColorMap pedColor = new sim.util.gui.SimpleColorMap(new Color[]{EMPTY, Color.red});
+    	
     Color offwhite = new Color(253, 253, 253);
     Color backdropColor = new Color(237, 246, 250);
 
+    
+    /*
     
     // elevation-based portrayal
     class FloorPortrayal extends RectanglePortrayal2D
@@ -305,6 +387,7 @@ public class SillyPedsWithUI extends GUIState
                 graphics.fillRect(x, y, w, h);
             }
         }
-
     }
+*/
+
 }
