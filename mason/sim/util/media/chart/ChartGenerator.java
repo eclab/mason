@@ -627,7 +627,13 @@ public abstract class ChartGenerator extends JPanel
 			value? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER: ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scaleField.setEnabled(!value);
 		if (value) scaleField.setText("");
-		else scaleField.setText("" + scaleField.getValue());
+		else 
+			{
+			double val = scaleField.getValue();
+			if (val == (int) val)
+				scaleField.setText("" + (int)val);
+			else scaleField.setText("" + val);
+			}
 		resizeChart();
 		}
 		
