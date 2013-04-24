@@ -94,8 +94,10 @@ public class TimeSeriesChartGenerator extends XYChartGenerator
         ((XYLineAndShapeRenderer)(((XYPlot)(chart.getPlot())).getRenderer())).setDrawSeriesLineAsPath(true);
 
         chart.setAntiAlias(true);
-        chartPanel = new ScrollableChartPanel(chart, true);            
-        chartHolder.getViewport().setView(chartPanel);
+        //chartPanel = new ScrollableChartPanel(chart, true); 
+        chartPanel = buildChartPanel(chart);           
+        setChartPanel(chartPanel);           
+//        chartHolder.getViewport().setView(chartPanel);
                 
         // this must come last because the chart must exist for us to set its dataset
         setSeriesDataset(collection);

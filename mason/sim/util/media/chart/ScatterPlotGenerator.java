@@ -51,8 +51,10 @@ public class ScatterPlotGenerator extends XYChartGenerator
         chart = ChartFactory.createScatterPlot("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
             PlotOrientation.VERTICAL, false, true, false);
         chart.setAntiAlias(true);
-        chartPanel = new ScrollableChartPanel(chart, true);            
-        chartHolder.getViewport().setView(chartPanel);
+        //chartPanel = new ScrollableChartPanel(chart, true); 
+        chartPanel = buildChartPanel(chart);           
+        //chartHolder.getViewport().setView(chartPanel);
+        setChartPanel(chartPanel);
         chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(false, true));
 //              ((StandardLegend) chart.getLegend()).setDisplaySeriesShapes(true);
 

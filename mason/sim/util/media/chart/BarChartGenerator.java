@@ -297,8 +297,10 @@ public class BarChartGenerator extends PieChartGenerator
         chart = ChartFactory.createBarChart("Untitled Chart", "Category", "Value", dataset,
             PlotOrientation.VERTICAL, false, true, false);
         chart.setAntiAlias(true);
-        chartPanel = new ScrollableChartPanel(chart, true);            
-        chartHolder.getViewport().setView(chartPanel);
+        //chartPanel = new ScrollableChartPanel(chart, true);
+        chartPanel = buildChartPanel(chart);                   
+        //chartHolder.getViewport().setView(chartPanel);
+        setChartPanel(chartPanel);
         		
         // this must come last because the chart must exist for us to set its dataset
         setSeriesDataset(dataset);

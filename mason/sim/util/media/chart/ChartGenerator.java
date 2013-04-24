@@ -68,6 +68,12 @@ import com.lowagie.text.pdf.*;
 
 public abstract class ChartGenerator extends JPanel
     {
+    public void setChartPanel(ScrollableChartPanel chartPanel)
+    	{
+    	chartHolder.getViewport().setView(chartPanel);
+    	this.chartPanel = chartPanel;
+    	}
+    
     /** A holder for global attributes components */
     protected Box globalAttributes = Box.createVerticalBox();
     /** A holder for series attributes components */
@@ -76,11 +82,10 @@ public abstract class ChartGenerator extends JPanel
     /** The chart */
     protected JFreeChart chart;
     /** The panel which holds and draws the chart */
-    protected ChartPanel chartPanel;
-    /** The JScrollPane which holdw the ChartPanel */
-    protected JScrollPane chartHolder = new JScrollPane();
-    
-        
+    protected ScrollableChartPanel chartPanel;
+    /** The JScrollPane which holds the ChartPanel */
+	private JScrollPane chartHolder = new JScrollPane();
+	
     JFrame frame;
     /** Returns the JFrame which stores the whole chart.  Set in createFrame(), else null. */
     public JFrame getFrame() { return frame; }
@@ -90,6 +95,7 @@ public abstract class ChartGenerator extends JPanel
     
     NumberTextField scaleField;
     NumberTextField proportionField;
+    JCheckBox fixBox;
 
     JButton movieButton = new JButton("Create Movie");
     BufferedImage buffer;
@@ -535,12 +541,21 @@ public abstract class ChartGenerator extends JPanel
         p.setPreferredSize(new Dimension(200,0));
         split.setLeftComponent(p);
                 
-
-
         // Add scale and proportion fields
         Box header = Box.createHorizontalBox();
 
         final double MAXIMUM_SCALE = 8;
+        
+        fixBox = new JCheckBox("Fill");
+        fixBox.addActionListener(new ActionListener()
+        	{
+            public void actionPerformed(ActionEvent e)
+            	{
+            	setFixed(fixBox.isSelected());
+            	}
+        	});
+		header.add(fixBox);
+		fixBox.setSelected(true);
         
         // add the scale field
         scaleField = new NumberTextField("  Scale: ", 1.0, true)
@@ -556,7 +571,9 @@ public abstract class ChartGenerator extends JPanel
             };
         scaleField.setToolTipText("Zoom in and out");
         scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
-        header.add(scaleField);
+        scaleField.setEnabled(false);
+		scaleField.setText("");
+		header.add(scaleField);
        
         // add the proportion field
         proportionField = new NumberTextField("  Proportion: ", 1.5, true)
@@ -575,6 +592,8 @@ public abstract class ChartGenerator extends JPanel
 
 
         chartHolder.setMinimumSize(new Dimension(0,0));
+		chartHolder.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		chartHolder.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);        
         chartHolder.getViewport().setBackground(Color.gray);
         JPanel p2 = new JPanel();
         p2.setLayout(new BorderLayout());
@@ -588,15 +607,32 @@ public abstract class ChartGenerator extends JPanel
         chart.setBackgroundPaint(Color.WHITE);
 
         // JFreeChart has a hillariously broken way of handling font scaling.
-        // It allows fonts to scale independently in X and Y.  We hack a workaround
-        // here.
+        // It allows fonts to scale independently in X and Y.  We hack a workaround here.
         chartPanel.setMinimumDrawHeight((int)DEFAULT_CHART_HEIGHT);
         chartPanel.setMaximumDrawHeight((int)DEFAULT_CHART_HEIGHT);
         chartPanel.setMinimumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
         chartPanel.setMaximumDrawWidth((int)(DEFAULT_CHART_HEIGHT * proportion));
         chartPanel.setPreferredSize(new java.awt.Dimension((int)(DEFAULT_CHART_HEIGHT * DEFAULT_CHART_PROPORTION), (int)(DEFAULT_CHART_HEIGHT)));
         }
-    
+
+	public boolean isFixed()
+		{
+		return fixBox.isSelected();
+		}
+		
+	public void setFixed(boolean value)
+		{
+		fixBox.setSelected(value);
+		chartHolder.setHorizontalScrollBarPolicy(
+			value? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER: ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scaleField.setEnabled(!value);
+		if (value) scaleField.setText("");
+		else scaleField.setText("" + scaleField.getValue());
+		resizeChart();
+		}
+		
+
+
     public double DEFAULT_CHART_HEIGHT = 480;
     public double DEFAULT_CHART_PROPORTION = 1.5;
     
@@ -741,31 +777,58 @@ public abstract class ChartGenerator extends JPanel
     class ScrollableChartPanel extends ChartPanel implements Scrollable
         {
         public ScrollableChartPanel(JFreeChart chart, boolean useBuffer)
-            { super(chart, useBuffer); }
+            {
+            super(chart, useBuffer);
+            }
+        
+        public Dimension getPreferredSize()
+        	{
+            Dimension size = super.getPreferredSize();
+            int viewportWidth = chartHolder.getViewport().getWidth();
+            if (viewportWidth == 0)  // uh oh, not set up yet
+            	return size;
+
+            // adjust height
+            if (isFixed())
+	            size.height = (int)(size.height / (double) size.width * viewportWidth);
+	        return size;
+        	}
+        	
         public Dimension getPreferredScrollableViewportSize()
-            { return getPreferredSize(); }
+            {
+            return getPreferredSize();
+            }
+            
         public int getScrollableUnitIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
             { 
             return (int)((orientation == SwingConstants.HORIZONTAL) ?
                 ( visibleRect.getWidth() / DEFAULT_UNIT_FRACTION ) :
                 ( visibleRect.getHeight() / DEFAULT_UNIT_FRACTION ));
             }
+            
         public int getScrollableBlockIncrement(java.awt.Rectangle visibleRect, int orientation, int direction)
             { 
             return (int)((orientation == SwingConstants.HORIZONTAL) ?
                 ( visibleRect.getWidth() / DEFAULT_BLOCK_FRACTION ) :
                 ( visibleRect.getHeight() / DEFAULT_BLOCK_FRACTION ));
             }
+            
         public boolean getScrollableTracksViewportHeight() { return false; }
-        public boolean getScrollableTracksViewportWidth() { return false; }
-
+        public boolean getScrollableTracksViewportWidth() { return isFixed(); }
         public Dimension getMaximumSize() { return getPreferredSize(); }
+        public Dimension getMinimumSize() { return getPreferredSize(); }
+        
+        public void setSize(Dimension d)
+        	{
+        	super.setSize(d);
+        	}
         }
         
         
-    public ChartPanel buildChartPanel(JFreeChart chart)
+        
+    public ScrollableChartPanel buildChartPanel(JFreeChart chart)
         {
-        return new ScrollableChartPanel(chart, false); 
+        return new ScrollableChartPanel(chart, true); 
         }
         
     }

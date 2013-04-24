@@ -91,8 +91,10 @@ public class PieChartGenerator extends ChartGenerator
         chart = ChartFactory.createMultiplePieChart("Untitled Chart", dataset,
             org.jfree.util.TableOrder.BY_COLUMN, false, true, false);
         chart.setAntiAlias(true);
-        chartPanel = new ScrollableChartPanel(chart, true);            
-        chartHolder.getViewport().setView(chartPanel);
+        //chartPanel = new ScrollableChartPanel(chart, true);            
+        chartPanel = buildChartPanel(chart);           
+		//chartHolder.getViewport().setView(chartPanel);
+        setChartPanel(chartPanel);
         
         JFreeChart baseChart = (JFreeChart)   ((MultiplePiePlot)(chart.getPlot())).getPieChart();
     	PiePlot base = (PiePlot)  (baseChart.getPlot());

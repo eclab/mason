@@ -2552,3 +2552,4 @@ Version 17
 	On Macs, inspectors now have small title bars
 	On Linux, FastValueGridPortrayal2D now uses stretched buffering like Macs
 	addSeries returns just SeriesAttributes on all ChartGenerators
+	Modifications to charting to allow fixed charts to window width

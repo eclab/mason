@@ -220,16 +220,6 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
                                 data[i++] = map.getRGB(intField[x][y]);
                     raster.setDataElements(sx,sy,ex-sx,ey-sy,data);
                     }
-
-// setting data elements above is faster than individual setRGBs
-//                if (isDoubleGrid2D)
-//                    for(int x=sx;x<ex;x++)
-//                        for(int y=sy;y<ey;y++)
-//                            _buffer.setRGB(x,y,map.getRGB(doubleField[x][y]));
-//                else
-//                    for(int x=sx;x<ex;x++)
-//                        for(int y=sy;y<ey;y++)
-//                            _buffer.setRGB(x,y,map.getRGB(intField[x][y]));
                 }
                 
             // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
