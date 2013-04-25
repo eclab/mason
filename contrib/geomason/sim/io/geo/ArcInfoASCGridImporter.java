@@ -13,6 +13,7 @@ package sim.io.geo;
 import com.vividsolutions.jts.geom.Envelope;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,7 @@ public class ArcInfoASCGridImporter //extends GeomImporter
             int height = 0;
 
             Scanner scanner = new Scanner(source);
+            scanner.useLocale(Locale.US);
 
             scanner.next(); // skip "ncols"
             width = scanner.nextInt();
