@@ -48,4 +48,4 @@ Version 1.4:
 	- Bug fixes
 	- Demo data directories now under respective source directories
 	- Minor code clean-ups
-
+	- Tweaks to demos to make them compatible with new charting
