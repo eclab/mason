@@ -6,7 +6,7 @@
 
 package sim.field.grid;
 import sim.util.IntBag;
-
+import java.util.Map;
 
 // (stars down the left are added there to keep the formatting correct)
 /** 
@@ -426,4 +426,10 @@ public interface Grid2D extends java.io.Serializable
      */
     public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos );
 
+    /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
+    public static final int ANY_SIZE = 0;
+	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    public Map buildMap(Map other);
+    /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
+    public Map buildMap(int size);
     }

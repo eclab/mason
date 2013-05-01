@@ -10,7 +10,7 @@ import sim.util.*;
 import java.util.*;
 
 /**
-   A storage facility for sparse objects in discrete 3D space, using HashMaps.  SparseGrid3D differs from ObjectGrid3D
+   A storage facility for sparse objects in discrete 3D space, using Maps.  SparseGrid3D differs from ObjectGrid3D
    in several respects:
     
    <ul>
@@ -18,7 +18,7 @@ import java.util.*;
    <li>ObjectGrid3D can store an object at more than one location (though it's bad form!).
    <li>SparseGrid3D can efficiently (O(1)) tell you the location of an object.
    <li>SparseGrid3D can efficiently (O(#objs)) scan through all objects.  The best you can do with ObjectGrid3D is search its array (which might have many empty slots).
-   <li>Storing an object, finding its location, or changing its location, in a SparseGrid3D is O(1) but requires several HashMap lookups and/or removes, which has a significant constant overhead.
+   <li>Storing an object, finding its location, or changing its location, in a SparseGrid3D is O(1) but requires several Map lookups and/or removes, which has a significant constant overhead.
    <li>SparseGrid3D can associate objects with <i>any</i> 3D integer location.  ObjectGrid3D's locations are restricted to be within its array.
    </ul>
 
@@ -514,7 +514,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
             if (dist * 2 >= width || dist * 2 >= height || dist * 2 >= length)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double3D elem = new Double3D(xPos.get(i), yPos.get(i), zPos.get(i));

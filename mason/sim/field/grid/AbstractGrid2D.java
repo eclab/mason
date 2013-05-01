@@ -41,6 +41,13 @@ public abstract class AbstractGrid2D implements Grid2D
     
     public final int getHeight() { return height; }
     
+    public Map buildMap(Map other) { return new HashMap(other); }
+    public Map buildMap(int size) 
+    	{
+    	if (size <= ANY_SIZE) return new HashMap();
+    	else return new HashMap(size);
+    	}
+    
     // slight revision for more efficiency
     public final int tx(int x) 
         { 
@@ -322,7 +329,7 @@ public abstract class AbstractGrid2D implements Grid2D
             if (dist * 2 >= width || dist * 2 >= height)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double2D elem = new Double2D(xPos.get(i), yPos.get(i));
@@ -445,7 +452,7 @@ public abstract class AbstractGrid2D implements Grid2D
             if (dist * 2 >= width || dist * 2 >= height)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double2D elem = new Double2D(xPos.get(i), yPos.get(i));

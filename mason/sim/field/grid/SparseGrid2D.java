@@ -10,7 +10,7 @@ import sim.util.*;
 import java.util.*;
 
 /**
-   A storage facility for sparse objects in discrete 2D space, using HashMaps.  SparseGrid2D differs from ObjectGrid2D
+   A storage facility for sparse objects in discrete 2D space, using Maps.  SparseGrid2D differs from ObjectGrid2D
    in several respects:
     
    <ul>
@@ -18,7 +18,7 @@ import java.util.*;
    <li>ObjectGrid2D can store an object at more than one location (though it's bad form!).
    <li>SparseGrid2D can efficiently (O(1)) tell you the location of an object.
    <li>SparseGrid2D can efficiently (O(#objs)) scan through all objects.  The best you can do with ObjectGrid2D is search its array (which might have many empty slots).
-   <li>Storing an object, finding its location, or changing its location, in a SparseGrid2D is O(1) but requires several HashMap lookups and/or removes, which has a significant constant overhead.
+   <li>Storing an object, finding its location, or changing its location, in a SparseGrid2D is O(1) but requires several Map lookups and/or removes, which has a significant constant overhead.
    <li>SparseGrid2D can associate objects with <i>any</i> 2D integer location.  ObjectGrid2D's locations are restricted to be within its array.
    </ul>
 
@@ -430,7 +430,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             if (dist * 2 >= width || dist * 2 >= height)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double2D elem = new Double2D(xPos.get(i), yPos.get(i));
@@ -553,7 +553,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
             if (dist * 2 >= width || dist * 2 >= height)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double2D elem = new Double2D(xPos.get(i), yPos.get(i));

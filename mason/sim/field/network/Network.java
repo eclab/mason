@@ -19,7 +19,7 @@ import java.util.*;
     for speed).
     
     <p>Nodes and Edges are stored in the Network using two data structures: a Bag containing all the nodes in the Field;
-    and a HashMap which maps each Node to a container holding the Node's index in the Bag, plus a Bag of the Node's outgoing
+    and a Map which maps each Node to a container holding the Node's index in the Bag, plus a Bag of the Node's outgoing
     Edges and a Bag of the Node's incoming Edges.  Ordinarily you won't fool with these structures other than to scan through
     them (in particular, to scan rapidly through the allNodes bag rather than use an iterator).
     
@@ -116,7 +116,7 @@ public class Network implements java.io.Serializable
     /** Hashes Network.IndexOutIn structures by Node.  These structures
         contain the incoming edges of the Node, its outgoing edges, and the index of
         the Node in the allNodes bag. */
-    public HashMap indexOutInHash = new HashMap();
+    public Map indexOutInHash = buildMap(ANY_SIZE);
 
     // perhaps rather than using a bag we should use an edge array... it'd be faster...
     /** All the objects in the sparse field.  For fast scans.  Do not rely on this bag always being the same object. */
@@ -549,7 +549,7 @@ public class Network implements java.io.Serializable
         are free to modify as it's no longer used internally by the Network. */
     public Bag clear()
         {
-        indexOutInHash = new HashMap();
+        indexOutInHash = buildMap(ANY_SIZE);
         Bag retval = allNodes;
         allNodes = new Bag();
         return retval;
@@ -774,4 +774,14 @@ public class Network implements java.io.Serializable
         return complement;
         }       
 
+    /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
+    public static final int ANY_SIZE = 0;
+	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    public Map buildMap(Map other) { return new HashMap(other); }
+    /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
+    public Map buildMap(int size) 
+    	{
+    	if (size <= ANY_SIZE) return new HashMap();
+    	else return new HashMap(size);
+    	}
     }

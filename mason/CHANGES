@@ -2553,3 +2553,4 @@ Version 17
 	On Linux, FastValueGridPortrayal2D now uses stretched buffering like Macs
 	addSeries returns just SeriesAttributes on all ChartGenerators
 	Modifications to charting to allow fixed charts to window width
+	Added the ability to change the Map implementation in various fields

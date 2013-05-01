@@ -42,6 +42,13 @@ public abstract class AbstractGrid3D implements Grid3D
     
     public final int getLength() { return length; }
     
+    public Map buildMap(Map other) { return new HashMap(other); }
+    public Map buildMap(int size) 
+    	{
+    	if (size <= ANY_SIZE) return new HashMap();
+    	else return new HashMap(size);
+    	}
+
     /*
       public final int tx(final int x) 
       { 
@@ -413,7 +420,7 @@ public abstract class AbstractGrid3D implements Grid3D
             if (dist * 2 >= width || dist * 2 >= height || dist * 2 >= length)  // too big, will have to remove duplicates
                 {
                 int sz = xPos.size();
-                HashMap map = new HashMap(sz);
+                Map map = buildMap(sz);
                 for(int i = 0 ; i < sz; i++)
                     {
                     Double3D elem = new Double3D(xPos.get(i), yPos.get(i), zPos.get(i));

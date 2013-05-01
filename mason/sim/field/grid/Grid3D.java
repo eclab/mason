@@ -6,6 +6,7 @@
 
 package sim.field.grid;
 import sim.util.IntBag;
+import java.util.Map;
 
 /**
    Define basic neighborhood functions for 3D Grids.  The basic interface defines a width and a height
@@ -283,5 +284,14 @@ public interface Grid3D extends java.io.Serializable
      * <p>You can also opt to include the origin -- that is, the (x,y,z) point at the center of the neighborhood -- in the neighborhood results.
      */
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos, IntBag zPos );
+
+
+    /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
+    public static final int ANY_SIZE = 0;
+	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    public Map buildMap(Map other);
+    /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
+    public Map buildMap(int size);
+
     }
 

@@ -42,14 +42,16 @@ import sim.util.*;
  * Steppables, or the ones to relace them, are maintained in a LinkedHashSet.  The Steppables to 
  * be removed are removed from the Set (O(1) per Steppable).  Steppables to be added are then added
  * to the Set.  Finally the Set is dumped to an array, which is then Stepped.
+ * 
+ * <p>To turn on this option, call setUsesSets(true).
  *
  * <p>This approach is dramatically faster than the default approach when a large number of Steppables
  * are in the Sequence and at least a moderate number (5 or greater typically) is removed at a time.
  * It has three disadvantages however.   First, it is slower when the number of Steppables is very
  * small, or when the number of Steppables removed is small (less than 5 perhaps).  Second, because
  * a Set is used, the Steppables in the Sequence must be unique: you cannot insert the same Steppable
- * multiple times in the array.  To turn on this option, call setUsesSets(true).  Third, using sets
- * does not ensure order regardless of what is set in setEnsuresOrder(...).
+ * multiple times in the array.  Third, using sets does not ensure order regardless of what is set in 
+ * setEnsuresOrder(...).
  *
  * @author Mark Coletti
  * @author Sean Luke
@@ -67,7 +69,7 @@ public class Sequence implements Steppable
     /** The number of actual Steppables in the steps array. */
     protected int size;
 
-    // Loaded it up and used temporarily to remove and add elements from the steps[] array
+    // Loaded up and used temporarily to remove and add elements from the steps[] array
     // If you're using steps.
     LinkedHashSet stepsHash = null;
 

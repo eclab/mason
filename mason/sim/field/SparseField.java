@@ -110,22 +110,33 @@ public abstract class SparseField implements java.io.Serializable
 
     /** LocationAndIndex objects (locations and indexes into the allObjects array) hashed by Object.  Ideally you would
         store only immutable or hash-by-pointer objects, el se they'll get lost in the HashMap. */
-    public HashMap locationAndIndexHash = new HashMap();
+    public Map locationAndIndexHash = buildMap(ANY_SIZE);
 
     /** Bags of objects hashed by location.  Do not rely on these bags always being the same objects. */
-    public HashMap objectHash = new HashMap();
+    public Map objectHash = buildMap(ANY_SIZE);
 
     /** All the objects in the sparse field.  For fast scans.  Do not rely on this bag always being the same object. */
     public Bag allObjects = new Bag();
     
+    /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
+    public static final int ANY_SIZE = 0;
+	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    public Map buildMap(Map other) { return new HashMap(other); }
+    /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
+    public Map buildMap(int size) 
+    	{
+    	if (size <= ANY_SIZE) return new HashMap();
+    	else return new HashMap(size);
+    	}
+
     protected SparseField() { }
         
     protected SparseField(SparseField other)
         {
         removeEmptyBags = other.removeEmptyBags;
         replaceLargeBags = other.replaceLargeBags;
-        locationAndIndexHash = new HashMap(other.locationAndIndexHash);
-        objectHash = new HashMap(other.objectHash);
+        locationAndIndexHash = buildMap(other.locationAndIndexHash);
+        objectHash = buildMap(other.objectHash);
         allObjects = new Bag(other.allObjects);
         }
         
@@ -249,8 +260,8 @@ public abstract class SparseField implements java.io.Serializable
         just make a brand new Sparse Field and let the garbage collector do its magic. */
     public Bag clear()
         {
-        locationAndIndexHash = new HashMap();
-        objectHash = new HashMap();
+        locationAndIndexHash = buildMap(ANY_SIZE);
+        objectHash = buildMap(ANY_SIZE);
         Bag retval = allObjects;
         allObjects = new Bag();
         return retval;

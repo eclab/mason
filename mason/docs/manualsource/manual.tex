@@ -3982,11 +3982,11 @@ MASON provides a variety of utility subclasses of Steppable which you may find u
 We next go through each of these in turn.
 
 \paragraph{\Class{sim.engine.Sequence}}
-This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add and remove, or replace all the agents, while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the agents.
+This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add and remove, or replace all the agents while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the current agents.
 
 To remove agents, Sequence will modify the order of the sequence by default.  If you want to guarantee that the Sequence order remains unmodified, you can call \method{setEnsuresOrder(true)}.  Note that this is slower (up to \(O(n)\) versus \(O(1)\) once the agent has been identified).
 
-Removing agents can be costly: it's an \(O(n)\) search through the array to find an agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  Another consequence is that order is not preserved regardless of the setting of \method{setEnsuresOrder(...)}.  This option is turned on with \method{setUsesSets(true)}.
+Removing agents can be costly: it's an \(O(n)\) search through the array to find the agent to remove.  Sequence has an optional \(O(1)\) removal procedure which has a high constant overhead but is generally far faster if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  If you're 4 or under it probably will not be worth it.  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and one consequence of this is that you are not permitted to have a Sequence which has the same Steppable appearing multiple times.  Another consequence is that order is not preserved regardless of the setting of \method{setEnsuresOrder(...)}.  This option is turned on with \method{setUsesSets(true)}.
 
 \begin{methods}{\class{sim.engine.Sequence} Constructor}
 \mthd{public Sequence(Steppable[] agents)} Builds a Sequence for the given array of agents.  The agents will be copied to an internal array.
@@ -4008,7 +4008,7 @@ Removing agents can be costly: it's an \(O(n)\) search through the array to find
 \mthd{public setUsesSets(boolean val)} Returns whether the Sequence uses a Set internally for faster removals (if you remove more than 4 or so at a given time).  Note that Sequences using Sets may not have agents appearing multiple times in the internal array. If the Sequence is using Sets and there are duplicates in the internal array, then an exception will be triggered.
 \end{methods}
 
-If you would like to subclass Sequence for some reason (very rare), here's what you need to know.  At the beginning of your \method{step(...)} call, you should first call \method{loadSteps()}. This method will rebuild (if necessary) the internal Steppable array and get it ready for you to to step.  The Steppables in question are stored like this:
+If you would like to subclass Sequence for some reason (very rare), here's what you need to know.  At the beginning of your \method{step(...)} call, you should first call \method{loadSteps()} (do not call \method{super.step(...)}). This method will rebuild (if necessary) the internal Steppable array and get it ready for you to to step.  The Steppables in question are stored like this:
 
 \java{%
 protected Steppable[] steps;\\
@@ -4626,6 +4626,55 @@ Additionally, rectangular grids have neighborhood lookup functions which return 
 
 ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D also have the methods \method{getMooreNeighborsAndLocations}, \method{getVonNeumannNeighborsAndLocations}, \method{getHexagonalNeighborsAndLocations}, and \method{getRaialNeighborsAndLocations}, which are like the \method{get...Neighbors} methods, except the coordinate bags have been modified so that, for each of the returned objects, the coordinate bags hold the coordinate where that object was found at the same index location. Thus all returned bags are the same length.
 \end{itemize}
+
+\subsection{Maps}
+\label{maps}
+
+All Grids and Sparse Fields employ Maps in some of their methods.  Sparse Grids use practically nothing {\it but} Maps to store locations of objects; but even Array Grids use Maps, at least temporarily, in some of their neighborhood functions.
+
+The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.   To replace it, you need to override the following two methods (located in Grid2D, Grid3D, SparseField, and elsewhere):
+
+\begin{methods}{\class{sim.field.grid.Grid2D} Utility}
+\mthd{public Map buildMap(Map other)}
+Returns a new Map which contains all the elements in the provided Map.
+\mthd{public Map buildMap(int size)}
+Returns a new Map which has a least {\it size} capacity (as a hint).  If {\it size} is set to \variable{ANY\_SIZE}, then no size is specified and the Map can build itself however it likes.
+\end{methods}
+
+The second of these methods relies on a variable defined in Grid2D, Grid3D, and SparseField:
+
+\begin{verbatim}
+public final static int ANY_SIZE;
+\end{verbatim}
+
+For example, suppose you decided to replace the bug grid's HashMaps in HeatBugs with THashMaps from the GNU Trove repository.  (I wouldn't suggest this: they're generally slower when used in MASON).  You could do it like this:
+
+{\footnotesize\begin{verbatim}
+public class HeatBugs2 extends HeatBugs {
+    public HeatBugs2(long seed) { super(seed); }
+        
+    public HeatBugs2(long seed, int width, int height, int count) { super(seed, width, height, count); }
+
+    protected void createGrids() {
+        bugs = new HeatBug[bugCount];
+        valgrid = new DoubleGrid2D(gridWidth, gridHeight,0);
+        valgrid2 = new DoubleGrid2D(gridWidth, gridHeight, 0);
+
+        buggrid = new SparseGrid2D(gridWidth, gridHeight) {
+            public Map buildMap(Map other) { return new gnu.trove.map.hash.THashMap(other); }
+            public Map buildMap(int size)  {
+                if (size <= Grid2D.ANY_SIZE) return new gnu.trove.map.hash.THashMap();
+                else return new gnu.trove.map.hash.THashMap(size);
+                }
+            };
+        }
+
+    public static void main(String[] args) {
+        doLoop(HeatBugs2.class, args);
+        System.exit(0);
+        }    
+    }
+\end{verbatim}}
 
 
 \section{Array Grids}
@@ -5372,6 +5421,40 @@ Returns as a new Bag objects at or within the given distance of the query positi
 Places into {\it result} (or a new Bag if {\it result} is not provided) all objects at or within the given distance of the query position, plus possibly some others.  Returns the result.    Pass in the appropriate flags if your field is toroidal or has non-point (area-filling or volume-filling) objects. 
 \end{methods}
 
+\section{Maps}
+
+Just like Grids, Continuous space uses Maps in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods (located in SparseField):
+
+\begin{methods}{\class{sim.field.SparseField} Utility}
+\mthd{public Map buildMap(Map other)}
+Returns a new Map which contains all the elements in the provided Map.
+\mthd{public Map buildMap(int size)}
+Returns a new Map which has a least {\it size} capacity (as a hint).  If {\it size} is set to \variable{ANY\_SIZE}, then no size is specified and the Map can build itself however it likes.
+\end{methods}
+
+The second of these methods relies on a variable defined in SparseField:
+
+\begin{verbatim}
+public final static int ANY_SIZE;
+\end{verbatim}
+
+For an example on how you'd override these methods, see Section \ref{maps}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \chapter{Networks}
 \label{sim.field.network}
 
@@ -5509,6 +5592,28 @@ Returns an adjacency matrix of Edges for a regular graph (not a multigraph).  If
 \mthd{public Edge[][][] getMultigraphAdjacencyMatrix()} 
 Returns an adjacency matrix of Edges for a multigraph.  If you have \(N\) nodes, this is an \(N \times N\) double array of Edge arrays, each Edge array holding those edges which connect two nodes.  If the graph is directed, the matrix is organized so that the first dimension is {\it from} and the second dimension is {\it to}.  If the graph is undirected, the same Edges are provided both places.  This matrix is not updated when the Network is modified, though Edge objects may be updated.  Building this matrix is an \(O(N^3 + E \times N^2)\) operation, where \(E\) is the number of edges.
 \end{methods}
+
+
+\subsection{Maps}
+
+Just like Grids and Continuous spaces, Network uses Maps in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods:
+
+\begin{methods}{\class{sim.field.network.Network} Utility}
+\mthd{public Map buildMap(Map other)}
+Returns a new Map which contains all the elements in the provided Map.
+\mthd{public Map buildMap(int size)}
+Returns a new Map which has a least {\it size} capacity (as a hint).  If {\it size} is set to \variable{ANY\_SIZE}, then no size is specified and the Map can build itself however it likes.
+\end{methods}
+
+The second of these methods relies on a variable defined in Network:
+
+\begin{verbatim}
+public final static int ANY_SIZE;
+\end{verbatim}
+
+For an example on how you'd override these methods, see Section \ref{maps}.
+
+
 
 
 

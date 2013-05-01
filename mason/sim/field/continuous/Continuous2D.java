@@ -89,7 +89,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
     private static final long serialVersionUID = 1;
 
     /** Where we store the Double2D values hashed by object */
-    public HashMap doubleLocationHash = new HashMap();
+    public Map doubleLocationHash = buildMap(ANY_SIZE);
     
     public double width;
     public double height;
@@ -148,7 +148,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         
     public final Bag clear()
         {
-        doubleLocationHash = new HashMap();
+        doubleLocationHash = buildMap(ANY_SIZE);
         return super.clear();
         }
         
