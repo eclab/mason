@@ -120,14 +120,14 @@ public abstract class SparseField implements java.io.Serializable
     
     /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
     public static final int ANY_SIZE = 0;
-	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    /** Creates a Map which is a copy of another. By default, HashMap is used. */
     public Map buildMap(Map other) { return new HashMap(other); }
     /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
     public Map buildMap(int size) 
-    	{
-    	if (size <= ANY_SIZE) return new HashMap();
-    	else return new HashMap(size);
-    	}
+        {
+        if (size <= ANY_SIZE) return new HashMap();
+        else return new HashMap(size);
+        }
 
     protected SparseField() { }
         

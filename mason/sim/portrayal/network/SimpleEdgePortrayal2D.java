@@ -48,7 +48,7 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
     public double baseWidth = 1.0;
         
     public static final int SHAPE_THIN_LINE = 0;
-	/** @deprecated Use SHAPE_LINE_ROUND_ENDS */
+    /** @deprecated Use SHAPE_LINE_ROUND_ENDS */
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_LINE_ROUND_ENDS = 1;
     public static final int SHAPE_LINE_SQUARE_ENDS = 2;
@@ -199,20 +199,20 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 }
             }
         else if (shape == SHAPE_THIN_LINE)
-        	{
+            {
             if (fromPaint == toPaint)
                 {
                 graphics.setPaint (fromPaint);
-	            graphics.drawLine(startX, startY, endX, endY);
+                graphics.drawLine(startX, startY, endX, endY);
                 }
             else
                 {
                 graphics.setPaint( fromPaint );
-                    graphics.drawLine(startX,startY,midX,midY);
-                    graphics.setPaint( toPaint );
-                    graphics.drawLine(midX,midY,endX,endY);
+                graphics.drawLine(startX,startY,midX,midY);
+                graphics.setPaint( toPaint );
+                graphics.drawLine(midX,midY,endX,endY);
                 }
-        	}
+            }
         else // shape == SHAPE_LINE etc.
             {
             if (fromPaint == toPaint)
@@ -221,16 +221,16 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 double width = getBaseWidth();
                 //if (info.precise || width != 0.0)
                 //    { 
-                    double scale = info.draw.width;
-                    if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
-                        scale = 1;
+                double scale = info.draw.width;
+                if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+                    scale = 1;
 
-                    Stroke oldstroke = graphics.getStroke();
-                    double weight = getPositiveWeight(object, e);
-                    graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
-                    preciseLine.setLine(startXd, startYd, endXd, endYd);
-                    graphics.draw(preciseLine);
-                    graphics.setStroke(oldstroke);
+                Stroke oldstroke = graphics.getStroke();
+                double weight = getPositiveWeight(object, e);
+                graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
+                preciseLine.setLine(startXd, startYd, endXd, endYd);
+                graphics.draw(preciseLine);
+                graphics.setStroke(oldstroke);
                 //    }
                 //else graphics.drawLine(startX, startY, endX, endY);
                 }
@@ -240,19 +240,19 @@ public class SimpleEdgePortrayal2D extends SimplePortrayal2D
                 double width = getBaseWidth();
                 //if (info.precise || width != 0.0)
                 //    { 
-                    double scale = info.draw.width;
-                    if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
-                        scale = 1;
+                double scale = info.draw.width;
+                if (scaling == SCALE_WHEN_SMALLER && info.draw.width >= 1 || scaling == NEVER_SCALE)  // no scaling
+                    scale = 1;
 
-                    Stroke oldstroke = graphics.getStroke();
-                    double weight = getPositiveWeight(object, e);
-                    graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
-                    preciseLine.setLine(startXd, startYd, midXd, midYd); 
-                    graphics.draw(preciseLine); 
-                    graphics.setPaint(toPaint);
-                    preciseLine.setLine(midXd, midYd, endXd, endYd); 
-                    graphics.draw(preciseLine); 
-                    graphics.setStroke(oldstroke);
+                Stroke oldstroke = graphics.getStroke();
+                double weight = getPositiveWeight(object, e);
+                graphics.setStroke(getBasicStroke((float)(width * weight * scale)));  // duh, can't reset a stroke, have to make it new each time :-(
+                preciseLine.setLine(startXd, startYd, midXd, midYd); 
+                graphics.draw(preciseLine); 
+                graphics.setPaint(toPaint);
+                preciseLine.setLine(midXd, midYd, endXd, endYd); 
+                graphics.draw(preciseLine); 
+                graphics.setStroke(oldstroke);
                 //    }
                 //else
                 //    {

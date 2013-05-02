@@ -24,7 +24,7 @@ import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 
 /** 
-A SeriesAttributes used for user control of bar chart series created with BarChartGenerator.  Similar to PieChartSeriesAttributes.
+    A SeriesAttributes used for user control of bar chart series created with BarChartGenerator.  Similar to PieChartSeriesAttributes.
 */
 
 
@@ -34,5 +34,5 @@ public class BarChartSeriesAttributes extends PieChartSeriesAttributes
     public BarChartSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, String[] labels, SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
         super(generator, name, index, values, labels, stoppable);
-        }    	
+        }       
     }

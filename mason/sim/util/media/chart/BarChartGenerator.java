@@ -48,7 +48,7 @@ import com.lowagie.text.pdf.*;
 
 
 /**
-A ChartGenerator for Bar Charts.  Similar enough to PieChartGenerator that it subclasses from it to share methods.
+   A ChartGenerator for Bar Charts.  Similar enough to PieChartGenerator that it subclasses from it to share methods.
 */ 
 
 public class BarChartGenerator extends PieChartGenerator
@@ -98,26 +98,26 @@ public class BarChartGenerator extends PieChartGenerator
     BarRenderer getPercentageRenderer() { return percentageRenderer; }
     
     void reviseRenderer(BarRenderer renderer)
-    	{
+        {
         renderer.setShadowVisible(false);
         renderer.setBarPainter(new StandardBarPainter());
         renderer.setBaseOutlineStroke(new BasicStroke(2.0f));
         renderer.setDrawBarOutline(true);
-		renderer.setBaseItemLabelGenerator(
-    		new StandardCategoryItemLabelGenerator(
-        		"{0}", java.text.NumberFormat.getInstance())); // {0} is the row key, {1} is the column key, {2} is the value
-		renderer.setBaseItemLabelsVisible(true);
-    	}
+        renderer.setBaseItemLabelGenerator(
+            new StandardCategoryItemLabelGenerator(
+                "{0}", java.text.NumberFormat.getInstance())); // {0} is the row key, {1} is the column key, {2} is the value
+        renderer.setBaseItemLabelsVisible(true);
+        }
     
     protected void buildGlobalAttributes(LabelledList list)
         {
         // create the chart
         CategoryPlot plot = (CategoryPlot)(chart.getPlot());
-		plot.setDomainGridlinesVisible(false);
-		plot.setRangeGridlinesVisible(false);
-		plot.setDomainGridlinePaint(new Color(200,200,200));
-		plot.setRangeGridlinePaint(new Color(200,200,200));
-		
+        plot.setDomainGridlinesVisible(false);
+        plot.setRangeGridlinesVisible(false);
+        plot.setDomainGridlinePaint(new Color(200,200,200));
+        plot.setRangeGridlinePaint(new Color(200,200,200));
+                
         // define the renderers
         barRenderer = new BarRenderer();
         reviseRenderer(barRenderer);
@@ -128,7 +128,7 @@ public class BarChartGenerator extends PieChartGenerator
         percentageRenderer = new StackedBarRenderer(true);
         reviseRenderer(percentageRenderer);
                 
-		plot.setRenderer(barRenderer);
+        plot.setRenderer(barRenderer);
         
         xLabel = new PropertyField()
             {
@@ -168,8 +168,8 @@ public class BarChartGenerator extends PieChartGenerator
             };
         gridlines.addItemListener(il);
 
-		list.add(new JLabel("Grid Lines"), gridlines);
-		
+        list.add(new JLabel("Grid Lines"), gridlines);
+                
         final JCheckBox labels = new JCheckBox();
         labels.setSelected(true);
         il = new ItemListener()
@@ -191,7 +191,7 @@ public class BarChartGenerator extends PieChartGenerator
                 }
             };
         labels.addItemListener(il);
-		list.add(new JLabel("Labels"), labels);
+        list.add(new JLabel("Labels"), labels);
 
         final JComboBox barType = new JComboBox();
         barType.setEditable(false);
@@ -202,21 +202,21 @@ public class BarChartGenerator extends PieChartGenerator
             {
             public void actionPerformed ( ActionEvent e )
                 {
-		        CategoryPlot plot = (CategoryPlot)(chart.getPlot());
+                CategoryPlot plot = (CategoryPlot)(chart.getPlot());
                 int type = barType.getSelectedIndex();
                 
                 if (type == 0) // separate
-                	{
-					plot.setRenderer(getBarRenderer());
-                	}
+                    {
+                    plot.setRenderer(getBarRenderer());
+                    }
                 else if (type == 1)  // stacked
-                	{
-					plot.setRenderer(getStackedBarRenderer());
-                	}
-                else				// percentage
-                	{
-					plot.setRenderer(getPercentageRenderer());
-                	}
+                    {
+                    plot.setRenderer(getStackedBarRenderer());
+                    }
+                else                            // percentage
+                    {
+                    plot.setRenderer(getPercentageRenderer());
+                    }
                 }
             });
         list.add(new JLabel("Bars"), barType);
@@ -228,7 +228,7 @@ public class BarChartGenerator extends PieChartGenerator
             {
             public void itemStateChanged(ItemEvent e)
                 {
-			    CategoryPlot plot = (CategoryPlot)(chart.getPlot());				
+                CategoryPlot plot = (CategoryPlot)(chart.getPlot());                                
                 if (e.getStateChange() == ItemEvent.SELECTED)
                     {
                     plot.setOrientation(PlotOrientation.HORIZONTAL);
@@ -244,51 +244,51 @@ public class BarChartGenerator extends PieChartGenerator
             };
         horizontal.addItemListener(il);
 
-		list.add(new JLabel("Horizontal"), horizontal);
+        list.add(new JLabel("Horizontal"), horizontal);
         }    
     
     boolean hasgridlines = false;
     boolean ishorizontal = false;
     void updateGridLines()
-    	{
-    	if (hasgridlines)
-    		{
-    		if (ishorizontal)
-    			{
-    			chart.getCategoryPlot().setRangeGridlinesVisible(true);
-    			chart.getCategoryPlot().setDomainGridlinesVisible(false);
-    			}
-    		else
-    			{
-    			chart.getCategoryPlot().setRangeGridlinesVisible(true);
-    			chart.getCategoryPlot().setDomainGridlinesVisible(false);
-    			}
-    		}
-    	else
-    		{
-    		chart.getCategoryPlot().setRangeGridlinesVisible(false);
-    		chart.getCategoryPlot().setDomainGridlinesVisible(false);
-    		}
-    	}
+        {
+        if (hasgridlines)
+            {
+            if (ishorizontal)
+                {
+                chart.getCategoryPlot().setRangeGridlinesVisible(true);
+                chart.getCategoryPlot().setDomainGridlinesVisible(false);
+                }
+            else
+                {
+                chart.getCategoryPlot().setRangeGridlinesVisible(true);
+                chart.getCategoryPlot().setDomainGridlinesVisible(false);
+                }
+            }
+        else
+            {
+            chart.getCategoryPlot().setRangeGridlinesVisible(false);
+            chart.getCategoryPlot().setDomainGridlinesVisible(false);
+            }
+        }
     
     public static final int MAXIMUM_BAR_CHART_ITEMS = 20;
     final DefaultCategoryDataset emptyDataset = new DefaultCategoryDataset();
     public Dataset getSeriesDataset() { return ((CategoryPlot)(chart.getPlot())).getDataset(); }
     public void setSeriesDataset(Dataset obj) 
-    	{
-    	// here we will interrupt things if they're too big
-    	if (((CategoryDataset)obj).getRowCount() > MAXIMUM_BAR_CHART_ITEMS)
-    		{
-    		((CategoryPlot)(chart.getPlot())).setDataset(emptyDataset);
-    		setInvalidChartTitle("[[ Dataset has too many items. ]]");
-    		}
-    	else
-    		{
-    		((CategoryPlot)(chart.getPlot())).setDataset((DefaultCategoryDataset)obj);
-    		if (invalidChartTitle != null)
-    			setInvalidChartTitle(null);
-    		}
-    	}
+        {
+        // here we will interrupt things if they're too big
+        if (((CategoryDataset)obj).getRowCount() > MAXIMUM_BAR_CHART_ITEMS)
+            {
+            ((CategoryPlot)(chart.getPlot())).setDataset(emptyDataset);
+            setInvalidChartTitle("[[ Dataset has too many items. ]]");
+            }
+        else
+            {
+            ((CategoryPlot)(chart.getPlot())).setDataset((DefaultCategoryDataset)obj);
+            if (invalidChartTitle != null)
+                setInvalidChartTitle(null);
+            }
+        }
 
     protected void buildChart()
         {
@@ -301,7 +301,7 @@ public class BarChartGenerator extends PieChartGenerator
         chartPanel = buildChartPanel(chart);                   
         //chartHolder.getViewport().setView(chartPanel);
         setChartPanel(chartPanel);
-        		
+                        
         // this must come last because the chart must exist for us to set its dataset
         setSeriesDataset(dataset);
         }
@@ -315,16 +315,16 @@ public class BarChartGenerator extends PieChartGenerator
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         
         for(int i=0; i < sa.length; i++)
-        	if (sa[i].isPlotVisible())
-				{
-				BarChartSeriesAttributes attributes = (BarChartSeriesAttributes)(sa[i]);
-				double[] values = attributes.getValues();
-				String[] labels = attributes.getLabels();
-				UniqueString seriesName = new UniqueString(attributes.getSeriesName());
-	
-				for(int j = 0; j < values.length; j++)
-					dataset.addValue(values[j], labels[j], seriesName);  // ugh
-				}
+            if (sa[i].isPlotVisible())
+                {
+                BarChartSeriesAttributes attributes = (BarChartSeriesAttributes)(sa[i]);
+                double[] values = attributes.getValues();
+                String[] labels = attributes.getLabels();
+                UniqueString seriesName = new UniqueString(attributes.getSeriesName());
+        
+                for(int j = 0; j < values.length; j++)
+                    dataset.addValue(values[j], labels[j], seriesName);  // ugh
+                }
                         
         setSeriesDataset(dataset);
         }
@@ -337,7 +337,7 @@ public class BarChartGenerator extends PieChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
- 	SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
+    SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
         {
         int i = getSeriesCount();
         
@@ -376,11 +376,11 @@ public class BarChartGenerator extends PieChartGenerator
         String[] labels = revisedLabels(map);
         double[] amounts = amounts(map, labels);
 
-		updateSeries(index, amounts, labels);
+        updateSeries(index, amounts, labels);
         }
     
     void updateSeries(int index, double[] amounts, String[] labels)
-    	{
+        {
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
             return;
             
@@ -390,6 +390,6 @@ public class BarChartGenerator extends PieChartGenerator
         BarChartSeriesAttributes hsa = (BarChartSeriesAttributes)(getSeriesAttribute(index));
         hsa.setValues(amounts);
         hsa.setLabels(labels);
-    	}    	
+        }       
     }
 

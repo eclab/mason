@@ -155,16 +155,16 @@ public abstract class SeriesAttributes extends LabelledList
         }
     
     boolean plotVisible = true;
-	public void setPlotVisible(boolean val)
-		{
-		plotVisible = val;
+    public void setPlotVisible(boolean val)
+        {
+        plotVisible = val;
         getRenderer().setSeriesVisible(seriesIndex, new Boolean(val));
-		}
-	
-	public boolean isPlotVisible()
-		{
-		return plotVisible;
-		}
+        }
+        
+    public boolean isPlotVisible()
+        {
+        return plotVisible;
+        }
         
     /** Builds a SeriesAttributes with the provided generator, name for the series, and index for the series.  Calls
         buildAttributes to construct custom elements in the LabelledList, then finally calls rebuildGraphicsDefinitions()

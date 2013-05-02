@@ -37,7 +37,7 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
     // key, where anonymous subclasses don't override the emitting function.  But for now since
     // there are so few generators, we're doing it this ugly way instead.
     protected boolean validChartGenerator(ChartGenerator generator) { return generator instanceof PieChartGenerator && 
-    																		!(generator instanceof BarChartGenerator); }
+            !(generator instanceof BarChartGenerator); }
         
     protected boolean includeAggregationMethodAttributes() { return false; }
 
@@ -106,16 +106,16 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         Object[] vals = previousValues;  // set it to something in case we don't get anything new.
                 
         //if (cls.isArray())
-            {
-            Class comp = cls.getComponentType();
-            if (comp.equals(Object.class))
                 {
-                Object[] array = (Object[]) obj;
-                vals = new Object[array.length];
-                for(int i=0;i<array.length;i++)
-                    vals[i] = array[i];
+                Class comp = cls.getComponentType();
+                if (comp.equals(Object.class))
+                    {
+                    Object[] array = (Object[]) obj;
+                    vals = new Object[array.length];
+                    for(int i=0;i<array.length;i++)
+                        vals[i] = array[i];
+                    }
                 }
-            }
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

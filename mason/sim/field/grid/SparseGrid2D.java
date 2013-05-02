@@ -1202,9 +1202,9 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         }
         
     public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos )
-    	{
-     getRadialLocations(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos);
-    	}
+        {
+        getRadialLocations(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos);
+        }
         
     public void getRadialLocations( final int x, final int y, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos )
         {
@@ -1223,9 +1223,9 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 
         // grab the rectangle
         if (toroidal)
-	        getMooreLocations(x,y, (int) Math.ceil(dist + 0.5), UNBOUNDED, includeOrigin, xPos, yPos);
-	    else
-	        getMooreLocations(x,y, (int) Math.ceil(dist + 0.5), mode, includeOrigin, xPos, yPos);
+            getMooreLocations(x,y, (int) Math.ceil(dist + 0.5), UNBOUNDED, includeOrigin, xPos, yPos);
+        else
+            getMooreLocations(x,y, (int) Math.ceil(dist + 0.5), mode, includeOrigin, xPos, yPos);
         int len = xPos.size();
         double distsq = dist * dist;
         
@@ -1234,100 +1234,100 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         int widthtimestwo = width * 2;
         int heighttimestwo = height * 2;
         
-            for(int i = 0; i < len; i++)
+        for(int i = 0; i < len; i++)
+            {
+            int xp = xPos.get(i);
+            int yp = yPos.get(i);
+            boolean remove = false;
+                
+            if (measurementRule == Grid2D.ANY)
                 {
-                int xp = xPos.get(i);
-                int yp = yPos.get(i);
-                boolean remove = false;
-                
-                if (measurementRule == Grid2D.ANY)
+                if (x == xp)
                     {
-                    if (x == xp)
+                    if (y < yp)
                         {
-                        if (y < yp)
-                            {
-                            double d = (yp - 0.5) -  y;
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        else
-                            {
-                            double d = -((yp - 0.5) - y);
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        }
-                    else if (y == yp)
-                        {
-                        if (x < xp)
-                            {
-                            double d = (xp - 0.5) - x;
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        else
-                            {
-                            double d = -((xp - 0.5) - x);
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        }
-                    if (x < xp)
-                        {
-                        if (y < yp)
-                            remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
-                        else
-                            remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
+                        double d = (yp - 0.5) -  y;
+                        remove = !(d < dist || (d == dist && closed));
                         }
                     else
                         {
-                        if (y < yp)
-                            remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
-                        else
-                            remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
+                        double d = -((yp - 0.5) - y);
+                        remove = !(d < dist || (d == dist && closed));
                         }
                     }
-                else if (measurementRule == Grid2D.ALL)
+                else if (y == yp)
                     {
                     if (x < xp)
                         {
-                        if (y < yp)
-                            remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
-                        else
-                            remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
+                        double d = (xp - 0.5) - x;
+                        remove = !(d < dist || (d == dist && closed));
                         }
                     else
                         {
-                        if (y < yp)
-                            remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
-                        else
-                            remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
+                        double d = -((xp - 0.5) - x);
+                        remove = !(d < dist || (d == dist && closed));
                         }
                     }
-                else // (measurementRule == Grid2D.CENTER)
+                if (x < xp)
                     {
-                    remove = !within(x,y,xp,yp,distsq,closed);
+                    if (y < yp)
+                        remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
+                    else
+                        remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
                     }
+                else
+                    {
+                    if (y < yp)
+                        remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
+                    else
+                        remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
+                    }
+                }
+            else if (measurementRule == Grid2D.ALL)
+                {
+                if (x < xp)
+                    {
+                    if (y < yp)
+                        remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
+                    else
+                        remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
+                    }
+                else
+                    {
+                    if (y < yp)
+                        remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
+                    else
+                        remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
+                    }
+                }
+            else // (measurementRule == Grid2D.CENTER)
+                {
+                remove = !within(x,y,xp,yp,distsq,closed);
+                }
                 
-                if (remove)
-                    { xPos.remove(i); yPos.remove(i); i--;  len--; }
-                else if (toroidal) // need to convert to toroidal position
-                	{ 
-                	int _x = xPos.get(i);
-                	int _y = yPos.get(i);
-                	xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
-                	yPos.set(i, tx(_y, height, heighttimestwo, _y + width, _y - width));
-                	}
+            if (remove)
+                { xPos.remove(i); yPos.remove(i); i--;  len--; }
+            else if (toroidal) // need to convert to toroidal position
+                { 
+                int _x = xPos.get(i);
+                int _y = yPos.get(i);
+                xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
+                yPos.set(i, tx(_y, height, heighttimestwo, _y + width, _y - width));
+                }
             }
         }
 
 
     public Bag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos )
-    	{
-    	return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
-    	}
+        {
+        return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
+        }
 
 
     public Bag getRadialNeighborsAndLocations( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
-    	{
-    	return getRadialNeighborsAndLocations(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
-    	}
+        {
+        return getRadialNeighborsAndLocations(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
+        }
 
 
 

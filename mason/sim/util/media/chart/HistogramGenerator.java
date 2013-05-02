@@ -68,7 +68,7 @@ public class HistogramGenerator extends XYChartGenerator
         chart.setAntiAlias(true);
         //chartPanel = new ScrollableChartPanel(chart, true);         
         chartPanel = buildChartPanel(chart);           
-		setChartPanel(chartPanel);   
+        setChartPanel(chartPanel);   
         //chartHolder.getViewport().setView(chartPanel);
         ((XYBarRenderer)(chart.getXYPlot().getRenderer())).setShadowVisible(false);
         ((XYBarRenderer)(chart.getXYPlot().getRenderer())).setBarPainter(new StandardXYBarPainter());

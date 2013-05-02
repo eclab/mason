@@ -41,8 +41,8 @@ import com.lowagie.text.pdf.*;
 */
 
 /**
-	An abstract subclass of ChartGenerator for charts which involve X-Y data, such
-	as Time Series, Histograms, and Scatter Plots.                
+   An abstract subclass of ChartGenerator for charts which involve X-Y data, such
+   as Time Series, Histograms, and Scatter Plots.                
 */
 
 public abstract class XYChartGenerator extends ChartGenerator
@@ -69,11 +69,11 @@ public abstract class XYChartGenerator extends ChartGenerator
 
 
 
-	/** Assumes that the underlying Dataset is an XYDataset.  Override this for other datasets. */
-	public int getSeriesCount()
-		{
-		return ((XYDataset)getSeriesDataset()).getSeriesCount();
-		}
+    /** Assumes that the underlying Dataset is an XYDataset.  Override this for other datasets. */
+    public int getSeriesCount()
+        {
+        return ((XYDataset)getSeriesDataset()).getSeriesCount();
+        }
 
 
 
@@ -132,10 +132,10 @@ public abstract class XYChartGenerator extends ChartGenerator
         {
         
         // create the chart
-		((XYPlot)(chart.getPlot())).setDomainGridlinesVisible(false);
-		((XYPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
-		((XYPlot)(chart.getPlot())).setDomainGridlinePaint(new Color(200,200,200));
-		((XYPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
+        ((XYPlot)(chart.getPlot())).setDomainGridlinesVisible(false);
+        ((XYPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
+        ((XYPlot)(chart.getPlot())).setDomainGridlinePaint(new Color(200,200,200));
+        ((XYPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
 
         xLabel = new PropertyField()
             {

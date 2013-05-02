@@ -451,15 +451,15 @@ public class ObjectGrid3D extends AbstractGrid3D
         }
 
     public Bag getRadialNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
-    	{
-    	return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
-    	}
+        {
+        return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+        }
 
 
     public Bag getRadialNeighborsAndLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
-    	{
-    	return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
-    	}
+        {
+        return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+        }
 
 
     public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)

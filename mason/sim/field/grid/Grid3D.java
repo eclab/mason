@@ -236,7 +236,7 @@ public interface Grid3D extends java.io.Serializable
      */
     public void getVonNeumannLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
     
-     /**
+    /**
      * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
      * The measurement rule is Grid2D.ANY, meaning those cells which overlap at all with the region.  
      * The region is closed, meaning that that points which touch on the outer surface of the sphere will be 
@@ -259,7 +259,7 @@ public interface Grid3D extends java.io.Serializable
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos );
 
 
-   /**
+    /**
      * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
      * If measurementRule is Grid3D.CENTER, then the measurement rule will be those cells whose centers
      * overlap with the region.  If measurementRule is Grid3D.ALL, then the measurement rule will be those
@@ -288,7 +288,7 @@ public interface Grid3D extends java.io.Serializable
 
     /** Pass this into buildMap to indicate that it should make a map of any size it likes. */
     public static final int ANY_SIZE = 0;
-	/** Creates a Map which is a copy of another. By default, HashMap is used. */
+    /** Creates a Map which is a copy of another. By default, HashMap is used. */
     public Map buildMap(Map other);
     /** Creates a map of the provided size (or any size it likes if ANY_SIZE is passed in).  By default, HashMap is used. */
     public Map buildMap(int size);

@@ -888,9 +888,9 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         }
 
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
-    	{
-     getRadialLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos, zPos);
-    	}
+        {
+        getRadialLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos, zPos);
+        }
         
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, int measurementRule, boolean closed, IntBag xPos, IntBag yPos, IntBag zPos )
         {
@@ -921,164 +921,164 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         int lengthtimestwo = length * 2;
         
 
-            for(int i = 0; i < len; i++)
+        for(int i = 0; i < len; i++)
+            {
+            int xp = xPos.get(i);
+            int yp = yPos.get(i);
+            int zp = zPos.get(i);
+            boolean remove = false;
+                
+            if (measurementRule == Grid2D.ANY)
                 {
-                int xp = xPos.get(i);
-                int yp = yPos.get(i);
-                int zp = zPos.get(i);
-                boolean remove = false;
-                
-                if (measurementRule == Grid2D.ANY)
+                if (z == zp)
                     {
-                    if (z == zp)
+                    if (x == xp)
                         {
-                        if (x == xp)
+                        if (y < yp)
                             {
-                            if (y < yp)
-                                {
-                                double d = (yp - 0.5) -  y;
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = -((yp - 0.5) - y);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        else if (y == yp)
-                            {
-                            if (x < xp)
-                                {
-                                double d = (xp - 0.5) - x;
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = -((xp - 0.5) - x);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        }
-                    else if (x == xp)
-                        {
-                        if (y == yp)
-                            {
-                            if (z  < zp)
-                                {
-                                double d = (zp - 0.5) -  z;
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            else
-                                {
-                                double d = -((zp - 0.5) - z);
-                                remove = !(d < dist || (d == dist && closed));
-                                }
-                            }
-                        }
-                    else if (z < zp)
-                        {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                            double d = (yp - 0.5) -  y;
+                            remove = !(d < dist || (d == dist && closed));
                             }
                         else
                             {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                            double d = -((yp - 0.5) - y);
+                            remove = !(d < dist || (d == dist && closed));
                             }
+                        }
+                    else if (y == yp)
+                        {
+                        if (x < xp)
+                            {
+                            double d = (xp - 0.5) - x;
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -((xp - 0.5) - x);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    }
+                else if (x == xp)
+                    {
+                    if (y == yp)
+                        {
+                        if (z  < zp)
+                            {
+                            double d = (zp - 0.5) -  z;
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        else
+                            {
+                            double d = -((zp - 0.5) - z);
+                            remove = !(d < dist || (d == dist && closed));
+                            }
+                        }
+                    }
+                else if (z < zp)
+                    {
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
                         }
                     else
                         {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
-                            }
+                        if (y < yp)
+                            remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
                         else
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
-                            }
+                            remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
                         }
                     }
-                else if (measurementRule == Grid2D.ALL)
+                else
                     {
-                    if (z < zp)
+                    if (x < xp)
                         {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
-                            }
+                        if (y < yp)
+                            remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
                         else
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
-                            }
+                            remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
                         }
                     else
                         {
-                        if (x < xp)
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
-                            }
+                        if (y < yp)
+                            remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
                         else
-                            {
-                            if (y < yp)
-                                remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
-                            else
-                                remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
-                            }
+                            remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
                         }
-
                     }
-                else // (measurementRule == Grid2D.CENTER)
+                }
+            else if (measurementRule == Grid2D.ALL)
+                {
+                if (z < zp)
                     {
-                    remove = !within(x,y,z,xp,yp,zp,distsq,closed);
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
+                        }
                     }
-                
-                if (remove)
-                    { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
-                else if (toroidal) // need to convert to toroidal position
-                	{ 
-                	int _x = xPos.get(i);
-                	int _y = yPos.get(i);
-                	int _z = zPos.get(i);
-                	xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
-                	yPos.set(i, ty(_y, height, heighttimestwo, _y + width, _y - width));
-                	zPos.set(i, tz(_z, length, lengthtimestwo, _z + length, _z - length));
-                	}
+                else
+                    {
+                    if (x < xp)
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
+                        }
+                    else
+                        {
+                        if (y < yp)
+                            remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
+                        else
+                            remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
+                        }
+                    }
 
                 }
+            else // (measurementRule == Grid2D.CENTER)
+                {
+                remove = !within(x,y,z,xp,yp,zp,distsq,closed);
+                }
+                
+            if (remove)
+                { xPos.remove(i); yPos.remove(i); zPos.remove(i); i--; len--; }
+            else if (toroidal) // need to convert to toroidal position
+                { 
+                int _x = xPos.get(i);
+                int _y = yPos.get(i);
+                int _z = zPos.get(i);
+                xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
+                yPos.set(i, ty(_y, height, heighttimestwo, _y + width, _y - width));
+                zPos.set(i, tz(_z, length, lengthtimestwo, _z + length, _z - length));
+                }
+
+            }
         }
 
 
     public Bag getRadialNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
-    	{
-    	return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
-    	}
+        {
+        return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+        }
 
 
     public Bag getRadialNeighborsAndLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
-    	{
-    	return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
-    	}
+        {
+        return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos, zPos);
+        }
 
 
 

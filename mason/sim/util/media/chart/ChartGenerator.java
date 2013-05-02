@@ -69,10 +69,10 @@ import com.lowagie.text.pdf.*;
 public abstract class ChartGenerator extends JPanel
     {
     public void setChartPanel(ScrollableChartPanel chartPanel)
-    	{
-    	chartHolder.getViewport().setView(chartPanel);
-    	this.chartPanel = chartPanel;
-    	}
+        {
+        chartHolder.getViewport().setView(chartPanel);
+        this.chartPanel = chartPanel;
+        }
     
     /** A holder for global attributes components */
     protected Box globalAttributes = Box.createVerticalBox();
@@ -84,8 +84,8 @@ public abstract class ChartGenerator extends JPanel
     /** The panel which holds and draws the chart */
     protected ScrollableChartPanel chartPanel;
     /** The JScrollPane which holds the ChartPanel */
-	private JScrollPane chartHolder = new JScrollPane();
-	
+    private JScrollPane chartHolder = new JScrollPane();
+        
     JFrame frame;
     /** Returns the JFrame which stores the whole chart.  Set in createFrame(), else null. */
     public JFrame getFrame() { return frame; }
@@ -103,7 +103,7 @@ public abstract class ChartGenerator extends JPanel
     public abstract Dataset getSeriesDataset();
     public abstract void setSeriesDataset(Dataset obj);
 
-	protected void update() { }
+    protected void update() { }
 
     /** Override this to construct the appropriate kind of chart.  This is the first thing called from the constructor; so certain
         of your instance variables may not have been set yet and you may need to set them yourself.  You'll need to set the dataset. */
@@ -187,7 +187,7 @@ public abstract class ChartGenerator extends JPanel
         {
         seriesAttributes.removeAll();
         for(int i = 0; i < c.length; i++)
-        	{
+            {
             seriesAttributes.add(c[i]);
             }
         }
@@ -302,7 +302,7 @@ public abstract class ChartGenerator extends JPanel
         
 
 
-	public abstract int getSeriesCount();
+    public abstract int getSeriesCount();
 
 
 
@@ -357,31 +357,31 @@ public abstract class ChartGenerator extends JPanel
         return component;
         }
 
-	/** This is set to a string indicating that the chart is invalid.  When the title
-		is set in the chart, this title will be used instead. */
-	protected String invalidChartTitle = null;
-	protected String validChartTitle = "";
-	
-	/** Sets the invalid chart title if any.  If null,
-		clears the invalid chart title and displays the
-		actual chart title. */
-	public void setInvalidChartTitle(String title)
-		{
-		invalidChartTitle = title;
-		setTitle(validChartTitle);
-		}
-	
+    /** This is set to a string indicating that the chart is invalid.  When the title
+        is set in the chart, this title will be used instead. */
+    protected String invalidChartTitle = null;
+    protected String validChartTitle = "";
+        
+    /** Sets the invalid chart title if any.  If null,
+        clears the invalid chart title and displays the
+        actual chart title. */
+    public void setInvalidChartTitle(String title)
+        {
+        invalidChartTitle = title;
+        setTitle(validChartTitle);
+        }
+        
     /** Sets the title of the chart (and the window frame). 
-    	If there is an invalidChartTitle set, this is used
-    	instead and the specified title is held in storage
-    	to be used later.  */
+        If there is an invalidChartTitle set, this is used
+        instead and the specified title is held in storage
+        to be used later.  */
     public void setTitle(String title)
         {
         validChartTitle = title;
 
         if (invalidChartTitle != null)
-        	title = invalidChartTitle;
-        	
+            title = invalidChartTitle;
+                
         chart.setTitle(title);
         chart.titleChanged(new TitleChangeEvent(new org.jfree.chart.title.TextTitle(title)));
         if (frame!=null) frame.setTitle(title);
@@ -449,13 +449,13 @@ public abstract class ChartGenerator extends JPanel
         list.add(new JLabel("Title"), titleField);
 
 
-		buildGlobalAttributes(list);
+        buildGlobalAttributes(list);
 
 
 
         final JCheckBox legendCheck = new JCheckBox();
         legendCheck.setSelected(false);
-		ItemListener il = new ItemListener()
+        ItemListener il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
                 {
@@ -475,17 +475,17 @@ public abstract class ChartGenerator extends JPanel
         list.add(new JLabel("Legend"), legendCheck);
 
 /*
-        final JCheckBox aliasCheck = new JCheckBox();
-        aliasCheck.setSelected(chart.getAntiAlias());
-        il = new ItemListener()
-            {
-            public void itemStateChanged(ItemEvent e)
-                {
-                chart.setAntiAlias( e.getStateChange() == ItemEvent.SELECTED );
-                }
-            };
-        aliasCheck.addItemListener(il);
-        list.add(new JLabel("Antialias"), aliasCheck);
+  final JCheckBox aliasCheck = new JCheckBox();
+  aliasCheck.setSelected(chart.getAntiAlias());
+  il = new ItemListener()
+  {
+  public void itemStateChanged(ItemEvent e)
+  {
+  chart.setAntiAlias( e.getStateChange() == ItemEvent.SELECTED );
+  }
+  };
+  aliasCheck.addItemListener(il);
+  list.add(new JLabel("Antialias"), aliasCheck);
 */
 
         JPanel pdfButtonPanel = new JPanel();
@@ -548,14 +548,14 @@ public abstract class ChartGenerator extends JPanel
         
         fixBox = new JCheckBox("Fill");
         fixBox.addActionListener(new ActionListener()
-        	{
+            {
             public void actionPerformed(ActionEvent e)
-            	{
-            	setFixed(fixBox.isSelected());
-            	}
-        	});
-		header.add(fixBox);
-		fixBox.setSelected(true);
+                {
+                setFixed(fixBox.isSelected());
+                }
+            });
+        header.add(fixBox);
+        fixBox.setSelected(true);
         
         // add the scale field
         scaleField = new NumberTextField("  Scale: ", 1.0, true)
@@ -572,8 +572,8 @@ public abstract class ChartGenerator extends JPanel
         scaleField.setToolTipText("Zoom in and out");
         scaleField.setBorder(BorderFactory.createEmptyBorder(0,0,0,2));
         scaleField.setEnabled(false);
-		scaleField.setText("");
-		header.add(scaleField);
+        scaleField.setText("");
+        header.add(scaleField);
        
         // add the proportion field
         proportionField = new NumberTextField("  Proportion: ", 1.5, true)
@@ -592,8 +592,8 @@ public abstract class ChartGenerator extends JPanel
 
 
         chartHolder.setMinimumSize(new Dimension(0,0));
-		chartHolder.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		chartHolder.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);        
+        chartHolder.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        chartHolder.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);        
         chartHolder.getViewport().setBackground(Color.gray);
         JPanel p2 = new JPanel();
         p2.setLayout(new BorderLayout());
@@ -615,28 +615,28 @@ public abstract class ChartGenerator extends JPanel
         chartPanel.setPreferredSize(new java.awt.Dimension((int)(DEFAULT_CHART_HEIGHT * DEFAULT_CHART_PROPORTION), (int)(DEFAULT_CHART_HEIGHT)));
         }
 
-	public boolean isFixed()
-		{
-		return fixBox.isSelected();
-		}
-		
-	public void setFixed(boolean value)
-		{
-		fixBox.setSelected(value);
-		chartHolder.setHorizontalScrollBarPolicy(
-			value? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER: ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scaleField.setEnabled(!value);
-		if (value) scaleField.setText("");
-		else 
-			{
-			double val = scaleField.getValue();
-			if (val == (int) val)
-				scaleField.setText("" + (int)val);
-			else scaleField.setText("" + val);
-			}
-		resizeChart();
-		}
-		
+    public boolean isFixed()
+        {
+        return fixBox.isSelected();
+        }
+                
+    public void setFixed(boolean value)
+        {
+        fixBox.setSelected(value);
+        chartHolder.setHorizontalScrollBarPolicy(
+            value? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER: ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scaleField.setEnabled(!value);
+        if (value) scaleField.setText("");
+        else 
+            {
+            double val = scaleField.getValue();
+            if (val == (int) val)
+                scaleField.setText("" + (int)val);
+            else scaleField.setText("" + val);
+            }
+        resizeChart();
+        }
+                
 
 
     public double DEFAULT_CHART_HEIGHT = 480;
@@ -692,7 +692,7 @@ public abstract class ChartGenerator extends JPanel
                 }
             };
         if (inspector)
-        	frame.getRootPane().putClientProperty("Window.style", "small");  // on the Mac
+            frame.getRootPane().putClientProperty("Window.style", "small");  // on the Mac
 
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
@@ -788,18 +788,18 @@ public abstract class ChartGenerator extends JPanel
             }
         
         public Dimension getPreferredSize()
-        	{
+            {
             Dimension size = super.getPreferredSize();
             int viewportWidth = chartHolder.getViewport().getWidth();
             if (viewportWidth == 0)  // uh oh, not set up yet
-            	return size;
+                return size;
 
             // adjust height
             if (isFixed())
-	            size.height = (int)(size.height / (double) size.width * viewportWidth);
-	        return size;
-        	}
-        	
+                size.height = (int)(size.height / (double) size.width * viewportWidth);
+            return size;
+            }
+                
         public Dimension getPreferredScrollableViewportSize()
             {
             return getPreferredSize();
@@ -825,9 +825,9 @@ public abstract class ChartGenerator extends JPanel
         public Dimension getMinimumSize() { return getPreferredSize(); }
         
         public void setSize(Dimension d)
-        	{
-        	super.setSize(d);
-        	}
+            {
+            super.setSize(d);
+            }
         }
         
         

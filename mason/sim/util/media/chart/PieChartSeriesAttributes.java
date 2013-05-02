@@ -24,8 +24,8 @@ import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
 
 /** 
-	A SeriesAttributes used for user control of pie chart series created with PieChartGenerator.
-	Like HistogramSeriesAttributes, modifying this series is costly because JFreeChart must rebuild everything.
+    A SeriesAttributes used for user control of pie chart series created with PieChartGenerator.
+    Like HistogramSeriesAttributes, modifying this series is costly because JFreeChart must rebuild everything.
 */
 
 
@@ -36,8 +36,8 @@ public class PieChartSeriesAttributes extends SeriesAttributes
     void setValues(double[] vals) { values = vals; }
     
     String[] labels;
-	String[] getLabels() { return labels; }
-	void setLabels(String[] labs) { labels = labs; }
+    String[] getLabels() { return labels; }
+    void setLabels(String[] labs) { labels = labs; }
     
     public PieChartSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, String[] labels, SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
@@ -66,9 +66,9 @@ public class PieChartSeriesAttributes extends SeriesAttributes
         }
     
     public void setPlotVisible(boolean val)
-    	{
-    	plotVisible = val;
-    	generator.update();
-    	}
-    	
+        {
+        plotVisible = val;
+        generator.update();
+        }
+        
     }

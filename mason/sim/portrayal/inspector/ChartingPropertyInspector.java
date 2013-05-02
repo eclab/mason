@@ -177,7 +177,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             ChartGenerator g = (ChartGenerator)(charts.objs[i]);
             if (!validChartGenerator(g))  // I can't use this chart
                 { charts.remove(g); i--; 
-                System.err.println(g);
+            System.err.println(g);
                 }
             }
 

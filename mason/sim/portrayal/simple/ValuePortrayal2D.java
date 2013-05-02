@@ -44,12 +44,12 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
         {
         ValueGridPortrayal2D parent = (ValueGridPortrayal2D) (info.fieldPortrayal);
         double levelHere = ((MutableDouble)object).val;
-		Color c = parent.getMap().getColor(levelHere);
+        Color c = parent.getMap().getColor(levelHere);
         if (c.getAlpha() != 0) 
-        	{
-        	paint = c;
-        	super.draw(object, graphics, info);
-        	}
+            {
+            paint = c;
+            super.draw(object, graphics, info);
+            }
         }
     
     public static abstract class Filter

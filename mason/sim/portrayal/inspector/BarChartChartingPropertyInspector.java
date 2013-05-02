@@ -100,16 +100,16 @@ public class BarChartChartingPropertyInspector extends ChartingPropertyInspector
         Object[] vals = previousValues;  // set it to something in case we don't get anything new.
                 
         //if (cls.isArray())
-            {
-            Class comp = cls.getComponentType();
-            if (comp.equals(Object.class))
                 {
-                Object[] array = (Object[]) obj;
-                vals = new Object[array.length];
-                for(int i=0;i<array.length;i++)
-                    vals[i] = array[i];
+                Class comp = cls.getComponentType();
+                if (comp.equals(Object.class))
+                    {
+                    Object[] array = (Object[]) obj;
+                    vals = new Object[array.length];
+                    for(int i=0;i<array.length;i++)
+                        vals[i] = array[i];
+                    }
                 }
-            }
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)
