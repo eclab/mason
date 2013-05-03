@@ -240,7 +240,13 @@ public class ParallelSequence extends Sequence
         private static final long serialVersionUID = 1;
         }
         
-        
+    // explicitly state a UID in order to be 'cross-platform' serializable
+    // because we contain an inner class and compilers come up with all
+    // sorts of different UIDs for inner classes and their parents.
+    private static final long serialVersionUID = 1;
+    }
+    
+
     // Why do we have a ThreadPool object here instead of using Java's thread
     // pool facility in java.util.concurrent?  Two reasons.  First, this is
     // faster and far simpler.  Second, java.util.concurrent has ridiculous
@@ -285,9 +291,9 @@ public class ParallelSequence extends Sequence
                     // add myself back in the list
                     synchronized(threads)
                         {
-                        ThreadPool.this.threads.push(this);
+                        threads.push(this);
                         if (totalThreads == threads.size())  // we're all in the bag, let the pool know if it's joining
-                            ThreadPool.this.threads.notify();
+                            threads.notify();
                         }
                     // let the pool know I'm home
                     }
@@ -350,10 +356,4 @@ public class ParallelSequence extends Sequence
 
         private static final long serialVersionUID = 1;
         }
-    
-    // explicitly state a UID in order to be 'cross-platform' serializable
-    // because we contain an inner class and compilers come up with all
-    // sorts of different UIDs for inner classes and their parents.
-    private static final long serialVersionUID = 1;
-    }
     
