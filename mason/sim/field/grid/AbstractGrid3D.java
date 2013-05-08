@@ -330,19 +330,16 @@ public abstract class AbstractGrid3D implements Grid3D
                         
             final int zmin = ((z-dist>=0 || !bounded)?z-dist:0);
             final int zmax = ((z+dist<=length-1 || !bounded)?z+dist:length-1);
-                        
+
             for( int x0 = xmin ; x0 <= xmax ; x0++ )
                 {
                 for( int y0 = ymin ; y0 <= ymax ; y0++ )
                     {
                     for( int z0 = zmin ; z0 <= zmax ; z0++ )
                         {
-                        if( x0 != x || y0 != y || z0 != z )
-                            {
                             xPos.add( x0 );
                             yPos.add( y0 );
                             zPos.add( z0 );
-                            }
                         }
                     }
                 }
@@ -460,12 +457,9 @@ public abstract class AbstractGrid3D implements Grid3D
                     for( int z0 = zmin; z0 <= zmax; z0++ )
                         {
                         final int z_0 = z0;
-                        if( x_0 != x || y_0 != y || z_0 != z )
-                            {
                             xPos.add( x_0 );
                             yPos.add( y_0 );
                             zPos.add( z_0 );
-                            }
                         }
                     }
                 }
@@ -669,6 +663,12 @@ public abstract class AbstractGrid3D implements Grid3D
         }
 
 
+ 	protected void checkBounds(Grid3D other)
+    	{
+    	if (getHeight() != other.getHeight() || getWidth() != other.getWidth() || getLength() != other.getLength())
+    		throw new IllegalArgumentException("Grids must be the same dimensions.");
+    	}
+    
 
     }
 

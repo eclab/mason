@@ -382,9 +382,13 @@ public class SimState implements java.io.Serializable
                 "                  Default: the system time in milliseconds.\n\n" +
                 "-until U          Double value >= 0: the simulation must stop when the\n" +
                 "                  simulation time U has been reached or exceeded.\n" +
-                "                  Default: don't stop.\n\n" +
+                "                  If -for is also included, the simulation terminates when\n" + 
+                "                  either of them is completed.\n" + 
+				"                  Default: don't stop.\n\n" +
                 "-for N            Long value >= 0: the simulation must stop when N\n" +
-                "                  simulation steps have transpired.\n" +
+                "                  simulation steps have transpired.   If -until is also\n" +
+                "                  included, the simulation terminates when either of them is\n" + 
+                "                  completed.\n" +
                 "                  Default: don't stop.\n\n" +
                 "-time T           Long value >= 0: print a timestamp every T simulation steps.\n" +
                 "                  If 0, nothing is printed.\n" +
@@ -592,8 +596,14 @@ public class SimState implements java.io.Serializable
                 
             state.finish();
             
-            if (retval) if (!quiet) System.err.println("Exhausted");
-                else if (!quiet) System.err.println("Quit");
+            if (retval) 
+            	{
+            	if (!quiet) System.err.println("Exhausted");
+            	}
+            else
+            	{
+            	if (!quiet) System.err.println("Quit");
+            	}
             }
         }
     

@@ -368,7 +368,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at getTime() + 1.0, 0 ordering. If this is a valid time
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
@@ -383,7 +384,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at getTime() + delta, 0 ordering. If this is a valid time
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
@@ -398,7 +400,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at getTime() + 1.0, and in the ordering provided. If this is a valid time
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
@@ -413,7 +416,8 @@ public class Schedule implements java.io.Serializable
     /** Schedules the event to occur at getTime() + delta, and in the ordering provided. If this is a valid time
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleOnce function call
@@ -430,7 +434,8 @@ public class Schedule implements java.io.Serializable
         timestamp). If this is a valid time
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     
     public boolean scheduleOnce(double time, final Steppable event)
@@ -446,7 +451,8 @@ public class Schedule implements java.io.Serializable
         timestamp). If this is a valid time, ordering,
         and event, schedules the event and returns TRUE.
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. 
     */
     public boolean scheduleOnce(double time, final int ordering, final Steppable event)
@@ -459,7 +465,8 @@ public class Schedule implements java.io.Serializable
     
     /** Schedules an item. 
         This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     protected boolean scheduleOnce(Key key, final Steppable event)
         {
@@ -472,7 +479,8 @@ public class Schedule implements java.io.Serializable
     
     /** Schedules an item.  You must synchronize on this.lock before calling this method.   This allows us to avoid synchronizing twice,
         and incurring any overhead (not sure if that's an issue really).  This method at present returns FALSE if the schedule cannot
-        schedule any more events (it's sealed or the time is AFTER_SIMULATION).  The method 
+        schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
+        event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
     boolean _scheduleOnce(Key key, final Steppable event)
         {

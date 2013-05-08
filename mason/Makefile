@@ -128,10 +128,6 @@ jar: 3d
 dist: clean 3d indent doc jar
 	touch TODO
 	rm TODO
-	touch docs/manualsource
-	rm -rf docs/manualsource
-	touch docs/Java3D.graffle
-	rm -rf docs/*.graffle
 	find . -name ".svn" -exec rm -rf {} \;
 	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."

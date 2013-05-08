@@ -767,7 +767,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      * 
      * @deprecated
      */
-    public Bag getNeighborsAndCorrespondingLocationsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getNeighborsAndCorrespondingPositionsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
         return getMooreNeighborsAndLocations(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
         }

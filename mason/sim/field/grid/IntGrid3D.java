@@ -289,6 +289,7 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
     */
     public final IntGrid3D add(IntGrid3D withThis)
         {
+        checkBounds(withThis);
         int[][]fieldx = null;
         int[] fieldxy = null;
         int[][][] ofield = withThis.field;
@@ -342,6 +343,7 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
     */
     public final IntGrid3D multiply(IntGrid3D withThis)
         {
+        checkBounds(withThis);
         int[][]fieldx = null;
         int[] fieldxy = null;
         int[][][] ofield = withThis.field;

@@ -2555,3 +2555,31 @@ Version 17
 	Modifications to charting to allow fixed charts to window width
 	Added the ability to change the Map implementation in various fields
 	Reindented
+
+Version 18
+	Deprecated SparseGrid2D method getNeighborsAndCorrespondingPositionsMaxDistance was
+		incorrectly renamed getNeighborsAndCorrespondingLocationsMaxDistance
+		Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	DenseGrid[2|3]D documentation error did not mae it clear that moveObject would
+		set an object location if it wasn't already in the grid.
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	Error in AbstractGrid3D and subclasses: all moore/max and hamiltonian/vonneumann
+		lookup methods would ignore the origin in non-toroidal cases regardless
+		of whether or not the user requested this feature.
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	DoubleGrid[2|3]D.truncate was not modifying the grid
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	DoubleGrid[2|3]D and IntGrid[2|3]D add and multiple methods didn't have sufficient
+		safeguards against multiplying or adding against other grids of different
+		dimensions.
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	Documentation improved to make it clear that repeated-scheduled Steppables would
+		simply terminate if their intervals eventually pushed them to beyond
+		AFTER_SIMULATION.
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	The -help flag in doLoop text modified to make it clear that the simulation would
+		end when either -time or -until was completed even if the other one was not.
+                Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+	SimpleInspector could reschedule itself even after the simulation had ended in
+		unusual situations, resulting in an unexpected spurious but otherwise
+		relatively harmless exception.  Thanks to Joey Harrison <jharri1@gmu.edu>

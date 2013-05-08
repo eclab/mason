@@ -249,6 +249,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D add(final IntGrid2D withThis)
         {
+        checkBounds(withThis);
         final int[][] otherField = withThis.field;
         double[] fieldx = null;
         int[] ofieldx = null;
@@ -269,6 +270,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D add(final DoubleGrid2D withThis)
         {
+        checkBounds(withThis);
         final double[][] otherField = withThis.field;
         double[] fieldx = null;
         double[] ofieldx = null;
@@ -307,6 +309,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D multiply(final IntGrid2D withThis)
         {
+        checkBounds(withThis);
         final int[][] otherField = withThis.field;
         double[] fieldx = null;
         int[] ofieldx = null;
@@ -327,6 +330,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D multiply(final DoubleGrid2D withThis)
         {
+        checkBounds(withThis);
         final double[][] otherField = withThis.field;
         double[] fieldx = null;
         double[] ofieldx = null;
@@ -389,10 +393,12 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
             {
             fieldx = field[x]; 
             for(int y=0;y<height;y++)
-                if (fieldx[y] > 0.0) 
-                    /*Strict*/Math.floor(fieldx[y]);
-                else
-                    /*Strict*/Math.ceil(fieldx[y]);
+            	fieldx[y] = (int) fieldx[y];
+                //if (fieldx[y] > 0.0) 
+                //    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
+                //else
+                //    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
+                
             }
         return this;
         }

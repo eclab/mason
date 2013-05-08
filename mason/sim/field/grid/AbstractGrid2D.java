@@ -671,6 +671,12 @@ public abstract class AbstractGrid2D implements Grid2D
         }
 
 
+    protected void checkBounds(Grid2D other)
+    	{
+    	if (getHeight() != other.getHeight() || getWidth() != other.getWidth())
+    		throw new IllegalArgumentException("Grids must be the same dimensions.");
+    	}
+    
 
 
 

@@ -283,6 +283,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D add(IntGrid3D withThis)
         {
+        checkBounds(withThis);
         int[][][] otherField = withThis.field;
         int[][] ofieldx = null;
         int[] ofieldxy = null;        
@@ -312,6 +313,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D add(DoubleGrid3D withThis)
         {
+        checkBounds(withThis);
         double[][][] otherField = withThis.field;
         double[][] ofieldx = null;
         double[] ofieldxy = null;        
@@ -365,6 +367,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D multiply(IntGrid3D withThis)
         {
+        checkBounds(withThis);
         int[][][] otherField = withThis.field;
         int[][] ofieldx = null;
         int[] ofieldxy = null;        
@@ -394,6 +397,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D multiply(DoubleGrid3D withThis)
         {
+        checkBounds(withThis);
         double[][][] otherField = withThis.field;
         double[][] ofieldx = null;
         double[] ofieldxy = null;        
@@ -466,7 +470,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     /** Eliminates the decimal portion of each value in the grid (rounds towards zero).
         Returns the modified grid. 
     */
-    public final DoubleGrid3D  truncate()
+    public final DoubleGrid3D truncate()
         {
         double[][] fieldx = null;
         double[] fieldxy = null;                        
@@ -480,10 +484,11 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
                 {
                 fieldxy = fieldx[y];
                 for(int z=0;z<length;z++)
-                    if (fieldxy[z] > 0.0) 
-                        /*Strict*/Math.floor(fieldxy[z]);
-                    else
-                        /*Strict*/Math.ceil(fieldxy[z]);
+                    fieldxy[z] = (int) fieldxy[z];
+                    //if (fieldxy[z] > 0.0) 
+                    //    /*Strict*/Math.floor(fieldxy[z]);
+                    //else
+                    //    /*Strict*/Math.ceil(fieldxy[z]);
                 }
             }
         return this;

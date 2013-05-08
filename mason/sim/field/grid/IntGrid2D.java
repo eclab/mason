@@ -286,6 +286,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
 
     public final IntGrid2D add(IntGrid2D withThis)
         {
+        checkBounds(withThis);
         int[][]ofield = withThis.field;
         int[] ofieldx = null;
         int[] fieldx = null;
@@ -332,6 +333,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
 
     public final IntGrid2D multiply(IntGrid2D withThis)
         {
+        checkBounds(withThis);
         int[][]ofield = withThis.field;
         int[] ofieldx = null;
         int[] fieldx = null;
