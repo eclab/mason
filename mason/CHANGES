@@ -2559,7 +2559,8 @@ Version 17
 Version 18
 	Deprecated SparseGrid2D method getNeighborsAndCorrespondingPositionsMaxDistance was
 		incorrectly renamed getNeighborsAndCorrespondingLocationsMaxDistance
-		Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
+		Thanks to Rob Alexander <rob.alexander@york.ac.uk> and the "Software Measurement 
+		and Testing 2013" class at University of York.
 	DenseGrid[2|3]D documentation error did not mae it clear that moveObject would
 		set an object location if it wasn't already in the grid.
                 Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
