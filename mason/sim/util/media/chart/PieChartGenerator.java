@@ -132,8 +132,22 @@ public class PieChartGenerator extends ChartGenerator
             if (sa[i].isPlotVisible())
                 {
                 PieChartSeriesAttributes attributes = (PieChartSeriesAttributes)(sa[i]);
-                double[] values = attributes.getValues();
-                String[] labels = attributes.getLabels();
+                
+                Object[] elements = attributes.getElements();
+                double[] values = null;
+                String[] labels = null;
+                if (elements != null) 
+                	{
+					HashMap map = convertIntoAmountsAndLabels(elements);
+					labels = revisedLabels(map);
+					values = amounts(map, labels);
+                	}
+                else
+                	{
+                	values = attributes.getValues();
+               		labels = attributes.getLabels();
+               		}
+               		
                 UniqueString seriesName = new UniqueString(attributes.getSeriesName());
         
                 for(int j = 0; j < values.length; j++)
@@ -149,6 +163,11 @@ public class PieChartGenerator extends ChartGenerator
         }
 
 
+	protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
+		{
+		return new PieChartSeriesAttributes(this, name, getSeriesCount(), stopper);
+		}
+
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
     SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
@@ -156,7 +175,12 @@ public class PieChartGenerator extends ChartGenerator
         int i = getSeriesCount();
         
         // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
-        PieChartSeriesAttributes csa = new PieChartSeriesAttributes(this, name, i, amounts, labels, stopper);
+        PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
+        
+        // set information
+        csa.setValues(amounts);
+        csa.setLabels(labels);
+        
         seriesAttributes.add(csa);
                 
         revalidate();  // display the new series panel
@@ -172,13 +196,49 @@ public class PieChartGenerator extends ChartGenerator
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
     public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)
         {
-        HashMap map = convertIntoAmountsAndLabels(objs);
-        String[] labels = revisedLabels(map);
-        double[] amounts = amounts(map, labels);
-        return addSeries(amounts, labels, name, stopper);
+        int i = getSeriesCount();
+        
+        // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
+        PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
+        
+        // set information
+        csa.setElements(objs);
+        
+        seriesAttributes.add(csa);
+                
+        revalidate();  // display the new series panel
+        update();
+                
+        // won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
+        SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
+                
+        return csa;
         }
         
                 
+    /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
+        event if/when the series is deleted from the chart by the user. Returns the series attributes. */
+    public SeriesAttributes addSeries(Collection objs, String name, SeriesChangeListener stopper)
+        {
+        int i = getSeriesCount();
+        
+        // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
+        PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
+        
+        // set information
+        csa.setElements(objs);
+        
+        seriesAttributes.add(csa);
+                
+        revalidate();  // display the new series panel
+        update();
+                
+        // won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
+        SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
+                
+        return csa;
+        }
+
     // Takes objects and produces an object->count mapping
     HashMap convertIntoAmountsAndLabels(Object[] objs)
         {
@@ -218,6 +278,18 @@ public class PieChartGenerator extends ChartGenerator
         return amounts;
         }
 
+    public void updateSeries(int index, Collection objs)
+        {
+        if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
+            return;
+            
+        if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
+            return;
+
+        PieChartSeriesAttributes hsa = (PieChartSeriesAttributes)(getSeriesAttribute(index));
+		hsa.setElements(new ArrayList(objs));
+		}
+    
     public void updateSeries(int index, Object[] objs)
         {
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
@@ -226,12 +298,9 @@ public class PieChartGenerator extends ChartGenerator
         if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
             return;
 
-        HashMap map = convertIntoAmountsAndLabels(objs);
-        String[] labels = revisedLabels(map);
-        double[] amounts = amounts(map, labels);
-
-        updateSeries(index, amounts, labels);
-        }
+        PieChartSeriesAttributes hsa = (PieChartSeriesAttributes)(getSeriesAttribute(index));
+		hsa.setElements((Object[])(objs.clone()));
+		}
     
     void updateSeries(int index, double[] amounts, String[] labels)
         {
@@ -242,8 +311,8 @@ public class PieChartGenerator extends ChartGenerator
             return;
 
         PieChartSeriesAttributes hsa = (PieChartSeriesAttributes)(getSeriesAttribute(index));
-        hsa.setValues(amounts);
-        hsa.setLabels(labels);
+        hsa.setValues((double[])(amounts.clone()));
+        hsa.setLabels((String[])(labels.clone()));
         }       
 
     // This ridiculous class exists so we can create Strings (of sorts) which are completely

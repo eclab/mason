@@ -2584,3 +2584,6 @@ Version 18
 	SimpleInspector could reschedule itself even after the simulation had ended in
 		unusual situations, resulting in an unexpected spurious but otherwise
 		relatively harmless exception.  Thanks to Joey Harrison <jharri1@gmu.edu>
+	Improvements to pie charting and bar charting facilities to allow tracking of
+		Collections and also to set up BarChartingPropertyInspector as a subclass
+		of PieChartChartingPropertyInspector.

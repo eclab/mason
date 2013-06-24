@@ -31,8 +31,8 @@ import org.jfree.data.general.*;
 public class BarChartSeriesAttributes extends PieChartSeriesAttributes
     {
     /** Produces a PieChartSeriesAttributes object */
-    public BarChartSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, String[] labels, SeriesChangeListener stoppable)  // , boolean includeMargin)
+    public BarChartSeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
-        super(generator, name, index, values, labels, stoppable);
+        super(generator, name, index, stoppable);
         }       
     }

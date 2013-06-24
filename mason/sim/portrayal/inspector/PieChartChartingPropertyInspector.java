@@ -46,7 +46,7 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         {
         return new Class[]
             {
-            new Object[0].getClass()
+            new Object[0].getClass(), java.util.Collection.class,
             };
         }
 
@@ -105,10 +105,10 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         Class cls = obj.getClass();
         Object[] vals = previousValues;  // set it to something in case we don't get anything new.
                 
-        //if (cls.isArray())
+        if (cls.isArray())
                 {
                 Class comp = cls.getComponentType();
-                if (comp.equals(Object.class))
+                if (Object.class.isAssignableFrom(comp))
                     {
                     Object[] array = (Object[]) obj;
                     vals = new Object[array.length];
@@ -116,6 +116,13 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
                         vals[i] = array[i];
                     }
                 }
+        else if (java.util.Collection.class.isAssignableFrom(cls))
+        	{
+			Object[] array = ((java.util.Collection) obj).toArray();
+			vals = new Object[array.length];
+			for(int i=0;i<array.length;i++)
+				vals[i] = array[i];
+        	}
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

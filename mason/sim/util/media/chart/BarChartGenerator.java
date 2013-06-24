@@ -272,7 +272,6 @@ public class BarChartGenerator extends PieChartGenerator
         }
     
     public static final int MAXIMUM_BAR_CHART_ITEMS = 20;
-    final DefaultCategoryDataset emptyDataset = new DefaultCategoryDataset();
     public Dataset getSeriesDataset() { return ((CategoryPlot)(chart.getPlot())).getDataset(); }
     public void setSeriesDataset(Dataset obj) 
         {
@@ -290,6 +289,11 @@ public class BarChartGenerator extends PieChartGenerator
             }
         }
 
+	protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
+		{
+		return new BarChartSeriesAttributes(this, name, getSeriesCount(), stopper);
+		}
+
     protected void buildChart()
         {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -306,90 +310,10 @@ public class BarChartGenerator extends PieChartGenerator
         setSeriesDataset(dataset);
         }
  
-    protected void update()
-        {
-        // We have to rebuild the dataset from scratch (deleting and replacing it) because JFreeChart's
-        // piechart facility doesn't have a way to move series.  Just like the histogram system: stupid stupid stupid.
-
-        SeriesAttributes[] sa = getSeriesAttributes();
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        for(int i=0; i < sa.length; i++)
-            if (sa[i].isPlotVisible())
-                {
-                BarChartSeriesAttributes attributes = (BarChartSeriesAttributes)(sa[i]);
-                double[] values = attributes.getValues();
-                String[] labels = attributes.getLabels();
-                UniqueString seriesName = new UniqueString(attributes.getSeriesName());
-        
-                for(int j = 0; j < values.length; j++)
-                    dataset.addValue(values[j], labels[j], seriesName);  // ugh
-                }
-                        
-        setSeriesDataset(dataset);
-        }
 
     public BarChartGenerator()
         {
         // buildChart is called by super() first
         }
-
-
-    /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
-        event if/when the series is deleted from the chart by the user. Returns the series attributes. */
-    SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
-        {
-        int i = getSeriesCount();
-        
-        // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
-        BarChartSeriesAttributes csa = new BarChartSeriesAttributes(this, name, i, amounts, labels, stopper);
-        seriesAttributes.add(csa);
-                
-        revalidate();  // display the new series panel
-        update();
-                
-        // won't update properly unless I force it here by letting all the existing scheduled events to go through.  Dumb design.  :-(
-        SwingUtilities.invokeLater(new Runnable() { public void run() { update(); } });
-                
-        return csa;
-        }
-
-    /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
-        event if/when the series is deleted from the chart by the user. Returns the series attributes. */
-    public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)
-        {
-        HashMap map = convertIntoAmountsAndLabels(objs);
-        String[] labels = revisedLabels(map);
-        double[] amounts = amounts(map, labels);
-        return addSeries(amounts, labels, name, stopper);
-        }
-        
-    public void updateSeries(int index, Object[] objs)
-        {
-        if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
-            return;
-            
-        if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
-            return;
-
-        HashMap map = convertIntoAmountsAndLabels(objs);
-        String[] labels = revisedLabels(map);
-        double[] amounts = amounts(map, labels);
-
-        updateSeries(index, amounts, labels);
-        }
-    
-    void updateSeries(int index, double[] amounts, String[] labels)
-        {
-        if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
-            return;
-            
-        if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
-            return;
-
-        BarChartSeriesAttributes hsa = (BarChartSeriesAttributes)(getSeriesAttribute(index));
-        hsa.setValues(amounts);
-        hsa.setLabels(labels);
-        }       
     }
 

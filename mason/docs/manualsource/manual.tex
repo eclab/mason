@@ -3488,7 +3488,7 @@ public MersenneTwisterFast random;
 public Schedule schedule;
 \end{verbatim}
 
-We'll get to the \variable{schedule} in Section \ref{sim.engine.Schedule}.  \variable{random} is an \Class{ec.util.MersenneTwisterFast}, a random number generator which (true to its name) is a fast-operating implementation of the Mersenne Twister algorithm.  Unlike \Class{java.util.Random}, this is a high-quality random number generator, and as discussed in Section \ref{ec.util}, its methods are essentially identical to \Class{java.util.Random}.  {\bf Do not use \class{java.util.Random} or \method{java.lang.Math.random() in your simulation}.  You should always use \variable{random}.}
+We'll get to the \variable{schedule} in Section \ref{sim.engine.Schedule}.  \variable{random} is an \Class{ec.util.MersenneTwisterFast}, a random number generator which (true to its name) is a fast-operating implementation of the Mersenne Twister algorithm.  Unlike \Class{java.util.Random}, this is a high-quality random number generator, and as discussed in Section \ref{ec.util}, its methods are essentially identical to \Class{java.util.Random}.  {\bf Do not use \class{java.util.Random} or \method{java.lang.Math.random() in your simulation}.  You should always use the provided random number generator.}
 
 \sidebar{Didn't MASON use to recommend locking on the schedule instead of the generator?}{Yes.  MASON acquires a lock on the schedule to synchronize the underlying model thread and the visualization/GUI thread.  You'll see MASON locking on the schedule in this manner later on in the visualization sections.  It used to be the case that we recommended locking on the schedule for accessing the random number generator as well, but this turns out to be an error: typically the model has a lock on the schedule already, and if you then try to acquire the lock from various threads, you'll get a deadlock.}
 \paragraph{\Class{ec.util.MersenneTwisterFast} is not thread synchronized}  Ordinarily your MASON simulation will involve a single thread, so there's no issue.  But if you break your simulation into multiple threads, you'll need to make sure that when you access the random number generator you do so in a threadsafe manner.  This is done by locking on the random number generator (\variable{random}). For example, imagine if you need a random double.  You should do something like this:
@@ -3815,7 +3815,7 @@ MASON's Schedule is little more than a binary heap with a current real-valued {\
     public static final double MAXIMUM\_INTEGER;
 }
 
-When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not a finite number of these: at some (very high) value, the timestamp becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than just timestamp~+~1.  That high value is \variable{MAXIMUM\_INTEGER}, and you probably should do integer scheduling beyond it.
+When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not an infinite number of these: at some (very high) value, the double-valued resolution becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than just timestamp~+~1.  That high value is \variable{MAXIMUM\_INTEGER}, and you probably should do integer scheduling beyond it.
 
 Here are some methods for accessing the current time and steps:
 
@@ -11470,6 +11470,10 @@ You can create a Pie Chart programmatically this way, or you can alternatively c
 \begin{methods}{\class{sim.util.media.chart.PieChartGenerator}}
 \mthd{public SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)} Adds a series with the given series name, with the provided amounts and labels.
 \mthd{public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public SeriesAttributes addSeries(Collection objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public void updateSeries(int index, double[] amounts, String[] labels)} Updates a series at a given index with a revised array.  
+\mthd{public void updateSeries(int index, Object[] objs)} Updates a series at a given index with a revised array.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public void updateSeries(int index, Collection objs)} Updates a series at a given index with a revised Collection.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
 \end{methods}
 
 MASON can plot multiple series (hence multiple pie charts) on the same chart, and if these series have similar groups it will plot them with the same colors.  However, to protect MASON from bombing if your array is very large and has many unique elements (an array of 1000 unique words, say), it will allow no more than \variable{MAXIMUM\_PIE\_CHART\_ITEMS} unique kinds of groups among all the series in the chart:
@@ -11497,7 +11501,7 @@ Because of internal misfeatures in JFreeChart that are not even worth getting in
 \includegraphics[width=3in]{BarChart0.png}\hfill\includegraphics[width=3in]{BarChart1.png}\\
 \\
 \hfill\includegraphics[width=3in]{BarChart2.png}\hfill\includegraphics[width=3in]{BarChart3.png}
-\caption{Four Bar Chart examples, showing horizontal and vertical separated charts, a stacked chart, and a stacked percentage chart.  All four examples use the same data.}
+\caption{Four Bar Chart examples, showing horizontal and vertical separated charts, a stacked chart, and a stacked percentage chart, in some cases showing a legend, and in other cases showing labels.  All four examples use the same data.}
 \end{figure}
 
 \paragraph{Generating Bar Charts}
@@ -11507,6 +11511,10 @@ Bar Charts are created using \Class{sim.util.media.chart.BarChartGenerator}, a s
 \begin{methods}{\class{sim.util.media.chart.BarChartGenerator}}
 \mthd{public SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)} Adds a series with the given series name, with the provided amounts and labels.
 \mthd{public SeriesAttributes addSeries(Object[] objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The bar chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public SeriesAttributes addSeries(Collection objs, String name, SeriesChangeListener stopper)} Adds a series with the given series name, and with a collection of objects.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public void updateSeries(int index, double[] amounts, String[] labels)} Updates a series at a given index with a revised array.  
+\mthd{public void updateSeries(int index, Object[] objs)} Updates a series at a given index with a revised array.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
+\mthd{public void updateSeries(int index, Collection objs)} Updates a series at a given index with a revised Collection.  The objects will be grouped into groups according to equality (the\method{equals(...)} method).  The pie chart will be constructed using labels extracted from the \method{toString()} method of one member of each group, and using as amounts the number of elements in each group.
 \end{methods}
 
 Bar Charts also, like Pie Charts, suffer from too many unique groups of objects, and have a maximum value: \variable{MAXIMUM\_BAR\_CHART\_ITEMS} unique kinds of groups among all the series in the chart:
@@ -11729,7 +11737,7 @@ HistogramSeriesAttributes allows the user to modify the following features of th
 Pie and Bar Charts at present have basically no per-series attributes beyond the series name.   The constructor for \Class{sim.util.media.chart.PieChartSeriesAttributes} is straightforward:
 
 \begin{methods}{\class{sim.util.media.chart.PieChartSeriesAttributes} Constructor}
-\mthd{public PieChartSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, String[] labels,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
+\mthd{public PieChartSeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)}
 Creates a PieChartSeriesAttributes attached to the given generator, with the provided name and series data in the form of labels and their associated values (amounts), and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  
 \end{methods}
 
