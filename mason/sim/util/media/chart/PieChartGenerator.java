@@ -178,8 +178,8 @@ public class PieChartGenerator extends ChartGenerator
         PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
         
         // set information
-        csa.setValues(amounts);
-        csa.setLabels(labels);
+        csa.setValues((double[])(amounts.clone()));
+        csa.setLabels((String[])(labels.clone()));
         
         seriesAttributes.add(csa);
                 
@@ -202,7 +202,7 @@ public class PieChartGenerator extends ChartGenerator
         PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
         
         // set information
-        csa.setElements(objs);
+        csa.setElements((Object[])(objs.clone()));
         
         seriesAttributes.add(csa);
                 
@@ -226,7 +226,7 @@ public class PieChartGenerator extends ChartGenerator
         PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);
         
         // set information
-        csa.setElements(objs);
+        csa.setElements(new ArrayList(objs));
         
         seriesAttributes.add(csa);
                 
