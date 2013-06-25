@@ -2587,3 +2587,4 @@ Version 18
 	Improvements to pie charting and bar charting facilities to allow tracking of
 		Collections and also to set up BarChartingPropertyInspector as a subclass
 		of PieChartChartingPropertyInspector.
+	Extended ThreadedDiffuser in HeatBugs to handle any number of threads

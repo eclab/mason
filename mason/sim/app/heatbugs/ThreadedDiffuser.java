@@ -22,31 +22,36 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
 
     public ParallelSequence diffusers;
         
-    public ThreadedDiffuser()
+    public ThreadedDiffuser(final int numThreads)
         {
-        diffusers = new ParallelSequence(new Steppable[]
-            {
-            new Steppable ()
+        Steppable[] threads = new Steppable[numThreads];
+        
+        // load all but the last thread
+        for(int i = 0; i < numThreads - 1; i++)
+        	{
+        	final int _i = i;
+        	threads[i] = new Steppable ()
                 { 
                 public void step(SimState state) 
                     {
-                    // diffuse top half of field
                     HeatBugs heatbugs = (HeatBugs)state;
-                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                    diffuse(heatbugs, 0, _gridWidth/2);
+                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe
+                    diffuse(heatbugs, _gridWidth / numThreads * _i, _gridWidth / numThreads * (_i + 1));
                     }
-                },
-            new Steppable ()
-                {
+                };
+        	}
+        
+        // load the last thread
+        threads[numThreads - 1] = new Steppable()
+        	{
                 public void step(SimState state) 
                     {
-                    // diffuse bottom half of field
                     HeatBugs heatbugs = (HeatBugs)state;
-                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe with other one
-                    diffuse(heatbugs, _gridWidth/2, _gridWidth);
+                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe
+                    diffuse(heatbugs, _gridWidth / numThreads * (numThreads - 1), _gridWidth);
                     }
-                }
-            });
+        	};
+        diffusers = new ParallelSequence(threads);
         }
         
         

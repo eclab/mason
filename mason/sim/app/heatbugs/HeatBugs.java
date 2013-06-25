@@ -150,7 +150,7 @@ public /*strictfp*/ class HeatBugs extends SimState
         if (HeatBugs.availableProcessors() >  1)  // yay, multi-processor!
             {
             // store away the ThreadedHexaDiffuser so we can call cleanup() on it later in our stop() method.
-            diffuser = new ThreadedDiffuser();
+            diffuser = new ThreadedDiffuser(2);
             schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
             }
         else
