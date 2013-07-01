@@ -2588,3 +2588,4 @@ Version 18
 		Collections and also to set up BarChartingPropertyInspector as a subclass
 		of PieChartChartingPropertyInspector.
 	Extended ThreadedDiffuser in HeatBugs to handle any number of threads
+	Added a "Redaw once at the next step" option to Display2D and 3D

@@ -2004,13 +2004,16 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     long lastStep = -1;
     double lastTime = Schedule.BEFORE_SIMULATION;
     long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
-        
+    boolean updateOnce = false;
+    
     /** Returns whether it's time to update. */
     public boolean shouldUpdate()
         {
         boolean val = false;
                 
-        if (updateRule == UPDATE_RULE_ALWAYS)
+        if (updateOnce)
+        	val = true;
+        else if (updateRule == UPDATE_RULE_ALWAYS)
             val = true;
         else if (updateRule == UPDATE_RULE_STEPS)
             {
@@ -2034,7 +2037,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             if (val) lastTime = time;
             }
         // else val = false;
-                
+        
+        // reset updateOnce
+        updateOnce = false;
+        
         return val;
         }
 
@@ -2370,6 +2376,16 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             });
                         
         refreshPopup.addSeparator();
+
+        m = new JMenuItem("Redraw once at the next step");
+        refreshPopup.add(m);
+        m.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                updateOnce = true;
+                }
+            });
 
         // add other menu items
         m = new JMenuItem("More Options...");
