@@ -149,22 +149,33 @@ public class ShapeFileImporter
                 shells.add(parts[i]);
             }
         }
+        
+        // This will contain any holes within a given polygon
+        LinearRing [] holesArray = null;
 
-        if (holes.size() > 0)
+        if (! holes.isEmpty())
         {
-            // Create a polygon with holes
-            LinearRing[] holesArray = new LinearRing[holes.size()];
+            holesArray = new LinearRing[holes.size()];
             holes.toArray(holesArray);
+        }
+
+        if (shells.size() == 1)
+        { // single polygon
+            
+            // It's ok if holesArray is null
             return geomFactory.createPolygon(shells.get(0), holesArray);
         }
-
-        // Create multi-polygon
-        Polygon[] poly = new Polygon[shells.size()];
-        for (int i = 0; i < shells.size(); i++)
-        {
-            poly[i] = geomFactory.createPolygon(parts[i], null);
+        else
+        { // mutipolygon
+            Polygon[] poly = new Polygon[shells.size()];
+            
+            for (int i = 0; i < shells.size(); i++)
+            {
+                poly[i] = geomFactory.createPolygon(parts[i], holesArray);
+            }
+            
+            return geomFactory.createMultiPolygon(poly);
         }
-        return geomFactory.createMultiPolygon(poly);
     }
 
 
