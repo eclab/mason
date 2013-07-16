@@ -1,3 +1,11 @@
+/*
+    DestructionPortrayal.java
+
+    $Id$
+*/
+
+package sim.app.geo.haiti;
+
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -5,13 +13,6 @@ import java.awt.geom.Rectangle2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.MutableDouble;
-
-
-/*
-    DestructionPortrayal.java
-
-    $Id$
-*/
 
 /* Color based on extent of damage, as defined by data sources */
 class DestructionPortrayal extends RectanglePortrayal2D
