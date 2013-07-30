@@ -35,6 +35,7 @@
 \usepackage{afterpage}
 \usepackage{color}\definecolor{gray}{gray}{0.5}
 \usepackage{alltt}
+\usepackage{tabto}
 \usepackage[font=footnotesize,labelsep=quad,labelfont=it]{caption}
 %%% Added in order to use hyperref -- this stuff has to appear before bibentry,x
 %%% which has a conflict with regard to \bibitem.  See later in this file for more stuff that has
@@ -232,6 +233,8 @@ George Mason University}
 \chapter{Introduction}
 
 \begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{ants.pdf}\vspace{2em}\end{figure}
+
+$\#Flame\ source\ files$
 
 MASON is a multiagent simulation toolkit designed to support large numbers of agents relatively efficiently on a single machine.  MASON has no domain-specific features: it is not a robotics simulator like TeamBots or Player/Stage, nor is it a game library.  Instead it belongs in the class of domain-independent simulators which might be unfairly described as ``dots on a screen'' simulators, such as Repast, Ascape, StarLogo, NetLogo, and of course, the venerable SWARM.
 
@@ -11624,15 +11627,15 @@ The dash pattern is one of the following nine patterns, indexed as follows:
 \newcommand{\idot}{\rule[0.5ex]{0.2em}{0.5pt}}
 
 \begin{itemize}
-\item[0] \idash\idash\idash\idash\idash\idash\idash\idash
-\item[1] \idash\idash\iskip\idash\idash\iskip\idash\idash
-\item[2] \idash\iskip\idash\iskip\idash\iskip\idash\iskip
-\item[3] \idash\ispace\idash\ispace\idash\ispace\idash\ispace\idash\ispace
-\item[4] \idash\ispace\idash\ispace\idot\ispace\idash\ispace\idash\ispace\idot\ispace
-\item[5] \idash\ispace\idot\ispace\idash\ispace\idot\ispace\idash\ispace\idot\ispace
-\item[6] \idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace
-\item[7] \idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace
-\item[8] \idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip
+\item[0] {\tt TimeSeriesAttributes.PATTERN\_SOLID} \tabto{25em} \idash\idash\idash\idash\idash\idash\idash\idash
+\item[1] {\tt TimeSeriesAttributes.PATTERN\_LONGDASH} \tabto{25em}  \idash\idash\iskip\idash\idash\iskip\idash\idash
+\item[2]  {\tt TimeSeriesAttributes.PATTERN\_STRETCH\_DASH} \tabto{25em} \idash\iskip\idash\iskip\idash\iskip\idash\iskip
+\item[3] {\tt TimeSeriesAttributes.PATTERN\_DASH} \tabto{25em}  \idash\ispace\idash\ispace\idash\ispace\idash\ispace\idash\ispace
+\item[4] {\tt TimeSeriesAttributes.PATTERN\_DASH\_DASH\_DOT} \tabto{25em}  \idash\ispace\idash\ispace\idot\ispace\idash\ispace\idash\ispace\idot\ispace
+\item[5] {\tt TimeSeriesAttributes.PATTERN\_DASH\_DOT} \tabto{25em}  \idash\ispace\idot\ispace\idash\ispace\idot\ispace\idash\ispace\idot\ispace
+\item[6]  {\tt TimeSeriesAttributes.PATTERN\_DASH\_DOT\_DOT} \tabto{25em} \idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace\idash\ispace\idot\ispace\idot\ispace
+\item[7] {\tt TimeSeriesAttributes.PATTERN\_DOT} \tabto{25em}  \idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace\idot\ispace
+\item[8]  {\tt TimeSeriesAttributes.PATTERN\_STRETCH\_DOT} \tabto{25em} \idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip\idot\iskip
 \end{itemize}
 
 \begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}

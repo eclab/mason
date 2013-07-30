@@ -37,6 +37,16 @@ public class TimeSeriesAttributes extends SeriesAttributes
     static final float SPACE = 3;
     /** A long space */
     static final float SKIP = DASH;
+    
+    public static final int PATTERN_SOLID = 0;
+    public static final int PATTERN_LONGDASH = 1;
+    public static final int PATTERN_STRETCH_DASH = 2;
+    public static final int PATTERN_DASH = 3;
+    public static final int PATTERN_DASH_DASH_DOT = 4;
+    public static final int PATTERN_DASH_DOT = 5;
+    public static final int PATTERN_DASH_DOT_DOT = 6;
+    public static final int PATTERN_DOT = 7;
+    public static final int PATTERN_STRETCH_DOT = 8;
 
     /** Nine dash combinations that the user might find helpful. */
     static final float[][] dashPatterns = 
