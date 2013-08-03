@@ -39,7 +39,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     static final float SKIP = DASH;
     
     public static final int PATTERN_SOLID = 0;
-    public static final int PATTERN_LONGDASH = 1;
+    public static final int PATTERN_LONG_DASH = 1;
     public static final int PATTERN_STRETCH_DASH = 2;
     public static final int PATTERN_DASH = 3;
     public static final int PATTERN_DASH_DASH_DOT = 4;
