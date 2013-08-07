@@ -170,7 +170,7 @@ public class PieChartGenerator extends ChartGenerator
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
-    SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
+    public SeriesAttributes addSeries(double[] amounts, String[] labels, String name, SeriesChangeListener stopper)
         {
         int i = getSeriesCount();
         

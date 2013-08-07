@@ -11717,7 +11717,11 @@ HistogramSeriesAttributes allows the user to modify the following features of th
 \item The thickness of the outline
 \end{itemize}
 
-\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+HistogramSeries also contain the current values of the Histogram.  You can change these but they won't be reflected until the next time the Histogram is updated.
+
+\begin{methods}{\class{sim.util.media.chart.HistogramSeriesAttributes}}
+\mthd{public void setValues(double[] values)} Sets the values.
+\mthd{public double[] getValues()} Returns the values.
 \mthd{public void setFillColor(Color color)} Sets the fill color.
 \mthd{public Color getFillColor()} Returns the fill color.
 \mthd{public void setFillOpacity(double val)} Sets the fill opacity.
@@ -11745,6 +11749,29 @@ Creates a PieChartSeriesAttributes attached to the given generator, with the pro
 \end{methods}
 
 \Class{sim.util.media.chart.BarChartSeriesAttributes} has an identical constructor (as it is a subclass of PieChartSeriesAttributes).
+
+However in the PieChartSeriesAttributes and BarChartSeriesAttributes classes are stored, much like Histogram, the current values of the Pie or Bar charts.  Values are stored in one of three possible ways:
+
+\begin{itemize}
+\item As a Collection of objects.  In this case, the pie or bar charts reflect the relative {\it counts} of identical objects, and use the {\it String form of the objects}, that is, \code{"" \(+\) obj}, as the names.
+\item As an array of objects.  In this case, the pie or bar charts reflect the relative {\it counts} of identical objects, and use the {\it String form of the objects}, that is, \code{"" \(+\) obj}, as the names.
+\item As an array of values and labels.  In this case, the pie or bar charts reflect each of the values, and label them with the given labels.
+\end{itemize}
+
+You can revise these values, but they won't be reflected until the generator's chart is updated.
+
+\begin{methods}{\class{sim.util.media.chart.PieChartSeriesAttributes}}
+\mthd{public void setElements(Object[] objs)} Sets the elements as counts of objects.
+\mthd{public Object[] getElements()} Returns the elements as counts of objects, or null if they weren't set this way.
+\mthd{public void setElements(Collection objs)} Sets the elements as counts of objects.
+\mthd{public Collection getElements()} Returns the elements as counts of objects, or null if they weren't set this way.
+\mthd{public void setValues(double[] vals)} Sets the elements to the given values.
+\mthd{public double[] getValues()} Returns the values, or null if they weren't set this way.
+\mthd{public void setLabels(String[] labels)} Sets the labels for each elements.  This array must be the same size as that provided in \method{setValues(...)}.
+\mthd{public String[] getLabels()} Returns the labels, or null if they weren't set this way.
+\end{methods}
+
+
 
 
 \subsection{Data Cullers}

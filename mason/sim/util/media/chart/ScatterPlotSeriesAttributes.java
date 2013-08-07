@@ -67,8 +67,8 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
     };
                 
     double[][] values; 
-    double[][] getValues() { return values; }
-    void setValues(double[][] vals) { values = vals; }
+    public double[][] getValues() { return values; }
+    public void setValues(double[][] vals) { values = vals; }
 
     Color color;
     ColorWell colorWell;

@@ -152,6 +152,5 @@ public class TimeSeriesChartGenerator extends XYChartGenerator
                     }
                 }
             }); 
-
         }
     }

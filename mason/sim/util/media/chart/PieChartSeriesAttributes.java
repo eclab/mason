@@ -40,16 +40,16 @@ public class PieChartSeriesAttributes extends SeriesAttributes
     	else return elements2.toArray();
     	}
     	
-    void setElements(Object[] elts) { elements = elts; elements2 = null; values = null; labels = null;}
-    void setElements(Collection elts) { elements2 = elts; elements = null; values = null; labels = null;}
+    public void setElements(Object[] elts) { elements = elts; elements2 = null; values = null; labels = null;}
+    public void setElements(Collection elts) { elements2 = elts; elements = null; values = null; labels = null;}
     
     double[] values; 
-    double[] getValues() { return values; }
-    void setValues(double[] vals) { values = vals; elements = null; elements2 = null; }
+    public double[] getValues() { return values; }
+    public void setValues(double[] vals) { values = vals; elements = null; elements2 = null; }
     
     String[] labels;
-    String[] getLabels() { return labels; }
-    void setLabels(String[] labs) { labels = labs; }
+    public String[] getLabels() { return labels; }
+    public void setLabels(String[] labs) { labels = labs; }
     
     public PieChartSeriesAttributes(ChartGenerator generator, String name, int index, SeriesChangeListener stoppable)  // , boolean includeMargin)
         { 
