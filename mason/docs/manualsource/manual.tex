@@ -3829,6 +3829,16 @@ Here are some methods for accessing the current time and steps:
 \mthd{public String getTimestamp(double time, String beforeSimulationString, String afterSimulationString)} Returns the provided time as a String value.  If the provided time is \variable{BEFORE\_SIMULATION}, then \variable{beforeSimulationString} is returned.  If the provided time is \variable{AFTER\_SIMULATION}, then \variable{afterSimulationString} is returned.
 \end{methods}
 
+\sidebar{How do I arbitrarily remove agents from the schedule?}{You don't.  The Schedule uses a data structure called a Heap, which is spectacularly inefficient at removal.  Instead, you have various options depending on your situation:
+
+If your agent is scheduled repeating, the \method{scheduleRepeating(...)} method returned a \class{sim.engine.Stoppable} object.  To prevent the agent from having its \method{step(...)} method called ever again, just call \method{stop()} on the Stoppable.  This will also make the agent able to be garbage collected.  Alternatively, if your agent is scheduled once, you can always just instruct your agent to ignore its \method{step(...)} method.
+
+If your agent is scheduled once, and you'd like to prematurely prevent its \method{step(...)} method from being called, when you schedule the agent, do so by using a \class{sim.engine.TentativeStep} object.  You can later call \method{stop()} on the TentativeStep, and the agent won't have its \method{step(...)} method called, and will be able to be garbage collected.  See Section \ref{utilityagentclasses}.  
+
+If you want your agent to scheduled on the Schedule, but available for garbage collection at any time (and thus never have its \method{step(...)} method called), you can use \class{sim.engine.WeakStep} to do this.  See Section \ref{utilityagentclasses}.  
+
+In all these cases, even though the agent is effectively ``removed'' from the Schedule, the Schedule will still advance to the timestep where the agent had been scheduled.
+}
 Agents are scheduled by associating them with a {\bf time} (a double value) an an {\bf ordering} (an integer).  The time indicates exactly when (in simulation time, not wall-clock time) the agent's \method{step(...)} method is to be called.  You must schedule an agent for a value higher than the current simulation time: if you schedule an agent for exactly the current simulation time, an epsilon (a small positive value) will be added.
 
 Agents scheduled for exactly the same time will have their \method{step(...)} methods called in the order specified by their relative ordering values (lower orderings first).  Agents with exactly the same time and exactly the same ordering will have their \method{step(...)} methods called in random order with respect to one another.
@@ -3910,7 +3920,7 @@ schedule.scheduleOnceIn(0,\\
 \rule{4em}{0pt} new Steppable() \{ public void step(SimState state) \{ state.kill(); \} \} );
 }
 
-For certain esoteric you may need to merge the agents of two schedules.  To do this, you can use:
+For certain esoteric tasks you may need to merge the agents of two schedules.  To do this, you can use:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void merge(Schedule second)} Merges a second schedule into the first Schedule, modifying it (but leaving the second Schedule untouched).  Schedules may not be merged if either of them is sealed, if the merging request occurs somewhere within the step() method of the first Schedule, or if the second schedule has agents scheduled for earlier than the current timestamp of the first Schedule.  This procedure is \(O(n))\) in the number of agents.
@@ -3970,6 +3980,7 @@ The Key's methods are pretty straightforward:
 
 
 \subsection{Utility Agent Classes}
+\label{utilityagentclasses}
 
 MASON provides a variety of utility subclasses of Steppable which you may find useful to expand on the basic capabilities of the Schedule.  Most of these subclasses are designed to hold other Steppables within them, and when stepped, step those Steppables in various ways:
 
@@ -4045,7 +4056,8 @@ Be sure to read and understand \class{sim.engine.Sequence}.
 You will see the most performance gains if the parallelized portion of your code mostly deals with complex computations rather than reading and writing memory.  Unfortunately many multiagent simulation tasks involve a great deal of reading and writing to memory (such as reading or writing to fields).    You can also get some (less impressive) performance gains if your parallelized agents are reading/writing memory that's very distant from one another, so they don't incur cache hits.  The HeatBugs ParallelDiffuser attempts this, for example.
 
 Multithreaded coding is hardly a panacea, and multiagent simulations' tendency to be highly memory-driven is a worst-case scenario for it.    So ParallelSequence is a useful tool in some cases, but far from a magic wand for speeding up your simulation.
-}\paragraph{\Class{sim.engine.ParallelSequence}}
+}
+\paragraph{\Class{sim.engine.ParallelSequence}}
 This is a subclass of Sequence which, instead of stepping each agent in turn, instead steps all of them simultaneously in separate threads.  Be careful when using ParallelSequence: as you have multiple threads, it's up to you to make sure that you don't create race conditions as they access various parts of your model simultaneously.  Notably if your agents use the random number generator from different threads, they should lock on the generator first, for example like this:
 
 \java{%
@@ -4146,7 +4158,7 @@ These methods are threadsafe.
 \paragraph{\Class{sim.engine.MethodStep}}  This convenience class allows you to call specific methods on your agent rather than calling its \method{step(...)} method.  Before we get into this, let's talk first about the issues raised, some history, and alternative solutions.
 
 The seminal multiagent simulation toolkit was SWARM, written in a combination of Objective-C and TCL/TK.  Objective-C has a procedure which enables you to call methods on objects by just specifying   the method name as a string.\footnote{
-Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages correspond to methods in those objects but they don't have to.  If an object receives a message for which it has no corresponding method, it has the option to deal with this however it likes rather than issue an error.
+Objective-C differs from Java in an important respect for purposes here: whereas in Java you {\it call} methods on other objects, in Objective-C, you {\it send} messages to them.  Normally these messages exactly correspond to method calls, but they don't have to.  If an object receives a message for which it has no corresponding method, it has the option to deal with this however it likes rather than issue an error.
 
 One effect of this is that in Objective-C you can specify what method you want to call dynamically, using Objective-C's SEL data type:
 
@@ -4577,7 +4589,7 @@ Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}
 Computes the neighboring locations lying in the circular region whose radius is {\it dist} away from the \(\langle X, Y\rangle\) location.  if {\it closed} is true, then the region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  Otherwise, locations are only members of the region is they are \(<\text{\it dist}\) away.  What constitutes neighborhood membership depends on the {\it measurement rule} being used.  There are three possible rules: \variable{Grid2D.ALL} implies that a grid cell is within the region if all of it lies within the region.  \variable{Grid2D.ANY} implies that a grid cell is within the region is any of it lies within the region.  \variable{Grid2D.CENTER} implies that a grid cell is within the region if the cell's center lies within the region.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
 
 \mthd{public void getRadialLocations(int x, int y, double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
-Computes the neighboring locations lying in the circular region whose radius is {\it dist} away from the \(\langle X, Y\rangle\) location.  The region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  A grid cell is considered within the region is any of it lies within the region.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
+Computes the neighboring locations lying in the circular region whose radius is {\it dist} away from the \(\langle X, Y\rangle\) location.  The region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  A grid cell is considered within the region if any of it lies within the region, that is, it is \variable{Grid2D.ANY} by default.    The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the returned locations.
 
 \mthd{public void getHexagonalLocations(int x, int y, int dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos)}
 Computes the neighboring locations lying within the hexagon centered at \(\text{\variable{x}}, \text{\variable{y}}\) and \((2\ \text{\variable{dist}}+1)\) cells from point to opposite point, inclusive.  If \variable{dist}\(=1\), this is equivalent to the center location itself and its six immediate neighbors.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, or \variable{Grid2D.TOROIDAL}.  The value \variable{Grid2D.UNBOUNDED} is not supported.  For each such neighboring location \(\langle X_i, Y_i\rangle\), the values \(X_i\) and \(Y_i\) are added to \variable{xPos} and \variable{yPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y\rangle\) location is not included among the loaded locations.
@@ -4595,7 +4607,7 @@ The \method{getRadialLocations(...)} method is different from the others; it ret
 
 \begin{itemize}
 \item {\it Measurement Rule}\quad The measurement rule defines how cells are determined to ``fall within'' the boundary of the circle.  MASON provides three such rules: \variable{Grid2D.ALL}, which means that the {\it entire cell} must fall within the circle boundary, \variable{Grid2D.ANY}, which means that {\it some part} of the cell must fall within the circle boundary, and \variable{Grid2D.CENTER}, which means that the {\it center of the cell} must fall within the circle boundary. 
-\item {\it Closedness}\quad MASON also provides two ways of determining exactly what the ``circle boundary'' means.  If the value is \variable{true}, then the circle is {\it closed}, meaning that a point lying exactly on the outer edge of the circle is considered to be ``within'' the boundary.  If the value is \variable{open}, then the circle is {\it open}, meaning that a point lying exactly on the outer edge is considered to be ``outside'' the boundary.
+\item {\it Closedness}\quad MASON also provides two ways of determining exactly what the ``circle boundary'' means.  If the value is \variable{true}, then the circle is {\it closed}, meaning that a point lying exactly on the outer edge of the circle is considered to be ``within'' the boundary.  If the value is \variable{false}, then the circle is {\it open}, meaning that a point lying exactly on the outer edge is considered to be ``outside'' the boundary.
 \end{itemize}
 
 Figure \ref{radial} illustrates some of these concepts.  If you're in doubt, you probably want \variable{Grid2D.ANY} and a closedness of \variable{true}.
@@ -4615,7 +4627,7 @@ Computes the neighboring locations lying within the \((2\ \text{\variable{dist}}
 Computes the neighboring locations lying in the spherical region whose radius is {\it dist} away from the \(\langle X, Y, Z\rangle\) location.  if {\it closed} is true, then the region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  Otherwise, locations are only members of the region is they are \(<\text{\it dist}\) away.  What constitutes neighborhood membership depends on the {\it measurement rule} being used.  There are three possible rules: \variable{Grid2D.ALL} implies that a grid cell is within the region if all of it lies within the region.  \variable{Grid2D.ANY} implies that a grid cell is within the region is any of it lies within the region.  \variable{Grid2D.CENTER} implies that a grid cell is within the region if the cell's center lies within the region.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
 
 \mthd{public void getRadialLocations(int x, int y, int z, double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos)}
-Computes the neighboring locations lying in the spherical region whose radius is {\it dist} away from the \(\langle X, Y, Z\rangle\) location.  The region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  A grid cell is considered within the region is any of it lies within the region.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
+Computes the neighboring locations lying in the spherical region whose radius is {\it dist} away from the \(\langle X, Y, Z\rangle\) location.  The region is considered to be closed, that is, locations are members of the region if they are \(\leq\text{\it dist}\) away.  A grid cell is considered within the region if any of it lies within the region, that is, it is \variable{Grid2D.ANY} by default.  The \variable{mode} variable determines the boundedness assumptions of the environment, one of: \variable{Grid2D.BOUNDED}, \variable{Grid2D.UNBOUNDED}, or \variable{Grid2D.TOROIDAL}.  Note that array grids  do not support \variable{Grid2D.UNBOUNDED}, though sparse grids do.  For each such neighboring location \(\langle X_i, Y_i, Z_i\rangle\), the values \(X_i\), \(Y_i\), and \(Z_i\) are added to \variable{xPos}, \variable{yPos}, and \variable{zPos} respectively, clearing them first.  If \variable{includeOrigin} is false, then the \(\langle x, y, z\rangle\) location is not included among the returned locations.
 
 \end{methods}
 
@@ -4734,9 +4746,9 @@ Flattens the grid by row-major order into a single array of values and returns i
 The various other classes have equivalent methods (the 3-dimensional classes obviously do not have a hexagonal distance method).
 
 \paragraph{A Hint on Scanning}
-Java doesn't have 2- and 3-dimensional arrays.  It has {\it arrays of arrays} or {\it arrays of arrays of arrays}.  This means that every time you read a 2-dimensional array cell (say) using \code{field[x][y]} Java must first verify that \code{field} is non-null, then check that \code{x} is within the X dimensions of \code{field}, then check that \code{field[x]} is non-null, then check that \code{y} is within the Y dimensions of \code{field[x]}, then finally return \code{field[x][y]}.  For 3-dimensional arrays, this is even worse.
+Java doesn't have 2- and 3-dimensional arrays.  It has {\it arrays of arrays} or {\it arrays of arrays of arrays}.  This means that every time you read a 2-dimensional array cell (say) using \code{field[x][y]} Java must first verify that \code{field} is non-null, then check that \code{x} is within the X dimensions of \code{field}, then check that \code{field[x]} is non-null, then check that \code{y} is within the Y dimensions of \code{field[x]}, then finally return \code{field[x][y]}.  That's a lot of checks.  And for 3-dimensional arrays, it's even worse.
 
-That's a lot of checking.  But there's a way to reduce it 2- or 3-fold.  If you want to scan through your field, instead of saying:
+But there's a way to reduce it 2- or 3-fold.  If you want to scan through your field, instead of saying:
 
 {\footnotesize\begin{verbatim}
 for(int i = 0; i < grid.field.length; i++)
@@ -5022,8 +5034,8 @@ You can skip this if you like.
 SparseField subclasses largely differ based on the type of Location they allow.  To implement a SparseField subclass, you only need to customize two methods based on that type. 
 
 \begin{itemize}
-\item \code{public {\it LocationType} getObjectLocation(Object obj)} will return the location of the given Object.
-\item \code{public boolean setObjectLocation(Object obj, {\it LocationType} location)} will set an Object to a given Location and return true.  If the Object or Location is null, or if some other error occurs such that the Object cannot be set to that Location, then false is returned.
+\item \code{public {\it LocationType} getObjectLocation(Object obj)}\qquad will return the location of the given Object.
+\item \code{public boolean setObjectLocation(Object obj, {\it LocationType} location)}\qquad will set an Object to a given Location and return true.  If the Object or Location is null, or if some other error occurs such that the Object cannot be set to that Location, then false is returned.
 \end{itemize}
 
 For example, let's say you want to implement a SparseField where the type is real valued doubles between 0.0 and 1.0 inclusive.  You could write it like this:
@@ -10288,7 +10300,9 @@ Now that you're armed with a BranchGroup, you can make a BranchGroupPortrayal3D:
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, transform, and appearance (which overrides appearances specified in any loaded file).
 \end{methods}
 
-Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON website has a link to download {\bf NCSA Portfolio}, a free but not quite open source collection of loaders for a much wider range of files.\footnote{NCSA Portfolio is not free for commercial use.  Furthermore, if you create a derivative work using NCSA Portfolio, you must notify NCSA of this fact and also add a disclaimer to this effect in your distributed package.}  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
+Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON libraries collection (see the MASON website) includes a jar file called \file{portfolio.jar}, which contains {\bf NCSA Portfolio}, an open source collection of loaders for a much wider range of files.\footnote{It used to be the case that NCSA Portfolio was not free for commercial use, and furthermore, if you created a derivative work using NCSA Portfolio, you had to notify NCSA of this fact and also add a disclaimer to this effect in your distributed package.  
+
+This isn't the case any more.  NCSA has agreed to make the code completely open source.}  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
 
 \java{%
 ncsa.j3d.loaders.ModelLoader loader = new ncsa.j3d.loaders.ModelLoader(); \\
