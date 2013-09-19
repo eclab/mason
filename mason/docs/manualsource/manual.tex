@@ -234,8 +234,6 @@ George Mason University}
 
 \begin{figure}[h]\vspace{-33em}\hspace{30em}\includegraphics[width=4in]{ants.pdf}\vspace{2em}\end{figure}
 
-$\#Flame\ source\ files$
-
 MASON is a multiagent simulation toolkit designed to support large numbers of agents relatively efficiently on a single machine.  MASON has no domain-specific features: it is not a robotics simulator like TeamBots or Player/Stage, nor is it a game library.  Instead it belongs in the class of domain-independent simulators which might be unfairly described as ``dots on a screen'' simulators, such as Repast, Ascape, StarLogo, NetLogo, and of course, the venerable SWARM.
 
 I call these simulators ``ultra-lightweight'' multiagent simulation toolkits.  They're popular for problems which involve many relatively simple agents and arbitrary problems, and are common in areas like artificial life, population biology, computational social sciences, complexity science, artificial intelligence, and (in my case) swarm robotics and mulitrobotics.
@@ -4055,7 +4053,7 @@ Be sure to read and understand \class{sim.engine.Sequence}.
 
 You will see the most performance gains if the parallelized portion of your code mostly deals with complex computations rather than reading and writing memory.  Unfortunately many multiagent simulation tasks involve a great deal of reading and writing to memory (such as reading or writing to fields).    You can also get some (less impressive) performance gains if your parallelized agents are reading/writing memory that's very distant from one another, so they don't incur cache hits.  The HeatBugs ParallelDiffuser attempts this, for example.
 
-Multithreaded coding is hardly a panacea, and multiagent simulations' tendency to be highly memory-driven is a worst-case scenario for it.    So ParallelSequence is a useful tool in some cases, but far from a magic wand for speeding up your simulation.
+Multithreaded coding is hardly a panacea, and multiagent simulations' tendency to be highly memory-driven is a worst-case scenario for it.    So ParallelSequence is a useful tool in some cases, but is far from a magic wand for speeding up your simulation.
 }
 \paragraph{\Class{sim.engine.ParallelSequence}}
 This is a subclass of Sequence which, instead of stepping each agent in turn, instead steps all of them simultaneously in separate threads.  Be careful when using ParallelSequence: as you have multiple threads, it's up to you to make sure that you don't create race conditions as they access various parts of your model simultaneously.  Notably if your agents use the random number generator from different threads, they should lock on the generator first, for example like this:
@@ -4077,6 +4075,8 @@ Be sure to read and understand \class{sim.engine.Sequence}.
 \mthd{public ParallelSequence(Steppable[] agents)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called ParallelSequence will step each of these agents in parallel in separate threads, then wait for them to complete before returning.
 \mthd{public ParallelSequence(Steppable[] agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.  If you instead pass in \variable{ParallelSequence.STEPPABLES}, then ParallelSequence will spawn one thread for each Steppable in the internal array.
 \end{methods}
+
+\sidebar{ParallelSequence has a thread pool?  Can I use that?}{Sorry, it's private.  But if you don't want to use Java's overcomplex concurrency package, you can find a simple threadpool class in MASON's sister package, ECJ.  Look for the \file{ec/util/ThreadPool.java} file in ECJ, which you can download at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}
 
 Allocating and starting threads is very expensive.  To be efficient, ParallelSequence allocates the threads when constructed, then holds them ready in reserve in a pool until the \method{step(...)} method is called.  It then sets them going, and when they are done, they once again are held waiting in the pool.  The threads are set to be daemon threads so they die if MASON exits.  This is far faster than creating and destroying them every time.  
 
