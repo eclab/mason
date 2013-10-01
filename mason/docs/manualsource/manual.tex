@@ -5495,7 +5495,7 @@ MASON has a general-purpose facility, in the \Package{sim.field.network} package
 \item Dynamically changing graph structures.
 \end{itemize}
 
-The network package does {\it not} presently support hypergraphs\footnote{A hypergraph is a graph with an edge which connects more than two nodes.}, nor does it enforce constraints of various kinds (such as connectivity or planar guarantees).  Objects in networks are also not associated with physical locations: if you want this, you should place them in a continuous or grid field as well as in a Network.
+The network package does {\it not} presently support hypergraphs\footnote{A hypergraph is a graph with an edge which connects more than two nodes.}, nor does it enforce constraints of various kinds (such as connectivity or planarity guarantees).  Objects in networks are also not associated with physical locations: if you want this, you should place them in a continuous or grid field as well as in a Network.
 
 \sidebar{Hey, I came here looking for \textbf{Social Networks!}}{The Network class is very general purpose, and so has no social network facilities by default. However there are two packages you can use with MASON which provide such facilities.  
 
@@ -5538,6 +5538,7 @@ Here's how you access these values:
 \mthd{public Object getInfo()} Returns the ``info'' Object (the label or weight).
 \mthd{public void setInfo(Object val)} Sets the ``info'' Object (the label or weight).
 \mthd{public double getWeight()} Returns the ``info'' Object as a weight.  If the Object is a subclass of \Class{java.lang.Number}, its \method{doubleValue()} is returned.  Else if the Object implements the \Class{sim.util.Valuable} interface, its \method{doubleValue()} is returned.  Else 0 is returned.
+\mthd{public void setWeight(double weight)} Sets the ``info'' Object to a \Class{java.lang.Double} indicating the provided weight.
 \mthd{public boolean getDirected()} Returns whether or not the Edge is directed.
 \mthd{public int compareTo(Object obj)} Compares the edge to the given object (which should be an Edge).  Comparison is only relevant if the given object is an Edge and if both info objects of the two Edges are subclasses of \class{java.lang.Number} or are \class{sim.util.Valuable}.  In this case, -1 is returned if this Edge's info is less than the provided Edge's info, 1 if it is greater, and 0 if they are equal.  In all other cases, 0 is returned.
 \mthd{public String toString()} Returns a string description of the Edge.
@@ -5595,6 +5596,10 @@ Returns in a Bag all the incoming edges to the given node (that is, those for wh
 Returns in a Bag all the outgoing edges from the given node (that is, those for which the node is the ``from'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesOut(myNode));}
 \mthd{public Bag getEdges(Object node, Bag result)}
 Returns in the Bag {\it result}, or (if  all the outgoing edges from the given node (that is, those for which the node is the ``from'' object).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdges(myNode));}
+\mthd{public Bag getEdges(Object fromNode, Object toNode, Bag result)}
+The Bag {\it result} is cleared, then all Edges connecting  {\it fromNode} to {\it toNode} are placed into the bag, and then it is returned.  If {\it result} is null, then a new Bag is created first.  If the graph is undirected, it doesn't matter which node is which.
+\mthd{public Edge getEdge(Object fromNode, Object toNode)}
+Returns an arbitrary Edge connecting {\it fromNode} to {\it toNode}, if one exists, else returns null.  If the graph is undirected, it doesn't matter which node is which.
 \end{methods}
 
 
@@ -5614,7 +5619,7 @@ Returns an adjacency matrix of Edges for a multigraph.  If you have \(N\) nodes,
 
 \subsection{Maps}
 
-Just like Grids and Continuous spaces, Network uses Maps in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods:
+Just like Grids and Continuous spaces, Network uses Maps internally in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods:
 
 \begin{methods}{\class{sim.field.network.Network} Utility}
 \mthd{public Map buildMap(Map other)}
