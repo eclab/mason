@@ -19,7 +19,7 @@ import java.util.*;
     for speed).
     
     <p>Nodes and Edges are stored in the Network using two data structures: a Bag containing all the nodes in the Field;
-    and a Map which maps each Node to a container holding the Node's index in the Bag, plus a Bag of the Node's outgoing
+    and a Map which maps each Node to a container holding the Node's index (position) in the Bag, plus a Bag of the Node's outgoing
     Edges and a Bag of the Node's incoming Edges.  Ordinarily you won't fool with these structures other than to scan through
     them (in particular, to scan rapidly through the allNodes bag rather than use an iterator).
     
@@ -330,6 +330,38 @@ public class Network implements java.io.Serializable
             return bag;
             }
         }
+    
+    /** Returns an arbitrary edge connecting the "from" node to the "to" node, if one exists, else returns null.
+    	If the graph is undirected, which node is "from" vs. "to" does not matter. */
+	public Edge getEdge(Object from, Object to)
+		{
+		Bag b = getEdgesOut(from);  // will never be null
+		for(int i = 0; i < b.size(); i++)
+			{
+			Edge e = (Edge)(b.get(i));
+			if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
+				return e;
+			}
+		return null;
+		}
+
+    /** Clears the provided Bag, then places in it all edges connecting the "from" node to the "to" node. Returns the Bag.
+    	If null is passed in for the Bag, then a new one is created and returned.
+    	If the graph is undirected, which node is "from" vs. "to" does not matter. */
+	public Bag getEdges(Object from, Object to, Bag bag)
+		{
+		if (bag == null) bag = new Bag();
+		else bag.clear();
+		
+		Bag b = getEdgesOut(from);  // will never be null
+		for(int i = 0; i < b.size(); i++)
+			{
+			Edge e = (Edge)(b.get(i));
+			if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
+				bag.add(e);
+			}
+		return bag;
+		}
         
     /** Add a node */
     public void addNode( final Object node )

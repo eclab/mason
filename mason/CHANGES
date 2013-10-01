@@ -2591,3 +2591,5 @@ Version 18
 	Added a "Redaw once at the next step" option to Display2D and 3D
 	Added dashing constants to TimeSeriesAttributes
 	Made public some methods in charting facility
+	Added Network.getEdge and a new Network.getEdges
+	Added Edge.setWeight

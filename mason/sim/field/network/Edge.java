@@ -103,6 +103,12 @@ public class Edge implements java.io.Serializable, Comparable
         this.indexTo = indexTo;
         }
 
+	/** Sets the weight of the edge to a java.lang.Double, discarding any previous weight or label.  */
+	public void setWeight(double weight)
+		{
+		info = new Double(weight);
+		}
+
     /**
        Returns the weight of the edge.  The default version of the function returns the value of the
        info object if it is a subclass of Number (including MutableDouble) or is Valuable, else returns 1.0.
