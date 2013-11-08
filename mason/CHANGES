@@ -2593,3 +2593,4 @@ Version 18
 	Made public some methods in charting facility
 	Added Network.getEdge and a new Network.getEdges
 	Added Edge.setWeight
+	Added Display[2|3]D.requestUpdate().  Thanks to Sadat Chowdhury <sadatc@gmail.com>

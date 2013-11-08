@@ -5685,7 +5685,7 @@ The first item is a pointer to the model itself.  The second item is a pointer t
 
 At present the only widgets which use the \variable{storage} variable are certain charting inspectors which need to retain the charts open at a given time.  You probably shouldn't mess around with the \variable{storage} variable unless you're making plug-in inspectors as well.  In that case, the rule is: you can put things in the HashMap, and take them out and change them, but you can't modify or take out anything someone {\it else} put in there.
 
-\sidebar{Why not just have a single random number generator?}{Since the generator would be used for both visualization and the model, you'd get different results with the same seed if you ran the simulation under visualization than you'd get if you ran it on the command line.  See the {\bf flockers} demo for an example which uses both generators.}  The final item is a random number generator, separate from the one provided in the model (the SimState), which can be used by GUIState, displays, inspectors, or portrayals in those rare cases when they need a random number.  For example, if each of your agents needs a random color, you could use the GUIState random number generator to pick this color.  In general, you {\bf must} use the SimState random number generator for all random number generation regarding your model, and {\bf ought to} use the GUIState random number generator for random number generation regarding your visualization which is entirely separate from the model. 
+\sidebar{Why not just have a single random number generator?}{Since the generator would be used for both visualization and the model, you'd get different results with the same seed if you ran the simulation under visualization than you'd get if you ran it on the command line.  See the {\bf flockers} demo for an example which uses both generators.}  The final item is a random number generator, separate from the one provided in the model (the SimState), which can be used by GUIState, displays, inspectors, or portrayals in those rare cases when they need a random number.  For example, if each of your agents needs a random color, you could use the GUIState random number generator to pick this color.  The reasoning behind this is that if your GUIState uses the same random number generator as the model, you're modifying the model and making it difficult to replicate results.  In general, you {\bf must} use the SimState random number generator for all random number generation regarding your model, and {\bf ought to} use the GUIState random number generator for random number generation regarding your visualization which is entirely separate from the model. 
 
 \begin{figure}[t]
 \begin{center}\includegraphics[width=6in]{GUIUML.pdf}\end{center}
@@ -6662,7 +6662,7 @@ Once you've created a JFrame, you'll want to register it with your \class{sim.di
 \mthd{public boolean unregisterFrame(JFrame frame)}  Unregisters the JFrame, notionally holding a Display of some sort, with the Controller, and returns \variable{true}, unless the Controller cannot register or unregister JFrames of any kind, in which case this method returns \variable{false}.
 \mthd{public boolean unregisterAllFrames()}  Unregisters all JFrames registered with the Controller, and returns \variable{true}, unless the Controller cannot register or unregister JFrames of any kind, in which case this method returns \variable{false}.
 \mthd{public ArrayList getAllFrames()}  Returns a list of all JFrames registered with the Controller.
-\mthd{public void refresh()}  Schedules updates and redraws of all Inspectors and Displays registered with the Controller to occur at some time soon in the future.  This is an expensive procedure and should not be called unless necessary: typically in response to some event (a button press etc.) rather than changes in the model itself.  Only call this method from the Swing even thread.
+\mthd{public void refresh()}  Schedules updates and redraws of all Inspectors and Displays registered with the Controller to occur at some time soon in the future.  This is an expensive procedure and should not be called unless necessary: typically in response to some event (a button press etc.) rather than changes in the model itself.  Only call this method from the Swing event thread.
 \end{methods}
 
 The Console lets you additionally show or hide all the registered frames:
@@ -6718,6 +6718,7 @@ Speaking of movies, the Display2D is capable of generating movies and taking scr
 \mthd{public void startMovie()} Starts a movie, asking the user what kind of movie to make and what file to save it to.  Only one movie can be generated at a time.
 \mthd{public void stopMovie()} Stops any currently started movie.
 \mthd{public boolean shouldUpdate()} Returns true or false to indicate if a Display2D should update and redraw itself at a given time.  By default this method queries the Display2D's GUI regarding the user choices for updating.  You may override this method if you feel inclined.
+\mthd{public void requestUpdate()} Requests that \method{shouldUpdate()} should return true at least for the next iteration.  This can be used by models to request that the display update itself once, perhaps for something important, even if it's set to never update itself.  This method is threadsafe and may be called either from the model thread or from the Swing event thread.
 \end{methods}
 
 
@@ -9463,6 +9464,7 @@ When a simulation is begun, you'll want to reset the Display.  This causes it to
 \mthd{public void startMovie()} Starts a movie, asking the user what kind of movie to make and what file to save it to.  Only one movie can be generated at a time.
 \mthd{public void stopMovie()} Stops any currently started movie.
 \mthd{public boolean shouldUpdate()} Returns true or false to indicate if a Display3D should update and redraw itself at a given time.  By default this method queries the Display3D's GUI regarding the user choices for updating.  You may override this method if you feel inclined.
+\mthd{public void requestUpdate()} Requests that \method{shouldUpdate()} should return true at least for the next iteration.  This can be used by models to request that the display update itself once, perhaps for something important, even if it's set to never update itself.  This method is threadsafe and may be called either from the model thread or from the Swing event thread.
 \end{methods}
 
 

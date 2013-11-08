@@ -1253,14 +1253,26 @@ public class Display3D extends JPanel implements Steppable
     long lastStep = -1;
     double lastTime = Schedule.BEFORE_SIMULATION;
     long lastWall = -1;  // the current time is around 1266514720569 so this should be fine (knock on wood)
+    Object[] updateLock = new Object[0];
     boolean updateOnce = false;
+
+    /** Asks Display3D to update itself next iteration regardless of the current redrawing/updating rule. */
+    public void requestUpdate()
+    	{
+    	synchronized(updateLock)
+    		{
+	    	updateOnce = true;
+	    	}
+    	}
 
     /** Returns whether it's time to update. */
     public boolean shouldUpdate()
         {
         boolean val = false;
-                
-		if (updateOnce)
+        boolean up = false;
+        synchronized(updateLock) { up = updateOnce; } 
+        
+        if (up)
         	val = true;
         else if (updateRule == Display2D.UPDATE_RULE_ALWAYS)
             val = true;
@@ -1288,7 +1300,7 @@ public class Display3D extends JPanel implements Steppable
         // else val = false;
                 
         // reset updateOnce
-        updateOnce = false;
+        synchronized(updateLock) { updateOnce = false; }
         
         return val;
         }
@@ -2380,13 +2392,13 @@ public class Display3D extends JPanel implements Steppable
                         
         refreshPopup.addSeparator();
 
-        m = new JMenuItem("Redraw at the next step");
+        m = new JMenuItem("Redraw once at the next step");
         refreshPopup.add(m);
         m.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
-                updateOnce = true;
+                requestUpdate();
                 }
             });
 
