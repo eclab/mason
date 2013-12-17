@@ -2594,3 +2594,4 @@ Version 18
 	Added Network.getEdge and a new Network.getEdges
 	Added Edge.setWeight
 	Added Display[2|3]D.requestUpdate().  Thanks to Sadat Chowdhury <sadatc@gmail.com>
+	LabelledPortrayal2D now handles multiline labels

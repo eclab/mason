@@ -203,8 +203,17 @@ public class LabelledPortrayal2D extends SimplePortrayal2D
                     {
                     x -= graphics.getFontMetrics().stringWidth(s);
                     }
-                graphics.drawString(s,x,y);
-                }
+				
+				if (s.contains("\n"))  // gotta split
+					{
+					String[] split = s.split("\n");
+					float height = graphics.getFontMetrics().getHeight();
+					for (int i = 0; i < split.length; i++)
+						graphics.drawString(split[i], x, y + i * height);
+					}
+				else
+					graphics.drawString(s,x,y);
+				}
             }
         }
         
