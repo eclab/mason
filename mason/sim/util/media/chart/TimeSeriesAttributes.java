@@ -96,9 +96,14 @@ public class TimeSeriesAttributes extends SeriesAttributes
 
     /** The time series in question.  */
     XYSeries series;
+    public XYSeries getSeries() { return series; }
+    /** Be very careful with this method. Know what you're doing. */
+    public void setSeries(XYSeries series) { this.series = series; }  
     public void setSeriesName(String val) { series.setKey(val); }  // bypasses super.setSeriesName
     public String getSeriesName() { return "" + series.getKey(); }  // bypasses super.getSeriesName
-                
+    
+    public void clear() { series.clear(); }
+    
     /** Builds a TimeSeriesAttributes with the given generator, series, and index for the series. */
     public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, SeriesChangeListener stoppable)
         { 

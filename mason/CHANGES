@@ -2604,3 +2604,4 @@ Version 18
 		cores better associated with their hot memory (probably doesn't).
 	Added replaceAll(...) and removeAll(...) methods, as appropriate, to 
 		DoubleGrid[2|3]D, IntGrid[2|3]D, Object[2|3]D, and DenseGrid[2|3]D.
+	Added ChartUtilities, and added a few methods into the charts to assist it.

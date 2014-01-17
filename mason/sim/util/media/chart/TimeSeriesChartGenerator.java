@@ -41,6 +41,15 @@ import com.lowagie.text.pdf.*;
 
 public class TimeSeriesChartGenerator extends XYChartGenerator
     {
+    public void clearAllSeries()
+    	{
+    	SeriesAttributes[] c = getSeriesAttributes();
+    	for (int i = 0; i < c.length; i++)
+    		{
+    		((TimeSeriesAttributes)(c[i])).clear();
+    		}
+    	}
+    	
     public void removeSeries(int index)
         {
         super.removeSeries(index);
