@@ -369,6 +369,33 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
 
 
 
+    /**
+      * Replace instances of one value to another.
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(int from, int to)
+		{
+		final int width = this.width;
+		final int height = this.height;
+		final int length = this.length;
+		int[][] fieldx = null;
+		int[] fieldxy = null;
+		for(int x = 0; x < width; x++)
+			{
+			fieldx = field[x];
+			for(int y = 0;  y < height; y++)
+				{
+				fieldxy = fieldx[y];
+				for(int z = 0; z < length; z++)
+					{
+					if (fieldxy[z] == from)
+						fieldxy[z] = to;
+					}
+				}
+			}
+		}
 
     
     

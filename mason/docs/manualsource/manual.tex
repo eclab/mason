@@ -4741,6 +4741,8 @@ Sets all values of the field to those found in \variable{values}.  If \variable{
 Sets all values of the field to those found in \variable{values}.  The grid is first reallocated to reflect the dimensions in \variable{values}.  Returns the grid.
 \mthd{public final double[] toArray()}
 Flattens the grid by row-major order into a single array of values and returns it.
+\mthd{public final void replaceAll(double from, double to)}
+Replaces all instances of {\it from} with the value {\it to} throughout the grid.
 \end{methods}
 
 The various other classes have equivalent methods (the 3-dimensional classes obviously do not have a hexagonal distance method).
@@ -4860,7 +4862,10 @@ The classes \Class{sim.field.grid.ObjectGrid2D} and \Class{sim.field.grid.Object
 Loads into a Bag all of the values stored in the array in row-major order, discarding null elements.  Returns the Bag.  This is different from \method{toArray()} in two ways: first, a Bag is returned, and second, the null elements are discarded.
 \mthd{public Bag clear()}
 Loads into a Bag all of the values stored in the array in row-major order, discarding null elements. Then sets all the values in the array to null.  Returns the Bag.
-
+\mthd{public final void replaceAll(Object from, Object to)}
+Replaces all instances of {\it from} with the value {\it to} throughout the grid.  Comparison is done using the \method{equals(...)} method.
+\mthd{public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)}
+Replaces all instances of {\it from} with the value {\it to} throughout the grid.  Comparison is done using the \method{equals(...)} method if {\it onlyIfSameObject} is false; otherwise, comparison is direct pointer comparison, that is, the instances must be exactly the same object as {\it from}.
 \end{methods}
 
 In Section \ref{GridComparison} we compare ObjectGrid2D, DenseGrid2D, and SparseGrid2D to give you an idea of when you should pick each over the others.
@@ -4941,6 +4946,14 @@ Removes all copies of the given Object from the given Location, and returns true
 Removes all copies of the given Object from the given Location, and returns true.  Returns false if the Object does not exist at the given Location.
 \mthd{public Bag clear()}
 Removes all Objects from the field and returns them in a Bag.  You may modify this Bag.  Note that this is a potentially expensive operation.
+\mthd{public final void replaceAll(Object from, Object to)}
+Replaces all instances of {\it from} with the value {\it to} throughout the grid.  Comparison is done using the \method{equals(...)} method.
+\mthd{public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)}
+Replaces all instances of {\it from} with the value {\it to} throughout the grid.  Comparison is done using the \method{equals(...)} method if {\it onlyIfSameObject} is false; otherwise, comparison is direct pointer comparison, that is, the instances must be exactly the same object as {\it from}.
+\mthd{public final void removeAll(Object from)}
+Removes all instances of {\it from} throughout the grid.  Comparison is done using the \method{equals(...)} method.
+\mthd{public final void removeAll(Object from, boolean onlyIfSameObject)}
+Removes all instances of {\it from} throughout the grid.  Comparison is done using the \method{equals(...)} method if {\it onlyIfSameObject} is false; otherwise, comparison is direct pointer comparison, that is, the instances must be exactly the same object as {\it from}.
 \end{methods}
 
 
@@ -7881,7 +7894,7 @@ Four provided Basic Portrayals draw their objects as either filled or outlined s
 \item \Class{sim.portrayal.simple.HexagonalPortrayal2D} draws its object as a hexagon.  HexagonalPortrayal2D is a subclass of ShapePortrayal2D.  HexagonalPortrayal2D is often used for drawing objects in hexagonal field portrayals.
 \end{itemize}
 
-These classes all have the same basic internal variables you can set, and constructors to match.
+These classes all subclass from the simple abstract class \Class{sim.portrayal.simple.AbstractShapePortrayal2D}, which defines three basic internal variables you can set.
 
 \java{%
     public Paint paint;\ \ \ \ \ // the paint with which to fill or draw the shape outline\\
@@ -8119,7 +8132,7 @@ What if your object portrays itself?  No problem: just use \variable{null} as th
 MASON provides three default wrapper portrayals for adding more visual information to an existing SimplePortrayal: \class{sim.portrayal.simple.LabelledPortrayal2D} adds a textual label, \class{sim.portrayal.simple.CircledPortrayal2D} highlights an object by drawing a circle around it, and \class{sim.portrayal.simple.OrientedPortrayal2D} adds a compass orientation marker.  The figure at right shows all three in action at once, wrapping a simple, gray OvalPortrayal2D.  (The label wasn't particularly well chosen).
 
 \paragraph{Labelling}
-\Class{sim.portrayal.simple.LabelledPortrayal2D} adds an optional label to a portrayed object.  The origin of the label is directly below the object by a small amount.   There are a lot of options.  First, you you may specify the {\bf paint} and {\bf font} of the label, the {\bf text alignment} (left, right, center) of the label, and whether or not it's only {\bf displayed when the object is selected}.  You an indicate whether the size of the font {\bf changes when you zoom in}.  
+\Class{sim.portrayal.simple.LabelledPortrayal2D} adds an optional label to a portrayed object.  The label can have multiple lines, each separated by a newline.  The origin of the label is directly below the object by a small amount.   There are a lot of options.  First, you you may specify the {\bf paint} and {\bf font} of the label, the {\bf text alignment} (left, right, center) of the label, and whether or not it's only {\bf displayed when the object is selected}.  You an indicate whether the size of the font {\bf changes when you zoom in}.  
 
 And you can specify the location of the label in two ways.  First, you can state where the origin of the label is to be placed in model units.  For example, assuming the object is typically to be drawn within a \(1 \times 1\) rectangle in model units, you can specify that the label is to be drawn directly to the right of the object by placing the location at \(\langle 1.5, 0\rangle\).  As the user zooms in in the Display2D, the label changes its distance proportionally.  Second, you can add an additional {\bf offset}, in pixels, to the label location.  The default label location is ten pixels down from right at the expected lower edge of the object, horizontally dead center:
 
@@ -10564,7 +10577,7 @@ Once the portrayal is constructed, you may change whether it shows the circle on
 \mthd{public boolean getCircleShowing()} Returns whether or not the sphere is shown at all.
 \end{methods}
 
-The \Class{sim.portrayal3d.simple.LabelledPortrayal3D} is very similar.  It allows you to add a textual label which is shown always or only when the object is selected.  The label always faces the user.
+The \Class{sim.portrayal3d.simple.LabelledPortrayal3D} is very similar.  It allows you to add a textual label which is shown always or only when the object is selected.  The label always faces the user.  Due to Java3D limitations the {\bf label can only be one line: newlines are ignored}.
 
 \begin{methods}{\class{sim.portrayal3d.simple.LabelledPortrayal3D} Constructor}
 \mthd{public LabelledPortrayal3D(SimplePortrayal3D child, Transform3D offset, Font font, String label, Color color,}\rule{0pt}{0pt}\hspace{\fill}{\sf boolean onlyLabelWhenSelected)}\\ Builds a LabelledPortrayal3D with the given child, offset (as a transform), label font and color, and the string used for the label. The portrayal will (or will not) show the label only when the object is selected.  If the label is null, then label used will be queried from the underlying object itself.
@@ -11437,10 +11450,13 @@ Like all generators, the TimeSeriesChartGenerator must implement some method for
 
 Unlike other generators, the TimeSeriesChartGenerator has a {\bf data culler} (we'll get to them in Section \ref{sim.util.media.chart.DataCuller}) which trims the size of the series so it doesn't overwhelm drawing.  The default data culler used is a \class{sim.util.media.chart.MinGapDataCuller}, which deletes series data which is most crowded in time with respect to its neighbors.  This is usually a good choice.
 
+Similarly, unlike other generators, you can {\bf clear} all the series in TimeSeriesChartGenerator, meaning that you can eliminate the data inside them (but not remove them).
+
 \begin{methods}{\class{sim.util.media.chart.TimeSeriesChartGenerator}}
 \mthd{public SeriesAttributes addSeries(XYSeries series, SeriesChangeListener stopper)} Adds a series to the chart, and produces a TimeSeriesAttributes controlling that series.
 \mthd{public void setDataCuller(DataCuller culler)} Sets the current data culler. If \variable{null} is passed in, no data is culled (this is probably not as good an idea as you think).
-\mthd{public DataCuller getDataCuller()} returns the current data culler.
+\mthd{public DataCuller getDataCuller()} Returns the current data culler.
+\mthd{public void clearAllSeries()} Clears all the series in the generator, but does not remove them.
 \end{methods}
 
 \begin{wrapfigure}{r}[0in]{3in}
@@ -11628,6 +11644,14 @@ Time Series are controlled by the class \Class{sim.util.media.chart.TimeSeriesAt
 
 \begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes} Constructor}
 \mthd{public TimeSeriesAttributes(ChartGenerator generator, XYSeries series, int index, SeriesChangeListener stoppable)} Creates a TimeSeriesAttributes attached to the given generator, with the provided series, and located at the given index in the attributes list.  The stoppable will be called when the TimeSeriesAttributes is deleted.
+\end{methods}
+
+Time Series are different from other kinds of plots in that the data is added incrementally rather than replaced in bulk each time.    For the same reason, it makes sense for time series to be able to have their data cleared.  Furthermore, only TimeSeriesAttributes have an internal JFreeChart series object (\class{org.jfree.data.xy.XYSeries}), whereas the other charts use arrays.  You can access this object if you need to.
+
+\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\mthd{public void clear()} Clears all the data in the time series.
+\mthd{public org.jfree.data.xy.XYSeries getSeries()} Returns the internal series object.
+\mthd{public void setSeries(org.jfree.data.xy.XYSeries)} Sets the internal series object.  Be careful this method.
 \end{methods}
 
 TimeSeriesAttributes allows the user to modify the following features:

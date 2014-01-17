@@ -422,6 +422,28 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         return this;
         }
 
+    /**
+      * Replace instances of one value to another.
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(double from, double to)
+		{
+		final int width = this.width;
+		final int height = this.height;
+		double[] fieldx = null;
+		for(int x = 0; x < width; x++)
+			{
+			fieldx = field[x];
+			for(int y = 0;  y < height; y++)
+				{
+				if (fieldx[y] == from)
+					fieldx[y] = to;
+				}
+			}
+		}
+
 
 /*
 

@@ -80,6 +80,53 @@ public class ObjectGrid3D extends AbstractGrid3D
         }
 
         
+    /**
+      * Replace instances of one value to another.  Equality is measured using equals(...).
+      * null is considered equal to null.  This is equivalent to calling replaceAll(from, to, false)
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(Object from, Object to)
+		{
+		replaceAll(from, to, false);
+		}
+
+    /**
+      * Replace instances of one value to another.  Equality is measured
+      * as follows.  (1) if onlyIfSameObject is true, then objects must be "== from"
+      * to one another to be considered equal.  (2) if onlyIfSameObject is false,
+      * then objects in the field must be "equals(from)".  In either case, null
+      * is considered equal to null.
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)
+		{
+		final int width = this.width;
+		final int height = this.height;
+		final int length = this.length;
+		Object[][] fieldx = null;
+		Object[] fieldxy = null;
+		for(int x = 0; x < width; x++)
+			{
+			fieldx = field[x];
+			for(int y = 0;  y < height; y++)
+				{
+				fieldxy = fieldx[y];
+				for(int z = 0; z < length; z++)
+					{
+					Object obj = fieldxy[z];
+					if ((obj == null && from == null) ||
+						(onlyIfSameObject && obj == from) ||
+						(!onlyIfSameObject && obj.equals(from)))
+						fieldxy[z] = to;
+					}
+				}
+			}
+		}
+
     /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
         Returns the grid. */
     public final Object[] toArray()

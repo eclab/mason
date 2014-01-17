@@ -14,12 +14,8 @@ import java.awt.geom.*;
    it manages the drawing and hit-testing for rectangular shapes.
 */
 
-public class RectanglePortrayal2D extends SimplePortrayal2D
+public class RectanglePortrayal2D extends AbstractShapePortrayal2D
     {
-    public Paint paint;
-    public double scale;
-    public boolean filled;
-
     public RectanglePortrayal2D() { this(Color.gray,1.0, true); }
     public RectanglePortrayal2D(Paint paint) { this(paint,1.0, true); }
     public RectanglePortrayal2D(double scale) { this(Color.gray,scale, true); }

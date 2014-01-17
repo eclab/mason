@@ -14,14 +14,11 @@ import java.awt.geom.*;
    it manages the drawing and hit-testing for shapes.
 */
 
-public class ShapePortrayal2D extends SimplePortrayal2D
+public class ShapePortrayal2D extends AbstractShapePortrayal2D
     {
     static final Stroke defaultStroke = new BasicStroke();
-    public Paint paint;
-    public double scale;
     public Shape shape;
     public Stroke stroke;
-    public boolean filled;
     AffineTransform transform = new AffineTransform();
 
     double[] xPoints = null;
@@ -35,6 +32,33 @@ public class ShapePortrayal2D extends SimplePortrayal2D
     double bufferedWidth;
     double bufferedHeight;
     Shape bufferedShape;
+    
+    public static final double[] X_POINTS_TRIANGLE_DOWN = new double[] {-0.5, 0, 0.5};
+    public static final double[] Y_POINTS_TRIANGLE_DOWN = new double[] {-0.5, 0.5, -0.5};
+    public static final double[] X_POINTS_TRIANGLE_UP = new double[] {-0.5, 0, 0.5};
+    public static final double[] Y_POINTS_TRIANGLE_UP = new double[] {0.5, -0.5, 0.5};
+    public static final double[] X_POINTS_TRIANGLE_RIGHT = new double[] {-0.5, -0.5, 0.5};
+    public static final double[] Y_POINTS_TRIANGLE_RIGHT = new double[] {-0.5, 0.5, 0};
+    public static final double[] X_POINTS_TRIANGLE_LEFT = new double[] {-0.5, 0.5, 0.5};
+    public static final double[] Y_POINTS_TRIANGLE_LEFT = new double[] {0, 0.5, -0.5};
+    public static final double[] X_POINTS_DIAMOND = new double[] {-0.5, 0, 0.5, 0};
+    public static final double[] Y_POINTS_DIAMOND = new double[] {0, 0.5, 0, -0.5};
+    public static final double[] X_POINTS_SQUARE = new double[] {-0.5, -0.5, 0.5, 0.5};
+    public static final double[] Y_POINTS_SQUARE = new double[] {-0.5, 0.5, 0.5, -0.5};
+    public static final double[] X_POINTS_BOWTIE = new double[] {-0.5, 0.5, 0.5, -0.5};
+    public static final double[] Y_POINTS_BOWTIE = new double[] {-0.5, 0.5, -0.5, 0.5};
+    public static final double[] X_POINTS_HOURGLASS = new double[] {-0.5, 0.5, -0.5, 0.5};
+    public static final double[] Y_POINTS_HOURGLASS = new double[] {-0.5, 0.5, 0.5, -0.5};
+	static final double OCT_COORD = (1.0 / (1.0 + Math.sqrt(2))) / 2.0;  // About .2071067811, derived from Wikipedia's Octogon article :-)
+
+    public static final double[] X_POINTS_OCTAGON = new double[] {-0.5, -0.5, -OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD};
+    public static final double[] Y_POINTS_OCTAGON = new double[] {-OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD, -0.5, -0.5};
+
+	// This hexagon, unlike HexagonalPortrayal2D, fits inside a 1x1 square centered at (0,0) and so looks somewhat stretched
+    public static final double[] X_POINTS_HEXAGON = new double[] {-0.5, -0.25, 0.25, 0.5, 0.25, -0.25};
+    public static final double[] Y_POINTS_HEXAGON = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};
+    public static final double[] X_POINTS_HEXAGON_ROTATED = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};
+    public static final double[] Y_POINTS_HEXAGON_ROTATED = new double[] {-0.5, -0.25, 0.25, 0.5, 0.25, -0.25};
     
     Shape buildPolygon(double[] xpoints, double[] ypoints)
         {

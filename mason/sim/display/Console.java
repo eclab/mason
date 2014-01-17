@@ -174,13 +174,15 @@ public class Console extends JFrame implements Controller
     /** The current time */
     JLabel time;
     /** The frame rate */
-    JSlider slider;
+    JSlider frameRateSlider;
     /** The associated text with the speed of play slider */
-    JLabel sliderText;
+    JLabel frameRateSliderText;
+    boolean frameRateSliderChanging = false;
     /** The slider which controls the number of steps per press of the step-button */
     JSlider stepSlider;
     /** The associated text for number of steps per press of the step-button */
     JLabel stepSliderText;
+    boolean stepSliderChanging = false;
     /* The slider which controls the thread priority of the underlying model thread */
     // JSlider prioritySlider;
     /* The associiated text for the thread priority of the underlying model thread */
@@ -248,7 +250,6 @@ public class Console extends JFrame implements Controller
         when there is NO underlying play thread (stepping happens inside the event loop, with the
         play thread killed), it can be safely set, but only do so from the event loop. */
     int numStepsPerStepButtonPress = 1;
-    
     
     /////////////////////// CONSTRUCTORS
     /////////////////////// This is the single most elaborate piece of code in Console.java, but it's
@@ -471,20 +472,12 @@ public class Console extends JFrame implements Controller
                 }
             };
 
-
-        // create speed slider
-        // Slider:  0   1     2    3   4  5  6 7  8  9
-        // speed:   0   1/4  1/2   1   2  4  8 16 32 64 (speed is in seconds per tick, higher is slower)
-        slider = new JSlider(0, 1000, 0); // ranges from 0 to 1000
-        slider.addChangeListener(new ChangeListener()
+        frameRateSlider = new JSlider(0, MAX_FRAME_RATE_SLIDER_VALUE, 0);
+        frameRateSlider.addChangeListener(new ChangeListener()
             {
             public void stateChanged(ChangeEvent e)
                 {
-                int val = slider.getValue();
-                long speed = (long)( 512000.0 / (Math.pow(4,5)-1) * ( Math.pow(4,val/1000.0) - 1 ) );
-                if (!slider.getValueIsAdjusting())
-                    setPlaySleep(speed); // convert to milliseconds
-                sliderText.setText("" + ((double) (speed)) / 1000);
+				setPlaySleep(sliderToFrameRate(frameRateSlider.getValue()));
                 }
             });
         b = new Box(BoxLayout.X_AXIS)
@@ -495,11 +488,11 @@ public class Console extends JFrame implements Controller
                 return insets;
                 }
             };
-        b.add(slider);
-        sliderText = new JLabel("0.0");
-        sliderText.setMinimumSize(new JLabel("88.888").getMinimumSize()); // ensure enough space
-        sliderText.setPreferredSize(new JLabel("88.888").getPreferredSize()); // ensure enough space
-        b.add(sliderText);
+        b.add(frameRateSlider);
+        frameRateSliderText = new JLabel("0");
+        frameRateSliderText.setMinimumSize(new JLabel("88.88").getMinimumSize()); // ensure enough space
+        frameRateSliderText.setPreferredSize(new JLabel("88.88").getPreferredSize()); // ensure enough space
+        b.add(frameRateSliderText);
         controlPanel.addLabelled("Delay (Sec/Step) ", b);
 
         // removed -- this is so rarely used that it's just confusing to users
@@ -540,10 +533,6 @@ public class Console extends JFrame implements Controller
             public void stateChanged(ChangeEvent e)
                 {
                 setNumStepsPerStepButtonPress(stepSlider.getValue());
-                /*
-                  numStepsPerStepButtonPress = stepSlider.getValue();
-                  stepSliderText.setText("" + numStepsPerStepButtonPress);
-                */
                 }
             });
         b = new Box(BoxLayout.X_AXIS)
@@ -1160,9 +1149,9 @@ public class Console extends JFrame implements Controller
             else
                 prefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
                         
-            prefs.putInt(DELAY_KEY,slider.getValue());
+            prefs.putInt(DELAY_KEY,frameRateSlider.getValue());
 //            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
-            prefs.putInt(STEPS_KEY, stepSlider.getValue());
+            prefs.putInt(STEPS_KEY, getNumStepsPerStepButtonPress());
             prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
             prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
             prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
@@ -1183,9 +1172,9 @@ public class Console extends JFrame implements Controller
             {
             Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
-            slider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, slider.getValue())));
+            frameRateSlider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, frameRateSlider.getValue())));
 //            prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
-            stepSlider.setValue(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
+            setNumStepsPerStepButtonPress(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
             endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
             timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
             pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
@@ -1341,14 +1330,46 @@ public class Console extends JFrame implements Controller
     /** Milliseconds of how long we should sleep between each step. Don't play with this. */
     long playSleep = 0;
     
+    static final double MAX_FRAME_RATE = 8.0;
+    static final int MAX_FRAME_RATE_SLIDER_VALUE = 1024;
+    long sliderToFrameRate(int val)
+    	{
+    	double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
+    	double v = val / (double) MAX_FRAME_RATE_SLIDER_VALUE * 2.0; // v ranges from 0 to 2
+    	return Math.round(Math.pow(v, maxAsPowerOfTwo) * 1000);  // put into milliseconds
+    	}
+
+    int frameRateToSlider(long valInMS)
+    	{
+    	double val = valInMS / 1000.0;
+    	double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
+    	double v = Math.pow(val, 1.0 / maxAsPowerOfTwo);
+    	return (int) Math.round(v * ((double) MAX_FRAME_RATE_SLIDER_VALUE) / 2.0);
+    	}
+    
+            
+        
     /** Sets (in milliseconds) how long we should sleep between each step in the play thread. 
-        This method is run as a doChangeCode so it can interrupt the possibly sleeping
-        thread and give it a new interval. */
-    public void setPlaySleep(final long sleep)
+    	Must be a value >= 0, else it will be set to 0.  */
+    public void setPlaySleep(long sleep)
         {
-        synchronized (playThreadLock)
-            {
-            playSleep = sleep;
+        if (sleep < 0) sleep = 0;
+        if (!frameRateSliderChanging)
+        	{
+        	frameRateSliderChanging = true;
+	        synchronized (playThreadLock)
+    	        {
+            	playSleep = sleep;
+            	}
+            frameRateSlider.setValue(frameRateToSlider(sleep));
+            DecimalFormat format = new DecimalFormat();
+            format.setMinimumFractionDigits(0);
+            format.setDecimalSeparatorAlwaysShown(false);
+            String text = format.format(sleep / 1000.0);
+            if (text.length() > 5)  // "88.88" remember...
+            	text = text.substring(0, 5);
+            frameRateSliderText.setText(text);
+            frameRateSliderChanging = false;
             }
         }
 
@@ -2263,17 +2284,20 @@ public class Console extends JFrame implements Controller
         return numStepsPerStepButtonPress;
         }
         
-    /** Sets the number of steps per stepp button press.  The value must be > 0 */
+    /** Sets the number of steps per stepp button press.  The value must be > 0.  If not, it will be set to 1. */
     public void setNumStepsPerStepButtonPress(int val)
         {
-        if (val > 0)
-            {
-            numStepsPerStepButtonPress = val;
-            stepSliderText.setText("" + numStepsPerStepButtonPress);
-            slider.setValue(val);
+        if (val <= 0) val = 1;
+        if (!stepSliderChanging)
+        	{
+        	stepSliderChanging = true;
+			numStepsPerStepButtonPress = val;
+            stepSlider.setValue(val);
+            stepSliderText.setText("" + val);
+            stepSliderChanging = false;
             }
         }
-        
+
     /** Called when the user presses the play button.  You can call this as well to simulate the same.  Keep in mind that play will change to step if pause is down. */
     public synchronized void pressPlay()
         {

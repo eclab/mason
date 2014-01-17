@@ -2561,7 +2561,7 @@ Version 18
 		incorrectly renamed getNeighborsAndCorrespondingLocationsMaxDistance
 		Thanks to Rob Alexander <rob.alexander@york.ac.uk> and the "Software Measurement 
 		and Testing 2013" class at University of York.
-	DenseGrid[2|3]D documentation error did not mae it clear that moveObject would
+	DenseGrid[2|3]D documentation error did not make it clear that moveObject would
 		set an object location if it wasn't already in the grid.
                 Thanks to Rob Alexander <rob.alexander@york.ac.uk> and his class.
 	Error in AbstractGrid3D and subclasses: all moore/max and hamiltonian/vonneumann
@@ -2595,3 +2595,12 @@ Version 18
 	Added Edge.setWeight
 	Added Display[2|3]D.requestUpdate().  Thanks to Sadat Chowdhury <sadatc@gmail.com>
 	LabelledPortrayal2D now handles multiline labels
+	Added AbstractShapePortrayal2D, now the superclass of OvalPortrayal2D,
+		RectanglePortrayal2D, ShapePortrayal2D, and HexagonalPortrayal2D.
+	Additional methods provided for Heap.java
+	Improvements to Console's frame rate slider
+	ThreadPool now uses a linked list instead of a Bag, so it can add from the end
+		and remove from the front, which hopefully keeps threads on different
+		cores better associated with their hot memory (probably doesn't).
+	Added replaceAll(...) and removeAll(...) methods, as appropriate, to 
+		DoubleGrid[2|3]D, IntGrid[2|3]D, Object[2|3]D, and DenseGrid[2|3]D.

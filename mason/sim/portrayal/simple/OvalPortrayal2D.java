@@ -15,11 +15,8 @@ import sim.display.*;
    it manages the drawing and hit-testing for oval shapes.
 */
 
-public class OvalPortrayal2D extends SimplePortrayal2D
+public class OvalPortrayal2D extends AbstractShapePortrayal2D
     {
-    public Paint paint;
-    public double scale;
-    public boolean filled;
     protected double offset = 0.0;  // used only by CircledPortrayal2D
     
     public OvalPortrayal2D() { this(Color.gray,1.0, true); }

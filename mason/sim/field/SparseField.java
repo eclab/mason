@@ -394,6 +394,7 @@ public abstract class SparseField implements java.io.Serializable
         return result;
         }
     
+
     /** Iterates over all objects.  
         NOT fail-fast, and remove() not supported.  Use this method only if you're
         woozy about accessing allObject.numObjs and allObject.objs directly. 

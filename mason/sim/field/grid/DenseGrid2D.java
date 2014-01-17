@@ -218,7 +218,111 @@ public class DenseGrid2D extends AbstractGrid2D
 
 
 
+
+    /**
+      * Replace instances of one value to another.  Equality is measured using equals(...).
+      * null is considered equal to null.  This is equivalent to calling replaceAll(from, to, false)
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(Object from, Object to)
+		{
+		replaceAll(from, to, false);
+		}
+
+    /**
+      * Replace instances of one value to another.  Equality is measured
+      * as follows.  (1) if onlyIfSameObject is true, then objects must be "== from"
+      * to one another to be considered equal.  (2) if onlyIfSameObject is false,
+      * then objects in the field must be "equals(from)".  In either case, null
+      * is considered equal to null.
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)
+		{
+		final int width = this.width;
+		final int height = this.height;
+		Bag[] fieldx = null;
+		for(int x = 0; x < width; x++)
+			{
+			fieldx = field[x];
+			for(int y = 0;  y < height; y++)
+				{
+				Bag bag = fieldx[y];
+				int len = bag.size();
+				
+				// If/when we move to ArrayList, we can use Collections.replaceAll.
+				// But because Bag doesn't implement the List interface, we can't.
+				
+				for(int i = 0; i < len; i++)
+					{
+					Object obj = bag.get(i);
+					if ((obj == null && from == null) ||
+						(onlyIfSameObject && obj == from) ||
+						(!onlyIfSameObject && obj.equals(from)))
+						bag.set(i, to);
+					}
+				}
+			}
+		}
+
        
+    /**
+      * Removes instances of the given value.  Equality is measured using equals(...).
+      * null is considered equal to null.  This is equivalent to calling replaceAll(from, to, false)
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void removeAll(Object from)
+		{
+		removeAll(from, false);
+		}
+
+    /**
+      * Removes instances of the given value.  Equality is measured
+      * as follows.  (1) if onlyIfSameObject is true, then objects must be "== from"
+      * to one another to be considered equal.  (2) if onlyIfSameObject is false,
+      * then objects in the field must be "equals(from)".  In either case, null
+      * is considered equal to null.
+      * @param from any element that matches this value will be replaced
+      * @param to with this value
+    */
+
+	public final void removeAll(Object from, boolean onlyIfSameObject)
+		{
+		final int width = this.width;
+		final int height = this.height;
+		Bag[] fieldx = null;
+		for(int x = 0; x < width; x++)
+			{
+			fieldx = field[x];
+			for(int y = 0;  y < height; y++)
+				{
+				Bag bag = fieldx[y];
+				int len = bag.size();
+				
+				// If/when we move to ArrayList, we can use Collections.replaceAll.
+				// But because Bag doesn't implement the List interface, we can't.
+				
+				for(int i = 0; i < len; i++)
+					{
+					Object obj = bag.get(i);
+					if ((obj == null && from == null) ||
+						(onlyIfSameObject && obj == from) ||
+						(!onlyIfSameObject && obj.equals(from)))
+						{
+						bag.remove(i);
+						i--;
+						len--;
+						}
+					}
+				}
+			}
+		}
 
 
 
