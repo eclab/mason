@@ -11,7 +11,8 @@ import java.awt.geom.*;
 
 /**
    A simple portrayal for 2D visualization of java.awt.Shapes and java.awt.Polygons. It extends the SimplePortrayal2D and
-   it manages the drawing and hit-testing for shapes.
+   it manages the drawing and hit-testing for shapes.  Various X and Y point arrays for constructing
+   different default shapes are also provided.
 */
 
 public class ShapePortrayal2D extends AbstractShapePortrayal2D
@@ -49,8 +50,8 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] Y_POINTS_BOWTIE = new double[] {-0.5, 0.5, -0.5, 0.5};
     public static final double[] X_POINTS_HOURGLASS = new double[] {-0.5, 0.5, -0.5, 0.5};
     public static final double[] Y_POINTS_HOURGLASS = new double[] {-0.5, 0.5, 0.5, -0.5};
+    
 	static final double OCT_COORD = (1.0 / (1.0 + Math.sqrt(2))) / 2.0;  // About .2071067811, derived from Wikipedia's Octogon article :-)
-
     public static final double[] X_POINTS_OCTAGON = new double[] {-0.5, -0.5, -OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD};
     public static final double[] Y_POINTS_OCTAGON = new double[] {-OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD, -0.5, -0.5};
 

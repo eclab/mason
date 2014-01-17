@@ -7910,7 +7910,18 @@ ShapePortrayal2D has an additional variable you can set:
 
 If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
 
-These classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
+\begin{wrapfigure}{r}[0in]{2.9in}
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-1em}\end{wrapfigure}
+Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
+
+Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
+
+{\footnotesize\begin{alltt}
+    ShapePortrayal2D portrayal = new ShapePortrayal2D(
+        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT, ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
+\end{alltt}}
+
+These various classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
 
 
 {\footnotesize\begin{alltt}
