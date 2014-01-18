@@ -11853,6 +11853,222 @@ TimeSeriesChartGenerator at present uses a culler called MinGapDataCuller, which
 \mthd{public MinGapDataCuller(int maxPointCount)} Constructs a MinGapDataCuller which agrees to cull after the point count has exceeded \variable{maxPointCount}, and then culls back to half that amount, plus 1.
 \end{methods}
 
+\subsection{Programmatically Displaying a Chart}
+\label{sim.display.ChartUtilities}
+
+It is often the case that you may want to make a permanent chart as part of your simulation.  With some elbow grease you can set up a chart as a Display: but it's a fair bit of work and requires some knowledge.  In general you'll have to:
+
+\begin{enumerate}
+\item Create and set up the chart as a ChartGenerator.
+\item Create the chart's JFrame and make it visible.
+\item Register the chart's JFrame with the Controller.
+\item Make one or more series in the form of SeriesAttributes and add them to the chart.
+\item Schedule repeating Steppables on the GUIState minischedule which revise the various series and then tell the chart to redraw itself in the near future.
+\end{enumerate}
+
+If you want your charts to survive checkpointing, then you'll have even more fun, as the underlying series objects will need to be carefully stored in the model.
+
+To remove most of the complexity, MASON has a factory class called \class{sim.display.ChartUtilities}.  Using it is pretty simple.  To start, you'll need to create an object which implements an interface defined in ChartUtilities.  There are presently five such interfaces, and each defines just one or two methods which MASON will call when it needs more data from you to update the chart.  For example, if you have created a time series chart, MASON will periodically call your object to ask for the latest value from your model to add to the time series.  Or if you have created a histogram, MASON will periodically call your object to ask for the latest data with which to build a new histogram.
+
+The interfaces are as follows:
+
+\paragraph{\class{sim.util.Valuable}} is used by time series charts, created by ChartUtilities, to add the latest information to the chart.  See Section \ref{sim.util.Valuable} for more information on this interface, but for a refresher:
+
+\begin{methods}{\class{sim.util.Valuable}}
+\mthd{public double doubleValue()} Returns the current value.  This is used by ChartUtilities to update the time series chart with the newest information.
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoubles}} is used by histograms, created by ChartUtilities, to provide the newest data with which to create the histogram.  
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoubles}}
+\mthd{public double[] provide()} Returns the latest samples with which to build the histogram.
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoubleDoubles}} is used by scatter plots, created by ChartUtilities, to provide the newest data with which to create the scatter plot.  
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoubleDoubles}}
+\mthd{public double[][] provide()} Returns the latest samples with which to build the scatter plot.  The returned data takes the form of exactly {\it two} double arrays, one for the X coordinates and one for the Y coordinates of the data.
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoublesAndLabels}}, which extends ProvidesDoubles, is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoublesAndLabels}}
+\mthd{public double[] provide()} Returns the latest samples with which to build the pie chart or bar chart.   The double values represent the sizes of various elements in the pie chart or bar chart.
+\mthd{public String[] provideLabels()} Returns the labels corresponding to the samples given in \method{provide()}.  The array length must thus be the same.
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesObjects}} is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesObjects}}
+\mthd{public Object[] provide()} Returns the latest samples with which to build the pie chart or bar chart.  The objects must respond to the \method{toString()} method to return labels.  The objects are broken into groups where all objects in a group have the same label.  The counts of these groups form the sizes of elements in the pie or bar charts, and the labels under which they're grouped form the labels of the elements. 
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesCollection}} is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesCollection}}
+\mthd{public Collection provide()} Returns the latest samples with which to build the pie chart or bar chart.  The objects in the collection must respond to the \method{toString()} method to return labels.  The objects are broken into groups where all objects in a group have the same label.  The counts of these groups form the sizes of elements in the pie or bar charts, and the labels under which they're grouped form the labels of the elements. 
+\end{methods}
+
+Armed with the appropriate interface, you can now build your Chart.  You must start by defining the chart in your \method{init()} method.  You have two choices here: you can create a standalone chart which is disassociated from MASON's Controller, or you can create one put into a Display JFrame and attached to the Controller.  The former is for customizing things: if you just want to make a Display, choose the latter.  Here are all the possible methods:
+
+\begin{methods}{\class{sim.display.ChartUtilities}}
+\mthd{public static TimeSeriesChartGenerator buildTimeSeriesChartGenerator(String title, String domainAxisLabel)} Produces a standalone time series chart.  The domain axis label is the label of the ``time'' axis.
+\mthd{public static TimeSeriesChartGenerator buildTimeSeriesChartGenerator(GUIState state, String title, String domainAxisLabel)} Produces a time series chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.   The domain axis label is the label of the ``time'' axis.
+\mthd{public static HistogramGenerator buildHistogramGenerator(String title, String rangeAxisLabel)} Produces a standalone histogram.    The range axis label is the label underneath the histogram.
+\mthd{public static HistogramGenerator buildHistogramGenerator(GUIState state, String title, String rangeAxisLabel)} Produces a histogram.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is the label underneath the histogram.
+\mthd{public static ScatterPlotGenerator buildScatterPlotGenerator(String title, String rangeAxisLabel, String domainAxisLabel)} Produces a standalone scatter plot.    The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
+\mthd{public static ScatterPlotGenerator buildScatterPlotGenerator(GUIState state, String title, String rangeAxisLabel,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf String domainAxisLabel)} 
+
+Produces a scatter plot.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
+\mthd{public static PieChartGenerator buildPieChartGenerator(String title)} Produces a standalone pie chart.
+\mthd{public static PieChartGenerator buildPieChartGenerator(GUIState state, String title)} Produces a pie chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  
+\mthd{public static BarChartGenerator buildBarChartGenerator(String title)} Produces a standalone bar chart.
+\mthd{public static BarChartGenerator buildBarChartGenerator(GUIState state, String title)} Produces a bar chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  
+\end{methods}
+
+Next in your \method{init()} method, you'll need to create one or more series for the chart, in the form of SeriesAttributes objects.  ChartUtilities provides simple methods to create these series for you.  Once the SeriesAttributes are created and added, you can customize them are you wish.  
+
+
+\begin{methods}{\class{sim.display.ChartUtilities}}
+\mthd{public static TimeSeriesAttributes addSeries(TimeSeriesChartGenerator chart, String seriesName)} Adds a new time series to the chart.
+\mthd{public static HistogramSeriesAttributes addSeries(HistogramGenerator chart, String seriesName, int numBins)} Adds a new histogram series to the chart.  You also provide the default number of bins for histograms created with this series.
+\mthd{public static ScatterPlotSeriesAttributes addSeries(ScatterPlotGenerator chart, String seriesName)} Adds a new scatter plot series to the chart.
+\mthd{public static PieChartSeriesAttributes addSeries(PieChartGenerator chart, String seriesName)} Adds a new pie chart series to the chart.
+\mthd{public static BarChartSeriesAttributes addSeries(BarChartGenerator chart, String seriesName)} Adds a new bar chart series to the chart.
+\end{methods}
+
+Once you have created your series, you will later (in your \method{start()} and \method{load()} methods) need to schedule them with the GUIState minischedule so MASON will repeatedly query your data-providing object to update them.  Here are the appropriate methods:
+
+\begin{methods}{\class{sim.display.ChartUtilities}}
+\mthd{public static Stoppable scheduleSeries(GUIState state, TimeSeriesAttributes attributes, sim.util.Valuable valueProvider)} Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, HistogramSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubles valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, ScatterPlotSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubleDoubles valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoublesAndLabels valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesObjects valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesCollection valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoublesAndLabels valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesObjects valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesCollection valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\end{methods}
+
+\paragraph{An Example}  Let's say our model has an instance variable (a double) in your SimState which is updated every timestep.  This instance variable is called, say, \variable{myData}.  We would like to track that in a Time Series set up as a Display in your GUIState.
+
+We begin by creating an instance variable in our GUIState which holds the time series attributes:
+
+\begin{verbatim}
+public sim.util.media.chart.TimeSeriesAttributes myAttributes;
+\end{verbatim}
+
+Next, in our GUIState's \method{init()} method, we create the chart and add the attributes to it:
+
+\begin{verbatim}
+public void init(Controller c)
+    {
+    super.init(c);
+
+    ChartUtilities myChart = ChartUtilities.buildTimeSeriesChartGenerator(this, 
+                               "My Thing", "As Time Goes By");
+    myAttributes = ChartUtilities.addSeries(myChart, "The Time Series of Interest");
+    ...
+\end{verbatim}
+
+Now in our GUIState's \method{start()} and \method{load()} methods, we schedule the chart.  Since typically these methods both call the convenience method \method{setupPortrayals()}, we'll add it there.  Note that in this example we provide a value-providing object in the form of an anonymous class which returns the latest information:
+
+\begin{verbatim}
+public void setupPortrayals()
+    {
+    ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
+        {
+        public double doubleValue()
+            {
+            return ((MyModel)state).myData;  // myData is updated every timestamp
+            }
+        });
+    ...
+\end{verbatim}
+
+And we're done!
+
+\paragraph{A Gotcha: Serializing a Time Series}
+
+In the example above, when you run the simulation, the chart will be displayed and update itself appropriately.  If you checkpoint it out and then quit and restart MASON from checkpoint, however, only information from then on will be displayed in the chart, not any of the original information.  This is because the series isn't being serialized with the model.
+
+This can be fixed.  First off, we'll have separate \method{start()} and \method{load()} methods, no longer unifying our chart scheduling under \method{setupPortrayals()}.   In the \method{start()} method, we'll schedule the SeriesAttributes as usual, but we'll also extract the underlying series (an \class{org.jfree.data.xy.XYSeries}) and store it in the model.  Let's imagine we've created the following instance variable in the SimState:
+
+\begin{verbatim}
+public org.jfree.data.xy.XYSeries series;
+\end{verbatim}
+
+Now we can assign it:
+
+\begin{verbatim}
+public void start()
+    {
+    super.start();
+    
+    ((MyModel)state).series = myAttributes.getSeries();
+
+    ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
+        {
+        public double doubleValue()
+            {
+            return ((MyModel)state).myData;  // myData is updated every timestamp
+            }
+        });
+    ...
+\end{verbatim}
+
+Now when our model is checkpointed, the series object is also checkpointed (it's Serializable, so we're okay).  When we load from checkpoint, the \method{load()} method is called, which we'll update as follows:
+
+\begin{verbatim}
+public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
+    {
+    super.load();
+    
+    myAttributes.setSeries(((MyModel)state).series);
+
+    ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
+        {
+        public double doubleValue()
+            {
+            return ((MyModel)state).myData;  // myData is updated every timestamp
+            }
+        });
+    ...
+\end{verbatim}
+
+... and now the series is loaded from the model for the chart to continue updating.
+
+\paragraph{Another Gotcha: Updating Time Series at Irregular Intervals}
+
+The various value-provider objects are called every timestep during display update time.  If for some reason you don't want to update your data every timestep, you have an option: pass in \variable{null} for your value-provider when you are scheduling a series.  
+
+This will cause the series to be scheduled to be redrawn but will never add data to it.  So how do you add data then?  Simple.  First, you extract the series to the SimState as shown in the previous example.  Then schedule a Steppable which adds data to that series when you feel like it.
 
 \cleardoublepage
 \footnotesize

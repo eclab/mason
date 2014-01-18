@@ -97,8 +97,17 @@ public class TimeSeriesAttributes extends SeriesAttributes
     /** The time series in question.  */
     XYSeries series;
     public XYSeries getSeries() { return series; }
-    /** Be very careful with this method. Know what you're doing. */
-    public void setSeries(XYSeries series) { this.series = series; }  
+    /** Clears the existing internal XYSeries, then adds all the series elements in the provided XYSeries to the
+    	internal XYSeries.  Does not notify the chart to update.
+    */
+    public void setSeries(XYSeries series) 
+    	{
+    	this.series.clear();
+    	int count = series.getItemCount();
+    	for(int i = 0; i < count; i++)
+    		this.series.add(series.getDataItem(i), true);
+    	}  
+    	
     public void setSeriesName(String val) { series.setKey(val); }  // bypasses super.setSeriesName
     public String getSeriesName() { return "" + series.getKey(); }  // bypasses super.getSeriesName
     

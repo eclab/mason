@@ -31,12 +31,12 @@ public class ChartUtilities
 	{
 	/** This class provides arrays of doubles to chart, or provides null if the current charted values shouldn't be changed. */
 	public interface ProvidesDoubles { public double[] provide(); }
-	/** This class provides arrays of doubles to chart, with associated labels, or provides null if the current charted values shouldn't be changed. */
-	public interface ProvidesDoublesAndLabels extends ProvidesDoubles { public String[] provideLabels(); }
 	/** This class provides two double arrays (that is, an array of the form double[2][]), which are
 		the same length, which represent the x and y coordinates of points, or else 
 		provides null if the current charted values shouldn't be changed. */
 	public interface ProvidesDoubleDoubles { public double[][] provide(); }
+	/** This class provides arrays of doubles to chart, with associated labels, or provides null if the current charted values shouldn't be changed. */
+	public interface ProvidesDoublesAndLabels extends ProvidesDoubles { public String[] provideLabels(); }
 	/** This class provides arrays of Objects to chart, or provides null if the current charted values shouldn't be changed. 
 		The array of objects will be sorted and counted, and the counts will be used to describe a distribution such
 		as for a pie chart.  The labels of the pie chart will be drawn from the object strings. */
