@@ -303,9 +303,7 @@ public abstract class ChartGenerator extends JPanel
 
 
     public abstract int getSeriesCount();
-
-
-
+    
 
     /** Deletes all series from the chart. */
     public void removeAllSeries()
@@ -393,8 +391,10 @@ public abstract class ChartGenerator extends JPanel
         {
         return validChartTitle;
         }
-                        
-
+    
+    static int uniqueNameKey = 0;
+    protected String makeUniqueString(String name) { return name + (uniqueNameKey++); }
+                     
     /** Returns the underlying chart. **/
     public JFreeChart getChart()
         {
@@ -836,7 +836,41 @@ public abstract class ChartGenerator extends JPanel
         {
         return new ScrollableChartPanel(chart, true); 
         }
+
+
+    // This ridiculous class exists so we can create Strings (of sorts) which are completely
+    // uncomparable and have a total sort order regardless of their values.  Otherwise
+    // (this is true) MultiplePiePlot won't allow multiple PiePlots with the same name.
+	public static class UniqueString implements java.lang.Comparable
+        {
+        String string;
         
-    }
+        public UniqueString(String str)
+            {
+            string = str;
+            }
+        
+        public boolean equals(Object obj)
+            {
+            return obj == this;
+            }
+                
+        public int compareTo(Object obj)
+            {
+            if (obj == this) return 0;
+            if (obj == null) throw new NullPointerException();
+            if (!(obj instanceof UniqueString)) return -1;
+            UniqueString us = (UniqueString)obj; 
+            if (us.string.equals(string))  // gotcha.  Gotta differentiate
+                {
+                if (System.identityHashCode(this) > System.identityHashCode(us))
+                    return 1; 
+                else return -1;
+                }
+            else return us.string.compareTo(string);
+            }
+                
+        public String toString() { return string; }
+        }    }
 
         

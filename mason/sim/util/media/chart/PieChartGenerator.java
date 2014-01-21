@@ -315,39 +315,5 @@ public class PieChartGenerator extends ChartGenerator
         hsa.setLabels((String[])(labels.clone()));
         }       
 
-    // This ridiculous class exists so we can create Strings (of sorts) which are completely
-    // uncomparable and have a total sort order regardless of their values.  Otherwise
-    // (this is true) MultiplePiePlot won't allow multiple PiePlots with the same name.
-    public class UniqueString implements java.lang.Comparable
-        {
-        String string;
-        
-        public UniqueString(String str)
-            {
-            string = str;
-            }
-        
-        public boolean equals(Object obj)
-            {
-            return obj == this;
-            }
-                
-        public int compareTo(Object obj)
-            {
-            if (obj == this) return 0;
-            if (obj == null) throw new NullPointerException();
-            if (!(obj instanceof UniqueString)) return -1;
-            UniqueString us = (UniqueString)obj; 
-            if (us.string.equals(string))  // gotcha.  Gotta differentiate
-                {
-                if (System.identityHashCode(this) > System.identityHashCode(us))
-                    return 1; 
-                else return -1;
-                }
-            else return us.string.compareTo(string);
-            }
-                
-        public String toString() { return string; }
-        }
     }
 

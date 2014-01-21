@@ -2605,3 +2605,6 @@ Version 18
 	Added replaceAll(...) and removeAll(...) methods, as appropriate, to 
 		DoubleGrid[2|3]D, IntGrid[2|3]D, Object[2|3]D, and DenseGrid[2|3]D.
 	Added ChartUtilities, and added a few methods into the charts to assist it.
+	Worked around bug in JFreeChart which prevents multiple series of the same name
+		from displaying at the same time.
+	Added BubbleChartGenerator and BubbleChartSeriesAttributes.

@@ -89,7 +89,7 @@ public class HistogramGenerator extends XYChartGenerator
         for(int i=0; i < sa.length; i++)
             {
             HistogramSeriesAttributes attributes = (HistogramSeriesAttributes)(sa[i]);
-            dataset.addSeries(attributes.getSeriesName(), attributes.getValues(), attributes.getNumBins());
+            dataset.addSeries(new UniqueString(attributes.getSeriesName()), attributes.getValues(), attributes.getNumBins());
             }
                         
         setSeriesDataset(dataset);
@@ -127,7 +127,7 @@ public class HistogramGenerator extends XYChartGenerator
         HistogramDataset dataset = (HistogramDataset)(getSeriesDataset());
         int i = dataset.getSeriesCount();
         dataset.setType(histogramType);  // It looks like the histograms reset
-        dataset.addSeries(name, vals, bins);
+        dataset.addSeries(new UniqueString(name), vals, bins);
                 
         // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
         HistogramSeriesAttributes csa = new HistogramSeriesAttributes(this, name, i, vals, bins, stopper);

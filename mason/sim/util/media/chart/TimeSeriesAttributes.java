@@ -108,7 +108,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
     		this.series.add(series.getDataItem(i), true);
     	}  
     	
-    public void setSeriesName(String val) { series.setKey(val); }  // bypasses super.setSeriesName
+    public void setSeriesName(String val) { series.setKey(new ChartGenerator.UniqueString(val)); }  // bypasses super.setSeriesName
     public String getSeriesName() { return "" + series.getKey(); }  // bypasses super.getSeriesName
     
     public void clear() { series.clear(); }

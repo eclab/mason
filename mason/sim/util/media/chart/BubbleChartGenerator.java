@@ -1,5 +1,5 @@
 /*
-  Copyright 2006 by Sean Luke and George Mason University
+  Copyright 2014 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
@@ -31,7 +31,7 @@ import com.lowagie.text.pdf.*;
     import com.itextpdf.text.pdf.*;
 */
 
-public class ScatterPlotGenerator extends XYChartGenerator
+public class BubbleChartGenerator extends XYChartGenerator
     {
     public void removeSeries(int index)
         {
@@ -47,16 +47,16 @@ public class ScatterPlotGenerator extends XYChartGenerator
 
     protected void buildChart()
         {
-        DefaultXYDataset dataset = new DefaultXYDataset();
-        chart = ChartFactory.createScatterPlot("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
+        DefaultXYZDataset dataset = new DefaultXYZDataset();
+        chart = ChartFactory.createBubbleChart("Untitled Chart","Untitled X Axis","Untitled Y Axis",dataset,
             PlotOrientation.VERTICAL, false, true, false);
         chart.setAntiAlias(true);
-        //chartPanel = new ScrollableChartPanel(chart, true); 
         chartPanel = buildChartPanel(chart);           
-        //chartHolder.getViewport().setView(chartPanel);
         setChartPanel(chartPanel);
-        chart.getXYPlot().setRenderer(new XYLineAndShapeRenderer(false, true));
-//              ((StandardLegend) chart.getLegend()).setDisplaySeriesShapes(true);
+        
+        // most irritating: you can't change the scale type once you've
+        // constructed the renderer.  :-(
+        chart.getXYPlot().setRenderer(new XYBubbleRenderer(XYBubbleRenderer.SCALE_ON_DOMAIN_AXIS));
 
         // this must come last because the chart must exist for us to set its dataset
         setSeriesDataset(dataset);
@@ -69,12 +69,28 @@ public class ScatterPlotGenerator extends XYChartGenerator
                 
         SeriesAttributes[] sa = getSeriesAttributes();
         XYPlot xyplot = (XYPlot)(chart.getPlot());
-        DefaultXYDataset dataset = new DefaultXYDataset();
+        DefaultXYZDataset dataset = new DefaultXYZDataset();
                 
         for(int i=0; i < sa.length; i++)
             {
-            ScatterPlotSeriesAttributes attributes = (ScatterPlotSeriesAttributes)(sa[i]);
-            dataset.addSeries(new UniqueString(attributes.getSeriesName()), attributes.getValues());
+            BubbleChartSeriesAttributes attributes = (BubbleChartSeriesAttributes)(sa[i]);
+            double scale = attributes.getScale();
+            
+            // copy over values, and square-root the z-value.
+            // A bug in JFreeChart means that z-values are not shown by
+            // area but rather by (ugh) diameter.
+            // Also we'll take advantage of this situation to allow
+            // for user-defined scaling of the bubbles on a per-series basis.
+            
+            double[][] values = attributes.getValues();
+            double[][] v2 = new double[values.length][values[0].length];
+            for(int k = 0; k < v2.length; k++)
+            	for(int j = 0; j < v2[k].length; j++)
+            		v2[k][j] = values[k][j];
+            for(int j = 0; j < v2[2].length; j++)
+            	v2[2][j] = Math.sqrt(scale * v2[2][j]);
+            
+            dataset.addSeries(new UniqueString(attributes.getSeriesName()), v2);
             }
 
         setSeriesDataset(dataset);
@@ -82,13 +98,13 @@ public class ScatterPlotGenerator extends XYChartGenerator
 
     public SeriesAttributes addSeries(double[][] values, String name, final org.jfree.data.general.SeriesChangeListener stopper)
         {
-        DefaultXYDataset dataset = (DefaultXYDataset)(getSeriesDataset());
+        DefaultXYZDataset dataset = (DefaultXYZDataset)(getSeriesDataset());
         int i = dataset.getSeriesCount();
         dataset.addSeries(new UniqueString(name), values);
                 
         // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
-        ScatterPlotSeriesAttributes csa = new ScatterPlotSeriesAttributes(this, name, i, values, stopper);
-        seriesAttributes.add(csa);
+        BubbleChartSeriesAttributes csa = new BubbleChartSeriesAttributes(this, name, i, values, stopper);
+        seriesAttributes.add(csa, name);
        
         revalidate();
         update();
@@ -107,7 +123,7 @@ public class ScatterPlotGenerator extends XYChartGenerator
         if (index >= getNumSeriesAttributes())  // this can happen when we close a window if we use the Histogram in a display
             return;
 
-        ScatterPlotSeriesAttributes series = (ScatterPlotSeriesAttributes)(getSeriesAttribute(index));
+        BubbleChartSeriesAttributes series = (BubbleChartSeriesAttributes)(getSeriesAttribute(index));
         series.setValues(vals);
         }
     }

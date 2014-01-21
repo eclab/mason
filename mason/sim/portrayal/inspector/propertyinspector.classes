@@ -15,5 +15,6 @@ sim.portrayal.inspector.StreamingPropertyInspector
 sim.portrayal.inspector.TimeSeriesChartingPropertyInspector
 sim.portrayal.inspector.HistogramChartingPropertyInspector
 sim.portrayal.inspector.ScatterPlotChartingPropertyInspector
+sim.portrayal.inspector.BubbleChartChartingPropertyInspector
 sim.portrayal.inspector.PieChartChartingPropertyInspector
 sim.portrayal.inspector.BarChartChartingPropertyInspector

@@ -142,10 +142,15 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         // you just define them above.  So we define them below here instead.
         opacity = 1.0;
 
-        color = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
-        // second argument does not matter
+        // NOTE:
+        // Paint paint = renderer.getSeriesPaint(getSeriesIndex());        
+        // In JFreeChart 1.0.6 getSeriesPaint returns null!!!
+        // You need lookupSeriesPaint(), but that's not backward compatible.
+        // The only thing consistent in all versions is getItemPaint 
+        // (which looks like a gross miss-use, but gets the job done)
+                
+		color = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
 
-        color = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
         colorWell = new ColorWell(color)
             {
             public Color changeColor(Color c) 
