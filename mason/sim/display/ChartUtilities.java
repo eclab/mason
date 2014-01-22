@@ -35,6 +35,10 @@ public class ChartUtilities
 		the same length, which represent the x and y coordinates of points, or else 
 		provides null if the current charted values shouldn't be changed. */
 	public interface ProvidesDoubleDoubles { public double[][] provide(); }
+	/** This class provides three double arrays (that is, an array of the form double[3][]), which are
+		the same length, which represent the x, y, and z coordinates of points, or else 
+		provides null if the current charted values shouldn't be changed. */
+	public interface ProvidesTripleDoubles { public double[][] provide(); }
 	/** This class provides arrays of doubles to chart, with associated labels, or provides null if the current charted values shouldn't be changed. */
 	public interface ProvidesDoublesAndLabels extends ProvidesDoubles { public String[] provideLabels(); }
 	/** This class provides arrays of Objects to chart, or provides null if the current charted values shouldn't be changed. 
@@ -183,7 +187,7 @@ public class ChartUtilities
 	/** Adds a series to the ScatterPlotGenerator. */
 	public static ScatterPlotSeriesAttributes addSeries(final ScatterPlotGenerator chart, String seriesName)
 		{
-		return (ScatterPlotSeriesAttributes)(chart.addSeries(new double[0][0], seriesName, null));
+		return (ScatterPlotSeriesAttributes)(chart.addSeries(new double[2][0], seriesName, null));
 		}
 		
 	/** Schedules a series with the MASON simulation.  You specify a value provider to give series data each timestep.  This value provider can be null, in which case no data will ever be updated -- you'd have to update it on your own as you saw fit. */
@@ -210,6 +214,64 @@ public class ChartUtilities
 				}
 			});
 		}
+
+
+	/** Builds a BubbleChartGenerator not attached to any MASON simulation. */
+	public static BubbleChartGenerator buildBubbleChartGenerator(String title, String rangeAxisLabel, String domainAxisLabel)
+		{
+		BubbleChartGenerator chart = new BubbleChartGenerator();
+		if (title == null) title = "";
+		chart.setTitle(title);
+		if (rangeAxisLabel == null) rangeAxisLabel = "";
+		chart.setYAxisLabel(rangeAxisLabel);
+		if (domainAxisLabel == null) domainAxisLabel = "";
+		chart.setXAxisLabel(domainAxisLabel);
+		return chart;		
+		}
+
+
+	/** Builds a BubbleChartGenerator and attaches it as a display in a MASON simulation. */
+	public static BubbleChartGenerator buildBubbleChartGenerator(GUIState state, String title, String rangeAxisLabel, String domainAxisLabel)
+		{
+		BubbleChartGenerator chart = buildBubbleChartGenerator(title, rangeAxisLabel, domainAxisLabel);
+		JFrame frame = chart.createFrame();
+		frame.setVisible(true);
+		frame.pack();
+		state.controller.registerFrame(frame);
+		return chart;
+		}
+	
+	/** Adds a series to the BubbleChartGenerator. */
+	public static BubbleChartSeriesAttributes addSeries(final BubbleChartGenerator chart, String seriesName)
+		{
+		return (BubbleChartSeriesAttributes)(chart.addSeries(new double[3][0], seriesName, null));
+		}
+		
+	/** Schedules a series with the MASON simulation.  You specify a value provider to give series data each timestep.  This value provider can be null, in which case no data will ever be updated -- you'd have to update it on your own as you saw fit. */
+	public static Stoppable scheduleSeries(final GUIState state, final BubbleChartSeriesAttributes attributes,
+											final ProvidesTripleDoubles valueProvider)
+		{
+		return state.scheduleRepeatingImmediatelyAfter(new Steppable()
+			{
+			double last = state.state.schedule.BEFORE_SIMULATION;
+			public void step(SimState state)
+				{
+				double x = state.schedule.getTime();
+				if (x > last && x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
+					{
+					last = x;
+					if (valueProvider != null)
+						{
+						double[][] vals = valueProvider.provide();
+						if (vals != null)
+							attributes.setValues(vals);
+						}
+						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
+					}
+				}
+			});
+		}
+
 
 
 	/** Builds a PieChartGenerator not attached to any MASON simulation. */

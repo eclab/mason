@@ -11435,7 +11435,9 @@ Want to create, say, a BoxPlotChartGenerator?  Here are some hints.  Most ChartG
 
 I am afraid to say that dealing with the complexity of JFreeChart is a bit of a black art.  But the above should give you some idea of what's involved.  Beyond that, it's best to read the source code for HistogramChartGenerator, TimeSeriesChartGenerator, PieChartGenerator, and perhaps ScatterPlotChartGenerator.
 
-Below are certain internal methods for updating a chart, adding or removing series attributes, or building the chart, which you may find handy in implementing the items above.  Note the various \method{update(...)} methods, which take {\bf keys}.  By passing in (for example) the current MASON simulation steps as a key, this mechanism allows you to ensure that the chart won't update itself if the simulation hasn't actually iterated.  You can also force an update regardless by passing in:
+For example: JFreeChart doesn't permit series in the same chart to have the same name.  Why?  No idea.  As a result, instead of passing the series name to the chart, MASON's ChartGenerators first convert it into a String-like key object called a \Class{sim.util.media.chart.ChartGenerator.UniqueString}, which is guaranteed to not be comparable to other UniqueStrings even if they have the same internal String.  This kind of stuff is ridiculous.
+
+Anyway, below are certain internal methods for updating a chart, adding or removing series attributes, or building the chart, which you may find handy in implementing the items above.  Note the various \method{update(...)} methods, which take {\bf keys}.  By passing in (for example) the current MASON simulation steps as a key, this mechanism allows you to ensure that the chart won't update itself if the simulation hasn't actually iterated.  You can also force an update regardless by passing in:
 
 \java{%
     public static final long FORCE\_KEY;
@@ -11476,7 +11478,7 @@ Similarly, unlike other generators, you can {\bf clear} all the series in TimeSe
 \paragraph{Generating Scatter Plots}
 Scatter plots aren't like time series: they must be revised in their entirety each timestep, and they tend not to grow in size (hence no need for a DataCuller).  In MASON, scatter plots are handled by \Class{sim.util.media.chart.ScatterPlotGenerator}, which overrides \method{update(...)} to completely revise the scatter plot.
 
-JFreeChart isn't as fast as MASON.  So if you're debating whether to use a scatter plot or a ContinuousPortrayal2D, I suggest using a ContinuousPortrayal2D.
+JFreeChart isn't remotely as fast as MASON.  So if you're debating whether to use a scatter plot or a ContinuousPortrayal2D, I suggest using a ContinuousPortrayal2D.
 
 \sidebar{Why a double array rather than two arrays?}{JFreeChart.}Thus the most important custom method is the one for adding new series.  Like TimeSeriesChartGenerator, ScatterPlotGenerator passes in a SeriesChangeListener as a callback.  But instead of an XYSeries holding data, instead a double array of values is passed in.  This double array is in fact just an array of two arrays, one holding X values and one holding Y values.
 
@@ -11486,6 +11488,20 @@ ScatterPlotGenerator also lets you revise the series manually via \method{update
 \mthd{public SeriesAttributes addSeries(double[][] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}.  The name of the series is also provided.
 \mthd{public void updateSeries(int index, double[][] values)} Modifies the series data of a given series in the chart.  The series data takes the form of two arrays of equal length, one for X coordinates and one for Y coordinates of the data.  These two arrays are then made element 0 and element 1 respectively of the double array called \variable{values}. 
 \end{methods}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-1em}\hfill\includegraphics[width=3in]{BubbleChart.png}\vspace{-1em}\end{wrapfigure}
+
+\paragraph{Generating Bubble Charts}
+Bubble Charts are very much like scatter plots, except that instead of plotting symbols they plot circles of different sizes.  Thus each plotted item has three dimensions: the X and Y coordinates of the item, and the area of its circle.  In MASON, bubble charts are handled by \Class{sim.util.media.chart.BubbleChartGenerator}.
+
+Exactly like ScatterPlotGenerator, BubbleChartGenerator uses for its series double array of values.  This double array is in fact an array of {\it three} arrays, one holding X values, one holding Y values, and one holding Z values, that is, the circle areas.
+
+\begin{methods}{\class{sim.util.media.chart.BubbleChartGenerator}}
+\mthd{public SeriesAttributes addSeries(double[][] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a BubbleChartSeriesAttributes controlling that series.  The series data takes the form of three arrays of equal length, one for X coordinates, one for Y coordinates, and one for Z coordinates of the data.  Z coordinates are represented by the size of the plotted circles.  These two arrays are then made elements 0, 1, and 2 respectively of the double array called \variable{values}.  The name of the series is also provided.
+\mthd{public void updateSeries(int index, double[][] values)} Modifies the series data of a given series in the chart. The series data takes the form of three arrays of equal length, one for X coordinates, one for Y coordinates, and one for Z coordinates of the data.  Z coordinates are represented by the size of the plotted circles.  These two arrays are then made elements 0, 1, and 2 respectively of the double array called \variable{values}.
+\end{methods}
+
 
 \paragraph{Generating Histograms}
 
@@ -11540,10 +11556,6 @@ If there are too many, the chart will be blank, and its title will indicate that
 \end{methods}
 
 There are presently few options available to you for Pie Charts: notably, you cannot specify the colors or the order in which elements are presented (though they're sorted alphabetically by their labels).
-
-Because of internal misfeatures in JFreeChart that are not even worth getting into, Pie Charts must provide a way for String-like objects to be unique even if they contain the same string text.  It does this with a simple utility class called \Class{sim.util.media.chart.UniqueString} which is used internally.
-
-
 
 
 
@@ -11742,7 +11754,7 @@ The symbol shape can be one of seven symbols, as follows:
 \item[6] Downward-pointing Triangle
 \end{itemize}
 
-\begin{methods}{\class{sim.util.media.chart.TimeSeriesAttributes}}
+\begin{methods}{\class{sim.util.media.chart.ScatterPlotAttributes}}
 \mthd{public void setSymbolColor(Color color)} Sets the symbol color.
 \mthd{public Color getSymbolColor()} Returns the symbol color.
 \mthd{public void setSymbolOpacity(double val)} Sets the symbol opacity.
@@ -11750,6 +11762,38 @@ The symbol shape can be one of seven symbols, as follows:
 \mthd{public void setShapeNum(int val)} Sets the symbol shape to one of the seven values described earlier.
 \mthd{public int getShapeNum()} Returns the symbol shape as one of the seven values described earlier.
 \mthd{public Shape getShape()} Returns the symbol shape as a \class{java.awt.geom.Shape}.
+\end{methods}
+
+
+\paragraph{Attributes for Bubble Charts}
+
+Bubble Charts are very similar to Scatter Plots.  They're controlled by the class \Class{sim.util.media.chart.BubbleChartSeriesAttributes}, which has the following constructor, solely called by BubbleChartGenerator:
+
+\begin{methods}{\class{sim.util.media.chart.BubbleChartSeriesAttributes} Constructor}
+\mthd{public BubbleChartSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\ Creates a BubbleChartSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of two arrays of equal length, one for X coordinates, one for Y coordinates, and one for Z coordinates of the data.  Z coordinates are represented by plotted circle area  These three arrays are then made elements 0, 1, and 2 respectively of the double array called \variable{values}.
+\end{methods}
+
+BubbleChartSeriesAttributes have the following features:
+
+\begin{itemize}
+\item The series name
+\item The color of the circles used to plot the series
+\item The opacity of the circles used to plot the series
+\item The relative scale of the circles used to plot the series
+\end{itemize}
+
+Before the circle is plotted based on the Z value, the Z value is scaled with the relative scale specified above.  The circle's area then is the size of this relative value.  The chart uses the X axis to compute the circle size (this isn't settable, because of poor judgment on part of the JFreeChart designers).
+
+Methods include:
+
+\begin{methods}{\class{sim.util.media.chart.ScatterPlotAttributes}}
+\mthd{public void setColor(Color color)} Sets the circle color.
+\mthd{public Color getColor()} Returns the circle color.
+\mthd{public void setOpacity(double val)} Sets the circle opacity.
+\mthd{public double getOpacity()} Returns the circle opacity.
+\mthd{public void setScale(double to)} Sets the relative scale of circle sizes.
+\mthd{public double getScale()} Returns the relative scale of circle sizes.
 \end{methods}
 
 \paragraph{Attributes for Histograms}
@@ -11856,7 +11900,7 @@ TimeSeriesChartGenerator at present uses a culler called MinGapDataCuller, which
 \subsection{Programmatically Displaying a Chart}
 \label{sim.display.ChartUtilities}
 
-It is often the case that you may want to make a permanent chart as part of your simulation.  With some elbow grease you can set up a chart as a Display: but it's a fair bit of work and requires some knowledge.  In general you'll have to:
+It is often the case that you may want to make a permanent chart as part of your simulation.  If you chose to do this entirely by hand, with some elbow grease you can set up a chart as a Display: but it's a fair bit of work and requires some knowledge.  In general you'll have to:
 
 \begin{enumerate}
 \item Create and set up the chart as a ChartGenerator.
@@ -11921,6 +11965,11 @@ Armed with the appropriate interface, you can now build your Chart.  You must st
 \rule{0pt}{0pt}\hspace{\fill}{\sf String domainAxisLabel)} 
 
 Produces a scatter plot.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
+\mthd{public static BubbleChartGenerator buildBubbleChartGenerator(String title, String rangeAxisLabel, String domainAxisLabel)} Produces a standalone bubble chart.    The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
+\mthd{public static BubbleChartGenerator buildBubbleChartGenerator(GUIState state, String title, String rangeAxisLabel,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf String domainAxisLabel)} 
+
+Produces a bubble chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
 \mthd{public static PieChartGenerator buildPieChartGenerator(String title)} Produces a standalone pie chart.
 \mthd{public static PieChartGenerator buildPieChartGenerator(GUIState state, String title)} Produces a pie chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  
 \mthd{public static BarChartGenerator buildBarChartGenerator(String title)} Produces a standalone bar chart.
@@ -11934,6 +11983,7 @@ Next in your \method{init()} method, you'll need to create one or more series fo
 \mthd{public static TimeSeriesAttributes addSeries(TimeSeriesChartGenerator chart, String seriesName)} Adds a new time series to the chart.
 \mthd{public static HistogramSeriesAttributes addSeries(HistogramGenerator chart, String seriesName, int numBins)} Adds a new histogram series to the chart.  You also provide the default number of bins for histograms created with this series.
 \mthd{public static ScatterPlotSeriesAttributes addSeries(ScatterPlotGenerator chart, String seriesName)} Adds a new scatter plot series to the chart.
+\mthd{public static BubbleChartSeriesAttributes addSeries(BubbleChartGenerator chart, String seriesName)} Adds a new bubble chart series to the chart.
 \mthd{public static PieChartSeriesAttributes addSeries(PieChartGenerator chart, String seriesName)} Adds a new pie chart series to the chart.
 \mthd{public static BarChartSeriesAttributes addSeries(BarChartGenerator chart, String seriesName)} Adds a new bar chart series to the chart.
 \end{methods}
@@ -11942,35 +11992,39 @@ Once you have created your series, you will later (in your \method{start()} and 
 
 \begin{methods}{\class{sim.display.ChartUtilities}}
 \mthd{public static Stoppable scheduleSeries(GUIState state, TimeSeriesAttributes attributes, sim.util.Valuable valueProvider)} Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, HistogramSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, HistogramSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubles valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, ScatterPlotSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, ScatterPlotSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubleDoubles valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, BubbleChartSeriesAttributes attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesTripleDoubles valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable scheduleSeries(GUIState state, PieChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoublesAndLabels valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, PieChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesObjects valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, PieChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, PieChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesCollection valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, BarChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoublesAndLabels valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, BarChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesObjects valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
-\mthd{public static Stoppable addSeries(GUIState state, BarChartSeriesAttributes attributes,}
+\mthd{public static Stoppable scheduleSeries(GUIState state, BarChartSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesCollection valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
@@ -12069,6 +12123,49 @@ public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
 The various value-provider objects are called every timestep during display update time.  If for some reason you don't want to update your data every timestep, you have an option: pass in \variable{null} for your value-provider when you are scheduling a series.  
 
 This will cause the series to be scheduled to be redrawn but will never add data to it.  So how do you add data then?  Simple.  First, you extract the series to the SimState as shown in the previous example.  Then schedule a Steppable which adds data to that series when you feel like it.
+
+Continuing our previous example, let's say we have decided to manually add data to our XYSeries every five time steps.  We might do something like this in the \method{start()} method of our \method{sim.engine.SimState} subclass:
+
+\begin{verbatim}
+    public void start()
+        {
+        super.start();
+        
+        schedule.scheduleRepeating(schedule.EPOCH, new Steppable()
+        	{
+		// Add an <X,Y> data point in the form of <time, data>
+		public static void step(SimState state) { series.add(schedule.getTime(), myData); }
+		}, 5);  // schedule every 5 timesteps
+        ...
+\end{verbatim}
+
+Now we need to instruct MASON not to load data into our chart, because we're doing it manually.   We can do that by modifying our \class{sim.display.GUIState} \method{start()} method like this:
+
+\begin{verbatim}
+public void start()
+    {
+    super.start();
+    
+    ((MyModel)state).series = myAttributes.getSeries();
+
+    ChartUtilities.scheduleSeries(this, myAttributes, null);  // no value-provider
+    ...
+\end{verbatim}
+
+And likewise the \method{load(...)} method:
+
+\begin{verbatim}
+public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
+    {
+    super.load();
+    
+    myAttributes.setSeries(((MyModel)state).series);
+
+    ChartUtilities.scheduleSeries(this, myAttributes, null);  // no value-provider
+    ...
+\end{verbatim}
+
+And we're done!
 
 \cleardoublepage
 \footnotesize
