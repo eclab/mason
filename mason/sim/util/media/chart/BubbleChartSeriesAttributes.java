@@ -66,7 +66,7 @@ public class BubbleChartSeriesAttributes extends SeriesAttributes
         {
         // The following variables aren't defined until AFTER construction if
         // you just define them above.  So we define them below here instead.
-        opacity = 1.0;
+        opacity = 0.5;  // so the bubbles overlap prettily
         
         scale = 1.0;
 
