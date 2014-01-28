@@ -41,6 +41,9 @@ public class ChartUtilities
 	public interface ProvidesTripleDoubles { public double[][] provide(); }
 	/** This class provides arrays of doubles to chart, with associated labels, or provides null if the current charted values shouldn't be changed. */
 	public interface ProvidesDoublesAndLabels extends ProvidesDoubles { public String[] provideLabels(); }
+	/** This class provides arrays of arrays of doubles to chart, plus one label for each of the arrays,
+		 or provides null if the current charted values shouldn't be changed. */
+	public interface ProvidesDoubleDoublesAndLabels extends ProvidesDoubleDoubles { public String[] provideLabels(); }
 	/** This class provides arrays of Objects to chart, or provides null if the current charted values shouldn't be changed. 
 		The array of objects will be sorted and counted, and the counts will be used to describe a distribution such
 		as for a pie chart.  The labels of the pie chart will be drawn from the object strings. */
@@ -94,13 +97,22 @@ public class ChartUtilities
 			double last = state.state.schedule.BEFORE_SIMULATION;
 			public void step(SimState state)
 				{
-				double x = state.schedule.getTime();
+				final double x = state.schedule.getTime();
 				if (x > last && x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
 					{
 					last = x;
-					if (valueProvider != null) 
-						series.add(x, valueProvider.doubleValue(), true);
-					attributes.possiblyCull();
+					final double value = (valueProvider == null) ? Double.NaN : valueProvider.doubleValue();
+					
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+					SwingUtilities.invokeLater(new Runnable()
+						{
+						public void run()
+							{
+							attributes.possiblyCull();
+							series.add(x, value, true);
+							}
+						});
+					// this will get pushed on the swing queue late
 					attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -129,7 +141,7 @@ public class ChartUtilities
 		return chart;
 		}
 	
-	/** Adds a series to the HistogramGenerator.  You also provide the default number of historgram bins. */
+	/** Adds a series to the HistogramGenerator.  You also provide the default number of histogram bins. */
 	public static HistogramSeriesAttributes addSeries(final HistogramGenerator chart, String seriesName, final int bins)
 		{
 		return (HistogramSeriesAttributes)(chart.addSeries(new double[0], bins, seriesName, null));
@@ -150,15 +162,128 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null) 
 						{
-						double[] vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setValues(vals);
+						final double[] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setValues(vals);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 					attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
 			});
 		}
+
+
+	/** Builds a BoxPlotGenerator not attached to any MASON simulation. */
+	public static BoxPlotGenerator buildBoxPlotGenerator(String title, String rangeAxisLabel)
+		{
+		BoxPlotGenerator chart = new BoxPlotGenerator();
+		if (title == null) title = "";
+		chart.setTitle(title);
+		if (rangeAxisLabel == null) rangeAxisLabel = "";
+		chart.setYAxisLabel(rangeAxisLabel);
+		return chart;		
+		}
+
+	/** Builds a BoxPlotGenerator and attaches it as a display in a MASON simulation. */
+	public static BoxPlotGenerator buildBoxPlotGenerator(GUIState state, String title, String rangeAxisLabel)
+		{
+		BoxPlotGenerator chart = buildBoxPlotGenerator(title, rangeAxisLabel);
+		JFrame frame = chart.createFrame();
+		frame.setVisible(true);
+		frame.pack();
+		state.controller.registerFrame(frame);
+		return chart;
+		}
+	
+	/** Adds a series to the BoxPlotGenerator. */
+	public static BoxPlotSeriesAttributes addSeries(final BoxPlotGenerator chart, String seriesName)
+		{
+		return (BoxPlotSeriesAttributes)(chart.addSeries(new double[0][0], new String[0], seriesName, null));
+		}
+		
+
+	/** Schedules a series with the MASON simulation.  You specify a value provider to give series data each timestep.  This value provider can be null, in which case no data will ever be updated -- you'd have to update it on your own as you saw fit. */
+	public static Stoppable scheduleSeries(final GUIState state, final BoxPlotSeriesAttributes attributes,
+											final ProvidesDoubles valueProvider)
+		{	
+		return state.scheduleRepeatingImmediatelyAfter(new Steppable()
+			{
+			double last = state.state.schedule.BEFORE_SIMULATION;
+			public void step(SimState state)
+				{
+				double x = state.schedule.getTime();
+				if (x > last && x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
+					{
+					last = x;
+					if (valueProvider != null) 
+						{
+						final double[] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setValues(new double[][]{vals});
+								attributes.setLabels(null);
+								}
+							});
+						}
+					// this will get pushed on the swing queue late
+					attributes.getGenerator().updateChartLater(state.schedule.getSteps());
+					}
+				}
+			});
+		}
+
+	/** Schedules a series with the MASON simulation.  You specify a value provider to give series data each timestep.  This value provider can be null, in which case no data will ever be updated -- you'd have to update it on your own as you saw fit. */
+	public static Stoppable scheduleSeries(final GUIState state, final BoxPlotSeriesAttributes attributes,
+											final ProvidesDoubleDoublesAndLabels valueProvider)
+		{	
+		return state.scheduleRepeatingImmediatelyAfter(new Steppable()
+			{
+			double last = state.state.schedule.BEFORE_SIMULATION;
+			public void step(SimState state)
+				{
+				double x = state.schedule.getTime();
+				if (x > last && x >= state.schedule.EPOCH && x < state.schedule.AFTER_SIMULATION)
+					{
+					last = x;
+					if (valueProvider != null) 
+						{
+						final double[][] vals = valueProvider.provide();
+						final String[] labels = valueProvider.provideLabels();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setValues(vals);
+								attributes.setLabels(labels);
+								}
+							});
+						}
+					// this will get pushed on the swing queue late
+					attributes.getGenerator().updateChartLater(state.schedule.getSteps());
+					}
+				}
+			});
+		}
+
+
+
+
+
+
 
 	/** Builds a ScatterPlotGenerator not attached to any MASON simulation. */
 	public static ScatterPlotGenerator buildScatterPlotGenerator(String title, String rangeAxisLabel, String domainAxisLabel)
@@ -205,10 +330,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						double[][] vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setValues(vals);
+						final double[][] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setValues(vals);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -262,10 +395,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						double[][] vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setValues(vals);
+						final double[][] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setValues(vals);
+								}
+							});
 						}
+						// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -315,14 +456,20 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						double[] vals = valueProvider.provide();
-						String[] labels = valueProvider.provideLabels();
-						if (vals != null)
+						final double[] vals = valueProvider.provide();
+						final String[] labels = valueProvider.provideLabels();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
 							{
-							attributes.setValues(vals);
-							attributes.setLabels(labels);
-							}
+							public void run()
+								{
+								attributes.setValues(vals);
+								attributes.setLabels(labels);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -344,10 +491,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						Object[] vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setElements(vals);
+						final Object[] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setElements(vals);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -369,10 +524,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						Collection vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setElements(new ArrayList(vals));  // just in case he tries to change the Collection before it's updated
+						final Collection vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setElements(new ArrayList(vals));
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -421,14 +584,20 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						double[] vals = valueProvider.provide();
-						String[] labels = valueProvider.provideLabels();
-						if (vals != null)
+						final double[] vals = valueProvider.provide();
+						final String[] labels = valueProvider.provideLabels();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
 							{
-							attributes.setValues(vals);
-							attributes.setLabels(labels);
-							}
+							public void run()
+								{
+								attributes.setValues(vals);
+								attributes.setLabels(labels);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -450,10 +619,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						Object[] vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setElements(vals);
+						final Object[] vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setElements(vals);
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 						attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}
@@ -475,10 +652,18 @@ public class ChartUtilities
 					last = x;
 					if (valueProvider != null)
 						{
-						Collection vals = valueProvider.provide();
-						if (vals != null)
-							attributes.setElements(new ArrayList(vals));  // just in case he tries to change the Collection before it's updated
+						final Collection vals = valueProvider.provide();
+
+						// JFreeChart isn't synchronized.  So we have to update it from the Swing Event Thread
+						if (vals != null) SwingUtilities.invokeLater(new Runnable()
+							{
+							public void run()
+								{
+								attributes.setElements(new ArrayList(vals));
+								}
+							});
 						}
+					// this will get pushed on the swing queue late
 					attributes.getGenerator().updateChartLater(state.schedule.getSteps());
 					}
 				}

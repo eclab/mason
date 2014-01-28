@@ -5183,6 +5183,7 @@ Removing All Objects At Location&Yes (1 object)&Yes&Yes, with constant overhead\
 Removing All Objects&Yes, but slowly&Yes, but slowly&Yes, and fast\\
 Objects can also be Drawn in Networks&No&No&Yes\\
 Speed of Drawing in GUI&Medium&Slow&Fast\\
+Objects are Movable with MovablePortrayal2D&No&No&Yes\\
 \end{tabular}}
 
 
@@ -11520,11 +11521,45 @@ org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1
 }
 
 \begin{methods}{\class{sim.util.media.chart.HistogramGenerator}}
-\mthd{public SeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a ScatterPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
+\mthd{public SeriesAttributes addSeries(double[] values, int bins, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a HistogramSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  The name of the series is also provided, as is the number of bins to use in the Histogram.
 \mthd{public void updateSeries(int index, double[] values)} Modifies the series data of a given series in the chart.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.
 \mthd{public void setHistogramType(HistogramType type)} Sets the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
 \mthd{public HistogramType getHistogramType(HistogramType type)} Returns the histogram type, one of \variable{org.jfree.data.statistics.HistogramType.FREQUENCY},\\ \variable{org.jfree.data.statistics.HistogramType.RELATIVE\_FREQUENCY}, or \variable{org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1}.
 \end{methods}
+
+
+\paragraph{Generating Box Plots}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-2em}\hfill\includegraphics[width=3in]{BoxPlot.png}\vspace{-3em}\end{wrapfigure}
+
+Box Plots are created in a manner somewhat similar to Histograms: MASON replaces the entire dataset each time with a custom update method.  Box Plots can be horizontal or vertical, and contain median bars and mean circles.  Normally there is no X axis label; instead, if the series contain multiple distributions, the labels of those distributions are shown, as in the picture at right.    BoxPlots are created using \Class{sim.util.media.chart.BoxPlotGenerator}.  
+
+The series in a Box Plot can be one of two things:
+
+\begin{itemize}
+\item An array of doubles. This represents a single distribution which is then plotted as a box plot.  There is no label for this distribution (technically the label is the empty string, ``'').
+\item An array of arrays of doubles, plus an array of Strings.  The various double arrays are separate distributions, plotted as separate box plots.  Each is labeled with the corresponding String.  If different series have distributions with the the same label, they are grouped together when plotted.  For example, in the picture, we have two series, ``Males'' and ``Females''.  Each consists of two distributions, one labeled ``Stars'' and one labeled ``No Stars''.
+\end{itemize}
+
+BoxPlotGenerators are not XYChartGenerators, so they have their own set of labels and options.  You can also control the maximum width of box plots (wide box plots don't look very good in JFreeChart), whether the Y Axis is log scaled, what the X and Y labels are, and whether the mean and/or median is shown.  
+
+\begin{methods}{\class{sim.util.media.chart.BoxPlotGenerator}}
+\mthd{public SeriesAttributes addSeries(double[] values, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a BoxPlotSeriesAttributes controlling that series.  The series data takes the form of a single array of doubles, forming the samples to a single unlabeled BoxPlot.  The name of the series is also provided.
+\mthd{public SeriesAttributes addSeries(double[][] values, String[] labels, String name, SeriesChangeListener stopper)} Adds a series to the chart, and produces a BoxPlotSeriesAttributes controlling that series.  The series data takes the form of multiple arrays of doubles, each array forming the samples to a different BoxPlot, whose label is provided by the corresponding string in labels.  The name of the series is also provided.
+\mthd{public void updateSeries(int index, double[] values)} Modifies the series data of a given series in the chart.  The series data takes the form of a single array of doubles, forming the samples to a single unlabeled BoxPlot.
+\mthd{public void updateSeries(int index, double[][] values)} Modifies the series data of a given series in the chart.  The series data takes the form of multiple arrays of doubles, each array forming the samples to a different BoxPlot.
+\mthd{public void setMaximumWidth(double value)}  Sets the maximum width of a BoxPlot as a percentage of the chart.  
+\mthd{public double getMaximumWidth()}  Returns the maximum width of a BoxPlot as a percentage of the chart.  
+\mthd{public void setYAxisLogScaled(boolean val)}  Sets whether the Y-axis is log scaled.
+\mthd{public double isYAxisLogScaled()}  Returns whether the Y-axis is log scaled.
+\mthd{public void setMeanShown(boolean val)}  Sets whether the mean is shown (as a big circle).
+\mthd{public double isMeanShown()}  Returns whether the mean is shown (as a big circle).
+\mthd{public void setMedianShown(boolean val)}  Sets whether the median bar is shown.
+\mthd{public double isMedianShown()}  Returns whether the median bar is shown.
+\end{methods}
+
+
 
 \paragraph{Generating Pie Charts}
 
@@ -11640,8 +11675,7 @@ SeriesAttributes has various straightforward getters and setters:
 \mthd{public String getSeriesName()} Returns the name of the attributes.
 \mthd{public void setSeriesIndex(int val)}  Sets the index of the attributes.  Be sure that this agrees with the actual index position.
 \mthd{public int getSeriesIndex()} Returns the index of the attributes.
-\mthd{public XYPlot getPlot()} Returns the JFreeChart's XYPlot used for drawing the chart.
-\mthd{public XYItemRenderer getRenderer()} Returns the JFreeChart's XYItemRenderer used for drawing the chart.
+\mthd{public Plot getPlot()} Returns the JFreeChart's Plot used for drawing the chart.
 \mthd{public ChartGenerator getGenerator()} Returns the ChartGenerator associated with this SeriesAttributes.
 \end{methods}
 
@@ -11803,7 +11837,7 @@ Histograms are controlled by the class \Class{sim.util.media.char.HistogramSerie
 
 \begin{methods}{\class{sim.util.media.chart.HistogramSeriesAttributes} Constructor}
 \mthd{public HistogramSeriesAttributes(ChartGenerator generator, String name, int index, double[] values, int bins,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
-Creates a ScatterPlotSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the ScatterPlotSeriesAttributes is deleted.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  
+Creates a HistogramSeriesAttributes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the HistogramSeriesAttributes is deleted.  The series data takes the form of a single array of doubles, forming the samples to the Histogram.  
 \end{methods}
 
 HistogramSeriesAttributes allows the user to modify the following features of the underlying series:
@@ -11836,6 +11870,49 @@ HistogramSeries also contain the current values of the Histogram.  You can chang
 \mthd{public void setNumBins(int val)} Sets the number of bins in the histogram.
 \mthd{public int getNumBins()} Returns the number of bins in the histogram.
 \end{methods}
+
+
+\paragraph{Attributes for Box Plots}
+
+BoxPlots are controlled by the class \Class{sim.util.media.char.BoxPlotSeriesAttributes}, which has the following constructors, solely called by BoxPlotGenerator:
+
+\begin{methods}{\class{sim.util.media.chart.BoxPlotSeriesAttributes} Constructor}
+\mthd{public BoxPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[][] values, String[] labels,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
+Creates a BoxPlotSeriesAttriburtes attached to the given generator, with the provided name and series data and labels, and located at the given index in the attributes list.  The stoppable will be called when the BoxPlotSeriesAttributes is deleted.  The series data takes the form of an array of arrays of doubles, each forming the samples to a single BoxPlot labelled with the corresponding label.
+\mthd{public BoxPlotSeriesAttributes(ChartGenerator generator, String name, int index, double[] values,} \rule{0pt}{0pt}\hspace{\fill}{\sf SeriesChangeListener stoppable)}\\
+Creates a BoxPlotSeriesAttriburtes attached to the given generator, with the provided name and series data, and located at the given index in the attributes list.  The stoppable will be called when the BoxPlotSeriesAttributes is deleted.  The series data takes the form of an array of doubles forming the samples to a single unlabeled BoxPlot.
+\end{methods}
+
+BoxPlotSeriesAttributes allows the user to modify the following features of the underlying series:
+
+\begin{itemize}
+\item The series name
+\item The thickness of the boxplot outline and whiskers
+\item The fill color for the boxplot
+\item The fill opacity for the boxplot
+\item The outline color for the boxplot
+\item The outline opacity for the boxplot
+\end{itemize}
+
+BoxPlotSeriesAttributes also contain the current values of the box plot.  You can change these but they won't be reflected until the next time the box plot is updated.
+
+\begin{methods}{\class{sim.util.media.chart.BoxPlotSeriesAttributes}}
+\mthd{public void setValues(double[][] values)} Sets the values.  The labels must be an array of the same length.
+\mthd{public double[][] getValues()} Returns the values.
+\mthd{public void setLabels(String[] labels)} Sets the labels.  The values must be an array of the same length.  Alternatively the labels array may be null, which empties the labels.
+\mthd{public String getLabels()} Returns the labels.
+\mthd{public void setFillColor(Color color)} Sets the fill color.
+\mthd{public Color getFillColor()} Returns the fill color.
+\mthd{public void setFillOpacity(double val)} Sets the fill opacity.
+\mthd{public double getFillOpacity()} Returns the fill opacity.
+\mthd{public void setStrokeColor(Color color)} Sets the outline stroke color.
+\mthd{public Color getStrokeColor()} Returns the outline stroke color.
+\mthd{public void setStrokeOpacity(double val)} Sets the outline stroke opacity.
+\mthd{public double getStrokeOpacity()} Returns the outline stroke opacity.
+\mthd{public void setThickness(double val)} Sets the outline thickness.
+\mthd{public double getThickness()} Returns the outline thickness.
+\end{methods}
+
 
 
 
@@ -11923,10 +12000,10 @@ The interfaces are as follows:
 \mthd{public double doubleValue()} Returns the current value.  This is used by ChartUtilities to update the time series chart with the newest information.
 \end{methods}
 
-\paragraph{\class{sim.display.ChartUtilities.ProvidesDoubles}} is used by histograms, created by ChartUtilities, to provide the newest data with which to create the histogram.  
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoubles}} is used by histograms and box plots, created by ChartUtilities, to provide the newest data with which to create the histogram or boxplot.  
 
 \begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoubles}}
-\mthd{public double[] provide()} Returns the latest samples with which to build the histogram.
+\mthd{public double[] provide()} Returns the latest samples with which to build the histogram or box plot
 \end{methods}
 
 \paragraph{\class{sim.display.ChartUtilities.ProvidesDoubleDoubles}} is used by scatter plots, created by ChartUtilities, to provide the newest data with which to create the scatter plot.  
@@ -11935,12 +12012,26 @@ The interfaces are as follows:
 \mthd{public double[][] provide()} Returns the latest samples with which to build the scatter plot.  The returned data takes the form of exactly {\it two} double arrays, one for the X coordinates and one for the Y coordinates of the data.
 \end{methods}
 
-\paragraph{\class{sim.display.ChartUtilities.ProvidesDoublesAndLabels}}, which extends ProvidesDoubles, is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
+\paragraph{\class{sim.display.ChartUtilities.ProvidesTripleDoubles}} is used by bubble charts, created by ChartUtilities, to provide the newest data with which to create the bubble chart.  
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesTripleDoubles}}
+\mthd{public double[][] provide()} Returns the latest samples with which to build the scatter plot.  The returned data takes the form of exactly {\it three} double arrays, one for the X coordinates, one for the Y coordinates, and one for the Z coordinates of the data.
+\end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoublesAndLabels}} which extends ProvidesDoubles, is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
 
 \begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoublesAndLabels}}
 \mthd{public double[] provide()} Returns the latest samples with which to build the pie chart or bar chart.   The double values represent the sizes of various elements in the pie chart or bar chart.
 \mthd{public String[] provideLabels()} Returns the labels corresponding to the samples given in \method{provide()}.  The array length must thus be the same.
 \end{methods}
+
+\paragraph{\class{sim.display.ChartUtilities.ProvidesDoubleDoublesAndLabels}} which extends ProvidesDoubleDoubles, is used by box plots, created by ChartUtilities, to provide the newest data with which to create the box plot.  Note that although this class extends ProvidesDoubleDoubles, the array returned by the \method{provide()} method is interpreted in a different way.
+
+\begin{methods}{\class{sim.display.ChartUtilities.ProvidesDoubleDoublesAndLabels}}
+\mthd{public double[][] provide()} Returns the latest samples with which to build the box plot.   Each subarray is a separate distribution numeric values from which ChartUtilities will build a separate box plot.
+\mthd{public String[] provideLabels()} Returns the labels corresponding to each distribution in \method{provide()}.  The array length must thus be the same.
+\end{methods}
+
 
 \paragraph{\class{sim.display.ChartUtilities.ProvidesObjects}} is used by pie charts and bar charts, created by ChartUtilities, to provide the newest data with which to create the chart.  It is one of three possible interfaces used by these kinds of charts.
 
@@ -11961,6 +12052,8 @@ Armed with the appropriate interface, you can now build your Chart.  You must st
 \mthd{public static TimeSeriesChartGenerator buildTimeSeriesChartGenerator(GUIState state, String title, String domainAxisLabel)} Produces a time series chart.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.   The domain axis label is the label of the ``time'' axis.
 \mthd{public static HistogramGenerator buildHistogramGenerator(String title, String rangeAxisLabel)} Produces a standalone histogram.    The range axis label is the label underneath the histogram.
 \mthd{public static HistogramGenerator buildHistogramGenerator(GUIState state, String title, String rangeAxisLabel)} Produces a histogram.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is the label underneath the histogram.
+\mthd{public static BoxPlotGenerator buildBoxPlotGenerator(String title, String rangeAxisLabel)} Produces a standalone box plot.    The range axis label is the label to the side of the box plot.
+\mthd{public static BoxPlotGenerator buildBoxPlotGenerator(GUIState state, String title, String rangeAxisLabel)} Produces a box plot.  Places it in its own JFrame, and registers it with the simulation's Controller as a display.  The range axis label is the label to the side of the box plot.
 \mthd{public static ScatterPlotGenerator buildScatterPlotGenerator(String title, String rangeAxisLabel, String domainAxisLabel)} Produces a standalone scatter plot.    The range axis label is typically the Y axis.  The domain axis label is typically the X axis.
 \mthd{public static ScatterPlotGenerator buildScatterPlotGenerator(GUIState state, String title, String rangeAxisLabel,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf String domainAxisLabel)} 
@@ -11983,6 +12076,7 @@ Next in your \method{init()} method, you'll need to create one or more series fo
 \begin{methods}{\class{sim.display.ChartUtilities}}
 \mthd{public static TimeSeriesAttributes addSeries(TimeSeriesChartGenerator chart, String seriesName)} Adds a new time series to the chart.
 \mthd{public static HistogramSeriesAttributes addSeries(HistogramGenerator chart, String seriesName, int numBins)} Adds a new histogram series to the chart.  You also provide the default number of bins for histograms created with this series.
+\mthd{public static BoxPlotSeriesAttributes addSeries(BoxPlotGenerator chart, String seriesName)} Adds a new boc plot series to the chart.
 \mthd{public static ScatterPlotSeriesAttributes addSeries(ScatterPlotGenerator chart, String seriesName)} Adds a new scatter plot series to the chart.
 \mthd{public static BubbleChartSeriesAttributes addSeries(BubbleChartGenerator chart, String seriesName)} Adds a new bubble chart series to the chart.
 \mthd{public static PieChartSeriesAttributes addSeries(PieChartGenerator chart, String seriesName)} Adds a new pie chart series to the chart.
@@ -11997,6 +12091,14 @@ Once you have created your series, you will later (in your \method{start()} and 
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubles valueProvider)} 
 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable scheduleSeries(GUIState state, BoxPlotSeries attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubles valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  The series will have a single distribution, whose label will be the empty String, that is, \variable{""}.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
+\mthd{public static Stoppable scheduleSeries(GUIState state, BoxPlotSeries attributes,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubleDoublesAndLabels valueProvider)} 
+
+Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  A series can have multiple distributions, each with its own label.  If multiple series have distributions with the same label, they will be grouped together when displayed, under the same label. Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
 \mthd{public static Stoppable scheduleSeries(GUIState state, ScatterPlotSeriesAttributes attributes,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf  sim.display.ChartUtilities.ProvidesDoubleDoubles valueProvider)} 
 

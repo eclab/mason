@@ -16,6 +16,7 @@ import sim.util.gui.*;
 // From JFreeChart
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.general.*;
+import org.jfree.chart.plot.*;
 
 public class ScatterPlotSeriesAttributes extends SeriesAttributes
     {
@@ -68,7 +69,16 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
                 
     double[][] values; 
     public double[][] getValues() { return values; }
-    public void setValues(double[][] vals) { values = vals; }
+    public void setValues(double[][] vals) 
+    	{
+    	if (vals != null)
+	    	{
+	    	vals = (double[][]) (vals.clone());
+    		for(int i = 0; i < vals.length; i++)
+    			vals[i] = (double[]) (vals[i].clone());
+    		}
+    	values = vals;
+    	}
 
     Color color;
     ColorWell colorWell;
@@ -115,7 +125,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         // set the shape
         shapeNum = shapeCounter;
         shape = shapes[shapeNum];
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)(((XYPlot)getPlot()).getRenderer());
         renderer.setSeriesShape(getSeriesIndex(), shape);
         renderer.setAutoPopulateSeriesShape(false);
         }
@@ -128,7 +138,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
                         
     public void rebuildGraphicsDefinitions()
         {
-        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)getRenderer();
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)(((XYPlot)getPlot()).getRenderer());
         renderer.setSeriesPaint(getSeriesIndex(), reviseColor(color, opacity));
         // shape may be null at this point, that's fine
         renderer.setSeriesShape(getSeriesIndex(), shape);
@@ -149,7 +159,7 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         // The only thing consistent in all versions is getItemPaint 
         // (which looks like a gross miss-use, but gets the job done)
                 
-		color = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
+		color = (Color) ((((XYPlot)getPlot()).getRenderer()).getItemPaint(getSeriesIndex(), -1));
 
         colorWell = new ColorWell(color)
             {

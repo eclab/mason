@@ -29,7 +29,7 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
         {
         return new Class[]
             {
-            new Double2D[0].getClass(), new Int2D[0].getClass()
+            new Double2D[0].getClass(), new Int2D[0].getClass(), ChartUtilities.ProvidesDoubleDoubles.class
             };
         }
 
@@ -108,6 +108,13 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
                 for(int i=0;i<array.length;i++)
                     { vals[0][i] = array[i].x; vals[1][i] = array[i].y; }
                 }
+			else if (obj instanceof ChartUtilities.ProvidesDoubleDoubles)
+				{
+				double[][] array = ((ChartUtilities.ProvidesDoubleDoubles) obj).provide();
+				vals = new double[2][array.length];
+				for(int i=0;i<array.length;i++)
+					{ vals[0][i] = array[0][i]; vals[1][i] = array[1][i]; }
+				}
             }
                                 
         boolean same = true;

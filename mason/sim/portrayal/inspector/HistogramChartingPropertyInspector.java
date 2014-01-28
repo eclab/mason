@@ -48,7 +48,8 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
             {
             new byte[0].getClass(), new short[0].getClass(), new int[0].getClass(), new long[0].getClass(),
             new float[0].getClass(), new double[0].getClass(), new boolean[0].getClass(), new Valuable[0].getClass(),
-            new Number[0].getClass(), IntBag.class, DoubleBag.class
+            new Number[0].getClass(), IntBag.class, DoubleBag.class,
+            ChartUtilities.ProvidesDoubles.class
             };
         }
 
@@ -192,6 +193,13 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
             for(int i=0; i < bag.numObjs; i++)
                 vals[i] = (bag.objs[i]);
             }
+        else if (obj instanceof ChartUtilities.ProvidesDoubles)
+        	{
+			double[] array = ((ChartUtilities.ProvidesDoubles) obj).provide();
+			vals = new double[array.length];
+			for(int i=0;i<array.length;i++)
+				vals[i] = array[i];
+        	}
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

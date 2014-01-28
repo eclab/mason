@@ -302,7 +302,7 @@ public class PieChartGenerator extends ChartGenerator
 		hsa.setElements((Object[])(objs.clone()));
 		}
     
-    void updateSeries(int index, double[] amounts, String[] labels)
+    public void updateSeries(int index, double[] amounts, String[] labels)
         {
         if (index < 0) // this happens when we're a dead chart but the inspector doesn't know
             return;

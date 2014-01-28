@@ -33,7 +33,8 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     {
     double[] values; 
     public double[] getValues() { return values; }
-    public void setValues(double[] vals) { values = vals; }
+    public void setValues(double[] vals) 
+    	{ if (vals != null) vals = (double[])(vals.clone()); values = vals; }
                 
     /** Border thickness */
     float thickness;
@@ -97,7 +98,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
 
     public void rebuildGraphicsDefinitions()
         {
-        XYBarRenderer renderer = (XYBarRenderer)getRenderer();
+        XYBarRenderer renderer = (XYBarRenderer)(((XYPlot)getPlot()).getRenderer());
             
         if (thickness == 0.0)
             renderer.setDrawBarOutline(false);
@@ -139,20 +140,20 @@ public class HistogramSeriesAttributes extends SeriesAttributes
         addLabelled("Bins",numBinsField);
 
         // NOTES:
-        // fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
+        // fillColor = (Color)((((XYPlot)getPlot()).getRenderer()).getSeriesPaint(getSeriesIndex()));
         // this returns null, cause getSeriesPaint returns whatever was set through setSeriesPaint;
         // for the default colors, you need "lookupSeriesPaint()".
-        // fillColor = (Color) (getRenderer().lookupSeriesPaint(getSeriesIndex()));
+        // fillColor = (Color) ((((XYPlot)getPlot()).getRenderer()).lookupSeriesPaint(getSeriesIndex()));
         // getRenderer returns an object implementing the XYItemRenderer interface.
         // either you cast that object to AbstractRenderer, and call lookupSeriesPaint()
         // or you call getItemPaint() on it directly; all getItemPaint does is call lookupSeriesPaint(),
         // but that looks bad, cause getItemPaint() seems to be meant for category data).
         // On the other hand, lookupSeriesPaint() does not show up before 1.0.6, so 
         // in the interest of backward compatibility:
-        fillColor = (Color) (getRenderer().getItemPaint(getSeriesIndex(), -1));
+        fillColor = (Color) ((((XYPlot)getPlot()).getRenderer()).getItemPaint(getSeriesIndex(), -1));
         // second argument does not matter
 
-        fillColor = (Color)(getRenderer().getSeriesPaint(getSeriesIndex()));
+        fillColor = (Color)((((XYPlot)getPlot()).getRenderer()).getSeriesPaint(getSeriesIndex()));
         fillColorWell = new ColorWell(fillColor)
             {
             public Color changeColor(Color c) 
@@ -204,7 +205,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
             };
         addLabelled("",lineOpacityField);
 
-        thicknessField = new NumberTextField(thickness,false)
+        thicknessField = new NumberTextField("Width ", thickness,false)
             {
             public double newValue(double newValue) 
                 {
@@ -215,6 +216,6 @@ public class HistogramSeriesAttributes extends SeriesAttributes
                 return newValue;
                 }
             };
-        addLabelled("Width",thicknessField);
+        addLabelled("",thicknessField);
         }
     }

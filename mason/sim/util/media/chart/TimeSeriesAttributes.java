@@ -127,7 +127,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
             if (stretch*thickness > 0)
                 newDashPattern[x] = dashPatterns[dashPattern][x] * stretch * thickness;  // include thickness so we dont' get overlaps -- will this confuse users?
                 
-        XYItemRenderer renderer = getRenderer();
+        XYItemRenderer renderer = (XYItemRenderer)(((XYPlot)getPlot()).getRenderer());
             
         // we do two different BasicStroke options here because recent versions of Java (for example, 1.6.0_35_b10-428-11M3811 on Retina Displays)
         // break when defining solid strokes as { X, 0.0 } even though that's perfecty cromulent.  So instead we hack it so that the "solid" stroke
@@ -154,7 +154,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
         thickness = 2.0f;
 
         // strokeColor = Color.black;  // rebuildGraphicsDefinitions will get called by our caller afterwards
-        XYItemRenderer renderer = getRenderer();
+        XYItemRenderer renderer = (((XYPlot)getPlot()).getRenderer());
 
         // NOTE:
         // Paint paint = renderer.getSeriesPaint(getSeriesIndex());        
@@ -233,13 +233,13 @@ public class TimeSeriesAttributes extends SeriesAttributes
             return false;
         }
                 
-    static Bag tmpBag = new Bag();
     void deleteItems(IntBag items)
         {
+   		Bag tmpBag = new Bag();
+        
         if(items.numObjs==0)
             return;
 
-        tmpBag.clear();
         int currentTabooIndex = 0;
         int currentTaboo = items.objs[0];
         Iterator iter = series.getItems().iterator();
@@ -269,7 +269,6 @@ public class TimeSeriesAttributes extends SeriesAttributes
         //only clear the rest using delete(start, end).
         for(int i=0;i<tmpBag.numObjs;i++)
             series.add((XYDataItem)(tmpBag.objs[i]), false);//no notifying just yet.
-        tmpBag.clear();
         //it doesn't matter that I clear this twice in a row 
         //(once here, once at next time through this fn), the second time is O(1).
         series.fireSeriesChanged();

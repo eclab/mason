@@ -47,6 +47,9 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         return new Class[]
             {
             new Object[0].getClass(), java.util.Collection.class,
+            ChartUtilities.ProvidesDoublesAndLabels.class,
+            ChartUtilities.ProvidesObjects.class,
+            ChartUtilities.ProvidesCollection.class,
             };
         }
 
@@ -122,6 +125,28 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
 			vals = new Object[array.length];
 			for(int i=0;i<array.length;i++)
 				vals[i] = array[i];
+        	}
+        else if (obj instanceof ChartUtilities.ProvidesObjects)
+        	{
+			Object[] array = ((ChartUtilities.ProvidesObjects) obj).provide();
+			vals = new Object[array.length];
+			for(int i=0;i<array.length;i++)
+				vals[i] = array[i];
+        	}
+        else if (obj instanceof ChartUtilities.ProvidesCollection)
+        	{
+			Object[] array = ((ChartUtilities.ProvidesCollection) obj).provide().toArray();
+			vals = new Object[array.length];
+			for(int i=0;i<array.length;i++)
+				vals[i] = array[i];
+        	}
+        else if (obj instanceof ChartUtilities.ProvidesDoublesAndLabels)  // Handled Specially
+        	{
+			double[] array = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provide();
+			String[] labels = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provideLabels();
+			previousValues = null;
+        	((PieChartGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), array, labels); 
+        	return;
         	}
                                 
         boolean same = true;

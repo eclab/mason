@@ -454,7 +454,6 @@ public abstract class ChartGenerator extends JPanel
 
 
         final JCheckBox legendCheck = new JCheckBox();
-        legendCheck.setSelected(false);
         ItemListener il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
@@ -473,6 +472,7 @@ public abstract class ChartGenerator extends JPanel
             };
         legendCheck.addItemListener(il);
         list.add(new JLabel("Legend"), legendCheck);
+        legendCheck.setSelected(true);
 
 /*
   final JCheckBox aliasCheck = new JCheckBox();

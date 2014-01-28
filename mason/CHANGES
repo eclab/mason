@@ -2608,3 +2608,6 @@ Version 18
 	Worked around bug in JFreeChart which prevents multiple series of the same name
 		from displaying at the same time.
 	Added BubbleChartGenerator and BubbleChartSeriesAttributes.
+	Deleted SeriesAttributes.getRenderer() and changed SeriesAttributes.getPlot()
+		to return a Plot, not an XYPlot
+	Added BoxPlots

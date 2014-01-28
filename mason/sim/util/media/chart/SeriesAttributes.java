@@ -80,7 +80,7 @@ public abstract class SeriesAttributes extends LabelledList
     public void setSeriesIndex(int val) { seriesIndex = val; }
                 
     
-    public XYItemRenderer getRenderer()
+    private XYItemRenderer getRenderer()
         {
         return ((XYPlot)getPlot()).getRenderer();
         }
