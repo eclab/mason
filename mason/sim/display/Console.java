@@ -448,15 +448,47 @@ public class Console extends JFrame implements Controller
             });
         b.add(button);
         b.add(Box.createGlue());
+        
+        ///////// Create the Save as Defaults buttons
+                
+        Box displayPrefs = new Box(BoxLayout.X_AXIS);
+        JButton saveDisplayPreferences = new JButton("Save");
+        JButton resetDisplayPreferences = new JButton("Reset");
+        JLabel displayLabel = new JLabel(" Window Position Defaults: ");
+        displayLabel.putClientProperty( "JComponent.sizeVariant", "mini" );
+        displayPrefs.add(Box.createGlue());
+        displayPrefs.add(displayLabel);
+        displayPrefs.add(saveDisplayPreferences);
+        displayPrefs.add(resetDisplayPreferences);
+                
+        saveDisplayPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+        saveDisplayPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+        saveDisplayPreferences.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                saveDisplayPreferences();
+                }
+            });
+        resetDisplayPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
+        resetDisplayPreferences.putClientProperty( "JButton.buttonType", "bevel" );
+        resetDisplayPreferences.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                resetDisplayPreferences();
+                }
+            });
+		Box combinedPanel = new Box(BoxLayout.Y_AXIS);
+		combinedPanel.add(b);
+		combinedPanel.add(displayPrefs);
+        
         JPanel frameListPanel = new JPanel();
         frameListPanel.setLayout(new BorderLayout());
         frameListPanel.add(new JScrollPane(frameListDisplay), BorderLayout.CENTER);
-        frameListPanel.add(b, BorderLayout.SOUTH);
-
-
-
-
-
+        frameListPanel.add(combinedPanel, BorderLayout.SOUTH);
+        //frameListPanel.add(b, BorderLayout.NORTH);
+        //frameListPanel.add(displayPrefs, BorderLayout.SOUTH);
 
 
         //////// Create the "Console" tab panel  
@@ -795,12 +827,14 @@ public class Console extends JFrame implements Controller
         ///////// Create the Save as Defaults buttons
                 
         Box defaults = new Box(BoxLayout.X_AXIS);
-        defaults.add(new JLabel(" Save as Defaults for "));
+        JLabel defaultsLabel = new JLabel(" Save as Defaults for ");
+        defaultsLabel.putClientProperty( "JComponent.sizeVariant", "mini" );
+        defaults.add(Box.createGlue());
+        defaults.add(defaultsLabel);
         JButton appPreferences = new JButton("Simulation");
         JButton systemPreferences = new JButton("MASON");
         defaults.add(appPreferences);
         defaults.add(systemPreferences);
-        defaults.add(Box.createGlue());
                 
         systemPreferences.putClientProperty( "JComponent.sizeVariant", "mini" );
         systemPreferences.putClientProperty( "JButton.buttonType", "bevel" );
@@ -1059,32 +1093,66 @@ public class Console extends JFrame implements Controller
         // some ConcurrentModificationException bugs we were seeing.
         invokeInSwing(new Runnable() { public void run() { try { simulation.init(Console.this); } catch (Exception e) { e.printStackTrace(); } } });
 
-        // Set the location of the console if it hasn't already
-        // been set by the user
-        Point loc = getLocation();
-        if (loc.x == -10000 && loc.y == -10000)  // user didn't set me I think
+		// rearrange display location according to preferences
+        try
             {
-            Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getDefaultConfiguration().getBounds();
-            // If there is room, put us to the far right of all the displays
-            // which have been attached so far.
-            Rectangle bounds = new Rectangle(0,0,0,0);
-            Iterator i = frameList.iterator();
-            while(i.hasNext())
-                bounds = bounds.union(((Component)i.next()).getBounds());
-            if (bounds.width + getWidth() + DEFAULT_GUTTER <= screen.width)  // enough space on right, though MacOS X will be a problem
-                setLocation(bounds.width + DEFAULT_GUTTER,defLoc.y);
-            else setLocation(defLoc);
-            }
+			// first, get a bounding rectangle for all our monitors
+			Rectangle screen = new Rectangle(0,0,0,0);
+			GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+			for(int i = 0; i < screens.length; i++)
+				screen = screen.union(screens[i].getDefaultConfiguration().getBounds());
+
+            Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+            if (appPrefs.getInt(NUM_DISPLAYS_KEY, -1) != -1)  // user set preferences.  Assume it's correct
+            	{
+				Iterator i = frameList.iterator();  // should all be here now
+				int count = 0;
+				while(i.hasNext())
+					{
+					Component c = (Component)(i.next());
+					Rectangle bounds = c.getBounds();
+					bounds.x = appPrefs.getInt(DISPLAY_X_KEY + count, bounds.x);
+					bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + count, bounds.y);
+					bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + count, bounds.width);
+					bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
+					c.setBounds(bounds.intersection(screen));  // constrain to screen?
+					c.setVisible(appPrefs.getBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible()));
+					count++;
+					}
+				Rectangle bounds = getBounds();  // of the Console
+				bounds.x = appPrefs.getInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
+				bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
+				bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
+				bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
+				setBounds(bounds.intersection(screen));
+				}
+			else  // user has not set preferences -- use standard method for positioning the console		
+				{
+				// Set the location of the console if it hasn't already
+				// been set by the user
+				Point loc = getLocation();
+				if (loc.x == -10000 && loc.y == -10000)  // user didn't set me I think
+					{
+//					Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().
+//						getDefaultScreenDevice().getDefaultConfiguration().getBounds();
+					// If there is room, put us to the far right of all the displays
+					// which have been attached so far.
+					Rectangle bounds = new Rectangle(0,0,0,0);
+					Iterator i = frameList.iterator();
+					while(i.hasNext())
+						bounds = bounds.union(((Component)i.next()).getBounds());
+					if (bounds.width + getWidth() + DEFAULT_GUTTER <= screen.width)  // enough space on right, though MacOS X will be a problem
+						setLocation(bounds.width + DEFAULT_GUTTER,defLoc.y);
+					else setLocation(defLoc);
+					}
+				}
+
+			}
+		catch (java.security.AccessControlException e) { } // it must be an applet
 
         // update preferences
         invokeInSwing(new Runnable() { public void run() { resetToPreferences(); }});
         }
-
-
-
-
-
 
 
     /** If I'm already in the Swing dispatch thread, just run this.  Otherwise call SwingUtilities.invokeAndWait on it. */
@@ -1136,8 +1204,6 @@ public class Console extends JFrame implements Controller
     static final String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
     static final String INCREMENT_KEY = "Increment";
     static final String REPEAT_KEY = "Repeat";
-//              public static final String SEED_KEY = "Seed";
-//    public String static final THREAD_PRIORITY_KEY = "Thread Priority";
                 
     void savePreferences(boolean appPreferences)
         {
@@ -1150,13 +1216,11 @@ public class Console extends JFrame implements Controller
                 prefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
                         
             prefs.putInt(DELAY_KEY,frameRateSlider.getValue());
-//            prefs.putInt(THREAD_PRIORITY_KEY, prioritySlider.getValue());
             prefs.putInt(STEPS_KEY, getNumStepsPerStepButtonPress());
             prefs.put(AUTOMATIC_STOP_STEPS_KEY, endField.getValue());
             prefs.put(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue());
             prefs.put(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue());
             prefs.put(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue());
-//                                                      prefs.put(SEED_KEY, randomField.getValue());
             prefs.putBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected());
             prefs.putBoolean(REPEAT_KEY, repeatButton.isSelected());
                         
@@ -1173,16 +1237,89 @@ public class Console extends JFrame implements Controller
             Preferences systemPrefs = Prefs.getGlobalPreferences(DEFAULT_PREFERENCES_KEY);
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
             frameRateSlider.setValue(appPrefs.getInt(DELAY_KEY, systemPrefs.getInt(DELAY_KEY, frameRateSlider.getValue())));
-//            prioritySlider.setValue(appPrefs.getInt(THREAD_PRIORITY_KEY, systemPrefs.getInt(THREAD_PRIORITY_KEY, prioritySlider.getValue())));
             setNumStepsPerStepButtonPress(appPrefs.getInt(STEPS_KEY, systemPrefs.getInt(STEPS_KEY, stepSlider.getValue())));
             endField.setValue(endField.newValue(appPrefs.get(AUTOMATIC_STOP_STEPS_KEY, systemPrefs.get(AUTOMATIC_STOP_STEPS_KEY, endField.getValue()))));
             timeEndField.setValue(timeEndField.newValue(appPrefs.get(AUTOMATIC_STOP_TIME_KEY, systemPrefs.get(AUTOMATIC_STOP_TIME_KEY, timeEndField.getValue()))));
             pauseField.setValue(pauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, systemPrefs.get(AUTOMATIC_PAUSE_STEPS_KEY, pauseField.getValue()))));
             timePauseField.setValue(timePauseField.newValue(appPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, systemPrefs.get(AUTOMATIC_PAUSE_TIME_KEY, timePauseField.getValue()))));
-            //                      randomField.setValue(randomField.newValue(appPrefs.get(SEED_KEY, systemPrefs.get(SEED_KEY, randomField.getValue()))));
             incrementSeedOnStop.setSelected(appPrefs.getBoolean(INCREMENT_KEY, systemPrefs.getBoolean(INCREMENT_KEY, incrementSeedOnStop.isSelected())));
             repeatButton.setSelected(appPrefs.getBoolean(REPEAT_KEY, systemPrefs.getBoolean(REPEAT_KEY, repeatButton.isSelected())));
             setShouldRepeat(repeatButton.isSelected());
+            }
+        catch (java.security.AccessControlException e) { } // it must be an applet
+        }
+
+
+
+
+    /////////////////////// DISPLAY PREFERENCES MANIPULATION
+        
+    static final String NUM_DISPLAYS_KEY = "Number of Displays";
+    static final String DISPLAY_X_KEY = "Display X ";
+    static final String DISPLAY_Y_KEY = "Display Y ";
+    static final String DISPLAY_WIDTH_KEY = "Display Width ";
+    static final String DISPLAY_HEIGHT_KEY = "Display Height ";
+    static final String DISPLAY_SHOWN_KEY = "Display Shown ";
+    static final String CONSOLE_KEY = "-1";
+    
+    void saveDisplayPreferences()
+        {
+        try
+            {
+        	resetDisplayPreferences();
+            Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+            Iterator i = frameList.iterator();
+            int count = 0;
+            while(i.hasNext())
+            	{
+            	Component c = (Component)(i.next());
+	            Rectangle bounds = c.getBounds();
+	            appPrefs.putInt(DISPLAY_X_KEY + count, bounds.x);
+	            appPrefs.putInt(DISPLAY_Y_KEY + count, bounds.y);
+	            appPrefs.putInt(DISPLAY_WIDTH_KEY + count, bounds.width);
+	            appPrefs.putInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
+	            appPrefs.putBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible());
+            	count++;
+            	}
+            Rectangle bounds = getBounds();  // of the Console
+			appPrefs.putInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
+			appPrefs.putInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
+			appPrefs.putInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
+			appPrefs.putInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
+			appPrefs.putBoolean(DISPLAY_SHOWN_KEY + CONSOLE_KEY, true);  // can't hide the console
+
+            appPrefs.putInt(NUM_DISPLAYS_KEY, count);
+            }
+        catch (java.security.AccessControlException e) { } // it must be an applet
+        }
+                                   
+    void resetDisplayPreferences()
+        {
+        try
+            {
+            Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
+            Iterator i = frameList.iterator();
+            int count = 0;
+            while(i.hasNext())
+            	{
+            	i.next();  // ignore
+            	count++;
+            	}
+            
+            // we'll remove up to the maximum of the current window count
+            // and the claimed number of displays in the preferences.  That
+            // should get rid of everything.
+            int totalcount = Math.max(count, appPrefs.getInt(NUM_DISPLAYS_KEY, 0));
+            for(int j = -1; j < totalcount; j++)   // -1 is the Console
+            	{
+            	appPrefs.remove(DISPLAY_X_KEY + j);
+            	appPrefs.remove(DISPLAY_Y_KEY + j);
+            	appPrefs.remove(DISPLAY_WIDTH_KEY + j);
+            	appPrefs.remove(DISPLAY_HEIGHT_KEY + j);
+            	appPrefs.remove(DISPLAY_SHOWN_KEY + j);
+            	}
+            	
+            appPrefs.remove(NUM_DISPLAYS_KEY);
             }
         catch (java.security.AccessControlException e) { } // it must be an applet
         }

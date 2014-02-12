@@ -60,7 +60,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     /** Sets this display to always draw precisely (or not).  Note that even if this display has
         been set to not display precisely, it may still draw precisely in certain circumstances, such as
         when outputting to a PDF. */
-    public void setPrecise(boolean precise) { this.precise = precise; }
+    public void setPrecise(boolean precise) { this.precise = precise; optionPane.preciseDrawing.setSelected(precise); }
         
     public String DEFAULT_PREFERENCES_KEY = "Display2D";
     String preferencesKey = DEFAULT_PREFERENCES_KEY;  // default 
@@ -91,6 +91,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         JCheckBox alphaInterpolation = new JCheckBox("Better Transparency");
         JCheckBox interpolation = new JCheckBox("Bilinear Interpolation of Images");
         JCheckBox tooltips = new JCheckBox("Tool Tips");
+        JCheckBox preciseDrawing = new JCheckBox("Precise Drawing");
         
         JButton systemPreferences = new JButton("MASON");
         JButton appPreferences = new JButton("Simulation");
@@ -160,6 +161,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             b.add(interpolation);
             b.add(alphaInterpolation);
             b.add(tooltips);
+            b.add(preciseDrawing);
             p = new JPanel();
             p.setLayout(new BorderLayout());
             p.setBorder(new javax.swing.border.TitledBorder("Graphics Features"));
@@ -171,6 +173,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 public void actionPerformed(ActionEvent e)
                     {
                     useTooltips = tooltips.isSelected();
+                    precise = preciseDrawing.isSelected();
                     if (useDefault.isSelected())
                         buffering = FieldPortrayal2D.DEFAULT;
                     else if (useBuffer.isSelected())
@@ -187,6 +190,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             alphaInterpolation.addActionListener(listener);
             interpolation.addActionListener(listener);
             tooltips.addActionListener(listener);
+            preciseDrawing.addActionListener(listener);
 
             // add preferences
                         
@@ -241,6 +245,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 prefs.putBoolean(BETTER_TRANSPARENCY_KEY, alphaInterpolation.isSelected());
                 prefs.putBoolean(INTERPOLATION_KEY, interpolation.isSelected());
                 prefs.putBoolean(TOOLTIPS_KEY, tooltips.isSelected());
+                prefs.putBoolean(PRECISE_KEY, preciseDrawing.isSelected());
                                                         
                 if (!Prefs.save(prefs))
                     Utilities.inform ("Preferences Cannot be Saved", "Your Java system can't save preferences.  Perhaps this is an applet?", this);
@@ -256,7 +261,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         static final String BETTER_TRANSPARENCY_KEY = "Better Transparency";
         static final String INTERPOLATION_KEY = "Bilinear Interpolation";
         static final String TOOLTIPS_KEY = "Tool Tips";
-                
+        static final String PRECISE_KEY = "Precise Drawing";
+
         /** Resets the Option Pane Preferences by loading from the preference database */
         void resetToPreferences()
             {
@@ -284,6 +290,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                         systemPrefs.getBoolean(INTERPOLATION_KEY, false)));
                 tooltips.setSelected(appPrefs.getBoolean(TOOLTIPS_KEY,
                         systemPrefs.getBoolean(TOOLTIPS_KEY, false)));
+                preciseDrawing.setSelected(appPrefs.getBoolean(PRECISE_KEY,
+                        systemPrefs.getBoolean(PRECISE_KEY, false)));
                 // trigger resets by calling the listener.  Don't bother with an event
                 listener.actionPerformed(null);
                 }
