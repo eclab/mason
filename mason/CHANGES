@@ -2611,3 +2611,6 @@ Version 18
 	Deleted SeriesAttributes.getRenderer() and changed SeriesAttributes.getPlot()
 		to return a Plot, not an XYPlot
 	Added BoxPlots
+	Display2D has an option for precise drawing
+	Console can save the positions of all the displays as user preferences.  Still
+		a bit flickery though.
