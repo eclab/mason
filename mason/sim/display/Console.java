@@ -1105,6 +1105,12 @@ public class Console extends JFrame implements Controller
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
             if (appPrefs.getInt(NUM_DISPLAYS_KEY, -1) != -1)  // user set preferences.  Assume it's correct
             	{
+				// zero: hide everything
+				Iterator iter = frameList.iterator();  // should all be here now
+				while(iter.hasNext())
+					((Component)(iter.next())).setVisible(false);
+
+				// Now move and show
 				Iterator i = frameList.iterator();  // should all be here now
 				int count = 0;
 				while(i.hasNext())
@@ -1133,8 +1139,6 @@ public class Console extends JFrame implements Controller
 				Point loc = getLocation();
 				if (loc.x == -10000 && loc.y == -10000)  // user didn't set me I think
 					{
-//					Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().
-//						getDefaultScreenDevice().getDefaultConfiguration().getBounds();
 					// If there is room, put us to the far right of all the displays
 					// which have been attached so far.
 					Rectangle bounds = new Rectangle(0,0,0,0);
