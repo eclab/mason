@@ -38,6 +38,21 @@ public class Balls3D extends SimState
     public int getNumBands() { return numBands; }
     public void setNumBands(int val) { if (val >= 0 ) numBands = val; }
 
+	public Double3D[] getBallPositions()
+		{
+		if (balls == null) return new Double3D[0];
+		
+		Bag bag = balls.getAllObjects();
+		if (bag == null) return new Double3D[0];
+		
+		Double3D[] d = new Double3D[bag.size()];
+		for(int i = 0; i < d.length; i++)
+			{
+			d[i] = balls.getObjectLocation(bag.get(i));
+			}
+		return d;
+		}
+
     public Balls3D(long seed)
         {
         super(seed);
