@@ -155,11 +155,12 @@ public class PropertyField extends JComponent
         return (int)Math.ceil(Math.log10(1/epsilon));
         }
       
+    boolean ignoreEvent = false;  // set to true when we're first setting the PropertyField
     ChangeListener sliderListener = new ChangeListener()
         {
         public void stateChanged (ChangeEvent e)
             {
-            if (domain != null && domain instanceof Interval)
+            if (!ignoreEvent && domain != null && domain instanceof Interval)
                 {
                 double d = 0;
                 Interval domain = (Interval)(PropertyField.this.domain);
@@ -180,6 +181,7 @@ public class PropertyField extends JComponent
                 setValue(newValue(str));
                 sliding = false;
                 }
+            ignoreEvent = false;  // reset
             }
         };
     
@@ -339,6 +341,7 @@ public class PropertyField extends JComponent
         sliderFormatter.setGroupingUsed(false); // no commas
                 
         // set values
+        ignoreEvent = true;  // don't change the underlying data yet
         setValues(label, initialValue, isReadWrite, domain, show);
         }
 

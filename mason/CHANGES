@@ -2614,3 +2614,5 @@ Version 18
 	Display2D has an option for precise drawing
 	Console can save the positions of all the displays as user preferences.  Still
 		a bit flickery though.
+	PropertyField no longer attempts to set the underlying value of sliding properties
+		when initialized.
