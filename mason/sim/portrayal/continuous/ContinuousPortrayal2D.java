@@ -254,13 +254,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                         //                    graphics.setClip(clip);
                         newinfo.selected = (objectSelected &&  // there's something there
                             selectedWrappers.get(portrayedObject) != null); 
-                        /* {
-                           LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                           portrayal.setSelected(wrapper,true);
-                           portrayal.draw(portrayedObject, graphics, newinfo);
-                           portrayal.setSelected(wrapper,false);
-                           }
-                           else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                        portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }
