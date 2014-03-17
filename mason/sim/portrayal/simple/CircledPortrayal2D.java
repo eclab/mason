@@ -112,7 +112,6 @@ public class CircledPortrayal2D extends OvalPortrayal2D
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
         {
-        // isSelected = selected;
         return getChild(wrapper.getObject()).setSelected(wrapper, selected);
         }
 
