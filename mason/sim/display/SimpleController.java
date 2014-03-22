@@ -56,7 +56,7 @@ public class SimpleController implements Controller
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
-            UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
+            UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager", true, Thread.currentThread().getContextClassLoader()).
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
         catch (Exception e) { /* e.printStackTrace(); */ }

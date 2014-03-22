@@ -1990,7 +1990,7 @@ public class Console extends JFrame implements Controller
                     if (!e.getValueIsAdjusting()) try
                                                       {
                                                       field.setText((String)list.getSelectedValue());
-                                                      browser.setText(GUIState.getInfo(Class.forName(field.getText())));
+                                                      browser.setText(GUIState.getInfo(Class.forName(field.getText(), true, Thread.currentThread().getContextClassLoader())));
                                                       }
                         catch (Throwable ex)
                             {

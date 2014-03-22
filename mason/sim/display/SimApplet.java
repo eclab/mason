@@ -42,7 +42,7 @@ public class SimApplet extends Applet
         try
             {
             // load that class
-            final Class simClass = Class.forName(simClassName);
+            final Class simClass = Class.forName(simClassName, true, Thread.currentThread().getContextClassLoader());
             if (!(GUIState.class.isAssignableFrom(simClass)) && !simClass.equals(sim.display.Console.class))  // if it's not a GUIState or Console
                 throw new Exception("Class is not a GUIState or the Console: " + simClass);
             button.addActionListener(new ActionListener()

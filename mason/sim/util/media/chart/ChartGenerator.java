@@ -727,7 +727,7 @@ public abstract class ChartGenerator extends JPanel
                 }
             else // hope there's no one using 1.2! 
                 UIManager.put("ColorChooserUI", 
-                    Class.forName("ch.randelshofer.quaqua.Quaqua14ColorChooserUI").getName());
+                    Class.forName("ch.randelshofer.quaqua.Quaqua14ColorChooserUI", true, Thread.currentThread().getContextClassLoader()).getName());
             }
         catch (Exception e) { }
         }

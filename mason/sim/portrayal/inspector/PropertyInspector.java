@@ -123,10 +123,11 @@ public abstract class PropertyInspector extends Inspector
         {
         try
             {
-            return (String)(Class.forName(classname).getMethod("name", new Class[0]).invoke(null, new Object[0]));
+            return (String)(Class.forName(classname, true, Thread.currentThread().getContextClassLoader()).getMethod("name", new Class[0]).invoke(null, new Object[0]));
             }
         catch(Throwable e)
             {
+            e.printStackTrace(); 
             return null;
             }
         }
@@ -135,13 +136,13 @@ public abstract class PropertyInspector extends Inspector
         {
         try
             {
-            Class[] types = (Class[])(Class.forName(classname).getMethod("types", new Class[0]).invoke(null, new Object[0]));
+            Class[] types = (Class[])(Class.forName(classname, true, Thread.currentThread().getContextClassLoader()).getMethod("types", new Class[0]).invoke(null, new Object[0]));
             if (types==null) return true; // all types are legal
             for(int x=0;x<types.length;x++)
                 if (types[x].isAssignableFrom(type))
                     return true;
             }
-        catch(Throwable e) { }
+        catch(Throwable e) { e.printStackTrace(); }
         return false;
         }
     
@@ -204,27 +205,36 @@ public abstract class PropertyInspector extends Inspector
             });
 
         for(int x = 0; x < classes.numObjs; x++)
-            {                                           
+            {
+            // first let's test to see if that class name is for real
+            Class _theClass = null;
+            try 
+            	{ 
+            	_theClass = Class.forName((String)(classes.objs[x]), true, Thread.currentThread().getContextClassLoader());
+            	}	
+			catch (ClassNotFoundException error) 
+				{
+				//error.printStackTrace();  // fail silently, it's annoying
+				continue;  // no class, can't make menu
+				}
+			catch (NoClassDefFoundError error) // why does this even exist?
+				{
+				//error.printStackTrace();  // fail silently, it's annoying
+				continue;  // no class, can't make menu
+				}
+			final Class theClass = _theClass;  // grrr, Java doesn't have proper closures
+            
             JMenuItem menu = new JMenuItem((String)(getMenuNameForPropertyInspectorClass((String)(classes.objs[x]))));
             popup.add(menu);
             if (!typesForClassCompatable((String)(classes.objs[x]),properties.getType(index)))
                 menu.setEnabled(false);
             else somethingCompatable = true;
 
-            final int menuIndex = x;
-            menu.addActionListener(new ActionListener()
+            menu.addActionListener(new ActionListener() 
                 {
                 public void actionPerformed(ActionEvent e)
                     {
-                    PropertyInspector inspector = null;
-                    try
-                        {
-                        inspector = PropertyInspector.makeInspector(
-                            Class.forName((String)(classes.objs[menuIndex])),
-                            properties, index, (sim.display.Console)(state.controller), state);
-                        }
-                    catch (ClassNotFoundException error) { }
-                    
+                    PropertyInspector inspector = PropertyInspector.makeInspector(theClass, properties, index, (sim.display.Console)(state.controller), state);                    
                     if (inspector != null)  // it'll be null if we've been cancelled
                         {
                         try

@@ -38,7 +38,7 @@ public class MovieMaker
         this.parentForDialogs = parent;
         try
             {
-            encoderClass = Class.forName("sim.util.media.MovieEncoder");
+            encoderClass = Class.forName("sim.util.media.MovieEncoder", true, Thread.currentThread().getContextClassLoader());
             }
         catch (Throwable e) { encoderClass = null; }  // JMF's not installed
         }

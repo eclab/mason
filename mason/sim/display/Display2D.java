@@ -811,7 +811,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             System.setProperty( "Quaqua.TabbedPane.design","auto" );  // UI Manager Properties docs differ
             System.setProperty( "Quaqua.visualMargin","1,1,1,1" );
             UIManager.put("Panel.opaque", Boolean.TRUE);
-            UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
+            UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager", true, Thread.currentThread().getContextClassLoader()).
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
         catch (Exception e) { /* e.printStackTrace(); */ }
@@ -1840,7 +1840,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             BufferedImage img = insideDisplay.paint(g,true,false);  // notice we're painting to a non-shared buffer
             try
                 {
-                sacrificialObj = Class.forName("com.lowagie.text.Cell").newInstance(); // sacrificial
+                sacrificialObj = Class.forName("com.lowagie.text.Cell", true, Thread.currentThread().getContextClassLoader()).newInstance(); // sacrificial
                 // if we survived that, then iText is installed and we're good.
                 havePDF = true; 
                 }
