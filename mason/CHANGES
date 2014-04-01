@@ -2627,3 +2627,8 @@ Version 18
                 class loading model is bizarre and arcane.
 	MASON handles missing JFreeCharts with aplomb now, rather than making blank
 		menu names	
+	Added a warning in Display2D.step() about a potential bug triggered in Linux
+		Java 6 in an unusual circumstance.  We've decided NOT to add our
+		workaround as it will likely slow down drawing: it's not a bug in
+		our code but rather in Oracle's.  But we included explanation about
+		how to work around it in the comments to that method.
