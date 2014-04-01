@@ -479,9 +479,9 @@ public class Console extends JFrame implements Controller
                 resetDisplayPreferences();
                 }
             });
-		Box combinedPanel = new Box(BoxLayout.Y_AXIS);
-		combinedPanel.add(b);
-		combinedPanel.add(displayPrefs);
+        Box combinedPanel = new Box(BoxLayout.Y_AXIS);
+        combinedPanel.add(b);
+        combinedPanel.add(displayPrefs);
         
         JPanel frameListPanel = new JPanel();
         frameListPanel.setLayout(new BorderLayout());
@@ -509,7 +509,7 @@ public class Console extends JFrame implements Controller
             {
             public void stateChanged(ChangeEvent e)
                 {
-				setPlaySleep(sliderToFrameRate(frameRateSlider.getValue()));
+                setPlaySleep(sliderToFrameRate(frameRateSlider.getValue()));
                 }
             });
         b = new Box(BoxLayout.X_AXIS)
@@ -1093,66 +1093,66 @@ public class Console extends JFrame implements Controller
         // some ConcurrentModificationException bugs we were seeing.
         invokeInSwing(new Runnable() { public void run() { try { simulation.init(Console.this); } catch (Exception e) { e.printStackTrace(); } } });
 
-		// rearrange display location according to preferences
+        // rearrange display location according to preferences
         try
             {
-			// first, get a bounding rectangle for all our monitors
-			Rectangle screen = new Rectangle(0,0,0,0);
-			GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-			for(int i = 0; i < screens.length; i++)
-				screen = screen.union(screens[i].getDefaultConfiguration().getBounds());
+            // first, get a bounding rectangle for all our monitors
+            Rectangle screen = new Rectangle(0,0,0,0);
+            GraphicsDevice[] screens = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+            for(int i = 0; i < screens.length; i++)
+                screen = screen.union(screens[i].getDefaultConfiguration().getBounds());
 
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
             if (appPrefs.getInt(NUM_DISPLAYS_KEY, -1) != -1)  // user set preferences.  Assume it's correct
-            	{
-				// zero: hide everything
-				Iterator iter = frameList.iterator();  // should all be here now
-				while(iter.hasNext())
-					((Component)(iter.next())).setVisible(false);
+                {
+                // zero: hide everything
+                Iterator iter = frameList.iterator();  // should all be here now
+                while(iter.hasNext())
+                    ((Component)(iter.next())).setVisible(false);
 
-				// Now move and show
-				Iterator i = frameList.iterator();  // should all be here now
-				int count = 0;
-				while(i.hasNext())
-					{
-					Component c = (Component)(i.next());
-					Rectangle bounds = c.getBounds();
-					bounds.x = appPrefs.getInt(DISPLAY_X_KEY + count, bounds.x);
-					bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + count, bounds.y);
-					bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + count, bounds.width);
-					bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
-					c.setBounds(bounds.intersection(screen));  // constrain to screen?
-					c.setVisible(appPrefs.getBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible()));
-					count++;
-					}
-				Rectangle bounds = getBounds();  // of the Console
-				bounds.x = appPrefs.getInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
-				bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
-				bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
-				bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
-				setBounds(bounds.intersection(screen));
-				}
-			else  // user has not set preferences -- use standard method for positioning the console		
-				{
-				// Set the location of the console if it hasn't already
-				// been set by the user
-				Point loc = getLocation();
-				if (loc.x == -10000 && loc.y == -10000)  // user didn't set me I think
-					{
-					// If there is room, put us to the far right of all the displays
-					// which have been attached so far.
-					Rectangle bounds = new Rectangle(0,0,0,0);
-					Iterator i = frameList.iterator();
-					while(i.hasNext())
-						bounds = bounds.union(((Component)i.next()).getBounds());
-					if (bounds.width + getWidth() + DEFAULT_GUTTER <= screen.width)  // enough space on right, though MacOS X will be a problem
-						setLocation(bounds.width + DEFAULT_GUTTER,defLoc.y);
-					else setLocation(defLoc);
-					}
-				}
+                // Now move and show
+                Iterator i = frameList.iterator();  // should all be here now
+                int count = 0;
+                while(i.hasNext())
+                    {
+                    Component c = (Component)(i.next());
+                    Rectangle bounds = c.getBounds();
+                    bounds.x = appPrefs.getInt(DISPLAY_X_KEY + count, bounds.x);
+                    bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + count, bounds.y);
+                    bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + count, bounds.width);
+                    bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
+                    c.setBounds(bounds.intersection(screen));  // constrain to screen?
+                    c.setVisible(appPrefs.getBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible()));
+                    count++;
+                    }
+                Rectangle bounds = getBounds();  // of the Console
+                bounds.x = appPrefs.getInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
+                bounds.y = appPrefs.getInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
+                bounds.width = appPrefs.getInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
+                bounds.height = appPrefs.getInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
+                setBounds(bounds.intersection(screen));
+                }
+            else  // user has not set preferences -- use standard method for positioning the console                
+                {
+                // Set the location of the console if it hasn't already
+                // been set by the user
+                Point loc = getLocation();
+                if (loc.x == -10000 && loc.y == -10000)  // user didn't set me I think
+                    {
+                    // If there is room, put us to the far right of all the displays
+                    // which have been attached so far.
+                    Rectangle bounds = new Rectangle(0,0,0,0);
+                    Iterator i = frameList.iterator();
+                    while(i.hasNext())
+                        bounds = bounds.union(((Component)i.next()).getBounds());
+                    if (bounds.width + getWidth() + DEFAULT_GUTTER <= screen.width)  // enough space on right, though MacOS X will be a problem
+                        setLocation(bounds.width + DEFAULT_GUTTER,defLoc.y);
+                    else setLocation(defLoc);
+                    }
+                }
 
-			}
-		catch (java.security.AccessControlException e) { } // it must be an applet
+            }
+        catch (java.security.AccessControlException e) { } // it must be an applet
 
         // update preferences
         invokeInSwing(new Runnable() { public void run() { resetToPreferences(); }});
@@ -1270,27 +1270,27 @@ public class Console extends JFrame implements Controller
         {
         try
             {
-        	resetDisplayPreferences();
+            resetDisplayPreferences();
             Preferences appPrefs = Prefs.getAppPreferences(simulation, DEFAULT_PREFERENCES_KEY);
             Iterator i = frameList.iterator();
             int count = 0;
             while(i.hasNext())
-            	{
-            	Component c = (Component)(i.next());
-	            Rectangle bounds = c.getBounds();
-	            appPrefs.putInt(DISPLAY_X_KEY + count, bounds.x);
-	            appPrefs.putInt(DISPLAY_Y_KEY + count, bounds.y);
-	            appPrefs.putInt(DISPLAY_WIDTH_KEY + count, bounds.width);
-	            appPrefs.putInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
-	            appPrefs.putBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible());
-            	count++;
-            	}
+                {
+                Component c = (Component)(i.next());
+                Rectangle bounds = c.getBounds();
+                appPrefs.putInt(DISPLAY_X_KEY + count, bounds.x);
+                appPrefs.putInt(DISPLAY_Y_KEY + count, bounds.y);
+                appPrefs.putInt(DISPLAY_WIDTH_KEY + count, bounds.width);
+                appPrefs.putInt(DISPLAY_HEIGHT_KEY + count, bounds.height);
+                appPrefs.putBoolean(DISPLAY_SHOWN_KEY + count, c.isVisible());
+                count++;
+                }
             Rectangle bounds = getBounds();  // of the Console
-			appPrefs.putInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
-			appPrefs.putInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
-			appPrefs.putInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
-			appPrefs.putInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
-			appPrefs.putBoolean(DISPLAY_SHOWN_KEY + CONSOLE_KEY, true);  // can't hide the console
+            appPrefs.putInt(DISPLAY_X_KEY + CONSOLE_KEY, bounds.x);
+            appPrefs.putInt(DISPLAY_Y_KEY + CONSOLE_KEY, bounds.y);
+            appPrefs.putInt(DISPLAY_WIDTH_KEY + CONSOLE_KEY, bounds.width);
+            appPrefs.putInt(DISPLAY_HEIGHT_KEY + CONSOLE_KEY, bounds.height);
+            appPrefs.putBoolean(DISPLAY_SHOWN_KEY + CONSOLE_KEY, true);  // can't hide the console
 
             appPrefs.putInt(NUM_DISPLAYS_KEY, count);
             }
@@ -1305,24 +1305,24 @@ public class Console extends JFrame implements Controller
             Iterator i = frameList.iterator();
             int count = 0;
             while(i.hasNext())
-            	{
-            	i.next();  // ignore
-            	count++;
-            	}
+                {
+                i.next();  // ignore
+                count++;
+                }
             
             // we'll remove up to the maximum of the current window count
             // and the claimed number of displays in the preferences.  That
             // should get rid of everything.
             int totalcount = Math.max(count, appPrefs.getInt(NUM_DISPLAYS_KEY, 0));
             for(int j = -1; j < totalcount; j++)   // -1 is the Console
-            	{
-            	appPrefs.remove(DISPLAY_X_KEY + j);
-            	appPrefs.remove(DISPLAY_Y_KEY + j);
-            	appPrefs.remove(DISPLAY_WIDTH_KEY + j);
-            	appPrefs.remove(DISPLAY_HEIGHT_KEY + j);
-            	appPrefs.remove(DISPLAY_SHOWN_KEY + j);
-            	}
-            	
+                {
+                appPrefs.remove(DISPLAY_X_KEY + j);
+                appPrefs.remove(DISPLAY_Y_KEY + j);
+                appPrefs.remove(DISPLAY_WIDTH_KEY + j);
+                appPrefs.remove(DISPLAY_HEIGHT_KEY + j);
+                appPrefs.remove(DISPLAY_SHOWN_KEY + j);
+                }
+                
             appPrefs.remove(NUM_DISPLAYS_KEY);
             }
         catch (java.security.AccessControlException e) { } // it must be an applet
@@ -1474,41 +1474,41 @@ public class Console extends JFrame implements Controller
     static final double MAX_FRAME_RATE = 8.0;
     static final int MAX_FRAME_RATE_SLIDER_VALUE = 1024;
     long sliderToFrameRate(int val)
-    	{
-    	double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
-    	double v = val / (double) MAX_FRAME_RATE_SLIDER_VALUE * 2.0; // v ranges from 0 to 2
-    	return Math.round(Math.pow(v, maxAsPowerOfTwo) * 1000);  // put into milliseconds
-    	}
+        {
+        double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
+        double v = val / (double) MAX_FRAME_RATE_SLIDER_VALUE * 2.0; // v ranges from 0 to 2
+        return Math.round(Math.pow(v, maxAsPowerOfTwo) * 1000);  // put into milliseconds
+        }
 
     int frameRateToSlider(long valInMS)
-    	{
-    	double val = valInMS / 1000.0;
-    	double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
-    	double v = Math.pow(val, 1.0 / maxAsPowerOfTwo);
-    	return (int) Math.round(v * ((double) MAX_FRAME_RATE_SLIDER_VALUE) / 2.0);
-    	}
+        {
+        double val = valInMS / 1000.0;
+        double maxAsPowerOfTwo = Math.log(MAX_FRAME_RATE) / Math.log(2.0);
+        double v = Math.pow(val, 1.0 / maxAsPowerOfTwo);
+        return (int) Math.round(v * ((double) MAX_FRAME_RATE_SLIDER_VALUE) / 2.0);
+        }
     
             
         
     /** Sets (in milliseconds) how long we should sleep between each step in the play thread. 
-    	Must be a value >= 0, else it will be set to 0.  */
+        Must be a value >= 0, else it will be set to 0.  */
     public void setPlaySleep(long sleep)
         {
         if (sleep < 0) sleep = 0;
         if (!frameRateSliderChanging)
-        	{
-        	frameRateSliderChanging = true;
-	        synchronized (playThreadLock)
-    	        {
-            	playSleep = sleep;
-            	}
+            {
+            frameRateSliderChanging = true;
+            synchronized (playThreadLock)
+                {
+                playSleep = sleep;
+                }
             frameRateSlider.setValue(frameRateToSlider(sleep));
             DecimalFormat format = new DecimalFormat();
             format.setMinimumFractionDigits(0);
             format.setDecimalSeparatorAlwaysShown(false);
             String text = format.format(sleep / 1000.0);
             if (text.length() > 5)  // "88.88" remember...
-            	text = text.substring(0, 5);
+                text = text.substring(0, 5);
             frameRateSliderText.setText(text);
             frameRateSliderChanging = false;
             }
@@ -2430,9 +2430,9 @@ public class Console extends JFrame implements Controller
         {
         if (val <= 0) val = 1;
         if (!stepSliderChanging)
-        	{
-        	stepSliderChanging = true;
-			numStepsPerStepButtonPress = val;
+            {
+            stepSliderChanging = true;
+            numStepsPerStepButtonPress = val;
             stepSlider.setValue(val);
             stepSliderText.setText("" + val);
             stepSliderChanging = false;
@@ -3232,6 +3232,5 @@ public class Console extends JFrame implements Controller
         inspectorToolbars = new Vector();
         resetInspectors(-1);
         }
-
     }
 

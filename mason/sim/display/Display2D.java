@@ -2017,12 +2017,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     
     /** Asks Display2D to update itself next iteration regardless of the current redrawing/updating rule. */
     public void requestUpdate()
-    	{
-    	synchronized(updateLock)
-    		{
-	    	updateOnce = true;
-	    	}
-    	}
+        {
+        synchronized(updateLock)
+            {
+            updateOnce = true;
+            }
+        }
     
     /** Returns whether it's time to update. */
     public boolean shouldUpdate()
@@ -2032,7 +2032,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         synchronized(updateLock) { up = updateOnce; } 
         
         if (up)
-        	val = true;
+            val = true;
         else if (updateRule == UPDATE_RULE_ALWAYS)
             val = true;
         else if (updateRule == UPDATE_RULE_STEPS)
@@ -2431,8 +2431,27 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         {
         if (shouldUpdate())       // time to update!
             {
-            if (insideDisplay.isShowing() && 
-                (getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)   // not minimized on the Mac
+            // POTENTIAL BUG ALERT
+            // We have seen a bug tickled in Linux Java 6, where getExtendedState()
+            // can potentially hang.  This is doubly problematic because we both
+            // call it explicitly below and also it's called implicitly inside
+            // calls to repaint() in the Java GUI source.
+            //
+            // See http://bugs.java.com/view_bug.do?bug_id=6798036
+            //
+            // This is tickled in an unusual situation when we (1) merge Display2D
+            // with Console in an interesting way (2) do some updates of button states 
+            // rapidly (3) run under Linux.  So it's a pretty unusual combination.
+            //
+            // At any rate, if you get bitten by this bug, you can work around it
+            // by commenting out && (getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)
+            // and also by replacing insideDisplay.repaint() with
+            // SwingUtilities.invokeLater(new Runnable() { public void run() { insideDisplay.repaint(); } }):
+            //
+            // Yuck.  Stupid Java bugs.
+
+            if (insideDisplay.isShowing()
+                && (getFrame().getExtendedState() & java.awt.Frame.ICONIFIED) == 0)   // not minimized on the Mac
                 {
                 insideDisplay.repaint();
                 }
