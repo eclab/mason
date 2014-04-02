@@ -1019,7 +1019,7 @@ Afterwards the code adds random edges to this graph.  Each student likes at leas
 
 \sidebar{Why use a Bag?  Why not an ArrayList?}{Up until Java 1.6, Sun's ArrayList class has been {\it very slow}.  ArrayList's \method{get(...)}, \method{set(...)}, and \method{add(...)} methods have not been inlinable due to errors on Sun's part.  And of course, you can't access the underlying array directly.  We created Bag many years ago as a replacement for ArrayList with properly inlinable methods and with direct access to the array (if you're careful). This made Bag {\it much} faster than ArrayList.  Since extensible arrays are so common in simulation, and back-end simulation must be efficient, we felt it was an acceptable compromise to make: using a nonstandard class in return for an almost five-fold speedup.  It was a good decision for almost ten years.
 
-Things have finally changed in Java 1.6.  Sun's HotSpot VM can now inline even methods like those in ArrayList.  This makes ArrayList decently fast; and indeed faster than Bag in certain cases.  So we may switch back to ArrayList at some time in the future if present trends continue.}%
+Things have finally changed in Java 1.6.  Sun's HotSpot VM can now inline even methods like those in ArrayList.  This makes ArrayList decently fast.  So we may switch back to ArrayList at some time in the future if present trends continue.}%
 Here's how the code works.  We first extract all the students from the graph with the method \method{getAllNodes()}.  This method returns a \Class{sim.util.Bag}, a faster replacement for Sun's \Class{java.util.ArrayList} which is used throughout MASON whenever speed is of importance.  Bag more or less has the same methods as ArrayList, so it shouldn't be hard to learn.
 
 The \method{getAllNodes()} method returns a Bag used internally in Network, and which you should treat as {\bf read-only}: do not modify it.  If you want to modify it, make a copy and modify that.
@@ -2680,7 +2680,7 @@ MASON has a large number of utility classes which can be used independently of t
 \item \package{sim.util.distribution}\quad Utility classes for sampling from distributions
 \end{itemize} 
 
-This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \package{sim.util.distribution}.  Many classes in the core simulation code rely on these packages (well the first two anyway), so it's important to cover them. 
+This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \package{sim.util.distribution}.  Many classes in the core simulation code rely on these packages (well the first two anyway), so it's important to cover them now.  The remaining packages will be covered in Chapter \ref{guiandmediautilities}.
 
 \section{The Random Number Generator and Distributions}
 \label{ec.util}
@@ -10774,6 +10774,7 @@ public class ColorCubePortrayal3D extends SimplePortrayal3D
 
 
 \chapter{GUI and Media Utilities}
+\label{guiandmediautilities}
 
 \begin{figure}[h]\vspace{-26.5em}\hspace{28.9em}\includegraphics[width=3.5in]{LightCycles.pdf}\vspace{0em}\end{figure}
 
