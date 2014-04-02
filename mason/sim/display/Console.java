@@ -1106,6 +1106,9 @@ public class Console extends JFrame implements Controller
             if (appPrefs.getInt(NUM_DISPLAYS_KEY, -1) != -1)  // user set preferences.  Assume it's correct
                 {
                 // zero: hide everything
+                System.err.println(DEFAULT_PREFERENCES_KEY);
+                System.err.println(NUM_DISPLAYS_KEY);
+                System.err.println(appPrefs.getInt(NUM_DISPLAYS_KEY, -1) );
                 Iterator iter = frameList.iterator();  // should all be here now
                 while(iter.hasNext())
                     ((Component)(iter.next())).setVisible(false);
@@ -1134,6 +1137,7 @@ public class Console extends JFrame implements Controller
                 }
             else  // user has not set preferences -- use standard method for positioning the console                
                 {
+                System.err.println("No bounds set yet");
                 // Set the location of the console if it hasn't already
                 // been set by the user
                 Point loc = getLocation();
@@ -1199,15 +1203,15 @@ public class Console extends JFrame implements Controller
 
     /////////////////////// PREFERENCES MANIPULATION
         
-    static final String DEFAULT_PREFERENCES_KEY = "Console";
-    static final String DELAY_KEY = "Delay";
-    static final String STEPS_KEY = "Steps";
-    static final String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
-    static final String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
-    static final String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Pause at Step";
-    static final String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
-    static final String INCREMENT_KEY = "Increment";
-    static final String REPEAT_KEY = "Repeat";
+    public static final String DEFAULT_PREFERENCES_KEY = "Console";
+    public static final String DELAY_KEY = "Delay";
+    public static final String STEPS_KEY = "Steps";
+    public static final String AUTOMATIC_STOP_STEPS_KEY = "Automatically Stop at Step";
+    public static final String AUTOMATIC_STOP_TIME_KEY = "Automatically Stop after Time";
+    public static final String AUTOMATIC_PAUSE_STEPS_KEY = "Automatically Pause at Step";
+    public static final String AUTOMATIC_PAUSE_TIME_KEY = "Automatically Pause after Time";
+    public static final String INCREMENT_KEY = "Increment";
+    public static final String REPEAT_KEY = "Repeat";
                 
     void savePreferences(boolean appPreferences)
         {
@@ -1258,13 +1262,13 @@ public class Console extends JFrame implements Controller
 
     /////////////////////// DISPLAY PREFERENCES MANIPULATION
         
-    static final String NUM_DISPLAYS_KEY = "Number of Displays";
-    static final String DISPLAY_X_KEY = "Display X ";
-    static final String DISPLAY_Y_KEY = "Display Y ";
-    static final String DISPLAY_WIDTH_KEY = "Display Width ";
-    static final String DISPLAY_HEIGHT_KEY = "Display Height ";
-    static final String DISPLAY_SHOWN_KEY = "Display Shown ";
-    static final String CONSOLE_KEY = "-1";
+    public static final String NUM_DISPLAYS_KEY = "Number of Displays";
+    public static final String DISPLAY_X_KEY = "Display X ";
+    public static final String DISPLAY_Y_KEY = "Display Y ";
+    public static final String DISPLAY_WIDTH_KEY = "Display Width ";
+    public static final String DISPLAY_HEIGHT_KEY = "Display Height ";
+    public static final String DISPLAY_SHOWN_KEY = "Display Shown ";
+    public static final String CONSOLE_KEY = "-1";
     
     void saveDisplayPreferences()
         {

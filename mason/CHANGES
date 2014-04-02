@@ -2632,3 +2632,4 @@ Version 18
 		workaround as it will likely slow down drawing: it's not a bug in
 		our code but rather in Oracle's.  But we included explanation about
 		how to work around it in the comments to that method.
+	Various preferences keys made public in Console
