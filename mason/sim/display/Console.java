@@ -1137,7 +1137,6 @@ public class Console extends JFrame implements Controller
                 }
             else  // user has not set preferences -- use standard method for positioning the console                
                 {
-                System.err.println("No bounds set yet");
                 // Set the location of the console if it hasn't already
                 // been set by the user
                 Point loc = getLocation();
