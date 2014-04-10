@@ -1712,6 +1712,10 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 wrapper.getFieldPortrayal().setSelected(wrapper, true);
                 selectedWrappers.add(wrapper);
                 }
+                
+        // finally, update the model inspector and other stuff, since this may
+        // be affected by the new selection
+        simulation.controller.refresh();
         }
         
     /** Determines the inspectors appropriate for the given selection region (rect), and sends

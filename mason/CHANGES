@@ -2633,3 +2633,4 @@ Version 18
 		our code but rather in Oracle's.  But we included explanation about
 		how to work around it in the comments to that method.
 	Various preferences keys made public in Console
+	The Console is now refreshed when a selection is made in Display[2|3]D
