@@ -1777,6 +1777,10 @@ public class Display3D extends JPanel implements Steppable
             }
             
         updateSceneGraph(false);
+
+        // finally, update the model inspector and other stuff, since this may
+        // be affected by the new selection
+        simulation.controller.refresh();
         }
 
 
