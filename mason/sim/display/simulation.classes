@@ -24,6 +24,10 @@
 # the user can't choose them.  Notably the Java3D classes
 # may not necessarily be around.
 
+# If there is a SINGLE classname listed below, then MASON
+# will launch its simulation directly rather than pop up
+# the simulation chooser window.
+
 sim.app.antsforage.AntsForageWithUI
 sim.app.asteroids.AsteroidsWithUI
 sim.app.balls3d.Balls3DWithUI
