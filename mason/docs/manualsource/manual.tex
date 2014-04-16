@@ -6228,7 +6228,7 @@ sim.app.crowd3d.Crowd3DWithUI
 \end{alltt}
 }
 
-The classes listed in this file are the ones shown in the window.  But there are two additional gizmos you should be aware of.  First off, note that the user is free to type in his own class name if he likes.  But if there is a line all by itself which says \variable{ONLY} then MASON will not allow this (the text field will simply be missing). You do it like this:
+The classes listed in this file are the ones shown in the window.  But there are three additional gizmos you should be aware of.  First off, note that the user is free to type in his own class name if he likes.  But if there is a line all by itself which says \variable{ONLY} then MASON will not allow this (the text field will simply be missing). You do it like this:
 
 {\footnotesize \begin{alltt}
 sim.app.antsforage.AntsForageWithUI
@@ -6260,6 +6260,8 @@ sim.app.crowd3d.Crowd3DWithUI
 }
 
 That way if you fire up MASON via \class{sim.display.Console}, you can display certain classes in the list without having to load their class files.  This is a very rare need.
+
+Third, if the \file{sim/display/simulation.classes} file contains a {\bf single class name}, then MASON will directly launch that class rather than pop up the simulation class chooser.  This will happen both when the user types \textit{java sim.display.Console} and when the user choose the ``New Simulation...'' menu option.
 
 \subsubsection{Running the Simulation}
 
