@@ -220,6 +220,7 @@ public abstract class AsynchronousSteppable implements Stoppable
         {
         if (running) return;
         running = true;
+        restoringFromCheckpoint = false;
         this.state = state;
         state.addToAsynchronousRegistry(this);
         thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(false); } });
@@ -245,6 +246,7 @@ public abstract class AsynchronousSteppable implements Stoppable
             }
         state.removeFromAsynchronousRegistry(this);
         running = false;
+        restoringFromCheckpoint = false;
         }
     
     /** Requests that the AsynchronousSteppable shut down its thread (temporarily) and blocks until this occurs. If it's already paused or not running, nothing happens.  */
@@ -263,17 +265,32 @@ public abstract class AsynchronousSteppable implements Stoppable
                 }
             }
         paused = true;
+        restoringFromCheckpoint = false;
         }
-        
+    
     /** Fires up the AsynchronousSteppable after a pause().
-        If it's already unpaused or not running, nothing happens. */
-    public final synchronized void resume()
+        If it's already unpaused or not running, nothing happens. 
+        @deprecated use resume(boolean)
+        */
+    public final void resume() { resume(false); }
+    
+    boolean restoringFromCheckpoint = false;
+    
+    /** Fires up the AsynchronousSteppable after a pause().
+        If it's already unpaused or not running, nothing happens. 
+        If 'restoringFromCheckpoint' is TRUE then resume(...)
+        is called when MASON is being started up from checkpoint.
+        Otherwise it is false.  */
+    public final synchronized void resume(boolean restoringFromCheckpoint)
         {
         if (!paused || !running) return;
+        restoringFromCheckpoint = true;
         paused = false;
         thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(true); } });
         thread.start();
         }
+        
+    public final synchronized boolean isFestoringFromCheckpoint() { return restoringFromCheckpoint; }
     
     
     /// Threads are not serializable, so we must manually rebuild here

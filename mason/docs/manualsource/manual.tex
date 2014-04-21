@@ -4230,6 +4230,8 @@ I recommend you use an anonymous Steppable instead of MethodStep.  It's likely f
 \begin{methods}{\class{sim.engine.AsynchronousSteppable}}
 \mthd{public abstract void run(boolean resuming)} The entry point to the thread.  Called when the thread has just begun, or is being resumed after having been paused.  This method is called in the asynchronous thread.
 
+There are two possible reasons why a method might be resumed.  First, it might be resumed after being {\it temporarily} paused, typically to write out a checkpoint file.  Second, it might be ``resumed'', so to speak, while MASON is being restarted from a checkpoint. In this second case, the \method{isRestoringFromCheckpoint()} method will return true.  You might need to know this information, perhaps, to handle reopening and appending to a file properly. 
+
 \mthd{public abstract void halt(boolean pausing)} Called when the thread is being paused, or is being permanently killed off.  This method should notify the thread that it should terminate\,---\,that is, that the \method{run(...)} method should exit.
 \end{methods}
 
@@ -4238,7 +4240,8 @@ The methods above aren't actually called directly by the model: instead the mode
 \begin{methods}{\class{sim.engine.AsynchronousSteppable}}
 \mthd{public void stop()} Kills the asynchronous thread permanently.  This method calls \code{halt(false)} to ask the thread to exit, then joins with the asynchronous thread.
 \mthd{public void pause()} Kills the asynchronous thread temporarily.  This method calls \code{halt(true)} to ask the thread to exit, then joins with the asynchronous thread.
-\mthd{public void resume()} Resumes a paused thread. This method calls \code{run(true)} to restart the thread.
+\mthd{public void resume(boolean restoringFromCheckpoint)} Resumes a paused thread. If this method is being called when MASON is firing up from a checkpoint file, then {\it restoringFromCheckpoint} is true, else it is false. This method calls \code{run(true)} to restart the thread.
+\mthd{public boolean isRestoringFromCheckpoint()} Returns true if the last entry or exit method called on this AsynchronousSteppable was \code{resume(true)}.
 \end{methods}
 
 It shouldn't surprise you that these methods are threadsafe.
@@ -4290,7 +4293,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
         boolean quit = false;
         while(!quit)
             \{
-            // do your stuff here -- assuming it doesn't block...
+            // do one iteration of your stuff here -- assuming it doesn't block...
             
             synchronized(lock) \{ quit = shouldQuit; shouldQuit = false; \}
             \}
@@ -4324,7 +4327,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
             
         while(!quit)
             \{
-            // do your stuff here -- assuming it doesn't block...
+            // do one iteration of your stuff here -- assuming it doesn't block...
             
             synchronized(lock) \{ quit = shouldQuit; shouldQuit = false; \}
             \}
@@ -4336,7 +4339,45 @@ AsynchronousSteppable s = new AsynchronousSteppable()
 \end{alltt}}
 
 
-\item The AsynchronousSteppable fires off a task which runs forever until killed. It must know if it's being paused, resumed, killed, or restarted from pause.  For example, you might create a task which writes to a file: when it is resumed, it must reopen the file in appending mode rather than overwrite the original contents. If the task is being permanently killed, it also wants to write a final footer to the file.  The typical template for writing this code would be:
+\item The AsynchronousSteppable fires off a task which runs forever until killed.  The task can be paused or resumed.  It needs to be able to distinguish between resuming, resuming from a checkpoint, and starting fresh, but doesn't need to distinguish between pausing and killing.  For example, you might create a task which writes to a file: when it is resumed, it must reopen the file in appending mode rather than overwrite the original contents.  However, if the thread is being resumed because MASON is restarting from a much earlier checkpoint, it should handle this specially to determine where in the file to start appending from. The typical template for writing this code would be:
+
+{\footnotesize \begin{alltt}
+AsynchronousSteppable s = new AsynchronousSteppable()
+    \{
+    boolean shouldQuit = false;
+    Object[] lock = new Object[0]; // an array is a unique, serializable object
+
+    protected void run(boolean resuming)
+        \{
+        boolean quit = false;
+        
+        if (!resuming)
+            \{
+            // we're starting fresh -- set up here if you have to
+            \}
+        else if (isRestoringFromCheckpoint())
+            \{
+            // we're resuming from a checkpoint restore -- re-set up here if you have to
+            \}
+        else
+            \{
+            // we're just resuming from a pause -- re-set up here if you have to
+            \}
+            
+        while(!quit)
+            \{
+            // do one iteration of your stuff here -- assuming it doesn't block...
+            
+            synchronized(lock) \{ quit = shouldQuit; shouldQuit = false; \}
+            \}
+        // we're quitting -- do cleanup here if you need to
+        \}
+
+    protected void halt(boolean pausing) \{ synchronized(lock) \{ shouldQuit = val; \} \}
+    \};
+\end{alltt}}
+
+\item The AsynchronousSteppable fires off a task which runs forever until killed. It must know if it's being started from scratch, paused, resumed (both cases), or killed.  For example, you might create a task which writes to a file: when it is resumed, it must reopen the file in appending mode rather than overwrite the original contents (and needs to know where to append, based on the resumption case). If the task is being permanently killed, it also wants to write a final footer to the file.  The typical template for writing this code would be:
 
 
 {\footnotesize \begin{alltt}
@@ -4355,14 +4396,18 @@ AsynchronousSteppable s = new AsynchronousSteppable()
             \{
             // we're starting fresh -- set up here if you have to
             \}
-        else // (resuming)
+        else if (isRestoringFromCheckpoint())
             \{
-            // we're resuming from a pause -- re-set up here if you have to
+            // we're resuming from a checkpoint restore -- re-set up here if you have to
+            \}
+        else
+            \{
+            // we're just resuming from a pause -- re-set up here if you have to
             \}
             
         while(!quit && !pause)
             \{
-            // do your stuff here -- assuming it doesn't block...
+            // do one iteration your stuff here -- assuming it doesn't block...
             
             synchronized(lock)
                 \{ 

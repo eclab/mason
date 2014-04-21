@@ -220,7 +220,7 @@ public class SimState implements java.io.Serializable
         {
         AsynchronousSteppable[] b = asynchronousRegistry();
         final int len = b.length;
-        for(int x=0;x<len;x++) b[x].resume();
+        for(int x=0;x<len;x++) b[x].resume(false);
         }
 
     /** Called after the SimState was created by reading from a checkpointed object.  You should
@@ -230,7 +230,7 @@ public class SimState implements java.io.Serializable
         {
         AsynchronousSteppable[] b = asynchronousRegistry();
         final int len = b.length;
-        for(int x=0;x<len;x++) b[x].resume();
+        for(int x=0;x<len;x++) b[x].resume(true);
         }
 
     /** Serializes out the SimState, and the entire simulation state (not including the graphical interfaces)
