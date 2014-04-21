@@ -2634,3 +2634,9 @@ Version 18
 		how to work around it in the comments to that method.
 	Various preferences keys made public in Console
 	The Console is now refreshed when a selection is made in Display[2|3]D
+	If the simulation.classes file has a single entry, then it is directly
+		launched rather than popping up the simulation chooser window when
+		the user runs java sim.display.Console or when New Simulation...
+		is chosen.
+	Fix in the manual examples regarding jobs.  Thanks to Stewart Aitken 
+		<sa120@york.ac.uk>

@@ -3607,7 +3607,7 @@ Adding checkpointing complicates the top-level loop, particularly if you mix it 
     public static void main(String[] args)
         \{
         int jobs = 100;  // let's do 100 runs
-        int job = 0;
+        long job = 0;
         
         SimState state = null;
         if (args.length > 0)
