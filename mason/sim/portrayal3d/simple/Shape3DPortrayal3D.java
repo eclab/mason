@@ -28,6 +28,7 @@ import java.awt.*;
    </ul>
 */
 
+
 public class Shape3DPortrayal3D extends PrimitivePortrayal3D
     {
     /** Constructs a Shape3DPortrayal3D with the given shape and a default (flat opaque white) appearance. */

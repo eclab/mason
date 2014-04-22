@@ -2222,7 +2222,9 @@ public class Console extends JFrame implements Controller
     /** Called when the "show" button is pressed in the Displays window.  */
     synchronized void showSelectedFrames()
         {
-        Object[] vals = (Object[]) (frameListDisplay.getSelectedValuesList().toArray());
+        // for the time being we're using the old method because the new method is ONLY supported in >= 1.7
+        Object[] vals = frameListDisplay.getSelectedValues();
+//        Object[] vals = (Object[]) (frameListDisplay.getSelectedValuesList().toArray());
         for (int x = 0; x < vals.length; x++)
             {
             ((JFrame) (vals[x])).toFront();
@@ -2247,7 +2249,9 @@ public class Console extends JFrame implements Controller
     /** Called when the "hide" button is pressed in the Displays window */
     synchronized void hideSelectedFrames()
         {
-        Object[] vals = (Object[]) (frameListDisplay.getSelectedValuesList().toArray());
+        // for the time being we're using the old method because the new method is ONLY supported in >= 1.7
+        Object[] vals = frameListDisplay.getSelectedValues();
+//        Object[] vals = (Object[]) (frameListDisplay.getSelectedValuesList().toArray());
         for (int x = 0; x < vals.length; x++)
             {
             ((JFrame) (vals[x])).setVisible(false);

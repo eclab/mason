@@ -2640,3 +2640,7 @@ Version 18
 		is chosen.
 	Fix in the manual examples regarding jobs.  Thanks to Stewart Aitken 
 		<sa120@york.ac.uk>
+	Additional functionality added to AsynchronousSteppable to distinguish between
+		resuming from a pause and resuming due to a checkpoint restart.
+	Revision to deprecated functions since the new ones are only available in
+		Java 1.7.  :-(  Stupid oracle, neither backward nor forward compatible.

@@ -408,6 +408,8 @@ public class TableLoader
             cur += b.length;
             }
             
+        // This creates a deprecation warning in 1.7, but it's important so we're keeping it...
+
         // Next convert the byte array to a buffered image
         BufferedImage image = ((ToolkitImage)(new ImageIcon(data).getImage())).getBufferedImage();
         

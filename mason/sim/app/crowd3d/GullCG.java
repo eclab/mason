@@ -4,9 +4,11 @@
 package sim.app.crowd3d;
 import javax.media.j3d.*;
 
-public class GullCG extends CompressedGeometry 
+/** New versions of Java3D have deprecated CompressedGeometry, but we're keeping it here. */
+
+ public class GullCG extends CompressedGeometry 
     {
-    private static final long serialVersionUID = 1;
+     private static final long serialVersionUID = 1;
 
     public GullCG() 
         {
@@ -524,6 +526,8 @@ public class GullCG extends CompressedGeometry
         64,   32,    0,  -52,    0,    0,    0, -120
         } ;
            
+
+
     private static final CompressedGeometryHeader cgHeader ;
       
     static 
