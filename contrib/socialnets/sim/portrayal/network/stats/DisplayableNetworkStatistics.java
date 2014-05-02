@@ -61,7 +61,7 @@ public class DisplayableNetworkStatistics
         return labels;
         }
 
-    // must be callled BEFORE degreeDistributionLabels
+    // must be called BEFORE degreeDistributionLabels
     int maxDegree;
     public double[] degreeDistribution(boolean out)
         {
@@ -79,6 +79,7 @@ public class DisplayableNetworkStatistics
             }               
         return MiniHistogram.makeBuckets(data, maxDegree, 0, maxDegree, false);
         }
+        
     public String[] degreeDistributionLabels()
         {
         String[] labels = new String[maxDegree+1];
