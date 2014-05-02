@@ -96,8 +96,7 @@ public class CentralizationStatistics
 // TODO I should use a Centrality measure: 1/max geodesic.
     public static Bag getGraphTheoreticCenter(final Network network)
         {
-        double[][] distances = NetworkStatistics.getShortestPathsMatrix(network, 
-            UnitEdgeMetric.defaultInstance);
+        double[][] distances = NetworkStatistics.getShortestPathsMatrix(network, UnitEdgeMetric.defaultInstance);
         int n = network.allNodes.numObjs;
         int[] maxGeodesics = new int[n];
         int count=0;
