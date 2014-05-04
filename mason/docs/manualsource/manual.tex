@@ -12183,10 +12183,11 @@ Schedules the series repeating, returning a Stoppable to stop it (you'll rarely 
 
 \paragraph{An Example}  Let's say our model has an instance variable (a double) in your SimState which is updated every timestep.  This instance variable is called, say, \variable{myData}.  We would like to track that in a Time Series set up as a Display in your GUIState.
 
-We begin by creating an instance variable in our GUIState which holds the time series attributes:
+We begin by creating two instance variables in our GUIState which hold the time series attributes and the underlying chart:
 
 \begin{verbatim}
 public sim.util.media.chart.TimeSeriesAttributes myAttributes;
+public ChartUtilities myChart;
 \end{verbatim}
 
 Next, in our GUIState's \method{init()} method, we create the chart and add the attributes to it:
@@ -12195,18 +12196,18 @@ Next, in our GUIState's \method{init()} method, we create the chart and add the 
 public void init(Controller c)
     {
     super.init(c);
-
-    ChartUtilities myChart = ChartUtilities.buildTimeSeriesChartGenerator(this, 
-                               "My Thing", "As Time Goes By");
+    myChart = ChartUtilities.buildTimeSeriesChartGenerator(this, "My Thing", "As Time Goes By");
     myAttributes = ChartUtilities.addSeries(myChart, "The Time Series of Interest");
     ...
 \end{verbatim}
 
-Now in our GUIState's \method{start()} and \method{load()} methods, we schedule the chart.  Since typically these methods both call the convenience method \method{setupPortrayals()}, we'll add it there.  Note that in this example we provide a value-providing object in the form of an anonymous class which returns the latest information:
+Now in our GUIState's \method{start()} and \method{load()} methods, we schedule the chart.  The code we'll add to each will be identical except for a single call in \method{start()} to reset all the data in the chart.  Note that in this example we provide a value-providing object in the form of an anonymous class which returns the latest information:
 
 \begin{verbatim}
-public void setupPortrayals()
+public void start()
     {
+    super.start();
+    myChart.clearAllSeries();        /// NOTE THIS ISN'T IN LOAD(...)
     ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
         {
         public double doubleValue()
@@ -12217,7 +12218,22 @@ public void setupPortrayals()
     ...
 \end{verbatim}
 
-And we're done!
+\begin{verbatim}
+public void load(final SimState state)        /// NOTE WE MADE THIS FINAL
+    {
+    super.start();
+    ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
+        {
+        public double doubleValue()
+            {
+            return ((MyModel)state).myData;  // myData is updated every timestamp
+            }
+        });
+    ...
+\end{verbatim}
+
+
+And we're done!  Note that if for some crazy reason you do {\it not} want the data reset between simulations\,---\,perhaps you're charting the statistics gathered from of several simulations together\,---\, all you have to do is not include the call to \method{clearAllSeries()}.
 
 \paragraph{A Gotcha: Serializing a Time Series}
 
@@ -12235,9 +12251,8 @@ Now we can assign it:
 public void start()
     {
     super.start();
-    
+    myChart.clearAllSeries();
     ((MyModel)state).series = myAttributes.getSeries();
-
     ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
         {
         public double doubleValue()
@@ -12254,9 +12269,7 @@ Now when our model is checkpointed, the series object is also checkpointed (it's
 public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
     {
     super.load();
-    
     myAttributes.setSeries(((MyModel)state).series);
-
     ChartUtilities.scheduleSeries(this, myAttributes, new sim.util.Valuable()
         {
         public double doubleValue()
@@ -12278,16 +12291,16 @@ This will cause the series to be scheduled to be redrawn but will never add data
 Continuing our previous example, let's say we have decided to manually add data to our XYSeries every five time steps.  We might do something like this in the \method{start()} method of our \method{sim.engine.SimState} subclass:
 
 \begin{verbatim}
-    public void start()
+public void start()
+    {
+    super.start();
+    myChart.clearAllSeries();
+    schedule.scheduleRepeating(schedule.EPOCH, new Steppable()
         {
-        super.start();
-        
-        schedule.scheduleRepeating(schedule.EPOCH, new Steppable()
-        	{
-		// Add an <X,Y> data point in the form of <time, data>
-		public static void step(SimState state) { series.add(schedule.getTime(), myData); }
-		}, 5);  // schedule every 5 timesteps
-        ...
+        // Add an <X,Y> data point in the form of <time, data>
+        public static void step(SimState state) { series.add(schedule.getTime(), myData); }
+        }, 5);  // schedule every 5 timesteps
+    ...
 \end{verbatim}
 
 Now we need to instruct MASON not to load data into our chart, because we're doing it manually.   We can do that by modifying our \class{sim.display.GUIState} \method{start()} method like this:
@@ -12296,9 +12309,8 @@ Now we need to instruct MASON not to load data into our chart, because we're doi
 public void start()
     {
     super.start();
-    
+    myChart.clearAllSeries();
     ((MyModel)state).series = myAttributes.getSeries();
-
     ChartUtilities.scheduleSeries(this, myAttributes, null);  // no value-provider
     ...
 \end{verbatim}
@@ -12309,9 +12321,7 @@ And likewise the \method{load(...)} method:
 public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
     {
     super.load();
-    
     myAttributes.setSeries(((MyModel)state).series);
-
     ChartUtilities.scheduleSeries(this, myAttributes, null);  // no value-provider
     ...
 \end{verbatim}
