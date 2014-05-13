@@ -370,18 +370,21 @@ public class SimState implements java.io.Serializable
             {
             System.err.println(
                 "Format:           java " + generator.simulationClass().getName() + " \\\n" +
-                "                       [-help] [-repeat R] [-seed S] [-until U] [-quiet] \\\n" +
-                "                       [-for F] [-time T] [-docheckpoint D] [-checkpoint C] \n\n" +
+                "                       [-help] [-repeat R] [-parallel P] [-seed S] \\\n" +
+                "                       [-until U] [-for F] [-time T] [-docheckpoint D] \\\n" +
+                "                       [-checkpoint C] [-quiet] \n\n" +
                 "-help             Shows this message and exits.\n\n" +
                 "-repeat R         Long value > 0: Runs the job R times.  Unless overridden by a\n" +
                 "                  checkpoint recovery (see -checkpoint), the random seed for\n" +
                 "                  each job is the provided -seed plus the job# (starting at 0).\n" +
                 "                  Default: runs once only: job number is 0.\n\n" +
-                "-parallel P       Long value > 0: Runs P separate batches of jobs, in parallel each\n" +
-                "                  one containing R jobs (as specified by -repeat).  Each batch has\n" +
-                "                  its own independent set of checkpoint files.  Job numbers will be\n" +
-                "                  0 ... R-1 for the first batch, then R ... R*2-1 for the second\n" +
-                "                  batch, and so on.\n\n" +
+                "-parallel P       Long value > 0: Runs P separate batches of jobs in parallel,\n" +
+                "                  each one containing R jobs (as specified by -repeat).  Each\n" +
+                "                  batch has its own independent set of checkpoint files.  Job\n" +
+                "                  numbers are 0 ... R-1 for the first batch, then R ... R*2-1\n" + 
+                "                  for the second batch, and so on.  -parallel may not be used\n" + 
+                "                  in combination with -checkpoint.\n" +
+                "                  Default: one batch only (no parallelism).\n\n" +
                 "-seed S           Long value not 0: the random number generator seed, unless \n" +
                 "                  overridden by a checkpoint recovery (see -checkpoint).\n" +
                 "                  Default: the system time in milliseconds.\n\n" +

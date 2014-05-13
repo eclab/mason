@@ -3672,7 +3672,7 @@ Ugh, that's getting ugly.  Though you can always fire up a MASON model as descri
 The advantage of \method{doLoop} is that it has provides lots of command-line gizmos for free:
 
 \begin{itemize}
-\item Job handling.  You can run the simulation some \(R\) times.
+\item Job handling.  You can run the simulation some \(R\) times, and can put them in parallel batches.
 \item Checkpointing.  You can easily start up the simulation from a checkpoint file and/or save checkpoints every \(D\) simulation steps. 
 \item Specifying the random number seed. 
 \item Running the simulation for some number of simulation steps, or until a given simulation timestep has passed. 
@@ -3725,7 +3725,7 @@ Format:           java MyModel \textbackslash
 -docheckpoint D   Long value > 0: checkpoint every D simulation steps.
                   Default: never.
                   Checkpoint files named
-                  <steps>.<job#>.HeatBugs.checkpoint
+                  <steps>.<job#>.MyModel.checkpoint
 
 -checkpoint C     String: loads the simulation from file C, recovering the job
                   number and the seed.  If the checkpointed simulation was begun
