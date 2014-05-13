@@ -2644,3 +2644,8 @@ Version 18
 		resuming from a pause and resuming due to a checkpoint restart.
 	Revision to deprecated functions since the new ones are only available in
 		Java 1.7.  :-(  Stupid oracle, neither backward nor forward compatible.
+	SpatialNetwork[2|3]D.getDimensions() deprecated
+	SpatialNetwork2D.getObjectLocation() de-deprecated
+	Added parallelism to doLoop.  This also required modifying a bit of the format
+		of the output text.
+	manualsource renamed to manual

@@ -82,6 +82,7 @@ public class SpatialNetwork3D
         return loc;
         }
 
+	/** @deprecated */
     public Double3D getDimensions()
         {
         if (field instanceof SparseField3D)

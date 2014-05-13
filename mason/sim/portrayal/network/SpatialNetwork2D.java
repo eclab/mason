@@ -53,7 +53,10 @@ public class SpatialNetwork2D
         }
 
     /**
-       @deprecated
+       NOTE this  used to be deprecated, but it has now been de-deprecated so as to be
+       consistent with SpatialNetwork3D.  This method returns the location of the object
+       as a Double2D regardless of which field it is located in and regardless of whether
+       the field is a Double2D or SparseGrid2D.  We may re-deprecate it eventually.
     */
     public Double2D getObjectLocation(Object node)
         {
@@ -63,5 +66,9 @@ public class SpatialNetwork2D
         return loc;
         }
 
+	/** 
+		@deprecated
+	*/
     public Double2D getDimensions() { return field.getDimensions(); }
     }
+
