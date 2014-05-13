@@ -2501,7 +2501,7 @@ import java.text.*;
 import sim.field.network.*;
 \end{alltt}}
 
-Next we need to add a \class{sim.display3d.Display3D} and its JFrame, plus a \class{sim.portrayal3d.continuous.ContinuousPortrayal3D} and a \class{sim.portrayal3d.network.NetworkPortrayal3D}.  These classes are the 3D equivalents of Display2D, ContinuousPortrayal2D, and NetworkPortayal2D, and you'll find they work similarly.  Add the following to \file{StudentsWithUI.java}:
+Next we need to add a \class{sim.display3d.Display3D} and its JFrame, plus a \class{sim.portrayal3d.continuous.ContinuousPortrayal3D} and a \class{sim.portrayal3d.network.NetworkPortrayal3D}.  These classes are the 3D equivalents of Display2D, ContinuousPortrayal2D, and NetworkPortrayal2D, and you'll find they work similarly.  Add the following to \file{StudentsWithUI.java}:
 
 {\footnotesize \begin{alltt}{\color{gray}
 public class StudentsWithUI extends GUIState
@@ -7091,7 +7091,7 @@ Again the default implementations of these methods are straightforward, but cust
 \subsection{Field Portrayals}
 \label{sim.portrayal.FieldPortrayal}
 
-All 2D and 3D Field Portrayals are subclasses of \Class{sim.portrayal.FieldPortrayal}.  The primary job of a Field Portrayal is to draw and otherwise manipulate a specific field.  Thus a Field Portayal acts as a kind of go-between for a 2D or 3D Display to work with an underlying field in your model.
+All 2D and 3D Field Portrayals are subclasses of \Class{sim.portrayal.FieldPortrayal}.  The primary job of a Field Portrayal is to draw and otherwise manipulate a specific field.  Thus a Field Portrayal acts as a kind of go-between for a 2D or 3D Display to work with an underlying field in your model.
 
 To use a Field Portrayal, you need to do at least two things:
 
@@ -7403,7 +7403,7 @@ In 2D, the Field Portrayal for Networks is, not surprisingly, \Class{sim.portray
  \item \class{sim.portrayal.continuous.ContinuousPortrayal2D}
  \end{itemize}
  
-\paragraph{Hint:} When attaching the NetworkPortrayal2D and the node's Field Portrayal above, attach the NetworkPortayal2D first, so it draws first and the edges appear under the nodes.  It generally looks better that way.
+\paragraph{Hint:} When attaching the NetworkPortrayal2D and the node's Field Portrayal above, attach the NetworkPortrayal2D first, so it draws first and the edges appear under the nodes.  It generally looks better that way.
  
 NetworkPortrayal2D doesn't just draw the edges in isolation: it still needs to know {\it where} the nodes are located on the screen.  The way it does this is by querying each node's Field as to where it drew the node, then using that information to draw the edge. 
  
@@ -7415,13 +7415,14 @@ A SpatialNetwork2D is constructed like this:
 \mthd{public SpatialNetwork2D(SparseField2D field, Network network) } Constructs the field with the given sparse field (either SparseGrid2D or Continuous2D) and a Network.
 \end{methods}
 
-In fact, if you're careful, you can embed the {\bf from} nodes in one sparse grid or continuous field, and embed the {\bf to} nodes in {\it another} field.  This might be useful, for example, for modeling a set of observers who observe a set of targets.
+In fact, if you're careful, you can embed the {\bf from} nodes in one sparse grid or continuous field, and embed the {\bf to} nodes in {\it another} field, called the {\bf auxiliary field}.  This might be useful, for example, for modeling a set of observers who observe a set of targets.
  
-To set the {\bf auxillary field} (the field of ``to'' nodes, if you want to differentiate them from the ``from'' nodes), and to get a given Object's location and the dimensions of the field, you have the methods:
+To set the auxiliary field, or to get the location of an object in the SpatialNetowrk2D, use the methods:
  
 \begin{methods}{\class{sim.portrayal.network.SpatialNetwork2D}}
-\mthd{public setAuxillaryField(SparseField2D field) } Sets the auxiliary field (the field for the ``to'' nodes) if it is different than the primary SparseField2D.
-\mthd{public Double2D getDimensions() } Returns the width and height of the primary field.
+\mthd{public setAuxiliaryField(SparseField2D field) } Sets the auxiliary field (the field for the ``to'' nodes) if it is different than the primary SparseField2D.
+%\mthd{public Double2D getDimensions() } Returns the width and height of the primary field.
+\mthd{public Double2D getObjectLocation(Object node)} Returns, as a Double2D, the location of the object in the primary field, or if it is not located there, the in the secondary field.
 \end{methods}
 
 Drawing edges isn't the same as drawing objects at single locations: edges require a start point and an endpoint.  Thus NetworkPortrayal2D sends to its SimplePortrayals a special subclass of DrawInfo2D, called \Class{sim.portrayal.network.EdgeDrawInfo2D}, which adds the second point (the endpoint):
@@ -7503,7 +7504,7 @@ Portrayal to use when none else can be determined for a given Object.  Here we'l
           \}	
 \end{alltt}}
 
-Next we'll handle the \method{getScale(...)} method.  This method takes a DrawInfo2D for the FieldPortayal as a whole and returns a \class{sim.util.Double2D} containing the width and height, in pixels of 1 unit of width and height in the field coordinate space.  The DrawInfo2D provided has as its Draw rectangle the expected bounds for the Field as a whole.  So usually the scale is computed by simply dividing the DrawInfo2D Draw width and height by the underlying Field's width and height.
+Next we'll handle the \method{getScale(...)} method.  This method takes a DrawInfo2D for the FieldPortrayal as a whole and returns a \class{sim.util.Double2D} containing the width and height, in pixels of 1 unit of width and height in the field coordinate space.  The DrawInfo2D provided has as its Draw rectangle the expected bounds for the Field as a whole.  So usually the scale is computed by simply dividing the DrawInfo2D Draw width and height by the underlying Field's width and height.
 
 However we can't do that in this case: our Field (a 1-dimensional range of numbers) doesn't have a ``width'' or ``height''.  What we're planning to do is draw, on a ring, all the objects in the Field: objects stored at 0.0 would be at the 12-o'clock position, objects at 0.5 would be at the 6-o'clock position, and so on.  So let's imagine a width and height for our ring: 20.0 ``units'', so to speak, in Field coordinates.   20 is a nice number for another reason: objects will be drawn to roughly fill a \(1 \times 1\) space of field coordinates, so our field will have nice big objects being drawn (1/20 of the ``height'' of the field).
 
@@ -7612,7 +7613,7 @@ You'll notice in the code below the use of a ``slop'' variable.  What's going on
 
 The above is sufficient for drawing our objects in a ring: but if we want to select or inspect them, we'll need to perform {\bf hit testing}.    It turns out that hit-testing is nearly identical in code to drawing.  But before we get to that, we need to start by discussing the concept of a {\bf Stable Location}.  
 
-MASON's inspectors, discussed in Section \ref{sim.portrayal.Inspector}, allow the user to inspect both the properties of an object and its location in its field.  In some kinds of fields, the object may change but the location stays the same (the inspector {\bf fixes on the location}.  In other fields\,---\,the more common situation\,---\,the object stays the same but the location may change.  We're in this second category.
+MASON's inspectors, discussed in Section \ref{sim.portrayal.Inspector}, allow the user to inspect both the properties of an object and its location in its field.  In some kinds of fields, the object may change but the location stays the same (the inspector {\bf fixes on the location}).  In other fields\,---\,the more common situation\,---\,the object stays the same but the location may change.  We're in this second category.
 
 The problem is that the location is an immutable object such as \class{sim.util.Double2D}, and so when an object moves about in the field, its location is constantly changed to new instances of Double2D.  This causes MASON's inspectors to have to rebuild themselves each time, which is expensive.  But we can get around it by creating a special ``location'' object, called a {\bf stable location}, which queries the underlying field for the current location of the object, then changes its properties to reflect that location.  A stable location will never change: but its property values will.  The stable location will be provided to LocationWrappers in lieu of the actual location.
 
@@ -8058,7 +8059,7 @@ Two other variables control how the edge is drawn:
     public int shape;
 }
 
-The {\it shape} variable determines whether the SimpleEdgePortrayal2D draws itself as a line or as a triangle.  It can be set to one of the two constants:
+The {\it shape} variable determines whether the SimpleEdgePortrayal2D draws itself as a line or as a triangle.  It can be set to one of the following constants:
 
 \java{%
     public static final int SHAPE\_THIN\_LINE;\\
@@ -8238,8 +8239,8 @@ Here are LabelledPortrayal's (few) methods of interest:
 \begin{methods}{\class{sim.portrayal.simple.LabelledPortrayal2D}}
 \mthd{public SimplePortrayal2D getChild(Object obj)}  Returns the subsidiary portrayal.  If the object can portray itself, it is returned as the portrayal.
 \mthd{public String getLabel(Object object, DrawInfo2D info)}  Returns the label string to draw.
-\mthd{public boolean isLabelShowing()}  Returns whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
-\mthd{public void setLabelShowing(boolean val)}  Sets whether LabelledPortayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
+\mthd{public boolean isLabelShowing()}  Returns whether LabelledPortrayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
+\mthd{public void setLabelShowing(boolean val)}  Sets whether LabelledPortrayal2D will show its label.  If false, then LabelledPortrayal2D will not show its label no matter what its settings are regarding object selection.  If true, then LabelledPortrayal2D may still not show its label depending on object selection settings.
 \mthd{public boolean getOnlyLabelWhenSelected()} Returns whether the label will be shown only if the object is selected.
 \mthd{public void setOnlyLabelWhenSelected(boolean val)} Sets whether the label will be shown only if the object is selected.
 \mthd{public int getLabelScaling()}  Returns the label scaling setting, either \variable{NEVER\_SCALE}, \variable{SCALE\_WHEN\_SMALLER}, or \variable{ALWAYS\_SCALE}.
@@ -8317,7 +8318,7 @@ You can also specify the {\it scale} of the orientation marker: how big it is re
     public static final int DEFAULT\_OFFSET = 0;
 }
 
-\sidebar{Haven't I seen the Compass shape before?}{Yep, it's the shape used for the Flockers demo example.  That example uses a trick: the shape is all you see.  This is done by wrapping a \class{sim.portrayal.simple.SimplePortrayal}, which if you recall doesn't draw anything.  However it also doesn't respond to hit requests, so how is that done?  It turns out that OrientedPortrayal2D responds to hit requests if the hit lands on the orientation marker shape.  Since the shape is all there is, we're good.}Just like CircledPortrayal2D you can optionally have OrientedPortrayal2D only show its orientation shape if the object is selected, or force it off entirely.
+\sidebar{Haven't I seen the Kite shape before?}{Yep, it's the shape used for the Flockers demo example.  That example uses a trick: the shape is all you see.  This is done by wrapping a \class{sim.portrayal.simple.SimplePortrayal}, which if you recall doesn't draw anything.  However it also doesn't respond to hit requests, so how is that done?  It turns out that OrientedPortrayal2D responds to hit requests if the hit lands on the orientation marker shape.  Since the shape is all there is, we're good.}Just like CircledPortrayal2D you can optionally have OrientedPortrayal2D only show its orientation shape if the object is selected, or force it off entirely.
 
 One thing to be aware of is that Oriented2D responds to hit-testing on its orientation marker shape in addition to sending hit-testing results to its subsidiary SimplePortrayal.  This can be turned off with the method \method{setOrientationHittable()}.
 
@@ -8445,7 +8446,7 @@ If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-a
 
 It's up to you to implement these methods in your object to reorient itself or provide orientation information (or not).  You also have the option of just implementing the \class{sim.portrayal.Oriented2D} interface, which simply returns the object's orientation.    In this case, the ring will rotate helpfully to reflect your object's current orientation, but the user won't be able to reorient the object. This could be used instead of \class{sim.portrayal.simple.OrientedPortrayal2D} to indicate the current orientation.
 
-Speaking of OrientedPortayal2D: AdjustablePortrayal2D doesn't change how the underlying SimplePortrayal2D draws its object.  So if you adjust the object's rotation, you may want something to reflect this, either with OrientedPortayal2D or a custom SimplePortrayal2D.
+Speaking of OrientedPortrayal2D: AdjustablePortrayal2D doesn't change how the underlying SimplePortrayal2D draws its object.  So if you adjust the object's rotation, you may want something to reflect this, either with OrientedPortrayal2D or a custom SimplePortrayal2D.
 
 \sidebar{Wait, why does Scalable2D form a property but not Orientable2D?}{History.  Look, I didn't say Orientatable2D's reason for not being a property was {\it good} reason...}
 Last but not least, the user can {\it scale} (notionally resize) an object by dragging the knob.  To do this, your object must implement the \Class{sim.portrayal.Scalable2D} interface.  This interface defines two methods which form a Java Bean Property:
@@ -8473,7 +8474,7 @@ It's often nice to display a {\bf trail} dragging behind an object to show where
 \label{trailandring}
 \end{wrapfigure}
 
-You should probably attach the ``trail'' FieldPortrayal to the Display2D before you attach the ``object'' FieldPortrayal: this way, the trail is drawn behind the object.  The TrailedPortrayal2D won't be drawn in both FieldPortrayals: it'll recognize the ``trail'' FieldPortrayal and only draw itself there.  In the other (``object'') FieldPortrayal, it'll ask its subsidiary to draw.
+You should probably attach the ``trail'' FieldPortrayal to the Display2D before you attach the ``object'' FieldPortrayal: this way, the trail is drawn behind the object and its neighbors.  The TrailedPortrayal2D won't be drawn in both FieldPortrayals: it'll recognize the ``trail'' FieldPortrayal and only draw itself there.  In the other (``object'') FieldPortrayal, it'll ask its subsidiary to draw.
 
 You can further wrap the TrailedPortrayal (in a MovablePortrayal2D, for example) to move the object, but only add the MovablePortrayal to the ``object'' FieldPortrayal.  Add the TrailedPortrayal2D to the ``trail'' FieldPortrayal.
 
@@ -8512,7 +8513,7 @@ A trail is made up of {\bf segments}, each segment representing a movement of th
         public double value;		// this is in sim.portrayal.simple.TrailedPortrayal2D.TrailDrawInfo2D
 }
 
-TrailDrawInfo2D is a subclass of \class{sim.portrayal.network.EdgeDrawInfo2D}, meaning that you have access not to just one point but two points: these represent the start and end of your segment.  So if you want to draw a line, you can get the points to draw just as you access the two points from EdgeDrawInfo2D.  Alternatively you could just draw a single object (creating a sort of ``dotted'' trail), in which case you'd just draw at the draw origin like any SimplePortayal2D.  Try using \class{sim.portrayal.simple.OvalPortrayal2D} as your trail portrayal some time.
+TrailDrawInfo2D is a subclass of \class{sim.portrayal.network.EdgeDrawInfo2D}, meaning that you have access not to just one point but two points: these represent the start and end of your segment.  So if you want to draw a line, you can get the points to draw just as you access the two points from EdgeDrawInfo2D.  Alternatively you could just draw a single object (creating a sort of ``dotted'' trail), in which case you'd just draw at the draw origin like any SimplePortrayal2D.  Try using \class{sim.portrayal.simple.OvalPortrayal2D} as your trail portrayal some time.
 
 Armed with this knowledge, you should now be able to understand the TrailedPortrayal2D constructors:
 
@@ -10139,11 +10140,11 @@ To set the second spatial field (for the rare use mentioned above), you can then
 \mthd{public void setAuxiliaryField(SparseField2D)} Sets the auxiliary field for the SpatialNetwork3D.  If this is set to \variable{null}, the field is removed.
 \end{methods}
 
-A SpatialNetwork3D has two other methods, which you'll rarely need to override, used by the NetworkPortrayal3D:
+A SpatialNetwork3D has another method, which you'll rarely need to override, used by the NetworkPortrayal3D:
 
 \begin{methods}{\class{sim.portrayal3d.network.SpatialNetwork3D}}
 \mthd{public Double3D getObjectLocation(Object node)} Returns, as a point in 3D space, the location of the given object.  First checks the primary field, then the auxiliary field.
-\mthd{public Double3D getDimensions()} Returns the dimensions of the primary spatial field in 3D space.
+%\mthd{public Double3D getDimensions()} Returns the dimensions of the primary spatial field in 3D space.
 \end{methods}
 
 NetworkPortrayal3D can use a variety of Edge Portrayals to draw its edges.  These are discussed later in Section \ref{sim.portrayal3d.network.SimpleEdgePortrayal3D}.
@@ -10477,7 +10478,7 @@ ValuePortrayal3D is a Shape3DPortrayal3D in the form of a simple {\bf cube} or a
 }
 
 \begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D} Constructor}
-\mthd{public ValuePortrayal3D(int shape)} Builds a ValuePortrayal3D using the given shape (either \variable{ValuePortayal3D.SHAPE\_CUBE} or \variable{ValuePortrayal3D.SHAPE\_SQUARE}).
+\mthd{public ValuePortrayal3D(int shape)} Builds a ValuePortrayal3D using the given shape (either \variable{ValuePortrayal3D.SHAPE\_CUBE} or \variable{ValuePortrayal3D.SHAPE\_SQUARE}).
 \mthd{public ValuePortrayal3D()} Builds a ValuePortrayal3D using a cube shape.
 \end{methods}
 
@@ -10488,7 +10489,7 @@ ValueGridPortrayal3D changes the Appearance of the ValuePortrayal3D cube to refl
 \mthd{public PolygonAttributes polygonAttributes()} Returns the ValuePortrayal3D's PolygonAttributes.
 \end{methods}
 
-Like ValuePortrayal2D and various QuadPortrayals, ValuePortrayal3D has a notion of a {\bf filter}: a simple class which allows setting or changing the value stored at a given \(\langle x, y, z\rangle\) location in a certain field.  Here, filters are subclasses of the abstract superclass \Class{sim.portayal3d.simple.ValuePortrayal3D.Filter}.  There are only two of them: \Class{sim.portayal3d.simple.ValuePortrayal3D.DoubleFilter} and \Class{sim.portayal3d.simple.ValuePortrayal3D.IntFilter}  Filters are used by Inspectors to make values (rather than objects) inspectable and potentially modifiable.  All filters have the same constructor:
+Like ValuePortrayal2D and various QuadPortrayals, ValuePortrayal3D has a notion of a {\bf filter}: a simple class which allows setting or changing the value stored at a given \(\langle x, y, z\rangle\) location in a certain field.  Here, filters are subclasses of the abstract superclass \Class{sim.Portrayal3d.simple.ValuePortrayal3D.Filter}.  There are only two of them: \Class{sim.portrayal3d.simple.ValuePortrayal3D.DoubleFilter} and \Class{sim.portrayal3d.simple.ValuePortrayal3D.IntFilter}  Filters are used by Inspectors to make values (rather than objects) inspectable and potentially modifiable.  All filters have the same constructor:
 
 \begin{methods}{\class{sim.portrayal3d.simple.ValuePortrayal3D.Filter} Constructor}
 \mthd{public Filter(LocationWrapper)} Builds a Filter based on the location and field stored in the given LocationWrapper.
@@ -11176,7 +11177,7 @@ String wrappedText = sim.util.gui.WordWrap.wrap(myText, myNumberOfPixels,
 button.setText("<html>" + sim.util.gui.WordWrap.toHTML(wrappedText) + "</html>");
 \end{verbatim}}
 
-Note that wrap are only presently done at whitespace, not hyphens.  Also note that if a word is too long, it's simply broken arbitrarily.  You can see both of these misfeatures illustrated at in the figure at right.
+Note that wraps are only presently done at whitespace, not hyphens.  Also note that if a word is too long, it's simply broken arbitrarily.  You can see both of these misfeatures illustrated at in the figure at right.
 
 There are no constructors to WordWrap: it's all just static methods.
 
@@ -11220,9 +11221,13 @@ MASON can make movies, PNG bitmaps, and vector PDF files of its simulation visua
 
 MASON creates movies by setting up a \Class{sim.util.media.MovieEncoder} and then submitting bitmaps to it one by one.  These bitmaps are then encoded into a video stream.  MovieEncoder is little more than a thin wrapper over Sun's JMF media utilities.
 
+\sidebar{iMovie doesn't like my video.}{iMovie breaks when trying to load JMF files with formats using 32 bits.  Choose a 16-bit or 24-bit format.}
+`
 The biggest downside to encoding with JMF is the size of the movies produced.  JMF has few generic options for producing movies: most of its encoders are outdated and operating-system-specific.  As a result MASON has opted to encode movies with the Motion JPEG codec: they are essentially streams of JPEG images.  It wouldn't surprise you to hear that this makes for some really gigantic files.  However, it's a simple task to re-encode these movies into something more useful.  For example, Quicktime on OS X 10.6 and later can load these movies and save them out under a smarter encoding (H.264 for example), resulting in radically smaller files.
 
-\sidebar{iMovie doesn't like my video.}{iMovie breaks when trying to load JMF files with formats using 32 bits.  Choose a 16-bit or 24-bit format.}
+\sidebar{Quicktime 10 doesn't like my video.}{Recent versions of Quicktime have arbitrarily removed support for ``older formats''.  You'll have to use Quicktime 7 Pro.}
+
+
 JMF also produces Motion JPEG files with broken headers, and this will irritate certain movie-playing programs which are trying to get a handle on them.  This is another good reason to re-encode the videos.
 
 To create a movie, MovieEncoder requires four things up front:
