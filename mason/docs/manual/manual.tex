@@ -2693,7 +2693,7 @@ The \package{ec.util} package contains a single class called \Class{ec.util.Mers
 
 \paragraph{Where did \package{ec.util} and \class{ec.util.MersenneTwisterFast} come from?}  This class and package came from ECJ, an evolutionary computation toolkit I developed in 1998.  There are actually two versions of Mersenne Twister: the class \class{ec.util.MersenneTwister} and the class \class{ec.util.MersenneTwisterFast}.  The former is a drop-in subclass replacement for \class{java.util.Random}, and is threadsafe.  The latter is not threadsafe, is {\it not} a subclass of \class{java.util.Random}, and has many methods (perhaps nowadays unnecessarily) heavily inlined, and as a result is significantly faster.  MersenneTwisterFast is the only class provided with and used by MASON.
 
-\paragraph{Any gotchas?}  Yes.  The standard MT199937 seeding algorithm uses one of Donald Knuth's plain-jane linear congruential generators to fill the Mersenne Twister's arrays.  This means that for a short while the algorithm will initially be outputting a (very slightly) lower quality random number stream until it warms up.  After about 624 calls to the generator, it'll be warmed up sufficiently.   As a result, in \method{SimState.start()}, {\bf MASON primes the MT generator for you by calling \method{nextInt()} 1248 times.}
+\paragraph{Any gotchas?}  Yes.  The standard MT199937 seeding algorithm uses one of Donald Knuth's plain-jane linear congruential generators to fill the Mersenne Twister's arrays.  This means that for a short while the algorithm will initially be outputting a (very slightly) lower quality random number stream until it warms up.  After about 624 calls to the generator, it'll be warmed up sufficiently.   As a result, in \method{SimState.start()}, {\bf MASON primes the MT generator for you by calling \method{nextInt()} 1249 times.}
 
 MersenneTwisterFast has identical methods to \class{java.util.Random}, plus one or two more for good measure. They should look familiar to you:
 
@@ -3570,7 +3570,8 @@ This example relies on several vital methods, including \method{start()}, \metho
 Next various utility methods:
 
 \begin{methods}{\class{sim.engine.SimState}}
-\mthd{public void setSeed(long seed)}  Sets the job's current random number seed, replaces the random number generator with a new one using the seed.  This is typically only called from the GUI.
+\mthd{public void setSeed(long seed)}  Sets the job's current random number seed, replaces the random number generator with a new one using the seed.  This is typically only called from the GUI. 
+\mthd{public static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)}  Primes the random number generator by calling its \method{nextInt()} method 1249 times.  See Section \label{ec.util.MersenneTwisterFast}) for why this is helpful.  Ordinarily you'd never call this method, but \method{SimState.start()} calls it once.  If you call \method{setSeed(...)} in the middle of your simulation, it's a good idea to call \method{primeGenerator(...)}, though not a disaster if you neglect to.
 \mthd{public long seed()}  Returns the job's current random number seed.  This is typically only called from the GUI.
 \mthd{public void setJob(long job)}  Sets the job number.
 \mthd{public long job()}  Returns the job number.
@@ -3777,7 +3778,6 @@ The most common method to override, by far, is \method{start()} first.  Almost c
 \item Reset the global variables (parameters, fields, etc.) of your simulation to be used again
 \item Reload the schedule it with initial agents (see Section \ref{sim.engine.Schedule} below).  The schedule will have already been cleared for you in \method{super.start()}
 \end{itemize} 
-
 
 \section{Agents and the Schedule}
 \label{sim.engine.Schedule}

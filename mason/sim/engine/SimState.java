@@ -102,8 +102,8 @@ public class SimState implements java.io.Serializable
         linear congruential generator; thereafter it uses the MersenneTwister algorithm to
         build new seeds.  Those first 624 numbers are generally just fine, but to be extra
         safe, you can prime the generator by calling nextInt() on it some (N>1) * 624 times.
-        This method does exactly that, presently with N=2. */
-    static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)
+        This method does exactly that, presently with N=2 ( + 1 ). */
+    public static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)
         {
         // 624 = MersenneTwisterFast.N  which is private duh
         for(int i = 0; i < 624 * 2 + 1; i++)
