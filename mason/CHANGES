@@ -2649,3 +2649,4 @@ Version 18
 	Added parallelism to doLoop.  This also required modifying a bit of the format
 		of the output text.
 	manualsource renamed to manual
+	MASON now primes MT by calling nextInt() 1248 times during SimState.start()

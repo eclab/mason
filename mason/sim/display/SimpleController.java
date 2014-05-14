@@ -176,7 +176,7 @@ public class SimpleController implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-        simulation.state.setSeed(randomSeed);   // reseed the generator
+        simulation.state.setSeed(randomSeed);   // reseed the generator.  Do this BEFORE calling start() so it gets properly primed
         simulation.start();
         }
 

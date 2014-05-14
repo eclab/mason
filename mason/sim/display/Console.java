@@ -1593,7 +1593,7 @@ public class Console extends JFrame implements Controller
     void startSimulation()
         {
         removeAllInspectors(true);      // clear inspectors
-        simulation.state.setSeed(randomSeed);   // reseed the generator
+        simulation.state.setSeed(randomSeed);   // reseed the generator.  Do this BEFORE simulation.start() so it gets properly primed
         simulation.start();
         updateTime(simulation.state.schedule.getSteps(), simulation.state.schedule.getTime(), -1.0);
         //setTime(simulation.state.schedule.getTime());

@@ -98,12 +98,27 @@ public class SimState implements java.io.Serializable
       }
     */
     
+	/** Primes the generator.  Mersenne Twister seeds its first 624 numbers using a basic
+        linear congruential generator; thereafter it uses the MersenneTwister algorithm to
+        build new seeds.  Those first 624 numbers are generally just fine, but to be extra
+        safe, you can prime the generator by calling nextInt() on it some (N>1) * 624 times.
+        This method does exactly that, presently with N=2. */
+    static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)
+        {
+        // 624 = MersenneTwisterFast.N  which is private duh
+        for(int i = 0; i < 624 * 2 + 1; i++)
+            generator.nextInt();
+        return generator;
+        }
+
     /** Called immediately prior to starting the simulation, or in-between
         simulation runs.  This gives you a chance to set up initially,
         or reset from the last simulation run. The default version simply
         replaces the Schedule with a completely new one.  */
     public void start()
         {
+        // prime the generator so it's got better statistial properties
+        random = primeGenerator(random);
         // just in case
         cleanupAsynchronous();
         // reset schedule
