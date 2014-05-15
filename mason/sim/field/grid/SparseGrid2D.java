@@ -214,14 +214,10 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         }
 
 
-    MutableInt2D speedyMutableInt2D = new MutableInt2D();
     /** Returns the number of objects stored in the grid at the given location. */
     public int numObjectsAtLocation(final int x, final int y)
         {
-        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
-        speedyMutableInt2D.x = x;
-        speedyMutableInt2D.y = y;
-        return numObjectsAtLocation(speedyMutableInt2D);
+        return numObjectsAtLocation(new Int2D(x,y));
         }
 
     /** Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
@@ -233,10 +229,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     */
     public Bag getObjectsAtLocation(final int x, final int y)
         {
-        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
-        speedyMutableInt2D.x = x;
-        speedyMutableInt2D.y = y;
-        return getObjectsAtLocation(speedyMutableInt2D);
+        return getObjectsAtLocation(new Int2D(x,y));
         }
 
     /** Returns the object location as a Double2D, or as null if there is no such object. */
@@ -256,10 +249,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
     /** Removes all the objects stored at the given location and returns them as a Bag (which you are free to modify). */
     public Bag removeObjectsAtLocation(final int x, final int y)
         {
-        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
-        speedyMutableInt2D.x = x;
-        speedyMutableInt2D.y = y;
-        return removeObjectsAtLocation(speedyMutableInt2D);
+        return removeObjectsAtLocation(new Int2D(x,y));
         }
 
     /** Changes the location of an object, or adds if it doesn't exist yet.  Returns false

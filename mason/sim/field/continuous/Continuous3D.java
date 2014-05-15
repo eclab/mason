@@ -628,7 +628,7 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         else result = new Bag(expectedBagSize);
         Bag temp;
     
-        MutableInt3D speedyMutableInt3D = this.speedyMutableInt3D;  // a little faster (local)
+        MutableInt3D speedyMutableInt3D = new MutableInt3D();  // a little faster (local)
 
 
         // do the loop
@@ -773,8 +773,6 @@ public /*strictfp*/ class Continuous3D extends SparseField implements SparseFiel
         if (width2 < width) return width2;
         return 0;
         }
-
-    MutableInt3D speedyMutableInt3D = new MutableInt3D();
 
 
     /** Returns a bag containing all the objects at a given discretized location, or null when there are no objects at the location.

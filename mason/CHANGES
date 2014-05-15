@@ -2650,3 +2650,5 @@ Version 18
 		of the output text.
 	manualsource renamed to manual
 	MASON now primes MT by calling nextInt() 1248 times during SimState.start()
+	Deleted internal local "speedy" variable which could cause race conditions
+		when using SparseGrid[2|3]D or Continuous[2|3]D with multiple threads.

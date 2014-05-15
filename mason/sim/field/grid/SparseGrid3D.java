@@ -163,15 +163,10 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
 
 
-    MutableInt3D speedyMutableInt3D = new MutableInt3D();
     /** Returns the number of objects stored in the grid at the given location. */
     public int numObjectsAtLocation(final int x, final int y, final int z)
         {
-        MutableInt3D speedyMutableInt3D = this.speedyMutableInt3D;  // a little faster (local)
-        speedyMutableInt3D.x = x;
-        speedyMutableInt3D.y = y;
-        speedyMutableInt3D.z = z;
-        return numObjectsAtLocation(speedyMutableInt3D);
+        return numObjectsAtLocation(new Int3D(x,y,z));
         }
 
     /** Returns a bag containing all the objects at a given location -- which MIGHT be empty or MIGHT be null
@@ -184,11 +179,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
     */
     public Bag getObjectsAtLocation(final int x, final int y, final int z)
         {
-        MutableInt3D speedyMutableInt3D = this.speedyMutableInt3D;  // a little faster (local)
-        speedyMutableInt3D.x = x;
-        speedyMutableInt3D.y = y;
-        speedyMutableInt3D.z = z;
-        return getObjectsAtLocation(speedyMutableInt3D);
+        return getObjectsAtLocation(new Int3D(x,y,z));
         }
 
     /** Returns the object location as a Double3D, or as null if there is no such object. */
@@ -208,11 +199,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
     /** Removes all the objects stored at the given location and returns them as a Bag (which you are free to modify). */
     public Bag removeObjectsAtLocation(final int x, final int y, final int z)
         {
-        MutableInt3D speedyMutableInt3D = this.speedyMutableInt3D;  // a little faster (local)
-        speedyMutableInt3D.x = x;
-        speedyMutableInt3D.y = y;
-        speedyMutableInt3D.z = z;
-        return removeObjectsAtLocation(speedyMutableInt3D);
+        return removeObjectsAtLocation(new Int3D(x,y,z));
         }
 
     /** Changes the location of an object, or adds if it doesn't exist yet.  Returns false

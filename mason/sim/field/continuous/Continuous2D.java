@@ -307,7 +307,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         int y2 = d.y;
         int searches = 0;
         
-        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
+        MutableInt2D speedyMutableInt2D = new MutableInt2D();
 
         // grab the first box
             
@@ -736,7 +736,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         else result = new Bag(expectedBagSize);
         Bag temp;
     
-        MutableInt2D speedyMutableInt2D = this.speedyMutableInt2D;  // a little faster (local)
+        MutableInt2D speedyMutableInt2D = new MutableInt2D();
 
             
         // do the loop
@@ -857,8 +857,6 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         if (width2 < width) return width2;
         return 0;
         }
-
-    MutableInt2D speedyMutableInt2D = new MutableInt2D();
 
     /** Returns a bag containing all the objects at a given discretized location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
