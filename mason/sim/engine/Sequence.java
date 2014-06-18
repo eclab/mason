@@ -50,7 +50,7 @@ import sim.util.*;
  * It has three disadvantages however.   First, it is slower when the number of Steppables is very
  * small, or when the number of Steppables removed is small (less than 5 perhaps).  Second, because
  * a Set is used, the Steppables in the Sequence must be unique: you cannot insert the same Steppable
- * multiple times in the array.  Third, using sets does not ensure order regardless of what is set in 
+ * multiple times in the array.  Third, using sets does not ensure order regardless of what you stated in 
  * setEnsuresOrder(...).
  *
  * @author Mark Coletti

@@ -1106,9 +1106,9 @@ public class Console extends JFrame implements Controller
             if (appPrefs.getInt(NUM_DISPLAYS_KEY, -1) != -1)  // user set preferences.  Assume it's correct
                 {
                 // zero: hide everything
-                System.err.println(DEFAULT_PREFERENCES_KEY);
-                System.err.println(NUM_DISPLAYS_KEY);
-                System.err.println(appPrefs.getInt(NUM_DISPLAYS_KEY, -1) );
+                //System.err.println(DEFAULT_PREFERENCES_KEY);
+                //System.err.println(NUM_DISPLAYS_KEY);
+                //System.err.println(appPrefs.getInt(NUM_DISPLAYS_KEY, -1) );
                 Iterator iter = frameList.iterator();  // should all be here now
                 while(iter.hasNext())
                     ((Component)(iter.next())).setVisible(false);
