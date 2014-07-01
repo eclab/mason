@@ -192,4 +192,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
             }
         aggregateSeries.clear();
         }
+
+	// Should not load data except when the simulation is running
+    protected boolean alwaysUpdateable() { return false; }
     }

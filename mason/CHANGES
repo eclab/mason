@@ -2652,3 +2652,6 @@ Version 18
 	MASON now primes MT by calling nextInt() 1248 times during SimState.start()
 	Deleted internal local "speedy" variable which could cause race conditions
 		when using SparseGrid[2|3]D or Continuous[2|3]D with multiple threads.
+	ChartingPropertyInspectors EXCEPT for TimeSeriesChartingPropertyInspector
+		can now update themselves outside the time boundaries (that is,
+		at BEFORE_SIMULATION and at AFTER_SIMULATION).

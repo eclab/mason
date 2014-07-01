@@ -3829,11 +3829,11 @@ Here are some methods for accessing the current time and steps:
 
 \sidebar{How do I arbitrarily remove agents from the schedule?}{You don't.  The Schedule uses a data structure called a Heap, which is spectacularly inefficient at removal.  Instead, you have various options depending on your situation:
 
-If your agent is scheduled repeating, the \method{scheduleRepeating(...)} method returned a \class{sim.engine.Stoppable} object.  To prevent the agent from having its \method{step(...)} method called ever again, just call \method{stop()} on the Stoppable.  This will also make the agent able to be garbage collected.  Alternatively, if your agent is scheduled once, you can always just instruct your agent to ignore its \method{step(...)} method.
+If your agent is scheduled repeating, the \method{scheduleRepeating(...)} method returned a \class{sim.engine.Stoppable} object.  To prevent the agent from having its \method{step(...)} method ever called again, just call \method{stop()} on the Stoppable.  This will also make the agent able to be garbage collected.  Alternatively, if your agent is scheduled once, you can always just instruct your agent to ignore its \method{step(...)} method.
 
 If your agent is scheduled once, and you'd like to prematurely prevent its \method{step(...)} method from being called, when you schedule the agent, do so by using a \class{sim.engine.TentativeStep} object.  You can later call \method{stop()} on the TentativeStep, and the agent won't have its \method{step(...)} method called, and will be able to be garbage collected.  See Section \ref{utilityagentclasses}.  
 
-If you want your agent to scheduled on the Schedule, but available for garbage collection at any time (and thus never have its \method{step(...)} method called), you can use \class{sim.engine.WeakStep} to do this.  See Section \ref{utilityagentclasses}.  
+If you want your agent to scheduled on the Schedule, but available for garbage collection at any time if memory demands require it (and thus never have its \method{step(...)} method called), you can use \class{sim.engine.WeakStep} to do this.  See Section \ref{utilityagentclasses}.  
 
 In all these cases, even though the agent is effectively ``removed'' from the Schedule, the Schedule will still advance to the timestep where the agent had been scheduled.
 }
@@ -4186,14 +4186,15 @@ MASON's approach is more rudimentary, faster, and much more Java-like: each agen
 Actually you can.  Just create an anonymous wrapper Steppable and schedule it instead, like this:
 
 \java{%
-	final Object myObject = ... \\
-	\hbox{Steppable even = new Steppable() \{ public void step(SimState state) \{ myObject.foo(); \}\};}\\
-	Steppable odd = new Steppable() \{ public void step(SimState state) \{ myObject.bar(); \}\};\\
+	Object myObject = ... \\
+	final Object myObject2 = myObject;\\
+	\hbox{Steppable even = new Steppable() \{ public void step(SimState state) \{ myObject2.foo(); \}\};}\\
+	\hbox{Steppable odd = new Steppable() \{ public void step(SimState state) \{ myObject2.bar(); \}\};}\\
 	schedule.scheduleRepeating(0.0, even, 2.0);\\
 	schedule.scheduleRepeating(1.0, odd, 2.0);
 }
 
-Piece of cake.  (Note that \variable{myObject} must be declared final.)
+Piece of cake.  (Note that we included a final version of \variable{myObject} called \variable{myObject2}.  Java is dumb.)
 
 But maybe you don't like this approach and would prefer something more like Repast's, even if it proves slower and a bit funky Java-wise.  You can do that with MethodStep.  When MethodStep is stepped, it calls a method (which you specify as a string) on a target object.  So you could write the above like this:
 
@@ -9145,7 +9146,7 @@ Collectively, these methods are:
 \subsection{Charting Property Inspectors}
 \label{sim.portrayal.inspector.ChartingPropertyInspector}
 
-\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides five Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
+\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides six Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
 
 \java{%
 public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
@@ -9156,15 +9157,18 @@ The current Charting Property Inspectors are:
 \begin{itemize}
 \item \Class{sim.portrayal.inspector.TimeSeriesChartingPropertyInspector} produces time series describing the progression of a numerical value over time.  It is capable of inspecting any boolean, byte, short, int, long, float, double, \class{java.lang.Number}, or \class{sim.util.Valuable}.
 \item \Class{sim.portrayal.inspector.ScatterPlotChartingPropertyInspector} produces scatter plots: the scatter plot changes each iteration.  This class is capable of inspecting (and extracting its data from) any array of \class{sim.util.Double2D} or \class{sim.util.Int2D}.  Each Double2D or Int2D represents a point on the scatter plot.
+
+\item \Class{sim.portrayal.inspector.BubbleChartChartingPropertyInspector} produces bubble charts: the bubble chart changes each iteration.  This class is capable of inspecting (and extracting its data from) any array of \class{sim.util.Double3D} or \class{sim.util.Int3D}.  Each Double3D or Int3D represents a point in the bubble chart.
+
 \item \Class{sim.portrayal.inspector.HistogramChartingPropertyInspector} produces histograms which change each iteration.  This class is capable of inspecting (and extracting its data from) any array of booleans, bytes, shorts, ints, longs, floats, doubles, \class{java.lang.Number}, or \class{sim.util.Valuable}.  It is also capable of inspecting a \class{sim.util.IntBag} or \class{sim.util.DoubleBag}.  Each element in the array or Bag represents a sample in the histogram.  Histograms by default have the following number of bins, which can be changed at any time by the user:
 
 \java{%
 public static final int DEFAULT\_BINS = 8;
 }
 
-\item \Class{sim.portrayal.inspector.BarChartChartingPropertyInspector} produces one or more bar charts of various kinds which change each iteration.  This class is capable of inspecing (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
+\item \Class{sim.portrayal.inspector.BarChartChartingPropertyInspector} produces one or more bar charts of various kinds which change each iteration.  This class is capable of inspecting (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
 
-\item \Class{sim.portrayal.inspector.PieChartChartingPropertyInspector} produces one or more pie charts which change each iteration.  This class is capable of inspecing (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
+\item \Class{sim.portrayal.inspector.PieChartChartingPropertyInspector} produces one or more pie charts which change each iteration.  This class is capable of inspecting (and extracting its data from) any Object array consisting of Objects which fall into one or more equivalence groups (defined by the \method{equals()} method).  So as not to overwhelm JFreeChart, the number of equivalence groups may not at this time exceed 20, or else the chart will not be drawn in the inspector.
 
 \end{itemize}
 
@@ -9176,13 +9180,14 @@ Each PropertyInspector is created using the same constructors: the superclass ve
 \mthd{public ChartingPropertyInspector(Properties properties, int index, Frame parent, GUIState gui)} Produces a ChartingPropertyInspector with a potentially new ChartGenerator and the property defined by the given index in the properties list.  The user may be queried to determine which ChartGenerator to use.
 \end{methods}
 
-These constructors in turn may call the method \method{validChartGenerator(...)} to determine if a provided ChartGenerator is valid, or they may call \method{createNewGenerator()} to produce a new one from scratch.  The generator is then stored internally but may be accessed with \method{getGenerator()}.  These classes also maintain a list of all current charts on-screen, in order to query the user as to which chart he'd like the ChartingPropertyInspector to draw on (or create a new one).  This list is defined by \method{getCharts(...)}.
+These constructors in turn may call the method \method{validChartGenerator(...)} to determine if a provided ChartGenerator is valid, or they may call \method{createNewGenerator()} to produce a new one from scratch.  The generator is then stored internally but may be accessed with \method{getGenerator()}.  These classes also maintain a list of all current charts on-screen, in order to query the user as to which chart he'd like the ChartingPropertyInspector to draw on (or create a new one).  This list is defined by \method{getCharts(...)}.  Finally, if a ChartingPropertyInspector is designed for charts which update themselves to add additional data each timestep, it will override the method \method{isAlwaysUpdateable()} to return \variable{false} so as to prevent it from being updated before or after valid simulation times.
 
 \begin{methods}{\class{sim.portrayal.inspector.ChartingPropertyInspector}}
 \mthd{public boolean validChartGenerator(ChartGenerator generator)}  Returns true if the given generator can be used by the ChartingPropertyInspector.
 \mthd{public ChartGenerator createNewGenerator()}  Returns a brand-new ChartGenerator.
 \mthd{public ChartGenerator getGenerator()}  Returns the current ChartGenerator.
 \mthd{protected Bag getCharts(GUIState gui)}  Returns all the presently on-screen charts associated with the given simulation.
+\mthd{protected boolean isAlwaysUpdateable()}  Returns true if this chart can always update itself and draw useful data, even before or after the simulation has terminated.  By default, returns true.  Some charts (notably time series inspectors) will override this method to return false.
 \end{methods}
 
 \paragraph{Series, Series Attributes, and Global Attributes}
@@ -9892,7 +9897,7 @@ Thus SparseFieldPortrayal has a utility method which does all this for you: it i
 
 MASON provides 3D Field Portrayals for a number of 2D and 3D fields: but not in all configurations.  For example, hexagonal representations of 2D grid fields are not supported, and at present Dense Grids are not supported.
 
-\sidebar{Why not just use Java3D Link and SharedGroup Classes?  Aren't they designed for this purpose?}{Couple of reasons.  First, SharedGroup has bugs.  Second, SharedGroup and Links still don't let objects appear and disappear from a scene: you still gotta deal with BranchGroups.  However, SharedGroups remain an option for complex or expensive objects: see Section \ref{sim.portrayal3d.simple.SharedPortrayal3D}.} Some of the Field Portrayals are quite costly, particularly as the grid size increases, largely due to poor design decisions in Java3D itself that can't easily be rectified.  Others are reasonably good memory-efficiency-wise (despite their use of BranchGroups).  In particular, the Sparse Grid, Network, and Continuous portrayals are good, as are portrayals for 2D numbers.
+\sidebar{Why not just use Java3D Link and SharedGroup Classes instead of BranchGroups?  Aren't they designed for this purpose?}{A couple of reasons.  First, SharedGroup has bugs.  Second, SharedGroup and Links still don't let objects appear and disappear from a scene: you still gotta deal with BranchGroups.  However, SharedGroups remain an option for complex or expensive objects: see Section \ref{sim.portrayal3d.simple.SharedPortrayal3D}.} Some of the Field Portrayals are quite costly, particularly as the grid size increases, largely due to poor design decisions in Java3D itself that can't easily be rectified.  Others are reasonably good memory-efficiency-wise (despite their use of BranchGroups).  In particular, the Sparse Grid, Network, and Continuous portrayals are good, as are portrayals for 2D numbers.
 
 \subsubsection{Field Portrayals for Object Grids}
 
@@ -10253,7 +10258,7 @@ MASON provides quite a number of basic and decorative simple portrayals.  You ca
 \item \class{sim.portrayal3d.simple.CylinderPortrayal3D} portrays objects as cylinders.
 \item \class{sim.portrayal3d.simple.ConePortrayal3D} portrays objects as cones.
 \item \class{sim.portrayal3d.simple.CubePortrayal3D} portrays objects as cubes.
-\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D} portrays objects with a Shape3D.
+\item \class{sim.portrayal3d.simple.Shape3DPortrayal3D} portrays objects with a Shape3D which can be defined or loaded from a file.  Some Shape3D objects are provided for you.
 \item \class{sim.portrayal3d.simple.BranchGroupPortrayal3D} portrays objects using a provided BranchGroup. Scenes can be loaded from files into this BranchGroup and displayed.
 \item \class{sim.portrayal3d.simple.ImagePortrayal3D} portrays objects with a flat image, which can be loaded from a file.
 \item \class{sim.portrayal3d.simple.SharedGroupPortrayal3D} portrays objects using a provided SharedGroup and Links, potentially saving a great deal of memory.
@@ -10583,7 +10588,7 @@ These classes all have the same constructors.  Here's the one for ConeEdgePortra
 
 \subsection{Wrapper Simple Portrayals}
 \label{sim.portrayal3d.simple.TransformedPortrayal3D}
-\label{sim.portrayal3d.SharedPortrayal3D}
+\label{sim.portrayal3d.simple.SharedPortrayal3D}
 
 In 2D, Wrapper Simple Portrayals held subsidiary portrayals as {\it children} and added features to their portrayal of objects or otherwise manipulated them.  The same goes for the 3D case.  MASON at present provides four Wrapper Simple Portrayals in 3D:
 
@@ -10876,7 +10881,7 @@ In addition to the ColorMap methods described above, SimpleColorMap also has a f
 \begin{methods}{\class{sim.util.gui.SimpleColorMap} Constructor}
 \mthd{public void setLevels(double minLevel, double maxLevel, Color minColor, Color maxColor)}  Sets minimum and maximum levels for the map and their respective colors.  The minimum level must be \(<=\) the maximum level. If they are equivalent, then minimum and maximum levels are unset.
 \mthd{public Color[] setColorTable(Color[] colorTable)}  Sets the color table for the map.  If null is passed in, the color table is unset.
-\mthd{public double filterLevel(double level)} Called prior to mapping the level to allow further modification by you.  You can override this method to filter the level as you like.  By default this method simply returns the level.
+\mthd{public double filterLevel(double level)} Called prior to mapping the level to allow further modification by you.  You can override this method to adjust the level as you like.  By default this method simply returns the level.
 \end{methods}
 
 SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has a faster cache commented out in its source code, but that cache has lower resolution.
@@ -12186,7 +12191,7 @@ Schedules the series repeating, returning a Stoppable to stop it (you'll rarely 
 Schedules the series repeating, returning a Stoppable to stop it (you'll rarely use that).  You provide a valueProvider which is called to provide the latest data to update the series in the chart.  Your valueProvider can be null, in which case the new data will not be added when the series is updated: you will have to add data manually (this is an unusual need).
 \end{methods}
 
-\paragraph{An Example}  Let's say our model has an instance variable (a double) in your SimState which is updated every timestep.  This instance variable is called, say, \variable{myData}.  We would like to track that in a Time Series set up as a Display in your GUIState.
+\paragraph{An Example}  Let's say our model has an instance variable (a double) in your SimState which is updated every timestep.  This instance variable is called, say, \variable{myData}.  We would like to track that in a Time Series set up as a Display in the GUIState.
 
 We begin by creating two instance variables in our GUIState which hold the time series attributes and the underlying chart:
 
@@ -12217,7 +12222,7 @@ public void start()
         {
         public double doubleValue()
             {
-            return ((MyModel)state).myData;  // myData is updated every timestamp
+            return ((MyModel)state).myData;  // myData is updated every timestep
             }
         });
     ...
@@ -12231,7 +12236,7 @@ public void load(final SimState state)        /// NOTE WE MADE THIS FINAL
         {
         public double doubleValue()
             {
-            return ((MyModel)state).myData;  // myData is updated every timestamp
+            return ((MyModel)state).myData;  // myData is updated every timestep
             }
         });
     ...
@@ -12262,7 +12267,7 @@ public void start()
         {
         public double doubleValue()
             {
-            return ((MyModel)state).myData;  // myData is updated every timestamp
+            return ((MyModel)state).myData;  // myData is updated every timestep
             }
         });
     ...
@@ -12279,7 +12284,7 @@ public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
         {
         public double doubleValue()
             {
-            return ((MyModel)state).myData;  // myData is updated every timestamp
+            return ((MyModel)state).myData;  // myData is updated every timestep
             }
         });
     ...

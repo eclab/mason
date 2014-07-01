@@ -340,6 +340,14 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
 
     boolean updatedOnceAlready = false;  // did we update at the simulation start?
         
+    /** Override this method if your charting property inspector can be updated and drawn
+    	with useful data even if the simulation is at an invalid time, such as BEFORE_SIMULATION
+    	or AFTER_SIMULATION.  If you have a time series or some other kind of inspector which
+    	doesn't get any data until EPOCH, then override this method to return FALSE.  Otherwise
+    	if your inspector always replaces all of its data (for example, a histogram), then
+    	you can leave the method as it is: the default returns TRUE. */
+    protected boolean isAlwaysUpdateable() { return true; }
+        
     public void updateInspector()
         {
         double time = simulation.state.schedule.getTime();
@@ -348,7 +356,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         // for this second condition to be true while the first one is false: if we're at
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
-        if (time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION &&
+        if (((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
             (lastTime < time || !updatedOnceAlready))  // bug fix 
             {              
             updatedOnceAlready = true;
