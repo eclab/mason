@@ -2655,3 +2655,5 @@ Version 18
 	ChartingPropertyInspectors EXCEPT for TimeSeriesChartingPropertyInspector
 		can now update themselves outside the time boundaries (that is,
 		at BEFORE_SIMULATION and at AFTER_SIMULATION).
+	DrawInfo2D copy constructors now copy the field, and in some situations
+		the location.

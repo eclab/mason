@@ -107,11 +107,15 @@ public class DrawInfo2D
         clip = new Rectangle2D.Double(oclip.x+translateX,oclip.y+translateY,oclip.width,oclip.height);
         precise = other.precise;
         gui = other.gui;
+        fieldPortrayal = other.fieldPortrayal;
+        selected = other.selected;
+        // location = other.location;  // would location be invalid?
         }
         
     public DrawInfo2D(DrawInfo2D other)
         {
         this(other, 0, 0);
+        location = other.location;
         }
         
     public boolean equals(Object obj)
@@ -126,7 +130,7 @@ public class DrawInfo2D
         return false;
         }
         
-    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + "]"; }
+    public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + "]"; }
     }
     
     
