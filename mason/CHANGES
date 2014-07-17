@@ -2657,3 +2657,6 @@ Version 18
 		at BEFORE_SIMULATION and at AFTER_SIMULATION).
 	DrawInfo2D copy constructors now copy the field, and in some situations
 		the location.
+	[Double|Int|Object]Grid2D.setTo(...) method for double arrays was not setting 
+		the values because the object width had not yet been set.  This 
+		bug also affected the equivalent copy constructor.

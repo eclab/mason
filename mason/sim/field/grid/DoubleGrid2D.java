@@ -91,11 +91,11 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
 
         // load
 
+        width = w;
+        height = h;
         this.field = new double[w][h];
         for(int i = 0; i < width; i++)
             this.field[i] = (double[]) field[i].clone();
-        width = w;
-        height = h;
         return this;
         }
 

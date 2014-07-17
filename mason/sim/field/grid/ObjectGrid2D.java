@@ -98,12 +98,12 @@ public class ObjectGrid2D extends AbstractGrid2D
                 throw new RuntimeException("ObjectGrid2D initialized with a non-rectangular field.");
 
         // load
-
+        
+        width = w;
+        height = h;
         this.field = new Object[w][h];
         for(int i = 0; i < width; i++)
             this.field[i] = (Object[]) field[i].clone();
-        width = w;
-        height = h;
         return this;
         }
 

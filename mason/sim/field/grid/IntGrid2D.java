@@ -95,11 +95,11 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
 
         // load
         
+        width = w;
+        height = h;
         this.field = new int[w][h];
         for(int i = 0; i < w; i++)
             this.field[i] = (int[]) field[i].clone();
-        width = w;
-        height = h;
         return this;
         }
 
