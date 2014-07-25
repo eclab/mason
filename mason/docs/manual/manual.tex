@@ -62,7 +62,7 @@
 %\newcommand\class[1]{\textsf{#1}}
 \newcommand\class[1]{\index{Classes!{#1}}\textsf{#1}}
 \newcommand\Class[1]{\index{Classes!{#1}|textbf}\textsf{#1}}
-\newcommand\method[1]{\textsf{#1}}
+\newcommand\method[1]{\hbox{\textsf{#1}}}
 \newcommand\parameter[1]{\texttt{#1}}
 \newcommand\character[1]{\texttt{"{#1}"}}
 \newcommand\textstr[1]{\texttt{"{#1}"}}
@@ -9464,7 +9464,7 @@ Okay, enough with the Java3D for now.  A Display2D is constructed identically to
 Returns a Display3D connected to the given GUIState.  The viewable region of the Display3D's Canvas is set to the given width and height in pixels.
 \end{methods}
 
-Justl like a Display2D, when you build a Display3D it automatically connects to the GUIState and adds itself to the GUIState's minischedule.  Likewise, typically your next task is often to place the Display2D in a JFrame.   Unlike Display2D (where it's an option) we strongly suggest you {\bf don't build your own JFrame}: instead, let Display3D do it for you with \method{createFrame()}.  This JFrame has certain bug fixes that get around stupidities in OS X and Linux with regard to Java3D.\footnote{If you absolutely must use your own JFrame, check out the Display3D.java code to see what bug fixes you ought to hack in.}
+Just like a Display2D, when you build a Display3D it automatically connects to the GUIState and adds itself to the GUIState's minischedule.  Likewise, typically your next task is often to place the Display2D in a JFrame.   Unlike Display2D (where it's an option) we strongly suggest you {\bf don't build your own JFrame}: instead, let Display3D do it for you with \method{createFrame()}.  This JFrame has certain bug fixes that get around stupidities in OS X and Linux with regard to Java3D.\footnote{If you absolutely must use your own JFrame, check out the Display3D.java code to see what bug fixes you ought to hack in.}
 
 Once you've created a JFrame, you'll want to register it with your \class{sim.display.Console} or other \class{sim.display.Controller}.  Your Controller will include the Display in its list of objects to refresh or update in certain situations; and will also include it in its ``displays'' tab to you can hide or show the Display at your leisure.  The registration methods for Controller were previously discussed in the Display2D Section (see page \pageref{registrationmethods}).
 
@@ -10881,7 +10881,7 @@ In addition to the ColorMap methods described above, SimpleColorMap also has a f
 \begin{methods}{\class{sim.util.gui.SimpleColorMap} Constructor}
 \mthd{public void setLevels(double minLevel, double maxLevel, Color minColor, Color maxColor)}  Sets minimum and maximum levels for the map and their respective colors.  The minimum level must be \(<=\) the maximum level. If they are equivalent, then minimum and maximum levels are unset.
 \mthd{public Color[] setColorTable(Color[] colorTable)}  Sets the color table for the map.  If null is passed in, the color table is unset.
-\mthd{public double filterLevel(double level)} Called prior to mapping the level to allow further modification by you.  You can override this method to adjust the level as you like.  By default this method simply returns the level.
+\mthd{public double transformLevel(double level, double minLevel, double maxLevel)} Override this to convert level values to new values using some appropriate mathematical transformation. The values you return ought to be \(\geq\) minLevel and \(\leq\) maxLevel; values outside these bounds will be trimmed to minLevel or maxLevel respectively prior to conversion to a color.  The default implementation simply returns the passed-in level.  
 \end{methods}
 
 SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has a faster cache commented out in its source code, but that cache has lower resolution.

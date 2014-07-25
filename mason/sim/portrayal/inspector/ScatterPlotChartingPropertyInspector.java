@@ -108,13 +108,13 @@ public class ScatterPlotChartingPropertyInspector extends ChartingPropertyInspec
                 for(int i=0;i<array.length;i++)
                     { vals[0][i] = array[i].x; vals[1][i] = array[i].y; }
                 }
-			else if (obj instanceof ChartUtilities.ProvidesDoubleDoubles)
-				{
-				double[][] array = ((ChartUtilities.ProvidesDoubleDoubles) obj).provide();
-				vals = new double[2][array.length];
-				for(int i=0;i<array.length;i++)
-					{ vals[0][i] = array[0][i]; vals[1][i] = array[1][i]; }
-				}
+            else if (obj instanceof ChartUtilities.ProvidesDoubleDoubles)
+                {
+                double[][] array = ((ChartUtilities.ProvidesDoubleDoubles) obj).provide();
+                vals = new double[2][array.length];
+                for(int i=0;i<array.length;i++)
+                    { vals[0][i] = array[0][i]; vals[1][i] = array[1][i]; }
+                }
             }
                                 
         boolean same = true;

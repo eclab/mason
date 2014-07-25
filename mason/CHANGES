@@ -2661,3 +2661,12 @@ Version 18
 		the values because the object width had not yet been set.  This 
 		bug also affected the equivalent copy constructor.  Thanks to Joey
 		Harrison <jharri@gmu.edu>
+	Added [Double|Int|Object]Grid3D.setTo(....) method for triple arrays, and
+		the equivalent copy constructor.
+	Fixed bug in TimeSeriesChartGenerator which was not permitting multiple
+		attributes of the same name.
+	Tweaks to SimpleColorMap to make it easier to subclass and customize
+	SimpleColorMap has a new method called transformLevel(...) to custom
+		filter the level values.  The old filterLevel(...) method has
+		been removed (not simply deprecated) due to severe design
+		flaws.  Thanks to Joey Harrison <jharri@gmu.edu>

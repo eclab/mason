@@ -34,7 +34,7 @@ public class HistogramSeriesAttributes extends SeriesAttributes
     double[] values; 
     public double[] getValues() { return values; }
     public void setValues(double[] vals) 
-    	{ if (vals != null) vals = (double[])(vals.clone()); values = vals; }
+        { if (vals != null) vals = (double[])(vals.clone()); values = vals; }
                 
     /** Border thickness */
     float thickness;

@@ -76,24 +76,24 @@ public class BoxPlotChartingPropertyInspector extends ChartingPropertyInspector
                 ((BoxPlotGenerator)getGenerator()).setYAxisLabel("Frequency");
                 }
                 
-			if (properties.getValue(index) instanceof ChartUtilities.ProvidesDoubleDoublesAndLabels)
-				{
-				// have to handle specially
-				String[] labels = ((ChartUtilities.ProvidesDoubleDoublesAndLabels)(properties.getValue(index))).provideLabels();
-            	seriesAttributes = ((BoxPlotGenerator)generator).addSeries(new double[labels.length][0], labels, properties.getName(index), 
-                	new SeriesChangeListener()
-                	    {
-                	    public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
-                	    });
-				}
-			else
-				{
-				seriesAttributes = ((BoxPlotGenerator)generator).addSeries(previousValues, properties.getName(index), 
-					new SeriesChangeListener()
-						{
-						public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
-						});
-				}
+            if (properties.getValue(index) instanceof ChartUtilities.ProvidesDoubleDoublesAndLabels)
+                {
+                // have to handle specially
+                String[] labels = ((ChartUtilities.ProvidesDoubleDoublesAndLabels)(properties.getValue(index))).provideLabels();
+                seriesAttributes = ((BoxPlotGenerator)generator).addSeries(new double[labels.length][0], labels, properties.getName(index), 
+                    new SeriesChangeListener()
+                        {
+                        public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
+                        });
+                }
+            else
+                {
+                seriesAttributes = ((BoxPlotGenerator)generator).addSeries(previousValues, properties.getName(index), 
+                    new SeriesChangeListener()
+                        {
+                        public void seriesChanged(SeriesChangeEvent event) { getStopper().stop(); }
+                        });
+                }
             }
         }
                 
@@ -204,20 +204,20 @@ public class BoxPlotChartingPropertyInspector extends ChartingPropertyInspector
                 vals[i] = (bag.objs[i]);
             }
         else if (obj instanceof ChartUtilities.ProvidesDoubles)
-        	{
-			double[] array = ((ChartUtilities.ProvidesDoubles) obj).provide();
-			vals = new double[array.length];
-			for(int i=0;i<array.length;i++)
-				vals[i] = array[i];
-        	}
+            {
+            double[] array = ((ChartUtilities.ProvidesDoubles) obj).provide();
+            vals = new double[array.length];
+            for(int i=0;i<array.length;i++)
+                vals[i] = array[i];
+            }
         else if (obj instanceof ChartUtilities.ProvidesDoubleDoublesAndLabels)  // Handled Specially
-        	{
-        	// just be done with it:
-        	ChartUtilities.ProvidesDoubleDoublesAndLabels o = (ChartUtilities.ProvidesDoubleDoublesAndLabels)obj;
-        	previousValues = null;
-        	((BoxPlotGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), o.provide(), o.provideLabels()); 
-        	return;
-        	}
+            {
+            // just be done with it:
+            ChartUtilities.ProvidesDoubleDoublesAndLabels o = (ChartUtilities.ProvidesDoubleDoublesAndLabels)obj;
+            previousValues = null;
+            ((BoxPlotGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), o.provide(), o.provideLabels()); 
+            return;
+            }
                              
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

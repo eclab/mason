@@ -123,13 +123,13 @@ public class BubbleChartChartingPropertyInspector extends ChartingPropertyInspec
                 for(int i=0;i<array.length;i++)
                     { vals[0][i] = array[i].x; vals[1][i] = array[i].y; vals[2][i] = array[i].z; }
                 }
-			else if (obj instanceof ChartUtilities.ProvidesTripleDoubles)
-				{
-				double[][] array = ((ChartUtilities.ProvidesTripleDoubles) obj).provide();
-				vals = new double[3][array.length];
-				for(int i=0;i<array.length;i++)
-					{ vals[0][i] = array[0][i]; vals[1][i] = array[1][i]; vals[2][i] = array[2][i]; }
-				}
+            else if (obj instanceof ChartUtilities.ProvidesTripleDoubles)
+                {
+                double[][] array = ((ChartUtilities.ProvidesTripleDoubles) obj).provide();
+                vals = new double[3][array.length];
+                for(int i=0;i<array.length;i++)
+                    { vals[0][i] = array[0][i]; vals[1][i] = array[1][i]; vals[2][i] = array[2][i]; }
+                }
             }
                                 
         boolean same = true;

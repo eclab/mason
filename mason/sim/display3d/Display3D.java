@@ -1258,12 +1258,12 @@ public class Display3D extends JPanel implements Steppable
 
     /** Asks Display3D to update itself next iteration regardless of the current redrawing/updating rule. */
     public void requestUpdate()
-    	{
-    	synchronized(updateLock)
-    		{
-	    	updateOnce = true;
-	    	}
-    	}
+        {
+        synchronized(updateLock)
+            {
+            updateOnce = true;
+            }
+        }
 
     /** Returns whether it's time to update. */
     public boolean shouldUpdate()
@@ -1273,7 +1273,7 @@ public class Display3D extends JPanel implements Steppable
         synchronized(updateLock) { up = updateOnce; } 
         
         if (up)
-        	val = true;
+            val = true;
         else if (updateRule == Display2D.UPDATE_RULE_ALWAYS)
             val = true;
         else if (updateRule == Display2D.UPDATE_RULE_STEPS)

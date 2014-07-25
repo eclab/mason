@@ -209,20 +209,20 @@ public abstract class PropertyInspector extends Inspector
             // first let's test to see if that class name is for real
             Class _theClass = null;
             try 
-            	{ 
-            	_theClass = Class.forName((String)(classes.objs[x]), true, Thread.currentThread().getContextClassLoader());
-            	}	
-			catch (ClassNotFoundException error) 
-				{
-				//error.printStackTrace();  // fail silently, it's annoying
-				continue;  // no class, can't make menu
-				}
-			catch (NoClassDefFoundError error) // why does this even exist?
-				{
-				//error.printStackTrace();  // fail silently, it's annoying
-				continue;  // no class, can't make menu
-				}
-			final Class theClass = _theClass;  // grrr, Java doesn't have proper closures
+                { 
+                _theClass = Class.forName((String)(classes.objs[x]), true, Thread.currentThread().getContextClassLoader());
+                }       
+            catch (ClassNotFoundException error) 
+                {
+                //error.printStackTrace();  // fail silently, it's annoying
+                continue;  // no class, can't make menu
+                }
+            catch (NoClassDefFoundError error) // why does this even exist?
+                {
+                //error.printStackTrace();  // fail silently, it's annoying
+                continue;  // no class, can't make menu
+                }
+            final Class theClass = _theClass;  // grrr, Java doesn't have proper closures
             
             JMenuItem menu = new JMenuItem((String)(getMenuNameForPropertyInspectorClass((String)(classes.objs[x]))));
             popup.add(menu);

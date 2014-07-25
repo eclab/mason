@@ -1940,47 +1940,47 @@ public class Console extends JFrame implements Controller
         }
         
     static boolean launchClass(JFrame originalFrame, String className)
-    	{
-		 try
-			{
-			// check first for a default constructor
-			java.lang.reflect.Constructor cons = Class.forName(className).getConstructor(new Class[] {});
-			// okay, we're past that.  Now try to build the instance
-			final GUIState state = (GUIState)(Class.forName(className).newInstance());
-							
-			// Now we create the controller, which calls init on the state.  If we were just started up,
-			// doNew() is being called from main(), and thus from the main thread rather than the dispatch
-			// thread.  This creates weird bugs if mouse events get tangled up when adding new portrayals
-			// because the mouse events try to check to see how many portrayals there are (for hitObjects()),
-			// creating race conditions.  So we'll check for that condition and call invokeAndWait if so.
-			// Otherwise we'll just call it directly.
-							
-			if (SwingUtilities.isEventDispatchThread())
-				state.createController();
-			else SwingUtilities.invokeAndWait(new Runnable() { public void run() { state.createController(); } });
-			return true;
-			}
-		catch (NoSuchMethodException e)
-			{
-			Utilities.informOfError(e, "The simulation does not have a default constructor: " + className, originalFrame);
-			return false;
-			}
-		catch (Throwable e)  // Most likely NoClassDefFoundError
-			{
-			Utilities.informOfError(e, 
-				"An error occurred while creating the simulation " + className, originalFrame);
-			return false;
-			}
-  	 	}    
+        {
+        try
+            {
+            // check first for a default constructor
+            java.lang.reflect.Constructor cons = Class.forName(className).getConstructor(new Class[] {});
+            // okay, we're past that.  Now try to build the instance
+            final GUIState state = (GUIState)(Class.forName(className).newInstance());
+                                                        
+            // Now we create the controller, which calls init on the state.  If we were just started up,
+            // doNew() is being called from main(), and thus from the main thread rather than the dispatch
+            // thread.  This creates weird bugs if mouse events get tangled up when adding new portrayals
+            // because the mouse events try to check to see how many portrayals there are (for hitObjects()),
+            // creating race conditions.  So we'll check for that condition and call invokeAndWait if so.
+            // Otherwise we'll just call it directly.
+                                                        
+            if (SwingUtilities.isEventDispatchThread())
+                state.createController();
+            else SwingUtilities.invokeAndWait(new Runnable() { public void run() { state.createController(); } });
+            return true;
+            }
+        catch (NoSuchMethodException e)
+            {
+            Utilities.informOfError(e, "The simulation does not have a default constructor: " + className, originalFrame);
+            return false;
+            }
+        catch (Throwable e)  // Most likely NoClassDefFoundError
+            {
+            Utilities.informOfError(e, 
+                "An error occurred while creating the simulation " + className, originalFrame);
+            return false;
+            }
+        }    
     
     /** Returns true if a new simulation has been created; false if the user cancelled. */
     static boolean doNew(JFrame originalFrame, boolean startingUp)
         {
         buildClassList();
         if (classNames.size() == 1)  // just launch it directly
-        	{
-        	return launchClass(originalFrame, (String) classNames.get(0));
-	      	}
+            {
+            return launchClass(originalFrame, (String) classNames.get(0));
+            }
 
         final String defaultText = "<html><body bgcolor='white'><font face='dialog'><br><br><br><br><p align='center'>Select a MASON simulation from the list at left,<br>or type a Java class name below.</p></font></body></html>";
         final String nothingSelectedText = "<html><body bgcolor='white'></body></html>";

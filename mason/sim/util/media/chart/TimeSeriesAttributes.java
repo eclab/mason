@@ -98,16 +98,16 @@ public class TimeSeriesAttributes extends SeriesAttributes
     XYSeries series;
     public XYSeries getSeries() { return series; }
     /** Clears the existing internal XYSeries, then adds all the series elements in the provided XYSeries to the
-    	internal XYSeries.  Does not notify the chart to update.
+        internal XYSeries.  Does not notify the chart to update.
     */
     public void setSeries(XYSeries series) 
-    	{
-    	this.series.clear();
-    	int count = series.getItemCount();
-    	for(int i = 0; i < count; i++)
-    		this.series.add(series.getDataItem(i), true);
-    	}  
-    	
+        {
+        this.series.clear();
+        int count = series.getItemCount();
+        for(int i = 0; i < count; i++)
+            this.series.add(series.getDataItem(i), true);
+        }  
+        
     public void setSeriesName(String val) { series.setKey(new ChartGenerator.UniqueString(val)); }  // bypasses super.setSeriesName
     public String getSeriesName() { return "" + series.getKey(); }  // bypasses super.getSeriesName
     
@@ -235,7 +235,7 @@ public class TimeSeriesAttributes extends SeriesAttributes
                 
     void deleteItems(IntBag items)
         {
-   		Bag tmpBag = new Bag();
+        Bag tmpBag = new Bag();
         
         if(items.numObjs==0)
             return;

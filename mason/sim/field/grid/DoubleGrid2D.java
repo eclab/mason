@@ -393,11 +393,11 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
             {
             fieldx = field[x]; 
             for(int y=0;y<height;y++)
-            	fieldx[y] = (int) fieldx[y];
-                //if (fieldx[y] > 0.0) 
-                //    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
-                //else
-                //    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
+                fieldx[y] = (int) fieldx[y];
+            //if (fieldx[y] > 0.0) 
+            //    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
+            //else
+            //    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
                 
             }
         return this;
@@ -423,26 +423,26 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         }
 
     /**
-      * Replace instances of one value to another.
-      * @param from any element that matches this value will be replaced
-      * @param to with this value
-    */
+     * Replace instances of one value to another.
+     * @param from any element that matches this value will be replaced
+     * @param to with this value
+     */
 
-	public final void replaceAll(double from, double to)
-		{
-		final int width = this.width;
-		final int height = this.height;
-		double[] fieldx = null;
-		for(int x = 0; x < width; x++)
-			{
-			fieldx = field[x];
-			for(int y = 0;  y < height; y++)
-				{
-				if (fieldx[y] == from)
-					fieldx[y] = to;
-				}
-			}
-		}
+    public final void replaceAll(double from, double to)
+        {
+        final int width = this.width;
+        final int height = this.height;
+        double[] fieldx = null;
+        for(int x = 0; x < width; x++)
+            {
+            fieldx = field[x];
+            for(int y = 0;  y < height; y++)
+                {
+                if (fieldx[y] == from)
+                    fieldx[y] = to;
+                }
+            }
+        }
 
 
 /*

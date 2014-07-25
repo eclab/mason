@@ -194,12 +194,12 @@ public class HistogramChartingPropertyInspector extends ChartingPropertyInspecto
                 vals[i] = (bag.objs[i]);
             }
         else if (obj instanceof ChartUtilities.ProvidesDoubles)
-        	{
-			double[] array = ((ChartUtilities.ProvidesDoubles) obj).provide();
-			vals = new double[array.length];
-			for(int i=0;i<array.length;i++)
-				vals[i] = array[i];
-        	}
+            {
+            double[] array = ((ChartUtilities.ProvidesDoubles) obj).provide();
+            vals = new double[array.length];
+            for(int i=0;i<array.length;i++)
+                vals[i] = array[i];
+            }
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

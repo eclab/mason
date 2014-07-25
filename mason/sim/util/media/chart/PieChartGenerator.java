@@ -137,17 +137,17 @@ public class PieChartGenerator extends ChartGenerator
                 double[] values = null;
                 String[] labels = null;
                 if (elements != null) 
-                	{
-					HashMap map = convertIntoAmountsAndLabels(elements);
-					labels = revisedLabels(map);
-					values = amounts(map, labels);
-                	}
+                    {
+                    HashMap map = convertIntoAmountsAndLabels(elements);
+                    labels = revisedLabels(map);
+                    values = amounts(map, labels);
+                    }
                 else
-                	{
-                	values = attributes.getValues();
-               		labels = attributes.getLabels();
-               		}
-               		
+                    {
+                    values = attributes.getValues();
+                    labels = attributes.getLabels();
+                    }
+                        
                 UniqueString seriesName = new UniqueString(attributes.getSeriesName());
         
                 for(int j = 0; j < values.length; j++)
@@ -163,10 +163,10 @@ public class PieChartGenerator extends ChartGenerator
         }
 
 
-	protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
-		{
-		return new PieChartSeriesAttributes(this, name, getSeriesCount(), stopper);
-		}
+    protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
+        {
+        return new PieChartSeriesAttributes(this, name, getSeriesCount(), stopper);
+        }
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
@@ -287,8 +287,8 @@ public class PieChartGenerator extends ChartGenerator
             return;
 
         PieChartSeriesAttributes hsa = (PieChartSeriesAttributes)(getSeriesAttribute(index));
-		hsa.setElements(new ArrayList(objs));
-		}
+        hsa.setElements(new ArrayList(objs));
+        }
     
     public void updateSeries(int index, Object[] objs)
         {
@@ -299,8 +299,8 @@ public class PieChartGenerator extends ChartGenerator
             return;
 
         PieChartSeriesAttributes hsa = (PieChartSeriesAttributes)(getSeriesAttribute(index));
-		hsa.setElements((Object[])(objs.clone()));
-		}
+        hsa.setElements((Object[])(objs.clone()));
+        }
     
     public void updateSeries(int index, double[] amounts, String[] labels)
         {

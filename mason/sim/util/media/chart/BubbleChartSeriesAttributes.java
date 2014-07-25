@@ -23,15 +23,15 @@ public class BubbleChartSeriesAttributes extends SeriesAttributes
     double[][] values; 
     public double[][] getValues() { return values; }
     public void setValues(double[][] vals) 
-    { 
-    	if (vals != null)
-	    	{
-	    	vals = (double[][]) (vals.clone());
-    		for(int i = 0; i < vals.length; i++)
-    			vals[i] = (double[]) (vals[i].clone());
-    		}
-    values = vals; 
-    }
+        { 
+        if (vals != null)
+            {
+            vals = (double[][]) (vals.clone());
+            for(int i = 0; i < vals.length; i++)
+                vals[i] = (double[]) (vals[i].clone());
+            }
+        values = vals; 
+        }
 
     Color color;
     ColorWell colorWell;
@@ -39,7 +39,7 @@ public class BubbleChartSeriesAttributes extends SeriesAttributes
     NumberTextField opacityField;
     double scale;
     NumberTextField scaleField;
-   	
+        
     public void setOpacity(double value) { opacityField.setValue(opacityField.newValue(value));  }
     public double getOpacity() { return opacityField.getValue(); }
     
@@ -87,7 +87,7 @@ public class BubbleChartSeriesAttributes extends SeriesAttributes
         // The only thing consistent in all versions is getItemPaint 
         // (which looks like a gross miss-use, but gets the job done)
                 
-		color = (Color) ((((XYPlot)getPlot()).getRenderer()).getItemPaint(getSeriesIndex(), -1));
+        color = (Color) ((((XYPlot)getPlot()).getRenderer()).getItemPaint(getSeriesIndex(), -1));
         
         colorWell = new ColorWell(color)
             {

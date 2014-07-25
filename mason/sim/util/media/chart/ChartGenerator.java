@@ -841,7 +841,7 @@ public abstract class ChartGenerator extends JPanel
     // This ridiculous class exists so we can create Strings (of sorts) which are completely
     // uncomparable and have a total sort order regardless of their values.  Otherwise
     // (this is true) MultiplePiePlot won't allow multiple PiePlots with the same name.
-	public static class UniqueString implements java.lang.Comparable
+    public static class UniqueString implements java.lang.Comparable
         {
         String string;
         

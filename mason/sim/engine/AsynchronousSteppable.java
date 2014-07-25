@@ -271,7 +271,7 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** Fires up the AsynchronousSteppable after a pause().
         If it's already unpaused or not running, nothing happens. 
         @deprecated use resume(boolean)
-        */
+    */
     public final void resume() { resume(false); }
     
     boolean restoringFromCheckpoint = false;

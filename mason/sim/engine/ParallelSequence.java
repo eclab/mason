@@ -247,113 +247,113 @@ public class ParallelSequence extends Sequence
     }
     
 
-    // Why do we have a ThreadPool object here instead of using Java's thread
-    // pool facility in java.util.concurrent?  Two reasons.  First, this is
-    // faster and far simpler.  Second, java.util.concurrent has ridiculous
-    // design errors in it -- it's nearly impossible to do basic tasks like
-    // join threads etc.  Was Sun's code written by monkeys?  It appears so.
-    // Seriously, how screwed up a company do you have to be to mess up a
-    // ** thread pool ** ?
+// Why do we have a ThreadPool object here instead of using Java's thread
+// pool facility in java.util.concurrent?  Two reasons.  First, this is
+// faster and far simpler.  Second, java.util.concurrent has ridiculous
+// design errors in it -- it's nearly impossible to do basic tasks like
+// join threads etc.  Was Sun's code written by monkeys?  It appears so.
+// Seriously, how screwed up a company do you have to be to mess up a
+// ** thread pool ** ?
 
 
-    class ThreadPool
+class ThreadPool
+    {
+    class Node implements Runnable
         {
-        class Node implements Runnable
+        boolean die = false;
+        boolean go = false;
+        public Thread thread;
+        public Runnable toRun;
+            
+        public Node(String name) 
             {
-            boolean die = false;
-            boolean go = false;
-            public Thread thread;
-            public Runnable toRun;
+            thread = new Thread(this); 
+            thread.setDaemon(true);
+            thread.setName(name);
+            }
             
-            public Node(String name) 
+        public void run()
+            {
+            while(true)
                 {
-                thread = new Thread(this); 
-                thread.setDaemon(true);
-                thread.setName(name);
-                }
-            
-            public void run()
-                {
-                while(true)
+                synchronized(this) 
                     {
-                    synchronized(this) 
+                    while(!go && !die)
                         {
-                        while(!go && !die)
-                            {
-                            try { wait(); }
-                            catch (InterruptedException e) { } // ignore
-                            }
-                        go = false;
-                        if (die) { die = false; return; }
+                        try { wait(); }
+                        catch (InterruptedException e) { } // ignore
                         }
-                    toRun.run();
-                    toRun = null;
-                    // add myself back in the list
-                    synchronized(threads)
-                        {
-                        threads.add(this);  // adds to the tail
-                        if (totalThreads == threads.size())  // we're all in the bag, let the pool know if it's joining
-                            threads.notify();
-                        }
-                    // let the pool know I'm home
+                    go = false;
+                    if (die) { die = false; return; }
                     }
-                }
-            }
-        
-        LinkedList threads = new LinkedList();
-        int totalThreads = 0;  // synchronize on threads first
-                
-        // Joins and kills all threads, both those running and those sitting in the pool
-        void killThreads()
-            {
-            synchronized(threads)
-                {
-                joinThreads();
-                while(!threads.isEmpty())
+                toRun.run();
+                toRun = null;
+                // add myself back in the list
+                synchronized(threads)
                     {
-                    Node node = (Node)(threads.remove());  // removes from head
-                    synchronized(node) { node.die = true; node.notify(); }  // reel it in
-                    try { node.thread.join(); }
-                    catch (InterruptedException e) { } // ignore
-                    totalThreads--;
+                    threads.add(this);  // adds to the tail
+                    if (totalThreads == threads.size())  // we're all in the bag, let the pool know if it's joining
+                        threads.notify();
                     }
+                // let the pool know I'm home
                 }
             }
-            
-        // Waits for all presently running threads to complete
-        void joinThreads()
-            {
-            synchronized(threads)
-                {
-                if(totalThreads > threads.size())  // there are still outstanding threads
-                    try { threads.wait(); }
-                    catch (InterruptedException e) { }  // ignore
-                }
-            }
-        
-        // Starts a thread running on the given runnable
-        void startThread(Runnable run) { startThread(run, "ParallelSequence"); }
-        
-        void startThread(Runnable run, String name)
-            {
-            Node node;
-            // ensure we have at least one thread
-            synchronized(threads) 
-                {
-                if (threads.isEmpty())
-                    {
-                    node = new Node(name + " Thread " + totalThreads);
-                    node.thread.start();
-                    totalThreads++;
-                    }
-                else  // pull a thread
-                    {
-                    node = (Node)(threads.remove());  // removes from the head
-                    }
-                }
-            synchronized(node) { node.toRun = run; node.go = true; node.notify(); }  // get it running
-            }
-
-        private static final long serialVersionUID = 1;
         }
+        
+    LinkedList threads = new LinkedList();
+    int totalThreads = 0;  // synchronize on threads first
+                
+    // Joins and kills all threads, both those running and those sitting in the pool
+    void killThreads()
+        {
+        synchronized(threads)
+            {
+            joinThreads();
+            while(!threads.isEmpty())
+                {
+                Node node = (Node)(threads.remove());  // removes from head
+                synchronized(node) { node.die = true; node.notify(); }  // reel it in
+                try { node.thread.join(); }
+                catch (InterruptedException e) { } // ignore
+                totalThreads--;
+                }
+            }
+        }
+            
+    // Waits for all presently running threads to complete
+    void joinThreads()
+        {
+        synchronized(threads)
+            {
+            if(totalThreads > threads.size())  // there are still outstanding threads
+                try { threads.wait(); }
+                catch (InterruptedException e) { }  // ignore
+            }
+        }
+        
+    // Starts a thread running on the given runnable
+    void startThread(Runnable run) { startThread(run, "ParallelSequence"); }
+        
+    void startThread(Runnable run, String name)
+        {
+        Node node;
+        // ensure we have at least one thread
+        synchronized(threads) 
+            {
+            if (threads.isEmpty())
+                {
+                node = new Node(name + " Thread " + totalThreads);
+                node.thread.start();
+                totalThreads++;
+                }
+            else  // pull a thread
+                {
+                node = (Node)(threads.remove());  // removes from the head
+                }
+            }
+        synchronized(node) { node.toRun = run; node.go = true; node.notify(); }  // get it running
+        }
+
+    private static final long serialVersionUID = 1;
+    }
     

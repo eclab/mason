@@ -51,11 +51,11 @@ public class ShapePortrayal2D extends AbstractShapePortrayal2D
     public static final double[] X_POINTS_HOURGLASS = new double[] {-0.5, 0.5, -0.5, 0.5};
     public static final double[] Y_POINTS_HOURGLASS = new double[] {-0.5, 0.5, 0.5, -0.5};
     
-	static final double OCT_COORD = (1.0 / (1.0 + Math.sqrt(2))) / 2.0;  // About .2071067811, derived from Wikipedia's Octogon article :-)
+    static final double OCT_COORD = (1.0 / (1.0 + Math.sqrt(2))) / 2.0;  // About .2071067811, derived from Wikipedia's Octogon article :-)
     public static final double[] X_POINTS_OCTAGON = new double[] {-0.5, -0.5, -OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD};
     public static final double[] Y_POINTS_OCTAGON = new double[] {-OCT_COORD, OCT_COORD, 0.5, 0.5, OCT_COORD, -OCT_COORD, -0.5, -0.5};
 
-	// This hexagon, unlike HexagonalPortrayal2D, fits inside a 1x1 square centered at (0,0) and so looks somewhat stretched
+    // This hexagon, unlike HexagonalPortrayal2D, fits inside a 1x1 square centered at (0,0) and so looks somewhat stretched
     public static final double[] X_POINTS_HEXAGON = new double[] {-0.5, -0.25, 0.25, 0.5, 0.25, -0.25};
     public static final double[] Y_POINTS_HEXAGON = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};
     public static final double[] X_POINTS_HEXAGON_ROTATED = new double[] {0, 0.5, 0.5, 0, -0.5, -0.5};

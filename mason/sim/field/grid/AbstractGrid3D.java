@@ -337,9 +337,9 @@ public abstract class AbstractGrid3D implements Grid3D
                     {
                     for( int z0 = zmin ; z0 <= zmax ; z0++ )
                         {
-                            xPos.add( x0 );
-                            yPos.add( y0 );
-                            zPos.add( z0 );
+                        xPos.add( x0 );
+                        yPos.add( y0 );
+                        zPos.add( z0 );
                         }
                     }
                 }
@@ -457,9 +457,9 @@ public abstract class AbstractGrid3D implements Grid3D
                     for( int z0 = zmin; z0 <= zmax; z0++ )
                         {
                         final int z_0 = z0;
-                            xPos.add( x_0 );
-                            yPos.add( y_0 );
-                            zPos.add( z_0 );
+                        xPos.add( x_0 );
+                        yPos.add( y_0 );
+                        zPos.add( z_0 );
                         }
                     }
                 }
@@ -663,11 +663,11 @@ public abstract class AbstractGrid3D implements Grid3D
         }
 
 
- 	protected void checkBounds(Grid3D other)
-    	{
-    	if (getHeight() != other.getHeight() || getWidth() != other.getWidth() || getLength() != other.getLength())
-    		throw new IllegalArgumentException("Grids must be the same dimensions.");
-    	}
+    protected void checkBounds(Grid3D other)
+        {
+        if (getHeight() != other.getHeight() || getWidth() != other.getWidth() || getLength() != other.getLength())
+            throw new IllegalArgumentException("Grids must be the same dimensions.");
+        }
     
 
     }

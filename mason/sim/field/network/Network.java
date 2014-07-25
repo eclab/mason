@@ -332,36 +332,36 @@ public class Network implements java.io.Serializable
         }
     
     /** Returns an arbitrary edge connecting the "from" node to the "to" node, if one exists, else returns null.
-    	If the graph is undirected, which node is "from" vs. "to" does not matter. */
-	public Edge getEdge(Object from, Object to)
-		{
-		Bag b = getEdgesOut(from);  // will never be null
-		for(int i = 0; i < b.size(); i++)
-			{
-			Edge e = (Edge)(b.get(i));
-			if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
-				return e;
-			}
-		return null;
-		}
+        If the graph is undirected, which node is "from" vs. "to" does not matter. */
+    public Edge getEdge(Object from, Object to)
+        {
+        Bag b = getEdgesOut(from);  // will never be null
+        for(int i = 0; i < b.size(); i++)
+            {
+            Edge e = (Edge)(b.get(i));
+            if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
+                return e;
+            }
+        return null;
+        }
 
     /** Clears the provided Bag, then places in it all edges connecting the "from" node to the "to" node. Returns the Bag.
-    	If null is passed in for the Bag, then a new one is created and returned.
-    	If the graph is undirected, which node is "from" vs. "to" does not matter. */
-	public Bag getEdges(Object from, Object to, Bag bag)
-		{
-		if (bag == null) bag = new Bag();
-		else bag.clear();
-		
-		Bag b = getEdgesOut(from);  // will never be null
-		for(int i = 0; i < b.size(); i++)
-			{
-			Edge e = (Edge)(b.get(i));
-			if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
-				bag.add(e);
-			}
-		return bag;
-		}
+        If null is passed in for the Bag, then a new one is created and returned.
+        If the graph is undirected, which node is "from" vs. "to" does not matter. */
+    public Bag getEdges(Object from, Object to, Bag bag)
+        {
+        if (bag == null) bag = new Bag();
+        else bag.clear();
+                
+        Bag b = getEdgesOut(from);  // will never be null
+        for(int i = 0; i < b.size(); i++)
+            {
+            Edge e = (Edge)(b.get(i));
+            if (e.getOtherNode(from).equals(to))  // since from is guaranteed to be a node, to must be the other (see getOtherNode docs for improper from situation)
+                bag.add(e);
+            }
+        return bag;
+        }
         
     /** Add a node */
     public void addNode( final Object node )

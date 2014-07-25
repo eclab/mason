@@ -98,7 +98,7 @@ public class SimState implements java.io.Serializable
       }
     */
     
-	/** Primes the generator.  Mersenne Twister seeds its first 624 numbers using a basic
+    /** Primes the generator.  Mersenne Twister seeds its first 624 numbers using a basic
         linear congruential generator; thereafter it uses the MersenneTwister algorithm to
         build new seeds.  Those first 624 numbers are generally just fine, but to be extra
         safe, you can prime the generator by calling nextInt() on it some (N>1) * 624 times.
@@ -407,7 +407,7 @@ public class SimState implements java.io.Serializable
                 "                  simulation time U has been reached or exceeded.\n" +
                 "                  If -for is also included, the simulation terminates when\n" + 
                 "                  either of them is completed.\n" + 
-				"                  Default: don't stop.\n\n" +
+                "                  Default: don't stop.\n\n" +
                 "-for N            Long value >= 0: the simulation must stop when N\n" +
                 "                  simulation steps have transpired.   If -until is also\n" +
                 "                  included, the simulation terminates when either of them is\n" + 
@@ -517,7 +517,7 @@ public class SimState implements java.io.Serializable
                 {
                 throw new RuntimeException("Invalid checkpoint modulo: " + cmod_s + ", must be a positive integer");
                 }
-    	final long cmod = _cmod;
+        final long cmod = _cmod;
         
         long _repeat = 1;
         String repeat_s = argumentForKey("-repeat", args);
@@ -548,12 +548,12 @@ public class SimState implements java.io.Serializable
         final int parallel = _parallel;
                 
         // check for parallelism with checkpoints
-		final String checkpointFile = argumentForKey("-checkpoint", args);
+        final String checkpointFile = argumentForKey("-checkpoint", args);
         if (parallel > 1 && checkpointFile != null)
-        	{
-        	System.err.println("Cannot load from checkpoint and run in parallel at the same time.  Sorry.");
-        	System.exit(1);
-        	}
+            {
+            System.err.println("Cannot load from checkpoint and run in parallel at the same time.  Sorry.");
+            System.exit(1);
+            }
        
        
         // okay, now we actually get down to brass tacks
@@ -566,126 +566,126 @@ public class SimState implements java.io.Serializable
         
         Thread[] threads = new Thread[parallel];
         for(int _thread = 0; _thread < parallel; _thread++)
-        	{
-        	final int thread = _thread;  // stupid Java
-        	threads[thread] = new Thread(new Runnable()
-        		{
-        		public void run()
-        			{
-        			long time = time_init - 1;
-					long job = thread * repeat;
-					long seed = seed_init + job;  // initially anyway
-					for(long rep = 0 ; rep < repeat; rep++)
-						{
-						SimState state = null;
-		
-						// start from checkpoint?  Note this will only happen if there is only ONE thread, so it's okay to change the job number here
-						if (rep == 0 && checkpointFile!=null)  // only job 0 loads from checkpoint
-							{
-							if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
-							state = SimState.readFromCheckpoint(new File(checkpointFile));
-							if (state == null)   // there was an error -- it got printed out to the screen, so just quit
-								System.exit(1);
-							else if (state.getClass() != generator.simulationClass())  // uh oh, wrong simulation stored in the file!
-								{
-								printlnSynchronized("Checkpoint contains some other simulation: " + state + ", should have been of class " + generator.simulationClass());
-								System.exit(1);
-								}
-										
-							state.nameThread();
+            {
+            final int thread = _thread;  // stupid Java
+            threads[thread] = new Thread(new Runnable()
+                {
+                public void run()
+                    {
+                    long time = time_init - 1;
+                    long job = thread * repeat;
+                    long seed = seed_init + job;  // initially anyway
+                    for(long rep = 0 ; rep < repeat; rep++)
+                        {
+                        SimState state = null;
+                
+                        // start from checkpoint?  Note this will only happen if there is only ONE thread, so it's okay to change the job number here
+                        if (rep == 0 && checkpointFile!=null)  // only job 0 loads from checkpoint
+                            {
+                            if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
+                            state = SimState.readFromCheckpoint(new File(checkpointFile));
+                            if (state == null)   // there was an error -- it got printed out to the screen, so just quit
+                                System.exit(1);
+                            else if (state.getClass() != generator.simulationClass())  // uh oh, wrong simulation stored in the file!
+                                {
+                                printlnSynchronized("Checkpoint contains some other simulation: " + state + ", should have been of class " + generator.simulationClass());
+                                System.exit(1);
+                                }
+                                                                                
+                            state.nameThread();
 
-							job = state.job();
-							if (state.seed() != 0) // likely good seed from the command line earlier
-								{
-								seed = state.seed();
-								if (!quiet) printlnSynchronized("Recovered job: " + state.job() + " Seed: " + state.seed());
-								}
-							else if (!quiet) printlnSynchronized("Renamed job: " + state.job() + " (unknown seed)");
-							}
+                            job = state.job();
+                            if (state.seed() != 0) // likely good seed from the command line earlier
+                                {
+                                seed = state.seed();
+                                if (!quiet) printlnSynchronized("Recovered job: " + state.job() + " Seed: " + state.seed());
+                                }
+                            else if (!quiet) printlnSynchronized("Renamed job: " + state.job() + " (unknown seed)");
+                            }
 
-						// ...or should we start fresh?
-						if (state==null)  // no checkpoint file requested
-							{
-							state = generator.newInstance(seed,args);
-							state.nameThread();
-							state.job = job;
-							state.seed = seed;
-							if (!quiet) printlnSynchronized("Job: " + state.job() + " Seed: " + state.seed());
-							state.start();
-							}
-			
-						NumberFormat rateFormat = NumberFormat.getInstance();
-						rateFormat.setMaximumFractionDigits(5);
-						rateFormat.setMinimumIntegerDigits(1);
+                        // ...or should we start fresh?
+                        if (state==null)  // no checkpoint file requested
+                            {
+                            state = generator.newInstance(seed,args);
+                            state.nameThread();
+                            state.job = job;
+                            state.seed = seed;
+                            if (!quiet) printlnSynchronized("Job: " + state.job() + " Seed: " + state.seed());
+                            state.start();
+                            }
+                        
+                        NumberFormat rateFormat = NumberFormat.getInstance();
+                        rateFormat.setMaximumFractionDigits(5);
+                        rateFormat.setMinimumIntegerDigits(1);
 
-						// do the loop
-						boolean retval = false;
-						long steps = 0;
-						long clock;
-						long oldClock = System.currentTimeMillis();
-						Schedule schedule = state.schedule;
-						long firstSteps = schedule.getSteps();
-			
-						while((_for == -1 || steps < _for) && schedule.getTime() <= until)
-							{
-							if (!schedule.step(state)) 
-								{
-								retval=true; 
-								break;
-								}
-							steps = schedule.getSteps();
-							if (time < 0)  // don't know how long to make the time yet
-								{
-								if (System.currentTimeMillis() - oldClock > 1000L)  // time to set the time
-									{
-									time = figureTime(steps - firstSteps);
-									}
-								}
-							if (time > 0 && steps % time == 0)
-								{
-								clock = System.currentTimeMillis();
-								if (!quiet) printlnSynchronized("Job " + job + ": " + "Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)));
-								firstSteps = steps;
-								oldClock = clock;
-								}
-							if (cmod > 0 && steps % cmod == 0)
-								{
-								String s = "" + steps + "." + state.job() +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
-								if (!quiet) printlnSynchronized("Job " + job + ": " + "Checkpointing to file: " + s);
-								state.writeToCheckpoint(new File(s));
-								}
-							}
-				
-						state.finish();
-			
-						if (retval) 
-							{
-							if (!quiet) printlnSynchronized("Job " + job + ": " + "Exhausted " + state.job );
-							}
-						else
-							{
-							if (!quiet) printlnSynchronized("Job " + job + ": " + "Quit " + state.job);
-							}
+                        // do the loop
+                        boolean retval = false;
+                        long steps = 0;
+                        long clock;
+                        long oldClock = System.currentTimeMillis();
+                        Schedule schedule = state.schedule;
+                        long firstSteps = schedule.getSteps();
+                        
+                        while((_for == -1 || steps < _for) && schedule.getTime() <= until)
+                            {
+                            if (!schedule.step(state)) 
+                                {
+                                retval=true; 
+                                break;
+                                }
+                            steps = schedule.getSteps();
+                            if (time < 0)  // don't know how long to make the time yet
+                                {
+                                if (System.currentTimeMillis() - oldClock > 1000L)  // time to set the time
+                                    {
+                                    time = figureTime(steps - firstSteps);
+                                    }
+                                }
+                            if (time > 0 && steps % time == 0)
+                                {
+                                clock = System.currentTimeMillis();
+                                if (!quiet) printlnSynchronized("Job " + job + ": " + "Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)));
+                                firstSteps = steps;
+                                oldClock = clock;
+                                }
+                            if (cmod > 0 && steps % cmod == 0)
+                                {
+                                String s = "" + steps + "." + state.job() +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
+                                if (!quiet) printlnSynchronized("Job " + job + ": " + "Checkpointing to file: " + s);
+                                state.writeToCheckpoint(new File(s));
+                                }
+                            }
+                                
+                        state.finish();
+                        
+                        if (retval) 
+                            {
+                            if (!quiet) printlnSynchronized("Job " + job + ": " + "Exhausted " + state.job );
+                            }
+                        else
+                            {
+                            if (!quiet) printlnSynchronized("Job " + job + ": " + "Quit " + state.job);
+                            }
 
-						job++;
-						seed++;
-						}
-					}
-				});
-			threads[thread].start();
-			}
+                        job++;
+                        seed++;
+                        }
+                    }
+                });
+            threads[thread].start();
+            }
         for(int thread = 0; thread < parallel; thread++)
-        	{
-        	try { threads[thread].join(); } catch (InterruptedException ex) {  }  // do nothing
-        	}
+            {
+            try { threads[thread].join(); } catch (InterruptedException ex) {  }  // do nothing
+            }
         System.exit(0);
-		}
-	
-	static Object printLock = new Object[0];
-	public static void printlnSynchronized(String val)
-		{
-		synchronized(printLock) { System.err.println(val); }
-		}
+        }
+        
+    static Object printLock = new Object[0];
+    public static void printlnSynchronized(String val)
+        {
+        synchronized(printLock) { System.err.println(val); }
+        }
     
     /** Names the current thread an appropriate name given the SimState */
     public void nameThread()

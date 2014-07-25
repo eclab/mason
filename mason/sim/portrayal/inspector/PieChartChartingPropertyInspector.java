@@ -109,45 +109,45 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         Object[] vals = previousValues;  // set it to something in case we don't get anything new.
                 
         if (cls.isArray())
+            {
+            Class comp = cls.getComponentType();
+            if (Object.class.isAssignableFrom(comp))
                 {
-                Class comp = cls.getComponentType();
-                if (Object.class.isAssignableFrom(comp))
-                    {
-                    Object[] array = (Object[]) obj;
-                    vals = new Object[array.length];
-                    for(int i=0;i<array.length;i++)
-                        vals[i] = array[i];
-                    }
+                Object[] array = (Object[]) obj;
+                vals = new Object[array.length];
+                for(int i=0;i<array.length;i++)
+                    vals[i] = array[i];
                 }
+            }
         else if (java.util.Collection.class.isAssignableFrom(cls))
-        	{
-			Object[] array = ((java.util.Collection) obj).toArray();
-			vals = new Object[array.length];
-			for(int i=0;i<array.length;i++)
-				vals[i] = array[i];
-        	}
+            {
+            Object[] array = ((java.util.Collection) obj).toArray();
+            vals = new Object[array.length];
+            for(int i=0;i<array.length;i++)
+                vals[i] = array[i];
+            }
         else if (obj instanceof ChartUtilities.ProvidesObjects)
-        	{
-			Object[] array = ((ChartUtilities.ProvidesObjects) obj).provide();
-			vals = new Object[array.length];
-			for(int i=0;i<array.length;i++)
-				vals[i] = array[i];
-        	}
+            {
+            Object[] array = ((ChartUtilities.ProvidesObjects) obj).provide();
+            vals = new Object[array.length];
+            for(int i=0;i<array.length;i++)
+                vals[i] = array[i];
+            }
         else if (obj instanceof ChartUtilities.ProvidesCollection)
-        	{
-			Object[] array = ((ChartUtilities.ProvidesCollection) obj).provide().toArray();
-			vals = new Object[array.length];
-			for(int i=0;i<array.length;i++)
-				vals[i] = array[i];
-        	}
+            {
+            Object[] array = ((ChartUtilities.ProvidesCollection) obj).provide().toArray();
+            vals = new Object[array.length];
+            for(int i=0;i<array.length;i++)
+                vals[i] = array[i];
+            }
         else if (obj instanceof ChartUtilities.ProvidesDoublesAndLabels)  // Handled Specially
-        	{
-			double[] array = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provide();
-			String[] labels = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provideLabels();
-			previousValues = null;
-        	((PieChartGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), array, labels); 
-        	return;
-        	}
+            {
+            double[] array = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provide();
+            String[] labels = ((ChartUtilities.ProvidesDoublesAndLabels) obj).provideLabels();
+            previousValues = null;
+            ((PieChartGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), array, labels); 
+            return;
+            }
                                 
         boolean same = true;
         if (previousValues != null && vals.length == previousValues.length)

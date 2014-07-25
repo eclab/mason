@@ -35,11 +35,11 @@ public class PieChartSeriesAttributes extends SeriesAttributes
     Collection elements2 = null;
     
     Object[] getElements() 
-    	{
-    	if (elements != null) return elements;
-    	else return elements2.toArray();
-    	}
-    	
+        {
+        if (elements != null) return elements;
+        else return elements2.toArray();
+        }
+        
     public void setElements(Object[] elts) { if (elts != null) elts = (Object[])(elts.clone()); elements = elts; elements2 = null; values = null; labels = null;}
     public void setElements(Collection elts) { if (elts != null) elts = new ArrayList(elts); elements2 = elts; elements = null; values = null; labels = null;}
     

@@ -28,9 +28,9 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
         
         // load all but the last thread
         for(int i = 0; i < numThreads - 1; i++)
-        	{
-        	final int _i = i;
-        	threads[i] = new Steppable ()
+            {
+            final int _i = i;
+            threads[i] = new Steppable ()
                 { 
                 public void step(SimState state) 
                     {
@@ -39,18 +39,18 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
                     diffuse(heatbugs, _gridWidth / numThreads * _i, _gridWidth / numThreads * (_i + 1));
                     }
                 };
-        	}
+            }
         
         // load the last thread
         threads[numThreads - 1] = new Steppable()
-        	{
-                public void step(SimState state) 
-                    {
-                    HeatBugs heatbugs = (HeatBugs)state;
-                    int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe
-                    diffuse(heatbugs, _gridWidth / numThreads * (numThreads - 1), _gridWidth);
-                    }
-        	};
+            {
+            public void step(SimState state) 
+                {
+                HeatBugs heatbugs = (HeatBugs)state;
+                int _gridWidth = heatbugs.valgrid.getWidth();  // read-only, so threadsafe
+                diffuse(heatbugs, _gridWidth / numThreads * (numThreads - 1), _gridWidth);
+                }
+            };
         diffusers = new ParallelSequence(threads);
         }
         

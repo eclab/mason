@@ -88,21 +88,21 @@ public class BoxPlotGenerator extends ChartGenerator
         }
                 
 
- 	public Dataset getSeriesDataset() { return ((CategoryPlot)(chart.getPlot())).getDataset(); }
+    public Dataset getSeriesDataset() { return ((CategoryPlot)(chart.getPlot())).getDataset(); }
 
     public void setSeriesDataset(Dataset obj)
-    	{
+        {
         ((CategoryPlot)(chart.getPlot())).setDataset((DefaultBoxAndWhiskerCategoryDataset)obj);
         if (invalidChartTitle != null)
             setInvalidChartTitle(null);
-    	}
-    	
+        }
+        
     public int getSeriesCount()
-    	{
+        {
         DefaultBoxAndWhiskerCategoryDataset dataset = (DefaultBoxAndWhiskerCategoryDataset)(getSeriesDataset());
-		return dataset.getRowCount();
-    	}
-    	
+        return dataset.getRowCount();
+        }
+        
     public void removeSeries(int index)
         {
         super.removeSeries(index);
@@ -121,29 +121,29 @@ public class BoxPlotGenerator extends ChartGenerator
         {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
 
-		// we build the chart manually rather than using ChartFactory
-		// because we need to customize the getDataRange method below
+        // we build the chart manually rather than using ChartFactory
+        // because we need to customize the getDataRange method below
 
-		CategoryAxis categoryAxis = new CategoryAxis("");
+        CategoryAxis categoryAxis = new CategoryAxis("");
         NumberAxis valueAxis = new NumberAxis("Untitled Y Axis");
         valueAxis.setAutoRangeIncludesZero(false);
         BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
         renderer.setBaseToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
         CategoryPlot plot = new CategoryPlot(dataset, categoryAxis, valueAxis, renderer)
-        	{
-        	// Customizing this method in order to provide a bit of
-        	// vertical buffer.  Otherwise the bar chart box gets drawn
-        	// slightly off-chart, which looks really bad.
-        	
-        	public Range getDataRange(ValueAxis axis)
-        		{
-        		Range range = super.getDataRange(axis);
-        		if (range == null) return null;
-        		final double EXTRA_PERCENTAGE = 0.02;
-        		return Range.expand(range, EXTRA_PERCENTAGE, EXTRA_PERCENTAGE);
-        		}
-        	};
-        	
+            {
+            // Customizing this method in order to provide a bit of
+            // vertical buffer.  Otherwise the bar chart box gets drawn
+            // slightly off-chart, which looks really bad.
+                
+            public Range getDataRange(ValueAxis axis)
+                {
+                Range range = super.getDataRange(axis);
+                if (range == null) return null;
+                final double EXTRA_PERCENTAGE = 0.02;
+                return Range.expand(range, EXTRA_PERCENTAGE, EXTRA_PERCENTAGE);
+                }
+            };
+                
         chart = new JFreeChart("Untitled Chart", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
         ChartFactory.getChartTheme().apply(chart);
 
@@ -155,13 +155,13 @@ public class BoxPlotGenerator extends ChartGenerator
         setSeriesDataset(dataset);
         }
  
- 	ArrayList buildList(double[] vals)
- 		{
- 		ArrayList list = new ArrayList();
- 		for(int i = 0; i < vals.length; i++)
- 			list.add(new Double(vals[i]));
- 		return list;
- 		}
+    ArrayList buildList(double[] vals)
+        {
+        ArrayList list = new ArrayList();
+        for(int i = 0; i < vals.length; i++)
+            list.add(new Double(vals[i]));
+        return list;
+        }
  
     protected void update()
         {
@@ -179,9 +179,9 @@ public class BoxPlotGenerator extends ChartGenerator
             //UniqueString series = new UniqueString(attributes.getSeriesName());
             String series = attributes.getSeriesName();
             for(int j = 0; j < values.length; j++)
-            	{
-            	dataset.add(buildList(values[j]), series, labels[j]);
-            	}
+                {
+                dataset.add(buildList(values[j]), series, labels[j]);
+                }
             }
 
         ((BoxAndWhiskerRenderer)(((CategoryPlot)(chart.getPlot())).getRenderer())).setMaximumBarWidth(getMaximumWidth());
@@ -192,16 +192,16 @@ public class BoxPlotGenerator extends ChartGenerator
 
 
     public SeriesAttributes addSeries(double[] vals, String name, SeriesChangeListener stopper)
-    	{
+        {
         double[][] vvals = new double[1][];
         vvals[0] = vals;
         return addSeries(vvals, name, stopper);
-    	}
+        }
 
     /** Adds a series, plus a (possibly null) SeriesChangeListener which will receive a <i>single</i>
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
 
-	SeriesAttributes addSeries(double[][] vals, String name, SeriesChangeListener stopper)
+    SeriesAttributes addSeries(double[][] vals, String name, SeriesChangeListener stopper)
         {
         if (vals == null || vals.length == 0) vals = new double[0][0];
         int i = getSeriesCount();
@@ -291,15 +291,15 @@ public class BoxPlotGenerator extends ChartGenerator
         if (vals == null || vals.length == 0) vals = new double[0][0];
         if (labels == null || labels.length == 0) labels = new String[0];
         if (vals.length != labels.length)  // uh oh
-        	return;
-        	
+            return;
+                
         BoxPlotSeriesAttributes hsa = (BoxPlotSeriesAttributes)(getSeriesAttribute(index));
         hsa.setValues(vals);
         hsa.setLabels(labels);
         }
         
     protected void buildGlobalAttributes(LabelledList list)
-    	{
+        {
         // create the chart
         ((CategoryPlot)(chart.getPlot())).setRangeGridlinesVisible(false);
         ((CategoryPlot)(chart.getPlot())).setRangeGridlinePaint(new Color(200,200,200));
@@ -365,21 +365,21 @@ public class BoxPlotGenerator extends ChartGenerator
             };
         ygridlines.addItemListener(il);
 
-		// JFreeChart's Box Plots look awful when wide because the mean
-		// circle is based on the width of the bar to the exclusion of all
-		// else.  So I've restricted the width to be no more than 0.4, and 0.1
-		// is the suggested default.
-		
-		final double INITIAL_WIDTH = 0.1;
-		final double MAXIMUM_RATIONAL_WIDTH = 0.4;
-		
+        // JFreeChart's Box Plots look awful when wide because the mean
+        // circle is based on the width of the bar to the exclusion of all
+        // else.  So I've restricted the width to be no more than 0.4, and 0.1
+        // is the suggested default.
+                
+        final double INITIAL_WIDTH = 0.1;
+        final double MAXIMUM_RATIONAL_WIDTH = 0.4;
+                
         maximumWidthField = new NumberTextField(INITIAL_WIDTH, 2.0, 0)
             {
             public double newValue(double newValue) 
                 {
                 if (newValue <= 0.0 || newValue > MAXIMUM_RATIONAL_WIDTH) 
                     newValue = currentValue;
-        		((BoxAndWhiskerRenderer)(((CategoryPlot)(chart.getPlot())).getRenderer())).setMaximumBarWidth(newValue);
+                ((BoxAndWhiskerRenderer)(((CategoryPlot)(chart.getPlot())).getRenderer())).setMaximumBarWidth(newValue);
                 update();
                 return newValue;
                 }
@@ -394,7 +394,7 @@ public class BoxPlotGenerator extends ChartGenerator
         
         mean = new JCheckBox();
         mean.setSelected(true);
-     	il = new ItemListener()
+        il = new ItemListener()
             {
             public void itemStateChanged(ItemEvent e)
                 {
@@ -442,8 +442,8 @@ public class BoxPlotGenerator extends ChartGenerator
         list.add(new JLabel("Horizontal"), horizontal);
 
 
-		final JCheckBox whiskersUseFillColorButton = new JCheckBox();
-		whiskersUseFillColorButton.setSelected(false);
+        final JCheckBox whiskersUseFillColorButton = new JCheckBox();
+        whiskersUseFillColorButton.setSelected(false);
         whiskersUseFillColorButton.addChangeListener(new ChangeListener(){
             public void stateChanged(ChangeEvent e)
                 {
@@ -457,5 +457,5 @@ public class BoxPlotGenerator extends ChartGenerator
         box.add(whiskersUseFillColorButton);
         box.add(Box.createGlue());
         list.add(new JLabel("Whiskers"), box);
-       }
+        }
     }

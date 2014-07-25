@@ -289,10 +289,10 @@ public class BarChartGenerator extends PieChartGenerator
             }
         }
 
-	protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
-		{
-		return new BarChartSeriesAttributes(this, name, getSeriesCount(), stopper);
-		}
+    protected PieChartSeriesAttributes buildNewAttributes(String name, SeriesChangeListener stopper)
+        {
+        return new BarChartSeriesAttributes(this, name, getSeriesCount(), stopper);
+        }
 
     protected void buildChart()
         {

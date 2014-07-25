@@ -36,24 +36,24 @@ public class BoxPlotSeriesAttributes extends SeriesAttributes
     double[][] values; 
     String[] labels = new String[] { "" };
     public void setLabels(String[] labels) 
-    	{
-    	if (labels != null) labels = (String[])(labels.clone()); 
-    	else labels = new String[] { "" };
-    	this.labels = labels; 
-    	}
+        {
+        if (labels != null) labels = (String[])(labels.clone()); 
+        else labels = new String[] { "" };
+        this.labels = labels; 
+        }
     public String[] getLabels() { return labels; }
 //    public void setLabel(String label) { this.labels = new String[] { label }; }
     public double[][] getValues() { return values; }
     public void setValues(double[][] vals) 
-    {
-    	if (vals != null)
-	    	{
-	    	vals = (double[][]) (vals.clone());
-    		for(int i = 0; i < vals.length; i++)
-    			vals[i] = (double[]) (vals[i].clone());
-    		}
-     values = vals; 
-     }
+        {
+        if (vals != null)
+            {
+            vals = (double[][]) (vals.clone());
+            for(int i = 0; i < vals.length; i++)
+                vals[i] = (double[]) (vals[i].clone());
+            }
+        values = vals; 
+        }
     //public void setValues(double[] vals) { setValues(new double[][] { vals }); }
                 
     /** Border thickness */
@@ -134,10 +134,10 @@ public class BoxPlotSeriesAttributes extends SeriesAttributes
         {
         BoxAndWhiskerRenderer renderer = (BoxAndWhiskerRenderer)getCategoryRenderer();
             
-		renderer.setSeriesOutlineStroke(getSeriesIndex(),
-			new BasicStroke(thickness));
-		renderer.setSeriesStroke(getSeriesIndex(),
-			new BasicStroke(thickness));
+        renderer.setSeriesOutlineStroke(getSeriesIndex(),
+            new BasicStroke(thickness));
+        renderer.setSeriesStroke(getSeriesIndex(),
+            new BasicStroke(thickness));
 
         renderer.setSeriesPaint(getSeriesIndex(),reviseColor(fillColor, fillOpacity));
         renderer.setSeriesOutlinePaint(getSeriesIndex(),reviseColor(strokeColor, lineOpacity));

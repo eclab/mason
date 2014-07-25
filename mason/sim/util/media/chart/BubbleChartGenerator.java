@@ -85,10 +85,10 @@ public class BubbleChartGenerator extends XYChartGenerator
             double[][] values = attributes.getValues();
             double[][] v2 = new double[values.length][values[0].length];
             for(int k = 0; k < v2.length; k++)
-            	for(int j = 0; j < v2[k].length; j++)
-            		v2[k][j] = values[k][j];
+                for(int j = 0; j < v2[k].length; j++)
+                    v2[k][j] = values[k][j];
             for(int j = 0; j < v2[2].length; j++)
-            	v2[2][j] = Math.sqrt(scale * v2[2][j]);
+                v2[2][j] = Math.sqrt(scale * v2[2][j]);
             
             dataset.addSeries(new UniqueString(attributes.getSeriesName()), v2);
             }

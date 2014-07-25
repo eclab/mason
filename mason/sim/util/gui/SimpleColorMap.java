@@ -137,9 +137,9 @@ public class SimpleColorMap implements ColorMap
         }
                 
     /** Override this to convert level values to new values using some appropriate mathematical transformation.
-    	The values you return ought to be >= minLevel and <= maxLevel; values outside these bounds will be
-    	trimmed to minLevel or maxLevel respectively prior to conversion to a color.  The default implementation
-    	simply returns the passed-in level.  */
+        The values you return ought to be >= minLevel and <= maxLevel; values outside these bounds will be
+        trimmed to minLevel or maxLevel respectively prior to conversion to a color.  The default implementation
+        simply returns the passed-in level.  */
     public double transformLevel(double level, double minLevel, double maxLevel) { return level; }
     
     /** Sets the color levels for the ValueGridPortrayal2D values for use by the default getColor(...)
@@ -177,7 +177,7 @@ public class SimpleColorMap implements ColorMap
         double minLevel = this.minLevel;
         double maxLevel = this.maxLevel;
 
-		// preprocess the level
+        // preprocess the level
         level = transformLevel(level, this.minLevel, this.maxLevel);
         
         if (colors != null && level >= 0 && level < colors.length)
@@ -186,7 +186,7 @@ public class SimpleColorMap implements ColorMap
             }
         else
             {
-        	if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+            if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
             
             if (level == minLevel) return minColor;  // so we don't divide by zero (maxLevel - minLevel)
             else if (level == maxLevel) return maxColor;  // so we don't overflow
@@ -227,7 +227,7 @@ public class SimpleColorMap implements ColorMap
         double minLevel = this.minLevel;
         double maxLevel = this.maxLevel;
 
-		// preprocess the level
+        // preprocess the level
         level = transformLevel(level, this.minLevel, this.maxLevel);
         
         if (colors != null)
@@ -257,7 +257,7 @@ public class SimpleColorMap implements ColorMap
         double minLevel = this.minLevel;
         double maxLevel = this.maxLevel;
 
-		// preprocess the level
+        // preprocess the level
         level = transformLevel(level, this.minLevel, this.maxLevel);
         
         if (colors != null)

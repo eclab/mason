@@ -66,9 +66,9 @@ public class SpatialNetwork2D
         return loc;
         }
 
-	/** 
-		@deprecated
-	*/
+    /** 
+        @deprecated
+    */
     public Double2D getDimensions() { return field.getDimensions(); }
     }
 
