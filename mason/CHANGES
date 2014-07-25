@@ -2668,5 +2668,5 @@ Version 18
 	Tweaks to SimpleColorMap to make it easier to subclass and customize
 	SimpleColorMap has a new method called transformLevel(...) to custom
 		filter the level values.  The old filterLevel(...) method has
-		been removed (not simply deprecated) due to severe design
-		flaws.  Thanks to Joey Harrison <jharri@gmu.edu>
+		been resituated as an optional method called by default by
+		transformLevel(...).  Thanks to Joey Harrison <jharri@gmu.edu>
