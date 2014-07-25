@@ -201,7 +201,7 @@ public abstract class SeriesAttributes extends LabelledList
             public String newValue(String newValue)
                 {
                 SeriesAttributes.this.setSeriesName(newValue);
-                getGenerator().getChartPanel().repaint();
+        		rebuildGraphicsDefinitions();
                 return newValue;
                 }
             };

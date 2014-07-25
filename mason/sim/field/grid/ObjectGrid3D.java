@@ -47,6 +47,11 @@ public class ObjectGrid3D extends AbstractGrid3D
         setTo(values);
         }
         
+    public ObjectGrid3D(Object[][][] values)
+        {
+        setTo(values);
+        }
+        
     public final void set(final int x, final int y, final int z, final Object val)
         {
         field[x][y][z] = val;
@@ -246,6 +251,53 @@ public class ObjectGrid3D extends AbstractGrid3D
             }
         return this;
         }
+
+
+
+    /** Sets the grid to a copy of the provided array, which must be rectangular. */
+    public ObjectGrid3D setTo(Object[][][] field)
+        {
+        // check info
+        
+        if (field == null)
+            throw new RuntimeException("ObjectGrid3D set to null field.");
+        int w = field.length;
+        int h = 0;
+        int l = 0;
+        if (w != 0) 
+        	{ 
+        	h = field[0].length; 
+        	if (h != 0)
+        		l = field[0][0].length;
+        	}
+        	
+        for(int i = 0; i < w; i++)
+        	{
+            if (field[i].length != h) // uh oh
+                throw new RuntimeException("ObjectGrid3D initialized with a non-rectangular field.");
+            for(int j = 0; j < h; j++)
+            	{
+            	if (field[i][j].length != l) // uh oh
+            		throw new RuntimeException("ObjectGrid3D initialized with a non-rectangular field.");
+            	}
+            }
+
+        // load
+        
+        width = w;
+        height = h;
+        length = l;
+        this.field = new Object[w][h][l];
+        for(int i = 0; i < w; i++)
+        	for(int j=0; j< h; j++)
+	        	{
+	            this.field[i][j] = (Object[]) field[i][j].clone();
+	            }
+        return this;
+        }
+
+
+
 
     /**
      * Gets all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y), abs(z-Z) ) <= dist.  This region forms a

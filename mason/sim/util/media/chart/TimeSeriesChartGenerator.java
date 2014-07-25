@@ -86,6 +86,7 @@ public class TimeSeriesChartGenerator extends XYChartGenerator
         XYSeriesCollection xysc = (XYSeriesCollection) getSeriesDataset();
 
         int i = xysc.getSeriesCount();
+        series.setKey(new ChartGenerator.UniqueString(series.getKey()));
         xysc.addSeries(series);
         TimeSeriesAttributes csa = new TimeSeriesAttributes(this, series, i, stopper); 
         seriesAttributes.add(csa);

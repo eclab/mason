@@ -845,9 +845,9 @@ public abstract class ChartGenerator extends JPanel
         {
         String string;
         
-        public UniqueString(String str)
+        public UniqueString(Object obj)
             {
-            string = str;
+            string = "" + obj;
             }
         
         public boolean equals(Object obj)

@@ -21,10 +21,11 @@ import sim.util.*;
  * is provided.  If it's between min-level and max-level, then a linear interpolation between min-Color and
  * max-Color is provided.  
  *
- * <p>You can customize the interpolation by overriding the filterLevel(double) method.  This method receives
- * a level value converted to between 0.0 and 1.0 inclusive, and is supposed to return a revised value between
- * 0.0 and 1.0.  For example, if you'd like to nudge colors up towards the maximum portion of the table, 
- * you could return the square root of the value you receive.  The default simply returns the value itself.
+ * <p>You can customize the interpolation by overriding the transformLevel(...) method.  This method receives
+ * a level value and the minimum and maximum values before it's clamped to a minimum or maximum color;
+ * you can modify this level value and return a new value (ideally between the minimum and maximum).
+ * For example, you could move the values to a log of their previous values.  
+ * The default simply returns the value itself.
  * </ol>
  *
  * <p>The user can provide both a color table <i>and</i> an interpolation; in this case, the color table takes
@@ -35,6 +36,8 @@ import sim.util.*;
  * if it's inside the color table range.
  *
  * <p>defaultValue() is set to return 0 if the color table exists, else min-level is provided.
+ *
+ * <p>NaN is assumed to be the same color as negative infinity.
  *
  * @author Sean Luke
  * 
@@ -132,13 +135,12 @@ public class SimpleColorMap implements ColorMap
         colors = colorTable;
         return retval;
         }
-        
-    public double filterLevel(double level) { return level; }
-        
-    /** Override this if you'd like to customize the color for values in the portrayal.  The default version
-        looks up the value in the colors[] table, else computes the interpolated color and grabs it out of
-        a predefined color cache (there can't be more than about 1024 or so interpolated colors, max). 
-    */
+                
+    /** Override this to convert level values to new values using some appropriate mathematical transformation.
+    	The values you return ought to be >= minLevel and <= maxLevel; values outside these bounds will be
+    	trimmed to minLevel or maxLevel respectively prior to conversion to a color.  The default implementation
+    	simply returns the passed-in level.  */
+    public double transformLevel(double level, double minLevel, double maxLevel) { return level; }
     
     /** Sets the color levels for the ValueGridPortrayal2D values for use by the default getColor(...)
         method.  These are overridden by any array provided in setColorTable().  If the value in the IntGrid2D or DoubleGrid2D
@@ -146,6 +148,8 @@ public class SimpleColorMap implements ColorMap
         maxColor is used.  Otherwise a linear interpolation from minColor to maxColor is used. */
     public void setLevels(double minLevel, double maxLevel, Color minColor, Color maxColor)
         {
+        if (maxLevel != maxLevel || minLevel != minLevel) throw new RuntimeException("maxLevel or minLevel cannot be NaN");
+        if (Double.isInfinite(maxLevel) || Double.isInfinite(minLevel)) throw new RuntimeException("maxLevel or minLevel cannot be infinite");
         if (maxLevel < minLevel) throw new RuntimeException("maxLevel cannot be less than minLevel");
         minRed = minColor.getRed(); minGreen = minColor.getGreen(); minBlue = minColor.getBlue(); minAlpha = minColor.getAlpha();
         maxRed = maxColor.getRed(); maxGreen = maxColor.getGreen(); maxBlue = maxColor.getBlue(); maxAlpha = maxColor.getAlpha();
@@ -170,25 +174,20 @@ public class SimpleColorMap implements ColorMap
         
     public Color getColor(double level)
         {
+        double minLevel = this.minLevel;
+        double maxLevel = this.maxLevel;
+
+		// preprocess the level
+        level = transformLevel(level, this.minLevel, this.maxLevel);
+        
         if (colors != null && level >= 0 && level < colors.length)
             {
             return colors[(int)level];
             }
         else
             {
-            double minLevel = this.minLevel;
-            double maxLevel = this.maxLevel;
-            // these next two also handle the possibility that maxLevel = minLevel
-            if (level >= maxLevel) return maxColor;
-            else if (level <= minLevel) return minColor;
-            else 
-                {
-                // now convert to between 0 and 1
-                double interval = maxLevel - minLevel;
-                // finally call the convert() function, then set back to between minLevel and maxLevel
-                level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-                }
-
+        	if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+            
             if (level == minLevel) return minColor;  // so we don't divide by zero (maxLevel - minLevel)
             else if (level == maxLevel) return maxColor;  // so we don't overflow
             
@@ -225,26 +224,25 @@ public class SimpleColorMap implements ColorMap
 
     public int getAlpha(double level)
         {
+        double minLevel = this.minLevel;
+        double maxLevel = this.maxLevel;
+
+		// preprocess the level
+        level = transformLevel(level, this.minLevel, this.maxLevel);
+        
         if (colors != null)
             {
             if (level >= 0 && level < colors.length)
                 return colors[(int)level].getAlpha();
             }
 
+        if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+
         // else...
             
-        final double minLevel = this.minLevel;
-        final double maxLevel = this.maxLevel;
         // these next two also handle the possibility that maxLevel = minLevel
         if (level >= maxLevel) return maxColor.getAlpha();
-        else if (level <= minLevel) return minColor.getAlpha();
-        else 
-            {
-            // now convert to between 0 and 1
-            double interval = maxLevel - minLevel;
-            // finally call the convert() function, then set back to between minLevel and maxLevel
-            level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-            }
+        if (level <= minLevel) return minColor.getAlpha();
 
         final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 
@@ -253,8 +251,15 @@ public class SimpleColorMap implements ColorMap
         return (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
         }
                 
+                
     public int getRGB(double level)
         {
+        double minLevel = this.minLevel;
+        double maxLevel = this.maxLevel;
+
+		// preprocess the level
+        level = transformLevel(level, this.minLevel, this.maxLevel);
+        
         if (colors != null)
             {
             if (level >= 0 && level < colors.length)
@@ -263,18 +268,11 @@ public class SimpleColorMap implements ColorMap
             
         // else...
             
-        final double minLevel = this.minLevel;
-        final double maxLevel = this.maxLevel;
+        if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+
         // these next two also handle the possibility that maxLevel = minLevel
         if (level >= maxLevel) return maxColor.getRGB();
-        else if (level <= minLevel) return minColor.getRGB();
-        else 
-            {
-            // now convert to between 0 and 1
-            double interval = maxLevel - minLevel;
-            // finally call the convert() function, then set back to between minLevel and maxLevel
-            level = filterLevel((level - minLevel) / interval) * interval + minLevel;
-            }
+        if (level <= minLevel) return minColor.getRGB();
 
         final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 

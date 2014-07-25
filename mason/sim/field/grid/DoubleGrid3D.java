@@ -45,6 +45,11 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         setTo(values);
         }
 
+    public DoubleGrid3D(double[][][] values)
+        {
+        setTo(values);
+        }
+        
     /** Sets location (x,y,z) to val */
     public final double set(final int x, final int y, final int z, final double val)
         {
@@ -203,6 +208,50 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
 
         return this;
         }
+
+    /** Sets the grid to a copy of the provided array, which must be rectangular. */
+    public DoubleGrid3D setTo(double[][][] field)
+        {
+        // check info
+        
+        if (field == null)
+            throw new RuntimeException("DoubleGrid3D set to null field.");
+        int w = field.length;
+        int h = 0;
+        int l = 0;
+        if (w != 0) 
+        	{ 
+        	h = field[0].length; 
+        	if (h != 0)
+        		l = field[0][0].length;
+        	}
+        	
+        for(int i = 0; i < w; i++)
+        	{
+            if (field[i].length != h) // uh oh
+                throw new RuntimeException("DoubleGrid3D initialized with a non-rectangular field.");
+            for(int j = 0; j < h; j++)
+            	{
+            	if (field[i][j].length != l) // uh oh
+            		throw new RuntimeException("DoubleGrid3D initialized with a non-rectangular field.");
+            	}
+            }
+
+        // load
+        
+        width = w;
+        height = h;
+        length = l;
+        this.field = new double[w][h][l];
+        for(int i = 0; i < w; i++)
+        	for(int j=0; j< h; j++)
+	        	{
+	            this.field[i][j] = (double[]) field[i][j].clone();
+	            }
+        return this;
+        }
+
+
 
     /** Thresholds the grid so that values greater to <i>toNoMoreThanThisMuch</i> are changed to <i>toNoMoreThanThisMuch</i>.
         Returns the modified grid. 

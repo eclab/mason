@@ -102,7 +102,7 @@ public class ObjectGrid2D extends AbstractGrid2D
         width = w;
         height = h;
         this.field = new Object[w][h];
-        for(int i = 0; i < width; i++)
+        for(int i = 0; i < w; i++)
             this.field[i] = (Object[]) field[i].clone();
         return this;
         }
