@@ -42,7 +42,7 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
         SparseField2D otherField = field.field2;  // do we have an auxiliary field?
         if (otherField == null) otherField = field.field;  // I guess not, use the main field
 
-        Double2D dimensions = field.getDimensions();
+        Double2D dimensions = field.field.getDimensions();  // dimensions of the main field
         double xScale = info.draw.width / dimensions.x;
         double yScale = info.draw.height / dimensions.y;
 
