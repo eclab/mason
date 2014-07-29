@@ -17,7 +17,7 @@ public class FlockersWithUI extends GUIState
     {
     public Display2D display;
     public JFrame displayFrame;
-    
+
     public static void main(String[] args)
         {
         new FlockersWithUI().createController();  // randomizes by currentTimeMillis
