@@ -2670,3 +2670,4 @@ Version 18
 		filter the level values.  The old filterLevel(...) method has
 		been resituated as an optional method called by default by
 		transformLevel(...).  Thanks to Joey Harrison <jharri@gmu.edu>
+	Further bugfixes to SimpleColorMap

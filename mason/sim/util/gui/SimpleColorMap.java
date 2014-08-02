@@ -142,8 +142,8 @@ public class SimpleColorMap implements ColorMap
         version of this function just returns the level. 
         
         <p><b>Do not override both this function and transformLevel(...).  transformLevel simply calls this
-    	function.</b>
-    	*/
+        function.</b>
+    */
     public double filterLevel(double level) { return level; }
     
     /** Override this to convert level values to new values using some appropriate mathematical transformation.
@@ -153,14 +153,14 @@ public class SimpleColorMap implements ColorMap
         way that minLevel is 0 and maxLevel is 1; it then calls filterLevel, then un-scales the result and returns it.
         
         <p><b>Do not override both this function and filterLevel(...).  filterLevel is just used by this function.</b>
-		*/
+    */
     public double transformLevel(double level, double minLevel, double maxLevel)
-    	{
-		if (level <= minLevel) return minLevel;
-		if (level >= maxLevel) return maxLevel;
-		double interval = maxLevel - minLevel;
-		return filterLevel((level - minLevel) / interval) * interval + minLevel;
-    	}
+        {
+        if (level <= minLevel) return minLevel;
+        if (level >= maxLevel) return maxLevel;
+        double interval = maxLevel - minLevel;
+        return filterLevel((level - minLevel) / interval) * interval + minLevel;
+        }
     
     /** Sets the color levels for the ValueGridPortrayal2D values for use by the default getColor(...)
         method.  These are overridden by any array provided in setColorTable().  If the value in the IntGrid2D or DoubleGrid2D
@@ -194,11 +194,17 @@ public class SimpleColorMap implements ColorMap
         
     public Color getColor(double level)
         {
-        double minLevel = this.minLevel;
-        double maxLevel = this.maxLevel;
+        // determine the min/max level for transformation
+        double minLevel2 = minLevel;
+        double maxLevel2 = maxLevel;
+        if (colors != null)
+        	{ 
+        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+        	} 
 
         // preprocess the level
-        level = transformLevel(level, this.minLevel, this.maxLevel);
+        level = transformLevel(level, minLevel2, maxLevel2);
         
         if (colors != null && level >= 0 && level < colors.length)
             {
@@ -244,12 +250,18 @@ public class SimpleColorMap implements ColorMap
 
     public int getAlpha(double level)
         {
-        double minLevel = this.minLevel;
-        double maxLevel = this.maxLevel;
+        // determine the min/max level for transformation
+        double minLevel2 = minLevel;
+        double maxLevel2 = maxLevel;
+        if (colors != null)
+        	{ 
+        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+        	} 
 
         // preprocess the level
-        level = transformLevel(level, this.minLevel, this.maxLevel);
-        
+        level = transformLevel(level, minLevel2, maxLevel2);
+
         if (colors != null)
             {
             if (level >= 0 && level < colors.length)
@@ -274,11 +286,17 @@ public class SimpleColorMap implements ColorMap
                 
     public int getRGB(double level)
         {
-        double minLevel = this.minLevel;
-        double maxLevel = this.maxLevel;
+        // determine the min/max level for transformation
+        double minLevel2 = minLevel;
+        double maxLevel2 = maxLevel;
+        if (colors != null)
+        	{ 
+        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+        	} 
 
         // preprocess the level
-        level = transformLevel(level, this.minLevel, this.maxLevel);
+        level = transformLevel(level, minLevel2, maxLevel2);
         
         if (colors != null)
             {
