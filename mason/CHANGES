@@ -2671,3 +2671,5 @@ Version 18
 		been resituated as an optional method called by default by
 		transformLevel(...).  Thanks to Joey Harrison <jharri@gmu.edu>
 	Further bugfixes to SimpleColorMap
+	SimState.cleaningAsynchronous no longer public
+	Reindented

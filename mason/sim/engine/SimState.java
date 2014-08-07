@@ -40,7 +40,7 @@ public class SimState implements java.io.Serializable
     // Lock for accessing the HashSet
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
     // Are we cleaning house and replacing the HashSet?
-    public boolean cleaningAsynchronous = false;
+    boolean cleaningAsynchronous = false;
         
     SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
@@ -90,14 +90,6 @@ public class SimState implements java.io.Serializable
         this.seed = seed;
         }
                 
-    /* @deprecated use setSeed */
-    /*
-      public void setRandom(MersenneTwisterFast random)
-      {
-      this.random = random;
-      }
-    */
-    
     /** Primes the generator.  Mersenne Twister seeds its first 624 numbers using a basic
         linear congruential generator; thereafter it uses the MersenneTwister algorithm to
         build new seeds.  Those first 624 numbers are generally just fine, but to be extra
@@ -389,16 +381,17 @@ public class SimState implements java.io.Serializable
                 "                       [-until U] [-for F] [-time T] [-docheckpoint D] \\\n" +
                 "                       [-checkpoint C] [-quiet] \n\n" +
                 "-help             Shows this message and exits.\n\n" +
-                "-repeat R         Long value > 0: Runs the job R times.  Unless overridden by a\n" +
+                "-repeat R         Long value > 0: Runs R jobs.  Unless overridden by a\n" +
                 "                  checkpoint recovery (see -checkpoint), the random seed for\n" +
                 "                  each job is the provided -seed plus the job# (starting at 0).\n" +
                 "                  Default: runs once only: job number is 0.\n\n" +
                 "-parallel P       Long value > 0: Runs P separate batches of jobs in parallel,\n" +
                 "                  each one containing R jobs (as specified by -repeat).  Each\n" +
                 "                  batch has its own independent set of checkpoint files.  Job\n" +
-                "                  numbers are 0 ... R-1 for the first batch, then R ... R*2-1\n" + 
-                "                  for the second batch, and so on.  -parallel may not be used\n" + 
-                "                  in combination with -checkpoint.\n" +
+                "                  numbers are 0, P, P*2, ... for the first batch, then 1, P+1,\n" +
+                "                  P*2+1, ... for the second batch, then 2, P+2, P*2+2, ... for\n" +
+                "                  the third batch, and so on.  -parallel may not be used in\n" +
+                "                  combination with -checkpoint.\n" +
                 "                  Default: one batch only (no parallelism).\n\n" +
                 "-seed S           Long value not 0: the random number generator seed, unless \n" +
                 "                  overridden by a checkpoint recovery (see -checkpoint).\n" +
@@ -697,7 +690,7 @@ public class SimState implements java.io.Serializable
     /** Returns MASON's Version */
     public static double version()
         {
-        return 17.0;
+        return 18.0;
         }
     
     // compute how much time per step 

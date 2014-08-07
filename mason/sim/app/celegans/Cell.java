@@ -395,7 +395,7 @@ public class Cell extends Object implements Steppable
         }
 
 
-/** Sorts the location array for this cell. */
+    /** Sorts the location array for this cell. */
     public void sortLocation()
         {
         // a simple insertion sort -- we don't have enough locations to justify
@@ -420,7 +420,7 @@ public class Cell extends Object implements Steppable
         }
 
 
-/** Adds a new location x,y,z at time t to the location array. */
+    /** Adds a new location x,y,z at time t to the location array. */
 
     public void pushLocation(double x, double y, double z, double t)
         {

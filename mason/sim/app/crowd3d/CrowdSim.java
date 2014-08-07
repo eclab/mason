@@ -58,14 +58,14 @@ public class CrowdSim extends SimState
         super.start();  // clear out the schedule
         
         boidSpace = new Continuous3D(Agent.SIGHT, spaceWidth, spaceHeight, spaceDepth);
-//*
+        //*
         Steppable spawner = new Steppable(){public void step(SimState state){spawnBoid();}};
-//        Steppable killer = new Steppable(){public void step(SimState state){killBoid();}};
+        //        Steppable killer = new Steppable(){public void step(SimState state){killBoid();}};
         schedule.scheduleRepeating(Schedule.EPOCH,1,spawner,STEPS_BETWEEN_INSERTS);
-/*/
-  for(int i=0;i<10;++i)
-  spawnBoid();
-//*/
+        /*/
+          for(int i=0;i<10;++i)
+          spawnBoid();
+        //*/
         }
     }
     

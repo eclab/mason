@@ -189,8 +189,8 @@ George Mason University}
 \\
 \\
 \\
-\large\rm {\bf Manual Version 17}\\
-\large\rm May, 2013\\
+\large\rm {\bf Manual Version 18}\\
+\large\rm August, 2014\\
 
 \vspace{5in}
 \noindent\Large\bf Where to Obtain MASON\\
@@ -199,7 +199,7 @@ George Mason University}
 \clearpage
 
 \small 
-\noindent {\Large\bf Copyright }  2010--2013 by Sean Luke.
+\noindent {\Large\bf Copyright }  2010--2014 by Sean Luke.
 
 \vspace{0.25in}
 \noindent {\Large\bf Thanks to } Claudio Cioffi Revilla and Carlotta Domeniconi.
@@ -1876,9 +1876,7 @@ public class StudentsWithUI extends GUIState
     \}}
 \end{alltt}}
 
-\sidebar{How do I keep certain objects from being moved but allow others?  Or constrain movement?}{Have the objects implement the \Class{sim.portrayal.Fixed2D} interface, which gives them control over how they're moved.}Notice how we've inserted the portrayals ``wrapped'' around the basic OvalPortrayal2D.    MovablePortrayal2D is straightforward and needs no explanation.
-
-CircledPortrayal2D and LabelledPortrayal2D are set up to scale out five times the standard size of a SimplePortrayal2D and to only draw when the object is selected.  The LabelledPortrayal is drawing the text in black and the CircledPortrayal in green.  Importantly, the \variable{null} value passed into the LabelledPortrayal2D tells it that no label is being provided: instead it must ask the underlying object what label to use (by calling \method{toString()}).  At the moment, this returns the same ugly default name that's showing up in the Inspector list (such as ``Student@5c76458f'').  Let's keep the unique number identifier but add information about current agitation:
+\sidebar{How do I keep certain objects from being moved but allow others?  Or constrain movement?}{Have the objects implement the \Class{sim.portrayal.Fixed2D} interface, which gives them control over how they're moved.}Notice how we've inserted the portrayals ``wrapped'' around the basic OvalPortrayal2D.    MovablePortrayal2D is straightforward and needs no explanation.  CircledPortrayal2D and LabelledPortrayal2D are set up to scale out five times the standard size of a SimplePortrayal2D and to only draw when the object is selected.  The LabelledPortrayal is drawing the text in black and the CircledPortrayal is drawing in green.  Importantly, the \variable{null} value passed into the LabelledPortrayal2D tells it that no label is being provided: instead it must ask the underlying object what label to use (by calling \method{toString()}).  At the moment, this returns the same ugly default name that's showing up in the Inspector list (such as ``Student@5c76458f'').  Let's keep the unique number identifier but add information about current agitation:
 
 {\footnotesize \begin{alltt}
 {\color{gray}import sim.engine.*;
@@ -1974,7 +1972,7 @@ Selection is presently somewhat primitive: you can't band-select (create a recta
 
 Let's add an additional agent which, if used, initially sets the randomness to a high value and gradually decreases it.  The user can turn the agent off in the model inspector.  The point of this exercise is twofold.  First, it demonstrates the use of an {\bf anonymous class} to add a single agent to the schedule (a common practice).  Second, it introduces the notion of an {\bf explicit ordering} among agents scheduled at the exact same timestep.
 
-MASON uses anonymous classes a lot, so if you're not familiar with them, they're worth explaining.  An anonymous class is simply a class that has no name at all.\footnote{Well, technically {\it all} Java classes have names.  But since you didn't state one, the compiler is free to make one up, which it will.  \file{javac} will probably name it \class{Foo\${\it number}}, for some random number, if the outer class in which it is declared is named \class{Foo}.} Instead, the anonymous class exists solely to be the subclass of some other class, or implement some interface, and create a single instance, then go away.
+MASON uses anonymous classes a lot, so if you're not familiar with them, they're worth explaining.  An anonymous class is simply a class that has no name at all.\footnote{Well, technically {\it all} Java classes have names.  But since you didn't state one, the compiler is free to make one up, which it will.  \file{javac} will probably name it \class{Foo\${\it number}}, for some arbitrary number, if the outer class in which it is declared is named \class{Foo}.} Instead, the anonymous class exists solely to be the subclass of some other class, or implement some interface,  then  create a single instance, and go away.
 
 The pattern for anonymous classes is:
 
@@ -2479,7 +2477,7 @@ Notice that we scheduled an anonymous agent which simply calls \method{load3DStu
             schedule.scheduleRepeating(schedule.EPOCH, 2, steppable);
 }
 
-Here we're scheduling the new anonymous agent with ordering 2, rather than the 0 the students use the 1 for previous anonymous agent.  This means that the agent will get stepped every timestep, but after all other agents are stepped.  That way we know the students have updated their agitation before we call the method (\method{load3DStudents()} which relocates them in the 3D field based on their agitation.
+Here we're scheduling the new anonymous agent with ordering 2, rather than the 0 the students use and the~1 used by the tempering anonymous agent.  This means that the agent will get stepped every timestep, but after all other agents are stepped.  That way we know the students have updated their agitation before we call the method (\method{load3DStudents()} which relocates them in the 3D field based on their agitation.
 
 \paragraph{Compile and Run}  If you compile and run the command-line simulation at this point...
 
@@ -3689,17 +3687,27 @@ If you run the \class{MyModel} program from the command line with the given para
 
 ... the \method{doLoop} will give you back a full description of its capabilities:
 
-{\footnotesize \begin{alltt}
-Format:           java MyModel \textbackslash
-                       [-help] [-repeat R] [-seed S] [-until U] [-quiet] \textbackslash
-                       [-for F] [-time T] [-docheckpoint D] [-checkpoint C] 
+{\footnotesize \begin{verbatim}
+Format:           java MyModel \
+                       [-help] [-repeat R] [-parallel P] [-seed S] \
+                       [-until U] [-for F] [-time T] [-docheckpoint D] \
+                       [-checkpoint C] [-quiet] 
 
 -help             Shows this message and exits.
 
--repeat R         Long value > 0: Runs the job R times.  Unless overridden by a
+-repeat R         Long value > 0: Runs R jobs.  Unless overridden by a
                   checkpoint recovery (see -checkpoint), the random seed for
                   each job is the provided -seed plus the job# (starting at 0).
                   Default: runs once only: job number is 0.
+
+-parallel P       Long value > 0: Runs P separate batches of jobs in parallel,
+                  each one containing R jobs (as specified by -repeat).  Each
+                  batch has its own independent set of checkpoint files.  Job
+                  numbers are 0, P, P*2, ... for the first batch, then 1, P+1,
+                  P*2+1, ... for the second batch, then 2, P+2, P*2+2, ... for
+                  the third batch, and so on.  -parallel may not be used in
+                  combination with -checkpoint.
+                  Default: one batch only (no parallelism).
 
 -seed S           Long value not 0: the random number generator seed, unless 
                   overridden by a checkpoint recovery (see -checkpoint).
@@ -3726,7 +3734,7 @@ Format:           java MyModel \textbackslash
 -docheckpoint D   Long value > 0: checkpoint every D simulation steps.
                   Default: never.
                   Checkpoint files named
-                  <steps>.<job#>.MyModel.checkpoint
+                  <steps>.<job#>.HeatBugs.checkpoint
 
 -checkpoint C     String: loads the simulation from file C, recovering the job
                   number and the seed.  If the checkpointed simulation was begun
@@ -3743,7 +3751,7 @@ Format:           java MyModel \textbackslash
 -quiet            Does not print messages except for errors and warnings.
                   This option implies -time 0.
                   Default: prints all messages.
-\end{alltt}
+\end{verbatim}
 }
 
 The \method{doLoop} method actually comes in two forms:
@@ -3816,7 +3824,7 @@ MASON's Schedule is little more than a binary heap with a current real-valued {\
     public static final double MAXIMUM\_INTEGER;
 }
 
-When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not an infinite number of these: at some (very high) value, the double-valued resolution becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than just timestamp~+~1.  That high value is \variable{MAXIMUM\_INTEGER}, and you probably should do integer scheduling beyond it.
+When the schedule is first made, its initial time is set to the the value \variable{BEFORE\_SIMULATION}.  You can't schedule agents for this time: the earliest you can possibly schedule an agent is at the \variable{EPOCH} (the ``dawn of time'' so to speak).   The earliest possible timestep that's still after the epoch is \variable{EPOCH\_PLUS\_EPSILON} (you won't use this much).  When the simulation has concluded, the schedule is set to \variable{AFTER\_SIMULATION}.  Last but very important is \variable{MAXIMUM\_INTEGER}.  Many simulations schedule agents with integer timestamps.  There are not an infinite number of these: at some (very high) value, the double-valued resolution becomes so large that if you added 1 to it the resulting double value would actually jump to much larger than just timestamp~+~1.  That high value is \variable{MAXIMUM\_INTEGER}, and you probably should not do integer scheduling beyond it.
 
 Here are some methods for accessing the current time and steps:
 
@@ -3921,7 +3929,7 @@ schedule.scheduleOnceIn(0,\\
 For certain esoteric tasks you may need to merge the agents of two schedules.  To do this, you can use:
 
 \begin{methods}{\class{sim.engine.SimState}}
-\mthd{public void merge(Schedule second)} Merges a second schedule into the first Schedule, modifying it (but leaving the second Schedule untouched).  Schedules may not be merged if either of them is sealed, if the merging request occurs somewhere within the step() method of the first Schedule, or if the second schedule has agents scheduled for earlier than the current timestamp of the first Schedule.  This procedure is \(O(n))\) in the number of agents.
+\mthd{public void merge(Schedule second)} Merges a second schedule into the first Schedule, modifying it (but leaving the second Schedule untouched).  Schedules may not be merged if either of them is sealed, if the merging request occurs somewhere within the step() method of the first Schedule, or if the second schedule has agents scheduled for earlier than the current timestamp of the first Schedule.  This procedure is \(O(n)\) in the number of agents.
 \end{methods}
 
 
@@ -3930,7 +3938,7 @@ For certain esoteric tasks you may need to merge the agents of two schedules.  T
 \label{sim.engine.Schedule.Key}
 
 \sidebar{Why doesn't Schedule use \class{java.util.PriorityQueue}?}{\class{sim.util.Heap} is a little bit faster, but that's not the reason.  PriorityQueue didn't exist when MASON was developed.}
-The Schedule employs a binary heap: specifically the MASON utility class \Class{sim.util.Heap}.   A binary heap is a data structure in which objects can be inserted and associated with {\it keys} which specify their ordering with respect to one another.  Inserting or removing an object is \(O(\lg n)\), and finding the minimum object is \(O(\lg 1)\).  The class is pretty simple:
+The Schedule employs a binary heap: specifically the MASON utility class \Class{sim.util.Heap}.   A binary heap is a data structure in which objects can be inserted and associated with {\it keys} which specify their ordering with respect to one another.  Inserting or removing an object is \(O(\lg n)\), and finding the minimum object is \(O(1)\).  The class is pretty simple:
 
 \begin{methods}{\class{sim.util.Heap} Constructor}
 \mthd{public Heap()} Creates an empty binary heap.
@@ -3997,7 +4005,7 @@ MASON provides a variety of utility subclasses of Steppable which you may find u
 We next go through each of these in turn.
 
 \paragraph{\Class{sim.engine.Sequence}}
-This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add and remove, or replace all the agents while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the current agents.
+This class holds an array of agents, and when it is stepped, it calls \method{step(...)} on each of the agents in turn.  The most common usage is to submit these agents when creating the Sequence, and then leave them be.  But you can also add and remove agents, or replace all the agents while the simulation is running.   Note that if you do so, these changes will not take affect until the Sequence's next \method{step(...)} call.  At that time, Sequence will first replace all the agents if you so requested.  It will then remove any agents you had requested, then add new agents as you requested, then finally step all the current agents.
 
 To remove an agent, Sequence must first {\it identify} the location the agent, and then {\it remove} the agent.  Identification is \(O(n)\) by default as it requires Sequence to search through the list of agents to find the right one to remove.  If you're doing a lot of removal, Sequence has a gizmo which makes this \(O(1)\) instead, but to use this gizmo, a Sequence is not permitted to contain the same Steppable multiple times.   This gizmo also has a high constant overhead, but is generally worth it if, each timestep you decide to remove agents, the number of agents you remove is large (perhaps over 4).  This \(O(1)\) procedure employs a \class{java.util.LinkedHashSet}, and is turned on with \method{setUsesSets(true)}.
 
@@ -5180,7 +5188,7 @@ Object Grids are best when you have any of:
 \begin{itemize}
 \item At most one object per grid Location, and (optionally) multiple Locations per object (though as a hack you could make multiple ``wrapper objects'' for your Objects and store the wrappers in the Sparse Grid at different locations). 
 \item A need for very fast lookup and modification.
-\item A need for very fast scans over all Locations in the grid.
+\item A need for very fast scans over all Locations (as opposed to Objects) in the grid.
 \end{itemize}
 
 
@@ -5190,7 +5198,7 @@ Dense Grids are best when you have any of:
 \begin{itemize}
 \item Multiple Objects per Location, {\it and} multiple Locations per Object.
 \item Objects which must be storable multiply at the same Location.
-\item A need for very fast scans over all Locations in the grid.
+\item A need for very fast scans over all Locations (as opposed to Objects) in the grid.
 \end{itemize}
 
 \paragraph{}
@@ -5200,14 +5208,14 @@ Sparse Grids are good for situations where you have any of:
 \item A very large or unbounded grid.
 \item Relatively few Objects compared to the total number of possible grid Locations.
 \item (Dense Grids also support this.) Multiple Objects per grid Location.
-\item A need for very fast scans over all Objects in the grid (though you could of course maintain the list of Objects you've stored in your Object grid yourself).
+\item A need for very fast scans over all Objects (as opposed to Locations) in the grid.
 \item The objects are also nodes in a Network (and will be drawn that way).  Networks can only be drawn if their nodes are in a SparseGrid or in a Continuous space.
 \item Fast drawing in the GUI.
 \end{itemize}
 
 \paragraph{Dense or Sparse Grid?}
 
-The hard choice is between dense and sparse grids.  My recommendation: use a sparse grid until speed becomes a real issue, then switch to dense grids (you might get 15\% improvement, but with various disadvantages).
+The hard choice is between dense and sparse grids.  My recommendation: use a sparse grid until speed becomes a real issue, then switch to dense grids (you might get 15\% improvement, but with a lot of disadvantages).  Note that at present there is {\bf no visualization available for DenseGrid3D}.
 
 \paragraph{Summary} Here is a summary of Object Grids, Dense Grids, and Sparse Grids in terms of functionality.
 
@@ -5501,7 +5509,7 @@ Places into {\it result} (or a new Bag if {\it result} is not provided) all obje
 
 \section{Maps}
 
-Just like Grids, Continuous space uses Maps in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods (located in SparseField):
+Just like Sparse Grids, Continuous space uses Maps in its methods.  The default Map employed \Class{java.util.HashMap}, but you can replace it with something else if you want.  This is a {\it rare} need.  You might do this is in the rare case that you're hunting for a more efficient Map implementation.  To replace it, you need to override the following two methods (located in SparseField):
 
 \begin{methods}{\class{sim.field.SparseField} Utility}
 \mthd{public Map buildMap(Map other)}
@@ -12049,7 +12057,7 @@ It is often the case that you may want to make a permanent chart as part of your
 
 If you want your charts to survive checkpointing, then you'll have even more fun, as the underlying series objects will need to be carefully stored in the model.
 
-To remove most of the complexity, MASON has a factory class called \class{sim.display.ChartUtilities}.  Using it is pretty simple.  To start, you'll need to create an object which implements an interface defined in ChartUtilities.  There are presently five such interfaces, and each defines just one or two methods which MASON will call when it needs more data from you to update the chart.  For example, if you have created a time series chart, MASON will periodically call your object to ask for the latest value from your model to add to the time series.  Or if you have created a histogram, MASON will periodically call your object to ask for the latest data with which to build a new histogram.
+To remove most of the complexity, MASON has a factory class called \class{sim.display.ChartUtilities}.  Using it is pretty simple.  To start, you'll need to create an object which implements an interface defined in ChartUtilities.  There are presently five such interfaces (different charts need different kinds of data), and each defines just one or two methods which MASON will call when it needs more data from you to update the chart.  For example, if you have created a time series chart, MASON will periodically call your object to ask for the latest value from your model to add to the time series.  Or if you have created a histogram, MASON will periodically call your object to ask for the latest data with which to build a new histogram.
 
 The interfaces are as follows:
 
@@ -12212,7 +12220,7 @@ public void init(Controller c)
     ...
 \end{verbatim}
 
-Now in our GUIState's \method{start()} and \method{load()} methods, we schedule the chart.  The code we'll add to each will be identical except for a single call in \method{start()} to reset all the data in the chart.  Note that in this example we provide a value-providing object in the form of an anonymous class which returns the latest information:
+Now in our GUIState's \method{start()} and \method{load()} methods, we schedule the chart.  The code we'll add to each will be identical except for a single call in \method{start()} to reset all the data in the chart.  So the two methods have to be separate, and we can't unify them like is often done in \method{setupPortrayals()}. Note that in this example we provide a value-providing object in the form of an anonymous class which returns the latest information:
 
 \begin{verbatim}
 public void start()
@@ -12250,7 +12258,9 @@ And we're done!  Note that if for some crazy reason you do {\it not} want the da
 
 In the example above, when you run the simulation, the chart will be displayed and update itself appropriately.  If you checkpoint it out and then quit and restart MASON from checkpoint, however, only information from then on will be displayed in the chart, not any of the original information.  This is because the series isn't being serialized with the model.
 
-This can be fixed.  First off, we'll have separate \method{start()} and \method{load()} methods, no longer unifying our chart scheduling under \method{setupPortrayals()}.   In the \method{start()} method, we'll schedule the SeriesAttributes as usual, but we'll also extract the underlying series (an \class{org.jfree.data.xy.XYSeries}) and store it in the model.  Let's imagine we've created the following instance variable in the SimState:
+This isn't a problem for histograms, bubble charts, and so on, which update all their data every timestep anyway.  But it's a problem for Time Series charts.
+
+This can be fixed.   In the \method{start()} method, we'll schedule the SeriesAttributes as usual, but we'll also extract the underlying series (an \class{org.jfree.data.xy.XYSeries}) and store it in the model.  Let's imagine we've created the following instance variable in the SimState:
 
 \begin{verbatim}
 public org.jfree.data.xy.XYSeries series;
@@ -12297,7 +12307,7 @@ public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
 
 The various value-provider objects are called every timestep during display update time.  If for some reason you don't want to update your data every timestep, you have an option: pass in \variable{null} for your value-provider when you are scheduling a series.  
 
-This will cause the series to be scheduled to be redrawn but will never add data to it.  So how do you add data then?  Simple.  First, you extract the series to the SimState as shown in the previous example.  Then schedule a Steppable which adds data to that series when you feel like it.
+This will cause the series to be scheduled to be redrawn but MASON will never add data to it.  So how do you add data then?  Simple.  First, you extract the series to the SimState as shown in the previous example.  Then schedule a Steppable which adds data to that series when you feel like it.
 
 Continuing our previous example, let's say we have decided to manually add data to our XYSeries every five time steps.  We might do something like this in the \method{start()} method of our \method{sim.engine.SimState} subclass:
 
@@ -12308,7 +12318,8 @@ public void start()
     myChart.clearAllSeries();
     schedule.scheduleRepeating(schedule.EPOCH, new Steppable()
         {
-        // Add an <X,Y> data point in the form of <time, data>
+        // Add an <X,Y> data point in the form of <current time, myData>
+        // remember that myData is a double which was set by the model
         public static void step(SimState state) { series.add(schedule.getTime(), myData); }
         }, 5);  // schedule every 5 timesteps
     ...

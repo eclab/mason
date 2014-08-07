@@ -198,10 +198,10 @@ public class SimpleColorMap implements ColorMap
         double minLevel2 = minLevel;
         double maxLevel2 = maxLevel;
         if (colors != null)
-        	{ 
-        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-        	} 
+            { 
+            minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+            maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+            } 
 
         // preprocess the level
         level = transformLevel(level, minLevel2, maxLevel2);
@@ -254,10 +254,10 @@ public class SimpleColorMap implements ColorMap
         double minLevel2 = minLevel;
         double maxLevel2 = maxLevel;
         if (colors != null)
-        	{ 
-        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-        	} 
+            { 
+            minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+            maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+            } 
 
         // preprocess the level
         level = transformLevel(level, minLevel2, maxLevel2);
@@ -290,10 +290,10 @@ public class SimpleColorMap implements ColorMap
         double minLevel2 = minLevel;
         double maxLevel2 = maxLevel;
         if (colors != null)
-        	{ 
-        	minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-        	maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-        	} 
+            { 
+            minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
+            maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
+            } 
 
         // preprocess the level
         level = transformLevel(level, minLevel2, maxLevel2);

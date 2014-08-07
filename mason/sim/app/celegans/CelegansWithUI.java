@@ -93,7 +93,7 @@ public class CelegansWithUI extends GUIState
         c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
 
-//              display.mSelectBehavior.setTolerance(10.0f);
+        //              display.mSelectBehavior.setTolerance(10.0f);
 
 
         // make the neuron displayer

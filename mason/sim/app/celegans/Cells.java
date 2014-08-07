@@ -28,9 +28,9 @@ public class Cells extends Object
     private static final long serialVersionUID = 1;
 
     public HashMap cell_dictionary;
-//    public HashMap group_dictionary;
-//    public HashMap pattern_dictionary;
-//    public HashMap fate_dictionary;
+    //    public HashMap group_dictionary;
+    //    public HashMap pattern_dictionary;
+    //    public HashMap fate_dictionary;
     public ArrayList roots;     // Cells with no parent. There should only be one, but what the heck.
     int num_processed_cells;
         
@@ -39,9 +39,9 @@ public class Cells extends Object
     public Cells()
         {
         cell_dictionary = new HashMap(300);
-//      group_dictionary = new HashMap();
-//      pattern_dictionary = new HashMap();
-//      fate_dictionary = new HashMap();
+        //      group_dictionary = new HashMap();
+        //      pattern_dictionary = new HashMap();
+        //      fate_dictionary = new HashMap();
         roots = new ArrayList();
         num_processed_cells=0;
         try 
@@ -361,7 +361,7 @@ public class Cells extends Object
 
 
 
-/** Fetches a cell in the cell dictionary by a given key, creating a new cell if the key doesn't exist yet. */
+    /** Fetches a cell in the cell dictionary by a given key, creating a new cell if the key doesn't exist yet. */
 
     public Cell fetchCell(String key)
         {
@@ -379,7 +379,7 @@ public class Cells extends Object
         }
 
 
-/** Fetches a group in the group dictionary by a given key, creating a new group if the key doesn't exist yet. */
+    /** Fetches a group in the group dictionary by a given key, creating a new group if the key doesn't exist yet. */
 
     public int fetchGroup(String key)
         {
@@ -391,7 +391,7 @@ public class Cells extends Object
         }
 
 
-/** Fetches an expression pattern in the pattern dictionary by a given key, creating a new pattern if the key doesn't exist yet. */
+    /** Fetches an expression pattern in the pattern dictionary by a given key, creating a new pattern if the key doesn't exist yet. */
 
     public int fetchPattern(String key)
         {
@@ -402,7 +402,7 @@ public class Cells extends Object
         return 0;
         }
 
-/** Fetches a cell fate in the fate dictionary by a given key, creating a new fate if the key doesn't exist yet. */
+    /** Fetches a cell fate in the fate dictionary by a given key, creating a new fate if the key doesn't exist yet. */
 
     public int fetchFate(String key)
         {
