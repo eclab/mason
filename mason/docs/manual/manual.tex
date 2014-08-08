@@ -10393,9 +10393,7 @@ Now that you're armed with a BranchGroup, you can make a BranchGroupPortrayal3D:
 \mthd{public BranchGroupPortrayal3D(BranchGroup scene, Transform3D transform, Appearance appearance)} Creates a new BranchGroupPortrayal3D for the given scene, transform, and appearance (which overrides appearances specified in any loaded file).
 \end{methods}
 
-Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON libraries collection (see the MASON website) includes a jar file called \file{portfolio.jar}, which contains {\bf NCSA Portfolio}, an open source collection of loaders for a much wider range of files.\footnote{It used to be the case that NCSA Portfolio was not free for commercial use, and furthermore, if you created a derivative work using NCSA Portfolio, you had to notify NCSA of this fact and also add a disclaimer to this effect in your distributed package.  
-
-This isn't the case any more.  NCSA has agreed to make the code completely open source.}  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
+\sidebar{Where do I find more 3D Object Files?}{http:/\!/yobi3d.com/ is amazing.}Java3D has a pretty limited collection of possible scene or object file types (\file{.lwo, .lws, .obj}).  However, the MASON libraries collection (see the MASON website) includes a jar file called \file{portfolio.jar}, which contains {\bf NCSA Portfolio}, an open source collection of loaders for a much wider range of files.\footnote{It used to be the case that NCSA Portfolio was not free for commercial use, and furthermore, if you created a derivative work using NCSA Portfolio, you had to notify NCSA of this fact and also add a disclaimer to this effect in your distributed package.  This isn't the case any more.  NCSA has agreed to make the code completely open source.}  To use NCSA Portfolio with a BranchGroupPortrayal, you'd do something like this:
 
 \java{%
 ncsa.j3d.loaders.ModelLoader loader = new ncsa.j3d.loaders.ModelLoader(); \\
