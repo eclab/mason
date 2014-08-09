@@ -289,7 +289,7 @@ public class SimpleColorMap implements ColorMap
         {
         if (colors != null && level >= 0 && level < colors.length)
         	{
-            return colors[(int)level].getAlpha();
+            return colors[(int)level].getRGB();
             }
 		else
 			{
