@@ -25,15 +25,25 @@ import sim.util.*;
  * a level value and the minimum and maximum values before it's clamped to a minimum or maximum color;
  * you can modify this level value and return a new value (ideally between the minimum and maximum).
  * For example, you could move the values to a log of their previous values.  
- * The default simply returns the value itself.
+ *
+ * <p>The default of transformLevel(...) calls another optional function you can override: the filterLevel(...)
+ * method.  This method is passed a level value which has been pre-transformed such that 0.0 is the "minimum"
+ * and 1.0 is the "maximum".  You can override this method to return a new value between 0.0 and 1.0
+ * which will be "de-transformed" and used instead.  The default simply returns the value itself.
+ *
+ * <p>You should only override transformLevel(...), of filterLevel(...), or none, but not both.
  * </ol>
  *
  * <p>The user can provide both a color table <i>and</i> an interpolation; in this case, the color table takes
  * precedence over the interpolation in that region where the color table is relevant.  You specify a color
- * table with setColorTable(), and you specify an interpolation range with setLevels().
+ * table with setColorTable(), and you specify an interpolation range with setLevels().  It's important to
+ * note that transformLevel(...) and filterLevel(...) are <i>not</i> applied to the color table, only to the
+ * interpolation.  So if you provide 2.7 as a level, and have some fancy-shmancy transformation for that
+ * in transformLevel(...), but you've made a color table 5 elements long, color number 2 will be used
+ * directly without every checking your transformLevel(...) method.
  *
  * <p>validLevel() is set to return true if the level range is between min-level and max-level, or
- * if it's inside the color table range.
+ * if it's inside the color table range.  Neither transformLevel(...) nor filterLevel(...) are called.
  *
  * <p>defaultValue() is set to return 0 if the color table exists, else min-level is provided.
  *
@@ -200,17 +210,8 @@ public class SimpleColorMap implements ColorMap
             }
         else
             {
-			// determine the min/max level for transformation
-			double minLevel2 = minLevel;
-			double maxLevel2 = maxLevel;
-			if (colors != null)
-				{ 
-				minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-				maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-				} 
-
 			// preprocess the level
-			level = transformLevel(level, minLevel2, maxLevel2);
+			level = transformLevel(level, minLevel, maxLevel);
         
             if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
             
@@ -256,18 +257,9 @@ public class SimpleColorMap implements ColorMap
             }
 		else
 			{
-			// determine the min/max level for transformation
-			double minLevel2 = minLevel;
-			double maxLevel2 = maxLevel;
-			if (colors != null)
-				{ 
-				minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-				maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-				} 
-
 			// preprocess the level
-			level = transformLevel(level, minLevel2, maxLevel2);
-        
+			level = transformLevel(level, minLevel, maxLevel);
+                
 			if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
 
 			// else...
@@ -293,17 +285,8 @@ public class SimpleColorMap implements ColorMap
             }
 		else
 			{
-			// determine the min/max level for transformation
-			double minLevel2 = minLevel;
-			double maxLevel2 = maxLevel;
-			if (colors != null)
-				{ 
-				minLevel2 = (0 < minLevel2 ? 0 : minLevel2);
-				maxLevel2 = (colors.length - 1 > maxLevel2 ? colors.length - 1 : maxLevel2);
-				} 
-
 			// preprocess the level
-			level = transformLevel(level, minLevel2, maxLevel2);
+			level = transformLevel(level, minLevel, maxLevel);
         
 			if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
 
