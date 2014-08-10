@@ -10866,13 +10866,13 @@ ColorMaps should map {\it every} value to a color, but they are allowed to compl
 
 MASON provides a single concrete implementation ColorMap, called SimpleColorMap.  This class offers three ways to map numbers to colors:
 
-\begin{itemize}
-\item Minimum and maximum double value are provided, as well as a minimum and maximum color.  A double value later passed in is mapped to an interpolated color.  Specifically, values from \mbox{\(i \in [\text{min level}, \text{max level}]\)} are first revised by being passed through an optional transformation function \(i \leftarrow t(i, \text{min level}, \text{max level})\) (which by default does nothing).  This revised value \(i\) then bounded between the min and max levels, namely \(i \leftarrow \max(\min(i, \text{max level}), \text{min level})\).  Finally \(i\) is mapped to an appropriate interpolated color between the min and max color values.
+\begin{enumerate}
+\item Minimum and maximum double value are provided, as well as a minimum and maximum color.  A double value later passed in is mapped to an interpolated color.  Specifically, values from \mbox{\(i \in [-\infty, \infty]\)} are first revised by being passed through an optional transformation function \(i \leftarrow t(i, \text{min level}, \text{max level})\) (which by default does nothing).  This revised value \(i\) then bounded between the min and max levels, namely \(i \leftarrow \max(\min(i, \text{max level}), \text{min level})\).  Finally \(i\) is mapped to an appropriate interpolated color between the min and max color values.
 
 \item An array of size \(n\) of colors is provided.  Values from \(i \in [0 ... n)\) are first converted as \(i \leftarrow \lfloor i \rfloor\), and then mapped to their respective color values in the array.
 
-\item Both of the above elements are provided.  Values from \(i \in [0 ... n)\) are first converted as \(i \leftarrow \lfloor i \rfloor\), and then mapped to their respective color values in the array.  All other numerical values, including \(n\), are interpolated as doubles using the minimum/maximum method (including the optional transformation function).
-\end{itemize}
+\item Both of the above elements are provided.  Values from \(i \in [0 ... n)\) are treated using \#2 above.  Values outside this range (including \(n\)) are treated as \#1 above, including the optional transformation function.
+\end{enumerate}
 
 Armed with this knowledge, SimpleColorMap's constructors should be easy to understand:
 
