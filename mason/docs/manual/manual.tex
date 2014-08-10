@@ -11362,12 +11362,13 @@ The other method takes a JFreeChart chart, a width and height for that chart, an
 
 MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) display Histograms, Time-Series Charts, Scatter Plots, Bar Charts, and Pie Charts of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
 
-This package, which is laid out in Figure \ref{ChartUML}, provides three kinds of items:
+This package, which is laid out in Figure \ref{ChartUML}, provides four kinds of items:
 
 \begin{itemize}
 \item {\bf Chart Generators} are JPanels which display multiple charts (of the same kind) layered on one another.  Chart Generators provide a lot of additional features: they make global attributes (chart titles, etc.) easy to set; they permit pictures and movies; and they maintain {\bf Series Attributes}, one per layered chart.
 \item {\bf Series Attributes} are JPanels which allow the user to view and modify per-chart attributes (chart color, etc.). Each chart is associated with a {\bf series}, that is, a set of data which is being displayed.  Hence the name.  Series Attributes can be moved around relative to one another, or deleted entirely.
 \item {\bf Data Cullers} are simple objects whose job is to reduce a series to a more manageable size as it has grown over time, so fewer points are displayed on the chart.  Data Cullers are presently only used for Time Series Charts.
+\item A {\bf Utility Factory Class} to make programmatically-generated charts easy..
 \end{itemize}
 
 Chart Generators and Series Attributes are presently provided for five kinds of charts:
