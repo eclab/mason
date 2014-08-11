@@ -1,4 +1,4 @@
-#### MASON Makefile
+### MASON Makefile
 #### By Sean Luke
 
 #### Relevant Stuff:
@@ -9,7 +9,7 @@ JAVAC = javac ${FLAGS}
 
 FLAGS = -target 1.5 -source 1.5 -g -nowarn 
 
-VERSION = 17
+VERSION = 18
 
 
 # Main java files, not including the 3D stuff
