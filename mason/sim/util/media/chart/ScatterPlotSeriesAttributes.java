@@ -20,8 +20,6 @@ import org.jfree.chart.plot.*;
 
 public class ScatterPlotSeriesAttributes extends SeriesAttributes
     {
-    static int shapeCounter = -1;
-        
     static Shape[] buildShapes()
         {
         Shape[] s = new Shape[7];
@@ -118,12 +116,12 @@ public class ScatterPlotSeriesAttributes extends SeriesAttributes
         super.setSeriesName(name);  // just set the name, don't update.  Bypasses standard method below.
 
         // increment shape counter
-        shapeCounter++;
-        if (shapeCounter >= shapes.length)
-            shapeCounter = 0;
+        ((ScatterPlotGenerator)generator).shapeCounter++;
+        if (((ScatterPlotGenerator)generator).shapeCounter >= shapes.length)
+            ((ScatterPlotGenerator)generator).shapeCounter = 0;
                         
         // set the shape
-        shapeNum = shapeCounter;
+        shapeNum = ((ScatterPlotGenerator)generator).shapeCounter;
         shape = shapes[shapeNum];
         XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer)(((XYPlot)getPlot()).getRenderer());
         renderer.setSeriesShape(getSeriesIndex(), shape);

@@ -380,7 +380,7 @@ public class BoxPlotGenerator extends ChartGenerator
                 if (newValue <= 0.0 || newValue > MAXIMUM_RATIONAL_WIDTH) 
                     newValue = currentValue;
                 ((BoxAndWhiskerRenderer)(((CategoryPlot)(chart.getPlot())).getRenderer())).setMaximumBarWidth(newValue);
-                update();
+                //update();
                 return newValue;
                 }
             };

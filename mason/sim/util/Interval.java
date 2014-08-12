@@ -14,8 +14,8 @@ public class Interval
     {
     public Interval(long min, long max)
         {
-        this.min = new Long(min);
-        this.max = new Long(max);
+        this.min = Long.valueOf(min);
+        this.max = Long.valueOf(max);
         isDouble = false;
         }
     

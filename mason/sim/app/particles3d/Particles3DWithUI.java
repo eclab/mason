@@ -85,9 +85,9 @@ public class Particles3DWithUI extends GUIState
         display.attach(particlesPortrayal,"Particles");
         display.attach(trailsPortrayal, "Trails"); 
 
-        display.translate(-Particles3D.gridWidth/2, 
-            -Particles3D.gridHeight/2, 
-            -Particles3D.gridLength/2); 
+        display.translate(-Particles3D.gridWidth/2.0, 
+            -Particles3D.gridHeight/2.0, 
+            -Particles3D.gridLength/2.0); 
         
         display.scale(1.0/Particles3D.gridWidth); 
 

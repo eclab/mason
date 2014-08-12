@@ -34,7 +34,7 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     // initialize the woim
     public Woim() 
         {
-        ond = /*Strict*/Math.random()*6.2832;
+        ond = /*Strict*/Math.random()*2*Math.PI;
         ondSpeed = 0.05 + /*Strict*/Math.random()*0.15;
         setNumberOfLinks( numLinks );
         }
@@ -69,10 +69,12 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     void preprocessWoims( final WoimsDemo state, Double2D pos, double distance )
         {
         nearbyWoims = state.woimsEnvironment.getNeighborsWithinDistance( pos, distance );
-        if( nearbyWoims == null )
-            {
-            return;
-            }
+/*
+  if( nearbyWoims == null )
+  {
+  return;
+  }
+*/
         distSqrTo = new double[nearbyWoims.numObjs];
         for( int i = 0 ; i < nearbyWoims.numObjs ; i++ )
             {
@@ -171,11 +173,11 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
         {
         ond += ondSpeed;
         if( ond > 7 )
-            ond -= 6.2832;
+            ond -= 2*Math.PI;
         double angle = /*Strict*/Math.cos( ond );
         Vector2D temp = velocity;
         double velA = /*Strict*/Math.atan2( temp.y, temp.x );
-        velA = velA + 1.5708*angle;
+        velA = velA + (Math.PI/2)*angle;
         return new Vector2D( /*Strict*/Math.cos(velA), /*Strict*/Math.sin(velA) );
         }
 

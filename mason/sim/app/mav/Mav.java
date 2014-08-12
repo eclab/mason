@@ -17,7 +17,7 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
     {
     private static final long serialVersionUID = 1;
 
-    public final static double[] theta = new double[/* 8 */]
+    final static double[] theta = new double[/* 8 */]
     {
     0*(/*Strict*/Math.PI/180),
     45*(/*Strict*/Math.PI/180),
@@ -29,7 +29,7 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
     315*(/*Strict*/Math.PI/180)
     };
         
-    public final static double[] xd = new double[/* 8 */]
+    final static double[] xd = new double[/* 8 */]
     {
     /*Strict*/Math.cos(theta[0]),
     /*Strict*/Math.cos(theta[1]),
@@ -41,7 +41,7 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
     /*Strict*/Math.cos(theta[7]),
     };
         
-    public final static double[] yd = new double[/* 8 */]
+    final static double[] yd = new double[/* 8 */]
     {
     /*Strict*/Math.sin(theta[0]),
     /*Strict*/Math.sin(theta[1]),

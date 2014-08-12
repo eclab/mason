@@ -240,6 +240,6 @@ public class BoxPlotSeriesAttributes extends SeriesAttributes
     public void setPlotVisible(boolean val)
         {
         plotVisible = val;
-        getCategoryRenderer().setSeriesVisible(seriesIndex, new Boolean(val));
+        getCategoryRenderer().setSeriesVisible(seriesIndex, Boolean.valueOf(val));
         }
     }

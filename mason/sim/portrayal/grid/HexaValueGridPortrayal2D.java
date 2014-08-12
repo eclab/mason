@@ -96,10 +96,10 @@ public class HexaValueGridPortrayal2D extends ValueGridPortrayal2D
 
             final double xScale = info.draw.width / divideByX;
             final double yScale = info.draw.height / divideByY;
-            int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-            int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
-            int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
-            int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+            //int startx = (int)(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+            //int starty = (int)((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+            //int endx = /*startx +*/ (int)(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+            //int endy = /*starty +*/ (int)((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
             DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
                     Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),

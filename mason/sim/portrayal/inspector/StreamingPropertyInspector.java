@@ -191,6 +191,8 @@ public class StreamingPropertyInspector extends PropertyInspector
                     System.out.println(properties.getObject() + "/" + properties.getName(index) + 
                         "/" + time + ": " + properties.getValue(index));
                     break;
+                default:  // uh on
+                    break;
                 }
             }
         }

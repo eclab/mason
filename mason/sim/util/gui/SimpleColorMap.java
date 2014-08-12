@@ -210,8 +210,8 @@ public class SimpleColorMap implements ColorMap
             }
         else
             {
-			// preprocess the level
-			level = transformLevel(level, minLevel, maxLevel);
+            // preprocess the level
+            level = transformLevel(level, minLevel, maxLevel);
         
             if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
             
@@ -252,66 +252,66 @@ public class SimpleColorMap implements ColorMap
     public int getAlpha(double level)
         {
         if (colors != null && level >= 0 && level < colors.length)
-        	{
+            {
             return colors[(int)level].getAlpha();
             }
-		else
-			{
-			// preprocess the level
-			level = transformLevel(level, minLevel, maxLevel);
+        else
+            {
+            // preprocess the level
+            level = transformLevel(level, minLevel, maxLevel);
                 
-			if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+            if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
 
-			// else...
-			
-			// these next two also handle the possibility that maxLevel = minLevel
-			if (level >= maxLevel) return maxColor.getAlpha();
-			if (level <= minLevel) return minColor.getAlpha();
+            // else...
+                        
+            // these next two also handle the possibility that maxLevel = minLevel
+            if (level >= maxLevel) return maxColor.getAlpha();
+            if (level <= minLevel) return minColor.getAlpha();
 
-			final double interpolation = (level - minLevel) / (maxLevel - minLevel);
+            final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 
-			final int maxAlpha = this.maxAlpha;
-			final int minAlpha = this.minAlpha;
-			return (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
- 			}
+            final int maxAlpha = this.maxAlpha;
+            final int minAlpha = this.minAlpha;
+            return (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
+            }
         }
                 
                 
     public int getRGB(double level)
         {
         if (colors != null && level >= 0 && level < colors.length)
-        	{
+            {
             return colors[(int)level].getRGB();
             }
-		else
-			{
-			// preprocess the level
-			level = transformLevel(level, minLevel, maxLevel);
+        else
+            {
+            // preprocess the level
+            level = transformLevel(level, minLevel, maxLevel);
         
-			if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
+            if (level != level) level = Double.NEGATIVE_INFINITY;  // NaN handling
 
-			// these next two also handle the possibility that maxLevel = minLevel
-			if (level >= maxLevel) return maxColor.getRGB();
-			if (level <= minLevel) return minColor.getRGB();
+            // these next two also handle the possibility that maxLevel = minLevel
+            if (level >= maxLevel) return maxColor.getRGB();
+            if (level <= minLevel) return minColor.getRGB();
 
-			final double interpolation = (level - minLevel) / (maxLevel - minLevel);
+            final double interpolation = (level - minLevel) / (maxLevel - minLevel);
 
-			final int maxAlpha = this.maxAlpha;
-			final int minAlpha = this.minAlpha;
-			final int alpha = (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
-			if (alpha==0) return 0;
+            final int maxAlpha = this.maxAlpha;
+            final int minAlpha = this.minAlpha;
+            final int alpha = (maxAlpha == minAlpha ? minAlpha : (int)(interpolation * (maxAlpha - minAlpha) + minAlpha));
+            if (alpha==0) return 0;
 
-			final int maxRed = this.maxRed;
-			final int minRed = this.minRed;
-			final int maxGreen = this.maxGreen;
-			final int minGreen = this.minGreen;
-			final int maxBlue = this.maxBlue;
-			final int minBlue = this.minBlue;
-			final int red = (maxRed == minRed ? minRed : (int)(interpolation * (maxRed - minRed) + minRed));
-			final int green = (maxGreen == minGreen ? minGreen : (int)(interpolation * (maxGreen - minGreen) + minGreen));
-			final int blue = (maxBlue == minBlue ? minBlue : (int)(interpolation * (maxBlue - minBlue) + minBlue));
-			return (alpha << 24) | (red << 16) | (green << 8) | blue;
-			}
+            final int maxRed = this.maxRed;
+            final int minRed = this.minRed;
+            final int maxGreen = this.maxGreen;
+            final int minGreen = this.minGreen;
+            final int maxBlue = this.maxBlue;
+            final int minBlue = this.minBlue;
+            final int red = (maxRed == minRed ? minRed : (int)(interpolation * (maxRed - minRed) + minRed));
+            final int green = (maxGreen == minGreen ? minGreen : (int)(interpolation * (maxGreen - minGreen) + minGreen));
+            final int blue = (maxBlue == minBlue ? minBlue : (int)(interpolation * (maxBlue - minBlue) + minBlue));
+            return (alpha << 24) | (red << 16) | (green << 8) | blue;
+            }
         }
 
     public boolean validLevel(double value)

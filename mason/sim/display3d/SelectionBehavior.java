@@ -102,10 +102,8 @@ public class SelectionBehavior extends MouseBehavior
                 if (p != null) pickResults = new PickResult[] { p };
                 else pickResults = new PickResult[0];
                 }
-            else if (numClicks > 1 && !oneClick)  // still need only one for selection, but maybe more for inspection
+            else // if (numClicks > 1 && !oneClick)  meh, let's still sort nicely for the inspector window
                 pickResults = pickCanvas.pickAllSorted();
-            else
-                pickResults = pickCanvas.pickAllSorted();  // meh, let's still sort nicely for the inspector window
             }
         catch (javax.media.j3d.CapabilityNotSetException e)
             {

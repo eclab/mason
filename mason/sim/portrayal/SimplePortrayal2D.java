@@ -18,7 +18,12 @@ import java.awt.event.*;
     update requests by updating this same LabelledList.
 */
 
-public class SimplePortrayal2D implements Portrayal2D
+// Note that this class implements java.io.Serializable.  This will cause FindBugs
+// and other static analyzers to complain about various non-Serializable objects
+// in non-transient instance variables in subclasses of this class.  But it's
+// necessary in order to allow user-defined objects to portray themselves without
+// forcing this to become an interface.
+public class SimplePortrayal2D implements Portrayal2D, java.io.Serializable
     {
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {

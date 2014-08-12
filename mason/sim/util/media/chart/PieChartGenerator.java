@@ -220,7 +220,7 @@ public class PieChartGenerator extends ChartGenerator
         event if/when the series is deleted from the chart by the user. Returns the series attributes. */
     public SeriesAttributes addSeries(Collection objs, String name, SeriesChangeListener stopper)
         {
-        int i = getSeriesCount();
+        //int i = getSeriesCount();
         
         // need to have added the dataset BEFORE calling this since it'll try to change the name of the series
         PieChartSeriesAttributes csa = buildNewAttributes(name, stopper);

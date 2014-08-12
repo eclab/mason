@@ -252,7 +252,7 @@ public abstract class ChartGenerator extends JPanel
     public void startMovie()
         {
         // can't start a movie if we're in an applet
-        if (SimApplet.isApplet)
+        if (SimApplet.isApplet())
             {
             Object[] options = {"Oops"};
             JOptionPane.showOptionDialog(
@@ -392,8 +392,8 @@ public abstract class ChartGenerator extends JPanel
         return validChartTitle;
         }
     
-    static int uniqueNameKey = 0;
-    protected String makeUniqueString(String name) { return name + (uniqueNameKey++); }
+    //static int uniqueNameKey = 0;
+    //protected static String makeUniqueString(String name) { return name + (uniqueNameKey++); }
                      
     /** Returns the underlying chart. **/
     public JFreeChart getChart()

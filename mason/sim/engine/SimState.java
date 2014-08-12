@@ -266,13 +266,19 @@ public class SimState implements java.io.Serializable
         If an exception is raised, it is printed and null is returned. */
     public SimState writeToCheckpoint(File file)
         {
+        FileOutputStream f = null;
         try {
-            FileOutputStream f = new FileOutputStream(file);
+            f = new FileOutputStream(file);
             writeToCheckpoint(f);
             f.close();
             return this;
             }
-        catch(Exception e) { e.printStackTrace(); return null; }
+        catch(Exception e) 
+            {
+            try { if (f != null) f.close(); } catch (Exception e2) { }
+            e.printStackTrace(); 
+            return null; 
+            }
         }
     
     /** Creates a SimState from checkpoint.  If an exception is raised, it is printed and null is returned. */
@@ -352,7 +358,7 @@ public class SimState implements java.io.Serializable
                 {
                 try
                     {
-                    return (SimState)(c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { new Long(seed) } ));
+                    return (SimState)(c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { Long.valueOf(seed) } ));
                     }
                 catch (Exception e)
                     {

@@ -118,7 +118,7 @@ public class PropertyField extends JComponent
         {
         public void actionPerformed ( ActionEvent e )
             {
-            setValue(newValue( new Boolean(checkField.isSelected()).toString() ));
+            setValue(newValue( "" + checkField.isSelected() ));
             }
         };
 

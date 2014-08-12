@@ -66,7 +66,7 @@ public class CapturingCanvas3D extends Canvas3D
     public void beginCapturing(boolean movie)
         {
         Rectangle2D r = getImageSize();
-        synchronized(this)
+        synchronized(this)  // must be synchronized here
             {
             x  = (int)r.getX();
             y  = (int)r.getY();

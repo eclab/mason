@@ -171,7 +171,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
+
+        //final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
         newinfo.precise = info.precise;

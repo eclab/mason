@@ -102,7 +102,6 @@ public class SimpleInspector extends Inspector
        view the object instead of using the ViewButton.  If not, returns null. */
     JPopupMenu makePreliminaryPopup(final int index)
         {
-        Class type = properties.getType(index);
         if (properties.isComposite(index))
             {
             JPopupMenu popup = new JPopupMenu();

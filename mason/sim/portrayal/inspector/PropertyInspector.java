@@ -88,7 +88,7 @@ public abstract class PropertyInspector extends Inspector
                 {
                 PropertyInspector inspector = (PropertyInspector)(inspectorClass.getConstructor(
                         new Class[] {Properties.class, Integer.TYPE, Frame.class, GUIState.class}).newInstance(
-                            new Object[] { properties, new Integer(index), parent, simulation}));
+                            new Object[] { properties, Integer.valueOf(index), parent, simulation}));
                 if (inspector.isValidInspector()) return inspector;
                 else return null;  // failed -- perhaps the user cancelled
                 }

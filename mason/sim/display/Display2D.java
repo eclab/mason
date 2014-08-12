@@ -814,7 +814,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager", true, Thread.currentThread().getContextClassLoader()).
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { /* e.printStackTrace(); */ }
+        catch (Exception e) { /* e.printStackTrace(); */ }  // just in case a runtime exception is thrown
 
         try  // now we try to set certain properties if the security permits it
             {
@@ -1282,8 +1282,6 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         this.simulation = simulation;
         
         reset();  // must happen AFTER simulation and interval are assigned
-        
-        final Color transparentBackground = new JPanel().getBackground();  // sacrificial JPanel
 
         // create the inner display and put it in a Scroll Panel
         insideDisplay = new InnerDisplay2D(width,height);
@@ -1680,8 +1678,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         }
 
 
-    public static int SELECTION_MODE_MULTI = 0;
-    public static int SELECTION_MODE_SINGLE = 1;
+    public static final int SELECTION_MODE_MULTI = 0;
+    public static final int SELECTION_MODE_SINGLE = 1;
     
     int selectionMode = SELECTION_MODE_MULTI;
     /** Returns whether selecting a region will select all the objects within that region (the default), or instead a single object. */
@@ -2223,7 +2221,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                     }
                 else // UPDATE_RULE_WALLCLOCK_TIME
                     {
-                    skipField.setValue((long)(wallInterval / 1000));
+                    skipField.setValue((long)(wallInterval / 1000));  // integer division
                     skipField.setEnabled(true);
                     }
                 }
@@ -2263,13 +2261,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 else if (updateRule == UPDATE_RULE_WALLCLOCK_TIME)
                     {
                     val = newValue;
-                    if (val < 0) val = wallInterval / 1000;
+                    if (val < 0) val = wallInterval / 1000;  // integer division
                     wallInterval = (long) (newValue * 1000);
                     }
                 else // if (updateRule == UPDATE_RULE_INTERNAL_TIME)
                     {
                     val = newValue;
-                    if (newValue < 0) newValue = timeInterval;
+                    if (val < 0) val = timeInterval;
                     timeInterval = val;
                     }
                         
@@ -2309,6 +2307,9 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 break;
             case UPDATE_RULE_NEVER:
                 s = "Currently never redrawing except when the window is redrawn";
+                break;
+            default:  // uh oh
+                s = "This should never happen";
                 break;
             }
         JMenuItem m = new JMenuItem(s);

@@ -215,7 +215,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
 
     public Object getValue(final int index)
         {
-        return new Integer(get(index));
+        return Integer.valueOf(get(index));
         }
 
     public int set(final int index, final int element)
@@ -364,7 +364,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         Integer[] o = new Integer[numObjs];
         for(int i = 0; i < numObjs; i++)
-            o[i] = new Integer(objs[i]);
+            o[i] = Integer.valueOf(objs[i]);
         return o;
         }
 
@@ -372,7 +372,7 @@ public class IntBag implements java.io.Serializable, Cloneable, Indexed
         {
         Long[] o = new Long[numObjs];
         for(int i = 0; i < numObjs; i++)
-            o[i] = new Long(objs[i]);
+            o[i] = Long.valueOf(objs[i]);
         return o;
         }
 

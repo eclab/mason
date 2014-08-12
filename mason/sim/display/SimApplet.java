@@ -21,16 +21,18 @@ public class SimApplet extends Applet
     {
     // some random static stuff to force Display2D and Console classes to load, as they have
     // some important properties to set
-    private static boolean b;
-    private static int i;
+    static boolean b;
+    static int i;
     static
         {
         b = Display2D.isMacOSX();
         i = Console.DEFAULT_WIDTH;
         }
 
-    public static boolean isApplet = false;
+    static boolean isApplet = false;
     public SimApplet() { isApplet = true; }
+    
+    public static boolean isApplet() { return isApplet; }
     
     public void init() 
         {
@@ -66,7 +68,7 @@ public class SimApplet extends Applet
             }
         }
         
-    public void setupApplet(Class GUIStateClass) throws Exception  // yes, purposely capitalized
+    void setupApplet(Class GUIStateClass) throws Exception  // yes, purposely capitalized
         {
         if (GUIStateClass.equals(Console.class))
             Console.main(new String[] {});
@@ -81,7 +83,7 @@ public class SimApplet extends Applet
             }
         }
     
-    public void doException(JComponent button, Exception e)
+    void doException(JComponent button, Exception e)
         {
         JTextArea text = new JTextArea();
         text.setText("" + e);

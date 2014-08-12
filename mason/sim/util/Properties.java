@@ -162,7 +162,7 @@ public abstract class Properties implements java.io.Serializable
                     { 
                     double d = Double.parseDouble(value); 
                     byte b = (byte) d; 
-                    if (b==d) return _setValue(index,new Byte(b)); 
+                    if (b==d) return _setValue(index,Byte.valueOf(b)); 
                     else throw e; 
                     }
                 }
@@ -173,7 +173,7 @@ public abstract class Properties implements java.io.Serializable
                     { 
                     double d = Double.parseDouble(value); 
                     short b = (short) d; 
-                    if (b==d) return _setValue(index,new Short(b)); 
+                    if (b==d) return _setValue(index,Short.valueOf(b)); 
                     else throw e; 
                     }
                 }
@@ -184,7 +184,7 @@ public abstract class Properties implements java.io.Serializable
                     { 
                     double d = Double.parseDouble(value); 
                     int b = (int) d; 
-                    if (b==d) return _setValue(index,new Integer(b)); 
+                    if (b==d) return _setValue(index,Integer.valueOf(b)); 
                     else throw e; 
                     }
                 }
@@ -195,7 +195,7 @@ public abstract class Properties implements java.io.Serializable
                     { 
                     double d = Double.parseDouble(value); 
                     long b = (long) d; 
-                    if (b==d) return _setValue(index,new Long(b)); 
+                    if (b==d) return _setValue(index,Long.valueOf(b)); 
                     else throw e; 
                     }
                 }

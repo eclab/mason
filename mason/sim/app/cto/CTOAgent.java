@@ -32,15 +32,9 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
                 {
                 intID = Integer.parseInt( id.substring(5) ); // "AGENT"
                 }
-            catch( IndexOutOfBoundsException e )
+            catch( Exception e )
                 {
-                System.err.println( "Exception generated: " + e );
-                System.exit(1);
-                }
-            catch( NumberFormatException e )
-                {
-                System.err.println( "Exception generated: " + e );
-                System.exit(1);
+                throw new RuntimeException(e);
                 }
             }
         else
@@ -49,15 +43,9 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
                 {
                 intID = Integer.parseInt( id.substring(6) ); // "TARGET"
                 }
-            catch( IndexOutOfBoundsException e )
+            catch( Exception e )
                 {
-                System.err.println( "Exception generated: " + e );
-                System.exit(1);
-                }
-            catch( NumberFormatException e )
-                {
-                System.err.println( "Exception generated: " + e );
-                System.exit(1);
+                throw new RuntimeException(e);
                 }
             }
         }
@@ -68,7 +56,6 @@ public /*strictfp*/ class CTOAgent extends sim.portrayal.simple.OvalPortrayal2D 
 
     public void step( final SimState state )
         {
-
         CooperativeObservation hb = (CooperativeObservation)state;
 
         Double2D location = agentLocation;//hb.environment.getObjectLocation(this);

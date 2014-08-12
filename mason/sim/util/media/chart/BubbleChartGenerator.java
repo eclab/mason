@@ -68,7 +68,7 @@ public class BubbleChartGenerator extends XYChartGenerator
         // we'll rebuild the plot from scratch
                 
         SeriesAttributes[] sa = getSeriesAttributes();
-        XYPlot xyplot = (XYPlot)(chart.getPlot());
+        //XYPlot xyplot = (XYPlot)(chart.getPlot());
         DefaultXYZDataset dataset = new DefaultXYZDataset();
                 
         for(int i=0; i < sa.length; i++)

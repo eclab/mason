@@ -158,7 +158,7 @@ public abstract class SeriesAttributes extends LabelledList
     public void setPlotVisible(boolean val)
         {
         plotVisible = val;
-        getRenderer().setSeriesVisible(seriesIndex, new Boolean(val));
+        getRenderer().setSeriesVisible(seriesIndex, Boolean.valueOf(val));
         }
         
     public boolean isPlotVisible()

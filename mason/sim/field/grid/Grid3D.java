@@ -238,7 +238,7 @@ public interface Grid3D extends java.io.Serializable
     
     /**
      * Gets all neighbors overlapping with a spherical region centered at (X,Y,Z) and with a radius of dist.
-     * The measurement rule is Grid2D.ANY, meaning those cells which overlap at all with the region.  
+     * The measurement rule is Grid3D.ANY, meaning those cells which overlap at all with the region.  
      * The region is closed, meaning that that points which touch on the outer surface of the sphere will be 
      * considered members of the region.
      *

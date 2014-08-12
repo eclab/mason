@@ -325,7 +325,7 @@ class ThreadPool
         {
         synchronized(threads)
             {
-            if(totalThreads > threads.size())  // there are still outstanding threads
+            while(totalThreads > threads.size())  // there are still outstanding threads
                 try { threads.wait(); }
                 catch (InterruptedException e) { }  // ignore
             }

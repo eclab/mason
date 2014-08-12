@@ -33,6 +33,9 @@ import com.lowagie.text.pdf.*;
 
 public class ScatterPlotGenerator extends XYChartGenerator
     {
+    // used by ScatterPlotSeriesAttributes
+    int shapeCounter = -1;
+        
     public void removeSeries(int index)
         {
         super.removeSeries(index);
@@ -68,7 +71,7 @@ public class ScatterPlotGenerator extends XYChartGenerator
         // we'll rebuild the plot from scratch
                 
         SeriesAttributes[] sa = getSeriesAttributes();
-        XYPlot xyplot = (XYPlot)(chart.getPlot());
+        //XYPlot xyplot = (XYPlot)(chart.getPlot());
         DefaultXYDataset dataset = new DefaultXYDataset();
                 
         for(int i=0; i < sa.length; i++)

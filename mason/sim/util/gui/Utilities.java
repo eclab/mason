@@ -114,7 +114,7 @@ public class Utilities
         Font boldFont = labelFont.deriveFont(Font.BOLD);
         FontMetrics boldFontMetrics = label.getFontMetrics(boldFont);
         Font smallFont = labelFont.deriveFont(labelFont.getSize2D() - 2.0f);
-        FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
+        //FontMetrics smallFontMetrics = label.getFontMetrics(smallFont);
         
         label.setText("<html><p style=\"padding-top: 12pt; padding-right: 50pt; font: " + 
             boldFont.getSize() + "pt " + boldFont.getFamily() + ";\"><b>"+
@@ -157,7 +157,7 @@ public class Utilities
     
     public static void inform(String description, String subDescription, JFrame frame)
         {
-        Object[] options = { "Okay" };
+        //Object[] options = { "Okay" };
         JLabel label = new JLabel();
         Font labelFont = label.getFont();
         Font boldFont = labelFont.deriveFont(Font.BOLD);

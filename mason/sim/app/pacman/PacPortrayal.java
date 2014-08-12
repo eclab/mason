@@ -52,6 +52,8 @@ public class PacPortrayal extends SimplePortrayal2D
             case Pac.S: a = -90; break;
             case Pac.W: a = 180; break;
             case Pac.NOTHING: a = 0; break;
+            default:  // uh oh
+                a = 0; break;
             }
                         
         double starta = a - MAXIMUM_MOUTH_ANGLE * step / MOUTH_RATE;

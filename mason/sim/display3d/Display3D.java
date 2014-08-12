@@ -231,7 +231,7 @@ public class Display3D extends JPanel implements Steppable
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager", true, Thread.currentThread().getContextClassLoader()).
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { /* e.printStackTrace(); */ }
+        catch (Exception e) { /* e.printStackTrace(); */ }  // just in case there's a RuntimeException raised
 
         try  // now we try to set certain properties if the security permits it
             {
@@ -251,7 +251,7 @@ public class Display3D extends JPanel implements Steppable
             // in common use...
             System.setProperty("com.apple.macos.use-file-dialog-packages","true");
             }
-        catch (Exception e) { }
+        catch (Exception e) { }  // just in case there's a RuntimeException raised
         }
 
     /** 
@@ -275,7 +275,7 @@ public class Display3D extends JPanel implements Steppable
                 unabated underneath. */ 
             public void addWindowListener(WindowListener l) 
                 {
-                if ((new String("class javax.media.j3d.EventCatcher")).compareTo(l.getClass().toString()) == 0)
+                if ("class javax.media.j3d.EventCatcher".compareTo(l.getClass().toString()) == 0)
                     l = new LocalWindowListener(); 
                                                 
                 super.addWindowListener(l); 
@@ -326,7 +326,7 @@ public class Display3D extends JPanel implements Steppable
         return frame;
         }
         
-    class LocalWindowListener extends java.awt.event.WindowAdapter 
+    static class LocalWindowListener extends java.awt.event.WindowAdapter 
         {
         // empty class to replace the windowlistener spawned by Canvas3D        
         }
@@ -1099,7 +1099,7 @@ public class Display3D extends JPanel implements Steppable
         mSelectBehavior.setSelectsAll(selectionAll, inspectionAll);
         mSelectBehavior.setEnable(selectBehCheckBox.isSelected());
 
-        toolTipBehavior = new ToolTipBehavior(canvas, root, bounds, simulation);
+        toolTipBehavior = new ToolTipBehavior(canvas, root, bounds);
         toolTipBehavior.setEnable(true);
         toolTipBehavior.setCanShowToolTips(usingToolTips);
         
@@ -1424,7 +1424,7 @@ public class Display3D extends JPanel implements Steppable
         Ought only be done from the main event loop. */
     public void takeSnapshot()
         {
-        if (SimApplet.isApplet)
+        if (SimApplet.isApplet())
             {
             Object[] options = {"Oops"};
             JOptionPane.showOptionDialog(
@@ -1470,7 +1470,7 @@ public class Display3D extends JPanel implements Steppable
     public void startMovie()
         {
         // can't start a movie if we're in an applet
-        if (SimApplet.isApplet)
+        if (SimApplet.isApplet())
             {
             Object[] options = {"Oops"};
             JOptionPane.showOptionDialog(
@@ -2218,7 +2218,7 @@ public class Display3D extends JPanel implements Steppable
                     }
                 else // Display2D.UPDATE_RULE_WALLCLOCK_TIME
                     {
-                    skipField.setValue((long)(wallInterval / 1000));
+                    skipField.setValue((long)(wallInterval / 1000));  // integer division
                     skipField.setEnabled(true);
                     }
                 }
@@ -2264,7 +2264,7 @@ public class Display3D extends JPanel implements Steppable
                 else // if (updateRule == Display2D.UPDATE_RULE_INTERNAL_TIME)
                     {
                     val = newValue;
-                    if (newValue < 0) newValue = timeInterval;
+                    if (val < 0) val = timeInterval;
                     timeInterval = val;
                     }
                         
@@ -2304,6 +2304,9 @@ public class Display3D extends JPanel implements Steppable
                 break;
             case Display2D.UPDATE_RULE_NEVER:
                 s = "Currently never redrawing except when the window is redrawn";
+                break;
+            default:  // uh oh
+                s = "This should never happen";
                 break;
             }
         JMenuItem m = new JMenuItem(s);

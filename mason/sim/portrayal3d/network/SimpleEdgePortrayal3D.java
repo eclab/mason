@@ -25,7 +25,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
     Color toColor;
     Color labelColor;
     Font labelFont;
-    Font3D labelFont3D;     // only used if we're doing Text3D
+    //Font3D labelFont3D;     // only used if we're doing Text3D
     boolean showLabels;
         
     // A larger font size makes the label bigger but also uses much more memory
@@ -75,7 +75,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
         if (labelFont == null) 
             labelFont = new Font("SansSerif", Font.PLAIN, FONT_SIZE);
         this.labelFont = labelFont;
-        labelFont3D = new Font3D(labelFont, new FontExtrusion());
+        //labelFont3D = new Font3D(labelFont, new FontExtrusion());
         showLabels = (labelColor != null);
         if (this.labelColor == null) 
             this.labelColor = Color.white;  // just in case the user turns on labels again

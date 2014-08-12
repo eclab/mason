@@ -143,15 +143,19 @@ public class PacMan extends SimState
         pacs[0] = new Pac(this,  0);
 
         // add Blinky
+        // yes, dead store
         Blinky blinky = new Blinky(this);
 
         // add Pinky
+        // yes, dead store
         Pinky pinky = new Pinky(this);
 
         // add Inky
+        // yes, dead store
         Inky inky = new Inky(this, blinky);
 
         // add Clyde
+        // yes, dead store
         Clyde clyde = new Clyde(this);
                 
         // ghosts are no longer frightened

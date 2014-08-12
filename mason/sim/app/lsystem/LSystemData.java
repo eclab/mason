@@ -51,7 +51,7 @@ public  class LSystemData implements java.io.Serializable
     public static String fromVector( ByteList v )
         {
         int p = 0;
-        String ret = new String();
+        String ret = "";
         for(p=0; p<v.length; p++)
             ret += String.valueOf((char)v.b[p]);
             

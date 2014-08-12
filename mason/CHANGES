@@ -2674,4 +2674,35 @@ Version 18
 	SimState.cleaningAsynchronous no longer public
 	SimpleColorMap.transformLevel(...) and filterLevel(...) no longer apply
 		to colors chosen from the integer color table.
-	Reindented
+	Eliminated threading in CTO
+	minor bug fix in Display[2|3]D's skip field
+	Added sim.display.SimApplet.isApplet();
+	Revision to AsynchronousSteppable: resume(...) now takes two arguments,
+		the second being restoringFromCheckpoint.  The method
+		isRestoringFromCheckpoint is deleted (it can't be deprecated
+		safely).
+	Added a bit of synchronization to Schedule
+	Fixed incorrect OR in _scheduleOnce
+	Better cleanups in SimState.writetoCheckpoint()
+	ParallelSequence.ThreadPool.joinThreads now does a while loop for
+		waiting just to be sure.
+	Constants moved from Grid2D to Grid3D in various Grid3D subclasses
+	getRadialNeighbors(...) recursive loop fixed in various grid classes
+	FieldPortrayal2D.getObjectLocation(Object) deleted
+	DrawInfo2D.equals(...) deleted.  It's going to cause problems with
+		subclasses, notably EdgeDrawInfo2D.
+	Moved the unsafe but necessary java.io.Serializable declaration from
+		Portrayal to SimplePortrayal2D.  This makes field portrayals
+		and all 3D portrayals un-serializable (as they should be).
+	Fix to TrailedPortrayal2D.draw, which was not setting lastObj
+		properly.
+	CubePortrayal3D's constructor no longer has the vestigial
+		generateNormals option
+	MiniHistogram.paintComponent no longer synchronized (not sure why
+		it was!)
+	spurious update() removed in BoxPlotGenerator.buildGlobalAttributes()
+	ScatterPlotSeriesAttributes.shapeNum no longer static but instead is
+		stored in ScatterPlotGenerator
+        Minor fixes kicked up by FindBugs
+        Reindented
+

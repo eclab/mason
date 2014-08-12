@@ -59,7 +59,7 @@ public class SimpleController implements Controller
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager", true, Thread.currentThread().getContextClassLoader()).
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { /* e.printStackTrace(); */ }
+        catch (Exception e) { /* e.printStackTrace(); */ } // just in case we throw a RuntimeException here
 
         try  // now we try to set certain properties if the security permits it
             {
@@ -70,7 +70,7 @@ public class SimpleController implements Controller
             // if we're on a mac, let's make the tabs smaller
             // System.setProperty("com.apple.macos.smallTabs", "true");  // nah, looks dorky...
             }
-        catch (Exception e) { }
+        catch (Exception e) { }  // just in case we throw a RuntimeException here
         }
 
     /** Random number generator seed */

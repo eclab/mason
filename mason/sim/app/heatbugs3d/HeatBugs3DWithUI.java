@@ -38,7 +38,6 @@ public class HeatBugs3DWithUI extends GUIState
     public static final int MESH = 1;
     public static final int NOZ  = 2;
 
-    int bugmode = STACKED;
     int heatmode = MESH;
 
        
@@ -70,7 +69,6 @@ public class HeatBugs3DWithUI extends GUIState
     public HeatBugs3DWithUI(SimState state, final int bugmode, final int heatmode)
         {
         super(state); 
-        this.bugmode = bugmode;
         this.heatmode = heatmode;
 
         // Here we define the bugPortrayal so it can be attached in init().  Otherwise
@@ -124,6 +122,8 @@ public class HeatBugs3DWithUI extends GUIState
             case NOZ :  
                 quadP = new TilePortrayal(cm);   // no height changes, but we need to raise the bugs a little bit
                 bugPortrayal.translate(0,0,1.0f);
+                break;
+            default:  // never happens
                 break;
             }
         heatPortrayal.setPortrayalForAll(quadP);

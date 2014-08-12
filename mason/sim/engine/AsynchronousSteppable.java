@@ -49,15 +49,13 @@ package sim.engine;
     <pre><tt>
     *   AsynchronousSteppable s = new AsynchronousSteppable()
     *       {
-    *       protected void run(boolean resuming)
+    *       protected void run(boolean resuming, boolean restoringFromCheckpoint)
     *           {
     *           if (!resuming)
     *               {
     *               // do your stuff here
     *               }
     *           }
-    *
-    *       protected void halt(boolean pausing) { } // nothing
     *       };
     </tt></pre>
     
@@ -66,8 +64,8 @@ package sim.engine;
     run(false) should perform the asynchronous task, halt(false) and halt(true) should both cause the thread
     to die or trigger events which will soon lead to thread death halt(...) returns, and run(true) should
     fire up the task loop again after it had been halted with halt(true).  The most common situation is where
-    you don't distinguish between your thread being killed temporarily or being killed permanently.  Here's
-    some code for this situation:
+    you don't distinguish between your thread being killed temporarily or being killed permanently,
+    nor between starting and resuming.  Here's some code for this situation:
     
     <pre><tt>
     *   AsynchronousSteppable s = new AsynchronousSteppable()
@@ -75,7 +73,7 @@ package sim.engine;
     *       boolean shouldQuit = false;
     *       Object[] lock = new Object[0]; // an array is a unique, serializable object
     *
-    *       protected void run(boolean resuming)
+    *       protected void run(boolean resuming, boolean restoringFromCheckpoint)
     *           {
     *           boolean quit = false;
     *           
@@ -105,13 +103,58 @@ package sim.engine;
     *       boolean shouldQuit = false;
     *       Object[] lock = new Object[0]; // an array is a unique, serializable object
     *
-    *       protected void run(boolean resuming)
+    *       protected void run(boolean resuming, boolean restoringFromCheckpoint)
     *           {
     *           boolean quit = false;
     *           
     *           if (!resuming)
     *               {
     *               // we're starting fresh -- set up here if you have to
+    *               }
+    *           else
+    *               {
+    *               // we're resuming from a pause -- re-set up here if you have to
+    *               }
+    *
+    *           while(!quit)
+    *               {
+    *               // do your stuff here -- assuming it doesn't block...
+    *               
+    *               synchronized(lock) { quit = shouldQuit; shouldQuit = false; }
+    *               }
+    *           // we're quitting -- do cleanup here if you need to
+    *           }
+    *
+    *       protected void halt(boolean pausing)
+    *           {
+    *           synchronized(lock) { shouldQuit = val; }
+    *           }
+    *       };
+    </tt></pre>
+
+    <p>Further, it's possible you may need to distinguish between being started or being restarted (but pausing
+    and quitting are considered the same), and additionally you need to know if you're being restarted after
+    the simulation has been restored from a checkpoint.  For example, if you were writing to a log and needed to know
+    whether to open the log fresh or to append to it; and if you're restoring from a an earlier checkpoint, you need
+    to seek in the file to append in the right spot.  You could do something along these lines:
+
+    <pre><tt>
+    *   AsynchronousSteppable s = new AsynchronousSteppable()
+    *       {
+    *       boolean shouldQuit = false;
+    *       Object[] lock = new Object[0]; // an array is a unique, serializable object
+    *
+    *       protected void run(boolean resuming, boolean restoringFromCheckpoint)
+    *           {
+    *           boolean quit = false;
+    *           
+    *           if (!resuming)
+    *               {
+    *               // we're starting fresh -- set up here if you have to
+    *               }
+    *           else if (restoringFromCheckpoint)
+    *               {
+    *               // do anything you need when restoring from a checkpoint, like seeking in files
     *               }
     *           else
     *               {
@@ -144,7 +187,7 @@ package sim.engine;
     *       boolean shouldPause = false;
     *       Object[] lock = new Object[0]; // an array is a unique, serializable object
     *
-    *       protected void run(boolean resuming)
+    *       protected void run(boolean resuming, boolean restoringFromCheckpoint)
     *           {
     *           boolean quit = false;
     *           boolean pause = false;
@@ -152,6 +195,10 @@ package sim.engine;
     *           if (!resuming)
     *               {
     *               // we're starting fresh -- set up here if you have to
+    *               }
+    *           else if (restoringFromCheckpoint)
+    *               {
+    *               // do anything you need when restoring from a checkpoint, like seeking in files
     *               }
     *           else
     *               {
@@ -191,11 +238,9 @@ package sim.engine;
     *           }
     *       };
     </tt></pre>
-
-
 */
 
-public abstract class AsynchronousSteppable implements Stoppable
+public class AsynchronousSteppable implements Stoppable
     {
     private static final long serialVersionUID = 1;
 
@@ -207,12 +252,15 @@ public abstract class AsynchronousSteppable implements Stoppable
     /** This method should enter the parallel thread's loop.  If resuming is true, then you may assume
         the parallel steppable is being resumed in the middle of a simulation after being paused (likely to checkpoint),
         as opposed to being started fresh.  */
-    protected abstract void run(boolean resuming);
+    protected void run(boolean resuming, boolean restoringFromCheckpoint) { run(resuming); }
+    
+    /** @deprecated override run(resuming, restoringFromCheckpoint) instead.  */
+    protected void run(boolean resuming) { }
     
     /** This method should cause the loop created in run(...) to die.  If pausing is true, then you may assume
         the parallel steppable is being paused in the middle of a simulation (likely to checkpoint),
         as opposed to being entirely stopped due to the end of the simulation.  */
-    protected abstract void halt(boolean pausing);
+    protected void halt(boolean pausing) { }
     
     /** Fires up the AsynchronousSteppable and registers it with the SimState.
         If it's already running, nothing happens. */
@@ -220,10 +268,9 @@ public abstract class AsynchronousSteppable implements Stoppable
         {
         if (running) return;
         running = true;
-        restoringFromCheckpoint = false;
         this.state = state;
         state.addToAsynchronousRegistry(this);
-        thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(false); } });
+        thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(false, false); } });
         thread.setDaemon(true);
         thread.setName("Asynchronous Steppable: " + this);
         thread.start();
@@ -246,7 +293,6 @@ public abstract class AsynchronousSteppable implements Stoppable
             }
         state.removeFromAsynchronousRegistry(this);
         running = false;
-        restoringFromCheckpoint = false;
         }
     
     /** Requests that the AsynchronousSteppable shut down its thread (temporarily) and blocks until this occurs. If it's already paused or not running, nothing happens.  */
@@ -265,7 +311,6 @@ public abstract class AsynchronousSteppable implements Stoppable
                 }
             }
         paused = true;
-        restoringFromCheckpoint = false;
         }
     
     /** Fires up the AsynchronousSteppable after a pause().
@@ -273,26 +318,20 @@ public abstract class AsynchronousSteppable implements Stoppable
         @deprecated use resume(boolean)
     */
     public final void resume() { resume(false); }
-    
-    boolean restoringFromCheckpoint = false;
-    
+        
     /** Fires up the AsynchronousSteppable after a pause().
         If it's already unpaused or not running, nothing happens. 
         If 'restoringFromCheckpoint' is TRUE then resume(...)
         is called when MASON is being started up from checkpoint.
         Otherwise it is false.  */
-    public final synchronized void resume(boolean restoringFromCheckpoint)
+    public final synchronized void resume(final boolean restoringFromCheckpoint)
         {
         if (!paused || !running) return;
-        restoringFromCheckpoint = true;
         paused = false;
-        thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(true); } });
+        thread = new Thread(new Runnable() { public void run() { AsynchronousSteppable.this.run(true, restoringFromCheckpoint); } });
         thread.start();
         }
         
-    public final synchronized boolean isFestoringFromCheckpoint() { return restoringFromCheckpoint; }
-    
-    
     /// Threads are not serializable, so we must manually rebuild here
     private void writeObject(java.io.ObjectOutputStream p)
         throws java.io.IOException

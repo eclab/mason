@@ -27,7 +27,7 @@ public class Synapse extends Object
     public int number=1;
     public String toString()
         {
-        String s = new String(type == type_chemical ? "chemical" : "gap");
+        String s = (type == type_chemical ? "chemical" : "gap");
         if (number > 1) s = s + " (" + number + ")";
         return s;
         }

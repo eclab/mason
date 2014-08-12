@@ -106,6 +106,7 @@ public class Asteroid extends Element
                 if (i == sizes.length - 1)
                     { forceX = -sumForceX; forceY = -sumForceY; }  // last one ought to balance out the others.  It's best if it's the biggest one, hence why we list smaller asteroids first
                 else { sumForceX += forceX; sumForceY += forceY; }
+                // yes, this is a dead store
                 Asteroid a = new Asteroid(asteroids, sizes[i], new MutableDouble2D(velocity.x + forceX, velocity.y + forceY), location);
                 }
             }

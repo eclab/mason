@@ -278,7 +278,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                         }
                     }
                 }
-            catch (Exception e)
+            catch (Exception e)         // just in case of RuntimeExceptions
                 {
                 e.printStackTrace();
                 }
@@ -324,7 +324,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 }
             else return null;
             }
-        catch (Exception e)
+        catch (Exception e)             // just in case of RuntimeExceptions
             {
             // couldn't find a setter
             return null;
@@ -346,7 +346,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 }
             else return null;
             }
-        catch (Exception e)
+        catch (Exception e)             // just in case of RuntimeExceptions
             {
             // couldn't find a domain
             return null;
@@ -368,7 +368,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 }
             else return null;
             }
-        catch (Exception e)
+        catch (Exception e)             // just in case of RuntimeExceptions
             {
             // couldn't find a domain
             return null;
@@ -390,7 +390,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 }
             else return null;
             }
-        catch (Exception e)
+        catch (Exception e)             // just in case of RuntimeExceptions
             {
             // couldn't find a domain
             return null;

@@ -23,6 +23,8 @@ public /*strictfp*/ class CooperativeObservation extends SimState
     public static final int NUM_TARGETS = 40;
     public static final int NUM_AGENTS = 10;
 
+    public static final double KMEANS_REPEAT_INTERVAL = 20;
+
     Double2D[] agentPos;
     Double2D[] targetPos;
     public Continuous2D environment = null;
@@ -81,6 +83,7 @@ public /*strictfp*/ class CooperativeObservation extends SimState
             targetPos[i] = new Double2D();
 
         kMeansEngine = new KMeansEngine( this );
+        schedule.scheduleRepeating(kMeansEngine, -1, KMEANS_REPEAT_INTERVAL);
 
         environment = new Continuous2D(8.0, XMAX-XMIN, YMAX-YMIN);
 
@@ -106,8 +109,9 @@ public /*strictfp*/ class CooperativeObservation extends SimState
                 times++;
                 if( times == 1000 )
                     {
+                    // give up
                     System.err.println( "Cannot place agents. Exiting...." );
-                    System.exit(1);
+                    break;
                     }
                 } while( !acceptablePosition( agent, loc ) );
             environment.setObjectLocation(agent,loc);

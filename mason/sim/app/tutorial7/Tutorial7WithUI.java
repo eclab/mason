@@ -19,7 +19,6 @@ public class Tutorial7WithUI extends GUIState
     {
     public Display3D display;
     public JFrame displayFrame;
-    Tutorial7 tutorial7;
     
     SparseGridPortrayal3D fliesPortrayal = new SparseGridPortrayal3D();
     ValueGrid2DPortrayal3D xProjectionPortrayal = new ValueGrid2DPortrayal3D("X Projection");

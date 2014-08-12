@@ -18,7 +18,8 @@ public class CrowdSim extends SimState
     public double spaceWidth = 20;
     public double spaceDepth = 20;
     public int boidCount =0;
-    public int STEPS_BETWEEN_INSERTS = 200;
+    public final int STEPS_BETWEEN_INSERTS = 200;
+    public double maxFnVal;
 
     public Continuous3D boidSpace = new Continuous3D(Agent.SIGHT, spaceWidth, spaceHeight, spaceDepth);
                 
@@ -31,7 +32,7 @@ public class CrowdSim extends SimState
     public CrowdSim(long seed)
         {
         super(seed);
-        Agent.MAX_FN_VAL = Math.min(spaceHeight, Math.min(spaceWidth, spaceDepth))/2;
+        maxFnVal = Math.min(spaceHeight, Math.min(spaceWidth, spaceDepth))/2;
         }
     
     private void spawnBoid()

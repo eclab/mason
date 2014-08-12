@@ -133,7 +133,7 @@ public class MiniHistogram extends JComponent
             }
         };
 
-    public synchronized void paintComponent(final Graphics graphics)
+    public void paintComponent(final Graphics graphics)
         {
         int len = 0;
         if (buckets != null) len = buckets.length;
@@ -186,7 +186,8 @@ public class MiniHistogram extends JComponent
         String[] s = new String[numBuckets];
         
         if (min>max) {double tmp = min; min = max; max = tmp;} // duh, stupid user
-        else if (min==max) { s[0] = "["+min+"..."+max+"]"; for(int x=1;x<s.length;x++) s[x] = ""; return s;}  // duh, stupider user
+        
+        if (min==max) { s[0] = "["+min+"..."+max+"]"; for(int x=1;x<s.length;x++) s[x] = ""; return s;}  // duh, stupider user
         else if (logScale)
             {
             min = Math.log(min);

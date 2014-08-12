@@ -4234,12 +4234,12 @@ I recommend you use an anonymous Steppable instead of MethodStep.  It's likely f
 
 
 
-\paragraph{\Class{sim.engine.AsynchronousSteppable}}  During its \method{step(...)} method, this Stoppable Steppable forks off a single thread, which runs {\it asynchronously from the simulation thread}, and optionally rejoins with the simulation thread at some time in the future.  The class is {\it abstract}: you have to subclass it and override certain methods which will be called when this thread is started or stopped.  Here they are:
+\paragraph{\Class{sim.engine.AsynchronousSteppable}}  During its \method{step(...)} method, this Stoppable Steppable forks off a single thread, which runs {\it asynchronously from the simulation thread}, and optionally rejoins with the simulation thread at some time in the future.  You are meant to subclass this class and and override certain methods which will be called when this thread is started or stopped.  Here they are:
 
 \begin{methods}{\class{sim.engine.AsynchronousSteppable}}
-\mthd{public abstract void run(boolean resuming)} The entry point to the thread.  Called when the thread has just begun, or is being resumed after having been paused.  This method is called in the asynchronous thread.
+\mthd{public abstract void run(boolean resuming, boolean restoringFromCheckpoint)} The entry point to the thread.  Called when the thread has just begun, or is being resumed after having been paused.  This method is called in the asynchronous thread.
 
-There are two possible reasons why a method might be resumed.  First, it might be resumed after being {\it temporarily} paused, typically to write out a checkpoint file.  Second, it might be ``resumed'', so to speak, while MASON is being restarted from a checkpoint. In this second case, the \method{isRestoringFromCheckpoint()} method will return true.  You might need to know this information, perhaps, to handle reopening and appending to a file properly. 
+There are two possible reasons why a method might be resumed.  First, it might be resumed after being {\it temporarily} paused, typically to write out a checkpoint file.  Second, it might be ``resumed'', so to speak, while MASON is being restarted from a checkpoint.  You might need to know this information, perhaps, to handle reopening and appending to a file properly. 
 
 \mthd{public abstract void halt(boolean pausing)} Called when the thread is being paused, or is being permanently killed off.  This method should notify the thread that it should terminate\,---\,that is, that the \method{run(...)} method should exit.
 \end{methods}
@@ -4250,7 +4250,6 @@ The methods above aren't actually called directly by the model: instead the mode
 \mthd{public void stop()} Kills the asynchronous thread permanently.  This method calls \code{halt(false)} to ask the thread to exit, then joins with the asynchronous thread.
 \mthd{public void pause()} Kills the asynchronous thread temporarily.  This method calls \code{halt(true)} to ask the thread to exit, then joins with the asynchronous thread.
 \mthd{public void resume(boolean restoringFromCheckpoint)} Resumes a paused thread. If this method is being called when MASON is firing up from a checkpoint file, then {\it restoringFromCheckpoint} is true, else it is false. This method calls \code{run(true)} to restart the thread.
-\mthd{public boolean isRestoringFromCheckpoint()} Returns true if the last entry or exit method called on this AsynchronousSteppable was \code{resume(true)}.
 \end{methods}
 
 It shouldn't surprise you that these methods are threadsafe.
@@ -4276,15 +4275,13 @@ Use of AsynchronousSteppable is quite rare.  Here are the most common scenarios 
 {\footnotesize \begin{alltt}
 AsynchronousSteppable s = new AsynchronousSteppable()
     \{
-    protected void run(boolean resuming)
+    protected void run(boolean resuming, boolean restoringFromCheckpoint)
         \{
         if (!resuming)
             \{
             // do your stuff here
             \}
         \}
-        
-    protected void halt(boolean pausing) \{ \} // this stays empty
     \};
 \end{alltt}}
 
@@ -4297,9 +4294,10 @@ AsynchronousSteppable s = new AsynchronousSteppable()
     boolean shouldQuit = false;
     Object[] lock = new Object[0]; // an array is a unique, serializable object
 
-    protected void run(boolean resuming)
+    protected void run(boolean resuming, boolean restoringFromCheckpoint)
         \{
         boolean quit = false;
+        
         while(!quit)
             \{
             // do one iteration of your stuff here -- assuming it doesn't block...
@@ -4321,7 +4319,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
     boolean shouldQuit = false;
     Object[] lock = new Object[0]; // an array is a unique, serializable object
 
-    protected void run(boolean resuming)
+    protected void run(boolean resuming, boolean restoringFromCheckpoint)
         \{
         boolean quit = false;
         
@@ -4331,7 +4329,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
             \}
         else // (resuming)
             \{
-            // we're resuming from a pause -- re-set up here if you have to
+           // we're resuming from a pause -- re-set up here if you have to
             \}
             
         while(!quit)
@@ -4356,7 +4354,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
     boolean shouldQuit = false;
     Object[] lock = new Object[0]; // an array is a unique, serializable object
 
-    protected void run(boolean resuming)
+    protected void run(boolean resuming, boolean restoringFromCheckpoint)
         \{
         boolean quit = false;
         
@@ -4364,9 +4362,9 @@ AsynchronousSteppable s = new AsynchronousSteppable()
             \{
             // we're starting fresh -- set up here if you have to
             \}
-        else if (isRestoringFromCheckpoint())
+        else if (restoringFromCheckpoint)
             \{
-            // we're resuming from a checkpoint restore -- re-set up here if you have to
+            // do anything you need when restoring from a checkpoint, like seeking in files
             \}
         else
             \{
@@ -4396,7 +4394,7 @@ AsynchronousSteppable s = new AsynchronousSteppable()
     boolean shouldPause = false;
     Object[] lock = new Object[0]; // an array is a unique, serializable object
 
-    protected void run(boolean resuming)
+    protected void run(boolean resuming, boolean restoringFromCheckpoint)
         \{
         boolean quit = false;
         boolean pause = false;
@@ -4405,9 +4403,9 @@ AsynchronousSteppable s = new AsynchronousSteppable()
             \{
             // we're starting fresh -- set up here if you have to
             \}
-        else if (isRestoringFromCheckpoint())
+        else if (restoringFromCheckpoint)
             \{
-            // we're resuming from a checkpoint restore -- re-set up here if you have to
+            // do anything you need when restoring from a checkpoint, like seeking in files
             \}
         else
             \{
@@ -6548,9 +6546,14 @@ If you're using Eclipse or NetBeans, you'll need to change the compiler target a
 
 \paragraph{Step 4.  Deploy the Applet}  MASON has HTML which will deploy your \file{mason.jar} file as an applet. It's located at \file{sim/display/SimApplet.html}.  Just stick the \file{mason.jar} file right next to that HTML file on your server and you're set.
 
+\paragraph{About SimApplet}
 
+The class \Class{sim.display.SimApplet} class handles the main work for you.  It's a standard Java applet class which fires up MASON according to the \file{simulation.classes} file.  As such it has only two methods of interest:
 
-
+\begin{methods}{\class{sim.display.SimApplet}}
+\mthd{public void init()} Initializes the applet and displays it. 
+\mthd{public static boolean isApplet()} Returns whether MASON believes it is running inside an applet (note that this is a static method).  You can call this to make decisions based on this belief.
+\end{methods}
 
 
 
@@ -7041,10 +7044,9 @@ Beyond the variables above, DrawInfo2D is mostly constructors:
 \mthd{public DrawInfo2D(DrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
 \end{methods}
 
-There are only a few methods:
+There is only one relevant method:
 
 \begin{methods}{\class{sim.portrayal.DrawInfo2D}}
-\mthd{public boolean equals(Object obj) } Compares against another DrawInfo2D's draw and clip rectangles and precise flag.
 \mthd{public String toString() } Prints the DrawInfo2D to a string in a pleasing fashion.
 \end{methods}
 

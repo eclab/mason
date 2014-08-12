@@ -218,7 +218,7 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         }
 
     // searches for an object within a short distance of a location
-    final int SEARCH_DISTANCE = 3;
+    final static int SEARCH_DISTANCE = 3;
     IntBag xPos = new IntBag(49);
     IntBag yPos = new IntBag(49);
         

@@ -54,7 +54,7 @@ public class PNGEncoder extends Object
     Image image;
     int width, height;
     int bytePos, maxPos;
-    int hdrPos, dataPos, endPos;
+    //int hdrPos, dataPos, endPos;
     CRC32 crc = new CRC32();
     long crcValue;
     boolean encodeAlpha;
@@ -171,9 +171,9 @@ public class PNGEncoder extends Object
         maxPos = 0;
 
         bytePos = writeBytes( pngIdBytes, 0 );
-        hdrPos = bytePos;
+        //hdrPos = bytePos;
         writeHeader();
-        dataPos = bytePos;
+        //dataPos = bytePos;
         if (writeImageData())
             {
             writeEnd();

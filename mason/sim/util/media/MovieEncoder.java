@@ -452,7 +452,7 @@ class MovieEncoderDataStream implements PullBufferStream
     Buffer buffer = null;
     Format format;
     boolean ended = false;
-    boolean endAcknowledged = false;
+    //boolean endAcknowledged = false;
     float frameRate;
     
     MovieEncoderDataStream(Format format, float frameRate) { this.frameRate = frameRate ;this.format = format; }
@@ -506,7 +506,7 @@ class MovieEncoderDataStream implements PullBufferStream
                 buf.setEOM(true);
                 buf.setOffset(0);
                 buf.setLength(0);
-                endAcknowledged = true;
+                //endAcknowledged = true;
                 }
             }
         }

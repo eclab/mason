@@ -133,15 +133,15 @@ public class Cell extends Object implements Steppable
     public Cell getParent() { return parent; }
 
     public int expressionPattern;
-    public final static String[] expressionPatterns = new String[] { "", "Expr8", "Expr12", "Expr15", "Expr21", "Expr24", "Expr28", "Expr29", "Expr35", "Expr38", "Expr29", "Expr49", "Expr56", "Expr67", "Expr68" };
+    final static String[] expressionPatterns = new String[] { "", "Expr8", "Expr12", "Expr15", "Expr21", "Expr24", "Expr28", "Expr29", "Expr35", "Expr38", "Expr29", "Expr49", "Expr56", "Expr67", "Expr68" };
     public String getExpressionPattern() { return expressionPatterns[expressionPattern]; }
 
     public int cellGroup;
-    public final static String[] cellGroups = new String[] { "", "GLR", "e1", "e2", "gon_herm_anch", "gon_herm_dish_A", "gon_herm_dish_P", "gon_herm_dut", "gon_herm_prsh_A", "gon_herm_prsh_P", "gon_herm_spth_A", "gon_herm_spth_P", "gon_herm_sujn_A", "gon_herm_sujn_P", "gon_herm_vut", "hyp10", "hyp3", "hyp4", "hyp5", "hyp6", "hyp7", "hyp8/9", "int_emb", "int_post", "m2", "m4", "m6", "m7", "mu_bod", "rectal epithelium", "se_herm", "seam", "um1", "um2", "vm1", "vm2", "vulvaA", "vulvaB", "vulvaC", "vulvaD", "vulvaE", "vulvaF" };
+    final static String[] cellGroups = new String[] { "", "GLR", "e1", "e2", "gon_herm_anch", "gon_herm_dish_A", "gon_herm_dish_P", "gon_herm_dut", "gon_herm_prsh_A", "gon_herm_prsh_P", "gon_herm_spth_A", "gon_herm_spth_P", "gon_herm_sujn_A", "gon_herm_sujn_P", "gon_herm_vut", "hyp10", "hyp3", "hyp4", "hyp5", "hyp6", "hyp7", "hyp8/9", "int_emb", "int_post", "m2", "m4", "m6", "m7", "mu_bod", "rectal epithelium", "se_herm", "seam", "um1", "um2", "vm1", "vm2", "vulvaA", "vulvaB", "vulvaC", "vulvaD", "vulvaE", "vulvaF" };
     public String cellGroup() { return cellGroups[cellGroup]; }
 
     public int fate;
-    public final static String[] fates = new String[] { "", "Dies", "Muscle", "Hypodermis", "Intestine", "Neuron", "Pharynx" };
+    final static String[] fates = new String[] { "", "Dies", "Muscle", "Hypodermis", "Intestine", "Neuron", "Pharynx" };
     public String getFate() { return fates[fate]; }
     boolean isNeuron() { return fate == 5; }
 
@@ -149,7 +149,7 @@ public class Cell extends Object implements Steppable
     // no-info founding,embryonic,
     // postembryonic,postembryonic dual origin
 
-    public final static String[] types = new String[] { "Founding / Unknown", "Preembryonic", "Postembryonic", "Postembryonic Dual Origin", "Postembryonic Unknown" };
+    final static String[] types = new String[] { "Founding / Unknown", "Preembryonic", "Postembryonic", "Postembryonic Dual Origin", "Postembryonic Unknown" };
     public String getType() { return types[type]; }
         
 
@@ -228,15 +228,15 @@ public class Cell extends Object implements Steppable
     public int location_max;
 
     /* Constants */
-    public static int initial_location_size=4;
-    public static double initial_split_radius_distance=2.0;
-    public static int post_embryonic_birthday = 500;
-    public static int maximum_death_day=1000;
-    public static char cell_type_preembryonic_unknown_position = 0;
-    public static char cell_type_preembryonic = 1;
-    public static char cell_type_postembryonic = 2;
-    public static char cell_type_postembryonic_dual_origin = 3;
-    public static char cell_type_postembryonic_unknown_position = 4;
+    public static final int initial_location_size=4;
+    public static final double initial_split_radius_distance=2.0;
+    public static final int post_embryonic_birthday = 500;
+    public static final int maximum_death_day=1000;
+    public static final char cell_type_preembryonic_unknown_position = 0;
+    public static final char cell_type_preembryonic = 1;
+    public static final char cell_type_postembryonic = 2;
+    public static final char cell_type_postembryonic_dual_origin = 3;
+    public static final char cell_type_postembryonic_unknown_position = 4;
 
 
     /* Functions */
@@ -703,15 +703,16 @@ public class Cell extends Object implements Steppable
                 else System.out.println("Whoa! Lineage name with no split characteristics: " 
                     +lineage_name+ " (" + official_name +")");
                 }
-            else if (parent==null)
-                {
-                // this shouldn't be able to happen, along with us being !root
-                System.out.println("Whoa! " + official_name + "is root, but has no location -- I shouldn't be able to get here!");
-                // Assume location is (0,0,0)
-                birth_location_x=0;
-                birth_location_y=0;
-                birth_location_z=0;
-                }
+/*            else if (parent==null)
+              {
+              // this shouldn't be able to happen, along with us being !root
+              System.out.println("Whoa! " + official_name + "is root, but has no location -- I shouldn't be able to get here!");
+              // Assume location is (0,0,0)
+              birth_location_x=0;
+              birth_location_y=0;
+              birth_location_z=0;
+              }
+*/
             else// further modify by moving cell in split direction
                 {
                 char sc=lineage_name.charAt(lineage_name.length()-1);

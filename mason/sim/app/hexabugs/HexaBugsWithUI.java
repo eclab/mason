@@ -74,7 +74,7 @@ public class HexaBugsWithUI extends GUIState
             display.attach(bugPortrayal,"Bugs");
 
             // redisplay
-            if (display!=null) display.repaint();
+            display.repaint();
             }
         }
         

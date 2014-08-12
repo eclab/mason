@@ -47,7 +47,7 @@ public class MutableDouble extends Number implements Valuable, Cloneable /* auto
                 
     public String toString()
         {
-        return new Double(val).toString();
+        return "" + val;
         }
 
     public boolean isNaN()

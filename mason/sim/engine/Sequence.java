@@ -272,7 +272,8 @@ public class Sequence implements Steppable
                 if (newSize <= newLen) newSize = newLen;
                 Steppable[] newSteppables = new Steppable[newSize];
                 System.arraycopy(steps, 0, newSteppables, 0, steps.length);
-                this.steps = steps = newSteppables;
+                this.steps = newSteppables;
+                steps = newSteppables;
                 }
             
             // copy in new elements

@@ -38,8 +38,6 @@ public class MouseTraps3DWithUI extends GUIState
 //      super(new MouseTraps(System.currentTimeMillis(), 3.9,100,100,10.0,10.0,false)); 
         }
     
-    double scale;
-
     public static String getName() { return "3D Mouse Traps"; }
         
     public void start()

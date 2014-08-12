@@ -73,11 +73,11 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
         if (info.selected && object!=null && (object instanceof Oriented2D || object instanceof Scalable2D))
             {
             double orientation = 0.0;
-            double scale = 1.0;
+            //double scale = 1.0;
             if (object instanceof Oriented2D)
                 { orientation = ((Oriented2D)object).orientation2D(); }
-            if (object instanceof Scalable2D)
-                scale = ((Scalable2D)object).getScale2D();
+            //if (object instanceof Scalable2D)
+            //    scale = ((Scalable2D)object).getScale2D();
             circle.setFrame(info.draw.x - CIRCLE_RADIUS, info.draw.y - CIRCLE_RADIUS, CIRCLE_RADIUS * 2, CIRCLE_RADIUS * 2);
             knob.setFrame(info.draw.x + CIRCLE_RADIUS * Math.cos(orientation) - KNOB_RADIUS, info.draw.y + CIRCLE_RADIUS * Math.sin(orientation) - KNOB_RADIUS, KNOB_RADIUS * 2, KNOB_RADIUS * 2);
             graphics.setPaint(LOWER_PAINT);
@@ -109,11 +109,11 @@ public class AdjustablePortrayal2D extends SimplePortrayal2D
                     (adjusting && adjustingObject != object) || // we're not portraying the relevant object
                     !((object instanceof Scalable2D || object instanceof Orientable2D)))) // it's neither scalable nor orientable
                 {
-                double orientation = 0.0;
-                if (object instanceof Oriented2D)
-                    { orientation = ((Oriented2D)object).orientation2D(); }
-                double knobX = myPosition.getX() + CIRCLE_RADIUS * Math.cos(orientation);
-                double knobY = myPosition.getY() + CIRCLE_RADIUS * Math.sin(orientation);
+                //double orientation = 0.0;
+                //if (object instanceof Oriented2D)
+                //    { orientation = ((Oriented2D)object).orientation2D(); }
+                //double knobX = myPosition.getX() + CIRCLE_RADIUS * Math.cos(orientation);
+                //double knobY = myPosition.getY() + CIRCLE_RADIUS * Math.sin(orientation);
                                                 
                 int id = event.getID();
                 if (id == MouseEvent.MOUSE_PRESSED)

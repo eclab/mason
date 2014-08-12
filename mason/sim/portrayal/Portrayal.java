@@ -11,7 +11,7 @@ import sim.display.*;
    A common interface for portrayal classes.
 */
 
-public interface Portrayal extends java.io.Serializable
+public interface Portrayal
     {
     /** Provide an inspector for an object. */
     public Inspector getInspector(LocationWrapper wrapper, GUIState state);

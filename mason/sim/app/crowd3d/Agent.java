@@ -12,12 +12,11 @@ public class Agent implements Steppable, Stoppable
     {
     private static final long serialVersionUID = 1;
 
-    public static double SIGHT = 5;
-    public static double SPEED = .05;
-    public static double WALL_AVERSION = 4.0;
-    public static double CROWD_AVERSION = 1.0;//more is better//
-    public static double MAX_FN_VAL;
-    public static double FORCE_MIN_THRESHOLD = 0.75;
+    public final static double SIGHT = 5;
+    public final static double SPEED = .05;
+    public final static double WALL_AVERSION = 4.0;
+    public final static double CROWD_AVERSION = 1.0;//more is better//
+    public final static double FORCE_MIN_THRESHOLD = 0.75;
         
     MutableDouble3D direction = new MutableDouble3D();
     static      MutableDouble3D tmpSumOfCrowdForces = new MutableDouble3D();
@@ -43,27 +42,27 @@ public class Agent implements Steppable, Stoppable
             if(neighbors.objs[i] == this)
                 continue;
             Double3D nPosition = hb.boidSpace.getObjectLocation(neighbors.objs[i]);
-            tmpSumOfCrowdForces.x +=    fn(myPositionD3D.x-nPosition.x);
-            tmpSumOfCrowdForces.y +=    fn(myPositionD3D.y-nPosition.y);
-            tmpSumOfCrowdForces.z +=    fn(myPositionD3D.z-nPosition.z);
+            tmpSumOfCrowdForces.x +=    fn(hb, myPositionD3D.x-nPosition.x);
+            tmpSumOfCrowdForces.y +=    fn(hb, myPositionD3D.y-nPosition.y);
+            tmpSumOfCrowdForces.z +=    fn(hb, myPositionD3D.z-nPosition.z);
             }       
         tmpSumOfCrowdForces.multiplyIn(CROWD_AVERSION);
             
             
         if(myPositionD3D.x < SIGHT/*+0*/)
-            tmpSumOfWallForces.x +=     fn(myPositionD3D.x/*-0*/);
+            tmpSumOfWallForces.x +=     fn(hb, myPositionD3D.x/*-0*/);
         if(myPositionD3D.x> hb.spaceWidth-SIGHT)
-            tmpSumOfWallForces.x -=     fn(hb.spaceWidth-myPositionD3D.x);
+            tmpSumOfWallForces.x -=     fn(hb, hb.spaceWidth-myPositionD3D.x);
                 
         if(myPositionD3D.y< SIGHT/*+0*/)
-            tmpSumOfWallForces.y +=     fn(myPositionD3D.y/*-0*/);
+            tmpSumOfWallForces.y +=     fn(hb, myPositionD3D.y/*-0*/);
         if(myPositionD3D.y> hb.spaceHeight-SIGHT)
-            tmpSumOfWallForces.y -= fn(hb.spaceHeight-myPositionD3D.y);
+            tmpSumOfWallForces.y -= fn(hb, hb.spaceHeight-myPositionD3D.y);
                         
         if(myPositionD3D.z< SIGHT/*+0*/)
-            tmpSumOfWallForces.z +=     fn(myPositionD3D.z/*-0*/);
+            tmpSumOfWallForces.z +=     fn(hb, myPositionD3D.z/*-0*/);
         if(myPositionD3D.z> hb.spaceDepth-SIGHT)
-            tmpSumOfWallForces.z -=     fn(hb.spaceDepth-myPositionD3D.z);
+            tmpSumOfWallForces.z -=     fn(hb, hb.spaceDepth-myPositionD3D.z);
         tmpSumOfWallForces.multiplyIn(WALL_AVERSION);
 
 
@@ -91,9 +90,9 @@ public class Agent implements Steppable, Stoppable
         position.z = Math.min(Math.max(position.z, 0), hb.spaceDepth);
         }
         
-    private double fn(double d)
+    private double fn(CrowdSim hb, double d)
         {
-        return Math.min(MAX_FN_VAL, 1.0/d);
+        return Math.min(hb.maxFnVal, 1.0/d);
         }
         
     private Stoppable stopper = null;

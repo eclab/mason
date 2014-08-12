@@ -860,7 +860,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
 
     public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,DoubleBag result, IntBag xPos, IntBag yPos )
         {
-        return getRadialNeighbors(x, y, dist, mode, includeOrigin, result, xPos, yPos);
+        return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
         }
                 
 

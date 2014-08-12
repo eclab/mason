@@ -123,7 +123,7 @@ public class Console extends JFrame implements Controller
             UIManager.setLookAndFeel((String)(Class.forName("ch.randelshofer.quaqua.QuaquaManager").
                     getMethod("getLookAndFeelClassName",(Class[])null).invoke(null,(Object[])null)));
             } 
-        catch (Exception e) { /* e.printStackTrace(); */ }
+        catch (Exception e) { /* e.printStackTrace(); */ }  // in case there's a runtime exception thrown
 
         try  // now we try to set certain properties if the security permits it
             {
@@ -3091,9 +3091,9 @@ public class Console extends JFrame implements Controller
         These bags must match in size, else an exception will be thrown. */
     public void setInspectors(final Bag inspectors, final Bag names)
         {
-        Object oldSelectedInspector = null;
-        if (inspectors.objs.length > preferredInspectorIndex)
-            oldSelectedInspector = inspectors.objs[preferredInspectorIndex];
+        //Object oldSelectedInspector = null;
+        //if (inspectors.objs.length > preferredInspectorIndex)
+        //    oldSelectedInspector = inspectors.objs[preferredInspectorIndex];
         
         // clear out old inspectors
         removeAllInspectors(false);
@@ -3112,7 +3112,6 @@ public class Console extends JFrame implements Controller
                     {
                     public void step(final SimState state)
                         {
-                        final Steppable foo = this;
                         SwingUtilities.invokeLater(new Runnable()
                             {
                             Inspector inspector = (Inspector)(inspectors.objs[xx]);

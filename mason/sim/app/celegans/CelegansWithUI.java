@@ -78,8 +78,6 @@ public class CelegansWithUI extends GUIState
         {
         super.init(c);
 
-        Celegans tut = (Celegans) state;
-
         // make the displayer
         display = new Display3D(600, 600,this);   
         display.attach( nodePortrayal, "Cells" );

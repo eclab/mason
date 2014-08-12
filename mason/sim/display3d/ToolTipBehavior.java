@@ -40,17 +40,15 @@ import javax.swing.border.*;
  */
 public class ToolTipBehavior extends PickMouseBehavior 
     {
-    GUIState guiState = null;
     Canvas3D canvas;
 
-    public ToolTipBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds, GUIState guiState) 
+    public ToolTipBehavior(Canvas3D canvas, BranchGroup root, Bounds bounds) 
         {
         super(canvas, root, bounds);
         this.canvas = canvas;
         this.setSchedulingBounds(bounds);
         root.addChild(this);
         pickCanvas.setMode(PickCanvas.GEOMETRY_INTERSECT_INFO);
-        this.guiState = guiState;
 
         timer = new javax.swing.Timer(ToolTipManager.sharedInstance().getInitialDelay(), timeUpNoMovement);
         timer.setRepeats(false);

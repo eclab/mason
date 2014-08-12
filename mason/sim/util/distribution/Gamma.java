@@ -137,7 +137,7 @@ public class Gamma extends AbstractContinousDistribution {
 
         else {        // CASE B: Acceptance complement algorithm gd (gaussian distribution, box muller transformation)
             if (a != aa) {                        // Step 1. Preparations
-                aa = a;
+                //aa = a;
                 ss = a - 0.5;
                 s = Math.sqrt(ss);
                 d = 5.656854249 - 12.0 * s;
@@ -157,7 +157,7 @@ public class Gamma extends AbstractContinousDistribution {
             if (d * u <= t * t * t) return(gds/lambda); // Squeeze acceptance
 
             if (a != aaa) {                           // Step 4. Set-up for hat case
-                aaa = a;
+                //aaa = a;
                 r = 1.0 / a;
                 q0 = ((((((((q9 * r + q8) * r + q7) * r + q6) * r + q5) * r + q4) *
                             r + q3) * r + q2) * r + q1) * r;

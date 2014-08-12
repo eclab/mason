@@ -108,7 +108,6 @@ public class AsteroidsWithUI extends GUIState
         // make the displayer
         display = new Display2D(750,750,this)
             {
-            public void createSimpleControllerMenu() { }                // we don't want the console menu at all
             public void quit()                                          // we close our controller when we die
                 {
                 super.quit();
@@ -212,6 +211,8 @@ public class AsteroidsWithUI extends GUIState
                           asteroids.actions[0] &= ~Ship.FIRE;
                           break;
                         */
+                    default:            // do nothing
+                        break;
                     }
                 }
                                 
@@ -269,6 +270,8 @@ public class AsteroidsWithUI extends GUIState
                         // frame comes to the fore again.  So we have to manually do request
                         // focus again here.
                         display.requestFocusInWindow();
+                        break;
+                    default: // do nothing
                         break;
                     }
                 }

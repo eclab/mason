@@ -39,7 +39,7 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
 
     public Woim3D() 
         {
-        ond = Math.random()*6.2832;
+        ond = Math.random()*2*Math.PI;
         ondSpeed = 0.05 + Math.random()*0.15;
         for( int i = 0 ; i < colors.length ; i++ )
             colors[i] = new java.awt.Color(63 + (int)(192*(colors.length-i)/colors.length),0,0);
@@ -68,8 +68,10 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     void preprocessWoims( final WoimsDemo3D state, Double3D pos, double distance )
         {
         nearbyWoims = state.woimEnvironment.getNeighborsWithinDistance( pos, distance );
-        if( nearbyWoims == null )
-            return;
+        /*
+          if( nearbyWoims == null )
+          return;
+        */
         distSqrTo = new double[nearbyWoims.numObjs];
         for( int i = 0 ; i < nearbyWoims.numObjs ; i++ )
             {
@@ -165,11 +167,11 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
         {
         ond += ondSpeed;
         if( ond > 7 )
-            ond -= 6.2832;
+            ond -= 2*Math.PI;
         double angle = Math.cos( ond );
         Vector3D temp = velocity;
         double velA = Math.atan2( temp.y, temp.x );
-        velA = velA + 1.5708*angle;
+        velA = velA + (Math.PI / 2)*angle;
         return new Vector3D( Math.cos(velA), Math.sin(velA), 0 );
         }
 

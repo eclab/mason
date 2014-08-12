@@ -14,7 +14,7 @@ import sim.portrayal3d.grid.*;
  */
 public class TilePortrayal extends QuadPortrayal
     {
-    float[] tmpCoords;
+    //float[] tmpCoords;
     float[] tmpColor;
         
     public TilePortrayal(ColorMap colorDispenser)
@@ -25,7 +25,7 @@ public class TilePortrayal extends QuadPortrayal
     public TilePortrayal(ColorMap colorDispenser, double zScale)
         {
         super(colorDispenser, zScale);
-        tmpCoords = new float[12];
+        //tmpCoords = new float[12];
         tmpColor = new float[4];
         }
         

@@ -72,9 +72,6 @@ public class PacManWithUI extends GUIState
         {
         PacMan pacman = (PacMan)state;
 
-        // Scared ghosts are blue rectangles
-        SimplePortrayal2D scared = new RectanglePortrayal2D(Color.blue, 1.6);
-                
         // Create the agent portrayal 
         agentPortrayal.setField(pacman.agents);
                 
@@ -283,6 +280,8 @@ public class PacManWithUI extends GUIState
                         // frame comes to the fore again.  So we have to manually do request
                         // focus again here.
                         display.requestFocusInWindow();
+                        break;
+                    default:  // uh oh
                         break;
                     }
                 }

@@ -167,7 +167,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
     protected Vector3d tmpVect = new Vector3d();
     /** tmp Transform3D 
      * it is reused, since the TGs are copying it internally*/
-    protected Transform3D tmpLocalT = new Transform3D();
+    //protected Transform3D tmpLocalT = new Transform3D();
 
     /** allocated in portray, and heavily reused in create/update model
      * to avoid "new"s

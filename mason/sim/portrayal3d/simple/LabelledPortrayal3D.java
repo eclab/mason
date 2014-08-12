@@ -71,7 +71,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
     Color color;
     Transform3D offset;
     Font font;
-    Font3D font3D;  // only used if we're doing Text3D
+    //Font3D font3D;  // only used if we're doing Text3D
     SimplePortrayal3D child;
     String label;
     
@@ -112,7 +112,7 @@ public class LabelledPortrayal3D extends SimplePortrayal3D
         this.label = label;
         if (font == null) font = new Font("SansSerif",Font.PLAIN, FONT_SIZE);
         this.font = font;
-        font3D = new Font3D(font, new FontExtrusion());
+        //font3D = new Font3D(font, new FontExtrusion());
         }
         
     public PolygonAttributes polygonAttributes()

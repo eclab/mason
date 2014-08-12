@@ -26,15 +26,9 @@ public /*strictfp*/ class Good extends Agent
             {
             intID = Integer.parseInt( id.substring(4) ); // "Good"
             }
-        catch( IndexOutOfBoundsException e )
+        catch( Exception e )
             {
-            System.err.println( "Exception generated: " + e );
-            System.exit(1);
-            }
-        catch( NumberFormatException e )
-            {
-            System.err.println( "Exception generated: " + e );
-            System.exit(1);
+            throw new RuntimeException(e);
             }
         }
 

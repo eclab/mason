@@ -317,11 +317,11 @@ public class ObjectGridPortrayal3D extends FieldPortrayal3D
         
                 
     // searches for an object within a short distance of a location
-    final int SEARCH_DISTANCE = 2;
-    final int bagsize = (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1);  // 125
-    IntBag xPos = new IntBag(bagsize);
-    IntBag yPos = new IntBag(bagsize);
-    IntBag zPos = new IntBag(bagsize);
+    final static int SEARCH_DISTANCE = 2;
+    final static int BAG_SIZE = (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1) * (SEARCH_DISTANCE * 2 + 1);  // 125
+    IntBag xPos = new IntBag(BAG_SIZE);
+    IntBag yPos = new IntBag(BAG_SIZE);
+    IntBag zPos = new IntBag(BAG_SIZE);
         
     Int3D searchForObject(Object object, Int3D loc)
         {

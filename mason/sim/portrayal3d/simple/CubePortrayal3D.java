@@ -19,9 +19,7 @@ import java.awt.*;
  */
 public class CubePortrayal3D extends SimplePortrayal3D
     {
-    double scale = 1f;
     Appearance appearance;
-    boolean generateNormals;
     boolean generateTextureCoordinates;
     
     /** Constructs a CubePortrayal3D with a default (flat opaque white) appearance and a scale of 1.0. */
@@ -45,7 +43,7 @@ public class CubePortrayal3D extends SimplePortrayal3D
     /** Constructs a CubePortrayal3D with a flat opaque appearance of the given color and the given scale. */
     public CubePortrayal3D(Color color, double scale)
         {
-        this(appearanceForColor(color), false, false, scale);
+        this(appearanceForColor(color), false, scale);
         }
                 
     /** Constructs a CubePortrayal3D with the given (opaque) image and a scale of 1.0. */
@@ -57,16 +55,14 @@ public class CubePortrayal3D extends SimplePortrayal3D
     /** Constructs a CubePortrayal3D with the given (opaque) image and scale. */
     public CubePortrayal3D(Image image, double scale)
         {
-        this(appearanceForImage(image,true),false,true,scale);
+        this(appearanceForImage(image,true),true,scale);
         }
 
     /** Constructs a CubePortrayal3D with the given appearance and scale, plus whether or not to generate normals or texture coordinates.  Without texture coordiantes, a texture will not be displayed */
-    public CubePortrayal3D(Appearance appearance, boolean generateNormals, boolean generateTextureCoordinates, double scale)
+    public CubePortrayal3D(Appearance appearance, boolean generateTextureCoordinates, double scale)
         {
-        this.generateNormals = generateNormals;
         this.generateTextureCoordinates = generateTextureCoordinates;
         this.appearance = appearance;  
-        this.scale = scale;
         for(int i=0;i<scaledVerts.length;i++)
             scaledVerts[i] = verts[i]*(float)scale;
         }

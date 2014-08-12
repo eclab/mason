@@ -840,7 +840,7 @@ public class Probability extends Constants {
             if( x < 0.0 ) {
                 p = Math.floor(q);
                 if( p == q ) throw new ArithmeticException("gamma: overflow");
-                i = (int)p;
+                //i = (int)p;
                 z = q - p;
                 if( z > 0.5 ) {
                     p += 1.0;

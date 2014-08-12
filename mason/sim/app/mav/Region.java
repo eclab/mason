@@ -21,7 +21,7 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
     // load it back in again.  Instead we have to save out a shape "number", and then
     // load that number back in again.  Suboptimal.
     
-    public static final Shape[] shapes = new Shape[]
+    static final Shape[] shapes = new Shape[]
     {
     new Ellipse2D.Double(0,0,100,100),
     AffineTransform.getRotateInstance(35*/*Strict*/Math.PI/180).createTransformedShape(
@@ -36,7 +36,7 @@ public /*strictfp*/ class Region extends SimplePortrayal2D
     int shapeNum;
 
 
-    public static final Color[] surfacecolors = new Color[] {Color.white, Color.blue, Color.green, Color.red};
+    static final Color[] surfacecolors = new Color[] {Color.white, Color.blue, Color.green, Color.red};
     public Shape shape;
     public Area area;
     public int surface;

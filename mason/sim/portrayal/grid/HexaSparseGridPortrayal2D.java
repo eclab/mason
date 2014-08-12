@@ -67,8 +67,8 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                 return;  // this is deprecated and will be deleted
             //if (object instanceof Constrained)
             //      location = (Int2D)((Constrained)object).constrainLocation(field, location);
-            if (location != null)
-                field.setObjectLocation(object, location);
+            // if (location != null)
+            field.setObjectLocation(object, location);
             }
         }
 
@@ -122,10 +122,10 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
 
             final double xScale = info.draw.width / divideByX;
             final double yScale = info.draw.height / divideByY;
-            int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
-            int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
-            int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
-            int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
+            //int startx = (int)Math.floor(((info.clip.x - info.draw.x)/xScale-0.5)/1.5)-2;
+            //int starty = (int)Math.floor((info.clip.y - info.draw.y)/(yScale*2.0))-2;
+            //int endx = /*startx +*/ (int)Math.floor(((info.clip.x - info.draw.x + info.clip.width)/xScale-0.5)/1.5) + 4;  // with rounding, width be as much as 1 off
+            //int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height)/(yScale*2.0)) + 4;  // with rounding, height be as much as 1 off
 
             DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
                     Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
@@ -291,26 +291,27 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         
                         newinfo.location = loc;
 
-                        if (graphics == null)
-                            {
-                            if (portrayal.hitObject(portrayedObject, newinfo))
-                                putInHere.add(getWrapper(portrayedObject));
-                            }
-                        else
-                            {
-                            // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                            //                    graphics.setClip(clip);
-                            newinfo.selected = (objectSelected &&  // there's something there
-                                selectedWrappers.get(portrayedObject) != null);
+                        // we never use this policy for hitting -- see above
+                        //if (graphics == null)
+                        //    {
+                        //    if (portrayal.hitObject(portrayedObject, newinfo))
+                        //        putInHere.add(getWrapper(portrayedObject));
+                        //    }
+                        //else
+                                {
+                                // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                                //                    graphics.setClip(clip);
+                                newinfo.selected = (objectSelected &&  // there's something there
+                                    selectedWrappers.get(portrayedObject) != null);
                                                                 
-                            /* {
-                               LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                               portrayal.setSelected(wrapper,true);
-                               portrayal.draw(portrayedObject, graphics, newinfo);
-                               portrayal.setSelected(wrapper,false);
-                               }
-                               else */ portrayal.draw(portrayedObject, graphics, newinfo);
-                            }
+                                /* {
+                                   LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                                   portrayal.setSelected(wrapper,true);
+                                   portrayal.draw(portrayedObject, graphics, newinfo);
+                                   portrayal.setSelected(wrapper,false);
+                                   }
+                                   else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                                }
                         }
                     }
                 }

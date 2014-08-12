@@ -482,7 +482,7 @@ public abstract class AbstractGrid3D implements Grid3D
         
     public void getRadialLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, IntBag xPos, IntBag yPos, IntBag zPos )
         {
-        getRadialLocations(x, y, z, dist, mode, includeOrigin, Grid2D.ANY, true, xPos, yPos, zPos);
+        getRadialLocations(x, y, z, dist, mode, includeOrigin, Grid3D.ANY, true, xPos, yPos, zPos);
         }
         
 
@@ -496,7 +496,7 @@ public abstract class AbstractGrid3D implements Grid3D
             throw new RuntimeException( "Distance must be positive" );
             }
             
-        if (measurementRule != Grid2D.ANY && measurementRule != Grid2D.ALL && measurementRule != Grid2D.CENTER)
+        if (measurementRule != Grid3D.ANY && measurementRule != Grid3D.ALL && measurementRule != Grid3D.CENTER)
             {
             throw new RuntimeException(" Measurement rule must be one of ANY, ALL, or CENTER" );
             }
@@ -522,7 +522,7 @@ public abstract class AbstractGrid3D implements Grid3D
             int zp = zPos.get(i);
             boolean remove = false;
                 
-            if (measurementRule == Grid2D.ANY)
+            if (measurementRule == Grid3D.ANY)
                 {
                 if (z == zp)
                     {
@@ -604,7 +604,7 @@ public abstract class AbstractGrid3D implements Grid3D
                         }
                     }
                 }
-            else if (measurementRule == Grid2D.ALL)
+            else if (measurementRule == Grid3D.ALL)
                 {
                 if (z < zp)
                     {
@@ -642,7 +642,7 @@ public abstract class AbstractGrid3D implements Grid3D
                     }
 
                 }
-            else // (measurementRule == Grid2D.CENTER)
+            else // (measurementRule == Grid3D.CENTER)
                 {
                 remove = !within(x,y,z,xp,yp,zp,distsq,closed);
                 }

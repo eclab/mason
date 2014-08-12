@@ -282,7 +282,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
             if (object != lastObj && onlyGrowTrailWhenSelected)
                 { 
                 places.clear();
-                lastObj = object;
+                this.lastObj = object;
                 }
             }
                 

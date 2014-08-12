@@ -14,9 +14,10 @@ public class Particles3D extends SimState
     {
     private static final long serialVersionUID = 1;
 
-    static public int gridWidth = 30;
-    static public int gridHeight = 30;
-    static public int gridLength = 30; 
+    // these are made static (ugh) in order to allow Particles3DWithUI.init() to access them to build the wireframe
+    static public final int gridWidth = 30;
+    static public final int gridHeight = 30;
+    static public final int gridLength = 30; 
 
     public SparseGrid3D particles;
     public DoubleGrid3D trails = new DoubleGrid3D(gridWidth, gridHeight, gridLength); 

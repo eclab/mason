@@ -108,8 +108,8 @@ public /*strictfp*/ class VirusInfectionDemo extends SimState
                 times++;
                 if( times == 1000 )
                     {
-                    System.err.println( "Cannot place agents. Exiting...." );
-                    System.exit(1);
+                    // can't place agents, oh well
+                    break;
                     }
                 } while( !acceptablePosition( agent, loc ) );
             environment.setObjectLocation(agent,loc);

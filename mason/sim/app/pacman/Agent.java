@@ -116,6 +116,8 @@ public abstract class Agent implements Oriented2D
                 nx = location.x - 1;
                 ny = location.y;
                 break;
+            default:  // uh oh
+                break;
             }
         return new MutableDouble2D(nx, ny);
         }
@@ -140,6 +142,8 @@ public abstract class Agent implements Oriented2D
                 break;
             case W:
                 x = pacman.agents.stx(x - speed());
+                break;
+            default:  // uh oh
                 break;
             }
         changeLocation(x, y);

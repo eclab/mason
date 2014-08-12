@@ -95,6 +95,7 @@ public class Ship extends Element
             Double2D location = asteroids.field.getObjectLocation(this);
             Double2D l2 = new Double2D(location.x + (MAXIMUM_RADIUS + 1) * Math.cos(orientation),
                 location.y + (MAXIMUM_RADIUS + 1) * Math.sin(orientation));
+            // yes this is a dead store
             Bullet b = new Bullet(asteroids, v2, l2, Bullet.LIFETIME);
             }
         }
