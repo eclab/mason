@@ -2703,6 +2703,19 @@ Version 18
 	spurious update() removed in BoxPlotGenerator.buildGlobalAttributes()
 	ScatterPlotSeriesAttributes.shapeNum no longer static but instead is
 		stored in ScatterPlotGenerator
-        Minor fixes kicked up by FindBugs
+        Minor fixes kicked up by FindBugs.  FindBugs finds a lot of non-bugs.
+		For future reference, command was:
+		./fb analyze -sortByClass ~/java/mason/jar/mason.18.jar |& \
+		  grep -v "from sim.engine.SimState to" | \
+		  grep -v "checks for operand being a" | \
+		  grep -v "non-transient non-serializable" | \
+		  grep -v "should be package protected" | \
+		  grep -v "+ in a loop" | \
+		  grep -v "Test for floating point equality" | \
+		  grep -v "default encoding" | \
+		  grep -v "is transient but isn't set by deserialization" | \
+		  grep -v " consider declaring a serialVersionUID" | \
+	  	  grep -v "stored into non-transient field"
+	All bad default cases now throw exceptions just in case
         Reindented
 

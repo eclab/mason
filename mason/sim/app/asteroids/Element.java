@@ -199,8 +199,8 @@ public abstract class Element extends sim.portrayal.SimplePortrayal2D implements
                     lastX = vals[4];
                     lastY = vals[5];
                     break;
-                default: // uh...
-                    break;
+                default:
+                    throw new RuntimeException("default case should never occur");
                 }
             p.next();
             }

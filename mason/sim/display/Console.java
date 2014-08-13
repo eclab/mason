@@ -2576,8 +2576,7 @@ public class Console extends JFrame implements Controller
                 if (lastRate != 0) updateTimeText(lastRate < 0 ? "" : rateFormat.format(lastRate));
                 break;
             default:
-                updateTimeText("");
-                break;
+                throw new RuntimeException("default case should never occur");
             }
         }
 

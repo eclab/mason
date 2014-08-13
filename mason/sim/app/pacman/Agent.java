@@ -116,8 +116,8 @@ public abstract class Agent implements Oriented2D
                 nx = location.x - 1;
                 ny = location.y;
                 break;
-            default:  // uh oh
-                break;
+            default:
+                throw new RuntimeException("default case should never occur");
             }
         return new MutableDouble2D(nx, ny);
         }
@@ -143,8 +143,8 @@ public abstract class Agent implements Oriented2D
             case W:
                 x = pacman.agents.stx(x - speed());
                 break;
-            default:  // uh oh
-                break;
+            default:
+                throw new RuntimeException("default case should never occur");
             }
         changeLocation(x, y);
         lastAction = action;

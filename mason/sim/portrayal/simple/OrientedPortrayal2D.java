@@ -185,7 +185,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                     final double leny = 0.0 * length;
                     switch(shape)
                         {
-                        default:
+                        default:                        // NOTE FALL THRU
                         case SHAPE_LINE:
                             if (path == null)
                                 {
@@ -244,7 +244,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                     final double leny = Math.sin(theta)*length;
                     switch(shape)
                         {
-                        default:
+                        default:                // NOTE FALL THRU
                         case SHAPE_LINE:
                             graphics.drawLine((int)info.draw.x,
                                 (int)info.draw.y,
@@ -314,7 +314,8 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             final double leny = 0.0 * length;
             switch(shape)
                 {
-                default: case SHAPE_LINE: { break; }  // hard to hit a line
+                default:                // NOTE FALL THRU
+                case SHAPE_LINE: { break; }  // hard to hit a line
                 case SHAPE_KITE:
                     if (path == null)
                         {

@@ -201,8 +201,8 @@ public abstract class Ghost extends Agent implements Steppable, Valuable
                             case E: nx = x + 1; ny = y; break;
                             case S: nx = x; ny = y + 1; break;
                             case W: nx = x - 1; ny = y; break;
-                            default:  // uh oh
-                                break;
+                            default:
+                                throw new RuntimeException("default case should never occur");
                             }
                                                 
                         // Here's how I'm going to define it.  

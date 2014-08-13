@@ -92,8 +92,8 @@ public /*strictfp*/ class WoimsDemo extends SimState
                 case 3: loc = new Double2D( random.nextDouble()*(XMAX-XMIN-DIAMETER)+XMIN+DIAMETER/2,
                     YMAX+EXTRA_SPACE );
                     break;
-                default:  // uh oh, cannot happen
-                    break;
+                default:
+                    throw new RuntimeException("default case should never occur");
                 }
             woim = new Woim();
             woimsEnvironment.setObjectLocation( woim, loc );

@@ -226,7 +226,7 @@ public class PropertyField extends JComponent
                 settingList = false;
                 break;
             default:
-                break;
+                throw new RuntimeException("default case should never occur");
             }
         currentValue = val;
         }
@@ -409,7 +409,7 @@ public class PropertyField extends JComponent
                     }
                 break;
             default:
-                break;
+                throw new RuntimeException("default case should never occur");
             }
         revalidate();
         repaint();

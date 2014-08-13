@@ -123,8 +123,8 @@ public class HeatBugs3DWithUI extends GUIState
                 quadP = new TilePortrayal(cm);   // no height changes, but we need to raise the bugs a little bit
                 bugPortrayal.translate(0,0,1.0f);
                 break;
-            default:  // never happens
-                break;
+            default:
+                throw new RuntimeException("default case should never occur");
             }
         heatPortrayal.setPortrayalForAll(quadP);
 // With this line we can tell the bug portrayal to use two triangles rather than

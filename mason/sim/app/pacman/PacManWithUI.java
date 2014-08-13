@@ -281,7 +281,8 @@ public class PacManWithUI extends GUIState
                         // focus again here.
                         display.requestFocusInWindow();
                         break;
-                    default:  // uh oh
+                    default:
+                        // do nothing
                         break;
                     }
                 }

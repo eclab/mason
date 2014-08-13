@@ -2305,9 +2305,8 @@ public class Display3D extends JPanel implements Steppable
             case Display2D.UPDATE_RULE_NEVER:
                 s = "Currently never redrawing except when the window is redrawn";
                 break;
-            default:  // uh oh
-                s = "This should never happen";
-                break;
+            default:
+                throw new RuntimeException("default case should never occur");
             }
         JMenuItem m = new JMenuItem(s);
         m.setEnabled(false);
