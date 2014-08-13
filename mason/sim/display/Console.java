@@ -1370,6 +1370,7 @@ public class Console extends JFrame implements Controller
         synchronized (playThreadLock)
             {
             threadPriority = val;
+            // findbugs thinks playThread must be synchronized, which isn't correct
             if (playThread != null)
                 playThread.setPriority(threadPriority);
             }
@@ -1529,8 +1530,9 @@ public class Console extends JFrame implements Controller
     /** The thread that actually goes through the steps */
     Thread playThread;
     
-    /** A general lock used by a number of short methods which need to "synchronize on the play thread"
-        even if it's changing to another thread.  To do this, we use this official 'play thread lock' */
+    /** A general lock used by a number of short methods which need to synchronize on stuff used by
+    	the play thread.  It's NOT needed to modify the play thread itself -- that's only done in the
+    	outer GUI thread.  */
     final Object playThreadLock = new Object();
     
     /** Whether the thread should stop.  Don't play with this. */

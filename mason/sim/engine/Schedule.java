@@ -260,7 +260,8 @@ public class Schedule implements java.io.Serializable
     
     /**
        Merge a given schedule into this one.  The other schedule is not modified, but the queue of the
-       original schedule is changed.
+       original schedule is changed.  NOTE: this method is not threadsafe and should be only performed 
+       when there are NO other threads which might want to manipulate the schedule.
     */
     public void merge(Schedule other) 
         {
