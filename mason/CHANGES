@@ -2718,4 +2718,5 @@ Version 18
 	  	  grep -v "stored into non-transient field"
 	All bad default cases now throw exceptions just in case
         Reindented
-
+	Fixed a bug tickled by a default case revision in console: there
+		was no SHOWING_NOTHING case.
