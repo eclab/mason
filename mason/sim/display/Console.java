@@ -2523,7 +2523,7 @@ public class Console extends JFrame implements Controller
     final static int SHOWING_TIME = 0;
     final static int SHOWING_STEPS = 1;
     final static int SHOWING_TPS = 2;
-    final static int SHOWING_NOTHING = -1;
+    final static int SHOWING_NOTHING = 3;
     int showing = SHOWING_TIME;
      
     /** How the frame rate should look */
