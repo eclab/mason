@@ -2577,6 +2577,9 @@ public class Console extends JFrame implements Controller
             case SHOWING_TPS:
                 if (lastRate != 0) updateTimeText(lastRate < 0 ? "" : rateFormat.format(lastRate));
                 break;
+            case SHOWING_NOTHING:
+                updateTimeText("");
+            	break;
             default:
                 throw new RuntimeException("default case should never occur");
             }
