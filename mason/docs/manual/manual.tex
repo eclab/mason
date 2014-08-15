@@ -7950,8 +7950,8 @@ Four provided Basic Portrayals draw their objects as either filled or outlined s
 \begin{itemize}
 \item \Class{sim.portrayal.simple.RectanglePortrayal2D} draws its object as a rectangle.
 \item \Class{sim.portrayal.simple.OvalPortrayal2D} draws its object as an oval.
-\item \Class{sim.portrayal.simple.ShapePortrayal2D} draws its object as a 2D \class{java.awt.Shape}, which you provide.  You can also provide, as two arrays, the X and Y points for a polygon.
 \item \Class{sim.portrayal.simple.HexagonalPortrayal2D} draws its object as a hexagon.  HexagonalPortrayal2D is a subclass of ShapePortrayal2D.  HexagonalPortrayal2D is often used for drawing objects in hexagonal field portrayals.
+\item \Class{sim.portrayal.simple.ShapePortrayal2D} draws its object as a 2D \class{java.awt.Shape}, which you provide.  You can also provide, as two arrays, the X and Y points for a polygon.
 \end{itemize}
 
 These classes all subclass from the simple abstract class \Class{sim.portrayal.simple.AbstractShapePortrayal2D}, which defines three basic internal variables you can set.
@@ -7962,26 +7962,19 @@ These classes all subclass from the simple abstract class \Class{sim.portrayal.s
     public boolean filled;\ \ // whether to fill or draw the shape outline\\
 }
 
-ShapePortrayal2D has an additional variable you can set:
+Let's start with the first three.  RectanglePortrayal2D, OvalPortrayal2D, and HexagonalPortrayal2D all draw their objects either as filled shapes or as outline shapes with a 1-point (or 1-pixel) outline.  They have similar constructors.  Here are the constructors for RectanglePortrayal2D:
 
-\java{%
-    public Stroke stroke;\ \ \ // the Stroke with which to draw the shape
-}
+\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D Constructor}}
+\mthd{public RectanglePortrayal2D() } Creates a portrayal which portrays as a gray filled rectangle of scale 1.0.
+\mthd{public RectanglePortrayal2D(Paint paint) } Creates a portrayal which portrays as a filled rectangle of scale 1.0 and of the given Paint.
+\mthd{public RectanglePortrayal2D(double scale) } Creates a portrayal which portrays as a gray filled rectangle of the given scale.
+\mthd{public RectanglePortrayal2D(Paint paint, double scale) } Creates a portrayal which portrays as a filled rectangle of the given scale and Paint.
+\mthd{public RectanglePortrayal2D(Paint paint, boolean filled) } Creates a portrayal which portrays as a rectangle of the given Paint, a scale of 1.0, and either filled or not.
+\mthd{public RectanglePortrayal2D(double scale, boolean filled) } Creates a portrayal which portrays as a gray rectangle of the given scale, and either filled or not.
+\mthd{public RectanglePortrayal2D(Paint paint, double scale, boolean filled) } Creates a portrayal which portrays as a rectangle of the given Paint and scale, and either filled or not.
+\end{methods}
 
-If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
-
-\begin{wrapfigure}{r}[0in]{2.9in}
-\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-1em}\end{wrapfigure}
-Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
-
-Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
-
-{\footnotesize\begin{alltt}
-    ShapePortrayal2D portrayal = new ShapePortrayal2D(
-        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT, ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
-\end{alltt}}
-
-These various classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
+These classes are pretty easily customized.  One standard trick is to subclass a Basic Portrayal to cause it to (say) change its color in response to some aspect or property of the Object: for example, if it's hungry or not.  To do this, you'd override its \method{draw(...)} method to change some feature first, then call the superclass.  For example:
 
 
 {\footnotesize\begin{alltt}
@@ -7997,13 +7990,54 @@ These various classes are pretty easily customized.  One standard trick is to su
 
 Here again, a \class{sim.util.gui.ColorMap} (Section \ref{sim.util.gui.ColorMap}) might be of use to you: you could store one permanently as an instance variable.
 
-A final Basic SimplePortrayal provided in MASON is \Class{sim.portrayal.simple.ImagePortrayal2D}.  This class draws a small bitmap image to represent the object.  The image can be transparent or semitransparent if you wish.  The image is scaled as follows: if the image is taller than it is wide, then the image is scaled so that its width is exactly \variable{info.draw.width}.  If the image is wider than it is tall, then the image is scaled so that its height is exactly \variable{info.draw.height}.  
+Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit within the typical 1x1 scale region for an object.  Rather, it's a true hexagon shape intended primarily to be used with hexagonal field portrayals.  But you can easily use it elsewhere.
 
-ImagePortrayal2D is a subclass of RectanglePortrayal2D, so it has an \variable{paint}, \variable{scale}, and \variable{filled} variable.  Only the \variable{scale} variable is used: you can the image it further by changing (or passing in) the \variable{scale} variable. 
+\paragraph{Arbitrary Shapes}  ShapePortrayal2D is much like the above portrayals, but has more functionality for drawing arbitrary shapes.  You specify the shape either as a \Class{java.awt.geom.Shape} object or as two arrays of values which represent the \(x\) and \(y\) coordinates for various points in a closed polygon.  This makes for a lot of constructors:
+
+\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D Constructor}}
+\mthd{public ShapePortrayal2D(Shape shape) } Creates a portrayal which portrays as a gray filled Shape of scale 1.0.
+\mthd{public ShapePortrayal2D(Shape shape, Paint paint) } Creates a portrayal which portrays as a filled Shape of scale 1.0 and of the given Paint.
+\mthd{public ShapePortrayal2D(Shape shape, double scale) } Creates a portrayal which portrays as a gray filled Shape of the given scale.
+\mthd{public ShapePortrayal2D(Shape shape, Paint paint, double scale) } Creates a portrayal which portrays as a filled Shape of the given scale and Paint.
+\mthd{public ShapePortrayal2D(Shape shape, Paint paint, boolean filled) } Creates a portrayal which portrays as a Shape of the given Paint, a scale of 1.0, and either filled or not.
+\mthd{public ShapePortrayal2D(Shape shape, double scale, boolean filled) } Creates a portrayal which portrays as a gray Shape of the given scale, and either filled or not.
+\mthd{public ShapePortrayal2D(Shape shape, Paint paint, double scale, boolean filled) } Creates a portrayal which portrays as a Shape of the given Paint and scale, and either filled or not.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints) } Creates a portrayal which portrays as a gray filled  polygon of the provided coordinates of scale 1.0.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint paint) } Creates a portrayal which portrays as a filled polygon of the provided coordinates of scale 1.0 and of the given Paint.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, double scale) } Creates a portrayal which portrays as a gray filled polygon of the provided coordinates of the given scale.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint paint, double scale) } Creates a portrayal which portrays as a filled polygon of the provided coordinates of the given scale and Paint.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint paint, boolean filled) } Creates a portrayal which portrays as a polygon of the provided coordinates of the given Paint, a scale of 1.0, and either filled or not.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, double scale, boolean filled) } Creates a portrayal which portrays as a gray polygon of the provided coordinates of the given scale, and either filled or not.
+\mthd{public ShapePortrayal2D(double[] xpoints, double[] ypoints, Paint paint, double scale, boolean filled) } Creates a portrayal which portrays as a polygon of the provided coordinates of the given Paint and scale, and either filled or not.
+\end{methods}
+
+\begin{wrapfigure}{r}[0in]{2.9in}
+\vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-1em}\end{wrapfigure}
+Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
+
+Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
+
+{\footnotesize\begin{alltt}
+    ShapePortrayal2D portrayal = new ShapePortrayal2D(
+        ShapePortrayal2D.X\_POINTS\_TRIANGLE\_LEFT, ShapePortrayal2D.Y\_POINTS\_TRIANGLE\_LEFT);
+\end{alltt}}
+
+Unlike the prior portrayals, you can specify the stroke (outline) of the ShapePortrayal2D shape, using this variable:
+
+\java{%
+    public Stroke stroke;\ \ \ // the Stroke with which to draw the shape
+}
+
+If this variable is set to \variable{null}, ShapePortrayal2D will use a default \variable{java.awt.geom.BasicStroke()} instead.  A {\bf warning about ShapePortrayal2D}: it's not serializable (because Shapes aren't serializable).  This means that if you create an agent which is a {\it subclass} of ShapePortrayal2D and use that agent in your model, you will not be able to checkpoint your model.
+
+
+\paragraph{Images} A final Basic SimplePortrayal provided in MASON is \Class{sim.portrayal.simple.ImagePortrayal2D}.  This class draws a small bitmap image to represent the object.  The image can be transparent or semitransparent if you wish.  The image is scaled as follows: if the image is taller than it is wide, then the image is scaled so that its width is exactly \variable{info.draw.width}.  If the image is wider than it is tall, then the image is scaled so that its height is exactly \variable{info.draw.height}.  
+
+ImagePortrayal2D is a subclass of RectanglePortrayal2D, so it has  the \variable{paint}, \variable{scale}, and \variable{filled} variables.  Only the \variable{scale} variable is used: you can the image it further by changing (or passing in) the \variable{scale} variable. 
 
 ImagePortrayal2D has a number of unusual constructors, so it's worthwhile explaining them here.  
 
-\begin{methods}{\class{sim.portrayal.simple.ImagePortrayal Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.ImagePortrayal2D Constructor}}
 \mthd{public ImagePortrayal(javax.swing.ImageIcon icon) } Creates an ImagePortrayal at a scale of 1.0, and using the image from the provided ImageIcon.
 \mthd{public ImagePortrayal(javax.swing.ImageIcon icon, double scale) } Creates an ImagePortrayal at the provided scale, and using the image from the provided ImageIcon.
 \mthd{public ImagePortrayal(Class cls, String resourceName) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is 1.0.
@@ -8116,11 +8150,9 @@ When drawing as a triangle or a ``sophisticated'' line, you have the option of s
 \sidebar{\variable{SCALE\_WHEN\_SMALLER} makes no sense as a name.}{Agreed.}
 The default is \variable{ALWAYS\_SCALE}, which instructs the edge to get bigger or smaller when you zoom in and out as if you're examining it closer.  This is {\it probably} what you want.  The width of the line will be set to the ratio of pixels to units in the underlying field.  For example, if your field is 100 wide and your NetworkPortrayal is 100 wide, and you're not zoomed in, then the scale is 1.0.  This is often a source of confusion, however, because often demos will have a larger NetworkPortrayal window, which results in a bigger scale even if you're not zoomed in: for example, a 600 pixel wide NetworkPortrayal drawing a 100-unit wide network will result in lines that are six pixels wide.  Keep this in mind: you can always compensate by creating the inverse value (in this case, \(1.0 / 6.0)\) in the the {\it baseWidth} accordingly.
 
-An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
+\sidebar{When I print the lines come out too thin.}{If you set \variable{baseWidth} to 0.0, interesting things happen.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something non-zero.}  An alternative is \variable{SCALE\_WHEN\_SMALLER} which only scales when you're really zoomed out: if you're zoomed in, it stays small so as not to crowd the environment.  You probably don't want to set scaling to \variable{NEVER\_SCALE}, which keeps the edges at their standard thickness regardless.
 
 Keep in mind that \variable{SHAPE\_THIN\_LINE} ignores all scaling.
-
-\sidebar{When I print the lines come out too thin.}{If you set \variable{baseWidth} to 0.0, interesting things happen.  In PostScript, a width of 0.0 means ``make the line as thin as the device can possibly draw.''  On a screen this means a pixel width of 1.0.  But on a printer, it could mean an extremely thin line.  You could remedy this by setting the \variable{baseWidth} to something non-zero.}
 
 Various methods can be used to set these values:
 
@@ -8172,7 +8204,23 @@ If you'd like to (say) change the edge {\it color} to reflect a weight or label,
 \label{sim.portrayal.simple.AdjustablePortrayal2D}
 
 \sidebar{I notice all these names are gerunds.}{Yep.  Wrapper portrayals are given adjectives describing their added functionality, and other simple portrayals are given nouns as names.}
-MASON provides a whole bunch of {\bf wrapper portrayals} which greatly enhance your 2D Simple Portrayal's capabilities without you having to write any more code.  These portrayals can wrap around another Simple Portrayal to enhance it: and you can wrap a wrapper portrayal in another wrapper portrayal to stack on the enhancement fun.  Here are the wrapper portrayals presently provided:
+MASON provides a whole bunch of {\bf wrapper portrayals} which greatly enhance your 2D Simple Portrayal's capabilities without you having to write any more code.  These portrayals can wrap around another Simple Portrayal to enhance it: and you can wrap a wrapper portrayal in another wrapper portrayal to stack on the enhancement fun.  
+
+What do we mean by ``wrapping around''?  Let's say you wished to add a label to a RectanglePortrayal2D which said ``Yo''.  You could write:
+
+{\footnotesize\begin{alltt}
+   SimplePortrayal myPortrayal = new LabeledPortrayal2D(
+       new RectanglePortrayal2D
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+        \{
+        Edge edge = (Edge) object;
+        if (edge.info == null) \{ toPaint = fromPaint = Color.red; \}
+        else \{ toPaint = fromPaint = Color.blue; \}
+        super.draw(object, graphics, info);
+        \}
+\end{alltt}}
+
+Here are the wrapper portrayals presently provided:
 
 \begin{itemize}
 \item \class{sim.portrayal.simple.LabelledPortrayal2D} adds a textual label to the portrayed object, and can be (typically) set up to only do this when the object is selected. 

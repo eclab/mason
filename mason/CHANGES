@@ -2719,4 +2719,7 @@ Version 18
 	All bad default cases now throw exceptions just in case
         Reindented
 	Fixed a bug tickled by a default case revision in console: there
-		was no SHOWING_NOTHING case.
+		was no SHOWING_NOTHING case.  Thanks to Ermo Wei
+		<ewei@masonlive.gmu.edu>
+	Added more documentation about 2D simple portrayals in the manual.
+	
