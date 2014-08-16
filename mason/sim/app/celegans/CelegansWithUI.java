@@ -68,7 +68,10 @@ public class CelegansWithUI extends GUIState
         neuronPortrayal.setPortrayalForAll(new SpherePortrayal3D());
 
         synapsePortrayal.setField( new SpatialNetwork3D(tut.neurons, tut.synapses) );
-        synapsePortrayal.setPortrayalForAll(new SimpleEdgePortrayal3D(Color.red, Color.blue, Color.white));
+        SimpleEdgePortrayal3D sep = new SimpleEdgePortrayal3D(Color.red, Color.blue, Color.white);
+        
+        sep.setLabelScale(sep.getLabelScale()/4.0);
+        synapsePortrayal.setPortrayalForAll(sep);
 
         display.createSceneGraph(); 
         display.reset();
