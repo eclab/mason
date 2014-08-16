@@ -2723,3 +2723,4 @@ Version 18
 		<ewei@masonlive.gmu.edu>
 	Added more documentation about 2D simple portrayals in the manual.
 	Synapse labels in celegans made smaller	
+	Tweaks to Lsystem's serialVersionUIDs so the .lss files load properly
