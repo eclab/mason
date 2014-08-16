@@ -8,7 +8,8 @@ package sim.app.lsystem;
 
 public class ByteList implements java.io.Serializable
     {
-    private static final long serialVersionUID = 1;
+    // Use exactly this serialVersionUID: the lss classes were serialized under it
+    private static final long serialVersionUID = -7841332939713409966L;
 
     public byte[] b;
     public int length = 0;

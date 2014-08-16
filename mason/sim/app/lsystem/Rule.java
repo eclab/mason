@@ -11,7 +11,8 @@ import java.io.*;
 
 public class Rule implements Serializable
     {
-    private static final long serialVersionUID = 1;
+    // Use exactly this serialVersionUID: the lss classes were serialized under it
+    private static final long serialVersionUID = 6750008059574576396L;
 
     // what to replace
     public byte pattern;

@@ -18,7 +18,8 @@ import java.util.*;
 
 public  class LSystemData implements java.io.Serializable
     {
-    private static final long serialVersionUID = 1;
+    // Use exactly this serialVersionUID: the various lss files were serialized under it
+    private static final long serialVersionUID = 2491061639713100804L;
 
     // expanded code and rule lists
     public ByteList code;
