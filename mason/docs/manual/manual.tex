@@ -3913,7 +3913,7 @@ If you like you can clear out the entire Schedule.  There are two methods to do 
 \mthd{public boolean scheduleComplete()} Returns true if the Schedule is empty.
 \end{methods}
 
-{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods,} as they don't clear out AsynchronousSteppables (we'll discuss them below).  Instead there is a special SimState method which does the task for you:
+{\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods, nor state.finish(),} as they don't clear out AsynchronousSteppables (we'll discuss them below). Instead there is a special SimState method which does the task for you:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void kill()} Clears the schedule, pushes the Schedule's time forward to \variable{AFTER\_SIMULATION}, and clears out all AsynchronousSteppables.

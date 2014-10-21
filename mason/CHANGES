@@ -2724,3 +2724,6 @@ Version 18
 	Added more documentation about 2D simple portrayals in the manual.
 	Synapse labels in celegans made smaller	
 	Tweaks to Lsystem's serialVersionUIDs so the .lss files load properly
+
+Version 19
+	Fix to minor errors in documentation diagram for inspectors
