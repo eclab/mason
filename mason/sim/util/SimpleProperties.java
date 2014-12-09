@@ -540,4 +540,79 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             return false;
             }
         }
+
+
+
+
+
+    // can only be called internally 
+	SimpleProperties() { }
+        
+    /** Produces a new SimpleProperties which is a strict subset of the
+    	existing SimpleProperties where the properties found in propertyNamesToRetain 
+    	are retained and other properties are removed.  The existing SimpleProperties
+    	must not use an auxillary.  The new SimpleProperties has the same volatility
+    	and object as the original.
+    */
+    public SimpleProperties getPropertiesSubset(String[] propertyNames, boolean retain)
+    	{
+    	if (auxillary != null)
+    		throw new RuntimeException("Properties may not be reduced if the SimpleProperties has an auxillary.");
+    		
+    	SimpleProperties props = new SimpleProperties()
+    		{
+    		public boolean isVolatile() { return SimpleProperties.this.isVolatile(); }
+    		};
+    	props.object = object;
+    	
+    	// normally it'd make more sense to put propertyNames in the outer loop
+    	// but this allows us to search for both retention and removal.
+    	
+    	// This is a little ugly
+    	boolean[] found = new boolean[propertyNames.length]; 
+    	for(int index = 0; index < numProperties(); index++)
+    		{
+    		int i;
+    		for(i = 0; i < propertyNames.length; i++)
+    			{
+    			if (getName(index).equals(propertyNames[i]))
+    				{ found[i] = true; break; }
+    			}
+    		
+    		if ((i < propertyNames.length && retain) ||
+    			(i >= propertyNames.length && !retain))  // add this one
+    			{
+	    		props.getMethods.add(getMethods.get(index));
+	    		props.setMethods.add(setMethods.get(index));
+	    		props.domMethods.add(domMethods.get(index));
+	    		props.desMethods.add(desMethods.get(index));
+	    		props.hideMethods.add(hideMethods.get(index));
+	    		props.nameMethods.add(nameMethods.get(index));
+    			}
+    		}
+    		
+    	if (retain)
+    		{
+    		for(int i = 0; i < found.length; i++)
+    			{
+    			if (!found[i])
+    				throw new RuntimeException("Unknown property name " + propertyNames[i] + " in object " + object);
+    			}
+    		}
+
+    	return props;
+    	}
+    
+	public String toString()
+		{
+		String s = "{ ";
+		for(int i = 0; i < numProperties(); i++)
+			{
+			if (i > 0) s += ", ";
+			s += getName(i);
+			}
+		s += "}";
+		return s;
+		}
+    
     }

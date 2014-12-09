@@ -3328,6 +3328,11 @@ This procedure, like MASON's \method{hideFoo()} Java Beans Property extension, i
 \mthd{public Object propertiesProxy()} Returns the proxy for the Object.
 \end{methods}
 
+SimpleProperties has one special method, mostly used by TabbedInspector (Section \ref{sim.portrayal.inspector.TabbedInspector}), to break properties into subsets.  TabbedInspector uses this to create separate inspectors, one per tab.  Note that to use this method, your SimpleProperties object {\bf may not have a proxy.}
+
+\begin{methods}{\class{sim.util.SimpleProperties}}
+\mthd{SimpleProperties getPropertiesSubset(String[] propertyNames, boolean retain)} Returns a SimpleProperties referring to the same object, but whose property list is a reduced subset of the original property list.  If {\it retain} is true, then the property list will contain only those properties whose names are found in {\it propertyNames} (and if any item in {\it propertyNames} does not appear in the original properties, an exception is thrown).  If {\it retain} is false, then the property list will contain only those properties whose names are {\it not} found in {\it propertyNames}.  The original SimpleProperties object may not have a properties proxy.
+\end{methods}
 
 
 \subsection{Collection Properties}
@@ -6938,7 +6943,9 @@ Display2D's relevant methods are:
 \mthd{public int getSelectionMode()} Returns how objects are selected when \method{performSelection(...)} is called.  At present there are two options: \variable{Display2D.SELECTION\_MODE\_MULTI}, in which all hit objects are selected, or \variable{Display2D.SELECTION\_MODE\_SINGLE}, in which at most a single hit object is selected.  The default is \variable{Display2D.SELECTION\_MODE\_MULTI}.
 \mthd{public void setSelectionMode( int mode )} Sets how objects are selected when \method{performSelection(...)} is called.  At present there are two options: \variable{Display2D.SELECTION\_MODE\_MULTI}, in which all hit objects are selected, or \variable{Display2D.SELECTION\_MODE\_SINGLE}, in which at most a single hit object is selected.  The default is \variable{Display2D.SELECTION\_MODE\_MULTI}.
 \mthd{public void clearSelections()}Instructs all Field Portrayals to clear all selections on all objects.
+\mthd{public void createInspectors( Point2D point, GUIState simulation )} Generates and submits to the Console inspectors for each object hit by the given point, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
 \mthd{public void createInspectors( Rectangle2D.Double rect, GUIState simulation )}Generates and submits to the Console inspectors for each object hit by the given rectangle, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
+\mthd{public void createInspectors( Bag locationWrappers, final GUIState simulation )} Generates and submits to the Console inspectors for each of the given LocationWrappers, by calling their relevant Field Portrayal's \method{getInspector(...)} method.
 \end{methods}
 
 
@@ -9092,9 +9099,14 @@ TabbedInspector's constructors:
 \begin{methods}{\class{sim.portrayal.inspector.TabbedInspector} Constructor}
 \mthd{public TabbedInspector()} Creates a volatile TabbedInspector. 
 \mthd{public TabbedInspector(boolean volatile)} Creates a TabbedInspector with the given volatility. 
+\mthd{public TabbedInspector(SimpleProperties properties, GUIState state, String[][] propertyNames, String[] tabNames,}
+\rule{0pt}{0pt}\hspace{\fill}{boolean isVolatile)}\\
+Creates a TabbedInspector with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab, except possibly the last, there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  If {\it tabNames} is one longer than {\it propertyNames}, then the final tab is used to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
 \end{methods}
 
-TabbedInspector's methods are likewise obvious:
+\sidebar{How dow I take advantage of this third constructor?}{The sim/app/heatbugs/HeatBugsWithUI.java source file has an example.} The third constructor is special.  Its purpose is to make it easy to break an object with many properties into multiple separate SimpleInspectors under a TabbedInspector: most commonly this is done for the Model tab in your simulation.
+
+TabbedInspector's methods are fairly obvious:
 
 \begin{methods}{\class{sim.portrayal.inspector.TabbedInspector}}
 \mthd{public void setUpdatingInspectors(boolean val)} Sets whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 

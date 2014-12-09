@@ -2727,3 +2727,13 @@ Version 18
 
 Version 19
 	Fix to minor errors in documentation diagram for inspectors
+	Added additional createInspectors methods
+	Added SimpleProperties.getPropertiesSubset()	
+	TabbedInspector now has size "small" tabs for OS X	
+	Added new constructor to TabbedInspector which takes a SimpleProperties
+		and breaks it into groups according to a provided array of
+	Added example HeatBugsWithUI code which demonstrates the new
+		TabbedInspector feature.
+		property names.
+	The default maximum number of properties per inspector is increased
+		from 25 to 100

@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.util.*;
 import java.awt.*;
+import sim.util.*;
+import sim.display.*;
 
 /** TabbedInspector is an Inspector which holds multiple subInspectors
     in turn, allowing you to device complex inspector sets to be displayed
@@ -32,7 +34,7 @@ import java.awt.*;
 public class TabbedInspector extends Inspector
     {
     public ArrayList inspectors = new ArrayList();
-    public JTabbedPane tabs = new JTabbedPane();
+    public JTabbedPane tabs = null;
     boolean updatingAllInspectors;
     
     /** Creates a volatile TabbedInspector */
@@ -40,9 +42,66 @@ public class TabbedInspector extends Inspector
         {
         this(true);
         }
+    
+    /** Creates a TabbedInspector in which the provided properties are broken into
+    	several groups, each under its own tab.  The tab names are provided with tabNames,
+    	and the properties under each tab are given with the corresponding propertyNames.
+    	tabNames is permitted to be one longer than propertyNames: the final tabName would
+    	then serve as a tab holding all extra properties which do not appear among ANY of the
+    	propertyNames arrays.  Otherwise, these properties will not appear at all.  The
+    	subinspectors under each tab are SimpleInspectors. */
+    public TabbedInspector(SimpleProperties properties, GUIState state,
+    						String[][] propertyNames, String[] tabNames,
+    						boolean isVolatile)
+    	{
+    	this(isVolatile);
+    	
+    	if (tabNames == null)
+    		throw new RuntimeException("Tab names provided is null.");
+    	if (propertyNames == null)
+    		throw new RuntimeException("Property names provided is null.");
+    	if (tabNames.length != propertyNames.length && tabNames.length != propertyNames.length + 1)
+    		{
+    		throw new RuntimeException("Property names and tab names must have the same length, or the tab names must be one greater.");
+    		}
+    	
+    	for(int i = 0; i < propertyNames.length; i++)
+    		{
+    		SimpleProperties simp = properties.getPropertiesSubset(propertyNames[i], true);
+    		addInspector(new SimpleInspector(simp, state, null), tabNames[i]);
+    		}
+    		
+    	if (tabNames.length > propertyNames.length)  // one extra "Misc" tab
+    		{
+    		// flatten all properties
+    		int count = 0;
+    		for(int i = 0; i < propertyNames.length; i++)
+    			count += propertyNames[i].length;
+    		String[] group = new String[count];
+    		count = 0;
+    		for(int i = 0; i < propertyNames.length; i++)
+    			{
+    			System.arraycopy(propertyNames[i], 0, group, count, propertyNames[i].length);
+    			count += propertyNames[i].length;
+    			}
+    		for(int i = 0; i < group.length; i++)
+    			System.err.println(group[i]);
+    		
+    		SimpleProperties simp = properties.getPropertiesSubset(group, false);
+    		addInspector(new SimpleInspector(simp, state, null), tabNames[tabNames.length - 1]);
+    		}
+    	}
 
     public TabbedInspector(boolean isVolatile)
         {
+        // Make a JTabbedPane with small tabs
+		UIDefaults defaults = UIManager.getDefaults( );
+        Object def = defaults.get("TabbedPane.useSmallLayout");
+        defaults.put("TabbedPane.useSmallLayout", Boolean.TRUE);
+		tabs = new JTabbedPane();
+        defaults.put("TabbedPane.useSmallLayout", def);
+
+		// Continue...
         setLayout(new BorderLayout());
         add(tabs,BorderLayout.CENTER);
         tabs.addChangeListener(new ChangeListener()

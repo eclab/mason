@@ -26,7 +26,7 @@ import java.awt.event.*;
 
 public class SimpleInspector extends Inspector
     {
-    public static final int DEFAULT_MAX_PROPERTIES = 25;
+    public static final int DEFAULT_MAX_PROPERTIES = 100;
     int maxProperties = DEFAULT_MAX_PROPERTIES;
     /** The GUIState  of the simulation */
     GUIState state;

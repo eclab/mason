@@ -1715,14 +1715,43 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // be affected by the new selection
         simulation.controller.refresh();
         }
-        
-    /** Determines the inspectors appropriate for the given selection region (rect), and sends
-        them on to the Controller. */
-    public void createInspectors( final Rectangle2D.Double rect, final GUIState simulation )
+
+    /** Inspects the following object. */
+    public void createInspector(LocationWrapper wrapper, GUIState simulation)
         {
+        Bag b = new Bag();
+        b.add(wrapper);
+        createInspectors(b,simulation);
+        }
+    
+    /** Determines the inspectors appropriate for the given point, and sends
+        them on to the Controller. */
+    public void createInspectors( Point2D point, GUIState simulation )
+        {
+        createInspectors(new Rectangle2D.Double(point.getX(), point.getY(), 1, 1), simulation);
+        }
+    
+    /** Determines the inspectors appropriate for the wrappers, and sends
+        them on to the Controller. */
+    public void createInspectors(Bag locationWrappers, final GUIState simulation)
+    	{
         Bag inspectors = new Bag();
         Bag names = new Bag();
-        
+
+    	for(int i = 0; i < locationWrappers.size(); i++)
+    		{
+			LocationWrapper wrapper = (LocationWrapper) (locationWrappers.get(i));
+			inspectors.add(wrapper.fieldPortrayal.getInspector(wrapper,simulation));
+			names.add(wrapper.fieldPortrayal.getName(wrapper));
+    		}
+    	simulation.controller.setInspectors(inspectors, names);
+    	}
+    	    
+    /** Determines the inspectors appropriate for the given selection region (rect), and sends
+        them on to the Controller. */
+    public void createInspectors( Rectangle2D.Double rect, GUIState simulation )
+        {
+        Bag wrappers = new Bag();
         Bag[] hitObjects = objectsHitBy(rect);
         for(int x=0;x<hitObjects.length;x++)
             {
@@ -1730,11 +1759,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             for( int i = 0 ; i < hitObjects[x].numObjs ; i++ )
                 {
                 LocationWrapper wrapper = (LocationWrapper) (hitObjects[x].objs[i]);
-                inspectors.add(p.portrayal.getInspector(wrapper,simulation));
-                names.add(p.portrayal.getName(wrapper));
+                // for good measure...
+                wrapper.fieldPortrayal = p.portrayal;
+                wrappers.add(wrapper);
                 }
             }
-        simulation.controller.setInspectors(inspectors,names);
+        createInspectors(wrappers, simulation);
         }
 
     final static int SCROLL_BAR_SCROLL_RATIO = 10;

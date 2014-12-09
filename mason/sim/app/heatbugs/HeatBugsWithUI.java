@@ -49,6 +49,38 @@ public class HeatBugsWithUI extends GUIState
     
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
 
+	/*	
+	// Would you like your model inspector to be broken into tabs?  Here's an example.
+	public Inspector getInspector()
+		{
+		Object obj = getSimulationInspectedObject();
+		return new sim.portrayal.inspector.TabbedInspector(
+			(SimpleProperties)Properties.getProperties(obj),
+			this,
+			
+			// Here we divide our properties into three groups.
+			// Notice that the properties "GridHeight", "GridWidth", and "BugCount" do not appear
+			// here -- they are "extra properties", see below. 
+			
+			new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+							{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+							{"BugXPos", "BugYPos"}},
+							
+							
+			// Here we give names to our three property groups.  These will be the names of the tabs.
+			// We also have a final name, "Misc", for extra properties which didn't appear in any group.
+			// They will appear under a final tab called "Misc".  If we don't provide that name,
+			// that is, we only have "Temps", "Constants", and "Pos" below, then extra properties
+			// will not be shown under any tab.
+			
+			new String[] {"Temps", "Constants", "Pos", "Misc"}, 
+			
+			
+			// Here we state that the inspector is NOT going to be volatile.  
+			false);
+		}
+	*/
+
     public void start()
         {
         super.start();
