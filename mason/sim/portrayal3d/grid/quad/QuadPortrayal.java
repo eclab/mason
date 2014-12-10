@@ -116,11 +116,11 @@ public abstract class QuadPortrayal implements Portrayal
         if (wrapper == null) return null;
         Grid2D grid = (Grid2D)(((ValueGrid2DPortrayal3D)(wrapper.getFieldPortrayal())).getField());
         if (grid instanceof DoubleGrid2D)
-            return new SimpleInspector(new DoubleFilter(wrapper), state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new DoubleFilter(wrapper), state, "Properties");
         else if (grid instanceof IntGrid2D)
-            return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new IntFilter(wrapper) ,state, "Properties");
         else if (grid instanceof ObjectGrid2D)
-            return new SimpleInspector(new ObjectFilter(wrapper) ,state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new ObjectFilter(wrapper) ,state, "Properties");
         else return null; // an error
         }
         

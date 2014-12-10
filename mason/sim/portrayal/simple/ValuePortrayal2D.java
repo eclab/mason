@@ -93,9 +93,9 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
         if (((ValueGridPortrayal2D)(wrapper.getFieldPortrayal())).getField() instanceof DoubleGrid2D)
-            return new SimpleInspector(new DoubleFilter(wrapper), state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new DoubleFilter(wrapper), state, "Properties");
         else
-            return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new IntFilter(wrapper) ,state, "Properties");
         // static inner classes don't need serialVersionUIDs
         }
     

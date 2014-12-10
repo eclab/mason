@@ -8751,7 +8751,7 @@ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 
 \paragraph{Important Note on Synchronization} Notice that we synchronized on the schedule before modifying the object.  This is because the model thread could well be running and in charge of the object, and we don't want to create a race condition.
 
-\subsubsection{Getting the Object Status and Name}
+\subsubsection{Getting the Object Status, Name, and Inspector}
 
 Displays and inspectors often want to display an object's name and a (very) short description of it.  Often these are simply set to the same thing.  The default implementations normally should suffice: the name just returns the \method{toString()} method applied to the given object, and the status just returns the name.  But let's say you wanted to customize it in some insane way.  You could say:
 
@@ -8764,6 +8764,8 @@ public String getName(LocationWrapper wrapper)
     return "AWESOME OBJECT: " + wrapper.getObject();
     }
 \end{verbatim}}
+
+Once your object is being properly hit, you can create your own custom inspector for it by overriding the method \method{getInspector(...)}.  This will be discussed in the upcoming Section \ref{ProducingIAnInspectorFromAPortrayal}.
 
 
 \subsubsection{Customizing Mouse Events}
@@ -8807,6 +8809,7 @@ Selects the Object represented by the given LocationWrapper by calling the relev
 
 
 
+
 \chapter{Inspectors}
 \label{sim.portrayal.Inspector}
 
@@ -8835,6 +8838,7 @@ You can create your own Inspectors and it's perfectly fine to do so: after all, 
 \end{figure}
 
 \section{Producing an Inspector from a Portrayal}
+\label{ProducingIAnInspectorFromAPortrayal}
 
 The most common way an Inspector is produced is as a result of double-clicking on a visualized object.  The Display gathers from the various Field Portrayals all objects and values which were hit by the double-click.  It then asks the relevant Field Portrayals to produce Inspectors for these objects and values: ``Fast'' Field Portrayals may respond to this by providing Inspectors directly, but most Field Portrayals respond by calling forth the appropriate Simple Portrayal to produce the Inspector instead.  At any point a Field Portrayal or Simple Portrayal is free to refuse to provide an Inspector.
 
@@ -8866,7 +8870,15 @@ So how is item 4 done?  All Portrayals, whether FieldPortrayals or SimplePortray
 
 FieldPortrayals often implement this method by calling the same method on the SimplePortrayal.  The default implementation of this method in SimplePortrayal is to produce a \class{sim.portrayal.SimpleInspector}.  This Inspector presents a tabular list of Java Bean Properties of the given object or value, using the \class{sim.util.Properties} facility discussed in Section \ref{sim.util.Properties}.  By customizing those properties as discussed in that Section, you can provide a bit of customization to the SimpleInspector.  But if you want a more custom Inspector, you'll need to make one yourself and have the SimplePortrayal return it from this method.
 
-These kinds of Inspectors are fleeting: they're generated on request, and are stored in the {\bf ``Inspectors'' tab}.  The user can detach them into separate windows and can also destroy them at any time.  When the simulation is stopped and restarted, all such inspectors are automatically destroyed.
+Another option, often more useful, is to have your underlying objects implement the \Class{sim.portrayal.inspector.ProvidesInspector} interface, which contains a single method:
+
+\begin{methods}{\class{sim.portrayal.inspector.ProvidesInspector}}
+\mthd{public Inspector provideInspector(GUIState state, String name)} Builds and returns a custom inspector for the object.   The {\it name}, if non-null, should be displayed prominently, typically by adding to the inspector a \class{javax.swing.border.TitledBorder}.
+\end{methods}
+
+The advantage of this approach over overriding \method{getInspector(...)} is that it will work both when inspecting the object directly from a FieldPortrayal {\it and} when inspecting the object by arriving some other way, such as viewing it as a property from some other inspector.
+
+Remember that all these kinds of Inspectors are fleeting: they're generated on request, and are stored in the {\bf ``Inspectors'' tab}.  The user can detach them into separate windows and can also destroy them at any time.  When the simulation is stopped and restarted, all such inspectors are automatically destroyed.
 
 \section{Producing an Inspector for a Model}
 
@@ -9040,9 +9052,15 @@ Basic Inspectors can be separated from the Console's inspector list and placed i
 \mthd{public void setTitle(String val)} Sets the string which should fill the title bar of the Inspector's window.  Some Inspectors may override getTitle() and completely ignore setTitle(...).
 \mthd{public JFrame createFrame(Stoppable stopper)} Produces a scrollable JFrame, with the Inspector in it, which will stop the Stoppable when the JFrame is closed.
 \end{methods}
+ 
+Finally, Inspector contains a factory method for generating an appropriate inspector for an object.  You do not have to use this method: you can just call an inspector's constructor directly.  But it's helpful for figuring out what kind of inspector would be the best choice.
    
-   
-   
+ \begin{methods}{\class{sim.portrayal.Inspector}}
+\mthd{public static Inspector getInspector(Object obj, GUIState state, String name)}  Returns an inspector appropriate for the provided object.  If the object is \class{sim.portrayal.inspector.ProvidesInspector}, then the object is queried to provide its own inspector.  Else if the object is \class{sim.portrayal.inspector.Tabbable}, then a TabbedInspector is constructed according to the object's specifications.  Else a \class{sim.portrayal.SimpleInspector} is constructed.
+\end{methods}
+
+For more information on \class{ProvidesInspector}, see Section \ref{ProducingIAnInspectorFromAPortrayal}.
+
 \subsection{SimpleInspector}
     
 \Class{sim.portrayal.SimpleInspector} is the most common inspector: it's a basic inspector which exposes to the user all the properties defined by \class{sim.util.Properties} on a given object, both read-Properties and read/write-Properties.  SimpleInspector also respects the extra gizmos that \class{sim.util.Properties} provides:
@@ -9054,13 +9072,11 @@ Basic Inspectors can be separated from the Console's inspector list and placed i
 \item If a property has a declared description, SimpleInspector will make a tooltip with that description (plain text or HTML) and display it when the mouse hovers over the SimpleInspector's widgets for that property.
 \end{itemize}
 
-SimpleInspector only shows a certain number of properties at a time: if there are more properties than this, then SimpleInspector will allow the user to page through the properties.  You can specify how many properties SimpleInspector shows.  The default value for this maximum is:
+SimpleInspector only shows a certain number of properties at a time: if there are more properties than this, then SimpleInspector will allow the user to page through the properties.  You can specify how many properties SimpleInspector shows.  The default value for this maximum the value provided by your GUIState's \method{getMaximumPropertiesForInspector()} method, which in turn by default returns the following constant found in SimpleInspector:
 
 \java{%
-public static final int DEFAULT\_MAX\_PROPERTIES = 25;
+public static final int DEFAULT\_MAX\_PROPERTIES = 100;
 }
-
-When further SimpleInspectors are produced from this SimpleInspector, they will have the same maximum number of properties as you had set here.
 
 SimpleInspector's default \method{getTitle()} calls \method{toString()} on the underlying object and returns that.  However the SimpleInspector's list of properties can be bordered and given a name (like ``Properties'').  This name is passed in in the constructor.
 
@@ -9068,10 +9084,10 @@ SimpleInspector is largely defined by its constructors:
     
 \begin{methods}{\class{sim.portrayal.SimpleInspector} Constructor}
 \mthd{public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).  You also specify the maximum number of properties shown at a time.
-\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.  
+\mthd{public SimpleInspector(Properties properties, GUIState state, String name)} Builds a SimpleInspector based on the provided properties, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{state.getMaximumPropertiesForInspector()}.  
 \mthd{public SimpleInspector(Object object, GUIState state, String name, int maxProperties)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title). You also specify the maximum number of properties shown at a time. 
-\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.  
-\mthd{public SimpleInspector(Object object, GUIState state)} Builds a SimpleInspector based on the provided object, with no title for the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{DEFAULT\_MAX\_PROPERTIES}.
+\mthd{public SimpleInspector(Object object, GUIState state, String name)} Builds a SimpleInspector based on the provided object, using the provided name as the title of the SimpleInspector's list of properties (not to be confused with the inspector's title).   The maximum number of properties shown at a time is set to \variable{state.getMaximumPropertiesForInspector()}.  
+\mthd{public SimpleInspector(Object object, GUIState state)} Builds a SimpleInspector based on the provided object, with no title for the SimpleInspector's list of properties.   The maximum number of properties shown at a time is set to \variable{state.getMaximumPropertiesForInspector()}.
 \end{methods}
 
 Note the third method: you don't {\it have} to inspect an actual object.  You can have the SimpleInspector actually use a Properties collection of your own devising.  This makes it possible to inspect dynamic or virtual objects, so to speak, which exist in name only.
@@ -9097,14 +9113,24 @@ TabbedInspector requires that its sub-Inspectors have exactly the same volatilit
 TabbedInspector's constructors:
 
 \begin{methods}{\class{sim.portrayal.inspector.TabbedInspector} Constructor}
-\mthd{public TabbedInspector()} Creates a volatile TabbedInspector. 
-\mthd{public TabbedInspector(boolean volatile)} Creates a TabbedInspector with the given volatility. 
-\mthd{public TabbedInspector(SimpleProperties properties, GUIState state, String[][] propertyNames, String[] tabNames,}
-\rule{0pt}{0pt}\hspace{\fill}{boolean isVolatile)}\\
-Creates a TabbedInspector with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab, except possibly the last, there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  If {\it tabNames} is one longer than {\it propertyNames}, then the final tab is used to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\mthd{public TabbedInspector()} Creates a volatile TabbedInspector with no name. 
+\mthd{public TabbedInspector(String name)} Creates a volatile TabbedInspector with the provided name. 
+\mthd{public TabbedInspector(sim.portrayal.inspector.Tabbable object, GUIState state, String name)}
+Creates a TabbedInspector with the given name, and with multiple tabs responding to the requirements of the underlying object.  The tab names for the SimpleInspectors are given in {\it object.provideTabNames()}.  For each tab there is a corresponding array from {\it object.provideTabProperties()}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given properties array will appear under the corresponding tab.  {\it object.provideExtraTab()} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\mthd{public TabbedInspector(SimpleProperties properties, GUIState state, String name, String[][] propertyNames,}
+\rule{0pt}{0pt}\hspace{\fill}{String[] tabNames, String extraTab, boolean isVolatile)}\\
+Creates a TabbedInspector with the given name, and with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  {\it extraTab} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
 \end{methods}
 
-\sidebar{How dow I take advantage of this third constructor?}{The sim/app/heatbugs/HeatBugsWithUI.java source file has an example.} The third constructor is special.  Its purpose is to make it easy to break an object with many properties into multiple separate SimpleInspectors under a TabbedInspector: most commonly this is done for the Model tab in your simulation.
+\sidebar{An example?}{See the \method{provideTabNames()} method found in the \file{sim/app/heatbugs/HeatBugs.java} and \file{sim/app/heatbugs/HeatBug.java} files, and also the \method{getInspector()} method in \file{sim/app/heatbugs/HeatBugsWithUI.java}.}
+
+The two last constructors allow you to build a TabbedInspector which automatically divides up the properties of an object in a way you specify.  Rather than call them, it's probably easier to just have the object implement the \class{sim.portrayal.inspector.Tabbable} interface.  MASON generally makes new inspectors by calling the \method{sim.portrayal.Inspector.getInspector(...)} method, which will check for this interface, and if it's implemented, will automatically build a TabbedInspector for you:
+
+\begin{methods}{\class{sim.portrayal.inspector.Tabbable}}
+\mthd{public String[] provideTabNames()} Returns an array of names for tabs under which properties will be divided. 
+\mthd{public String[][] provideTabProperties()} Returns, for each tab name, a list of properties to place under that tab. 
+\mthd{public String provideExtraTab()} If this value is non-null, it forms an additional tab under which miscellaneous properties, not found among those in {\it provideTabProperties()}, will be placed.  Otherwise, these properties will not appear in the inspector.
+\end{methods}
 
 TabbedInspector's methods are fairly obvious:
 
@@ -9146,6 +9172,11 @@ When the user tries to change the value in a Filter, the Filter calls a special 
 \end{methods}
 
 You probably will never need to use these classes, but it's useful to understand how they work in case you need to do a similar thing.
+
+\subsection{Objects Providing their Own Inspectors}
+\label{sim.portrayal.inspector.ProvidesInspector}
+
+Objects which act as their own Portrayals 
 
 \section{Property Inspectors}
 \label{sim.portrayal.inspector.PropertyInspector}

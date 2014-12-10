@@ -248,7 +248,7 @@ public abstract class FieldPortrayal
             setLayout(new BorderLayout());
             lastLocation = wrapper.getLocation();
             positions.setText(wrapper.getLocationName());
-            locationInspector = new SimpleInspector(lastLocation, state, null);
+            locationInspector = sim.portrayal.Inspector.getInspector(lastLocation, state, null);
             disclosurePanel = new DisclosurePanel(positions, locationInspector, "Position");
             add(disclosurePanel, BorderLayout.NORTH);
             add( objectInspector, BorderLayout.CENTER);
@@ -282,7 +282,7 @@ public abstract class FieldPortrayal
             Object location = wrapper.getLocation();
             if (location != lastLocation)  // sadly this will happen an awful lot
                 {
-                disclosurePanel.setDisclosedComponent(new SimpleInspector(location, state, null));
+                disclosurePanel.setDisclosedComponent(sim.portrayal.Inspector.getInspector(location, state, null));
                 lastLocation = location;
                 }
             positions.setText(wrapper.getLocationName());

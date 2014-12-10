@@ -10,6 +10,8 @@ import sim.display.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
+import sim.portrayal.inspector.*;
+import sim.display.*;
 
 /** An Inspector is a JPanel containing information about some object,
     and updates its displayed information when updateInspector() is called.
@@ -78,6 +80,21 @@ import java.awt.*;
 public abstract class Inspector extends JPanel
     {
     boolean _volatile = true;
+    
+	/** Returns an inspector for the provided object.  If the object responds to the ProvidesInspector
+		interface, then it provides its own inspector.  Else if the object responds to the Tabbable 
+		interface, than a TabbedInspector is provided.  Else a SimpleInspector is provided. */
+	public static Inspector getInspector(Object obj, GUIState state, String name)
+		{
+		if (obj == null)
+			return new SimpleInspector(obj, state, name);
+		else if (obj instanceof ProvidesInspector)
+			return ((ProvidesInspector)obj).provideInspector(state, name);
+		else if (obj instanceof Tabbable)
+			return new TabbedInspector((Tabbable)obj, state, name);
+		else
+			return new SimpleInspector(obj, state, name);
+		}
         
     /** Set to true (default) if the inspector should be updated every time step.  Else set to false. */
     public void setVolatile(boolean val) {_volatile = val;}

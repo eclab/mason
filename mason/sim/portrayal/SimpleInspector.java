@@ -41,12 +41,11 @@ public class SimpleInspector extends Inspector
     /** The number of items presently in the propertyList */
     int count = 0;
     JPanel header = new JPanel()
-        {
-        public Insets getInsets () { return new Insets(2,2,2,2); }
-        };
+    		{
+        	public Insets getInsets () { return new Insets(2,2,2,2); }
+    		};
     String listName;  // used internally
-
-    JLabel numElements = new JLabel();
+    JLabel numElements = null;
     Box startField = null;
     
     public GUIState getGUIState() { return state; }
@@ -57,6 +56,7 @@ public class SimpleInspector extends Inspector
         title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
         {
+    	numElements = new JLabel();
         this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
         this.state = state;
@@ -73,7 +73,7 @@ public class SimpleInspector extends Inspector
         title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Properties properties, GUIState state, String name)
         {
-        this(properties, state, name, DEFAULT_MAX_PROPERTIES);
+        this(properties, state, name, state.getMaximumPropertiesForInspector());
         }
         
     /** Creates a new SimpleInspector with the given properties and state. */
@@ -87,7 +87,7 @@ public class SimpleInspector extends Inspector
         title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Object object, GUIState state, String name) 
         {
-        this(object, state, name, DEFAULT_MAX_PROPERTIES);
+        this(object, state, name, state.getMaximumPropertiesForInspector());
         }
         
     /** Creates a new SimpleInspector with the given object, state, maximum number of properties, and
@@ -112,20 +112,20 @@ public class SimpleInspector extends Inspector
                 public void actionPerformed(ActionEvent e)
                     {
                     Properties props = properties;
-                    final SimpleInspector simpleInspector = new SimpleInspector(props.getValue(index), SimpleInspector.this.state, null, maxProperties);
+                    final Inspector inspector = Inspector.getInspector(props.getValue(index), SimpleInspector.this.state, null);
                     Stoppable stopper = null;
                     try 
                         {
-                        stopper = SimpleInspector.this.state.scheduleRepeatingImmediatelyAfter(simpleInspector.getUpdateSteppable());
+                        stopper = SimpleInspector.this.state.scheduleRepeatingImmediatelyAfter(inspector.getUpdateSteppable());
                         }
                     catch (java.lang.IllegalArgumentException ee)  // this can happen if the simulation is over, so nothing further can be scheduled (notably the Stopper)
                         {
                         // make a dummy stopper
                         stopper = new Stoppable() { public void stop() { } };
                         }
-                    stopper = simpleInspector.reviseStopper(stopper);
-                    SimpleInspector.this.state.controller.registerInspector(simpleInspector,stopper);
-                    JFrame frame = simpleInspector.createFrame(stopper);
+                    stopper = inspector.reviseStopper(stopper);
+                    SimpleInspector.this.state.controller.registerInspector(inspector,stopper);
+                    JFrame frame = inspector.createFrame(stopper);
                     frame.setVisible(true);
                     }
                 });
@@ -309,14 +309,14 @@ public class SimpleInspector extends Inspector
 
     public void updateInspector()
         {
-        if (properties.isVolatile())  // need to rebuild each time, YUCK
-            {
-            remove(propertyList);
-            generateProperties(start);
-            doEnsuredRepaint(this);
-            }
-        else for( int i = start ; i < start+count ; i++ )
-                 if (members[i] != null) 
-                     members[i].setValue(properties.betterToString(properties.getValue(i)));
-        }
+	        if (properties.isVolatile())  // need to rebuild each time, YUCK
+           		{
+            	remove(propertyList);
+            	generateProperties(start);
+            	doEnsuredRepaint(this);
+            	}
+        	else for( int i = start ; i < start+count ; i++ )
+        	         if (members[i] != null) 
+        	             members[i].setValue(properties.betterToString(properties.getValue(i)));
+        	}
     }

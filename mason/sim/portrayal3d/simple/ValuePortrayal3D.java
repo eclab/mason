@@ -263,9 +263,9 @@ app.setTransparencyAttributes(ta);
         Object field = ((ValueGridPortrayal3D)(wrapper.getFieldPortrayal())).getField();
                 
         if (field instanceof DoubleGrid3D || field instanceof DoubleGrid2D)
-            return new SimpleInspector(new DoubleFilter(wrapper), state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new DoubleFilter(wrapper), state, "Properties");
         else
-            return new SimpleInspector(new IntFilter(wrapper) ,state, "Properties");
+            return sim.portrayal.Inspector.getInspector(new IntFilter(wrapper) ,state, "Properties");
         // static inner classes don't need serialVersionUIDs
         }
     

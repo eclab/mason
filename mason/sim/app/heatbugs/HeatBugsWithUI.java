@@ -50,7 +50,9 @@ public class HeatBugsWithUI extends GUIState
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
 
 	/*	
-	// Would you like your model inspector to be broken into tabs?  Here's an example.
+	// Would you like your model inspector to be broken into tabs?  Here's the HARD WAY.
+	// For the (better) EASY WAY, see the provideTabNames() method in HeatBugs.java
+	
 	public Inspector getInspector()
 		{
 		Object obj = getSimulationInspectedObject();
@@ -68,13 +70,15 @@ public class HeatBugsWithUI extends GUIState
 							
 							
 			// Here we give names to our three property groups.  These will be the names of the tabs.
-			// We also have a final name, "Misc", for extra properties which didn't appear in any group.
-			// They will appear under a final tab called "Misc".  If we don't provide that name,
-			// that is, we only have "Temps", "Constants", and "Pos" below, then extra properties
-			// will not be shown under any tab.
+	
+			new String[] {"Temps", "Constants", "Pos"}, 
 			
-			new String[] {"Temps", "Constants", "Pos", "Misc"}, 
 			
+			// Here we provide a name for the tab holding all properties which didn't appear among the strings above.
+			// If this name is null, then no tab will appear and these properties will not be accessible via
+			// the inspector.
+			
+			"Misc", 
 			
 			// Here we state that the inspector is NOT going to be volatile.  
 			false);

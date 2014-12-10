@@ -9,7 +9,7 @@ import sim.field.grid.*;
 import sim.util.*;
 import sim.engine.*;
 
-public /*strictfp*/ class HeatBug implements Steppable
+public /*strictfp*/ class HeatBug implements Steppable //, sim.portrayal.inspector.Tabbable   //// See "provideTabNames()" below
     {
     private static final long serialVersionUID = 1;
 
@@ -94,4 +94,14 @@ public /*strictfp*/ class HeatBug implements Steppable
         addHeat(hb.valgrid,bestx,besty,heatOutput);
         }
 
+	// Would you like your model inspector to be broken into tabs?  Here's an example.
+	// To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
+
+    public String[] provideTabNames()
+    	{ return new String[] {"Heat", "Probability"}; }
+    public String[][] provideTabProperties()
+    	{ return new String[][] {{"IdealTemperature", "HeatOutput"},
+								 {"RandomMovementProbability", "Me"}}; }
+    public String provideExtraTab()
+    	{ return null; }
     }

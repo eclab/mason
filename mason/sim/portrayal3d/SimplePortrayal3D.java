@@ -158,7 +158,7 @@ public class SimplePortrayal3D implements Portrayal3D
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)
         {
         if (wrapper == null) return null;
-        return new SimpleInspector(wrapper.getObject(), state, "Properties");
+        return Inspector.getInspector(wrapper.getObject(), state, "Properties");
         }
         
     public String getStatus(LocationWrapper wrapper) { return getName(wrapper); }
