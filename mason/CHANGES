@@ -2732,8 +2732,19 @@ Version 19
 	TabbedInspector now has size "small" tabs for OS X	
 	Added new constructor to TabbedInspector which takes a SimpleProperties
 		and breaks it into groups according to a provided array of
-	Added example HeatBugsWithUI code which demonstrates the new
-		TabbedInspector feature.
-		property names.
+	Added new Tabbable interface
+	Added new constructor to TabbedInspector which takes a Tabbable object
+		and breaks it into groups according to the arrays it provides
+	Added example HeatBugs code which demonstrates the new TabbedInspector
+		property names feature.
 	The default maximum number of properties per inspector is increased
 		from 25 to 100
+	Various constructors in SimpleInspector changed so that the expected
+		maximum number of properties is queried from the GUIState.
+	Objects which implement the ProvidesInspector interface can provide
+		their own inspectors.
+	Inspector.getInspector() factory method provided which guesses as to
+		the right kind of inspector for a given object.  All MASON
+		classes which normally build SimpleInspectors now call this
+		method instead.  This method checks for the Tabbable and
+		ProvidesInspector interfaces, else uses SimpleInspector.
