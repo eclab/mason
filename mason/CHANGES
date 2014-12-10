@@ -2748,3 +2748,4 @@ Version 19
 		classes which normally build SimpleInspectors now call this
 		method instead.  This method checks for the Tabbable and
 		ProvidesInspector interfaces, else uses SimpleInspector.
+	Tweaks to MovieMaker's interface

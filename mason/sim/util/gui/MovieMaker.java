@@ -89,18 +89,24 @@ public class MovieMaker
             panel2.setLayout(new BorderLayout());
             panel2.setBorder(new javax.swing.border.TitledBorder("Format"));
             JComboBox encoding = new JComboBox(fmts);
+            if (fmts.length == 3)  // we will assume that this is the default formats, so we want the 24-bit one, which is #2
+            	encoding.setSelectedIndex(1);  // item 2
             panel2.add(encoding, BorderLayout.CENTER);
                         
             // add a warning
-            String text1 = "A bug in Sun's JMF code embeds in the movie a bad format description string.  This breaks some non-Apple movie players.  Additionally, JMF's movies will be extremely large.  " +
-                "A suggested solution: produce the movie in 16 or 24 bit (32 bit breaks iMovie).  Then load the movie into Quicktime Pro or iMovie, and save out again as H.264.\n\n" + 
-                "See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
+            String text1 = 	"MASON uses Sun's JMF movie generation code.  JMF saves out movies in uncompressed RGB: they are gigantic. Once saved out, you need to " +
+            			   	"convert them to a better codec (we recommend H.264). " +
+            				"However, JMF result in videos with an incorect codec string. " +
+            			   	"This breaks a number of movie players and converters.\n\n" + 
+            			   	"Quicktime 10.  You can load the movie (which converts it) and save it out as H.264. " +
+            			   	"However Quicktime does not work with 16-bit RGB: use the 24 or 32 bit RGB formats in MASON.\n\n" +
+            			   	"iMovie 10.  iMovie does not work with 32-bit RGB: use the 16 or 24 RGB bit formats in MASON.\n\n"+
+            			   	"Final Cut Pro.  FCP works with any of the RGB formats.\n\n" +
+                			"See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
             int myNumberOfPixels = 600; // our word-wrap pixel length
             JLabel label = new JLabel();
-            label.setText("<html><br><b>Note</b><br><font size='-2'>" + 
+            label.setText("<html><br><b>Notes</b><br><font size='-2'>" + 
                 WordWrap.toHTML(WordWrap.wrap(text1, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
-                //"</font><br><br><b>Suggested Solution</b><br><font size='-2'>" + 
-                //WordWrap.toHTML(WordWrap.wrap(text2, myNumberOfPixels, label.getFontMetrics(label.getFont()))) +
                 "</font></html>");
 
             JPanel panel3 = new JPanel();
