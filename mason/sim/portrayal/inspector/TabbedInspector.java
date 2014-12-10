@@ -84,8 +84,6 @@ public class TabbedInspector extends Inspector
     			System.arraycopy(propertyNames[i], 0, group, count, propertyNames[i].length);
     			count += propertyNames[i].length;
     			}
-    		for(int i = 0; i < group.length; i++)
-    			System.err.println(group[i]);
     		
     		SimpleProperties simp = properties.getPropertiesSubset(group, false);
     		addInspector(new SimpleInspector(simp, state, null), tabNames[tabNames.length - 1]);
