@@ -76,7 +76,7 @@ public class MovieMaker
             
             // ultimate classy list mode
             for(int i=0; i<fmts.length; i++)
-                fmts[i] = "<html><font face=\"" + font + "\" size=\"-2\">" + WordWrap.toHTML(WordWrap.wrap(f[i].toString(), 40)) + "</font></html>";
+                fmts[i] = "<html><font face=\"" + font + "\" size=\"-2\">" + WordWrap.toHTML(WordWrap.wrap(f[i].toString(), 80)) + "</font></html>";
             
             // add widgets
             JTextField framerate = new JTextField(""+fps);
@@ -102,6 +102,7 @@ public class MovieMaker
             			   	"However Quicktime does not work with 16-bit RGB: use the 24 or 32 bit RGB formats in MASON.\n\n" +
             			   	"iMovie 10.  iMovie does not work with 32-bit RGB: use the 16 or 24 RGB bit formats in MASON.\n\n"+
             			   	"Final Cut Pro.  FCP works with any of the RGB formats.\n\n" +
+            			   	"IN SHORT: We suggest you save out in 24-bit RGB.\n\n" +
                 			"See http://cs.gmu.edu/~eclab/projects/mason/extensions/movies/ for more information.";
             int myNumberOfPixels = 600; // our word-wrap pixel length
             JLabel label = new JLabel();
