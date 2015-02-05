@@ -2749,3 +2749,7 @@ Version 19
 		method instead.  This method checks for the Tabbable and
 		ProvidesInspector interfaces, else uses SimpleInspector.
 	Tweaks to MovieMaker's interface
+	Made various constants in Grid2D and Grid3D final
+	Fix in TabbedInspector: Java's removeAll() method sets the selected
+		index to -1, then calls all the listeners, *before* it
+		removes the tabs.  Unbelievable.
