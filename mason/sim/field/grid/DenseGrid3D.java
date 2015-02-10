@@ -687,5 +687,61 @@ public class DenseGrid3D extends AbstractGrid3D
         return result;
         }
 
+    /**
+     * Determines all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y), abs(z-Z) ) <= dist. This region forms a
+     * square 2*dist+1 cells across, centered at (X,Y,Z).  If dist==1, this
+     * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y,Z)), plus (X,Y,Z) itself.
+     * <p>Then returns, as a Bag, any Objects which fall on one of these <x,y,z> locations.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     */
+	public Bag getMooreNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
+		{
+		return getMooreNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
+		}
+
+
+
+    /**
+     * Determines all neighbors of a location that satisfy abs(x-X) + abs(y-Y) + abs(z-Z) <= dist.  This region forms a diamond
+     * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y,Z).  If dist==1 this is
+     * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y,Z)),
+     * plus (X,Y,Z) itself.
+     * <p>Then returns, as a Bag, any Objects which fall on one of these <x,y,z> locations.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     */
+	public Bag getVonNeumannNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
+		{
+		return getVonNeumannNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
+		}
+
+
+
+
+
+    public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin)
+        {
+        return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
+        }
+
+
+
 
     }

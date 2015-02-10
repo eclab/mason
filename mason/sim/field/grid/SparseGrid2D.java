@@ -687,7 +687,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsMaxDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getMooreNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -716,14 +716,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getMooreNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getMooreNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getMooreLocations( x, y, dist, mode, true, xPos, yPos );
+        getMooreLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -835,7 +835,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsHamiltonianDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getVonNeumannNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -865,14 +865,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getVonNeumannNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getVonNeumannLocations( x, y, dist, mode, true, xPos, yPos );
+        getVonNeumannLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
 
@@ -989,7 +989,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      */
     public Bag getNeighborsHexagonalDistance( final int x, final int y, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos )
         {
-        return getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, result, xPos, yPos);
+        return getHexagonalNeighbors(x, y, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos);
         }
 
 
@@ -1019,14 +1019,14 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
      *
      * <p>You can also opt to include the origin -- that is, the (x,y) point at the center of the neighborhood -- in the neighborhood results.
      */
-    public Bag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, Bag result, IntBag xPos, IntBag yPos )
+    public Bag getHexagonalNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
         if( yPos == null )
             yPos = new IntBag();
 
-        getHexagonalLocations( x, y, dist, mode, true, xPos, yPos );
+        getHexagonalLocations( x, y, dist, mode, includeOrigin, xPos, yPos );
         return getObjectsAtLocations(xPos,yPos,result);
         }
                 
@@ -1343,6 +1343,84 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
         getRadialLocations( x, y, dist, mode, includeOrigin, measurementRule, closed, xPos, yPos );
         reduceObjectsAtLocations( xPos,  yPos,  result);
         return getObjectsAtLocations(xPos,yPos,result);
+        }
+
+
+
+    /**
+     * Determines all neighbors of a location that satisfy max( abs(x-X) , abs(y-Y) ) <= dist. This region forms a
+     * square 2*dist+1 cells across, centered at (X,Y).  If dist==1, this
+     * is equivalent to the so-called "Moore Neighborhood" (the eight neighbors surrounding (X,Y)), plus (X,Y) itself.
+     * <p>Then returns, as a Bag, any Objects which fall on one of these <x,y> locations.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     */
+	public Bag getMooreNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+		{
+		return getMooreNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+		}
+
+
+
+    /**
+     * Determines all neighbors of a location that satisfy abs(x-X) + abs(y-Y) <= dist.  This region forms a diamond
+     * 2*dist+1 cells from point to opposite point inclusive, centered at (X,Y).  If dist==1 this is
+     * equivalent to the so-called "Von-Neumann Neighborhood" (the four neighbors above, below, left, and right of (X,Y)),
+     * plus (X,Y) itself.
+     * <p>Then returns, as a Bag, any Objects which fall on one of these <x,y> locations.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     */
+	public Bag getVonNeumannNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+		{
+		return getVonNeumannNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+		}
+
+
+
+
+    /**
+     * Determines all locations located within the hexagon centered at (X,Y) and 2*dist+1 cells from point to opposite point 
+     * inclusive.
+     * If dist==1, this is equivalent to the six neighboring locations immediately surrounding (X,Y), 
+     * plus (X,Y) itself.
+     * <p>Then returns, as a Bag, any Objects which fall on one of these <x,y> locations.
+     *
+     * <p>This function may be run in one of three modes: Grid2D.BOUNDED, Grid2D.UNBOUNDED, and Grid2D.TOROIDAL.  If "bounded",
+     * then the neighbors are restricted to be only those which lie within the box ranging from (0,0) to (width, height), 
+     * that is, the width and height of the grid.  If "unbounded", then the neighbors are not so restricted.  Note that unbounded
+     * neighborhood lookup only makes sense if your grid allows locations to actually <i>be</i> outside this box.  For example,
+     * SparseGrid2D permits this but ObjectGrid2D and DoubleGrid2D and IntGrid2D and DenseGrid2D do not.  Finally if "toroidal",
+     * then the environment is assumed to be toroidal, that is, wrap-around, and neighbors are computed in this fashion.  Toroidal
+     * locations will not appear multiple times: specifically, if the neighborhood distance is so large that it wraps completely around
+     * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
+     * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
+     */
+	public Bag getHexagonalNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+		{
+		return getHexagonalNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+		}
+
+
+    public Bag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin)
+        {
+        return getRadialNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
         }
 
 
