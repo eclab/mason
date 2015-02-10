@@ -2753,3 +2753,12 @@ Version 19
 	Fix in TabbedInspector: Java's removeAll() method sets the selected
 		index to -1, then calls all the listeners, *before* it
 		removes the tabs.  Unbelievable.
+	SparseGrid3D.getNeighborsMaxDistance deprecated
+	SparseGrid2D neighborhood functions were lacking origin inclusion
+		arguments.  This will be a non-backward-compatible change.
+	New simplified neighborhood functions (getMooreNeighbors,
+		getVonNeumannNeighbors, getRadialNeighbors,
+		getHexagonalNeihbors) added to all grid classes which do
+		NOT require that you pass in a result bag or any of the
+		(generally useless) location bags.  Thanks to 
+		Christian Meyer <c.meyer@uni-oldenburg.de>
