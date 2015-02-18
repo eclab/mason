@@ -22,7 +22,11 @@ import sim.util.*;
 
 public class FastObjectGridPortrayal2D extends ObjectGridPortrayal2D
     {
-    FastValueGridPortrayal2D valueGridPortrayal = new FastValueGridPortrayal2D("", immutableField);
+    FastValueGridPortrayal2D valueGridPortrayal = new FastValueGridPortrayal2D("", immutableField)
+    	{
+    	public Stroke getGridStroke(float width) { return FastObjectGridPortrayal2D.this.getGridStroke(width); }
+    	};
+    	
     DoubleGrid2D grid;
     
     /** If immutableField is true, we presume that the grid doesn't change.  This allows us to just
@@ -121,4 +125,24 @@ public class FastObjectGridPortrayal2D extends ObjectGridPortrayal2D
         // now ask the ValueGridPortrayal to draw it!
         valueGridPortrayal.draw(object /* doesn't matter */ , graphics, info);
         }
+
+    /** Turns grid lines on or off.  Grid lines are drawn centered on the borders between cells, and also
+    	on the outside border of the grid.  FRACTION indicates the width of a stroked line as a fraction
+    	of the width (or height) of a grid cell.  COLOR indicates the color of the stroked line. 
+    	MODULUS indicates the number grid cells skipped before a new grid line is drawn -- for example, drawing
+    	a line once every ten cells (1 is a good default).
+    	If FRACTION or MODULUS is set to a value <= 0, or COLOR is set to null, then the grid is not displayed.
+    	If you can't think of a good FRACTION, 1/8.0 doesn't look too bad.
+    */
+    public void setGridlines(float fraction, int modulus, Color color)
+    	{
+    	valueGridPortrayal.setGridlines(fraction, modulus, color);
+    	}
+    
+    /** Override this method to provide a custom stroke for the gridlines. */
+     public Stroke getGridStroke(float width)
+    	{
+    	return new BasicStroke(width);
+    	}
+
     }

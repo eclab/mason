@@ -66,7 +66,37 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
         {
         this(false);
         }
-
+    
+    /** Indicates the fraction of a cell width or height that will be filled by the stroked line.
+    	The line is actually centered on the border between the two cells: so the fraction is the
+    	total amount filled by the portions of the stroked lines on both sides of the cells.  */
+    double gridFraction = 1/8.0;
+    Color gridColor = Color.blue;
+    int gridModulus = 10;
+    
+    /** Turns grid lines on or off.  Grid lines are drawn centered on the borders between cells, and also
+    	on the outside border of the grid.  FRACTION indicates the width of a stroked line as a fraction
+    	of the width (or height) of a grid cell.  COLOR indicates the color of the stroked line. 
+    	MODULUS indicates the number grid cells skipped before a new grid line is drawn -- for example, drawing
+    	a line once every ten cells (1 is a good default).
+    	If FRACTION or MODULUS is set to a value <= 0, or COLOR is set to null, then the grid is not displayed.
+    	If you can't think of a good FRACTION, 1/8.0 doesn't look too bad.
+    */
+    	
+    public void setGridlines(float fraction, int modulus, Color color)
+    	{
+    	if (color == null || fraction <= 0.0 || modulus <= 0)
+    		{
+    		gridColor = null;
+    		}
+    	else
+    		{
+    		gridColor = color;
+    		gridFraction = fraction;
+    		gridModulus = modulus;
+    		}
+    	}
+    	
 /*
   public void reset()
   {
@@ -345,9 +375,36 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
                         graphics.draw(preciseRectangle);
                         }
             }
+    
+    
+    	/** Draw the grid if any */
+    	if (gridColor != null)
+    		{
+			java.awt.geom.Line2D.Double d = new java.awt.geom.Line2D.Double();
+			graphics.setColor(gridColor);
+			graphics.setStroke(getGridStroke((float)(xScale * gridFraction)));
+			for(int i = 0; i <= maxX; i+= gridModulus)
+				{
+				d.setLine(info.draw.x + xScale * i , info.draw.y, info.draw.x + xScale * i , info.draw.y + info.draw.height);
+				graphics.draw(d);
+				}
+
+			graphics.setStroke(getGridStroke((float)(yScale * gridFraction)));
+			for(int i = 0; i <= maxY; i+= gridModulus)
+				{
+				d.setLine(info.draw.x, info.draw.y + yScale * i , info.draw.x + info.draw.width, info.draw.y + yScale * i );
+				graphics.draw(d);
+				}
+			}
 
         // finally, clear dirty flag if we've just drawn (don't clear if we're doing hit testing)
         if (graphics!=null) setDirtyField(false);
         }
+    
+    /** Override this method to provide a custom stroke for the gridlines. */
+    public Stroke getGridStroke(float width)
+    	{
+    	return new BasicStroke(width);
+    	}
                 
     }
