@@ -2762,3 +2762,5 @@ Version 19
 		NOT require that you pass in a result bag or any of the
 		(generally useless) location bags.  Thanks to 
 		Christian Meyer <c.meyer@uni-oldenburg.de>
+	New setGridLines and setGridStroke functions for 
+		FastValueGridPortrayal2D and FastObjectGridPortrayal2D 

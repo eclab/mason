@@ -7378,6 +7378,15 @@ FastValueGridPortrayal2D shares the same methods with ValueGridPortrayal2D for s
 \mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
 \end{methods}
 
+FastValueGridPortrayal2D also can optionally overlay a grid on top of the cells to make them easier to see:
+
+\begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D}}
+\mthd{public void setGridLines(double fraction, int modulus, Color color) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
+\end{methods}
+
+
+
 There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.
 
 Another Fast Field Portrayal is \Class{sim.portrayal.grid.FastObjectGridPortrayal2D}.  This class represents Objects in the ObjectGrid2D as colored rectangles.  FastObjectGridPortrayal2D is quite unusual because it uses {\it another} ``fast'' FieldPortrayal (specifically FastValueGridPortrayal2D) to actually handle its drawing.
