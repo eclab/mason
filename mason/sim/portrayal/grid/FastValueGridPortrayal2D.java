@@ -83,7 +83,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
     	If you can't think of a good FRACTION, 1/8.0 doesn't look too bad.
     */
     	
-    public void setGridlines(float fraction, int modulus, Color color)
+    public void setGridLines(float fraction, int modulus, Color color)
     	{
     	if (color == null || fraction <= 0.0 || modulus <= 0)
     		{

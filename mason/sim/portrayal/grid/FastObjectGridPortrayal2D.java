@@ -134,9 +134,9 @@ public class FastObjectGridPortrayal2D extends ObjectGridPortrayal2D
     	If FRACTION or MODULUS is set to a value <= 0, or COLOR is set to null, then the grid is not displayed.
     	If you can't think of a good FRACTION, 1/8.0 doesn't look too bad.
     */
-    public void setGridlines(float fraction, int modulus, Color color)
+    public void setGridLines(float fraction, int modulus, Color color)
     	{
-    	valueGridPortrayal.setGridlines(fraction, modulus, color);
+    	valueGridPortrayal.setGridLines(fraction, modulus, color);
     	}
     
     /** Override this method to provide a custom stroke for the gridlines. */
