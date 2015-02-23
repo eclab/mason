@@ -71,7 +71,7 @@ public class FastValueGridPortrayal2D extends ValueGridPortrayal2D
     	The line is actually centered on the border between the two cells: so the fraction is the
     	total amount filled by the portions of the stroked lines on both sides of the cells.  */
     double gridFraction = 1/8.0;
-    Color gridColor = Color.blue;
+    Color gridColor = null;
     int gridModulus = 10;
     
     /** Turns grid lines on or off.  Grid lines are drawn centered on the borders between cells, and also

@@ -7381,15 +7381,16 @@ FastValueGridPortrayal2D shares the same methods with ValueGridPortrayal2D for s
 FastValueGridPortrayal2D also can optionally overlay a grid on top of the cells to make them easier to see:
 
 \begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D}}
-\mthd{public void setGridLines(double fraction, int modulus, Color color) } Sets the color map used by the default simple portrayal (a ValuePortrayal2D).
-\mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
+\mthd{public void setGridLines(double fraction, int modulus, Color color) } Turns on (or off) drawing of an overlay grid.  {\it fraction} is the width of a line as a fraction of a cell's width or height (1/8.0 is a reasonable default).  {\it modulus} specifies how many cells are skipped before a new line is drawn (1 is a reasonable default).  {\it color} is the color of a line.  Lines are drawn starting at the left and top grid boundary and proceeding towards the right and bottom boundaries.  If the modulus lands exactly on the right or bottom grid boundary (as would be the case, for example, if the modulus were 1), then the right or bottom grid boundary is also drawn.  Lines are drawn exactly on the midpoint between cells.  If {\it fraction} or {\it modulus} is \(\leq 0\), or if {\it color} is null, then setGridLines turns {\it off} all drawing of grid lines.  Grid lines are by default not drawn.
+
+\mthd{public java.awt.Stroke getGridStroke(float width) } Returns a Stroke of the provided width, used to draw the grid lines.  By default, this is a simple BasicStroke.  You can override it to provide more sophisticated Strokes.
 \end{methods}
 
 
 
-There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.
+There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.  No gridlines are provided.
 
-Another Fast Field Portrayal is \Class{sim.portrayal.grid.FastObjectGridPortrayal2D}.  This class represents Objects in the ObjectGrid2D as colored rectangles.  FastObjectGridPortrayal2D is quite unusual because it uses {\it another} ``fast'' FieldPortrayal (specifically FastValueGridPortrayal2D) to actually handle its drawing.
+Another Fast Field Portrayal is \Class{sim.portrayal.grid.FastObjectGridPortrayal2D}.  This class represents Objects in the ObjectGrid2D as colored rectangles.  FastObjectGridPortrayal2D is quite unusual because it uses {\it another} ``fast'' FieldPortrayal (specifically FastValueGridPortrayal2D) to actually handle its drawing.  This class, like FastValueGridPortrayal2D, allows you to overlay gridlines.
 
 Drawing works roughly like this.  First, FastObjectGridPortrayal2D translates objects in the ObjectGridPortrayal into numbers.  These numbers are then stored in a private DoubleGrid2D.  FastObjectGridPortrayal2D then calls on its own private FastValueGridPortrayal2D to draw this DoubleGrid2D.
 
@@ -7410,7 +7411,7 @@ FastObjectGridPortrayal2D has the following constructors:
 \mthd{public FastValueGridPortrayal2D() } Constructs the FastObjectGridPortrayal2D.  The field is assumed to not be immutable.
 \end{methods}
 
-Again, there is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastObjectGridPortrayal2D}. It has exactly the same constructors and issues as FastObjectGridPortrayal2D.
+Again, there is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastObjectGridPortrayal2D}. It has exactly the same constructors and issues as FastObjectGridPortrayal2D.  No gridlines are provided.
 
 
 \subsection{Field Portrayals for Networks}

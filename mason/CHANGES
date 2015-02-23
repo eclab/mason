@@ -2764,3 +2764,4 @@ Version 19
 		Christian Meyer <c.meyer@uni-oldenburg.de>
 	New setGridLines and setGridStroke functions for 
 		FastValueGridPortrayal2D and FastObjectGridPortrayal2D 
+	Removed default setting of grid lines (oops!)
