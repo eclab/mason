@@ -2458,9 +2458,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
 
 
-    /** Steps the Display2D in the GUIState schedule.  If we're in MacOS X, this results in a repaint()
-        request generated.  If we're in Windows or X Windows, this results in a direct call to
-        paintComponent on the insideDisplay. */
+    /** Steps the Display2D in the GUIState schedule.  This results in a repaint() request generated.   */
     public void step(final SimState state)
         {
         if (shouldUpdate())       // time to update!
