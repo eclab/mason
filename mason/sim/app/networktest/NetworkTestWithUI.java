@@ -187,7 +187,7 @@ display.insideDisplay.addMouseMotionListener(adapter);
 
 
 
-    }
+        }
         
     public void quit()
         {

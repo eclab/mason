@@ -929,10 +929,10 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      */
-	public DoubleBag getMooreNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
-		{
-		return getMooreNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
-		}
+    public DoubleBag getMooreNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+        {
+        return getMooreNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        }
 
 
 
@@ -953,10 +953,10 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      */
-	public DoubleBag getVonNeumannNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
-		{
-		return getVonNeumannNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
-		}
+    public DoubleBag getVonNeumannNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+        {
+        return getVonNeumannNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        }
 
 
 
@@ -978,10 +978,10 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      */
-	public DoubleBag getHexagonalNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
-		{
-		return getHexagonalNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
-		}
+    public DoubleBag getHexagonalNeighbors( int x, int y, int dist, int mode, boolean includeOrigin )
+        {
+        return getHexagonalNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
+        }
 
 
     public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin)

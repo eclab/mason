@@ -6222,6 +6222,10 @@ Because MASON can have multiple simulations running at a time, there are really 
 \mthd{public void doNew()} Fires up the Simulation-Chooser  box to allow the user to pick a simulation to create.
 \mthd{public boolean isNewMenuAllowed()} Returns true if the ``New Simulation...'' menu is permitted.
 \mthd{public void setNewMenuAllowed(boolean val)} Stipulates whether or not the ``New Simulation...'' menu is permitted.
+\mthd{public boolean isSaveMenuAllowed()} Returns true if the ``Save'' and ``Save As...'' menus are permitted.
+\mthd{public void setSaveMenuAllowed(boolean val)} Stipulates whether or not the  ``Save'' and ``Save As...'' menus are permitted.
+\mthd{public boolean isOpenMenuAllowed()} Returns true if the ``Open...'' menu is permitted.
+\mthd{public void setOpenMenuAllowed(boolean val)} Stipulates whether or not the ``Open...'' menu is permitted.
 \end{methods}
 
 \sidebar{I didn't disable it, yet the New Simulation... menu is disabled.}{The menu will also be disabled if your \file{simulation.classes} file has no entries for some reason.  See Section \ref{AboutTheSimulationChooser}, coming up next, for more information on this file.}  The above methods allow you to restrict the user's access of the {\bf New Simulation...} menu.  Why would you want to do this?  Primarily to keep the user from entering and starting up a different simulation.  By default the user is permitted.

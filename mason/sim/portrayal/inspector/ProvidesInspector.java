@@ -11,6 +11,6 @@ import sim.portrayal.*;
 public interface ProvidesInspector
     {
     /** Provides an inspector for this object.  The provided name should appear prominently,
-    	typically as a TitledBorder around the inspector. */
+        typically as a TitledBorder around the inspector. */
     public Inspector provideInspector(GUIState state, String name);
     }

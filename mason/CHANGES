@@ -2765,3 +2765,5 @@ Version 19
 	New setGridLines and setGridStroke functions for 
 		FastValueGridPortrayal2D and FastObjectGridPortrayal2D 
 	Removed default setting of grid lines (oops!)
+	Added a few more methods for enabling/disabling menu options in Console
+	Reindented

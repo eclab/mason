@@ -94,10 +94,30 @@ public class Console extends JFrame implements Controller
     public void setNewMenuAllowed(boolean val)
         {
         newMenuAllowed = val;
-        if (!newMenuAllowed || classNames.size() == 0)  // nothing permitted
-            newMenu.setEnabled(false);
+        newMenu.setEnabled(newMenuAllowed && classNames.size() > 0);
         }
     public boolean isNewMenuAllowed() { return newMenuAllowed; }
+
+    /** Do we allow the user to choose the 'Save' and 'Save As...' menus? */
+    boolean saveMenuAllowed = true;
+    public void setSaveMenuAllowed(boolean val)
+        {
+        saveMenuAllowed = val;
+        saveMenu.setEnabled(saveMenuAllowed);
+        saveAsMenu.setEnabled(saveMenuAllowed);
+        }
+    public boolean isSaveMenuAllowed() { return saveMenuAllowed; }
+
+    /** Do we allow the user to choose the 'Open' menu? */
+    boolean openMenuAllowed = true;
+    public void setOpenMenuAllowed(boolean val)
+        {
+        openMenuAllowed = val;
+        openMenu.setEnabled(openMenuAllowed);
+        }
+    public boolean isOpenMenuAllowed() { return openMenuAllowed; }
+
+
     /** Keep track of the last inspector selected so it stays selected after user picks a different area. */
     int preferredInspectorIndex = 0;
 
@@ -217,6 +237,12 @@ public class Console extends JFrame implements Controller
     JMenuBar menuBar;
     /** The 'New Simulation' menu. */
     JMenuItem newMenu;
+    /** The 'Save' menu. */
+    JMenuItem saveMenu;
+    /** The 'Save As...' menu. */
+    JMenuItem saveAsMenu;
+    /** The 'Open ...' menu. */
+    JMenuItem openMenu;
     /** The split pane shown under the "Inspectors" tab, holding the list of 
         inspectors at top, and specific inspectors at bottom */
     JSplitPane innerInspectorPanel;
@@ -526,36 +552,6 @@ public class Console extends JFrame implements Controller
         frameRateSliderText.setPreferredSize(new JLabel("88.88").getPreferredSize()); // ensure enough space
         b.add(frameRateSliderText);
         controlPanel.addLabelled("Delay (Sec/Step) ", b);
-
-        // removed -- this is so rarely used that it's just confusing to users
-        // create priority slider
-        /*prioritySlider = new JSlider(Thread.MIN_PRIORITY, Thread.MAX_PRIORITY, Thread.NORM_PRIORITY); // ranges from 0 to 100
-          prioritySlider.addChangeListener(new ChangeListener()
-          {
-          public void stateChanged(ChangeEvent e)
-          {
-          int val = prioritySlider.getValue();
-          if (!prioritySlider.getValueIsAdjusting())
-          { setThreadPriority(val); } 
-          prioritySliderText.setText("" + val + (val==Thread.NORM_PRIORITY ? ": norm" : ""));
-          }
-          });
-          b = new Box(BoxLayout.X_AXIS)
-          {
-          Insets insets = new Insets(2, 4, 2, 4);  // Java jams the widgets too closely for my taste
-          public Insets getInsets()
-          {
-          return insets;
-          }
-          };
-          b.add(prioritySlider);
-          prioritySliderText = new JLabel(Thread.NORM_PRIORITY + ": norm");
-          prioritySliderText.setMinimumSize(new JLabel("88: norm").getMinimumSize()); // ensure enough space
-          prioritySliderText.setPreferredSize(new JLabel("88: norm").getPreferredSize()); // ensure enough space
-          b.add(prioritySliderText);
-          controlPanel.addLabelled("Thread Priority ", b);
-        */
-
 
         // Create the step slider
         // the equation is: step = slider
@@ -1000,36 +996,36 @@ public class Console extends JFrame implements Controller
                 }
             });
         fileMenu.add(newMenu);
-        JMenuItem open = new JMenuItem("Open...");
-        if (SimApplet.isApplet) open.setEnabled(false);
-        open.addActionListener(new ActionListener()
+        openMenu = new JMenuItem("Open...");
+        if (SimApplet.isApplet) openMenu.setEnabled(false);
+        openMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
                 doOpen();
                 }
             });
-        fileMenu.add(open);
-        JMenuItem save = new JMenuItem("Save");
-        if (SimApplet.isApplet) save.setEnabled(false);
-        save.addActionListener(new ActionListener()
+        fileMenu.add(openMenu);
+        saveMenu = new JMenuItem("Save");
+        if (SimApplet.isApplet) saveMenu.setEnabled(false);
+        saveMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
                 synchronized(simulation.state.schedule) { doSave(); }
                 }
             });
-        fileMenu.add(save);
-        JMenuItem saveAs = new JMenuItem("Save As...");
-        if (SimApplet.isApplet) saveAs.setEnabled(false);
-        saveAs.addActionListener(new ActionListener()
+        fileMenu.add(saveMenu);
+        saveAsMenu = new JMenuItem("Save As...");
+        if (SimApplet.isApplet) saveAsMenu.setEnabled(false);
+        saveAsMenu.addActionListener(new ActionListener()
             {
             public void actionPerformed(ActionEvent e)
                 {
                 synchronized(simulation.state.schedule) { doSaveAs(); }
                 }
             });
-        fileMenu.add(saveAs);
+        fileMenu.add(saveAsMenu);
 
         JMenuItem _about = new JMenuItem("About MASON");
         _about.addActionListener(new ActionListener()
@@ -1531,8 +1527,8 @@ public class Console extends JFrame implements Controller
     Thread playThread;
     
     /** A general lock used by a number of short methods which need to synchronize on stuff used by
-    	the play thread.  It's NOT needed to modify the play thread itself -- that's only done in the
-    	outer GUI thread.  */
+        the play thread.  It's NOT needed to modify the play thread itself -- that's only done in the
+        outer GUI thread.  */
     final Object playThreadLock = new Object();
     
     /** Whether the thread should stop.  Don't play with this. */
@@ -2579,7 +2575,7 @@ public class Console extends JFrame implements Controller
                 break;
             case SHOWING_NOTHING:
                 updateTimeText("");
-            	break;
+                break;
             default:
                 throw new RuntimeException("default case should never occur");
             }

@@ -41,9 +41,9 @@ public class SimpleInspector extends Inspector
     /** The number of items presently in the propertyList */
     int count = 0;
     JPanel header = new JPanel()
-    		{
-        	public Insets getInsets () { return new Insets(2,2,2,2); }
-    		};
+        {
+        public Insets getInsets () { return new Insets(2,2,2,2); }
+        };
     String listName;  // used internally
     JLabel numElements = null;
     Box startField = null;
@@ -56,7 +56,7 @@ public class SimpleInspector extends Inspector
         title of the SimpleInspector (what appears in a window).  For that, use setTitle. */
     public SimpleInspector(Properties properties, GUIState state, String name, int maxProperties)
         {
-    	numElements = new JLabel();
+        numElements = new JLabel();
         this.maxProperties = maxProperties;
         setLayout(new BorderLayout());
         this.state = state;
@@ -309,14 +309,14 @@ public class SimpleInspector extends Inspector
 
     public void updateInspector()
         {
-	        if (properties.isVolatile())  // need to rebuild each time, YUCK
-           		{
-            	remove(propertyList);
-            	generateProperties(start);
-            	doEnsuredRepaint(this);
-            	}
-        	else for( int i = start ; i < start+count ; i++ )
-        	         if (members[i] != null) 
-        	             members[i].setValue(properties.betterToString(properties.getValue(i)));
-        	}
+        if (properties.isVolatile())  // need to rebuild each time, YUCK
+            {
+            remove(propertyList);
+            generateProperties(start);
+            doEnsuredRepaint(this);
+            }
+        else for( int i = start ; i < start+count ; i++ )
+                 if (members[i] != null) 
+                     members[i].setValue(properties.betterToString(properties.getValue(i)));
+        }
     }

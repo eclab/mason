@@ -561,7 +561,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
 
 
 
-	/** @deprecated */
+    /** @deprecated */
     public Bag getNeighborsMaxDistance( final int x, final int y, final int z, final int dist, final boolean toroidal, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         return getMooreNeighbors(x, y, z, dist, toroidal ? TOROIDAL : BOUNDED, true, result, xPos, yPos, zPos);
@@ -1084,10 +1084,10 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      */
-	public Bag getMooreNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
-		{
-		return getMooreNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
-		}
+    public Bag getMooreNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
+        {
+        return getMooreNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
+        }
 
 
 
@@ -1108,10 +1108,10 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
      * the width or height of the box, neighbors will not be counted multiple times.  Note that to ensure this, subclasses may need to
      * resort to expensive duplicate removal, so it's not suggested you use so unreasonably large distances.
      */
-	public Bag getVonNeumannNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
-		{
-		return getVonNeumannNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
-		}
+    public Bag getVonNeumannNeighbors( int x, int y, int z, int dist, int mode, boolean includeOrigin )
+        {
+        return getVonNeumannNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
+        }
 
 
 

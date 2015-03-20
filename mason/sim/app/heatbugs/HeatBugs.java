@@ -179,17 +179,17 @@ public /*strictfp*/ class HeatBugs extends SimState // implements sim.portrayal.
         }
         
 
-	// Would you like your model inspector to be broken into tabs?  Here's an example.
-	// To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
-	// See also the getInspector() method in HeatBugsWithUI 
-        public String[] provideTabNames()
-    		{ return new String[] {"Temps", "Constants", "Pos"}; }
-    	public String[][] provideTabProperties()
-    		{ return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
-				 					 {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
-									 {"BugXPos", "BugYPos"}}; }
-  	  public String provideExtraTab()
-    		{ return "Misc"; }
+    // Would you like your model inspector to be broken into tabs?  Here's an example.
+    // To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
+    // See also the getInspector() method in HeatBugsWithUI 
+    public String[] provideTabNames()
+        { return new String[] {"Temps", "Constants", "Pos"}; }
+    public String[][] provideTabProperties()
+        { return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+                                     {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+                                     {"BugXPos", "BugYPos"}}; }
+    public String provideExtraTab()
+        { return "Misc"; }
     
     
 
