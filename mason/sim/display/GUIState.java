@@ -437,7 +437,7 @@ public abstract class GUIState
         state.schedule.reset();
         resetQueues();
         }
-    
+        
     /** Returns FALSE if nothing was stepped -- the schedule is exhausted or time has run out. */
     public boolean step()
         {
