@@ -2959,7 +2959,7 @@ public class Console extends JFrame implements Controller
         while(i.hasNext())
             {
             Inspector c = (Inspector)(i.next());
-            if (c!=null)  // this is a WeakHashMap, so the keys can be null if garbage collected
+            if (c!=null && !c.isStopped())  // this is a WeakHashMap, so the keys can be null if garbage collected
                 {
                 if (c.isVolatile())
                     {
@@ -3225,7 +3225,7 @@ public class Console extends JFrame implements Controller
                 }
             }
         }
-
+        
     /** Stops and removes all inspectors. If killDraggedOutWindowsToo is true, then all inspector windows will be closed; else only
         the inspectors presently embedded in the console will be stopped and removed. */
     public void removeAllInspectors(boolean killDraggedOutWindowsToo)

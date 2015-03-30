@@ -29,6 +29,9 @@ public interface ColorMap
         <p><code return getColor(level).getRGB() </code>
         
         ... however it's likely that this method could be written more efficiently than this.
+        
+        <p>Why isn't this called getRGBA(...)?  Because for some reason the underlying Color
+        method is likewise getRGB(), even though it ought to be called getRGBA().
     */
     public int getRGB(double level);
     /** Returns the alpha value for a color for the given level.  This could be simply written as 

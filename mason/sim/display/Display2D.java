@@ -2193,11 +2193,11 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             }
                         
         // next, let' propagate the event to any objects which have been hit.
-        // We go backwards through the bag list so top elements are selected first
+        // We go backwards through the bag lists so top elements are selected first
                 
         Bag[] hitObjects = objectsHitBy(p);
         for(int x=hitObjects.length - 1; x >= 0; x--)
-            for(int i = 0; i < hitObjects[x].numObjs; i++)
+            for(int i = hitObjects[x].numObjs - 1; i >= 0 ; i--)
                 {
                 LocationWrapper wrapper = (LocationWrapper)(hitObjects[x].objs[i]);
                 FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());

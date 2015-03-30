@@ -573,7 +573,7 @@ public class SimpleController implements Controller
         while(i.hasNext())
             {
             Inspector c = (Inspector)(i.next());
-            if (c!=null)  // this is a WeakHashMap, so the keys can be null if garbage collected
+            if (c!=null && !c.isStopped())  // this is a WeakHashMap, so the keys can be null if garbage collected
                 {
                 if (c.isVolatile())
                     {

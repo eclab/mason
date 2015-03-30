@@ -276,7 +276,7 @@ public class SimpleColorMap implements ColorMap
             }
         }
                 
-                
+	 
     public int getRGB(double level)
         {
         if (colors != null && level >= 0 && level < colors.length)
@@ -313,6 +313,13 @@ public class SimpleColorMap implements ColorMap
             return (alpha << 24) | (red << 16) | (green << 8) | blue;
             }
         }
+    /*
+
+    public int getRGB(double level)
+        {
+        return getColor(level).getRGB();
+        }
+	*/
 
     public boolean validLevel(double value)
         {

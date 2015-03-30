@@ -5898,14 +5898,20 @@ Let's start with the last two first.
 
 {\footnotesize \begin{alltt}
 GUIState guistate = ...
-guistate.scheduleImmediatelyAfter(
-   new Steppable()
-       \{
-       public void step(SimState state)
-          \{
-          // put your model-modifying code here
-          \}
-      \});
+try \{
+    guistate.scheduleImmediatelyAfter(
+        new Steppable()
+            \{
+            public void step(SimState state)
+                \{
+                // put your model-modifying code here
+            \}
+        \});
+    \}
+catch (IllegalArgumentException e)
+    \{
+    // This occurs when we tried to schedule after the simulation had ended
+    \}
 \end{alltt}
 }
 
@@ -5922,13 +5928,19 @@ mySlider.addChangeListener(ChangeListener l)
     public ChangeEvent(Object source)
         \{
         final int value  = mySlider.getValue();
-        guistate.scheduleImmediatelyAfter(new Steppable()
-            \{
-            public void step(SimState state)
+        try \{
+            guistate.scheduleImmediatelyAfter(new Steppable()
                 \{
-                myAgent.setChinUpsRage(value);  // or whatever
-                \}
-            \});
+                public void step(SimState state)
+                    \{
+                    myAgent.setChinUpsRage(value);  // or whatever
+                    \}
+                \});
+            \}
+        catch (IllegalArgumentException e)
+            \{
+            // we won't bother doing anything here because the simulation is over
+            \}
         \}
     \});
 \end{alltt}
@@ -6013,7 +6025,7 @@ guistate.scheduleRepeatingImmediatelyAfter(new Steppable()
 \end{alltt}
 }
 
-\method{repaint()} just puts an event request on the Swing event schedule which will eventually call \method{paintComponent()}.  (It'll be done before the next model iteration).  However \method{paintComponent()} is not threadsafe: if you need to access the model inside \method{paintComponent}, you {\it must} lock on the Schedule first:
+Note that \method{repaint()} just puts an event request on the Swing event schedule which will eventually call \method{paintComponent()}.  (It'll be done before the next model iteration).  However \method{paintComponent()} is not threadsafe: if you need to access the model inside \method{paintComponent}, you {\it must} lock on the Schedule first:
 
 {\footnotesize \begin{alltt}
 protected void paintComponent(Graphics g)
@@ -10973,7 +10985,9 @@ ColorMaps should map {\it every} value to a color, but they are allowed to compl
 \mthd{public double defaultValue()} Provides a valid level which can serve as a canonical level value to replace invalid levels provided by the user.  The ColorMap should not replace values itself, but simply offer this as a reasonable replacement. 
 \end{methods}
 
-MASON provides a single concrete implementation ColorMap, called SimpleColorMap.  This class offers three ways to map numbers to colors:
+MASON provides a few concrete implementations of ColorMap.  The simplest one, \class{sim.util.gui.AbstractColorMap}, provides default implementations of all these methods, except for \method{getColor(...)}.  If you want to implement your own ColorMap, this is an easy way to do it: you just implement that one method.
+
+A more common alternative is to use \class{sim.util.gui.SimpleColorMap}, which gives you three different ways to map values to colors:
 
 \begin{enumerate}
 \item Minimum and maximum double value are provided, as well as a minimum and maximum color.  A double value later passed in is mapped to an interpolated color.  Specifically, values from \mbox{\(i \in [-\infty, \infty]\)} are first revised by being passed through an optional transformation function \(i \leftarrow t(i, \text{min level}, \text{max level})\) (which by default does nothing).  This revised value \(i\) then bounded between the min and max levels, namely \(i \leftarrow \max(\min(i, \text{max level}), \text{min level})\).  Finally \(i\) is mapped to an appropriate interpolated color between the min and max color values.
@@ -11003,6 +11017,16 @@ In addition to the ColorMap methods described above, SimpleColorMap also has a f
 \end{methods}
 
 SimpleColorMap doesn't make new Color objects each time: that'd be pretty inefficient.  Instead it maintains a {\bf color cache} to return pre-requested Color objects.  The cache won't grow beyond about 1024 or so interpolated colors.  SimpleColorMap has a faster cache commented out in its source code, but that cache has lower resolution.
+
+A third ColorMap implementation is \class{sim.util.gui.CompositeColorMap}.  This class takes several subsidiary ColorMaps.  When asked to map a level to a color, it queries these ColorMaps in turn until it finds one for which the level is valid.  It then extracts the color from that ColorMap and returns it.  If none of them think the level is valid, it extracts a color from the last ColorMap.  This is a useful method for implementing ColorMaps consisting of multiple ranges of color (from Green to Blue, then from Blue to Red, say).
+
+\begin{methods}{\class{sim.util.gui.CompositeColorMap} Constructor}
+\mthd{public CompositeColorMap(ColorMap map1, ColorMap map2)}  Builds a CompositeColorMap with two subsidiary ColorMaps.  
+\mthd{public CompositeColorMap(ColorMap map1, ColorMap map2, ColorMap map3)}  Builds a CompositeColorMap with three subsidiary ColorMaps.  
+\mthd{public CompositeColorMap(ColorMap map1, ColorMap map2, ColorMap map3, ColorMap map4)}  Builds a CompositeColorMap with four subsidiary ColorMaps.  
+\mthd{public CompositeColorMap(ColorMap[] maps)}  Builds a CompositeColorMap with an arbitrary number \(>0\) of subsidiary ColorMaps.  
+\end{methods}
+
 
 \begin{wrapfigure}{r}[0in]{1.5in}
 \vspace{-1em}\hfill\includegraphics[width=1.5in]{ColorWell.png}

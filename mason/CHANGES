@@ -2767,3 +2767,16 @@ Version 19
 	Removed default setting of grid lines (oops!)
 	Added a few more methods for enabling/disabling menu options in Console
 	Reindented
+	Mouse events on non-selected objects now fully go through the bags 
+		of hit objects in reverse order.  Previously they'd go through
+		the fields in order from front to back, but inside a field they'd
+		go through the objects from back to front.  Now they're all
+		front to back.
+	Bugfix to MovablePortrayal2D, which had allowed selected objects to
+		be hit before non-selected objects even if they appeared behind
+		them in a field (or in another field).
+	Inspector.isStopped() added, and changes made to 
+		Inspector.reviseStopper(...) to make possible this method.  This
+		makes it possible for the Console and SimpleController to avoid
+		updating stopped inspectors during refresh().
+	Added CompositeColorMap and AbstractColorMap

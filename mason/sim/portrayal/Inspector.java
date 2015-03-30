@@ -187,11 +187,20 @@ public abstract class Inspector extends JPanel
         which will then get registered with the Inspector; this larger stopper is
         also what is passed into Inspector.createFrame(...).  If you 
         override this method, be sure to call super.getRevisedStopper(stopper) and
-        wrap *that*.
+        wrap *that*.  The default version of this method creates a wrapped stopper
+        which guarantees that when the stopper's stop() method is called, the 
+        Inspector knows about it so that it can properly set isStopped(). 
     */
-    public Stoppable reviseStopper(Stoppable stopper)
+    public Stoppable reviseStopper(final Stoppable stopper)
         {
-        return stopper;
+        return new Stoppable()
+        	{
+        	public void stop()
+        		{
+        		stopper.stop();
+        		stopped = true;
+				}
+        	};
         }
 
     /** Disposes the Inspector's frame if it's not a Controller.  Override this
@@ -208,6 +217,10 @@ public abstract class Inspector extends JPanel
         if (c != null && !(c instanceof Controller))
             ((JFrame)c).dispose();
         }
+
+	boolean stopped;
+	/** Returns true if this Inspector's Stoppable has been stopped. */
+	public boolean isStopped() { return stopped; }
 
     /** Creates a scrollable frame surrounding the inspector which calls stop()
         on the underlying stopper when closed.  stopper may be null, in which
