@@ -97,7 +97,7 @@ public /*strictfp*/ class HeatBugs extends SimState // implements sim.portrayal.
     public DoubleGrid2D valgrid;
     public DoubleGrid2D valgrid2;
     public SparseGrid2D buggrid;
-    
+
     /** Creates a HeatBugs simulation with the given random number seed. */
     public HeatBugs(long seed)
         {

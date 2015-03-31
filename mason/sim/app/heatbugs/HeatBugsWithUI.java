@@ -111,9 +111,7 @@ public class HeatBugsWithUI extends GUIState
 
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         heatPortrayal.setMap(new sim.util.gui.SimpleColorMap(0,HeatBugs.MAX_HEAT,Color.black,Color.red));
-                                
-        heatPortrayal.setGridLines(true);
-        heatPortrayal.setBorder(true);
+                             
                                 
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
 // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
@@ -150,7 +148,7 @@ public class HeatBugsWithUI extends GUIState
 
         // attach the portrayals
         display.attach(heatPortrayal,"Heat");
-        
+
 // uncomment this to try out trails  (also need to uncomment out some others in this file, look around)
 // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
 // its idealTemperature to 0 in the Inspector.
