@@ -55,6 +55,8 @@ public class SwarmGameWithUI extends GUIState
         SwarmGame swarm = (SwarmGame)state;
         // obstacle portrayal needs no setup
         agentsPortrayal.setField(swarm.agents);
+        agentsPortrayal.setBorder(1.0, Color.red, true);
+        agentsPortrayal.setAxes(1.0, Color.blue, false);
         agentsPortrayal.setPortrayalForAll(new OrientedPortrayal2D(new OvalPortrayal2D(Color.black),0,1.0));
         
         // reschedule the displayer

@@ -7264,6 +7264,7 @@ In some operating systems (notably MacOS X), the second approach is {\it much} f
 MASON provides at one standard Field Portrayal for each of its fields: and special standard Field Portrayals for hexagonal representations of grid fields.  They are:
 
 \subsubsection{Field Portrayals for Object Grids}
+\label{sim.portrayal.grid.ObjectGridPortrayal2D}
 
 \Class{sim.portrayal.grid.ObjectGridPortrayal2D} portrays fields of the form \class{sim.field.grid.ObjectGrid2D}.  ObjectGridPortrayal2D generates wrappers by fixing the Object but allowing it to change location.  If the object has moved, the wrapper will look nearby (no more than 3 units in any direction) to find the new location, and report this new location.  If the object has moved further than this, it's too expensive to track and the wrapper will simply report that the object's location is ``unknown''.
 
@@ -7272,6 +7273,19 @@ MASON provides at one standard Field Portrayal for each of its fields: and speci
 \end{methods}
 
 \Class{sim.portrayal.grid.HexaObjectGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.ObjectGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility as ObjectGridPortrayal2D.
+
+ObjectGridPortrayal2D (but not HexaObjectGridPortrayal2D) can also overlay its drawn object with gridlines with a border.
+
+\begin{methods}{\class{sim.portrayal.grid.ObjectGridPortrayal2D}}
+\mthd{public void setGridLines(boolean on) } Turns grid lines on or off.  By default the grid is off.  
+\mthd{void setGridColor(Color val) } Sets the grid line color.   By default the grid is blue.  
+\mthd{public void setGridModulus(int val) } Sets the line grid modulus. This is the minimum number of grid cells skipped before the next grid line is drawn.  By default the modulus is 10.
+\mthd{public void setGridMinSpacing(double val) } Sets the grid min spacing.  This is the minimum number of pixels skipped before another grid line is drawn. The grid modulus is repeatedly doubled until the grid spacing equals or exceeds the minimum spacing.  The purpose of this is to keep very zoomed-out from being overwhelmed by grid lines.  By default the min spacing is 2.0.
+\mthd{public void setGridLineFraction(double val) } Sets the grid line fraction.  This is the width of a stroked line as a fraction of the width (or height)  of a grid cell.  Grid lines are drawn centered on the borders between cells.   By default the fraction is 1/8.0.  
+\mthd{public void setBorder(boolean on) } Turns border lines on or off.    By default the border is off.
+\mthd{public void setBorderColor(Color val) } Sets the border color.  By default the border is red.
+\mthd{public void setBorderLineFraction(double val) } Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid is being drawn clipped (see Display2D.setClipping(...)), then only half of the width of this line will be visible (the half that lies within the grid region).   By default the fraction is 1/8.0.
+\end{methods}
 
 \subsubsection{Field Portrayals for Sparse Grids}
 
@@ -7293,6 +7307,8 @@ SparseGridPortrayal2D also makes its own LocationWrappers: in this case, the Obj
 
 \Class{sim.portrayal.grid.HexaSparseGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.SparseGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility and draw policy mechanism as SparseGridPortrayal2D.
 
+Like ObjectGridPortrayal2D, SparseGridPortrayal2D (but not HexaSparseGridPortrayal2D) can also overlay its drawn object with gridlines with a border.  See Section \ref{sim.portrayal.grid.ObjectGridPortrayal2D} for the relevant methods.
+
 \subsubsection{Field Portrayals for Grids of Bags of Objects}
 
 \Class{sim.portrayal.grid.DenseGridPortrayal2D} portrays fields of the form \class{sim.field.grid.DenseGrid2D}.  Just as in SparseGridPortrayal2D, these grids allow Objects to pile up at the same location, and so require a draw policy. But DenseGridPortrayal2D's LocationWrappers aren't like those in SparseGridPortrayal2D: they're instead exactly like those in ObjectGridPortrayal2D, and so can't track objects if they've moved too far away.
@@ -7304,6 +7320,8 @@ SparseGridPortrayal2D also makes its own LocationWrappers: in this case, the Obj
 \end{methods}
 
 \Class{sim.portrayal.grid.HexaDenseGridPortrayal2D} also portrays fields of the form \class{sim.field.grid.DenseGrid2D} under the assumption that they have been laid out as hexagonal grids.  It uses the same wrapper facility and draw policy mechanism as DenseGridPortrayal2D.
+
+Like ObjectGridPortrayal2D, DenseGridPortrayal2D (but not HexaDenseGridPortrayal2D) can also overlay its drawn object with gridlines with a border.  See Section \ref{sim.portrayal.grid.ObjectGridPortrayal2D} for the relevant methods.
 
 
 \subsubsection{Field Portrayals for Grids of Numbers}
@@ -7340,6 +7358,9 @@ For more information on this procedure, see Section \ref{sim.portrayal.simple.Va
 
 \sidebar{Why doesn't HexaValueGridPortrayal2D use a SimplePortrayal?}{Because it's just unacceptably slow.  Drawing and computing hexagons is slow enough.  Calling forth a subsidiary object to do it for you is slower still.}  \paragraph{Important Note: Hexagonal Fields} There is also a Hexagonal version of ValueGridPortrayal2D called \Class{sim.portrayal.grid.HexaValueGridPortrayal2D}.  This field portrayal shares more in common with ``fast'' Field Portrayals: it does not use a SimplePortrayal.   Instead it simply draws its values as hexagons using the given ColorMap for color.  Note that there is {\it still} a ``fast'' version of this portrayal!  It's called \Class{sim.portrayal.grid.FastHexaValueGridPortrayal2D}, and it's fast (indeed {\it much} faster) because instead of drawing hexagons, it draws rectangles organized like bricks: this allows it to pull off the same image-stretching tricks discussed later in Section \ref{fastfieldportrayals}.
 
+Like ObjectGridPortrayal2D, ValueGridPortrayal2D (but not HexaValueGridPortrayal2D) can also overlay its drawn object with gridlines with a border.  See Section \ref{sim.portrayal.grid.ObjectGridPortrayal2D} for the relevant methods.
+
+
 \subsubsection{Field Portrayals for Continuous Space}
 \label{sim.portrayal.continuous.ContinuousPortrayal2D}
 
@@ -7347,16 +7368,18 @@ For more information on this procedure, see Section \ref{sim.portrayal.simple.Va
  
 Objects in continuous space, unlike objects in grids, can wrap around if the field is considered to be toroidal.  Thus ContinuousPortrayal2D has the option of displaying an overlapping object on {\it both} sides in which it overlaps to create the illusion of wrapping around in a toroidal fashion.
 
-It's also not quite clear where the boundary {\it is} in a continuous space, particularly if the Display2D's clipping has been turned off.  So ContinuousPortrayal2D has the option of drawing a {\it frame} around the boundary of the field.  ContinuousPortrayal2D also can draw the {\bf axes} marking the origin of the space.
+It's also not quite clear where the boundary {\it is} in a continuous space, particularly if the Display2D's clipping has been turned off.  So ContinuousPortrayal2D has the option of drawing a {\it border} around the boundary of the field.  ContinuousPortrayal2D also can draw the {\bf axes} marking the origin of the space.  Note that these axes do {\it not} go through the origin of the space, but rather through the midpoint of the width and height of the field.
 
 \begin{methods}{\class{sim.portrayal.continuous.ContinuousPortrayal2D}}
-\mthd{public void setFrame(Paint p) } Causes the portrayal to draw a frame around the bounds of the field with the given paint.  If the paint is null, nothing is drawn.
-\mthd{public Paint getFame() } Returns the paint with which the portrayal is drawing the frame.
-\mthd{public void setAxes(Paint p) } Causes the portrayal to draw simple axes which meet at its origin, using the given paint.
-\mthd{public Paint getAxes() } Returns the paint with which the axes are being drawn.
 \mthd{public void setDisplayingToroidally(boolean val) } Causes the portrayal to display wrap-around objects on both sides (or if in a corner, potentially four times), or clears this feature.
 \mthd{public boolean isDisplayingToroidally() } Returns whether or not the portrayal is displaying objects toroidally.
 \mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
+\mthd{public void setAxes(boolean on) } Turns axes on or off.  Axes are drawn midway through the field (even though that is NOT the (0,0) location).  By default the axes are off.  
+\mthd{void setAxesColor(Color val) } Sets the axis line color.   By default the color is blue.  
+\mthd{public void setAxesLineFraction(double val) } Sets the axis line fraction.  This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  By default the fraction is 1/8.0.  
+\mthd{public void setBorder(boolean on) } Turns border lines on or off.    By default the border is off.
+\mthd{public void setBorderColor(Color val) } Sets the border color.  By default the border is red.
+\mthd{public void setBorderLineFraction(double val) } Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  Note that if the field is being drawn clipped (see Display2D.setClipping(...)), then only half of the width of this line will be visible (the half that lies within the field region).   By default the fraction is 1/8.0.
 \end{methods}
 
 \vbox{
@@ -7394,17 +7417,11 @@ FastValueGridPortrayal2D shares the same methods with ValueGridPortrayal2D for s
 \mthd{public ColorMap getMap() } Returns the color map used by the default simple portrayal (a ValuePortrayal2D).
 \end{methods}
 
-FastValueGridPortrayal2D also can optionally overlay a grid on top of the cells to make them easier to see:
-
-\begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D}}
-\mthd{public void setGridLines(double fraction, int modulus, Color color) } Turns on (or off) drawing of an overlay grid.  {\it fraction} is the width of a line as a fraction of a cell's width or height (1/8.0 is a reasonable default).  {\it modulus} specifies how many cells are skipped before a new line is drawn (1 is a reasonable default).  {\it color} is the color of a line.  Lines are drawn starting at the left and top grid boundary and proceeding towards the right and bottom boundaries.  If the modulus lands exactly on the right or bottom grid boundary (as would be the case, for example, if the modulus were 1), then the right or bottom grid boundary is also drawn.  Lines are drawn exactly on the midpoint between cells.  If {\it fraction} or {\it modulus} is \(\leq 0\), or if {\it color} is null, then setGridLines turns {\it off} all drawing of grid lines.  Grid lines are by default not drawn.
-
-\mthd{public java.awt.Stroke getGridStroke(float width) } Returns a Stroke of the provided width, used to draw the grid lines.  By default, this is a simple BasicStroke.  You can override it to provide more sophisticated Strokes.
-\end{methods}
+There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.
 
 
+Like ObjectGridPortrayal2D, FastValueGridPortrayal2D (but not HexaFastValueGridPortrayal2D) can also overlay its drawn object with gridlines with a border.  See Section \ref{sim.portrayal.grid.ObjectGridPortrayal2D} for the relevant methods.
 
-There is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastValueGridPortrayal2D} (try saying {\it that} three times fast!). It has exactly the same constructors and issues as FastValueGridPortrayal2D.  It draws values as rectangles rather than as hexagons.  No gridlines are provided.
 
 Another Fast Field Portrayal is \Class{sim.portrayal.grid.FastObjectGridPortrayal2D}.  This class represents Objects in the ObjectGrid2D as colored rectangles.  FastObjectGridPortrayal2D is quite unusual because it uses {\it another} ``fast'' FieldPortrayal (specifically FastValueGridPortrayal2D) to actually handle its drawing.  This class, like FastValueGridPortrayal2D, allows you to overlay gridlines.
 
@@ -7427,7 +7444,11 @@ FastObjectGridPortrayal2D has the following constructors:
 \mthd{public FastValueGridPortrayal2D() } Constructs the FastObjectGridPortrayal2D.  The field is assumed to not be immutable.
 \end{methods}
 
-Again, there is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastObjectGridPortrayal2D}. It has exactly the same constructors and issues as FastObjectGridPortrayal2D.  No gridlines are provided.
+Again, there is also a hexagonal version, \Class{sim.portrayal.grid.HexaFastObjectGridPortrayal2D}. It has exactly the same constructors and issues as FastObjectGridPortrayal2D.
+
+Like ObjectGridPortrayal2D, FastObjectGridPortrayal2D (but not HexaFastObjectGridPortrayal2D) can also overlay its drawn object with gridlines with a border.  See Section \ref{sim.portrayal.grid.ObjectGridPortrayal2D} for the relevant methods.
+
+
 
 
 \subsection{Field Portrayals for Networks}

@@ -289,6 +289,14 @@ public class HexaDenseGridPortrayal2D extends DenseGridPortrayal2D
                     }
                 }
         }
+
+
+    /** This is not supported by hexagonal portrayals.  Throws an exception. */
+    public void setBorder(boolean on) { throw new RuntimeException("Border drawing is not supported by hexagonal portrayals."); }
+
+    /** This is not supported by hexagonal portrayals.  Throws an exception. */
+    public void setGridLines(boolean on) { throw new RuntimeException("Grid line drawing is not supported by hexagonal portrayals."); }
+
     }
     
     

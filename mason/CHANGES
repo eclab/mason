@@ -2780,3 +2780,6 @@ Version 19
 		makes it possible for the Console and SimpleController to avoid
 		updating stopped inspectors during refresh().
 	Added CompositeColorMap and AbstractColorMap
+	Old grid overlay code removed and replaced with new grid overlay code
+		for all rectangular grids and for continuous space (which uses
+		axes rather than grid lines).

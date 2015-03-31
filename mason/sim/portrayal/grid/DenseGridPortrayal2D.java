@@ -182,6 +182,9 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
                         }
                     }
                 }
+                
+        drawGrid(graphics, xScale, yScale, maxX, maxY, info);
+        drawBorder(graphics, xScale, info);
         }
 
     // Overrides objectGridPortrayal2D

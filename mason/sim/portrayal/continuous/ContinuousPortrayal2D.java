@@ -29,37 +29,6 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
     // a grey oval.  You should provide your own protrayals...
     SimplePortrayal2D defaultPortrayal = new OvalPortrayal2D();
 
-    Paint frame = null;
-    /** If you provide a Paint, a thin frame of this paint will be drawn around the (0,0,width,height) space of
-        the field.  This is mostly useful for seeing the frame of the field when clipping is turned off and you're zoomed out. */ 
-    public void setFrame(Paint p)
-        {
-        frame = p;
-        }
-                
-    public Paint getFame()
-        {
-        return frame;
-        }
-
-    Paint axes = null;
-    /** If you provide a Paint, a thin frame of this paint will be drawn around the (0,0,width,height) space of
-        the field.  This is mostly useful for seeing the frame of the field when clipping is turned off and you're zoomed out. */ 
-    public void setAxes(Paint p)
-        {
-        axes = p;
-        }
-                
-    public Paint getAxes()
-        {
-        return axes;
-        }
-        
-    boolean drawsFrameAndAxesInFront = true;
-    public boolean getDrawsFrameAndAxesInFront() { return drawsFrameAndAxesInFront; }
-    public void setDrawsFrameAndAxesInFront(boolean val) { drawsFrameAndAxesInFront = val; }
-    
-
     public void setField(Object field)
         {
         if (field instanceof Continuous2D) super.setField(field);
@@ -181,11 +150,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final Continuous2D field = (Continuous2D)this.field;
         if (field==null) return;
                 
-        if (!drawsFrameAndAxesInFront) drawFrameAndAxes(graphics, info);
-                
         boolean objectSelected = !selectedWrappers.isEmpty();
-                
-//        Rectangle2D.Double cliprect = (Rectangle2D.Double)(info.draw.createIntersection(info.clip));
 
         final double xScale = info.draw.width / field.width;
         final double yScale = info.draw.height / field.height;
@@ -193,8 +158,6 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         final int starty = (int)Math.floor((info.clip.y - info.draw.y) / yScale);
         int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
-
-//        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
         newinfo.precise = info.precise;
@@ -260,33 +223,10 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
                 }
             }
             
-        if (drawsFrameAndAxesInFront) drawFrameAndAxes(graphics, info);
+        drawAxes(graphics, xScale, yScale, info);
+        drawBorder(graphics, xScale, info);
         }
 
-
-    void drawFrameAndAxes(Graphics2D graphics, DrawInfo2D info)
-        {
-        if (frame != null && graphics != null)
-            {
-            graphics.setPaint(frame);
-            graphics.draw(new Rectangle2D.Double(info.draw.x - 1, info.draw.y - 1, info.draw.width + 1, info.draw.height + 1));
-            }
-
-        if (axes != null && graphics != null)
-            {
-            graphics.setPaint(axes);
-            
-            // Bugs in OS X's graphics handling prevent any line extending beyond
-            // (Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 52),
-            // even when the line being drawn is real-valued.  Also, if the line endpoints are
-            // well outside the clip region it's clipped entirely even if the line intersects
-            // with the clip region.  Grrrrrr......  
-            graphics.draw(new Line2D.Double(info.clip.x, info.draw.y + (info.draw.height) / 2.0, 
-                    info.clip.x + info.clip.width, info.draw.y + (info.draw.height) / 2.0));
-            graphics.draw(new Line2D.Double(info.draw.x + (info.draw.width) / 2.0, info.clip.y, 
-                    info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
-            }
-        }
 
     public LocationWrapper getWrapper(final Object obj)
         {
@@ -326,6 +266,134 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
             }
         return true;
         }
+
+
+
+    // Indicates the fraction of a cell width or height that will be filled by the stroked line.
+    //    The line is actually centered on the border between the two cells: so the fraction is the
+    //    total amount filled by the portions of the stroked lines on both sides of the cells.
+    double axesLineFraction = 1/8.0;
+    Color axesColor = Color.blue;
+    double axesLineMinWidth = 1.0;
+    double axesLineMaxWidth = Double.POSITIVE_INFINITY;
+    boolean axes = false;
+    
+    /** Turns axes on or off.  Axes are drawn midway through the field (even though that is NOT the (0,0) location).  By default the axes are off.  */
+    public void setAxes(boolean on) { axes = on; }
+
+    /** Sets the axes color.   By default the color is blue.  */
+    public void setAxesColor(Color val)
+    	{
+        if (val == null) throw new RuntimeException("color must be non-null");
+    	axesColor = val;
+    	}
+    
+    /** Sets the axis line fraction.  This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  
+    By default the fraction is 1/8.0.    */
+    public void setAxesLineFraction(double val)
+    	{
+        if (val <= 0) throw new RuntimeException("axesLineFraction must be between 0 and 1");
+        axesLineFraction = val;
+    	}
+        
+     /** Sets the minimum and maximum width of a border line in pixels. 
+     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    public void setAxesLineMinMaxWidth(double min, double max)
+    	{
+    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+    	axesLineMinWidth = min;
+    	axesLineMaxWidth = max;
+    	}
+
+    // Indicates the fraction of a cell width or height that will be filled by the stroked line.
+    //    The line is actually centered on the border between the two cells: so the fraction is the
+    //    total amount filled by the portions of the stroked lines on both sides of the cells.
+    double borderLineFraction = 1/8.0;
+    Color borderColor = Color.red;
+    double borderLineMinWidth = 1.0;
+    double borderLineMaxWidth = Double.POSITIVE_INFINITY;
+    boolean border = false;
+    
+    /** Turns border lines on or off.    By default the border is off.  */
+    public void setBorder(boolean on) { border = on; }
+
+    /** Sets the border color.  By default the border is red.  */
+    public void setBorderColor(Color val)
+    	{
+        if (val == null) throw new RuntimeException("color must be non-null");
+    	borderColor = val;
+    	}
+    
+    /** Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) 
+    	 of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid
+    	 is being drawn clipped (see Display2D.setClipping(...)), then only HALF of the width of this line will
+    	 be visible (the half that lies within the grid region).  
+    	   By default the fraction is 1/8.0..  */
+    public void setBorderLineFraction(double val)
+    	{
+        if (val <= 0) throw new RuntimeException("borderLineFraction must be between 0 and 1");
+    	borderLineFraction = val;
+    	}
+    
+     /** Sets the minimum and maximum width of a border line in pixels. 
+     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    public void setBorderLineMinMaxWidth(double min, double max)
+    	{
+    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+    	borderLineMinWidth = min;
+    	borderLineMaxWidth = max;
+    	}
+    
+
+
+    void drawBorder(Graphics2D graphics, double xScale, DrawInfo2D info)
+    	{
+    	/** Draw a border if any */
+        if (border && graphics != null)
+            {
+        	Stroke oldStroke = graphics.getStroke();
+    		Paint oldPaint = graphics.getPaint();
+        	java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
+            graphics.setColor(borderColor);
+            graphics.setStroke(new BasicStroke((float)Math.min(borderLineMaxWidth, Math.max(borderLineMinWidth, (xScale * borderLineFraction)))));
+            d.setRect(info.draw.x, info.draw.y, info.draw.width, info.draw.height);
+            graphics.draw(d);
+    	    graphics.setStroke(oldStroke);
+	    	graphics.setPaint(oldPaint);
+        }
+    	}
+    
+
+    void drawAxes(Graphics2D graphics, double xScale, double yScale, DrawInfo2D info)
+    	{
+    	/** Draw the axes if any */
+        if (axes && graphics != null)
+            {
+    		Stroke oldStroke = graphics.getStroke();
+    		Paint oldPaint = graphics.getPaint();
+            java.awt.geom.Line2D.Double d = new java.awt.geom.Line2D.Double();
+            graphics.setColor(axesColor);
+            graphics.setStroke(new BasicStroke((float)Math.min(axesLineMaxWidth, Math.max(axesLineMinWidth, (xScale * axesLineFraction)))));
+            
+            // Bugs in OS X's graphics handling prevent any line extending beyond
+            // (Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 52),
+            // even when the line being drawn is real-valued.  Also, if the line endpoints are
+            // well outside the clip region it's clipped entirely even if the line intersects
+            // with the clip region.  Grrrrrr......  
+            graphics.draw(new Line2D.Double(info.clip.x, info.draw.y + (info.draw.height) / 2.0, 
+                    info.clip.x + info.clip.width, info.draw.y + (info.draw.height) / 2.0));
+
+            graphics.setStroke(new BasicStroke((float)Math.min(axesLineMaxWidth, Math.max(axesLineMinWidth, (yScale * axesLineFraction)))));
+
+            graphics.draw(new Line2D.Double(info.draw.x + (info.draw.width) / 2.0, info.clip.y, 
+                    info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
+    		graphics.setStroke(oldStroke);
+    		graphics.setPaint(oldPaint);
+            }
+		}
+
     }
     
     
