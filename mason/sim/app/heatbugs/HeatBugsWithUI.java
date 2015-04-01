@@ -53,37 +53,37 @@ public class HeatBugsWithUI extends GUIState
 
 // Would you like your model inspector to be broken into tabs?  Here's the HARD WAY.
 // For the (better) EASY WAY, see the provideTabNames() method in HeatBugs.java
-	
-//	public Inspector getInspector()
-//		{
-//		Object obj = getSimulationInspectedObject();
-//		return new sim.portrayal.inspector.TabbedInspector(
-//			(SimpleProperties)Properties.getProperties(obj),
-//			this,
-//			
-//			// Here we divide our properties into three groups.
-//			// Notice that the properties "GridHeight", "GridWidth", and "BugCount" do not appear
-//			// here -- they are "extra properties", see below. 
-//			
-//			new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
-//							{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
-//							{"BugXPos", "BugYPos"}},
-//							
-//							
-//			// Here we give names to our three property groups.  These will be the names of the tabs.
-//	
-//			new String[] {"Temps", "Constants", "Pos"}, 
-//			
-//			
-//			// Here we provide a name for the tab holding all properties which didn't appear among the strings above.
-//			// If this name is null, then no tab will appear and these properties will not be accessible via
-//			// the inspector.
-//			
-//			"Misc", 
-//			
-//			// Here we state that the inspector is NOT going to be volatile.  
-//			false);
-//		}
+        
+//      public Inspector getInspector()
+//              {
+//              Object obj = getSimulationInspectedObject();
+//              return new sim.portrayal.inspector.TabbedInspector(
+//                      (SimpleProperties)Properties.getProperties(obj),
+//                      this,
+//                      
+//                      // Here we divide our properties into three groups.
+//                      // Notice that the properties "GridHeight", "GridWidth", and "BugCount" do not appear
+//                      // here -- they are "extra properties", see below. 
+//                      
+//                      new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+//                                                      {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+//                                                      {"BugXPos", "BugYPos"}},
+//                                                      
+//                                                      
+//                      // Here we give names to our three property groups.  These will be the names of the tabs.
+//      
+//                      new String[] {"Temps", "Constants", "Pos"}, 
+//                      
+//                      
+//                      // Here we provide a name for the tab holding all properties which didn't appear among the strings above.
+//                      // If this name is null, then no tab will appear and these properties will not be accessible via
+//                      // the inspector.
+//                      
+//                      "Misc", 
+//                      
+//                      // Here we state that the inspector is NOT going to be volatile.  
+//                      false);
+//              }
 
 
 

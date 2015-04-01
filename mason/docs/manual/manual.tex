@@ -7276,15 +7276,18 @@ MASON provides at one standard Field Portrayal for each of its fields: and speci
 
 ObjectGridPortrayal2D (but not HexaObjectGridPortrayal2D) can also overlay its drawn object with gridlines with a border.
 
+
 \begin{methods}{\class{sim.portrayal.grid.ObjectGridPortrayal2D}}
 \mthd{public void setGridLines(boolean on) } Turns grid lines on or off.  By default the grid is off.  
-\mthd{void setGridColor(Color val) } Sets the grid line color.   By default the grid is blue.  
+\mthd{public void setGridColor(Color val) } Sets the grid line color.   By default the grid is blue.  
 \mthd{public void setGridModulus(int val) } Sets the line grid modulus. This is the minimum number of grid cells skipped before the next grid line is drawn.  By default the modulus is 10.
 \mthd{public void setGridMinSpacing(double val) } Sets the grid min spacing.  This is the minimum number of pixels skipped before another grid line is drawn. The grid modulus is repeatedly doubled until the grid spacing equals or exceeds the minimum spacing.  The purpose of this is to keep very zoomed-out from being overwhelmed by grid lines.  By default the min spacing is 2.0.
 \mthd{public void setGridLineFraction(double val) } Sets the grid line fraction.  This is the width of a stroked line as a fraction of the width (or height)  of a grid cell.  Grid lines are drawn centered on the borders between cells.   By default the fraction is 1/8.0.  
+\mthd{public void setGridLineMinMaxWidth(double min, double max) } Sets the minimum and maximum width, in pixels, of a grid line.  This overrides setGridLineFraction(...).  By default, the minimum is 1.0 and the maximum is positive infinity.   
 \mthd{public void setBorder(boolean on) } Turns border lines on or off.    By default the border is off.
 \mthd{public void setBorderColor(Color val) } Sets the border color.  By default the border is red.
 \mthd{public void setBorderLineFraction(double val) } Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid is being drawn clipped (see Display2D.setClipping(...)), then only half of the width of this line will be visible (the half that lies within the grid region).   By default the fraction is 1/8.0.
+\mthd{public void setBorderLineMinMaxWidth(double min, double max) } Sets the minimum and maximum width, in pixels, of a border.  This overrides setBorderLineFraction(...).  By default, the minimum is 1.0 and the maximum is positive infinity.   
 \end{methods}
 
 \subsubsection{Field Portrayals for Sparse Grids}
@@ -7375,11 +7378,13 @@ It's also not quite clear where the boundary {\it is} in a continuous space, par
 \mthd{public boolean isDisplayingToroidally() } Returns whether or not the portrayal is displaying objects toroidally.
 \mthd{public LocationWrapper getWrapper(Object obj) } Produces a wrapper which allows the location to change but which fixes the object.
 \mthd{public void setAxes(boolean on) } Turns axes on or off.  Axes are drawn midway through the field (even though that is NOT the (0,0) location).  By default the axes are off.  
-\mthd{void setAxesColor(Color val) } Sets the axis line color.   By default the color is blue.  
+\mthd{public void setAxesColor(Color val) } Sets the axis line color.   By default the color is blue.  
 \mthd{public void setAxesLineFraction(double val) } Sets the axis line fraction.  This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  By default the fraction is 1/8.0.  
+\mthd{public void setAxesLineMinMaxWidth(double min, double max) } Sets the minimum and maximum width, in pixels, of an axis.  This overrides setAxesLineFraction(...).  By default, the minimum is 1.0 and the maximum is positive infinity.   
 \mthd{public void setBorder(boolean on) } Turns border lines on or off.    By default the border is off.
 \mthd{public void setBorderColor(Color val) } Sets the border color.  By default the border is red.
 \mthd{public void setBorderLineFraction(double val) } Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  Note that if the field is being drawn clipped (see Display2D.setClipping(...)), then only half of the width of this line will be visible (the half that lies within the field region).   By default the fraction is 1/8.0.
+\mthd{public void setBorderLineMinMaxWidth(double min, double max) } Sets the minimum and maximum width, in pixels, of a border.  This overrides setBorderLineFraction(...).  By default, the minimum is 1.0 and the maximum is positive infinity.   
 \end{methods}
 
 \vbox{

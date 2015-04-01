@@ -21,7 +21,7 @@ import java.awt.*;
 public class CompositeColorMap implements ColorMap
     {
     ColorMap[] maps;
-    	
+        
     /** Builds a CompositeColorMap with two subsidiary maps */
     public CompositeColorMap(ColorMap map1, ColorMap map2) { this(new ColorMap[] { map1, map2 }); }
 
@@ -33,11 +33,11 @@ public class CompositeColorMap implements ColorMap
 
     /** Builds a CompositeColorMap with an arbitrary number (> 0) of subsidiary maps */
     public CompositeColorMap(ColorMap[] maps)
-    	{
-    	if (maps.length == 0)
-    		throw new RuntimeException("CompositeColorMap requires at least one ColorMap");
-    	this.maps = maps; 
-    	}
+        {
+        if (maps.length == 0)
+            throw new RuntimeException("CompositeColorMap requires at least one ColorMap");
+        this.maps = maps; 
+        }
      
     public Color getColor(double level)
         {

@@ -380,38 +380,7 @@ public class TableLoader
         value of the pixel.  The Y dimension is not flipped.  */
     public static int[][] loadPNGFile(InputStream str) throws IOException
         {
-        // read the bytes into a byte array
-        BufferedInputStream stream = new BufferedInputStream(str);
-        ArrayList list = new ArrayList();
-        int count = 0;
-        while(true)
-            {
-            byte[] buffer = new byte[16384 * 16];
-            int len = stream.read(buffer);
-            if (len <= 0) // all done
-                break;
-            else if (len < buffer.length)
-                {
-                byte[] buf2 = new byte[len];
-                System.arraycopy(buffer, 0, buf2, 0, len);
-                buffer = buf2;
-                }
-            count += len;
-            list.add(buffer);
-            }
-        byte[] data = new byte[count];
-        int cur = 0;
-        for(int i = 0; i < list.size(); i++)
-            {
-            byte[] b = (byte[])(list.get(i));
-            System.arraycopy(b, 0, data, cur, b.length);
-            cur += b.length;
-            }
-            
-        // This creates a deprecation warning in 1.7, but it's important so we're keeping it...
-
-        // Next convert the byte array to a buffered image
-        BufferedImage image = ((ToolkitImage)(new ImageIcon(data).getImage())).getBufferedImage();
+        BufferedImage image = javax.imageio.ImageIO.read(str);
         
         // Is the color model something we can use?
         int type = image.getType();

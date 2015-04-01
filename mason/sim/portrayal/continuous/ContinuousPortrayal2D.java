@@ -283,28 +283,28 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
     /** Sets the axes color.   By default the color is blue.  */
     public void setAxesColor(Color val)
-    	{
+        {
         if (val == null) throw new RuntimeException("color must be non-null");
-    	axesColor = val;
-    	}
+        axesColor = val;
+        }
     
     /** Sets the axis line fraction.  This is the width of a stroked line as a fraction of the width (or height) of a unit in the continuous space.  
-    By default the fraction is 1/8.0.    */
+        By default the fraction is 1/8.0.    */
     public void setAxesLineFraction(double val)
-    	{
+        {
         if (val <= 0) throw new RuntimeException("axesLineFraction must be between 0 and 1");
         axesLineFraction = val;
-    	}
+        }
         
-     /** Sets the minimum and maximum width of a border line in pixels. 
-     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    /** Sets the minimum and maximum width of a border line in pixels. 
+        By default, the minimum is 1.0 and the maximum is positive infinity. */
     public void setAxesLineMinMaxWidth(double min, double max)
-    	{
-    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
-    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
-    	axesLineMinWidth = min;
-    	axesLineMaxWidth = max;
-    	}
+        {
+        if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+        if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+        axesLineMinWidth = min;
+        axesLineMaxWidth = max;
+        }
 
     // Indicates the fraction of a cell width or height that will be filled by the stroked line.
     //    The line is actually centered on the border between the two cells: so the fraction is the
@@ -320,59 +320,59 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
     /** Sets the border color.  By default the border is red.  */
     public void setBorderColor(Color val)
-    	{
+        {
         if (val == null) throw new RuntimeException("color must be non-null");
-    	borderColor = val;
-    	}
+        borderColor = val;
+        }
     
     /** Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) 
-    	 of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid
-    	 is being drawn clipped (see Display2D.setClipping(...)), then only HALF of the width of this line will
-    	 be visible (the half that lies within the grid region).  
-    	   By default the fraction is 1/8.0..  */
+        of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid
+        is being drawn clipped (see Display2D.setClipping(...)), then only HALF of the width of this line will
+        be visible (the half that lies within the grid region).  
+        By default the fraction is 1/8.0..  */
     public void setBorderLineFraction(double val)
-    	{
+        {
         if (val <= 0) throw new RuntimeException("borderLineFraction must be between 0 and 1");
-    	borderLineFraction = val;
-    	}
+        borderLineFraction = val;
+        }
     
-     /** Sets the minimum and maximum width of a border line in pixels. 
-     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    /** Sets the minimum and maximum width of a border line in pixels. 
+        By default, the minimum is 1.0 and the maximum is positive infinity. */
     public void setBorderLineMinMaxWidth(double min, double max)
-    	{
-    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
-    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
-    	borderLineMinWidth = min;
-    	borderLineMaxWidth = max;
-    	}
+        {
+        if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+        if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+        borderLineMinWidth = min;
+        borderLineMaxWidth = max;
+        }
     
 
 
     void drawBorder(Graphics2D graphics, double xScale, DrawInfo2D info)
-    	{
-    	/** Draw a border if any */
+        {
+        /** Draw a border if any */
         if (border && graphics != null)
             {
-        	Stroke oldStroke = graphics.getStroke();
-    		Paint oldPaint = graphics.getPaint();
-        	java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
+            Stroke oldStroke = graphics.getStroke();
+            Paint oldPaint = graphics.getPaint();
+            java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
             graphics.setColor(borderColor);
             graphics.setStroke(new BasicStroke((float)Math.min(borderLineMaxWidth, Math.max(borderLineMinWidth, (xScale * borderLineFraction)))));
             d.setRect(info.draw.x, info.draw.y, info.draw.width, info.draw.height);
             graphics.draw(d);
-    	    graphics.setStroke(oldStroke);
-	    	graphics.setPaint(oldPaint);
+            graphics.setStroke(oldStroke);
+            graphics.setPaint(oldPaint);
+            }
         }
-    	}
     
 
     void drawAxes(Graphics2D graphics, double xScale, double yScale, DrawInfo2D info)
-    	{
-    	/** Draw the axes if any */
+        {
+        /** Draw the axes if any */
         if (axes && graphics != null)
             {
-    		Stroke oldStroke = graphics.getStroke();
-    		Paint oldPaint = graphics.getPaint();
+            Stroke oldStroke = graphics.getStroke();
+            Paint oldPaint = graphics.getPaint();
             java.awt.geom.Line2D.Double d = new java.awt.geom.Line2D.Double();
             graphics.setColor(axesColor);
             graphics.setStroke(new BasicStroke((float)Math.min(axesLineMaxWidth, Math.max(axesLineMinWidth, (xScale * axesLineFraction)))));
@@ -389,10 +389,10 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
 
             graphics.draw(new Line2D.Double(info.draw.x + (info.draw.width) / 2.0, info.clip.y, 
                     info.draw.x + (info.draw.width) / 2.0, info.clip.y + info.clip.height));
-    		graphics.setStroke(oldStroke);
-    		graphics.setPaint(oldPaint);
+            graphics.setStroke(oldStroke);
+            graphics.setPaint(oldPaint);
             }
-		}
+        }
 
     }
     

@@ -69,7 +69,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
             int id = event.getID();
             Point2D.Double objPos = ((FieldPortrayal2D)(wrapper.getFieldPortrayal())).getObjectPosition(wrapper.getObject(), range);
 
-			// pressing should be only for hit objects -- selected objects should NOT get priority
+            // pressing should be only for hit objects -- selected objects should NOT get priority
             if (id == MouseEvent.MOUSE_PRESSED && objPos != null && type == SimplePortrayal2D.TYPE_HIT_OBJECT)
                 {
                 originalMousePosition = event.getPoint();     

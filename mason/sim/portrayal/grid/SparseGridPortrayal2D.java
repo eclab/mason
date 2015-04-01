@@ -358,47 +358,47 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
     /** Sets the grid color.   By default the grid is blue.  */
     public void setGridColor(Color val)
-    	{
+        {
         if (val == null) throw new RuntimeException("color must be non-null");
-    	gridColor = val;
-    	}
+        gridColor = val;
+        }
     
     /** Sets the grid modulus. This is the minimum number of grid cells skipped before another grid line is drawn. 
-    	  By default the modulus is 10.  */
+        By default the modulus is 10.  */
     public void setGridModulus(int val)
-    	{
+        {
         if (val <= 0) throw new RuntimeException("modulus must be > 0");
-    	gridModulus = val;
-    	}
+        gridModulus = val;
+        }
 
     /** Sets the grid min spacing.  This is the minimum number of pixels skipped before another grid line is drawn.
-    	The grid modulus is doubled until the grid spacing equals or exceeds the minimum spacing.  
-    	  By default the min spacing is 2.0.  */
+        The grid modulus is doubled until the grid spacing equals or exceeds the minimum spacing.  
+        By default the min spacing is 2.0.  */
     public void setGridMinSpacing(double val)
-    	{
+        {
         if (val < 0 || val > 1) throw new RuntimeException("grid min spacing must be > 0");
         gridMinSpacing = val;
-    	}
+        }
 
     /** Sets the grid line fraction.  This is the width of a stroked line as a fraction of the width (or height) 
-    	 of a grid cell.  Grid lines are drawn centered on the borders between cells.  
-    	   By default the fraction is 1/8.0.  */
+        of a grid cell.  Grid lines are drawn centered on the borders between cells.  
+        By default the fraction is 1/8.0.  */
     public void setGridLineFraction(double val)
-    	{
+        {
         if (val <= 0) throw new RuntimeException("gridLineFraction must be between 0 and 1");
-    	gridLineFraction = val;
-    	}
+        gridLineFraction = val;
+        }
         
-     /** Sets the minimum and maximum width of a grid line in pixels. 
-     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    /** Sets the minimum and maximum width of a grid line in pixels. 
+        By default, the minimum is 1.0 and the maximum is positive infinity. */
     public void setGridLineMinMaxWidth(double min, double max)
-    	{
-    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
-    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
-    	gridLineMinWidth = min;
-    	gridLineMaxWidth = max;
-    	}
-    	
+        {
+        if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+        if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+        gridLineMinWidth = min;
+        gridLineMaxWidth = max;
+        }
+        
     // Indicates the fraction of a cell width or height that will be filled by the stroked line.
     //    The line is actually centered on the border between the two cells: so the fraction is the
     //    total amount filled by the portions of the stroked lines on both sides of the cells.
@@ -413,52 +413,52 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
     /** Sets the border color.  By default the border is red.  */
     public void setBorderColor(Color val)
-    	{
+        {
         if (val == null) throw new RuntimeException("color must be non-null");
-    	borderColor = val;
-    	}
+        borderColor = val;
+        }
     
     /** Sets the border line fraction. This is the width of a stroked line as a fraction of the width (or height) 
-    	 of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid
-    	 is being drawn clipped (see Display2D.setClipping(...)), then only HALF of the width of this line will
-    	 be visible (the half that lies within the grid region).  
-    	   By default the fraction is 1/8.0..  */
+        of a grid cell.  Grid lines are drawn centered on the borders around the grid.  Note that if the grid
+        is being drawn clipped (see Display2D.setClipping(...)), then only HALF of the width of this line will
+        be visible (the half that lies within the grid region).  
+        By default the fraction is 1/8.0..  */
     public void setBorderLineFraction(double val)
-    	{
+        {
         if (val <= 0) throw new RuntimeException("borderLineFraction must be between 0 and 1");
-    	borderLineFraction = val;
-    	}
+        borderLineFraction = val;
+        }
 
-     /** Sets the minimum and maximum width of a border line in pixels. 
-     	By default, the minimum is 1.0 and the maximum is positive infinity. */
+    /** Sets the minimum and maximum width of a border line in pixels. 
+        By default, the minimum is 1.0 and the maximum is positive infinity. */
     public void setBorderLineMinMaxWidth(double min, double max)
-    	{
-    	if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
-    	if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
-    	borderLineMinWidth = min;
-    	borderLineMaxWidth = max;
-    	}
-    	
+        {
+        if (min <= 0) throw new RuntimeException("minimum width must be between >= 0");
+        if (min > max) throw new RuntimeException("maximum width must be >= minimum width");
+        borderLineMinWidth = min;
+        borderLineMaxWidth = max;
+        }
+        
     void drawBorder(Graphics2D graphics, double xScale, DrawInfo2D info)
-    	{
-    	/** Draw a border if any */
+        {
+        /** Draw a border if any */
         if (border && graphics != null)
             {
-        	Stroke oldStroke = graphics.getStroke();
-    		Paint oldPaint = graphics.getPaint();
-        	java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
+            Stroke oldStroke = graphics.getStroke();
+            Paint oldPaint = graphics.getPaint();
+            java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
             graphics.setColor(borderColor);
             graphics.setStroke(new BasicStroke((float)Math.min(borderLineMaxWidth, Math.max(borderLineMinWidth, (xScale * borderLineFraction)))));
             d.setRect(info.draw.x, info.draw.y, info.draw.x + info.draw.width, info.draw.y + info.draw.height);
             graphics.draw(d);
-    	    	graphics.setStroke(oldStroke);
-	    	graphics.setPaint(oldPaint);
+            graphics.setStroke(oldStroke);
+            graphics.setPaint(oldPaint);
+            }
         }
-    	}
     
     void drawGrid(Graphics2D graphics, double xScale, double yScale, int maxX, int maxY, DrawInfo2D info)
-    	{
-    	/** Draw the grid if any */
+        {
+        /** Draw the grid if any */
         if (gridLines && graphics != null)
             {
             // determine the skip
@@ -467,8 +467,8 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
             int skipY = gridModulus;
             while(skipY * yScale < gridMinSpacing) skipY *= 2;
             
-    		Stroke oldStroke = graphics.getStroke();
-    		Paint oldPaint = graphics.getPaint();
+            Stroke oldStroke = graphics.getStroke();
+            Paint oldPaint = graphics.getPaint();
             java.awt.geom.Line2D.Double d = new java.awt.geom.Line2D.Double();
             graphics.setColor(gridColor);
             graphics.setStroke(new BasicStroke((float)Math.min(gridLineMaxWidth, Math.max(gridLineMinWidth, (xScale * gridLineFraction)))));
@@ -484,10 +484,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                 d.setLine(info.draw.x, info.draw.y + yScale * i , info.draw.x + info.draw.width, info.draw.y + yScale * i );
                 graphics.draw(d);
                 }
-	    	graphics.setStroke(oldStroke);
-	    	graphics.setPaint(oldPaint);
+            graphics.setStroke(oldStroke);
+            graphics.setPaint(oldPaint);
             }
-		}
+        }
 
 
     }

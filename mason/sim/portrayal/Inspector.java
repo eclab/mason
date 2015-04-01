@@ -194,13 +194,13 @@ public abstract class Inspector extends JPanel
     public Stoppable reviseStopper(final Stoppable stopper)
         {
         return new Stoppable()
-        	{
-        	public void stop()
-        		{
-        		stopper.stop();
-        		stopped = true;
-				}
-        	};
+            {
+            public void stop()
+                {
+                stopper.stop();
+                stopped = true;
+                }
+            };
         }
 
     /** Disposes the Inspector's frame if it's not a Controller.  Override this
@@ -218,9 +218,9 @@ public abstract class Inspector extends JPanel
             ((JFrame)c).dispose();
         }
 
-	boolean stopped;
-	/** Returns true if this Inspector's Stoppable has been stopped. */
-	public boolean isStopped() { return stopped; }
+    boolean stopped;
+    /** Returns true if this Inspector's Stoppable has been stopped. */
+    public boolean isStopped() { return stopped; }
 
     /** Creates a scrollable frame surrounding the inspector which calls stop()
         on the underlying stopper when closed.  stopper may be null, in which
