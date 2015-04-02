@@ -2112,6 +2112,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         (or on OS X) Command-dragging or two-finger-click-dragging.  By default FALSE. */
     public boolean getMouseChangesOffset() { return mouseChangesOffset; }
     
+    // MovablePortrayal2D sets this when moving an object so we can keep track of it
+    // and direct mouse events to it FIRST.  
+    LocationWrapper movingWrapper = null;
+    
+    /** Declares an object to be the one under control of MovablePortrayal2D. */
+    public void setMovingWrapper(LocationWrapper wrapper) { movingWrapper = wrapper; }
+    
     boolean openHand = false;
     Cursor OPEN_HAND_CURSOR_C = getToolkit().createCustomCursor(OPEN_HAND_CURSOR_P.getImage(), new Point(8,8), "Open Hand");
     Cursor CLOSED_HAND_CURSOR_C = getToolkit().createCustomCursor(CLOSED_HAND_CURSOR_P.getImage(), new Point(8,8), "Closed Hand");
@@ -2176,9 +2183,23 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             }
         
-        // next, let's propagate the event to selected objects
-                
         Point2D.Double p = new Point2D.Double(event.getX(), event.getY());
+
+        // first, propagate the event to any moving wrapper
+        if (movingWrapper != null)
+        	{
+            FieldPortrayal2D f = (FieldPortrayal2D)(movingWrapper.getFieldPortrayal());
+            Object obj = movingWrapper.getObject();
+            SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+            if (portrayal.handleMouseEvent(simulation, this, movingWrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
+                {
+                simulation.controller.refresh();
+                return true;
+                }
+        	}
+        
+        // next, let's propagate the event to any selected objects
+                
         for(int x=0;x<selectedWrappers.size();x++)
             {
             LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
@@ -2192,7 +2213,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 }
             }
                         
-        // next, let' propagate the event to any objects which have been hit.
+        // next, let's propagate the event to any objects which have been hit.
         // We go backwards through the bag lists so top elements are selected first
                 
         Bag[] hitObjects = objectsHitBy(p);

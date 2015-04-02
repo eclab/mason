@@ -2784,3 +2784,7 @@ Version 19
 		for all rectangular grids and for continuous space (which uses
 		axes rather than grid lines).
 	Replaced old TableLoader ToolkitImage code with ImageIO
+	Added MovablePortrayal2D.setSelectsWhenMoved(...), 
+		MovablePortrayal2D.getSelectsWhenMoved(), and
+		Manipulating2D.setMovingWrapper() to enable objects to NOT
+		be selected when they are moved as an option

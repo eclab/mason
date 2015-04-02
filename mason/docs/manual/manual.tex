@@ -6696,7 +6696,7 @@ public NumberTextField scaleField;\\
 
 A Display2D is constructed as follows:
 
-\begin{methods}{\class{sim.display.Display2D Constructor}}
+\begin{methods}{\class{sim.display.Display2D} Constructor}
 \mthd{public Display2D(double width, double height, GUIState guistate)}
 Returns a Display2D connected to the given GUIState.  The viewable region of the Display2D's Inner Display is set to the given width and height in pixels.
 \end{methods}
@@ -7061,7 +7061,7 @@ These six variables are publicly accessible:
 
 Beyond the variables above, DrawInfo2D is mostly constructors:
 
-\begin{methods}{\class{sim.portrayal.DrawInfo2D Constructor}}
+\begin{methods}{\class{sim.portrayal.DrawInfo2D} Constructor}
 \mthd{public DrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip) } Builds a DrawInfo2D from the given draw and clip rectangles.  precise and selected are both set to false and location is set to null.
 \mthd{public DrawInfo2D(DrawInfo2D other, double translateX, double translateY)} Builds a DrawInfo2D with its draw and clip rectangles translated by a certain factor from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
 \mthd{public DrawInfo2D(DrawInfo2D other)} Builds a DrawInfo2D with its draw and clip rectangles copied from another DrawInfo2D.  precise is copied from the other, but selected is set to false and location is set to null.
@@ -7101,7 +7101,7 @@ Note that these elements may change within a given LocationWrapper as the object
 
 The constructor for a LocationWrapper is straightforward:
 
-\begin{methods}{\class{sim.portrayal.LocationWrapper Constructor}}
+\begin{methods}{\class{sim.portrayal.LocationWrapper} Constructor}
 \mthd{LocationWrapper(Object object, Object location, FieldPortrayal fieldPortrayal) } Produces a LocationWrapper with the given object, its location in a field, and the field portrayal for that field.
 \end{methods}
 
@@ -7347,7 +7347,7 @@ Relevant methods:
 
 ValueGridPortrayal2D also has a special constructor which sets the value name:
 
-\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.grid.ValueGridPortrayal2D} Constructor}
 \mthd{public ValueGridPortrayal2D(String valueName) } Constructs the ValueGridPortrayal2D, setting the name used to describe the values in the grid.
 \end{methods}
 
@@ -7408,7 +7408,7 @@ Most Fast Field Portrayals draw their grid of rectangles either by drawing separ
 
 The most common Fast Field Portrayal is \Class{sim.display.grid.FastValueGridPortrayal2D}, which draws grids of numbers as colored rectangles.  
 
-\begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.grid.FastValueGridPortrayal2D} Constructor}
 \mthd{public FastValueGridPortrayal2D(String valueName, boolean immutableField) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid, and whether it's immutable.
 \mthd{public FastValueGridPortrayal2D(String valueName) } Constructs the FastValueGridPortrayal2D, setting the name used to describe the values in the grid.  The field is assumed to not be immutable.
 \mthd{public FastValueGridPortrayal2D(boolean immutable) } Constructs the FastValueGridPortrayal2D, using a default name to describe the values in the grid, and and specifying whether it's immutable.
@@ -7444,7 +7444,7 @@ Once they're numbers, ObjectGrid2D uses exactly the same Color Map methods as Fa
 
 FastObjectGridPortrayal2D has the following constructors:
 
-\begin{methods}{\class{sim.portrayal.grid.FastObjectGridPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.grid.FastObjectGridPortrayal2D} Constructor}
 \mthd{public FastObjectGridPortrayal2D(boolean immutable) } Constructs the FastObjectGridPortrayal2D, specifying whether it's immutable.
 \mthd{public FastValueGridPortrayal2D() } Constructs the FastObjectGridPortrayal2D.  The field is assumed to not be immutable.
 \end{methods}
@@ -7481,7 +7481,7 @@ The problem here is that NetworkPortrayal2D thus needs {\it two} fields: the Net
 
 A SpatialNetwork2D is constructed like this:
 
-\begin{methods}{\class{sim.portrayal.network.SpatialNetwork2D Constructor}}
+\begin{methods}{\class{sim.portrayal.network.SpatialNetwork2D} Constructor}
 \mthd{public SpatialNetwork2D(SparseField2D field, Network network) } Constructs the field with the given sparse field (either SparseGrid2D or Continuous2D) and a Network.
 \end{methods}
 
@@ -7504,7 +7504,7 @@ public Point2D.Double secondPoint;
 The EdgeDrawInfo2D class has several constructors which extend the standard DrawInfo2D constructors:
 
 
-\begin{methods}{\class{sim.portrayal.EdgeDrawInfo2D Constructor}}
+\begin{methods}{\class{sim.portrayal.EdgeDrawInfo2D} Constructor}
 \mthd{public EdgeDrawInfo2D(GUIState gui, FieldPortrayal fieldPortrayal, RectangularShape draw, RectangularShape clip,}
 \hsp{\fill}{\sf Point2D.Double other) } \\
 Builds a DrawInfo2D from the given draw and clip rectangles.  precise and selected are both set to false and location is set to null.   The second point is provided by ``other''.
@@ -8023,7 +8023,7 @@ These classes all subclass from the simple abstract class \Class{sim.portrayal.s
 
 Let's start with the first three.  RectanglePortrayal2D, OvalPortrayal2D, and HexagonalPortrayal2D all draw their objects either as filled shapes or as outline shapes with a 1-point (or 1-pixel) outline.  They have similar constructors.  Here are the constructors for RectanglePortrayal2D:
 
-\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.RectanglePortrayal2D} Constructor}
 \mthd{public RectanglePortrayal2D() } Creates a portrayal which portrays as a gray filled rectangle of scale 1.0.
 \mthd{public RectanglePortrayal2D(Paint paint) } Creates a portrayal which portrays as a filled rectangle of scale 1.0 and of the given Paint.
 \mthd{public RectanglePortrayal2D(double scale) } Creates a portrayal which portrays as a gray filled rectangle of the given scale.
@@ -8053,7 +8053,7 @@ Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit
 
 \paragraph{Arbitrary Shapes}  ShapePortrayal2D is much like the above portrayals, but has more functionality for drawing arbitrary shapes.  You specify the shape either as a \Class{java.awt.geom.Shape} object or as two arrays of values which represent the \(x\) and \(y\) coordinates for various points in a closed polygon.  This makes for a lot of constructors:
 
-\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.ShapePortrayal2D} Constructor}
 \mthd{public ShapePortrayal2D(Shape shape) } Creates a portrayal which portrays as a gray filled Shape of scale 1.0.
 \mthd{public ShapePortrayal2D(Shape shape, Paint paint) } Creates a portrayal which portrays as a filled Shape of scale 1.0 and of the given Paint.
 \mthd{public ShapePortrayal2D(Shape shape, double scale) } Creates a portrayal which portrays as a gray filled Shape of the given scale.
@@ -8072,7 +8072,7 @@ Note that HexagonalPortrayal2D is a little nonstandard: its hexagon does not fit
 
 \begin{wrapfigure}{r}[0in]{2.9in}
 \vspace{-1em}\hfill\includegraphics[width=2.8in]{2DShapes.pdf}\vspace{-1em}\end{wrapfigure}
-Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
+Besides letting you define shapes via Java2D shape objects and polygon arrays, ShapePortrayal2D also has some built-in shape arrays you can pass to its constructor, which define squares, diamonds, triangles in various orientations, hexagons in different orientations, octagons, bowties, and hourglasses.  The various built-in shapes are shown at right.  Note that all the default shapes are designed to fit within the same size square (hence the ``hexagon'' and ``rotated hexagon'' are kind of squished).  If you'd like an accurate hexagon, use HexagonalPortrayal2D.  Also note that ``square'' is somewhat redundant given that you can make the same with RectanglePortrayal2D.
 
 Here is an example of creating a ShapePortrayal2D with a left triangle default shape:
 
@@ -8096,7 +8096,7 @@ ImagePortrayal2D is a subclass of RectanglePortrayal2D, so it has  the \variable
 
 ImagePortrayal2D has a number of unusual constructors, so it's worthwhile explaining them here.  
 
-\begin{methods}{\class{sim.portrayal.simple.ImagePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.ImagePortrayal2D} Constructor}
 \mthd{public ImagePortrayal(javax.swing.ImageIcon icon) } Creates an ImagePortrayal at a scale of 1.0, and using the image from the provided ImageIcon.
 \mthd{public ImagePortrayal(javax.swing.ImageIcon icon, double scale) } Creates an ImagePortrayal at the provided scale, and using the image from the provided ImageIcon.
 \mthd{public ImagePortrayal(Class cls, String resourceName) } Creates an ImagePortrayal by loading an image resource of the name {\it resourceName}, which must be located right next to the class file (``.class'') of the given class.  That is, uses \method{getClass().getResource(...)}.  The scale is 1.0.
@@ -8149,7 +8149,7 @@ The ``paint'' of the edge is {\it fromPaint}.  When two paints are required (as 
 
 You can set all these in a constructor:
 
-\begin{methods}{\class{sim.portrayal.network.SimpleEdgePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.network.SimpleEdgePortrayal2D} Constructor}
 \mthd{public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint, Font labelFont) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, label paint, and label font.  If the label paint is \variable{null}, no label will be drawn.
 \mthd{public SimpleEdgePortrayal2D(Paint fromPaint, Paint toPaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given from-paint, to-paint, and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
 \mthd{public SimpleEdgePortrayal2D(Paint edgePaint, Paint labelPaint) } Creates a SimpleEdgePortrayal with the given edge paint (used for both the from-paint and the to-paint) and label paint.  A default font will be used for the label.  If the label paint is \variable{null}, no label will be drawn.
@@ -8256,11 +8256,6 @@ If you'd like to (say) change the edge {\it color} to reflect a weight or label,
 \end{alltt}}
 
 \subsection{Wrapper Simple Portrayals}
-\label{sim.portrayal.simple.FacetedPortrayal2D}
-\label{sim.portrayal.simple.TransformedPortrayal2D}
-\label{sim.portrayal.simple.TrailedPortrayal2D}
-\label{sim.portrayal.simple.MovablePortrayal2D}
-\label{sim.portrayal.simple.AdjustablePortrayal2D}
 
 \sidebar{I notice all these names are gerunds.}{Yep.  Wrapper portrayals are given adjectives describing their added functionality, and other simple portrayals are given nouns as names.}
 MASON provides a whole bunch of {\bf wrapper portrayals} which greatly enhance your 2D Simple Portrayal's capabilities without you having to write any more code.  These portrayals can wrap around another Simple Portrayal to enhance it: and you can wrap a wrapper portrayal in another wrapper portrayal to stack on the enhancement fun.  
@@ -8268,17 +8263,7 @@ MASON provides a whole bunch of {\bf wrapper portrayals} which greatly enhance y
 What do we mean by ``wrapping around''?  Let's say you wished to add a label to a RectanglePortrayal2D which said ``Yo''.  You could write:
 
 {\footnotesize\begin{alltt}
-   SimplePortrayal myPortrayal = new LabelledPortrayal2D(
-       new RectanglePortrayal2D()
-          \{
-          public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
-              \{
-              Edge edge = (Edge) object;
-              if (edge.info == null) \{ toPaint = fromPaint = Color.red; \}
-              else \{ toPaint = fromPaint = Color.blue; \}
-              super.draw(object, graphics, info);
-              \}
-          \});
+   SimplePortrayal myPortrayal = new LabelledPortrayal2D(new RectanglePortrayal2D(), "Yo");
 \end{alltt}}
 
 Here are the wrapper portrayals presently provided:
@@ -8333,7 +8318,7 @@ The baseline (the bottom of the letters) of the text is drawn relative to this p
 
 The constructors should now be clear:
 
-\begin{methods}{\class{sim.portrayal.simple.LabelledPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.LabelledPortrayal2D} Constructor}
 \mthd{public LabelledPortrayal2D(SimplePortrayal2D child, String label)}  Creates a LabelledPortrayal2D which always draws its label at the default location, color and font, and left-alignment.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{LabelledPortrayal2D(SimplePortrayal2D child, String label, Paint paint, boolean onlyLabelWhenSelected)}  Creates a LabelledPortrayal2D with default location values, left-aligned, with the given paint and label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{public LabelledPortrayal2D(SimplePortrayal2D child, double scaley, String label, Paint paint, boolean onlyLabelWhenSelected)} Creates a LabelledPortrayal2D with the given child, Y scale value to specify the location of the label (plus a 10 pixel y offset), left-aligned, and providing the text paint, label, and whether or not to only draw the label when the object has been selected.  If the child is null, then LabelledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
@@ -8377,7 +8362,7 @@ MASON also provides a class for doing simple highlighting as well: \Class{sim.po
 
 The constructors should be straightforward:
 
-\begin{methods}{\class{sim.portrayal.simple.CircledPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.CircledPortrayal2D} Constructor}
 \mthd{public CircledPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and the size of the ring in both pixel offset and model scale.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{public CircledPortrayal2D(SimplePortrayal2D child, Paint paint, boolean onlyCircleWhenSelected)}  Creates a CircledPortrayal2D with the given child, and default size settings.  The ring is drawn with the given paint, and you can specify if it is to only be drawn when the object is selected.  If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{public CircledPortrayal2D(SimplePortrayal2D child)}  Creates a CircledPortrayal2D with the given child, and default settings for the ring size and paint (blue).  The ring is always shown.   If the child is null, then CircledPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
@@ -8444,7 +8429,7 @@ One thing to be aware of is that Oriented2D responds to hit-testing on its orien
 
 OrientedPortrayal2D's constructors:
 
-\begin{methods}{\class{sim.portrayal.simple.OrientedPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.OrientedPortrayal2D} Constructor}
 \mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint, int shape)}  Creates a OrientedPortrayal2D with the given child, shape, shape paint, and the size of the shape in both pixel offset and model scale.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale, Paint paint)}  Creates a OrientedPortrayal2D with the given child, shape paint, and the size of the shape in both pixel offset and model scale.  The shape is a line.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
 \mthd{public OrientedPortrayal2D(SimplePortrayal2D child, int offset, double scale)}  Creates a OrientedPortrayal2D with the given child, and the size of the shape in both pixel offset and model scale.  The shape is a line, and drawn in red.  If the child is null, then OrientedPortrayal2D assumes the object can portray itself and uses it as the (effective) child.
@@ -8478,7 +8463,7 @@ OrientedPortrayal2D has certain important methods needed to set features:
 
 FacetedPortrayal2D is different than other wrapper portrayals because it takes more than one SimplePortrayal.  To create a FacetedPortrayal2D you need to provide all those children, plus whether you'd like to portray with {\it all} of them or with a particular one depending on the current object status.  
 
-\begin{methods}{\class{sim.portrayal.simple.FacetedPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.FacetedPortrayal2D} Constructor}
 \mthd{public FacetedPortrayal2D(SimplePortrayal2D[] children)}  Creates a FacetedPortrayal2D with the given children, set up to select one at a time based on the current object value.
 \mthd{public FacetedPortrayal2D(SimplePortrayal2D[] children, boolean portrayAllChildren)}  Creates a FacetedPortrayal2D with the given children, and whether or not to portray all of them, or rather one selected at a time based on the current object value.
 \end{methods}
@@ -8511,7 +8496,7 @@ A note about AffineTransforms: they change {\it everything}: the text, the thick
 
 At any rate, the constructors:
 
-\begin{methods}{\class{sim.portrayal.simple.TransformedPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.TransformedPortrayal2D} Constructor}
 \mthd{public TransformedPortrayal2D(SimplePortrayal2D child, AffineTransform transform)}  Creates a TransformedPortrayal2D with the given child and affine transform.
 \end{methods}
 
@@ -8533,11 +8518,19 @@ Always returns false: no mouse events are passed its child.
 
 The wrapper portrayals \Class{sim.portrayal.simple.MovablePortrayal2D} and \Class{sim.portrayal.simple.AdjustablePortrayal2D} make it easy to move and make simple adjustments (rotation, size) to an underlying object in a field.  
 
-Let's start with MovablePortrayal2D.  If you wrap a SimplePortrayal2D with this object, the user will be able to move the object by dragging it with the mouse.  When you move an object, you also select it (and thus deselect other objects).  If you use a MovablePortrayal2D in conjunction with an AdjustablePortrayal2D (discussed next), you must wrap the MovablePortrayal2D inside the AdjustablePortrayal2D, not the other way around.  MovablePortrayal takes a single, simple Constructor: 
+Let's start with MovablePortrayal2D.  If you wrap a SimplePortrayal2D with this object, the user will be able to move the object by dragging it with the mouse.  If you use a MovablePortrayal2D in conjunction with an AdjustablePortrayal2D (discussed next), you must wrap the MovablePortrayal2D inside the AdjustablePortrayal2D, not the other way around.  MovablePortrayal takes a single, simple Constructor: 
 
-\begin{methods}{\class{sim.portrayal.simple.MovablePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.MovablePortrayal2D} Constructor}
 \mthd{public MovablePortrayal2D(SimplePortrayal2D child)}  Creates a MovablePortrayal2D with the given child.
 \end{methods}
+
+Normally MovablePortrayal2D sets an object to be selected before it moves it, deselecting other objects.  You can turn off this behavior by calling \method{setSelectsWhenMoved(false)}.
+
+\begin{methods}{\class{sim.portrayal.simple.MovablePortrayal2D}}
+\mthd{public boolean getSelectsWhenMoved()}  Returns whether the MovablePortrayal2D selects the object when it is being moved. 
+\mthd{public void setSelectsWhenMoved(boolean val)}  Sets whether the MovablePortrayal2D selects the object when it is being moved. 
+\end{methods}
+
 
 How do you {\it prevent} objects from being moved?  Ordinarily, without a MovablePortrayal2D the user can't move an object by dragging it.  But consider the following example.  All the objects in your field, even though they're different classes, use the same SimplePortrayal2D.  You have wrapped this in a MovablePortrayal2D and installed the MovablePortrayal2D with \method{setPortrayalForAll()}.  So now all of your objects are movable.  But what if you didn't want some of them movable?
 
@@ -8551,7 +8544,7 @@ The \class{sim.portrayal.simple.AdjustablePortrayal2D} wrapper portrayal gives t
 
 Like MovablePortrayal2D, AdjustablePortrayal2D has a single straightforward constructor:
 
-\begin{methods}{\class{sim.portrayal.simple.AdjustablePortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.AdjustablePortrayal2D} Constructor}
 \mthd{public AdjustablePortrayal2D(SimplePortrayal2D child)}  Creates a AdjustablePortrayal2D with the given child.
 \end{methods}
 
@@ -8637,7 +8630,7 @@ TrailDrawInfo2D is a subclass of \class{sim.portrayal.network.EdgeDrawInfo2D}, m
 
 Armed with this knowledge, you should now be able to understand the TrailedPortrayal2D constructors:
 
-\begin{methods}{\class{sim.portrayal.simple.TrailedPortrayal2D Constructor}}
+\begin{methods}{\class{sim.portrayal.simple.TrailedPortrayal2D} Constructor}
 \mthd{public TrailedPortrayal2D(GUIState state, SimplePortrayal2D child, FieldPortrayal2D fieldPortrayal, double length,}
 \rule{0pt}{0pt}\hspace{\fill}{\sf Color minColor, Color maxColor)}\\
 Creates a TrailedPortrayal2D with the given child and ``trail'' Field Portrayal.  The length of the trail is provided, as well as the min color (at the ``start'' of the trail, near the object) and the max color (at the far end of the trail).  TrailedPortrayal2D will draw trail segments using lines.
@@ -8697,11 +8690,11 @@ Drawing is expensive, and so Field Portrayals try hard to avoid drawing objects 
 \mthd{public void draw(Object object, Graphics2D graphics, DrawInfo2D info) } Draws the Object on-screen.  The object should be centered at \(\langle\)\variable{info.draw.x, info.draw.y}\(\rangle\).  One unit of width in the model's world is equivalent to \variable{info.draw.width} pixels, and likewise one unit of height in the model's world is equivalent to \variable{info.draw.height} pixels.  \variable{info.clip} provides the clip rectangle, in pixels, of objects which must be drawn: if the object does not fall within this rectangle, it need not be drawn.  If \variable{info.precise} is true, then the object should be drawn using high-quality floating-point operations; else (potentially faster) integer operations will suffice.   If \variable{info.selected} is true, the object should assume it has been ``selected'' and draw itself differently accordingly if it feels the need.  \variable{object} provides the object in question: and \variable{info.fieldPortrayal} provides the field portrayal.  In some cases, \variable{info.location} may provide the location of the object in the field, though this is optional and should not be relied on.
 \end{methods}
 
-\sidebar{What are all these draw and clip rectangles?}{For a refresher, see Section \ref{sim.portrayal.DrawInfo2D}.}MASON assumes that most objects are drawn roughly as \(1\times 1\) in model coordinates: thus when an object draws itself on-screen, it'll usually be drawn to approximately fill the rectangle from  \(\langle\)\variable{info.draw.x, info.draw.y}\(\rangle\) to  \(\langle\)\variable{info.draw.x \(+\) info.draw.width, info.draw.y \(+\) info.draw.height}\(\rangle\).  If this rectangle doesn't intersect with the clip rectangle (in \variable{info.clip}), then the Field Portrayal will likely not even bother to ask the SimplePortrayal2D to draw itself.
+\sidebar{What are all these draw and clip rectangles?}{For a refresher, see Section \ref{sim.portrayal.DrawInfo2D}.}MASON assumes that most objects are drawn roughly as \(1\times 1\) in model coordinates: thus when an object draws itself on-screen, it'll usually be drawn to approximately fill the rectangle from  \(\langle\)\variable{info.draw.x \(-\) info.draw.width/2, info.draw.y \(-\) info.draw.height/2}\(\rangle\) to  \(\langle\)\variable{info.draw.x \(+\) info.draw.width/2, info.draw.y \(+\) info.draw.height/2}\(\rangle\).  If this rectangle doesn't intersect with the clip rectangle (in \variable{info.clip}), then the Field Portrayal will likely not even bother to ask the SimplePortrayal2D to draw itself.
 
 If drawing is really expensive, and the object's shape is unusual, SimplePortrayal2D can do more sophisticated clip testing once its \method{draw(...)} method is called to determine if the object is {\it really} intersecting with the \variable{info.clip} rectangle.  This is rare though.
 
-When you're asked to draw, you're given a \class{java.awt.Graphics2D} class to draw with.  Most MASON examples draw with Java AWT (integer) graphics primitives when they can, and Java2D (floating point) graphics primitives when they must.  This is because in most cases AWT is still faster than Java2D in many implementations.  This is changing though: it might be enough at this point for you to just always draw with Java2D
+When you're asked to draw, you're given a \class{java.awt.Graphics2D} class to draw with.  Most MASON examples draw with Java AWT (integer) graphics primitives when they can, and Java2D (floating point) graphics primitives when they must.  This is because in most cases AWT is still faster than Java2D in many implementations.  This is changing though: it might be enough at this point for you to just always draw with Java2D.
 
 When {\it must} you draw with Java2D?  When the DrawInfo2D's \variable{precise} variable is set to \variable{true}.  This is often the case if MASON is asking you to draw not to the screen but in fact to a high-quality vector PDF which requires floating point accuracy.
 
@@ -8712,7 +8705,7 @@ Ellipse2D.Double ellipse = new Ellipse2D.Double();
 
 public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
     graphics.setColor(Color.RED);
-    if (info.precise) {
+    if (!info.precise) {
         graphics.fillOval((int)(info.draw.x - info.draw.width / 2), (int)(info.draw.y - info.draw.height / 4),
                           (int)(info.draw.width), (int)(info.draw.height / 2));
     }
@@ -8769,7 +8762,7 @@ Ellipse2D.Double ellipse = new Ellipse2D.Double();
 public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
     if (info.selected) graphics.setColor(Color.RED);
     else graphics.setColor(Color.BLUE);
-    if (info.precise) {
+    if (!info.precise) {
         graphics.fillOval((int)(info.draw.x - info.draw.width / 2), (int)(info.draw.y - info.draw.height / 4),
                           (int)(info.draw.width), (int)(info.draw.height / 2));
     }
@@ -8791,7 +8784,7 @@ public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
     synchronized(info.gui.state.schedule) { myobj.iHaveBeenSelected(info.selected); }
     
     graphics.setColor(Color.RED);
-    if (info.precise) {
+    if (!info.precise) {
         graphics.fillOval((int)(info.draw.x - info.draw.width / 2), (int)(info.draw.y - info.draw.height / 4),
                           (int)(info.draw.width), (int)(info.draw.height / 2));
     }
@@ -8828,7 +8821,7 @@ It's rare to need to handle a mouse event on your own: this is the domain of cla
 
 \begin{methods}{\class{sim.portrayal.SimplePortrayal2D}}
 \mthd{public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, LocationWrapper wrapper,}\hsp{\fill}{\sf MouseEvent event, DrawInfo2D fieldPortrayalDrawInfo, int type)}\\
-Handles the given event, and either returns true (meaning that the event was handled and consumed) or false.  Many mouse events are routable, a notable exception being scroll wheel events.  Mouse events are sent at various times, indicated by {\it type}.  If type is \variable{sim.portrayal.SimplePortraya2D.TYPE\_SELECTED\_OBJECT}, then the mouse event is being called because it is a selected object, even if it's not being hit by the mouse.  If the type is \variable{sim.portrayal.SimplePortraya2D.TYPE\_HIT\_OBJECT} then the object is being sent a mouse event because it was hit by the mouse.  The GUIState is provided, plus a Manipulating2D (likely a Display of some sort).  The LocationWrapper provides the object in question, the field portrayal, and location of the object.  The DrawInfo2D is the one provided to the field portrayal, not the simple portrayal: its draw field indicates the region of the field.
+Handles the given event, and either returns true (meaning that the event was handled and consumed) or false.  Many mouse events are routable, a notable exception being scroll wheel events.  Mouse events are sent at various times, indicated by {\it type}.  If type is \variable{sim.portrayal.SimplePortraya2D.TYPE\_SELECTED\_OBJECT}, then the mouse event is being called because it is a selected object, even if it's not being hit by the mouse.  If the type is \variable{sim.portrayal.SimplePortrayal2D.TYPE\_HIT\_OBJECT} then the object is being sent a mouse event because it was hit by the mouse.  The GUIState is provided, plus a Manipulating2D (likely a Display of some sort).  The LocationWrapper provides the object in question, the field portrayal, and location of the object.  The DrawInfo2D is the one provided to the field portrayal, not the simple portrayal: its draw field indicates the region of the field.
 \end{methods}
 
 So let's say you'd like to have your SimplePortrayal2D print ``ouch!'' every time it's moused over.  You could do it this way:
@@ -8854,14 +8847,16 @@ public boolean handleMouseEvent(GUIState gui, Manipulating2D manipulating, Locat
  
 Note that you need to lock on the schedule: unlike various other operations, mouse events can and do occur right in the middle of the period of time that the model thread is in control of the model.  If you don't lock on the schedule, you run the risk of a race condition as you access the model at the same time the model thread is messing around with it.
 
-Certain SimplePortrayals2D wrapper classes which use the handleMouseEvent method also need to query the Display2D about certain things.  This is done through the \Class{sim.display.Manipulating2D} interface.  At present this interface provides a single method:
+Certain SimplePortrayals2D wrapper classes which use the handleMouseEvent method also need to query the Display2D about certain things.  This is done through the \Class{sim.display.Manipulating2D} interface.  At present this interface provides two methods:
 
 \begin{methods}{\class{sim.display.Manipulating2D}}
 \mthd{public void performSelection(LocationWrapper wrapper)}
 Selects the Object represented by the given LocationWrapper by calling the relevant FieldPortrayal's \method{setSelected(...)} method
+\mthd{public void setMovingWrapper(LocationWrapper wrapper)}
+Declares a wrapper to be the one that is being moved.  This causes the Display2D to {\it first} attempt to send mouse events to that wrapper, and only send to other wrappers if that one does not respond.  Setting the wrapper to null clears it.
 \end{methods}
 
-
+Both of these methods exist primarily to assist \class{sim.portrayal.simple.MovablePortrayal2D}.
 
 
 \chapter{Inspectors}
@@ -9614,7 +9609,7 @@ Figure \ref{java3dlayout} shows these objects in relationship to others in MASON
 
 Okay, enough with the Java3D for now.  A Display2D is constructed identically to a Display2D:
 
-\begin{methods}{\class{sim.display.Display3D Constructor}}
+\begin{methods}{\class{sim.display.Display3D} Constructor}
 \mthd{public Display3D(double width, double height, GUIState guistate)}
 Returns a Display3D connected to the given GUIState.  The viewable region of the Display3D's Canvas is set to the given width and height in pixels.
 \end{methods}

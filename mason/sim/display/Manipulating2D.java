@@ -22,4 +22,5 @@ public interface Manipulating2D
     {
     /** Selects the following object, deselecting other selected objects. */
     public void performSelection(LocationWrapper wrapper);
+    public void setMovingWrapper(LocationWrapper wrapper);
     }
