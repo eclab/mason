@@ -2788,3 +2788,4 @@ Version 19
 		MovablePortrayal2D.getSelectsWhenMoved(), and
 		Manipulating2D.setMovingWrapper() to enable objects to NOT
 		be selected when they are moved as an option
+	Spelling error in Display2D.detachAll()

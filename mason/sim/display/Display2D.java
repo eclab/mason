@@ -1254,7 +1254,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         }
         
     /** Detatches all portrayals from the Display2D. */
-    public ArrayList detatchAll()
+    public ArrayList detachAll()
         {
         ArrayList old = portrayals;
         popup.removeAll();
