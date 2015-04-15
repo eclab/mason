@@ -2789,3 +2789,6 @@ Version 19
 		Manipulating2D.setMovingWrapper() to enable objects to NOT
 		be selected when they are moved as an option
 	Spelling error in Display2D.detachAll()
+	Tweak to SimpleProperties to allow recovery from a property generation
+		failure on a method.
+	Added instructions in manual for interfacing with Apache Math

@@ -211,11 +211,18 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     desMethods.add(null);
                     nameMethods.add(null);
                     }
+                }
+            catch (Exception e)         // just in case of RuntimeExceptions
+                {
+                e.printStackTrace();
+                }
 
                 // handle general properties
                 Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
                 for(int x = 0 ; x < m.length; x++)
                     {
+                    try  // we handle exceptions here by going to the next method and trying that one.
+                    	{
                     if (!("get".equals(m[x].getName())) && !("is".equals(m[x].getName())) &&  // "get()" and "is()" aren't properties
                         (m[x].getName().startsWith("get") || m[x].getName().startsWith("is"))) // corrrect syntax?
                         {
@@ -276,12 +283,12 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                 }
                             }
                         }
+                        }
+                    catch(Exception e1)
+                    	{
+                    	e1.printStackTrace();  // try again though
+                    	}
                     }
-                }
-            catch (Exception e)         // just in case of RuntimeExceptions
-                {
-                e.printStackTrace();
-                }
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare

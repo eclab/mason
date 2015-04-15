@@ -2680,7 +2680,7 @@ MASON has a large number of utility classes which can be used independently of t
 
 This chapter concentrates solely on \package{ec.util}, \package{sim.util}, and \package{sim.util.distribution}.  Many classes in the core simulation code rely on these packages (well the first two anyway), so it's important to cover them now.  The remaining packages will be covered in Chapter \ref{guiandmediautilities}.
 
-\section{The Random Number Generator and Distributions}
+\section{Random Number Generation}
 \label{ec.util}
 \label{ec.util.MersenneTwisterFast}
 \label{sim.util.distribution}
@@ -2727,6 +2727,7 @@ MersenneTwisterFast has identical methods to \class{java.util.Random}, plus one 
 \mthd{public static void main(String[] args)} Performs a test of the code.
 \end{methods}
 
+\subsection{Distributions with COLT}
 The MersenneTwisterFast class, like \class{java.util.Random}, provides random numbers from only two floating-point distributions: uniform and Gaussian.  What if you need numbers drawn from other distributions?  MASON provides a variety of distributions in the \Package{sim.util.distribution} package.  This package is a modified version of the distributions from the COLT/JET library.\footnote{http:/\!/acs.lbl.gov/software/colt/}  The modifications remove certain misfeatures of the library which make it difficult to serialize, unify a few utility classes, and most importantly, replace COLT's random number generator data types with Mersenne Twister.  You can just plug in your model's MersenneTwisterFast random number generator and pop out random numbers under various distributions.
 
 Because it's separate from the MASON core proper (and a bit new), I don't describe this package in detail, but it should be fairly straightforward.  {\bf Warning:} the port of these classes from COLT to MASON is new and has not been tested much.
@@ -2772,6 +2773,40 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 \item Zipf
 \end{itemize}
 
+\subsection{Distributions with Apache Commons Math}
+
+An alternative is to use Apache Commons Math.\footnote{http://commons.apache.org/proper/commons-math/} Apache Commons has its own special interface for random number generators called \class{org.apache.commons.math3.random.RandomGenerator}.  To use its distributions, we must create a wrapper around MersenneTwisterFast which allows us to implement that interface.  It's easy:
+
+\begin{verbatim}
+public class MTFApache implements org.apache.commons.math3.random.RandomGenerator {
+    ec.util.MersenneTwisterFast random;
+
+    public MTFApache(ec.util.MersenneTwisterFast random) { this.random = random; }
+    
+    public boolean nextBoolean() { return random.nextBoolean(); }
+    public void nextBytes(byte[] bytes) { random.nextBytes(bytes); }
+    public double nextDouble() { return random.nextDouble(); }
+    public float nextFloat() { return random.nextFloat(); }
+    public double nextGaussian() { return random.nextGaussian(); }
+    public int nextInt() { return random.nextInt(); }
+    public int nextInt(int n) { return random.nextInt(n); }
+    public long nextLong() { return random.nextLong(); }
+    public void setSeed(int seed) { random.setSeed(seed); }
+    public void setSeed(int[] array) { random.setSeed(array); }
+    public void setSeed(long seed) { random.setSeed(seed); }
+    }
+\end{verbatim}
+
+Armed with this class, we can now easily access distributions.  For example, we can say:
+
+\begin{verbatim}
+import org.apache.commons.math3.distribution.*;
+
+LogNormalDistribution dist = new LogNormalDistribution(new MTFApache(state.random), 1.0, 1.0);  
+System.err.println("Random LogNormal number: " + dist.sample());
+\end{verbatim}
+
+Note that Apache Commons Math distributions have alternative constructors which don't require that you pass in a random number generator\,---\,they build one internally.  This is a {\it very bad idea}, and whoever came up with this should be smacked.  {\bf Always pass in MersenneTwisterFast in a wrapper as the random number generator for your Apache Commons Math distribution.}
 
 \section{Coordinate Wrapper Classes}
 
