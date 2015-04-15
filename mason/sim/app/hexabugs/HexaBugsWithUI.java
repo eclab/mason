@@ -69,7 +69,7 @@ public class HexaBugsWithUI extends GUIState
                 }
                 
             // reattach the portrayals
-            display.detatchAll();
+            display.detachAll();
             display.attach(currentHeatPortrayal,"Heat");
             display.attach(bugPortrayal,"Bugs");
 
