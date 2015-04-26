@@ -3609,7 +3609,7 @@ Next various utility methods:
 
 \begin{methods}{\class{sim.engine.SimState}}
 \mthd{public void setSeed(long seed)}  Sets the job's current random number seed, replaces the random number generator with a new one using the seed.  This is typically only called from the GUI. 
-\mthd{public static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)}  Primes the random number generator by calling its \method{nextInt()} method 1249 times.  See Section \label{ec.util.MersenneTwisterFast}) for why this is helpful.  Ordinarily you'd never call this method, but \method{SimState.start()} calls it once.  If you call \method{setSeed(...)} in the middle of your simulation, it's a good idea to call \method{primeGenerator(...)}, though not a disaster if you neglect to.
+\mthd{public static MersenneTwisterFast primeGenerator(MersenneTwisterFast generator)}  Primes the random number generator by calling its \method{nextInt()} method 1249 times.  See Section \ref{ec.util.MersenneTwisterFast}) for why this is helpful.  Ordinarily you'd never call this method, but \method{SimState.start()} calls it once.  If you call \method{setSeed(...)} in the middle of your simulation, it's a good idea to call \method{primeGenerator(...)}, though not a disaster if you neglect to.
 \mthd{public long seed()}  Returns the job's current random number seed.  This is typically only called from the GUI.
 \mthd{public void setJob(long job)}  Sets the job number.
 \mthd{public long job()}  Returns the job number.
@@ -4148,6 +4148,145 @@ The ParallelSequence makes any of these options easy with the following methods:
 \end{methods}
 
 See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of how to use ParallelSequence to double the speed of a simulation.
+
+\paragraph{\Class{sim.engine.Repeat}}  This is class is a generalization of the \method{scheduleRepeating(...} method found in the Schedule (in fact the Schedule uses a simple version of this class to implement that method).
+
+If you need to schedule an agent repeating for a consistent interval and for a long time, \method{scheduleRepeating(...)} will do the trick.  If your repetition needs are more complex, you can use \class{sim.engine.Repeat} as a convenience class.  And if that doesn't suffice, you can always create a Steppable which, when stepped, first reschedules itself in the schedule as you see fit, and then does its thing.
+
+Here's how \class{sim.engine.Repeat} works.  
+
+   Repeat takes a subsidiary Steppable, and each time the Repeat has its \method{step()} called, it first
+   reschedules itself in the Schedule, then calls \method{step()} on the subsidiary Steppable.
+   Repeat defines an abstract method, \method{getNextTime(...)}, which you must override to specify
+   the next timestep to repeat.  Repeats are \class{sim.engine.Stoppable}: if you call \method{stop()} on a Repeat that
+   is presently scheduled, it will not call \method{step()} on its subsidiary Steppable and will instead
+   drop out of the Schedule instead of rescheduling itself any more.
+      
+   Let's say that you want to repeat on timesteps 0, 1, 3, 4, 6, 7, 9, 10, etc., that is,
+   jump 1, then jump 2, then jump 1, then 2, etc.  The ordering will always be 1. 
+   You could create a Repeated steppable as follows:
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+Repeat repeat = new Repeat(step, 1)
+   {
+   double jump = 2;
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      jump = (jump == 1 ? 2 : 1);
+      return currentTime + jump;
+      }
+   };
+schedule.scheduleOnce(0.0, 1, repeat);
+\end{verbatim}
+}
+
+Repeat can also handle random rescheduling.  For example, suppose you wanted to repeat
+   at the current time, plus 1.0, plus a random number chosen from a power law distribution
+   with an alpha of 3.0 and a cutoff of 0.5.  Starting at timestep 0.0, ordering 1.
+   You could do this:
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+Repeat repeat = new Repeat(step, 1)
+   {
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+      }
+   };
+schedule.scheduleOnce(0.0, 1, repeat);
+\end{verbatim}
+}
+   
+Like RandomSequence, Repeat might
+   be used in a multithreaded environment (inside a \class{sim.engine.ParallelSequence}, for example).  In this
+   situation, you need to synchronize on the random number generator inside the \method{getNextTime()}
+   method like this:
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+Repeat repeat = new Repeat(step, 1)
+   {
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      synchronized(state.random)
+         { 
+         return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+         }
+      }
+   };
+schedule.scheduleOnce(0.0, 1, repeat);
+\end{verbatim}
+}
+   
+You can also change the ordering.  Ordinarily the Repeat reschedules your Steppable
+   under the same ordering that you passed into the constructor.  But you can update that
+   (this is a rare need).  For example, to increase the ordering by 1 each time:
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+Repeat repeat = new Repeat(step, 1)
+   {
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      setOrdering(getOrdering() + 1);
+      return currentTime + 1.0 + sim.util.distributions.Distributions.nextPowLaw(3.0, 0.5, state.random);
+      }
+   };
+schedule.scheduleOnce(0.0, 1, repeat);
+\end{verbatim}
+}
+   
+Note that some distributions in sim.util.Distribution require instances be maintained, rather than
+   just simple function calls (like nextPowLaw).  You can do this too.  For example, suppose you want
+   to reschedule at the current time, plus 1.0, plus a Poisson-distributed value with a mean of 10.0.  
+   You could do this (note the {\tt final} declaration):
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+SimState state = ...
+final sim.util.distributions.Poisson poisson = new sim.util.distributions.Poisson(10.0, state);
+Repeat repeat = new Repeat(step, 1)
+   {
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      return currentTime + 1.0 + poisson.nextInt();
+      }
+   };
+schedule.scheduleOnce(0.0, 1, repeat);
+\end{verbatim}
+}
+   
+Of course you might want the Repeat to also schedule itself at some random timestep initially as well.
+   At present Repeat does not support this via an API -- you have to do it manually.  This is mostly
+   because the using API would usually be just as long as doing it by hand.  But in the future we might provide
+   something if there is demand.  Anyway, let's say you want to pick a uniform time in the future to schedule
+   initially, between 0.0 and 10.0, inclusive.  Thereafter you want to reschedule using the Poisson distribution shown
+   earlier.  You could do it like this:
+   
+{\small
+\begin{verbatim}
+Steppable step = ...
+SimState state = ...
+final sim.util.distributions.Poisson poisson = new sim.util.distributions.Poisson(10.0, state);
+Repeat repeat = new Repeat(step, 1)
+   {
+   protected double getNextTime(SimState state, double currentTime)
+      {
+      return currentTime + 1.0 + poisson.nextInt();
+      }
+   };
+schedule.scheduleOnce(state.random.nextDouble(true, true) * 10.0, 1, repeat);
+\end{verbatim}
+}
+
+
 
 \paragraph{\Class{sim.engine.TentativeStep}}  Let's suppose you want to schedule an agent one-shot, but it's possible that in the future you'd need to prevent it from having its \method{step(...)} method called.  TentativeStep to the rescue!  Create a TentativeStep wrapped around your agent and schedule the TentativeStep instead.   When the TentativeStep is stepped, it'll call \method{step(...)} on the underlying agent.  But TentativeStep is \Class{sim.engine.Stoppable}, so you can call \method{stop()} on it at any time to prevent this from happening. 
 
@@ -7015,8 +7154,6 @@ Display2D also uses hit testing to compute tool tip information.  Tool tips are 
          
     
 \section{2D Field Portrayals}
-\label{sim.portrayal.Portrayal2D}
-\label{sim.portrayal.FieldPortrayal}
 \label{sim.portrayal.FieldPortrayal2D}
 
 For every field that's portrayed in a Display2D, there's a \Class{sim.portrayal.FieldPortrayal2D} whose job is is to portray it.    Display2D draws, selects, inspects, and otherwise manipulates objects and data in fields by asking Field Portrayals to do the job on its behalf.  When drawing, Field Portrayals are layered one on top of each other in the Display2D: it asks the bottom-most Field Portrayal to draw itself first, then the next lowest Field Portrayal, and so on, up to the top.
@@ -11155,7 +11292,7 @@ Adds a row which holds the provided component filling all five columns.  Returns
 \hfill\includegraphics[width=2in]{Disclosure2.png}
 \caption{A DisclosurePanel in its ``hidden'' state and ``disclosed'' state.}
 \vspace{0em}
-\label{LabelledList}
+\label{DisclosurePanel}
 \end{wrapfigure}
 
 \paragraph{Disclosure Panels}
@@ -11546,7 +11683,6 @@ The other method takes a JFreeChart chart, a width and height for that chart, an
 
 \section{Charting}
 \label{sim.util.media.chart.ChartGenerator}
-\label{sim.util.media.chart.SeriesAttributes}
 
 
 MASON's ChartingPropertyInspectors (Section \ref{sim.portrayal.inspector.ChartingPropertyInspector}) display Histograms, Time-Series Charts, Scatter Plots, Bar Charts, and Pie Charts of data gleaned from the simulation.  They do this using a Java-based charting package called JFreeChart.  JFreeChart is powerful but inconsistent and often confusing.  MASON provides a simple cover which attempts to make JFreeChart a bit more accessible.  This cover forms the \Package{sim.util.media.chart} package.
