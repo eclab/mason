@@ -5756,8 +5756,8 @@ At right, Figure \ref{NetworkUML} shows the \Package{sim.field.network} package 
 The \Class{sim.field.network.Edge} class defines an {\bf edge} which connects two {\bf nodes}.  Each Edge is associated with exactly one Network, known as its {\bf owner}.  And edge contains four basic elements (plus some auxiliary internal indexes to make things faster):
 
 \begin{itemize}
-\item The ``{\it from}'' node.  If the network is unweighted, the particular node which is ``from'' versus ``to'' is meaningless.
-\item The ``{\it to}'' node.  If the network is unweighted, the particular node which is ``from'' versus ``to'' is meaningless.
+\item The ``{\it from}'' node.  If the network is undirected, the particular node which is ``from'' versus ``to'' is meaningless.
+\item The ``{\it to}'' node.  If the network is undirected, the particular node which is ``from'' versus ``to'' is meaningless.
 \item The info object: the label or weight if any.
 \item The owner: the Network which controls this Edge.
 \end{itemize}
