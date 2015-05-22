@@ -550,7 +550,7 @@ public abstract class AbstractGrid2D implements Grid2D
     
     boolean within(double d1x, double d1y, double d2x, double d2y, double distanceSquared, boolean closed)
         {
-        double d= ds(d1x, d1y, d2x, d2y);
+        double d = ds(d1x, d1y, d2x, d2y);
         return (d < distanceSquared || (d == distanceSquared && closed));
         }
         
