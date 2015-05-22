@@ -159,11 +159,12 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         if (object != null && auxillary == null) 
+        	{
+            // generate the properties
+            Class c = object.getClass();
+
             try
                 {
-                // generate the properties
-                Class c = object.getClass();
-
                 // handle integers
                 if (object instanceof Long || object instanceof Integer || object instanceof Short || object instanceof Byte)
                     {
@@ -289,6 +290,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     	e1.printStackTrace();  // try again though
                     	}
                     }
+                }
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare

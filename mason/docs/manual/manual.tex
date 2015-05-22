@@ -5132,9 +5132,9 @@ So how do you place Objects in the field and move them about? Here are the relev
 
 \begin{methods}{\class{sim.field.grid.DenseGrid2D}}
 \mthd{public Bag getObjectsAtLocation(int x, int y)}
-Returns the Bag storing all the Objects at a given location, or null if there are no objects (sometimes if there are no objects, an empty Bag may be returned).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myDenseGrid.getObjectsAtLocation(location));}
+Returns the Bag storing all the Objects at a given location, or null if there are no objects (sometimes if there are no objects, an empty Bag may be returned).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myDenseGrid.getObjectsAtLocation(location));}
 \mthd{public Bag getObjectsAtLocation(Int2D location)}
-Returns the Bag storing all the Objects at a given location, or null if there are no objects (sometimes if there are no objects, an empty Bag may be returned).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myDenseGrid.getObjectsAtLocation(location));}
+Returns the Bag storing all the Objects at a given location, or null if there are no objects (sometimes if there are no objects, an empty Bag may be returned).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myDenseGrid.getObjectsAtLocation(location));}
 \mthd{public int numObjectsAtLocation(int x, int y)}
 Returns the number of objects stored at the given location.
 \mthd{public int numObjectsAtLocation(Int2D location)}
@@ -5229,13 +5229,13 @@ Returns true if the Object has been stored in the field.
 \mthd{public int size()}
 Returns the number of Objects stored in the field.
 \mthd{public final Bag getObjectsAtLocation(Object location)}
-Returns all Objects stored at the given Location, or null if there are no Objects.   {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getObjectsAtLocation(location));}
+Returns all Objects stored at the given Location, or null if there are no Objects.   {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getObjectsAtLocation(location));}
 \mthd{public final int numObjectsAtLocation(Object location)}
 Returns the number of Objects stored at the given Location.
 \mthd{public Bag removeObjectsAtLocation(Object location)}
 Removes and returns the number of Objects stored at the given Location, or null if there are no Objects.
 \mthd{public final Bag getObjectsAtLocationOfObject(Object obj)}
-Returns all Objects stored at the Location of the given Object, or null if the Object is not stored in the SparseField. {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getObjectsAtLocationOfObject(obj));}
+Returns all Objects stored at the Location of the given Object, or null if the Object is not stored in the SparseField. {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getObjectsAtLocationOfObject(obj));}
 \mthd{public final int numObjectsAtLocationOfObject(Object obj)}
 Returns the number of Objects stored at the Location of the given Object.
 \mthd{public Object remove(Object obj)}
@@ -5245,7 +5245,7 @@ Loads into a Bag all of the Objects stored in the field, then removes all of the
 \mthd{public Bag getObjectsAtLocations(Bag locations, Bag result)}
 Places into the result Bag all objects found at any of the given locations, and returns the result.  You may provide null for the result Bag, in which case a Bag is created for you and returned.
 \mthd{public final Bag getAllObjects()}
-Returns all objects stored in the field.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getAllObjects());}
+Returns all objects stored in the field.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseField.getAllObjects());}
 \mthd{public int getObjectIndex(Object obj)}
 Returns the index where the Object may be found in the Bag provided by the method \method{getAllObjects()}.
 \mthd{public Iterator iterator()}
@@ -5347,7 +5347,7 @@ Returns the location of a given Object converted to a Double2D.
 \mthd{public int numObjectsAtLocation(int x, int y)}
 Returns number of Objects stored at the Location \code{new Int2D(x,y)}.
 \mthd{public Bag getObjectsAtLocation(int x, int y)}
-Returns all the Objects stored at the Location \code{new Int2D(x,y)}.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseGrid2D.getObjectsAtLocation(x, y));}
+Returns all the Objects stored at the Location \code{new Int2D(x,y)}.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(mySparseGrid2D.getObjectsAtLocation(x, y));}
 \mthd{public Bag removeObjectsAtLocation(int x, int y)}
 Removes and returns the number of Objects stored at \code{new Int2D(x,y)}, or null if there are no Objects.
 \mthd{public boolean setObjectLocation(Object obj, int x, int y)}
@@ -5570,7 +5570,7 @@ Loads into a Bag all of the Objects stored in the field, then removes all of the
 \mthd{public Bag getObjectsAtLocations(Bag locations, Bag result)}
 Places into the result Bag all objects found precisely at any of the given locations, and returns the result.  You may provide null for the result Bag, in which case a Bag is created for you and returned.
 \mthd{public final Bag getAllObjects()}
-Returns all objects stored in the field.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getAllObjects());}
+Returns all objects stored in the field.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getAllObjects());}
 \mthd{public int getObjectIndex(Object obj)}
 Returns the index where the Object may be found in the Bag provided by the method \method{getAllObjects()}.
 \mthd{public Iterator iterator()}
@@ -5630,7 +5630,7 @@ Additionally, Continuous2D and Continuous3D have certain utility methods for acc
 
 \begin{methods}{\class{sim.field.continuous.Continuous2D} Utility}
 \mthd{public Bag getObjectsAtDiscretizedLocation(Int2D location)}
-Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
+Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
 \mthd{public Int2D discretize(Double2D location)}
 Discretizes the given Double2D location according to the Continuous field's discretization.
 \mthd{public Int2D discretize(Double2D location, int discretization)}
@@ -5639,7 +5639,7 @@ Discretizes the given Double2D location according to the provided discretization
 
 \begin{methods}{\class{sim.field.continuous.Continuous3D} Utility}
 \mthd{public Bag getObjectsAtDiscretizedLocation(Int3D location)}
-Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
+Returns a Bag consisting of all the Objects stored at the given discretized location.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myContinuousField.getObjectsAtDiscretizedLocation());}
 \mthd{public Int3D discretize(Double3D location)}
 Discretizes the given Double3D location according to the Continuous field's discretization.
 \mthd{public Int3D discretize(Double3D location, int discretization)}
@@ -5832,15 +5832,15 @@ Network also contains various methods for querying Nodes and Edges.
 
 \begin{methods}{\class{sim.field.network.Network}}
 \mthd{public Bag getAllNodes()}
-Returns all the nodes in the Network as a Bag.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getAllNodes());}
+Returns all the nodes in the Network as a Bag.  {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getAllNodes());}
 \mthd{public Iterator iterator()}
 Returns an Iterator over all nodes provided by the \method{getAllNodes()} method.  Iterators are slow, so this is largely a convenience method. 
 \mthd{public Bag getEdgesIn(Object node)}
-Returns in a Bag all the incoming edges to the given node (that is, those for which the node is the ``to'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesIn(myNode));}
+Returns in a Bag all the incoming edges to the given node (that is, those for which the node is the ``to'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesIn(myNode));}
 \mthd{public Bag getEdgesOut(Object node)}
-Returns in a Bag all the outgoing edges from the given node (that is, those for which the node is the ``from'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesOut(myNode));}
+Returns in a Bag all the outgoing edges from the given node (that is, those for which the node is the ``from'' object), or, if the Network is undirected, returns a Bag of all edges associated with the node.    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdgesOut(myNode));}
 \mthd{public Bag getEdges(Object node, Bag result)}
-Returns in the Bag {\it result}, or (if  all the outgoing edges from the given node (that is, those for which the node is the ``from'' object).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdges(myNode));}
+Returns in the Bag {\it result}, or (if  all the outgoing edges from the given node (that is, those for which the node is the ``from'' object).    {\bf The provided Bag is to be treated as read-only and not to be modified, and it may change at any time without warning.}  You should use this method only to do quick read-only scans of the field without modification.  If you want to modify or retain the Bag, copy it first like this: \code{Bag vals = new Bag(myNetwork.getEdges(myNode));}
 \mthd{public Bag getEdges(Object fromNode, Object toNode, Bag result)}
 The Bag {\it result} is cleared, then all Edges connecting  {\it fromNode} to {\it toNode} are placed into the bag, and then it is returned.  If {\it result} is null, then a new Bag is created first.  If the graph is undirected, it doesn't matter which node is which.
 \mthd{public Edge getEdge(Object fromNode, Object toNode)}
@@ -5966,13 +5966,14 @@ Next you need to override certain methods. Here are the most common ones:
 
 You will almost certainly override \method{init(...)}, \method{start()}, \method{quit()}, and \method{load(...)}.  Here are the common tasks you'll almost always do in these methods: 
 
-\begin{itemize}
-\item \method{init(...)}\quad Construct at least one Display, create a JFrame for it, register the JFrame with the Controller, make the JFrame visible, and attach one or more Field Portrayals to the JFrame.
+\begin{description}
 
-\item \method{start()} and \method{load(...)}\quad These methods typically have identical code, so much so that in most of the MASON application demos, they just call a common made-up method called \method{setupPortrayals()} which does that code.  Typically the tasks are: attach to each Field Portrayal the Field it is portraying, then in each Field Portrayal construct and attach the Simple Portrayals for the various objects in the Field, or its ColorMap.  Last, reset the Displays and request them to be repainted.
+\item[\rm \method{init(...)}]\hfill\\Construct at least one Display, create a JFrame for it, register the JFrame with the Controller, make the JFrame visible, and attach one or more Field Portrayals to the JFrame.
 
-\item \method{quit()}\quad Dispose the Displays' JFrames and set them and the Displays to null.
-\end{itemize}
+\item[\rm \method{start()} \textit{and} \method{load(...)}]\hfill\\These methods typically have identical code, so much so that in most of the MASON application demos, they just call a common made-up method called \method{setupPortrayals()} which does that code.  Typically the tasks are: attach to each Field Portrayal the Field it is portraying, then in each Field Portrayal construct and attach the Simple Portrayals for the various objects in the Field, or its ColorMap.  Last, reset the Displays and request them to be repainted.
+
+\item[\rm \method{quit()}]\hfill\\Dispose the Displays' JFrames and set them and the Displays to null.
+\end{description}
 
 You might also override \method{finish()}.  The most common task here is to stop charts etc. which might potentially have movies being run on them.  (Standard MASON 2D and 3D Displays stop themselves, don't worry about them).  This task is also commonly done in \method{quit()} as well.
 
@@ -6005,7 +6006,7 @@ public static void main(String[] args)
 \end{alltt}
 }
 
-The \method{createController()} method builds an appropriate Controller and makes it visible, which is sufficient to start up the GUI simulation:
+The \method{createController()} method builds an appropriate Controller and makes it visible, which is sufficient to start up the GUI simulation.  It's already written for you in \class{sim.display.GUIState}:
 
 \begin{methods}{\class{sim.display.GUIState}}
 \mthd{public Controller createController()} Builds a controller appropriate for this GUIState, then sets it visible (starting the GUI).  Returns the controller.  The default builds a \class{sim.display.Console}, which should work in most cases, but you may wish to override it to build something else, such as a \class{sim.display.SimpleController}.

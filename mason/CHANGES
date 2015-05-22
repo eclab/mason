@@ -2792,3 +2792,4 @@ Version 19
 	Tweak to SimpleProperties to allow recovery from a property generation
 		failure on a method.
 	Added instructions in manual for interfacing with Apache Math
+	Bugfix in SimpleProperties, which had a variable in the wrong location
