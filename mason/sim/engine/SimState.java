@@ -696,7 +696,7 @@ public class SimState implements java.io.Serializable
     /** Returns MASON's Version */
     public static double version()
         {
-        return 18.0;
+        return 19.0;
         }
     
     // compute how much time per step 
