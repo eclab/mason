@@ -9,7 +9,7 @@ JAVAC = javac ${FLAGS}
 
 FLAGS = -target 1.5 -source 1.5 -g -nowarn 
 
-VERSION = 18
+VERSION = 19
 
 
 # Main java files, not including the 3D stuff
@@ -126,6 +126,10 @@ jar: 3d
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
 dist: clean 3d indent doc jar
+	echo If the version is being updated, change it here:
+	echo 1. sim.engine.SimState.version()
+	echo 2. manual.tex frontmatter (including copyright year)
+	echo 3. Makefile VERSION variable
 	touch TODO
 	rm TODO
 	find . -name ".svn" -exec rm -rf {} \;
