@@ -159,7 +159,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     void generateProperties(boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
         if (object != null && auxillary == null) 
-        	{
+            {
             // generate the properties
             Class c = object.getClass();
 
@@ -218,12 +218,12 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 e.printStackTrace();
                 }
 
-                // handle general properties
-                Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
-                for(int x = 0 ; x < m.length; x++)
+            // handle general properties
+            Method[] m = (includeSuperclasses ? c.getMethods() : c.getDeclaredMethods());
+            for(int x = 0 ; x < m.length; x++)
+                {
+                try  // we handle exceptions here by going to the next method and trying that one.
                     {
-                    try  // we handle exceptions here by going to the next method and trying that one.
-                    	{
                     if (!("get".equals(m[x].getName())) && !("is".equals(m[x].getName())) &&  // "get()" and "is()" aren't properties
                         (m[x].getName().startsWith("get") || m[x].getName().startsWith("is"))) // corrrect syntax?
                         {
@@ -284,13 +284,13 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                                 }
                             }
                         }
-                        }
-                    catch(Exception e1)
-                    	{
-                    	e1.printStackTrace();  // try again though
-                    	}
+                    }
+                catch(Exception e1)
+                    {
+                    e1.printStackTrace();  // try again though
                     }
                 }
+            }
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare

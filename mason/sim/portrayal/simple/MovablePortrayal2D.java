@@ -64,8 +64,8 @@ public class MovablePortrayal2D extends SimplePortrayal2D
     /** Returns whether the MovablePortrayal2D selects the object when it is being moved. */
     public boolean getSelectsWhenMoved() { return selectsWhenMoved; }
     /** Sets whether the MovablePortrayal2D selects the object when it is being moved. */
-	public void setSelectsWhenMoved(boolean val) { selectsWhenMoved = val; }        
-	
+    public void setSelectsWhenMoved(boolean val) { selectsWhenMoved = val; }        
+        
     Point2D originalMousePosition = null;
     Point2D originalObjectPosition = null;
         
@@ -101,7 +101,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
                     {
                     manipulating.setMovingWrapper(wrapper);
                     if (selectsWhenMoved)
-                    	manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
+                        manipulating.performSelection(wrapper);  // make sure we're selected, and all others deselected, so we're called again
                     return true;  // will cause a refresh
                     }
                 else { originalMousePosition = originalObjectPosition = null; }  // clean up
@@ -123,7 +123,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
                 {
                 originalMousePosition = null;
                 originalObjectPosition = null;
-                 manipulating.setMovingWrapper(null);
+                manipulating.setMovingWrapper(null);
                 }
             }
         return getChild(wrapper.getObject()).handleMouseEvent(guistate, manipulating, wrapper, event, range, type);  // let someone else have it

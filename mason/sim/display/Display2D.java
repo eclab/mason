@@ -2187,7 +2187,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
 
         // first, propagate the event to any moving wrapper
         if (movingWrapper != null)
-        	{
+            {
             FieldPortrayal2D f = (FieldPortrayal2D)(movingWrapper.getFieldPortrayal());
             Object obj = movingWrapper.getObject();
             SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
@@ -2196,7 +2196,7 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
                 simulation.controller.refresh();
                 return true;
                 }
-        	}
+            }
         
         // next, let's propagate the event to any selected objects
                 
