@@ -4149,7 +4149,7 @@ The ParallelSequence makes any of these options easy with the following methods:
 
 See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of how to use ParallelSequence to double the speed of a simulation.
 
-\paragraph{\Class{sim.engine.Repeat}}  This is class is a generalization of the \method{scheduleRepeating(...} method found in the Schedule (in fact the Schedule uses a simple version of this class to implement that method).
+\paragraph{\Class{sim.engine.Repeat}}  This is class is a generalization of the \method{scheduleRepeating(...)} method found in the Schedule (in fact the Schedule uses a simple version of this class to implement that method).
 
 If you need to schedule an agent repeating for a consistent interval and for a long time, \method{scheduleRepeating(...)} will do the trick.  If your repetition needs are more complex, you can use \class{sim.engine.Repeat} as a convenience class.  And if that doesn't suffice, you can always create a Steppable which, when stepped, first reschedules itself in the schedule as you see fit, and then does its thing.
 
