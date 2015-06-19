@@ -127,9 +127,9 @@ jar: 3d
 # removes SVN directories
 dist: clean 3d indent doc jar
 	echo If the version is being updated, change it here:
-	echo 1. sim.engine.SimState.version()
-	echo 2. manual.tex frontmatter (including copyright year)
-	echo 3. Makefile VERSION variable
+	echo "1. sim.engine.SimState.version()"
+	echo "2. manual.tex frontmatter (including copyright year)"
+	echo "3. Makefile VERSION variable"
 	touch TODO
 	rm TODO
 	find . -name ".svn" -exec rm -rf {} \;
