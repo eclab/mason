@@ -122,6 +122,100 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList nameMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
     Properties auxillary = null;  // if non-null, we use this properties instead
     
+	// default comparator, see below
+	Comparator getSortComparator()
+    	{
+	    return new Comparator()
+    		{
+    		public int compare(Object x, Object y)
+    			{
+    			Method xm = (Method) x;
+    			Method ym = (Method) y;
+    			int val = xm.getName().compareTo(ym.getName());
+    			if (val == 0)
+    				{
+    				Class[] xp = xm.getParameterTypes();
+    				Class[] yp = ym.getParameterTypes();
+    				if (xp.length < yp.length) val = -1;
+    				else if (xp.length > yp.length) val = 1;
+    				else val = 0;
+    				if (val == 0)
+    					{
+    					val = xm.toGenericString().compareTo(ym.toGenericString());  // gotta do something!
+    					}
+    				}
+    			return val; 
+    			}
+    		public boolean equals(Object obj)
+    			{ return this.equals(obj); }  // doesn't really matter
+    		};
+    	}
+    
+    /** Sorts the properties by the following comparator, which 
+    	takes two java.lang.reflect.Method objects: these are getMethods for two properties. 
+    	Note that if SimpleProperties has an auxillary, this method does nothing.
+    	
+    	<p>By default SimpleProperties sorts 
+    	alphabetically by method name, breaking ties by number of
+    	arguments (fewer arguments appear earlier), and breaking
+    	ties further by lexicographic comparison of the output
+    	of each Method's toGenericString() method.  
+    */
+ 	public void sortProperties(final Comparator c)
+    	{
+    	if (auxillary != null) return;
+    	if (getMethods.size() < 2) return;  // don't bother!
+    	
+    	// sort the getMethods indices
+    	Integer[] index = new Integer[getMethods.size()];
+    	for(int i = 0; i < index.length; i++)
+    		index[i] = new Integer(i);
+    	Arrays.sort(index, new Comparator()
+    		{
+    		public int compare(Object x, Object y)
+    			{ 
+    			return c.compare(getMethods.get(((Integer)x).intValue()),
+    							 getMethods.get(((Integer)y).intValue()));
+    			}
+    		public boolean equals(Object obj)
+    			{ return this.equals(obj); }  // doesn't really matter
+    		});
+    	
+    	// reorganize
+    	ArrayList a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		{
+    		a.add(getMethods.get(index[i].intValue()));
+    		}
+    	getMethods = a;
+
+    	a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		a.add(setMethods.get(index[i].intValue()));
+    	setMethods = a;
+    	
+    	a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		a.add(domMethods.get(index[i].intValue()));
+    	domMethods = a;
+
+    	a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		a.add(desMethods.get(index[i].intValue()));
+    	desMethods = a;
+    		
+    	a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		a.add(hideMethods.get(index[i].intValue()));
+    	hideMethods = a;
+    		
+    	a = new ArrayList();
+    	for(int i = 0; i < index.length; i++)
+    		a.add(nameMethods.get(index[i].intValue()));
+    	nameMethods = a;
+    	}
+    
+    
     /** Gathers all properties for the object, including ones defined in superclasses. 
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
         which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
@@ -291,6 +385,9 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     }
                 }
             }
+        
+        // now sort!
+        sortProperties(getSortComparator());
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare

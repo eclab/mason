@@ -3365,8 +3365,11 @@ This procedure, like MASON's \method{hideFoo()} Java Beans Property extension, i
 
 SimpleProperties has one special method, mostly used by TabbedInspector (Section \ref{sim.portrayal.inspector.TabbedInspector}), to break properties into subsets.  TabbedInspector uses this to create separate inspectors, one per tab.  Note that to use this method, your SimpleProperties object {\bf may not have a proxy.}
 
+SimpleProperties also has a basic method for sorting the properties as you like.
+
 \begin{methods}{\class{sim.util.SimpleProperties}}
 \mthd{SimpleProperties getPropertiesSubset(String[] propertyNames, boolean retain)} Returns a SimpleProperties referring to the same object, but whose property list is a reduced subset of the original property list.  If {\it retain} is true, then the property list will contain only those properties whose names are found in {\it propertyNames} (and if any item in {\it propertyNames} does not appear in the original properties, an exception is thrown).  If {\it retain} is false, then the property list will contain only those properties whose names are {\it not} found in {\it propertyNames}.  The original SimpleProperties object may not have a properties proxy.
+\mthd{void sortProperties(Comparator comparator)} Sorts the properties using the provided Comparator.  The comparator takes two \class{java.lang.reflect.Method} objects to compare: these are the various get...() methods in the SimpleProperties.   By default the properties are sorted lexicographically by name, then by number of arguments (fewer arguments first), then lexicographically the output of the get...() methods' \method{toGenericString()} methods.
 \end{methods}
 
 
