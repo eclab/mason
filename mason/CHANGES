@@ -2795,3 +2795,7 @@ Version 19
 	Bugfix in SimpleProperties, which had a variable in the wrong location
 	Reindented, updated version
 
+Version 20
+	By default SimpleProperties (and thus SimpleInspector) now sorts its
+		properties alphabetically.
+
