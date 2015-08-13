@@ -357,12 +357,13 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
         if (((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
-            (lastTime < time || !updatedOnceAlready))  // bug fix 
+            (lastTime + globalAttributes.interval <= time || !updatedOnceAlready))  // bug fix 
             {              
             updatedOnceAlready = true;
 
             // update the data
             updateSeries(time, lastTime);
+            System.err.println("whoa " + time + " " + lastTime + " " + updatedOnceAlready + " " + isAlwaysUpdateable());
             lastTime = time;
                 
             // now determine when to redraw

@@ -2798,4 +2798,6 @@ Version 19
 Version 20
 	By default SimpleProperties (and thus SimpleInspector) now sorts its
 		properties alphabetically.
-
+	Bug in ChartingPropertyInspector, which was updating data every timestep
+		regardless of what the user requested.  Thanks to Axel Kowald
+		<Axel.Kowald@ncl.ac.uk>
