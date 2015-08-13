@@ -245,29 +245,29 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             {
             setLayout(new BorderLayout());
                         
-            title = includeAggregationMethodAttributes() ? "Add Data..." : "Redraw";
+            title = "Add Data..."; // includeAggregationMethodAttributes() ? "Add Data..." : "Redraw";
             LabelledList list = new LabelledList(title);
             add(list,BorderLayout.CENTER);
                         
+			NumberTextField stepsField = new NumberTextField(1,true)
+				{
+				public double newValue(double value)
+					{
+					value = (long)value;
+					if (value <= 0) return currentValue;
+					else 
+						{
+						interval = (long)value;
+						return value;
+						}
+					}
+				};
+																					
+			list.addLabelled("Every",stepsField);
+			list.addLabelled("",new JLabel("...Timesteps"));
+
             if (includeAggregationMethodAttributes())
                 {
-                NumberTextField stepsField = new NumberTextField(1,true)
-                    {
-                    public double newValue(double value)
-                        {
-                        value = (long)value;
-                        if (value <= 0) return currentValue;
-                        else 
-                            {
-                            interval = (long)value;
-                            return value;
-                            }
-                        }
-                    };
-                                                                                        
-                list.addLabelled("Every",stepsField);
-                list.addLabelled("",new JLabel("...Timesteps"));
-
                 String[] optionsLabel = { "Current", "Maximum", "Minimum", "Mean" };
                 final JComboBox optionsBox = new JComboBox(optionsLabel);
                 optionsBox.setSelectedIndex(aggregationMethod);
@@ -295,9 +295,9 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                         generator.update(ChartGenerator.FORCE_KEY, false);  // keep up-to-date
                         }
                     });
-            if (includeAggregationMethodAttributes())
+            //if (includeAggregationMethodAttributes())
                 list.addLabelled("Redraw", optionsBox2);
-            else list.add(optionsBox2);
+            //else list.add(optionsBox2);
             }
         }
         
@@ -351,19 +351,34 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
     public void updateInspector()
         {
         double time = simulation.state.schedule.getTime();
-        // we should only update if we're at a new time that we've not seen yet, or if
+        // we should only update if we're beyond the desired interval of time, or if
         // we're at the start of inspection and haven't done an update yet.  It's possible
         // for this second condition to be true while the first one is false: if we're at
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
-        if (((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
-            (lastTime + globalAttributes.interval <= time || !updatedOnceAlready))  // bug fix 
+        if (
+        	// If we're always updatable, or we're inside the simulation boundaries...
+        	((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
+        	
+        	// AND we're one of...	
+         	(
+            	// we're using aggregation (Time Series), and our aggregation method is something other than CURRENT
+	        	// (thus we must update the series every timestep)
+            	(includeAggregationMethodAttributes() && globalAttributes.aggregationMethod != AGGREGATIONMETHOD_CURRENT && lastTime < time) ||
+            
+                // OR we're using aggregation (Time Series), and our aggregation method is CURRENT, and we're beyond the timestep interval
+            	(includeAggregationMethodAttributes() && globalAttributes.aggregationMethod == AGGREGATIONMETHOD_CURRENT && lastTime + globalAttributes.interval <= time) ||
+
+            	// OR we're NOT using aggregation, and we're beyond the interval
+             	(!includeAggregationMethodAttributes() && lastTime + globalAttributes.interval <= time) ||
+            
+            	// OR we've not updated yet
+            	!updatedOnceAlready))
             {              
             updatedOnceAlready = true;
 
             // update the data
             updateSeries(time, lastTime);
-            System.err.println("whoa " + time + " " + lastTime + " " + updatedOnceAlready + " " + isAlwaysUpdateable());
             lastTime = time;
                 
             // now determine when to redraw
