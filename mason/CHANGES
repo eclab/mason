@@ -2801,3 +2801,9 @@ Version 20
 	Bug in ChartingPropertyInspector, which was updating data every timestep
 		regardless of what the user requested.  Thanks to Axel Kowald
 		<Axel.Kowald@ncl.ac.uk>
+	Utilities.iFloor, Utilities.iCeil, and Utilities.iRound officially
+		deleted.  They were deprecated and made private anyway, and
+		had bugs.
+	Various Grid getRadialNeighbors and getRadialNeighbors upgraded to permit
+		a double-valued distance.  Thanks to Christian Meyer
+		<c.meyer@uni-oldenburg.de>

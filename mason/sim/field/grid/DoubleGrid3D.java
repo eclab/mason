@@ -754,12 +754,12 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         }
 
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin,DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public DoubleBag getRadialNeighbors( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin,DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid3D.ANY, true, result, xPos, yPos, zPos);
         }
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public DoubleBag getRadialNeighbors( final int x, final int y, int z, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -857,7 +857,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
 
 
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin)
+    public DoubleBag getRadialNeighbors( final int x, final int y, int z, final double dist, int mode, boolean includeOrigin)
         {
         return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
         }

@@ -222,6 +222,11 @@ George Mason University}
 	\end{itemize}
 	This summary is just informational: if there is any conflict in interpretation between the summary and the actual license, the actual license always takes precedence.
 
+\vspace{0.15in}
+
+\noindent {\Large\bf This document is was produced} in part through funding from grants 0916870, 1205626, and 1317813 from the National Science Foundation.
+
+
 
 \normalsize
 \cleardoublepage
@@ -2806,7 +2811,7 @@ LogNormalDistribution dist = new LogNormalDistribution(new MTFApache(state.rando
 System.err.println("Random LogNormal number: " + dist.sample());
 \end{verbatim}
 
-Note that Apache Commons Math distributions have alternative constructors which don't require that you pass in a random number generator\,---\,they build one internally.  This is a {\it very bad idea}, and whoever came up with this should be smacked.  {\bf Always pass in MersenneTwisterFast in a wrapper as the random number generator for your Apache Commons Math distribution.}
+Note that Apache Commons Math distributions have alternative constructors which don't require that you pass in a random number generator\,---\,they build one internally.  This is a {\it very bad idea}, and whoever came up with this should be smacked.  {\bf Always pass in MersenneTwisterFast in a wrapper as the random number generator for your Apache Commons Math distribution when using MASON.}
 
 \section{Coordinate Wrapper Classes}
 
@@ -2867,7 +2872,7 @@ You should access these variables with abandon: they're designed for it.    Addi
 \mthd{public long manhattanDistance(MutableInt2D p)} Returns the manhattan distance from the Int2D to the given coordinates.
 \end{methods}
 
-The distance between two points  \(\langle x_1, y_1\rangle\) and \(\langle x_2, y_2\rangle\) is defined as \(\sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}\).  The squared distance is defined as \((x_1 - x_2)^2 + (y_1 - y_2)^2\).  .  The manhattan distance is defined as \(| x_1 - x_2|+ |y_1 - y_2|\).
+The distance between two points  \(\langle x_1, y_1\rangle\) and \(\langle x_2, y_2\rangle\) is defined as \(\sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}\).  The squared distance is defined as \((x_1 - x_2)^2 + (y_1 - y_2)^2\).   The manhattan distance is defined as \(| x_1 - x_2|+ |y_1 - y_2|\).
 
 MutableInt2D has all these methods and constructors, plus a few more:
 
@@ -3223,7 +3228,7 @@ public void setDominated(boolean val);
 
 Note that the {\it set} method doesn't have to set the value\,---\,if it's a bad value, it can simply refuse to do so.
 
-The rules for properties are rigid.  The methods must be named properly, must not have additional arguments, and read-write properties must have properly matching types.  Here are some invalid properties:
+The rules for properties are rigid.  The methods must be named properly, must not have additional arguments, and read-write properties must have properly matching types.  Properties can't be static and must be public.  Here are some invalid properties:
 
 \java{%
 public int GetAge();\\
@@ -3959,7 +3964,7 @@ If you like you can clear out the entire Schedule.  There are two methods to do 
 {\bf If your goal is to end the simulation prematurely, don't use the \method{clear()} or \method{reset()} methods, nor state.finish(),} as they don't clear out AsynchronousSteppables (we'll discuss them below). Instead there is a special SimState method which does the task for you:
 
 \begin{methods}{\class{sim.engine.SimState}}
-\mthd{public void kill()} Clears the schedule, pushes the Schedule's time forward to \variable{AFTER\_SIMULATION}, and clears out all AsynchronousSteppables.
+\mthd{public void kill()} Clears the schedule, pushes the Schedule's time forward to \variable{AFTER\_SIMULATION}, and clears out all AsynchronousSteppables.  If this method is called while agents are being stepped, all agents meant to be stepped this timestamp will still be stepped.
 \end{methods}
 
 Note that this method should NOT be called from within the \method{step()} methods of AsynchronousSteppables, ParallelSequences (discussed later), or other agents with non-primary threads, as it will cause a deadlock.  Instead, these kinds of agents can kill the simulation by scheduling an agent for the immediate next timestep which itself calls \method{kill()}.  For example:
@@ -4152,7 +4157,7 @@ The ParallelSequence makes any of these options easy with the following methods:
 
 See the \Class{sim.app.heatbugs.ThreadedDiffuser} class for a good example of how to use ParallelSequence to double the speed of a simulation.
 
-\paragraph{\Class{sim.engine.Repeat}}  This is class is a generalization of the \method{scheduleRepeating(...)} method found in the Schedule (in fact the Schedule uses a simple version of this class to implement that method).
+\paragraph{\Class{sim.engine.Repeat}}  This is class is a generalization of the \method{scheduleRepeating(...)} method found in the Schedule (in fact the Schedule uses a simplified version of this class to implement that method).
 
 If you need to schedule an agent repeating for a consistent interval and for a long time, \method{scheduleRepeating(...)} will do the trick.  If your repetition needs are more complex, you can use \class{sim.engine.Repeat} as a convenience class.  And if that doesn't suffice, you can always create a Steppable which, when stepped, first reschedules itself in the schedule as you see fit, and then does its thing.
 
@@ -4303,7 +4308,7 @@ schedule.scheduleOnce(state.random.nextDouble(true, true) * 10.0, 1, repeat);
 
 TentativeStep's \method{step(...)} and \method{stop()} methods are synchronized: different methods can call them safely.
 
-\paragraph{\Class{sim.engine.WeakStep}}  In some rare cases you may need to schedule an agent {\it weakly}, meaning that if Java is running low on memory, it should feel free to garbage collect the agent before its \method{step(...)} method is called.  WeakStep enables this: create the WeakStep, passing in the agent you wish to be held weakly.  Then schedule the WeakStep on the schedule.  If the agent is garbage collected early, when it comes time to step it, the WeakStep will simply do nothing.  Note that even if the agent is garbage collected, {\it the WeakStep is still on the schedule until removed.}  Thus this is primarily useful for agents which consume significant memory and are worthwhile garbage-collecting if necessary.
+\paragraph{\Class{sim.engine.WeakStep}}  In some rare cases you may need to schedule an agent {\it weakly}, meaning that if Java is running low on memory, it should feel free to garbage collect the agent before its \method{step(...)} method is called.  WeakStep enables this: create the WeakStep, passing in the agent you wish to be held weakly.  Then schedule the WeakStep on the schedule.  If the agent is garbage collected early, when it comes time to step it, the WeakStep will simply do nothing.  Note that even if the agent is garbage collected, {\it the WeakStep is still on the schedule until removed,} and so eventually the Schedule will advance to the timestep of the WeakStep, and call \method{step(...)} on it, though that now won't do anything.  Thus this class is primarily useful for agents which consume significant memory and are worthwhile garbage-collecting if necessary.
 
 \begin{methods}{\class{sim.engine.WeakStep} Constructor}
 \mthd{public WeakStep(Steppable agent)} Builds a WeakStep for a given agent.  The agent will be held as a weak reference.
@@ -4876,7 +4881,7 @@ Additionally, rectangular grids have neighborhood lookup functions which return 
 
 \item ObjectGrid/3D, DenseGrid/3D, and SparseGrid2D/3D have the methods \method{getMooreNeighbors}, \method{getVonNeumannNeighbors}, \method{getHexagonalNeighbors}, and \method{getRadialNeighbors}, which return all the coordinates normally returned their equivalent \method{get...Locations} methods, plus an additional Bag holding any {\bf non-null Objects} stored at each of those locations.  The coordinate bags hold all relevant locations, not just those in which neighbors were discovered (and so they may be bigger than, and uncorrelated with, the result bag).
 
-ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D also have the methods \method{getMooreNeighborsAndLocations}, \method{getVonNeumannNeighborsAndLocations}, \method{getHexagonalNeighborsAndLocations}, and \method{getRaialNeighborsAndLocations}, which are like the \method{get...Neighbors} methods, except the coordinate bags have been modified so that, for each of the returned objects, the coordinate bags hold the coordinate where that object was found at the same index location. Thus all returned bags are the same length.
+ObjectGrid2D/3D, DenseGrid2D/3D, and SparseGrid2D/3D also have the methods \method{getMooreNeighborsAndLocations}, \method{getVonNeumannNeighborsAndLocations}, \method{getHexagonalNeighborsAndLocations}, and \method{getRadialNeighborsAndLocations}, which are like the \method{get...Neighbors} methods, except the coordinate bags have been modified so that, for each of the returned objects, the coordinate bags hold the coordinate where that object was found at the same index location. Thus all returned bags are the same length.
 \end{itemize}
 
 \subsection{Maps}
@@ -5964,7 +5969,7 @@ Next you need to override certain methods. Here are the most common ones:
 \mthd{public void quit()} Shuts down the GUIState in preparation for quitting the GUI.   If you override this, be sure to call \code{super.quit()} first.  This method is called in the GUI thread well after the model has ended, so there's no need to obtain a lock on the schedule.
 \mthd{public void start()} Starts the simulation.  If you override this, be sure to call \code{super.start()} first, which, among other things, will call \method{start()} on the underlying model.  This method does not have a lock on the schedule, so if you have AsynchronousSteppables in your model, you should obtain a lock on the schedule {\it after} calling \code{super.start()}. 
 \mthd{public void finish()} Ends the simulation.  If you override this, be sure to call \code{super.finish()} first, which, among other things, will call \method{finish()} on the underlying model.  After \code{super.finish()}, the model is no longer running and there are no AsynchronousSteppables, so there is at present no need to obtain a lock on the schedule (you might as well though, for good measure).
-\mthd{public void load(SimState state)} Continues a simulation which had been checkpointed.  The model is provided, already been loaded from the checkpoint.  If you override this, be sure to call \code{super.load(state)} first.  This method does not have a lock on the schedule, so if you have AsynchronousSteppables in your model, you should obtain a lock on the schedule {\it after} calling \code{super.load()}. 
+\mthd{public void load(SimState state)} Continues a simulation which had been checkpointed.  The model is provided, and has already been loaded from the checkpoint.  If you override this, be sure to call \code{super.load(state)} first.  Note that \code{super.load(state)} sets your \variable{state} instance variable to the provided state, among other things.  This method does not have a lock on the schedule, so if you have AsynchronousSteppables in your model, you should obtain a lock on the schedule {\it after} calling \code{super.load()}. 
 \end{methods}
 
 You will almost certainly override \method{init(...)}, \method{start()}, \method{quit()}, and \method{load(...)}.  Here are the common tasks you'll almost always do in these methods: 
@@ -5974,6 +5979,8 @@ You will almost certainly override \method{init(...)}, \method{start()}, \method
 \item[\rm \method{init(...)}]\hfill\\Construct at least one Display, create a JFrame for it, register the JFrame with the Controller, make the JFrame visible, and attach one or more Field Portrayals to the JFrame.
 
 \item[\rm \method{start()} \textit{and} \method{load(...)}]\hfill\\These methods typically have identical code, so much so that in most of the MASON application demos, they just call a common made-up method called \method{setupPortrayals()} which does that code.  Typically the tasks are: attach to each Field Portrayal the Field it is portraying, then in each Field Portrayal construct and attach the Simple Portrayals for the various objects in the Field, or its ColorMap.  Last, reset the Displays and request them to be repainted.
+
+Note a crucial difference between these methods: when \method{start()} is called, your \variable{state} instance variable has been set.  When \method{load(...)} is called, the \variable{state} instance variable is still referring to the {\it old} state.  The new state is being passed into \method{load(...)} as a parameter.  Thus if you need to access the old state for any reason (a very rare need indeed), you should do so {\it before} you call \method{super.load(...)}.  After \method{super.load(...)} is called, the \variable{state} instance variable has now been set to the new state.
 
 \item[\rm \method{quit()}]\hfill\\Dispose the Displays' JFrames and set them and the Displays to null.
 \end{description}
@@ -11008,8 +11015,8 @@ Finally, LabelledPortrayal calls a special method on itself to determine what la
 The 3D Wrapper Simple Portrayal class \Class{sim.portrayal3d.simple.TransformedPortrayal3D} allows you to perform an affine transform on the scene graphs produced by a child portrayal.  This is useful if you'd like the scene graphs to be larger, for example, or rotated in a different direction.  Unlike TransformedPortrayal2D, TransformedPortrayal3D does not impact on selection, inspection, etc.  It's fully baked.  TransformedPortrayal3D underneath is simply adding an additional TransformGroup to the root of the scene graph.
 
 \begin{methods}{\class{sim.portrayal3d.simple.TransformedPortrayal3D} Constructor}
-\mthd{public TransformedPortrayal3D(SimplePortrayal3D child, Transform3D transform} Builds a TransformedPortrayal3D with the given child and transform.  The transform may be changed at a later time.
-\mthd{public TransformedPortrayal3D(SimplePortrayal3D child} Builds a TransformedPortrayal3D with the given child and an empty transform.  The transform may be changed at a later time.
+\mthd{public TransformedPortrayal3D(SimplePortrayal3D child, Transform3D transform)} Builds a TransformedPortrayal3D with the given child and transform.  The transform may be changed at a later time.
+\mthd{public TransformedPortrayal3D(SimplePortrayal3D child)} Builds a TransformedPortrayal3D with the given child and an empty transform.  The transform may be changed at a later time.
 \end{methods}
 
 Transformations are made after the fact in a manner very similar to the Display3D's internal transform.  If you set the transform to null, the TransformedPortrayal3D will provide a {\bf default transform} via its method \method{getDefaultTransform()}.  By default, this returns an empty Transform3D, but you can override it (for some reason) to provide something else.  
@@ -11566,7 +11573,7 @@ MASON can make movies, PNG bitmaps, and vector PDF files of its simulation visua
 MASON creates movies by setting up a \Class{sim.util.media.MovieEncoder} and then submitting bitmaps to it one by one.  These bitmaps are then encoded into a video stream.  MovieEncoder is little more than a thin wrapper over Sun's JMF media utilities.
 
 \sidebar{iMovie doesn't like my video.}{iMovie breaks when trying to load JMF files with formats using 32 bits.  Choose a 16-bit or 24-bit format.}
-`
+
 The biggest downside to encoding with JMF is the size of the movies produced.  JMF has few generic options for producing movies: most of its encoders are outdated and operating-system-specific.  As a result MASON has opted to encode movies with the Motion JPEG codec: they are essentially streams of JPEG images.  It wouldn't surprise you to hear that this makes for some really gigantic files.  However, it's a simple task to re-encode these movies into something more useful.  For example, Quicktime on OS X 10.6 and later can load these movies and save them out under a smarter encoding (H.264 for example), resulting in radically smaller files.
 
 \sidebar{Quicktime 10 doesn't like my video.}{Recent versions of Quicktime have arbitrarily removed support for ``older formats''.  You'll have to use Quicktime 7 Pro.}
@@ -11609,7 +11616,7 @@ You can now start stuffing the MovieEncoder with images, one after another.  The
 MASON provides a simple class, \Class{sim.util.gui.MovieMaker}, which handles much of the GUI gruntwork of having the user set up a movie to write out with MovieEncoder.  This class is essentially a GUI sheen over MovieEncoder itself.  A MovieMaker is constructed like this:
  
 \begin{methods}{\class{sim.util.media.MovieMaker} Constructor}
-\mthd{public MovieMaker(Frame parent)}  Creates a MovieMaker.  The MovieMaker will produce some dialog panels whose parent will be assigned to \variable{parent} (which can be \variable{null}) if you like).
+\mthd{public MovieMaker(Frame parent)}  Creates a MovieMaker.  The MovieMaker will produce some dialog panels whose parent window will be assigned to \variable{parent} (which can be \variable{null} if you like).
 \end{methods}
 
 Once you have a MovieMaker, you \method{start(...)} it, then start adding images to it with \method{add(...)}, then finally call \method{stop(...)} to write the movie out.  If this sounds similar to the MovieEncoder procedure, you win a gold star.  The difference is that you don't have to specify much: MovieMaker queries the user for the file name, frame rate, and the format he'd prefer.
@@ -11696,11 +11703,11 @@ This package, which is laid out in Figure \ref{ChartUML}, provides four kinds of
 \begin{itemize}
 \item {\bf Chart Generators} are JPanels which display multiple charts (of the same kind) layered on one another.  Chart Generators provide a lot of additional features: they make global attributes (chart titles, etc.) easy to set; they permit pictures and movies; and they maintain {\bf Series Attributes}, one per layered chart.
 \item {\bf Series Attributes} are JPanels which allow the user to view and modify per-chart attributes (chart color, etc.). Each chart is associated with a {\bf series}, that is, a set of data which is being displayed.  Hence the name.  Series Attributes can be moved around relative to one another, or deleted entirely.
-\item {\bf Data Cullers} are simple objects whose job is to reduce a series to a more manageable size as it has grown over time, so fewer points are displayed on the chart.  Data Cullers are presently only used for Time Series Charts.
-\item A {\bf Utility Factory Class} to make programmatically-generated charts easy..
+\item {\bf Data Cullers} are simple objects whose job is to reduce a series to a more manageable size if it has grown over time, so fewer points are displayed on the chart.  Data Cullers are presently only used for Time Series Charts.
+\item A {\bf Utility Factory Class} to make programmatically-generated charts easy.
 \end{itemize}
 
-Chart Generators and Series Attributes are presently provided for five kinds of charts:
+Chart Generators and Series Attributes are presently provided for seven kinds of charts:
 
 \begin{itemize}
 \item Time Series Charts
@@ -11709,6 +11716,7 @@ Chart Generators and Series Attributes are presently provided for five kinds of 
 \item Bubble Charts
 \item Bar Charts
 \item Pie Charts
+\item Box Plots
 \end{itemize}
 
 \begin{figure}[t]
@@ -11724,7 +11732,7 @@ Chart Generators are all subclasses of the abstract class \Class{sim.util.media.
 
 In an important sense, a ChartGenerator is like a Display2D or Display3D.  You can think of its relationships to its Series Attributes as similar to the relationship between a Display2D and its Field Portrayals.   Like the displays, ChartGenerator can create movies and publication-quality vector PDFs.
 
-\sidebar{Got an example?}{For an extended example, see MASON's \file{howto.html} file, under the subtitle ``How to Add a Chart Programmatically''.}You don't just have to create a ChartGenerator via an inspector: you can also set one up as a display or a free-standing JFrame.   ChartGenerator is essentially independent of MASON.
+\sidebar{Got an example?}{For an extended example, see MASON's \file{howto.html} file, under the subtitle ``How to Add a Chart Programmatically''.  See also Section \ref{sim.display.ChartUtilities} for information about using ChartUtilities and another example.}You don't just have to create a ChartGenerator via an inspector: you can also set one up as a display or a free-standing JFrame.   ChartGenerator is essentially independent of MASON.
 
 A ChartGenerator has the following protected variables:
 
@@ -11930,7 +11938,7 @@ org.jfree.data.statistics.HistogramType.SCALE\_AREA\_TO\_1
 \begin{wrapfigure}{r}[0in]{3in}
 \vspace{-2em}\hfill\includegraphics[width=3in]{BoxPlot.png}\vspace{-3em}\end{wrapfigure}
 
-Box Plots are created in a manner somewhat similar to Histograms: MASON replaces the entire dataset each time with a custom update method.  Box Plots can be horizontal or vertical, and contain median bars and mean circles.  Normally there is no X axis label; instead, if the series contain multiple distributions, the labels of those distributions are shown, as in the picture at right.    BoxPlots are created using \Class{sim.util.media.chart.BoxPlotGenerator}.  
+Box Plots are created in a manner somewhat similar to Histograms: MASON replaces the entire dataset each time with a custom update method.  Box Plots may be horizontal or vertical, and may contain median bars and mean circles (or not).  Normally there is no X axis label; instead, if the series contain multiple distributions, the labels of those distributions are shown, as in the picture at right.    BoxPlots are created using \Class{sim.util.media.chart.BoxPlotGenerator}.  
 
 The series in a Box Plot can be one of two things:
 

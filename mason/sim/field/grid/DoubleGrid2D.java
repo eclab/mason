@@ -858,13 +858,13 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         }
                 
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,DoubleBag result, IntBag xPos, IntBag yPos )
+    public DoubleBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin,DoubleBag result, IntBag xPos, IntBag yPos )
         {
         return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
         }
                 
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos )
+    public DoubleBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  DoubleBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -984,7 +984,7 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         }
 
 
-    public DoubleBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin)
+    public DoubleBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin)
         {
         return getRadialNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
         }

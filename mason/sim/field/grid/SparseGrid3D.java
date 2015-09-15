@@ -755,7 +755,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         }
 
 
-    public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getRadialNeighbors( final int x, final int y, int z, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -768,7 +768,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         return getObjectsAtLocations(xPos,yPos,zPos,result);
         }
 
-    public Bag getRadialNeighborsAndLocations( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, int z, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -1056,13 +1056,13 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
         }
 
 
-    public Bag getRadialNeighbors( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getRadialNeighbors( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, Grid3D.ANY, true, result, xPos, yPos, zPos);
         }
 
 
-    public Bag getRadialNeighborsAndLocations( final int x, final int y, final int z, final int dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
+    public Bag getRadialNeighborsAndLocations( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin, Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {
         return getRadialNeighborsAndLocations(x, y, z, dist, mode, includeOrigin, Grid3D.ANY, true, result, xPos, yPos, zPos);
         }
@@ -1117,7 +1117,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
 
 
 
-    public Bag getRadialNeighbors( final int x, final int y, int z, final int dist, int mode, boolean includeOrigin)
+    public Bag getRadialNeighbors( final int x, final int y, int z, final double dist, int mode, boolean includeOrigin)
         {
         return getRadialNeighbors(x, y, z, dist, mode, includeOrigin, null, null, null, null);
         }

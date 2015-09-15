@@ -776,12 +776,12 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         }
                 
                 
-    public IntBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
+    public IntBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin, IntBag result, IntBag xPos, IntBag yPos )
         {
         return getRadialNeighbors(x, y, dist, mode, includeOrigin, Grid2D.ANY, true, result, xPos, yPos);
         }
 
-    public IntBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  IntBag result, IntBag xPos, IntBag yPos )
+    public IntBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin,  int measurementRule, boolean closed,  IntBag result, IntBag xPos, IntBag yPos )
         {
         if( xPos == null )
             xPos = new IntBag();
@@ -901,7 +901,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
         }
 
 
-    public IntBag getRadialNeighbors( final int x, final int y, final int dist, int mode, boolean includeOrigin)
+    public IntBag getRadialNeighbors( final int x, final int y, final double dist, int mode, boolean includeOrigin)
         {
         return getRadialNeighbors(x, y, dist, mode, includeOrigin, null, null, null);
         }
