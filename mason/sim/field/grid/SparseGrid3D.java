@@ -917,64 +917,20 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                 
             if (measurementRule == Grid3D.ANY)
                 {
-                // first consider the six axes.
-                // These must have at least TWO points of equality, such as x==xp and y==yp
-				if (  	(x==xp ? 1 : 0) +
-						(y==yp ? 1 : 0) +
-						(z==zp ? 1 : 0) >= 2 )
-					{
-					// check for edges
-					if (z == zp)
-						{
-						if (x == xp)
-							{
-							if (y < yp)
-								{
-								double d = (yp - 0.5) -  y;
-								remove = !(d < dist || (d == dist && closed));
-								}
-							else if (y > yp)
-								{
-								double d = -((yp - 0.5) - y);
-								remove = !(d < dist || (d == dist && closed));
-								}
-							else // y == yp  // special case
-								{
-								// don't remove unless open and dist is zero, a rare case
-								remove = (dist == 0 && !closed);
-								}
-							}
-						else if (y == yp)
-							{
-							if (x < xp)
-								{
-								double d = (xp - 0.5) - x;
-								remove = !(d < dist || (d == dist && closed));
-								}
-							else
-								{
-								double d = -((xp - 0.5) - x);
-								remove = !(d < dist || (d == dist && closed));
-								}
-							}
-						}
-					else if (x == xp)
-						{
-						if (y == yp)
-							{
-							if (z  < zp)
-								{
-								double d = (zp - 0.5) -  z;
-								remove = !(d < dist || (d == dist && closed));
-								}
-							else
-								{
-								double d = -((zp - 0.5) - z);
-								remove = !(d < dist || (d == dist && closed));
-								}
-							}
-						}
-					}
+                // handle simple cases where there's at least one equality
+                if (x==xp)
+                	{
+                	remove = AbstractGrid2D.removeForAny(y,z,yp,zp,dist,closed);
+                	}
+                else if (y==yp)
+                	{
+                	remove = AbstractGrid2D.removeForAny(x,z,xp,zp,dist,closed);
+                	}
+                else if (z==zp)
+                	{
+                	remove = AbstractGrid2D.removeForAny(x,y,xp,yp,dist,closed);
+                	}
+
                 // off center -- check for nearest corner
                 else if (z < zp)
                     {

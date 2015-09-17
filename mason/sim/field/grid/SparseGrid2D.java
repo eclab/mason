@@ -1232,55 +1232,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 
             if (measurementRule == Grid2D.ANY)
                 {
-                // above or below -- check for edges
-                if (x == xp)
-                    {
-                    if (y < yp)
-                        {
-                        double d = (yp - 0.5) -  y;
-                        remove = !(d < dist || (d == dist && closed));
-                        }
-                    else if (y > yp)
-                        {
-                        double d = -((yp - 0.5) - y);
-                        remove = !(d < dist || (d == dist && closed));
-                        }
-                    else // y == yp  // special case
-                    	{
-                    	// don't remove unless open and dist is zero, a rare case
-                    	remove = (dist == 0 && !closed);
-                    	}
-                    }
-                // left or right -- check for edges
-                else if (y == yp)
-                    {
-                    if (x < xp)
-                        {
-                        double d = (xp - 0.5) - x;
-                        remove = !(d < dist || (d == dist && closed));
-                        }
-                    else  // x > xp  // (x == xp checked for earlier)
-                        {
-                        double d = -((xp - 0.5) - x);
-                        remove = !(d < dist || (d == dist && closed));
-                        }
-                    }
-                
-                // off center -- check for nearest corner
-                else if (x < xp)
-                    {
-                    if (y < yp)
-                        remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
-                    else
-                        remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
-                    }
-                else if (x > xp)
-                    {
-                    if (y < yp)
-                        remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
-                    else
-                        remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
-                    }
+            	remove = AbstractGrid2D.removeForAny(x, y, xp, yp, dist, closed);
                 }
             else if (measurementRule == Grid2D.ALL)
                 {
