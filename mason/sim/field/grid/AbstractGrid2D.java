@@ -595,6 +595,7 @@ public abstract class AbstractGrid2D implements Grid2D
                 
             if (measurementRule == Grid2D.ANY)
                 {
+                // above or below -- check for edges
                 if (x == xp)
                     {
                     if (y < yp)
@@ -602,12 +603,18 @@ public abstract class AbstractGrid2D implements Grid2D
                         double d = (yp - 0.5) -  y;
                         remove = !(d < dist || (d == dist && closed));
                         }
-                    else
+                    else if (y > yp)
                         {
                         double d = -((yp - 0.5) - y);
                         remove = !(d < dist || (d == dist && closed));
                         }
+                    else // y == yp  // special case
+                    	{
+                    	// don't remove unless open and dist is zero, a rare case
+                    	remove = (dist == 0 && !closed);
+                    	}
                     }
+                // left or right -- check for edges
                 else if (y == yp)
                     {
                     if (x < xp)
@@ -615,20 +622,22 @@ public abstract class AbstractGrid2D implements Grid2D
                         double d = (xp - 0.5) - x;
                         remove = !(d < dist || (d == dist && closed));
                         }
-                    else
+                    else  // x > xp  // (x == xp checked for earlier)
                         {
                         double d = -((xp - 0.5) - x);
                         remove = !(d < dist || (d == dist && closed));
                         }
                     }
-                if (x < xp)
+                
+                // off center -- check for nearest corner
+                else if (x < xp)
                     {
                     if (y < yp)
                         remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
                     else
                         remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
                     }
-                else
+                else if (x > xp)
                     {
                     if (y < yp)
                         remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
@@ -638,18 +647,21 @@ public abstract class AbstractGrid2D implements Grid2D
                 }
             else if (measurementRule == Grid2D.ALL)
                 {
+                // must check if ALL corners lie within the boundary.  However
+                // we can reduce it to just specific corners depending on the relative
+                // positions of the coordinates
                 if (x < xp)
                     {
                     if (y < yp)
                         remove = !within(x,y,xp+0.5,yp+0.5,distsq,closed);
-                    else
+                    else  // y >= yp.  y==yp is included because only one corner must be checked -- grid points are centered in their squares
                         remove = !within(x,y,xp+0.5,yp-0.5,distsq,closed);
                     }
-                else
+                else  // x >= xp.  x==xp is included because only one corner must be checked -- grid points are centered in their squares
                     {
                     if (y < yp)
                         remove = !within(x,y,xp-0.5,yp+0.5,distsq,closed);
-                    else
+                    else // y >= yp.  y==yp is included because only one corner must be checked -- grid points are centered in their squares
                         remove = !within(x,y,xp-0.5,yp-0.5,distsq,closed);
                     }
                 }

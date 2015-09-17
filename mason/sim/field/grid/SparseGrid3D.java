@@ -917,82 +917,96 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                 
             if (measurementRule == Grid3D.ANY)
                 {
-                if (z == zp)
-                    {
-                    if (x == xp)
-                        {
-                        if (y < yp)
-                            {
-                            double d = (yp - 0.5) -  y;
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        else
-                            {
-                            double d = -((yp - 0.5) - y);
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        }
-                    else if (y == yp)
-                        {
-                        if (x < xp)
-                            {
-                            double d = (xp - 0.5) - x;
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        else
-                            {
-                            double d = -((xp - 0.5) - x);
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        }
-                    }
-                else if (x == xp)
-                    {
-                    if (y == yp)
-                        {
-                        if (z  < zp)
-                            {
-                            double d = (zp - 0.5) -  z;
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        else
-                            {
-                            double d = -((zp - 0.5) - z);
-                            remove = !(d < dist || (d == dist && closed));
-                            }
-                        }
-                    }
+                // first consider the six axes.
+                // These must have at least TWO points of equality, such as x==xp and y==yp
+				if (  	(x==xp ? 1 : 0) +
+						(y==yp ? 1 : 0) +
+						(z==zp ? 1 : 0) >= 2 )
+					{
+					// check for edges
+					if (z == zp)
+						{
+						if (x == xp)
+							{
+							if (y < yp)
+								{
+								double d = (yp - 0.5) -  y;
+								remove = !(d < dist || (d == dist && closed));
+								}
+							else if (y > yp)
+								{
+								double d = -((yp - 0.5) - y);
+								remove = !(d < dist || (d == dist && closed));
+								}
+							else // y == yp  // special case
+								{
+								// don't remove unless open and dist is zero, a rare case
+								remove = (dist == 0 && !closed);
+								}
+							}
+						else if (y == yp)
+							{
+							if (x < xp)
+								{
+								double d = (xp - 0.5) - x;
+								remove = !(d < dist || (d == dist && closed));
+								}
+							else
+								{
+								double d = -((xp - 0.5) - x);
+								remove = !(d < dist || (d == dist && closed));
+								}
+							}
+						}
+					else if (x == xp)
+						{
+						if (y == yp)
+							{
+							if (z  < zp)
+								{
+								double d = (zp - 0.5) -  z;
+								remove = !(d < dist || (d == dist && closed));
+								}
+							else
+								{
+								double d = -((zp - 0.5) - z);
+								remove = !(d < dist || (d == dist && closed));
+								}
+							}
+						}
+					}
+                // off center -- check for nearest corner
                 else if (z < zp)
                     {
                     if (x < xp)
                         {
                         if (y < yp)
                             remove = !within(x,y,z,xp-0.5,yp-0.5,zp-0.5,distsq,closed);
-                        else
+                        else // y > yp
                             remove = !within(x,y,z,xp-0.5,yp+0.5,zp-0.5,distsq,closed);
                         }
-                    else
+                    else  // x > xp
                         {
                         if (y < yp)
                             remove = !within(x,y,z,xp+0.5,yp-0.5,zp-0.5,distsq,closed);
-                        else
+                        else  // y > yp
                             remove = !within(x,y,z,xp+0.5,yp+0.5,zp-0.5,distsq,closed);
                         }
                     }
-                else
+                else  // z > zp
                     {
                     if (x < xp)
                         {
                         if (y < yp)
                             remove = !within(x,y,z,xp-0.5,yp-0.5,zp+0.5,distsq,closed);
-                        else
+                        else  // y > yp
                             remove = !within(x,y,z,xp-0.5,yp+0.5,zp+0.5,distsq,closed);
                         }
-                    else
+                    else  // x > xp
                         {
                         if (y < yp)
                             remove = !within(x,y,z,xp+0.5,yp-0.5,zp+0.5,distsq,closed);
-                        else
+                        else // y > yp
                             remove = !within(x,y,z,xp+0.5,yp+0.5,zp+0.5,distsq,closed);
                         }
                     }
@@ -1054,7 +1068,6 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
 
             }
         }
-
 
     public Bag getRadialNeighbors( final int x, final int y, final int z, final double dist, int mode, boolean includeOrigin,  Bag result, IntBag xPos, IntBag yPos, IntBag zPos )
         {

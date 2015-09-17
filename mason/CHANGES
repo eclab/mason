@@ -2807,3 +2807,8 @@ Version 20
 	Various Grid getRadialNeighbors and getRadialNeighbors upgraded to permit
 		a double-valued distance.  Thanks to Christian Meyer
 		<c.meyer@uni-oldenburg.de>
+	Bugfix to AbstractGrid2D.getRadialLocations, which was not including
+		the center square if Grid2D.ANY was being used.  Similarly for
+		AbstractGrid3D.getRadialLocations, and the SparseGrid versions.
+		Thanks to Christian Meyer <c.meyer@uni-oldenburg.de>
+
