@@ -2811,4 +2811,6 @@ Version 20
 		the center square if Grid2D.ANY was being used.  Similarly for
 		AbstractGrid3D.getRadialLocations, and the SparseGrid versions.
 		Thanks to Christian Meyer <c.meyer@uni-oldenburg.de>
-
+	Upgraded MersenneTwisterFast to version 22
+	Revised PieChartSeriesAttributes.java to avoid a NullPointerException
+		in getElements() when no elements have been set yet.
