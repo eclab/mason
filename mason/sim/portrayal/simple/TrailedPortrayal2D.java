@@ -33,8 +33,7 @@ import java.awt.event.*;
           
    <p>To add trails, what you'll do is create a second FieldPortrayal2D, identical to fieldPortrayal, and
    which portrays the same field.  Let's call this one trailfieldportrayal.  Attach trailfieldportrayal to
-   the display immediately *before* fieldPortrayal is attached, so it's drawn immediately before and thus
-   the objects in fieldPortrayal get drawn on top of the trails.
+   the display immediately *before* fieldPortrayal is attached, so the objects in fieldPortrayal get drawn on top of the trails.
            
    <p>Next you'll need to specify the SimplePortrayal2D for trailfieldportrayal.  To do this, you'll use
    a TrailPortrayal2D wrapped around a child SimplePortrayal2D, specifically, the same kind of SimplePortrayal2D as "simple" was.
@@ -104,10 +103,6 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         Place(Object location, double timestamp) { this.location = location; this.timestamp = timestamp; }
         }
         
-    // is the object selected?  We'll use this auxiliary variable in the case that we're using a MovablePortrayal2D
-    // and so we didn't get selected.
-    boolean isSelected = false;
-
     boolean onlyGrowTrailWhenSelected = false;
     /** Set this to grow the trail only after the objet has been selected, and delete it when the object has been deselected.  By default this is FALSE.
         If you set this to TRUE, you can use the same TrailedPortrayal2D repeatedly for all objects in your field rather than providing separate
@@ -242,30 +237,34 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
 
     final static Object NO_OBJ = new Object();  // for use in currentObjectLocation
     final static Object NO_OBJ2 = new Object(); // for use in selectedObj
+    final static Object NO_OBJ3 = new Object(); // for use in lastObj
 
-    Object lastObj;  // what was the last object that was growing a trail
-    Object selectedObj;  // what was the object selected in the primary fieldPortrayal?
+    Object lastObj = NO_OBJ3;  // what was the last object that was growing a trail.  Initially nothing (NO_OBJ3).
+    Object selectedObj = NO_OBJ2;  // what was the object selected in the primary fieldPortrayal?  Normally nothing (NO_OBJ2).
     boolean locked = false;  // have we settled on a selected object?
         
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {               
-        // I am probably added to more than one field portrayal, but should only
-        // be drawing in one of them.  So let's first double check that.
-        if (info.fieldPortrayal != fieldPortrayal)
+        // This code is called when I'm in the field portrayal for drawing the underlying objects
+        // as a wrapper portrayal
+        if (info.fieldPortrayal != fieldPortrayal)  // not the field portrayal in which I draw the trail
             {
             if (info.selected && !locked)  // not settled on one yet
-                { 
-                selectedObj = object; 
+                {
+                selectedObj = object;  // this may change -- we want the topmost.
                 if (selectedObj == lastObj)  // DEFINITELY want this one, lock it, no one else may be the selected object
                     locked = true;
                 }
-            else if (selectedObj == object)  // deselected
-                selectedObj = NO_OBJ2;  // impossible to be in a field
-                         
+            else if (selectedObj == object)  // deselected (not info.selected)
+                selectedObj = NO_OBJ2; // impossible to be in a field
+            
+            // at this point, selectedObj contains the object that we want to draw the trail
+            
             getChild(object).draw(object, graphics, info);
-            return;  // don't draw me.
             }
-                
+        else
+        	// this code is called when I'm in the field portrayal for drawing the trails
+        	{
         // locals are faster
         Object selectedObj = this.selectedObj;
         Object lastObj = this.lastObj;
@@ -324,8 +323,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                     }
                 }
             }
-                
-                
+            
         // am I being drawn?
         if (object == selectedObj || !onlyShowTrailWhenSelected) 
             {
@@ -374,7 +372,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                         jump = Math.abs(loc1.x - loc2.x) > width * maximumJump ||
                             Math.abs(loc1.y - loc2.y) > height * maximumJump;
                         }
-                                                                                
+                                                                   
                     // don't draw if it's a jump
                     if (!jump)
                         {
@@ -390,6 +388,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                 lastPosition = position;
                 }
             }
+            }
         }
         
     public boolean hitObject(Object object, DrawInfo2D range)
@@ -399,12 +398,10 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         }
 
     public boolean setSelected(LocationWrapper wrapper, boolean selected)
-        {
+        {        
         // always do a setSelected if the child is cool with it.
         Object object = wrapper.getObject();
-        boolean returnval = getChild(object).setSelected(wrapper, selected);
-        //isSelected = (selected && returnval);  // sometimes a child will return true regardless: we want to check for that.
-        return returnval;
+        return getChild(object).setSelected(wrapper, selected);
         }
 
     public Inspector getInspector(LocationWrapper wrapper, GUIState state)

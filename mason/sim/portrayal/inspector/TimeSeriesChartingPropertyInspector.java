@@ -183,7 +183,7 @@ public class TimeSeriesChartingPropertyInspector extends ChartingPropertyInspect
                     }
                 if (n == 0)
                     {
-                    // System.err.println( "No element????" );
+                    // no element -- do nothing
                     }
                 else addToMainSeries(sumX / n, y, false);
                 break;
