@@ -2813,4 +2813,5 @@ Version 20
 		Thanks to Christian Meyer <c.meyer@uni-oldenburg.de>
 	Upgraded MersenneTwisterFast to version 22
 	Revised PieChartSeriesAttributes.java to avoid a NullPointerException
-		in getElements() when no elements have been set yet.
+		in getElements() when no elements have been set yet.  Thanks to
+		Miriam Tschanen <tmiriam@student.ethz.ch>
