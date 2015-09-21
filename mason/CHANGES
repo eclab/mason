@@ -2815,3 +2815,5 @@ Version 20
 	Revised PieChartSeriesAttributes.java to avoid a NullPointerException
 		in getElements() when no elements have been set yet.  Thanks to
 		Miriam Tschanen <tmiriam@student.ethz.ch>
+	Fixed a bug in HeatBugsWithUI where trails were not being drawn even
+		when requested.  Thanks to Ernesto Carella <carrknight@gmail.com>
