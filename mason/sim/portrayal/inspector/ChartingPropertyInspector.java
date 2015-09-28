@@ -248,22 +248,22 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
             LabelledList list = new LabelledList(title);
             add(list,BorderLayout.CENTER);
                         
-			NumberTextField stepsField = new NumberTextField(1,true)
-				{
-				public double newValue(double value)
-					{
-					value = (long)value;
-					if (value <= 0) return currentValue;
-					else 
-						{
-						interval = (long)value;
-						return value;
-						}
-					}
-				};
-																					
-			list.addLabelled("Every",stepsField);
-			list.addLabelled("",new JLabel("...Timesteps"));
+            NumberTextField stepsField = new NumberTextField(1,true)
+                {
+                public double newValue(double value)
+                    {
+                    value = (long)value;
+                    if (value <= 0) return currentValue;
+                    else 
+                        {
+                        interval = (long)value;
+                        return value;
+                        }
+                    }
+                };
+                                                                                                                                                                        
+            list.addLabelled("Every",stepsField);
+            list.addLabelled("",new JLabel("...Timesteps"));
 
             if (includeAggregationMethodAttributes())
                 {
@@ -295,7 +295,7 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
                         }
                     });
             //if (includeAggregationMethodAttributes())
-                list.addLabelled("Redraw", optionsBox2);
+            list.addLabelled("Redraw", optionsBox2);
             //else list.add(optionsBox2);
             }
         }
@@ -356,23 +356,23 @@ public abstract class ChartingPropertyInspector extends PropertyInspector
         // simulation start, then lastTime == Schedule.BEFORE_SIMULATION == time, but we'd
         // still want to update at least one time.
         if (
-        	// If we're always updatable, or we're inside the simulation boundaries...
-        	((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
-        	
-        	// AND we're one of...	
-         	(
-            	// we're using aggregation (Time Series), and our aggregation method is something other than CURRENT
-	        	// (thus we must update the series every timestep)
-            	(includeAggregationMethodAttributes() && globalAttributes.aggregationMethod != AGGREGATIONMETHOD_CURRENT && lastTime < time) ||
+            // If we're always updatable, or we're inside the simulation boundaries...
+            ((time >= Schedule.EPOCH && time < Schedule.AFTER_SIMULATION) || isAlwaysUpdateable()) &&
+                
+            // AND we're one of...  
+                (
+                // we're using aggregation (Time Series), and our aggregation method is something other than CURRENT
+                // (thus we must update the series every timestep)
+                (includeAggregationMethodAttributes() && globalAttributes.aggregationMethod != AGGREGATIONMETHOD_CURRENT && lastTime < time) ||
             
                 // OR we're using aggregation (Time Series), and our aggregation method is CURRENT, and we're beyond the timestep interval
-            	(includeAggregationMethodAttributes() && globalAttributes.aggregationMethod == AGGREGATIONMETHOD_CURRENT && lastTime + globalAttributes.interval <= time) ||
+                (includeAggregationMethodAttributes() && globalAttributes.aggregationMethod == AGGREGATIONMETHOD_CURRENT && lastTime + globalAttributes.interval <= time) ||
 
-            	// OR we're NOT using aggregation, and we're beyond the interval
-             	(!includeAggregationMethodAttributes() && lastTime + globalAttributes.interval <= time) ||
+                // OR we're NOT using aggregation, and we're beyond the interval
+                (!includeAggregationMethodAttributes() && lastTime + globalAttributes.interval <= time) ||
             
-            	// OR we've not updated yet
-            	!updatedOnceAlready))
+                // OR we've not updated yet
+                !updatedOnceAlready))
             {              
             updatedOnceAlready = true;
 
