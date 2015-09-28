@@ -555,58 +555,58 @@ public abstract class AbstractGrid2D implements Grid2D
         }
         
     static boolean removeForAny(int x, int y, int xp, int yp, double dist, boolean closed)
-    	{
-		// above or below -- check for edges
-		if (x == xp)
-			{
-			if (y < yp)
-				{
-				double d = (yp - 0.5) -  y;
-				return !(d < dist || (d == dist && closed));
-				}
-			else if (y > yp)
-				{
-				double d = -((yp - 0.5) - y);
-				return !(d < dist || (d == dist && closed));
-				}
-			else // y == yp  // special case
-				{
-				// don't remove unless open and dist is zero, a rare case
-				return (dist == 0 && !closed);
-				}
-			}
-		// left or right -- check for edges
-		else if (y == yp)
-			{
-			if (x < xp)
-				{
-				double d = (xp - 0.5) - x;
-				return !(d < dist || (d == dist && closed));
-				}
-			else  // x > xp  // (x == xp checked for earlier)
-				{
-				double d = -((xp - 0.5) - x);
-				return !(d < dist || (d == dist && closed));
-				}
-			}
-		
-		// off center -- check for nearest corner
-		else if (x < xp)
-			{
-			if (y < yp)
-				return !within(x,y,xp-0.5,yp-0.5,dist*dist,closed);
-			else
-				return !within(x,y,xp-0.5,yp+0.5,dist*dist,closed);
-			}
-		else if (x > xp)
-			{
-			if (y < yp)
-				return !within(x,y,xp+0.5,yp-0.5,dist*dist,closed);
-			else
-				return !within(x,y,xp+0.5,yp+0.5,dist*dist,closed);
-			}
-		else return false;
-		}
+        {
+        // above or below -- check for edges
+        if (x == xp)
+            {
+            if (y < yp)
+                {
+                double d = (yp - 0.5) -  y;
+                return !(d < dist || (d == dist && closed));
+                }
+            else if (y > yp)
+                {
+                double d = -((yp - 0.5) - y);
+                return !(d < dist || (d == dist && closed));
+                }
+            else // y == yp  // special case
+                {
+                // don't remove unless open and dist is zero, a rare case
+                return (dist == 0 && !closed);
+                }
+            }
+        // left or right -- check for edges
+        else if (y == yp)
+            {
+            if (x < xp)
+                {
+                double d = (xp - 0.5) - x;
+                return !(d < dist || (d == dist && closed));
+                }
+            else  // x > xp  // (x == xp checked for earlier)
+                {
+                double d = -((xp - 0.5) - x);
+                return !(d < dist || (d == dist && closed));
+                }
+            }
+                
+        // off center -- check for nearest corner
+        else if (x < xp)
+            {
+            if (y < yp)
+                return !within(x,y,xp-0.5,yp-0.5,dist*dist,closed);
+            else
+                return !within(x,y,xp-0.5,yp+0.5,dist*dist,closed);
+            }
+        else if (x > xp)
+            {
+            if (y < yp)
+                return !within(x,y,xp+0.5,yp-0.5,dist*dist,closed);
+            else
+                return !within(x,y,xp+0.5,yp+0.5,dist*dist,closed);
+            }
+        else return false;
+        }
 
         
         
@@ -651,7 +651,7 @@ public abstract class AbstractGrid2D implements Grid2D
                 
             if (measurementRule == Grid2D.ANY)
                 {
-            	remove = AbstractGrid2D.removeForAny(x, y, xp, yp, dist, closed);
+                remove = AbstractGrid2D.removeForAny(x, y, xp, yp, dist, closed);
                 }
             else if (measurementRule == Grid2D.ALL)
                 {

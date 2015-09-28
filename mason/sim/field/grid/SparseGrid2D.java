@@ -1232,7 +1232,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 
             if (measurementRule == Grid2D.ANY)
                 {
-            	remove = AbstractGrid2D.removeForAny(x, y, xp, yp, dist, closed);
+                remove = AbstractGrid2D.removeForAny(x, y, xp, yp, dist, closed);
                 }
             else if (measurementRule == Grid2D.ALL)
                 {

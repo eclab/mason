@@ -919,17 +919,17 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                 {
                 // handle simple cases where there's at least one equality
                 if (x==xp)
-                	{
-                	remove = AbstractGrid2D.removeForAny(y,z,yp,zp,dist,closed);
-                	}
+                    {
+                    remove = AbstractGrid2D.removeForAny(y,z,yp,zp,dist,closed);
+                    }
                 else if (y==yp)
-                	{
-                	remove = AbstractGrid2D.removeForAny(x,z,xp,zp,dist,closed);
-                	}
+                    {
+                    remove = AbstractGrid2D.removeForAny(x,z,xp,zp,dist,closed);
+                    }
                 else if (z==zp)
-                	{
-                	remove = AbstractGrid2D.removeForAny(x,y,xp,yp,dist,closed);
-                	}
+                    {
+                    remove = AbstractGrid2D.removeForAny(x,y,xp,yp,dist,closed);
+                    }
 
                 // off center -- check for nearest corner
                 else if (z < zp)
