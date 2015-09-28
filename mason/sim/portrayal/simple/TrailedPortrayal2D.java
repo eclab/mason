@@ -263,131 +263,131 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
             getChild(object).draw(object, graphics, info);
             }
         else
-        	// this code is called when I'm in the field portrayal for drawing the trails
-        	{
-        // locals are faster
-        Object selectedObj = this.selectedObj;
-        Object lastObj = this.lastObj;
-        boolean onlyShowTrailWhenSelected = this.onlyShowTrailWhenSelected;
-        boolean onlyGrowTrailWhenSelected = this.onlyGrowTrailWhenSelected;
-                
-                
-        // unlock so next time around I have to search for an object again
-        locked = false;
-                
-        // am I a new object that's been selected?  If so, clear the trail
-        if (object == selectedObj || !onlyShowTrailWhenSelected)
+            // this code is called when I'm in the field portrayal for drawing the trails
             {
-            if (object != lastObj && onlyGrowTrailWhenSelected)
-                { 
-                places.clear();
-                this.lastObj = object;
-                }
-            }
+            // locals are faster
+            Object selectedObj = this.selectedObj;
+            Object lastObj = this.lastObj;
+            boolean onlyShowTrailWhenSelected = this.onlyShowTrailWhenSelected;
+            boolean onlyGrowTrailWhenSelected = this.onlyGrowTrailWhenSelected;
                 
-        Object currentObjectLocation = NO_OBJ;
                 
-        // should I update my location?
-        if (object == selectedObj || !onlyGrowTrailWhenSelected)
-            {
-            double currentTime = state.state.schedule.getTime();
-
-            // delete old stuff from front
-            ListIterator iterator = places.listIterator();
-            while(iterator.hasNext())
+            // unlock so next time around I have to search for an object again
+            locked = false;
+                
+            // am I a new object that's been selected?  If so, clear the trail
+            if (object == selectedObj || !onlyShowTrailWhenSelected)
                 {
-                Place p = (Place)(iterator.next());
-
-                // First remove old stuff
-                if (p.timestamp <= currentTime - length)
-                    {
-                    iterator.remove();
+                if (object != lastObj && onlyGrowTrailWhenSelected)
+                    { 
+                    places.clear();
+                    this.lastObj = object;
                     }
-                else break;
                 }
-                        
-            // add new stuff to back
-            int size = places.size();
-            currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
                 
-            if (size == 0 && currentTime > Schedule.BEFORE_SIMULATION && currentTime < Schedule.AFTER_SIMULATION)  // first time!
+            Object currentObjectLocation = NO_OBJ;
+                
+            // should I update my location?
+            if (object == selectedObj || !onlyGrowTrailWhenSelected)
                 {
-                places.add(new Place(currentObjectLocation, currentTime));
-                }
-            else if (size > 0)
-                {
-                Place lastPlace = (Place)(places.getLast());
-                if (lastPlace.timestamp < currentTime)  // something new!
+                double currentTime = state.state.schedule.getTime();
+
+                // delete old stuff from front
+                ListIterator iterator = places.listIterator();
+                while(iterator.hasNext())
+                    {
+                    Place p = (Place)(iterator.next());
+
+                    // First remove old stuff
+                    if (p.timestamp <= currentTime - length)
+                        {
+                        iterator.remove();
+                        }
+                    else break;
+                    }
+                        
+                // add new stuff to back
+                int size = places.size();
+                currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
+                
+                if (size == 0 && currentTime > Schedule.BEFORE_SIMULATION && currentTime < Schedule.AFTER_SIMULATION)  // first time!
                     {
                     places.add(new Place(currentObjectLocation, currentTime));
                     }
-                }
-            }
-            
-        // am I being drawn?
-        if (object == selectedObj || !onlyShowTrailWhenSelected) 
-            {
-            if (currentObjectLocation == NO_OBJ) // haven't determined this yet
-                currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
-
-            double currentTime = state.state.schedule.getTime();
-            ListIterator iterator = places.listIterator();
-            Place lastPlace = null;
-            Point2D.Double lastPosition = null;
-            TrailDrawInfo2D temp = new TrailDrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(info.draw.x, info.draw.y, info.draw.width, info.draw.height), // make a copy, we'll modify it
-                info.clip, null);
-            while(iterator.hasNext())
-                {
-                Place p = (Place)(iterator.next());
-
-                // first figure out where to draw the first point.  We'll do this by computing the position relative to a known
-                // position of a known object (namely the object that was just passed in along with its DrawInfo).
-                Point2D.Double position = fieldPortrayal.getRelativeObjectPosition(p.location, currentObjectLocation, info);
-                                                                
-                // now determine whether or not to draw.
-                if (lastPosition != null)  // we had a previous position to use as our second point
+                else if (size > 0)
                     {
-                    // compute whether this was a big jump
-                    boolean jump = false;
-                    Object field = fieldPortrayal.getField();
-                    double width = 0;
-                    double height = 0;
-                    if (field instanceof Grid2D) 
+                    Place lastPlace = (Place)(places.getLast());
+                    if (lastPlace.timestamp < currentTime)  // something new!
                         {
-                        Grid2D grid = (Grid2D) field;
-                        width = grid.getWidth();
-                        height = grid.getHeight();
-                        Int2D loc1 = (Int2D)(p.location);
-                        Int2D loc2 = (Int2D)(lastPlace.location);
-                        jump = Math.abs(loc1.x - loc2.x) > width * maximumJump ||
-                            Math.abs(loc1.y - loc2.y) > height * maximumJump;
-                        }
-                    else if (field instanceof Continuous2D) 
-                        {
-                        Continuous2D grid = (Continuous2D) field;
-                        width = grid.getWidth();
-                        height = grid.getHeight();
-                        Double2D loc1 = (Double2D)(p.location);
-                        Double2D loc2 = (Double2D)(lastPlace.location);
-                        jump = Math.abs(loc1.x - loc2.x) > width * maximumJump ||
-                            Math.abs(loc1.y - loc2.y) > height * maximumJump;
-                        }
-                                                                   
-                    // don't draw if it's a jump
-                    if (!jump)
-                        {
-                        temp.value = valueForTimestep(p.timestamp, currentTime);
-                        temp.draw.x = position.x;
-                        temp.draw.y = position.y;
-                        temp.secondPoint = lastPosition;
-                        trail.draw(object, graphics, temp);
+                        places.add(new Place(currentObjectLocation, currentTime));
                         }
                     }
-                                                                
-                lastPlace = p;
-                lastPosition = position;
                 }
-            }
+            
+            // am I being drawn?
+            if (object == selectedObj || !onlyShowTrailWhenSelected) 
+                {
+                if (currentObjectLocation == NO_OBJ) // haven't determined this yet
+                    currentObjectLocation = fieldPortrayal.getObjectLocation(object, info.gui);
+
+                double currentTime = state.state.schedule.getTime();
+                ListIterator iterator = places.listIterator();
+                Place lastPlace = null;
+                Point2D.Double lastPosition = null;
+                TrailDrawInfo2D temp = new TrailDrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(info.draw.x, info.draw.y, info.draw.width, info.draw.height), // make a copy, we'll modify it
+                    info.clip, null);
+                while(iterator.hasNext())
+                    {
+                    Place p = (Place)(iterator.next());
+
+                    // first figure out where to draw the first point.  We'll do this by computing the position relative to a known
+                    // position of a known object (namely the object that was just passed in along with its DrawInfo).
+                    Point2D.Double position = fieldPortrayal.getRelativeObjectPosition(p.location, currentObjectLocation, info);
+                                                                
+                    // now determine whether or not to draw.
+                    if (lastPosition != null)  // we had a previous position to use as our second point
+                        {
+                        // compute whether this was a big jump
+                        boolean jump = false;
+                        Object field = fieldPortrayal.getField();
+                        double width = 0;
+                        double height = 0;
+                        if (field instanceof Grid2D) 
+                            {
+                            Grid2D grid = (Grid2D) field;
+                            width = grid.getWidth();
+                            height = grid.getHeight();
+                            Int2D loc1 = (Int2D)(p.location);
+                            Int2D loc2 = (Int2D)(lastPlace.location);
+                            jump = Math.abs(loc1.x - loc2.x) > width * maximumJump ||
+                                Math.abs(loc1.y - loc2.y) > height * maximumJump;
+                            }
+                        else if (field instanceof Continuous2D) 
+                            {
+                            Continuous2D grid = (Continuous2D) field;
+                            width = grid.getWidth();
+                            height = grid.getHeight();
+                            Double2D loc1 = (Double2D)(p.location);
+                            Double2D loc2 = (Double2D)(lastPlace.location);
+                            jump = Math.abs(loc1.x - loc2.x) > width * maximumJump ||
+                                Math.abs(loc1.y - loc2.y) > height * maximumJump;
+                            }
+                                                                   
+                        // don't draw if it's a jump
+                        if (!jump)
+                            {
+                            temp.value = valueForTimestep(p.timestamp, currentTime);
+                            temp.draw.x = position.x;
+                            temp.draw.y = position.y;
+                            temp.secondPoint = lastPosition;
+                            trail.draw(object, graphics, temp);
+                            }
+                        }
+                                                                
+                    lastPlace = p;
+                    lastPosition = position;
+                    }
+                }
             }
         }
         
