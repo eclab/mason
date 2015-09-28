@@ -42,6 +42,9 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     public static final int SHAPE_LINE = 0;
     public static final int SHAPE_KITE = 1;
     public static final int SHAPE_COMPASS = 2;
+    public static final int SHAPE_TRIANGLE = 3;
+    public static final int SHAPE_INVERTED_T = 4;
+    public static final int SHAPE_ARROW = 5;
 
     /** The type of the oriented shape */
     int shape = SHAPE_LINE;
@@ -64,7 +67,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     public void setDrawFilled(boolean val) { drawFilled = val; }
     public boolean isDrawFilled() { return drawFilled; }
             
-    public void setShape(int val) { if (val >= SHAPE_LINE && val <= SHAPE_COMPASS) shape = val; path = null; }
+    public void setShape(int val) { if (val >= SHAPE_LINE && val <= SHAPE_ARROW) shape = val; path = null; }
     public int getShape() { return shape; }
         
     public boolean isOrientationShowing() { return showOrientation; }
@@ -78,16 +81,17 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
         
     Shape path = null;
         
-    Shape buildPolygon(double[] xpoints, double[] ypoints)
+    Shape buildPolygon(double[] xpoints, double[] ypoints, int npoints)
         {
         GeneralPath path = new GeneralPath();
         // general paths are only floats and not doubles in Java 1.4, 1.5
         // in 1.6 it's been changed to doubles finally but we're not there yet.
         if (xpoints.length > 0) path.moveTo((float)xpoints[0], (float)ypoints[0]);
-        for(int i=xpoints.length-1; i >= 0; i--)
+        for(int i=npoints-1; i >= 0; i--)
             path.lineTo((float)xpoints[i], (float)ypoints[i]);
         return path;
-        }       
+        }
+    
         
     boolean onlyDrawWhenSelected = false;
         
@@ -139,10 +143,10 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             }
         }
     
-    int[] simplePolygonX = new int[4];
-    int[] simplePolygonY = new int[4];
-    double[] simplePolygonXd = new double[4];
-    double[] simplePolygonYd = new double[4];
+    int[] simplePolygonX = new int[7];
+    int[] simplePolygonY = new int[7];
+    double[] simplePolygonXd = new double[7];
+    double[] simplePolygonYd = new double[7];
     double lastLength = Double.NaN;
     AffineTransform transform = new AffineTransform();
     Stroke stroke = new BasicStroke();
@@ -189,7 +193,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         case SHAPE_LINE:
                             if (path == null)
                                 {
-                                path = new Line2D.Double(0,0,0,length);
+                                path = new Line2D.Double(0,0,length,0);
                                 }
                             graphics.setStroke(stroke);
                             graphics.draw(transform.createTransformedShape(path));
@@ -197,15 +201,19 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         case SHAPE_KITE:
                             if (path == null)
                                 {
+                                // [1, 0]
                                 simplePolygonXd[0] = (0 + lenx);
                                 simplePolygonYd[0] = (0 + leny);
+                                // [-1, 1]
                                 simplePolygonXd[1] = (0 + -leny + -lenx);
                                 simplePolygonYd[1] = (0 + lenx + -leny);
+                                // [-1/2, 0]
                                 simplePolygonXd[2] = (0 + -lenx/2);
                                 simplePolygonYd[2] = (0 + -leny/2);
+                                // [-1, -1]
                                 simplePolygonXd[3] = (0 + leny + -lenx);
                                 simplePolygonYd[3] = (0 + -lenx + -leny);
-                                path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd, 4);
                                 }
                             if (drawFilled) 
                                 graphics.fill(transform.createTransformedShape(path));
@@ -218,15 +226,103 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         case SHAPE_COMPASS:
                             if (path == null)
                                 {
+                                // [1, 0] 
                                 simplePolygonXd[0] = (0 + lenx);
                                 simplePolygonYd[0] = (0 + leny);
+                                // [0, 1/2]
                                 simplePolygonXd[1] = (0 + -leny/2);
                                 simplePolygonYd[1] = (0 + lenx/2);
+                                // [-1/2, 0]
                                 simplePolygonXd[2] = (0 + -lenx/2);
                                 simplePolygonYd[2] = (0 + -leny/2);
+                                // [0, -1/2]
                                 simplePolygonXd[3] = (0 + leny/2);
                                 simplePolygonYd[3] = (0 + -lenx/2);
-                                path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd, 4);
+                                }
+                            if (drawFilled) 
+                                graphics.fill(transform.createTransformedShape(path));  
+                            else 
+                                {
+                                graphics.setStroke(stroke);
+                                graphics.draw(transform.createTransformedShape(path));
+                                }
+                            break;
+                        case SHAPE_TRIANGLE:
+                            if (path == null)
+                                {
+                                // [1, 0]
+                                simplePolygonXd[0] = (0 + lenx);
+                                simplePolygonYd[0] = (0 + leny);
+                                // [-1, 1/2]
+                                simplePolygonXd[1] = (0 + -lenx + -leny/2);
+                                simplePolygonYd[1] = (0 + -leny + lenx/2);
+                                // [-1, -1/2]
+                                simplePolygonXd[2] = (0 + -lenx + leny/2);
+                                simplePolygonYd[2] = (0 + -leny + -lenx/2);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd, 3);
+                                }
+                            if (drawFilled) 
+                                graphics.fill(transform.createTransformedShape(path));  
+                            else 
+                                {
+                                graphics.setStroke(stroke);
+                                graphics.draw(transform.createTransformedShape(path));
+                                }
+                            break;
+                        case SHAPE_INVERTED_T:
+                            if (path == null)
+                                {
+                                // [1, 0]
+                                simplePolygonXd[0] = (0 + lenx);
+                                simplePolygonYd[0] = (0 + leny);
+                                // [-1/2, 1/2]
+                                simplePolygonXd[1] = (0 + -lenx/2 + -leny/2);
+                                simplePolygonYd[1] = (0 + -leny/2 + lenx/2);
+                                // [-1, 1]
+                                simplePolygonXd[2] = (0 + -lenx + -leny);
+                                simplePolygonYd[2] = (0 + -leny + lenx);
+                                // [-1, -1]
+                                simplePolygonXd[3] = (0 + -lenx + leny);
+                                simplePolygonYd[3] = (0 + -leny + -lenx);
+                                // [-1/2, -1/2]
+                                simplePolygonXd[4] = (0 + -lenx/2 + leny/2);
+                                simplePolygonYd[4] = (0 + -leny/2 + -lenx/2);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd, 5);
+                                }
+                            if (drawFilled) 
+                                graphics.fill(transform.createTransformedShape(path));  
+                            else 
+                                {
+                                graphics.setStroke(stroke);
+                                graphics.draw(transform.createTransformedShape(path));
+                                }
+                            break;
+                        case SHAPE_ARROW:
+                            if (path == null)
+                                {
+                                // [1, 0]
+                                simplePolygonXd[0] = (0 + lenx);
+                                simplePolygonYd[0] = (0 + leny);
+                                // [0, 1]
+                                simplePolygonXd[1] = (0 + -leny);
+                                simplePolygonYd[1] = (0 + lenx);
+                                // [0, 1/2]
+                                simplePolygonXd[2] = (0 + -leny/2);
+                                simplePolygonYd[2] = (0 + lenx/2);
+                                // [-1, 1/2]
+                                simplePolygonXd[3] = (0 + -lenx + -leny/2);
+                                simplePolygonYd[3] = (0 + -leny + lenx/2);
+                                // [-1, -1/2]
+                                simplePolygonXd[4] = (0 + -lenx + leny/2);
+                                simplePolygonYd[4] = (0 + -leny + -lenx/2);
+                                // [0, -1/2]
+                                simplePolygonXd[5] = (0 + leny/2);
+                                simplePolygonYd[5] = (0 + -lenx/2);
+                                // [0, -1]
+                                simplePolygonXd[6] = (0 + leny);
+                                simplePolygonYd[6] = (0 + -lenx);
+                                path = buildPolygon(simplePolygonXd, simplePolygonYd, 7);
                                 }
                             if (drawFilled) 
                                 graphics.fill(transform.createTransformedShape(path));  
@@ -274,6 +370,48 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                             simplePolygonY[3] = (int)(info.draw.y + -lenx/2);
                             if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 4);
                             else graphics.drawPolygon(simplePolygonX, simplePolygonY, 4);
+                            break;
+                        case SHAPE_TRIANGLE:
+                            simplePolygonX[0] = (int)(info.draw.x + lenx);
+                            simplePolygonY[0] = (int)(info.draw.y + leny);
+                            simplePolygonX[1] = (int)(info.draw.x + -lenx + -leny/2);
+                            simplePolygonY[1] = (int)(info.draw.y + -leny + lenx/2);
+                            simplePolygonX[2] = (int)(info.draw.x + -lenx + leny/2);
+                            simplePolygonY[2] = (int)(info.draw.y + -leny + -lenx/2);
+                            if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 3);
+                            else graphics.drawPolygon(simplePolygonX, simplePolygonY, 3);
+                            break;
+                        case SHAPE_INVERTED_T:
+                            simplePolygonX[0] = (int)(info.draw.x + lenx);
+                            simplePolygonY[0] = (int)(info.draw.y + leny);
+                            simplePolygonX[1] = (int)(info.draw.x + -lenx/2 + -leny/2);
+                            simplePolygonY[1] = (int)(info.draw.y + -leny/2 + lenx/2);
+                            simplePolygonX[2] = (int)(info.draw.x + -lenx + -leny);
+                            simplePolygonY[2] = (int)(info.draw.y + -leny + lenx);
+                            simplePolygonX[3] = (int)(info.draw.x + -lenx + leny);
+                            simplePolygonY[3] = (int)(info.draw.y + -leny + -lenx);
+                            simplePolygonX[4] = (int)(info.draw.x + -lenx/2 + leny/2);
+                            simplePolygonY[4] = (int)(info.draw.y + -leny/2 + -lenx/2);
+                            if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 5);
+                            else graphics.drawPolygon(simplePolygonX, simplePolygonY, 5);
+                            break;
+                        case SHAPE_ARROW:
+                            simplePolygonX[0] = (int)(info.draw.x + lenx);
+                            simplePolygonY[0] = (int)(info.draw.y + leny);
+                            simplePolygonX[1] = (int)(info.draw.x + -leny);
+                            simplePolygonY[1] = (int)(info.draw.y + lenx);
+                            simplePolygonX[2] = (int)(info.draw.x + -leny/2);
+                            simplePolygonY[2] = (int)(info.draw.y + lenx/2);
+                            simplePolygonX[3] = (int)(info.draw.x + -lenx + -leny/2);
+                            simplePolygonY[3] = (int)(info.draw.y + -leny + lenx/2);
+                            simplePolygonX[4] = (int)(info.draw.x + -lenx + leny/2);
+                            simplePolygonY[4] = (int)(info.draw.y + -leny + -lenx/2);
+                            simplePolygonX[5] = (int)(info.draw.x + leny/2);
+                            simplePolygonY[5] = (int)(info.draw.y + -lenx/2);
+                            simplePolygonX[6] = (int)(info.draw.x + leny);
+                            simplePolygonY[6] = (int)(info.draw.y + -lenx);
+                            if (drawFilled) graphics.fillPolygon(simplePolygonX, simplePolygonY, 7);
+                            else graphics.drawPolygon(simplePolygonX, simplePolygonY, 7);
                             break;
                         }
                     }
@@ -327,7 +465,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         simplePolygonYd[2] = (0 + -leny/2);
                         simplePolygonXd[3] = (0 + leny + -lenx);
                         simplePolygonYd[3] = (0 + -lenx + -leny);
-                        path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                        path = buildPolygon(simplePolygonXd, simplePolygonYd, 4);
                         }
                     return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);
                     //break;
@@ -342,10 +480,61 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         simplePolygonYd[2] = (0 + -leny/2);
                         simplePolygonXd[3] = (0 + leny/2);
                         simplePolygonYd[3] = (0 + -lenx/2);
-                        path = buildPolygon(simplePolygonXd, simplePolygonYd);
+                        path = buildPolygon(simplePolygonXd, simplePolygonYd, 4);
                         }
                     return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);
                     //break;
+                case SHAPE_TRIANGLE:
+                    if (path == null)
+                        {
+                        simplePolygonXd[0] = (0 + lenx);
+                        simplePolygonYd[0] = (0 + leny);
+                        simplePolygonXd[1] = (0 + -lenx + -leny/2);
+                        simplePolygonYd[1] = (0 + -leny + lenx/2);
+                        simplePolygonXd[2] = (0 + -lenx + leny/2);
+                        simplePolygonYd[2] = (0 + -leny + -lenx/2);
+                        path = buildPolygon(simplePolygonXd, simplePolygonYd, 3);
+                        }
+                    return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);
+                    // break;
+                case SHAPE_INVERTED_T:
+                    if (path == null)
+                        {
+                        simplePolygonXd[0] = (0 + lenx);
+                        simplePolygonYd[0] = (0 + leny);
+                        simplePolygonXd[1] = (0 + -lenx/2 + -leny/2);
+                        simplePolygonYd[1] = (0 + -leny/2 + lenx/2);
+                        simplePolygonXd[2] = (0 + -lenx + -leny);
+                        simplePolygonYd[2] = (0 + -leny + lenx);
+                                simplePolygonXd[3] = (0 + -lenx + leny);
+                                simplePolygonYd[3] = (0 + -leny + -lenx);
+                                simplePolygonXd[4] = (0 + -lenx/2 + leny/2);
+                                simplePolygonYd[4] = (0 + -leny/2 + -lenx/2);
+                        path = buildPolygon(simplePolygonXd, simplePolygonYd, 5);
+                        }
+                    return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);
+                    // break;               
+                case SHAPE_ARROW:
+                    if (path == null)
+                        {
+                        simplePolygonXd[0] = (0 + lenx);
+                        simplePolygonYd[0] = (0 + leny);
+                        simplePolygonXd[1] = (0 + -leny);
+                        simplePolygonYd[1] = (0 + lenx);
+                        simplePolygonXd[2] = (0 + -leny/2);
+                        simplePolygonYd[2] = (0 + lenx/2);
+                        simplePolygonXd[3] = (0 + -lenx + -leny/2);
+                        simplePolygonYd[3] = (0 + -leny + lenx/2);
+                        simplePolygonXd[4] = (0 + -lenx + leny/2);
+                        simplePolygonYd[4] = (0 + -leny + -lenx/2);
+                        simplePolygonXd[5] = (0 + leny/2);
+                        simplePolygonYd[5] = (0 + -lenx/2);
+                        simplePolygonXd[6] = (0 + leny);
+                        simplePolygonYd[6] = (0 + -lenx);
+                        path = buildPolygon(simplePolygonXd, simplePolygonYd, 7);
+                        }
+                    return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);
+                    // break;               
                 }
             }
         return false;

@@ -8577,12 +8577,23 @@ In order to display an orientation, OrientedPortrayal2D must know what the orien
 
 \begin{figure}
 \begin{center}
-\begin{tabular}{ccccc}
-\includegraphics[width=1in]{OrientationLine.pdf}&\includegraphics[width=1in]{OrientationOutlineCompass.pdf}&\includegraphics[width=1in]{OrientationOutlineKite.pdf}&\includegraphics[width=1in]{OrientationCompass.pdf}&\includegraphics[width=1in]{OrientationKite.pdf}\\
-(a) Line&(b) Compass&(c) Kite&(d) Compass (Filled)&(e) Kite (Filled)\\
+\begin{tabular}{@{}cccccc@{}}
+\includegraphics[width=0.9in]{OrientationLine.pdf}&%
+\includegraphics[width=0.9in]{OrientationKite.pdf}&%
+\includegraphics[width=0.9in]{OrientationCompass.pdf}&%
+\includegraphics[width=0.9in]{OrientationTriangle.pdf}&%
+\includegraphics[width=0.9in]{OrientationInvertedT.pdf}&%
+\includegraphics[width=0.9in]{OrientationArrow.pdf}\\
+\includegraphics[width=0.9in]{OrientationLine.pdf}&%
+\includegraphics[width=0.9in]{OrientationKiteFilled.pdf}&%
+\includegraphics[width=0.9in]{OrientationCompassFilled.pdf}&%
+\includegraphics[width=0.9in]{OrientationTriangleFilled.pdf}&%
+\includegraphics[width=0.9in]{OrientationInvertedTFilled.pdf}&%
+\includegraphics[width=0.9in]{OrientationArrowFilled.pdf}\\
+(a) Line&(b) Kite&(c) Compass&(d) Triangle & Inverted-T& Arrow\\
 \end{tabular}
 \end{center}
-\caption{Five orientation markers for \class{sim.portrayal.simple.OrientedPortrayal2D}.}
+\caption{Five orientation markers for \class{sim.portrayal.simple.OrientedPortrayal2D}, in filled/unfilled versions (Line is the same for both).}
 \label{orientationmarkers}
 \end{figure}
 
@@ -8594,7 +8605,10 @@ You specify the shape to draw in two ways.  First, you specify the shape itself,
 \java{%
     public static final int SHAPE\_LINE;\\
     public static final int SHAPE\_KITE;\\
-    public static final int SHAPE\_COMPASS;
+    public static final int SHAPE\_COMPASS;\\
+    public static final int SHAPE\_TRIANGLE;\\
+    public static final int SHAPE\_INVERTED\_T;\\
+    public static final int SHAPE\_ARROW;
 }
 
 The default is \variable{SHAPE\_LINE}.
