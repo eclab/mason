@@ -2825,3 +2825,6 @@ Version 20
 		have a big impact on people.
 	DenseGrid2DPortrayal.setField now doesn't throw an exception
 	DenseGrid2DPortrayal.getWrapper now doesn't throw an exception
+	Added Scaled2D.java
+	Added VectorPortrayal2D.java
+

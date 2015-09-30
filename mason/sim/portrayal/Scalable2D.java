@@ -16,8 +16,7 @@ package sim.portrayal;
    reflected, for example, in the color of the object.
 */
 
-public interface Scalable2D
+public interface Scalable2D extends Scaled2D
     {
-    public double getScale2D();
     public void setScale2D(double val);
     }

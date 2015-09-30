@@ -21,8 +21,6 @@ import sim.util.*;
 
 public class ValuePortrayal2D extends RectanglePortrayal2D
     {
-    // public ValueGridPortrayal2D parent;  // no longer used
-    
     public ValuePortrayal2D() { }
         
     /** @deprecated
@@ -30,14 +28,12 @@ public class ValuePortrayal2D extends RectanglePortrayal2D
     public ValuePortrayal2D(ValueGridPortrayal2D parent)
         {
         super(null);  // no color  -- we'll determine the color during portrayal
-        // setParent(parent);
         }
     
     /** @deprecated does nothing now
      */
     public void setParent(ValueGridPortrayal2D parent)
         {
-        // this.parent = parent;
         }
     
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)

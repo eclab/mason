@@ -23,9 +23,13 @@ import java.awt.event.*;
    </tt></pre>
 
    <p>... that is, or is a value which scales when you zoom in, and dr adds 
-   additional fixed pixels.  The default is scale = 0.5, offset = 0, with a red color.
+   additional fixed pixels.  The default is scale = 1.0, offset = 0, with a red color.
+   Note that though the scale is 1.0, the shape is actually drawn effectively with a scale of 2.0
+   (that is, filling a 2x2 square rather than a 1x1 square) so as to be seen to some degree outside
+   the underlying child portrayal.
    
-   <p>You can specify other shapes than a simple line.  We provide two others: kites and compasses. 
+   <p>You can specify other shapes than a simple line.  We provide several others: a line arrow, 
+   a kite, compass, triangle, inverted T dagger shape, and arrow.
 
    <p><b>Note:  </b> One oddity of OrientedPortrayal2D is due to the fact that the line is only
    drawn if the object is being drawn.  While most FieldPortrayals ask objects just off-screen
@@ -36,15 +40,16 @@ import java.awt.event.*;
 
 public class OrientedPortrayal2D extends SimplePortrayal2D
     {
-    public static final double DEFAULT_SCALE = 0.5;
+    public static final double DEFAULT_SCALE = 1.0;
     public static final int DEFAULT_OFFSET = 0;
     
     public static final int SHAPE_LINE = 0;
-    public static final int SHAPE_KITE = 1;
-    public static final int SHAPE_COMPASS = 2;
-    public static final int SHAPE_TRIANGLE = 3;
-    public static final int SHAPE_INVERTED_T = 4;
-    public static final int SHAPE_ARROW = 5;
+    public static final int SHAPE_LINE_ARROW = 1;
+    public static final int SHAPE_KITE = 2;
+    public static final int SHAPE_COMPASS = 3;
+    public static final int SHAPE_TRIANGLE = 4;
+    public static final int SHAPE_INVERTED_T = 5;
+    public static final int SHAPE_ARROW = 6;
 
     /** The type of the oriented shape */
     int shape = SHAPE_LINE;
@@ -165,7 +170,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         // draw the underlying object first?
-        if (shape == SHAPE_LINE || !drawFilled)
+        if (shape <= SHAPE_LINE_ARROW || !drawFilled)
             getChild(object).draw(object,graphics,info);
 
         if (showOrientation && (info.selected || !onlyDrawWhenSelected))
@@ -194,6 +199,25 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                             if (path == null)
                                 {
                                 path = new Line2D.Double(0,0,length,0);
+                                }
+                            graphics.setStroke(stroke);
+                            graphics.draw(transform.createTransformedShape(path));
+                            break;
+                        case SHAPE_LINE_ARROW:
+                            if (path == null)
+                                {
+                                GeneralPath p = new GeneralPath();
+                                //[-1, 0]
+                                p.moveTo((float) -lenx, (float) -leny);
+                                // [1, 0]
+                                p.lineTo((float) lenx, (float) leny);
+                                // [1/2, 1/2]
+                                p.moveTo((float) (lenx/2 - leny/2), (float) (leny/2 + lenx/2));
+                                // [1, 0]
+                                p.lineTo((float) lenx, (float) leny);
+                                // [1/2, -1/2]
+                                p.lineTo((float) (lenx/2 + leny/2), (float) (leny/2 - lenx/2));
+                                path = p;
                                 }
                             graphics.setStroke(stroke);
                             graphics.draw(transform.createTransformedShape(path));
@@ -347,6 +371,23 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                                 (int)(info.draw.x + lenx),
                                 (int)(info.draw.y + leny));
                             break;
+                        case SHAPE_LINE_ARROW:
+                        	// [1, 0] to [-1, 0]
+                            graphics.drawLine((int)(info.draw.x + lenx),
+                                (int)(info.draw.y + leny),
+                                (int)(info.draw.x - lenx),
+                                (int)(info.draw.y - leny));
+                            // [1, 0] to [1/2, 1/2]
+                            graphics.drawLine((int)(info.draw.x + lenx),
+                                (int)(info.draw.y + leny),
+                                (int)(info.draw.x + lenx/2 - leny/2),
+                                (int)(info.draw.y + leny/2 + lenx/2));
+                            // [1, 0] to [1/2, -1/2]
+                            graphics.drawLine((int)(info.draw.x + lenx),
+                                (int)(info.draw.y + leny),
+                                (int)(info.draw.x + lenx/2 + leny/2),
+                                (int)(info.draw.y + leny/2 - lenx/2));
+                            break;
                         case SHAPE_KITE:
                             simplePolygonX[0] = (int)(info.draw.x + lenx);
                             simplePolygonY[0] = (int)(info.draw.y + leny);
@@ -419,7 +460,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
             }
             
         // draw the underlying object last?
-        if (shape != SHAPE_LINE && drawFilled)
+        if (shape > SHAPE_LINE_ARROW && drawFilled)
             getChild(object).draw(object,graphics,info);
         }
         
@@ -454,6 +495,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                 {
                 default:                // NOTE FALL THRU
                 case SHAPE_LINE: { break; }  // hard to hit a line
+                case SHAPE_LINE_ARROW: { break; } // hard to hit a line arrow
                 case SHAPE_KITE:
                     if (path == null)
                         {

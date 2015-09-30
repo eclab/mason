@@ -8177,6 +8177,7 @@ There are several special kinds of 2D Simple Portrayals:
 \begin{itemize}
 \item {\bf Basic Simple Portrayals} draw objects, often as ovals or rectangles.
 \item {\bf Value Simple Portrayals} draw numbers as ovals or rectangles or hexagons: these Simple Portrayals commonly color their shapes using a \class{sim.util.gui.ColorMap} to translate between number values and colors.
+\item {\bf Vector Simple Portrayals} draw numbers in grids as oriented vectors.   These Simple Portrayals can portray numbers which separately define orientation, scaling, and (using a  \class{sim.util.gui.ColorMap}) the color of the vector.
 \item {\bf Edge Simple Portrayals} draw edges in networks.  These are designed to work with \class{sim.portrayal.network.NetworkPortrayal2D} and with a special subclass of DrawInfo2D called \class{sim.portrayal.network.EdgeDrawInfo2D}.
 \item {\bf Wrapper Simple Portrayals} ``wrap'' around subsidiary Simple Portrayals to add additional gizmos to them.  For example. to add a label, or to circle an object when it's selected, or to enable rotation or dragging or a trail, simply create a wrapper portrayal around your basic portrayal and submit the wrapper portrayal as the Simple Portrayal to the Field Portrayal.  Wrapper portrayals can wrap other wrapper portrayals, creating a sequence of ``wraps'' around a basic portrayal.
 \end{itemize}
@@ -8302,6 +8303,93 @@ So if SimplePortrayal's \method{draw(...)} and \method{hitObject(...)} methods t
 ValuePortrayal2D displays its number as a rectangle with a given color, using the ValueGridPortrayal2D's Color Map.  As such, ValuePortrayal2D subclasses from RectanglePortrayal2D and inherits all of its features, except that the \variable{paint} variable is set each time to reflect the desired color value.
 
 ValuePortrayal2D, or a subclass of it, will {\it only} work with ValueGridPortrayal2D or a subclass of it.
+
+\subsection{Vector Simple Portrayals}
+\label{sim.portrayal.simple.VectorPortrayal2D}
+
+If you would like to draw a vector field (a 2D grid of vector arrows) \Class{sim.portrayal.simple.VectorPortrayal2D} is your class.  VectorPortrayal2D is capable of using up to three different grids of numbers to define the orientation, scale (size), and color of the vectors (using a Color Map).  Alternatively you use a VectorPortrayal2D to portray a grid of objects, and it will query the objects using the Oriented2D, Scaled2D, and Valuable interfaces to extract this information to draw them as vectors.  
+
+You can specify the shape of your vectors: any of the shapes shown in Figure \ref{orientationmarkers} (page \pageref{orientationmarkers}).  These shapes can also be filled or outline, as shown in that Figure.  The corresponding shape constants are those found in \class{sim.portrayal.simple.OrientedPortrayal2D}, namely:
+
+\java{%
+    public static final int SHAPE\_LINE;\\
+    public static final int SHAPE\_LINE\_ARROW;\\
+    public static final int SHAPE\_KITE;\\
+    public static final int SHAPE\_COMPASS;\\
+    public static final int SHAPE\_TRIANGLE;\\
+    public static final int SHAPE\_INVERTED\_T;\\
+    public static final int SHAPE\_ARROW;
+}
+
+By default these shapes are filled, except for \variable{SHAPE\_LINE} and \variable{SHAPE\_LINE\_ARROW}, which are always drawn unfilled regardless.  To draw the shapes as outlines instead, use these methods (inherited by OrientedPortrayal2D):
+
+\begin{methods}{\class{sim.portrayal.simple.VectorPortrayal2D}}
+\mthd{public int getShape()}  Returns the shape being drawn.  The default is \variable{SHAPE\_LINE\_ARROW}.
+\mthd{public void setShape(int shape)}  Sets the shape being drawn.  The default is \variable{SHAPE\_LINE\_ARROW}.
+\end{methods}
+
+Note that the default is \variable{SHAPE\_LINE\_ARROW}, which is different from OrientedPortrayal2D.  There are plenty of other OrientedPortrayal2D methods you could call, but few would be rational to use: I'd stay away from them.
+
+The logical scaling of your vectors is between 0.0 and 1.0, and values less than or equal to 0.0 will not be drawn.  If this isn't the scaling you want, you can also pre-scale all the vectors, by changing the \variable{scale} instance variable in VectorPortrayal2D.  This value will be multiplied against your vector's scale values to produce their true size.  Alternatively, you could override the following method to filter each value specially, perhaps using a Log function or whatnot.
+
+\begin{methods}{\class{sim.portrayal.simple.VectorPortrayal2D}}
+\mthd{public double filterScale(double value) } Modifies value to a new value which will be used to determine the length of a vector.  Override this if you feel the need to do so.  The default version of this method multiplies the value by the internal \variable{scale} variable of the VectorPortrayal2D to produce the new value.
+\end{methods}
+
+\paragraph{Portraying Multiple Grids of Numbers}
+VectorPortrayal2D portrays grids of numbers using up to three DoubleGrid2D grids passed into the constructor: grids defining the {\bf orientation}, {\bf scale} (size, magnitude), and {\bf color} of a vector at a given location respectively.  These grids can be \variable{null}, which causes that particular feature to not be changed, but all if all three of them are null, then VectorPortrayal2D will instead assume it is portraying an Object (see below).  If the color grid is non-null, then you must provide a ColorMap to interpret its value.
+
+There is also a fourth grid: the grid assigned to the Field Portrayal to which VectorPortrayal2D is attached.  This grid will be ignored for drawing purposes, but will be used for all other purposes, such as hit-testing, and thus inspectors will inspect this grid.  You can of course use any of the previous three grids as this fourth grid as well.
+
+\paragraph{Portraying Grids of Objects}
+If you do not provide a single DoubleGrid2D grid in your constructor, VectorPortrayal2D will do the normal MASON thing instead: it will try to extract the vector information out of the grid assigned to the Field Portrayal to which VectorPortrayal2D is attached.  Objects in this grid provide information by implementing one of three interfaces:
+
+\begin{itemize}
+\item \class{sim.portrayal.Oriented2D}\quad This specifies the orientation of the vector.
+\item \class{sim.portrayal.Scaled2D}\quad This specifies the scale (size, magnitude) of the vector.
+\item \class{sim.util.Valuable} (or subclassing from \class{java.lang.Number}) \quad This specifies the color of the vector.  If you did not provide a Color Map, this value will not be queried.
+\end{itemize}
+
+All told, the constructors are:
+
+\begin{methods}{\class{sim.portrayal.simple.VectorPortrayal2D} Constructor}
+\mthd{public VectorPortrayal2D()} 
+Creates a VectorPortrayal2D which responds to objects which are
+    	Oriented2D and/or Scaled2D.  These define the orientation and
+    	scaling of the vector respectively. The vector color is white,
+    	and its shape is a line arrow.  
+\mthd{public VectorPortrayal2D(int shape)} 
+	Creates a VectorPortrayal2D which responds to objects which are
+    	Oriented2D and/or Scaled2D.  These define the orientation and
+    	scaling of the vector respectively. The vector color is white,
+    	and is of the shape specified.  
+\mthd{public VectorPortrayal2D(ColorMap map)} 
+Creates a VectorPortrayal2D which responds to objects which are
+    	Valuable (or a Number), Oriented2D, and/or Scaled2D.  These define the color, orientation and
+    	scaling of the vector respectively. The vector color is defined by the map
+    	provided, mapping the Valuable interface (or Number.doubleValue()).  The vector shape is a line arrow. 
+	If the map is null, this constructor operates like \code{new VectorPortrayal2D()}.
+\mthd{public VectorPortrayal2D(int shape, ColorMap map)} 
+Creates a VectorPortrayal2D which responds to objects which are
+    	Valuable (or a Number), Oriented2D, and/or Scaled2D.  These define the color, orientation and
+    	scaling of the vector respectively. The vector color is defined by the map
+    	provided, mapping the Valuable interface (or Number.doubleValue()).  The vector shape the shape provided.  
+	If the map is null, this constructor operates like \code{new VectorPortrayal2D(shape)}.
+\mthd{public VectorPortrayal2D(DoubleGrid2D orientationGrid)} 
+Creates a VectorPortrayal with an orientation grid.  If this grid is null, this constructor operates the same as
+ 		\code{new VectorPortrayal2D()}.
+ 		The shape will be a white line arrow.  
+		\mthd{public VectorPortrayal2D(DoubleGrid2D orientationGrid, DoubleGrid2D sizeGrid)} 
+Creates a VectorPortrayal with an orientation grid and size grid.  Either of these grids can be null,
+ 		and so won't be used.  If both grids are null, this constructor operates the same as
+ 		\code{new VectorPortrayal2D()}.  The shape will be a white line arrow.   		
+The shape will be a white line arrow.  
+\mthd{public VectorPortrayal2D(int shape, DoubleGrid2D orientationGrid, DoubleGrid2D sizeGrid, DoubleGrid2D colorGrid, ColorMap map)} 
+Create a VectorPortrayal with a provided shape, and with an orientation grid, size grid, and color grid,
+ 		plus a ColorMap for the color grid.  Any of these grids can be null, and so won't be used.  If you provide a color grid, you must
+		also provide a Color Map.  If all three grids are null, this constructor operates
+		the same as \code{new VectorPortrayal(shape, map)}.  
+\end{methods}
 
 \subsection{Edge Simple Portrayals}
 \label{sim.portrayal.network.SimpleEdgePortrayal2D}
