@@ -8577,23 +8577,25 @@ In order to display an orientation, OrientedPortrayal2D must know what the orien
 
 \begin{figure}
 \begin{center}
-\begin{tabular}{@{}cccccc@{}}
+\begin{tabular}{@{}c@{}c@{}c@{}c@{}c@{}c@{}c@{}}
 \includegraphics[width=0.9in]{OrientationLine.pdf}&%
+\includegraphics[width=0.9in]{OrientationLineArrow.pdf}&%
 \includegraphics[width=0.9in]{OrientationKite.pdf}&%
 \includegraphics[width=0.9in]{OrientationCompass.pdf}&%
 \includegraphics[width=0.9in]{OrientationTriangle.pdf}&%
 \includegraphics[width=0.9in]{OrientationInvertedT.pdf}&%
 \includegraphics[width=0.9in]{OrientationArrow.pdf}\\
 \includegraphics[width=0.9in]{OrientationLine.pdf}&%
+\includegraphics[width=0.9in]{OrientationLineArrow.pdf}&%
 \includegraphics[width=0.9in]{OrientationKiteFilled.pdf}&%
 \includegraphics[width=0.9in]{OrientationCompassFilled.pdf}&%
 \includegraphics[width=0.9in]{OrientationTriangleFilled.pdf}&%
 \includegraphics[width=0.9in]{OrientationInvertedTFilled.pdf}&%
 \includegraphics[width=0.9in]{OrientationArrowFilled.pdf}\\
-(a) Line&(b) Kite&(c) Compass&(d) Triangle & Inverted-T& Arrow\\
+Line& Line Arrow&Kite& Compass& Triangle & Inverted-T& Arrow\\
 \end{tabular}
 \end{center}
-\caption{Five orientation markers for \class{sim.portrayal.simple.OrientedPortrayal2D}, in filled/unfilled versions (Line is the same for both).}
+\caption{Five orientation markers for \class{sim.portrayal.simple.OrientedPortrayal2D}, in filled/unfilled versions (Line and Line Arrow are the same filled or unfilled).  Notice that filled markers are drawn behind the child object, while unfilled markers are drawn on top.}
 \label{orientationmarkers}
 \end{figure}
 
@@ -8604,6 +8606,7 @@ You specify the shape to draw in two ways.  First, you specify the shape itself,
 
 \java{%
     public static final int SHAPE\_LINE;\\
+    public static final int SHAPE\_LINE\_ARROW;\\
     public static final int SHAPE\_KITE;\\
     public static final int SHAPE\_COMPASS;\\
     public static final int SHAPE\_TRIANGLE;\\
@@ -8616,11 +8619,14 @@ The default is \variable{SHAPE\_LINE}.
 You can also specify the {\it scale} of the orientation marker: how big it is relative to the underlying SimplePortrayal.  This is done in exactly the same way as in CircledPortrayal2D: you provide a {\bf scale} in the underlying model units, and an {\bf offset} in pixels.  The default settings for these are:
 
 \java{%
-    public static final double DEFAULT\_SCALE = 0.5;\\
+    public static final double DEFAULT\_SCALE = 1.0;\\
     public static final int DEFAULT\_OFFSET = 0;
 }
 
-\sidebar{Haven't I seen the Kite shape before?}{Yep, it's the shape used for the Flockers demo example.  That example uses a trick: the shape is all you see.  This is done by wrapping a \class{sim.portrayal.simple.SimplePortrayal}, which if you recall doesn't draw anything.  However it also doesn't respond to hit requests, so how is that done?  It turns out that OrientedPortrayal2D responds to hit requests if the hit lands on the orientation marker shape.  Since the shape is all there is, we're good.}Just like CircledPortrayal2D you can optionally have OrientedPortrayal2D only show its orientation shape if the object is selected, or force it off entirely.
+Note that at its default scale (1.0) Oriented2DPortrayal draws its shapes to fill a roughly \(2 \times 2\) square, whereas other objects fill a \(1 \times 1\) square.  You need to keep this in mind, particularly when using OrientedPortrayal2D all by itself (the trick there is to wrap a \class{SimplePortrayal2D}, which itself draws nothing): you may wish to set the scale to 0.5, which would bring the OrientedPortrayal2D back down to normal size.
+
+\sidebar{Haven't I seen the Kite shape before?}{Yep, it's the shape used for the Flockers demo example.  That example uses a trick: the shape is all you see.  This is done by wrapping a \class{sim.portrayal.simple.SimplePortrayal}, which if you recall doesn't draw anything.  However it also doesn't respond to hit requests, so how is that done?  It turns out that OrientedPortrayal2D responds to hit requests if the hit lands on the orientation marker shape.  Since the shape is all there is, we're good.}
+Just like CircledPortrayal2D you can optionally have OrientedPortrayal2D only show its orientation shape if the object is selected, or force it off entirely.
 
 One thing to be aware of is that Oriented2D responds to hit-testing on its orientation marker shape in addition to sending hit-testing results to its subsidiary SimplePortrayal.  This can be turned off with the method \method{setOrientationHittable()}.
 
@@ -8747,7 +8753,9 @@ Like MovablePortrayal2D, AdjustablePortrayal2D has a single straightforward cons
 
 If you wrap a SimplePortrayal2D with an AdustablePortrayal2D, it'll add a ring-and-knob widget whenever the object is selected (see Figure \ref{trailandring} below).  If the user rotates the knob on the ring, the object will be asked to reorient itself.  If the user drags the knob {\it off} of the ring (the knob doesn't presently move off the ring, but MASON will understand) the object will be asked to rescale itself.  
 
-\sidebar{Oriented2D doesn't define a proper Java Property!}{We don't want to require the user to display orientation information in inspectors.  If you'd like to do so, just implement an additional method, \method{public double getOrientation2D()}, which simply calls \method{orientation2D()}.}AdjustablePortrayal2D only bothers to ask objects to orient themselves if they implement the \Class{sim.portrayal.Orientable2D} interface, which is an extension of the \class{sim.portrayal.Oriented2D}, an interface defined earlier in Section \ref{sim.portrayal.Oriented2D}.  The Orientable2D interface defines two methods:
+\sidebar{Oriented2D doesn't define a proper Java Property!}{We didn't want to require the user to display orientation information in inspectors.  If you'd like to do so, just implement an additional method, \method{public double getOrientation2D()}, which simply calls \method{orientation2D()}.
+
+Now that MASON's Java Property facility has the ability to hide properties, in hindsight maybe this was a dumb decision.  But there you go.}AdjustablePortrayal2D only bothers to ask objects to orient themselves if they implement the \Class{sim.portrayal.Orientable2D} interface, which is an extension of the \class{sim.portrayal.Oriented2D}, an interface defined earlier in Section \ref{sim.portrayal.Oriented2D}.  The Orientable2D interface defines two methods:
  
 \begin{methods}{\class{sim.portrayal.Orientable2D}}
 \mthd{public double orientation2D()} Returns the object's orientation.

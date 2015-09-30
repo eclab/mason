@@ -35,7 +35,12 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         {
         super();
         }
-        
+	
+	// the purpose of this method is to allow DenseGridPortrayal2D to call super.super.setField,
+	// thus bypassing the check below to make sure that the field is an ObjectGrid2D -- it isn't,
+	// it would be a DenseGrid2D, which doesn't subclass from ObjectGrid2D
+	void setFieldBypass(Object field) { super.setField(field); }
+	 
     public void setField(Object field)
         {
         if (field instanceof ObjectGrid2D ) super.setField(field);
@@ -231,7 +236,6 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         Object[][] grid = field.field;
         if (grid[loc.x][loc.y] == object)
             return new Int2D(loc.x, loc.y);
-        //field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
         field.getMooreLocations(loc.x, loc.y, SEARCH_DISTANCE, Grid2D.TOROIDAL, true, xPos, yPos);  // we include the origin but it doesn't matter
         for(int i=0;i<xPos.numObjs;i++)
             if (grid[xPos.get(i)][yPos.get(i)] == object) return new Int2D(xPos.get(i), yPos.get(i));

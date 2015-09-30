@@ -50,7 +50,7 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
 
     public void setField(Object field)
         {
-        if (field instanceof DenseGrid2D ) super.setField(field);
+        if (field instanceof DenseGrid2D ) super.setFieldBypass(field);  // see ObjectGridPortrayal2D.setFieldBypass
         else throw new RuntimeException("Invalid field for DenseGridPortrayal2D: " + field);
         }
         
@@ -211,4 +211,46 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
             }
         return null;
         }
+
+                
+    final Message unknown = new Message("It's too costly to figure out where the object went.");
+	// overrides same version in ObjectGrid2D
+    public LocationWrapper getWrapper(Object object, Int2D location)
+        {
+        final DenseGrid2D field = (DenseGrid2D)(this.field);
+        return new LocationWrapper(object, location, this)
+            {
+            public Object getLocation()
+                { 
+                Int2D loc = (Int2D) super.getLocation();
+                if (field.field[loc.x][loc.y] != null &&
+                	field.field[loc.x][loc.y].contains(getObject()))  // it's still there!
+                    {
+                    return loc;
+                    }
+                else
+                    {
+                    Int2D result = searchForObject(object, loc);
+                    if (result != null)  // found it nearby
+                        {
+                        location = result;
+                        return result;
+                        }
+                    else    // it's moved on!
+                        {
+                        return unknown;
+                        }
+                    }
+                }
+            
+            public String getLocationName()
+                {
+                Object loc = getLocation();
+                if (loc instanceof Int2D)
+                    return ((Int2D)this.location).toCoordinates();
+                else return "Location Unknown";
+                }
+            };
+        }
+
     }
