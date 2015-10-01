@@ -53,7 +53,9 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
 
     /** The type of the oriented shape */
     int shape = SHAPE_LINE;
-    
+    public void setShape(int val) { if (val >= SHAPE_LINE && val <= SHAPE_ARROW) shape = val; path = null; }
+    public int getShape() { return shape; }
+
     /** The pre-scaling length */
     public double scale;
     
@@ -65,22 +67,16 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
     
     public SimplePortrayal2D child;
     
-    /** Overrides all drawing. */
-    boolean showOrientation = true;
-    
     public boolean drawFilled = true;
     public void setDrawFilled(boolean val) { drawFilled = val; }
     public boolean isDrawFilled() { return drawFilled; }
             
-    public void setShape(int val) { if (val >= SHAPE_LINE && val <= SHAPE_ARROW) shape = val; path = null; }
-    public int getShape() { return shape; }
-        
+    /** Overrides all drawing. */
+    boolean showOrientation = true;
     public boolean isOrientationShowing() { return showOrientation; }
     public void setOrientationShowing(boolean val) { showOrientation = val; }
-
     /** @deprecated use isOrientationShowing() */
     public boolean isLineShowing() { return showOrientation; }
-        
     /** @deprecated use setOrientationShowing() */
     public void setLineShowing(boolean val) { showOrientation = val; }
         
