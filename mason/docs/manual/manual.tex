@@ -8347,8 +8347,16 @@ If you do not provide a single DoubleGrid2D grid in your constructor, VectorPort
 \begin{itemize}
 \item \class{sim.portrayal.Oriented2D}\quad This specifies the orientation of the vector.
 \item \class{sim.portrayal.Scaled2D}\quad This specifies the scale (size, magnitude) of the vector.
-\item \class{sim.util.Valuable} (or subclassing from \class{java.lang.Number}) \quad This specifies the color of the vector.  If you did not provide a Color Map, this value will not be queried.
+\item \class{sim.util.Valuable} (or subclassing from \class{java.lang.Number}) \quad This specifies the color of the vector.  If you did not provide a Color Map, this value will not be used.
 \end{itemize}
+
+You can also provide a grid of Double2D, Double3D, Int2D, or Int3D objects.  In this case, VectorPortrayal2D will extract the \variable{x} and \variable{y} values from these objects, and assume that the vector is defined as \(\langle x, y\rangle\).  It will then convert them into orientation and scale as appropriate (namely, orientation is \(\tan^{-1}(y,x)\) and scale is \(\sqrt{x^2 + y^2}\)).  If you provide Double3D or Int3D, the \variable{z} variable will be used for color.  {\bf Important Note.  }  In order to compute the orientation from Double2D etc., VectorPortrayal2D must use the \code{atan2(...)} function, which is very costly.  To save some time (about a six-fold improvement!) VectorPortrayal2D draws using a somewhat inaccurate estimation of \code{atan2(...)} when drawing is not set to be \variable{precise}.  If you output to PDF, it'll be precise, for example.   If you want to force VectorPortrayal2D to always use a precisely accurate version of \code{atan2(...)} in this situation, you can use the following methods:
+
+\begin{methods}{\class{sim.portrayal.simple.VectorPortrayal2D}}
+\mthd{public boolean getUsesExactOrientation()}  Returns true if VectorPortrayal2D always draws Double2D, Double3D, Int2D, or Int3D objects with precise orientation values.
+\mthd{public void setUsesExactOrientation(boolean val)}  Sets whether VectorPortrayal2D  always draws Double2D, Double3D, Int2D, or Int3D objects with precise orientation values. Note that this will incur a roughly 6x slowdown in drawing.
+\end{methods}
+
 
 All told, the constructors are:
 

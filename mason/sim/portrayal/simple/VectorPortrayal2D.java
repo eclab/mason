@@ -38,11 +38,20 @@ import sim.util.gui.*;
 		the object to see if it implements the Oriented2D interface (to get the vector orientation), the Scaled2D interface (to get
 		the vector scale), and the Valuable interface (to get the color).  Instead of the Valuable interface, an object may
 		also subclass from Number.  If the color is to be queried, a ColorMap must also be provided, else it may be null.
+		
+		<p>Object mode also supports Double2D, Double3D, Int2D, and Int3D objects.  Here, the x and y values define the vector proper
+		and are converted into appropriate orientation and scale values (which isn't fast, as it requires atan2!).  For Double3D
+		and Int3D, the z value is converted into the color.
 	</ul>
 	
-	You can set the scale of the VectorPortrayal2D manually, in which case this value is multiplied by the value provided by the
+	<p>You can set the scale of the VectorPortrayal2D manually, in which case this value is multiplied by the value provided by the
 	underlying object to get the final scale of the vector.  You can also specify a vector shape, one of the OrientedPortrayal2D shapes
 	(since VectorPortrayal2D is its subclass).
+	
+	<p>VectorPortrayal2D is a subclass of OrientedPortrayal2D mostly because it's convenient for it to use OrientedPortrayal's shapes
+	and auto-rotation.  OrentedPortrayal2D has other random features which don't make a whole lot of sense to use in this context, so we
+	suggest you not play with them unless you absolutely must.  This inludes mucking with the "offset" instance variable, calling 
+	setOrientationShowing(), or changing the "child" instance variable.  
 */
 
 public class VectorPortrayal2D extends OrientedPortrayal2D
@@ -141,66 +150,143 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
     	return this.scale * objectScale;
     	}
     
+    boolean usesExactOrientation = false;
+    public boolean getUsesExactOrientation() { return usesExactOrientation; }
+    public void setUsesExactOrientation(boolean val) { usesExactOrientation = val; }
+    
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
 		if (object==null) return;
 
 		double oldscale = this.scale;
 		Paint oldPaint = this.paint;
+		
+		double o = 0;
+		double s = 0;
+		double c = 0;
+		boolean oset = false;
+		boolean sset = false;
+		boolean cset = false;
 			
         if (sizeGrid == null && orientationGrid==null && colorGrid == null)
         	{
-        	orientation = Double.NaN;
-        	
-        	// if the object doesn't respond in any way
-        	if (!(object instanceof Scaled2D ||
-        		  object instanceof Oriented2D ||
-        		  (map != null && (object instanceof Valuable || object instanceof Number)))) 
-        		return;  // bah
-        		
-        	if (map != null && (object instanceof Valuable || object instanceof Number))
+        	if (object instanceof Scaled2D || object instanceof Oriented2D || object instanceof Valuable || object instanceof Number)
         		{
-        		if (object instanceof Number)
-        			this.paint = map.getColor(((Number)object).doubleValue());
-        		else
-					this.paint = map.getColor(((Valuable)object).doubleValue());
-        		}
-        		
-        	if (object instanceof Scaled2D)
-        		{
-				this.scale = 0.5 * filterScale(((Scaled2D)object).getScale2D());
-				if (this.scale < 0) this.scale = 0;
-        		}
-        	else this.scale = oldscale * 0.5;
-        	
-        	if (object instanceof Oriented2D)
-        		{
-        		orientation = ((Oriented2D)object).orientation2D();
-        		}
+				if (object instanceof Number)
+					{
+					c = ((Number)object).doubleValue();
+					cset = true;
+					}
+				else if (object instanceof Valuable)
+					{
+					c = ((Valuable)object).doubleValue();
+					cset = true;
+					}
+				else cset = false;
+				
+				if (object instanceof Scaled2D)
+					{
+					s = ((Scaled2D)object).getScale2D();
+					sset = true;
+					}
+				else sset = false;
+			
+				if (object instanceof Oriented2D)
+					{
+					o = ((Oriented2D)object).orientation2D();
+					oset = true;
+					}
+				else oset = false;
+				}
+			else if (object instanceof Double2D)
+				{
+				Double2D num = (Double2D) object;
+				o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+				s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
+				oset = true;
+				sset = true;
+				cset = false;
+				}
+			else if (object instanceof Double3D)
+				{
+				Double3D num = (Double3D) object;
+				o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+				s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
+				c = num.z;
+				oset = true;
+				sset = true;
+				cset = true;
+				}
+			else if (object instanceof Int2D)
+				{
+				Int2D num = (Int2D) object;
+				o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+				s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
+				oset = true;
+				sset = true;
+				cset = false;
+				}
+			else if (object instanceof Int3D)
+				{
+				Int3D num = (Int3D) object;
+				o = (usesExactOrientation || info.precise ? Math.atan2(num.y, num.x) : fastAtan2(num.y, num.x));  // ugh atan2
+				s = Math.sqrt(num.x * num.x + num.y * num.y);  // ugh sqrt
+				c = num.z;
+				oset = true;
+				sset = true;
+				cset = true;
+				}
+			else return; // what the... ?
         	}
         else
         	{
 			MutableInt2D d = ((MutableInt2D)(info.location));
-			orientation = Double.NaN;
 			
 			if (map != null)
 				{
-				paint = map.getColor(colorGrid.field[d.x][d.y]);
+				c = colorGrid.field[d.x][d.y];
+				cset = true;
 				}
+			else cset = false;
 			
 			if (sizeGrid != null)
 				{
-				this.scale = 0.5 * filterScale(sizeGrid.field[d.x][d.y]);
-				if (this.scale < 0) this.scale = 0;
+				s = sizeGrid.field[d.x][d.y];
+				sset = true;
 				}
-			else this.scale = oldscale * 0.5;
+			else sset = false;
 
 			if (orientationGrid != null)
 				{
-				orientation = orientationGrid.field[d.x][d.y];
+				o = orientationGrid.field[d.x][d.y];
+				oset = true;
 				}
+			else oset = false;
 			}
 		
+		
+		// set orientation, scale, and color
+		if (oset)
+			{
+			this.orientation = o;
+			}
+		else this.orientation = Double.NaN;
+		
+		if (sset)
+			{
+			this.scale = 0.5 * filterScale(s);
+			if (this.scale < 0 || this.scale != this.scale ) // (NaN)
+				this.scale = 0;
+			}
+		else this.scale = oldscale * 0.5;
+		
+		if (cset && map != null)
+			{
+			paint = map.getColor(c);
+			}
+
+			
+		// draw
 		if (this.scale > 0)
 			super.draw(object, graphics, info);
 			
@@ -230,5 +316,44 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
 	            return sim.portrayal.Inspector.getInspector(new ValuePortrayal2D.IntFilter(wrapper) ,state, "Properties");
             }
         else return super.getInspector(wrapper, state);
+        }
+
+
+    // pretty accurate, 13x the speed of Math.Math.atan2(x)
+    static final double M_PI_2 = Math.PI / 2;
+    static final double C = (1 + Math.sqrt(17.0)) / 8.0;
+    static final double C_P_1 = (C + 1);
+    double fastAtan1(double x)
+        {
+        double a = Math.abs(x);
+        double aa = a * a;
+        double aaa = aa * a;
+        return (x < 0 ? -1 : 1) * M_PI_2 * (C * a + aa + aaa) / (1 + C_P_1 * a + C_P_1 * aa + aaa);
+        }
+
+    // See http://en.wikipedia.org/wiki/Atan2 for conversion to atan
+    // about 9x the speed of Math.atan2(y,x)
+    double fastAtan2(double y, double x)
+        {
+        if (x > 0)
+            {
+            return fastAtan1(y / x);
+            }
+        else if (x < 0)
+            {
+            if (y >= 0)
+                return fastAtan1(y/x) + Math.PI;
+            else
+                return fastAtan1(y/x) - Math.PI;
+            }
+        else // x == 0
+            {
+            if (y > 0) 
+                return Math.PI / 2;
+            else if (y < 0) 
+                return 0 - Math.PI / 2;
+            else // (y==0)
+                return 0;  // technically this is undefined but Java returns 0
+            }
         }
     }

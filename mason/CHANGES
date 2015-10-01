@@ -2827,4 +2827,6 @@ Version 20
 	DenseGrid2DPortrayal.getWrapper now doesn't throw an exception
 	Added Scaled2D.java
 	Added VectorPortrayal2D.java
+	Updated VectorPortrayal2D to permit Double2D etc.  Thanks to Christian
+		Meyer <c.meyer@uni-oldenburg.de>
 
