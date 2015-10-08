@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.awt.*;
 import sim.portrayal.inspector.*;
 import sim.display.*;
+import sim.util.gui.*;
 
 /** An Inspector is a JPanel containing information about some object,
     and updates its displayed information when updateInspector() is called.
@@ -80,6 +81,13 @@ import sim.display.*;
 public abstract class Inspector extends JPanel
     {
     boolean _volatile = true;
+    JPanel header = new JPanel();
+/*        {
+        public Insets getInsets () { return new Insets(2,2,2,2); }
+        };
+    */
+        
+    public Inspector() { header.setLayout(new BorderLayout()); }
     
     /** Returns an inspector for the provided object.  If the object responds to the ProvidesInspector
         interface, then it provides its own inspector.  Else if the object responds to the Tabbable 
@@ -90,18 +98,62 @@ public abstract class Inspector extends JPanel
             return new SimpleInspector(obj, state, name);
         else if (obj instanceof ProvidesInspector)
             return ((ProvidesInspector)obj).provideInspector(state, name);
+        else if (obj instanceof TabbableAndGroupable)
+        	return new TabbedInspector((TabbableAndGroupable) obj, state, name);
         else if (obj instanceof Tabbable)
             return new TabbedInspector((Tabbable)obj, state, name);
+        else if (obj instanceof Groupable)
+        	return new GroupedInspector((Groupable)obj, state, name);
         else
             return new SimpleInspector(obj, state, name);
         }
-        
+    
+    
     /** Set to true (default) if the inspector should be updated every time step.  Else set to false. */
-    public void setVolatile(boolean val) {_volatile = val;}
+    public void setVolatile(boolean val) {_volatile = val; updateRefresh(); }
         
     /** Returns true (default) if the inspector should be updated every time step.  Else returns false. */
     public boolean isVolatile() { return _volatile; }
-        
+    
+    public JPanel getHeader() { return header; }
+    
+    JButton updateButton = null;
+    boolean showsUpdate = true;
+    public boolean getShowsUpdate() { return showsUpdate; }
+    public void setShowsUpdate(boolean val) {  showsUpdate = val; updateRefresh(); }
+     	
+    void updateRefresh()
+    	{
+        if (isVolatile() || !getShowsUpdate())
+            {
+            if (updateButton!=null) 
+                {
+                header.remove(updateButton); revalidate();
+                }
+            }
+        else
+            {
+            if (updateButton==null)
+                {
+                updateButton = (JButton) makeUpdateButton();
+                                
+                // modify height -- stupid MacOS X 1.4.2 bug has icon buttons too big
+                NumberTextField sacrificial = new NumberTextField(1,true);
+                Dimension d = sacrificial.getPreferredSize();
+                d.width = updateButton.getPreferredSize().width;                                
+                updateButton.setPreferredSize(d);
+                d = sacrificial.getMinimumSize();
+                d.width = updateButton.getMinimumSize().width;
+                updateButton.setMinimumSize(d);
+                                
+                // add to header
+                header.add(updateButton,BorderLayout.WEST);
+                revalidate(); 
+                }
+            } 
+    	}
+    	
+    	   
     /** Called by the system to inform the Inspector that it needs to update itself to reflect any
         changed in the underlying data. */
     public abstract void updateInspector();
@@ -153,14 +205,11 @@ public abstract class Inspector extends JPanel
     public Component makeUpdateButton()
         {
         JButton jb = new JButton(UPDATE_ICON);
-        jb.setText("Refresh");
+        //jb.setText("Refresh");
         // quaquaify
         jb.putClientProperty("Quaqua.Button.style","square");
-
-        //jb.setPressedIcon(UPDATE_ICON_P);
-        //jb.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-                
-        jb.setToolTipText("Refreshes this inspector to reflect the current underlying values in the model.");
+        jb.setToolTipText("Updates this inspector to reflect the current underlying values in the model.");
+		//jb.setBorder(BorderFactory.createEmptyBorder());
 
         jb.addActionListener(new ActionListener()
             {
