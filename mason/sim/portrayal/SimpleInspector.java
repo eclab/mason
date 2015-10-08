@@ -40,10 +40,6 @@ public class SimpleInspector extends Inspector
     int start = 0;
     /** The number of items presently in the propertyList */
     int count = 0;
-    JPanel header = new JPanel()
-        {
-        public Insets getInsets () { return new Insets(2,2,2,2); }
-        };
     String listName;  // used internally
     JLabel numElements = null;
     Box startField = null;
@@ -61,8 +57,7 @@ public class SimpleInspector extends Inspector
         setLayout(new BorderLayout());
         this.state = state;
         listName = name;
-        header.setLayout(new BorderLayout());
-        add(header,BorderLayout.NORTH);
+        add(getHeader(),BorderLayout.NORTH);
         this.properties = properties;
         generateProperties(0);
         setTitle("" + properties.getObject());
@@ -231,13 +226,13 @@ public class SimpleInspector extends Inspector
                 startField.add(f);
                 startField.add(numElements);
                 startField.add(Box.createGlue());
-                header.add(startField, BorderLayout.CENTER);
+                getHeader().add(startField, BorderLayout.CENTER);
                 }
             }
         else 
             {
             start = 0;
-            if (startField!=null) header.remove(startField);
+            if (startField!=null) getHeader().remove(startField);
             }
 
         members = new PropertyField[len];
@@ -274,39 +269,6 @@ public class SimpleInspector extends Inspector
         revalidate();
         }
     
-    JButton updateButton = null;
-    public void setVolatile(boolean val)
-        {
-        super.setVolatile(val);
-        if (isVolatile())
-            {
-            if (updateButton!=null) 
-                {
-                header.remove(updateButton); revalidate();
-                }
-            }
-        else
-            {
-            if (updateButton==null)
-                {
-                updateButton = (JButton) makeUpdateButton();
-                                
-                // modify height -- stupid MacOS X 1.4.2 bug has icon buttons too big
-                NumberTextField sacrificial = new NumberTextField(1,true);
-                Dimension d = sacrificial.getPreferredSize();
-                d.width = updateButton.getPreferredSize().width;                                
-                updateButton.setPreferredSize(d);
-                d = sacrificial.getMinimumSize();
-                d.width = updateButton.getMinimumSize().width;
-                updateButton.setMinimumSize(d);
-                                
-                // add to header
-                header.add(updateButton,BorderLayout.WEST);
-                revalidate(); 
-                }
-            } 
-        }
-
     public void updateInspector()
         {
         if (properties.isVolatile())  // need to rebuild each time, YUCK

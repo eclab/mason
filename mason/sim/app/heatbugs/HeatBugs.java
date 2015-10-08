@@ -10,7 +10,11 @@ import sim.field.grid.*;
 import sim.util.*;
 
 
-public /*strictfp*/ class HeatBugs extends SimState // implements sim.portrayal.inspector.Tabbable   //// See "provideTabNames()" below
+public /*strictfp*/ class HeatBugs extends SimState  
+/// See further below for information about these options
+// implements sim.portrayal.inspector.Tabbable
+// implements sim.portrayal.inspector.Groupable
+// implements sim.portrayal.inspector.TabbableAndGroupable 
     {
     private static final long serialVersionUID = 1;
 
@@ -176,8 +180,8 @@ public /*strictfp*/ class HeatBugs extends SimState // implements sim.portrayal.
                 invoke(runtime,(Object[])null)).intValue(); }
         catch (Exception e) { return 1; }  // a safe but sometimes wrong assumption!
         }
-        
 
+/*
     // Would you like your model inspector to be broken into tabs?  Here's an example.
     // To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
     // See also the getInspector() method in HeatBugsWithUI 
@@ -187,10 +191,44 @@ public /*strictfp*/ class HeatBugs extends SimState // implements sim.portrayal.
         { return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
                                      {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
                                      {"BugXPos", "BugYPos"}}; }
+    public String provideExtraTab() { return "Extra"; }
+*/ 
+        
+/*
+    // Would you like your model inspector instead to be broken into groups?  Here's an example.
+    // To get this to work, uncomment the "implements sim.portrayal.inspector.Groupable" at the top of this class
+    // and uncomment the following code.
+    // See also the getInspector() method in HeatBugsWithUI 
+    public String[] provideGroupNames()
+        { return new String[] {"Temps", "Constants", "Pos"}; }
+    public String[][] provideGroupProperties()
+        { return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+                                     {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+                                     {"BugXPos", "BugYPos"}}; }
+    public boolean showExtraProperties() { return true; }
+ */   
+
+    
+ /*
+    // Would you like your model inspector instead to be broken into tabs AND gropus?  Here's an example.
+    // To get this to work, uncomment the "implements sim.portrayal.inspector.TabbableAndGroupable" at the top of this class
+    // See also the getInspector() method in HeatBugsWithUI 
+    public String[] provideTabNames()
+        { return new String[] {"Temps", "Constants", "Pos"}; }
+    public String[][][] provideTabGroupProperties()
+        { return new String[][][] {{{"MinimumIdealTemperature", "MaximumIdealTemperature"},
+        						  {"MinimumOutputHeat", "MaximumOutputHeat"}, {"MaximumHeat"}},
+                                  {{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"}},
+                                  {{"BugXPos", "BugYPos"}}}; }
+    public String[][] provideTabGroups()
+        { return new String[][] {{"Ideal Temperature",
+        						  "Output Heat"},
+                                  {},
+                                  {"Bug Position"}}; }
+                        
     public String provideExtraTab()
         { return "Misc"; }
-    
-    
+*/
 
     
     public static void main(String[] args)

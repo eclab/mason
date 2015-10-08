@@ -26,11 +26,11 @@ public class HeatBugsWithUI extends GUIState
     FastValueGridPortrayal2D heatPortrayal = new FastValueGridPortrayal2D("Heat");
     SparseGridPortrayal2D bugPortrayal = new SparseGridPortrayal2D();
 
-	// UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
-	// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
-	// its idealTemperature to 0 in the Inspector.
+    // UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
+    // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+    // its idealTemperature to 0 in the Inspector.
 
-  	// SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); 
+    // SparseGridPortrayal2D trailsPortrayal = new SparseGridPortrayal2D(); 
 
 
     public static void main(String[] args)
@@ -48,7 +48,6 @@ public class HeatBugsWithUI extends GUIState
         }
     
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
-
 
 
 // Would you like your model inspector to be broken into tabs?  Here's the HARD WAY.
@@ -105,18 +104,18 @@ public class HeatBugsWithUI extends GUIState
     // so I didn't have to type it twice :-)
     public void setupPortrayals()
         {
-		// UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
-		// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
-		// its idealTemperature to 0 in the Inspector.
+        // UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
+        // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+        // its idealTemperature to 0 in the Inspector.
 
-		//  trailsPortrayal.setField(((HeatBugs)state).buggrid);
-		//  SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
-		//  for(int x=0;x<((HeatBugs)state).bugs.length;x++)
-		//	  {
-  		//	  TrailedPortrayal2D tp = new TrailedPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 100);
-  		//		trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], tp);
-  		//		bugPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], new MovablePortrayal2D(tp));   // all the heatbugs will be white ovals
-  		//		}
+        //  trailsPortrayal.setField(((HeatBugs)state).buggrid);
+        //  SimplePortrayal2D heatBugPortrayal = new sim.portrayal.simple.OvalPortrayal2D(Color.white);
+        //  for(int x=0;x<((HeatBugs)state).bugs.length;x++)
+        //        {
+        //        TrailedPortrayal2D tp = new TrailedPortrayal2D(this, heatBugPortrayal, trailsPortrayal, 100);
+        //              trailsPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], tp);
+        //              bugPortrayal.setPortrayalForObject(((HeatBugs)state).bugs[x], new MovablePortrayal2D(tp));   // all the heatbugs will be white ovals
+        //              }
 
         // tell the portrayals what to portray and how to portray them
         bugPortrayal.setField(((HeatBugs)state).buggrid);
@@ -151,11 +150,11 @@ public class HeatBugsWithUI extends GUIState
         // attach the portrayals
         display.attach(heatPortrayal,"Heat");
 
-		// UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
-		// you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
-		// its idealTemperature to 0 in the Inspector.
+        // UNCOMMENT this to try out trails  (also need to uncomment out some others in this file, look around)
+        // you'll also need to cause a Bug to wander a lot more in order to see the trail -- I suggest setting
+        // its idealTemperature to 0 in the Inspector.
 
-  		// display.attach( trailsPortrayal, "Trails" ); 
+        // display.attach( trailsPortrayal, "Trails" ); 
 
 
         display.attach(bugPortrayal,"Bugs");

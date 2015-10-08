@@ -2829,4 +2829,8 @@ Version 20
 	Added VectorPortrayal2D.java
 	Updated VectorPortrayal2D to permit Double2D etc.  Thanks to Christian
 		Meyer <c.meyer@uni-oldenburg.de>
-
+	TabbedInspector.inspectors and TabbedInspector.tabs is no longer public
+	GroupedInspector.java, Groupable.java, and TabbableAndGroupable.java added
+	TabbedInspector constructors no longer have isVolatile as an argument.
+		This is obviously not backward compatible but the change is
+		very recent and hopefully won't affect anyone.

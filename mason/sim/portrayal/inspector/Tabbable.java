@@ -6,6 +6,11 @@
 
 package sim.portrayal.inspector;
 
+/** 
+	A Tabbable object can have its properties automatically broken up under various
+	tabs in a TabbedInspector.
+*/
+
 public interface Tabbable
     {
     /** Returns a list of names for tabs to appear in the TabbedInspector. */

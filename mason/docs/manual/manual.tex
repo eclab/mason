@@ -9452,11 +9452,74 @@ There are a few methods of interest to subclasses of SimpleInspector:
 \mthd{public int getMaxProperties()} Returns the maximum number of properties displayed per page in the inspector.
 \end{methods}
 
+
+\subsection{GroupedInspector}
+\label{sim.portrayal.inspector.GroupedInspector}
+\label{sim.portrayal.inspector.Groupable}
+
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-4.5em}\hfill\includegraphics[width=2.8in]{Groupable.png}\vspace{-3em}\end{wrapfigure}
+
+
+ \Class{sim.portrayal.inspector.GroupedInspector} provides a way to break out an Inspector into multiple disclosure groups to make things neat and clean.  You can create a GroupedInspector, then add Inspectors to it, each with a group name.  Then you provide the GroupedInspector to the system.  Only one sub-Inspector will be displayed at a time.  Alternatively, you can simply point GroupedInspector at an object implementing the \class{sim.portrayal.inspector.Groupable} interfaces.  This will cause GroupedInspector to build itself based on suggested groupings from the object itself.   
+
+GroupedInspector requires that its sub-Inspectors have exactly the same volatility as GroupedInspector itself: in other words, you can't have a mix of volatile and non-volatile sub-Inspectors.  
+
+GroupedInspector's constructors:
+
+\begin{methods}{\class{sim.portrayal.inspector.GroupedInspector} Constructor}
+\mthd{public GroupedInspector()} Creates a volatile GroupedInspector with no name. 
+\mthd{public GroupedInspector(String name)} Creates a volatile GroupedInspector with the provided name. 
+\mthd{public GroupedInspector(sim.portrayal.inspector.Groupable object, GUIState state, String name)}
+Creates a GroupedInspector with the given name, and with multiple groups corresponding to the requirements of the underlying object.  The group names for the SimpleInspectors are given in {\it object.provideGroupNames()}.  For each group there is a corresponding array from {\it object.provideGroupProperties()}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given properties array will appear under the corresponding group.  If {\it object.showExtraProperties()} is true, then the inspector will also display (prior to any groups) all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\mthd{public GroupedInspector(SimpleProperties properties, GUIState state, String name, String[][] propertyNames,}
+\rule{0pt}{0pt}\hspace{\fill}{String[] groupNames, boolean showExtraProperties)}\\
+Creates a GroupedInspector with the given name, and with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it groupNames}.  For each tab there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  If {\it showExtraProperties} is true, then the inspector will also display (prior to any groups) all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+
+\end{methods}
+\sidebar{What about the \class{sim.portrayal.inspector.TabbableAndGroupable} interface?}{See Section \ref{sim.portrayal.inspector.TabbableAndGroupable}.}
+
+
+The last constructor allows you to build a GroupedInspector on an object, collecting its properties under tabs and groups as you like.  But rather than call them, it's probably easier to just have the object implement the \Class{sim.portrayal.inspector.Groupable} interface. 
+
+\sidebar{An example?}{See commented out code in \file{sim/app/heatbugs/HeatBugs.java}.}
+
+MASON generally builds new inspectors by calling the \method{sim.portrayal.Inspector.getInspector(...)} method, which will check for these interfaces, and if they're implemented, will automatically build a GroupedInspector for you.  The interface in question is:
+
+\begin{methods}{\class{sim.portrayal.inspector.Groupable}}
+\mthd{public String[] provideGroupNames()} Returns an array of names for groups under which properties will be divided. 
+\mthd{public String[][] provideGroupProperties()} Returns, for each group name, a list of properties to place under that group. 
+\mthd{public boolean showExtraProperties()} If this value is true, all properties which are not found among {\it provideExtraProperties} are also displayed individually in the inspector, rather than put into a group.  If the value is true, these properties are not displayed at all.
+\end{methods}
+
+GroupedInspector's methods are fairly obvious:
+
+\begin{methods}{\class{sim.portrayal.inspector.GroupedInspector}}
+\mthd{public void setUpdatingAllInspectors(boolean val)} Sets whether or not the GroupedInspector is updating all inspectors or just the frontmost one. 
+\mthd{public boolean isUpdatingAllInspectors()} Returns whether or not the GroupedInspector is updating all inspectors or just the frontmost one. 
+\mthd{public void addInspector(Inspector insp, String group)} Adds an inspector, as a group with the given name.   This method sets the title of the inspector (via \method{setTitle(...)}) to that name.
+\mthd{public void addInspector(Inspector insp)} Adds an inspector, using the inspector's title (from \method{getTitle(...)}) as the name.
+\mthd{public void remove(Inspector insp)} Removes an inspector. 
+\mthd{public void clear()} Removes all inspectors. 
+\mthd{public void updateInspector()} Updates the inspector and all subinspectors. 
+\mthd{public void setVolatile(boolean val)} Sets the volatility of the inspector and all subinspectors. 
+\end{methods}
+
     
 \subsection{TabbedInspector}
 \label{sim.portrayal.inspector.TabbedInspector}
+\label{sim.portrayal.inspector.Tabbable}
+\label{sim.portrayal.inspector.TabbableAndGroupable}
 
-\Class{sim.portrayal.inspector.TabbedInspector} provides an easy\footnote{Well, not {\it very} easy.} way to break out an Inspector into multiple tabs to save window space.  It's fairly straightforward: you create a TabbedInspector, then add Inspectors to it, each with a tab name.  Then you provide the TabbedInspector to the system.  Only one sub-Inspector will be displayed at a time.  TabbedInspector is just a utility most easily used with custom sub-inspectors of your design.
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-5.5em}\hfill\includegraphics[width=2.8in]{Tabbable.png}\vspace{-3em}\end{wrapfigure}
+
+\Class{sim.portrayal.inspector.TabbedInspector} provides a way to break out an Inspector into multiple tabs to save window space.  It's fairly straightforward: you create a TabbedInspector, then add Inspectors to it, each with a tab name.  Then you provide the TabbedInspector to the system.  Only one sub-Inspector will be displayed at a time.  Alternatively, you can simply point TabbedInspector at an object implementing the \class{sim.portrayal.inspector.Tabbable} \class{sim.portrayal.inspector.TabbableAndGroupable} or  interfaces.  This will cause TabbedInspector to build itself based on suggested groupings from the object itself.   
+
+
+\sidebar{This text is nearly identical to the GroupedInspector section.}{Yep, and with good reason.}
 
 TabbedInspector requires that its sub-Inspectors have exactly the same volatility as TabbedInspector itself: in other words, you can't have a mix of volatile and non-volatile sub-Inspectors.  However you have one additional option.  If TabbedInspector is updated, you can have it update either {\it all} of the sub-Inspectors or just the sub-Inspector which is {\it presently being displayed}.
 
@@ -9466,15 +9529,21 @@ TabbedInspector's constructors:
 \mthd{public TabbedInspector()} Creates a volatile TabbedInspector with no name. 
 \mthd{public TabbedInspector(String name)} Creates a volatile TabbedInspector with the provided name. 
 \mthd{public TabbedInspector(sim.portrayal.inspector.Tabbable object, GUIState state, String name)}
-Creates a TabbedInspector with the given name, and with multiple tabs responding to the requirements of the underlying object.  The tab names for the SimpleInspectors are given in {\it object.provideTabNames()}.  For each tab there is a corresponding array from {\it object.provideTabProperties()}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given properties array will appear under the corresponding tab.  {\it object.provideExtraTab()} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+Creates a TabbedInspector with the given name, and with multiple tabs corresponding to the requirements of the underlying object.  The tab names for the SimpleInspectors are given in {\it object.provideTabNames()}.  For each tab there is a corresponding array from {\it object.provideTabProperties()}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given properties array will appear under the corresponding tab.  If {\it object.provideExtraTab()} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\mthd{public TabbedInspector(sim.portrayal.inspector.TabbableAndGroupable object, GUIState state, String name)}
+Creates a TabbedInspector with the given name, and with multiple tabs, and groups under those tabs, corresponding to the requirements of the underlying object.  The tab names for the SimpleInspectors are given in {\it object.provideTabNames()}.  For each tab there is a corresponding array from {\it object.provideTabGroups()}, which must represent names of groups to be formed under that tab.  For each combination of tab and group, there is an array from {\it object.provideTabGroupProperties()}, which contains properties to be grouped under that tab/group combination.  For each tab there may optionally be one additional array of properties: these properties will appear ungrouped under the tab along with the groups.    If {\it object.provideExtraTab()} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
 \mthd{public TabbedInspector(SimpleProperties properties, GUIState state, String name, String[][] propertyNames,}
-\rule{0pt}{0pt}\hspace{\fill}{String[] tabNames, String extraTab, boolean isVolatile)}\\
-Creates a TabbedInspector with the given name, and with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  {\it extraTab} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\rule{0pt}{0pt}\hspace{\fill}{String[] tabNames, String extraTab)}\\
+Creates a TabbedInspector with the given name, and with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab there is a corresponding array of {\it propertyNames}, which must represent names found in the provided {\it properties}.  All the properties whose names are found under a given propertyNames array will appear under the corresponding tab.  If {\it extraTab} is non-null, then a final tab is provided, of that name, to hold all the properties which appeared nowhere else; otherwise they will not be displayed at all.
+\mthd{public TabbedInspector(SimpleProperties properties, GUIState state, String name, String[][][] tabGroupProperties,}
+\rule{0pt}{0pt}\hspace{\fill}{String[][] tabGroups, String[] tabNames, String extraTab)}\\
+Creates a TabbedInspector with the given name, and with multiple SimpleInspectors as tabs.  The tab names for the SimpleInspectors are given in {\it tabNames}.  For each tab there is a corresponding array of {\it tabGroups}, which must represent groups found under the given tab. Properties for each tab/group combination are given under tabGroupProperties.  There may be one additional array of properties under a given tab: these will appear as separate ungrouped properties.  {\it extraTab} gives the name of a tab holding all extra properties which do not appear among ANY of the propertyNames arrays.  If {\it extraTab} is null, these properties will not appear at all.  The subinspectors under each tab are SimpleInspectors.
+
 \end{methods}
 
-\sidebar{An example?}{See the \method{provideTabNames()} method found in the \file{sim/app/heatbugs/HeatBugs.java} and \file{sim/app/heatbugs/HeatBug.java} files, and also the \method{getInspector()} method in \file{sim/app/heatbugs/HeatBugsWithUI.java}.}
+\sidebar{An example?}{See commented out code in \file{sim/app/heatbugs/HeatBugs.java}.}
 
-The two last constructors allow you to build a TabbedInspector which automatically divides up the properties of an object in a way you specify.  Rather than call them, it's probably easier to just have the object implement the \class{sim.portrayal.inspector.Tabbable} interface.  MASON generally makes new inspectors by calling the \method{sim.portrayal.Inspector.getInspector(...)} method, which will check for this interface, and if it's implemented, will automatically build a TabbedInspector for you:
+The last two constructors allow you to build a TabbedInspector on an object, collecting its properties under tabs and groups as you like.  But rather than call them, it's probably easier to just have the object implement the \Class{sim.portrayal.inspector.Tabbable} or \Class{sim.portrayal.inspector.TabbableAndGroupable} interfaces (not both).  MASON generally builds new inspectors by calling the \method{sim.portrayal.Inspector.getInspector(...)} method, which will check for these interfaces, and if they're implemented, will automatically build a TabbedInspector for you.  The interfaces in question are:
 
 \begin{methods}{\class{sim.portrayal.inspector.Tabbable}}
 \mthd{public String[] provideTabNames()} Returns an array of names for tabs under which properties will be divided. 
@@ -9482,15 +9551,29 @@ The two last constructors allow you to build a TabbedInspector which automatical
 \mthd{public String provideExtraTab()} If this value is non-null, it forms an additional tab under which miscellaneous properties, not found among those in {\it provideTabProperties()}, will be placed.  Otherwise, these properties will not appear in the inspector.
 \end{methods}
 
+\begin{methods}{\class{sim.portrayal.inspector.TabbableAndGroupable}}
+\mthd{public String[] provideTabNames()} Returns an array of names for tabs under which properties will be divided. 
+\mthd{public String[][][] provideTabGroupProperties()} Returns, for each tab and each group, a list of names of properties of this object which should appear under that tab and group 
+\mthd{public String[][] provideTabGroups()} Returns, for each tab, a list of names of groups which should appear under that tab.  The number of groups per tab must be equal to, or one less than, the number of tab properties per tab as provided in provideTabProperties().  If there is one less group, then the remaining tab properties will be inserted inline.  
+\mthd{public String provideExtraTab()} Returns a name for an additional tab holding the remaining properties not given in provide tabGroupProperties(), or null if no such tab should be displayed.  
+\end{methods}
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-3em}\hfill\includegraphics[width=2.8in]{TabbableAndGroupable.png}\vspace{-5em}\end{wrapfigure}
+
+TabbableAndGroupable is the whole enchalada: it divides your inspector up by tabs, then divides each tab up by groups.  You have the option of displaying additional individual properties outside a group, and displaying a final tab of remaining properties.  A picture is shown at right of one  such tab.
+
 TabbedInspector's methods are fairly obvious:
 
 \begin{methods}{\class{sim.portrayal.inspector.TabbedInspector}}
-\mthd{public void setUpdatingInspectors(boolean val)} Sets whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
-\mthd{public boolean isUpdatingInspectors()} Returns whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
+\mthd{public void setUpdatingAllInspectors(boolean val)} Sets whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
+\mthd{public boolean isUpdatingAllInspectors()} Returns whether or not the TabbedInspector is updating all inspectors or just the frontmost one. 
 \mthd{public void addInspector(Inspector insp, String tab)} Adds an inspector, with a tab with the given name.   This method sets the title of the inspector (via \method{setTitle(...)}) to that name.
 \mthd{public void addInspector(Inspector insp)} Adds an inspector, using the inspector's title (from \method{getTitle(...)}) as the name.
 \mthd{public void remove(Inspector insp)} Removes an inspector. 
 \mthd{public void clear()} Removes all inspectors. 
+\mthd{public void updateInspector()} Updates the inspector and all subinspectors. 
+\mthd{public void setVolatile(boolean val)} Sets the volatility of the inspector and all subinspectors. 
 \end{methods}
 
 \subsection{Inspecting Values}
