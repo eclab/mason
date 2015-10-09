@@ -2840,6 +2840,6 @@ Version 20
 		to be entirely deletable from MASON if you're not doing 3D and
 		don't want to compile that code.
 	sim/portrayal3d/inspector package deleted.  It is now empty.
-	SparseGrid3DPortrayal2D, ObjectGrid3DPortrayal2D, and 
-		Continuous3DPortrayal2D portrayals added. Note that they have
+	SparseGrid3DPortrayal2D, ObjectGrid3DPortrayal2D, DenseGrid3DPortrayal2D,
+		and Continuous3DPortrayal2D portrayals added. Note that they have
 		NOT been tested much.

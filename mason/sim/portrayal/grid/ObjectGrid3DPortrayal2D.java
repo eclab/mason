@@ -170,7 +170,7 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         final int maxX = field.getWidth(); 
         final int maxY = field.getHeight();
         final int maxZ = field.getLength();
-        if (maxX == 0 || maxY == 0) return; 
+        if (maxX == 0 || maxY == 0 || maxZ == 0) return; 
         
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;

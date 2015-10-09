@@ -7595,6 +7595,8 @@ The field portrayals in question are:
 ObjectGrid3DPortrayal2D&ObjectGridPortrayal2D&ObjectGrid3D\\
 \vspace{0.25em}
 SparseGrid3DPortrayal2D&SparseGridPortrayal2D&SparseGrid3D\\
+\vspace{0.25em}
+DenseGrid3DPortrayal2D&DenseGridPortrayal2D&DenseGrid3D\\
 Continuous3DPortrayal2D&ContinuousPortrayal2D&Continuous3D\\
 \end{tabular}
 \end{center}
@@ -7606,6 +7608,8 @@ These portrayals comes with a few gotchas:
 \paragraph{Continuous3DPortrayal2D} No gotchas.
 
 \paragraph{SparseGrid3DPortrayal2D} Just like SparseGridPortrayal2D, this class can be provided an optional DrawPolicy.  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location. 
+
+\paragraph{DenseGrid3DPortrayal2D} Just like DenseGridPortrayal2D, this class can be provided an optional DrawPolicy.  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location.   Also, like DenseGridPortrayal2D, empty or null cells are always completely ignored.  It'd be pretty unusual to be using DenseGrid3DPortrayal2D, but there you have it.
 
 \paragraph{ObjectGrid3DPortrayal2D} This class works very similarly to ObjectGirdPortrayal2D, except that it has the option of completely ignoring empty (null) cells (and ignoring them is {\bf turned on by default}).  This is particularly important in 3D because it's highly likely that you'll have a lot of null cells stacked up on top of non-null cells.  By ``ignore'' we mean that the cells are not drawn\,---\,the simple portrayal is never fetched at all\,---\,and they are not hit-tested in any way.  This is changed with the following methods: 
 

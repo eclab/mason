@@ -15,28 +15,15 @@ import java.util.*;
 import sim.display.*;
 
 /**
-   Portrayal for Dense grids: grids of Bags of objects.
+   Portrayal for 3D Dense grids: grids of Bags of objects.
    
    The 'location' passed
-   into the DrawInfo2D handed to the SimplePortryal2D is a MutableInt2D.
+   into the DrawInfo2D handed to the SimplePortryal2D is a MutableInt3D.
 */
 
-public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
+public class DenseGrid3DPortrayal2D extends ObjectGrid3DPortrayal2D
     {
     public DrawPolicy policy;
-
-    public DenseGridPortrayal2D()
-        {
-        super();
-        }
-        
-    /** @IgnoreWarnings 
-        @deprecated Use setDrawPolicy. */
-    public DenseGridPortrayal2D (DrawPolicy policy)
-        {
-        super();
-        this.policy = policy;
-        }
 
     public void setDrawPolicy(DrawPolicy policy)
         {
@@ -50,15 +37,15 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
 
     public void setField(Object field)
         {
-        if (field instanceof DenseGrid2D ) super.setFieldBypass(field);  // see ObjectGridPortrayal2D.setFieldBypass
-        else throw new RuntimeException("Invalid field for DenseGridPortrayal2D: " + field);
+        if (field instanceof DenseGrid3D ) setFieldBypass(field);  // see ObjectGridPortrayal2D.setFieldBypass
+        else throw new RuntimeException("Invalid field for DenseGrid3DPortrayal2D: " + field);
         }
         
     public Object getObjectLocation(Object object, GUIState gui)
         {
         synchronized(gui.state.schedule)
             {
-            final DenseGrid2D field = (DenseGrid2D) this.field;
+            final DenseGrid3D field = (DenseGrid3D) this.field;
             if (field==null) return null;
 
             int maxX = field.getWidth(); 
@@ -68,27 +55,27 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
             // find the object.
             for(int x=0; x < maxX; x++)
                 {
-                Object[] fieldx = field.field[x];
+                Object[][] fieldx = field.field[x];
                 for(int y = 0; y < maxY; y++)
                     {
-                    Bag objects = (Bag)(fieldx[y]);
-                    if (objects == null || objects.size()==0) continue;
-                    for(int i=0;i<objects.numObjs;i++)
-                        if (objects.objs[i] == object)  // found it!
-                            return new Int2D(x,y);
+                    Object[] fieldxy = fieldx[y];
+                    for(int z = 0; z < fieldxy.length; z++)
+						{
+	                    Bag objects = (Bag)(fieldxy[z]);
+	                    if (objects == null || objects.size() == 0) continue;
+	                    for(int i=0;i<objects.numObjs;i++)
+	                        if (objects.objs[i] == object)  // found it!
+	                            return new Int3D(x,y,z);
+	                    }
                     }
                 }
             return null;  // it wasn't there
             }
         }
 
-
-    // our location to pass to the portrayal
-    protected final MutableInt2D locationToPass = new MutableInt2D(0,0);
-        
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
-        final DenseGrid2D field = (DenseGrid2D)(this.field);
+        final DenseGrid3D field = (DenseGrid3D)(this.field);
         Bag policyBag = new Bag();
 
         if (field==null) return;
@@ -106,7 +93,8 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
         
         final int maxX = field.getWidth(); 
         final int maxY = field.getHeight();
-        if (maxX == 0 || maxY == 0) return; 
+        final int maxZ = field.getLength();
+        if (maxX == 0 || maxY == 0 || maxZ == 0) return; 
         
         final double xScale = info.draw.width / maxX;
         final double yScale = info.draw.height / maxY;
@@ -125,10 +113,11 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
         if( starty < 0 ) starty = 0;
         for(int x=startx;x<endx;x++)
             for(int y=starty;y<endy;y++)
+            	for(int z=0; z < maxZ; z++)
                 {
-                Bag objects = field.field[x][y];
+                Bag objects = field.field[x][y][z];
                                 
-                if (objects == null || objects.size()==0) continue;
+                if (objects == null || objects.size() == 0) continue;
 
                 if (policy != null & graphics != null)
                     {
@@ -138,6 +127,7 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
                     }
                 locationToPass.x = x;
                 locationToPass.y = y;
+                locationToPass.z = z;
                 
                 for(int i=0;i<objects.numObjs;i++)
                     {
@@ -161,7 +151,7 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
                     if (graphics == null)
                         {
                         if (portrayedObject != null && portrayal.hitObject(portrayedObject, newinfo))
-                            putInHere.add(getWrapper(portrayedObject, new Int2D(x,y)));
+                            putInHere.add(getWrapper(portrayedObject, new Int3D(x,y,z)));
                         }
                     else
                         {
@@ -187,26 +177,25 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
         drawBorder(graphics, xScale, info);
         }
 
-    // Overrides objectGridPortrayal2D
-    Int2D searchForObject(Object object, Int2D loc)
+    // Overrides ObjectGrid3DPortrayal2D
+    Int3D searchForObject(Object object, Int3D loc)
         {
-        DenseGrid2D field = (DenseGrid2D)(this.field);
-        Object[][] grid = field.field;
-        if (grid[loc.x][loc.y] != null)
+        DenseGrid3D field = (DenseGrid3D)(this.field);
+        Object[][][] grid = field.field;
+        if (grid[loc.x][loc.y][loc.z] != null)
             {
-            Bag b = (Bag)(grid[loc.x][loc.y]);
+            Bag b = (Bag)(grid[loc.x][loc.y][loc.z]);
             if (b.contains(object))
-                return new Int2D(loc.x, loc.y);
+                return new Int3D(loc.x, loc.y, loc.z);
             }
-        //field.getNeighborsMaxDistance(loc.x, loc.y, SEARCH_DISTANCE, true, xPos, yPos);
-        field.getMooreLocations(loc.x, loc.y, SEARCH_DISTANCE, Grid2D.TOROIDAL, false, xPos, yPos);  // we remove the origin: there might be a big useless bag there
+        field.getMooreLocations(loc.x, loc.y, loc.z, SEARCH_DISTANCE, Grid3D.TOROIDAL, false, xPos, yPos, zPos);  // we remove the origin: there might be a big useless bag there
         for(int i=0;i<xPos.numObjs;i++)
             {
-            if (grid[xPos.get(i)][yPos.get(i)] != null)
+            if (grid[xPos.get(i)][yPos.get(i)][zPos.get(i)] != null)
                 {
-                Bag b = (Bag)(grid[xPos.get(i)][yPos.get(i)]);
+                Bag b = (Bag)(grid[xPos.get(i)][yPos.get(i)][zPos.get(i)]);
                 if (b.contains(object))
-                    return new Int2D(xPos.get(i), yPos.get(i));
+                    return new Int3D(xPos.get(i), yPos.get(i), zPos.get(i));
                 }
             }
         return null;
@@ -214,23 +203,23 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
 
                 
     final Message unknown = new Message("It's too costly to figure out where the object went.");
-	// overrides same version in ObjectGrid2D
-    public LocationWrapper getWrapper(Object object, Int2D location)
+	// overrides same version in ObjectGrid3D
+    public LocationWrapper getWrapper(Object object, Int3D location)
         {
-        final DenseGrid2D field = (DenseGrid2D)(this.field);
+        final DenseGrid3D field = (DenseGrid3D)(this.field);
         return new LocationWrapper(object, location, this)
             {
             public Object getLocation()
                 { 
-                Int2D loc = (Int2D) super.getLocation();
-                if (field.field[loc.x][loc.y] != null &&
-                	field.field[loc.x][loc.y].contains(getObject()))  // it's still there!
+                Int3D loc = (Int3D) super.getLocation();
+                if (field.field[loc.x][loc.y][loc.z] != null &&
+                	field.field[loc.x][loc.y][loc.z].contains(getObject()))  // it's still there!
                     {
                     return loc;
                     }
                 else
                     {
-                    Int2D result = searchForObject(object, loc);
+                    Int3D result = searchForObject(object, loc);
                     if (result != null)  // found it nearby
                         {
                         location = result;
@@ -246,8 +235,8 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
             public String getLocationName()
                 {
                 Object loc = getLocation();
-                if (loc instanceof Int2D)
-                    return ((Int2D)this.location).toCoordinates();
+                if (loc instanceof Int3D)
+                    return ((Int3D)this.location).toCoordinates();
                 else return "Location Unknown";
                 }
             };
