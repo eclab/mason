@@ -167,7 +167,8 @@ After the Tutorials, you should check out the <a href="howto.html">How-Tos</a> f
 <p>Make sure your CLASSPATH is set up right.  Then try this:
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>cd mason</tt><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>javac */*.java */*/*.java */*/*/*.java */*/*/*/*.java</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>dir /s /B *.java > sources.txt</tt><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>javac @sources.txt</tt>
 
 <h3>Running an App from the Command Line</h3>
 
