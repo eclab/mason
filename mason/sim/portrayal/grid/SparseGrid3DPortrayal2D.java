@@ -15,7 +15,6 @@ import java.util.*;
 import java.awt.geom.*;
 import sim.portrayal.inspector.*;
 import sim.display.*;
-import sim.portrayal3d.inspector.*;
 
 /**
    Can be used to draw both continuous and discrete sparse fields.
@@ -124,8 +123,15 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
             return new Point2D.Double(newinfo.draw.x, newinfo.draw.y);
             }
         }
-        
-        
+    
+    
+    
+    //// FIXME: The computational complexity of this could be improved.  At present
+    //// we are sorting everything by Z and then throwing out the stuff that doesn't
+    //// fall within the drawing region.  Instead, we should gather all the elements 
+    //// that fall within the region and THEN sort them by Z.
+    //// See also Continuous3DPortrayal2D
+    	
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final SparseGrid3D field = (SparseGrid3D) this.field;
@@ -155,13 +161,43 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         // We never use the policy to determine hitting.  hence this only works if graphics != null
         if (policy != null && graphics != null)
             {
-            Bag policyBag = new Bag();
             Iterator iterator = field.locationBagIterator();
+            Bag bagbag = new Bag();
             while(iterator.hasNext())
                 {
                 Bag objects = (Bag)(iterator.next());
                 
-                if (objects == null) continue;
+                if (objects == null || objects.size() == 0) continue;
+                bagbag.add(objects);
+                }
+            
+            // at this point we have a bag of BAGS, where each sub-bag is the objects at
+            // a given location.  So we use a comparator which sorts the sub-bags based
+            // on (say) the first element in each of them.
+            
+            // sort here
+            bagbag.sort(new Comparator()
+            	{
+            	public int compare(Object o1, Object o2)
+            		{
+            		Bag b1 = (Bag)o1;
+            		Bag b2 = (Bag)o2;
+            		
+            		Int3D i1 = (Int3D)(field.getObjectLocation(b1.get(0)));
+            		Int3D i2 = (Int3D)(field.getObjectLocation(b2.get(0)));
+            		// sort so that smaller objects appear first
+            		if (i1.z < i2.z) return -1;
+            		if (i2.z < i1.z) return 1;
+            		return 0;
+            		}
+				});
+				
+			// now we apply the policy
+            
+	        Bag policyBag = new Bag();
+            for(int i = 0; i < bagbag.size(); i++)
+            	{
+	            Bag objects = (Bag)(bagbag.get(i));
                                 
                 // restrict the number of objects to draw
                 policyBag.clear();  // fast
@@ -206,7 +242,20 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
             }
         else            // the easy way -- draw the objects one by one
             {
-            Bag objects = field.getAllObjects();
+	        Bag objects = new Bag(field.getAllObjects());  // copy the bag
+    	    objects.sort(new Comparator()
+            	{
+            	public int compare(Object o1, Object o2)
+            		{
+            		Int3D i1 = (Int3D)(field.getObjectLocation(o1));
+            		Int3D i2 = (Int3D)(field.getObjectLocation(o2));
+            		// sort so that smaller objects appear first
+            		if (i1.z < i2.z) return -1;
+            		if (i2.z < i1.z) return 1;
+            		return 0;
+            		}
+				});
+				        		
             for(int x=0;x<objects.numObjs;x++)
                 {
                 final Object portrayedObject = objects.objs[x];

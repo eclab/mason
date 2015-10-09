@@ -7571,7 +7571,7 @@ It's also not quite clear where the boundary {\it is} in a continuous space, par
 \end{methods}
 
 \vbox{
-\begin{wrapfigure}{r}[0in]{2in}\vspace{-1em}\hfill\includegraphics[width=1.5in]{ContinuousVsGrid.pdf}\vspace{-1em}\caption{Centers of objects at $\langle 0, 0\rangle$ in a grid and in continuous space. }\label{mixingcontinuousandgrids}\end{wrapfigure}
+\begin{wrapfigure}{r}[0in]{1.8in}\vspace{-3em}\hfill\includegraphics[width=1.5in]{ContinuousVsGrid.pdf}\vspace{-1em}\caption{Centers of objects at $\langle 0, 0\rangle$ in a grid and in continuous space. }\label{mixingcontinuousandgrids}\end{wrapfigure}
 
 \paragraph{A Note on Mixing Continuous and Grid Space}
 
@@ -7579,6 +7579,41 @@ In an \(n \times m\) continuous space, an object at \(\langle 0,0\rangle\) is dr
 
 When you overlap continuous and grid field portrayals, you'll want to be mindful of this.  You probably will want to translate one or the other so that these two locations line up.  The easiest way to do this is to translate the continuous portrayal by \(\frac{1}{2n}\) and \(\frac{1}{2m}\) when it's attached to the Display2D (see Section \ref{attachingfields}, page \pageref{attachingfields}).
 }
+
+\vspace{1em}
+\subsubsection{Field Portrayals for Visualizing 3D Grids or Continuous Space in 2D}
+
+MASON provides limited support for projecting 3D fields into 2D space for purposes of displaying them with 2D portrayals.  In this case, the field is projected along the Z dimension (or ``length'') of the field.  Objects whose Z value is {\it smaller} appear {\it behind} objects whose Z value is larger.  This configuration makes it easy, for example, display fields which are meant to describe objects at various heights off of the ground, for example: airplanes, with higher altitude, appear in front of cars, which have lower altitude.
+
+The field portrayals in question are:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\bf{3D Field Portrayal}&{\bf Works More or Less Like}&{\bf Portrays}\\
+\hline
+\vspace{0.25em}
+ObjectGrid3DPortrayal2D&ObjectGridPortrayal2D&ObjectGrid3D\\
+\vspace{0.25em}
+SparseGrid3DPortrayal2D&SparseGridPortrayal2D&SparseGrid3D\\
+Continuous3DPortrayal2D&ContinuousPortrayal2D&Continuous3D\\
+\end{tabular}
+\end{center}
+
+\noindent Note that in all three portrayals, the method \method{getPositionLocation(...)}, which translates positions on-screen to locations in the field, returns a location with a Z-value of 0.
+
+These portrayals comes with a few gotchas:
+
+\paragraph{Continuous3DPortrayal2D} No gotchas.
+
+\paragraph{SparseGrid3DPortrayal2D} Just like SparseGridPortrayal2D, this class can be provided an optional DrawPolicy.  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location. 
+
+\paragraph{ObjectGrid3DPortrayal2D} This class works very similarly to ObjectGirdPortrayal2D, except that it has the option of completely ignoring empty (null) cells (and ignoring them is {\bf turned on by default}).  This is particularly important in 3D because it's highly likely that you'll have a lot of null cells stacked up on top of non-null cells.  By ``ignore'' we mean that the cells are not drawn\,---\,the simple portrayal is never fetched at all\,---\,and they are not hit-tested in any way.  This is changed with the following methods: 
+
+\begin{methods}{\class{sim.portrayal.grid.ObjectGrid3DPortrayal2D}}
+\mthd{public void setIgnoresEmpty(boolean val) } Sets whether empty (null) cells are completely ignored for hit-testing and drawing. By default this is true.
+\mthd{public boolean getIgnoresEmpty() } Returns whether empty (null) cells are completely ignored for hit-testing and drawing. By default this is true.
+\end{methods}
+
 
 \subsection{Fast Field Portrayals}
 \label{fastfieldportrayals}

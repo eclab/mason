@@ -33,18 +33,18 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         super();
         }
 	
-	boolean ignoresNull = true;
+	boolean ignoresEmpty = true;
 	
-	/** Returns whether null cells are completely ignored for hit-testing and drawing. By default this is true.*/
-	public boolean getIgnoresNull()
+	/** Returns whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
+	public boolean getIgnoresEmpty()
 		{
-		return ignoresNull;
+		return ignoresEmpty;
 		}
 		
-	/** Sets whether null cells are completely ignored for hit-testing and drawing. By default this is true.*/
-	public void setIgnoresNull(boolean val)
+	/** Sets whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
+	public void setIgnoresEmpty(boolean val)
 		{
-		ignoresNull = val;
+		ignoresEmpty = val;
 		}
 	
     public void setField(Object field)
@@ -184,6 +184,8 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         newinfo.location = locationToPass;
         newinfo.fieldPortrayal = this;
 
+		boolean ignoresEmpty = this.ignoresEmpty;  // locals are faster
+		
         if (endx > maxX) endx = maxX;
         if (endy > maxY) endy = maxY;
         if( startx < 0 ) startx = 0;
@@ -193,6 +195,8 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
             	for(int z = 0; z < maxZ; z++)
                 {
                 Object obj = field.field[x][y][z];
+                if (obj == null && ignoresEmpty) continue;
+                
                 Portrayal p = getPortrayalForObject(obj);
                 if (!(p instanceof SimplePortrayal2D))
                     throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 

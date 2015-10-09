@@ -14,7 +14,6 @@ import java.awt.geom.*;
 import java.util.*;
 import sim.portrayal.inspector.*;
 import sim.display.*;
-import sim.portrayal3d.inspector.*;
 
 /**
    Portrays Continuous3D fields projected into a 2D space.  When asked to portray objects, this field computes the buckets
@@ -128,6 +127,12 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
             }
         }
 
+    //// FIXME: The computational complexity of this could be improved.  At present
+    //// we are sorting everything by Z and then throwing out the stuff that doesn't
+    //// fall within the drawing region.  Instead, we should gather all the elements 
+    //// that fall within the region and THEN sort them by Z.
+    //// See also SparseGrid3DPortrayal2D
+    	
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final Continuous3D field = (Continuous3D)this.field;
@@ -149,7 +154,21 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         // hit/draw the objects one by one -- perhaps for large numbers of objects it would
         // be smarter to grab the objects out of the buckets that specifically are inside
         // our range...
-        Bag objects = field.getAllObjects();
+
+		Bag objects = new Bag(field.getAllObjects());  // copy the bag
+		objects.sort(new Comparator()
+			{
+			public int compare(Object o1, Object o2)
+				{
+				Double3D i1 = (Double3D)(field.getObjectLocation(o1));
+				Double3D i2 = (Double3D)(field.getObjectLocation(o2));
+				// sort so that smaller objects appear first
+				if (i1.z < i2.z) return -1;
+				if (i2.z < i1.z) return 1;
+				return 0;
+				}
+			});
+							
         final double discretizationOverlap = field.discretization;
         for(int x=0;x<objects.numObjs;x++)
             {

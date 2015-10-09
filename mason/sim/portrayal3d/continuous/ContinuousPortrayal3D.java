@@ -11,7 +11,6 @@ import sim.portrayal.*;
 import sim.portrayal3d.*;
 import sim.util.*;
 import sim.field.continuous.*;
-import sim.portrayal3d.inspector.*;
 import sim.portrayal.inspector.*;
 
 import com.sun.j3d.utils.picking.*;
