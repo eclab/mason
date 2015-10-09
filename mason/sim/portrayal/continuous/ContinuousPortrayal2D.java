@@ -34,6 +34,13 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         if (field instanceof Continuous2D) super.setField(field);
         else throw new RuntimeException("Invalid field for ContinuousPortrayal2D: " + field);
         }
+
+    // lets ContinuousPortrayal3D set the field
+    void setFieldBypass(Object field)
+        {
+        super.setField(field);
+        }
+
         
     public Portrayal getDefaultPortrayal()
         {
