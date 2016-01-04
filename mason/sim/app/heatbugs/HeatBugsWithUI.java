@@ -126,7 +126,6 @@ public class HeatBugsWithUI extends GUIState
         heatPortrayal.setField(((HeatBugs)state).valgrid);
         heatPortrayal.setMap(new sim.util.gui.SimpleColorMap(0,HeatBugs.MAX_HEAT,Color.black,Color.red));
                              
-                                
         // reschedule the displayer
         display.reset();
                 

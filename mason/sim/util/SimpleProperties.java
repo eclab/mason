@@ -122,10 +122,11 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList nameMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
     Properties auxillary = null;  // if non-null, we use this properties instead
     
-    // default comparator, see below
-    Comparator getSortComparator()
-        {
-        return new Comparator()
+    Comparator sortComparator = null;
+
+    public Comparator makeAlphabeticalComparator()
+    	{
+    	return new Comparator()
             {
             public int compare(Object x, Object y)
                 {
@@ -146,10 +147,51 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     }
                 return val; 
                 }
+                
             public boolean equals(Object obj)
                 { return this.equals(obj); }  // doesn't really matter
             };
         }
+        
+    public Comparator makeFilterComparator(String[] filter)
+    	{
+    	if (filter == null) filter = new String[0];
+
+		// load the filter into a hashmap to make things O(1) roughly
+    	final HashMap filterMap = new HashMap();
+		int j = 0;
+		for(int i = 0; i < filter.length; i++)
+			{
+			if (filterMap.containsKey(filter[i]))
+				throw new IllegalArgumentException("Array provided to SimpleProperties.setSortList has duplicate values.");
+			filterMap.put(filter[i], new Integer(i));
+			}
+
+    	return new Comparator()
+            {
+            public int compare(Object x, Object y)
+                {
+                Method xm = (Method) x;
+                Method ym = (Method) y;
+                
+                Integer xi = (Integer)(filterMap.get(xm.getName()));
+                Integer yi = (Integer)(filterMap.get(ym.getName()));
+                
+                if (xi == null && yi == null) return 0;
+                else if (xi == null) return -1;
+                else if (yi == null) return 1;
+                else if (xi < yi) return -1;
+                else if (xi > yi) return 1;
+                else return 0;  // should NEVER HAPPEN
+                }
+                
+            public boolean equals(Object obj)
+                { return this.equals(obj); }  // doesn't really matter
+            };
+    	}
+        
+	public Comparator getSortComparator() { return sortComparator; }
+    public void setSortComparator(Comparator c) { sortComparator = c; }
     
     /** Sorts the properties by the following comparator, which 
         takes two java.lang.reflect.Method objects: these are getMethods for two properties. 
@@ -161,20 +203,23 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         ties further by lexicographic comparison of the output
         of each Method's toGenericString() method.  
     */
-    public void sortProperties(final Comparator c)
+    public void sortProperties(Comparator c)
         {
         if (auxillary != null) return;
         if (getMethods.size() < 2) return;  // don't bother!
-        
+        if (c == null) return;
+        	
         // sort the getMethods indices
         Integer[] index = new Integer[getMethods.size()];
         for(int i = 0; i < index.length; i++)
             index[i] = new Integer(i);
-        Arrays.sort(index, new Comparator()
+        
+        final Comparator cc = c;
+        Arrays.sort(index, new Comparator()  // this is a STABLE SORT, so elements not appearing in c's filter will return 0 resulting in no change  we hope.
             {
             public int compare(Object x, Object y)
                 { 
-                return c.compare(getMethods.get(((Integer)x).intValue()),
+                return cc.compare(getMethods.get(((Integer)x).intValue()),
                     getMethods.get(((Integer)y).intValue()));
                 }
             public boolean equals(Object obj)

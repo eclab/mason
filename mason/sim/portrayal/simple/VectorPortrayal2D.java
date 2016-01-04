@@ -62,6 +62,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
     ColorMap map;
     double orientation;
     
+    public static final int SHAPE_LINE_T = -100;
+    
     /** Creates a VectorPortrayal2D which responds to objects which are
     	Oriented2D and/or Scaled2D.  These define the orientation and
     	scaling of the vector respectively. The vector color is white,
@@ -150,17 +152,24 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
     	return this.scale * objectScale;
     	}
     
+    public void setShape(int val) { if (val == SHAPE_LINE_T) { shape = val; path = null; } else super.setShape(val); }
+    
     boolean usesExactOrientation = false;
     public boolean getUsesExactOrientation() { return usesExactOrientation; }
     public void setUsesExactOrientation(boolean val) { usesExactOrientation = val; }
     
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
-		if (object==null) return;
+		if (object==null) return;  // bah
 
+		// we will be temporarily modifying the scale and paint prior to calling super.draw(...)
+		// so we save the old versions here in order to restore them later.
 		double oldscale = this.scale;
 		Paint oldPaint = this.paint;
+
 		
+		// orientation, scale, and color numerical values, and whether
+		// these values were set or defaults should be used instead
 		double o = 0;
 		double s = 0;
 		double c = 0;
@@ -168,6 +177,8 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
 		boolean sset = false;
 		boolean cset = false;
 			
+			
+		// compute the numerical values
         if (sizeGrid == null && orientationGrid==null && colorGrid == null)
         	{
         	if (object instanceof Scaled2D || object instanceof Oriented2D || object instanceof Valuable || object instanceof Number)
@@ -288,7 +299,17 @@ public class VectorPortrayal2D extends OrientedPortrayal2D
 			
 		// draw
 		if (this.scale > 0)
-			super.draw(object, graphics, info);
+			{
+			if (shape == SHAPE_LINE_T)
+				{
+				if (info.precise)
+					{
+					
+					}
+				}
+			else 
+				super.draw(object, graphics, info);
+			}
 			
 		// restore scale and paint
 		this.paint = oldPaint;  // this is probably not necessary, since we don't use it in any way

@@ -163,9 +163,11 @@ public class ParallelSequence extends Sequence
                     "Probably you have the same ParallelSequence nested, or the same ParallelSequence being stepped in parallel.\n" +
                     "Either way, it's a bug.");
             operating = true;
-            }
 
-        loadSteps();
+            // we load the steps inside the lock here so we can guarantee
+            // people aren't trying to add or remove stuff
+            loadSteps();
+            }
 
         if (threads == null)  // rebuild threads
             threads = new ThreadPool();
@@ -204,6 +206,103 @@ public class ParallelSequence extends Sequence
         operating = false;
         }
 
+
+
+    public void replaceSteppables(Collection collection)
+        {
+        synchronized(operatingLock)
+            {
+            super.replaceSteppables(collection);
+            }
+        }
+
+    public void replaceSteppables(Steppable[] steppables)
+        {
+        synchronized(operatingLock)
+            {
+            super.replaceSteppables(steppables);
+            }
+        }
+
+    public void addSteppable(Steppable steppable)
+        {
+        synchronized(operatingLock)
+            {
+            super.addSteppable(steppable);
+            }
+        }
+
+    public void addSteppables(Steppable[] steppables)
+        {
+        synchronized(operatingLock)
+            {
+            super.addSteppables(steppables);
+            }
+        }
+
+    public void addSteppables(Collection steppables)
+        {
+        synchronized(operatingLock)
+            {
+            super.addSteppables(steppables);
+            }
+        }
+
+    public void removeSteppable(Steppable steppable)
+        {
+        synchronized(operatingLock)
+            {
+            super.removeSteppable(steppable);
+            }
+        }
+
+    public void removeSteppables(Steppable[] steppables)
+        {
+        synchronized(operatingLock)
+            {
+            super.removeSteppables(steppables);
+            }
+        }
+
+    public void removeSteppables(Collection steppables)
+        {
+        synchronized(operatingLock)
+            {
+            super.removeSteppables(steppables);
+            }
+        }
+
+    public boolean getEnsuresOrder() 
+        {
+        synchronized(operatingLock)
+            {
+            return super.getEnsuresOrder();
+            }
+        }
+        
+    public void setEnsuresOrder(boolean val)
+        {
+        synchronized(operatingLock)
+            {
+            super.setEnsuresOrder(val);
+            }
+        }
+        
+    public boolean getUsesSets() 
+        {
+        synchronized(operatingLock)
+            {
+            return super.getUsesSets();
+            }
+        }
+
+    public void setUsesSets(boolean val) 
+        { 
+        synchronized(operatingLock)
+            {
+            super.setUsesSets(val);
+            }
+        }
 
     // a worker is a semaphore and also implements a runnable
     class Worker implements Runnable

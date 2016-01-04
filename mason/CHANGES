@@ -2843,3 +2843,11 @@ Version 20
 	SparseGrid3DPortrayal2D, ObjectGrid3DPortrayal2D, DenseGrid3DPortrayal2D,
 		and Continuous3DPortrayal2D portrayals added. Note that they have
 		NOT been tested much.
+	Filled out Section 10.6.7 of the manual ("Objects Providing their Own
+		Inspector"), which for some reason had not been written.
+	GroupedInspector now draws borders when a name is provided.
+	Added some additional facilities to TabbedInspector and GroupedInspector
+	Revised ParallelSequence to avoid theoretical race conditions.
+	Updated the manual regarding ParallelSequence.
+	Added experimental code for specifying the sort order of properties
+	Removed Scalable.java.  Use Scalable2D.java instead.

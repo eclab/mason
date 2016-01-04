@@ -2680,6 +2680,7 @@ public class Console extends JFrame implements Controller
 
             public void run()
                 {
+
                 double currentRate = 0.0;
                 try
                     {
