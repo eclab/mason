@@ -93,8 +93,8 @@ public class Sequence implements Steppable
         
     public Sequence(Collection collection)
         {
-        steps = new Steppable[collection.size()];
-        steps = (Steppable[])(collection.toArray(steps));
+        steps = (Steppable[])(collection.toArray(new Steppable[collection.size()]));
+        size = steps.length;
         }
 
     /** Returns whether the order among the remaining Steppables in the internal array is maintained after removing

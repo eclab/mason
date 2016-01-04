@@ -2851,3 +2851,5 @@ Version 20
 	Updated the manual regarding ParallelSequence.
 	Added experimental code for specifying the sort order of properties
 	Removed Scalable.java.  Use Scalable2D.java instead.
+	Bugfix to Sequence constructor.  Thanks to Axel Kowald
+                <Axel.Kowald@ncl.ac.uk>

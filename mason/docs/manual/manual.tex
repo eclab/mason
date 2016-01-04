@@ -2725,6 +2725,7 @@ MersenneTwisterFast has identical methods to \class{java.util.Random}, plus one 
 \end{methods}
 
 \subsection{Distributions with COLT}
+\label{colt}
 The MersenneTwisterFast class, like \class{java.util.Random}, provides random numbers from only two floating-point distributions: uniform and Gaussian.  What if you need numbers drawn from other distributions?  MASON provides a variety of distributions in the \Package{sim.util.distribution} package.  This package is a modified version of the distributions from the COLT/JET library.\footnote{http:/\!/acs.lbl.gov/software/colt/}  The modifications remove certain misfeatures of the library which make it difficult to serialize, unify a few utility classes, and most importantly, replace COLT's random number generator data types with Mersenne Twister.  You can just plug in your model's MersenneTwisterFast random number generator and pop out random numbers under various distributions.
 
 Because it's separate from the MASON core proper (and a bit new), I don't describe this package in detail, but it should be fairly straightforward.  {\bf Warning:} the port of these classes from COLT to MASON is new and has not been tested much.
@@ -2771,6 +2772,7 @@ The second group are just function calls from the \Class{sim.util.distribution.D
 \end{itemize}
 
 \subsection{Distributions with Apache Commons Math}
+\label{apachemath}
 
 An alternative is to use Apache Commons Math.\footnote{http://commons.apache.org/proper/commons-math/} Apache Commons has its own special interface for random number generators called \class{org.apache.commons.math3.random.RandomGenerator}.  To use its distributions, we must create a wrapper around MersenneTwisterFast which allows us to implement that interface.  It's easy:
 
@@ -4078,7 +4080,7 @@ protected Steppable[] steps;\\
 protected int size; 
 }
 
-The Steppables you'll be stepping are found in \variable{steps[0]} through \variable{steps[size-1]} inclusive.   If you may not always step the Steppables in that order (perhaps you're randomizing the array order, or stepping in parallel threads), you should override the method \method{canEnsureOrder()} to return \variable{false}.  Do not add or delete from this array, though you can change the order of its elements during \method{step(...)}.
+The Steppables you'll be stepping are found in \variable{steps[0]} through \variable{steps[size-1]} inclusive.   If you may not always step the Steppables in that order (perhaps you're randomizing the array order, or stepping in parallel threads), you should override the method \method{canEnsureOrder()} to return \variable{false}.  Do not add or delete from this internal array (\method(loadSteps() will handle that for you), though you can change the order of its elements during \method{step(...)}.
 
 \begin{methods}{\class{sim.engine.Sequence}}
 \mthd{protected void loadSteps()} Subclasses should call this this as the first item in their \method{step(...)} methods.  It reconstructs the \variable{steps} array and prepares it to be stepped as appropriate.
@@ -4206,6 +4208,8 @@ Repeat repeat = new Repeat(step, 1)
 schedule.scheduleOnce(0.0, 1, repeat);
 \end{verbatim}
 }
+
+(See Section \ref{colt} for more about the COLT distribution package being used here, and see Section \ref{apachemath} for an alternative using Apache Math).
    
 Like RandomSequence, Repeat might
    be used in a multithreaded environment (inside a \class{sim.engine.ParallelSequence}, for example).  In this
@@ -11418,7 +11422,7 @@ If instead the TransformGroup passed in is non-\variable{null}, then you may ass
 \vspace{0em}
 \end{wrapfigure}
 
-And that's more or less all there's to it.  Here's an example using the \class{com.sun.j3d.utils.geometry.ColorCube} class, which defines a simple Shape3D in the form of a multicolored cube.  In this example we create a cube and then leave it alone\,---\,thecube doesn't change size or color, etc. to reflect some feature of the underlying model object.  It just draws it as a cube.  This example is pickable, and creates a LocationWrapper as necessary.  Note the various Java3D capability bits turned on (both explicitly and via \method{setPickableFlags(...)}): in more complex scene graphs, getting all the bits turned on to allow the object to be pickable or change in color or appearance, etc., can be a frustrating experience of trial and error.  It's Java3D's worst feature.
+And that's more or less all there's to it.  Here's an example using the \class{com.sun.j3d.utils.geometry.ColorCube} class, which defines a simple Shape3D in the form of a multicolored cube.  In this example we create a cube and then leave it alone\,---\,the cube doesn't change size or color, etc. to reflect some feature of the underlying model object.  It just draws it as a cube.  This example is pickable, and creates a LocationWrapper as necessary.  Note the various Java3D capability bits turned on (both explicitly and via \method{setPickableFlags(...)}): in more complex scene graphs, getting all the bits turned on to allow the object to be pickable or change in color or appearance, etc., can be a frustrating experience of trial and error.  It's Java3D's worst feature.
 
 {\footnotesize\begin{verbatim}
 package sim.portrayal3d.simple;
