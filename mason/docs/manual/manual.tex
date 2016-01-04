@@ -1104,7 +1104,7 @@ import sim.field.network.*;
 \end{alltt}}
 
 
-
+\bump
 
 \begin{wrapfigure}{r}[0in]{3in}
 \vspace{-2em}\hfill\includegraphics[width=3in]{Schoolyard1.png}\vspace{-5em}\end{wrapfigure}
@@ -1238,7 +1238,6 @@ java StudentsWithUI}
 As shown at right, we've now got edges being drawn.  Now let's modify how the nodes are drawn to reflect how agitated the students are.
 
 
-\bump
 \section{Inspect Student Agitation and Customize its Visualizaion}
 
 Before we can visualize how agitated the students are, we'll need to actually define what ``agitated'' means.  We'll define it in terms of the affinity forces: a student is happier if he has lower affinity forces on him (he's fine where he is), and more agitated if the forces are high.
@@ -1431,7 +1430,7 @@ import java.awt.*;
 \end{alltt}}
 
 \begin{wrapfigure}{r}[0in]{3in}
-\vspace{-1em}\hfill\includegraphics[width=3in]{Schoolyard3.png}\vspace{-7em}\end{wrapfigure}
+\vspace{-3em}\hfill\includegraphics[width=3in]{Schoolyard3.png}\vspace{-5em}\end{wrapfigure}
 
 Note that the \method{draw(...)} method is passed the object to draw (a Student).  From this we extract the agitation, then set an appropriate Color (ranging from red to blue). Finally (and crucially) we call \method{super.draw(...)} to draw the Student.
 
@@ -1455,40 +1454,30 @@ Now that our students have certain Java Bean Properties, we can inspect those va
 \end{itemize}
 
 \begin{wrapfigure}{r}[0in]{3in}
-\vspace{-6.5em}\hfill\includegraphics[width=2.8in]{ConsoleInspectors.png}\vspace{-2em}\end{wrapfigure}
+\vspace{-12.5em}\hfill\includegraphics[width=2.8in]{ConsoleInspectors.png}\vspace{-3em}\end{wrapfigure}
 
 
 It's easy to to inspect a Student now.  Double-click on a student and the Console will shift to showing a list of Inspectors, one for each object you hit with the mouse.  If you find it challenging to select a student, try rescaling the simulation a bit via the Scale Field \raisebox{-0.25em}{\includegraphics[scale=0.4]{ScaleField.png}},
 
 The two things inspectable in the simulation, at the moment, are Students and Edges.  At right is the Console after I clicked on a particularly simple Student with just two Edges.  Often you'll get a bounty of Edges, followed by one or a few Students, depending on what you clicked on.
 
-In the Console at right we see the list of Inspectors, and beneath it the \Class{sim.portrayal.SimpleInspector} for an Edge with weight 0.18921159420002.\footnote{Actually, it's {\it two} inspectors one nested in the other: the SimpleInspector is displaying the stuff inside the ``Properties'' box.  The ContinuousPortrayal2D wrapped this in an outer Inspector which also includes the position of the object.  Also if you look carefully you'll see the Students are called \class{sim.app.wcss.Student} rather than just \class{Student}: I took these screenshots from the WCSS tutorial.  So sue me.}   An Inspector (usually a SimpleInspector) is produced by the SimplePortrayal2D (in this case, the OvalPortrayal2D) when requested by the Display2D after the user double-clicked on an object.  Notice that the Edge has two properties: \textit{NaN} and \textit{Infinite}.  The Edge is displaying a SimpleInspector for its \variable{info} object, and we placed a \Class{java.lang.Double} in there (that's what's holding the 0.18921159420002 value).  Sun's Double class has two unhelpful Java Bean Property methods: \method{isNaN()} and \method{isInfinite()}.  
-
 \begin{wrapfigure}{r}[0in]{3in}
 \vspace{-1em}\hfill\includegraphics[width=2.8in]{ConsoleInspectors2.png}\vspace{-2em}\end{wrapfigure}
 
-Click on the Student\footnote{Don't like that ugly name for the Student in the Inspector's list?  Just override the Student's \method{toString()} method, and it'll be used instead.} and you'll get an Inspector like the one shown at right.  The Student has one property: \textit{Agitation}.  This corresponds to the Java Bean Property Method we defined: \method{getAgitation()}.  If you continue the simulation, you'll find that this property automatically updates.\footnote{Also the simulation runs more slowly because there's more stuff to draw on-screen.  Click ``Empty List'' to get rid of the Inspectors and make the simulation run faster.  You can make the simulation run even faster by getting rid of the display.  Click the display's close box (on OS X, the red button).  Last, change the Time Button \raisebox{-0.25em}{\includegraphics[scale=0.4]{TimeButton.png}} to say ``Rate'', which is updated less often.  With no displays to draw, no inspectors to update, and no steps counter to repaint, the GUI will approach\,---\,but not match\,---\,the speed you get if you just run on the command line.  Don't worry, you can get the display back -- go to the Displays tab \raisebox{-0.25em}{\includegraphics[scale=0.4]{DisplaysButton.png}} and double-click on the display.}
+
+In the Console at right we see the list of Inspectors, and beneath it the \Class{sim.portrayal.SimpleInspector} for an Edge with weight 0.18921159420002.\footnote{Actually, it's {\it two} inspectors one nested in the other: the SimpleInspector is displaying the stuff inside the ``Properties'' box.  The ContinuousPortrayal2D wrapped this in an outer Inspector which also includes the position of the object.  Also if you look carefully you'll see the Students are called \class{sim.app.wcss.Student} rather than just \class{Student}: I took these screenshots from the WCSS tutorial.  So sue me.}   An Inspector (usually a SimpleInspector) is produced by the SimplePortrayal2D (in this case, the OvalPortrayal2D) when requested by the Display2D after the user double-clicked on an object.  Notice that the Edge has two properties: \textit{NaN} and \textit{Infinite}.  The Edge is displaying a SimpleInspector for its \variable{info} object, and we placed a \Class{java.lang.Double} in there (that's what's holding the 0.18921159420002 value).  Sun's Double class has two unhelpful Java Bean Property methods: \method{isNaN()} and \method{isInfinite()}.  
+
+Click on the Student\footnote{Don't like that ugly name for the Student in the Inspector list?  Override the Student's \method{toString()} method, and it'll be used instead.} and you'll get an Inspector like the one shown at right.  The Student has one property: \textit{Agitation}.  This corresponds to the Java Bean Property Method we defined: \method{getAgitation()}.  If you continue the simulation, you'll find that this property automatically updates.\footnote{Also the simulation runs more slowly because there's more stuff to draw on-screen.  Click ``Empty List'' to get rid of the Inspectors and make the simulation run faster.  You can make the simulation run even faster by getting rid of the display.  Click the display's close box (on OS X, the red button).  Last, change the Time Button \raisebox{-0.25em}{\includegraphics[scale=0.4]{TimeButton.png}} to say ``Rate'', which is updated less often.  With no displays to draw, no inspectors to update, and no steps counter to repaint, the GUI will approach\,---\,but not match\,---\,the speed you get if you just run on the command line.  Don't worry, you can get the display back -- go to the Displays tab \raisebox{-0.25em}{\includegraphics[scale=0.4]{DisplaysButton.png}} and double-click on the display.}
 
 We can go further than this.  Let's chart the degree of agitation of a given Student.  Stop the simulation and start it paused (click on the Pause button \raisebox{-0.25em}{\includegraphics[scale=0.4]{PauseButton.png}} when the console is Stopped \raisebox{-0.25em}{\includegraphics[scale=0.4]{StopButton.png}}\ ).  Then step the simulation a few times and double-click on a student and inspect it.  Next, click on the magnifying glass button \raisebox{-0.2em}{\includegraphics[scale=0.4]{MagnifyingGlassButton.png}} next to the \textit{Agitation} property.  Up will pop up a menu which lets you {\it stream} the property to a file or to a window, or {\it chart} the property\footnote{MASON uses the charting library {\it JFreeChart} (http:/\!/jfree.org/jfreechart/) to do charting in its inspectors.} by calling forth further inspectors to do more interesting things.
 
-These inspectors are different from the SimpleInspectors you've seen so far. First off, the SimpleInspector is designed to inspect an {\it object}.  These additional inspectors, subclasses of \Class{sim.portrayal.inspector.PropertyInspector}, are designed to inspect {\it the value of a property of an object}.  Second, PropertyInspectors can be dynamically plugged-in at run-time, and appear in that pop-up menu.
-
-\begin{wrapfigure}{r}[0in]{4in}
+\begin{wrapfigure}{r}[0in]{3.8in}
 \vspace{-1em}\hfill\includegraphics[width=4in]{Chart.png}\vspace{-2em}\end{wrapfigure}
 
+
+These inspectors are different from the SimpleInspectors you've seen so far. SimpleInspector is designed to inspect an {\it object}.  These additional inspectors, subclasses of \Class{sim.portrayal.inspector.PropertyInspector}, are designed to inspect {\it the value of a property of an object}.  Second, PropertyInspectors can be dynamically plugged-in at run-time, and appear in that pop-up menu.
+
 Select {\it Chart} from the pop-up menu and you'll get a chart window like the one at right.  Make some tweaks of features, unpause the simulation, and watch the chart unspool.  If you click on ``Save as PDF...'', you can generate a publication-quality PDF output of the chart (as opposed to a bitmap screenshot).
-
-~\\
-\\
-\\
-\\
-\\
-\\
-\\
-\\
-
-
-\bump
 
 \section{Inspect the Model} 
 
@@ -1719,6 +1708,7 @@ public class StudentsWithUI extends GUIState
     \}}
 \end{alltt}}
 
+\bump
 
 \paragraph{Compile and Run}
 
@@ -1728,20 +1718,21 @@ java StudentsWithUI}
 \end{alltt}}
 
 \begin{wrapfigure}{r}[0in]{3in}
-\vspace{-15em}\hfill\includegraphics[width=2.8in]{ConsoleInspectors3.png}\vspace{-2em}\end{wrapfigure}
+\vspace{-8em}\hfill\includegraphics[width=2.8in]{ConsoleInspectors3.png}\vspace{-5em}\end{wrapfigure}
 
 When you fire up MASON this time, notice that the Console now has an extra tab at the end: the {\bf Model Tab} \raisebox{-0.25em}{\includegraphics[scale=0.4]{ModelButton.png}}. This tab reveals the Model's Inspector, as shown at right.  Notice the five properties we added, one of which has a slider.
 
-\begin{wrapfigure}{r}[0in]{4in}
-\vspace{-1em}\hfill\includegraphics[width=4in]{Histogram.png}\vspace{-2em}\end{wrapfigure}
-
 \paragraph{Important Note} The Model Inspector isn't valid until you start the simulation.  So examining or setting values when the Simulation is Stopped  \raisebox{-0.25em}{\includegraphics[scale=0.4]{StopButton.png}} may have no effect.  Instead, press Pause \raisebox{-0.25em}{\includegraphics[scale=0.4]{PauseButton.png}} first, then modify and examine the inspector.
+
+\begin{wrapfigure}{r}[0in]{4in}
+\vspace{-1em}\hfill\includegraphics[width=4in]{Histogram.png}\vspace{-1em}\end{wrapfigure}
 
 Try tweaking these values.  Note that you can only modify the number of students before starting a simulation (the model uses this value at \method{start(...)} time and nowhere else) but the two Multiplier properties can be modified whenever you like.  Try setting the number of students to 1000 for example.  Or change the degree of randomness.
 
+You can create time series charts from the {\it AverageForce} property.  But more interesting, you can now create histograms of from the double array generated by \method{getAgitationDistribution()}.  Just click on the magnifying glass button \raisebox{-0.2em}{\includegraphics[scale=0.4]{MagnifyingGlassButton.png}} and select {\it Histogram}.  Up pops a histogram like the one here.
+
 \sidebar{Can you have more than one series on a chart?}{Absolutely. Histograms and time series charts both support multiple series.  Just ask to chart a second item, and you'll be given the option to put it on its own chart or to add it to an existing chart.}
 
-You can create time series charts from the {\it AverageForce} property.  But more interesting, you can now create histograms of from the double array generated by \method{getAgitationDistribution()}.  Just click on the magnifying glass button \raisebox{-0.2em}{\includegraphics[scale=0.4]{MagnifyingGlassButton.png}} and select {\it Histogram}.  Up pops a histogram like the one here.
 
 \section{Select, Label, and Move Students} 
 
@@ -2279,8 +2270,6 @@ It's very easy to add an HTML file.  Simply create a file called \file{index.htm
 
 For example, create the following file, named \file{index.html}, and save it right next to the file \file{StudentsWithUI.class}:
 
-\bump
-
 {\footnotesize \begin{alltt}<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
@@ -2309,10 +2298,15 @@ their situation.
 
 Notice that the DOCTYPE indicates HTML 3.2, an old and simple version of HTML with limited CSS support.  This is as far as Java's GUI facilities go.  You do not need to provide the DOCTYPE: but you do need to be aware that 3.2 is all MASON can display.
 
-\begin{wrapfigure}{r}[0in]{3in}
+\begin{wrapfigure}{r}[0in]{1in}
 \vspace{-1em}\hfill\includegraphics[width=0.5in]{SchoolyardIcon.png}\vspace{-0em}\end{wrapfigure}
 
 The HTML file above requires an image (\file{icon.png}) to provide sort of the ``standard look'' of MASON's built-in demo applications.  The one I use is shown at right.
+
+
+\begin{wrapfigure}{r}[0in]{3in}
+\vspace{-5em}\hfill\includegraphics[width=2.8in]{Console2.png}\vspace{-7em}\end{wrapfigure}
+
 
 \paragraph{Run the Simulation}
 Now fire up the simulation again:
@@ -2321,10 +2315,7 @@ Now fire up the simulation again:
 \textit{java StudentsWithUI}
 \end{alltt}}
 
-\begin{wrapfigure}{r}[0in]{3in}
-\vspace{-1em}\hfill\includegraphics[width=2.8in]{Console2.png}\vspace{-7em}\end{wrapfigure}
-
-\noindent ... and you'll find that the Console now looks like the Figure on the right.
+\noindent ... and the Console now looks like the Figure on the right.
 
 Alternatively you can embed your own String, or a URL to an existing web page, directly in your GUIState subclass.  For example, if you didn't provide the \file{index.html} file above, you could add some simple text in the method \method{getInfo()}.  Specifically, add the following method to your \file{StudentsWithUI.java} file:
 
@@ -2345,21 +2336,22 @@ One last approach you can take is to return not a String but a URL.  For example
 
 
 {\footnotesize \begin{alltt}
-    public static Object getInfo()
-        \{
-        try \{ return new java.net.URL("http://google.com/"); \} 
-        catch (java.net.MalformedURLException e) \{ return "Oops"; \}
-        \}
+public static Object getInfo()
+    \{
+    try \{ return new java.net.URL("http://google.com/"); \} 
+    catch (java.net.MalformedURLException e) \{ return "Oops"; \}
+    \}
 \end{alltt}}
 
 \begin{wrapfigure}{r}[0in]{3in}
-\vspace{-2em}\hfill\includegraphics[width=2.8in]{Console3.png}\vspace{-5em}\end{wrapfigure}
+\vspace{-9em}\hfill\includegraphics[width=2.8in]{Console3.png}\vspace{-5em}\end{wrapfigure}
 
 When you do this, the Console window will look like it does at right.  Notice that the Google.com page is a bit discombobulated: it's assuming a more recent version of HTML than 3.2.  If you try it, you'll also find out that the search buttons don't work, though the links do.  I believe form submission in general isn't available in Java's basic HTML facilities (nor is JavaScript).
 
 
 
 
+\bump
 
 \section{Go 3D} 
 
@@ -2658,7 +2650,7 @@ java StudentsWithUI}
 \end{alltt}}
 
 \begin{wrapfigure}{r}[0in]{3in}
-\vspace{-2em}\hfill\includegraphics[width=2.8in]{Students3D.png}\vspace{-5em}\end{wrapfigure}
+\vspace{-14em}\hfill\includegraphics[width=2.8in]{Students3D.png}\vspace{-2em}\end{wrapfigure}
 
 \noindent ...you should fine a new Display added to your simulation which looks like the figure to the right (I've enlarged the window a bit\,---\,try dragging in the bottom right corner to do that.).  You can {\bf rotate} the scene by dragging on it, {\bf translate} the scene by right-mouse-button-dragging or by dragging with the Command key pressed, and finally {\bf move the camera towards or away from the scene} by middle-mouse-button-dragging or by dragging with the Option/Alt key pressed.  You'll find that double-clicking on objects and edges in the 3D 
 scene will bring up inspectors too.  And be sure to check out the options in the Options pane too: for example, auto-rotation, or adding axes.
@@ -4123,13 +4115,19 @@ synchronized(state.random)\\
 // now use val here....
 }
 
-Notably the RandomSequence described above needs to be used carefully when in combination with ParallelSequence: make certain that it is set to synchronize if used inside one of the ParallelSequence's threads.
+RandomSequence, described earlier, particularly needs to be used carefully when in combination with ParallelSequence: make certain that it is set to synchronize if used inside one of the ParallelSequence's threads.
 
-Be sure to read and understand \class{sim.engine.Sequence}.
+Because ParallelSequence is a \class{sim.engine.Sequence}, it has the same basic methods for adding agents to, removing agents from, or entirely replacing its internal sequence.  Like \class{sim.engine.Sequence}, these methods' operations are delayed until just before the next \method{step(...)} call commences.  However unlike \class{sim.engine.Sequence}, these methods are also synchronized, so they can be called from any thread.  Other synchronized methods include \method{getEnsuresOrder()}, \method{setEnsuresOrder(...)}, \method{getUsesSets()}, and \method{setUsesSets(...)}.
+
+Speaking of ensuring order: ParallelSequence obviously can never ensure order regardless of the setting in \method{setEnsuresOrder(...)}. 
+
+Because ParallelSequence uses threads, you'll need to specify them in the constructor, with the following options:
 
 \begin{methods}{\class{sim.engine.ParallelSequence} Constructor}
 \mthd{public ParallelSequence(Steppable[] agents)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called ParallelSequence will step each of these agents in parallel in separate threads, then wait for them to complete before returning.
 \mthd{public ParallelSequence(Steppable[] agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.  If you instead pass in \variable{ParallelSequence.STEPPABLES}, then ParallelSequence will spawn one thread for each Steppable in the internal array.
+\mthd{public ParallelSequence(Collection agents)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called ParallelSequence will step each of these agents in parallel in separate threads, then wait for them to complete before returning.
+\mthd{public ParallelSequence(Collection agents, int numThreads)} Builds a ParallelSequence for the given array of agents (there should be no null values, and the array ought not be modified later).  When its \method{step(...)} method is called, ParallelSequence will generate {\it numThreads} number of threads, then divide the agents roughly evenly among the various threads.  Each thread will then step its assigned agents in some order.  ParallelSequence will wait for all threads to complete this task before returning.  If for {\it numThreads} you pass in \variable{ParallelSequence.CPUS}, then ParallelSequence will query Java for the number of CPUs or cores on the system and spawn exactly that number of threads.  If you instead pass in \variable{ParallelSequence.STEPPABLES}, then ParallelSequence will spawn one thread for each Steppable in the internal array.
 \end{methods}
 
 \sidebar{ParallelSequence has a thread pool?  Can I use that?}{Sorry, it's private.  But if you don't want to use Java's overcomplex concurrency package, you can find a simple threadpool class in MASON's sister package, ECJ.  Look for the \file{ec/util/ThreadPool.java} file in ECJ, which you can download at http:/\!/cs.gmu.edu/\(\sim\)eclab/projects/ecj/}
@@ -7583,7 +7581,7 @@ When you overlap continuous and grid field portrayals, you'll want to be mindful
 \vspace{1em}
 \subsubsection{Field Portrayals for Visualizing 3D Grids or Continuous Space in 2D}
 
-MASON provides limited support for projecting 3D fields into 2D space for purposes of displaying them with 2D portrayals.  In this case, the field is projected along the Z dimension (or ``length'') of the field.  Objects whose Z value is {\it smaller} appear {\it behind} objects whose Z value is larger.  This configuration makes it easy, for example, display fields which are meant to describe objects at various heights off of the ground, for example: airplanes, with higher altitude, appear in front of cars, which have lower altitude.
+MASON provides limited support for projecting 3D fields into 2D space for purposes of displaying them with 2D portrayals.  In this case, the field is projected along the Z dimension (or ``length'') of the field.  Objects whose Z value is lower appear {\it behind} objects whose Z value is higher.  This configuration makes it easy, for example, display fields which are meant to describe objects at various heights off of the ground, for example: airplanes, with higher altitude, appear in front of cars, which have lower altitude.
 
 The field portrayals in question are:
 
@@ -7603,15 +7601,15 @@ Continuous3DPortrayal2D&ContinuousPortrayal2D&Continuous3D\\
 
 \noindent Note that in all three portrayals, the method \method{getPositionLocation(...)}, which translates positions on-screen to locations in the field, returns a location with a Z-value of 0.
 
-These portrayals comes with a few gotchas:
+These portrayals come with a few gotchas:
 
 \paragraph{Continuous3DPortrayal2D} No gotchas.
 
-\paragraph{SparseGrid3DPortrayal2D} Just like SparseGridPortrayal2D, this class can be provided an optional DrawPolicy.  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location. 
+\paragraph{SparseGrid3DPortrayal2D} Just like SparseGridPortrayal2D, this class can be provided an optional \hbox{DrawPolicy.}  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location. 
 
-\paragraph{DenseGrid3DPortrayal2D} Just like DenseGridPortrayal2D, this class can be provided an optional DrawPolicy.  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location.   Also, like DenseGridPortrayal2D, empty or null cells are always completely ignored.  It'd be pretty unusual to be using DenseGrid3DPortrayal2D, but there you have it.
+\paragraph{DenseGrid3DPortrayal2D} Just like DenseGridPortrayal2D, this class can be provided an optional \hbox{DrawPolicy.}  The Z-ordering of objects still is the primary sorting of the objects: the DrawPolicy will only specify the relative ordering of objects found at exactly the same location.   Also, like DenseGridPortrayal2D, empty or null cells are always completely ignored.  It'd be pretty unusual to be using DenseGrid3DPortrayal2D in general, but there you have it.
 
-\paragraph{ObjectGrid3DPortrayal2D} This class works very similarly to ObjectGirdPortrayal2D, except that it has the option of completely ignoring empty (null) cells (and ignoring them is {\bf turned on by default}).  This is particularly important in 3D because it's highly likely that you'll have a lot of null cells stacked up on top of non-null cells.  By ``ignore'' we mean that the cells are not drawn\,---\,the simple portrayal is never fetched at all\,---\,and they are not hit-tested in any way.  This is changed with the following methods: 
+\paragraph{ObjectGrid3DPortrayal2D} This class works very similarly to ObjectGirdPortrayal2D, except that it has the option of completely ignoring empty (null) cells (and ignoring them is {\bf turned on by default}).  This is particularly important in 3D because it's highly likely that you'll have a lot of null cells stacked up on top of non-null cells.  By ``ignore'' we mean that the cells are not drawn\,---\,the simple portrayal is never fetched at all\,---\,and they are not hit-tested in any way: you cannot inspect the cells.  This default is changed with the following methods: 
 
 \begin{methods}{\class{sim.portrayal.grid.ObjectGrid3DPortrayal2D}}
 \mthd{public void setIgnoresEmpty(boolean val) } Sets whether empty (null) cells are completely ignored for hit-testing and drawing. By default this is true.
@@ -7622,9 +7620,9 @@ These portrayals comes with a few gotchas:
 \subsection{Fast Field Portrayals}
 \label{fastfieldportrayals}
 
-For each of the grid Field Portrayals, there is often a {\bf ``fast'' Field Portrayals} which does the same thing but much faster.  The trade-off is flexibility: a ``fast'' Field Portrayal doesn't draw objects using a SimplePortrayal, but rather just draws them as a grid of colored rectangles.  The color is determined using a {\bf Color Map} (discussed in Section \ref{sim.util.gui.ColorMap}, a basic object which maps values to colors.
+For many of the grid Field Portrayals, there is often a {\bf ``fast'' Field Portrayal} which does the same thing but much faster.  The trade-off is flexibility: a ``fast'' Field Portrayal doesn't draw objects using a SimplePortrayal, but rather just draws them as a grid of colored rectangles.  The color is determined using a {\bf Color Map} (discussed in Section \ref{sim.util.gui.ColorMap}), a basic object which maps values to colors.
 
-Fast Field Portrayals also take advantage of FieldPortrayal's {\bf immutable field} feature (Section \ref{sim.portrayal.FieldPortrayal}: instead of requerying the field, they may, if useful, simply re-draw the same thing over and over again.  If your field changes very slowly, you can keep it immutable usually but force a redraw occasionally with a well-timed \method{setDirtyField(true)}.
+Fast Field Portrayals also take advantage of FieldPortrayal's {\bf immutable field} feature (Section \ref{sim.portrayal.FieldPortrayal}): instead of re-querying the field, they may, if it is helpful, simply re-draw the same thing over and over again.  If your field changes very slowly, you can keep it immutable usually but force a redraw occasionally with a well-timed \method{setDirtyField(true)}.
 
 Most Fast Field Portrayals draw their grid of rectangles either by drawing separate rectangles one by one, or by poking pixels in an image, then stretching the image to fill the region (each pixel thus stretches into a rectangle).  Which technique is faster depends on the operating system: on OS X, for example, it's much faster to poke pixels in an image.  At the very end of Section \ref{bufferedgrids} (2D Field Portrayals) we discussed the \method{setBuffering(...)} and \method{getBuffering(...)} methods, which determine what technique is used (or if MASON is free to pick one on its own appropriate to the operating system).
 
@@ -7687,7 +7685,15 @@ Field Portrayals for Networks aren't what you expect.  Rather than portray the e
 
 Why do this?  Because elements in graphs don't have locations in space per se.  If you draw a graph structure, you need only to specify the location of the nodes, and the edges are drawn according to that.  But how are your nodes embedded in space?  Are they in a continuous space?  In a grid world?  In a hexagonal environment?
 
-\sidebar{How about hexagonal grids?}{Right now NetworkPortrayal2D can only handle non-hexagonal SparseGrid2D and Continuous2D, because it computes the math itself rather than querying the underlying Field Portrayal.  Perhaps later we'll retool it to do hexagonal if there's demand.}
+\sidebar{How about hexagonal grids?}{Right now NetworkPortrayal2D can only handle non-hexagonal SparseGrid2D and Continuous2D, because it computes the math itself rather than querying the underlying Field Portrayal.  Perhaps later we'll retool it to do hexagonal if there's demand.\\
+\\
+{\it How about DenseGrid2D or ObjectGrid2D?}\\
+\\
+DenseGrid2D and ObjectGrid2D have no fast way of looking of up the location of an object, which is critical to make this work well.\\
+\\
+{\it SparseGrid3DPortrayal3D or Continuous3DPortrayal3D?}\\
+\\
+Boy, you just want everything, don't you.}
 In 2D, the Field Portrayal for Networks is, not surprisingly, \Class{sim.portrayal.network.NetworkPortrayal2D}.  It draws no nodes, only edges.  Thus to draw the network you'll need to embed all of the Network's nodes in a \class{sim.field.grid.SparseGrid2D} or a \class{sim.field.continuous.Continuous2D} field, and then draw the nodes with one of the following:
 
  \begin{itemize}
@@ -9648,7 +9654,65 @@ You probably will never need to use these classes, but it's useful to understand
 \subsection{Objects Providing their Own Inspectors}
 \label{sim.portrayal.inspector.ProvidesInspector}
 
-Objects which act as their own Portrayals 
+Rather than have a SimpleInspector assigned to them, or specify that they'd like to be put into a TabbedInspector or GroupedInspector, objects may provide their own custom inspector.  To do this, they only need to implement the \Class{sim.portrayal.inspector.ProvidesInspector} interface.  This interface has a single method:
+
+\begin{methods}{\class{sim.portrayal.inspector.ProvidesInspector}}
+\mthd{public Inspector provideInspector(GUIState state, String name)} Returns an inspector for the object.  The provided name should appear prominently, typically as the label for a \class{javax.swing.border.TitledBorder} surrounding the inspector.
+\end{methods}
+
+For example, let's say that your object has a single instance variable: a color.  You want an inspector which displays this color and lets the user change it.  To do this, you'd create an inspector with a \class{sim.util.gui.ColorWell} and a label.  Here's an example of the \method{provideInspector(...)} method in action:
+
+\begin{verbatim}
+import sim.portrayal.*;
+import sim.display.*;
+import sim.util.gui.*;
+import java.awt.*;
+import javax.swing.*;
+javax.swing.border.*;
+
+public class MyObject implements java.io.Serializable
+    {
+    private static final long serialVersionUID = 1;
+    public Color color = Color.blue;
+    
+    public Inspector provideInspector(GUIState state, String name)
+    	{
+    	private static final long serialVersionUID = 1;
+    	final ColorWell well = new ColorWell(color);
+	
+    	Inspector insp = new Inspector()
+    		{
+    		private static final long serialVersionUID = 1;
+    		public void updateInspector() { well.setColor(color); }
+    		};
+	
+    	// load the inspector with stuff
+    	JPanel panel = new JPanel();
+    	panel.setLayout(new BorderLayout());
+    	panel.add(new JLabel("Color "), BorderLayout.WEST);
+    	panel.add(well, BorderLayout.CENTER);
+    	insp.setLayout(new BorderLayout());
+    	insp.add(panel, BorderLayout.NORTH);
+	
+    	// set the name
+    	insp.setBorder(new TitledBorder(name));
+    	return insp;
+    	}
+    }
+\end{verbatim}
+    
+\begin{wrapfigure}{r}[0in]{2in}
+\vspace{-1em}\hfill\includegraphics[width=2in]{CustomInspector.png}
+\caption{Our custom inspector, with the title ``Properties''.  The ``Location'' portion was added by MASON.}
+\vspace{0em}
+\end{wrapfigure}
+
+Now when we inspect the object, it might look like the picture at right.  If you click on the blue Color Well, a color chooser panel pops up to let you change (and thus set) the color.
+
+\paragraph{Important Note}  Note that the object above is \class{java.io.Serializable}.  This is because the object is part of our MASON model and we want our model to be checkpointable.  However, the above code used anonymous classes to create its custom inspector.  When doing this, be careful that you're not including storing, as instance variables, objects which aren't themselves serializable: this includes many Java GUI widgets.  If you need to, you could create a separate Inspector class which is outside MyObject and which is constructed in \method{provideInspector(...)}.
+
+Also note the repeated use of \variable{serialVersionUID}.  You should always provide a  \variable{serialVersionUID}, set to 1, in all classes you create, anonymous or not, to assist in serialization portability.
+
 
 \section{Property Inspectors}
 \label{sim.portrayal.inspector.PropertyInspector}
@@ -9719,7 +9783,7 @@ Collectively, these methods are:
 \subsection{Charting Property Inspectors}
 \label{sim.portrayal.inspector.ChartingPropertyInspector}
 
-\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see the file \file{docs/howto.html}, under the title ``How to Display a Chart Programmatically''.}  MASON provides six Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
+\sidebar{Charting Property Inspectors are all well and good, but I want a permanent Charting display for my model.}{With some elbow grease, you can get charting as a Display quite nicely.  For details, see Section \ref{sim.display.ChartUtilities}.}  MASON provides seven Property Inspectors which produce charts using the JFreeChart\footnote{http:/\!/jfree.org} library.  The Property Inspectors are subclasses of the abstract superclass \Class{sim.portrayal.inspector.ChartingPropertyInspector}.  These Property Inspectors rely on {\bf chart generators}, utility classes discussed later in Section \ref{sim.util.media.chart.ChartGenerator}.  Chart generators manage the complexity of interfacing with JFreeChart.  Charts also use the Preferences facility (Section \ref{sim.display.Prefs}), with the Preferences key:
 
 \java{%
 public final static String chartKey = "sim.portrayal.inspector.ChartingPropertyInspector";
