@@ -183,18 +183,56 @@ public class ParallelSequence extends Sequence
             n = size;
         
         int jump = size / n;
+        int extra = size % n;
+        int current = 0;
+        
+        // AT THIS POINT:
+        // size is the total number of steppables
+    	// n is the total number of threads
+        // jump is the nominal number of steppables each thread must do
+        // extra is the left over steppables -- we'll share 1 each of these with the early threads
+        // current is the current position where the next thread should start its stepping 
+        
+        // FOR EXAMPLE
+        // size = 17
+        // n = 3
+        // jump = 17 / 3 = 5
+        // extra= 17 % 3 = 2
+        // thread 0 : 0 to 6  (extra -> 1
+        // thread 1 : 6 to 12 (extra -> 0)
+        // thread 3 : 12 to 17 (extra = 0)
+        
+        // ANOTHER EXAMPLE
+        // size = 18
+        // n = 3
+        // jump = 18 / 3 = 6
+        // extra = 18 % 3 = 0
+        // thread 0 : 0 to 6 (extra = 0)
+        // thread 1 : 6 to 12 (extra = 0)
+        // thread 2 : 12 to 18 (extra = 0)
+        
+        // ANOTHER EXAMPLE
+        // size = 16
+        // n = 3
+        // jump = 16 / 3 = 5
+        // extra = 18 % 3 = 1
+        // thread 0 : 0 to 6 (extra -> 0)
+        // thread 1 : 6 to 11 (extra = 0)
+        // thread 2 : 11 to 16 (extra = 0)
+        
         for(int i = 0; i < n; i++)
             {
-            // The commented out code interleaves the threads with regard to the steppables,
-            // which is a bad idea with multiple CPUs because it causes cache contention (generally
-            // you want to have different CPUs working on completely different areas of memory). 
-            // But in fact it makes almost no difference at all.
-            
-            // this.threads.startThread(new Worker(state, i, numSteps, n));
-            
-            // This code instead starts each thread on a different chunk of the steppables array
-            this.threads.startThread(new Worker(state, i * jump, Math.min( (i+1) * jump, size), 1),
-                "ParallelSequence");
+            if (extra > 0)
+            	{
+            	this.threads.startThread(new Worker(state, current, current + jump + 1, 1), "ParallelSequence");
+            	current += (jump + 1);
+            	extra--;
+            	}
+            else
+            	{
+            	this.threads.startThread(new Worker(state, current, current + jump, 1), "ParallelSequence");
+            	current += jump;
+            	}
             }
 
         if (destroysThreads)

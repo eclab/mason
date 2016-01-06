@@ -2853,3 +2853,5 @@ Version 20
 	Removed Scalable.java.  Use Scalable2D.java instead.
 	Bugfix to Sequence constructor.  Thanks to Axel Kowald
                 <Axel.Kowald@ncl.ac.uk>
+	Bugfix to ParallelSequence step method.  Thanks to Axel Kowald
+		<Axel.Kowald@ncl.ac.uk>
