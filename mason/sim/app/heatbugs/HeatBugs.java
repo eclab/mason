@@ -135,6 +135,8 @@ public /*strictfp*/ class HeatBugs extends SimState
     
         // Schedule the heat bugs -- we could instead use a RandomSequence, which would be faster
         // But we spend no more than 3% of our total runtime in the scheduler max, so it's not worthwhile
+        
+       
         for(int x=0;x<bugCount;x++)
             {
             bugs[x] = new HeatBug(random.nextDouble() * (maxIdealTemp - minIdealTemp) + minIdealTemp,
@@ -143,22 +145,27 @@ public /*strictfp*/ class HeatBugs extends SimState
             buggrid.setObjectLocation(bugs[x],random.nextInt(gridWidth),random.nextInt(gridHeight));
             schedule.scheduleRepeating(bugs[x]);
             }
-                        
+                    
         // Here we're going to pick whether or not to use Diffuser (the default) or if
         // we're really going for the gusto and have multiple processors on our computer, we
-        // can use our multithreaded super-neato ThreadedDiffuser!  On a Power Mac G5 with
-        // two processors, we get almost a 90% speedup in the underlying model because *so*
-        // much time is spent in the Diffuser.
-                            
-        // Schedule the diffuser to happen after the heatbugs
-        if (HeatBugs.availableProcessors() >  1)  // yay, multi-processor!
+        // can use our multithreaded super-neato ThreadedDiffuser! 
+        
+        // Beyond 3 threads we don't see any advantage on a small grid
+        
+        if (HeatBugs.availableProcessors() > 3)  // yay, multi-processor!
             {
-            // store away the ThreadedHexaDiffuser so we can call cleanup() on it later in our stop() method.
+            diffuser = new ThreadedDiffuser(3);
+            schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
+            }
+        else if (HeatBugs.availableProcessors() >= 2)
+        	{
             diffuser = new ThreadedDiffuser(2);
             schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
             }
-        else
+		else
+			{
             schedule.scheduleRepeating(Schedule.EPOCH,1,new Diffuser(),1);
+            }
         }
     
     public void stop()

@@ -429,9 +429,6 @@ public class SimpleController implements Controller
                             e.printStackTrace();
                             }
 
-                    // name the current thread
-                    simulation.state.nameThread();
-
                     // start the main loop
 
                     boolean result = true;
@@ -509,6 +506,13 @@ public class SimpleController implements Controller
                 }
             };
         playThread = new Thread(run);
+        
+		// we'd like the thread to name itself when it's running so it can load the model
+		// and determine the model class etc.  However we can't do that because once Eclipse/NetBeans
+		// notice a class in their profilers, they don't change its name any more.  So it's too late.
+		// As a result we set it here first before starting it up, oh well.
+		playThread.setName("MASON (" + simulation.state.getClass().getSimpleName() + ")");                            
+
         playThread.start();
         }
 

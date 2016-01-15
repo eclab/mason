@@ -2855,3 +2855,12 @@ Version 20
                 <Axel.Kowald@ncl.ac.uk>
 	Bugfix to ParallelSequence step method.  Thanks to Axel Kowald
 		<Axel.Kowald@ncl.ac.uk>
+	Bugfix to Sequence loadStepsHash method.  Thanks to Axel Kowald
+                <Axel.Kowald@ncl.ac.uk>
+	Deprecated SimState.nameThread -- it's not very useful because of when
+		Eclipse / NetBeans decide to display threadnames.  :-(
+	Revisions to ParallelSequence to reduce the amount of synchronization
+		contentions in the thread pool.  This should improve things
+		SLIGHTLY, but we're still stuck with a lot of memory-bound
+		issues
+	Accordingly, bumped HeatBugs's maximum threads to 3

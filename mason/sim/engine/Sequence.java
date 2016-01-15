@@ -182,10 +182,10 @@ public class Sequence implements Steppable
         // copy over set
         if (stepsHashChanged)
             {
+            size = stepsHash.size();
             if (steps == null)
-                steps = new Steppable[stepsHash.size()];
+                steps = new Steppable[size];
             steps = (Steppable[]) (stepsHash.toArray(steps));
-            size = steps.length;
             }
         }
         

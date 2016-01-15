@@ -21,7 +21,7 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
     private static final long serialVersionUID = 1;
 
     public ParallelSequence diffusers;
-        
+    
     public ThreadedDiffuser(final int numThreads)
         {
         Steppable[] threads = new Steppable[numThreads];
@@ -61,7 +61,16 @@ public /*strictfp*/ class ThreadedDiffuser implements Steppable
                 
         // copy HeatBugs.this.valgrid2 to HeatBugs.this.valgrid
         HeatBugs heatbugs = (HeatBugs)state;
-        heatbugs.valgrid.setTo(heatbugs.valgrid2);
+        
+        // We COULD just copy all thre results into heatbugs like this;
+        //heatbugs.valgrid.setTo(heatbugs.valgrid2);
+
+		// But we can get a big improvement in speed (almost 2x at 8 processors!)
+		// if we just swap the field pointers internally.  This is a hack and there
+		// are obviously other ways to do it but it will work fine here.
+        double[][] temp = heatbugs.valgrid.field;
+        heatbugs.valgrid.field = heatbugs.valgrid2.field;
+        heatbugs.valgrid2.field = temp;
         }
         
         

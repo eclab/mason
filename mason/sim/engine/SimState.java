@@ -591,8 +591,6 @@ public class SimState implements java.io.Serializable
                                 System.exit(1);
                                 }
                                                                                 
-                            state.nameThread();
-
                             job = state.job();
                             if (state.seed() != 0) // likely good seed from the command line earlier
                                 {
@@ -606,7 +604,6 @@ public class SimState implements java.io.Serializable
                         if (state==null)  // no checkpoint file requested
                             {
                             state = generator.newInstance(seed,args);
-                            state.nameThread();
                             state.job = job;
                             state.seed = seed;
                             if (!quiet) printlnSynchronized("Job: " + state.job() + " Seed: " + state.seed());
@@ -671,6 +668,12 @@ public class SimState implements java.io.Serializable
                         }
                     }
                 });
+                
+            // we'd like the thread to name itself when it's running so it can load the model
+            // and determine the model class etc.  However we can't do that because once Eclipse/NetBeans
+            // notice a class in their profilers, they don't change its name any more.  So it's too late.
+            // As a result we set it here first before starting it up, oh well.
+			threads[thread].setName("MASON " + thread);                            
             threads[thread].start();
             }
         for(int thread = 0; thread < parallel; thread++)
@@ -686,10 +689,9 @@ public class SimState implements java.io.Serializable
         synchronized(printLock) { System.err.println(val); }
         }
     
-    /** Names the current thread an appropriate name given the SimState */
+    /** @deprecated */
     public void nameThread()
         {
-        // name my thread for the profiler
         Thread.currentThread().setName("MASON Model: " + this.getClass());
         }
 

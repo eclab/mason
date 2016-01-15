@@ -220,20 +220,23 @@ public class ParallelSequence extends Sequence
         // thread 1 : 6 to 11 (extra = 0)
         // thread 2 : 11 to 16 (extra = 0)
         
-        for(int i = 0; i < n; i++)
+        Runnable[] workers = new Runnable[n];
+    	for(int i = 0; i < n; i++)
             {
             if (extra > 0)
             	{
-            	this.threads.startThread(new Worker(state, current, current + jump + 1, 1), "ParallelSequence");
+            	workers[i] = new Worker(state, current, current + jump + 1, 1);
             	current += (jump + 1);
             	extra--;
             	}
             else
             	{
-            	this.threads.startThread(new Worker(state, current, current + jump, 1), "ParallelSequence");
+            	workers[i] = new Worker(state, current, current + jump, 1);
             	current += jump;
             	}
             }
+
+        this.threads.startThreads(workers, "ParallelSequence");
 
         if (destroysThreads)
             cleanup();
@@ -243,7 +246,6 @@ public class ParallelSequence extends Sequence
         // don't need to synchronize to turn operating off
         operating = false;
         }
-
 
 
     public void replaceSteppables(Collection collection)
@@ -383,24 +385,28 @@ public class ParallelSequence extends Sequence
     private static final long serialVersionUID = 1;
     }
     
-
-// Why do we have a ThreadPool object here instead of using Java's thread
-// pool facility in java.util.concurrent?  Two reasons.  First, this is
-// faster and far simpler.  Second, java.util.concurrent has ridiculous
-// design errors in it -- it's nearly impossible to do basic tasks like
-// join threads etc.  Was Sun's code written by monkeys?  It appears so.
-// Seriously, how screwed up a company do you have to be to mess up a
-// ** thread pool ** ?
-
+// Here we use our own thread pool.  This pool is constructed so that we
+// can fire off N threads with a minimum of locking and wait()ing, which
+// just kills us when we have lots of very short-length jobs as is the case
+// for something like a ParallelSequence.
 
 class ThreadPool
     {
+    // object for notifying threads to all start.  This lets us do a notifyAll() in bulk
+    // rather than separate notify()s on each of the threads, which is very costly.
+    Object[] all = new Object[0];
+    
+    // Thread pool
+    ArrayList threads = new ArrayList();
+    int totalThreads = 0;
+                
+	// holds a thread
     class Node implements Runnable
         {
-        boolean die = false;
-        boolean go = false;
+        boolean die = false;  // raised when the Node is asked to kill its thread and die.
+        boolean go = false;  // raised when the Node is asked to have its thread run the runnable toRun.
         public Thread thread;
-        public Runnable toRun;
+        public Runnable toRun;  // the runnable to run
             
         public Node(String name) 
             {
@@ -413,46 +419,66 @@ class ThreadPool
             {
             while(true)
                 {
-                synchronized(this) 
-                    {
-                    while(!go && !die)
-                        {
-                        try { wait(); }
-                        catch (InterruptedException e) { } // ignore
-                        }
-                    go = false;
-                    if (die) { die = false; return; }
-                    }
+                // this is outside because these are booleans and are atomic, and it
+                // doesn't matter anyway because they're READ here and only WRITTEN
+                // elsewhere.  It gives us a small chance of escaping the synchronization
+                // immediately below.
+                if (!go && !die)
+                	{
+		            synchronized(all) 
+	                	{
+	                	while (!go && !die)
+							{
+		                	try { all.wait(0); }
+		                	catch (InterruptedException e) { } // ignore
+		                	}
+	                    }
+	                }
+
+	            // at this point either go or die has been raised and toRun won't be updated again
+	            // until after adding back into the list, so we can access them here safely without synchronization
+	            
+				if (die) { die = false; return; }
+				go = false;
                 toRun.run();
-                toRun = null;
+                
                 // add myself back in the list
                 synchronized(threads)
                     {
-                    threads.add(this);  // adds to the tail
+                    threads.add(this);  // adds to the head -- it seems we get a 20% performance boost pulling hot threads from the head when doing nothing with them.
                     if (totalThreads == threads.size())  // we're all in the bag, let the pool know if it's joining
                         threads.notify();
                     }
-                // let the pool know I'm home
                 }
             }
         }
-        
-    LinkedList threads = new LinkedList();
-    int totalThreads = 0;  // synchronize on threads first
-                
+    
+    
     // Joins and kills all threads, both those running and those sitting in the pool
     void killThreads()
         {
         synchronized(threads)
             {
             joinThreads();
-            while(!threads.isEmpty())
+            
+            // at this point size == totalthreads
+            int size = threads.size();
+            
+            for(int i = 0; i < size; i++)
                 {
-                Node node = (Node)(threads.remove());  // removes from head
-                synchronized(node) { node.die = true; node.notify(); }  // reel it in
+                Node node = (Node)(threads.get(i));
+                node.die = true;  // it's okay if this isn't synchronized
+                }
+                
+            // wake up threads to die
+            synchronized(all) { all.notifyAll(); }
+
+            for(int i = 0; i < size; i++)
+                {
+                Node node = (Node)(threads.remove(size - i - 1));
                 try { node.thread.join(); }
                 catch (InterruptedException e) { } // ignore
-                totalThreads--;
+            	totalThreads--;
                 }
             }
         }
@@ -463,33 +489,55 @@ class ThreadPool
         synchronized(threads)
             {
             while(totalThreads > threads.size())  // there are still outstanding threads
-                try { threads.wait(); }
+                try { threads.wait(0); }
                 catch (InterruptedException e) { }  // ignore
             }
         }
         
-    // Starts a thread running on the given runnable
-    void startThread(Runnable run) { startThread(run, "ParallelSequence"); }
+    
+    void startThreads(Runnable[] run, String name)
+    	{
+        Node[] nodes = new Node[run.length];
         
-    void startThread(Runnable run, String name)
-        {
-        Node node;
-        // ensure we have at least one thread
+        // we're going to do this in bulk rather than individually, so
+        // we need to first gather all the needed threads into nodes
         synchronized(threads) 
             {
-            if (threads.isEmpty())
-                {
-                node = new Node(name + " Thread " + totalThreads);
-                node.thread.start();
-                totalThreads++;
-                }
-            else  // pull a thread
-                {
-                node = (Node)(threads.remove());  // removes from the head
-                }
+            int available = threads.size();
+            for (int i = 0; i < run.length; i++)
+            	{
+				if (available == 0)
+					{
+					nodes[i] = new Node(name + " " + totalThreads);
+                   	nodes[i].toRun = run[i]; 
+                	nodes[i].go = true; 
+					
+                    nodes[i].thread.start();  // since go is already set, this thread won't even bother to wait()
+					totalThreads++;
+					}
+				else  // pull a thread
+					{
+					nodes[i] = (Node)(threads.remove(available-1));  // removes from the head
+					
+					// this can be done without synchronization on the node
+					// because the node is waiting for go or die to be true
+					// before it accesses toRun at this stage
+					nodes[i].toRun = run[i]; 
+
+					// this may cause the node to prematurely fire without waiting on 'all',
+					// but that's a good thing.
+					nodes[i].go = true; 
+					available--;
+					}
+				}
             }
-        synchronized(node) { node.toRun = run; node.go = true; node.notify(); }  // get it running
-        }
+        
+        synchronized(all) 
+        	{
+	       	// get all the nodes going
+	       	all.notifyAll();
+			}
+    	}
 
     private static final long serialVersionUID = 1;
     }

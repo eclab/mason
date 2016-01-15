@@ -3566,7 +3566,6 @@ MASON does simulations by setting up a SimState, allowing it to load the Schedul
 
 \begin{enumerate}
 \item Create an instance of a SimState subclass called \variable{state}.
-\item Call \code{state.nameThread(...);} to label the thread with a name you'll recognize in debuggers.
 \item Loop some {\it jobs} times:
 \item\hspace{3em}Call \code{state.setJob(...);}
 \item\hspace{3em}Call \code{state.start();}
@@ -3584,7 +3583,6 @@ You can easily write this loop yourself:
         \{
         int jobs = 100;  // let's do 100 runs
         SimState state = new MyModel(System.currentTimeMillis());	// MyModel is our SimState subclass
-        state.nameThread();
         for(int job = 0; job < jobs; job++)
             \{
             state.setJob(job);
@@ -3616,7 +3614,6 @@ Next various utility methods:
 \mthd{public void setJob(long job)}  Sets the job number.
 \mthd{public long job()}  Returns the job number.
 \mthd{public static double version()}  Returns MASON's version number.
-\mthd{public void nameThread()}  Stamps the current thread with a name easily recognized by debuggers, such as ``\texttt{MASON Model: Students}''
 \end{methods}
 
 Notice that a number of these methods aren't in standard Java Beans format (that is, they're called \method{foo()} rather than \method{getFoo()}. This is on purpose: the SimState is often inspected in the GUI, and we don't want these methods being displayed as properties.  If you'd prefer otherwise, simply make a cover method (like \method{getSeed()}
@@ -6270,7 +6267,6 @@ Recall that when running the model without a UI, the top-level loop is typically
 
 \begin{enumerate}
 \item Create an instance of a SimState subclass called \variable{state}.
-\item Call \code{state.nameThread(...);} to label the thread with a name you'll recognize in debuggers.
 \item Loop some {\it jobs} times:
 \item\hspace{3em}Call \code{state.setJob(...);}
 \item\hspace{3em}Call \code{state.start();}
