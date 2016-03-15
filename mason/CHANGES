@@ -2864,3 +2864,6 @@ Version 20
 		SLIGHTLY, but we're still stuck with a lot of memory-bound
 		issues
 	Accordingly, bumped HeatBugs's maximum threads to 3
+	Increased the maximum height of Property Field combo boxes to 20
+	Bugfix for boxed types in CollectionProperties.  Thanks to 
+		Christian Meyer <c.meyer@uni-oldenburg.de>

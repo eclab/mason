@@ -155,11 +155,11 @@ public class CollectionProperties extends Properties
 
         if (collection!=null) return false;  // collections are not modifiable -- they can't be referenced
 
-        Class type = getTypeConversion(getType(index));
+        Class type = getType(index);
         Object obj = getValue(index);
         if (obj!=null)
             {
-            if (!type.isAssignableFrom(obj.getClass())) // uh oh, violated base type
+            if (!type.isAssignableFrom(getTypeConversion(obj.getClass()))) // uh oh, violated base type
                 return false;
             }
         return !isComposite(index);
@@ -200,7 +200,7 @@ public class CollectionProperties extends Properties
             }
         Object obj = getValue(index);
         if (obj==null) return Object.class;
-        return obj.getClass();
+        return getTypeConversion(obj.getClass());
         }
 
     protected Object _setValue(int index, Object value)

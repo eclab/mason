@@ -38,6 +38,7 @@ public class PropertyField extends JComponent
     JLabel optionalLabel = new JLabel();
     static final int SLIDER_MAX = 1000;
     static final int SLIDER_WIDTH = 80;
+    static final int COMBO_BOX_MAX_HEIGHT = 20; // much bigger than the default
     JSlider slider = new JSlider(0,SLIDER_MAX)
         {
         public Dimension getMaximumSize() { return new Dimension(SLIDER_WIDTH, super.getMaximumSize().height); }
@@ -319,6 +320,7 @@ public class PropertyField extends JComponent
         viewButton.addActionListener(viewButtonListener);
         slider.addChangeListener(sliderListener);
         list.addActionListener(listListener);
+        list.setMaximumRowCount(COMBO_BOX_MAX_HEIGHT);
         
         // quaquaify
         viewButton.putClientProperty("Quaqua.Button.style","square");
