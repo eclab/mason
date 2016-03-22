@@ -3354,6 +3354,15 @@ If you pass in an ordinary Object (not an array, List, Indexed, Collection, or M
 \mthd{public String betterToString(Object obj)} Returns a prettier \method{toString()} value for a given object than is provided by default.
 \end{methods}
 
+Ordinarily you wouldn't create a SimpleProperties by hand.  But you can, using any of the following constructors:
+
+\begin{methods}{\class{sim.util.SimpleProperties} Constructor}
+\mthd{public SimpleProperties(Object obj)} Returns a SimpleProperties for the given object, including superclasses, not including the \method{getClass()} method, and including MASON Java Bean property extensions.  Proxies and dynamic properties are allowed.
+\mthd{public SimpleProperties(Object obj, boolean allowProxy)} Returns a SimpleProperties for the given object, specifying  whether or not to permit a proxy or dynamic property.  The SimpleProperties will include superclasses, not include the \method{getClass()} method, and will include MASON Java Bean property extensions.  Generally you would only use this version of the constructor to break recursion; see the example below.
+\mthd{public SimpleProperties(Object obj, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)} Returns a SimpleProperties for the provided object, specifying whether or not to include properties of superclasses, whether or not to include the \method{getClass()} method, and whether or not to include MASON Java Bean property extensions.  Proxies and dynamic properties are allowed.
+\mthd{public SimpleProperties(Object obj, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions, boolean allowProxy)} Returns a SimpleProperties for the provided object, specifying whether or not to include properties of superclasses, whether or not to include the \method{getClass()} method, whether or not to include MASON Java Bean property extensions, and whether or not to permit a proxy or dynamic property.  Generally you would only use this version of the constructor to break recursion; see the example below.
+\end{methods}
+
 When you point a Properties factory method at an ordinary Object which happens to be \Class{sim.util.Proxiable}, the Properties factory method will not build a Properties object based on the Object but rather query the Object for {\it another} Object , the {\bf properties proxy}, from which to extract Properties on its behalf.  This querying is not transitive, even if the proxy object is itself Proxiable.
 
 This procedure, like MASON's \method{hideFoo()} Java Beans Property extension, is meant to allow Objects to control which Properties are actually shown or to create different ones. To make your Object Proxiable, you need to implement the following method:
@@ -3364,12 +3373,38 @@ This procedure, like MASON's \method{hideFoo()} Java Beans Property extension, i
 
 SimpleProperties has one special method, mostly used by TabbedInspector (Section \ref{sim.portrayal.inspector.TabbedInspector}), to break properties into subsets.  TabbedInspector uses this to create separate inspectors, one per tab.  Note that to use this method, your SimpleProperties object {\bf may not have a proxy.}
 
-SimpleProperties also has a basic method for sorting the properties as you like.
+SimpleProperties also has a several methods for sorting properties.
 
 \begin{methods}{\class{sim.util.SimpleProperties}}
 \mthd{SimpleProperties getPropertiesSubset(String[] propertyNames, boolean retain)} Returns a SimpleProperties referring to the same object, but whose property list is a reduced subset of the original property list.  If {\it retain} is true, then the property list will contain only those properties whose names are found in {\it propertyNames} (and if any item in {\it propertyNames} does not appear in the original properties, an exception is thrown).  If {\it retain} is false, then the property list will contain only those properties whose names are {\it not} found in {\it propertyNames}.  The original SimpleProperties object may not have a properties proxy.
-\mthd{void sortProperties(Comparator comparator)} Sorts the properties using the provided Comparator.  The comparator takes two \class{java.lang.reflect.Method} objects to compare: these are the various get...() methods in the SimpleProperties.   By default the properties are sorted lexicographically by name, then by number of arguments (fewer arguments first), then lexicographically the output of the get...() methods' \method{toGenericString()} methods.
+\mthd{Comparator makeAlphabeticalComparator()}  Provides a comparator which compares properties alphabetically.
+\mthd{Comparator makeSimpleComparator(String[] filter)}  Given an array of property names, provides a comparator which sorts so properties in the same order as the array; remaining properties not appearing the array are sorted last and in arbitrary order.
+\mthd{SimpleProperties sort(Comparator comparator)} Sorts the properties using the provided Comparator.  The comparator takes two \class{java.lang.reflect.Method} objects to compare: these are the various get...() methods in the SimpleProperties.   
+\mthd{SimpleProperties sort(String[] filter)} Sorts the properties using a Simple Comparator, with the provided array of property names.  The array specifies the order in which the properties should appear; properties not appearing in this array are placed last and sorted arbitrarily with respect to one another.  Returns the properties.
+\mthd{SimpleProperties sortAlphabetically()} Sorts the properties using an Alphabetical Comparator, that is, alphabetically by property name. Returns the properties.
 \end{methods}
+
+If you would like your object to have its properties sorted in a certain way, for example, alphabetically, you could make your object implement the \class{sim.util.Propertied} interface, and then drop in the following method:
+
+{\small \begin{verbatim}
+public Properties properties() { return new sim.util.SimpleProperties(this, false).sortAlphabetically(); }
+\end{verbatim}}
+
+The \variable{false} prevents recursion since your \method{properties()} is referring the same object again.
+
+Or you could add a simple sorting filter like this:
+
+{\small \begin{verbatim}
+public Properties properties() { return new sim.util.SimpleProperties(this, false).sort(
+    new String[]  {
+        "FirstProperty",
+        "SecondProperty",
+        "ThirdProperty",
+        "FourthProperty"
+        }); }
+\end{verbatim}}
+
+For more on the \class{sim.util.Propertied} interface, see Section \ref{dynamicproperties} below.
 
 
 \subsection{Collection Properties}
@@ -3389,6 +3424,7 @@ These kinds of objects have \(n\) properties if they are holding \(n\) elements.
 A Map that holds \(n\) elements has \(n\) properties.  Like Collections, Maps also are volatile because the number and order of the properties can change at any time.  Maps hold elements in {\it key\(\longrightarrow\)value} pairs.  The name of a property corresponding to a Map element is ``{\it key}'', and the value of the property is {\it value}.   Properties objects do not at present allow you to add or delete elements, only to view and change existing ones.
 
 \subsection{Dynamic Properties}
+\label{dynamicproperties}
 
 In very rare cases an Object may wish to exact complete control over the properties object used for it.  In this case the object itself can provide a dynamic Properties object of its own construction.  For example, if you are implementing a MASON library for some other programming language, you may wish to enable MASON's GUI Inspectors to access certain language features: the easiest way to do this is to create an object which provides dynamic Properties object: when it is queried for properties, it turns around and simply asks the language what it should provide the queries.
 
