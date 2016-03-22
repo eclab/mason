@@ -2867,3 +2867,4 @@ Version 20
 	Increased the maximum height of Property Field combo boxes to 20
 	Bugfix for boxed types in CollectionProperties.  Thanks to 
 		Christian Meyer <c.meyer@uni-oldenburg.de>
+	Added preliminary support for sorting properties.

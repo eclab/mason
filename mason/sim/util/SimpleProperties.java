@@ -122,8 +122,6 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList nameMethods = new ArrayList(); // if not hidden (or explicitly shown), that corresponding spot will be null
     Properties auxillary = null;  // if non-null, we use this properties instead
     
-    Comparator sortComparator = null;
-
     public Comparator makeAlphabeticalComparator()
     	{
     	return new Comparator()
@@ -153,7 +151,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             };
         }
         
-    public Comparator makeFilterComparator(String[] filter)
+    public Comparator makeSimpleComparator(String[] filter)
     	{
     	if (filter == null) filter = new String[0];
 
@@ -190,8 +188,21 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             };
     	}
         
-	public Comparator getSortComparator() { return sortComparator; }
-    public void setSortComparator(Comparator c) { sortComparator = c; }
+    public SimpleProperties sort(Comparator c) 
+    	{
+    	sortProperties(c);
+    	return this;
+    	}
+
+    public SimpleProperties sortAlphabetically() 
+    	{
+    	return sort(makeAlphabeticalComparator());
+    	}
+    
+    public SimpleProperties sort(String[] filter) 
+    	{
+    	return sort(makeSimpleComparator(filter));
+    	}
     
     /** Sorts the properties by the following comparator, which 
         takes two java.lang.reflect.Method objects: these are getMethods for two properties. 
@@ -265,7 +276,14 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
         which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
     */
-    public SimpleProperties(Object o) { this(o,true,false,true); }
+    public SimpleProperties(Object o) { this(o, true); }
+
+    /** Gathers all properties for the object, including ones defined in superclasses. 
+        SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
+        which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected.
+    */
+    public SimpleProperties(Object o, boolean allowProxy) { this(o,true,false,true,allowProxy); }
+
     
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
         If includeGetClass is true, then the Class property will be included. 
@@ -287,10 +305,21 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
+        this(o, includeSuperclasses, includeGetClass, includeExtensions, true);
+        }
+    
+    /** Gathers all properties for the object, possibly including ones defined in superclasses. 
+        If includeGetClass is true, then the Class property will be included. If includeDomains is true, then
+        SimpleProperties will search the object for methods of the form <tt>public Object dom<i>Property</i>()</tt>
+        which define the domain of the property.  The domFoo() and hideFoo() property extension methods are respected
+        if <tt>includeExtensions</tt> is true.
+    */
+    public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions, boolean allowProxy)
+        {
         object = o;
         if (o!=null && o instanceof sim.util.Proxiable)
             object = ((sim.util.Proxiable)(o)).propertiesProxy();
-        else if (o!=null && o instanceof sim.util.Propertied)
+        else if (allowProxy && o !=null && o instanceof sim.util.Propertied)
             auxillary = ((sim.util.Propertied)(o)).properties();
         generateProperties(includeSuperclasses,includeGetClass,includeExtensions);
         }
@@ -299,6 +328,13 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         if (object != null && auxillary == null) 
             {
+            getMethods = new ArrayList();
+    		setMethods = new ArrayList();
+    		domMethods = new ArrayList();
+    		desMethods = new ArrayList();
+    		hideMethods = new ArrayList();
+    		nameMethods = new ArrayList();
+
             // generate the properties
             Class c = object.getClass();
 
@@ -430,9 +466,6 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     }
                 }
             }
-        
-        // now sort!
-        sortProperties(getSortComparator());
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
