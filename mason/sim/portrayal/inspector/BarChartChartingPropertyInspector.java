@@ -37,6 +37,9 @@ public class BarChartChartingPropertyInspector extends PieChartChartingPropertyI
         return new Class[]
             {
             new Object[0].getClass(), java.util.Collection.class,
+            ChartUtilities.ProvidesDoublesAndLabels.class,
+            ChartUtilities.ProvidesObjects.class,
+            ChartUtilities.ProvidesCollection.class,
             };
         }
 
