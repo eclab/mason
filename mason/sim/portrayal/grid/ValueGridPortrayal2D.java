@@ -391,7 +391,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
             java.awt.geom.Rectangle2D.Double d = new java.awt.geom.Rectangle2D.Double();
             graphics.setColor(borderColor);
             graphics.setStroke(new BasicStroke((float)Math.min(borderLineMaxWidth, Math.max(borderLineMinWidth, (xScale * borderLineFraction)))));
-            d.setRect(info.draw.x, info.draw.y, info.draw.x + info.draw.width, info.draw.y + info.draw.height);
+            d.setRect(info.draw.x, info.draw.y, info.draw.width, info.draw.height);
             graphics.draw(d);
             graphics.setStroke(oldStroke);
             graphics.setPaint(oldPaint);
