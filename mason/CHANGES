@@ -2872,3 +2872,6 @@ Version 20
 		ChartUtilities interfaces
 	Bug fix to drawBorder() in various 2D grid portrayals.  Thanks to
 		Marshall Abrams <marshall@logical.net>
+	Bug fix to selection when in hexagonal grids.  Thanks to
+                Marshall Abrams <marshall@logical.net>
+

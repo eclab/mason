@@ -163,6 +163,7 @@ public class HexaDenseGridPortrayal2D extends DenseGridPortrayal2D
         if (field==null) return;
 
         boolean objectSelected = !selectedWrappers.isEmpty();
+        Object selectedObject = (selectedWrapper == null ? null : selectedWrapper.getObject());
 
         int maxX = field.getWidth(); 
         int maxY = field.getHeight();
@@ -284,6 +285,8 @@ public class HexaDenseGridPortrayal2D extends DenseGridPortrayal2D
                         {
                         // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                         //                    graphics.setClip(clip);
+                        newinfo.selected = (objectSelected &&  // there's something there
+                            (selectedObject==portrayedObject || selectedWrappers.get(portrayedObject) != null));
                         portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }

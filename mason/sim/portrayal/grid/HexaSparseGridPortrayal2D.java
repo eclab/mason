@@ -375,15 +375,15 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         {
                         // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                         //                        graphics.setClip(clip);                        
-                        if (objectSelected &&  // there's something there
-                            selectedWrappers.get(portrayedObject) != null)
-                            {
+                        newinfo.selected = (objectSelected &&  // there's something there
+                            selectedWrappers.get(portrayedObject) != null);
+                       /*     {
                             LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
                             portrayal.setSelected(wrapper,true);
                             portrayal.draw(portrayedObject, graphics, newinfo);
                             portrayal.setSelected(wrapper,false);
                             }
-                        else portrayal.draw(portrayedObject, graphics, newinfo);
+                        else */portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

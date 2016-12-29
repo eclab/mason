@@ -154,6 +154,9 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
         final ObjectGrid2D field = (ObjectGrid2D) this.field;
         if (field==null) return;
         
+        boolean objectSelected = !selectedWrappers.isEmpty();
+        Object selectedObject = (selectedWrapper == null ? null : selectedWrapper.getObject());
+
         // Scale graphics to desired shape -- according to p. 90 of Java2D book,
         // this will change the line widths etc. as well.  Maybe that's not what we
         // want.
@@ -262,6 +265,8 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                     {
                     // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
                     //                    graphics.setClip(clip);
+                    newinfo.selected = (objectSelected &&  // there's something there
+                        (selectedObject==obj || selectedWrappers.get(obj) != null));
                     portrayal.draw(obj, graphics, newinfo);
                     }
                 }
