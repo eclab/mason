@@ -278,7 +278,7 @@ public class HexaDenseGridPortrayal2D extends DenseGridPortrayal2D
                 
                     if (graphics == null)
                         {
-                        if (portrayal.hitObject(portrayedObject, newinfo))
+                        if (portrayedObject != null && portrayal.hitObject(portrayedObject, newinfo))
                             putInHere.add(getWrapper(portrayedObject, new Int2D(x,y)));
                         }
                     else

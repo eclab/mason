@@ -258,7 +258,7 @@ public class HexaObjectGridPortrayal2D extends ObjectGridPortrayal2D
                 
                 if (graphics == null)
                     {
-                    if (portrayal.hitObject(obj, newinfo))
+                    if (obj != null && portrayal.hitObject(obj, newinfo))
                         putInHere.add(getWrapper(obj, new Int2D(x,y)));
                     }
                 else
