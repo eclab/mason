@@ -3766,7 +3766,7 @@ If you run the \class{MyModel} program from the command line with the given para
 Format:           java MyModel \
                        [-help] [-repeat R] [-parallel P] [-seed S] \
                        [-until U] [-for F] [-time T] [-docheckpoint D] \
-                       [-checkpoint C] [-quiet] 
+                       [-checkpointname N] [-checkpoint C] [-quiet] 
 
 -help             Shows this message and exits.
 
@@ -3808,8 +3808,11 @@ Format:           java MyModel \
 
 -docheckpoint D   Long value > 0: checkpoint every D simulation steps.
                   Default: never.
-                  Checkpoint files named
-                  <steps>.<job#>.HeatBugs.checkpoint
+                  Checkpoint files named       <steps>.<job#>.NAME.checkpoint
+                  where NAME is specified in -checkpointname
+
+-checkpointname N String: id for the checkpoint filename (see -docheckpoint)
+                  Default: HeatBugs
 
 -checkpoint C     String: loads the simulation from file C, recovering the job
                   number and the seed.  If the checkpointed simulation was begun
@@ -9782,16 +9785,16 @@ These are defined in the static methods (which you should override in your subcl
 
 \begin{methods}{\class{sim.portrayal.inspector.PropertyInspector}}
 \mthd{public static String name()} Returns the PropertyInspector's preferred name.
-\mthd{public Class[] types()} Returns an array consisting of the kinds of types the PropertyInspector is capable of inspecting.  Property types can be class names, or they can be numerical or boolean types, or a mix of the two.  In the case of numerical or boolean types, use the \variable{TYPE} constant for that numerical type: for example for doubles, use the constant\variable{java.lang.Double.TYPE}.  If \variable{null} is returned, this PropertyInspector is assumed to accept all data types.  If an empty array is returned, it is assumed to accept no data types at all (not very useful!).
+\mthd{public static Class[] types()} Returns an array consisting of the kinds of types the PropertyInspector is capable of inspecting.  Property types can be class names, or they can be numerical or boolean types, or a mix of the two.  In the case of numerical or boolean types, use the \variable{TYPE} constant for that numerical type: for example for doubles, use the constant \variable{java.lang.Double.TYPE}.  If \variable{null} is returned, this PropertyInspector is assumed to accept all data types.  If an empty array is returned, it is assumed to accept no data types at all (not very useful!).
 \end{methods}
 
-At this point MASON may display, for various properties of an object, a pop-up menu of PropertyInspector choices, by calling \method{getPopupMenu(...)}.  For example, this is done when the user clicks on the\quad\includegraphics[scale=0.6]{Inspect.png}{\quad}icon next to a property in a SimpleInspector.  This method goes through each of the registered PropertyInspector classes, determines which ones have valid types, then calls \method{getMenuNameForPropertyInspectorClass(...)}, which produces the menu text for the PropertyInspector, typically by calling \method{name()} on the relevant class.  
+When the user clicks on the \quad\includegraphics[scale=0.6]{Inspect.png}{\quad}icon next to a property in a SimpleInspector (for example), MASON will call \method{PropertyInspector.getPopupMenu(...)} \method{getMenuForPropertyInspectorClass(...)}and  to build a menu for your PropertyInspector subclass based on what its \method{types()} and \method{name()} return.  
 
-When the user chooses one of these menu options, MASON will create a PropertyInspector for that property.  This is done by calling a factory method, \method{makeInspector(...)}, to build the PropertyInspector.   \method{makeInspector(...)} first constructs the PropertyInspector using Java Reflection.  It then calls \method{isValidInspector()} on this Inspector to determine if the inspector is {\bf valid} (it's invalid if the user cancelled during construction, or an error occurred).  If it's valid, \method{makeInspector(...)} returns the inspector, else it returns \variable{null}.
+When the user chooses one of these menu options, MASON will then create a PropertyInspector for that property.  This is done by calling a factory method, \method{makeInspector(...)}, to build the PropertyInspector.   \method{makeInspector(...)} first constructs the PropertyInspector.  It then calls \method{isValidInspector()} on this Inspector to determine if the inspector is {\bf valid} (it's invalid if the user cancelled during construction, or an error occurred).  If it's valid, \method{makeInspector(...)} returns the inspector, else it returns \variable{null}.
 
 \begin{methods}{\class{sim.portrayal.inspector.PropertyInspector}}
-\mthd{public static PropertyInspector(PropertyInspector makeInspector(Class inspectorClass, Properties properties, int index,}
-\rule{0pt}{0pt}\hspace{\fill}{\sf Frame parent, GUIState gui)}\\
+\mthd{public static PropertyInspector makeInspector(Class inspectorClass, Properties properties, int index, Frame parent,}
+\rule{0pt}{0pt}\hspace{\fill}{\sf GUIState gui)}\\
 Produces a PropertyInspector ready to display, or returns null if the user cancelled the PropertyInspector creation or some event or error occurred which prevented the PropertyInspector from being constructed.  The PropertyInspector's class is provided, along with the Properties of the object to inspect, and the index of the desired property.
 \mthd{public static String getMenuNameForPropertyInspectorClass(String classname)} Determines the name of the PropertyInspector class to be displayed in the pop-up menu.
 \mthd{public static JToggleButton getPopupMenu(Properties properties, int index, GUIState state, JPopupMenu pop)} 
@@ -9800,10 +9803,18 @@ Produces a popup menu attached to a JToggleButton which shows all valid Property
 \mthd{public boolean isValidInspector()} Returns whether or not the constructed PropertyInspector is valid.
 \end{methods}
 
-This multi-step process allows PropertyInspectors to, among other things, pop up modal dialog boxes to more specifically determine user preferences, or cancel his option.  For example, \class{sim.portrayal.inspector.StreamingPropertyInspector} pops up a window asking the user where he'd like to stream to (a file?  a window?).  And \class{sim.portrayal.inspector.HistogramChartingPropertyInspector} pops up a window asking the user if he'd like to create the histogram on a new chart, or add it to an existing chart owned by another HistogramChartingPropertyInspector.  
+Every PropertyInspector has a specific constructor that \method{makeInspector(...)} calls to build it.  During construction, the PropertyInspector should determine whether construction is valid or if it failed.  The main reason it might fail is user cancellation of the PropertyInspector setup process.   If the construction succeeded (or didn't), the PropertyInspector should indicate this by calling \method{setValidInspector(...)}.  Later, after construction, \method{makeInspector(...)} will call \method{isValidInspector()} to determine whether to continue with setting things up.
 
-\sidebar{Why is \method{shouldCreateFrame()} overridden but \method{isValidInspector()} isn't?}{Oh, you saw that, did you?  The excuse for this seeming disparity is that PropertyInspector classes nearly always have a fixed value to return for \method{shouldCreateFrame}, but the value returned by \method{isValidInspector()} varies from instance to instance.}
-Some PropertyInspectors want to be automatically displayed in windows: others do not, but rather do their work hidden (perhaps creating their own windows).  MASON will query the PropertyInspector regarding this using \method{shouldCreateFrame()} and display the PropertyInspector (or not) accordingly.  By default \method{shouldCreateFrame(} returns true.  Override it to return false if you like.
+The constructor in question is:
+
+\begin{methods}{\class{sim.portrayal.inspector.PropertyInspector} Constructor}
+\mthd{public PropertyInspector(Properties properties, int index, Frame parent, GUIState simulation)} 
+Constructs the PropertyInspector for property number {\it index} in the provided {\it properties}.  Be sure to call \method{super(...)} first.  This method should also call \method{setValidInspector(...)} to indicate whether the PropertyInspector is valid and ready to go.  If not, MASON will assume that something went wrong, or the user canceled the process, and so delete the PropertyInspector immediately after construction.
+\end{methods}
+
+This multi-step process allows PropertyInspectors to, among other things, pop up modal dialog boxes to more specifically determine user preferences, or cancel his option.  For example, \class{sim.portrayal.inspector.StreamingPropertyInspector} pops up a window asking the user where he'd like to stream to (a file?  a window?).  And \class{sim.portrayal.inspector.HistogramChartingPropertyInspector} pops up a window asking the user if he'd like to create the histogram on a new chart, or add it to an existing chart owned by another HistogramChartingPropertyInspector.
+
+Some PropertyInspectors want to be automatically displayed in windows: others do not, but rather do their work hidden (perhaps creating their own windows).  MASON will query the PropertyInspector regarding this using \method{shouldCreateFrame()} and display the PropertyInspector (or not) accordingly.  By default \method{shouldCreateFrame()} returns true.  Override it to return false if you like.
 
 \sidebar{Why have both \method{reviseStopper(...)} and \method{set/getStopper(...)}?}{Sure, you could have done this with just \method{reviseStopper(...)}.  But it's convenient to have a separate method.  Think of it this way: \method{reviseStopper(...)} is mostly used to revise the Stoppable so as to remain {\it informed} that the Inspector is being stopped.  Whereas \method{set/getStopper(...)} are used to enable the PropertyInspector to conveniently {\it stop itself}.  What's unexpected is the fact that Inspector doesn't have \method{set/getStopper(...)}.  Perhaps we'll refactor it one day (it's less useful for basic Inspectors).}
 Finally, after the PropertyInspector has had its \method{reviseStopper(...)} method called, the revised Stoppable is again passed to it via \method{setStopper(...)}.  This method stores the Stoppable in the PropertyInspector to be accessed later with \method{getStopper()}.  This is used by some PropertyInspectors to cancel themselves in some way other than closing the window (recall not all PropertyInspectors have windows).

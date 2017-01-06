@@ -385,7 +385,7 @@ public class SimState implements java.io.Serializable
                 "Format:           java " + generator.simulationClass().getName() + " \\\n" +
                 "                       [-help] [-repeat R] [-parallel P] [-seed S] \\\n" +
                 "                       [-until U] [-for F] [-time T] [-docheckpoint D] \\\n" +
-                "                       [-checkpoint C] [-quiet] \n\n" +
+                "                       [-checkpointname N] [-checkpoint C] [-quiet] \n\n" +
                 "-help             Shows this message and exits.\n\n" +
                 "-repeat R         Long value > 0: Runs R jobs.  Unless overridden by a\n" +
                 "                  checkpoint recovery (see -checkpoint), the random seed for\n" +
@@ -419,10 +419,12 @@ public class SimState implements java.io.Serializable
                 "                  one of 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, etc.\n\n" +
                 "-docheckpoint D   Long value > 0: checkpoint every D simulation steps.\n" +
                 "                  Default: never.\n" +
-                "                  Checkpoint files named\n"+
-                "                  <steps>.<job#>." + 
+                "                  Checkpoint files named       <steps>.<job#>.NAME.checkpoint\n" +
+                "                  where NAME is specified in -checkpointname\n\n" +
+                "-checkpointname N String: id for the checkpoint filename (see -docheckpoint)\n" +
+                "                  Default: " + 
                 generator.simulationClass().getName().substring(generator.simulationClass().getName().lastIndexOf(".") + 1) + 
-                ".checkpoint\n\n" + 
+                "\n\n" + 
                 "-checkpoint C     String: loads the simulation from file C, recovering the job\n" +
                 "                  number and the seed.  If the checkpointed simulation was begun\n" +
                 "                  on the command line but was passed through the GUI for a while\n" +
@@ -504,6 +506,8 @@ public class SimState implements java.io.Serializable
                 }
         final long time_init = _time;  //blah
         
+        final String checkpointName = argumentForKey("-checkpointname", args);
+
         long _cmod = 0;
         String cmod_s = argumentForKey("-docheckpoint", args);
         if (cmod_s != null)
@@ -646,7 +650,10 @@ public class SimState implements java.io.Serializable
                                 }
                             if (cmod > 0 && steps % cmod == 0)
                                 {
-                                String s = "" + steps + "." + state.job() +  "." + state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1) + ".checkpoint";
+                                String id = checkpointName;
+                                if (id == null)
+                                	id = state.getClass().getName().substring(state.getClass().getName().lastIndexOf(".") + 1);
+                                String s = "" + steps + "." + state.job() +  "." + id  + ".checkpoint";
                                 if (!quiet) printlnSynchronized("Job " + job + ": " + "Checkpointing to file: " + s);
                                 state.writeToCheckpoint(new File(s));
                                 }

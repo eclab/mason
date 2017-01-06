@@ -2874,4 +2874,7 @@ Version 20
 		Marshall Abrams <marshall@logical.net>
 	Bug fix to selection when in hexagonal grids.  Thanks to
                 Marshall Abrams <marshall@logical.net>
-
+	Bug fix to null selection in hexagonal grids (oops).  Thanks to
+		Marshall Abrams <marshall@logical.net>
+	Added ability to uniquely name checkpoints.  Thanks to
+		Axel Kowald <Axel.Kowald@ncl.ac.uk>
