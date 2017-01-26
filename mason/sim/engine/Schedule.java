@@ -191,11 +191,10 @@ public class Schedule implements java.io.Serializable
     // could be static, but why not let it be overridden?
     public String getTimestamp(double time, final String beforeSimulationString, final String afterSimulationString)
         {
-        double _time = getTime();
-        if (_time < EPOCH) return beforeSimulationString;
-        if (_time >= AFTER_SIMULATION) return afterSimulationString;
-        if (_time == (long)_time) return Long.toString((long)_time);
-        return Double.toString(_time);
+        if (time < EPOCH) return beforeSimulationString;
+        if (time >= AFTER_SIMULATION) return afterSimulationString;
+        if (time == (long)time) return Long.toString((long)time);
+        return Double.toString(time);
         }
 
     /** Returns the number of steps the Schedule has pulsed so far. */

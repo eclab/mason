@@ -46,4 +46,6 @@ public class LocationWrapper
     public Object getLocation() { return location; }
     /** Override this to provide the current location's name */
     public String getLocationName() { return "" + location; }
-    }
+    
+    public String toString() { return "LocationWrapper[" + object + ", " + location + ", " + fieldPortrayal + "]";  }
+	}

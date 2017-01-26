@@ -2878,3 +2878,6 @@ Version 20
 		Marshall Abrams <marshall@logical.net>
 	Added ability to uniquely name checkpoints.  Thanks to
 		Axel Kowald <Axel.Kowald@ncl.ac.uk>
+	Fixed getTime() bug in Schedule.getTimeStamp().  Thanks to Joey
+		Harrison <joey.f.harrison@gmail.com>
+	Added LocationWrapper.getString()
