@@ -444,7 +444,7 @@ public abstract class GUIState
         boolean returnval = false;
         synchronized(state.schedule)
             {
-            // grab the before and after queues so no one add to them
+            // grab the before and after queues so no one can add to them
             // while we're using them.
             Steppable[] _before2 = before2;
             Steppable[] _after2 = after2;
