@@ -2881,3 +2881,5 @@ Version 20
 	Fixed getTime() bug in Schedule.getTimeStamp().  Thanks to Joey
 		Harrison <joey.f.harrison@gmail.com>
 	Added LocationWrapper.getString()
+	Display2D.handleMouseEvent() wasn't synchronizing, so expensive
+		events would produce a race condition
