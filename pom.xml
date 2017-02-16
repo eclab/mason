@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>net.dwicke</groupId>
+    <artifactId>mason</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>mason</name>
+    <description>Maven support for Mason</description>
+    <url>https://github.com/dwicke/mason</url>
+
+    <licenses>
+        <license>
+            <name>Academic Free License, version 3.0</name>
+            <url>https://github.com/eclab/mason/blob/master/mason/LICENSE</url>
+        </license>
+    </licenses>
+
+    <build>
+
+        <sourceDirectory>mason</sourceDirectory>
+
+        <resources>
+            <resource>
+                <directory>mason/ec</directory>
+
+                <includes>
+                    <include>**/*.png</include>
+                    <include>**/*.java</include>
+                    <include>**/*.html</include>
+                    <include>**/README</include>
+                    <include>**/LICENSE</include>
+                    <include>**/CHANGES</include>
+                    <include>**/*.classes</include>
+                </includes>
+            </resource>
+
+            <resource>
+                <directory>mason/sim</directory>
+                <excludes>
+                    <exclude>app/**</exclude>
+                </excludes>
+                <includes>
+                    <include>**/*.png</include>
+                    <include>**/*.java</include>
+                    <include>**/*.html</include>
+                    <include>**/README</include>
+                    <include>**/LICENSE</include>
+                    <include>**/CHANGES</include>
+                    <include>**/*.classes</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.17</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jfree/jcommon -->
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>1.0.21</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.lowagie/itext -->
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.media/jmf -->
+        <dependency>
+            <groupId>javax.media</groupId>
+            <artifactId>jmf</artifactId>
+            <version>2.1.1e</version>
+        </dependency>
+
+    </dependencies>
+
+
+
+
+</project>
