@@ -43,6 +43,8 @@
                 <directory>mason/sim</directory>
                 <excludes>
                     <exclude>app/**</exclude>
+                    <exclude>sim/display3d/**</exclude>
+                    <exclude>sim/portrayal3d/**</exclude>
                 </excludes>
                 <includes>
                     <include>**/*.png</include>
