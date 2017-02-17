@@ -30,11 +30,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
                 <configuration>
                     <excludes>
-                        <exclude>app/**/*.java</exclude>
-                        <exclude>sim/display3d/**/*.java</exclude>
-                        <exclude>sim/portrayal3d/**/*.java</exclude>
+                        <exclude>**/app/*</exclude>
+                        <exclude>**/sim/display3d/*</exclude>
+                        <exclude>**/sim/portrayal3d/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
