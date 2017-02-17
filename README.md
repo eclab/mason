@@ -5,17 +5,17 @@ To develop you own 2d simulations using mason it is as easy as adding a dependen
 
 ```xml
 <repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
   
-  <dependency>
-	    <groupId>com.github.User</groupId>
-	    <artifactId>Repo</artifactId>
-	    <version>Tag</version>
-	</dependency>
+<dependency>
+    <groupId>com.github.User</groupId>
+    <artifactId>Repo</artifactId>
+    <version>Tag</version>
+</dependency>
 ```
 
 Replace User with the username of this repo, Repo with mason, and if you want the latest version replace Tag with -SNAPSHOT (to get the latest), otherwise you can replace Tag with a specific short commit id, or version id if there is a release.  If you are using gradle or some other build tool see the instructions on https://jitpack.io/.
