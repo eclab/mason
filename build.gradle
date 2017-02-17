@@ -1,0 +1,56 @@
+group 'net.dwicke'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDir 'mason'
+            exclude 'docs/**'
+            exclude 'jar/**'
+            exclude 'start/**'
+            exclude 'sim/app/**'
+            exclude 'sim/display3d/**'
+            exclude 'sim/portrayal3d/**'
+        }
+        resources {
+            srcDir 'mason'
+            include '**/*.png'
+            include '**/*.classes'
+            include '**/README'
+            include '**/LICENCE'
+            include '**/*.html'
+            include '**/CHANGES'
+            include '**/*.java'
+            exclude 'docs/**'
+            exclude 'jar/**'
+            exclude 'start/**'
+            exclude 'sim/app/**'
+            exclude 'sim/display3d/**'
+            exclude 'sim/portrayal3d/**'
+        }
+    }
+}
+
+
+
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    // https://mvnrepository.com/artifact/org.jfree/jfreechart
+    compile group: 'org.jfree', name: 'jfreechart', version: '1.0.17'
+    // https://mvnrepository.com/artifact/org.jfree/jcommon
+    compile group: 'org.jfree', name: 'jcommon', version: '1.0.21'
+    // https://mvnrepository.com/artifact/com.lowagie/itext
+    compile group: 'com.lowagie', name: 'itext', version: '2.1.4'
+    // https://mvnrepository.com/artifact/javax.media/jmf
+    compile group: 'javax.media', name: 'jmf', version: '2.1.1e'
+}
