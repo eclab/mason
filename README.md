@@ -20,4 +20,4 @@ To develop you own 2d simulations using mason it is as easy as adding a dependen
 
 Replace User with the username of this repo, Repo with mason, and if you want the latest version replace Tag with -SNAPSHOT (to get the latest), otherwise you can replace Tag with a specific short commit id, or version id if there is a release.  If you are using gradle or some other build tool see the instructions on https://jitpack.io/.
 
-MASON can also be built by following the instructions in the README here https://github.com/eclab/mason/blob/master/mason/README
+MASON can also be built by following the instructions in the README here https://github.com/eclab/mason/blob/master/mason/README and it will include the sim directory so as to run the example simulations.  Also, there are instructions for building the 3d simulation examples there as well.
