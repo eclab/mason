@@ -20,9 +20,25 @@
         </license>
     </licenses>
 
+
+
     <build>
 
         <sourceDirectory>mason</sourceDirectory>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>app/**/*.java</exclude>
+                        <exclude>sim/display3d/**/*.java</exclude>
+                        <exclude>sim/portrayal3d/**/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
 
         <resources>
             <resource>
@@ -58,6 +74,8 @@
             </resource>
         </resources>
     </build>
+
+
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.jfree/jfreechart -->
