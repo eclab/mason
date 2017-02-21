@@ -548,11 +548,24 @@ public class SimState implements java.io.Serializable
                 {
                 throw new RuntimeException("Invalid parallel value: " + parallel_s + ", must be a positive integer");
                 }
+
+        int _ignoreJob = 0;
+        String ignoreJob_s = argumentForKey("-ignoreJob", args);
+        if (ignoreJob_s != null)
+            try
+            {
+                _ignoreJob = Integer.parseInt(ignoreJob_s);
+                if (_ignoreJob < 0) throw new Exception();
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException("Invalid ignore Job value: " + ignoreJob_s + ", must be >= 0");
+            }
         final int parallel = _parallel;
                 
         // check for parallelism with checkpoints
         final String checkpointFile = argumentForKey("-checkpoint", args);
-        if (parallel > 1 && checkpointFile != null)
+        if (parallel > 1 && checkpointFile != null && _ignoreJob == 0)
             {
             System.err.println("Cannot load from checkpoint and run in parallel at the same time.  Sorry.");
             System.exit(1);
@@ -583,7 +596,7 @@ public class SimState implements java.io.Serializable
                         SimState state = null;
                 
                         // start from checkpoint?  Note this will only happen if there is only ONE thread, so it's okay to change the job number here
-                        if (rep == 0 && checkpointFile!=null)  // only job 0 loads from checkpoint
+                        if (rep == 0 && checkpointFile!=null && _ignoreJob == 0)  // only job 0 loads from checkpoint
                             {
                             if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
                             state = SimState.readFromCheckpoint(new File(checkpointFile));
@@ -602,6 +615,22 @@ public class SimState implements java.io.Serializable
                                 if (!quiet) printlnSynchronized("Recovered job: " + state.job() + " Seed: " + state.seed());
                                 }
                             else if (!quiet) printlnSynchronized("Renamed job: " + state.job() + " (unknown seed)");
+                            }
+
+                        if (_ignoreJob == 1 && checkpointFile!=null)
+                            {
+                            if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
+                            state = SimState.readFromCheckpoint(new File(checkpointFile));
+                            if (state == null)   // there was an error -- it got printed out to the screen, so just quit
+                                System.exit(1);
+                            else if (state.getClass() != generator.simulationClass())  // uh oh, wrong simulation stored in the file!
+                            {
+                                printlnSynchronized("Checkpoint contains some other simulation: " + state + ", should have been of class " + generator.simulationClass());
+                                System.exit(1);
+                            }
+                            // got to set the job and the seed.
+                            state.job = job;
+                            state.seed = seed;
                             }
 
                         // ...or should we start fresh?
