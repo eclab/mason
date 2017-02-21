@@ -629,9 +629,11 @@ public class SimState implements java.io.Serializable
                                 printlnSynchronized("Checkpoint contains some other simulation: " + state + ", should have been of class " + generator.simulationClass());
                                 System.exit(1);
                             }
-                            // got to set the job and the seed.
+                            // got to set the job and the seed
+                            state.kill(); // clear out anything that is not in SimState
                             state.job = job;
                             state.seed = seed;
+                            state.start(); // start it up.
                             }
 
                         // ...or should we start fresh?
