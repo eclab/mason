@@ -561,6 +561,7 @@ public class SimState implements java.io.Serializable
             {
                 throw new RuntimeException("Invalid ignore Job value: " + ignoreJob_s + ", must be >= 0");
             }
+        final int ignoreJob = _ignoreJob;
         final int parallel = _parallel;
                 
         // check for parallelism with checkpoints
@@ -596,7 +597,7 @@ public class SimState implements java.io.Serializable
                         SimState state = null;
                 
                         // start from checkpoint?  Note this will only happen if there is only ONE thread, so it's okay to change the job number here
-                        if (rep == 0 && checkpointFile!=null && _ignoreJob == 0)  // only job 0 loads from checkpoint
+                        if (rep == 0 && checkpointFile!=null && ignoreJob == 0)  // only job 0 loads from checkpoint
                             {
                             if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
                             state = SimState.readFromCheckpoint(new File(checkpointFile));
@@ -617,7 +618,7 @@ public class SimState implements java.io.Serializable
                             else if (!quiet) printlnSynchronized("Renamed job: " + state.job() + " (unknown seed)");
                             }
 
-                        if (_ignoreJob == 1 && checkpointFile!=null)
+                        if (ignoreJob == 1 && checkpointFile!=null)
                             {
                             if (!quiet) printlnSynchronized("Loading from checkpoint " + checkpointFile);
                             state = SimState.readFromCheckpoint(new File(checkpointFile));
