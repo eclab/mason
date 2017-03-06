@@ -42,7 +42,7 @@ public class SimState implements java.io.Serializable
     // Are we cleaning house and replacing the HashSet?
     boolean cleaningAsynchronous = false;
     // number of jobs total
-    long totalNumJobs;
+    public static long totalNumJobs;
 
         SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
@@ -582,7 +582,8 @@ public class SimState implements java.io.Serializable
         // initial job within a thread.  This will likely change the job number, which
         // could conflict with other job numbers in other threads, so this is only permitted
         // if there is a SINGLE thread.  We already checked for that situation above.
-        
+
+        SimState.totalNumJobs = parallel*repeat;// guarunteed to be set before needed by any of the simulations
         Thread[] threads = new Thread[parallel];
         for(int _thread = 0; _thread < parallel; _thread++)
             {
@@ -635,7 +636,6 @@ public class SimState implements java.io.Serializable
                             state.kill(); // clear out anything that is not in SimState
                             state.job = job;
                             state.seed = seed;
-                            state.totalNumJobs = parallel*repeat;
                             state.start(); // start it up.
                             }
 
@@ -742,6 +742,7 @@ public class SimState implements java.io.Serializable
         {
         return 19.0;
         }
+
     
     // compute how much time per step 
     // it's possible this could go into an infinite loop if time is gigantic
