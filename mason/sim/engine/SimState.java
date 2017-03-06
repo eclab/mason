@@ -41,8 +41,10 @@ public class SimState implements java.io.Serializable
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
     // Are we cleaning house and replacing the HashSet?
     boolean cleaningAsynchronous = false;
-        
-    SimState(long seed, MersenneTwisterFast random, Schedule schedule)
+    // number of jobs total
+    long totalNumJobs;
+
+        SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
         this.random = random;
         this.schedule = schedule;
@@ -633,6 +635,7 @@ public class SimState implements java.io.Serializable
                             state.kill(); // clear out anything that is not in SimState
                             state.job = job;
                             state.seed = seed;
+                            state.totalNumJobs = parallel*repeat;
                             state.start(); // start it up.
                             }
 
