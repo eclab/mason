@@ -42,7 +42,7 @@ public class SimState implements java.io.Serializable
     // Are we cleaning house and replacing the HashSet?
     boolean cleaningAsynchronous = false;
     // number of jobs total
-    public static long totalNumJobs;
+    public static long totalNumJobs = 1; // will always have at least one job
 
         SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
