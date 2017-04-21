@@ -10,6 +10,8 @@ import sim.field.*;
 import sim.field.grid.*;
 import sim.field.continuous.*;
 import sim.portrayal.inspector.*;
+import sim.portrayal.*;
+import sim.display.*;
 
 /**
    StableDouble3D is a StableLocation for Double3D.  It can be used with either 2D or 3D fields.  See StableLocation for more information.
@@ -21,7 +23,8 @@ public class StableDouble3D implements StableLocation
     public double y = 0;
     public double z = 0;
     public boolean exists = false;
-    public SparseField field;
+    public FieldPortrayal fieldPortrayal;
+    public GUIState gui;
     public Object object;
 
     public String toString()
@@ -31,29 +34,38 @@ public class StableDouble3D implements StableLocation
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
         
-    public StableDouble3D(Continuous2D field, Object object)
+    public StableDouble3D(FieldPortrayal fieldPortrayal, Object object, GUIState gui)
         {
-        this.field = field;
-        this.object = object;
-        }
-        
-    public StableDouble3D(Continuous3D field, Object object)
-        {
-        this.field = field;
+        this.gui = gui;
+        this.fieldPortrayal = fieldPortrayal;
         this.object = object;
         }
         
     void update()
         {
         Double3D pos = null;
-        if (field == null) return;
-        if (field instanceof Continuous2D)
-            pos = new Double3D(((Continuous2D)field).getObjectLocation(object));
-        else
-            pos = ((Continuous3D)field).getObjectLocation(object);
-        
-        if (pos == null) { exists = false; }  // purposely don't update x and y and z so they stay the same
-        else { x = pos.x; y = pos.y; z = pos.z; exists = true; }
+        if (fieldPortrayal == null) return;
+        Object p = fieldPortrayal.getObjectLocation(object, gui);
+        if (p == null)  { exists = false; }  // purposely don't update x and y and z so they stay the same
+        else 
+        	{
+        	if (p instanceof Double3D)
+				{
+				pos = (Double3D)p;
+				}
+			else if (p instanceof Double2D)
+				{
+				pos = new Double3D((Double2D)p);
+				}
+			else 
+				{
+				throw new RuntimeException("StableDouble3D expected an Double2D or Double3D position from underlying field portrayal " + fieldPortrayal);
+				}
+			x = pos.x; 
+			y = pos.y; 
+			z = pos.z; 
+			exists = true; 
+			}
         }
 
     /* For some reason, the order of the parameters in the MASON windows will be Z, Exists, Y, X.  Oh well! */
@@ -64,30 +76,19 @@ public class StableDouble3D implements StableLocation
 
     public void setX(double val)
         {
-        if (field == null) return;
-        if (field instanceof Continuous2D)
-            { ((Continuous2D)field).setObjectLocation(object, new Double2D(val,getY()));  z = 0; }
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(val,getY(),getZ()));
-        x = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Double3D(val, getY(), getZ()), gui);
         }
-            
+
     public void setY(double val)
         {
-        if (field == null) return;
-        if (field instanceof Continuous2D)
-            { ((Continuous2D)field).setObjectLocation(object, new Double2D(getX(),val));  z = 0; }
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),val,getZ()));
-        y = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Double3D(getX(), val, getZ()), gui);
         }
-            
+
     public void setZ(double val)
         {
-        if (field == null) return;
-        if (field instanceof Continuous2D) { z = 0; return; }  // won't set anything anyway
-        else ((Continuous3D)field).setObjectLocation(object, new Double3D(getX(),getY(),val));
-        z = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Double3D(getX(), getY(), val), gui);
         }
     }

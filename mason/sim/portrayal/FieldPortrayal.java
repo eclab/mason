@@ -328,4 +328,21 @@ public abstract class FieldPortrayal
             setSelected(wrapper, selected);
             }
         }
+        
+    /** Returns the first location in the underlying field of the given object, if such a thing
+        is reasonable.  Largely used for getObjectPosition(...).     
+        If null is returned, then the portrayal is unable to determine the position of the field location.
+        <b>Optionally overridable</b>.  The default implementation returns null. */
+    public Object getObjectLocation(Object object, GUIState gui)
+        {
+        return null;
+        }
+
+    /** Sets location in the underlying field of the given object, if such a thing
+        is reasonable.  Largely used for setObjectPosition(...), and in the Inspector's LocationWrapper via the Stable classes.   
+        <b>Optionally overridable</b>.  The default implementation does nothing.  */
+    public void setObjectLocation(Object obj, Object location, GUIState gui)
+        {
+        return;
+        }
     }

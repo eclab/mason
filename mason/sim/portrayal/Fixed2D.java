@@ -20,6 +20,11 @@ package sim.portrayal;
         
    <p>Objects which do not implement this interface have no say: MovablePortrayal2D will
    go directly to their fields and ask the fields to move them about.
+
+
+Fixed2D is deprecated: use Constrained instead.
+
+@deprecated
 */
 
 public interface Fixed2D
@@ -43,6 +48,8 @@ public interface Fixed2D
         method is called just make all the appropriate updates in the various fields,
         then return true.
         </ul>
+
+    @deprecated
     */
     public boolean maySetLocation(Object field, Object newObjectLocation);
     }

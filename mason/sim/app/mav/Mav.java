@@ -82,7 +82,7 @@ public /*strictfp*/ class Mav implements Steppable, Oriented2D
     
     public void act(double[] sensorReading, int currentSurface)
         {
-        if (currentSurface == 100) System.out.println("Acting");
+        //if (currentSurface == 100) System.out.println("Acting");
         }
         
     double[] proximitySensors = new double[8];  // all squared values

@@ -51,10 +51,7 @@ public class SparseGridPortrayal3D extends SparseFieldPortrayal3D
     public LocationWrapper completedWrapper(LocationWrapper w, PickIntersection pi, PickResult pr)     
         {
         final Object field = getField();
-        StableLocation d = null;
-        if (field instanceof SparseGrid2D) { d = new StableInt2D((SparseGrid2D) field, w.getObject()); }
-        else  { d = new StableInt3D((SparseGrid3D) field,  w.getObject()); }
-        final StableLocation loc = d;
+        final StableLocation loc = new StableInt3D(this,  w.getObject(), getCurrentGUIState());
         return new LocationWrapper( w.getObject(), null , this)  // don't care about location
             {
             public Object getLocation()

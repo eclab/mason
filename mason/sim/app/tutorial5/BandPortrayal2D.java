@@ -22,7 +22,7 @@ public class BandPortrayal2D extends SimpleEdgePortrayal2D
         strengthFormat.setMinimumIntegerDigits(1);
         strengthFormat.setMaximumFractionDigits(2);
         }
-    
+        
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
         {
         // this better be an EdgeDrawInfo2D!  :-)

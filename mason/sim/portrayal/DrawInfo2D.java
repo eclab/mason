@@ -56,11 +56,20 @@ public class DrawInfo2D
     public FieldPortrayal2D fieldPortrayal;
     public Rectangle2D.Double draw;
     public Rectangle2D.Double clip;
+    public DrawInfo2D parent;
     public boolean selected;
     public boolean precise;
     public Object location;
     
+    /**
+    @deprecated
+    */
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
+        {
+        this(gui, fieldPortrayal, draw, clip, null);
+        }
+
+    public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, DrawInfo2D parent)
         {
         this.draw = new Rectangle2D.Double();
         this.draw.setRect(draw.getFrame());
@@ -68,6 +77,7 @@ public class DrawInfo2D
         this.clip.setRect(clip.getFrame());
         precise = false;
         this.gui = gui;
+        this.parent = parent;
         this.fieldPortrayal = fieldPortrayal;
         }
 
@@ -81,6 +91,7 @@ public class DrawInfo2D
         gui = other.gui;
         fieldPortrayal = other.fieldPortrayal;
         selected = other.selected;
+        parent = other.parent;
         // location = other.location;  // would location be invalid?
         }
         
@@ -88,6 +99,7 @@ public class DrawInfo2D
         {
         this(other, 0, 0);
         location = other.location;
+        parent = other.parent;
         }
     
     public String toString() { return "DrawInfo2D[ Draw: " + draw + " Clip: " + clip + " Precise: " + precise + " Location : " + location + " portrayal: " + fieldPortrayal + "]"; }

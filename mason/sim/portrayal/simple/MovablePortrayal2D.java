@@ -25,7 +25,7 @@ import sim.util.*;
    
    <p>It's possible that an object wants to control how it's moved.  For example, you may have
    objects which maintain their own internal location and don't like to be moved without being
-   informed.  You can still use them with MovablePortrayal2D if they implement the Fixed2D interface,
+   informed.  You can still use them with MovablePortrayal2D if they implement the Fixed2D or Constrained interfaces,
    implementing its sole method to move themselves in their field, and then returning false.  Similarly
    objects can implement this interface to simply deny moving at all, for example at certain points of time
    in the simulation.
@@ -96,6 +96,7 @@ public class MovablePortrayal2D extends SimplePortrayal2D
                 hitRange.clip.y = originalMousePosition.getY();
                 hitRange.clip.width = 1;
                 hitRange.clip.height = 1;
+                hitRange.parent = range;
                                                         
                 if (hitObject(wrapper.getObject(), hitRange))
                     {

@@ -12,6 +12,7 @@ import sim.util.*;
 import java.awt.*;
 import java.util.*;
 import java.awt.geom.*;
+import sim.display.*;
 
 /**
    Portrayal for hexagonal grids (each cell has six equally-distanced neighbors). It can draw
@@ -55,6 +56,27 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
     
+    public void setObjectLocation(Object object, Object location, GUIState gui)
+        {
+        synchronized(gui.state.schedule)
+            {
+		if (location != null)
+			{
+			if (location instanceof Int2D)
+				{
+				Int2D loc = (Int2D) location;
+				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+					return;  // this is deprecated and will be deleted
+				else if (object instanceof Constrained)
+					  loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
+				if (loc != null)
+					((SparseGrid2D)field).setObjectLocation(object, loc);
+				}
+			}
+			}
+        }
+
+   /*
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
         final SparseGrid2D field = (SparseGrid2D)this.field;
@@ -65,12 +87,13 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
             {
             if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
                 return;  // this is deprecated and will be deleted
-            //if (object instanceof Constrained)
-            //      location = (Int2D)((Constrained)object).constrainLocation(field, location);
-            // if (location != null)
-            field.setObjectLocation(object, location);
+            else if (object instanceof Constrained)
+                  location = (Int2D)((Constrained)object).constrainLocation(field, location);
+        	if (location != null)
+            	field.setObjectLocation(object, location);
             }
         }
+    */
 
     public Double2D getScale(DrawInfo2D info)
         {
@@ -130,7 +153,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
             DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
                     Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                     Math.ceil(info.draw.height / (maxY + 0.5))),
-                info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
+                info.clip/*, xPoints, yPoints*/, info);  // we don't do further clipping 
             newinfo.precise = info.precise;
 
             Int2D loc = (Int2D) location;
@@ -219,7 +242,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, 
                 Math.ceil(info.draw.width / (HEXAGONAL_RATIO * ((maxX - 1) * 3.0 / 4.0 + 1))),
                 Math.ceil(info.draw.height / (maxY + 0.5))),
-            info.clip/*, xPoints, yPoints*/);  // we don't do further clipping 
+            info.clip/*, xPoints, yPoints*/, info);  // we don't do further clipping 
         newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 
@@ -295,7 +318,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         //if (graphics == null)
                         //    {
                         //    if (portrayal.hitObject(portrayedObject, newinfo))
-                        //        putInHere.add(getWrapper(portrayedObject));
+                        //        putInHere.add(getWrapper(portrayedObject, newinfo.gui));
                         //    }
                         //else
                                 {
@@ -369,7 +392,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                     if (graphics == null)
                         {
                         if (portrayal.hitObject(portrayedObject, newinfo))
-                            putInHere.add(getWrapper(portrayedObject));
+                            putInHere.add(getWrapper(portrayedObject, newinfo.gui));
                         }
                     else
                         {

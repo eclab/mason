@@ -60,8 +60,6 @@ public class Flocker implements Steppable, sim.portrayal.Orientable2D
             Flocker other = (Flocker)(b.objs[i]);
             if (!other.dead)
                 {
-                double dx = flockers.tdx(loc.x,other.loc.x);
-                double dy = flockers.tdy(loc.y,other.loc.y);
                 Double2D m = ((Flocker)b.objs[i]).momentum();
                 count++;
                 x += m.x;

@@ -87,7 +87,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
         {
         /** A value from 1.0 to 0.0 indicating how far "back in time" this segment is supposed to be. */
         public double value = 0.0;
-        public TrailDrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint) { super(gui, fieldPortrayal, draw, clip, secondPoint); }
+        public TrailDrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Point2D.Double secondPoint, DrawInfo2D parent) { super(gui, fieldPortrayal, draw, clip, secondPoint, parent); }
         public TrailDrawInfo2D(DrawInfo2D other, double translateX, double translateY, Point2D.Double secondPoint) { super(other, translateX, translateY, secondPoint); }
         //public TrailDrawInfo2D(Rectangle2D.Double draw, Rectangle2D.Double clip, Point2D.Double secondPoint) { super(draw, clip, secondPoint); }
         public TrailDrawInfo2D(DrawInfo2D other, Point2D.Double secondPoint) { super(other, secondPoint); }
@@ -335,7 +335,7 @@ public class TrailedPortrayal2D extends SimplePortrayal2D
                 Place lastPlace = null;
                 Point2D.Double lastPosition = null;
                 TrailDrawInfo2D temp = new TrailDrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(info.draw.x, info.draw.y, info.draw.width, info.draw.height), // make a copy, we'll modify it
-                    info.clip, null);
+                    info.clip, null, info);
                 while(iterator.hasNext())
                     {
                     Place p = (Place)(iterator.next());

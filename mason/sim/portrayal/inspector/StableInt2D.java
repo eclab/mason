@@ -9,6 +9,8 @@ import sim.util.*;
 import sim.field.*;
 import sim.field.grid.*;
 import sim.field.continuous.*;
+import sim.portrayal.*;
+import sim.display.*;
 
 /**
    StableInt2D is a StableLocation for Int2D.  See StableLocation for more information.
@@ -18,8 +20,9 @@ public class StableInt2D implements StableLocation
     {
     public int x = 0;
     public int y = 0;
-    public boolean exists;
-    public SparseGrid2D field;
+    public boolean exists = false;
+    public FieldPortrayal fieldPortrayal;
+    public GUIState gui;
     public Object object;
         
     public String toString()
@@ -29,18 +32,37 @@ public class StableInt2D implements StableLocation
         else return "(" + x + ", " + y + ")"; 
         }
         
-    public StableInt2D(SparseGrid2D field, Object object)
+    public StableInt2D(FieldPortrayal fieldPortrayal, Object object, GUIState gui)
         {
-        this.field = field;
+        this.gui = gui;
+        this.fieldPortrayal = fieldPortrayal;
         this.object = object;
         }
         
     void update()
         {
         Int2D pos = null;
-        if (field != null) pos = field.getObjectLocation(object);
-        if (pos == null) { exists = false; }  // purposely don't update x and y so they stay the same
-        else { x = pos.x; y = pos.y; exists = true; }
+        if (fieldPortrayal == null) return;
+        Object p = fieldPortrayal.getObjectLocation(object, gui);
+        if (p == null)  { exists = false; }  // purposely don't update x and y and z so they stay the same
+        else 
+        	{
+        	if (p instanceof Int3D)
+				{
+				pos = new Int2D(((Int3D)p).x, ((Int3D)p).y);
+				}
+			else if (p instanceof Int2D)
+				{
+				pos = (Int2D)p;
+				}
+			else 
+				{
+				throw new RuntimeException("StableInt2D expected an Int2D or Int3D position from underlying field portrayal " + fieldPortrayal);
+				}
+			x = pos.x; 
+			y = pos.y; 
+			exists = true; 
+			}
         }
             
     public int getX() { update(); return x; }
@@ -49,28 +71,14 @@ public class StableInt2D implements StableLocation
             
     public void setX(int val)
         {
-        if (field!=null) field.setObjectLocation(object, new Int2D(val,getY()));
-        x = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Int2D(val, getY()), gui);
         }
 
     public void setY(int val)
         {
-        if (field!=null) field.setObjectLocation(object, new Int2D(getX(),val));
-        y = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Int2D(getX(), val), gui);
         }
 
-// playing with too much fire
-/* 
-   public void setExists(boolean val)
-   {
-   exists = val;
-   if (exists)
-   { if (field!=null) field.setObjectLocation(object, new Int2D(x,y)); }
-   else
-   { if (field!=null) field.remove(object); } // too powerful?
-   }
-*/
     }
-

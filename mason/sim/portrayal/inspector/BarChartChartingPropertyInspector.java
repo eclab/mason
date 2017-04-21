@@ -22,6 +22,7 @@ import org.jfree.data.general.*;
         
     <ul>
     <li>Any array of Objects
+    <li>Any array of Datum objects (each Datum will be used as a separate element in the series)
     </ul>
         
     <p>BarChartChartingPropertyInspector registers itself with the property menu option "Make Bar Chart".

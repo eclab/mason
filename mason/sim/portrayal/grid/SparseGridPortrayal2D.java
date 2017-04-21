@@ -96,6 +96,27 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         return new Int2D(startx, starty);
         }
 
+    public void setObjectLocation(Object object, Object location, GUIState gui)
+        {
+        synchronized(gui.state.schedule)
+            {
+		if (location != null)
+			{
+			if (location instanceof Int2D)
+				{
+				Int2D loc = (Int2D) location;
+				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+					return;  // this is deprecated and will be deleted
+				else if (object instanceof Constrained)
+					  loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
+				if (loc != null)
+					((SparseGrid2D)field).setObjectLocation(object, loc);
+				}
+			}
+			}
+        }
+
+/*
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
         synchronized(fieldPortrayalInfo.gui.state.schedule)
@@ -108,13 +129,14 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                 {
                 if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
                     return;  // this is deprecated and will be deleted
-                //if (object instanceof Constrained)
-                //      location = (Int2D)((Constrained)object).constrainLocation(field, location);
+                else if (object instanceof Constrained)
+                      location = (Int2D)((Constrained)object).constrainLocation(field, location);
                 if (location != null)
                     field.setObjectLocation(object, location);
                 }
             }
         }
+*/
 
     public Object getObjectLocation(Object object, GUIState gui)
         {
@@ -139,7 +161,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
             final double xScale = info.draw.width / maxX;
             final double yScale = info.draw.height / maxY;
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);
             newinfo.precise = info.precise;
 
             Int2D loc = (Int2D)location;
@@ -180,7 +202,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
 
         //final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
         newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 
@@ -282,7 +304,7 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
                         {
                         if (portrayal.hitObject(portrayedObject, newinfo))
                             {
-                            putInHere.add(getWrapper(portrayedObject));
+                            putInHere.add(getWrapper(portrayedObject, newinfo.gui));
                             }
                         }
                     else
@@ -308,10 +330,10 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         }
 
     // The easiest way to make an inspector which gives the location of my objects
-    public LocationWrapper getWrapper(Object object)
+    public LocationWrapper getWrapper(Object object, GUIState gui)
         {
         final SparseGrid2D field = (SparseGrid2D) this.field;
-        final StableInt2D w = new StableInt2D(field, object);
+        final StableInt2D w = new StableInt2D(this, object, gui);
         return new LocationWrapper( object, null, this )  // don't care about location
             {
             public Object getLocation()

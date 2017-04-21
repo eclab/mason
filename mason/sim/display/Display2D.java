@@ -1607,13 +1607,21 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // compute WHERE we need to draw
         int origindx = 0;
         int origindy = 0;
+        double fieldWidth;
+        double fieldHeight;
 
         // for information on why we use getViewRect, see computeClip()
         Rectangle2D fullComponent = insideDisplay.getViewRect();
         if (fullComponent.getWidth() > (insideDisplay.width * scale))
-            origindx = (int)((fullComponent.getWidth() - insideDisplay.width*scale)/2);
+        	{
+            fieldWidth = insideDisplay.width*scale;
+            origindx = (int)((fullComponent.getWidth() - fieldWidth)/2);
+            }
         if (fullComponent.getHeight() > (insideDisplay.height*scale))
-            origindy = (int)((fullComponent.getHeight() - insideDisplay.height*scale)/2);
+        	{
+        	fieldHeight = insideDisplay.height*scale;
+            origindy = (int)((fullComponent.getHeight() - fieldHeight)/2);
+            }
                                 
         // offset according to user's specification
         origindx += (int)(insideDisplay.xOffset*scale);
@@ -1625,7 +1633,8 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             (int)(holder.bounds.y * scale) + origindy,
             (int)(holder.bounds.width * scale),
             (int)(holder.bounds.height * scale));
-        DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip);
+
+        DrawInfo2D d2d = new DrawInfo2D(simulation, holder.portrayal, region, clip, null);
         d2d.gui = simulation;
         d2d.precise = forcePrecise || precise;
         return d2d;

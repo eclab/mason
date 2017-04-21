@@ -12,6 +12,7 @@ import sim.portrayal3d.*;
 import sim.util.*;
 import sim.field.continuous.*;
 import sim.portrayal.inspector.*;
+import sim.display.*;
 
 import com.sun.j3d.utils.picking.*;
 
@@ -57,9 +58,7 @@ public class ContinuousPortrayal3D extends SparseFieldPortrayal3D
         {
         final Object field = getField();
         StableLocation d = null;
-        if (field instanceof Continuous2D) { d = new StableDouble2D((Continuous2D) field, w.getObject()); }
-        else  { d = new StableDouble3D((Continuous3D) field,  w.getObject()); }
-        final StableLocation loc = d;
+        final StableLocation loc = new StableDouble3D(this, w.getObject(), getCurrentGUIState());
         return new LocationWrapper( w.getObject(), null, this)  // don't care about location
             {
             public Object getLocation()

@@ -74,6 +74,27 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         return new Double3D(x,y, 0);
         }
 
+    public void setObjectLocation(Object object, Object location, GUIState gui)
+        {
+        synchronized(gui.state.schedule)
+            {
+		if (location != null)
+			{
+			if (location instanceof Double2D)
+				{
+				Double3D loc = (Double3D) location;
+				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+					return;  // this is deprecated and will be deleted
+				else if (object instanceof Constrained)
+					  loc = (Double3D)((Constrained)object).constrainLocation(field, loc);
+				if (loc != null)
+					((Continuous3D)field).setObjectLocation(object, loc);
+				}
+			}
+			}
+        }
+
+/*
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
         synchronized(fieldPortrayalInfo.gui.state.schedule)
@@ -89,12 +110,14 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
                 location = new Double3D(location.x, location.y, oldLocation.z);
                 if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
                     return;  
-                if (location != null)
+            	else if (object instanceof Constrained)
+                      location = (Double3D)((Constrained)object).constrainLocation(field, location);
+				if (location != null)
                     field.setObjectLocation(object, location);
                 }
             }
         }
-
+*/
     public Object getObjectLocation(Object object, GUIState gui)
         {
         synchronized(gui.state.schedule)
@@ -114,7 +137,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
                 
             final double xScale = fieldPortrayalInfo.draw.width / field.width;
             final double yScale = fieldPortrayalInfo.draw.height / field.height;
-            DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(fieldPortrayalInfo.gui, fieldPortrayalInfo.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), fieldPortrayalInfo.clip, fieldPortrayalInfo);  // we don't do further clipping 
             newinfo.precise = fieldPortrayalInfo.precise;
 
             Double3D loc = (Double3D) location;
@@ -147,7 +170,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         int endx = /*startx +*/ (int)Math.floor((info.clip.x - info.draw.x + info.clip.width) / xScale) + /*2*/ 1;  // with rounding, width be as much as 1 off
         int endy = /*starty +*/ (int)Math.floor((info.clip.y - info.draw.y + info.clip.height) / yScale) + /*2*/ 1;  // with rounding, height be as much as 1 off
 
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
         newinfo.precise = info.precise;
         newinfo.fieldPortrayal = this;
 
@@ -211,7 +234,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
                     if (graphics == null)
                         {
                         if (portrayal.hitObject(portrayedObject, newinfo))
-                            putInHere.add(getWrapper(portrayedObject));
+                            putInHere.add(getWrapper(portrayedObject, newinfo.gui));
                         }
                     else
                         {
@@ -230,10 +253,10 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         }
 
 
-    public LocationWrapper getWrapper(final Object obj)
+    public LocationWrapper getWrapper(final Object obj, GUIState gui)
         {
         final Continuous3D field = (Continuous3D)this.field;
-        final StableDouble3D w = new StableDouble3D(field, obj);
+        final StableDouble3D w = new StableDouble3D(this, obj, gui);
         return new LocationWrapper( obj, null , this)  // don't care about location
             {
             public Object getLocation()

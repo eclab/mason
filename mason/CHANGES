@@ -2883,3 +2883,24 @@ Version 20
 	Added LocationWrapper.getString()
 	Display2D.handleMouseEvent() wasn't synchronizing, so expensive
 		events would produce a race condition
+	sim.portrayal.Constrained added and sim.portrayal.Fixed2D deprecated
+	Extraneous code removed from Flocker.java
+	Print statement removed from Mav.java
+	DrawInfo2D now has an additional field called "parent", referring to
+		the DrawInfo2D which spawned this one.  Typically the
+		DrawInfo2D of a simple portrayal has the DrawInfo2D of its
+		field portrayal as its parent.  This is done to enable access
+		to the field portrayal's draw and clip rectangles.
+	getObjectLocation(...) and setObjectLocation(...) have been promoted
+		to FieldPortrayal.java and have had their arguments changed.
+	StableLocations now require that you provide them with the GUI and
+		the FieldPortrayal rather than the field, because they will
+		use the new setObjectLocation and getObjectLocation methods
+		in FieldPortrayal.java, which also requires the GUI.  This
+		eliminates direct access of fields by GUI widgets.
+	Properties.getProperties() method added.
+	The class Datum added.  PieChartChartingPropertyInspector and
+		BarChartChartingPropertyInspector now can use Datum to indicate
+		the total amount of an element in the series rather than
+		solely relying on counts of arbitrary Objects.
+

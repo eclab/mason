@@ -21,7 +21,8 @@ import org.jfree.data.general.*;
     the PieChartChartingPropertyInspector will operate include:
         
     <ul>
-    <li>Any array of Objects
+    <li>Any array of Objects (of which it will show counts of duplicates)
+    <li>Any array of Datum objects (each Datum will be used as a separate element in the series)
     </ul>
         
     <p>PieChartChartingPropertyInspector registers itself with the property menu option "Make Pie Chart".
@@ -111,7 +112,35 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         if (cls.isArray())
             {
             Class comp = cls.getComponentType();
-            if (Object.class.isAssignableFrom(comp))
+            
+            // first check to see if the data is already organized into Datum
+            // chunks for us.
+            if (Datum.class.isAssignableFrom(comp))
+            	{
+            	Datum[] data = (Datum[])(obj);
+            	double[] doublevals = new double[data.length];
+            	String[] labels = new String[data.length];
+            	for(int i = 0; i < data.length; i++)
+            		{
+            		if (data[i] != null)
+            			{
+            			doublevals[i] = data[i].getValue();
+            			labels[i] = data[i].getLabel();
+            			}
+            		else
+            			{
+            			doublevals[i] = 0;
+            			labels[i] = "null";
+            			}
+            		}
+            	previousValues = null;
+            	((PieChartGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), doublevals, labels); 
+            	return;
+            	}
+            	
+            // okay, next check to see if the data can just be counted.
+
+            else if (Object.class.isAssignableFrom(comp))
                 {
                 Object[] array = (Object[]) obj;
                 vals = new Object[array.length];
@@ -122,6 +151,47 @@ public class PieChartChartingPropertyInspector extends ChartingPropertyInspector
         else if (java.util.Collection.class.isAssignableFrom(cls))
             {
             Object[] array = ((java.util.Collection) obj).toArray();
+            
+            // first check to see if the data is already organized into Datum
+            // chunks for us.
+
+            boolean hasDatum = false;
+            boolean hasNonDatum = false;
+            for(int i=0;i<array.length;i++)
+            	{
+            	if (array[i] != null)
+            		{
+            		if (array[i] instanceof Datum)
+            			hasDatum = true;
+            		else
+            			hasNonDatum = true;
+            		}
+            	}
+            
+            if (hasDatum && !hasNonDatum)
+            	{
+            	double[] doublevals = new double[array.length];
+            	String[] labels = new String[array.length];
+            	for(int i = 0; i < array.length; i++)
+            		{
+            		if (array[i] != null)
+            			{
+            			doublevals[i] = ((Datum)(array[i])).getValue();
+            			labels[i] = ((Datum)(array[i])).getLabel();
+            			}
+            		else
+            			{
+            			doublevals[i] = 0;
+            			labels[i] = "null";
+            			}
+            		}
+            	previousValues = null;
+            	((PieChartGenerator)generator).updateSeries(seriesAttributes.getSeriesIndex(), doublevals, labels); 
+            	return;
+            	}
+            
+            // okay, they're not Datum.  Just count the data
+            
             vals = new Object[array.length];
             for(int i=0;i<array.length;i++)
                 vals[i] = array[i];

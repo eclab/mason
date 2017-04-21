@@ -139,7 +139,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
             final double xScale = info.draw.width / maxX;
             final double yScale = info.draw.height / maxY;
 
-            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);  // we don't do further clipping 
+            DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);  // we don't do further clipping 
             newinfo.precise = info.precise;
             
             Int2D loc = (Int2D) location;
@@ -207,7 +207,7 @@ public class ValueGridPortrayal2D extends FieldPortrayal2D
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
 
         // the drawinfo that the object's portrayal will use -- we fill in the blanks later
-        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip);
+        DrawInfo2D newinfo = new DrawInfo2D(info.gui, info.fieldPortrayal, new Rectangle2D.Double(0,0, xScale, yScale), info.clip, info);
         newinfo.precise = info.precise;
         newinfo.location = locationToPass;
         newinfo.fieldPortrayal = this;  // crucial for ValuePortrayal2D to get the parent out

@@ -111,10 +111,16 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         
     /** Moves (or tries to move) the object to an internal location equivalent to the given position on-screen of the
         provided object, assuming that the object exists within the underlying field and that this
-        location is acceptable.  <b>Optionally overridable</b>.  The default implementation does nothing.  */
+        location is acceptable.  <b>Optionally overridable</b>.  The default implementation calls setObjectLocation to do its work.  */
     public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
         {
-        return;
+        synchronized(fieldPortrayalInfo.gui.state.schedule)
+            {
+            if (getObjectLocation(object, fieldPortrayalInfo.gui) == null) return;
+            Object location = getPositionLocation(position, fieldPortrayalInfo);
+            if (location != null)
+                setObjectLocation(object, location, fieldPortrayalInfo.gui);
+            }
         }
         
     /** Returns the width and height, in pixels, of 1.0 x 1.0 units in the underlying field.
@@ -132,16 +138,7 @@ public abstract class FieldPortrayal2D extends FieldPortrayal implements Portray
         {
         return null;
         }
-        
-    /** Returns the first location in the underlying field of the given object, if such a thing
-        is reasonable.  Largely used for getObjectPosition(...).     
-        If null is returned, then the portrayal is unable to determine the position of the field location.
-        <b>Optionally overridable</b>.  The default implementation returns null. */
-    public Object getObjectLocation(Object object, GUIState gui)
-        {
-        return null;
-        }
-        
+                
     /** Returns the position on-screen of the provided location in the underlying field.  Negative positions are acceptable.
         If null is returned, then the portrayal is unable to perform the requested action on the given location.
         <b>Optionally overridable</b>.  The default implementation returns null. */

@@ -10,9 +10,11 @@ import sim.field.*;
 import sim.field.grid.*;
 import sim.field.continuous.*;
 import sim.portrayal.inspector.*;
+import sim.portrayal.*;
+import sim.display.*;
 
 /**
-   StableInteD is a StableLocation for InteD, usable for SparseGrid2D and SparseGrid3D.  See StableLocation for more information.
+   StableInt3D is a StableLocation for Int3D, usable for SparseGrid2D and SparseGrid3D.  See StableLocation for more information.
 */
 
 public class StableInt3D implements StableLocation
@@ -21,7 +23,8 @@ public class StableInt3D implements StableLocation
     public int y = 0;
     public int z = 0;
     public boolean exists = false;
-    public SparseField field;
+    public FieldPortrayal fieldPortrayal;
+    public GUIState gui;
     public Object object;
         
     public String toString()
@@ -31,28 +34,38 @@ public class StableInt3D implements StableLocation
         else return "(" + x + ", " + y + ", " + z + ")"; 
         }
         
-    public StableInt3D(SparseGrid2D field, Object object)
+    public StableInt3D(FieldPortrayal fieldPortrayal, Object object, GUIState gui)
         {
-        this.field = field;
+        this.gui = gui;
+        this.fieldPortrayal = fieldPortrayal;
         this.object = object;
         }
-        
-    public StableInt3D(SparseGrid3D field, Object object)
-        {
-        this.field = field;
-        this.object = object;
-        }
-        
+
     void update()
         {
         Int3D pos = null;
-        if (field == null) return;
-        if (field instanceof SparseGrid2D)
-            pos = new Int3D(((SparseGrid2D)field).getObjectLocation(object));
-        else
-            pos = ((SparseGrid3D)field).getObjectLocation(object);
-        if (pos == null) { exists = false; }  // purposely don't update x and y and z so they stay the same
-        else { x = pos.x; y = pos.y; z = pos.z; exists = true; }
+        if (fieldPortrayal == null) return;
+        Object p = fieldPortrayal.getObjectLocation(object, gui);
+        if (p == null)  { exists = false; }  // purposely don't update x and y and z so they stay the same
+        else 
+        	{
+        	if (p instanceof Int3D)
+				{
+				pos = (Int3D)p;
+				}
+			else if (p instanceof Int2D)
+				{
+				pos = new Int3D((Int2D)p);
+				}
+			else 
+				{
+				throw new RuntimeException("StableInt3D expected an Int2D or Int3D position from underlying field portrayal " + fieldPortrayal);
+				}
+			x = pos.x; 
+			y = pos.y; 
+			z = pos.z; 
+			exists = true; 
+			}
         }
             
     public int getX() { update(); return x; }
@@ -62,31 +75,20 @@ public class StableInt3D implements StableLocation
             
     public void setX(int val)
         {
-        if (field == null) return;
-        if (field instanceof SparseGrid2D)
-            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(val,getY()));  z = 0; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(val,getY(),getZ()));
-        x = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Int3D(val, getY(), getZ()), gui);
         }
 
     public void setY(int val)
         {
-        if (field == null) return;
-        if (field instanceof SparseGrid2D)
-            { ((SparseGrid2D)field).setObjectLocation(object, new Int2D(getX(),val));  z = 0; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),val,getZ()));
-        y = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Int3D(getX(), val, getZ()), gui);
         }
 
     public void setZ(int val)
         {
-        if (field == null) return;
-        if (field instanceof SparseGrid2D) { z = 0; return; }
-        else ((SparseGrid3D)field).setObjectLocation(object, new Int3D(getX(),getY(),val));
-        z = val;
-        exists = true;
+        if (fieldPortrayal == null) return;
+        fieldPortrayal.setObjectLocation(object, new Int3D(getX(), getY(), val), gui);
         }
     }
 

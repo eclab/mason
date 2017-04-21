@@ -37,6 +37,7 @@ public abstract class Properties implements java.io.Serializable
         The Class property will NOT be included.
         The domFoo() and hideFoo() property extension methods are respected.
         Domains will always be produced according to the rules in the comments for getDomain(index) below.
+        Proxies and dynamic properties are always permitted.
     */
     public static Properties getProperties(Object object)
         {
@@ -50,6 +51,7 @@ public abstract class Properties implements java.io.Serializable
         If includeSuperclasses is true, then any SimpleProperties will include superclasses.
         If includeGetClass is true, then the Class property will be included.
         The domFoo() and hideFoo() property extension methods are respected.
+        Proxies and dynamic properties are always permitted.
     
         @deprecated use the full version
     */
@@ -65,17 +67,40 @@ public abstract class Properties implements java.io.Serializable
         If includeSuperclasses is true, then any SimpleProperties will include superclasses.
         If includeGetClass is true, then the Class property will be included.
         The domFoo() and hideFoo() property extension methods are respected if <tt>includeExtensions</tt> is true.
+        Proxies and dynamic properties are always permitted.
+        
+        @deprecated use the full version
     */
     public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
         {
-        if (object == null) return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions);
+        return getProperties(object, expandCollections, includeSuperclasses, includeGetClass, includeExtensions, true);
+        }
+        
+    /** Returns a Properties object for the given object.  
+        If expandCollections is true, then if object is a Map, Indexed, or Collection,
+        then it will be treated using CollectionProperties.  Otherwise it will be
+        treated using SimpleProperties.   Arrays are always treated using CollectionProperties. 
+        If includeSuperclasses is true, then any SimpleProperties will include superclasses.
+        If includeGetClass is true, then the Class property will be included.
+        If allowProxy is true, then proxies and dynamic properties are permitted.
+        The domFoo() and hideFoo() property extension methods are respected if <tt>includeExtensions</tt> is true.
+    */
+    public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions, boolean allowProxy)
+        {
+        if (object == null) 
+        	return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions, false);
+        else if (allowProxy && object instanceof sim.util.Proxiable)
+        	object = ((sim.util.Proxiable)object).propertiesProxy();
+        else if (allowProxy && object instanceof sim.util.Propertied)
+            return ((sim.util.Propertied)(object)).properties();
+            
         Class c = object.getClass();
         if (c.isArray()) return new CollectionProperties(object);
         else if (expandCollections && (Collection.class.isAssignableFrom(c) ||
                 Indexed.class.isAssignableFrom(c) ||
                 Map.class.isAssignableFrom(c)))
             return new CollectionProperties(object);
-        else return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions);
+        else return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions, false);
         }
 
     protected Object object;
