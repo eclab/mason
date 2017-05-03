@@ -280,44 +280,56 @@ public class TableLoader
         ArrayList rows = new ArrayList();
         int width = -1;
         
-        while(scan.hasNextLine())
-            {
-            String srow = scan.nextLine().trim();
-            if (srow.length() > 0)
-                {
-                int w = 0;
-                if (width == -1)  // first time compute width
-                    {
-                    ArrayList firstRow = new ArrayList();
-                    Scanner rowScan = new Scanner(new StringReader(srow));
-                    while(rowScan.hasNextDouble())
-                        {
-                        firstRow.add(new Double(rowScan.nextDouble()));  // ugh, boxed
-                        w++;
-                        }
-                    width = w;
-                    double[] row = new double[width];
-                    for(int i = 0; i < width; i++)
-                        row[i] = ((Double)(firstRow.get(i))).doubleValue();
-                    rows.add(row);
-                    }
-                else
-                    {
-                    double[] row = new double[width];
-                    Scanner rowScan = new Scanner(new StringReader(srow));
-                    while(rowScan.hasNextDouble())
-                        {
-                        if (w == width)  // uh oh
-                            throw new IOException("Row lengths do not match in text file");
-                        row[w] = rowScan.nextDouble();
-                        w++;
-                        }
-                    if (w < width)  // uh oh
-                        throw new IOException("Row lengths do not match in text file");
-                    rows.add(row);
-                    }
-                }
-            }
+        try
+        	{
+			while(scan.hasNextLine())
+				{
+				String srow = scan.nextLine().trim();
+				if (srow.length() > 0)
+					{
+					int w = 0;
+					if (width == -1)  // first time compute width
+						{
+						ArrayList firstRow = new ArrayList();
+						Scanner rowScan = new Scanner(new StringReader(srow));
+						try 
+							{
+							while(rowScan.hasNextDouble())
+								{
+								firstRow.add(new Double(rowScan.nextDouble()));  // ugh, boxed
+								w++;
+								}
+							}
+						finally { rowScan.close(); }
+						width = w;
+						double[] row = new double[width];
+						for(int i = 0; i < width; i++)
+							row[i] = ((Double)(firstRow.get(i))).doubleValue();
+						rows.add(row);
+						}
+					else
+						{
+						double[] row = new double[width];
+						Scanner rowScan = new Scanner(new StringReader(srow));
+						try
+							{
+							while(rowScan.hasNextDouble())
+								{
+								if (w == width)  // uh oh
+									throw new IOException("Row lengths do not match in text file");
+								row[w] = rowScan.nextDouble();
+								w++;
+								}
+							}
+						finally { rowScan.close(); }
+						if (w < width)  // uh oh
+							throw new IOException("Row lengths do not match in text file");
+						rows.add(row);
+						}
+					}
+				}
+			}
+		finally { scan.close(); }
             
         if (width == -1)  // got nothing
             return new double[0][0];

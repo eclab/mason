@@ -2903,4 +2903,5 @@ Version 20
 		BarChartChartingPropertyInspector now can use Datum to indicate
 		the total amount of an element in the series rather than
 		solely relying on counts of arbitrary Objects.
-
+	Scanners in TableLoader now are properly closed when done.  Thanks
+		to Joey Harrison <joey.f.harrison@gmail.com>
