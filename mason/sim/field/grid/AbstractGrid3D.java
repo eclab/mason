@@ -30,11 +30,11 @@ public abstract class AbstractGrid3D implements Grid3D
     private static final long serialVersionUID = 1;
 
     // this should never change except via setTo
-    protected int width;
+    public int width;
     // this should never change except via setTo
-    protected int height;
+    public int height;
     // this should never change except via setTo
-    protected int length;
+    public int length;
 
     public final int getWidth() { return width; }
     
@@ -63,7 +63,7 @@ public abstract class AbstractGrid3D implements Grid3D
     // slight revision for more efficiency
     public final int tx(int x) 
         { 
-        final int width = this.width;
+        final int width = this.getWidth();
         if (x >= 0 && x < width) return x;  // do clearest case first
         x = x % width;
         if (x < 0) x = x + width;
@@ -84,7 +84,7 @@ public abstract class AbstractGrid3D implements Grid3D
     // slight revision for more efficiency
     public final int ty(int y) 
         { 
-        final int height = this.height;
+        final int height = this.getHeight();
         if (y >= 0 && y < height) return y;  // do clearest case first
         y = y % height;
         if (y < 0) y = y + height;
@@ -105,21 +105,30 @@ public abstract class AbstractGrid3D implements Grid3D
     // slight revision for more efficiency
     public final int tz(int z) 
         { 
-        final int length = this.length;
+        final int length = this.getLength();
         if (z >= 0 && z < length) return z;  // do clearest case first
         z = z % length;
-        if (z < 0) z = z + height;
+        if (z < 0) z = z + height; // Ermo : is this a bug, should it be z = z + length;?
         return z;
         }
 
     public final int stx(final int x) 
-        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
+        {
+    	int width = getWidth();
+    	if (x >= 0) { if (x < width) return x; return x - width; } return x + width;
+    	}
     
-    public final int sty(final int y) 
-        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
+    public final int sty(final int y)
+        {
+    	int height = getHeight();
+    	if (y >= 0) { if (y < height) return y ; return y - height; } return y + height;
+    	}
 
     public final int stz(final int z) 
-        { if (z >= 0) { if (z < length) return z ; return z - length; } return z + length; }
+        {
+    	int length = getLength();
+    	if (z >= 0) { if (z < length) return z ; return z - length; } return z + length;
+    	}
 
     // faster version
     final int stx(final int x, final int width) 
@@ -215,6 +224,9 @@ public abstract class AbstractGrid3D implements Grid3D
     protected void removeOriginToroidal(int x, int y, int z, IntBag xPos, IntBag yPos, IntBag zPos)
         {
         int size = xPos.size();
+        width = getWidth();
+        height = getHeight();
+        length = getLength();
         x = tx(x, width, width*2, x+width, x-width);
         y = ty(y, height, height*2, y+height, y-height);
         z = tz(z, length, length*2, z+length, z-length);
@@ -267,9 +279,9 @@ public abstract class AbstractGrid3D implements Grid3D
         zPos.clear();
 
         // local variables are faster
-        final int height = this.height;
-        final int width = this.width;
-        final int length = this.length;
+        final int height = getHeight();
+        final int width = getWidth();
+        final int length = getLength();
 
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )
@@ -381,9 +393,9 @@ public abstract class AbstractGrid3D implements Grid3D
         zPos.clear();
 
         // local variables are faster
-        final int height = this.height;
-        final int width = this.width;
-        final int length = this.length;
+        final int height = getHeight();
+        final int width = getWidth();
+        final int length = getLength();
 
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )
@@ -507,9 +519,9 @@ public abstract class AbstractGrid3D implements Grid3D
         double distsq = dist * dist;
         
 
-        int width = this.width;
-        int height = this.height;
-        int length = this.length;
+        int width = getWidth();
+        int height = getHeight();
+        int length = getLength();
         int widthtimestwo = width * 2;
         int heighttimestwo = height * 2;
         int lengthtimestwo = length * 2;
@@ -638,6 +650,8 @@ public abstract class AbstractGrid3D implements Grid3D
         if (getHeight() != other.getHeight() || getWidth() != other.getWidth() || getLength() != other.getLength())
             throw new IllegalArgumentException("Grids must be the same dimensions.");
         }
+    
+    protected boolean isDistributed() { return false; }
     
 
     }

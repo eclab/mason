@@ -6,6 +6,8 @@
 
 package sim.field.grid;
 
+import java.awt.geom.RectangularShape;
+
 import sim.util.*;
 
 /**
@@ -27,10 +29,7 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     
     public DoubleGrid3D (int width, int height, int length)
         {
-        this.width = width;
-        this.height = height;
-        this.length = length;
-        field = new double[width][height][length];
+        reshape(width, height, length);
         }
     
     public DoubleGrid3D (int width, int height, int length, double initialValue)
@@ -49,6 +48,14 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         {
         setTo(values);
         }
+    
+    protected void reshape(int width, int height, int length)
+    	{
+    	this.width = width;
+        this.height = height;
+        this.length = length;
+        field = new double[width][height][length];
+    	}
         
     /** Sets location (x,y,z) to val */
     public final double set(final int x, final int y, final int z, final double val)
@@ -67,28 +74,42 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
 
     /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
         Returns the grid. */
+    
     public final double[] toArray()
         {
-        double[][][] field = this.field;
-        double[][] fieldx = null;
-        double[] fieldxy = null;
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;
-        double[] vals = new double[width * height * length];
-        int i = 0;
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y = 0; y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    {
-                    vals[i++] = fieldxy[z];
-                    }
-                }
-            }
+    	double[] vals = new double[getWidth() * getHeight() * getLength()];
+    	int i = 0;
+    	if (isDistributed())
+    		{
+    		int w = getWidth();
+    		int h = getHeight();
+    		int l = getLength();
+    		for(int x = 0;x < w;++x)
+    			for(int y = 0;y < h;++y)
+    				for(int z = 0;z < l;++z)
+    					vals[i++] = get(x, y, z);
+    		}
+    	else
+    		{
+    		double[][][] field = this.field;
+    		double[][] fieldx = null;
+    		double[] fieldxy = null;
+    		final int width = getWidth();
+    		final int height = getHeight();
+    		final int length = getLength();
+    		for(int x=0;x<width;x++)
+            	{
+    			fieldx = field[x];
+    			for(int y = 0; y<height;y++)
+                	{
+    				fieldxy = fieldx[y];
+    				for(int z=0;z<length;z++)
+                    	{
+    					vals[i++] = fieldxy[z];
+                    	}
+                	}
+            	}
+    		}
         return vals;
         }
         
@@ -96,117 +117,200 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final double max()
         {
         double max = Double.NEGATIVE_INFINITY;
-        double[][] fieldx = null;
-        double[] fieldxy = null;
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy= fieldx[y];
-                for(int z=0;z<length;z++)
-                    if (max < fieldxy[z]) max = fieldxy[z];
-                }
-            }
-        return max;
+        if (isDistributed())
+    		{
+    		int w = getWidth();
+    		int h = getHeight();
+    		int l = getLength();
+    		for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                	for(int z = 0; z < l; z++)
+                		{                        
+                		double g = get(x,y,z);
+                		if (max < g)
+                			max = g;
+                		}
+    		}
+        else
+    		{
+	    	double[][] fieldx = null;
+	    	double[] fieldxy = null;
+	    	final int width = getWidth();
+	    	final int height = getHeight();
+	    	final int length = getLength();         
+	    
+	    	for(int x=0;x<width;x++)
+	        	{
+	    		fieldx = field[x];
+	    		for(int y=0;y<height;y++)
+	            	{
+	    			fieldxy = fieldx[y];
+	    			for(int z=0;z<length;z++)
+	    				if (max < fieldxy[z]) max = fieldxy[z];
+	            	}
+	        	}
+	    	}
+	    return max;
         }
 
     /** Returns the minimum value stored in the grid */
     public final double min()
         {
         double min = Double.POSITIVE_INFINITY;
-        double[][] fieldx = null;
-        double[] fieldxy = null;
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    if (min > fieldxy[z]) min = fieldxy[z];
-                }
-            }
-        return min;
+        if (isDistributed())
+    		{
+	    	int w = getWidth();
+			int h = getHeight();
+			int l = getLength();
+			for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	            		{                        
+	            		double g = get(x,y,z);
+	            		if (min > g)
+	            			min = g;
+	            		}
+    		}
+        else 
+	    	{
+	    	double[][] fieldx = null;
+	    	double[] fieldxy = null;
+	    	final int width = getWidth();
+	    	final int height = getHeight();
+	    	final int length = getLength();         
+	    	for(int x=0;x<width;x++)
+	        	{
+	    		fieldx = field[x];
+	    		for(int y=0;y<height;y++)
+	            	{
+	    			fieldxy = fieldx[y];
+	    			for(int z=0;z<length;z++)
+	    				if (min > fieldxy[z]) min = fieldxy[z];
+	            	}
+	        	}
+	    	}
+	    return min;
         }
         
     /** Returns the mean value stored in the grid */
     public final double mean()
         {
-        long count = 0;
+    	long count = 0;
         double mean = 0;
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    { mean += fieldxy[z]; count++; }
-                }
-            }
+        if (isDistributed())
+        	{
+        	int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                	for(int z = 0; z < l; z++)
+                		{                 
+                		mean += get(x,y,z);
+                		count++;
+                		}
+        	}
+        else
+        	{
+        	double[][]fieldx = null;
+        	double[] fieldxy = null;
+        	final int width = getWidth();
+        	final int height = getHeight();
+        	final int length = getLength();         
+        	for(int x=0;x<width;x++)
+            	{
+        		fieldx = field[x];
+        		for(int y=0;y<height;y++)
+                	{
+        			fieldxy = fieldx[y];
+        			for(int z=0;z<length;z++)
+                    	{ mean += fieldxy[z]; count++; }
+                	}
+            	}
+        	}
         return (count == 0 ? 0 : mean / count);
         }
         
     /** Sets all the locations in the grid the provided element */
     public final DoubleGrid3D setTo(double thisMuch)
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]=thisMuch;
-                }
-            }
-        return this;
+    	if (isDistributed())
+			{
+			int w = getWidth();
+			int h = getHeight();
+			int l = getLength();
+			reshape(w, h, l);
+			for(int x = 0; x < w; x++)
+				for(int y = 0; y < h; y++)
+					for(int z = 0; z < l; z++)
+						{
+						set(x, y, z, thisMuch);
+						}
+			}
+		else
+			{
+			double[][] fieldx = null;
+			double[] fieldxy = null;
+			final int width = this.width;
+			final int height = this.height;
+			final int length = this.length;
+			for(int x=0;x<width;x++)
+	        	{
+				fieldx = field[x];
+				for(int y=0;y<height;y++)
+	            	{
+					fieldxy = fieldx[y];
+					for(int z=0;z<length;z++)
+						fieldxy[z]=thisMuch;
+	            	}
+	        	}
+	    	}
+		return this;
         }
 
     /** Changes the dimensions of the grid to be the same as the one provided, then
-        sets all the locations in the grid to the elements at the quivalent locations in the
+        sets all the locations in the grid to the elements at the equivalent locations in the
         provided grid. */
     public final DoubleGrid3D setTo(DoubleGrid3D values)
         {
-        if (width != values.width || height != values.height || length != values.length )
-            {
-            final int width = this.width = values.width;
-            final int height = this.height = values.height;
-            /*final int length =*/ this.length = values.length;
-            field = new double[width][height][];
-            double[][] fieldx = null;
-            for(int x = 0 ; x < width; x++)
-                {
-                fieldx = field[x];
-                for( int y = 0 ; y < height ; y++ )
-                    fieldx[y] = (double []) (values.field[x][y].clone());
-                }
-            }
-        else
-            {
-            for(int x =0 ; x < width; x++)
-                for( int y = 0 ; y < height ; y++ )
-                    System.arraycopy(values.field[x][y],0,field[x][y],0,length);
-            }
+    	if (isDistributed())
+			{
+			reshape(values.getWidth(), values.getHeight(), values.getLength());
+			int w = getWidth();
+			int h = getHeight();
+			int l = getLength();
+			for(int x = 0; x < w; x++)
+				for(int y = 0; y < h; y++)
+					for(int z = 0; z < l; z++)
+						{
+						set(x, y, z, values.get(x, y, z));
+						}
+			}
+		else if (getWidth() != values.getWidth() || getHeight() != values.getHeight() || getLength() != values.getLength() )
+	        {
+	        reshape(values.getWidth(), values.getHeight(), values.getLength());
+	        int width = getWidth();
+	        int height = getHeight();
+	        for(int x = 0 ; x < width; x++)
+	            {
+	            for( int y = 0 ; y < height ; y++ )
+	                this.field[x][y] = (double []) (values.field[x][y].clone());
+	            }
+	        }
+	    else
+	        {
+	        int width = getWidth();
+	        int height = getHeight();
+	        int length = getLength();
+	        for(int x =0 ; x < width; x++)
+	            {
+	            for( int y = 0 ; y < height ; y++ )
+	                System.arraycopy(values.field[x][y],0,field[x][y],0,length);
+	            }
+	        }
+	
+	    return this;
 
-        return this;
         }
 
     /** Sets the grid to a copy of the provided array, which must be rectangular. */
@@ -239,15 +343,25 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
 
         // load
         
-        width = w;
-        height = h;
-        length = l;
-        this.field = new double[w][h][l];
-        for(int i = 0; i < w; i++)
-            for(int j=0; j< h; j++)
-                {
-                this.field[i][j] = (double[]) field[i][j].clone();
-                }
+        reshape(w, h, l);
+        if (isDistributed())
+        	{
+        	for(int x = 0; x < w; x++)
+    			for(int y = 0; y < h; y++)
+    				for(int z = 0; z < l; z++)
+    					{
+    					set(x, y, z, field[x][y][z]);
+    					}
+        	}
+        else
+        	{
+        	for(int i = 0; i < w; i++)
+                for(int j = 0; j < h; j++)
+                    {
+                    this.field[i][j] = (double[]) field[i][j].clone();
+                    }
+        	}
+        
         return this;
         }
 
@@ -258,24 +372,39 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D upperBound(double toNoMoreThanThisMuch)
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;     
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-           
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    if (fieldxy[z] > toNoMoreThanThisMuch)
-                        fieldxy[z] = toNoMoreThanThisMuch;
-                }
-            }
-        return this;
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                 
+	            		if (get(x,y,z) > toNoMoreThanThisMuch)
+	            			set(x,y,z,toNoMoreThanThisMuch);
+	                	}
+			}
+		else
+			{    		
+			double[][] fieldx = null;
+			double[] fieldxy = null;
+			final int width = getWidth();
+			final int height = getHeight();
+			final int length = getLength();         
+			for(int x=0;x<width;x++)
+	        	{
+				fieldx = field[x];
+				for(int y=0;y<height;y++)
+	            	{
+					fieldxy = fieldx[y];
+					for(int z=0;z<length;z++)
+						if (fieldxy[z] > toNoMoreThanThisMuch)
+							fieldxy[z] = toNoMoreThanThisMuch;
+	            	}
+	        	}
+			}
+    	return this;
         }
 
     /** Thresholds the grid so that values smaller than <i>toNoLowerThanThisMuch</i> are changed to <i>toNoLowerThanThisMuch</i>
@@ -283,23 +412,39 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D lowerBound(double toNoLowerThanThisMuch)
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    if (fieldxy[z] < toNoLowerThanThisMuch)
-                        fieldxy[z] = toNoLowerThanThisMuch;
-                }
-            }
-        return this;
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                 
+	            		if (get(x,y,z) < toNoLowerThanThisMuch)
+	            			set(x,y,z,toNoLowerThanThisMuch);
+	                	}
+			}
+		else
+			{
+			double[][] fieldx = null;
+			double[] fieldxy = null;
+			final int width = getWidth();
+			final int height = getHeight();
+			final int length = getLength();         
+			for(int x=0;x<width;x++)
+	        	{
+				fieldx = field[x];
+				for(int y=0;y<height;y++)
+	            	{
+					fieldxy = fieldx[y];
+					for(int z=0;z<length;z++)
+						if (fieldxy[z] < toNoLowerThanThisMuch)
+							fieldxy[z] = toNoLowerThanThisMuch;
+	            	}
+	        	}
+			}
+	    return this;
         }
 
     /** Sets each value in the grid to that value added to <i>withThisMuch</i>
@@ -308,23 +453,37 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D add(double withThisMuch)
         {
         if (withThisMuch==0.0) return this;
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]+=withThisMuch;
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                    
+	            		set(x, y, z, get(x, y, z) + withThisMuch);
+	                	}
+	    	}
+	    else
+	    	{
+	    	double[][] fieldx = null;
+	    	double[] fieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]+=withThisMuch;
+	                }
+	            }
+	    	}
+	    return this;
         }
         
     /** Sets the value at each location in the grid to that value added to the value at the equivalent location in the provided grid.
@@ -333,28 +492,43 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D add(IntGrid3D withThis)
         {
         checkBounds(withThis);
-        int[][][] otherField = withThis.field;
-        int[][] ofieldx = null;
-        int[] ofieldxy = null;        
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            ofieldx = otherField[x];
-            for(int y=0;y<height;y++)
-                {
-                ofieldxy = ofieldx[y];
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]+=ofieldxy[z];
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                  
+	            		set(x, y, z, get(x, y, z) + withThis.get(x, y, z));
+	                	}
+	    	}
+	    else
+	    	{
+	        double[][]fieldx = null;
+	        double[] fieldxy = null;
+	        int[][][] ofield = withThis.field;
+	        int[][]ofieldx = null;
+	        int[] ofieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();         
+	                                
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            ofieldx = ofield[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                ofieldxy = ofieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]+=ofieldxy[z];
+	                }
+	            }
+	    	}
+	    return this;
         }
 
     /** Sets the value at each location in the grid to that value added to the value at the equivalent location in the provided grid.
@@ -363,27 +537,43 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D add(DoubleGrid3D withThis)
         {
         checkBounds(withThis);
-        double[][][] otherField = withThis.field;
-        double[][] ofieldx = null;
-        double[] ofieldxy = null;        
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            ofieldx = otherField[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                ofieldxy = ofieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]+=ofieldxy[z];
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                  
+	            		set(x, y, z, get(x, y, z) + withThis.get(x, y, z));
+	                	}
+	    	}
+	    else
+	    	{
+	        double[][]fieldx = null;
+	        double[] fieldxy = null;
+	        double[][][] ofield = withThis.field;
+	        double[][]ofieldx = null;
+	        double[] ofieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();         
+	                                
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            ofieldx = ofield[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                ofieldxy = ofieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]+=ofieldxy[z];
+	                }
+	            }
+	    	}
+	    return this;
         }
 
     /** Sets each value in the grid to that value multiplied <i>byThisMuch</i>
@@ -392,23 +582,37 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D multiply(double byThisMuch)
         {
         if (byThisMuch==1.0) return this;
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]*=byThisMuch;
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                    
+	            		set(x, y, z, get(x, y, z) * byThisMuch);
+	                	}	
+	    	}
+	    else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]*=byThisMuch;
+	                }       
+	            }
+	    	}
+	    return this;
         }
     
     /** Sets the value at each location in the grid to that value multiplied by to the value at the equivalent location in the provided grid.
@@ -417,28 +621,42 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D multiply(IntGrid3D withThis)
         {
         checkBounds(withThis);
-        int[][][] otherField = withThis.field;
-        int[][] ofieldx = null;
-        int[] ofieldxy = null;        
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            ofieldx = otherField[x];
-            for(int y=0;y<height;y++)
-                {
-                ofieldxy = ofieldx[y];
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]*=ofieldxy[z];
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();                      	            
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                   
+	            		set(x, y, z, get(x, y, z) * withThis.get(x, y, z));
+	                	}
+	    	}
+	    else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;
+	        int[][][] ofield = withThis.field;
+	        int[][]ofieldx = null;
+	        int[] ofieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            ofieldx = ofield[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                ofieldxy = ofieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]*=ofieldxy[z];
+	                }
+	            }
+	    	}
+	    return this;
         }
 
     /** Sets the value at each location in the grid to that value multiplied by to the value at the equivalent location in the provided grid.
@@ -447,27 +665,42 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     public final DoubleGrid3D multiply(DoubleGrid3D withThis)
         {
         checkBounds(withThis);
-        double[][][] otherField = withThis.field;
-        double[][] ofieldx = null;
-        double[] ofieldxy = null;        
-        double[][] fieldx = null;
-        double[] fieldxy = null;        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            ofieldx = otherField[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                ofieldxy = ofieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z]*=ofieldxy[z];
-                }
-            }
-        return this;
+        if (isDistributed())
+	    	{
+	    	int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();                      	            
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{                   
+	            		set(x, y, z, get(x, y, z) * withThis.get(x, y, z));
+	                	}
+	    	}
+	    else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;
+	        double[][][] ofield = withThis.field;
+	        double[][]ofieldx = null;
+	        double[] ofieldxy = null;
+	        final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            ofieldx = ofield[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                ofieldxy = ofieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z]*=ofieldxy[z];
+	                }
+	            }
+	    	}
+	    return this;
         }
 
     /** Sets each value in the grid to floor(value).
@@ -475,21 +708,34 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D floor()
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {               
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z] = /*Strict*/Math.floor(fieldxy[z]);
-                }
-            }
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	            		set(x, y, z, Math.floor(get(x, y, z)));                	
+			}
+    	else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;                        
+	        final int width = this.width;
+	        final int height = this.height;
+	        final int length = this.length;         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {               
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z] = /*Strict*/Math.floor(fieldxy[z]);
+	                }
+	            }
+	    	}
         return this;
         }
 
@@ -498,21 +744,34 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D ceiling()
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z] = /*Strict*/Math.ceil(fieldxy[z]);
-                }
-            }
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	            		set(x, y, z, Math.ceil(get(x, y, z)));         
+			}
+    	else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;                        
+	        final int width = this.width;
+	        final int height = this.height;
+	        final int length = this.length;         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z] = /*Strict*/Math.ceil(fieldxy[z]);
+	                }
+	            }
+	    	}
         return this;
         }
     
@@ -521,25 +780,38 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D truncate()
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z] = (int) fieldxy[z];
-                //if (fieldxy[z] > 0.0) 
-                //    /*Strict*/Math.floor(fieldxy[z]);
-                //else
-                //    /*Strict*/Math.ceil(fieldxy[z]);
-                }
-            }
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	            		set(x, y, z, ((int) get(x, y, z)));                	
+			}
+    	else
+    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;                        
+	        final int width = this.width;
+	        final int height = this.height;
+	        final int length = this.length;         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z] = (int) fieldxy[z];
+	                //if (fieldxy[z] > 0.0) 
+	                //    /*Strict*/Math.floor(fieldxy[z]);
+	                //else
+	                //    /*Strict*/Math.ceil(fieldxy[z]);
+	                }
+	            }
+	    	}
         return this;
         }
 
@@ -550,22 +822,35 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
     */
     public final DoubleGrid3D  rint()
         {
-        double[][] fieldx = null;
-        double[] fieldxy = null;                        
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;         
-        for(int x=0;x<width;x++)
-            {
-            fieldx = field[x];
-            for(int y=0;y<height;y++)
-                {
-                
-                fieldxy = fieldx[y];
-                for(int z=0;z<length;z++)
-                    fieldxy[z] = /*Strict*/Math.rint(fieldxy[z]);
-                }
-            }
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	            		set(x, y, z, Math.rint(get(x, y, z)));
+			}
+    	else
+	    	{
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;                        
+	        final int width = this.width;
+	        final int height = this.height;
+	        final int length = this.length;         
+	        for(int x=0;x<width;x++)
+	            {
+	            fieldx = field[x];
+	            for(int y=0;y<height;y++)
+	                {
+	                
+	                fieldxy = fieldx[y];
+	                for(int z=0;z<length;z++)
+	                    fieldxy[z] = /*Strict*/Math.rint(fieldxy[z]);
+	                }
+	            }
+	    	}
         return this;
         }
     
@@ -578,24 +863,41 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
 
     public final void replaceAll(double from, double to)
         {
-        final int width = this.width;
-        final int height = this.height;
-        final int length = this.length;
-        double[][] fieldx = null;
-        double[] fieldxy = null;
-        for(int x = 0; x < width; x++)
-            {
-            fieldx = field[x];
-            for(int y = 0;  y < height; y++)
-                {
-                fieldxy = fieldx[y];
-                for(int z = 0; z < length; z++)
-                    {
-                    if (fieldxy[z] == from)
-                        fieldxy[z] = to;
-                    }
-                }
-            }
+    	if (isDistributed())
+			{
+			int w = getWidth();
+	        int h = getHeight();
+	        int l = getLength();
+	        for(int x = 0; x < w; x++)
+	            for(int y = 0; y < h; y++)
+	            	for(int z = 0; z < l; z++)
+	                	{
+	            		if (get(x, y, z) == from)
+	            			set(x, y, z, to);
+	                	}
+			}
+		else
+			{
+			final int width = getWidth();
+	        final int height = getHeight();
+	        final int length = getLength();
+	        double[][] fieldx = null;
+	        double[] fieldxy = null;
+	        for(int x = 0; x < width; x++)
+	            {
+	            fieldx = field[x];
+	            for(int y = 0;  y < height; y++)
+	                {
+	                fieldxy = fieldx[y];
+	                for(int z = 0; z < length; z++)
+	                    {
+	                    if (fieldxy[z] == from)
+	                        fieldxy[z] = to;
+	                    }
+	                }
+	            }
+			}
+
         }
     
     
@@ -785,7 +1087,8 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             {
             assert sim.util.LocationLog.it(this, new Int3D(xPos.objs[i],yPos.objs[i],zPos.objs[i]));
-            double val = field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] ;
+            // double val = field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]];
+            double val = get(xPos.objs[i], yPos.objs[i], zPos.objs[i]);
             result.add( val );
             }
         }
@@ -801,7 +1104,8 @@ public /*strictfp*/ class DoubleGrid3D extends AbstractGrid3D
         for( int i = 0 ; i < xPos.numObjs ; i++ )
             {
             assert sim.util.LocationLog.it(this, new Int3D(xPos.objs[i],yPos.objs[i],zPos.objs[i]));
-            double val = field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]] ;
+            // double val = field[xPos.objs[i]][yPos.objs[i]][zPos.objs[i]];
+            double val = get(xPos.objs[i], yPos.objs[i], zPos.objs[i]);
             result.add( val );
             }
         return result;
