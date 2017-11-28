@@ -33,9 +33,9 @@ public abstract class AbstractGrid2D implements Grid2D
     private static final long serialVersionUID = 1;
 
     // this should never change except via setTo
-    protected int width;
+    public int width;
     // this should never change except via setTo
-    protected int height;
+    public int height;
 
     public final int getWidth() { return width; }
     
@@ -51,7 +51,7 @@ public abstract class AbstractGrid2D implements Grid2D
     // slight revision for more efficiency
     public final int tx(int x) 
         { 
-        final int width = this.width;
+        final int width = this.getWidth();
         if (x >= 0 && x < width) return x;  // do clearest case first
         x = x % width;
         if (x < 0) x = x + width;
@@ -61,7 +61,7 @@ public abstract class AbstractGrid2D implements Grid2D
     // slight revision for more efficiency
     public final int ty(int y) 
         { 
-        final int height = this.height;
+        final int height = this.getHeight();
         if (y >= 0 && y < height) return y;  // do clearest case first
         y = y % height;
         if (y < 0) y = y + height;
@@ -69,11 +69,17 @@ public abstract class AbstractGrid2D implements Grid2D
         }
         
     public final int stx(final int x) 
-        { if (x >= 0) { if (x < width) return x; return x - width; } return x + width; }
+        { 
+        int width = getWidth();
+        if (x >= 0) { if (x < width) return x; return x - width; } return x + width; 
+        }
 
 
     public final int sty(final int y) 
-        { if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; }
+        { 
+        int height = getHeight();
+        if (y >= 0) { if (y < height) return y ; return y - height; } return y + height; 
+        }
         
     public final int ulx(final int x, final int y) { return x - 1; }
 
@@ -163,6 +169,8 @@ public abstract class AbstractGrid2D implements Grid2D
     protected void removeOriginToroidal(int x, int y, IntBag xPos, IntBag yPos)
         {
         int size = xPos.size();
+        int width = getWidth();
+        int height = getHeight();
         x = tx(x, width, width*2, x+width, x-width);
         y = ty(y, height, height*2, y+height, y-height);
         
@@ -204,15 +212,15 @@ public abstract class AbstractGrid2D implements Grid2D
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
 
-        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+        if( ( x < 0 || x >= getWidth() || y < 0 || y >= getHeight() ) && !bounded)
             throw new RuntimeException( "Invalid initial position" );
 
         xPos.clear();
         yPos.clear();
 
         // local variables are faster
-        final int height = this.height;
-        final int width = this.width;
+        final int height = getWidth();
+        final int width = getHeight();
 
 
         // for toroidal environments the code will be different because of wrapping arround
@@ -295,15 +303,15 @@ public abstract class AbstractGrid2D implements Grid2D
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
 
-        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+        if( ( x < 0 || x >= getWidth() || y < 0 || y >= getHeight() ) && !bounded)
             throw new RuntimeException( "Invalid initial position" );
 
         xPos.clear();
         yPos.clear();
 
         // local variables are faster
-        final int height = this.height;
-        final int width = this.width;
+        final int height = getWidth();
+        final int width = getHeight();
         
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )
@@ -397,15 +405,15 @@ public abstract class AbstractGrid2D implements Grid2D
             throw new RuntimeException( "xPos and yPos should not be null" );
             }
 
-        if( ( x < 0 || x >= width || y < 0 || y >= height ) && !bounded)
+        if( ( x < 0 || x >= getWidth() || y < 0 || y >= getHeight() ) && !bounded)
             throw new RuntimeException( "Invalid initial position" );
 
         xPos.clear();
         yPos.clear();
 
         // local variables are faster
-        final int height = this.height;
-        final int width = this.width;
+        final int height = getHeight();
+        final int width = getWidth();
 
         if( toroidal && height%2==1 )
             throw new RuntimeException( "toroidal hexagonal environment should have even heights" );
@@ -638,8 +646,8 @@ public abstract class AbstractGrid2D implements Grid2D
         int len = xPos.size();
         double distsq = dist * dist;
         
-        int width = this.width;
-        int height = this.height;
+        int width = getWidth();
+        int height = getHeight();
         int widthtimestwo = width * 2;
         int heighttimestwo = height * 2;
         
@@ -696,8 +704,6 @@ public abstract class AbstractGrid2D implements Grid2D
         if (getHeight() != other.getHeight() || getWidth() != other.getWidth())
             throw new IllegalArgumentException("Grids must be the same dimensions.");
         }
-
-    protected boolean isDistributed() { return false; }
     
 
 
@@ -966,5 +972,7 @@ return true;
 
 
 */
+
+    protected boolean isDistributed() { return false; }
 
     }

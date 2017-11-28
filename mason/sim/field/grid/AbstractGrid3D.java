@@ -108,7 +108,7 @@ public abstract class AbstractGrid3D implements Grid3D
         final int length = this.getLength();
         if (z >= 0 && z < length) return z;  // do clearest case first
         z = z % length;
-        if (z < 0) z = z + height; // Ermo : is this a bug, should it be z = z + length;?
+        if (z < 0) z = z + length; 
         return z;
         }
 
