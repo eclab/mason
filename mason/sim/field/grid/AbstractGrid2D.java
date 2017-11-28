@@ -685,7 +685,7 @@ public abstract class AbstractGrid2D implements Grid2D
                 int _x = xPos.get(i);
                 int _y = yPos.get(i);
                 xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
-                //David: this MAY be a bug depending on how radial positions are supposed to work.
+                //David: this MAY be a bug depending on how radial positions are supposed to work...
                 //Shouldn't this be the function ty() instead of function tx()?
                 yPos.set(i, tx(_y, height, heighttimestwo, _y + width, _y - width));
                 }
