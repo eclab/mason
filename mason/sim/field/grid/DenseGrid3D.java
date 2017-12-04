@@ -72,6 +72,11 @@ public class DenseGrid3D extends AbstractGrid3D
         {
         return field[x][y][z];
         }
+    
+    public void setObjectsAtLocation(final int x, final int y, final int z, final Bag bag)
+    	{
+    	field[x][y][z] = bag;
+    	}
                 
     /** Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
@@ -86,8 +91,17 @@ public class DenseGrid3D extends AbstractGrid3D
         The location is set to null (the bag is removed) regardless of the setting of removeEmptyBags.  */
     public Bag removeObjectsAtLocation(final int x, final int y, final int z)
         {
-        Bag b = field[x][y][z];
-        field[x][y][z] = null;
+    	Bag b = null;
+    	if (isDistributed())
+    		{
+    		b = getObjectsAtLocation(x, y, z);
+    		setObjectsAtLocation(x, y, z, null);
+    		}
+    	else
+    		{
+    		b = field[x][y][z];
+    		field[x][y][z] = null;
+    		}
         return b;
         }
     
@@ -98,7 +112,11 @@ public class DenseGrid3D extends AbstractGrid3D
 
     public boolean removeObjectAtLocation(final Object obj, final int x, final int y, final int z)
         {
-        Bag b = field[x][y][z];
+    	Bag b = null;
+    	if (isDistributed())
+    		b = getObjectsAtLocation(x, y, z);
+    	else
+    		b = field[x][y][z];
         if (b==null) return false;
         boolean result = b.remove(obj);
         int objsNumObjs = b.numObjs;
@@ -112,7 +130,11 @@ public class DenseGrid3D extends AbstractGrid3D
     
     public boolean removeObjectMultiplyAtLocation(final Object obj, final int x, final int y, final int z)
         {
-        Bag b = field[x][y][z];
+    	Bag b = null;
+    	if (isDistributed())
+    		b = getObjectsAtLocation(x, y, z);
+    	else
+    		b = field[x][y][z];
         if (b==null) return false;
         boolean result = b.removeMultiply(obj);
         int objsNumObjs = b.numObjs;
@@ -149,7 +171,11 @@ public class DenseGrid3D extends AbstractGrid3D
         
     public int numObjectsAtLocation(final int x, final int y, final int z)
         {
-        Bag b = field[x][y][z];
+    	Bag b = null;
+    	if (isDistributed())
+    		b = getObjectsAtLocation(x, y, z);
+    	else
+			b = field[x][y][z];
         if (b == null) return 0;
         return b.numObjs;
         }
