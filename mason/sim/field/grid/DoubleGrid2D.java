@@ -57,13 +57,13 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         }
         
     /** Sets location (x,y) to val */
-    public final void set(final int x, final int y, final double val)
+    public void set(final int x, final int y, final double val)
         {
         field[x][y] = val;
         }
     
     /** Returns the element at location (x,y) */
-    public final double get(final int x, final int y)
+    public double get(final int x, final int y)
         {
         return field[x][y];
         }
