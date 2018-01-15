@@ -1,49 +1,36 @@
 package sim.field.grid;
-import sim.util.*;
-import mpi.*;
+
 import java.util.ArrayList;
 import java.nio.DoubleBuffer;
+
+import sim.util.*;
+import sim.field.DUniformPartition;
+
+import mpi.*;
 import static mpi.MPI.slice;
 
 public class DDoubleGrid2D extends DoubleGrid2D {
 
 	public double[] field;
-	public int width, height, np, pw, ph, psize, aoi, pid;
-	public int dims[], coords[];
-	CartParms topoParams;
-	public CartComm comm;
+	public int width, height, pw, ph, psize, aoi;
+	public DUniformPartition partition;
 
+	CartComm comm;
 	Datatype wtype, htype, ctype, ptype, p2type;
 
-	public DDoubleGrid2D(int width, int height, int aoi, double initialValue) {
+	public DDoubleGrid2D(int width, int height, int aoi, double initialValue, DUniformPartition partition) {
 		super(width, height);
 
 		this.width = width;
 		this.height = height;
 		this.aoi = aoi;
-
-		// Init MPI Cartesian Topology (4 neighbors)
-		dims = new int[] {0, 0};
-		coords = new int[2];
-		boolean periods[] = {true, true};
-
-		try {
-			pid = MPI.COMM_WORLD.getRank();
-			np = MPI.COMM_WORLD.getSize();
-			CartComm.createDims(np, dims);
-			comm = ((Intracomm)MPI.COMM_WORLD).createCart(dims, periods, false);
-			topoParams = comm.getTopo();
-		} catch (MPIException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		coords[0] = topoParams.getCoord(0);
-		coords[1] = topoParams.getCoord(1);
+		this.partition = partition;
+		comm = partition.comm;
 
 		// Init local storage
 		// Assume divide evenly
-		pw = width / dims[0];
-		ph = height / dims[1];
+		pw = width / partition.dims[0];
+		ph = height / partition.dims[1];
 		psize = (pw + 2 * aoi) * (ph + 2 * aoi);
 		field = new double[psize];
 		for (int i = 0; i < psize; i++)
@@ -62,32 +49,9 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 		}
 	}
 
-	public int toPartitionId(final int x, final int y) throws MPIException {
-		int px = x / pw, py = y / ph;
-		return comm.getRank(new int[] {px, py});
-	}
-
-	public int[] getNeighborIds() throws MPIException {
-		int[] ret = new int[4];
-		ret[0] = comm.getRank(new int[] {(coords[0] - 1) % dims[0], coords[1]});
-		ret[1] = comm.getRank(new int[] {(coords[0] + 1) % dims[0], coords[1]});
-		ret[2] = comm.getRank(new int[] {coords[0], (coords[1] - 1) % dims[1]});
-		ret[3] = comm.getRank(new int[] {coords[0], (coords[1] + 1) % dims[1]});
-		return ret;
-	}
-
-	public int[] getCornerIds() throws MPIException {
-		int[] ret = new int[4];
-		ret[0] = comm.getRank(new int[] {(coords[0] - 1) % dims[0], (coords[1] - 1) % dims[1]});
-		ret[1] = comm.getRank(new int[] {(coords[0] + 1) % dims[0], (coords[1] + 1) % dims[1]});
-		ret[2] = comm.getRank(new int[] {(coords[0] - 1) % dims[0], (coords[1] + 1) % dims[1]});
-		ret[3] = comm.getRank(new int[] {(coords[0] + 1) % dims[0], (coords[1] - 1) % dims[1]});
-		return ret;
-	}
-
 	public final double get(final int x, final int y) {
-		int lx = x - coords[0] * pw + aoi;
-		int ly = y - coords[1] * ph + aoi;
+		int lx = x - partition.coords[0] * pw + aoi;
+		int ly = y - partition.coords[1] * ph + aoi;
 
 		// In global
 		assert (x >= 0 && x < width && y >= 0 && y < height);
@@ -109,8 +73,8 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 	}
 
 	public final void set(final int x, final int y, final double val) {
-		int lx = x - coords[0] * pw + aoi;
-		int ly = y - coords[1] * ph + aoi;
+		int lx = x - partition.coords[0] * pw + aoi;
+		int ly = y - partition.coords[1] * ph + aoi;
 
 		// In global
 		assert (x >= 0 && x < width && y >= 0 && y < height);
@@ -159,19 +123,19 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 		comm.unpack(recvbuf, pos[2], slice(field, idx(0, ph + aoi)), 1, ctype);
 	}
 
-	public double[] collect() throws MPIException {
+	public double[] collect(int dst) throws MPIException {
 		double [] ret = null;
 		byte[] buf = null;
 
-		if (pid == 0) {
+		if (partition.pid == dst) {
 			ret = new double[width * height];
 			buf = new byte[width * height * 8];
 		}
 
-		MPI.COMM_WORLD.gather(slice(field, idx(aoi, aoi)), 1, ptype, buf, pw * ph * 8, MPI.BYTE, 0);
+		MPI.COMM_WORLD.gather(slice(field, idx(aoi, aoi)), 1, ptype, buf, pw * ph * 8, MPI.BYTE, dst);
 
-		if (pid == 0) {
-			for (int i = 0; i < np; i++) {
+		if (partition.pid == dst) {
+			for (int i = 0; i < partition.np; i++) {
 				int[] coords = comm.getCoords(i);
 				MPI.COMM_WORLD.unpack(buf, pw * ph * 8 * i, slice(ret, coords[0] * pw * height + coords[1] * ph), 1, p2type);
 			}
@@ -195,27 +159,30 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 	public static void main(String[] args) throws MPIException {
 		MPI.Init(args);
 
-		DDoubleGrid2D f = new DDoubleGrid2D(8, 8, 1, 0);
+		DUniformPartition p = new DUniformPartition(new int[] {8, 8});
+		DDoubleGrid2D f = new DDoubleGrid2D(8, 8, 1, 0, p);
 
-		if (f.pid == 0)
-			for (int i = 0; i < f.np; i++)
+		if (p.pid == 0) {
+			for (int i = 0; i < f.partition.np; i++)
 				System.out.printf("PID %d (%d, %d)\n", i, f.comm.getCoords(i)[0], f.comm.getCoords(i)[1]);
+			System.out.println();
+		}
 
-		f.field[f.idx(1, 1)] = f.pid + 1;
-		f.field[f.idx(1, 4)] = f.pid + 1;
-		f.field[f.idx(4, 1)] = f.pid + 1;
-		f.field[f.idx(4, 4)] = f.pid + 1;
+		f.field[f.idx(1, 1)] = p.pid + 1;
+		f.field[f.idx(1, 4)] = p.pid + 1;
+		f.field[f.idx(4, 1)] = p.pid + 1;
+		f.field[f.idx(4, 4)] = p.pid + 1;
 
 		f.sync();
 
-		if (f.pid == 0)
+		if (p.pid == 0) {
 			print2dArray(f.field, 6, 6);
+			System.out.println();
+		}
 
-		System.out.println();
+		double[] ret = f.collect(0);
 
-		double[] ret = f.collect();
-
-		if (f.pid == 0)
+		if (p.pid == 0)
 			print2dArray(ret, 8, 8);
 
 		MPI.Finalize();

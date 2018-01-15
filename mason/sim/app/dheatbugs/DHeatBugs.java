@@ -9,6 +9,8 @@ import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;
 
+import sim.field.DUniformPartition;
+
 import mpi.*;
 import java.nio.*;
 
@@ -91,8 +93,8 @@ public class DHeatBugs extends SimState {
 
         createGrids();
 
-        p_w = valgrid.dims[0];
-        p_h = valgrid.dims[1];
+        p_w = valgrid.partition.dims[0];
+        p_h = valgrid.partition.dims[1];
         procCount = p_w * p_h;
         cell_width = gridWidth / p_w;
         cell_height = gridHeight / p_h;
@@ -108,8 +110,9 @@ public class DHeatBugs extends SimState {
 
     protected void createGrids() {
         bugs = new DHeatBug[bugCount];
-        valgrid = new DDoubleGrid2D(gridWidth, gridHeight, aoi, 0);
-        valgrid2 = new DDoubleGrid2D(gridWidth, gridHeight, aoi, 0);
+        DUniformPartition partition = new DUniformPartition(new int[]{gridWidth, gridHeight});
+        valgrid = new DDoubleGrid2D(gridWidth, gridHeight, aoi, 0, partition);
+        valgrid2 = new DDoubleGrid2D(gridWidth, gridHeight, aoi, 0, partition);
     }
 
     /** Resets and starts a simulation */

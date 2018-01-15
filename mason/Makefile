@@ -7,7 +7,7 @@
 
 JAVAC = javac ${FLAGS}
 
-FLAGS = -target 1.5 -source 1.5 -g -nowarn -cp ".:library/bsh-2.0b4.jar:library/itext-1.2.jar:library/jcommon-1.0.21.jar:library/jfreechart-1.0.17.jar:library/jmf.jar:library/portfolio.jar:library/mpi.jar"
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ".:library/bsh-2.0b4.jar:library/itext-1.2.jar:library/jcommon-1.0.21.jar:library/jfreechart-1.0.17.jar:library/jmf.jar:library/portfolio.jar:library/mpi.jar"
 
 VERSION = 19
 
