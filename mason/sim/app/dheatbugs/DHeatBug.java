@@ -29,7 +29,7 @@ public class DHeatBug implements Steppable {
     public Object domRandomMovementProbability() { return new Interval(0.0, 1.0); }
 
     public int loc_x, loc_y;
-    public boolean isInit = true;
+    public boolean isFirstStep = true;
 
     public DHeatBug( double idealTemp, double heatOutput, double randomMovementProbability, int loc_x, int loc_y) {
         this.heatOutput = heatOutput;
@@ -52,10 +52,11 @@ public class DHeatBug implements Steppable {
         int myx = loc_x;
         int myy = loc_y;
 
-        if (!this.isInit) {
+        // Skip addHeat for the first step 
+        if (!this.isFirstStep) {
             addHeat(hb.valgrid, loc_x, loc_y, heatOutput);
         } else {
-            this.isInit = false;
+            this.isFirstStep = false;
         }
 
         final int START = -1;
@@ -95,25 +96,19 @@ public class DHeatBug implements Steppable {
         bestx = bestx < 0 ? hb.valgrid.width + bestx : bestx % hb.valgrid.width;
         besty = besty < 0 ? hb.valgrid.height + besty : besty % hb.valgrid.height;
 
-        move(hb, bestx, besty);
-    }
-
-    public void move(DHeatBugs hb, int x, int y) {
-        final int destRank = x / hb.cell_height * hb.p_h + y / hb.cell_width;
-
-        IntBuffer ob = MPI.newIntBuffer(1).put(5);
-        IntBuffer nb = MPI.newIntBuffer(1);
-        DoubleBuffer mb = MPI.newDoubleBuffer(5).put(new double[] {this.idealTemp, this.heatOutput, this.randomMovementProbability, (double)x, (double)y});
+        // Update location
+        loc_x = bestx;
+        loc_y = besty;
 
         try {
-            hb.schedAtomicWin.lock(MPI.LOCK_SHARED, destRank, 0);
-            hb.schedAtomicWin.fetchAndOp(ob, nb, MPI.INT, destRank, 0, MPI.SUM);
-            hb.schedAtomicWin.unlock(destRank);
-
-            hb.schedWin.put(mb, 5, MPI.DOUBLE, destRank, nb.get(0), 5, MPI.DOUBLE);
-        } catch (MPIException e) {
+            hb.queue.setPos(this, bestx, besty);
+        } catch (Exception e) {
             e.printStackTrace(System.out);
             System.exit(-1);
         }
+    }
+
+    public String toString() {
+        return String.format("[%d, %d]", loc_x, loc_y);
     }
 }

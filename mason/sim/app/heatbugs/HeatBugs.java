@@ -105,7 +105,7 @@ public /*strictfp*/ class HeatBugs extends SimState
     /** Creates a HeatBugs simulation with the given random number seed. */
     public HeatBugs(long seed)
         {
-        this(seed, 100, 100, 100);
+        this(seed, 1000, 1000, 1000);
         }
         
     public HeatBugs(long seed, int width, int height, int count)

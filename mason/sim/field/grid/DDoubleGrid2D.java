@@ -50,11 +50,13 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 	}
 
 	public final double get(final int x, final int y) {
-		int lx = x - partition.coords[0] * pw + aoi;
-		int ly = y - partition.coords[1] * ph + aoi;
+		int tx = stx(x), ty = sty(y);
+		int lx = tx - partition.coords[0] * pw + aoi;
+		int ly = ty - partition.coords[1] * ph + aoi;
 
 		// In global
-		assert (x >= 0 && x < width && y >= 0 && y < height);
+		if (!(tx >= 0 && tx < width && ty >= 0 && ty < height))
+			throw new IllegalArgumentException(String.format("PID %d get [%d, %d] is out of global boundary", partition.pid, tx, ty));
 
 		// handle toridal
 		if (lx < 0)
@@ -67,20 +69,24 @@ public class DDoubleGrid2D extends DoubleGrid2D {
 			ly -= height;
 
 		// In this partition and its surrounding ghost cells
-		assert (lx >= 0 && lx < pw + 2 * aoi && ly >= 0 && ly < ph + 2 * aoi);
+		if (!(lx >= 0 && lx < pw + 2 * aoi && ly >= 0 && ly < ph + 2 * aoi))
+			throw new IllegalArgumentException(String.format("PID %d get [%d, %d] -> [%d, %d] is out of local boundary", partition.pid, tx, ty, lx, ly));
 
 		return field[lx * (ph + 2 * aoi) + ly];
 	}
 
 	public final void set(final int x, final int y, final double val) {
+		int tx = stx(x), ty = sty(y);
 		int lx = x - partition.coords[0] * pw + aoi;
 		int ly = y - partition.coords[1] * ph + aoi;
 
 		// In global
-		assert (x >= 0 && x < width && y >= 0 && y < height);
+		if (!(tx >= 0 && tx < width && ty >= 0 && ty < height))
+			throw new IllegalArgumentException(String.format("PID %d set [%d, %d] is out of global boundary", partition.pid, tx, ty));
 
 		// In this partition but not in ghost cells
-		assert (lx >= aoi && lx < pw + aoi && ly >= aoi && ly < ph + aoi);
+		if (!(lx >= aoi && lx < pw + aoi && ly >= aoi && ly < ph + aoi))
+			throw new IllegalArgumentException(String.format("PID %d set [%d, %d] -> [%d, %d] is out of global boundary", partition.pid, tx, ty, lx, ly));
 
 		field[lx * (ph + 2 * aoi) + ly] = val;
 	}

@@ -93,6 +93,10 @@ public class DistributedAgentQueue implements Iterable<Steppable> {
         return agents.iterator();
     }
 
+    public int size() {
+    	return agents.size();
+    }
+
 	public void add(final Steppable a, int x, int y) throws MPIException, IOException {
 		int dst = partition.toPartitionId(new int[]{x, y});
 		AgentWithPosition agent = new AgentWithPosition(a, x, y);
