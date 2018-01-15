@@ -12,7 +12,6 @@ import mpi.*;
 
 public class DistributedAgentQueueTest extends SimState {
 
-	ArrayList<Integer> agentids;
 	DistributedAgentQueue queue;
 	DUniformPartition partition;
 
@@ -20,8 +19,10 @@ public class DistributedAgentQueueTest extends SimState {
 		public void step( final SimState state ) {
 			DistributedAgentQueueTest sim = (DistributedAgentQueueTest)state;
 			String s = String.format("PID %d Step %d Agent list: ", sim.partition.pid, sim.schedule.getSteps());
-			for (Integer i : sim.agentids)
-				s += i.toString() + " ";
+			for (Steppable i : sim.queue) {
+				DistributedAgentQueueTestAgent a = (DistributedAgentQueueTestAgent)i;
+				s += a.toString() + " ";
+			}
 			System.out.println(s);
 		}
 	}
@@ -39,16 +40,6 @@ public class DistributedAgentQueueTest extends SimState {
 		}
 	}
 
-	public void addId(Object a) {
-		DistributedAgentQueueTestAgent agent = (DistributedAgentQueueTestAgent)a;
-		agentids.add(Integer.valueOf(agent.id));
-	}
-
-	public void removeId(Object a) {
-		DistributedAgentQueueTestAgent agent = (DistributedAgentQueueTestAgent)a;
-		agentids.remove(Integer.valueOf(agent.id));
-	}
-
 	public DistributedAgentQueueTest(long seed) {
 		super(seed);
 	}
@@ -57,7 +48,6 @@ public class DistributedAgentQueueTest extends SimState {
 		super.start();
 
 		int width = 10, height = 10;
-		agentids = new ArrayList<Integer>();
 		partition = new DUniformPartition(new int[] {width, height});
 		try {
 			queue = new DistributedAgentQueue(partition, this);
@@ -71,12 +61,9 @@ public class DistributedAgentQueueTest extends SimState {
 
 		try {
 			if (partition.pid == 0) {
-				agentids.add(Integer.valueOf(1));
-				agentids.add(Integer.valueOf(2));
-				agentids.add(Integer.valueOf(3));
-				schedule.scheduleOnce(new DistributedAgentQueueTestAgent(1, 0, 0, 0, 1, width, height), 1);
-				schedule.scheduleOnce(new DistributedAgentQueueTestAgent(2, 0, 0, 1, 0, width, height), 1);
-				schedule.scheduleOnce(new DistributedAgentQueueTestAgent(3, 0, 0, 1, 1, width, height), 1);
+				queue.add(new DistributedAgentQueueTestAgent(1, 0, 0, 0, 1, width, height), 0, 0);
+				queue.add(new DistributedAgentQueueTestAgent(2, 0, 0, 1, 0, width, height), 0, 0);
+				queue.add(new DistributedAgentQueueTestAgent(3, 0, 0, 1, 1, width, height), 0, 0);
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.out);

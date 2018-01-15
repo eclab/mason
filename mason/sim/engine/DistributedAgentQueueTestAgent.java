@@ -14,11 +14,11 @@ public class DistributedAgentQueueTestAgent implements Steppable, Serializable {
 	public void step( final SimState state ) {
 		DistributedAgentQueueTest sim = (DistributedAgentQueueTest)state;
 
-		loc_x += step_x;
-		loc_y += step_y;
+		loc_x = (loc_x + step_x) % w;
+		loc_y = (loc_y + step_y) % h;
 
 		try {
-			sim.queue.setPos(this, loc_x % w, loc_y % h);
+			sim.queue.setPos(this, loc_x, loc_y);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -33,5 +33,9 @@ public class DistributedAgentQueueTestAgent implements Steppable, Serializable {
 		step_y = sy;
 		this.w = w;
 		this.h = h;
+	}
+
+	public String toString() {
+		return String.format("Agent %d [%d %d]", id, loc_x, loc_y);
 	}
 }

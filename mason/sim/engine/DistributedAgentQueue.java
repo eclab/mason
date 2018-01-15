@@ -9,21 +9,20 @@ import sim.field.DUniformPartition;
 
 import mpi.*;
 
-public class DistributedAgentQueue {
+public class DistributedAgentQueue implements Iterable<Steppable> {
 
 	int nc; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
 	CartComm comm;
 
-	HashMap<Integer, AgentOutputStream> agentOutput;
+	HashMap<Integer, AgentOutputStream> dstMap;
 	AgentOutputStream[] outputStreams;
 
 	DUniformPartition partition;
 	SimState state;
 
-	// for debug
-	DistributedAgentQueueTest sim;
+	HashSet<Steppable> agents;
 
 	private class AgentOutputStream {
 		ByteArrayOutputStream out;
@@ -60,6 +59,8 @@ public class DistributedAgentQueue {
 		this.state = state;
 		nc = partition.dims.length * 2; // number of direct neighbors = |dims| * 2;
 
+		agents = new HashSet<Steppable>();
+
 		src_count = new int[nc];
 		src_displ = new int[nc];
 		dst_count = new int[nc];
@@ -71,10 +72,10 @@ public class DistributedAgentQueue {
 			outputStreams[i] = new AgentOutputStream();
 
 		// direct neighbors
-		agentOutput = new HashMap<Integer, AgentOutputStream>();
+		dstMap = new HashMap<Integer, AgentOutputStream>();
 		int[] neighbors = partition.getNeighborIds();
 		for (int i = 0; i < nc; i++)
-			agentOutput.putIfAbsent(neighbors[i], outputStreams[i]);
+			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
 
 		// extended neighbors
 		// assuming the order of the result is like [-1, -1], [-1, 1], [1, -1], [1, 1]
@@ -82,17 +83,26 @@ public class DistributedAgentQueue {
 		// second half send to neighbors[1] - [1, 0]
 		int[] extended = partition.getExtendedNeighborIds(false);
 		for (int i = 0 ; i < extended.length / 2; i++) {
-			agentOutput.putIfAbsent(extended[i], agentOutput.get(neighbors[0]));
-			agentOutput.putIfAbsent(extended[i + extended.length / 2], agentOutput.get(neighbors[1]));
+			dstMap.putIfAbsent(extended[i], dstMap.get(neighbors[0]));
+			dstMap.putIfAbsent(extended[i + extended.length / 2], dstMap.get(neighbors[1]));
 		}
+	}
 
-		// For debug
-		sim = (DistributedAgentQueueTest)state;
+	@Override
+    public Iterator<Steppable> iterator() {
+        return agents.iterator();
+    }
+
+	public void add(final Steppable a, int x, int y) throws MPIException, IOException {
+		int dst = partition.toPartitionId(new int[]{x, y});
+		AgentWithPosition agent = new AgentWithPosition(a, x, y);
+
+		assert dst == partition.pid;
+		onRecv(agent);
 	}
 
 	public void setPos(final Steppable a, int x, int y) throws MPIException, IOException {
-		// For debug
-		sim.removeId(a);
+		agents.remove(a);
 
 		int dst = partition.toPartitionId(new int[]{x, y});
 		AgentWithPosition agent = new AgentWithPosition(a, x, y);
@@ -102,8 +112,8 @@ public class DistributedAgentQueue {
 			return;
 		}
 
-		assert agentOutput.containsKey(dst); // Remote
-		agentOutput.get(dst).write(agent);
+		assert dstMap.containsKey(dst); // Remote
+		dstMap.get(dst).write(agent);
 	}
 
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
@@ -162,18 +172,11 @@ public class DistributedAgentQueue {
 	}
 
 	private void onRecv(AgentWithPosition a) throws MPIException, IOException {
-		int dst = partition.toPartitionId(new int[]{a.x, a.y});
+		agents.add(a.obj);
 
-		// if still remote
-		if (dst != partition.pid) {
+		if (partition.pid != partition.toPartitionId(new int[]{a.x, a.y}))
 			setPos(a.obj, a.x, a.y);
-			return;
-		}
-
-		// local - Added to local schedule
-		state.schedule.scheduleOnce(a.obj, 1);
-
-		// For debug
-		sim.addId(a.obj);
+		else
+			state.schedule.scheduleOnce(a.obj, 1);
 	}
 }
