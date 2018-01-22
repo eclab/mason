@@ -22,15 +22,16 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 		super(discretization, width, height);
 		this.aoi = aoi;
 		this.p = p;
+		this.sched = sched;
 		this.f = new HaloFieldContinuous(p, aoi);
+
 		try {
 			this.m = new DObjectMigrator(p);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		this.sched = sched;
-
+		
 		ghosts = new ArrayList<Object>();
 		futureGhosts = new ArrayList<Object>();
 	}
@@ -40,10 +41,10 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 		double[] loc_arr = new double[] {loc.x, loc.y};
 		DContinuous2DObject a = new DContinuous2DObject(obj, loc);
 
-		if (!f.inLocalAndHalo(loc_arr))
-			throw new IllegalArgumentException(String.format("New location outside local partition and its halo area"));
+		// if (!f.inLocalAndHalo(loc_arr))
+		// 	throw new IllegalArgumentException(String.format("New location outside local partition and its halo area"));
 
-		assert super.setObjectLocation(obj, loc) == true;
+		super.setObjectLocation(obj, loc);
 
 		if (f.inPrivate(loc_arr)) {
 			sched.scheduleOnce((Steppable)obj, 1);
@@ -60,7 +61,8 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 				e.printStackTrace();
 				System.exit(-1);
 			}
-		}
+		} else 
+			return false;
 
 		return true;
 	}
@@ -78,15 +80,13 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 
 		for (Object o : m.objects) {
 			DContinuous2DObject a = (DContinuous2DObject)o;
-			assert super.setObjectLocation(a.obj, a.loc) == true;
-			assert a.loc != null;
+			super.setObjectLocation(a.obj, a.loc);
 			if (a.migrate)
 				sched.scheduleOnce((Steppable)a.obj, 1);
 			else
 				ghosts.add(a.obj);
 		}
-		for (Object o : futureGhosts)
-			ghosts.add(o);
+		ghosts.addAll(futureGhosts);
 
 		m.objects.clear();
 		futureGhosts.clear();
@@ -153,6 +153,7 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 		if (p.pid == 2) {
 			loc = new Double2D(500, 250);
 			Bag bag = f.getObjectsAtLocation(loc);
+			//f.getAllObjects();
 			assert bag.size() == 1;
 			obj = (DContinuous2DTestObject)bag.pop();
 
