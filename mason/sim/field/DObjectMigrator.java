@@ -91,10 +91,15 @@ public class DObjectMigrator implements Iterable<Object> {
 		return objects.size();
 	}
 
-	public void migrate(final Object obj, final int dst) throws MPIException, IOException {
+	public void migrate(final Object obj, final int dst) {
 		MigratedObject mo = new MigratedObject(obj, dst);
 		assert dstMap.containsKey(dst);
-		dstMap.get(dst).write(mo);
+		try {
+			dstMap.get(dst).write(mo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	public void sync() throws MPIException, IOException, ClassNotFoundException {

@@ -13,11 +13,12 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 	public DUniformPartition p;
 	public HaloFieldContinuous f;
 	DObjectMigrator m;
-	SimState sim;
+	Schedule sched;
 
-	List<Object> ghosts;
+	public List<Object> ghosts;
+	List<Object> futureGhosts;
 
-	public DContinuous2D(final double discretization, double width, double height, double aoi, DUniformPartition p, SimState sim) {
+	public DContinuous2D(final double discretization, double width, double height, double aoi, DUniformPartition p, Schedule sched) {
 		super(discretization, width, height);
 		this.aoi = aoi;
 		this.p = p;
@@ -28,33 +29,34 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		this.sim = sim;
+		this.sched = sched;
 
 		ghosts = new ArrayList<Object>();
+		futureGhosts = new ArrayList<Object>();
 	}
 
 	@Override
 	public boolean setObjectLocation(Object obj, final Double2D loc) {
 		double[] loc_arr = new double[] {loc.x, loc.y};
+		DContinuous2DObject a = new DContinuous2DObject(obj, loc);
 
 		if (!f.inLocalAndHalo(loc_arr))
 			throw new IllegalArgumentException(String.format("New location outside local partition and its halo area"));
 
+		assert super.setObjectLocation(obj, loc) == true;
+
 		if (f.inPrivate(loc_arr)) {
-			super.setObjectLocation(obj, loc);
-		} else {
-			DContinuous2DObject a = new DContinuous2DObject(obj, loc);
+			sched.scheduleOnce((Steppable)obj, 1);
+		} else if (f.inShared(loc_arr)) {
+			sched.scheduleOnce((Steppable)obj, 1);
+			for (int dst : f.toNeighbors(loc_arr))
+				m.migrate(a, dst);
+		} else if (f.inHalo(loc_arr)) {
+			futureGhosts.add(obj);
+			a.migrate = true;
 			try {
-				if (f.inShared(loc_arr)) {
-					super.setObjectLocation(obj, loc);
-					for (int dst : f.toNeighbors(loc_arr))
-						m.migrate(a, dst);
-				} else if (f.inHalo(loc_arr)) {
-					super.remove(obj);
-					a.migrate = true;
-					m.migrate(a, p.toPartitionId(loc_arr));
-				}
-			} catch (Exception e) {
+				m.migrate(a, p.toPartitionId(loc_arr));
+			} catch (MPIException e) {
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -65,20 +67,124 @@ public /*strictfp*/ class DContinuous2D extends Continuous2D {
 
 	public void sync() {
 		ghosts.forEach(super::remove);
+		ghosts.clear();
+
 		try {
 			m.sync();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		ghosts = new ArrayList<Object>();
+
 		for (Object o : m.objects) {
 			DContinuous2DObject a = (DContinuous2DObject)o;
-			super.setObjectLocation(a.obj, a.loc);
+			assert super.setObjectLocation(a.obj, a.loc) == true;
+			assert a.loc != null;
 			if (a.migrate)
-				sim.schedule.scheduleOnce((Steppable)a.obj, 1);
+				sched.scheduleOnce((Steppable)a.obj, 1);
 			else
 				ghosts.add(a.obj);
+		}
+		for (Object o : futureGhosts)
+			ghosts.add(o);
+
+		m.objects.clear();
+		futureGhosts.clear();
+	}
+
+	public static void main(String args[]) throws MPIException {
+		MPI.Init(args);
+
+		double width = 1000;
+		double height = 1000;
+		double neighborhood = 10;
+
+		DUniformPartition p = new DUniformPartition(new int[] {(int)width, (int)height});
+		fakeSchedule sch = new fakeSchedule(p.pid);
+		DContinuous2D f = new DContinuous2D(neighborhood / 1.5, width, height, neighborhood, p, sch);
+		DContinuous2DTestObject obj = null;
+		Double2D loc = new Double2D(250, 250);
+		String s = null;
+
+		assert p.np == 4;
+
+		// step 1 ---------------------------------
+		if (p.pid == 0) {
+			obj = new DContinuous2DTestObject(0, loc);
+			f.setObjectLocation(obj, loc);
+		}
+
+		f.sync();
+
+		s = String.format("PID %d Step %d Total objects %d\n", p.pid, sch.steps, f.size());
+		System.out.print(s);
+
+		sch.steps++;
+
+		// step 2 ---------------------------------
+		if (p.pid == 0) {
+			loc = new Double2D(495, 250);
+			obj.loc = loc;
+			f.setObjectLocation(obj, loc);
+		}
+
+		f.sync();
+
+		s = String.format("PID %d Step %d Total objects %d\n", p.pid, sch.steps, f.size());
+		System.out.print(s);
+
+		sch.steps++;
+
+		// step 3 ---------------------------------
+		if (p.pid == 0) {
+			loc = new Double2D(500, 250);
+			obj.loc = loc;
+			f.setObjectLocation(obj, loc);
+		}
+
+		f.sync();
+
+		s = String.format("PID %d Step %d Total objects %d\n", p.pid, sch.steps, f.size());
+		System.out.print(s);
+
+		sch.steps++;
+
+		// step 4 ---------------------------------
+		if (p.pid == 2) {
+			loc = new Double2D(500, 250);
+			Bag bag = f.getObjectsAtLocation(loc);
+			assert bag.size() == 1;
+			obj = (DContinuous2DTestObject)bag.pop();
+
+			loc = new Double2D(750, 250);
+			obj.loc = loc;
+			f.setObjectLocation(obj, loc);
+		}
+
+		f.sync();
+
+		s = String.format("PID %d Step %d Total objects %d\n", p.pid, sch.steps, f.size());
+		System.out.print(s);
+
+		sch.steps++;
+
+		MPI.Finalize();
+	}
+
+	private static class fakeSchedule extends Schedule {
+
+		public int steps = 0;
+		public int pid;
+
+		public fakeSchedule(int pid) {
+			this.pid = pid;
+		}
+
+		@Override
+		public boolean scheduleOnce(final Steppable event, final int ordering) {
+			String s = String.format("PID %d Step %d scheduled object %s\n", pid, steps, event.toString());
+			System.out.print(s);
+			return true;
 		}
 	}
 }

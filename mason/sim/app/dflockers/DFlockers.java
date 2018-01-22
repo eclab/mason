@@ -21,7 +21,6 @@ public class DFlockers extends SimState {
     public double width = 1000;
     public double height = 1000;
     public int numFlockers = 1000;
-    public static int pw = 1, ph = 1;
     public double cohesion = 1.0;
     public double avoidance = 1.0;
     public double randomness = 1.0;
@@ -90,19 +89,19 @@ public class DFlockers extends SimState {
         // that's 16 hash lookups! I would have guessed that
         // neighborhood * 2 (which is about 4 lookups on average)
         // would be optimal.  Go figure.
-        flockers = new DContinuous2D(neighborhood / 1.5, width, height, neighborhood, partition, this);
+        flockers = new DContinuous2D(neighborhood / 1.5, width, height, neighborhood, partition, this.schedule);
 
         // make a bunch of flockers and schedule 'em.  A few will be dead
-        for (int x = 0; x < numFlockers / (pw * ph); x++) {
+        for (int x = 0; x < numFlockers / partition.np; x++) {
             Double2D location = new Double2D((random.nextDouble() + partition.coords[0]) * flockers.f.lsize[0], (random.nextDouble() + partition.coords[1]) * flockers.f.lsize[1]);
             DFlocker flocker = new DFlocker(location);
             if (random.nextBoolean(deadFlockerProbability))
                 flocker.dead = true;
             flockers.setObjectLocation(flocker, location);
-            schedule.scheduleOnce(flocker, 1);
+            //schedule.scheduleOnce(flocker, 1);
         }
 
-        schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
+        schedule.scheduleRepeating(Schedule.EPOCH, 0, new Synchronizer(), 1);
     }
 
     public static void main(String[] args) throws MPIException {
@@ -117,8 +116,9 @@ public class DFlockers extends SimState {
 
         public void step(SimState state) {
             try {
-                System.out.println("Here1");
                 flockers.sync();
+                String s = String.format("PID %d Steps %d Number of Agents %d\n", partition.pid, schedule.getSteps(), flockers.size() - flockers.ghosts.size());
+                System.out.print(s);
             } catch(Exception e) {
                 e.printStackTrace();
                 System.exit(-1);
