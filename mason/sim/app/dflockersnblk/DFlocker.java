@@ -15,9 +15,17 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 
     public Double2D loc = new Double2D(0, 0);
     public Double2D lastd = new Double2D(0, 0);
+    public DContinuous2DNBLK flockers;
+    public DFlockers theFlock;
     public boolean dead = false;
 
-    public DFlocker(Double2D location) { loc = location;}
+    //public Double2D globalloc = new Double2D(0, 0);
+
+    public DFlocker(Double2D location) { loc = location; }
+
+    public Bag getNeighbors() {
+        return flockers.getNeighborsExactlyWithinDistance(loc, theFlock.neighborhood, true);
+    }
 
     public double getOrientation() { return orientation2D(); }
     public boolean isDead() { return dead; }
@@ -113,13 +121,13 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         Double2D oldloc = loc;
         loc = flock.flockers.getObjectLocation(this);
         if (loc == null) {
-            System.out.printf("pid %d oldx %g oldy %g", flock.flockers.p.pid, oldloc.x, oldloc.y);
+            System.out.printf("pid %d oldx %g oldy %g", flock.flockers.pid, oldloc.x, oldloc.y);
             Thread.dumpStack();
             System.exit(-1);
         }
 
         if (dead) return;
-        Bag b = flock.flockers.getNeighborsExactlyWithinDistance(loc, flock.neighborhood, true);
+        Bag b = getNeighbors();
 
         Double2D avoid = avoidance(b, flock.flockers);
         Double2D cohe = cohesion(b, flock.flockers);
@@ -140,6 +148,8 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         lastd = new Double2D(dx, dy);
         loc = new Double2D(flock.flockers.stx(loc.x + dx), flock.flockers.sty(loc.y + dy));
 
-        flock.flockers.setObjectLocation(this, loc);
+        boolean moved = flock.flockers.setObjectLocation(this, loc);
+        if (!moved)
+            flock.schedule.scheduleOnce(this, 0);
     }
 }

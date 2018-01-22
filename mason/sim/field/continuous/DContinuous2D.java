@@ -1,91 +1,84 @@
 package sim.field.continuous;
+
+import java.util.*;
+
 import sim.field.*;
 import sim.util.*;
-import java.util.*;
+import sim.engine.*;
+
 import mpi.*;
-import java.nio.*;
 
 public /*strictfp*/ class DContinuous2D extends Continuous2D {
-	public int px, py, pw, ph, pid;
-	public double cell_width, cell_height;
-	public double aoi;
+	double aoi;
+	public DUniformPartition p;
+	public HaloFieldContinuous f;
+	DObjectMigrator m;
+	SimState sim;
 
-	public List<Request> req_list = new ArrayList<Request>();
+	List<Object> ghosts;
 
-	public DContinuous2D(final double discretization, double width, double height, int pw, int ph, double aoi) {
+	public DContinuous2D(final double discretization, double width, double height, double aoi, DUniformPartition p, SimState sim) {
 		super(discretization, width, height);
-
-		try {
-			pid = MPI.COMM_WORLD.getRank();
-		} catch (MPIException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		px = pid / ph;
-		py = pid % ph;
 		this.aoi = aoi;
-		cell_height = height / ph;
-		cell_width = width / pw;
-		this.ph = ph;
-		this.pw = pw;
-
-		//System.out.printf("pid %d px %d py %d cw %g ch %g\n", pid, px, py, cell_width, cell_height);
-	}
-
-	@Override
-	public synchronized final boolean setObjectLocation(Object obj, final Double2D location) {
-		if (isPrivate(location)) {
-			super.setObjectLocation(obj, location);
-			return false;
-		} else {
-			super.remove(obj);
-			int dst = toNeighborRank(location);
-			DoubleBuffer data = MPI.newDoubleBuffer(3);
-			data.put(location.x);
-			data.put(location.y);
-			data.put((double)pid);
-			try {
-				Request req = MPI.COMM_WORLD.iSend(data, 3, MPI.DOUBLE, dst, 0);
-				req_list.add(req);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			return true;
-		}
-	}
-
-	public boolean isPrivate(final Double2D location) {
-		return px * cell_width <= location.x && location.x < (px + 1) * cell_width && py * cell_height <= location.y && location.y < (py + 1) * cell_height;
-	}
-
-	public int toNeighborRank(final Double2D location) {
-		int nx = (int)(location.x / (double)cell_width);
-		int ny = (int)(location.y / (double)cell_height);
-
-		return nx * ph + ny;
-	}
-
-	public void sync() {
-		Request[] rs = new Request[req_list.size()];
+		this.p = p;
+		this.f = new HaloFieldContinuous(p, aoi);
 		try {
-			Request.waitAll(req_list.toArray(rs));
+			this.m = new DObjectMigrator(p);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		this.sim = sim;
+
+		ghosts = new ArrayList<Object>();
 	}
 
-	// private class MFlocker implements java.io.Serializable {
-	// 	public Double2D location;
-	// 	public boolean end = false;
+	@Override
+	public boolean setObjectLocation(Object obj, final Double2D loc) {
+		double[] loc_arr = new double[] {loc.x, loc.y};
 
-	// 	public MFlocker(Double2D location) {
-	// 		this.location = location;
-	// 	}
+		if (!f.inLocalAndHalo(loc_arr))
+			throw new IllegalArgumentException(String.format("New location outside local partition and its halo area"));
 
-	// 	public MFlocker() {
-	// 		this.end = true;
-	// 	}
-	// }
+		if (f.inPrivate(loc_arr)) {
+			super.setObjectLocation(obj, loc);
+		} else {
+			DContinuous2DObject a = new DContinuous2DObject(obj, loc);
+			try {
+				if (f.inShared(loc_arr)) {
+					super.setObjectLocation(obj, loc);
+					for (int dst : f.toNeighbors(loc_arr))
+						m.migrate(a, dst);
+				} else if (f.inHalo(loc_arr)) {
+					super.remove(obj);
+					a.migrate = true;
+					m.migrate(a, p.toPartitionId(loc_arr));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
+
+		return true;
+	}
+
+	public void sync() {
+		ghosts.forEach(super::remove);
+		try {
+			m.sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		ghosts = new ArrayList<Object>();
+		for (Object o : m.objects) {
+			DContinuous2DObject a = (DContinuous2DObject)o;
+			super.setObjectLocation(a.obj, a.loc);
+			if (a.migrate)
+				sim.schedule.scheduleOnce((Steppable)a.obj, 1);
+			else
+				ghosts.add(a.obj);
+		}
+	}
 }

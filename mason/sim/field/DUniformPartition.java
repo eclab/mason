@@ -50,7 +50,7 @@ public class DUniformPartition {
 	// 	return comm.getRank(new int[] {px, py});
 	// }
 
-	// global coordinates to partition id
+	// global int coordinates to partition id
 	public int toPartitionId(final int[] c) throws MPIException {
 		int[] pc = new int[nd];
 
@@ -59,6 +59,19 @@ public class DUniformPartition {
 
 		for (int i = 0; i < nd; i++)
 			pc[i] = c[i] / (size[i] / dims[i]);
+
+		return comm.getRank(pc);
+	}
+
+	// global double coordinates to partition id
+	public int toPartitionId(final double[] c) throws MPIException {
+		int[] pc = new int[nd];
+
+		if (c.length != nd)
+			throw new IllegalArgumentException(String.format("Number of dimensions does not match: want %d got %d", nd, c.length));
+
+		for (int i = 0; i < nd; i++)
+			pc[i] = (int)(c[i] / (double)(size[i] / dims[i]));
 
 		return comm.getRank(pc);
 	}
@@ -100,6 +113,29 @@ public class DUniformPartition {
 		c[d] += 1; getExtendedNeighborIdsRecursive(l, c, d + 1, includeDirectNeighbor); c[d] -= 1;
 	}
 
+	public int[] getExtendedNeighborsByShift(int dim, int shift) throws MPIException {
+		if (shift > 1 || shift < -1)
+			throw new IllegalArgumentException(String.format("Shift can only be 1, 0 or -1: got %d", shift));
+
+		ArrayList<Integer> l = new ArrayList<Integer>();
+		getExtendedNeighborsByShiftRecursive(l, coords, 0, dim, shift);
+		return l.stream().mapToInt(i->i).toArray();
+	}
+
+	private void getExtendedNeighborsByShiftRecursive(ArrayList<Integer> l, int[] c, int d, int dfix, int shift) throws MPIException {
+		if (d == nd) {
+			l.add(comm.getRank(c));
+			return;
+		}
+		if (d == dfix) {
+			c[d] += shift; getExtendedNeighborsByShiftRecursive(l, c, d + 1, dfix, shift); c[d] -= shift;
+		} else {
+			getExtendedNeighborsByShiftRecursive(l, c, d + 1, dfix, shift);
+			c[d] -= 1; getExtendedNeighborsByShiftRecursive(l, c, d + 1, dfix, shift); c[d] += 1;
+			c[d] += 1; getExtendedNeighborsByShiftRecursive(l, c, d + 1, dfix, shift); c[d] -= 1;
+		}
+	}
+
 	// private static void printArray(int[] a) {
 	// 	for (int i = 0; i < a.length; i++) {
 	// 		if (i > 0) {
@@ -118,10 +154,10 @@ public class DUniformPartition {
 
 		assert dp.np == 4; // assume 4 LPs
 
-		assert dp.toPartitionId(new int[]{0, 0}) == 0;
-		assert dp.toPartitionId(new int[]{0, 16}) == 1;
-		assert dp.toPartitionId(new int[]{16, 0}) == 2;
-		assert dp.toPartitionId(new int[]{16, 16}) == 3;
+		assert dp.toPartitionId(new int[] {0, 0}) == 0;
+		assert dp.toPartitionId(new int[] {0, 16}) == 1;
+		assert dp.toPartitionId(new int[] {16, 0}) == 2;
+		assert dp.toPartitionId(new int[] {16, 16}) == 3;
 
 		if (dp.pid == 0) {
 			int[] want = new int[] {2, 2, 1, 1};
@@ -133,6 +169,10 @@ public class DUniformPartition {
 			got = dp.getExtendedNeighborIds(true);
 			assert Arrays.equals(want, got);
 			assert want.length == dp.totalNeighbors;
+
+			want = new int[] {2, 3, 3};
+			got = dp.getExtendedNeighborsByShift(0, 1);
+			assert Arrays.equals(want, got);
 		} else if (dp.pid == 1) {
 			int[] want = new int[] {3, 3, 0, 0};
 			int[] got = dp.getNeighborIds();
