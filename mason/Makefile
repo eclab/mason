@@ -36,7 +36,7 @@ sim/app/tutorial5/*.java \
 sim/app/schelling/*.java \
 sim/app/pacman/*.java \
 sim/app/pso/*.java \
-sim/app/wcss/tutorial0*/*.java \
+sim/app/wcss/tutorial09/*.java \
 sim/app/wcss/tutorial10/*.java \
 sim/app/wcss/tutorial11/*.java \
 sim/app/wcss/tutorial12/*.java \
