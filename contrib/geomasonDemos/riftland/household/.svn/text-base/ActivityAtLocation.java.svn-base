@@ -1,0 +1,47 @@
+/*
+ * ActivityAtLocation.java
+ *
+ * $Id$
+ */
+
+package riftland.household;
+
+import riftland.World;
+import riftland.parcel.Parcel;
+
+/**
+ *
+ */
+abstract public class ActivityAtLocation extends Activity
+{
+
+    /** Where this activity is taking place
+     *
+     * XXX should consider making this more specific to GrazableArea since
+     * all the current activities take place only on those parcel types
+     */
+    private Parcel location = null;
+
+
+    public ActivityAtLocation(Household household, Parcel location)
+    {
+        super(household);
+        
+        this.location = location;
+    }
+
+    
+    public Parcel getLocation()
+    {
+        return location;
+    }
+
+    public void setLocation(Parcel location)
+    {
+        this.location = location;
+    }
+
+	@Override
+	abstract public void remove();
+
+}

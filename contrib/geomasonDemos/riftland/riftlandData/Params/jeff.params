@@ -1,0 +1,137 @@
+# main.params
+#
+# A (hopefully) reasonable default set of parameters for the Riftland simulation
+#
+# $Id: main.params 1436 2012-10-16 21:34:50Z jharri $
+
+print-params=true
+
+#this only applies to WorldGUI (World does not read this parameter)
+#this is a comment (it starts with #)
+
+##		World Parameters
+#################################
+WaterHoleFertilityBias  = 3.0
+#LoggerLevel             = WARNING
+LoggerLevel             = INFO
+BaseGrowthRate          = 0.010
+# In range (0,1]; denotes how much of the true population per parcel to place
+InitTruePopulationPortion = 0.0
+NumWaterHoles  		= 182
+OutputStats             = false
+MaxTrailLength 		= 1
+##### world physiology parameter
+FarmStoreConsumptionRate = 1.0
+WeatherClusterControlFile = ClusterData/ClusterControl-drought.txt
+#WeatherClusterControlFile = ClusterData/ClusterControl.txt
+
+
+#Baratetta, Culture #199 (South of Mandera area) with 182 wateringholes
+#SubArea                   = (1250, 600), (1400, 750)
+
+# culture 37, Nyoro, NW of Lake V, with 112 wateringholes
+#SubArea                  = (350, 850), (450, 950)
+
+# SW Lake V: culture #86 (~1/2;other #69), Moru, with 101 wateringholes
+#SubArea                  = (170, 1280), (270, 1380)
+
+#Topotha, due south of Lake V., culture #83, 211WH
+#SubArea                   = (600,1300), (700,1400)
+
+
+# Testing
+# top-left
+#SubArea                  = (0, 0), (200, 200)
+# bottom-right
+#SubArea                  = (1300, 1300), (1694, 1630)
+# top-right
+#SubArea                  = (1300, 0), (1694, 150)	
+# bottom-left
+#SubArea                  = (0, 1300), (400, 1630)	
+
+
+#========
+# crowding sub-area
+#SubArea = (400,900),(410,910)
+
+# larger area 300x300
+#SubArea = (400,550), (700,850)
+#SubArea = (1000, 600), (1300,900)
+
+#TestSubArea               = (170, 1280), (270, 1380)
+
+#========= others ===========
+#  20,000 for whole RiftLand
+# 1000 water holes -- TURKANA, Kenya
+#SubArea                 = (650, 250),(1000, 800)
+# 120 Water holes -- MOYALE, Kenya
+#SubArea                 = (1175, 500), (1350, 700)
+# 200 Water holes -- MARSABIT, Kenya
+#SubArea                 = (950, 400),(1300, 800)
+#200 water holes -- GULU, Uganda
+#SubArea                 = (450, 525),(574, 650)
+
+
+#Mandera
+#SubArea                 = (1200, 550), (1350, 700)
+# Brundi
+#SubArea                 = (125, 1250), (350, 1450)
+#northern small country, clear
+#SubArea                 = (150, 1100), (250, 1200)
+#
+
+
+
+##             Behavior Parameters
+##################################
+FarmStoreConsumptionRte = 1.0
+HerdUseRuleBased = TRUE
+
+
+##		Farming Parameters
+##################################
+HectorPerFarmLaborer	= 1.0
+FarmYieldRate		= 2.0
+FarmStoreSupplyToSplit	= 1.5
+FarmFamilySizeToSplit	= 4.0
+
+##		Herding Parameters
+##################################
+HerdedTLUsPerHerder     = 15
+VisionAndMovementRange	= 10
+
+##		GrazableArea Parameters
+#######################################
+BaseGrowthRate          = 0.01
+
+##		Behavior Parameters
+###################################
+TLUFoodConsumptionRate  = 15.00
+MaxDaysWithoutFood      = 60
+WaterConsumptionRate    = 20
+MaxDaysWithoutWater     = 6
+VegetationThreshold	= 1025
+MaxHerdMovement		= 20
+VisionRange		= 10
+HerderMemoryCapacity	= 5
+HerderReproductionLevel = 100
+IdealBirthProbability   = 0.05
+
+##		Conflict Parameters
+#################################
+HerderHerderConflict	= true
+WithinClanConflict	= true
+HerderFarmerConflict	= true
+EscalateConflict	= true
+NumStepsToEscalate	= 1
+EscalationDistance	= 10
+DamageRatio		= 0.05
+
+##		Weather Parameters
+#################################
+
+##		Observations
+#################################
+#TrackCurrentNumHerders	= true
+#TrackCurrentNumAnimals	= true
+
