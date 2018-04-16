@@ -140,7 +140,7 @@ public class ForagingBeeGUI extends GUIState {
 		displayFrame.setVisible(true);
 		display.attach(vidPortrayal, "Agents");
 
-		display.setInterval(5);
+		//display.setInterval(5);
 	}
 
 	/**
