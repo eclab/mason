@@ -67,7 +67,7 @@ public class ValueGrid2DPortrayal3D extends FieldPortrayal3D
         return field;
         }
 
-    public String valueName;
+    String valueName;
     
     public String getValueName() { return valueName; }
     public void setValueName(String name) { valueName = name; }
