@@ -1,0 +1,64 @@
+# benchmark_history.csv
+#
+# We usually collect performance numbers by running World (headless) on Brahma
+# from a jar with asserts disabled.  Specifically, we use the UNIX 'time'
+# command to measure runtime, and report the 'real' time (as opposed to 'user'
+# or 'sys').  For example, to run benchmark 0 for 10 steps, we would run the
+# following command from inside the 'dist' directory:
+#
+# time java -Xms16g -Xmx24g -jar RiftLand.jar -for 10 -file ../src/riftland/DataFiles/Params/benchmark0.params -filepath ../src/riftland/DataFiles/
+# 
+# If we use '-for 0', then only the model initialization will be timed.  It's
+# important to have initialization benchmarks, and benchmarks for step 1
+# ('-for 1') so we can distinguish initialization speeds from run speeds.
+
+date    revision    benchmark   seconds    num_steps   machine  author  comment
+2013-03-20  1701    1        11.554       0     Brahma     Siggy     ""
+2013-03-20  1701    1        10.709       0     Brahma     Siggy     ""
+2013-03-20  1701    1         9.877       0     Brahma     Siggy     ""
+2013-03-20  1701    1        10.254       0     Brahma     Siggy     ""
+2013-03-20  1701    1        92.115      20     Brahma     Siggy     ""
+2013-03-20  1701    1        99.110      20     Brahma     Siggy     ""
+2013-03-20  1701    0        67.313       0     Brahma     Siggy     ""
+2013-03-20  1701    0        67.045       0     Brahma     Siggy     ""
+2013-03-20  1701    0        67.166       0     Brahma     Siggy     ""
+2013-03-20  1701    0      1481.895       5     Brahma     Siggy     ""
+2013-03-20  1701    0      1454.878       1     Brahma     Siggy     ""
+2013-03-20  1701    0      5861.503      40     Brahma     Siggy     ""
+2013-03-20  1701    0     46621.888     200     Brahma     Siggy     ""
+2013-03-21  1712    1        34.903      20     Brahma     Siggy     "First test of parallelized weighted movement."
+2013-03-21  1712    1        32.728      20     Brahma     Siggy     ""
+2013-03-21  1712    0       268.274       1     Brahma     Siggy     ""
+2013-03-21  1712    0      2040.269      40     Brahma     Siggy     ""
+2013-03-21  1712    0     11785.326     200     Brahma     Siggy     ""
+2013-03-25  1712    3        37.333      20     Brahma     Siggy     "First test of parallelized rule-based movement."
+2013-03-25  1712    3        38.039      20     Brahma     Siggy     ""
+2013-03-25  1712    3        36.642      20     Brahma     Siggy     ""
+2013-03-25  1712    3        64.115      40     Brahma     Siggy     ""
+2013-03-25  1712    3        11.806       0     Brahma     Siggy     ""
+2013-03-25  1712    3        16.192       1     Brahma     Siggy     ""
+2013-03-25  1720    3        25.676      20     Brahma     Siggy     "First test of updated rule-based movement."
+2013-03-25  1720    3        26.980      20     Brahma     Siggy     ""
+2013-03-25  1720    3        26.043      20     Brahma     Siggy     ""
+2013-03-25  1720    2      1495.983      40     Brahma     Siggy     ""
+2013-03-25  1720    2       224.202       1     Brahma     Siggy     ""
+2013-03-25  1720    2      8370.031     200     Brahma     Siggy     ""
+2013-04-02  1735    1        58.789      40     Brahma     Siggy     ""
+2013-04-02  1735    1        57.664      40     Brahma     Siggy     ""
+2013-04-02  1735    1        56.192      40     Brahma     Siggy     ""
+2013-04-02  1735    1        57.040      40     Brahma     Siggy     ""
+2013-04-02  1735    1        11.584       0     Brahma     Siggy     ""
+2013-04-02  1736    1        31.249      20     Brahma     Siggy     ""
+2013-04-02  1736    1        31.454      20     Brahma     Siggy     ""
+2013-04-02  1736    1        49.224      40     Brahma     Siggy     "Showing speed increase from restricting nearbyWaterHoles cache to nearest 10 WaterHoles."
+2013-04-02  1736    1        49.154      40     Brahma     Siggy     ""
+2013-04-02  1736    1        48.974      40     Brahma     Siggy     ""
+2013-04-02  1739    1        50.602      40     Brahma     Siggy     "Showing no speed increase for caching distances between WaterHoles."
+2013-04-02  1739    1        49.869      40     Brahma     Siggy     ""
+2013-04-02  1739    1        49.850      40     Brahma     Siggy     ""
+2013-04-09  1748    1      1312.878      40     Brahma     Siggy     "Slowdown from inefficient implementation of WaterHoleFinder."
+2013-04-09  1750    1        57.780      40     Brahma     Siggy     "Efficient implementation of WaterHoleFinder."
+2013-04-09  1750    1        55.784      40     Brahma     Siggy     ""
+2013-04-29  1657    1     59292.090      40     Brahma     Siggy     "Really slow, old code: Before speed-up of herding, after speed-up of initialization."
+2013-04-29  1819    1        92          40     Brahma     Jeff      "With disaster at day 13.  Three cores being used by Ates"
+2013-04-29  1825    1        84.31       40     Brahma     Jeff      "No disaster.  Machine free"

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="geomason" />
+    <orderEntry type="module" module-name="mason" />
+    <orderEntry type="module" module-name="socialnets" />
+    <orderEntry type="library" name="AcequiasData" level="project" />
+    <orderEntry type="library" name="bsh-2.0b4" level="project" />
+    <orderEntry type="library" name="forms_rt-7.0.3" level="project" />
+    <orderEntry type="library" name="html" level="project" />
+    <orderEntry type="library" name="java3d:j3d-core-utils:1.3.1" level="project" />
+    <orderEntry type="library" name="jts-1.8" level="project" />
+    <orderEntry type="library" name="jts-1.13" level="project" />
+    <orderEntry type="library" name="acequiasData" level="project" />
+    <orderEntry type="library" name="gdal-2.2.1" level="project" />
+    <orderEntry type="library" name="gt-data-8.0-M4" level="project" />
+  </component>
+</module>
