@@ -1018,7 +1018,7 @@ public class SparseGrid3D extends SparseField implements Grid3D, SparseField3D
                 int _y = yPos.get(i);
                 int _z = zPos.get(i);
                 xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
-                yPos.set(i, ty(_y, height, heighttimestwo, _y + width, _y - width));
+                yPos.set(i, ty(_y, height, heighttimestwo, _y + height, _y - height));
                 zPos.set(i, tz(_z, length, lengthtimestwo, _z + length, _z - length));
                 }
 
