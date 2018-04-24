@@ -1266,7 +1266,7 @@ public class SparseGrid2D extends SparseField implements Grid2D, SparseField2D
                 int _x = xPos.get(i);
                 int _y = yPos.get(i);
                 xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
-                yPos.set(i, tx(_y, height, heighttimestwo, _y + width, _y - width));
+                yPos.set(i, tx(_y, height, heighttimestwo, _y + height, _y - height));
                 }
             }
         }

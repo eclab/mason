@@ -694,7 +694,7 @@ public abstract class AbstractGrid2D implements Grid2D
                 int _y = yPos.get(i);
                 xPos.set(i, tx(_x, width, widthtimestwo, _x + width, _x - width));
                 
-                yPos.set(i, ty(_y, height, heighttimestwo, _y + width, _y - width));
+                yPos.set(i, ty(_y, height, heighttimestwo, _y + height, _y - height));
                 }
             }
         }
@@ -973,7 +973,6 @@ return true;
 
 
 */
-
     protected boolean isDistributed() { return false; }
 
     }

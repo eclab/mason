@@ -2905,3 +2905,5 @@ Version 20
 		solely relying on counts of arbitrary Objects.
 	Scanners in TableLoader now are properly closed when done.  Thanks
 		to Joey Harrison <joey.f.harrison@gmail.com>
+	Bugfix to radial distance measurement in 2D and 3D NON-square toroidal
+		grids.  Thanks to Oliver Binns <ob601@york.ac.uk>
