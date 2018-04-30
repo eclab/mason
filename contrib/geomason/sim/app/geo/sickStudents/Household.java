@@ -11,7 +11,7 @@
  ** $Id$
  **
  **/
-package sim.app.geo.sickStudents;
+package sickStudents;
 
 import com.vividsolutions.jts.geom.Point;
 import java.util.ArrayList;

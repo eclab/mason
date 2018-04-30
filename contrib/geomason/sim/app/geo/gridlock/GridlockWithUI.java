@@ -11,7 +11,7 @@
  * $Id$
  **
  **/
-package sim.app.geo.gridlock;
+package gridlock;
 
 import java.awt.Color;
 import javax.swing.JFrame;

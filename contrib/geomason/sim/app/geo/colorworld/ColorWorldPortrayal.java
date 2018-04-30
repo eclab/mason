@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.colorworld;
+package colorworld;
 
 import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;

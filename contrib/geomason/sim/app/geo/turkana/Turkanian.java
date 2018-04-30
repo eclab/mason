@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.turkana;
+package turkana;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

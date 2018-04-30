@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.colorworld;
+package colorworld;
 
 import java.io.FileNotFoundException;
 import java.net.URL;

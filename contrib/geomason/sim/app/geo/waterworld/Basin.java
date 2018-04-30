@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.waterworld;
+package waterworld;
 
 import java.util.ArrayList;
 

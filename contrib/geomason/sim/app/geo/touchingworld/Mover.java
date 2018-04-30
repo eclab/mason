@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.touchingworld;
+package touchingworld;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
