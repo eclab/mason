@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.schellingspace;
+package schellingspace;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
