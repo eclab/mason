@@ -31,7 +31,7 @@ public class SimpleEdgePortrayal3D extends SimplePortrayal3D
     // A larger font size makes the label bigger but also uses much more memory
     static final int FONT_SIZE = 18;
     // A smaller scaling factor reduces the label size
-    static final double SCALING_MODIFIER = 1.0 / 5.0; 
+    static final double SCALING_MODIFIER = 1.0 / 5.0 / 2; 
         
     double labelScale = 1.0;
     public double getLabelScale() { return labelScale; }

@@ -219,8 +219,8 @@ public abstract class AbstractGrid2D implements Grid2D
         yPos.clear();
 
         // local variables are faster
-        final int height = getWidth();
-        final int width = getHeight();
+        final int height = getHeight();
+        final int width = getWidth();
 
 
         // for toroidal environments the code will be different because of wrapping arround
@@ -310,8 +310,8 @@ public abstract class AbstractGrid2D implements Grid2D
         yPos.clear();
 
         // local variables are faster
-        final int height = getWidth();
-        final int width = getHeight();
+        final int height = getHeight();
+        final int width = getWidth();
         
         // for toroidal environments the code will be different because of wrapping arround
         if( toroidal )

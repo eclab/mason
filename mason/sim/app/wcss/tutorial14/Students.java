@@ -64,7 +64,7 @@ public class Students extends SimState
             Double2D loc = (Double2D)(yard.getObjectLocation(student));
             // we multiply by 5 in order to scale the agitation roughly with the student dispersion
             // in the other two dimensions
-            agitatedYard.setObjectLocation(student, new Double3D(loc, student.getAgitation() * 5.0));
+            agitatedYard.setObjectLocation(student, new Double3D(loc, student.getAgitation() * 2.0));
             }
         }
 

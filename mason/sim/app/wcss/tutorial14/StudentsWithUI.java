@@ -109,10 +109,15 @@ public class StudentsWithUI extends GUIState
                 
                 
         agitatedYardPortrayal.setField( students.agitatedYard );
-        agitatedYardPortrayal.setPortrayalForAll(new ConePortrayal3D(Color.red, 2.0));
+        
+        agitatedYardPortrayal.setPortrayalForAll(new ConePortrayal3D(
+        	ConePortrayal3D.appearanceForColors(Color.GREEN, Color.BLACK, Color.RED, Color.BLUE, 0.5, 1.0),
+        	true, 
+        	true,
+        	 2.0));
 
         agitatedBuddiesPortrayal.setField( new SpatialNetwork3D( students.agitatedYard, students.buddies ) );
-        SimpleEdgePortrayal3D ep = new CylinderEdgePortrayal3D()
+        SimpleEdgePortrayal3D ep = new CylinderEdgePortrayal3D(0.3)
             {
             DecimalFormat format = new DecimalFormat("#.##");
                                 

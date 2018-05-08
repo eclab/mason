@@ -497,6 +497,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     }
                 }
             }
+        sortAlphabetically();
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
