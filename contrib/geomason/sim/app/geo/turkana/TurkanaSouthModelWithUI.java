@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.turkana;
+package turkana;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

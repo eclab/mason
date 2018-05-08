@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.schellingspace;
+package schellingspace;
 
 import javax.swing.JFrame;
 import org.jfree.data.xy.XYSeries;

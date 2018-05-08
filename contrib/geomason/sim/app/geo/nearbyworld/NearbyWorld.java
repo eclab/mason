@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.nearbyworld;
+package nearbyworld;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.util.GeometricShapeFactory;

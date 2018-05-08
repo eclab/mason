@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.sickStudents;
+package sickStudents;
 
 import java.util.ArrayList;
 import java.util.Collections;

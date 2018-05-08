@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.sillypeds;
+package sillypeds;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

@@ -10,6 +10,6 @@
  **
  ** $Id$
  **/
-package sim.app.geo.sickStudents;
+package sickStudents;
 
 public enum Status { SUSCEPTIBLE, INFECTED, RECOVERED };

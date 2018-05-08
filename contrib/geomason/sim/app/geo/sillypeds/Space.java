@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sim.app.geo.sillypeds;
+package sillypeds;
 
 import java.util.ArrayList;
 import java.util.Collections;

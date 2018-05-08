@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.colorworld;
+package colorworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;

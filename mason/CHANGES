@@ -2907,3 +2907,6 @@ Version 20
 		to Joey Harrison <joey.f.harrison@gmail.com>
 	Bugfix to radial distance measurement in 2D and 3D NON-square toroidal
 		grids.  Thanks to Oliver Binns <ob601@york.ac.uk>
+	Bugfix to getWidth/getHeight, which were switched around in AbstractGrid2D
+		for getNeighbors functions (ugh).  Would only affect non-square
+		environments.

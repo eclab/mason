@@ -11,7 +11,7 @@
  ** $Id$
  * 
  **/
-package sim.app.geo.sickStudents;
+package sickStudents;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

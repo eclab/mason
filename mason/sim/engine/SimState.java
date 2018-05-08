@@ -362,7 +362,7 @@ public class SimState implements java.io.Serializable
                     }
                 catch (Exception e)
                     {
-                    throw new RuntimeException("Exception occurred while trying to construct the simulation " + c + "\n" + e);
+                    throw new RuntimeException("Exception occurred while trying to construct the simulation " + c, e);
                     }
                 }
             public Class simulationClass() { return c; }

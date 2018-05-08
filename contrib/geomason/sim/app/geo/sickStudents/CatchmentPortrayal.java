@@ -9,7 +9,7 @@
  ** See the file "LICENSE" for more information
  **
  **/
-package sim.app.geo.sickStudents;
+package sickStudents;
 
 import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;

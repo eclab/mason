@@ -9,7 +9,7 @@
  * 
  */
 
-package sim.app.geo.touchingworld;
+package touchingworld;
 
 import java.awt.Color;
 import javax.swing.JFrame;
