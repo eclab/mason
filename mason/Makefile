@@ -9,7 +9,7 @@ JAVAC = javac ${FLAGS}
 
 FLAGS = -target 1.5 -source 1.5 -g -nowarn 
 
-VERSION = 29
+VERSION = 19
 
 
 # Main java files, not including the 3D stuff
