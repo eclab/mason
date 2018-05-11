@@ -1,0 +1,5 @@
+Todo list for changes
+
+[ ] Implement ECJ parameter database
+[ ] Move data filename to parameter database
+[ ] Put portrayal colormap bounds in parameter database

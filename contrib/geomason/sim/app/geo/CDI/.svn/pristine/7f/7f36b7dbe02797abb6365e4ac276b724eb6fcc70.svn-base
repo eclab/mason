@@ -1,0 +1,33 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+parent.0 = @ec.Evolve es/es.params
+parent.1 = ec.params
+
+# es.params defines MuCommaLambdaBreeder at (1, 10).  We also need
+# to state that the pipeline will be just mutation plus ESSelection,
+# which we do below.
+
+es.mu.0 =                               5
+es.lambda.0 =                           10
+
+
+
+pop.subpop.0.species.mutation-prob = 0.016984963036159526
+pop.subpop.0.species.mutation-stdev = 0.8892889554415008
+pop.subpop.0.species.mutation-type = polynomial
+pop.subpop.0.species.mutation-distribution-index = 21
+pop.subpop.0.species.alternative-polynomial-version = false
+pop.subpop.0.size = 100
+es.mu-fraction.0 = 0.04571899460952962
+
+
+# Since we're sharing ecsuite.params, this version just does
+# crossover followed by mutation.  The inputs to the crossover
+# operator are ESSelection and a standard tournament selector
+
+pop.subpop.0.species.pipe.source.0.source.0 = ec.es.ESSelection
+pop.subpop.0.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+
+generations = 100

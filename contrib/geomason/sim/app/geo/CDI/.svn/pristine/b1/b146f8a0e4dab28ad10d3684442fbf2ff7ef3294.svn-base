@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =============================================
+     Author:   Khaled
+     ============================================= -->
+
+<!--<project name="migration-model" default="compile" basedir=".">-->
+<project name="migration-model" basedir=".">
+
+	<!-- External libraries path -->
+	<property name="ext.lib.dir" value="libs"/>
+	<!-- Source path -->
+	<property name="src.dir" value="src"/>
+	<!-- Bin path -->
+	<property name="bin.dir" value="bin"/>
+	<!-- adding the external libraries into the classpath -->
+	<patternset id="needed.libs">
+		<include name="commons-math3-3.3.jar"/>
+		<include name="csv4j-0.4.0.jar"/>
+		<include name="iText-2.1.5.jar"/>
+		<include name="jcommon-1.0.17.jar"/>
+		<include name="jfreechart-1.0.14.jar"/>
+		<include name="jmf.jar"/>
+		<include name="mason.18.jar"/>
+		<include name="toolsUI-4.3.jar"/>
+		<include name="ecj.jar"/>
+		<include name="jzlib-1.0.7.jar"/>
+		<include name="pshecj.jar"/>
+		<include name="PowerLaws.jar"/>
+	</patternset>
+	<path id="jar.external">
+		<fileset dir="${ext.lib.dir}">
+			<patternset refid="needed.libs"/>
+		</fileset>
+	</path>
+
+	<!-- ================ The description line ============== -->	
+	<description>
+		CDI Project: Northland Migration Model 
+	</description>
+
+	<!-- ==================== Clean Target ================== -->
+	<!--
+	  The "clean" target deletes any previous contents in the "bin" 
+	  directory, and/or the .class files, also deletes the vim 
+	  vestiges like .swp etc.
+	-->
+	<target name="clean" 
+			description="delete all the vestiges">
+		<delete failonerror="true" includeemptydirs="true">
+			<fileset dir="."
+				includes="*.jar"
+				defaultexcludes="no"/>
+			<fileset dir="${src.dir}"
+				includes="**/*.class, **/.*.*.swp, **/*.*~"
+				defaultexcludes="no"/>
+			<fileset dir="${bin.dir}" 
+				includes="**/*" defaultexcludes="no"/>
+		</delete>
+	</target>
+	
+	<!-- ==================== Compile Model ================ -->
+	<!--
+	  The "compile" target compiles the java files.	  
+	-->
+	<target name="compile" 
+			depends="clean" 
+			description="compile model sources">
+		<!--<copy todir="${bin.dir}">
+			<fileset dir="${src.dir}"
+				includes="**/*.txt, **/*.csv, **/*.params, 
+					**/*.html, **/*.png, **/*.jpg"/>
+			</copy>-->
+		<javac	classpathref="jar.external"
+			srcdir="${src.dir}"
+			destdir="${bin.dir}"
+			debug="true"
+			deprecation="false"
+			optimize="true"
+			includeantruntime="false">
+			<!-- source="1.6" target="1.6">	-->			
+		</javac>
+	</target>
+
+	<!-- ==================== Archive Model ================ -->
+	<!--
+	  The "jar" target archive the executables and resources to jar files.	  
+	-->
+	<!--<target name="jar" depends="compile" description="makes a jar file">
+		<jar jarfile="migration.jar" basedir="${bin.dir}">
+			<zipgroupfileset dir="${ext.lib.dir}">
+				<patternset refid="needed.libs"/>
+			</zipgroupfileset>
+			<manifest>
+				<attribute name="Main-Class" value="migration.MigrationWithUI"/>-->
+				<!--<attribute name="Main-Class" value="ec.Evolve"/>-->
+			<!--</manifest>
+		</jar>
+	</target>-->
+
+	<!-- ================= Runs the model ================= -->
+	<!--
+	  This runs the MASON model
+	-->
+	<target name="run" 
+			depends="compile" 
+			description="runs the model">
+		<java	classpathref="jar.external"
+			classname="migration.MigrationWithUI"
+			fork="true">
+			<classpath>
+				<pathelement location="${bin.dir}"/>
+				<!-- this is needed to get the txt files -->
+				<pathelement location="${src.dir}"/>
+			</classpath>
+		</java>
+	</target>
+
+	<!-- ================= Runs the EC process ================= -->
+	<!--
+	  This runs the ECJ process
+	-->
+	<target name="run-ec"
+			depends="compile"
+			description="runs the ec module">
+		<java	classpathref="jar.external"
+			classname="ec.Evolve"
+			fork="true">
+			<classpath>
+				<pathelement location="${bin.dir}"/>
+				<!-- this is needed to get the txt files -->
+				<pathelement location="${src.dir}"/>
+			</classpath>
+			<!--<arg value="-from"/> 
+			  <arg value="app/ant/ant.params"/>-->
+			<arg value="-p"/>
+			<arg value="print-params=false"/>
+			<arg value="-file"/>
+			<arg value="src/optimization/desirability/es.params"/>
+			<arg value="-p"/>
+			<arg value="stat.file=ant.out.stat"/>
+		</java>
+	</target>
+</project>

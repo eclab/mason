@@ -1,0 +1,5 @@
+# use the following to point to the desire parameter file
+parent.0 = baseline/baseline.param
+
+#parent.0 = test.param
+

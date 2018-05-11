@@ -1,0 +1,96 @@
+\documentclass[10pt]{article}
+\usepackage{url,graphicx,tabularx,amsmath,amsfonts,fullpage,multicol,makecell}
+\usepackage{enumitem}
+\usepackage{verbatim}
+\usepackage{subfig}
+\usepackage{caption}
+% \usepackage{subcaption}
+\usepackage{float}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+
+\setlength{\parskip}{1ex} %--skip lines between paragraphs
+\setlength{\parindent}{0pt} %--don't indent paragraphs
+%-- Commands for header
+\renewcommand{\title}[1]{\textbf{#1}\\}
+\renewcommand{\line}{\begin{tabularx}{\textwidth}{X>{\raggedleft}X}\hline\\\end{tabularx}\\[-0.5cm]}
+\newcommand{\leftright}[2]{\begin{tabularx}{\textwidth}{X>{\raggedleft}X}#1%
+& #2\\\end{tabularx}\\[-0.5cm]}
+
+%-- directory location to search for images
+% \graphicspath{{test-es/}}
+
+%----- my mod
+\makeatletter
+%-- change section and subsection title format
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {.05ex \@plus.05ex}%
+                                  {\normalfont\large\bf}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {.05ex \@plus.05ex}%
+                                  {\normalfont\normalsize\bf}}
+%-- put "." (dot) after each section number
+% \g@addto@macro\thesection.
+% \makeatother
+
+%\linespread{2} %-- Uncomment for Double Space
+
+\begin{document}
+
+\title{Finding the \emph{Desirability Coefficients}}
+\line
+\leftright{\vspace{0.5pt}\today}{\vspace{0.5pt}Khaled} %-- left and right positions in the header
+
+\vspace{10pt}
+Hi, I have done some major optimization on the smoothing and the EC codes --
+	\begin{itemize}[noitemsep,nolistsep] 
+		\item A major recoding to adopt all kind of matrix operations with primitive \texttt{double[][]} grid instead of MASON's \texttt{DoubleGrid2D}, to avoid lots of small function calls.
+		\item Implemented a faster convolution algorithm for the smoothing operation, now algorithm is $3$ times faster with the same kernel size. 
+		\item Did multiple tests with kernel dimensions. A dimension of $23 \times 23$, radius = $3.0$ and passes  = $2$ gives extremely fast and comparatively better smoothing. Please do not ask how I settled with this number.
+		\item All operations are done on the bounding-box, including during the fitness computation -- so overall EC runs are even faster.
+		\item The problem with \emph{normalization-before-fitness-coputation} is gone, please do not ask why -- I have no idea.
+		\item Doing Evolution Strategy (ES) instead of GA, and it is faster.
+		\item Hope this ends the phase 1.
+	\end{itemize}
+Now the coefficient values are more meaningful, and normalization before the comparison also gives better approximation to the actual population distribution. Please see the below figures (darker regions mean more desirable) --
+%
+\begin{figure}[H]
+	\centering
+	\subfloat[Smoothed population map.]{%
+		\includegraphics[width=0.5\textwidth]{smooth-pop-small.pdf}}
+\end{figure}
+%
+\begin{figure}[H]
+	\centering
+	\subfloat[Without Normalization Before Fitness Calculation]{%
+		\includegraphics[width=0.5\textwidth]{mean-coeff-es-small.pdf}}
+	\subfloat[Normalization Before Fitness Calculation]{%
+		\includegraphics[width=0.5\textwidth]{mean-coeff-es-norm-small.pdf}}
+\end{figure}
+%
+\vfill\eject
+The statistics are more meaningful now -- 
+
+For example, if you look at figure (\ref{fig:e}), the \emph{elevation} coefficient distribution is negative. This could be interpreted as higher elevation levels are negatively penalized, and so forth.
+%
+\begin{figure}[H]
+	\centering
+	\subfloat[Without Normalization Before Fitness Calculation]{%
+		\includegraphics[width=0.5\textwidth]{test-es/boxplot.pdf}}
+	\subfloat[Normalization Before Fitness Calculation]{%
+		\includegraphics[width=0.5\textwidth]{test-es-norm/boxplot.pdf}
+		\label{fig:e}
+	}
+\end{figure}
+%
+... and the bounding-box looks like this --
+\begin{figure}[H]
+	\centering
+	\subfloat[Bounding-Box]{%
+		\includegraphics[width=0.5\textwidth]{bbox-small.pdf}}
+\end{figure}
+\end{document}
