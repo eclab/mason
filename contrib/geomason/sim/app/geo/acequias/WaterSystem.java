@@ -1,6 +1,8 @@
+package acequias;
+
 import java.util.HashMap;
 
-import objects.Tile;
+import acequias.objects.Tile;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

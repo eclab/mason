@@ -163,7 +163,14 @@ public class AStar {
 		Edge edge = null;
 
 		if (x.cameFrom != null) {
-			edge = (Edge) roadNetwork.getEdge(x.cameFrom.city, x.city);
+			Bag edgeList =  roadNetwork.getEdges(x.cameFrom.city, new sim.util.Bag());
+			for(Object edgeObj : edgeList){
+				Edge locEdge = (Edge) edgeObj;
+				if(locEdge.compareTo(x.city)==0){
+					edge = locEdge;
+					break;
+				}
+			}
 			edges.add(0, edge);
 			RoadInfo edgeInfo = (RoadInfo) edge.getInfo();
 			//RoadInfo edge = (RoadInfo) roadNetwork.getEdge(x.cameFrom.city, x.city).getInfo();
@@ -180,7 +187,15 @@ public class AStar {
 			while (x != null) {
 
 				double dist = x.city.location.distance(locations.get(0));
-				edge =  roadNetwork.getEdge(x.city, to.city);
+				edgeList =  roadNetwork.getEdges(x.city, new Bag());
+
+				for(Object edgeObj : edgeList){
+					Edge locEdge = (Edge) edgeObj;
+					if(locEdge.compareTo(to.city)==0){
+						edge = locEdge;
+						break;
+					}
+				}
 				 edgeInfo = (RoadInfo) edge.getInfo();
 				mod_speed = edgeInfo.getSpeed() * Parameters.TEMPORAL_RESOLUTION;// now
 																				// km

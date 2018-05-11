@@ -1,15 +1,27 @@
+package acequias;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
+import javax.swing.JFrame;
+
 import org.jfree.data.xy.XYSeries;
+
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.portrayal.DrawInfo2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
+import sim.portrayal.network.NetworkPortrayal2D;
+import sim.portrayal.network.SimpleEdgePortrayal2D;
+import sim.portrayal.simple.RectanglePortrayal2D;
+import sim.util.MutableDouble;
+import sim.util.gui.ColorMap;
 import sim.util.media.chart.TimeSeriesChartGenerator;
-
-import javax.swing.*;
-import java.awt.*;
 
 /** <b>AcequiaWorldWithUI</b> the visualization of AcequiaWorld.
  * 
@@ -29,7 +41,7 @@ public class AcequiaWorldWithUI extends GUIState {
 	ObjectGridPortrayal2D hydrologicalFeatures = new ObjectGridPortrayal2D();
 	ObjectGridPortrayal2D landUse = new ObjectGridPortrayal2D();
 	ObjectGridPortrayal2D roads = new ObjectGridPortrayal2D();
-		GridNetworkPortrayal waterNetwork = new GridNetworkPortrayal();
+		GridNetworkPortrayal waterNetwork = new GridNetworkPortrayal();	
 	ObjectGridPortrayal2D hydrationPortrayal = new ObjectGridPortrayal2D();
 	
 	TimeSeriesChartGenerator urbanVSAgChart;
