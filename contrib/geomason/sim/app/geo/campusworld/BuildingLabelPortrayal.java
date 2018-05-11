@@ -7,7 +7,7 @@
  *
  * $Id$
  */
-package sim.app.geo.campusworld;
+package campusworld;
 
 import java.awt.Paint;
 import sim.portrayal.DrawInfo2D;

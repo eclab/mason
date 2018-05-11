@@ -1,4 +1,4 @@
-/* 
+package campusworld;/*
  * Copyright 2011 by Mark Coletti, Keith Sullivan, Sean Luke, and
  * George Mason University Mason University Licensed under the Academic
  * Free License version 3.0
@@ -8,7 +8,7 @@
  * $Id$
  */
 
-package sim.app.geo.campusworld;
+
 
 import com.vividsolutions.jts.io.ParseException;
 import java.awt.Color;
