@@ -10140,23 +10140,23 @@ Display3D also has several special public variables for providing access to its 
 
 \java{%
     public sim.display3d.CapturingCanvas3D canvas;      // MASON's Canvas3D\\
-    public SimpleUniverse universe;    // Display2D's Java3D Universe\\
+    public SimpleUniverse universe;    // Display3D's Java3D Universe\\
     public BranchGroup root;       // The root of the Java3D scene graph\\
     public BranchGroup viewRoot;       // A viewpoint-independent auxiliary root\\
     public TransformGroup autoSpinTransformGroup;  // hangs below the root\\
     \hbox{public TransformGroup globalModelTransformGroup;   // hangs below the autoSpinTransformGroup}
 } 
 
-Figure \ref{java3dlayout} shows these objects in relationship to others in MASON's scene graph configuration.   The first object is MASON's {\bf canvas}, the Java3D equivalent of a JComponent and Graphics2D.    It's where the 3D image is displayed.  As mentioned before, the canvas is a \class{sim.display3d.CapturingCanvas3D}, discussed at length in Section \ref{sim.display3d.CapturingCanvas3D}.  Associated with the canvas is the {\bf universe}, the top-level Java3D object for describing the 3D environment.  Hanging off of the universe is a tree of various objects.  Four of those objects have been exposed as variables above in order to allow the model developer add Java3D scene material in different places and under different circumstances.  Specifically: Display3D lets the user {\it change the viewpoint of the camera} by dragging the mouse, and {\it auto-rotate} a scene (independent of changing the viewpoint); and lets the model-developer {\it transform} the entire scene (most commonly scale it).  This means that there are four places you might want to hang material:
+Figure \ref{java3dlayout} shows these objects in relationship to others in MASON's scene graph configuration.   The first object is MASON's {\bf canvas}, the Java3D equivalent of a JComponent and Graphics2D.    It's where the 3D image is displayed.  As mentioned before, the canvas is a \class{sim.display3d.CapturingCanvas3D}, discussed at length in Section \ref{sim.display3d.CapturingCanvas3D}.  Associated with the canvas is the {\bf universe}, the top-level Java3D object for describing the 3D environment.  Hanging off of the universe is a tree of various objects.  Four of those objects have been exposed as variables above in order to allow the model developer to add Java3D scene material in different places and under different circumstances.  Specifically: Display3D lets the user {\it change the viewpoint of the camera} by dragging the mouse, and {\it auto-rotate} a scene (independent of changing the viewpoint); and lets the model-developer {\it transform} the entire scene (most commonly scale it).  This means that there are four places you might want to hang material:
 
 \begin{itemize}
 \item If you want your material to stay constant in the scene regardless of auto-rotation, model transforms, or the viewpoint changing (that is, it moves when the viewpoint moves), hang your material off of the \variable{viewRoot}.  {\it Example:} you might add ambient light, fog, or behind-the-camera spotlights here.
 \item If you don't want your scene material to be auto-rotated with the rest of the scene graph when the user turns on auto-rotation in the option pane, nor transformed along with the rest of the scene graph by various Display3D transform methods, then you should hang the material off of the \variable{root}.  The material will be subject to changing viewpoints.  {\it Example:} you might add fixed spotlights here.  Fog or ambient light is okay too.
 \item If you don't want your scene material transformed (translated etc.) along with the rest of the scene graph by various Display3D transform methods, then you should hang the material of the \variable{autoSpinTransformGroup}.  The material will be subject to changing viewpoints and auto-rotation.   {\it Example:} you might add a floor or a wireframe here.
-\item Otherwise, you should hang the material of the \variable{globalModelTransformGroup}.  The material will be subject to changing viewpoints, auto-rotation, and model transforms.   {\it Example:} you might additional model scene objects here.
+\item Otherwise, you should hang the material of the \variable{globalModelTransformGroup}.  The material will be subject to changing viewpoints, auto-rotation, and model transforms.   {\it Example:} you might add additional model scene objects here.
 \end{itemize}
 
-Okay, enough with the Java3D for now.  A Display2D is constructed identically to a Display2D:
+Okay, enough with the Java3D for now.  A Display3D is constructed identically to a Display2D:
 
 \begin{methods}{\class{sim.display.Display3D} Constructor}
 \mthd{public Display3D(double width, double height, GUIState guistate)}
