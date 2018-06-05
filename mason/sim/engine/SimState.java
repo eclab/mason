@@ -115,6 +115,7 @@ public class SimState implements java.io.Serializable
         cleanupAsynchronous();
         // reset schedule
         schedule.reset();
+        schedule.clearBeforeAndAfter();
         }
         
     /** Called either at the proper or a premature end to the simulation. 
@@ -125,7 +126,6 @@ public class SimState implements java.io.Serializable
     public void finish()
         {
         kill();  // cleans up asynchronous and resets the schedule, a good ending
-        schedule.clearBeforeAndAfter();
         }
 
     /** A Steppable on the schedule can call this method to cancel the simulation.
