@@ -2910,3 +2910,6 @@ Version 20
 	Bugfix to getWidth/getHeight, which were switched around in AbstractGrid2D
 		for getNeighbors functions (ugh).  Would only affect non-square
 		environments.
+	Minor bugfix to TableLoader, thanks to Joey Harrison 
+		<joey.f.harrison@gmail.com>	
+	Added bookend steppables to the Schedule

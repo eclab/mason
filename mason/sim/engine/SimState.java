@@ -125,6 +125,7 @@ public class SimState implements java.io.Serializable
     public void finish()
         {
         kill();  // cleans up asynchronous and resets the schedule, a good ending
+        schedule.clearBeforeAndAfter();
         }
 
     /** A Steppable on the schedule can call this method to cancel the simulation.

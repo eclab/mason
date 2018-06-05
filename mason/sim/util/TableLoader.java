@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.image.*;
-import sun.awt.image.*;
 import javax.swing.*;
 
 /****

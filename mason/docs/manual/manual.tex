@@ -4010,8 +4010,20 @@ For certain esoteric tasks you may need to merge the agents of two schedules.  T
 \mthd{public void merge(Schedule second)} Merges a second schedule into the first Schedule, modifying it (but leaving the second Schedule untouched).  Schedules may not be merged if either of them is sealed, if the merging request occurs somewhere within the step() method of the first Schedule, or if the second schedule has agents scheduled for earlier than the current timestamp of the first Schedule.  This procedure is \(O(n)\) in the number of agents.
 \end{methods}
 
+\subsection{Bookend Steppables}
 
-\subsubsection{Under the Hood}
+The Schedule has one additional mechanism to keep track of its iterations.  Each time, immediately before the schedule is stepped (iterated), a special collection of registered Steppables are called; similarly, immediately after the schedule is stepped, another special collection is called.  You can add Steppables to this collection with the methods:
+
+\begin{methods}{\class{sim.engine.SimState}}
+\mthd{public void addBefore(Steppable step)} Adds a Steppable to be called immediately before each time the Schedule is itself stepped.  You should only call this method from within your \method{SimState.start()} method, after first calling \method{super.start()}.
+\mthd{public void addAfter(Steppable step)} Adds a Steppable to be called immediately after each time the Schedule is itself stepped.  You should only call this method from within your \method{SimState.start()} method, after first calling \method{super.start()}.
+\end{methods}
+
+Notice that these methods must be called inside your \method{SimState.start()} method.  This is because \method{super.start()} first clears all the existing Steppables from these two collections.  There is no guaranteed order in which the before-collection Steppables are called, and similarly the after-collection Steppables. 
+
+These methods are really meant to extend MASON; but you can call them if you like, though their use would likely be rare.
+
+\subsection{Under the Hood}
 \label{sim.util.Heap}
 \label{sim.engine.Schedule.Key}
 
@@ -11470,7 +11482,7 @@ Building a Java3D scene can be daunting.  But if you have Java3D chops, sticking
 
 Simple Portrayals in 3D really have one major task: create a scene graph and hang certain LocationWrappers off of the shapes and geometry found in that graph.  The LocationWrappers indicate the object in the field that that portion of scene represents.  If you've set up the LocationWrappers right, you don't have to do anything further to handle selection or inspection, as SimplePortrayal3D does all the machinery for you.  Though you can override various SimplePortrayal3D methods to customize things if you like.
 
-The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.   Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so when Java3D picks that shape, MASON knows what object and field it's associated with.
+The procedure is pretty simple.  You override the \method{getModel(...)} method to provide an actual scene graph.  If the TransformGroup passed in is \variable{null}, a new scene graph must be built from scratch (or cloned from somewhere) and hung as a child of a new and unused TransformGroup.   Then you either make the scene graph unpickable using \method{clearPickableFlags(...)}), or make the scene graph pickable by using \method{setPickableFlags(...)}.  If you have chosen to make the scene graph pickable, you have to store a LocationWrapper in each Shape3D in the scene so that when Java3D picks that shape, MASON knows what object and field it's associated with.
 
 If instead the TransformGroup passed in is non-\variable{null}, then you may assume you're being handed back a scene graph you had previously created, and your task is to modify the scene graph to reflect underlying changes in the object status.  It's often the case that if the TransformGroup is non-\variable{null} you'll do absolutely nothing at all.
 
