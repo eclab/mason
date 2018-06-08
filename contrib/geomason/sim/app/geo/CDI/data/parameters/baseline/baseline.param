@@ -1,0 +1,164 @@
+# using short names for weather data files
+# Model output control flags
+print-params = true
+recordData = true
+populationHistrograms = false
+cellHistrograms = false
+
+
+# Desirability coefficients for initialization
+#initTempCoeff = 0.2377310
+initTempCoeff = 0.9
+initPortCoeff = -0.03746687
+initRiverCoeff = 0.1122526
+initElevCoeff = -0.08117447
+initSocialWeight = 1
+initSocialWeightSpread = 0.05
+initDesirabilityExp = 12.0
+initRecalculationSkip = 10
+
+
+# Urban agent parameters
+urbanTempCoeff = 0.8
+urbanPortCoeff = -0.1
+urbanRiverCoeff = 0.1
+urbanElevCoeff = -0.1
+urbanOpportunityCoeff = 0.01
+urbanSocialWeight = 0.04
+urbanAdjacentSocialDiscount = 0.3
+urbanDesExp = 20
+urbanGrowthRate = 0.003
+urbanMovementWill = 0.85
+
+
+# Rural agent parameters
+ruralTempCoeff = 0.3
+ruralPortCoeff = -0.1
+ruralRiverCoeff = 0.1
+ruralElevCoeff = -0.1
+ruralOpportunityCoeff = 0.01
+ruralSocialWeight = 0.01
+ruralAdjacentSocialDiscount = 0.3
+ruralDesExp = 20
+ruralGrowthRate = 0.006
+ruralMovementWill = 0.2
+
+
+# General agent parameters
+householdSize = 4
+moveCost = 100
+idealTemperature = 293.15
+wealthMu = 10.1
+wealthSigma = 0.33
+wealthAdjMu = 0.05
+wealthAdjSigma = 0.005
+wealthLossToBirthMu = 0.8
+wealthLossToBirthSigma = 0.05
+recordDistance = 0
+
+
+# World parameters
+recalSkip = 1
+infrastructureDecreaseRate = 0.005
+infrastructureIncreaseRate = 0.01
+infrastructureDeviationRate = 0.1
+initUrbanDensity = 550
+densityIncrement = 0
+densityIncrementInterval = 5
+
+
+# Government parameters
+govPctSavings = 0
+householdSubsidy = moveCost*Math.log(100)
+householdSubsidyThreshold = 1
+migrationTaxRate = 0.00
+beginMigrationTax = 2015.00
+beginInfrastructureTax = 1911.0
+infrastructureBaseCost = 10000.0
+infrastructureCostExponent = 0.2
+infrastructureMaintenanceCoefficient = 0.05
+
+
+# Climate data parameters
+meanTempAdjust = 0
+stdevTempAdjust = 0.0 
+tempRunnningAvgWindow = 12
+
+#This is historical weather for Jan 1851 to Dec 2004:
+histTempFilename=src/CDI/data/temperature-Data/1851-2004.nc
+#Offset to start with the weather for the first quarter of 1911
+histTempFileOffset=720
+
+#Specify which temperature projection to use:
+#This is RCP 2.6 jan 2005 to dec 2099
+projTempFilename=src/CDI/data/temperature-Data/optimistic-future.nc
+#This is RCP 8.5 Jan 2005 to Dec 2099
+#projTempFilename=data/temperature-Data/pessimistic-future.nc
+#when to start using this file (like historic weather file)
+projTempFileOffset=0
+
+
+# seasonOverrideStart = year - 1911 * 4  (assuming histTempFileOffset=720, which is 1911)
+# 1911 = 0, 2004 = 372, 2050 = 556
+seasonOverrideStart=-1
+seasonOverrideDuration=-1
+
+# Filenames for results data (date and time will be added to these base file names
+# basic name of output data
+filePath                = movement
+# tracked household locations
+householdFilePath       = tracked-household
+# migration data at provence level (like Canadian census data)
+censusMigrationFilePath = migration
+
+
+# Filenames for GIS input data
+tempDesFile  = src/CDI/data/GIS-data/canada_temp_zscore.txt
+riverDesFile = src/CDI/data/GIS-data/canada_lake_zscore.txt
+portDesFile  = src/CDI/data/GIS-data/canada_port_zscore.txt
+elevDesFile  = src/CDI/data/GIS-data/canada_dem_zscore.txt
+riverRawFile = src/CDI/data/GIS-data/canada_lake_raw.txt
+tempRawFile  = src/CDI/data/GIS-data/canada_temp_raw.txt
+portRawFile  = src/CDI/data/GIS-data/canada_port_raw.txt
+elevRawFile  = src/CDI/data/GIS-data/canada_dem_raw.txt
+cultureGroupFile   = src/CDI/data/GIS-data/can_regcode_culture.txt
+landCoverFile      = src/CDI/data/GIS-data/canada_land_cover.txt
+nppFile            = src/CDI/data/GIS-data/net_primary_productivity.txt
+coastalFile        = src/CDI/data/GIS-data/can_coastal.txt            
+popRegionFile      = src/CDI/data/GIS-data/can_pop_1911_region.txt
+initialzationPopulationFile = src/CDI/data/GIS-data/can_pop_1911_pop.txt
+nationsFilename    = src/CDI/data/GIS-data/cdi_country_e2.txt
+provincesFilename  = src/CDI/data/GIS-data/cdi_provinces.txt
+populationFilename = src/CDI/data/GIS-data/cdi_pop_e2.txt
+borealAreaFilename = src/CDI/data/GIS-data/cdibnd10k.txt
+latFilename        = src/CDI/data/GIS-data/cdilat10k.txt
+lonFilename        = src/CDI/data/GIS-data/cdilon10k.txt
+growthRateFile     = src/CDI/data/GIS-data/Growth_rate.txt
+
+# color map bounds for different portrayal 
+popColorMapLowerBound = 100
+popColorMapUpperBound = 10000     
+
+tempColorMapLowerBound = -2.0
+tempColorMapUpperBound = 2.0       
+
+tempDesColorMapLowerBound = -2.0
+tempDesColorMapUpperBound = 2.0
+
+riverDesColorMapLowerBound = -2.0
+riverDesColorMapUpperBound = 2.0
+
+portDesColorMapLowerBound = -2.0
+portDesColorMapUpperBound = 2.0
+
+elevDesColorMapLowerBound = -2.0
+elevDesColorMapUpperBound = 2.0
+
+totalDesColorMapLowerBound = -2.0
+totalDesColorMapUpperBound = 2.0
+
+
+
+attachmentTime = 2
+detachmentTime = 2
+attachmentStrength = 0

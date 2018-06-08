@@ -1,0 +1,31 @@
+# Historical growth rate data for Canada
+# Growth rate includes net population changes from birth, immigration and
+# emigration.
+#
+# Column 1 : The date defining the beginning of a period
+# Column 2 : The date defining the end of a period
+# Column 3 : Urban growth rate (% annually)
+# Column 4 : Rural growth rate (% annually)
+#
+# Note that the units used for growth rate here are not the same as in the
+# model GUI
+#
+1861 1871 1.42 1.42
+1871 1881 1.72 1.72
+1881 1891 1.17 1.17
+1891 1901 1.11 1.11
+1901 1911 6.58 6.58
+1911 1921 2.19 2.19
+1921 1931 1.80 1.80
+1931 1941 1.08 1.08
+1941 1951 1.86 1.86
+1951 1956 3.56 3.56
+1956 1961 2.68 2.68
+1961 1966 1.94 1.94
+1966 1971 1.55 1.55
+1971 1976 1.74 1.74
+1976 1981 1.16 1.16
+1981 1986 1.03 1.03
+1986 1991 1.47 1.47
+1991 1996 1.12 1.12
+1996 2001 0.95 0.95

@@ -179,7 +179,6 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 Integer xi = (Integer)(filterMap.get(getPropertyName(xm)));
                 Integer yi = (Integer)(filterMap.get(getPropertyName(ym)));
                 
-                System.err.println("Compare " + xm.getName() + " (" + xi + ") " + ym + " (" + yi + ")");           
                 if (xi == null && yi == null) return 0;
                 else if (xi == null) return 1;
                 else if (yi == null) return -1;

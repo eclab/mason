@@ -7,8 +7,7 @@
  *
  * $Id$
 */
-package sim.app.geo.campusworld;
-
+package campusworld;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;

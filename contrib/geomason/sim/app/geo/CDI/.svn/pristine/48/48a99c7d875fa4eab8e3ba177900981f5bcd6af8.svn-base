@@ -1,0 +1,109 @@
+\documentclass[10pt]{article}
+\usepackage{url,graphicx,tabularx,amsmath,amsfonts,fullpage,multicol,makecell}
+\usepackage{verbatim}
+% \usepackage{subfigure}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning}
+
+\setlength{\parskip}{1ex} %--skip lines between paragraphs
+\setlength{\parindent}{0pt} %--don't indent paragraphs
+%-- Commands for header
+\renewcommand{\title}[1]{\textbf{#1}\\}
+\renewcommand{\line}{\begin{tabularx}{\textwidth}{X>{\raggedleft}X}\hline\\\end{tabularx}\\[-0.5cm]}
+\newcommand{\leftright}[2]{\begin{tabularx}{\textwidth}{X>{\raggedleft}X}#1%
+& #2\\\end{tabularx}\\[-0.5cm]}
+
+%----- my mod
+\makeatletter
+%-- change section and subsection title format
+\renewcommand\section{\@startsection{section}{1}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {.05ex \@plus.05ex}%
+                                  {\normalfont\large\bf}}
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                                  {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                  {.05ex \@plus.05ex}%
+                                  {\normalfont\normalsize\bf}}
+%-- put "." (dot) after each section number
+% \g@addto@macro\thesection.
+% \makeatother
+
+%\linespread{2} %-- Uncomment for Double Space
+
+\begin{document}
+
+\title{Smoothing the landscape by Gaussian Kernel}
+\line
+\leftright{\vspace{0.5pt}\today}{\vspace{0.5pt}AKM Khaled Ahsan Talukder} %-- left and right positions in the header
+
+\vspace{10pt}
+Hi, I have done with the smoothing code. I made it generic so that it could be used with any library (i.e. MASON's grid), you need to just pass the grid as a double array. The smoothing is done with Gaussian kernel (i.e. Gaussian Blur \url{http://en.wikipedia.org/wiki/Gaussian_blur}). The complexity is $O(n^2)$.
+%
+\begin{figure}[H]
+\centering
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{orig-terrain.pdf}
+		\caption{Original Terrain}
+	\end{subfigure}%
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-0.pdf}
+		\caption{Iteration 0}
+	\end{subfigure}%
+\end{figure}
+\begin{figure}[H]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-1.pdf}
+		\caption{Iteration 1}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-2.pdf}
+		\caption{Iteration 2}
+	\end{subfigure}
+\end{figure}
+\begin{figure}[H]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-3.pdf}
+		\caption{Iteration 3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-4.pdf}
+		\caption{Iteration 4}
+	\end{subfigure}
+\end{figure}
+\begin{figure}[H]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-5.pdf}
+		\caption{Iteration 5}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-6.pdf}
+		\caption{Iteration 6}
+	\end{subfigure}
+\end{figure}
+\begin{figure}[H]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-7.pdf}
+		\caption{Iteration 7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-8.pdf}
+		\caption{Iteration 8}
+	\end{subfigure}
+\end{figure}
+\begin{figure}[H]
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-9.pdf}
+		\caption{Iteration 9}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.5\textwidth}
+		\includegraphics[width=\textwidth]{smooth-terrain-10.pdf}
+		\caption{Iteration 10}
+	\end{subfigure}
+\end{figure}
+%
+\end{document}

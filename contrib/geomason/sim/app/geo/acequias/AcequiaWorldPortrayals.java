@@ -1,8 +1,10 @@
+package acequias;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import objects.Tile;
+import acequias.objects.Tile;
 
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
@@ -15,9 +17,11 @@ Licensed under the Academic Free License version 3.0
 See the file "LICENSE" for more information
  */
 
+import sim.app.tutorial5.Band;
 import sim.field.network.*;
 import sim.portrayal.network.*;
-
+import sim.portrayal.*;
+import java.awt.*;
 import java.util.Random;
 
 /** A series of Portrayals associated with AcequiaWorldWithUI

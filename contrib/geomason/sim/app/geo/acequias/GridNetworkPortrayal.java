@@ -1,3 +1,4 @@
+package acequias;
 //social nets
 import sim.portrayal.*;
 import sim.portrayal.network.EdgeDrawInfo2D;
@@ -7,7 +8,7 @@ import sim.util.*;
 import java.awt.*;
 import java.awt.geom.*;
 
-import objects.Tile;
+import acequias.objects.Tile;
 
 /** <b>GridNetworkPortrayal</b> displays a network on a grid.
  * 
@@ -45,14 +46,15 @@ public class GridNetworkPortrayal extends FieldPortrayal2D
         double yScale = info.draw.height / gridHeight;
 
 //        final Rectangle clip = (graphics==null ? null : graphics.getClipBounds());
+            //(GUIState state, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip, Double secondPoint)
         EdgeDrawInfo2D newinfo = new EdgeDrawInfo2D(
                 info.gui,
                 info.fieldPortrayal,
             new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replaced
 
             info.clip, // we don't do further clipping
-            new Point2D.Double(0,0),
-            info);  // these will also get replaced
+            new Point2D.Double(0,0)
+            );  // these will also get replaced
 
         // draw ALL the edges -- one never knows if an edge will cross into our boundary
         

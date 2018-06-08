@@ -1,0 +1,6 @@
+1. The parameters we need to put in ec params are distribution for HouseHold class
+and desCoeff for phase1 and phase2
+
+2.file names in Map class
+3. bounds on colormap for different portrayals
+

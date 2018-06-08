@@ -1,0 +1,25 @@
+#!/bin/bash
+# A shell script to run multiple ecj runs
+
+# class/library paths
+CLSPATH=.:bin:src:libs/*
+SRCPATH=src/optimization/desirability
+
+# total number of runs
+PARAMFILE=$1
+
+if [[ ! $# -eq 1 ]]; then
+	echo "Usage: ./dosinglerun [ecj parameter file]" ;
+	exit 0;
+fi
+
+cd ../../../ ;
+if [[ -s $SRCPATH/$PARAMFILE ]]; then
+	# run the ec for 1 time
+	java -cp $CLSPATH ec.Evolve -file $SRCPATH/$PARAMFILE -p stat.file=single.stat ;
+	echo "Done $RUN_START-$RUN_END ec experiments with $SRCPATH/$PARAMFILE" ;
+else
+	echo "File $SRCPATH/$PARAMFILE could not be located!" ;
+	echo "Usage: ./dosinglerun [ecj parameter file]" ;
+	exit 0 ;
+fi
