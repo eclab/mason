@@ -15,8 +15,6 @@ VERSION = 19
 # Main java files, not including the 3D stuff
 DIRS = \
 sim/app/heatbugs/*.java\
-sim/app/dheatbugs/*.java\
-sim/app/dheatbugsrma/*.java\
 sim/app/hexabugs/*.java \
 sim/app/asteroids/*.java \
 sim/app/antsforage/*.java \
@@ -31,7 +29,6 @@ sim/app/lsystem/*.java \
 sim/app/lightcycles/*.java \
 sim/app/swarmgame/*.java \
 sim/app/flockers/*.java \
-sim/app/dflockers/*.java \
 sim/app/tutorial1and2/*.java \
 sim/app/tutorial3/*.java \
 sim/app/tutorial4/*.java \
