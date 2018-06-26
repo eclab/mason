@@ -139,7 +139,7 @@ public /*strictfp*/ class Continuous2D extends SparseField implements SparseFiel
         return new Int2D((int)(location.x / discretization), (int)(location.y / discretization));
         }
     
-    public boolean setObjectLocation(Object obj, final Double2D location)
+    public final boolean setObjectLocation(Object obj, final Double2D location)
         {
         boolean result = super.setObjectLocation(obj, discretize(location));
         if (result) doubleLocationHash.put(obj,location);
