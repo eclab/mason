@@ -15,9 +15,11 @@
 
 JAVAC = javac 
 
+CLASSPATH=".:../../mason:../../mason/library/mpi.jar:../../mason/library/jts-1.13.jar"
+
 # GeoMason supports Java 5; note that MASON proper only supports Java 4.
-JAVACFLAGS = -target 1.5 -source 1.5 ${FLAGS}
-FLAGS = -g -nowarn
+JAVACFLAGS = -target 1.8 -source 1.8 ${FLAGS}
+FLAGS = -g -nowarn -cp ${CLASSPATH}
 
 VERSION = 1.5
 
@@ -30,6 +32,8 @@ all: jar demos
 
 
 DEMOS = sim/app/geo/campusworld/*.java		\
+sim/app/geo/dcampusworld/*.java		\
+sim/app/geo/dschellingspace/*.java		\
 sim/app/geo/colorworld/*.java			\
 sim/app/geo/nearbyworld/*.java			\
 sim/app/geo/networkworld/*.java			\

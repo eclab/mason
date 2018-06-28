@@ -15,6 +15,9 @@ import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -142,8 +145,23 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
     }
 
 
-    /** A cached, optimized version of my Geometry.  Used for fast intersection, union, etc. operations */
-    public PreparedGeometry preparedGeometry;
+    /** A cached, optimized version of my Geometry.  Used for fast intersection, union, etc. operations,
+     * This instance is not serializable, thus we declare it transient */
+    public transient PreparedGeometry preparedGeometry;
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    	// just do not write preparedGeometry to stream
+    	out.defaultWriteObject();
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    	in.defaultReadObject();
+    	// reconstruct preparedGeometry from geometry
+    	if (geometry != null)
+        {
+            preparedGeometry = PreparedGeometryFactory.prepare(geometry);
+        }
+    }
 
     /** Does this MasonGeometry move? i.e., dynamically change location */
     public boolean isMovable = false;
@@ -305,7 +323,6 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
         {
             return geometry.getNumPoints();
         }
-
     }
 
 
