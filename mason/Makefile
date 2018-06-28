@@ -7,7 +7,7 @@
 
 JAVAC = javac ${FLAGS}
 
-FLAGS = -target 1.5 -source 1.5 -g -nowarn 
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ".:library/bsh-2.0b4.jar:library/itext-1.2.jar:library/jcommon-1.0.21.jar:library/jfreechart-1.0.17.jar:library/jmf.jar:library/portfolio.jar:library/mpi.jar"
 
 VERSION = 19
 
@@ -15,6 +15,7 @@ VERSION = 19
 # Main java files, not including the 3D stuff
 DIRS = \
 sim/app/heatbugs/*.java\
+sim/app/dheatbugs/*.java\
 sim/app/hexabugs/*.java \
 sim/app/asteroids/*.java \
 sim/app/antsforage/*.java \
@@ -29,6 +30,7 @@ sim/app/lsystem/*.java \
 sim/app/lightcycles/*.java \
 sim/app/swarmgame/*.java \
 sim/app/flockers/*.java \
+sim/app/dflockers/*.java \
 sim/app/tutorial1and2/*.java \
 sim/app/tutorial3/*.java \
 sim/app/tutorial4/*.java \
@@ -52,6 +54,7 @@ sim/field/*.java \
 sim/field/grid/*.java \
 sim/field/continuous/*.java \
 sim/field/network/*.java \
+sim/field/storage/*.java \
 sim/portrayal/*.java \
 sim/portrayal/grid/*.java \
 sim/portrayal/continuous/*.java \

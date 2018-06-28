@@ -6,6 +6,8 @@
 
 package sim.engine;
 
+import java.lang.reflect.Constructor;
+
 /** An interface for classes capable of creating SimState subclasses.
     Typically you wouldn't use this interface; but rather it is used
     internaly in the SimState.doLoop methods. */
@@ -18,4 +20,7 @@ public interface MakesSimState
         
     /** Returns the class of the SimState subclass that will be generated. */
     public Class simulationClass();
+
+    /** Returns the constructors of the SimState subclass that will be generated.*/
+    public Constructor[] getConstructors();
     }
