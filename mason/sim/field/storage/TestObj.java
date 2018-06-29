@@ -1,7 +1,7 @@
 package sim.field.storage;
 
 public class TestObj implements java.io.Serializable {
-	int id;
+	public int id;
 
 	public TestObj(int id) {
 		this.id = id;
