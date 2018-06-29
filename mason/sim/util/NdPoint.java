@@ -16,10 +16,12 @@ public abstract class NdPoint implements Comparable<NdPoint>, Serializable {
 	public abstract double[] getArrayInDouble();
 	public abstract String toString();
 
+	public abstract NdPoint shift(int offset);
 	public abstract NdPoint shift(int dim, int offset);
 	public abstract NdPoint shift(int[] offsets);
 	public abstract NdPoint rshift(int[] offsets);
 
+	public abstract NdPoint shift(double offset);
 	public abstract NdPoint shift(int dim, double offset);
 	public abstract NdPoint shift(double[] offsets);
 	public abstract NdPoint rshift(double[] offsets);
@@ -34,8 +36,9 @@ public abstract class NdPoint implements Comparable<NdPoint>, Serializable {
 	public abstract NdPoint min(NdPoint that);
 
 	public abstract boolean equals(NdPoint that);
-	// TODO Complete this in subclass
-	//public abstract NdPoint toToroidal(NdRectangle bound);
+	
+	// TODO Use NdRectangle
+	public abstract NdPoint toToroidal(IntHyperRect bound);
 
 	// TODO better design?
 	public abstract int[] getOffsetsInt(NdPoint that);

@@ -46,6 +46,10 @@ public class IntPoint extends NdPoint {
 		return new IntPoint(a);
 	}
 
+	public IntPoint shift(int offset) {
+		return new IntPoint(IntStream.range(0, nd).map(i -> c[i] + offset).toArray());
+	}
+
 	public IntPoint shift(int[] offsets) {
 		assertEqualDim(offsets);
 		return new IntPoint(IntStream.range(0, nd).map(i -> c[i] + offsets[i]).toArray());
@@ -57,6 +61,10 @@ public class IntPoint extends NdPoint {
 	}
 
 	// TODO make these return DoublePoint
+	public NdPoint shift(double offset) {
+		throw new IllegalArgumentException("IntPoint cannot be shifted with double offsets");
+	}
+
 	public NdPoint shift(int dim, double offset) {
 		throw new IllegalArgumentException("IntPoint cannot be shifted with double offsets");
 	}

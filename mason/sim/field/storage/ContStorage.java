@@ -26,7 +26,7 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	}
 
 	protected Object allocate(int size) {
-		this.dsize = IntStream.range(0, shape.getNd()).map(i -> (int)Math.ceil(shape.getSize()[i] / discretizations[i])).toArray();
+		this.dsize = IntStream.range(0, shape.getNd()).map(i -> (int)Math.ceil(shape.getSize()[i] / discretizations[i]) + 1).toArray();
 		// Overwrite the original stride with the new stride of dsize;
 		// so that getFlatIdx() can correctly get the cell index of a discretized point
 		// TODO better approach?
@@ -120,7 +120,8 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	public List<T> getObjects(final IntHyperRect r) {
 		final ArrayList<T> objs = new ArrayList<T>();
 
-		for (IntPoint dp : IntPointGenerator.getBlock(discretize(r.ul()), discretize(r.br())))
+		IntPoint ul = discretize(r.ul()), br = discretize(r.br()).shift(1);
+		for (IntPoint dp : IntPointGenerator.getBlock(ul, br))
 			getCelldp(dp).stream().filter(obj -> r.contains(m.get(obj))).forEach(obj -> objs.add(obj));
 
 		return objs;
@@ -223,6 +224,11 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 
 		System.out.println("get objects at " + loc5);
 		for (TestObj obj : f.getObjects(loc5))
+			System.out.println(obj);
+
+		IntHyperRect area = new IntHyperRect(1, new IntPoint(25, 35), new IntPoint(35, 47));
+		System.out.println("get objects in " + area);
+		for (TestObj obj : f.getObjects(area))
 			System.out.println(obj);
 
 		System.out.println("Move " + obj4 + " from " + loc4 + " to " + loc5 + ", get objects at " + loc4);

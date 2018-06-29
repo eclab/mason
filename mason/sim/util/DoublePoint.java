@@ -45,6 +45,10 @@ public class DoublePoint extends NdPoint {
 		return new DoublePoint(newc);
 	}
 
+	public DoublePoint shift(double offset) {
+		return new DoublePoint(IntStream.range(0, nd).mapToDouble(i -> c[i] + offset).toArray());
+	}
+
 	public DoublePoint shift(double[] offsets) {
 		assertEqualDim(offsets);
 		return new DoublePoint(IntStream.range(0, nd).mapToDouble(i -> c[i] + offsets[i]).toArray());
@@ -57,6 +61,10 @@ public class DoublePoint extends NdPoint {
 
 	public DoublePoint shift(int dim, int offset) {
 		return shift(dim, (double)offset);
+	}
+
+	public DoublePoint shift(int offset) {
+		return new DoublePoint(IntStream.range(0, nd).mapToDouble(i -> c[i] + offset).toArray());
 	}
 
 	public DoublePoint shift(int[] offsets) {
