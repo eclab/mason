@@ -47,6 +47,9 @@ public class SimState implements java.io.Serializable
     boolean cleaningAsynchronous = false;
 
     public static Logger logger;
+
+    // Flag indicating whether MPI is used
+    static boolean useMPI = false;
         
     SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
@@ -398,6 +401,8 @@ public class SimState implements java.io.Serializable
 
     public static void doLoopMPI(final Class c, String[] args) throws mpi.MPIException {
         mpi.MPI.Init(args);
+
+        useMPI = true;
 
         // Setup Logger
         String loggerName = String.format("MPI-Job-%d", mpi.MPI.COMM_WORLD.getRank());

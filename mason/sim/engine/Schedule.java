@@ -303,6 +303,18 @@ public class Schedule implements java.io.Serializable
     	{
     	afterSteps.add(step);
     	}
+
+    /** Use MPI_allReduce to get the current minimum timestamp in the schedule of all the LPs */
+    private double getGlobalTime(double localTime) {
+      double[] buf = new double[]{localTime};
+      try {
+        mpi.MPI.COMM_WORLD.allReduce(buf, 1, mpi.MPI.DOUBLE, mpi.MPI.MIN);
+      } catch (Exception e) {
+        e.printStackTrace();
+        System.exit(-1);
+      }
+      return buf[0];
+    }
     	
     Bag beforeSteps = new Bag();
     Bag afterSteps = new Bag();
@@ -332,38 +344,43 @@ public class Schedule implements java.io.Serializable
             if (time == AFTER_SIMULATION || queue.isEmpty())
                 { time = AFTER_SIMULATION; inStep = false; return false; }  // bump the time for the queue.isEmpty() bit
             
-            // now change the time
-            time = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
-
             final boolean shuffling = this.shuffling; // locals are faster.  This one needs to be synchronized inside lock
 
-            // grab all of the steppables in the right order.  To do this, we employ two Bags:
-            // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
-            // 2. Next we either shuffle or reverse the substeps.
-            // 3. Next we add them all to the end of the currentSteps Bag
-            // 4. Then we clear the substeps bag, but we don't let them GC yet
-            // 5. Last, out of the while-loop, we clear the substeps bag "for real", allowing them to GC
-            while(true)
-                {
-                // Suck out the contents of the next ordering
-                queue.extractMin(substeps);  // come out in reverse order
+            // now change the time
+            double myTime = ((Key)(queue.getMinKey())).time;  // key shouldn't be able to be null; time should always be one bigger
+            if (state.useMPI)
+              time = getGlobalTime(myTime);
+            else
+              time = myTime;
 
-                // shuffle
-                if (substeps.numObjs > 1) 
-                    {
-                    if (shuffling) substeps.shuffle(random);  // no need to flip -- we're randomizing
-                    else substeps.reverse();  // they came out in reverse order; we need to flip 'em
-                    }
-                                                                
-                // dump
-                if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;  // remember index of largest substep since we're violating clear()
-                currentSteps.addAll(substeps);
-                substeps.numObjs = 0;  // temporarily clear
-                
-                // check next key and break if we don't need to go on
-                Key currentKey = (Key)(queue.getMinKey());
-                if (currentKey == null || currentKey.time != time) break;  // looks like no more substeps at this timestamp
-                }
+            if(time >= myTime)
+              // grab all of the steppables in the right order.  To do this, we employ two Bags:
+              // 1. Each iteration of the while-loop, we grab all the steppables of the next ordering, put into the substeps Bag
+              // 2. Next we either shuffle or reverse the substeps.
+              // 3. Next we add them all to the end of the currentSteps Bag
+              // 4. Then we clear the substeps bag, but we don't let them GC yet
+              // 5. Last, out of the while-loop, we clear the substeps bag "for real", allowing them to GC
+              while(true)
+                  {
+                  // Suck out the contents of the next ordering
+                  queue.extractMin(substeps);  // come out in reverse order
+
+                  // shuffle
+                  if (substeps.numObjs > 1) 
+                      {
+                      if (shuffling) substeps.shuffle(random);  // no need to flip -- we're randomizing
+                      else substeps.reverse();  // they came out in reverse order; we need to flip 'em
+                      }
+                                                                  
+                  // dump
+                  if (topSubstep < substeps.numObjs) topSubstep = substeps.numObjs;  // remember index of largest substep since we're violating clear()
+                  currentSteps.addAll(substeps);
+                  substeps.numObjs = 0;  // temporarily clear
+                  
+                  // check next key and break if we don't need to go on
+                  Key currentKey = (Key)(queue.getMinKey());
+                  if (currentKey == null || currentKey.time > time) break;  // looks like no more substeps at this timestamp
+                  }
             }
             
         // now finally clear out the substeps for real
