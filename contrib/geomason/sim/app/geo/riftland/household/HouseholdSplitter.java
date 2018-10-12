@@ -1,10 +1,10 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
-import riftland.*;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.WaterHole;
-import riftland.util.CachedDistance;
+import sim.app.geo.riftland.*;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.CachedDistance;
 import sim.util.Int2D;
 
 import java.util.logging.Level;

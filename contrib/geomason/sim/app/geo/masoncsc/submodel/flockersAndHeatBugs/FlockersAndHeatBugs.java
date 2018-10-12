@@ -1,7 +1,7 @@
-package masoncsc.submodel.flockersAndHeatBugs;
-import masoncsc.submodel.MetaSimState;
-import masoncsc.submodel.flockersAndHeatBugs.flockers.Flockers;
-import masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugs;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs;
+import sim.app.geo.masoncsc.submodel.MetaSimState;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.flockers.Flockers;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugs;
 import sim.engine.SimState;
 
 

@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package nearbyworld;
+package sim.app.geo.nearbyworld;
 
 import java.awt.Color;
 import javax.swing.JFrame;

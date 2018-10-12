@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package dadaab;
+package sim.app.geo.dadaab;
 
 /**
  *
@@ -12,7 +12,7 @@ package dadaab;
 import java.io.*;
 import java.util.ArrayList;
 
-import dadaab.dadaabData.DadaabData;
+//import DadaabData;
 import sim.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

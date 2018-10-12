@@ -1,4 +1,4 @@
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import javax.swing.filechooser.FileFilter;
 
 import sim.display.Console;
 
-import riftland.PopulationCenter;
+import sim.app.geo.riftland.PopulationCenter;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;

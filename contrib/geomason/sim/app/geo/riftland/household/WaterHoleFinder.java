@@ -1,12 +1,12 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
-import riftland.Parameters;
-import riftland.World;
-import riftland.parcel.WaterHole;
-import riftland.util.CachedDistance;
-import riftland.util.FitnessProportionalSelector;
-import riftland.util.Pair;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.CachedDistance;
+import sim.app.geo.riftland.util.FitnessProportionalSelector;
+import sim.app.geo.riftland.util.Pair;
 import sim.util.Int2D;
 
 import java.util.ArrayList;

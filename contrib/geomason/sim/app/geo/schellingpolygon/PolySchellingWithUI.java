@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package schellingpolygon;
+package sim.app.geo.schellingpolygon;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

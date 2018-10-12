@@ -1,10 +1,10 @@
-package acequias;
+package sim.app.geo.acequias;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import acequias.objects.Tile;
+import sim.app.geo.acequias.objects.Tile;
 
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.RectanglePortrayal2D;

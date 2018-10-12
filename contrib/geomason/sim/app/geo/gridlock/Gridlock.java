@@ -6,7 +6,7 @@
  * <p/>
  *
  */
-package gridlock;
+package sim.app.geo.gridlock;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;

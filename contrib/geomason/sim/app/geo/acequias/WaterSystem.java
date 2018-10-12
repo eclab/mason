@@ -1,8 +1,8 @@
-package acequias;
+package sim.app.geo.acequias;
 
 import java.util.HashMap;
 
-import acequias.objects.Tile;
+import sim.app.geo.acequias.objects.Tile;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

@@ -4,7 +4,7 @@
  * $Id: SaltWater.java 1613 2013-02-12 20:34:08Z jharri $
  */
 
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
 /**
  * Represents 1 km^2 of salt water

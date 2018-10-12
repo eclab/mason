@@ -4,18 +4,18 @@
  * $Id: World.java 2028 2013-09-04 18:44:30Z escott8 $
  *
  */
-package riftland;
+package sim.app.geo.riftland;
 
 import ec.util.MersenneTwisterFast;
-import riftland.conflict.ConflictMediatorRural;
-import riftland.conflict.Mediator;
-import riftland.dataCollectors.DataCollector;
-import riftland.dataCollectors.DisplacementEventCollector;
-import riftland.dataCollectors.DisplacementEventDetailsCollector;
-import riftland.dataCollectors.EthnicityCollector;
-import riftland.household.HerdMover;
-import riftland.util.CachedDistance;
-import riftland.util.Misc;
+import sim.app.geo.riftland.conflict.ConflictMediatorRural;
+import sim.app.geo.riftland.conflict.Mediator;
+import sim.app.geo.riftland.dataCollectors.DataCollector;
+import sim.app.geo.riftland.dataCollectors.DisplacementEventCollector;
+import sim.app.geo.riftland.dataCollectors.DisplacementEventDetailsCollector;
+import sim.app.geo.riftland.dataCollectors.EthnicityCollector;
+import sim.app.geo.riftland.household.HerdMover;
+import sim.app.geo.riftland.util.CachedDistance;
+import sim.app.geo.riftland.util.Misc;
 import sim.engine.MakesSimState;
 import sim.engine.SimState;
 import sim.field.grid.DoubleGrid2D;

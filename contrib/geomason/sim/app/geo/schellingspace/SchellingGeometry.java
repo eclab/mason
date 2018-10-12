@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package schellingspace;
+package sim.app.geo.schellingspace;
 
 import java.util.ArrayList;
 import sim.util.geo.MasonGeometry;

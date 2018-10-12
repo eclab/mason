@@ -1,14 +1,14 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
 import java.awt.geom.Point2D;
-import riftland.Land;
-import riftland.Parameters;
-import riftland.World;
-import riftland.conflict.Conflict;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
-import riftland.parcel.WaterHole;
+import sim.app.geo.riftland.Land;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.conflict.Conflict;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.WaterHole;
 import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.IntBag;

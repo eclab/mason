@@ -7,9 +7,9 @@
  *
  * $Id$
  */
-package campusworld;
+package sim.app.geo.campusworld;
 
-import campusworld.CampusWorld;
+import sim.app.geo.campusworld.CampusWorld;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;

@@ -1,4 +1,4 @@
-package riftland.util;
+package sim.app.geo.riftland.util;
 
 /**
  *

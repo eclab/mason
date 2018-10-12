@@ -1,9 +1,9 @@
-package riftland.dataCollectors;
+package sim.app.geo.riftland.dataCollectors;
 
-import masoncsc.datawatcher.*;
-import masoncsc.util.Pair;
-import riftland.Parameters;
-import riftland.World;
+import sim.app.geo.masoncsc.datawatcher.*;
+import sim.app.geo.masoncsc.util.Pair;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 

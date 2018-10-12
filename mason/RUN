@@ -1,0 +1,1 @@
+mpirun -np $1 java -cp "library/*:." -verbose sim.display.Console

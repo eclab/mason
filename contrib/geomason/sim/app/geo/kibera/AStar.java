@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package kibera;
+package sim.app.geo.kibera;
 
 // Haiti project  - searching the nearest road
 
-import kibera.KiberaBuilder.Node;
+import sim.app.geo.kibera.KiberaBuilder.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;

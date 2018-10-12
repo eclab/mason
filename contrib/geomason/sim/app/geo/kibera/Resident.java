@@ -1,13 +1,13 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.util.ArrayList;
-import kibera.KiberaBuilder.Node;
+import sim.app.geo.kibera.KiberaBuilder.Node;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.network.Edge;
 import sim.util.Double2D;
 import sim.util.Valuable;
-//import kibera.TimeManager;
+//import sim.app.geo.kibera.TimeManager;
 
 /*
  * 

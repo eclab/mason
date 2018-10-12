@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.io.*;
 import java.net.URL;
@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import kibera.Resident.Employment;
-import kibera.Resident.Gender;
-import kibera.Resident.Identity;
-import kibera.Resident.Religion;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Gender;
+import sim.app.geo.kibera.Resident.Identity;
+import sim.app.geo.kibera.Resident.Religion;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
 
-import kibera.kiberaData.KiberaData;
+import sim.app.geo.kibera.kiberaData.KiberaData;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.DoubleGrid2D;

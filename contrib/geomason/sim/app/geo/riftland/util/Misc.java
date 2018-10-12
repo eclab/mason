@@ -1,12 +1,12 @@
-package riftland.util;
+package sim.app.geo.riftland.util;
 
 import ec.util.MersenneTwisterFast;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import riftland.Parameters;
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.util.Bag;
 import sim.util.Int2D;
 

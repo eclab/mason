@@ -1,4 +1,4 @@
-package hotspots.objects;
+package sim.app.geo.hotspots.objects;
 
 
 import java.io.IOException;
@@ -10,9 +10,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import hotspots.sim.Hotspots;
-import hotspots.sim.Hotspots.EvacuationOrder;
-import hotspots.sim.Hotspots.RoadClosure;
+import sim.app.geo.hotspots.sim.Hotspots;
+import sim.app.geo.hotspots.sim.Hotspots.EvacuationOrder;
+import sim.app.geo.hotspots.sim.Hotspots.RoadClosure;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;

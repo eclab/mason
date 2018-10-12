@@ -1,4 +1,4 @@
-package hotspots.sim;
+package sim.app.geo.hotspots.sim;
 
 import java.io.*;
 import java.net.URL;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import hotspots.hotspotsData.HotSpotsData;
+import sim.app.geo.hotspots.hotspotsData.HotSpotsData;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;
@@ -25,7 +25,7 @@ import sim.util.geo.AttributeValue;
 import sim.util.geo.GeomPlanarGraph;
 import sim.util.geo.MasonGeometry;
 import sim.util.geo.PointMoveTo;
-import hotspots.objects.Agent;
+import sim.app.geo.hotspots.objects.Agent;
 
 import swise.agents.communicator.Communicator;
 import swise.agents.communicator.Information;

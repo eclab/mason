@@ -1,4 +1,4 @@
-package hotspots.visualization;
+package sim.app.geo.hotspots.visualization;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -13,8 +13,8 @@ import javax.swing.JFrame;
 import org.jfree.data.xy.XYSeries;
 
 import ec.util.MersenneTwisterFast;
-import hotspots.objects.Agent;
-import hotspots.sim.Hotspots;
+import sim.app.geo.hotspots.objects.Agent;
+import sim.app.geo.hotspots.sim.Hotspots;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;

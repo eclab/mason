@@ -1,12 +1,12 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.util.TreeMap;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import kibera.Resident.Employment;
-import kibera.Resident.Goal;
-import kibera.Resident.Identity;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Goal;
+import sim.app.geo.kibera.Resident.Identity;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

@@ -1,6 +1,6 @@
-package kibera;
+package sim.app.geo.kibera;
 
-import kibera.Resident.Gender;
+import sim.app.geo.kibera.Resident.Gender;
 import sim.util.Bag;
 
 public class Business {

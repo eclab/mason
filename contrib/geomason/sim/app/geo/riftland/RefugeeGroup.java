@@ -4,12 +4,12 @@
  * $Id: RefugeeGroup.java 1733 2013-04-01 20:33:47Z escott8 $
  */
 
-package riftland;
+package sim.app.geo.riftland;
 
-import riftland.household.Household;
+import sim.app.geo.riftland.household.Household;
 import java.util.ArrayList;
 
-import cityMigration.CityMigrationModel;
+import sim.app.geo.cityMigration.CityMigrationModel;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package schellingspace;
+package sim.app.geo.schellingspace;
 
 import com.vividsolutions.jts.geom.*;
 import java.io.FileNotFoundException;

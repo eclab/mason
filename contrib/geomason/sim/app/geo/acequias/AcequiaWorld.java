@@ -1,4 +1,4 @@
-package acequias;
+package sim.app.geo.acequias;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,12 +7,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import acequias.objects.Acequia;
-import acequias.objects.Parciante;
-import acequias.objects.Tile;
-//import acequias.
-//import acequias.acequiasData;
-//import acequias.acequiasData.AcequiasData;
+import sim.app.geo.acequias.objects.Acequia;
+import sim.app.geo.acequias.objects.Parciante;
+import sim.app.geo.acequias.objects.Tile;
+//import sim.app.geo.acequias.
+//import sim.app.geo.acequias.acequiasData;
+//import sim.app.geo.acequias.acequiasData.AcequiasData;
 import sim.engine.SimState;
 import sim.field.grid.ObjectGrid2D;
 import sim.field.network.Edge;
@@ -463,7 +463,7 @@ public class AcequiaWorld extends SimState {
 			// Convert our input stream to a BufferedReader
 
 
-			BufferedReader d = new BufferedReader(new InputStreamReader(acequias.acequiasData.AcequiasData.class.getResourceAsStream
+			BufferedReader d = new BufferedReader(new InputStreamReader(sim.app.geo.acequias.acequiasData.AcequiasData.class.getResourceAsStream
 					(filename)));
 
 
@@ -563,7 +563,7 @@ public class AcequiaWorld extends SimState {
 
 			// Convert our input stream to a
 
-			BufferedReader d = new BufferedReader(new InputStreamReader(acequias.acequiasData.AcequiasData.class.getResourceAsStream
+			BufferedReader d = new BufferedReader(new InputStreamReader(sim.app.geo.acequias.acequiasData.AcequiasData.class.getResourceAsStream
 					(filename)));
 
 			// get the parameters from the file

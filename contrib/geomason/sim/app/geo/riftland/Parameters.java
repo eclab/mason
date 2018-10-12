@@ -1,8 +1,8 @@
-package riftland;
+package sim.app.geo.riftland;
 
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;
-import riftland.riftlandData.RiftLandData;
+import sim.app.geo.riftland.riftlandData.RiftLandData;
 
 import java.io.*;
 import java.net.URL;

@@ -4,12 +4,12 @@
  * $Id: Mediator.java 1707 2013-03-20 21:43:50Z escott8 $
  */
 
-package riftland.conflict;
+package sim.app.geo.riftland.conflict;
 
 import java.util.LinkedList;
 import java.util.List;
-import riftland.household.Activity;
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.household.Activity;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.engine.Steppable;
 import sim.field.grid.SparseGrid2D;
 

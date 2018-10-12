@@ -1,4 +1,4 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

@@ -1,14 +1,14 @@
-package riftland;
+package sim.app.geo.riftland;
 
-import cityMigration.DisplacementEvent;
+import sim.app.geo.cityMigration.DisplacementEvent;
 import com.vividsolutions.jts.geom.Point;
 import ec.util.MersenneTwisterFast;
-import riftland.household.Farming;
-import riftland.household.Herding;
-import riftland.household.Household;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
-import riftland.util.Misc;
+import sim.app.geo.riftland.household.Farming;
+import sim.app.geo.riftland.household.Herding;
+import sim.app.geo.riftland.household.Household;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
+import sim.app.geo.riftland.util.Misc;
 import sim.engine.RandomSequence;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;

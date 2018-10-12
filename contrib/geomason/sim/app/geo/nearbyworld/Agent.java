@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package nearbyworld;
+package sim.app.geo.nearbyworld;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;

@@ -1,11 +1,11 @@
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 
 import com.vividsolutions.jts.geom.Envelope;
-import riftland.Parameters;
-import riftland.PopulationCenter;
-import riftland.RefugeeGroup;
-import riftland.household.Household;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.PopulationCenter;
+import sim.app.geo.riftland.RefugeeGroup;
+import sim.app.geo.riftland.household.Household;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;

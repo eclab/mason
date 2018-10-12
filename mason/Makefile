@@ -4,11 +4,10 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-
-JAVAC = javac ${FLAGS}
-
-FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ".:library/bsh-2.0b4.jar:library/itext-1.2.jar:library/jcommon-1.0.21.jar:library/jfreechart-1.0.17.jar:library/jmf.jar:library/portfolio.jar:library/mpi.jar"
-
+LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" library/* `
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}:$$CLASSPATH
+JAVAC = mpijavac ${FLAGS}
+BUILDDIR=$$(pwd)
 VERSION = 19
 
 
@@ -88,6 +87,7 @@ sim/display3d/*.java \
 
 
 # Make the main MASON code, not including 3D code
+all: SHELL=/bin/bash
 all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
@@ -95,6 +95,7 @@ all:
 	${JAVAC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
+3d: SHELL=/bin/bash
 3d:
 	${JAVAC} ${DIRS} ${3DDIRS}
 
@@ -119,11 +120,19 @@ docs: doc
 
 # Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
 # files.  you'll probably want to strip this down some.
+jar: SHELL=/bin/bash
 jar: 3d
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	#printf "Main-Class: sim.display.Console\nClass-Path:" > /tmp/manifest.add
+	#for i in $$(ls library | grep jar); do printf " library/$$i" >> /tmp/manifest.add ; done
+	echo "" >> /tmp/manifest.add
+	echo $$(cat /tmp/manifest.add)
+	#jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add library/* ec/* sim/* docs/* start/*
+	#rm /tmp/manifest.add
+
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories

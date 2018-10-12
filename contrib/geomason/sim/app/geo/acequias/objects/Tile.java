@@ -1,4 +1,4 @@
-package objects;
+package sim.app.geo.acequias.objects;
 
 /**  <b>Tile</b> the patches of landscape which make up the environment.
  * 

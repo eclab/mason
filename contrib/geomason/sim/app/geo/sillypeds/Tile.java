@@ -11,7 +11,7 @@
  ** $Id$
  **
  **/
-package sillypeds;
+package sim.app.geo.sillypeds;
 
 import java.util.ArrayList;
 

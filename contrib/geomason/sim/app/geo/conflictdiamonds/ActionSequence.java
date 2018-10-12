@@ -1,8 +1,9 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
-import conflictdiamonds.ConflictDiamonds.Goal;
+/*import conflictdiamonds.ConflictDiamonds.Goal;
 import conflictdiamonds.ConflictDiamonds.Action;
-
+*/
+import sim.app.geo.conflictdiamonds.*;
 /**
  * After the Intensity Analyzer has determined the action-guiding motive, the Action Sequence executes the action.
  * Activities include finding employment in diamond industry, continue working, stay home, or rebel

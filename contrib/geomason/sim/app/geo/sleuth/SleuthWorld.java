@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sleuth;
+package sim.app.geo.sleuth;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

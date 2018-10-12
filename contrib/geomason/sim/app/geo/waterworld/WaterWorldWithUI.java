@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package waterworld;
+package sim.app.geo.waterworld;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

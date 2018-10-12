@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package schellingspace;
+package sim.app.geo.schellingspace;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -1,4 +1,4 @@
-package masoncsc.gui;
+package sim.app.geo.masoncsc.gui;
 
 /* ===========================================================
  * JFreeChart : a free chart library for the Java(tm) platform
