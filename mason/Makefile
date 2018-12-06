@@ -125,13 +125,9 @@ jar: 3d
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	#printf "Main-Class: sim.display.Console\nClass-Path:" > /tmp/manifest.add
-	#for i in $$(ls library | grep jar); do printf " library/$$i" >> /tmp/manifest.add ; done
-	echo "" >> /tmp/manifest.add
-	echo $$(cat /tmp/manifest.add)
 	#jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
-	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add library/* ec/* sim/* docs/* start/*
-	#rm /tmp/manifest.add
+	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add ec/ sim/ docs/ start/
+	rm /tmp/manifest.add
 
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then

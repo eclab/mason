@@ -12,9 +12,9 @@
 #
 # See other make options:
 # make help
-JAVAC = mpijavac -target 1.8 -source 1.8 -nowarn
 LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" library/* `
 FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}:$$CLASSPATH:.
+JAVAC = mpijavac ${FLAGS}
 BUILDDIR=$$(pwd)
 # GeoMason supports Java 5; note that MASON proper only supports Java 4.
 
@@ -26,6 +26,7 @@ SRC_DISTRO  = geomason.src.${VERSION}.tgz
 DEMO_DISTRO = geomason.demos.${VERSION}.tgz
 
 all: jar demos
+
 
 DEMOS = \
 	sim/app/geo/campusworld/*.java		\
@@ -71,10 +72,11 @@ DEMOS = \
 	# sim/app/geo/haiti/*.java		\
 
 
+
 # Note that we do not restrict demos to Java 1.4 as is this case with MASON
 demos : ${JARFILE}
 	@echo "Compiling examples..."
-	@javac -cp ${CLASSPATH}:${JARFILE} $(DEMOS)
+	@mpijavac -cp ${CLASSPATH}:${JARFILE}:${LIBS} $(DEMOS)
 
 
 dist : ${SRC_DISTRO} ${DEMO_DISTRO}
@@ -154,13 +156,14 @@ ${JARFILE} : $(BASE_FILES) $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
 	@touch /tmp/manifest.add
 	@rm /tmp/manifest.add
 	@echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	@echo "Class-Path: . library/*"
+	#@echo "Class-Path:  library/*"
 	@javac ${JAVACFLAGS} $^
 	@jar -cvmf /tmp/manifest.add $@ `find sim/app sim/field sim/io sim/portrayal sim/util -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
 	@rm /tmp/manifest.add
 
 
 jar : ${JARFILE}
+
 
 #Print a help message
 help:

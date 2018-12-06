@@ -11,7 +11,7 @@ instance="c5.large"
 
 # --------------------------------------------------
 
-JAR_NAME="mason.jar"
+JAR_NAME="mason.19.jar"
 HF_PUBLIC="hostfile"
 HF_PRIVATE="mpi_hostfile"
 
