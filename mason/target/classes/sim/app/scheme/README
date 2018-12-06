@@ -1,0 +1,154 @@
+These are Kawa/Scheme implementations of the Tutorial1 and Tutorial2 MASON
+applications.  To run them:
+
+1. Download and install, and add to your CLASSPATH the very latest 
+   Kawa (at least 1.9.0) from its CVS repository
+	http://www.gnu.org/software/kawa/Getting-Kawa.html
+2. Run as
+	java kawa.repl run1.scm		(tutorial 1)
+   or
+	java kawa.repl run2.scm		(tutorial 2)
+
+Scheme is a dialect from the Lisp family of languages, and is designed to be
+very small and elegant.  Kawa is a Scheme compiler and interpreter which runs
+on the Java virtual machine and has nice hooks into Java proper.
+
+What's the point?  I wanted to see how easy it was for MASON to be hooked up
+with non-Java languages.  I'm an AI guy, so Lisp was the obvious choice.  :-)
+Other possible language targets in the future: JRuby, Jython.  I've already
+done it in BeanShell, but it was unacceptably, ridiculously slow.
+
+Speed.  Scheme is an untyped language.  In standard Scheme form, the examples
+in this directory run at 1/40 the speed of Java.  But Kawa has certain
+language extensions in the form of type declarations and Java method call
+forms.  Including the optional type declarations everywhere allows Kawa to
+run these tutorials at about 2/3 the speed of Java!  That's VERY IMPRESSIVE
+for a language which has to interface with another one to do its job.
+
+Kawa has an extensive manual:
+	http://www.gnu.org/software/kawa/toc.html
+...including discussion of its (nonstandard) typing system
+	http://www.gnu.org/software/kawa/Types.html
+...and its (obviously nonstandard) object interface to Java
+	http://www.gnu.org/software/kawa/Objects-Classes-and-Modules.html
+
+However if you're an experienced Lisper or schemer, I've listed below just
+enough for you to know to understand the code.  Enjoy.  Note that this code
+is written in a Scheme fashion that very strongly resembles the Java versions
+of the code.  That was intentional, as it was the easiest way to port for
+proof of concept purposes.
+
+Sean
+
+
+
+CASE SENSITIVITY
+
+Kawa is by default case-sensitive, which makes it a bit easier to interoperate
+with Java symbols.
+
+TYPE DECLARATIONS
+
+Kawa makes use of type declarations in order to give compiler hints as to the
+type of a variable, and also in order to access various Java classes.  A type
+declaration looks like this:
+
+	<void>			void type
+	<int>			basic data types (typically java ones)
+	<hereIsASchemeClass>	Scheme classes
+	<java.lang.String>	Java classes
+	<int[][]>		Java arrays
+
+You can type a variable using the :: operator.  This gives a hint to Kawa that
+the variable will *only* hold an object of that type, which enables it to
+compile to much faster code.  Without ::, the tutorial1 example runs at 1/40
+the speed of the MASON Java version.  With ::, the tutorial1 example runs at
+about 3/4 the speed.  Pretty impressive!
+
+Variables are typed in various places:
+
+	(let (x :: <java.lang.String>
+	     ((y :: <int> 4 ))) ....
+
+	(do ((x :: <int> 0 (+ x 1))) ...
+
+etc.  Basically anywhere where you define a variable or slot, you can instead 
+define that variable :: <type>.
+
+ALLOCATING A JAVA OBJECT
+
+(make <java.util.Random> initialSeed)
+or
+(<java.util.Random> initialSeed)
+; new java.util.Random(initialSeed)
+
+
+CASTING INTO SUBCLASSES
+
+(as <javax.swing.JCheckBox> myButton)
+; ((javax.swing.JCheckBox)myButton)
+
+
+CALLING A STATIC METHOD
+
+(<java.lang.String>:valueOf myObject)
+; java.lang.String.valueOf(myObject)
+
+
+CALLING SUPER
+
+(invoke-special <the.super.class.Name> (this) 'theMethodName ...args...)
+
+CALLING AN INSTANCE METHOD ON A JAVA OBJECT
+
+(myButton:setSize 100 200)
+; myButton.setSize(100, 200)
+(*:toString "Tutorial2: Life")
+; "Tutorial2: Life".toString()  ;; necessary because Scheme Strings != Java Strings
+
+
+GETTING/SETTING AN INSTANCE VARIABLE
+
+myButton:val
+(set! myButton:val 42)
+; myButton.val    myButton.val = 42
+
+
+CREATING A JAVA ARRAY WITH PREDEFINED VALUES
+(<int[]> 1 2 3 4)
+; new int[] { 1, 2, 3, 4}
+(<int[][]> (<int[]> 1 2) (<int[]> 3 4))
+; new int[][] {{1, 2}, {3, 4}}
+
+
+CREATING A JAVA CLASS WITH SCHEME METHODS AND SLOTS
+(define-simple-class <subclassname> (<java.lang.the.super.Class>)
+	-- slot --
+	-- slot -- ...)
+
+where -- slot -- can be a constructor, a method, or an instance variable.
+
+Constructor  (args can be typed):
+
+((*init* ...args...) ... :: <optional-return-type>... ...body...)
+
+Method    (args can be typed):
+
+((methodName ...args...) ... :: <optional-return-type> ... ..body...)
+
+Instance variable:
+
+(variablename
+	...optional type: <type>...
+	...optional init-form: initial-value-expression... )
+
+
+ACCESSING THIS
+
+(this)
+
+
+TESTING FOR JAVA NULL
+
+(eq? thing-to-compare #!null)
+

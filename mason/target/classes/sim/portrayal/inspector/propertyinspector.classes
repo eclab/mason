@@ -1,0 +1,21 @@
+# This is the propertyinspector.classes file.  When a
+# user chooses from various PropertyInspector subclasses,
+# the ones presented to him are selected from this file,
+# assuming they can respond to the type of property he
+# is examining.  The common place for this to occur is
+# when a user clicks on the magnifying glass icon next
+# to a property in a SimpleInspector, producing a pop-up
+# menu constructed from the classes below.  Add your
+# PropertyInspector subclass to the list below if you wish
+# it to be included for consideration in that menu.
+# Empty lines in this file are ignored, as 
+# is any part of a line which starts with a pound sign.
+
+sim.portrayal.inspector.StreamingPropertyInspector
+sim.portrayal.inspector.TimeSeriesChartingPropertyInspector
+sim.portrayal.inspector.HistogramChartingPropertyInspector
+sim.portrayal.inspector.ScatterPlotChartingPropertyInspector
+sim.portrayal.inspector.PieChartChartingPropertyInspector
+sim.portrayal.inspector.BarChartChartingPropertyInspector
+sim.portrayal.inspector.BubbleChartChartingPropertyInspector
+sim.portrayal.inspector.BoxPlotChartingPropertyInspector

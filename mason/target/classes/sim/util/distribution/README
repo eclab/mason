@@ -1,0 +1,83 @@
+This is a portion of the CERN JET library dealing with sampling distributions
+(portions of cern.jet.random, cern.jet.math, and cern.jet.stat) modified in
+various ways to make the library more useful as part of the MASON toolkit.
+Most importantly, the package has been set up so that you use
+MersenneTwisterFast as the random number generator behind these distributions.
+
+This stuff is very early and subject to non backward compatible change.  You
+have been warned.  Also we make no claims about the quality or correctness of 
+the samples produced by this code: though generally CERN JET/COLT has a fairly
+good reputation.
+
+
+WHAT'S IN THE PACKAGE
+
+The package is primarily intended to enable you to generate random numbers
+under a wide variety of distributions.  The package provides separate classes
+for the following distributions:
+
+	Beta, Binomial, Breit-Wigner (Lorentz), Mean-Square Breit-Wigner,
+	Chi-Square, Empirical, Discrete Imperical ("EmpiricalWalker"),
+	Exponential, Exponential Power, Gamma, Hyperbolic, Hypergeometric,
+	Logarithmic, NegativeBinomial, Normal (Gaussian), Poisson (in two
+	different forms), Student's T, Uniform, Von Mises, and Zeta.
+
+These classes work by instantiating a distribution with a given
+Mersenne Twister random number generator, then pulling random numbers out
+of the distribution.  It'd be best is you just mae one distribution of
+a given kind.  There shouldn't be any reason you couldn't use the same 
+Mersenne Twister for various different distributions, though keep in mind
+that the distributions (and MersenneTwisterFast) are not threadsafe, so
+if you use them in different threads you should lock on the Schedule
+before using the distribution.  Of course, the Uniform and Normal 
+distributions aren't very useful since they're provided by the random 
+number generator itself.  But there you have it.
+
+Additionally, the "Distributions" class provides several additional
+distributions which don't require internal state to compute and so can be
+performed with a single function each:
+
+	Burr (various kinds), Cauchy, Erlang, Geomeric, Lambda, Laplace,
+	Logistic, Power-Law, Triangular, Weibull, and Zipf.
+
+These distributions work by simply passing the Mersenne Twister in as a
+parameter to the static method, and out pops a single random number under
+the distribution.
+
+
+WHERE THE PACKAGE CAME FROM
+
+http://acs.lbl.gov/~hoschek/colt/
+
+The COLT package is quite a bit bigger than just these distributions,
+including a lot of numerical computing.  The last update to the package was
+five years ago however, so it may be suffering from some bit-rot.  If you
+cannot get the colt JAR file from this distribution, try Repast, which has
+it as part of their system.
+
+
+CHANGES FOR MASON COMPATIBILITY
+
+Changes were made to make it easy to use the package with MASON's RNG
+of choice; to conform with MASON's package structures so as to not require
+a separate jar file; and to make the code easier to serialize.
+
+        - All static random number generator code has been removed
+        - The Stack class has been merged into the EmpiricalWalker class
+        - The Benchmark class has been removed
+        - The cern.jet.math.Polynomial, cern.jet.math.Constants,
+          cern.jet.math.Arithmetic, and cern.jet.stat.Probability classes
+          have been merged into this package.  The cern.jet.stat.Gamma class
+          has been merged with the Probability class.
+        - Interfaces and superclasses have been removed from the
+          AbstractDistribution class
+        - AbstractDistribution no longer clones its random number generator
+          when cloned, but rather shares it as a pointer.
+        - Various Uniform constructors have been deleted
+
+... and the big ones:
+
+        - RandomGenerator has been replaced with MersenneTwisterFast
+        - The package has been changed to sim.util.distribution
+
+

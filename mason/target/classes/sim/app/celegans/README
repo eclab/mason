@@ -1,0 +1,22 @@
+This project was an attempt by me to convert some old code I developed while
+hanging out at Sony Computer Science Laboratories in 1998.  The code's function is
+for visualizing the C. elegans worm, and when it was developed, Java3D had
+*just* came out (and Java was barely three years old).  My goal was to see
+how quickly one could convert the whole thing over to MASON.  Answer: about a day.
+
+As a result, the code has some peculiarities: the big one is a "Synapse" object
+which has to be converted into an "Edge" object.  I might clean that up in the
+future.  Also, Java3D, as used by MASON, can't handle all those synapses
+in real time (about 4000 of them).   So the synapse display is hidden by default.
+We'll need to think about how to increase Java3D's efficiency.
+
+The code is also very "old style" Java -- though I brought a few elements up
+to current form while converting it over.
+
+The database is a cleaned-up version of the AceDB neural and cellular structure
+information (http://www.acedb.org/), converted into a format that made it easy
+to parse.  It's dated around 1997.  Probably much better data is available, 
+perhaps from WormBase (http://www.wormbase.org/), but the original data 
+should suffice for now.
+
+Sean Luke

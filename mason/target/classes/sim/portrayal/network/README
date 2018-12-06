@@ -1,0 +1,35 @@
+sim/portrayal/network
+
+This package holds 2D FieldPortrayals for the Network field.
+
+NetworkPortrayal2D.java
+
+A FieldPortrayal for the Network field.  Actually requires TWO fields: a 
+Network field which contains the nodes and edges in the network, and a 
+Continuous2D or SparseGrid2D which specifies the location in 2D space of 
+the NODES.  The FieldPortrayal then draws the edges by querying the 
+Continuous2D or SparseGrid2D for where the ends of the edges should be 
+located.  The FieldPortrayal does NOT draw any nodes -- you should draw 
+those by using a ContinuousPortrayal2D or SparseGridPortrayal2D on the 
+same fields.
+
+
+SpatialNetwork2D.java
+
+A class which holds both a Network and either a Continuous2D or 
+SparseGrid2D as discussed above.  The SpatialNetwork2D object is the 
+object provided to the NetworkPortrayal2D to "portray".
+
+
+SimpleEdgePortrayal2D.java
+
+A SimplePortrayal designed to draw edges for the NetworkPortrayal2D.  
+You can create your own subclasses if you don't like our implementation.
+
+
+EdgeDrawInfo2D.java
+
+An extension of sim/portrayal/DrawInfo2D which includes the location of
+the second point of the edge.  Passed to SimpleEdgePortrayal2D to tell
+it how and where to draw its edges.
+
