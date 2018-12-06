@@ -126,7 +126,7 @@ jar: 3d
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	#jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
-	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add ec/ sim/ docs/ start/
+	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add ec/ sim/ docs/ start/ library/
 	rm /tmp/manifest.add
 
 

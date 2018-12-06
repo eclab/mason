@@ -13,7 +13,7 @@
 # See other make options:
 # make help
 LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" library/* `
-FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}:$$CLASSPATH:.
+FLAGS = -g -nowarn -cp ${LIBS}:$$CLASSPATH:.
 JAVAC = mpijavac ${FLAGS}
 BUILDDIR=$$(pwd)
 # GeoMason supports Java 5; note that MASON proper only supports Java 4.
