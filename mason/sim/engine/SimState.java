@@ -763,10 +763,10 @@ public class SimState implements java.io.Serializable
                         long firstSteps = schedule.getSteps();
                         double averageRate = 0;
                         long startClock = oldClock;
+                        Timing.start(Timing.LB_RUNTIME);
                         
                         while((_for == -1 || steps < _for) && schedule.getTime() <= until)
                             {
-                            Timing.start(Timing.LB_RUNTIME);
                             boolean ret = schedule.step(state);
                             // Start the timer here for every step but stop it in one of the steppables
                             // Timing.stop(Timing.LB_RUNTIME);
