@@ -1,0 +1,2 @@
+mpirun -np $1 java -verbose -jar geomason.1.6.jar -cp library/*
+

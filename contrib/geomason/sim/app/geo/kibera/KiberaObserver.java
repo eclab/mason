@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import kibera.Resident.Employment;
-import kibera.Resident.Goal;
-import kibera.Resident.Identity;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Goal;
+import sim.app.geo.kibera.Resident.Identity;
 import net.sf.csv4j.CSVWriter;
 import sim.engine.SimState;
 import sim.engine.Steppable;

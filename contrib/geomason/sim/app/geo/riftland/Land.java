@@ -1,12 +1,12 @@
-package riftland;
+package sim.app.geo.riftland;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
-import riftland.parcel.*;
-import riftland.riftlandData.RiftLandData;
-import riftland.util.Misc;
+import sim.app.geo.riftland.parcel.*;
+import sim.app.geo.riftland.riftlandData.RiftLandData;
+import sim.app.geo.riftland.util.Misc;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.ObjectGrid2D;
 import sim.io.geo.ShapeFileImporter;

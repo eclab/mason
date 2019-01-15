@@ -1,12 +1,12 @@
-package masoncsc.submodel.flockersAndHeatBugs;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs;
 
 import java.awt.Color;
 
 import javax.swing.JFrame;
 
-import masoncsc.submodel.MetaGUIState;
-import masoncsc.submodel.flockersAndHeatBugs.flockers.FlockersWithUI;
-import masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugsWithUI;
+import sim.app.geo.masoncsc.submodel.MetaGUIState;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.flockers.FlockersWithUI;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugsWithUI;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;

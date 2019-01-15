@@ -10,6 +10,10 @@ import java.util.*;
 import java.io.*;
 import java.util.zip.*;
 import java.text.*;
+import java.util.logging.*;
+import java.lang.reflect.*;
+
+import sim.util.Timing;
 
 /** SimState represents the simulation proper.  Your simulations generally will contain one top-level object which subclasses from SimState.
 
@@ -41,6 +45,11 @@ public class SimState implements java.io.Serializable
     Object asynchronousLock = new boolean[1];  // an array is a unique, serializable object
     // Are we cleaning house and replacing the HashSet?
     boolean cleaningAsynchronous = false;
+
+    public static Logger logger;
+
+    // Flag indicating whether MPI is used
+    static boolean useMPI = false;
         
     SimState(long seed, MersenneTwisterFast random, Schedule schedule)
         {
@@ -349,24 +358,138 @@ public class SimState implements java.io.Serializable
         return job;
         }
 
+    private static void initRemoteLogger(String loggerName, String logServAddr, int logServPort) throws IOException {
+        SocketHandler sh = new SocketHandler(logServAddr, logServPort);
+        sh.setLevel(Level.ALL);
+        sh.setFormatter(new java.util.logging.Formatter() {
+            public String format(LogRecord rec) {
+                return String.format("[%s][%s][%s:%s][%-7s]\t %s",
+									  new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
+                                      rec.getLoggerName(),
+                                      rec.getSourceClassName(),
+                                      rec.getSourceMethodName(),
+									  rec.getLevel().getLocalizedName(),
+                                      rec.getMessage()
+                                     );
+            }
+        });
+        
+
+        logger = Logger.getLogger(loggerName);
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.ALL);
+        logger.addHandler(sh);
+    }
+
+    private static void initLocalLogger(String loggerName) {
+        logger = Logger.getLogger(loggerName);
+        logger.setLevel(Level.ALL);
+		logger.setUseParentHandlers(false);
+
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setFormatter(new java.util.logging.Formatter() {
+			public synchronized String format(LogRecord rec) {
+				return String.format("[%s][%-7s] %s%n",
+						new SimpleDateFormat("MM-dd-YYYY HH:mm:ss.SSS").format(new Date(rec.getMillis())),
+						rec.getLevel().getLocalizedName(),
+						rec.getMessage()
+				);
+			}
+		});
+		logger.addHandler(handler);
+    }
+
+    public static void doLoopMPI(final Class c, String[] args) throws mpi.MPIException {
+        mpi.MPI.Init(args);
+
+        useMPI = true;
+
+        // Setup Logger
+        String loggerName = String.format("MPI-Job-%d", mpi.MPI.COMM_WORLD.getRank());
+        String logServAddr = argumentForKey("-logserver", args);
+        String logServPortStr = argumentForKey("-logport", args);
+        if (logServAddr != null && logServPortStr != null)
+            try{
+                initRemoteLogger(loggerName, logServAddr, Integer.parseInt(logServPortStr));
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            }
+        else
+            initLocalLogger(loggerName);
+
+        // start do loop 
+        doLoop(c, args);
+
+        mpi.MPI.Finalize();
+    }
+
     /** Calls doLoop(MakesSimState,args), passing in a MakesSimState which creates
         SimStates of the provided Class c, using the constructor new <simState>(<random seed>). */
-    public static void doLoop(final Class c, String[] args)
-        {
-        doLoop(new MakesSimState()
-            {
-            public SimState newInstance(long seed, String[] args)
-                {
-                try
-                    {
+	public static void doLoop(final Class c, String[] args) {
+		// Map that helps boxing (primitive type to its wrapper class)
+		Map<Class<?>, Class<?>> map = new HashMap<Class<?>, Class<?>>();
+		map.put(boolean.class, Boolean.class);
+		map.put(byte.class, Byte.class);
+		map.put(short.class, Short.class);
+		map.put(char.class, Character.class);
+		map.put(int.class, Integer.class);
+		map.put(long.class, Long.class);
+		map.put(float.class, Float.class);
+		map.put(double.class, Double.class);
+
+		doLoop(new MakesSimState() {
+			public SimState newInstance(long seed, String[] args) {
+				try {
+					String ci_s = argumentForKey("-c", args);
+					if (ci_s == null)
                     return (SimState)(c.getConstructor(new Class[] { Long.TYPE }).newInstance(new Object[] { Long.valueOf(seed) } ));
-                    }
-                catch (Exception e)
-                    {
-                    throw new RuntimeException("Exception occurred while trying to construct the simulation " + c, e);
-                    }
-                }
-            public Class simulationClass() { return c; }
+					else {
+						// Get the constructor based on index given by "-c"
+						int ci = Integer.parseInt(ci_s);
+						Constructor constructor = c.getConstructors()[ci];
+
+						// Get the parameter type array of the given constructor
+						Class[] args_primitive_types = constructor.getParameterTypes();
+						Object[] args_obj = new Object[args_primitive_types.length];
+
+						// Get the parameter values given by "-a" and compare its length against the parameter type array
+						// Here we assume the first argument of the constructor will always be the seed
+						// and the seed value will not be included in the "-a"
+						String args_value_s = argumentForKey("-a", args);
+						if (args_value_s == null)
+							throw new RuntimeException("need to provide arguments to the constructors with -a ");
+						String[] args_value = args_value_s.split(",");
+						if (args_value.length != args_primitive_types.length - 1)
+							throw new RuntimeException("incorrect number of arguments is provided to the given constructor Want: " + (args_primitive_types.length - 1) + " Got: " + args_value.length);
+
+						// Create the parameter object array based on the type and value
+						args_obj[0] = seed;
+						for(int i = 0; i < args_value.length; i++) {
+							// Support primitive type only
+							if (!args_primitive_types[i + 1].isPrimitive())
+								throw new RuntimeException("Unsupported type: " + args_primitive_types[i + 1] + " Primitive type arguments only.");
+							
+							// Boxing of the primitive types
+							Class args_wrapper_type = map.get(args_primitive_types[i + 1]);
+							Method valueOf_method = args_wrapper_type.getMethod("valueOf", String.class);
+							args_obj[i + 1] = valueOf_method.invoke(args_wrapper_type, args_value[i]);
+						}
+
+						// Invoke the constructor and return the instance
+						return (SimState)constructor.newInstance(args_obj);
+					}
+
+				} 
+				catch (Exception e) {
+					if(e instanceof InvocationTargetException)
+						e.getCause().printStackTrace();
+					throw new RuntimeException("Exception occurred while trying to construct the simulation " + c, e);
+				}
+			}
+			public Class simulationClass() { return c; }
+
+			public Constructor[] getConstructors() { return c.getConstructors(); }
             }, args);
         }
     
@@ -439,8 +562,18 @@ public class SimState implements java.io.Serializable
                 "                  job 0 and with the seed given in -seed.\n\n" + 
                 "-quiet            Does not print messages except for errors and warnings.\n" + 
                 "                  This option implies -time 0.\n" +
-                "                  Default: prints all messages.\n"
+				"                  Default: prints all messages.\n\n" + 
+				"-c i              Use the ith constructor printed below to generate the \n" + 
+				"                  simulation instance. If missing, the default constructor to \n" + 
+				"                  use is the first one. \n\n" + 
+				"-a arg1,arg2,...  Comma-sparated arguments that will be passed to the constructor given by -c \n" + 
+				"                  Do not include seed in the arguments, use -seed if needed. \n\n"
                 );
+
+			Constructor[] cs = generator.getConstructors();
+			for (int i = 0; i < cs.length; i++)
+				System.err.printf("Available Constuctor [%d]: %s %n", i, cs[i]);
+
             System.exit(0);
             }
 
@@ -559,6 +692,8 @@ public class SimState implements java.io.Serializable
             System.exit(1);
             }
        
+		// init local logger
+		initLocalLogger("MASON-Logger");
        
         // okay, now we actually get down to brass tacks
         
@@ -626,10 +761,16 @@ public class SimState implements java.io.Serializable
                         long oldClock = System.currentTimeMillis();
                         Schedule schedule = state.schedule;
                         long firstSteps = schedule.getSteps();
+                        double averageRate = 0;
+                        long startClock = oldClock;
+                        Timing.start(Timing.LB_RUNTIME);
                         
                         while((_for == -1 || steps < _for) && schedule.getTime() <= until)
                             {
-                            if (!schedule.step(state)) 
+                            boolean ret = schedule.step(state);
+                            // Start the timer here for every step but stop it in one of the steppables
+                            // Timing.stop(Timing.LB_RUNTIME);
+                            if (!ret) 
                                 {
                                 retval=true; 
                                 break;
@@ -645,7 +786,7 @@ public class SimState implements java.io.Serializable
                             if (time > 0 && steps % time == 0)
                                 {
                                 clock = System.currentTimeMillis();
-                                if (!quiet) printlnSynchronized("Job " + job + ": " + "Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)));
+                                if (!quiet) printlnSynchronized("Job " + job + ": " + "Steps: " + steps + " Time: " + state.schedule.getTimestamp("At Start", "Done") + " Rate: " + rateFormat.format((1000.0 *(steps - firstSteps)) / (clock - oldClock)) + " Mean: " + rateFormat.format(1000.0 * steps / (clock - startClock)));
                                 firstSteps = steps;
                                 oldClock = clock;
                                 }
@@ -694,7 +835,7 @@ public class SimState implements java.io.Serializable
     static Object printLock = new Object[0];
     public static void printlnSynchronized(String val)
         {
-        synchronized(printLock) { System.err.println(val); }
+		synchronized(printLock) { logger.info(val); }
         }
     
     /** @deprecated */

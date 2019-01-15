@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sillypeds;
+package sim.app.geo.sillypeds;
 
 
 

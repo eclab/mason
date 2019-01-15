@@ -1,4 +1,4 @@
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
 import ec.util.MersenneTwisterFast;
 import java.util.ArrayList;
@@ -7,9 +7,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import riftland.Parameters;
-import riftland.WaterHoles;
-import riftland.util.Misc;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.WaterHoles;
+import sim.app.geo.riftland.util.Misc;
 import sim.field.grid.Grid2D;
 import sim.util.Bag;
 import sim.util.Int2D;

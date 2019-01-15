@@ -1,4 +1,4 @@
-package haiti;
+package sim.app.geo.haiti;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,7 +10,7 @@ import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.MutableDouble;
 import sim.util.gui.ColorMap;
 
-
+/*
 class RoadsPortrayal extends RectanglePortrayal2D {
 
 	// colormap for roads, which have values between 0 and 12
@@ -42,6 +42,7 @@ class RoadsPortrayal extends RectanglePortrayal2D {
 
 
 /* Color based on extent of damage, as defined by data sources */
+/* This appears to already be externally defined
 class DestructionPortrayal extends RectanglePortrayal2D {
 
 	public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
@@ -72,7 +73,7 @@ class DestructionPortrayal extends RectanglePortrayal2D {
 			graphics.setColor( Color.red );
 		graphics.fillRect(x,y,w,h);				
 	}
-}	
+}
 
 class CentersPortrayal extends RectanglePortrayal2D {
 	
@@ -156,6 +157,7 @@ class DensityPortrayal  extends RectanglePortrayal2D {
 	}
 }
 */
+/*
 class KnowledgePortrayal extends RectanglePortrayal2D {
 	
 	// colormap for people in tile levels, which varies between 0 and 30
@@ -183,3 +185,4 @@ class KnowledgePortrayal extends RectanglePortrayal2D {
 		}
 	}
 }
+*/

@@ -4,17 +4,17 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-
+LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
 JAVAC = javac ${FLAGS}
-
-FLAGS = -target 1.5 -source 1.5 -g -nowarn 
-
+BUILDDIR=$$(pwd)
 VERSION = 19
 
 
 # Main java files, not including the 3D stuff
 DIRS = \
 sim/app/heatbugs/*.java\
+sim/app/dheatbugs/*.java\
 sim/app/hexabugs/*.java \
 sim/app/asteroids/*.java \
 sim/app/antsforage/*.java \
@@ -29,6 +29,7 @@ sim/app/lsystem/*.java \
 sim/app/lightcycles/*.java \
 sim/app/swarmgame/*.java \
 sim/app/flockers/*.java \
+sim/app/dflockers/*.java \
 sim/app/tutorial1and2/*.java \
 sim/app/tutorial3/*.java \
 sim/app/tutorial4/*.java \
@@ -48,10 +49,12 @@ sim/util/media/*.java \
 sim/util/media/chart/*.java \
 sim/util/gui/*.java \
 sim/util/distribution/*.java \
+sim/util/sweep/*.java \
 sim/field/*.java \
 sim/field/grid/*.java \
 sim/field/continuous/*.java \
 sim/field/network/*.java \
+sim/field/storage/*.java \
 sim/portrayal/*.java \
 sim/portrayal/grid/*.java \
 sim/portrayal/continuous/*.java \
@@ -84,7 +87,13 @@ sim/portrayal3d/network/*.java \
 sim/display3d/*.java \
 
 
+# EC Example java files
+ECDIRS = \
+sim/app/tutorial1and2/ec/*.java \
+
+
 # Make the main MASON code, not including 3D code
+all: SHELL=/bin/bash
 all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
@@ -92,9 +101,13 @@ all:
 	${JAVAC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
+3d: SHELL=/bin/bash
 3d:
 	${JAVAC} ${DIRS} ${3DDIRS}
 
+# Make the EC Demo
+ec:
+	${JAVAC} ${DIRS} ${3DDIRS}
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -116,15 +129,19 @@ docs: doc
 
 # Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
 # files.  you'll probably want to strip this down some.
-jar: 3d
+jar: SHELL=/bin/bash
+jar: 3d ec
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	#jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add ec/ sim/ docs/ start/ library/
+	rm /tmp/manifest.add
+
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean 3d indent doc jar
+dist: clean 3d ec indent doc jar
 	@ echo If the version is being updated, change it here:
 	@ echo "1. sim.engine.SimState.version()"
 	@ echo "2. manual.tex frontmatter (including copyright year)"
@@ -151,6 +168,7 @@ help:
 	@ echo "make          Builds the model core, utilities, and 2D code/apps only"
 	@ echo "make all        (Same thing)"
 	@ echo "make 3d       Builds the model core, utilities, and both 2D and 3D code/apps"
+	@ echo "make ec       Builds the model core, utilities, and the EC example"
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
 	@ echo "make doc        (Same thing)"
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"

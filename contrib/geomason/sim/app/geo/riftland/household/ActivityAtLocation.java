@@ -4,10 +4,10 @@
  * $Id: ActivityAtLocation.java 1761 2013-04-16 20:05:28Z jharri $
  */
 
-package riftland.household;
+package sim.app.geo.riftland.household;
 
-import riftland.World;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.Parcel;
 
 /**
  *

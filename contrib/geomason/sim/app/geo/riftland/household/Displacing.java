@@ -4,7 +4,7 @@
  * $Id: Displacing.java 1723 2013-03-26 21:08:37Z escott8 $
  */
 
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import sim.engine.SimState;
 

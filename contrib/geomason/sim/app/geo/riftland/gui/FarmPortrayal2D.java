@@ -1,9 +1,9 @@
-package riftland.gui;
+package sim.app.geo.riftland.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;

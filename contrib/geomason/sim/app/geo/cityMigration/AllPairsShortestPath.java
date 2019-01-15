@@ -1,4 +1,4 @@
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 public class EdgeInfo implements java.io.Serializable {
 	

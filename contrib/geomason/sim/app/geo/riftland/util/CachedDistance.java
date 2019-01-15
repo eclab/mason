@@ -1,6 +1,6 @@
-package riftland.util;
+package sim.app.geo.riftland.util;
 
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.Parcel;
 import sim.util.Int2D;
 
 /**

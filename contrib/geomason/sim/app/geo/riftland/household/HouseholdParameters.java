@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-package riftland.household;
+package sim.app.geo.riftland.household;
 
-import riftland.Parameters;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
 
 /** Used to make it easier to initialize a new Household with specific state.
 * @see HouseholdSplitter

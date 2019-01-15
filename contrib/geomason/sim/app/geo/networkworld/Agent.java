@@ -7,7 +7,7 @@
  *
  * $Id: Agent.java,v 1.7 2010-08-25 20:06:51 mcoletti Exp $
  */
-package networkworld;
+package sim.app.geo.networkworld;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;

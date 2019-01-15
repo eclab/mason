@@ -1,4 +1,4 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
 

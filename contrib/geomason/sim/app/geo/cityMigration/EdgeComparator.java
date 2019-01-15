@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 import java.util.*;
 import sim.field.network.*;

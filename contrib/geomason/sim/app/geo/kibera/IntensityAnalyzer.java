@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import kibera.Resident.Employment;
 import kibera.Resident.Goal;

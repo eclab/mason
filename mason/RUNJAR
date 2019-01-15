@@ -1,0 +1,2 @@
+mpirun -np $1 java -jar jar/mason.19.jar -cp $CLASSPATH
+

@@ -4,7 +4,7 @@
  * $Id: Weather.java 2029 2013-09-04 19:49:57Z escott8 $
  *
  */
-package riftland;
+package sim.app.geo.riftland;
 
 import ec.util.MersenneTwisterFast;
 import java.io.BufferedReader;
@@ -14,7 +14,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.Parcel;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.ObjectGrid2D;

@@ -5,9 +5,9 @@
  *
  */
 
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
-import riftland.PopulationCenter;
+import sim.app.geo.riftland.PopulationCenter;
 
 /**
  * Represents a 1 km^2 of developed area.

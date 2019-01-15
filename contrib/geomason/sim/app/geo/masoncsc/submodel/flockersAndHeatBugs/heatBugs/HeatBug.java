@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package masoncsc.submodel.flockersAndHeatBugs.heatBugs;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.heatBugs;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.DoubleGrid2D;

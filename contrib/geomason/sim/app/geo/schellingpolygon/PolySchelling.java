@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package schellingpolygon;
+package sim.app.geo.schellingpolygon;
 
 import java.io.FileNotFoundException;
 import java.net.URL;

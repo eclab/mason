@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package masoncsc.submodel.flockersAndHeatBugs.flockers;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.flockers;
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.continuous.*;

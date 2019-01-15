@@ -1,4 +1,4 @@
-package objects;
+package sim.app.geo.acequias.objects;
 
 import java.util.ArrayList;
 

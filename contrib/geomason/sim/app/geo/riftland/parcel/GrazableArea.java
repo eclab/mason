@@ -4,15 +4,15 @@
  * $Id: GrazableArea.java 1967 2013-08-01 16:31:41Z tim $
  * 
  */
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
 import java.util.ArrayList;
 import java.util.List;
-import riftland.Land;
-import riftland.household.Farming;
-import riftland.household.Herding;
-import riftland.Parameters;
-import riftland.ThreadedGardener;
+import sim.app.geo.riftland.Land;
+import sim.app.geo.riftland.household.Farming;
+import sim.app.geo.riftland.household.Herding;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.ThreadedGardener;
 import sim.util.Bag;
 
 /** Represents a 1km^2 area of grazable land */

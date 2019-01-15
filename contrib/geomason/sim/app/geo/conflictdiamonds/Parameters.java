@@ -1,4 +1,4 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;

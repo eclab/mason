@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import sim.field.network.Edge;
 import sim.util.Bag;

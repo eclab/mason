@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sickStudents;
+package sim.app.geo.sickStudents;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;

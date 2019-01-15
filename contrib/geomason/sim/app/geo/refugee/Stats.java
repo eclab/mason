@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 import java.io.*;
 import java.text.NumberFormat;
 import java.text.ParseException;

@@ -3,15 +3,15 @@
  *
  * $Id: Farming.java 1943 2013-07-16 01:53:34Z hkarbasi $
  */
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 
 import ec.util.MersenneTwisterFast;
-import riftland.Gardener;
-import riftland.Parameters;
-import riftland.World;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.Gardener;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
 import sim.engine.SimState;
 import sim.field.grid.SparseGrid2D;
 

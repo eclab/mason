@@ -1,13 +1,13 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
 import java.util.List;
 import java.util.logging.Level;
-import riftland.Parameters;
-import riftland.World;
-import riftland.parcel.GrazableArea;
-import riftland.util.CachedDistance;
-import riftland.util.Misc;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.util.CachedDistance;
+import sim.app.geo.riftland.util.Misc;
 import sim.util.Bag;
 
 /** An implementation of herding behavior that uses formula-based semantics.

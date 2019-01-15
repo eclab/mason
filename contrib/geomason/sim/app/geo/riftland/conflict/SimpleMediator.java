@@ -5,7 +5,7 @@
  * 
  */
 
-package riftland.conflict;
+package sim.app.geo.riftland.conflict;
 
 import sim.engine.SimState;
 

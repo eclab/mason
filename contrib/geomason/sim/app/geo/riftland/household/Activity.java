@@ -4,7 +4,7 @@
  * $Id: Activity.java 1814 2013-05-14 15:12:24Z escott8 $
  */
 
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import sim.engine.SimState;
 

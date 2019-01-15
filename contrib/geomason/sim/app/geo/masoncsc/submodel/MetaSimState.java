@@ -1,4 +1,4 @@
-package masoncsc.submodel;
+package sim.app.geo.masoncsc.submodel;
 
 import sim.engine.Schedule;
 import sim.engine.SimState;

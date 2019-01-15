@@ -1,10 +1,10 @@
-package riftland.util;
+package sim.app.geo.riftland.util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import riftland.gui.AlternatingColorPortrayal2D;
+import sim.app.geo.riftland.gui.AlternatingColorPortrayal2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.util.Int2D;

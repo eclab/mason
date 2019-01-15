@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package waterworld;
+package sim.app.geo.waterworld;
 
 import java.util.ArrayList;
 import sim.engine.SimState;

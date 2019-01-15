@@ -1,4 +1,4 @@
-package haiti;
+package sim.app.geo.haiti;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;

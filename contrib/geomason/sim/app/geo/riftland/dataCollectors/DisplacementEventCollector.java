@@ -1,11 +1,11 @@
-package riftland.dataCollectors;
+package sim.app.geo.riftland.dataCollectors;
 
-import cityMigration.DisplacementEvent;
-import masoncsc.datawatcher.DataWatcher;
-import masoncsc.datawatcher.FileDataWriter;
-import masoncsc.datawatcher.ListDataWatcher;
-import riftland.Parameters;
-import riftland.World;
+import sim.app.geo.cityMigration.DisplacementEvent;
+import sim.app.geo.masoncsc.datawatcher.DataWatcher;
+import sim.app.geo.masoncsc.datawatcher.FileDataWriter;
+import sim.app.geo.masoncsc.datawatcher.ListDataWatcher;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import java.util.ArrayList;

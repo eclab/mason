@@ -4,11 +4,11 @@
  * $Id: WorldObserver.java 2028 2013-09-04 18:44:30Z escott8 $
  */
 
-package riftland.dataCollectors;
+package sim.app.geo.riftland.dataCollectors;
 
-import riftland.World;
-import riftland.conflict.Mediator;
-import cityMigration.DisplacementEvent;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.conflict.Mediator;
+import sim.app.geo.cityMigration.DisplacementEvent;
 import net.sf.csv4j.CSVWriter;
 import sim.engine.SimState;
 import sim.engine.Steppable;

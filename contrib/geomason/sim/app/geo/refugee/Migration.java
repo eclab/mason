@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.xy.XYSeries;
 import sim.engine.Schedule;

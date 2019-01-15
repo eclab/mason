@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package dadaab;
+package sim.app.geo.dadaab;
 
 // Haiti project  - searching the nearest road
-import dadaab.CampBuilder.Node;
+import sim.app.geo.dadaab.CampBuilder.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;

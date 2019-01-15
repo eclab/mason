@@ -8,7 +8,7 @@
  **
  ** $Id$
  **/
-package sleuth;
+package sim.app.geo.sleuth;
 
 import java.util.ArrayList;
 import sim.engine.SimState;

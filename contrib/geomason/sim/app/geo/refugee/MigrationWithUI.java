@@ -1,5 +1,5 @@
 
-package refugee;
+package sim.app.geo.refugee;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;

@@ -1,4 +1,4 @@
-package masoncsc.properties;
+package sim.app.geo.masoncsc.properties;
 
 import java.io.IOException;
 import java.io.StringReader;

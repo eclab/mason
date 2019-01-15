@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 
 import java.awt.Color;
 import ec.util.MersenneTwisterFast;

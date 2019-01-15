@@ -11,7 +11,7 @@
  ** $Id$
  **
  **/
-package waterworld;
+package sim.app.geo.waterworld;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

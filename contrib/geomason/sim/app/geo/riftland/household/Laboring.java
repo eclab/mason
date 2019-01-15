@@ -4,9 +4,9 @@
  * $Id: Laboring.java 1825 2013-05-20 04:23:17Z escott8 $
  */
 
-package riftland.household;
+package sim.app.geo.riftland.household;
 
-import riftland.Parameters;
+import sim.app.geo.riftland.Parameters;
 import sim.engine.SimState;
 
 /** Represents part of a Household working in a city that sends money back

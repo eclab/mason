@@ -3,9 +3,9 @@
 
     $Id$
  */
-package riftland;
+package sim.app.geo.riftland;
 
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.engine.ParallelSequence;
 import sim.engine.SimState;
 import sim.engine.Steppable;
