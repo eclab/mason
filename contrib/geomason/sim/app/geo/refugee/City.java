@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 
 import java.util.ArrayList;
 import java.util.HashMap;

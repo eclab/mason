@@ -1,4 +1,4 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
 import conflictdiamonds.ConflictDiamonds.Action;
 import sim.engine.SimState;

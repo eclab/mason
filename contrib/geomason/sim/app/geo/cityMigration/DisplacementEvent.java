@@ -1,6 +1,6 @@
-package cityMigration;
+package sim.app.geo.cityMigration;
 
-import riftland.household.Household;
+import sim.app.geo.riftland.household.Household;
 import java.util.StringTokenizer;
 
 public class DisplacementEvent

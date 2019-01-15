@@ -6,10 +6,10 @@
  * account for x percent of its interaction with larger cities.
  */
 
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 import java.util.ArrayList;
-import riftland.PopulationCenter;
+import sim.app.geo.riftland.PopulationCenter;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.util.Bag;

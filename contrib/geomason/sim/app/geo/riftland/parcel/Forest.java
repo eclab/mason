@@ -5,7 +5,7 @@
  *
  */
 
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
 /** Represents a parcel of forest
  *

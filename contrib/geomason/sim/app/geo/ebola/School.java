@@ -1,4 +1,4 @@
-package ebola;
+package sim.app.geo.ebola;
 
 
 import sim.util.Int2D;

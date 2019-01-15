@@ -1,8 +1,8 @@
-package masoncsc.submodel.flockersAndHeatBugs;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs;
 
-import masoncsc.submodel.MetaGUIState;
-import masoncsc.submodel.flockersAndHeatBugs.flockers.FlockersWithUI;
-import masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugsWithUI;
+import sim.app.geo.masoncsc.submodel.MetaGUIState;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.flockers.FlockersWithUI;
+import sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.heatBugs.HeatBugsWithUI;
 import sim.display.GUIState;
 
 public class FlockersAndHeatBugsWithUI extends MetaGUIState

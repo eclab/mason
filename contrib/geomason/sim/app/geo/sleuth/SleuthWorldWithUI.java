@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package sleuth;
+package sim.app.geo.sleuth;
 
 import java.awt.Color;
 import javax.swing.JFrame;

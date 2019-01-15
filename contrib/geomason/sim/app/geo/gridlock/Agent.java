@@ -11,7 +11,7 @@
  * $Id$
  **
  **/
-package gridlock;
+package sim.app.geo.gridlock;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.linearref.LengthIndexedLine;

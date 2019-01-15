@@ -1,4 +1,4 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.awt.Color;
 import java.awt.Dimension;

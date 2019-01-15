@@ -1,4 +1,4 @@
-package masoncsc.util;
+package sim.app.geo.masoncsc.util;
 
 /**
  *

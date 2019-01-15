@@ -3,17 +3,17 @@
  *
  * $Id: Household.java 2008 2013-08-19 18:21:25Z hkarbasi $
  */
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
-import riftland.Parameters;
-import riftland.Population;
-import riftland.WaterHoles;
-import riftland.World;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
-import riftland.parcel.WaterHole;
-import riftland.util.CachedDistance;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.Population;
+import sim.app.geo.riftland.WaterHoles;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.CachedDistance;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import java.util.logging.Level;

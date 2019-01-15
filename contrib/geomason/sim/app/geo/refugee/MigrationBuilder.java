@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 
 import java.io.*;
 import java.net.URL;
@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 
-import refugee.refugeeData.RefugeeData;
+import sim.app.geo.refugee.refugeeData.RefugeeData;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.SparseGrid2D;

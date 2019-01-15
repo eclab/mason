@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package networkworld;
+package sim.app.geo.networkworld;
 
 import java.awt.Color;
 import javax.swing.JFrame;

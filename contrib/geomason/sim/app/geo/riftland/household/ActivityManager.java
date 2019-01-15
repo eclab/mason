@@ -1,13 +1,13 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
-import cityMigration.DisplacementEvent;
+import sim.app.geo.cityMigration.DisplacementEvent;
 import ec.util.MersenneTwisterFast;
 import java.util.logging.Level;
-import riftland.Parameters;
-import riftland.Population;
-import riftland.WaterHoles;
-import riftland.World;
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.Population;
+import sim.app.geo.riftland.WaterHoles;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.field.grid.SparseGrid2D;
 
 /**

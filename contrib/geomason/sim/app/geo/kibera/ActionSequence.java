@@ -1,13 +1,13 @@
-package kibera;
+package sim.app.geo.kibera;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-import kibera.Resident.Employment;
-import kibera.Resident.Goal;
-import kibera.Resident.Religion;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Goal;
+import sim.app.geo.kibera.Resident.Religion;
 import sim.field.network.Edge;
 import sim.util.Bag;
 import sim.util.Double2D;

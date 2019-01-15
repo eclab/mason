@@ -7,7 +7,7 @@
  * 
  * $Id$
  */
-package touchingworld;
+package sim.app.geo.touchingworld;
 
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;

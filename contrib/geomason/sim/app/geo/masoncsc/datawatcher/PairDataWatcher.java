@@ -1,6 +1,6 @@
-package masoncsc.datawatcher;
+package sim.app.geo.masoncsc.datawatcher;
 
-import masoncsc.util.Pair;
+import sim.app.geo.masoncsc.util.Pair;
 
 /**
  * A DataWatcher that maintains an observation of the form (x,y).

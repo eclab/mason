@@ -1,4 +1,4 @@
-package acequias;
+package sim.app.geo.acequias;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

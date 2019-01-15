@@ -1,4 +1,4 @@
-package haiti;
+package sim.app.geo.haiti;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

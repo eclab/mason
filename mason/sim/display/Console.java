@@ -1911,6 +1911,7 @@ public class Console extends JFrame implements Controller
                             }
                         catch (Throwable e) 
                             {
+				    e.printStackTrace();
                             if (!errout) 
                                 System.err.println("WARNING: Not all classes loaded, due to error: probably no Java3D." 
                                     // + " \nFirst problematic class: " + st.sval

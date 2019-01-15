@@ -1,7 +1,7 @@
-package masoncsc.datawatcher;
+package sim.app.geo.masoncsc.datawatcher;
 
 
-import masoncsc.util.Pair;
+import sim.app.geo.masoncsc.util.Pair;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 

@@ -1,11 +1,11 @@
-package riftland.dataCollectors;
+package sim.app.geo.riftland.dataCollectors;
 
-import masoncsc.datawatcher.DataWatcher;
-import masoncsc.datawatcher.FileDataWriter;
-import masoncsc.datawatcher.ListDataWatcher;
-import riftland.Parameters;
-import riftland.World;
-import riftland.household.Household;
+import sim.app.geo.masoncsc.datawatcher.DataWatcher;
+import sim.app.geo.masoncsc.datawatcher.FileDataWriter;
+import sim.app.geo.masoncsc.datawatcher.ListDataWatcher;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.household.Household;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

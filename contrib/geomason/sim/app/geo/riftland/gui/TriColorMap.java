@@ -1,4 +1,4 @@
-package riftland.gui;
+package sim.app.geo.riftland.gui;
 
 import java.awt.Color;
 

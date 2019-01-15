@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package masoncsc.submodel.flockersAndHeatBugs.heatBugs;
+package sim.app.geo.masoncsc.submodel.flockersAndHeatBugs.heatBugs;
 import sim.engine.*;
 import sim.field.grid.*;
 import sim.util.*;

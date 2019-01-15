@@ -1,4 +1,4 @@
-package acequias;
+package sim.app.geo.acequias;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,9 +7,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import acequias.objects.Parciante;
-import acequias.objects.RealEstateAgent;
-import acequias.objects.Tile;
+import sim.app.geo.acequias.objects.Parciante;
+import sim.app.geo.acequias.objects.RealEstateAgent;
+import sim.app.geo.acequias.objects.Tile;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 

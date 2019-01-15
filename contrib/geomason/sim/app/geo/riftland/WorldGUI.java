@@ -4,7 +4,7 @@
  * $Id: WorldGUI.java 2002 2013-08-14 20:14:42Z jharri $
  * 
  */
-package riftland;
+package sim.app.geo.riftland;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -12,15 +12,15 @@ import javax.swing.*;
 
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
-import riftland.conflict.Conflict;
-import riftland.gui.FarmPortrayal2D;
-import riftland.gui.SnailTrailPortrayal;
-import riftland.gui.TriColorMap;
-import riftland.household.Herding;
-import riftland.household.Household;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.WaterHole;
-import riftland.util.YScalableXYSeries;
+import sim.app.geo.riftland.conflict.Conflict;
+import sim.app.geo.riftland.gui.FarmPortrayal2D;
+import sim.app.geo.riftland.gui.SnailTrailPortrayal;
+import sim.app.geo.riftland.gui.TriColorMap;
+import sim.app.geo.riftland.household.Herding;
+import sim.app.geo.riftland.household.Household;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.YScalableXYSeries;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;

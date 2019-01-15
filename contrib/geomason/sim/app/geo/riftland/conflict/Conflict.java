@@ -5,11 +5,11 @@
  * 
  */
 
-package riftland.conflict;
+package sim.app.geo.riftland.conflict;
 
-import riftland.household.ActivityAtLocation;
-import riftland.household.Activity;
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.household.ActivityAtLocation;
+import sim.app.geo.riftland.household.Activity;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.util.Valuable;
 
 /** Encapsulates a specific conflict between farmer_ and herder_

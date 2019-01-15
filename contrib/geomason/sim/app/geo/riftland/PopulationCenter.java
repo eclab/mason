@@ -5,10 +5,10 @@
  *
  */
 
-package riftland;
+package sim.app.geo.riftland;
 
-import riftland.household.Household;
-import riftland.parcel.UrbanArea;
+import sim.app.geo.riftland.household.Household;
+import sim.app.geo.riftland.parcel.UrbanArea;
 import sim.util.Double2D;
 
 import java.util.ArrayList;

@@ -1,12 +1,12 @@
-package riftland;
+package sim.app.geo.riftland;
 
 import ec.util.MersenneTwisterFast;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
-import riftland.parcel.WaterHole;
-import riftland.util.DiscreteVoronoi;
-import riftland.util.Misc;
-import riftland.util.SquareDiscreteVoronoi;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.DiscreteVoronoi;
+import sim.app.geo.riftland.util.Misc;
+import sim.app.geo.riftland.util.SquareDiscreteVoronoi;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;

@@ -8,7 +8,7 @@
  * $Id: NetworkWorld.java,v 1.6 2010-08-25 20:06:50 mcoletti Exp $
  * 
  */
-package networkworld;
+package sim.app.geo.networkworld;
 
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.io.ParseException;

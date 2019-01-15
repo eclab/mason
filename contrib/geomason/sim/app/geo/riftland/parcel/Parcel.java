@@ -4,9 +4,9 @@
  * $Id: Parcel.java 1707 2013-03-20 21:43:50Z escott8 $
  */
 
-package riftland.parcel;
+package sim.app.geo.riftland.parcel;
 
-import riftland.Weather;
+import sim.app.geo.riftland.Weather;
 import sim.util.Int2D;
 import sim.util.Valuable;
 

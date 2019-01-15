@@ -3,7 +3,7 @@
  *
  * $Id: Cluster.java 2029 2013-09-04 19:49:57Z escott8 $
  */
-package riftland;
+package sim.app.geo.riftland;
 
 import ec.util.MersenneTwisterFast;
 import riftland.riftlandData.RiftLandData;

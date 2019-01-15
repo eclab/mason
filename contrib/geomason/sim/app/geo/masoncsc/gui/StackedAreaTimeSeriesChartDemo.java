@@ -1,4 +1,4 @@
-package masoncsc.gui;
+package sim.app.geo.masoncsc.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

@@ -3,19 +3,19 @@
  *
  * $Id: Herding.java 2029 2013-09-04 19:49:57Z escott8 $
  */
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
-import riftland.Parameters;
-import riftland.WaterHoles;
-import riftland.World;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.WaterHole;
-import riftland.util.CachedDistance;
+import sim.app.geo.riftland.Parameters;
+import sim.app.geo.riftland.WaterHoles;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.WaterHole;
+import sim.app.geo.riftland.util.CachedDistance;
 import sim.engine.SimState;
 import sim.field.SparseField;
 import sim.field.grid.SparseGrid2D;

@@ -1,11 +1,11 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwister;
 import ec.util.MersenneTwisterFast;
-import riftland.Land;
-import riftland.Population;
-import riftland.parcel.GrazableArea;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.Land;
+import sim.app.geo.riftland.Population;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.Parcel;
 
 import java.util.ArrayList;
 import java.util.Collections;

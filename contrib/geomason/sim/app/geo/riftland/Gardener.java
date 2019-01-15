@@ -3,12 +3,12 @@
 
     $Id$
  */
-package riftland;
+package sim.app.geo.riftland;
 
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.parcel.GrazableArea;
 import java.util.Collection;
 import java.util.LinkedList;
-import riftland.parcel.WaterHole;
+import sim.app.geo.riftland.parcel.WaterHole;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package masoncsc.util;
+package sim.app.geo.masoncsc.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

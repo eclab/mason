@@ -1,4 +1,4 @@
-package acequias;
+package sim.app.geo.acequias;
 //social nets
 import sim.portrayal.*;
 import sim.portrayal.network.EdgeDrawInfo2D;
@@ -8,7 +8,7 @@ import sim.util.*;
 import java.awt.*;
 import java.awt.geom.*;
 
-import acequias.objects.Tile;
+import sim.app.geo.acequias.objects.Tile;
 
 /** <b>GridNetworkPortrayal</b> displays a network on a grid.
  * 

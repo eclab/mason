@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 
 import sim.util.Int2D;
 

@@ -4,13 +4,13 @@
  * $Id: SnailTrailPortrayal.java 1843 2013-05-25 01:34:28Z escott8 $
  * 
  */
-package riftland.gui;
+package sim.app.geo.riftland.gui;
 
 import java.awt.*;
 import java.util.Iterator;
-import riftland.parcel.GrazableArea;
-import riftland.household.Herding;
-import riftland.parcel.Parcel;
+import sim.app.geo.riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.household.Herding;
+import sim.app.geo.riftland.parcel.Parcel;
 import sim.portrayal.*;
 import sim.util.gui.ColorMap;
 import sim.util.gui.SimpleColorMap;

@@ -1,4 +1,4 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
 import java.util.ArrayList;
 import java.util.Collection;

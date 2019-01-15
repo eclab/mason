@@ -1,4 +1,4 @@
-package masoncsc.util;
+package sim.app.geo.masoncsc.util;
 
 import ec.util.MersenneTwisterFast;
 import sim.engine.SimState;

@@ -1,4 +1,4 @@
-package cityMigration;
+package sim.app.geo.cityMigration;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
@@ -11,11 +11,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 
-import cityMigration.cityMigrationData.CityMigrationData;
+import sim.app.geo.cityMigration.cityMigrationData.CityMigrationData;
 import com.vividsolutions.jts.geom.Envelope;
 
-import riftland.PopulationCenter;
-import riftland.World;
+import sim.app.geo.riftland.PopulationCenter;
+import sim.app.geo.riftland.World;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Edge;
 import sim.field.network.Network;

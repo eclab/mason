@@ -10,7 +10,7 @@
  **
  ** *$Id$
  **/
-package sickStudents;
+package sim.app.geo.sickStudents;
 
 public class StatsTools
 {

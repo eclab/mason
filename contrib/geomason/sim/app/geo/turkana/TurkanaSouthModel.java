@@ -10,7 +10,7 @@
  **
  ** $Id$
  **/
-package turkana;
+package sim.app.geo.turkana;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

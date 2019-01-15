@@ -1,4 +1,4 @@
-package haiti;
+package sim.app.geo.haiti;
 
 class Location{
 	int x;

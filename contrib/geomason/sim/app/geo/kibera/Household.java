@@ -1,6 +1,6 @@
-package kibera;
+package sim.app.geo.kibera;
 
-import kibera.Resident.Identity;
+import sim.app.geo.kibera.Resident.Identity;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

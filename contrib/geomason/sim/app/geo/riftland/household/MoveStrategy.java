@@ -1,8 +1,8 @@
-package riftland.household;
+package sim.app.geo.riftland.household;
 
 import ec.util.MersenneTwisterFast;
-import riftland.World;
-import riftland.parcel.GrazableArea;
+import sim.app.geo.riftland.World;
+import sim.app.geo.riftland.parcel.GrazableArea;
 
 /**
  *

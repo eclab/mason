@@ -1,4 +1,4 @@
-package refugee;
+package sim.app.geo.refugee;
 
 public class Constants {
     public static int MALE = 0;

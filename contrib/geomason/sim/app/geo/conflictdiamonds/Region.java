@@ -1,4 +1,4 @@
-package conflictdiamonds;
+package sim.app.geo.conflictdiamonds;
 
 import java.util.*;
 import sim.util.Bag;

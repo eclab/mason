@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package riftland.household;
+package sim.app.geo.riftland.household;
 
-import riftland.Parameters;
+import sim.app.geo.riftland.Parameters;
 
 /**
  *

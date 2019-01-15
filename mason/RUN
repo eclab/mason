@@ -1,0 +1,2 @@
+echo "MAKE SURE YOU'RE USING A MULTIPLE OF 4"
+mpirun -np $1 java -cp "library/*:." -verbose sim.display.Console

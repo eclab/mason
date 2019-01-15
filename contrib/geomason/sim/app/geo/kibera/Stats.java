@@ -1,5 +1,5 @@
-//package masoncsc.util;
-package kibera;
+//package sim.app.geo.masoncsc.util;
+package sim.app.geo.kibera;
 
 import ec.util.MersenneTwisterFast;
 
