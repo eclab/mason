@@ -49,7 +49,6 @@ sim/util/media/*.java \
 sim/util/media/chart/*.java \
 sim/util/gui/*.java \
 sim/util/distribution/*.java \
-sim/util/sweep/*.java \
 sim/field/*.java \
 sim/field/grid/*.java \
 sim/field/continuous/*.java \
@@ -62,6 +61,7 @@ sim/portrayal/network/*.java \
 sim/portrayal/simple/*.java \
 sim/portrayal/inspector/*.java \
 ec/util/*.java \
+#sim/util/sweep/*.java \ 
 
 
 # The additional 3D java files
