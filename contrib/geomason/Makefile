@@ -123,24 +123,11 @@ indent:
 
 
 # All the main GeoMason source files
-BASE_FILES = ./sim/field/geo/GeomField.java		\
-	     ./sim/field/geo/GeomGridField.java			\
-	     ./sim/field/geo/GeomVectorField.java			\
-	     ./sim/io/geo/ArcInfoASCGridImporter.java		\
-	     ./sim/io/geo/ShapeFileImporter.java			\
-	     ./sim/io/geo/ArcInfoASCGridExporter.java		\
-	     ./sim/io/geo/ShapeFileExporter.java			\
-	     ./sim/portrayal/geo/GeomPortrayal.java			\
-	     ./sim/portrayal/geo/GeomVectorFieldPortrayal.java	\
-	     ./sim/portrayal/geo/GeomInfo2D.java			\
-	     ./sim/util/geo/AttributeValue.java			\
-	     ./sim/util/geo/GeometryUtilities.java			\
-	     ./sim/util/geo/GeomPlanarGraph.java			\
-	     ./sim/util/geo/GeomPlanarGraphDirectedEdge.java		\
-	     ./sim/util/geo/GeomPlanarGraphEdge.java			\
-	     ./sim/util/geo/MasonGeometry.java			\
-	     ./sim/util/geo/PointMoveTo.java				\
-	     ./sim/io/geo/ShapeFileExporter.java			
+BASE_FILES = ./sim/field/geo/*.java		\
+	     ./sim/io/geo/*.java		\
+	     ./sim/portrayal/geo/*.java			\
+	     ./sim/util/geo/*.java			\
+	     ./sim/io/geo/*.java			
 
 
 # Optional GDAL based importer
