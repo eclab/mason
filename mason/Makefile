@@ -61,7 +61,7 @@ sim/portrayal/network/*.java \
 sim/portrayal/simple/*.java \
 sim/portrayal/inspector/*.java \
 ec/util/*.java \
-#sim/util/sweep/*.java \
+#sim/util/sweep/*.java \ 
 
 
 # The additional 3D java files
