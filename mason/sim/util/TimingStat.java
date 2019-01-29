@@ -56,7 +56,8 @@ public class TimingStat {
         System.err.println("STOP CALLED");
         new Throwable().printStackTrace();
 		if (ts == -1L)
-			throw new IllegalStateException("Timer is not started");
+            System.err.println("What");
+			//throw new IllegalStateException("Timer is not started");
 		add((double)(curr - ts));
 		ts = -1L;
 	}

@@ -6,7 +6,7 @@
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
 FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
-JAVAC = javac ${FLAGS}
+JAVAC = mpijavac ${FLAGS}
 BUILDDIR=$$(pwd)
 VERSION = 19
 
