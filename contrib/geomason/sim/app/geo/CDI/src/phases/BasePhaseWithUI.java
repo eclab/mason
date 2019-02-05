@@ -1,4 +1,4 @@
-package CDI.src.phases;
+package sim.app.geo.CDI.src.phases;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import masoncsc.datawatcher.TimeSeriesDataStore;
+import sim.app.geo.masoncsc.datawatcher.TimeSeriesDataStore;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -22,9 +22,9 @@ import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Interval;
 import sim.util.media.chart.ChartGenerator;
 import sim.util.media.chart.TimeSeriesChartGenerator;
-import CDI.src.environment.Cell;
-import CDI.src.environment.Map;
-import CDI.src.environment.SmartColorMap;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.SmartColorMap;
 
 public class BasePhaseWithUI extends GUIState
 {

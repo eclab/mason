@@ -1,4 +1,4 @@
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 import java.awt.Graphics2D;
 import java.awt.Paint;

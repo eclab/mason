@@ -1,4 +1,4 @@
-package CDI.src.migration.parameters;
+package sim.app.geo.CDI.src.migration.parameters;
 
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;

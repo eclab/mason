@@ -1,4 +1,4 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 import java.awt.Color;
 import java.awt.FileDialog;
@@ -12,11 +12,11 @@ import sim.portrayal.simple.OrientedPortrayal2D;
 
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
-import CDI.src.migration.util.Distributions;
-import CDI.src.movement.data.BarChartFactor;
-import CDI.src.movement.data.BarChartFactor.Factor;
-import CDI.src.movement.data.DataCollector;
-import CDI.src.movement.parameters.Parameters;
+import sim.app.geo.CDI.src.migration.util.Distributions;
+import sim.app.geo.CDI.src.movement.data.BarChartFactor;
+import sim.app.geo.CDI.src.movement.data.BarChartFactor.Factor;
+import sim.app.geo.CDI.src.movement.data.DataCollector;
+import sim.app.geo.CDI.src.movement.parameters.Parameters;
 import sim.engine.MakesSimState;
 import sim.engine.SimState;
 import sim.field.grid.DenseGrid2D;
@@ -24,13 +24,13 @@ import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
 import sim.field.grid.SparseGrid2D;
 import sim.util.Interval;
-import CDI.src.util.MersenneTwisterFastApache;
+import sim.app.geo.CDI.src.util.MersenneTwisterFastApache;
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
-import CDI.src.environment.GrowthRateTable;
-import CDI.src.environment.Map;
-import CDI.src.environment.MegaCellSign;
-import CDI.src.government.govAgent;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.GrowthRateTable;
+import sim.app.geo.CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.MegaCellSign;
+import sim.app.geo.CDI.src.government.govAgent;
 
 import java.util.Map.Entry;
 

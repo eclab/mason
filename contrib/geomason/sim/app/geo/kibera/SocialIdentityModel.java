@@ -3,9 +3,9 @@ package sim.app.geo.kibera;
 import sim.field.network.Edge;
 import sim.util.Bag;
 import sim.util.Double2D;
-import kibera.Resident.Employment;
-import kibera.Resident.Goal;
-import kibera.Resident.Identity;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Goal;
+import sim.app.geo.kibera.Resident.Identity;
 //was
 //import sim.field.network.st.DegreeStatistics;
 

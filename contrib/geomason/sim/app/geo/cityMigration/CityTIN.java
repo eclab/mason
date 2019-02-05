@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import cityMigration.cityMigrationData.CityMigrationData;
-import riftland.PopulationCenter;
-import riftland.World;
+//import sim.app.geo.cityMigration.cityMigrationData.CityMigrationData;
+import sim.app.geo.riftland.PopulationCenter;
+import sim.app.geo.riftland.World;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.IntGrid2D;

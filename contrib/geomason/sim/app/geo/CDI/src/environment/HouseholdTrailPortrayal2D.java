@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 import sim.portrayal.*;
 import sim.portrayal.simple.*;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.*;
 import java.awt.geom.*;
 
-import CDI.src.movement.NorthLandsMovementWithUI;
+import sim.app.geo.CDI.src.movement.NorthLandsMovementWithUI;
 import sim.portrayal.grid.DrawPolicy;
 import sim.portrayal.inspector.*;
 import sim.display.*;

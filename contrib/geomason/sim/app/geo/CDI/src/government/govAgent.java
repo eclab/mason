@@ -6,18 +6,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CDI.src.government;
+package sim.app.geo.CDI.src.government;
 
 import java.util.*;
 
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Cell;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.DoubleBag;
-import CDI.src.movement.parameters.*;
-import CDI.src.movement.Household;
-import CDI.src.movement.NorthLandsMovement;
+import sim.app.geo.CDI.src.movement.parameters.*;
+import sim.app.geo.CDI.src.movement.Household;
+import sim.app.geo.CDI.src.movement.NorthLandsMovement;
 
 /**
  *

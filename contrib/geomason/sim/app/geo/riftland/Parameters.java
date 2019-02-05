@@ -2,7 +2,7 @@ package sim.app.geo.riftland;
 
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;
-import sim.app.geo.riftland.riftlandData.RiftLandData;
+//import sim.app.geo.riftland.riftlandData.RiftLandData;
 
 import java.io.*;
 import java.net.URL;
@@ -95,7 +95,7 @@ public class Parameters
         return parameters;
     }
     private static File getFile(String nodesFilename) throws IOException {
-        InputStream nodeStream = RiftLandData.class.getResourceAsStream(nodesFilename);
+        InputStream nodeStream = Parameters.class.getResourceAsStream(nodesFilename);
         try {
             if (!new File("./shapeFiles/").exists()) {
                 new File("./shapeFiles/").mkdir();

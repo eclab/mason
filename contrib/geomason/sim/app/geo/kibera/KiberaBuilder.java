@@ -17,7 +17,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 
 
-import sim.app.geo.kibera.kiberaData.KiberaData;
+//import sim.app.geo.kibera.kiberaData.KiberaData;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.DoubleGrid2D;
@@ -88,7 +88,7 @@ public class KiberaBuilder extends Stats {
 		try
 		{
 			// buffer reader - read ascii file
-			BufferedReader land = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(landFile)));
+			BufferedReader land = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(landFile)));
 			String line;
 
 			// first read the dimensions
@@ -166,13 +166,13 @@ public class KiberaBuilder extends Stats {
 	public static void addFacilities(String facilityFile, String healthFile, String religionFile, Kibera kibera) {
             try {
                 // buffer reader - read ascii file
-                BufferedReader facilities = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(facilityFile)));
+                BufferedReader facilities = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(facilityFile)));
                 String line;
 
-                BufferedReader healthFacilities = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(healthFile)));
+                BufferedReader healthFacilities = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(healthFile)));
                 String healthLine;
 
-                BufferedReader religiousFacilities = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(religionFile)));
+                BufferedReader religiousFacilities = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(religionFile)));
                 String religiousLine;
 
                 // first read the dimensions
@@ -436,7 +436,7 @@ public class KiberaBuilder extends Stats {
         public static void addWatsan(String watsanFile, Kibera kibera) {
             try {
                 // buffer reader - read ascii file
-                BufferedReader waterSanitation = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(watsanFile)));
+                BufferedReader waterSanitation = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(watsanFile)));
                 String line;
 
                 // first read the dimensions
@@ -1449,7 +1449,7 @@ public class KiberaBuilder extends Stats {
 	private static void createRoads(String roadFile, Kibera kibera) {
 		try {
 	        // now read road grid
-            BufferedReader roads = new BufferedReader(new InputStreamReader(KiberaData.class.getResourceAsStream(roadFile)));
+            BufferedReader roads = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(roadFile)));
 			String line;
 
 			// first read the dimensions

@@ -1,15 +1,15 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 import java.util.*;
 
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
-import CDI.src.environment.MegaCellSign;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.MegaCellSign;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.portrayal.Orientable2D;
 import sim.util.DoubleBag;
-import CDI.src.movement.parameters.*;
+import sim.app.geo.CDI.src.movement.parameters.*;
 
 public class Household implements Cloneable, Steppable{
     

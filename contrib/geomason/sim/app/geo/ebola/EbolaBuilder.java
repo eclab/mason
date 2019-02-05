@@ -1,7 +1,8 @@
 package sim.app.geo.ebola;
 
 import com.vividsolutions.jts.geom.*;
-import ebola.ebolaData.EbolaData;
+//import sim.app.geo.ebola.ebolaData.EbolaData;
+//import sim.app.geo.ebola.
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;
@@ -72,11 +73,11 @@ public class EbolaBuilder
 
             //get a grid as a base for the mbr
             GeomGridField gridField = new GeomGridField();//just to align mbr
-            InputStream inputStream = EbolaData.class.getResourceAsStream(Parameters.ADMIN_ID_PATH);
+            InputStream inputStream = EbolaBuilder.class.getResourceAsStream(Parameters.ADMIN_ID_PATH);
             ArcInfoASCGridImporter.read(inputStream, GeomGridField.GridDataType.INTEGER, gridField);
             ebolaSim.admin_id = (IntGrid2D)gridField.getGrid();
             //System.out.println("236, 507 = " + ebolaSim.admin_id.get(236, 507));
-            inputStream = EbolaData.class.getResourceAsStream(Parameters.POP_PATH);
+            inputStream = EbolaBuilder.class.getResourceAsStream(Parameters.POP_PATH);
             ArcInfoASCGridImporter.read(inputStream, GeomGridField.GridDataType.INTEGER, gridField);
 
             //align mbr for all vector files read
@@ -145,7 +146,7 @@ public class EbolaBuilder
             vf.setMBR(globalMBR);
     }
     private static URL getUrl(String nodesFilename) throws IOException {
-        InputStream nodeStream = EbolaData.class.getResourceAsStream(nodesFilename);
+        InputStream nodeStream = EbolaBuilder.class.getResourceAsStream(nodesFilename);
         try {
             if (!new File("./shapeFiles/").exists()) {
                 new File("./shapeFiles/").mkdir();
@@ -188,7 +189,8 @@ public class EbolaBuilder
                 Bag schools_masked = new Bag();
                 System.err.println("URL: " + files[i]);
                 URL shapeURI = getUrl(filePath);;
-                ShapeFileImporter.read(shapeURI, vectorFields[i], schools_masked);
+                URL shapeDBF = getUrl(filePath.replace("shp", "dbf"));;
+                ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i], schools_masked);
             }
         }
         catch(Exception e)
@@ -204,7 +206,7 @@ public class EbolaBuilder
             ebolaSim.road_cost = new DoubleGrid2D(ebolaSim.world_width, ebolaSim.world_height);
 
            // FileInputStream fileInputStream = new FileInputStream(new File(Parameters.ROADS_COST_PATH));
-            DataInputStream dataInputStream = new DataInputStream(EbolaData.class.getResourceAsStream(Parameters.ROADS_COST_PATH));
+            DataInputStream dataInputStream = new DataInputStream(EbolaBuilder.class.getResourceAsStream(Parameters.ROADS_COST_PATH));
 
             for(int i = 0; i < ebolaSim.world_width; i++)
                 for(int j = 0; j < ebolaSim.world_height; j++)
@@ -747,11 +749,11 @@ public class EbolaBuilder
             System.out.print("Adding houses ");
             long time = System.currentTimeMillis();
             // buffer reader - read ascii file for population data
-            BufferedReader pop_reader = new BufferedReader(new InputStreamReader(EbolaData.class.getResourceAsStream(pop_file)));
+            BufferedReader pop_reader = new BufferedReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(pop_file)));
             String pop_line;
 
             //buffer reader - read ascii file for admin data
-            BufferedReader admin_reader = new BufferedReader(new InputStreamReader(EbolaData.class.getResourceAsStream(admin_file)));
+            BufferedReader admin_reader = new BufferedReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(admin_file)));
             String admin_line;
             String[] admin_tokens;
 
@@ -1435,7 +1437,7 @@ public class EbolaBuilder
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaData.class.getResourceAsStream(file)));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(file)));
             csvReader.readLine();//skip the headers
             List<String> line = csvReader.readLine();
             while(!line.isEmpty())

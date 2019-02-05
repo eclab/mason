@@ -1,4 +1,4 @@
-package CDI.src.optimization.util ;
+package sim.app.geo.CDI.src.optimization.util ;
 
 /**
  * This class is a generic filter implementation,
@@ -6,7 +6,7 @@ package CDI.src.optimization.util ;
  * kernel models like Gaussian, Laplacian etc. -- khaled
  */
 
-import CDI.src.environment.Map ;
+import sim.app.geo.CDI.src.environment.Map ;
 
 public class Filter
 {

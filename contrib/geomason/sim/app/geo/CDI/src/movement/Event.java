@@ -1,4 +1,4 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 
 import java.awt.Point;

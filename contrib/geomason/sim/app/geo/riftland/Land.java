@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
 import sim.app.geo.riftland.parcel.*;
-import sim.app.geo.riftland.riftlandData.RiftLandData;
+//import sim.app.geo.riftland.riftlandData.RiftLandData;
 import sim.app.geo.riftland.util.Misc;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.ObjectGrid2D;
@@ -183,12 +183,12 @@ final public class Land
             if ("".equals(datapath))
             { // Load data from a resource in our jar
                 System.err.println("hey we got this? "  + params.world.getDatapath() + " " + params.world.getLanduseFile());
-                landuse = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getLanduseFile())));
-                urbanuse = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getUrbanuseFile())));
-                parkland = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getParklandFile())));
-                forestland = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getForestFile())));
-                ndviResidual = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviResidualFile())));
-                NDVI2001001 = new BufferedReader(new InputStreamReader(RiftLandData.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviDataFile())));
+                landuse = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getLanduseFile())));
+                urbanuse = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getUrbanuseFile())));
+                parkland = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getParklandFile())));
+                forestland = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getForestFile())));
+                ndviResidual = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviResidualFile())));
+                NDVI2001001 = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviDataFile())));
             }
             else
             { // Load data from an external file
@@ -407,7 +407,7 @@ final public class Land
             URL boundaryFile;
             if ("".equals(datapath))
             {
-                boundaryFile = RiftLandData.class.getResource(params.world.getDatapath() + params.world.getPoliticalBoundariesFile());
+                boundaryFile = Land.class.getResource(params.world.getDatapath() + params.world.getPoliticalBoundariesFile());
             }
             else
             {

@@ -1,8 +1,8 @@
 package sim.app.geo.kibera;
 
-import kibera.Resident.Employment;
-import kibera.Resident.Goal;
-import kibera.Resident.Religion;
+import sim.app.geo.kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Goal;
+import sim.app.geo.kibera.Resident.Religion;
 
 public class IntensityAnalyzer {
 

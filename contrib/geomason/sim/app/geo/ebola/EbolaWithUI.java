@@ -1,7 +1,7 @@
 package sim.app.geo.ebola;
 
 
-import ebola.Household;
+import sim.app.geo.ebola.Household;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartFrame;
 import org.jfree.chart.JFreeChart;

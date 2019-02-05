@@ -4,7 +4,7 @@
  * $Id: YScalableXYSeries.java 1588 2013-02-06 17:14:12Z escott8 $
  */
 
-package CDI.src.migration.util;
+package sim.app.geo.CDI.src.migration.util;
 
 import org.jfree.data.xy.XYDataItem;
 

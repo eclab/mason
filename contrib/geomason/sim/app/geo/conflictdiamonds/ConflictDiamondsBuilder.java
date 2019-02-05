@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import cityMigration.cityMigrationData.CityMigrationData;
-import conflictdiamonds.conflictdiamondsData.ConflictDiamondsData;
+import sim.app.geo.cityMigration.CityTIN;
+//import conflictdiamonds.conflictdiamondsData.ConflictDiamondsData;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.ObjectGrid2D;
 import sim.field.grid.SparseGrid2D;
@@ -42,11 +42,11 @@ public class ConflictDiamondsBuilder {
 
 			   
            // Convert our input stream to a BufferedReader
-           BufferedReader regionarea = new BufferedReader(new InputStreamReader(ConflictDiamondsData.class.getResourceAsStream(regionfile)));
-           BufferedReader remotesurface = new BufferedReader(new InputStreamReader(ConflictDiamondsData.class.getResourceAsStream(remotenessfile)));
-           BufferedReader diamondsurface = new BufferedReader(new InputStreamReader(ConflictDiamondsData.class.getResourceAsStream(diamondfile)));
-           BufferedReader diamondproximatesurface = new BufferedReader(new InputStreamReader(ConflictDiamondsData.class.getResourceAsStream(diamondproximatefile)));
-           BufferedReader populationdist = new BufferedReader(new InputStreamReader(ConflictDiamondsData.class.getResourceAsStream(populationfile)));
+           BufferedReader regionarea = new BufferedReader(new InputStreamReader(ConflictDiamondsBuilder.class.getResourceAsStream(regionfile)));
+           BufferedReader remotesurface = new BufferedReader(new InputStreamReader(ConflictDiamondsBuilder.class.getResourceAsStream(remotenessfile)));
+           BufferedReader diamondsurface = new BufferedReader(new InputStreamReader(ConflictDiamondsBuilder.class.getResourceAsStream(diamondfile)));
+           BufferedReader diamondproximatesurface = new BufferedReader(new InputStreamReader(ConflictDiamondsBuilder.class.getResourceAsStream(diamondproximatefile)));
+           BufferedReader populationdist = new BufferedReader(new InputStreamReader(ConflictDiamondsBuilder.class.getResourceAsStream(populationfile)));
 
            //Create the regions
            Region newRegion;
@@ -430,7 +430,7 @@ public class ConflictDiamondsBuilder {
     }
     private static URL getUrl(String nodesFilename) throws IOException {
         try {
-            InputStream nodeStream = ConflictDiamondsData.class.getResourceAsStream(nodesFilename);
+            InputStream nodeStream = ConflictDiamondsBuilder.class.getResourceAsStream(nodesFilename);
             //nodeStream.read(buffer);
             if(!new File("./shapeFiles/").exists()){
                 new File("./shapeFiles/").mkdir();

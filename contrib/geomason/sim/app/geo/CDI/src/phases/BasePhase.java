@@ -1,4 +1,4 @@
-package CDI.src.phases;
+package sim.app.geo.CDI.src.phases;
 
 
 import java.util.ArrayList;
@@ -7,20 +7,20 @@ import java.util.Arrays;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.spiderland.Psh.intStack;
 
-import CDI.src.migration.util.Distributions;
-import CDI.src.movement.parameters.Parameters;
-import CDI.src.phases.ECInterface;
-import CDI.src.phases.Utility;
+import sim.app.geo.CDI.src.migration.util.Distributions;
+import sim.app.geo.CDI.src.movement.parameters.Parameters;
+import sim.app.geo.CDI.src.phases.ECInterface;
+import sim.app.geo.CDI.src.phases.Utility;
 import sim.engine.MakesSimState;
 import sim.engine.SimState;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
 import sim.util.Interval;
 import ucar.nc2.ui.geoloc.NewMapAreaEvent;
-import CDI.src.util.MersenneTwisterFastApache;
+import sim.app.geo.CDI.src.util.MersenneTwisterFastApache;
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
-import CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Map;
 
 
 public class BasePhase extends SimState implements ECInterface

@@ -1,4 +1,4 @@
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 import java.io.BufferedReader;
 
@@ -20,8 +20,8 @@ import java.nio.file.Paths;
 import org.spiderland.Psh.booleanStack;
 import org.spiderland.Psh.intStack;
 
-import CDI.src.movement.NorthLandsMovement;
-import CDI.src.movement.parameters.*;
+import sim.app.geo.CDI.src.movement.NorthLandsMovement;
+import sim.app.geo.CDI.src.movement.parameters.*;
 import sim.engine.Stoppable;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;

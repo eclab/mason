@@ -1,6 +1,6 @@
 package sim.app.geo.kibera;
 
-import kibera.Resident.Employment;
+import sim.app.geo.kibera.Resident.Employment;
 import ec.util.MersenneTwisterFast;
 
 public class WealthDistribution {

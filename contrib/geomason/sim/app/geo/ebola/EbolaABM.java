@@ -1,7 +1,7 @@
 package sim.app.geo.ebola;
 
 
-import ebola.ebolaData.EbolaData;
+//import sim.app.geo.ebola.ebolaData.EbolaData;
 import ec.util.MersenneTwisterFast;
 import net.sf.csv4j.CSVReader;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -354,7 +354,7 @@ public class EbolaABM extends SimState
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaData.class.getResourceAsStream(file)));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaABM.class.getResourceAsStream(file)));
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers

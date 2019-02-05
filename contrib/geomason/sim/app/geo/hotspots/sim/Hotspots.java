@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import sim.app.geo.hotspots.hotspotsData.HotSpotsData;
+//import sim.app.geo.hotspots.hotspotsData.HotSpotsData;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;
@@ -845,11 +845,12 @@ public class Hotspots extends SimState {
 	synchronized void readInVectorLayer(GeomVectorField layer, String filename, String layerDescription, Bag attributes){
 		try {
 				System.out.print("Reading in " + layerDescription + "from " + filename + "...");
+                String dbName = filename.replace("shp", "dbf");
 				//File file = new File(filename);
 				if(attributes == null || attributes.size() == 0)
-					ShapeFileImporter.read(getUrl(filename), layer);
+					ShapeFileImporter.read(getUrl(filename), getUrl(dbName), layer);
 				else
-					ShapeFileImporter.read(getUrl(filename), layer, attributes);
+					ShapeFileImporter.read(getUrl(filename), getUrl(dbName), layer, attributes);
 				System.out.println("done");	
 
 		} catch (Exception e) {
@@ -857,7 +858,7 @@ public class Hotspots extends SimState {
 		}
 	}
 	private static URL getUrl(String nodesFilename) throws IOException {
-		InputStream nodeStream = HotSpotsData.class.getResourceAsStream(nodesFilename);
+		InputStream nodeStream = Hotspots.class.getResourceAsStream(nodesFilename);
 		try {
 			if (!new File("./shapeFiles/").exists()) {
 				new File("./shapeFiles/").mkdir();

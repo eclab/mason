@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import cityMigration.cityMigrationData.CityMigrationData;
+//import sim.app.geo.cityMigration;
 /**
  * The City Migration model depicts the movement of people who have been displaced.
  * The displaced are moved between cities, which are connected with a spatial interaction network

@@ -1,6 +1,4 @@
-
-
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 import sim.portrayal.*;
 import sim.portrayal.simple.*;
@@ -13,7 +11,7 @@ import java.awt.geom.*;
 
 import org.springframework.ui.context.support.UiApplicationContextUtils;
 
-import CDI.src.movement.NorthLandsMovementWithUI;
+import sim.app.geo.CDI.src.movement.NorthLandsMovementWithUI;
 import sim.portrayal.grid.DrawPolicy;
 import sim.portrayal.inspector.*;
 import sim.display.*;

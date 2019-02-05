@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.sf.csv4j.CSVReader;
-import refugee.refugeeData.RefugeeData;
+//import refugee.refugeeData;
 
 public class Stats {
 
@@ -25,7 +25,7 @@ public class Stats {
 	private static void readInActual(String actual_file, HashMap<String, Double> actualpop){
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(RefugeeData.class.getResourceAsStream(actual_file)));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(Stats.class.getResourceAsStream(actual_file)));
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {
 				// read in the county ids
@@ -53,7 +53,7 @@ public class Stats {
 		try {
 			String filenameout = filename + "_compare.csv";
 			File outfile = new File(filenameout);
-			CSVReader csvReader = new CSVReader(new InputStreamReader(RefugeeData.class.getResourceAsStream(filename + ".csv")));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(Stats.class.getResourceAsStream(filename + ".csv")));
 			FileWriter fw = new FileWriter(outfile, true);
 			BufferedWriter bw = new BufferedWriter(fw);
 			PrintWriter writer = new PrintWriter(bw);

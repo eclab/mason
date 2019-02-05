@@ -1,4 +1,4 @@
-package CDI.src.movement.parameters;
+package sim.app.geo.CDI.src.movement.parameters;
 
 import ec.util.Parameter;
 import ec.util.ParameterDatabase;

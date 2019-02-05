@@ -1,4 +1,4 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,8 +11,8 @@ import java.util.StringTokenizer;
 import sim.field.grid.IntGrid2D;
 import sim.util.Double2D;
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
-import CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Map;
 import java.io.FileInputStream;
 
 public class PeopleSprinkler {

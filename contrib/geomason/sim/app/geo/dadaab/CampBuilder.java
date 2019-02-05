@@ -12,7 +12,7 @@ package sim.app.geo.dadaab;
 import java.io.*;
 import java.util.ArrayList;
 
-//import DadaabData;
+//import Dadaab;
 import sim.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,12 +45,12 @@ public class CampBuilder {
     
     //static MersenneTwisterFast random;
 
-    static public void create(String campfile, String facilityfile, String roadfile,  Dadaab dadaab, MersenneTwisterFast random) {
+    static public void create(String campfile, String facilityfile, String roadfile,  Dadaab dadaab, MersenneTwisterFast random) throws Exception{
       //  CampBuilder.random = random;
         try {
 
             // buffer reader - read ascii file
-            BufferedReader camp = new BufferedReader(new InputStreamReader(DadaabData.class.getResourceAsStream(campfile)));
+            BufferedReader camp = new BufferedReader(new InputStreamReader(Dadaab.class.getResourceAsStream(campfile)));
             String line;
 
             // first read the dimensions
@@ -134,7 +134,7 @@ public class CampBuilder {
             // overwrite the file and make 100
            
             // now read facility grid
-            BufferedReader fac = new BufferedReader(new InputStreamReader(DadaabData.class.getResourceAsStream(facilityfile)));
+            BufferedReader fac = new BufferedReader(new InputStreamReader(Dadaab.class.getResourceAsStream(facilityfile)));
             // skip the irrelevant metadata
             for (int i = 0; i < 6; i++) {
                 fac.readLine();
@@ -222,7 +222,7 @@ public class CampBuilder {
 
             // now read road grid
 
-            BufferedReader road = new BufferedReader(new InputStreamReader(DadaabData.class.getResourceAsStream(roadfile)));
+            BufferedReader road = new BufferedReader(new InputStreamReader(Dadaab.class.getResourceAsStream(roadfile)));
 
             // skip the irrelevant metadata
             for (int i = 0; i < 6; i++) {
@@ -244,7 +244,7 @@ public class CampBuilder {
                 }
             }
             
-            BufferedReader dailyRainfall =  new BufferedReader(new InputStreamReader(DadaabData.class.getResourceAsStream("/dadaab/dadaabData/dadaabDailyRain.csv")));
+            BufferedReader dailyRainfall =  new BufferedReader(new InputStreamReader(Dadaab.class.getResourceAsStream("/dadaab/dadaabData/dadaabDailyRain.csv")));
 
             for (int curr_row = 0; curr_row < height; ++curr_row) {
              
@@ -259,7 +259,7 @@ public class CampBuilder {
             
             // now read elev file and store in bag
 
-           BufferedReader elev = new BufferedReader(new InputStreamReader(DadaabData.class.getResourceAsStream("/dadaab/dadaabData/d_dem_n.txt")));
+           BufferedReader elev = new BufferedReader(new InputStreamReader(Dadaab.class.getResourceAsStream("/dadaab/dadaabData/d_dem_n.txt")));
 
             // skip the irrelevant metadata
             for (int i = 0; i < 6; i++) {
@@ -291,14 +291,16 @@ public class CampBuilder {
              maskedCamp.add("CAMPID");
 
             URL campShapUL = getUrl("/dadaab/dadaabData/Road/Camp_n.shp");
+            URL campShapDF = getUrl("/dadaab/dadaabData/Road/Camp_n.dbf");
            
-            ShapeFileImporter.read(campShapUL, dadaab.campShape, maskedCamp);
+            ShapeFileImporter.read(campShapUL, campShapDF, dadaab.campShape, maskedCamp);
 
             Bag masked = new Bag();
            
             //ShapeFileImporter importer = new ShapeFileImporter();
             URL roadLinkUL = getUrl("/dadaab/dadaabData/Road/dadaab_road_f_node.shp");
-            ShapeFileImporter.read(roadLinkUL, dadaab.roadLinks,masked);
+            URL roadLinkDF = getUrl("/dadaab/dadaabData/Road/dadaab_road_f_node.dbf");
+            ShapeFileImporter.read(roadLinkUL, roadLinkDF, dadaab.roadLinks,masked);
                  
             extractFromRoadLinks(dadaab.roadLinks, dadaab); // construct a network of roads
 
@@ -374,7 +376,7 @@ public class CampBuilder {
     }
     private static URL getUrl(String nodesFilename) throws IOException {
         try {
-            InputStream nodeStream = DadaabData.class.getResourceAsStream(nodesFilename);
+            InputStream nodeStream = Dadaab.class.getResourceAsStream(nodesFilename);
             //nodeStream.read(buffer);
             if(!new File("./shapeFiles/").exists()){
                 new File("./shapeFiles/").mkdir();

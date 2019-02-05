@@ -3,7 +3,7 @@ package sim.app.geo.cityMigration;
 import java.io.*;
 import java.util.ArrayList;
 
-import cityMigration.cityMigrationData.CityMigrationData;
+import sim.app.geo.cityMigration.tin.CityMigrationData;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.field.network.stats.NetworkStatistics;

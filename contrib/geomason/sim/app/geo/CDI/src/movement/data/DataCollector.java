@@ -1,4 +1,4 @@
-package CDI.src.movement.data;
+package sim.app.geo.CDI.src.movement.data;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +8,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import CDI.src.movement.Household;
-import CDI.src.movement.NorthLandsMovement;
-import CDI.src.movement.data.BarChartFactor.Factor;
+import sim.app.geo.CDI.src.movement.Household;
+import sim.app.geo.CDI.src.movement.NorthLandsMovement;
+import sim.app.geo.CDI.src.movement.data.BarChartFactor.Factor;
 
 public class DataCollector {
 

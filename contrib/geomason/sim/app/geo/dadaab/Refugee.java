@@ -16,7 +16,7 @@ import sim.engine.Stoppable;
 import sim.field.continuous.Continuous2D;
 import java.lang.Math.*;
 import ec.util.MersenneTwisterFast;
-import dadaab.CampBuilder.Node;
+import sim.app.geo.dadaab.CampBuilder.Node;
 
 public class Refugee implements Steppable, Valuable, java.io.Serializable {
     // refugee - age, sex, activity, householdID, Household ResponID

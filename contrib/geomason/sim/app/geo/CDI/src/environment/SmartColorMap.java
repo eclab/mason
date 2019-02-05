@@ -1,9 +1,9 @@
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 import java.awt.Color;
 import java.util.HashMap;
 
-import CDI.src.movement.parameters.Parameters;
+import sim.app.geo.CDI.src.movement.parameters.Parameters;
 import sim.util.gui.SimpleColorMap;
 
 /**

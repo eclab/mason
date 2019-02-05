@@ -1,9 +1,9 @@
-package CDI.src.environment;
+package sim.app.geo.CDI.src.environment;
 
 
 
 
-import CDI.src.movement.data.BarChartFactor.Factor;
+import sim.app.geo.CDI.src.movement.data.BarChartFactor.Factor;
 import sim.field.grid.Grid2D;
 import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;

@@ -1,6 +1,6 @@
 package sim.app.geo.ebola;
 
-import ebola.Structure;
+import sim.app.geo.ebola.Structure;
 import sim.util.Bag;
 import sim.util.Int2D;
 

@@ -1,4 +1,4 @@
-package CDI.src.phases;
+package sim.app.geo.CDI.src.phases;
 
 import sim.field.grid.IntGrid2D;
 

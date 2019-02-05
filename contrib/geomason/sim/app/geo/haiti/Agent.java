@@ -1,6 +1,6 @@
 package sim.app.geo.haiti;
 
-import haiti.HaitiFood.Node;
+import sim.app.geo.haiti.HaitiFood.Node;
 
 import java.awt.Color;
 import java.util.ArrayList;

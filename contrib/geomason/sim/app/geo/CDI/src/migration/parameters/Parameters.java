@@ -1,4 +1,4 @@
-package CDI.src.migration.parameters;
+package sim.app.geo.CDI.src.migration.parameters;
 
 import java.awt.Color;
 
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import ucar.nc2.dt.point.RecordDatasetHelper;
-import CDI.src.migration.util.Distributions;
+import sim.app.geo.CDI.src.migration.util.Distributions;
 import ec.util.ParameterDatabase;
 
 /**

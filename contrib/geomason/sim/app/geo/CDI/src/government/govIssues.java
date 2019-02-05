@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CDI.src.government;
+package sim.app.geo.CDI.src.government;
 
 /**
  *

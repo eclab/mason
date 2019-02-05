@@ -1,10 +1,10 @@
 
-        /*
-         * ConflictMediatorRural.java
-         *
-         * $Id$
-         */
-        package sim.app.geo.riftland.conflict;
+/*
+ * ConflictMediatorRural.java
+ *
+ * $Id$
+ */
+package sim.app.geo.riftland.conflict;
 
 import sim.app.geo.riftland.household.Herding;
 import sim.app.geo.riftland.household.Activity;
@@ -76,7 +76,7 @@ public class ConflictMediatorRural extends Mediator {
                 defenders.addAll(defending.getFarms());
                 int conflicts = defenders.size();
 
-//                System.out.println("ConflictMediatorRural>herder vs. " + conflicts + " farmers");
+                //                System.out.println("ConflictMediatorRural>herder vs. " + conflicts + " farmers");
 
                 int attackerCulture;
                 attackerCulture = attacker.getHousehold().getCulture();
@@ -115,7 +115,7 @@ public class ConflictMediatorRural extends Mediator {
             // go through bag and process based on culture match or non-match
             int potentialConflicts = defenders.size();
 
-//            System.out.println("ConflictMediatorRural>herder vs. " + potentialConflicts + " herders");
+            //            System.out.println("ConflictMediatorRural>herder vs. " + potentialConflicts + " herders");
 
             int attackerCulture;
             attackerCulture = attacker.getHousehold().getCulture();
@@ -157,10 +157,10 @@ public class ConflictMediatorRural extends Mediator {
                 } // endif test other exists
             }  // end loop through potential conflicts
 
-//            System.out.print("@" + world_.schedule.getSteps() + " ");
-//            System.out.println("ConflictMediatorRural>herder in " 
-//                               + this.getHHconflicts() + " conflicts and " 
-//                               + this.getHHnonconflicts() + " sharings");
+            //            System.out.print("@" + world_.schedule.getSteps() + " ");
+            //            System.out.println("ConflictMediatorRural>herder in " 
+            //                               + this.getHHconflicts() + " conflicts and " 
+            //                               + this.getHHnonconflicts() + " sharings");
 
         } // endif processing of h-h conflict
 
@@ -182,7 +182,7 @@ public class ConflictMediatorRural extends Mediator {
     {
         //System.err.println("# conflicts: " + this.getNumConflicts());
 
-//        escalationsGrid.clear();  // If I put this in clearConflicts, nothing gets drawn
+        //        escalationsGrid.clear();  // If I put this in clearConflicts, nothing gets drawn
 
         for ( Conflict conflict : this.conflicts() )
         {

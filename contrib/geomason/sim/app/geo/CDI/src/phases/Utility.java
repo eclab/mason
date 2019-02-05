@@ -1,13 +1,13 @@
-package CDI.src.phases;
+package sim.app.geo.CDI.src.phases;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import CDI.src.optimization.util.Filter;
-import CDI.src.optimization.util.GaussianFilter;
+import sim.app.geo.CDI.src.optimization.util.Filter;
+import sim.app.geo.CDI.src.optimization.util.GaussianFilter;
 import ec.util.MersenneTwisterFast;
-import CDI.src.environment.Cell;
-import CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Map;
 import sim.field.grid.AbstractGrid2D;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;

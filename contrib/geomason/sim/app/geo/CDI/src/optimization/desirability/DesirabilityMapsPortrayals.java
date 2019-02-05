@@ -1,4 +1,4 @@
-package CDI.src.optimization.desirability ;
+package sim.app.geo.CDI.src.optimization.desirability ;
 
 import java.awt.Color;
 
@@ -6,7 +6,7 @@ import sim.util.gui.SimpleColorMap;
 import sim.field.grid.DoubleGrid2D;
 import sim.portrayal.grid.FastValueGridPortrayal2D;
 
-import CDI.src.environment.Map ;
+import sim.app.geo.CDI.src.environment.Map ;
 
 public class DesirabilityMapsPortrayals
 {

@@ -1,4 +1,4 @@
-package CDI.src.optimization.util ;
+package sim.app.geo.CDI.src.optimization.util ;
 
 /**
  * This class implements a simple Gaussian kernel

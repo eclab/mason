@@ -124,7 +124,7 @@ public class HaitiFood extends SimState {
 	
 	String roadsFile, roadVectorFile, destructionFile, popFile;
 	/** Initialization */
-	public void start() {
+	public void start(){
 		super.start();
 
 		// ---- read in data ----
@@ -144,8 +144,8 @@ public class HaitiFood extends SimState {
 			// the road network)
 			//ShapeFileImporter importer = new ShapeFileImporter();
 			GeomVectorField roadLinks = new GeomVectorField();
-			
-			ShapeFileImporter.read(new File(roadVectorFile).toURI().toURL(), roadLinks, new Bag());
+		    String roadDB = roadVectorFile.replace("shp", "dbf");	
+			ShapeFileImporter.read(new File(roadVectorFile).toURI().toURL(), new File(roadDB).toURI().toURL(), roadLinks, new Bag());
 			nodes = new SparseGrid2D(gridWidth, gridHeight);
 			extractFromRoadLinks(roadLinks); // construct a network of roads
 
@@ -181,7 +181,9 @@ public class HaitiFood extends SimState {
 			e.printStackTrace();
 		}catch(MalformedURLException e){
 			e.printStackTrace();
-		}
+		}catch(Exception e){
+            e.printStackTrace();
+        }
 
 		// ---- set up rumors/information spread ----
 

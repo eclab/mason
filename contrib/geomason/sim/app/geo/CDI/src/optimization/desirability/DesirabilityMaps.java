@@ -1,4 +1,4 @@
-package CDI.src.optimization.desirability ;
+package sim.app.geo.CDI.src.optimization.desirability ;
 
 /**
  * This is the merged version of Map.java and DesirabilityMaps.java, the legacy
@@ -18,10 +18,10 @@ import java.net.URL;
 import sim.field.grid.AbstractGrid2D;
 import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.IntGrid2D;
-import CDI.src.movement.parameters.*;
-import CDI.src.environment.Map;
-import CDI.src.optimization.util.Filter ;
-import CDI.src.optimization.util.GaussianFilter ;
+import sim.app.geo.CDI.src.movement.parameters.*;
+import sim.app.geo.CDI.src.environment.Map;
+import sim.app.geo.CDI.src.optimization.util.Filter ;
+import sim.app.geo.CDI.src.optimization.util.GaussianFilter ;
 
 public class DesirabilityMaps
 {

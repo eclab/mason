@@ -1,4 +1,4 @@
-package CDI.src.movement.parameters;
+package sim.app.geo.CDI.src.movement.parameters;
 
 //import java.awt.Color;
 import java.io.File;
@@ -8,8 +8,8 @@ import java.io.IOException;
 //import org.spiderland.Psh.booleanStack;
 
 //import ucar.nc2.dt.point.RecordDatasetHelper;
-import CDI.src.migration.parameters.Utility;
-//import CDI.src.migration.util.Distributions;
+import sim.app.geo.CDI.src.migration.parameters.Utility;
+//import sim.app.geo.CDI.src.migration.util.Distributions;
 import ec.util.ParameterDatabase;
 
 /**

@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 
-import sim.app.geo.refugee.refugeeData.RefugeeData;
+//import sim.app.geo.refugee.refugeeData;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.SparseGrid2D;
@@ -172,14 +172,15 @@ class MigrationBuilder {
 				String filePath = files[i];
 
 				URL shapeURI = getUrl(filePath);
-				ShapeFileImporter.read(shapeURI, vectorFields[i], attributes);
+				URL shapeDBF = getUrl(filePath.replace("shp", "dbf"));
+				ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i], attributes);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	private static URL getUrl(String nodesFilename) throws IOException {
-		InputStream nodeStream = RefugeeData.class.getResourceAsStream(nodesFilename);
+		InputStream nodeStream = MigrationBuilder.class.getResourceAsStream(nodesFilename);
 		try {
 			if (!new File("./shapeFiles/").exists()) {
 				new File("./shapeFiles/").mkdir();
@@ -309,7 +310,7 @@ class MigrationBuilder {
 	private static void setUpPopDist(String pop_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(RefugeeData.class.getResourceAsStream(pop_dist_file)));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream(pop_dist_file)));
 			//csvReader.readLine();// skip the headers
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {
@@ -333,7 +334,7 @@ class MigrationBuilder {
 	private static void setUpFinDist(String fin_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(RefugeeData.class.getResourceAsStream((fin_dist_file))));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream((fin_dist_file))));
 			//csvReader.readLine();// skip the headers
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {
@@ -358,7 +359,7 @@ class MigrationBuilder {
 	private static void setUpAgeDist(String age_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(RefugeeData.class.getResourceAsStream(age_dist_file)));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream(age_dist_file)));
 			csvReader.readLine();
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {

@@ -1,4 +1,4 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
-import CDI.src.movement.data.BarChartFactor.Factor;
-import CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.movement.data.BarChartFactor.Factor;
+import sim.app.geo.CDI.src.environment.Cell;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.DoubleGrid2D;

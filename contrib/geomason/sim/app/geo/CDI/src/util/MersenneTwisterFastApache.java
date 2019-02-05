@@ -1,4 +1,4 @@
-package CDI.src.util;
+package sim.app.geo.CDI.src.util;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import ec.util.MersenneTwisterFast;

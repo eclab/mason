@@ -1,4 +1,4 @@
-package CDI.src.movement;
+package sim.app.geo.CDI.src.movement;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 import org.jfree.data.xy.XYSeries;
 
-import masoncsc.util.ChartUtils;
+import sim.app.geo.masoncsc.util.ChartUtils;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -26,15 +26,15 @@ import sim.portrayal.simple.TrailedPortrayal2D;
 import sim.util.Interval;
 import sim.util.media.chart.BarChartGenerator;
 import sim.util.media.chart.HistogramGenerator;
-import CDI.src.environment.Cell;
-import CDI.src.environment.DoubleColorMap;
-import CDI.src.environment.HouseholdSelectionGridPortrayal2D;
-import CDI.src.environment.HouseholdTrackerPortrayal2D;
-import CDI.src.environment.HouseholdTrailPortrayal2D;
-import CDI.src.environment.Map;
-import CDI.src.environment.SmartColorMap;
-import CDI.src.environment.SmartDoubleColorMap;
-import CDI.src.environment.SmartFastValueGridPortrayal2D;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.DoubleColorMap;
+import sim.app.geo.CDI.src.environment.HouseholdSelectionGridPortrayal2D;
+import sim.app.geo.CDI.src.environment.HouseholdTrackerPortrayal2D;
+import sim.app.geo.CDI.src.environment.HouseholdTrailPortrayal2D;
+import sim.app.geo.CDI.src.environment.Map;
+import sim.app.geo.CDI.src.environment.SmartColorMap;
+import sim.app.geo.CDI.src.environment.SmartDoubleColorMap;
+import sim.app.geo.CDI.src.environment.SmartFastValueGridPortrayal2D;
 
 public class NorthLandsMovementWithUI extends GUIState 
 {

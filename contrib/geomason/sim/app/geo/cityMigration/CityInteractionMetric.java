@@ -1,6 +1,6 @@
 package sim.app.geo.cityMigration;
 
-import riftland.PopulationCenter;
+import sim.app.geo.riftland.PopulationCenter;
 
 public interface CityInteractionMetric
 {

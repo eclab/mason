@@ -1,8 +1,8 @@
-package CDI.src.phases.util;
+package sim.app.geo.CDI.src.phases.util;
 
-import CDI.src.optimization.util.Filter;
-import CDI.src.environment.Cell;
-import CDI.src.environment.Map;
+import sim.app.geo.CDI.src.optimization.util.Filter;
+import sim.app.geo.CDI.src.environment.Cell;
+import sim.app.geo.CDI.src.environment.Map;
 import sim.field.grid.Grid2D;
 import sim.util.*;
 
