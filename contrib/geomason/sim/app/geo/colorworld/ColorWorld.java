@@ -7,8 +7,8 @@
  *
  * $Id$
 */
-package colorworld;
-
+package sim.app.geo.colorworld;
+import sim.app.geo.colorworld.data.ColorWorldData;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.logging.Level;
@@ -72,12 +72,13 @@ public class ColorWorld extends SimState
         // this line allows us to replace the standard MasonGeometry with our
         // own subclass of MasonGeometry; see CountingGeomWrapper.java for more info.
         // Note: this line MUST occur prior to ingesting the data
-        URL politicalBoundaries = ColorWorld.class.getResource("data/pol.shp");
+        URL politicalBoundaries = ColorWorldData.class.getResource("pol.shp");
+        URL politicalDB = ColorWorldData.class.getResource("pol.dbf");
 
         Bag empty = new Bag();
         try
         {
-            ShapeFileImporter.read(politicalBoundaries, county, empty, CountingGeomWrapper.class);
+            ShapeFileImporter.read(politicalBoundaries, politicalDB, county, empty, CountingGeomWrapper.class);
         } catch (Exception ex)
         {
             Logger.getLogger(ColorWorld.class.getName()).log(Level.SEVERE, null, ex);

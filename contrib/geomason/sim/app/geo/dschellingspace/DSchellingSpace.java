@@ -12,6 +12,8 @@
  **/
 package sim.app.geo.dschellingspace;
 
+import sim.app.geo.dschellingspace.data.DSchellingSpaceData;
+
 import com.vividsolutions.jts.geom.*;
 
 import mpi.MPIException;
@@ -218,8 +220,9 @@ public class DSchellingSpace extends SimState
         try // to import the data from the shapefile
         {
             System.out.print("Reading boundary data ... ");        
-            URL wardsFile = DSchellingSpace.class.getResource("data/DCreprojected.shp");
-            ShapeFileImporter.read( wardsFile, world, SchellingGeometry.class);
+            URL wardsFile = DSchellingSpaceData.class.getResource("DCreprojected.shp");
+            URL wardsDB = DSchellingSpaceData.class.getResource("DCreprojected.dbf");
+            ShapeFileImporter.read( wardsFile, wardsDB, world, SchellingGeometry.class);
         }
         catch (Exception ex)
         {

@@ -7,7 +7,7 @@
  *
  * $Id$
 */
-package colorworld;
+package sim.app.geo.colorworld;
 
 
 import sim.util.Bag;

@@ -11,6 +11,7 @@
  ** $Id$
  **/
 package sim.app.geo.schellingspace;
+import sim.app.geo.schellingspace.data.SchellingSpaceData;
 
 import com.vividsolutions.jts.geom.*;
 import java.io.FileNotFoundException;
@@ -207,9 +208,10 @@ public class SchellingSpace extends SimState
         {
             System.out.print("Reading boundary data ... ");
             
-            URL wardsFile = SchellingSpace.class.getResource("data/DCreprojected.shp");
+            URL wardsFile = SchellingSpaceData.class.getResource("DCreprojected.shp");
+            URL wardsDB = SchellingSpaceData.class.getResource("DCreprojected.dbf");
 
-            ShapeFileImporter.read( wardsFile, world, SchellingGeometry.class);
+            ShapeFileImporter.read( wardsFile, wardsDB, world, SchellingGeometry.class);
         }
         catch (Exception ex)
         {

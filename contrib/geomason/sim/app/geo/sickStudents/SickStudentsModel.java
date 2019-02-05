@@ -12,6 +12,7 @@
  **/
 package sim.app.geo.sickStudents;
 
+import sim.app.geo.sickStudents.data.SickStudentsData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -135,12 +136,12 @@ public class SickStudentsModel extends SimState
         try
         {
             // read the data
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/ES_ATTENDANCE_AREAS.shp"), elementarySchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/MS_ATTENDANCE_AREAS.shp"), middleSchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/HS_ATTENDANCE_AREAS.shp"),  highSchoolZones);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/ElementarySchools.shp"),  elementarySchools);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/MiddleSchools.shp"), middleSchools);
-            ShapeFileImporter.read(SickStudentsModel.class.getResource("data/HighSchools.shp"), highSchools);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("ES_ATTENDANCE_AREAS.shp"), SickStudentsData.class.getResource("ES_ATTENDANCE_AREAS.dbf"), elementarySchoolZones);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("MS_ATTENDANCE_AREAS.shp"), SickStudentsData.class.getResource("MS_ATTENDANCE_AREAS.dbf"), middleSchoolZones);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("HS_ATTENDANCE_AREAS.shp"), SickStudentsData.class.getResource("HS_ATTENDANCE_AREAS.dbf"), highSchoolZones);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("ElementarySchools.shp"),  SickStudentsData.class.getResource("ElementarySchools.dbf"), elementarySchools);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("MiddleSchools.shp"), SickStudentsData.class.getResource("MiddleSchools.dbf"), middleSchools);
+            ShapeFileImporter.read(SickStudentsData.class.getResource("HighSchools.shp"), SickStudentsData.class.getResource("HighSchools.dbf"), highSchools);
 
             // Make all the bounding rectangles match one another
             Envelope MBR = elementarySchoolZones.getMBR();

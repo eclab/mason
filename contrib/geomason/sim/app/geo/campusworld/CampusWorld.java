@@ -8,6 +8,7 @@
  * $Id$
 */
 package sim.app.geo.campusworld;
+import sim.app.geo.campusworld.data.CampusWorldData;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -77,8 +78,9 @@ public class CampusWorld extends SimState
 
             // read in the buildings GIS file
 
-            URL bldgGeometry = CampusWorld.class.getResource("data/bldg.shp");
-            ShapeFileImporter.read(bldgGeometry, buildings, masked);
+            URL bldgGeometry = CampusWorldData.class.getResource("bldg.shp");
+            URL bldgDB = CampusWorldData.class.getResource("bldg.dbf");
+            ShapeFileImporter.read(bldgGeometry, bldgDB, buildings, masked);
 
             // We want to save the MBR so that we can ensure that all GeomFields
             // cover identical area.
@@ -86,15 +88,17 @@ public class CampusWorld extends SimState
 
             System.out.println("reading roads layer");
 
-            URL roadGeometry = CampusWorld.class.getResource("data/roads.shp");
-            ShapeFileImporter.read(roadGeometry, roads);
+            URL roadGeometry = CampusWorldData.class.getResource("roads.shp");
+            URL roadDB = CampusWorldData.class.getResource("roads.dbf");
+            ShapeFileImporter.read(roadGeometry, roadDB, roads);
 
             MBR.expandToInclude(roads.getMBR());
 
             System.out.println("reading walkways layer");
 
-            URL walkWayGeometry = CampusWorld.class.getResource("data/walk_ways.shp");
-            ShapeFileImporter.read(walkWayGeometry, walkways);
+            URL walkWayGeometry = CampusWorldData.class.getResource("walk_ways.shp");
+            URL walkWayDB = CampusWorldData.class.getResource("walk_ways.dbf");
+            ShapeFileImporter.read(walkWayGeometry, walkWayDB, walkways);
 
             MBR.expandToInclude(walkways.getMBR());
 

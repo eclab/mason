@@ -8,6 +8,8 @@
  */
 package sim.app.geo.gridlock;
 
+import sim.app.geo.gridlock.data.GridlockData;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -121,17 +123,19 @@ public class Gridlock extends SimState
             // read in the roads to create the transit network
             System.out.println("reading roads layer...");
 
-            URL roadsFile = Gridlock.class.getResource("data/roads.shp");
+            URL roadsFile = GridlockData.class.getResource("roads.shp");
+            URL roadsDB = GridlockData.class.getResource("roads.shp");
 
-            ShapeFileImporter.read(roadsFile, roads);
+            ShapeFileImporter.read(roadsFile, roadsDB, roads);
 
             Envelope MBR = roads.getMBR();
 
             // read in the tracts to create the background
             System.out.println("reading tracts layer...");
 
-            URL areasFile = Gridlock.class.getResource("data/areas.shp");
-            ShapeFileImporter.read(areasFile, censusTracts);
+            URL areasFile = GridlockData.class.getResource("areas.shp");
+            URL areasDB = GridlockData.class.getResource("areas.dbf");
+            ShapeFileImporter.read(areasFile, areasDB, censusTracts);
 
 
             MBR.expandToInclude(censusTracts.getMBR());

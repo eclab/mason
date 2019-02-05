@@ -49,3 +49,6 @@ java -Xms1g -Xmx2g sim.app.geo.sickStudents.SickStudentsModelWithUI
 
 Naturally, you may want to adjust the command line stack and heap
 allocation parameters to better fit available memory.
+
+
+You'll need to build GDAL: http://download.osgeo.org/gdal/
