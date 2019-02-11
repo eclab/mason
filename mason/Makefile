@@ -6,12 +6,34 @@
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
 FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
-JAVAC = mpijavac ${FLAGS}
-BUILDDIR=$$(pwd)
+JAVAC = javac ${FLAGS}
+MPIJAVAC = mpijavac ${FLAGS}
 VERSION = 19
+ifdef D
+CC = ${MPIJAVAC}
+TARGET = dmason.${VERSION}.jar
+else
+CC = ${JAVAC}
+TARGET = mason.${VERSION}.jar
+endif
 
 
 # Main java files, not including the 3D stuff
+DISTRIBUTED = \
+sim/field/DPartition.java \
+sim/field/DUniformPartition.java \
+sim/field/DNonUniformPartition.java \
+sim/field/DQuadTreePartition.java \
+sim/field/HaloField.java \
+sim/field/grid/NDoubleGrid2D.java \
+sim/field/grid/NIntGrid2D.java \
+sim/field/grid/NObjectGrid2D.java \
+sim/field/grid/NObjectsGrid2D.java \
+sim/field/storage/IntGridStorage.java \
+sim/field/storage/DoubleGridStorage.java \
+sim/field/storage/ObjectGridStorage.java \
+sim/field/
+
 DIRS = \
 sim/app/heatbugs/*.java\
 sim/app/dheatbugs/*.java\
@@ -98,16 +120,16 @@ all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
 	@ echo 
-	${JAVAC} ${DIRS}
+	${CC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
 3d: SHELL=/bin/bash
 3d:
-	${JAVAC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS}
 
 # Make the EC Demo
 ec:
-	${JAVAC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS}
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -134,8 +156,8 @@ jar: 3d ec
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	#jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
-	jar -cvfm jar/mason.${VERSION}.jar /tmp/manifest.add ec/ sim/ docs/ start/ library/
+	#jar -cvfm jar/${TARGET} /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	jar -cvfm jar/${TARGET} /tmp/manifest.add ec/ sim/ docs/ start/ library/
 	rm /tmp/manifest.add
 
 

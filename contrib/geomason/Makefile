@@ -14,10 +14,15 @@
 LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../../library/* `
 GLIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" geolib/* `
 MASON=../../mason/jar/mason.19.jar
-FLAGS = -g -cp ${LIBS}:${GLIBS}:${MASON}
-JAVAC = mpijavac ${FLAGS}
-BUILDDIR=$$(pwd)
-# GeoMason supports Java 5; note that MASON proper only supports Java 4.
+CP=${LIBS}:${GLIBS}:${MASON}
+FLAGS = -g -cp ${CP}
+JAVAC = javac ${FLAGS}
+MPIJAVAC = mpijavac ${FLAGS}
+ifdef D
+CC=${MPIJAVAC}
+else
+CC=${JAVAC}
+endif
 
 VERSION = 1.6.1
 
@@ -129,18 +134,21 @@ TOUCHINGWORLD = sim/app/geo/touchingworld/*.java
 TURKANA = sim/app/geo/turkana/*.java
 
 WATERWORLD = sim/app/geo/waterworld/*.java
-
 #----- END DEMOS ------#
-DEMO = $(CAMPUSWORLD) $(COLORWORLD) $(DCAMPUSWORLD) $(DSCHELLINGSPACE) $(EBOLA) $(GRIDLOCK) $(HAITI) $(HOTSPOTS) $(MASONCSC) $(NEARBYWORLD) $(NETWORKWORLD) $(REFUGEE) $(SCHELLINGPOLYGON) $(SCHELLINGSPACE) $(SICKSTUDENTS) $(SILLYPEDS) $(SLEUTH) $(TOUCHINGWORLD) $(TOUCHINGWORLD) $(TURKANA) $(WATERWORLD)
+DISTRIBUTEDDEMOS = $(DCAMPUSWORLD) $(DSCHELLINGSPACE)
+DEMO = $(CAMPUSWORLD) $(COLORWORLD) $(EBOLA) $(GRIDLOCK) $(HAITI) $(HOTSPOTS) $(MASONCSC) $(NEARBYWORLD) $(NETWORKWORLD) $(REFUGEE) $(SCHELLINGPOLYGON) $(SCHELLINGSPACE) $(SICKSTUDENTS) $(SILLYPEDS) $(SLEUTH) $(TOUCHINGWORLD) $(TOUCHINGWORLD) $(TURKANA) $(WATERWORLD)
 # ^ These demos compile
 # These demos don't: ACEQUIAS , CDI , CITYMIGRATION , CONFLICTDIAMONDS , DADAAB , KIBERA , RIFTLAND
-DEMOS = $(DEMO) 
+#
+ifdef D
+DEMOS = $(DEMO) $(DISTRIBUTEDDEMOS)
+else
+DEMOS = $(DEMO)
+endif
 
-
-# Note that we do not restrict demos to Java 1.4 as is this case with MASON
 demos : ${JARFILE}
 	@echo "Compiling examples..."
-	@${JAVAC} ${BASE_FILES} ${DEMOS}
+	@${CC} ${BASE_FILES} ${DEMOS}
 
 
 dist : ${SRC_DISTRO} ${DEMO_DISTRO}
@@ -201,7 +209,7 @@ ${JARFILE} : $(BASE_FILES) $(GDAL_FILES) $(GEOTOOL_FILES) $(OGR_FILES)
 	@rm /tmp/manifest.add
 	@echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	#@echo "Class-Path:  library/*"
-	@${JAVAC} ${JAVACFLAGS} $^
+	@${CC} ${JAVACFLAGS} $^
 	@jar -cvmf /tmp/manifest.add $@ `find sim/app sim/field sim/io sim/portrayal sim/util -name "*.class" -or -name "*.jpg" -or -name "*.png" -or -name "index.html"`
 	@rm /tmp/manifest.add
 
