@@ -50,7 +50,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         for (i = 0; i < b.size(); i++) {
             DFlocker other = (DFlocker)(b.get(i));
             if (!other.dead) {
-            	DoublePoint m = ((DFlocker)b.get(i)).momentum();
+                DoublePoint m = ((DFlocker)b.get(i)).momentum();
                 count++;
                 x += m.c[0];
                 y += m.c[1];
@@ -148,12 +148,12 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         try {
             int dst = flock.partition.toPartitionId(new double[] {loc.c[0], loc.c[1]});
             if (dst != flock.partition.getPid()) {
-            	// Need to migrate to other partition, 
-            	// remove from current partition 
+                // Need to migrate to other partition, 
+                // remove from current partition 
                 flock.flockers.removeObject(this);
                 flock.queue.migrate(this, dst, loc);           
             } else {
-            	// Set to new location in current partition
+                // Set to new location in current partition
                 flock.flockers.setLocation(this, loc);
                 flock.schedule.scheduleOnce(this, 1);
             }

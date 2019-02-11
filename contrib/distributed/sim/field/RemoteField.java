@@ -8,5 +8,5 @@ import sim.util.IntPoint;
 
 // TODO replace IntPoint with NdPoint
 public interface RemoteField extends Remote {
-	Serializable getRMI(IntPoint p) throws RemoteException;
+    Serializable getRMI(IntPoint p) throws RemoteException;
 }

@@ -41,21 +41,21 @@ public class Diffuser implements Steppable {
 
             for (int y = aoi; y < _gridHeight + aoi; y++) {
                 average = (
-                    _valgrid_field[past + y - 1] + 
-                    _valgrid_field[past + y] + 
-                    _valgrid_field[past + y + 1] +
-                    _valgrid_field[curr + y - 1] + 
-                    _valgrid_field[curr + y] + 
-                    _valgrid_field[curr + y + 1] +
-                    _valgrid_field[next + y - 1] + 
-                    _valgrid_field[next + y] + 
-                    _valgrid_field[next + y + 1]
-                    ) / 9.0;
+                           _valgrid_field[past + y - 1] + 
+                           _valgrid_field[past + y] + 
+                           _valgrid_field[past + y + 1] +
+                           _valgrid_field[curr + y - 1] + 
+                           _valgrid_field[curr + y] + 
+                           _valgrid_field[curr + y + 1] +
+                           _valgrid_field[next + y - 1] + 
+                           _valgrid_field[next + y] + 
+                           _valgrid_field[next + y + 1]
+                           ) / 9.0;
 
                 // load the new value into HeatBugs.this.valgrid2
                 _valgrid2_field[curr + y] = _evaporationRate *
-                          (_valgrid_field[curr + y] + _diffusionRate *
-                           (average - _valgrid_field[curr + y]));
+                    (_valgrid_field[curr + y] + _diffusionRate *
+                     (average - _valgrid_field[curr + y]));
             }
 
             // swap elements

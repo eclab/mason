@@ -4,110 +4,35 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
-FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
-JAVAC = javac ${FLAGS}
-VERSION = 19
+LIBS=
+FLAGS = -target 1.8 -source 1.8 -g -nowarn ${LIBS}
+JAVAC = mpijavac ${FLAGS}
+VERSION = 1
 CC = ${JAVAC}
-TARGET = mason.${VERSION}.jar
+TARGET = distributed.${VERSION}.jar
 
 
 # Main java files, not including the 3D stuff
 
-DIRS = \
-sim/app/heatbugs/*.java\
-sim/app/hexabugs/*.java \
-sim/app/asteroids/*.java \
-sim/app/antsforage/*.java \
-sim/app/virus/*.java \
-sim/app/cto/*.java \
-sim/app/woims/*.java \
-sim/app/mav/*.java \
-sim/app/mousetraps/*.java \
-sim/app/networktest/*.java \
-sim/app/keepaway/*.java \
-sim/app/lsystem/*.java \
-sim/app/lightcycles/*.java \
-sim/app/swarmgame/*.java \
-sim/app/flockers/*.java \
-sim/app/tutorial1and2/*.java \
-sim/app/tutorial3/*.java \
-sim/app/tutorial4/*.java \
-sim/app/tutorial5/*.java \
-sim/app/schelling/*.java \
-sim/app/pacman/*.java \
-sim/app/pso/*.java \
-sim/app/wcss/tutorial0*/*.java \
-sim/app/wcss/tutorial10/*.java \
-sim/app/wcss/tutorial11/*.java \
-sim/app/wcss/tutorial12/*.java \
-sim/app/wcss/tutorial13/*.java \
-sim/display/*.java \
-sim/engine/*.java \
-sim/util/*.java \
-sim/util/media/*.java \
-sim/util/media/chart/*.java \
-sim/util/gui/*.java \
-sim/util/distribution/*.java \
-sim/field/*.java \
-sim/field/grid/*.java \
-sim/field/continuous/*.java \
-sim/field/network/*.java \
-sim/field/storage/*.java \
-sim/portrayal/*.java \
-sim/portrayal/grid/*.java \
-sim/portrayal/continuous/*.java \
-sim/portrayal/network/*.java \
-sim/portrayal/simple/*.java \
-sim/portrayal/inspector/*.java \
-ec/util/*.java \
-#sim/util/sweep/*.java \ 
+FIELD= sim/field/*.java \
+		sim/field/grid/*.java \
+		sim/field/storage/*.java \
+		sim/field/continuous/*.java
+UTIL= sim/util/*.java
+APP = sim/app/dflockers/*.java \
+	  sim/app/dheatbugs/*.java
+ENGINE=sim/engine/*.java
 
-
-# The additional 3D java files
-3DDIRS = \
-sim/app/heatbugs3d/*.java \
-sim/app/woims3d/*.java \
-sim/app/mousetraps3d/*.java \
-sim/app/crowd3d/*.java \
-sim/app/balls3d/*.java \
-sim/app/celegans/*.java \
-sim/app/particles3d/*.java \
-sim/app/pso3d/*.java \
-sim/app/tutorial6/*.java \
-sim/app/tutorial7/*.java \
-sim/app/celegans/*.java \
-sim/app/wcss/tutorial14/*.java \
-sim/portrayal3d/*.java \
-sim/portrayal3d/simple/*.java \
-sim/portrayal3d/grid/*.java \
-sim/portrayal3d/grid/quad/*.java \
-sim/portrayal3d/continuous/*.java \
-sim/portrayal3d/network/*.java \
-sim/display3d/*.java \
-
-
-# EC Example java files
-ECDIRS = \
-sim/app/tutorial1and2/ec/*.java \
-
+DIRS = ${FIELD} ${UTIL} ${APP} ${ENGINE}
 
 # Make the main MASON code, not including 3D code
-all: SHELL=/bin/bash
-all:
-	@ echo This makes the 2D MASON code.
+all:	jar
+
+compile:
+	@ echo This makes the Distributed MASON code.
 	@ echo To learn about other options, type 'make help'
 	@ echo 
-	${CC} ${DIRS}
-
-# Make the main MASON code AND the 3D code
-3d: SHELL=/bin/bash
-3d:
-	${CC} ${DIRS} ${3DDIRS}
-
-# Make the EC Demo
-ec:
-	${CC} ${DIRS} ${3DDIRS}
+	 ${CC} ${DIRS}
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -129,19 +54,18 @@ docs: doc
 
 # Build an applet jar file.  Note this collects ALL .class, .png, .jpg, index.html, and simulation.classes
 # files.  you'll probably want to strip this down some.
-jar: SHELL=/bin/bash
-jar: 3d ec
-	touch /tmp/manifest.add
-	rm /tmp/manifest.add
-	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	#jar -cvfm jar/${TARGET} /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
-	jar -cvfm jar/${TARGET} /tmp/manifest.add ec/ sim/ docs/ start/ library/
-	rm /tmp/manifest.add
+jar: compile
+	@touch /tmp/manifest.add
+	@rm /tmp/manifest.add
+	@echo "Main-Class: sim.display.Console" > /tmp/manifest.add
+	@jar cvfm jar/${TARGET} /tmp/manifest.add  sim/ docs/ scripts/
+	@rm /tmp/manifest.add
+	@echo "check jar/${TARGET}"
 
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean 3d ec indent doc jar
+dist: clean indent doc jar
 	@ echo If the version is being updated, change it here:
 	@ echo "1. sim.engine.SimState.version()"
 	@ echo "2. manual.tex frontmatter (including copyright year)"
@@ -163,19 +87,14 @@ indent:
 
 # Print a help message
 help: 
-	@ echo MASON Makefile options
+	@ echo Distributed MASON Makefile options
 	@ echo 
-	@ echo "make          Builds the model core, utilities, and 2D code/apps only"
+	@ echo "make          Builds the model core, utilities, apps"
 	@ echo "make all        (Same thing)"
-	@ echo "make 3d       Builds the model core, utilities, and both 2D and 3D code/apps"
-	@ echo "make ec       Builds the model core, utilities, and the EC example"
 	@ echo "make docs     Builds the class documentation, found in docs/classsdocs"
 	@ echo "make doc        (Same thing)"
 	@ echo "make clean    Cleans out all classfiles, checkpoints, and various gunk"
-	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
-	@ echo "              called mason.jar.  Heavyweight -- all class files included."
-
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
 

@@ -73,9 +73,9 @@ public class DHeatBug implements Steppable {
                         int xx = (x + loc_x);
                         int yy = (y + loc_y);
                         if (bestx == START ||
-                                (hb.valgrid.get(xx, yy) < hb.valgrid.get(bestx, besty)) ||
-                                (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
-                        { bestx = xx; besty = yy; }
+                            (hb.valgrid.get(xx, yy) < hb.valgrid.get(bestx, besty)) ||
+                            (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
+                            { bestx = xx; besty = yy; }
                     }
         } else if ( hb.valgrid.get(myx, myy) < idealTemp ) { // go to warmest place
             for (int x = -1; x < 2; x++)
@@ -84,9 +84,9 @@ public class DHeatBug implements Steppable {
                         int xx = (x + loc_x);
                         int yy = (y + loc_y);
                         if (bestx == START ||
-                                (hb.valgrid.get(xx, yy) > hb.valgrid.get(bestx, besty)) ||
-                                (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
-                        { bestx = xx; besty = yy; }
+                            (hb.valgrid.get(xx, yy) > hb.valgrid.get(bestx, besty)) ||
+                            (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
+                            { bestx = xx; besty = yy; }
                     }
         } else {        // stay put
             bestx = loc_x;
@@ -105,7 +105,7 @@ public class DHeatBug implements Steppable {
                 hb.queue.migrate(this, dst, new DoublePoint(loc_x, loc_y));
                 hb.privBugCount--;
             } else {
-            	hb.bugs.set(old_x, old_y, null);
+                hb.bugs.set(old_x, old_y, null);
                 hb.bugs.set(loc_x, loc_y, this);
                 hb.schedule.scheduleOnce(this, 1);
             }

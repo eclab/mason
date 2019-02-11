@@ -254,7 +254,7 @@ public class SegmentTree {
      *              =max |      x       |       x       |       x               |   ()          |   (min,ned)
      *              >max |      x       |       x       |       x               |       x       |   gen(nst,ned)
      *  ----------------------------------------------------------------------------------------------------------------
-    **/
+     **/
     private List<Segment> generate(Segment orig) {
         final double st = orig.st, ed = orig.ed;
         final double min = root.min, max = root.max, len = max - min;
@@ -361,9 +361,9 @@ public class SegmentTree {
 
         List<Double> testVals = Arrays.asList(-10.0, 1.5, 4.0, 7.5, 11.5, 100.0);
         List<List<Integer>> expected1 = Arrays.asList(
-                                            Arrays.asList(2, 3), Arrays.asList(4), Arrays.asList(1, 2),
-                                            Arrays.asList(3), Arrays.asList(0, 1, 2), Arrays.asList(1, 2)
-                                        );
+                                                      Arrays.asList(2, 3), Arrays.asList(4), Arrays.asList(1, 2),
+                                                      Arrays.asList(3), Arrays.asList(0, 1, 2), Arrays.asList(1, 2)
+                                                      );
 
         for (int i = 0; i < testVals.size(); i++) {
             double val = testVals.get(i);
@@ -375,20 +375,20 @@ public class SegmentTree {
         }
 
         List<Segment> testSegs = Arrays.asList(
-                                     new Segment(-2, -1), new Segment(-2, 2), new Segment(-2, 5), new Segment(-2, 10), new Segment(-2, 100),
-                                     new Segment(2, 2), new Segment(2, 6), new Segment(2, 10), new Segment(2, 12),
-                                     new Segment(4, 7), new Segment(4, 10), new Segment(4, 19),
-                                     new Segment(10, 10), new Segment(10, 14),
-                                     new Segment(15, 25)
-                                 );
+                                               new Segment(-2, -1), new Segment(-2, 2), new Segment(-2, 5), new Segment(-2, 10), new Segment(-2, 100),
+                                               new Segment(2, 2), new Segment(2, 6), new Segment(2, 10), new Segment(2, 12),
+                                               new Segment(4, 7), new Segment(4, 10), new Segment(4, 19),
+                                               new Segment(10, 10), new Segment(10, 14),
+                                               new Segment(15, 25)
+                                               );
 
         List<List<Integer>> expected2 = Arrays.asList(
-                                            Arrays.asList(2, 3), Arrays.asList(2, 3, 4), Arrays.asList(0, 1, 2, 3, 4), Arrays.asList(0, 1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
-                                            Arrays.asList(), Arrays.asList(0, 1, 2, 5), Arrays.asList(0, 1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
-                                            Arrays.asList(1, 2, 3, 5), Arrays.asList(1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
-                                            Arrays.asList(), Arrays.asList(0, 1, 2, 5),
-                                            Arrays.asList(0, 1, 2, 3, 4, 5)
-                                        );
+                                                      Arrays.asList(2, 3), Arrays.asList(2, 3, 4), Arrays.asList(0, 1, 2, 3, 4), Arrays.asList(0, 1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
+                                                      Arrays.asList(), Arrays.asList(0, 1, 2, 5), Arrays.asList(0, 1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
+                                                      Arrays.asList(1, 2, 3, 5), Arrays.asList(1, 2, 3, 4, 5), Arrays.asList(0, 1, 2, 3, 4, 5),
+                                                      Arrays.asList(), Arrays.asList(0, 1, 2, 5),
+                                                      Arrays.asList(0, 1, 2, 3, 4, 5)
+                                                      );
 
         for (int i = 0; i < testSegs.size(); i++) {
             Segment s = testSegs.get(i);

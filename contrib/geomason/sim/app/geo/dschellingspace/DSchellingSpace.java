@@ -27,6 +27,7 @@ import java.util.Set;
 import sim.app.geo.dcampusworld.DAgent;
 import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.engine.SimState;
+import sim.engine.DSimState;
 import sim.field.DNonUniformPartition;
 import sim.field.DObjectMigratorNonUniform;
 import sim.field.continuous.NContinuous2D;
@@ -42,7 +43,7 @@ import sim.util.geo.MasonGeometry;
 
 
 //@SuppressWarnings("restriction")
-public class DSchellingSpace extends SimState
+public class DSchellingSpace extends DSimState
 {
     private static final long serialVersionUID = 1L;
 

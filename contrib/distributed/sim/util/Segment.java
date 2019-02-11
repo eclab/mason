@@ -51,8 +51,8 @@ public class Segment implements Comparable<Segment> {
     }
 
     /**
-    * overlapWith() and contains() assume the interval to be half-close half-open [st, ed)
-    **/
+     * overlapWith() and contains() assume the interval to be half-close half-open [st, ed)
+     **/
 
     public boolean overlapWith(Segment other) {
         return !((this.st >= other.ed) || (this.ed <= other.st));

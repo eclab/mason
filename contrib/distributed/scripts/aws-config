@@ -37,12 +37,12 @@ ssh_opts="-i $identity -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -l 
 apt_packages="build-essential default-jdk htop"
 openmpi_link="https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.0.tar.gz"
 code_repo="https://github.com/eclab/mason.git"
-code_branch="distributed"
+code_branch="master"
 
 file_done_flag="file_setup_done"
 
 compile_openmpi="cd openmpi-3.1.0; ./configure --enable-mpi-java; make -j4; sudo make install; sudo ldconfig; cd .."
-compile_mason="git clone -b $code_branch $code_repo; cd mason/mason; make; cd ../.."
+compile_mason="git clone -b $code_branch $code_repo; cd mason/mason; make; cd ../contrib/distributed/; make; cd ../../../"
 
 commands_per_host="sudo apt-get update; \
 sudo apt-get -y install $apt_packages; \

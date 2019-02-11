@@ -5,8 +5,8 @@
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 #LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
-LIBS=$(CLASSPATH)
-FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
+LIBS=-cp $$CLASSPATH
+FLAGS = -target 1.8 -source 1.8 -g -nowarn ${LIBS}
 JAVAC = javac ${FLAGS}
 VERSION = 19
 CC = ${JAVAC}
@@ -95,20 +95,22 @@ sim/app/tutorial1and2/ec/*.java \
 
 # Make the main MASON code, not including 3D code
 all: SHELL=/bin/bash
-all:
+all: 2d
+
+2d:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
 	@ echo 
-	@ ${CC} ${DIRS}
+	${CC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
 3d: SHELL=/bin/bash
 3d:
-	@ ${CC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS}
 
 # Make the EC Demo
 ec:
-	@ ${CC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS} ${ECDIRS}
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -136,7 +138,7 @@ jar: 3d ec
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
 	#jar -cvfm jar/${TARGET} /tmp/manifest.add  `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
-	jar -cvfm jar/${TARGET} /tmp/manifest.add ec/ sim/ docs/ start/ library/
+	jar -cvfm jar/${TARGET} /tmp/manifest.add ec/ sim/ docs/ start/ 
 	rm /tmp/manifest.add
 
 
@@ -176,7 +178,6 @@ help:
 	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
 	@ echo "              called mason.jar.  Heavyweight -- all class files included."
-
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
 

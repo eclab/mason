@@ -351,7 +351,6 @@ public class ShapeFileImporter
 
             int headerSize = (int) readShort(dbFileInputStream, true);
             int recordSize = (int) readShort(dbFileInputStream, true);
-            System.out.println("headerSize: " + headerSize + ", recordSize: " + recordSize);
             int fieldCnt = (short) ((headerSize - 1) / 32 - 1);
 
             FieldDirEntry fields[] = new FieldDirEntry[fieldCnt];
@@ -374,7 +373,6 @@ public class ShapeFileImporter
                 byte b = readByte(dbFileInputStream, true);
                 length = (b >= 0) ? (int) b : 256 + (int) b; // Allow 0?
                 fields[i].fieldSize = length;
-                System.out.println("index i: " + i + ", fields[i].fieldSize: " + fields[i].fieldSize);
 
                 seek(dbFileInputStream, 15);
             }
@@ -481,18 +479,15 @@ public class ShapeFileImporter
                 Coordinate pt;
                 switch(recordType){
                     case POINT:
-                        System.out.println("POINT");
                         pt = new Coordinate(readDouble(shpFileInputStream, true), readDouble(shpFileInputStream, true));
                         geom = geomFactory.createPoint(pt);
                         break;
                     case POINTZ:
-                        System.out.println("POINTZ");
                         pt = new Coordinate(readDouble(shpFileInputStream, true), readDouble(shpFileInputStream, true), readDouble(shpFileInputStream, true));
                         geom = geomFactory.createPoint(pt);
                         break;
                     case POLYLINE:
                     case POLYGON:
-                        System.out.println("POLY*");
                         // advance past four doubles: minX, minY, maxX, maxY
                         seek(shpFileInputStream, 32);
 
@@ -556,7 +551,6 @@ public class ShapeFileImporter
                         }
                         break;
                     default:
-                        System.out.println("Other");
                         System.err.println("Unknown shape type in " + recordType);
                 }
 

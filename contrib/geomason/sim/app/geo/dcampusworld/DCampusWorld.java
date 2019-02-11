@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 
 import sim.engine.Schedule;
 import sim.engine.SimState;
+import sim.engine.DSimState;
 import sim.engine.Steppable;
 import sim.field.DNonUniformPartition;
 import sim.field.DObjectMigratorNonUniform;
@@ -51,7 +52,7 @@ import sim.util.geo.MasonGeometry;
  * roads provides the environment for the agents. During the simulation, the
  * agents wander randomly on the walkways.
  */
-public class DCampusWorld extends SimState
+public class DCampusWorld extends DSimState
 {
 	private static final long serialVersionUID = 1L;
 
