@@ -11,10 +11,11 @@
 #
 # See other make options:
 # make help
-LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../../library/* `
-GLIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" geolib/* `
+#LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../../library/* `
+#GLIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" geolib/* `
 MASON=../../mason/jar/mason.19.jar
-CP=${LIBS}:${GLIBS}:${MASON}
+#CP=${LIBS}:${GLIBS}:${MASON}
+CP = $(CLASSPATH) # Override CP if your classpath doesn't agree.
 FLAGS = -g -cp ${CP}
 JAVAC = javac ${FLAGS}
 MPIJAVAC = mpijavac ${FLAGS}

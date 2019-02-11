@@ -4,8 +4,7 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-#LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
-LIBS=$(CLASSPATH)
+LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../library/* `
 FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
 JAVAC = javac ${FLAGS}
 VERSION = 19
@@ -99,16 +98,16 @@ all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
 	@ echo 
-	@ ${CC} ${DIRS}
+	${CC} ${DIRS}
 
 # Make the main MASON code AND the 3D code
 3d: SHELL=/bin/bash
 3d:
-	@ ${CC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS}
 
 # Make the EC Demo
 ec:
-	@ ${CC} ${DIRS} ${3DDIRS}
+	${CC} ${DIRS} ${3DDIRS}
 
 # Delete all jmf gunk, checkpoints, backup emacs gunk classfiles,
 # documentation, and odd MacOS X poops
@@ -135,7 +134,7 @@ jar: 3d ec
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	#jar -cvfm jar/${TARGET} /tmp/manifest.add  `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
+	#jar -cvfm jar/${TARGET} /tmp/manifest.add  `find library -name "*.jar"` `find . -name "*.class"` `find sim -name "*.jpg"` `find sim -name "*.png"` `find sim -name "*.pbm"` `find sim -name "index.html"` sim/display/simulation.classes sim/portrayal/inspector/propertyinspector.classes
 	jar -cvfm jar/${TARGET} /tmp/manifest.add ec/ sim/ docs/ start/ library/
 	rm /tmp/manifest.add
 
