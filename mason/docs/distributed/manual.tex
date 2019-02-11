@@ -1,0 +1,260 @@
+%%%%
+%%%% Multiagent Simulation and the MASON Library
+%%%% Copyright 2010 by Sean Luke
+%%%%
+%%%% LaTeX Source
+%%%% This source code, and embedded PDFs and sources (such as OmniGraffle Files)
+%%%% Are distributed under the Academic Free License version 3.0
+%%%% See the file "LICENSE" for more information
+%%%%
+%%%% When you build this source code, the resulting PDF file is licensed under the
+%%%% Creative Commons Attribution-No Derivative Works 3.0 United States License
+%%%% See the URL http://creativecommons.org/licenses/by-nd/3.0/us/   for more information
+%%%%
+%%%% If you have any questions, feel free to contact me at sean@cs.gmu.edu
+%%%% Sean Luke
+
+\documentclass[twoside,10pt]{book}
+\usepackage{fullpage}
+\usepackage{mathpazo}
+\usepackage[noend]{algpseudocode}
+\usepackage{amsmath}
+\usepackage{latexsym}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{bm}
+\usepackage{qtree}
+\usepackage{array}
+\usepackage{eurosym}
+\usepackage{textcomp}
+\usepackage{makeidx}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{microtype}
+\usepackage{afterpage}
+\usepackage{color}\definecolor{gray}{gray}{0.5}
+\usepackage{alltt}
+\usepackage{tabto}
+\usepackage[font=footnotesize,labelsep=quad,labelfont=it]{caption}
+%%% Added in order to use hyperref -- this stuff has to appear before bibentry,x
+%%% which has a conflict with regard to \bibitem.  See later in this file for more stuff that has
+%%% to be added afterwards
+  \makeatletter
+  \let\saved@bibitem\@bibitem
+  \makeatother
+
+\usepackage{bibentry}
+\usepackage[hyperfootnotes=false,linktocpage=true,linkbordercolor={0.5 0 0}]{hyperref}
+%%% Note that to avoid a link being created from \pageref, just use \pageref*
+%%% End hyperref stuff
+
+\renewcommand\textfraction{0.0}
+\renewcommand\topfraction{1.0}
+\renewcommand\bottomfraction{1.0}
+
+
+\newcommand\file[1]{\textsf{#1}}
+\newcommand\variable[1]{\textsf{#1}}
+%\newcommand\package[1]{\textsf{#1}}
+\newcommand\package[1]{\index{Packages!{#1}}\textsf{#1}}
+\newcommand\Package[1]{\index{Packages!{#1}|textbf}\textsf{#1}}
+%\newcommand\class[1]{\textsf{#1}}
+\newcommand\class[1]{\index{Classes!{#1}}\textsf{#1}}
+\newcommand\Class[1]{\index{Classes!{#1}|textbf}\textsf{#1}}
+\newcommand\method[1]{\hbox{\textsf{#1}}}
+\newcommand\parameter[1]{\texttt{#1}}
+\newcommand\character[1]{\texttt{"{#1}"}}
+\newcommand\textstr[1]{\texttt{"{#1}"}}
+\newcommand\code[1]{\textsf{#1}}
+
+\newcommand\ignore[1]{}
+
+
+\newcommand\sidebara[3]{\begin{wrapfigure}{r}[0in]{3.2in}%
+\vspace{-1.1em}\hfill\framebox{\begin{minipage}{3in}\setlength\parindent{1.5em}\footnotesize{\noindent\textit{#1}
+
+\vspace{0.5em}{\noindent #2}}
+\end{minipage}}
+\vspace{#3}
+\end{wrapfigure}
+}
+
+\newcommand\sidebar[2]{\begin{wrapfigure}{r}[0in]{3.2in}%
+\vspace{-1.1em}\hfill\framebox{\begin{minipage}{3in}\setlength\parindent{1.5em}\footnotesize{\noindent\textit{#1}
+
+\vspace{0.5em}{\noindent #2}}
+\end{minipage}}
+\vspace{-0.5em}
+\end{wrapfigure}
+}
+
+
+
+%%% Hack to allow more spacing before and after an hline
+\newcommand\tstrut{\rule{0pt}{2.4ex}}
+\newcommand\bstrut{\rule[-1.0ex]{0pt}{0pt}}
+
+% Increase the numbering depth
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{6}
+
+
+%%%% This code is used to create consistent lists of methods
+
+% From TUGboat, Volume 24 (2003), No. 2 "Hints & Tricks"
+\newcommand*{\xfill}[1][0pt]{%
+	\cleaders
+		\hbox to 1pt{\hss
+			\raisebox{#1}{\rule{1.2pt}{0.4pt}}%
+			\hss}\hfill}
+			
+\newenvironment{methods}[1]{
+\vspace{1.0em}\noindent\textsf{\textbf{#1 Methods}}\quad \xfill[0.5ex]
+\vspace{-0.25em}
+\begin{description}
+\small}
+{\end{description}\hrule\vspace{1.5em}}
+
+\newcommand{\mthd}[1]{\item[{\sf #1}]~\newline}
+
+
+\newcommand\booktitle{Distributed MASON\\}
+\newcommand\reference[1]{\vspace{0.5em}\hfill{\parbox{6in}{\raggedleft\noindent\textsf{#1}}}}
+
+% Include subsubsection in the TOC
+\setcounter{tocdepth}{3}
+
+% Use with a %, like this:   \params{%
+\newcommand\params[1]{\vbox{\begin{quote}\small\tt{\noindent{#1}}\end{quote}}}
+\newcommand\script[1]{\params{#1}}
+\newcommand\java[1]{\params{#1}}
+
+% Allow poor horizontal spacing
+\sloppy
+
+% Allow a ragged bottom even in two-sided
+\raggedbottom
+
+% Command to push text to following page without the cutoff that occurs with clearpage
+\newcommand\bump{\vspace{10in}}
+
+% Command to push text to following line
+\newcommand\hbump{\hspace{10in}}
+
+
+% Define an existing word in text as an index item
+\newcommand{\idx}[1]{\index{#1}#1}
+
+% Define an existing word in text as an index item and make it bold
+\newcommand{\df}[1]{\index{#1}\textbf{#1}}
+
+% Provide a separate index item for a word in text and make it bold
+\newcommand{\dfa}[2]{\index{#1}\textbf{#2}}
+
+% Create algorithms and definitions
+\newtheorem{algm}{Algorithm}
+\newtheorem{defn}{Definition}
+
+% Initial figures, pages, algorithms, and sections should be 0 :-)
+\setcounter{figure}{-1}	% Mona is Figure 0
+\setcounter{page}{-1}	% Start with Page 1 (the Front Page).  I'd like it to be Page 0 but it messes up twosided
+\setcounter{algm}{-1}	% Start with Algorithm 0 (the Example Algorithm)
+\setcounter{section}{-1}	% Start at Section 0 (the Introduction)
+
+\thispagestyle{plain}
+\thispagestyle{empty}
+
+\newcommand\hsp[1]{{\rule{0pt}{0pt}\hspace{#1}}}
+\newcommand\spc{{\rule{0pt}{0pt}~}}
+
+
+
+\makeindex
+
+
+\begin{document}
+
+\noindent\huge\bf \booktitle\\
+\\
+%{\large\rm A User Manual for the MASON Multiagent Simulation Toolkit}\\
+\\
+\Large\bf Sean Luke\\
+{\large\rm 
+Department of Computer Science\\
+George Mason University}
+\\
+\\
+\\
+\large\rm {\bf Manual Version 19}\\
+\large\rm June, 2015\\
+
+\vspace{5in}
+\noindent\Large\bf Where to Obtain Distributed MASON\\
+\large\rm http:/\!/cs.gmu.edu/\!\(\sim\)eclab/projects/mason/
+
+\clearpage
+
+\small 
+\noindent {\Large\bf Copyright }  2010--2015 by Sean Luke.
+
+\vspace{0.25in}
+\noindent {\Large\bf Thanks to } Claudio Cioffi Revilla and Carlotta Domeniconi.
+
+\vspace{0.25in}
+
+\noindent {\Large\bf Get the latest version of this document or suggest improvements here:}
+
+\reference{http:/\!/cs.gmu.edu/\!\(\sim\)eclab/projects/mason/}
+
+\vspace{0.15in}
+
+\vspace{0.15in}
+	\noindent {\Large\bf This document is licensed} under the {\bf Creative Commons Attribution-No Derivative Works 3.0 United States License,} except for those portions of the work licensed differently as described in the next section. To view a copy of this license, visit http:/\!/creativecommons.org/licenses/by-nd/3.0/us/ or send a letter to Creative Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.  A quick license summary:
+	\begin{itemize}
+	\item You are free to redistribute this document.
+	\vspace{-0.5em}\item {\bf You may not} modify, transform, translate, or build upon the document except for personal use.   
+	\vspace{-0.5em}\item You must maintain the author's attribution with the document at all times.
+	\vspace{-0.5em}\item You may not use the attribution to imply that the author endorses you or your document use.  
+	\end{itemize}
+	This summary is just informational: if there is any conflict in interpretation between the summary and the actual license, the actual license always takes precedence.
+
+\vspace{0.15in}
+
+\noindent {\Large\bf This document is was produced} in part through funding from grants 0916870, 1205626, and 1317813 from the National Science Foundation.
+
+
+
+\normalsize
+\cleardoublepage
+
+\tableofcontents
+\clearpage
+
+
+\chapter{Introduction}
+
+
+And we're done!
+
+\cleardoublepage
+\footnotesize
+\addcontentsline{toc}{chapter}{Index}
+\printindex
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
