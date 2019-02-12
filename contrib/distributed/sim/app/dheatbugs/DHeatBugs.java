@@ -212,7 +212,6 @@ public class DHeatBugs extends DSimState {
 
     public static void main(String[] args) throws MPIException {
         Timing.setWindow(20);
-        Timing.start(Timing.LB_RUNTIME);
         doLoopMPI(DHeatBugs.class, args);
         System.exit(0);
     }

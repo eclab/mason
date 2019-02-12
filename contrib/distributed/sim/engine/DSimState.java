@@ -12,6 +12,7 @@ import java.util.zip.*;
 import java.text.*;
 import java.util.logging.*;
 import java.lang.reflect.*;
+import sim.util.Timing;
 
 public class DSimState extends SimState
 {
@@ -78,6 +79,7 @@ public class DSimState extends SimState
     public static void doLoopMPI(final Class c, String[] args) throws mpi.MPIException 
     {
         mpi.MPI.Init(args);
+        Timing.start(Timing.LB_RUNTIME);
 
         // Setup Logger
         String loggerName = String.format("MPI-Job-%d", mpi.MPI.COMM_WORLD.getRank());

@@ -109,7 +109,6 @@ public class DFlockers extends DSimState {
 
     public static void main(String[] args) throws MPIException {
         Timing.setWindow(20);
-        Timing.start(Timing.LB_RUNTIME);
         doLoopMPI(DFlockers.class, args);
         System.exit(0);
     }
