@@ -50,9 +50,8 @@ public class TimingStat {
     }
 
     public void stop(long curr) {
-        // Does it matter if an already stopped timer is stopped again?
+        // Does this matter?
         /*if (ts == -1L)
-            System.err.println("What");
             throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));
         ts = -1L;
