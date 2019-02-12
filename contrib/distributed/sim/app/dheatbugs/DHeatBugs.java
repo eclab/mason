@@ -135,10 +135,6 @@ public class DHeatBugs extends DSimState {
         schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
     }
 
-    public static void main(String[] args) throws MPIException {
-        Timing.setWindow(20);
-        doLoopMPI(DHeatBugs.class, args);
-        System.exit(0);
     }
 
     private class Synchronizer implements Steppable {
@@ -214,4 +210,10 @@ public class DHeatBugs extends DSimState {
             //System.out.print(s);
         }
     }
+
+    public static void main(String[] args) throws MPIException {
+        Timing.setWindow(20);
+        Timing.start(Timing.LB_RUNTIME);
+        doLoopMPI(DHeatBugs.class, args);
+        System.exit(0);
 }
