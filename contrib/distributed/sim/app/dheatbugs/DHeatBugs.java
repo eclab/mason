@@ -1,8 +1,8 @@
 /*
-  Copyright 2006 by Sean Luke and George Mason University
-  Licensed under the Academic Free License version 3.0
-  See the file "LICENSE" for more information
-*/
+   Copyright 2006 by Sean Luke and George Mason University
+   Licensed under the Academic Free License version 3.0
+   See the file "LICENSE" for more information
+   */
 
 package sim.app.dheatbugs;
 
@@ -135,7 +135,6 @@ public class DHeatBugs extends DSimState {
         schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
     }
 
-    }
 
     private class Synchronizer implements Steppable {
         private static final long serialVersionUID = 1;
@@ -196,12 +195,12 @@ public class DHeatBugs extends DSimState {
             //state.logger.info(String.format("PID %d Step %d Agent Count %d\n", hb.p.pid, hb.schedule.getSteps(), hb.privBugCount));
             //if (DNonUniformPartition.getPartitionScheme().getPid() == 0) {
             ((DSimState)state).logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
-                                            hb.p.getPid(),
-                                            hb.schedule.getSteps(),
-                                            Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
-                                            Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
-                                            Timing.get(Timing.LB_OVERHEAD).getMovingAverage()
-                                            ));
+                    hb.p.getPid(),
+                    hb.schedule.getSteps(),
+                    Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
+                    Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
+                    Timing.get(Timing.LB_OVERHEAD).getMovingAverage()
+                    ));
             //}
             // for (Steppable i : hb.queue) {
             //      DHeatBug a = (DHeatBug)i;
@@ -216,4 +215,5 @@ public class DHeatBugs extends DSimState {
         Timing.start(Timing.LB_RUNTIME);
         doLoopMPI(DHeatBugs.class, args);
         System.exit(0);
+    }
 }
