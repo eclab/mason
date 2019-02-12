@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import sim.app.geo.CDI.src.optimization.util.Filter;
-import sim.app.geo.CDI.src.optimization.util.GaussianFilter;
+import sim.app.geo.CDI.src.phases.util.GaussianFilter;
 import ec.util.MersenneTwisterFast;
 import sim.app.geo.CDI.src.environment.Cell;
 import sim.app.geo.CDI.src.environment.Map;
@@ -244,7 +244,7 @@ public class Utility {
             int kwidth, int kheight, double sigma, int pass)
     {
     	DoubleGrid2D destGrid = new DoubleGrid2D(Map.GRID_WIDTH, Map.GRID_HEIGHT);
-    	CDI.src.phases.util.GaussianFilter filter = new CDI.src.phases.util.GaussianFilter(kwidth,kheight,sigma);
+    	GaussianFilter filter = new GaussianFilter(kwidth,kheight,sigma);
     	if(srcGrid instanceof DoubleGrid2D)
             // destGrid.field = Filter.applyFilterWithMapConstraint(
             destGrid.field = filter.applyFilter(((DoubleGrid2D)srcGrid).field, pass, map);

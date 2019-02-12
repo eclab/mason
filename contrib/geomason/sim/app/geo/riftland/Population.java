@@ -561,7 +561,8 @@ final public class Population {
                 }
             }
 
-            ShapeFileImporter.read(murdockURL, ethnicRegions, masked);
+            File murdockDB = new File(dataPath+params.world.getEthnicRegionsFile().replace("shp", "dbf"));
+            ShapeFileImporter.read(murdockURL, murdockDB.toURI().toURL(), ethnicRegions, masked);
 
             System.out.println("Loaded " + ethnicRegions.getGeometries().numObjs + " ethnic regions");
         } catch (Exception ex)

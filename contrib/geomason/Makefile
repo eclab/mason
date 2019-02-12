@@ -1,5 +1,4 @@
-#GeoMason make file
-#
+
 # Note that you will have to uncomment the GeoTools and/or OGR support
 # in the jar file rule if you want support for those importers.
 #
@@ -13,11 +12,8 @@
 # make help
 #LIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" ../../library/* `
 #GLIBS=`function join() { local IFS=$$1; shift; echo "$$*"; }; join ":" geolib/* `
-MASON=../../mason/jar/mason.19.jar
-DISTRIBUTED=../distributed/jar/distributed.1.jar
-#CP=${LIBS}:${GLIBS}:${MASON}
-CP = -cp "$$CLASSPATH:${MASON}:${DISTRIBUTED}" # Override CP if your classpath doesn't agree.
-FLAGS = -g ${CP}
+CP = -cp $$CLASSPATH:../distributed/jar/distributed.1.jar:../../mason/jar/mason.19.jar
+FLAGS = -nowarn -g ${CP}
 JAVAC = mpijavac ${FLAGS}
 CC = ${JAVAC}
 
@@ -133,10 +129,11 @@ TURKANA = sim/app/geo/turkana/*.java
 WATERWORLD = sim/app/geo/waterworld/*.java
 #----- END DEMOS ------#
 DISTRIBUTEDDEMOS = $(DCAMPUSWORLD) $(DSCHELLINGSPACE)
-DEMOS = $(CAMPUSWORLD) $(COLORWORLD) $(EBOLA) $(GRIDLOCK) $(HAITI) $(HOTSPOTS) $(MASONCSC) $(NEARBYWORLD) $(NETWORKWORLD) $(REFUGEE) $(SCHELLINGPOLYGON) $(SCHELLINGSPACE) $(SICKSTUDENTS) $(SILLYPEDS) $(SLEUTH) $(TOUCHINGWORLD) $(TOUCHINGWORLD) $(TURKANA) $(WATERWORLD) $(DISTRIBUTEDDEMOS)
+DEMOS = $(CAMPUSWORLD) $(CDI) $(CITYMIGRATION) $(COLORWORLD) $(CONFLICTDIAMONDS) $(DADAAB) $(EBOLA) $(GRIDLOCK) $(HAITI) $(HOTSPOTS) $(KIBERA) $(MASONCSC) $(NEARBYWORLD) $(NETWORKWORLD) $(REFUGEE) $(RIFTLAND) $(SCHELLINGPOLYGON) $(SCHELLINGSPACE) $(SICKSTUDENTS) $(SILLYPEDS) $(SLEUTH) $(TOUCHINGWORLD) $(TOUCHINGWORLD) $(TURKANA) $(WATERWORLD) $(DISTRIBUTEDDEMOS)
 # ^ These demos compile
-# These demos don't: ACEQUIAS , CDI , CITYMIGRATION , CONFLICTDIAMONDS , DADAAB , KIBERA , RIFTLAND
-#
+# These demos don't: ACEQUIAS , 
+
+DEMOS += $(ACEQUIAS)
 
 demos : ${JARFILE}
 	@echo "Compiling examples..."

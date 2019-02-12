@@ -1,1 +1,0 @@
-mpirun -np $1 java -verbose -jar geomason.1.6.jar -cp $CLASSPATH:../../mason/jar/mason.19.jar:../distributed/jar/distributed.1.jar $2

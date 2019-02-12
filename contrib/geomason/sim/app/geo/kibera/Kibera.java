@@ -282,7 +282,7 @@ public class Kibera extends SimState {
 	}
 	
 	@Override
-	public void start() 
+	public void start()
 	{
 		super.start();
 		
@@ -320,8 +320,11 @@ public class Kibera extends SimState {
                 
                 allHomesAvailable = new Bag();
 		
+                try{
 		KiberaBuilder.createWorld("/kibera/kiberaData/kibera.txt", "/kibera/kiberaData/roads_cost_distance.txt", "/kibera/kiberaData/schools.txt", "/kibera/kiberaData/health.txt", "/kibera/kiberaData/religion.txt", "/kibera/kiberaData/watsan.txt", this);	
-		
+                } catch(Exception e) {
+                    System.out.println(e);
+                }
 		kObserver = new KiberaObserver(this);
                 schedule.scheduleRepeating(kObserver, KiberaObserver.ORDERING, 1.0);
         

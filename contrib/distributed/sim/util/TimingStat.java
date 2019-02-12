@@ -11,7 +11,6 @@ public class TimingStat {
     TimeUnit u;
 
     public TimingStat(int cap) {
-        System.err.println("GUJNK");
         this.cap = cap;
         this.setUnit(TimeUnit.MILLISECONDS);
         reset();
@@ -45,19 +44,16 @@ public class TimingStat {
     }
 
     public void start(long curr) {
-        System.err.println("START CALLED");
-        new Throwable().printStackTrace();
         if (ts != -1L)
             throw new IllegalStateException("Timer is already started");
         ts = curr;
     }
 
     public void stop(long curr) {
-        System.err.println("STOP CALLED");
-        new Throwable().printStackTrace();
-        if (ts == -1L)
+        // Does it matter if an already stopped timer is stopped again?
+        /*if (ts == -1L)
             System.err.println("What");
-        //throw new IllegalStateException("Timer is not started");
+            throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));
         ts = -1L;
     }

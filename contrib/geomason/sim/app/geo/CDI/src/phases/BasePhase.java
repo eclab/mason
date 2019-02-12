@@ -3,6 +3,7 @@ package sim.app.geo.CDI.src.phases;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.lang.reflect.*;
 
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import org.spiderland.Psh.intStack;
@@ -373,6 +374,11 @@ public class BasePhase extends SimState implements ECInterface
     	// we have a new Migration instance instead of phase2?
       doLoop(new MakesSimState()
         {
+            @Override
+            public Constructor[] getConstructors()
+            {
+                return BasePhase.class.getConstructors();
+            }
             @Override
             public SimState newInstance(long seed, String[] args)
             { return new BasePhase(seed, args); }

@@ -2,6 +2,7 @@ package sim.app.geo.conflictdiamonds;
 
 import java.util.ArrayList;
 import java.util.TreeMap;
+import java.lang.reflect.*;
 import org.jfree.data.category.DefaultCategoryDataset;
 import sim.engine.*;
 import sim.field.geo.GeomVectorField;
@@ -70,7 +71,13 @@ public class ConflictDiamonds extends SimState {
         schedule.scheduleRepeating(cObserver, ConflictDiamondsObserver.ORDERING, 1.0);
     
         // create the grids
+        try{
         ConflictDiamondsBuilder.create("/conflictdiamonds/conflictdiamondsData/z_landscape.txt", "/conflictdiamonds/conflictdiamondsData/z_cities.txt", "/conflictdiamonds/conflictdiamondsData/z_diamonds.txt", "/conflictdiamonds/conflictdiamondsData/z_diamondcities.txt", "/conflictdiamonds/conflictdiamondsData/z_population.txt", this);
+        } 
+        catch (Exception e)
+        {
+            System.err.println(e);
+        }
         Steppable chartUpdater = new Steppable() {
             public void step(SimState state) {
                 //update data to build charts and write to output files
@@ -121,7 +128,12 @@ public class ConflictDiamonds extends SimState {
     
     public static void main(String[] args) {    	
          doLoop(new MakesSimState()
-        {
+                 {
+            @Override
+            public Constructor[] getConstructors()
+            {
+                return ConflictDiamonds.class.getConstructors();
+            }
             @Override
             public SimState newInstance(long seed, String[] args)
             {

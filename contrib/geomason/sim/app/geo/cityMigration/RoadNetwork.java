@@ -14,6 +14,8 @@ import java.util.Set;
 //import sim.app.geo.cityMigration.cityMigrationData.CityMigrationData;
 import com.vividsolutions.jts.geom.Envelope;
 
+import sim.app.geo.cityMigration.tin.CityMigrationData;
+
 import sim.app.geo.riftland.PopulationCenter;
 import sim.app.geo.riftland.World;
 import sim.field.continuous.Continuous2D;

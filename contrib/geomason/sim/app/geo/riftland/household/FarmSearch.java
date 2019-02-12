@@ -1,6 +1,5 @@
 package sim.app.geo.riftland.household;
 
-import ec.util.MersenneTwister;
 import ec.util.MersenneTwisterFast;
 import sim.app.geo.riftland.Land;
 import sim.app.geo.riftland.Population;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 /**
  * Static methods for finding a new location to set up a farm.  This is used,
@@ -105,7 +105,8 @@ public class FarmSearch
         }
 
         // Shuffling the list so that we minimize direction bias in placing the new farm.
-        Collections.shuffle(perimeter, new MersenneTwister(random.nextLong()));
+        MersenneTwisterFast mtw = new MersenneTwisterFast(random.nextLong());
+        Collections.shuffle(perimeter, new Random(mtw.nextLong()));
         
         // Now we loop though the parcels in the list to find a parcel that qualifies to be the home of newly created Farm.
         // Once we find it we break from the loop and stop searching further.

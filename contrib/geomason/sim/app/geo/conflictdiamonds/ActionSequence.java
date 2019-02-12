@@ -1,8 +1,7 @@
 package sim.app.geo.conflictdiamonds;
 
-/*import conflictdiamonds.ConflictDiamonds.Goal;
-import conflictdiamonds.ConflictDiamonds.Action;
-*/
+import sim.app.geo.conflictdiamonds.ConflictDiamonds.Goal;
+import sim.app.geo.conflictdiamonds.ConflictDiamonds.Action;
 import sim.app.geo.conflictdiamonds.*;
 /**
  * After the Intensity Analyzer has determined the action-guiding motive, the Action Sequence executes the action.

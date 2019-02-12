@@ -36,7 +36,7 @@ public class ConflictDiamondsBuilder {
      * 
      *
      */
-    public static void create(String regionfile, String remotenessfile, String diamondfile, String diamondproximatefile, String populationfile, ConflictDiamonds conflictDiamonds) {
+    public static void create(String regionfile, String remotenessfile, String diamondfile, String diamondproximatefile, String populationfile, ConflictDiamonds conflictDiamonds) throws Exception{
         try {
             // Open the file
 
@@ -91,15 +91,17 @@ public class ConflictDiamondsBuilder {
             //File file=new File("confli/conflictdiamonds/z_boundaries.shp");
             URL boundariesShapeUL = getUrl("/conflictdiamonds/conflictdiamondsData/z_boundaries.shp");//file.toURL();
             //System.exit(0);
-            ShapeFileImporter.read(boundariesShapeUL, conflictDiamonds.allBoundaries, regionNames);
+            URL boundariesShapeDB = getUrl("/conflictdiamonds/conflictdiamondsData/z_boundaries.dbf");//file.toURL();
+            ShapeFileImporter.read(boundariesShapeUL, boundariesShapeDB, conflictDiamonds.allBoundaries, regionNames);
 
             Bag diamondLocation = new Bag();
             diamondLocation.add("Country");
 
 
             URL diamondsShapeUL = getUrl("/conflictdiamonds/conflictdiamondsData/z_Diamond_SL.shp");//fileDiamonds.toURL();
+            URL diamondsShapeDB = getUrl("/conflictdiamonds/conflictdiamondsData/z_Diamond_SL.dbf");//fileDiamonds.toURL();
 
-            ShapeFileImporter.read(diamondsShapeUL, conflictDiamonds.allDiamonds, diamondLocation);
+            ShapeFileImporter.read(diamondsShapeUL, diamondsShapeDB,  conflictDiamonds.allDiamonds, diamondLocation);
 			
             for ( int i = 0; i < width; i++ ) {
                 for ( int j = 0; j < height; j++ ) {

@@ -21,6 +21,7 @@ import sim.engine.SimState;
 import sim.field.grid.DoubleGrid2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.lang.reflect.*;
 
 /** Implements state for the RiftLand simulation. */
 public class World extends SimState
@@ -327,6 +328,10 @@ public class World extends SimState
     {
         doLoop(new MakesSimState()
         {
+            @Override
+            public Constructor[] getConstructors(){
+                return World.class.getConstructors();
+            }
             @Override
             public SimState newInstance(long seed, String[] args)
             {

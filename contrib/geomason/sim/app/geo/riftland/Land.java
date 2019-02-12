@@ -420,7 +420,8 @@ final public class Land
                 }
             }
 
-            ShapeFileImporter.read(boundaryFile, politicalBoundaries);
+            File db = new File(datapath + params.world.getPoliticalBoundariesFile().replace("shp", "dbf"));
+            ShapeFileImporter.read(boundaryFile, db.toURI().toURL(), politicalBoundaries);
 
             World.getLogger().info("Loaded " + politicalBoundaries.getGeometries().numObjs
                     + " political regions");

@@ -41,7 +41,7 @@ public class KiberaBuilder extends Stats {
 	
 	static int intNumNeighborhoods = 15;
 	
-	public static void createWorld(String landFile, String roadFile, String facilityFile, String healthFile, String religionFile, String watsanFile, Kibera kibera)
+	public static void createWorld(String landFile, String roadFile, String facilityFile, String healthFile, String religionFile, String watsanFile, Kibera kibera) throws Exception
 	{
 		kibera.parcels.clear();
 		kibera.households.clear();
@@ -1446,7 +1446,7 @@ public class KiberaBuilder extends Stats {
 
 	}
 	
-	private static void createRoads(String roadFile, Kibera kibera) {
+	private static void createRoads(String roadFile, Kibera kibera) throws Exception{
 		try {
 	        // now read road grid
             BufferedReader roads = new BufferedReader(new InputStreamReader(KiberaBuilder.class.getResourceAsStream(roadFile)));
@@ -1490,9 +1490,11 @@ public class KiberaBuilder extends Stats {
             roadImporter.add("Type");
                
             File file=new File("data/Road_Export.shp");
+            File fileD = new File("data/Road_Export.dbf");
             URL roadShapeUL = file.toURL();
+            URL roadShapeD = fileD.toURL();
                
-            ShapeFileImporter.read(roadShapeUL, kibera.roadLinks, roadImporter);
+            ShapeFileImporter.read(roadShapeUL, roadShapeD, kibera.roadLinks, roadImporter);
                
             extractFromRoadLinks(kibera.roadLinks, kibera); //construct a newtork of roads
                

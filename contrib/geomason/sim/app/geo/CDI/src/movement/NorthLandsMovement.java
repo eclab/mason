@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
+import java.lang.reflect.*;
 
 import sim.portrayal.simple.OrientedPortrayal2D;
 
@@ -1517,6 +1518,11 @@ public class NorthLandsMovement extends SimState {
 	{
 		doLoop(new MakesSimState() 
 		{
+            @Override
+            public Constructor[] getConstructors()
+            {
+                return NorthLandsMovement.class.getConstructors();
+            }
 			@Override
 			public SimState newInstance(long seed, String[] args) 
 			{	return new NorthLandsMovement(seed, args);	}

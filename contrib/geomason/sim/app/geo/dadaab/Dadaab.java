@@ -21,6 +21,8 @@ import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomGridField.GridDataType;
 
+import java.lang.reflect.*;
+
 public class Dadaab extends SimState {
 
     public ObjectGrid2D allCamps; // The model environment - holds fields ( parcels)
@@ -136,7 +138,11 @@ public class Dadaab extends SimState {
 
         super.start();
         // accessing inpt files
+        try {
         CampBuilder.create("/dadaab/dadaabData/d_camp_a.txt", "/dadaab/dadaabData/d_faci_a.txt", "/dadaab/dadaabData/d_costp_a.txt", this, this.random);
+        } catch (Exception e){
+            System.err.println(e);
+        }
 
 
         schedule.scheduleRepeating(rainfall, rainfall.ORDERING, 1);
@@ -552,6 +558,10 @@ public class Dadaab extends SimState {
       // doLoop(Landscape.class, args);
       doLoop(new MakesSimState()
         {
+            @Override
+            public Constructor[] getConstructors(){
+                return Dadaab.class.getConstructors();
+            }
             @Override
             public SimState newInstance(long seed, String[] args)
             {
