@@ -49,8 +49,26 @@ public class TimingStat {
         ts = curr;
     }
 
+    /**
+     * @deprecated
+     * hatfolk (13 Feb 2019):
+     * This isn't actually deprecated but more of a
+     * "BOO! LOOK AT ME! BEWARE! SPOOKY!" kind of warning.
+     *
+     * In order to get the distributed applications to work, I ended up
+     * commenting out the timestamp check below and the thrown exception.
+     * We, as of Feb. 2019, hereby say that this isn't a bad idea /yet/.
+     * But if you, traveler of the future, find it to be problematic,
+     * please change the code as needed. 
+     *
+     * The fundamental question is "Is it problematic to stop a stopped timer?"
+     *
+     * Our answer seems to be that it probably isn't and the timer is being used
+     * as part of a lamport schema. That and doing this currently works.
+     *
+     */
+    @Deprecated
     public void stop(long curr) {
-        // Does this matter?
         /*if (ts == -1L)
             throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));
