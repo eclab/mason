@@ -10,7 +10,7 @@
 package sim.io.geo;
 
 import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import org.geotools.data.shapefile.ShapefileDataStore;
+//import org.geotools.data.shapefile.ShapefileDataStore;
 import com.vividsolutions.jts.geom.*;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -362,14 +362,14 @@ public class ShapeFileImporter
 
             for (int i = 0; i < fieldCnt; i++)
             {
-                dbFileInputStream.readNBytes(c, 0, 11);
+                dbFileInputStream.read(c, 0, 11);
                 int j = 0;
                 for (j = 0; j < 12 && c[j] != 0; j++); // skip to first unwritten byte
                 String name = new String(c, 0, j);
                 type[i] = (char) readByte(dbFileInputStream, true);
                 fields[i] = new FieldDirEntry();
                 fields[i].name = name;
-                dbFileInputStream.readNBytes(c, 0, 4);  // data address
+                dbFileInputStream.read(c, 0, 4);  // data address
                 byte b = readByte(dbFileInputStream, true);
                 length = (b >= 0) ? (int) b : 256 + (int) b; // Allow 0?
                 fields[i].fieldSize = length;
