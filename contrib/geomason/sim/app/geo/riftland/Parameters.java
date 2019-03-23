@@ -27,6 +27,12 @@ public class Parameters
     /** The default parameters file CLI argument */
     private final static String A_FILE = "-file";
 
+    public Parameters(String relativePath, Class reference)
+    {
+        loadParameters(openParameterDatabase(relativePath, reference));
+        checkConstraints();
+    }
+
     public Parameters(String[] args)
     {
         if (args != null)
@@ -50,7 +56,23 @@ public class Parameters
         if (vegetation.minVegetationKgPerKm2 <= 5)
             throw new IllegalStateException("Parameters: vegetation.minVegetationKgPerKm2 must be > 5.");
     }
+    public static ParameterDatabase openParameterDatabase(String relative, Class reproduction)
+    {
+        ParameterDatabase parameter = null;
+        try{
+        parameter = new ParameterDatabase(relative, reproduction);
+        } catch (IOException e){
 
+        }
+        if(parameter == null){
+            System.out.println("\nNo parameter file was specified;"
+                    + "\n-default programmatic settings engaged,"
+                    + "\n-command line -p parameters ignored."
+                    + "\nConsider using: -file foo.params [-p bar1=val1 [-p bar2=val2 ... ]]\n");
+            parameter = new ParameterDatabase();
+        }
+        return parameter;
+    }
     //<editor-fold defaultstate="collapsed" desc="ECJ ParameterDatabase methods">
     /**
      * Initialize parameter database from file
@@ -75,7 +97,7 @@ public class Parameters
 
                     File parameterDatabaseFile = getFile(args[x + 1]);
 //                    parameters = new ParameterDatabase(parameterDatabaseFile.getAbsoluteFile());
-                    System.err.println(parameterDatabaseFile.getAbsoluteFile() + " that b path " + Arrays.toString(args));
+                    //System.err.println(parameterDatabaseFile.getAbsoluteFile() + " that b path " + Arrays.toString(args));
                     parameters = new ParameterDatabase(parameterDatabaseFile.getAbsoluteFile(), args);
                 } catch (IOException ex)
                 {

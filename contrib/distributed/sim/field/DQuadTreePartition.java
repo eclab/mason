@@ -81,6 +81,12 @@ public class DQuadTreePartition extends DPartition {
         setMPITopo();
     }
 
+    @Override
+    public void initialize()
+    {
+        initUniformly();
+    }
+
     public void initUniformly() {
         // Init into a full quad tree
         // Check whether np is power of (2 * nd)

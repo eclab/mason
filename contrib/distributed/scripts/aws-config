@@ -17,7 +17,7 @@ HF_PRIVATE="mpi_hostfile"
 
 # AWS Config
 key=$MASON_KEY
-security_gid=$SECURIT_GID # Set this up via AWS Security Group
+security_gid=$SECURITY_GID # Set this up via AWS Security Group
 subnet_id=$SUBNET_ID # Set this up in AWS VPC -> Subnet
 
 # ubuntu-xenial-16.04-amd64-server-20180109

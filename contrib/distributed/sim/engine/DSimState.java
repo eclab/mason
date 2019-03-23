@@ -13,18 +13,56 @@ import java.text.*;
 import java.util.logging.*;
 import java.lang.reflect.*;
 import sim.util.Timing;
+import sim.field.DPartition;
+import sim.field.DQuadTreePartition;
+import sim.field.DObjectMigratorNonUniform;
+import sim.field.LoadBalancer;
 
 public class DSimState extends SimState
 {
+    public DPartition p; // Refactor to "partition" later
+    public DObjectMigratorNonUniform queue; // Maybe make a class that's more abstract so you can choose Uniform vs NonUniform
+    public LoadBalancer lb; // Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been used: lb = new LoadBalancer(aoi, 100);
     public static Logger logger;
+    public int[] aoi; // Area of Interest
+    
     public DSimState(long seed)
     {
         super(seed);
+        this.aoi = new int[]{5, 5};
+        DQuadTreePartition dq =   new DQuadTreePartition(new int[] {1000, 1000}, true, this.aoi);
+        dq.initialize();
+        p = dq;
+        queue = new DObjectMigratorNonUniform(p);
+    }
+
+    public DSimState(long seed, DPartition p, int aoi){
+        super(seed);
+        this.p = p;
+        this.aoi = new int[] {aoi, aoi};
+        p.initialize();
+        queue = new DObjectMigratorNonUniform(p);
+
+    }
+
+    public DSimState(long seed, int width, int height, int aoi){
+        super(seed);
+        this.aoi = new int[]{aoi, aoi};
+        DQuadTreePartition dq =   new DQuadTreePartition(new int[] {width, height}, true, this.aoi);
+        p = dq;
+        p.initialize();
+        queue = new DObjectMigratorNonUniform(p);
+
     }
 
     protected DSimState(MersenneTwisterFast random, Schedule schedule)
     {
         super(0, random, schedule);  // 0 is a bogus value.  In fact, MT can't have 0 as its seed value.
+        this.aoi = new int[]{5, 5};
+        DQuadTreePartition dq =   new DQuadTreePartition(new int[] {1000, 1000}, true, this.aoi);
+        dq.initialize();
+        p = dq;
+        queue = new DObjectMigratorNonUniform(p);
     }
 
     protected DSimState(long seed, Schedule schedule)
@@ -76,8 +114,13 @@ public class DSimState extends SimState
             });
         logger.addHandler(handler);
     }
-    public static void doLoopMPI(final Class c, String[] args) throws mpi.MPIException 
+    public static void doLoopMPI(final Class c, String[] args) throws mpi.MPIException
     {
+        doLoopMPI(c, args, 20);
+    }
+    public static void doLoopMPI(final Class c, String[] args, int window) throws mpi.MPIException 
+    {
+        Timing.setWindow(window);
         mpi.MPI.Init(args);
         Timing.start(Timing.LB_RUNTIME);
 

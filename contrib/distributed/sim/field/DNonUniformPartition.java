@@ -93,6 +93,14 @@ public class DNonUniformPartition extends DPartition {
     // dims represents how many processors you want to assign on each dimension
     // Any zero value in dims means you want the system to decide the best value
     // null dims means the system will compute the best values on all dimensions
+
+    @Override
+    public void initialize()
+    {
+        initUniformly(null);
+
+    }
+
     public void initUniformly(int[] dims) {
         int[] psize = new int[nd], coord = new int[nd];
 

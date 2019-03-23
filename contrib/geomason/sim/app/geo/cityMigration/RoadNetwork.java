@@ -68,6 +68,15 @@ public class RoadNetwork
 		nodes = new ArrayList<PopulationCenter>();
 		readRoadNetwork(nodesFilename, edgesFilename, MBR, reproject);
 	}
+
+    public RoadNetwork(InputStream nodesStream, InputStream edgesStream, Envelope MBR, boolean reproject) {
+        edgeField = new Network(false);
+        nodeField = new Continuous2D(Double.MAX_VALUE, MBR.getWidth(), MBR.getHeight());
+		nodeField = new Continuous2D(Double.MAX_VALUE, 1694, 1630);
+        nodes = new ArrayList<PopulationCenter>();
+        readRoadNetwork(nodesStream, edgesStream, MBR, reproject);
+
+    }
 	
 	public RoadNetwork(String nodesFilename, String edgesFilename, Envelope MBR) {
 		this(nodesFilename, edgesFilename, MBR, true);
@@ -120,6 +129,64 @@ public class RoadNetwork
 	private void calcAllPairsShortestPaths(boolean showProgress) {
 		calcAllPairsShortestPaths(showProgress, false);
 	}
+
+    public void readRoadNetwork(InputStream nodesStream, InputStream edgesStream, Envelope MBR, boolean reproject) {
+        try{
+            edgeField.clear();
+            nodeField.clear();
+            nodes.clear();
+            Rectangle2D.Double viewport = new Rectangle2D.Double(0, 0, 1694, 1630);
+            AffineTransform transform = GeometryUtilities.worldToScreenTransform(MBR, viewport);
+            double degToMeters = Double.NaN;
+            Point2D point1 = null, point1M = null;
+            // Read nodes
+            // BufferedReader fin = new BufferedReader(new InputStream(CityMigrationData.class.getResourceAsStream(nodesFilename), "UTF-8"));
+            BufferedReader fin = new BufferedReader(new InputStreamReader(nodesStream));
+            String s = fin.readLine();
+            while((s = fin.readLine()) != null) {
+                String[] tokens = s.split(",", 7);
+                double x = Double.parseDouble(tokens[1].trim());
+                double y = Double.parseDouble(tokens[2].trim());
+                int id = Integer.parseInt(tokens[3].trim());
+                int pop = Integer.parseInt(tokens[4].trim());
+                String name = tokens[5].trim().replaceAll("^\"|\"$", ""); // quotes > /dev/null
+                Point2D pt = new Point2D.Double(x, y);
+                Point2D newPt = new Point2D.Double();
+                transform.transform(pt, newPt);
+                Double2D loc = new Double2D(reproject ? newPt : pt);
+                PopulationCenter pc = new PopulationCenter(name, id, pop, loc);
+                addNode(pc, loc);
+                // Init the conversion factor TODO take this out after Ates redoes the file in meters???
+                if (point1 == null) {
+                    point1 = pt;
+                    point1M = newPt;
+                } else if (Double.isNaN(degToMeters)) {
+                    double degDist = point1.distance(pt);
+                    double meterDist = point1M.distance(newPt);
+                    degToMeters = meterDist / degDist;
+                }
+            }
+            fin.close(); // Might be optional but hey.
+            // Read the edges
+            // fin = new BufferedReader(new InputStreamReader(CityMigrationData.class.getResourceAsStream(edgesFilename), "UTF-8"));
+            fin = new BufferedReader(new InputStreamReader(edgesStream));
+            fin.readLine();
+            while ((s = fin.readLine()) != null) {
+                String[] tokens = s.split(",", 7);
+                int fromNode = Integer.parseInt(tokens[1].trim());
+                int toNode = Integer.parseInt(tokens[2].trim());
+                double length = Double.parseDouble(tokens[3].trim());
+                PopulationCenter node1 = idToCityMap.get(fromNode);
+                PopulationCenter node2 = idToCityMap.get(toNode);
+                edgeField.addEdge(node1, node2, length* degToMeters);
+            }
+            fin.close();
+            fixIndices();
+            allPairsShortestPaths = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	
 	/**
 	 * Read in the road network from the nodes and edges files and put them into a network.

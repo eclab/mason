@@ -37,6 +37,26 @@ public class CityTIN {
 
     public HashMap<MasonGeometry, PopulationCenter> nodesToCities = new HashMap<MasonGeometry, PopulationCenter>();
 
+    public CityTIN(URL nodesShpStream, URL nodesDbfStream, URL edgesShpStream, URL edgesDbfStream, int width, int height){
+        System.out.println("reading road network...");
+        nodes = new GeomVectorField(width, height);
+        edges = new GeomVectorField(width, height);
+        try{
+            ShapeFileImporter.read(nodesShpStream, nodesDbfStream, nodes);
+            ShapeFileImporter.read(edgesShpStream, edgesDbfStream, edges);
+            Bag geoms = nodes.getGeometries();
+            System.out.format("CityTIN: nodes.size: %d\n", geoms.numObjs);
+            for (int i = 0; i < geoms.numObjs; i++) {
+                MasonGeometry mg = (MasonGeometry) geoms.get(i);
+                mg.isMovable = true;
+            }
+            geoms = edges.getGeometries();
+            System.out.format("CityTIN: edges.size: %d\n", geoms.numObjs);
+        } catch (Exception ex) {
+        }
+    }
+
+
     public CityTIN(String nodesFilename, String edgesFilename, int width, int height) {
 
         System.out.println("reading road network...");

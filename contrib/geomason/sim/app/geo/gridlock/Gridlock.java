@@ -124,7 +124,7 @@ public class Gridlock extends SimState
             System.out.println("reading roads layer...");
 
             URL roadsFile = GridlockData.class.getResource("roads.shp");
-            URL roadsDB = GridlockData.class.getResource("roads.shp");
+            URL roadsDB = GridlockData.class.getResource("roads.dbf");
 
             ShapeFileImporter.read(roadsFile, roadsDB, roads);
 

@@ -18,6 +18,7 @@ import sim.util.Timing;
 import sim.util.MPITest;
 
 public class DHeatBugs extends DSimState {
+    // Import HeatBugs fields
     private static final long serialVersionUID = 1;
 
     public double minIdealTemp = 17000;
@@ -30,6 +31,15 @@ public class DHeatBugs extends DSimState {
     public static final double MAX_HEAT = 32000;
     public double randomMovementProbability = 0.1;
 
+    public int gridHeight;
+    public int gridWidth;
+    public int bugCount, privBugCount; // the replacement for get/setBugCount ?
+
+    /* missing:
+     * HeatBug[] bugs
+     */
+
+    // Same getters and setters as HeatBugs
     public double getMinimumIdealTemperature() { return minIdealTemp; }
     public void setMinimumIdealTemperature( double temp ) { if ( temp <= maxIdealTemp ) minIdealTemp = temp; }
     public double getMaximumIdealTemperature() { return maxIdealTemp; }
@@ -44,7 +54,9 @@ public class DHeatBugs extends DSimState {
     public double getDiffusionConstant() { return diffusionRate; }
     public void setDiffusionConstant( double temp ) { if ( temp >= 0 && temp <= 1 ) diffusionRate = temp; }
     public Object domDiffusionConstant() { return new Interval(0.0, 1.0); }
-    public double getRandomMovementProbability() { return randomMovementProbability; }
+
+
+    // Missing getBugXPos, getBugYPos
 
     // public void setRandomMovementProbability( double t ) {
     //      if (t >= 0 && t <= 1) {
@@ -55,31 +67,31 @@ public class DHeatBugs extends DSimState {
     //      }
     // }
     public Object domRandomMovementProbability() { return new Interval(0.0, 1.0); }
+    public double getRandomMovementProbability() { return randomMovementProbability; }
+
 
     public double getMaximumHeat() { return MAX_HEAT; }
 
-    public NDoubleGrid2D valgrid;
-    public NDoubleGrid2D valgrid2;
-    public NObjectGrid2D bugs;
+    /* Missing
+     * get/setGridHeight get/setGridWidth get/setBugCount
+     */
 
-    public DPartition p;
-    public DObjectMigratorNonUniform queue;
+    public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
+    public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
+    public NObjectGrid2D bugs; // Instead op SparseGrid2D
 
-    public int bugCount, privBugCount;
-    public int[] aoi;
+
     //public IntHyperRect myPart;
+    //
 
-    LoadBalancer lb;
 
     public DHeatBugs(long seed) {
         this(seed, 1000, 1000, 0, 5);
     }
 
     public DHeatBugs(long seed, int width, int height, int count, int aoi) {
-        super(seed);
-
-        bugCount = count;
-        this.aoi = new int[] {aoi, aoi};
+        super(seed, width, height, aoi);
+        gridWidth = width; gridHeight = height; bugCount = count;
 
         try {
             // DNonUniformPartition ps = DNonUniformPartition.getPartitionScheme(new int[] {width, height}, true, this.aoi);
@@ -90,17 +102,8 @@ public class DHeatBugs extends DSimState {
             // ps.insertPartition(new IntHyperRect(3, new IntPoint(100, 100), new IntPoint(1000, 1000)));
             // ps.commit();
 
-            DQuadTreePartition ps = new DQuadTreePartition(new int[] {width, height}, true, this.aoi);
-            ps.initUniformly();
-            p = ps;
-
-            valgrid = new NDoubleGrid2D(p, this.aoi, 0);
-            valgrid2 = new NDoubleGrid2D(p, this.aoi, 0);
-            bugs = new NObjectGrid2D<DHeatBug>(p, this.aoi, s -> new DHeatBug[s]);
-
-            queue = new DObjectMigratorNonUniform(p);
-
-            privBugCount = bugCount / p.np;
+            createGrids();
+            privBugCount = bugCount / p.np; // np?
 
             //lb = new LoadBalancer(this.aoi, 100);
         } catch (Exception e) {
@@ -111,15 +114,24 @@ public class DHeatBugs extends DSimState {
         //myPart = p.getPartition();
     }
 
+    protected void createGrids()
+    {
+        valgrid = new NDoubleGrid2D(p, aoi, 0);
+        valgrid2 = new NDoubleGrid2D(p, aoi, 0);
+        bugs = new NObjectGrid2D<DHeatBug>(p, aoi, s -> new DHeatBug[s]);
+    }
+
     public void start() {
         super.start();
 
         int[] size = p.getPartition().getSize();
+        double rangeIdealTemp = maxIdealTemp - minIdealTemp;
+        double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
-        for (int x = 0; x < privBugCount; x++) {
-            double idealTemp = random.nextDouble() * (maxIdealTemp - minIdealTemp) + minIdealTemp;
-            double heatOutput = random.nextDouble() * (maxOutputHeat - minOutputHeat) + minOutputHeat;
-            int px, py;
+        for (int x = 0; x < privBugCount; x++) { // The difference between this and bugCount?
+            double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
+            double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
+            int px, py; // Why are we doing this? Relationship?
             do {
                 px = random.nextInt(size[0]) + p.getPartition().ul().getArray()[0];
                 py = random.nextInt(size[1]) + p.getPartition().ul().getArray()[1];
@@ -129,12 +141,18 @@ public class DHeatBugs extends DSimState {
             schedule.scheduleOnce(b, 1);
         }
 
+        // Does this have to happen here? I guess.
         schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
         schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
         schedule.scheduleRepeating(Schedule.EPOCH, 4, new Balancer(), 1);
         schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
     }
 
+    // Missing availableProcessors() ; Is this really needed? Maybe not.
+
+    // Includes three private classes
+    // Synchronizer, Balancer, Inspector
+    // Doesn't have stop()
 
     private class Synchronizer implements Steppable {
         private static final long serialVersionUID = 1;
@@ -211,7 +229,6 @@ public class DHeatBugs extends DSimState {
     }
 
     public static void main(String[] args) throws MPIException {
-        Timing.setWindow(20);
         doLoopMPI(DHeatBugs.class, args);
         System.exit(0);
     }

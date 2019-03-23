@@ -13,7 +13,7 @@ import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.DoubleGridStorage;
 
-public class NDoubleGrid2D extends HaloField {
+public class NDoubleGrid2D extends HaloField{
 
     public NDoubleGrid2D(DPartition ps, int[] aoi, double initVal) {
         super(ps, aoi, new DoubleGridStorage(ps.getPartition(), initVal));

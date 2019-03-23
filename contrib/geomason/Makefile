@@ -159,7 +159,7 @@ ${DEMO_DISTRO} :
 
 # Delete all the class files, checkpoints, and other various garbage
 clean:
-	rm -f ${JARFILE}
+	#rm -f ${JARFILE}
 	find . -name "*.class" -exec rm -f {} \;
 	find . -name "jmf.log" -exec rm -f {} \;
 	find . -name ".DS_Store" -exec rm -f {} \;

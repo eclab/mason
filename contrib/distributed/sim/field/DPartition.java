@@ -94,4 +94,6 @@ public abstract class DPartition {
     public void registerPostCommit(Consumer r) {
         postCallbacks.add(r);
     }
+
+    public abstract void initialize(); // How to initialize the partition
 }

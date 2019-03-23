@@ -2,6 +2,9 @@ package sim.app.geo.cityMigration;
 
 
 import com.vividsolutions.jts.geom.Envelope;
+import sim.app.geo.riftland.riftlandData.RiftlandData;
+import sim.app.geo.riftland.riftlandData.popData.PopData;
+import sim.app.geo.riftland.riftlandData.politicalData.PoliticalData;
 import sim.app.geo.riftland.Parameters;
 import sim.app.geo.riftland.PopulationCenter;
 import sim.app.geo.riftland.RefugeeGroup;
@@ -30,7 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-//import sim.app.geo.cityMigration;
+import sim.app.geo.cityMigration.tin.TinData;
+import sim.app.geo.cityMigration.cityMigrationData.CityMigrationData;
 /**
  * The City Migration model depicts the movement of people who have been displaced.
  * The displaced are moved between cities, which are connected with a spatial interaction network
@@ -221,18 +225,31 @@ public class CityMigrationModel extends SimState
     }
     
     public boolean getSaveAllPairsShortestPath() { return false; }
+    /*
+     * More like a warning type thing. I have no idea where to save the new paths.
+     * I can load just fine but uh.
+     */
+    @Deprecated
     public void setSaveAllPairsShortestPath(boolean val) {
 		try{System.err.println("i'm trying to do the thing");
 			//cityMigration.CityMigrationData.
 			//System.err.println(new File(cityMigration.CityMigrationData.class.getResource("").toURI()).getAbsolutePath());
 
             }catch(Exception e){e.printStackTrace();}
-    	roadNetwork.saveAllPairsShortestPath("/cityMigration/cityMigrationData/roadNetworkShortestPaths.ser");
+        URL paths = CityMigrationData.class.getResource("roadNetworkShortestPath.ser");
+    	//roadNetwork.saveAllPairsShortestPath(paths);
+        // TODO: Save this stuff where?
     }
 
     public boolean getLoadAllPairsShortestPath() { return false; }
+    /*
+     * Warning: This doesn't work right yet.
+     * Need to figure out where to write this.
+     */
+    @Deprecated
     public void setLoadAllPairsShortestPath(boolean val) {
-    		roadNetwork.loadAllPairsShortestPath("/cityMigration/cityMigrationData/roadNetworkShortestPaths.ser");
+            URL paths = CityMigrationData.class.getResource("roadNetworkShortestPath.ser");
+    		//roadNetwork.loadAllPairsShortestPath(paths);
     }
 
     public boolean getCreateSimplifiedRoadNetwork() { return false; }
@@ -300,35 +317,29 @@ public class CityMigrationModel extends SimState
 	// =============================================================================================
 
 
-	/**
-	 * This constructor gets called from CityMigrationModelWithUI.
-	 * @param seed
-	 */
-	public CityMigrationModel(long seed) {
-		this(seed, new String[] { "-file", "/riftland/riftlandData/Params/default.params" });
-	}
 
 	/**
 	 * This constructor gets called from the other constructor and also from
 	 * RiftlandWithMigration.
 	 *
 	 * @param seed
-	 * @param args
 	 */
-	public CityMigrationModel(long seed, String[] args) {
+	public CityMigrationModel(long seed) {
 		super(seed);
 
-		params = new Parameters(args);
+		params = new Parameters("Params/default.params" , sim.app.geo.riftland.riftlandData.RiftlandData.class);
 		propertyChangeSupport = new PropertyChangeSupport(this);
 
 		readFiles();
 
 		roadNetwork = new RoadNetwork(width, height);
-		roadNetwork.readRoadNetwork("/cityMigration/cityMigrationData/road_nodes.txt", "/cityMigration/cityMigrationData/road_edges.txt", MBR, true);
+		//roadNetwork.readRoadNetwork("/cityMigration/cityMigrationData/road_nodes.txt", "/cityMigration/cityMigrationData/road_edges.txt", MBR, true);
+        roadNetwork.readRoadNetwork(CityMigrationData.class.getResourceAsStream("road_nodes.txt"), CityMigrationData.class.getResourceAsStream("road_edges.txt"), MBR, true);
 //    	setLoadAllPairsShortestPath(true);	// read
 //    	setCreateSimplifiedRoadNetwork(true);
 
-    	roadNetworkSimp = new RoadNetwork("/cityMigration/cityMigrationData/road_nodes_simp.txt", "/cityMigration/cityMigrationData/road_edges_simp.txt", MBR, false);
+    	//roadNetworkSimp = new RoadNetwork("/cityMigration/cityMigrationData/road_nodes_simp.txt", "/cityMigration/cityMigrationData/road_edges_simp.txt", MBR, false);
+        roadNetworkSimp = new RoadNetwork(CityMigrationData.class.getResourceAsStream("road_nodes_simp.txt"), CityMigrationData.class.getResourceAsStream("road_edges_simp.txt"), MBR, false);
 
     	if (cityStatsLogFilename != null)
     		cityStatsCollector = new CityStatsCollector(this, cityStatsLogFilename);
@@ -340,18 +351,21 @@ public class CityMigrationModel extends SimState
             // Read in population center metadata
 
         	GeomGridField populationGrid = new GeomGridField(); // only used for its MBR
-            InputStream populationStream = CityMigrationModel.class.getResourceAsStream("/riftland/riftlandData/PopData/riftpopulation.asc");
+            InputStream populationStream = PopData.class.getResourceAsStream("riftpopulation.asc");
             ArcInfoASCGridImporter.read(populationStream, GridDataType.INTEGER, populationGrid);
             populationStream.close();
             MBR = populationGrid.MBR;
 
-        	cityTIN = new CityTIN("/cityMigration/cityMigrationData/tin/RLUrbNodes.shp", "/cityMigration/cityMigrationData/tin/RLUrbLinks.shp", width, height);
+        	//cityTIN = new CityTIN("/cityMigration/cityMigrationData/tin/RLUrbNodes.shp", "/cityMigration/cityMigrationData/tin/RLUrbLinks.shp", width, height);
+            cityTIN = new CityTIN(TinData.class.getResource("RLUrbNodes.shp"), TinData.class.getResource("RLUrbNodes.dbf"), TinData.class.getResource("RLUrbLinks.shp"), TinData.class.getResource("RLUrbLinks.dbf"), width, height);
 
         	//File politicalBoundariesFile = new File("/riftland/riftlandData/political/RiftLand_Boundary.shp");
-            URL boundaryFile = getUrl("/riftland/riftlandData/political/RiftLand_Boundary.shp");//politicalBoundariesFile.toURI().toURL();
+            URL boundaryFile = PoliticalData.class.getResource("RiftLand_Boundary.shp");
+            //getUrl("/riftland/riftlandData/political/RiftLand_Boundary.shp");//politicalBoundariesFile.toURI().toURL();
             if (boundaryFile == null)
                 throw new FileNotFoundException(boundaryFile.toString());
-            URL boundaryDB = getUrl("/riftland/riftlandData/political/RiftLand_Boundary.dbf");//politicalBoundariesFile.toURI().toURL();
+            //URL boundaryDB = getUrl("/riftland/riftlandData/political/RiftLand_Boundary.dbf");//politicalBoundariesFile.toURI().toURL();
+            URL boundaryDB = PoliticalData.class.getResource("RiftLand_Boundary.dbf");
 
             ShapeFileImporter.read(boundaryFile, boundaryDB, politicalBoundaries);
             
