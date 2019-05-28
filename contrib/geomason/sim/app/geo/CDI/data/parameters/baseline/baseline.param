@@ -85,13 +85,13 @@ stdevTempAdjust = 0.0
 tempRunnningAvgWindow = 12
 
 #This is historical weather for Jan 1851 to Dec 2004:
-histTempFilename=src/CDI/data/temperature-Data/1851-2004.nc
+histTempFilename=temperature-Data/1851-2004.nc
 #Offset to start with the weather for the first quarter of 1911
 histTempFileOffset=720
 
 #Specify which temperature projection to use:
 #This is RCP 2.6 jan 2005 to dec 2099
-projTempFilename=src/CDI/data/temperature-Data/optimistic-future.nc
+projTempFilename=../../temperature-Data/optimistic-future.nc
 #This is RCP 8.5 Jan 2005 to Dec 2099
 #projTempFilename=data/temperature-Data/pessimistic-future.nc
 #when to start using this file (like historic weather file)
@@ -113,27 +113,27 @@ censusMigrationFilePath = migration
 
 
 # Filenames for GIS input data
-tempDesFile  = src/CDI/data/GIS-data/canada_temp_zscore.txt
-riverDesFile = src/CDI/data/GIS-data/canada_lake_zscore.txt
-portDesFile  = src/CDI/data/GIS-data/canada_port_zscore.txt
-elevDesFile  = src/CDI/data/GIS-data/canada_dem_zscore.txt
-riverRawFile = src/CDI/data/GIS-data/canada_lake_raw.txt
-tempRawFile  = src/CDI/data/GIS-data/canada_temp_raw.txt
-portRawFile  = src/CDI/data/GIS-data/canada_port_raw.txt
-elevRawFile  = src/CDI/data/GIS-data/canada_dem_raw.txt
-cultureGroupFile   = src/CDI/data/GIS-data/can_regcode_culture.txt
-landCoverFile      = src/CDI/data/GIS-data/canada_land_cover.txt
-nppFile            = src/CDI/data/GIS-data/net_primary_productivity.txt
-coastalFile        = src/CDI/data/GIS-data/can_coastal.txt            
-popRegionFile      = src/CDI/data/GIS-data/can_pop_1911_region.txt
-initialzationPopulationFile = src/CDI/data/GIS-data/can_pop_1911_pop.txt
-nationsFilename    = src/CDI/data/GIS-data/cdi_country_e2.txt
-provincesFilename  = src/CDI/data/GIS-data/cdi_provinces.txt
-populationFilename = src/CDI/data/GIS-data/cdi_pop_e2.txt
-borealAreaFilename = src/CDI/data/GIS-data/cdibnd10k.txt
-latFilename        = src/CDI/data/GIS-data/cdilat10k.txt
-lonFilename        = src/CDI/data/GIS-data/cdilon10k.txt
-growthRateFile     = src/CDI/data/GIS-data/Growth_rate.txt
+tempDesFile  =../../GIS-data/canada_temp_zscore.txt
+riverDesFile =../../GIS-data/canada_lake_zscore.txt
+portDesFile  =../../GIS-data/canada_port_zscore.txt
+elevDesFile  =../../GIS-data/canada_dem_zscore.txt
+riverRawFile =../../GIS-data/canada_lake_raw.txt
+tempRawFile  =../../GIS-data/canada_temp_raw.txt
+portRawFile  =../../GIS-data/canada_port_raw.txt
+elevRawFile  =../../GIS-data/canada_dem_raw.txt
+cultureGroupFie   =../../GIS-data/can_regcode_culture.txt
+landCoverFile     =../../GIS-data/canada_land_cover.txt
+nppFile            =../../GIS-data/net_primary_productivity.txt
+coastalFile        =../../GIS-data/can_coastal.txt            
+popRegionFile      =../../GIS-data/can_pop_1911_region.txt
+initialzationPopulationFile =../../GIS-data/can_pop_1911_pop.txt
+nationsFilename    =../../GIS-data/cdi_country_e2.txt
+provincesFilename  =../../GIS-data/cdi_provinces.txt
+populationFilename =../../GIS-data/cdi_pop_e2.txt
+borealAreaFilename =../../GIS-data/cdibnd10k.txt
+latFilename        =../../GIS-data/cdilat10k.txt
+lonFilename        =../../GIS-data/cdilon10k.txt
+growthRateFile     =../../GIS-data/Growth_rate.txt
 
 # color map bounds for different portrayal 
 popColorMapLowerBound = 100

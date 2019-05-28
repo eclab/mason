@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import sim.app.geo.cityMigration.tin.CityMigrationData;
+import sim.app.geo.cityMigration.tin.TinData;
 import sim.app.geo.riftland.PopulationCenter;
 import sim.app.geo.riftland.World;
 import sim.field.geo.GeomGridField;
@@ -94,7 +94,7 @@ public class CityTIN {
     }
 
     private URL getUrl(String nodesFilename) throws IOException {
-        InputStream nodeStream = CityMigrationData.class.getResourceAsStream(nodesFilename);
+        InputStream nodeStream = TinData.class.getResourceAsStream(nodesFilename);
         try {
             if (!new File("./shapeFiles/").exists()) {
                 new File("./shapeFiles/").mkdir();

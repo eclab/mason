@@ -22,6 +22,7 @@ import sim.field.grid.DoubleGrid2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.lang.reflect.*;
+import sim.app.geo.riftland.riftlandData.RiftlandData;
 
 /** Implements state for the RiftLand simulation. */
 public class World extends SimState
@@ -133,7 +134,7 @@ public class World extends SimState
     {
         super(seed);
         Logger.getLogger(World.class.getName()).info("World constructor begins.");
-        params = new Parameters(args);
+        params = new Parameters("Params/default.params", RiftlandData.class);
         
         setLoggerLevel(params.system.getLoggerLevel());
 
@@ -157,12 +158,12 @@ public class World extends SimState
             params.world.setNumInitialWateringHoles(20000);
             land = new Land(params);
         }
-        land.loadLandData(datapath, threadedGardener);
+        land.loadLandData(datapath, threadedGardener); // Somehow this worked?
 
         waterHoles = new WaterHoles(params, land);
         threadedGardener.setWaterHoles(waterHoles);
         
-        population = new Population(params, datapath, land);
+        population = new Population(params, "", land);
         herdMover = new HerdMover(params, population.getHerdingGrid());
         mediator = new ConflictMediatorRural(land.getWidth(), land.getHeight());
         createGrids(land.getWidth(), land.getHeight());

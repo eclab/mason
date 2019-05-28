@@ -3,7 +3,7 @@ package sim.app.geo.cityMigration;
 import java.io.*;
 import java.util.ArrayList;
 
-import sim.app.geo.cityMigration.tin.CityMigrationData;
+import sim.app.geo.cityMigration.tin.TinData;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.field.network.stats.NetworkStatistics;
@@ -142,7 +142,7 @@ public class AllPairsShortestPath implements Serializable
 		InputStream fis = null;
 		ObjectInputStream in = null;
 		try {
-			fis = CityMigrationData.class.getResourceAsStream(filename);
+			fis = TinData.class.getResourceAsStream(filename);
 			in = new ObjectInputStream(fis);
 			apsp = (AllPairsShortestPath) in.readObject();
 			in.close();

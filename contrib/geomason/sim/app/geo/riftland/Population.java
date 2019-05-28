@@ -9,6 +9,7 @@ import sim.app.geo.riftland.household.Household;
 import sim.app.geo.riftland.parcel.GrazableArea;
 import sim.app.geo.riftland.parcel.Parcel;
 import sim.app.geo.riftland.util.Misc;
+import sim.app.geo.riftland.riftlandData.RiftlandData;
 import sim.engine.RandomSequence;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;
@@ -507,7 +508,7 @@ final public class Population {
             InputStream populationStream;
             if ("".equals(datapath))
             {
-                populationStream = new BufferedInputStream(getClass().getResourceAsStream(params.world.getDatapath() + params.world.getPopulationFile()));
+                populationStream = new BufferedInputStream(RiftlandData.class.getResourceAsStream(params.world.getPopulationFile()));
             }
             else
             {
@@ -546,14 +547,19 @@ final public class Population {
         try
         {
             URL murdockURL;
+            URL murdockDB;
             if ("".equals(dataPath))
             {
-                murdockURL = getClass().getResource(params.world.getDatapath() + params.world.getEthnicRegionsFile());
+                murdockURL = RiftlandData.class.getResource(params.world.getEthnicRegionsFile());
+                murdockDB = RiftlandData.class.getResource(params.world.getEthnicRegionsFile().replace("shp", "dbf"));
             }
             else
             {
                 File murdockFile = new File(dataPath + params.world.getEthnicRegionsFile());
                 murdockURL = murdockFile.toURI().toURL();
+                File murdockDBF = new File(dataPath + params.world.getEthnicRegionsFile().replace("shp", "dbf"));
+                murdockDB = murdockDBF.toURI().toURL();
+                
 
                 if (murdockURL == null)
                 {
@@ -561,7 +567,7 @@ final public class Population {
                 }
             }
 
-            File murdockDB = new File(dataPath+params.world.getEthnicRegionsFile().replace("shp", "dbf"));
+            
             ShapeFileImporter.read(murdockURL, murdockDB.toURI().toURL(), ethnicRegions, masked);
 
             System.out.println("Loaded " + ethnicRegions.getGeometries().numObjs + " ethnic regions");
@@ -586,6 +592,7 @@ final public class Population {
         for (int i = 0; i < ethnicGeometries.size(); i++)
         {
             MasonGeometry geometry = (MasonGeometry) ethnicGeometries.objs[i];
+            System.out.println(geometry.toString());
             int id = geometry.getIntegerAttribute("ID_CULTURE");
             String name = geometry.getStringAttribute("NAME");
             ethnicIDToName.put(id, name);

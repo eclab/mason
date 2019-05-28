@@ -5,7 +5,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
 import sim.app.geo.riftland.parcel.*;
-//import sim.app.geo.riftland.riftlandData.RiftLandData;
 import sim.app.geo.riftland.util.Misc;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.ObjectGrid2D;
@@ -15,7 +14,7 @@ import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 import sim.util.gui.SimpleColorMap;
-
+import sim.app.geo.riftland.riftlandData.RiftlandData;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -183,12 +182,12 @@ final public class Land
             if ("".equals(datapath))
             { // Load data from a resource in our jar
                 System.err.println("hey we got this? "  + params.world.getDatapath() + " " + params.world.getLanduseFile());
-                landuse = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getLanduseFile())));
-                urbanuse = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getUrbanuseFile())));
-                parkland = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getParklandFile())));
-                forestland = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getForestFile())));
-                ndviResidual = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviResidualFile())));
-                NDVI2001001 = new BufferedReader(new InputStreamReader(Land.class.getResourceAsStream(params.world.getDatapath() + params.world.getNdviDataFile())));
+                landuse = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getLanduseFile())));
+                urbanuse = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getUrbanuseFile())));
+                parkland = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getParklandFile())));
+                forestland = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getForestFile())));
+                ndviResidual = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getNdviResidualFile())));
+                NDVI2001001 = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getNdviDataFile())));
             }
             else
             { // Load data from an external file
@@ -402,17 +401,21 @@ final public class Land
     private GeomVectorField loadPoliticalBoundaries(String datapath)
     {
         politicalBoundaries = new GeomVectorField();
+        URL boundaryDB;
         try
         {
             URL boundaryFile;
             if ("".equals(datapath))
             {
-                boundaryFile = Land.class.getResource(params.world.getDatapath() + params.world.getPoliticalBoundariesFile());
+                boundaryFile = RiftlandData.class.getResource(params.world.getDatapath() + params.world.getPoliticalBoundariesFile());
+                boundaryDB = RiftlandData.class.getResource(params.world.getDatapath() + params.world.getPoliticalBoundariesFile().replace("shp", "dbf"));
             }
             else
             {
                 File politicalBoundariesFile = new File(datapath + params.world.getPoliticalBoundariesFile());
                 boundaryFile = politicalBoundariesFile.toURI().toURL();
+                File db = new File(datapath + params.world.getPoliticalBoundariesFile().replace("shp", "dbf"));
+                boundaryDB = db.toURI().toURL();
 
                 if (boundaryFile == null)
                 {
@@ -420,8 +423,7 @@ final public class Land
                 }
             }
 
-            File db = new File(datapath + params.world.getPoliticalBoundariesFile().replace("shp", "dbf"));
-            ShapeFileImporter.read(boundaryFile, db.toURI().toURL(), politicalBoundaries);
+            ShapeFileImporter.read(boundaryFile, boundaryDB, politicalBoundaries);
 
             World.getLogger().info("Loaded " + politicalBoundaries.getGeometries().numObjs
                     + " political regions");

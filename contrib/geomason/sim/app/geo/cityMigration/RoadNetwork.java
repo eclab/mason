@@ -14,7 +14,7 @@ import java.util.Set;
 //import sim.app.geo.cityMigration.cityMigrationData.CityMigrationData;
 import com.vividsolutions.jts.geom.Envelope;
 
-import sim.app.geo.cityMigration.tin.CityMigrationData;
+import sim.app.geo.cityMigration.tin.TinData;
 
 import sim.app.geo.riftland.PopulationCenter;
 import sim.app.geo.riftland.World;
@@ -205,7 +205,7 @@ public class RoadNetwork
 			Point2D point1 = null, point1M = null;
 			
 			// --- Read the nodes
-			BufferedReader fin = new BufferedReader(new InputStreamReader(CityMigrationData.class.getResourceAsStream(
+			BufferedReader fin = new BufferedReader(new InputStreamReader(TinData.class.getResourceAsStream(
 			        nodesFilename), "UTF-8"));
 			String s;
 			s = fin.readLine();		// skip the headers
@@ -241,7 +241,7 @@ public class RoadNetwork
 			fin.close();
 			
 			// --- Read the edges
-			fin = new BufferedReader(new InputStreamReader(CityMigrationData.class.getResourceAsStream(
+			fin = new BufferedReader(new InputStreamReader(TinData.class.getResourceAsStream(
                     edgesFilename), "UTF-8"));;
 			s = fin.readLine();		// skip the headers
 			while ((s = fin.readLine()) != null) {

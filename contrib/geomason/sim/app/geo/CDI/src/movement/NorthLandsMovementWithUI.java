@@ -35,6 +35,7 @@ import sim.app.geo.CDI.src.environment.Map;
 import sim.app.geo.CDI.src.environment.SmartColorMap;
 import sim.app.geo.CDI.src.environment.SmartDoubleColorMap;
 import sim.app.geo.CDI.src.environment.SmartFastValueGridPortrayal2D;
+import sim.app.geo.CDI.data.CDIData;
 
 public class NorthLandsMovementWithUI extends GUIState 
 {
@@ -141,7 +142,11 @@ public class NorthLandsMovementWithUI extends GUIState
 	{	return (NorthLandsMovement)state;	}
 	
 	public NorthLandsMovementWithUI() 
-	{ this(new String[] {"-file", "src/CDI/data/parameters/baseline/baseline.param" });	}
+    {
+	//{ this(new String[] {"-file", "src/CDI/data/parameters/baseline/baseline.param" });	}
+   this(new NorthLandsMovement(System.currentTimeMillis(), CDIData.class, "parameters/baseline/baseline.param"));
+    
+    }
 	
 	public NorthLandsMovementWithUI(String[] args)
 	{	this(new NorthLandsMovement(System.currentTimeMillis(), args));	}

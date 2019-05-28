@@ -1,0 +1,3364 @@
+Compiling examples...
+mpijavac -nowarn -g -cp $CLASSPATH:../distributed/jar/distributed.1.jar:../../mason/jar/mason.19.jar ./sim/field/geo/*.java ./sim/io/geo/*.java ./sim/portrayal/geo/*.java ./sim/util/geo/*.java ./sim/io/geo/*.java			 sim/app/geo/campusworld/*.java sim/app/geo/campusworld/data/*.java sim/app/geo/CDI/*.java sim/app/geo/CDI/src/*.java sim/app/geo/CDI/src/files/*.java sim/app/geo/CDI/src/files/data/*.java sim/app/geo/CDI/src/government/*.java sim/app/geo/CDI/src/migration/*.java sim/app/geo/CDI/src/migration/util/*.java sim/app/geo/CDI/src/migration/parameters/*.java sim/app/geo/CDI/src/movement/*.java sim/app/geo/CDI/src/movement/data/*.java sim/app/geo/CDI/src/movement/parameters/*.java sim/app/geo/CDI/src/optimization/*.java sim/app/geo/CDI/src/optimization/desirability/*.java sim/app/geo/CDI/src/optimization/util/*.java sim/app/geo/CDI/src/phases/*.java sim/app/geo/CDI/src/phases/util/*.java sim/app/geo/CDI/src/environment/*.java  sim/app/geo/cityMigration/*.java sim/app/geo/cityMigration/tin/*.java sim/app/geo/colorworld/*.java sim/app/geo/colorworld/data/*.java sim/app/geo/conflictdiamonds/*.java  sim/app/geo/dadaab/*.java sim/app/geo/ebola/*.java sim/app/geo/gridlock/*.java sim/app/geo/gridlock/data/*.java sim/app/geo/haiti/*.java sim/app/geo/hotspots/objects/*.java sim/app/geo/hotspots/sim/*.java sim/app/geo/hotspots/visualization/*.java sim/app/geo/kibera/*.java sim/app/geo/masoncsc/*.java sim/app/geo/masoncsc/gui/*.java sim/app/geo/masoncsc/properties/*.java sim/app/geo/masoncsc/submodel/*.java sim/app/geo/masoncsc/submodel/flockersAndHeatBugs/*.java sim/app/geo/masoncsc/submodel/flockersAndHeatBugs/heatBugs/*.java sim/app/geo/masoncsc/submodel/flockersAndHeatBugs/flockers/*.java sim/app/geo/masoncsc/datawatcher/*.java sim/app/geo/masoncsc/util/*.java sim/app/geo/nearbyworld/*.java sim/app/geo/networkworld/*.java sim/app/geo/refugee/*.java  sim/app/geo/riftland/*.java sim/app/geo/riftland/conflict/*.java sim/app/geo/riftland/dataCollectors/*.java sim/app/geo/riftland/gui/*.java sim/app/geo/riftland/household/*.java sim/app/geo/riftland/parcel/*.java sim/app/geo/riftland/util/*.java sim/app/geo/schellingpolygon/*.java sim/app/geo/schellingpolygon/data/*.java sim/app/geo/schellingspace/*.java sim/app/geo/schellingspace/data/*.java sim/app/geo/sickStudents/*.java sim/app/geo/sickStudents/data/*.java sim/app/geo/sillypeds/*.java  sim/app/geo/sleuth/*.java sim/app/geo/touchingworld/*.java  sim/app/geo/touchingworld/*.java  sim/app/geo/turkana/*.java sim/app/geo/waterworld/*.java sim/app/geo/dcampusworld/*.java sim/app/geo/dcampusworld/data/*.java sim/app/geo/dschellingspace/*.java sim/app/geo/dschellingspace/data/*.java
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.World <init>
+INFO: World constructor begins.
+	 P: print-params = true
+	 P: LoggerLevel = INFO
+	 P: OutputFilename = carrying-file.csv
+	 P: EthnicityFilename = ethnic-file.csv
+	 P: DisplacementFilename = displaced-file.csv
+	!P: DisplacementDetailsFilename
+	!P: Numthreads
+	!P: SubArea
+	 P: NumWaterHoles = 20000
+	 P: InitTruePopulationPortion = 1.0
+	 P: OnlyOneHousehold = false
+	 P: OneHouseholdX = 0
+	 P: OneHouseholdY = 0
+	 P: WeatherSequence = 0,1,2,3,4,5,6,7,8,9,10,11
+	 P: WeatherClusterControlFile = ../ClusterData/ClusterControl.txt
+	 P: ScheduleMediator = false   # DEFUNCT?
+	 P: PermanentWaterThreshold = 50000
+	 P: WaterHoleCounterFlag = false
+	 P: AnnualTaxRate = 0.02   # Compounded daily, which is not accurate
+	 P: InitialEndowmentInYears = 2.5
+	 P: LaborProductionRate = 0.5
+	 P: CanFarm = true
+	 P: CanHerd = true
+	 P: PlantingThreshold = 300
+	 P: KgOfGrainPerPersonDay = 2.0
+	 P: MaxWorkableLandPerFarmer = 1.0
+	 P: FarmIntensificationExponent = 0.75
+	 P: MaxMoveDistanceForNewHousehold = 10
+	 P: FarmingRestartProbabilityExponent = 1.0
+	 P: TLUFoodConsumptionRate = 100.0
+	 P: TLUFoodMetabolismRate = 2.0
+	 P: TLUWaterMetabolismRate = 20
+	 P: TLUMaxDaysWithoutFood = 60
+	 P: TLUMaxDaysWithoutWater = 6
+	!P: TLUFoodMax
+	 P: TLUFoodStress = 1    # DEFUNCT?
+	!P: TLUWaterMax
+	 P: TLUWaterStress = 1.25   # DEFUNCT?
+	 P: HerdIdealBirthProbability = 0.001
+	 P: FoodCostOfMovement = 0.1
+	 P: WaterCostOfMovement = 0.1
+	 P: HerdingFoodWeight = 1.0
+	 P: HerdingWaterWeight = 1.0
+	 P: HerdingDistanceWeight = 0.05
+	 P: HerdingHomeWeight = 1.0
+	 P: ReturnHomeCheckInterval = 1.0
+	 P: TLUPerPFD = 2
+	 P: PFDPerConsumedTLU = 83.33333333333333
+	 P: MaxTLUsPerHerder = 10
+	 P: HerdVegetationThreshold = 1025   # DEFUNCT?
+	 P: VisionAndMovementRange = 10
+	 P: MaxNearbyWaterHoles = 10
+	 P: HerdSplitThreshold = 100
+	 P: HerdingRestartProbabilityExponent = 1.0
+	 P: PlentyOfWaterInTLUDays = 10000
+	 P: MaxTrailLength = 0
+	 P: HerdUseRuleBased = true
+hey we got this? /riftland/riftlandData/ LandData/landquality.txt
+Either your shpFile or dbFile is missing!
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land loadPoliticalBoundaries
+SEVERE: url is null; file is probably not found
+java.lang.IllegalArgumentException: url is null; file is probably not found
+	at sim.io.geo.ShapeFileImporter.open(ShapeFileImporter.java:316)
+	at sim.io.geo.ShapeFileImporter.read(ShapeFileImporter.java:342)
+	at sim.io.geo.ShapeFileImporter.read(ShapeFileImporter.java:212)
+	at sim.app.geo.riftland.Land.loadPoliticalBoundaries(Land.java:426)
+	at sim.app.geo.riftland.Land.loadLandData(Land.java:226)
+	at sim.app.geo.riftland.World.<init>(World.java:161)
+	at sim.app.geo.riftland.WorldGUI.<init>(WorldGUI.java:145)
+	at sim.app.geo.riftland.WorldGUI.main(WorldGUI.java:861)
+
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land assignParcels
+INFO: Entering Land.assignParcels()
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 0 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 2 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 3 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 4 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 5 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 6 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 7 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 8 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 9 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 10 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 11 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 12 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 13 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 14 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 15 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 16 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 17 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 18 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 19 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 20 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 21 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 22 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 23 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 24 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 25 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 26 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 27 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 28 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 29 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 30 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 31 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 32 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 33 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 34 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 35 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 36 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 37 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 38 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 39 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 40 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 41 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 42 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 43 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 44 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 45 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 46 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 47 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 48 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 49 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 50 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 51 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 52 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 53 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 54 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 55 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 56 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 57 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 58 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 59 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 60 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 61 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 62 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 63 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 64 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 65 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 66 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 67 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 68 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 69 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 70 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 71 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 72 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 73 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 74 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 75 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 76 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 77 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 78 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 79 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 80 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 81 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 82 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 83 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 84 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 85 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 86 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 87 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 88 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 89 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 90 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 91 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 92 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 93 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 94 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 95 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 96 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 97 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 98 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 99 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 100 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 101 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 102 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 103 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 104 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 105 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 106 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 107 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 108 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 109 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 110 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 111 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 112 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 113 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 114 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 115 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 116 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 117 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 118 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 119 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 120 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 121 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 122 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 123 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 124 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 125 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 126 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 127 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 128 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 129 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 130 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 131 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 132 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 133 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 134 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 135 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 136 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 137 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 138 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 139 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 140 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 141 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 142 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 143 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 144 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 145 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 146 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 147 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 148 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 149 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 150 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 151 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 152 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 153 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 154 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 155 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 156 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 157 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 158 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 159 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 160 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 161 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 162 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 163 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 164 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 165 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 166 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 167 assigned
+Apr 04, 2019 2:59:00 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 168 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 169 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 170 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 171 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 172 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 173 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 174 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 175 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 176 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 177 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 178 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 179 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 180 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 181 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 182 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 183 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 184 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 185 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 186 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 187 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 188 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 189 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 190 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 191 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 192 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 193 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 194 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 195 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 196 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 197 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 198 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 199 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 200 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 201 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 202 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 203 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 204 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 205 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 206 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 207 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 208 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 209 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 210 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 211 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 212 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 213 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 214 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 215 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 216 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 217 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 218 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 219 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 220 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 221 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 222 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 223 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 224 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 225 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 226 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 227 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 228 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 229 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 230 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 231 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 232 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 233 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 234 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 235 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 236 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 237 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 238 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 239 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 240 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 241 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 242 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 243 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 244 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 245 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 246 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 247 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 248 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 249 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 250 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 251 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 252 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 253 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 254 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 255 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 256 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 257 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 258 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 259 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 260 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 261 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 262 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 263 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 264 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 265 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 266 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 267 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 268 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 269 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 270 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 271 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 272 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 273 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 274 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 275 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 276 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 277 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 278 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 279 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 280 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 281 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 282 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 283 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 284 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 285 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 286 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 287 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 288 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 289 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 290 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 291 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 292 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 293 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 294 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 295 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 296 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 297 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 298 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 299 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 300 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 301 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 302 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 303 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 304 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 305 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 306 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 307 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 308 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 309 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 310 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 311 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 312 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 313 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 314 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 315 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 316 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 317 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 318 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 319 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 320 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 321 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 322 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 323 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 324 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 325 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 326 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 327 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 328 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 329 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 330 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 331 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 332 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 333 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 334 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 335 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 336 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 337 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 338 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 339 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 340 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 341 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 342 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 343 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 344 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 345 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 346 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 347 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 348 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 349 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 350 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 351 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 352 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 353 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 354 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 355 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 356 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 357 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 358 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 359 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 360 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 361 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 362 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 363 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 364 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 365 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 366 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 367 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 368 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 369 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 370 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 371 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 372 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 373 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 374 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 375 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 376 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 377 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 378 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 379 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 381 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 380 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 382 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 383 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 384 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 385 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 386 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 387 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 388 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 389 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 390 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 391 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 392 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 393 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 394 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 395 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 396 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 397 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 398 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 399 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 400 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 401 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 402 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 403 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 404 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 405 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 406 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 407 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 408 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 409 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 410 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 411 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 412 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 413 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 414 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 415 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 416 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 417 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 418 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 419 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 420 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 421 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 422 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 423 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 424 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 425 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 426 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 427 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 428 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 429 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 430 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 431 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 432 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 433 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 434 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 435 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 436 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 437 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 438 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 439 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 440 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 441 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 442 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 443 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 444 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 445 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 446 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 447 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 448 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 449 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 450 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 451 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 452 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 453 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 454 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 455 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 456 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 457 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 458 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 459 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 460 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 461 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 462 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 463 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 464 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 465 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 466 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 467 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 468 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 469 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 470 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 471 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 472 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 473 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 474 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 475 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 476 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 477 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 478 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 479 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 480 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 481 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 482 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 483 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 484 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 485 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 486 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 487 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 488 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 489 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 490 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 491 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 492 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 493 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 494 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 495 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 496 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 497 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 498 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 499 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 500 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 501 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 502 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 503 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 504 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 505 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 506 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 507 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 508 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 509 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 510 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 511 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 512 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 513 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 514 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 515 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 516 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 517 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 518 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 519 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 520 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 521 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 522 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 523 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 524 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 525 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 526 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 527 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 528 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 529 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 530 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 531 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 532 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 533 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 534 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 535 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 536 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 537 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 538 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 539 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 540 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 541 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 542 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 543 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 544 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 545 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 546 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 547 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 548 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 549 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 550 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 551 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 552 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 553 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 554 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 555 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 556 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 557 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 558 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 559 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 560 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 561 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 562 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 563 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 564 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 565 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 566 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 567 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 568 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 569 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 570 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 571 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 572 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 573 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 574 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 575 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 576 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 577 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 578 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 579 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 580 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 581 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 582 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 583 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 584 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 585 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 586 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 587 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 588 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 589 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 590 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 591 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 592 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 593 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 594 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 595 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 596 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 597 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 598 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 599 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 600 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 601 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 602 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 603 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 604 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 605 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 606 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 607 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 608 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 609 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 610 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 611 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 612 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 613 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 614 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 615 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 616 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 617 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 618 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 619 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 620 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 621 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 622 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 623 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 624 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 625 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 626 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 627 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 628 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 629 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 630 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 631 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 632 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 633 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 634 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 635 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 636 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 637 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 638 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 639 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 640 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 641 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 642 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 643 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 644 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 645 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 646 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 647 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 648 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 649 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 650 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 651 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 652 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 653 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 654 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 655 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 656 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 657 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 658 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 659 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 660 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 661 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 662 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 663 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 664 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 665 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 666 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 667 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 668 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 669 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 670 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 671 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 672 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 673 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 674 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 675 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 676 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 677 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 678 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 679 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 680 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 681 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 682 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 683 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 684 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 685 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 686 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 687 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 688 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 689 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 690 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 691 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 692 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 693 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 694 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 695 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 696 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 697 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 698 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 699 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 700 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 701 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 702 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 703 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 704 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 705 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 706 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 707 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 708 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 709 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 710 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 711 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 712 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 713 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 714 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 715 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 716 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 717 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 718 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 719 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 720 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 721 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 722 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 723 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 724 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 725 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 726 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 727 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 728 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 729 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 730 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 731 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 732 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 733 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 734 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 735 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 736 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 737 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 738 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 739 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 740 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 741 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 742 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 743 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 744 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 745 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 746 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 747 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 748 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 749 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 750 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 751 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 752 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 753 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 754 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 755 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 756 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 757 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 758 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 759 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 760 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 761 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 762 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 763 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 764 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 765 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 766 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 767 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 768 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 769 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 770 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 771 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 772 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 773 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 774 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 775 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 776 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 777 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 778 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 779 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 780 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 781 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 782 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 783 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 784 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 785 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 786 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 787 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 788 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 789 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 790 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 791 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 792 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 793 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 794 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 795 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 796 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 797 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 798 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 799 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 800 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 801 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 802 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 803 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 804 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 805 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 806 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 807 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 808 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 809 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 810 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 811 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 812 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 813 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 814 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 815 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 816 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 817 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 818 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 819 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 820 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 821 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 822 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 823 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 824 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 825 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 826 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 827 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 828 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 829 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 830 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 831 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 832 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 833 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 834 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 835 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 836 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 837 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 838 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 839 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 840 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 841 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 842 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 843 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 844 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 845 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 846 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 847 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 848 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 849 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 850 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 851 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 852 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 853 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 854 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 855 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 856 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 857 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 858 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 859 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 860 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 861 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 862 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 863 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 864 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 865 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 866 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 867 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 868 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 869 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 870 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 871 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 872 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 873 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 874 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 875 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 876 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 877 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 878 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 879 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 880 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 881 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 882 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 883 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 884 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 885 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 886 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 887 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 888 assigned
+Apr 04, 2019 2:59:01 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 889 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 890 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 891 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 892 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 893 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 894 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 895 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 896 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 897 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 898 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 899 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 900 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 901 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 902 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 903 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 904 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 905 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 906 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 907 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 908 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 909 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 910 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 911 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 912 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 913 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 914 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 915 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 916 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 917 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 918 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 919 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 920 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 921 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 922 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 923 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 924 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 925 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 926 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 927 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 928 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 929 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 930 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 931 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 932 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 933 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 934 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 935 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 936 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 937 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 938 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 939 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 940 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 941 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 942 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 943 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 944 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 945 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 946 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 947 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 948 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 949 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 950 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 951 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 952 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 953 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 954 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 955 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 956 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 957 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 958 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 959 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 960 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 961 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 962 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 963 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 964 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 965 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 966 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 967 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 968 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 969 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 970 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 971 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 972 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 973 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 974 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 975 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 976 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 977 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 978 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 979 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 980 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 981 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 982 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 983 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 984 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 985 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 986 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 987 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 988 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 989 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 990 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 991 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 992 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 993 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 994 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 995 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 996 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 997 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 998 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 999 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1000 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1001 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1002 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1003 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1004 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1005 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1006 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1007 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1008 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1009 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1010 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1011 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1012 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1013 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1014 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1015 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1016 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1017 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1018 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1019 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1020 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1021 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1022 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1023 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1024 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1025 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1026 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1027 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1028 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1029 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1030 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1031 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1032 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1033 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1034 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1035 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1036 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1037 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1038 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1039 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1040 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1041 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1042 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1043 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1044 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1045 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1046 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1047 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1048 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1049 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1050 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1051 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1052 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1053 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1054 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1055 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1056 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1057 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1058 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1059 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1060 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1061 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1062 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1063 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1064 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1065 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1066 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1067 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1068 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1069 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1070 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1071 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1072 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1073 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1074 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1075 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1076 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1077 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1078 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1079 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1080 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1081 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1082 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1083 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1084 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1085 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1086 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1087 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1088 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1089 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1090 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1091 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1092 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1093 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1094 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1095 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1096 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1097 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1098 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1099 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1100 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1101 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1102 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1103 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1104 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1105 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1106 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1107 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1108 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1109 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1110 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1111 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1112 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1113 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1114 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1115 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1116 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1117 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1118 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1119 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1120 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1121 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1122 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1123 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1124 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1125 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1126 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1127 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1128 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1129 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1130 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1131 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1132 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1133 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1134 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1135 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1136 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1137 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1138 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1139 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1140 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1141 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1142 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1143 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1144 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1145 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1146 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1147 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1148 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1149 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1150 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1151 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1152 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1153 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1154 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1155 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1156 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1157 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1158 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1159 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1160 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1161 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1162 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1163 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1164 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1165 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1166 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1167 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1168 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1169 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1170 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1171 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1172 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1173 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1174 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1175 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1176 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1177 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1178 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1179 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1180 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1181 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1182 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1183 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1184 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1185 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1186 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1187 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1188 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1189 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1190 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1191 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1192 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1193 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1194 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1195 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1196 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1197 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1198 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1199 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1200 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1201 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1202 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1203 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1204 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1205 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1206 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1207 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1208 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1209 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1210 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1211 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1212 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1213 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1214 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1215 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1216 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1217 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1218 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1219 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1220 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1221 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1222 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1223 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1224 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1225 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1226 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1227 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1228 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1229 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1230 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1231 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1232 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1233 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1234 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1235 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1236 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1237 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1238 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1239 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1240 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1241 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1242 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1243 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1244 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1245 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1246 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1247 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1248 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1249 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1250 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1251 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1252 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1253 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1254 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1255 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1256 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1257 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1258 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1259 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1260 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1261 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1262 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1263 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1264 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1265 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1266 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1267 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1268 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1269 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1270 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1271 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1272 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1273 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1274 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1275 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1276 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1277 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1278 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1279 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1280 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1281 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1282 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1283 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1284 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1285 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1286 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1287 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1288 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1289 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1290 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1291 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1292 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1293 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1294 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1295 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1296 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1297 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1298 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1299 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1300 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1301 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1302 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1303 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1304 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1305 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1306 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1307 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1308 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1309 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1310 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1311 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1312 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1313 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1314 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1315 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1316 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1317 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1318 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1319 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1320 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1321 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1322 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1323 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1324 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1325 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1326 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1327 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1328 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1329 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1330 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1331 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1332 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1333 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1334 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1335 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1336 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1337 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1338 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1339 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1340 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1341 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1342 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1343 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1344 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1345 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1346 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1347 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1348 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1349 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1350 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1351 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1352 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1353 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1354 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1355 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1356 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1357 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1358 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1359 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1360 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1361 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1362 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1363 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1364 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1365 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1366 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1367 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1368 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1369 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1370 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1371 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1372 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1373 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1374 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1375 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1376 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1377 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1378 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1379 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1380 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1381 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1382 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1383 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1384 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1385 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1386 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1387 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1388 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1389 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1390 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1391 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1392 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1393 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1394 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1395 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1396 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1397 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1398 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1399 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1400 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1401 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1402 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1403 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1404 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1405 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1406 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1407 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1408 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1409 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1410 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1411 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1412 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1413 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1414 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1415 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1416 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1417 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1418 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1419 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1420 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1421 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1422 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1423 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1424 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1425 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1426 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1427 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1428 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1429 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1430 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1431 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1432 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1433 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1434 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1435 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1436 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1437 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1438 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1439 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1440 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1441 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1442 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1443 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1444 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1445 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1446 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1447 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1448 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1449 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1450 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1451 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1452 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1453 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1454 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1455 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1456 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1457 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1458 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1459 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1460 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1461 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1462 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1463 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1464 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1465 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1466 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1467 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1468 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1469 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1470 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1471 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1472 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1473 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1474 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1475 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1476 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1477 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1478 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1479 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1480 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1481 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1482 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1483 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1484 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1485 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1486 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1487 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1488 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1489 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1490 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1491 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1492 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1493 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1494 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1495 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1496 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1497 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1498 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1499 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1500 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1501 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1502 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1503 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1504 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1505 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1506 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1507 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1508 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1509 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1510 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1511 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1512 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1513 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1514 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1515 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1516 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1517 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1518 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1519 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1520 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1521 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1522 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1523 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1524 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1525 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1526 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1527 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1528 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1529 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1530 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1531 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1532 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1533 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1534 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1535 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1536 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1537 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1538 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1539 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1540 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1541 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1542 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1543 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1544 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1545 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1546 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1547 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1548 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1549 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1550 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1551 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1552 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1553 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1554 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1555 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1556 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1557 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1558 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1559 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1560 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1561 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1562 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1563 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1564 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1565 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1566 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1567 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1568 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1569 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1570 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1571 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1572 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1573 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1574 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1575 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1576 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1577 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1578 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1579 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1580 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1581 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1582 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1583 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1584 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1585 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1586 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1587 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1588 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1589 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1590 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1591 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1592 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1593 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1594 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1595 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1596 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1597 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1598 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1599 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1600 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1601 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1602 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1603 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1604 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1605 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1606 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1607 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1608 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1609 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1610 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1611 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1612 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1613 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1614 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1615 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1616 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1617 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1618 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1619 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1620 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1621 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1622 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1623 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1624 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1625 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1626 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1627 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1628 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land$1RowAssigner run
+INFO: Row 1629 assigned
+Apr 04, 2019 2:59:02 PM sim.app.geo.riftland.Land assignParcels
+INFO: Exiting Land.assignParcels()
+Loaded 138 ethnic regions
+MULTIPOLYGON (((42.377999999999986 6.129912635521144, 42.377999999999986 4.069218948108485, 42.33180699999997 4.0787540000000035, 42.27584900000005 4.15154500000002, 42.24589300000004 4.254318999999981, 42.16000200000005 4.438449000000041, 42.12561900000003 4.502679000000036, 42.082656000000014 4.588321000000022, 42.06131700000002 4.682531999999981, 41.92904100000004 5.277775000000048, 41.87761500000002 5.427652999999992, 41.86052499999997 5.496169999999964, 41.87363800000004 5.5518459999999905, 41.90832799999997 5.598961999999993, 42.05118199999998 5.706057999999977, 42.181147999999965 5.838846000000046, 42.28943100000002 5.941651999999991, 42.34154200000005 6.040162000000024, 42.377999999999986 6.129912635521144)), ((42.377999999999986 7.809000000000118, 42.377999999999986 6.862590646884378, 42.361293 6.935218999999989, 42.297073000000026 7.145049, 42.17265699999997 7.457647000000009, 42.086812999999964 7.658906999999964, 42.05680999999997 7.74455100000003, 42.04976428723208 7.809000000000118, 42.377999999999986 7.809000000000118)))
+Exception in thread "main" java.lang.NullPointerException
+	at sim.util.geo.MasonGeometry.getIntegerAttribute(MasonGeometry.java:230)
+	at sim.app.geo.riftland.Population.createEthnicIDMap(Population.java:596)
+	at sim.app.geo.riftland.Population.loadEthnicRegions(Population.java:579)
+	at sim.app.geo.riftland.Population.<init>(Population.java:502)
+	at sim.app.geo.riftland.World.<init>(World.java:166)
+	at sim.app.geo.riftland.WorldGUI.<init>(WorldGUI.java:145)
+	at sim.app.geo.riftland.WorldGUI.main(WorldGUI.java:861)
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[22170,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------

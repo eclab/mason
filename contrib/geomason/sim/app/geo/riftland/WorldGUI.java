@@ -8,6 +8,7 @@ package sim.app.geo.riftland;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.*;
 
 import org.jfree.data.xy.XYDataItem;
@@ -50,6 +51,7 @@ import sim.util.media.chart.DataCuller;
 import sim.util.media.chart.HistogramGenerator;
 import sim.util.media.chart.TimeSeriesAttributes;
 import sim.util.media.chart.TimeSeriesChartGenerator;
+import sim.app.geo.riftland.riftlandData.RiftlandData;
 
 /** GUI wrapper for World
  *
