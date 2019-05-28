@@ -1,0 +1,28 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>Tutorial 2: Life</h2> 
+By Sean Luke
+</table>
+
+<font size="-1" color="gray">
+[<a href="tutorial1.html">Tutorial 1</a> documentation]&nbsp;&nbsp;&nbsp;[<a href="tutorial2.html">Tutorial 2</a> documentation]
+</font>
+
+<p>Tutorial 2 is a simple visualization of the <a href="">John Conway's</a> <a href="http://en.wikipedia.org/wiki/Conway's_Game_of_Life">Game of Life</a>, later popularized in a column by <a href="http://en.wikipedia.org/wiki/Martin_Gardner">Martin Gardner</a>.  Life is a two-dimensional totalistic cellular automaton, where each cell in the grid simultaneously decides to be "alive" or "dead" based on the following rules:
+
+<ol>
+<li>If a cell has less than live two neighbors (up/down/left/right -- no diagonal neighbors), is dead in the next iteration, presumably of loneliness.
+<li>If a cell has more than three live neighbors, it is dead in the next iteration from suffucation.
+<li>If a live cell has two or three live neighbors, it stays alive in the next iteration.
+<li>If a dead cell has exactly three live neighbors, it comes alive in the next iteration.
+</ol>
+
+<p>The initial conditions of the automaton are set to Martin Gardner's so-called  <a href="http://www.radicaleye.com/lifepage/picgloss/picgloss.html">B-Heptomino</a>.  More on Life from <a href="http://www.radicaleye.com/lifepage/lifepage.html">Paul's Page</a> and from <a href="http://mathworld.wolfram.com/Life.html">MathWorld</a>.
+
+<p><b>Where is Tutorial 1 in the simulation list?</b> Tutorial 1 is a command-line example only, with no GUI.
+
+<p><hr><font color='red'>Note:</font> this description is different from the one which appears after following the tutorial documentation.  This is because the tutorial documentation overrides the <tt>getInfo</tt> method to provide a description.  If this method is not overridden, MASON instead tries to display a file called <tt>index.html</tt> stored in the same directory as the simulation (which is what's going on here). 
+
+</body></html>

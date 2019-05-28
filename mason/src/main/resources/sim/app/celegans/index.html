@@ -1,0 +1,19 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2><i>Caenorhabditis elegans</i> Embryo and Neural Network Visualization</h2> 
+by Sean Luke
+</table>
+
+<p>A visualization of the cell splitting and movement during the development of the embry of <i>Caenorhabditis elegans</i>, an almost microscopic worm popular for biological study.  Cells are colored first according to known eventual function (<span style="background-color: black;"><font color="#D3D3D3">Germ Cell / Dies</font>, <font color="#0000FF">Muscle</font>, <font color="#FFFF00">Hypodermis</font>, <font color="#FF0000">Intestine</font>, <font color="#00FF00">Neuron</font>, <font color="#FFA500">Pharynx</font></span>), and if no function is specified, then by cell type (<span style="background-color: black;"><font color="#FF00FF">Founding / Unknown</font>, <font color="#FFC0CB">Preembryonic</font>, <font color="#00FFFF">Postembryonic</font>, <font color="#A9A9A9">Postembryonic Dual Origin</font>, <font color="#800080">Postembryonic Unknown</font></span>).
+
+<p>The visualization starts by reading from a database file: be warned that this may take a bit.
+
+<p>The visualization starts with the founding cell (P0'), and continus through about timestep 600, prior to gastriculation.  Some cells have lineage information but no position information.  When such cells are "born" from their parents, they appear next to their parents in a line, so at the end the embryo appears to have "stripes" or "lines" of cells through it in the same direction.  This is an artifact of the visualization: it's not reality.
+
+<p>You'll see two large germ cells at one end of the embryo.  These cells are "large" not because they're actually large but because they split innumerably to form sex cells, and so the resultant volume can't be computed.  This is also an artifact of the visualization.
+
+<p>The visualization also has a hidden display showing the neurons and synapses.  Synapses only appear when both of their neurons appear in the embryo.  There are a <i>lot</i> of synapses: 3916 in this database.  This overwhelms Java3D, so only show the display when the simulation is paused (and wait).
+
+</body></html>

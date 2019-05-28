@@ -1,1 +1,9 @@
+mason/target/
+contrib/geomason/target/
 *.class
+*.aux
+*.idx
+*.log
+*.out
+*.toc
+

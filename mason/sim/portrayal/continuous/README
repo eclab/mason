@@ -1,9 +1,0 @@
-sim/portrayal/continuous
-
-This package holds a 2D FieldPortrayal for the Continuous2D field.
-
-
-ContinuousPortrayal2D.java
-
-A field portrayal for the Continuous2D field.
-

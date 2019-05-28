@@ -1,0 +1,23 @@
+sim
+
+This package holds most of the MASON simulation toolkit.  The exception 
+is MersenneTwister, which is in the 'ec' package to retain compatibility 
+with MASON's sister toolkit, ECJ.
+
+If you're looking for the top-level README and documentation, look in the
+'mason' directory, which is the parent directory of this one.
+
+The subpackages are:
+
+engine		The simulation core, including the schedule
+field		Data structures representing 2D and 3D space and networks
+		(so-called 'fields')
+display		2D Visualization GUI elements
+portrayal	Objects used by the 2D display package to represent the objects
+		in various fields in your simulation
+display3d	3D Visualization GUI elements
+portrayal3d	Objects used by the 3D display package to represent the objects
+		in various fields in your simulation
+util		Utility classes
+app		Demo application examples
+

@@ -1,0 +1,5 @@
+The subdirectories here hold versions of the Student Schoolyard Cliques
+tutorial presented at WCSS in 2008, and represented in Chapter 2 of the
+MASON Manual, "Multiagent Simulation and the MASON Library".  Each
+tutorial directory builds on the previous one with a more elaborate
+version.

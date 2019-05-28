@@ -1,0 +1,108 @@
+sim/display
+
+This package holds visualization widgets for the simulation toolkit.  Most
+3D visualization widgets are located instead in sim/display3d.
+
+MASON models may register themselves to be displayed when the user 
+chooses "New Simulation..." from Console.java (or runs [java 
+sim.display.Console] ).  Classes register themselves in the 
+simulation.classes file.
+
+
+Classes:
+
+
+GUIState.java
+
+An object which holds the model (the SimState) and all visualizers for 
+the model at present under one umbrella.
+
+
+Controller.java
+
+An interface for widgets which control the simulation and the schedule.
+
+
+SimpleController.java
+
+A very simple widget for controlling the simulation and the schedule, 
+mostly useful for games or other tasks for which Console.java is not a 
+good idea.  Otherwise, rarely used.
+
+
+Console.java
+
+An elaborate widget for controlling the simulation and the schedule.  
+Includes facilties for playing, stopping, pausing, resuming, saving and 
+loading models, creating new models, changing model parameters, 
+visualizing inspectors on the model, and other functionality.  Yes, 
+Console.java really compiles to over 64 classes.  Anonymous classes are 
+great.
+
+
+Display.java
+
+A 2D visualization widget for displaying 2D fields and their subsidiary 
+objects.  Works with various 2D Portrayals to display and inspect those 
+objects.  Capable of scrolling and scaling, making movies and pictures, 
+etc.
+
+
+SimApplet.java
+
+A simple Applet subclass for setting up MASON as an applet in a web browser.
+
+
+RateAdjuster.java
+
+A Steppable which can be inserted in the Schedule or (more appropriately)
+the GUIState's mini-schedule to slow down a simulation to no faster than
+a given frame rate.  Useful for keeping games feeling smooth despite the
+platform.
+
+
+Manipulating2D.java
+
+A simple interface for Display2D to implement.  This interface is passed
+to SimplePortrayal2D classes in their handleMouseEvent(...) method rather
+than the Display2D itself.  This interface may grow as additional methods
+are required by these classes.
+
+
+Prefs.java
+
+A simple cover function for Java's preferences facility meant to make it
+easy to retrieve, save, and delete MASON- or app-specific preferences.
+
+
+Other Files:
+
+
+simulation.classes	A file which contains all classes which have
+			registered themselves with MASON to be displayed
+			when the user chooses "New Simulation..." in the
+			Console.
+Camera.png		A camera icon for taking snapshots
+CameraPressed.png	A "pressed" camera icon for taking snapshots
+Layers.png		An icon for displaying or hiding fields
+LayersPressed.png	A "pressed" icon for displaying or hiding fields
+MovieOff.png		An icon indicating that no movie is recording
+MovieOffPressed.png	A "pressed" icon indicating that no movie is recording
+MovieOn.png		An icon indicating that a movie is recording
+MovieOnPressed.png	A "pressed" icon indicating that a movie is recording
+NotPlaying.png		An icon indicating that the simulation is NOT running
+NotRecording.png	An icon indicating non-recording -- UNUSED
+NotStopped.png		An icon indicating that the simulation is NOT stopped
+Options.png		An icon for choosing display options
+OptionsPressed.png	A "pressed" icon for choosing display options
+PauseOff.png		An icon indicating that the simulation is NOT paused
+PauseOn.png		An icon indicating that the simulation IS paused
+Playing.png		An icon indicating that the simulation IS playing
+Recording.png		An icon indicating recording -- UNUSED
+StepOff.png		An icon indicating that the simulation is NOT stepping
+StepOn.png		An icon indicating that the simulation IS stepping
+Stopped.png		An icon indicating that the simulation IS stopped
+Reload.png		A "reload" or "refresh" icon
+ReloadPressed.png	A "pressed" versionof the reload or refresh icon
+
+
