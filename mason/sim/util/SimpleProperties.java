@@ -495,8 +495,8 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     e1.printStackTrace();  // try again though
                     }
                 }
+       		sortAlphabetically();
             }
-        sortAlphabetically();
         }
     
     /* If it exists, returns a method of the form 'public boolean hideFoo() { ...}'.  In this method the developer can declare
@@ -529,14 +529,31 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         try
             {
-            if (m.getName().startsWith("get"))
+            String name = m.getName();
+            if (name.startsWith("get"))
                 {
-                return m.getName().substring(3);
+                return name.substring(3);
                 }
-            else if (m.getName().startsWith("is"))
+            else if (name.startsWith("is"))
                 {
-                return m.getName().substring(2);
+                return name.substring(2);
                 }
+        	else if (name.equals("longValue"))   // Integers of various kinds
+        		{
+	            return "Value";
+	            }
+	        else if (name.equals("doubleValue"))   // Other Numbers
+	        	{
+	            return "Value";
+	            }
+	        else if (name.equals("booleanValue"))   // Booleans
+	        	{
+	            return "Value";
+	            }
+	        else if (name.equals("toString"))   // Strings, StringBuffers
+	        	{
+	            return "Value";
+	            }
             else return null;
             }
         catch (Exception e)             // just in case of RuntimeExceptions
@@ -550,13 +567,15 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         try
             {
-            if (m.getName().startsWith("get"))
+            String name = m.getName();
+            if (m == null) return null;
+            else if (name.startsWith("get"))
                 {
-                return c.getMethod("set" + (m.getName().substring(3)), new Class[] { m.getReturnType() });
+                return c.getMethod("set" + (name.substring(3)), new Class[] { m.getReturnType() });
                 }
-            else if (m.getName().startsWith("is"))
+            else if (name.startsWith("is"))
                 {
-                return c.getMethod("set" + (m.getName().substring(2)), new Class[] { m.getReturnType() });
+                return c.getMethod("set" + (name.substring(2)), new Class[] { m.getReturnType() });
                 }
             else return null;
             }
@@ -572,6 +591,16 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         if (!includeExtensions) return null;
         try
             {
+            String name = getPropertyName(m);
+            if (name != null)
+            	{
+            	return c.getMethod("dom" + name, new Class[] {} );
+            	}
+            else
+            	{
+            	return null;
+            	}
+/*
             if (m.getName().startsWith("get"))
                 {
                 return c.getMethod("dom" + (m.getName().substring(3)), new Class[] {});
@@ -581,6 +610,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 return c.getMethod("dom" + (m.getName().substring(2)), new Class[] { });
                 }
             else return null;
+*/
             }
         catch (Exception e)             // just in case of RuntimeExceptions
             {
@@ -594,6 +624,16 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         if (!includeExtensions) return null;
         try
             {
+            String name = getPropertyName(m);
+            if (name != null)
+            	{
+            	return c.getMethod("des" + name, new Class[] {} );
+            	}
+            else
+            	{
+            	return null;
+            	}
+            /*
             if (m.getName().startsWith("get"))
                 {
                 return c.getMethod("des" + (m.getName().substring(3)), new Class[] {});
@@ -603,6 +643,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 return c.getMethod("des" + (m.getName().substring(2)), new Class[] { });
                 }
             else return null;
+            */
             }
         catch (Exception e)             // just in case of RuntimeExceptions
             {
@@ -616,6 +657,16 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         if (!includeExtensions) return null;
         try
             {
+            String name = getPropertyName(m);
+            if (name != null)
+            	{
+            	return c.getMethod("name" + name, new Class[] {} );
+            	}
+            else
+            	{
+            	return null;
+            	}
+            /*
             if (m.getName().startsWith("get"))
                 {
                 return c.getMethod("name" + (m.getName().substring(3)), new Class[] {});
@@ -625,6 +676,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 return c.getMethod("name" + (m.getName().substring(2)), new Class[] { });
                 }
             else return null;
+            */
             }
         catch (Exception e)             // just in case of RuntimeExceptions
             {
@@ -633,12 +685,13 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             }
         }
     
-    public boolean isVolatile() { if (auxillary!=null) return auxillary.isVolatile(); return false; }
+    public boolean isVolatile() { if (auxillary!=null) return auxillary.isVolatile(); else return false; }
 
     /** Returns the number of properties discovered */
     public int numProperties()
         {
         if (auxillary!=null) return auxillary.numProperties();
+        if (object == null) return 0;
         return getMethods.size();
         }
 
@@ -716,6 +769,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     protected Object _setValue(int index, Object value)
         {
         if (auxillary!=null) return auxillary.setValue(index,value);  // I think this is right
+        if (object == null) return null;
         try
             {
             if (setMethods.get(index) == null) return null;
@@ -794,7 +848,9 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         {
         if (auxillary != null)
             throw new RuntimeException("Properties may not be reduced if the SimpleProperties has an auxillary.");
-                
+        if (object == null)
+            throw new RuntimeException("Properties for a Null object may not be reduced.");
+            
         SimpleProperties props = new SimpleProperties()
             {
             public boolean isVolatile() { return SimpleProperties.this.isVolatile(); }
