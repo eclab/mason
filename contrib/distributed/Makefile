@@ -57,9 +57,9 @@ jar: compile
 	@touch /tmp/manifest.add
 	@rm /tmp/manifest.add
 	@echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	@jar cvfm jar/${TARGET} /tmp/manifest.add  sim/ docs/ scripts/
-	@rm /tmp/manifest.add
-	@echo "check jar/${TARGET}"
+	jar cvfm jar/${TARGET} /tmp/manifest.add  sim/ docs/ scripts/
+	rm /tmp/manifest.add
+	echo "check jar/${TARGET}"
 
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
