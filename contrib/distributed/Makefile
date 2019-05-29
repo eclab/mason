@@ -5,10 +5,9 @@
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 LIBS=$$CLASSPATH
-FLAGS = -target 1.8 -source 1.8 -g -nowarn ${LIBS}
-JAVAC = mpijavac ${FLAGS}
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -cp ${LIBS}
+CC = mpijavac ${FLAGS}
 VERSION = 1
-CC = ${JAVAC}
 TARGET = distributed.${VERSION}.jar
 
 
