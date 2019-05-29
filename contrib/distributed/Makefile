@@ -4,7 +4,7 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-LIBS=
+LIBS=$$CLASSPATH
 FLAGS = -target 1.8 -source 1.8 -g -nowarn ${LIBS}
 JAVAC = mpijavac ${FLAGS}
 VERSION = 1

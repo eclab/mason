@@ -4,13 +4,13 @@
 #### Relevant Stuff:
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
-
+LIBS=$$CLASSPATH
+CLASSROOT = target/classes
+FLAGS = -target 1.8 -source 1.8 -g -nowarn -d ${CLASSROOT} -cp ${LIBS}
 JAVAC = javac ${FLAGS}
 
-CLASSROOT = target/classes
-FLAGS = -target 1.8 -source 1.8 -g -nowarn -d ${CLASSROOT}
-
 VERSION = 19
+TARGET=mason.${VERSION}.jar
 
 # Main java files, not including the 3D stuff
 SRCS = \
@@ -91,6 +91,7 @@ DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
 3DDIRS=$(addprefix $(SRCROOT)/, $(3DSRCS))
 
 # Make the main MASON code, not including 3D code
+all: SHELL=/bin/bash
 all:
 	@ echo This makes the 2D MASON code.
 	@ echo To learn about other options, type 'make help'
@@ -131,7 +132,8 @@ jar: 3d
 	touch /tmp/manifest.add
 	rm /tmp/manifest.add
 	echo "Main-Class: sim.display.Console" > /tmp/manifest.add
-	jar -cvfm target/mason.${VERSION}.jar /tmp/manifest.add -C ${CLASSROOT} .
+	jar -cvfm target/${TARGET} /tmp/manifest.add -C ${CLASSROOT} .
+	rm /tmp/manifest.add
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
@@ -168,7 +170,6 @@ help:
 	@ echo "make dist     Does a make clean, make docs, and make 3d, then deletes SVN dirs"
 	@ echo "make jar      Makes 3d, then collects ALL class files into a jar file"
 	@ echo "              called mason.jar.  Heavyweight -- all class files included."
-
 	@ echo "make help     Brings up this message!"
 	@ echo "make indent   Uses emacs to re-indent MASON java files as you'd prefer"
 
