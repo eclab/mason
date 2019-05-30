@@ -185,6 +185,7 @@ public class LoadBalancer {
         return count;
     }
 
+/*
     public static void main(String args[]) throws MPIException, InterruptedException, IOException {
         int[] size = new int[] {10, 10};
         int[] aoi = new int[] {1, 1};
@@ -230,4 +231,5 @@ public class LoadBalancer {
 
         MPI.Finalize();
     }
+*/
 }

@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 import mpi.*;
 
 import sim.field.DPartition;
-import sim.field.DNonUniformPartition;
+//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.ContStorage;
 import sim.field.storage.TestObj;
@@ -79,6 +79,7 @@ public class NContinuous2D<T extends Serializable> extends HaloField {
         return null;
     }
 
+/*
     public static void main(String[] args) throws MPIException {
         MPI.Init(args);
 
@@ -121,4 +122,5 @@ public class NContinuous2D<T extends Serializable> extends HaloField {
 
         MPI.Finalize();
     }
+*/
 }

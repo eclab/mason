@@ -12,7 +12,7 @@ import sim.util.IntPoint;
 import sim.util.IntHyperRect;
 import sim.util.MPITest;
 import sim.field.DPartition;
-import sim.field.DNonUniformPartition;
+//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.GridStorage;
 import sim.field.storage.ObjectGridStorage;
@@ -69,6 +69,7 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
         array[idx].add(val);
     }
 
+/*
     public static void main(String[] args) throws MPIException, IOException {
         MPI.Init(args);
 
@@ -114,4 +115,5 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 
         MPI.Finalize();
     }
+*/
 }

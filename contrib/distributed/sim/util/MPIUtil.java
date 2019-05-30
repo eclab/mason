@@ -260,6 +260,7 @@ public class MPIUtil {
         return recvBuf;
     }
 
+/*
     public static void main(String[] args) throws MPIException, IOException {
         MPI.Init(args);
 
@@ -353,6 +354,7 @@ public class MPIUtil {
 
         MPI.Finalize();
     }
+    */
 }
 
 class ByteBufferOutputStream extends OutputStream implements AutoCloseable {

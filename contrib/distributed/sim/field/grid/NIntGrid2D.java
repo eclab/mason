@@ -9,7 +9,7 @@ import sim.util.IntPoint;
 import sim.util.IntHyperRect;
 import sim.util.MPITest;
 import sim.field.DPartition;
-import sim.field.DNonUniformPartition;
+//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.IntGridStorage;
 
@@ -58,6 +58,7 @@ public class NIntGrid2D extends HaloField {
         getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
     }
 
+/*
     public static void main(String[] args) throws MPIException, IOException {
         MPI.Init(args);
 
@@ -87,4 +88,5 @@ public class NIntGrid2D extends HaloField {
         sim.field.RemoteProxy.Finalize();
         MPI.Finalize();
     }
+*/
 }

@@ -105,6 +105,7 @@ public class RemoteProxy {
         return remoteFields[pid];
     }
 
+/*
     public static void main(String[] args) throws MPIException {
         MPI.Init(args);
 
@@ -131,6 +132,7 @@ public class RemoteProxy {
 
         MPI.Finalize();
     }
+*/
 
     static class FakeRemoteField implements RemoteField {
         int val;

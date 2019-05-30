@@ -49,6 +49,7 @@ public class GraphColoring {
         return color;
     }
 
+/*
     public static void main(String[] args) throws MPIException {
         MPI.Init(args);
 
@@ -63,4 +64,5 @@ public class GraphColoring {
 
         MPI.Finalize();
     }
+*/
 }
