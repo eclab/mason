@@ -1,0 +1,71 @@
+sim/field/grid
+
+This package holds common representations of 2D and 3D discretized space.
+
+
+Grid2D.java
+
+An interface for functions common to most 2D grids, including computations
+for toroidal space, hexagonal and triangular space, and height and width.
+
+
+Grid3D.java
+
+An interface for functions common to most 3D grids, including computations
+for toroidal space, and height, depth, and width.
+
+
+AbstractGrid2D.java
+
+An abstract but concrete implementation of many of the functions in Grid2D.
+
+
+AbstractGrid3D.java
+
+An abstract but concrete implementation of many of the functions in Grid3D.
+
+
+IntGrid2D.java
+
+A 2D grid of integers (basically a wrapper for a 2D int array).
+
+
+IntGrid3D.java
+
+A 3D grid of integers (basically a wrapper for a 3D int array).
+
+
+DoubleGrid2D.java
+
+A 2D grid of doubles (basically a wrapper for a 2D double array).
+
+
+DoubleGrid3D.java
+
+A 3D grid of doubles (basically a wrapper for a 3D double array).
+
+
+ObjectGrid2D.java
+
+A 2D grid of Objects of all kinds (basically a wrapper for a 2D Object array).
+
+
+ObjectGrid3D.java
+
+A 3D grid of Objects of all kinds (basically a wrapper for a 3D Object array).
+
+
+SparseGrid2D.java
+
+A 2D sparse grid of Objects, subclassing from sim/field/SparseField.java.
+These Objects are not stored in an array but are rather associated with 2D
+locations via a hash table.
+
+
+SparseGrid3D.java
+
+A 3D Sparse grid of Objects, subclassing from sim/field/SparseField.java.
+These Objects are not store in an array but are rather associated with 3D
+locations via a hash table.
+
+

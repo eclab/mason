@@ -1,0 +1,188 @@
+"Geographic name","Longitude","Latitude","PRNAME","Geographic code","Geographic type","Population 2011","Population 2006","CSDUID","CDUID","CDNAME","ERNAME"
+Calgary,-114.052206,51.035212,Alberta,4806016,CY,1096833,988812,4806016,4806,Division No.  6,Calgary
+Edmonton,-113.494839,53.537162,Alberta,4811061,CY,812201,730372,4811061,4811,Division No. 11,Edmonton
+Strathcona County,-113.098756,53.567279,Alberta,4811052,SM,92490,82511,4811052,4811,Division No. 11,Edmonton
+Red Deer,-113.79703,52.281594,Alberta,4808011,CY,90564,83154,4808011,4808,Division No.  8,Red Deer
+Lethbridge,-112.843978,49.687894,Alberta,4802012,CY,83517,74685,4802012,4802,Division No.  2,Lethbridge--Medicine Hat
+Wood Buffalo,-111.308568,57.542179,Alberta,4816037,SM,65565,51496,4816037,4816,Division No. 16,Wood Buffalo--Cold Lake
+St. Albert,-113.638706,53.640444,Alberta,4811062,CY,61466,57764,4811062,4811,Division No. 11,Edmonton
+Medicine Hat,-110.701472,50.045886,Alberta,4801006,CY,60005,56997,4801006,4801,Division No.  1,Lethbridge--Medicine Hat
+Grande Prairie,-118.805151,55.170012,Alberta,4819012,CY,55032,47107,4819012,4819,Division No. 19,Athabasca--Grande Prairie--Peace River
+Airdrie,-114.012817,51.276754,Alberta,4806021,CY,42564,28927,4806021,4806,Division No.  6,Calgary
+Rocky View County,-114.065026,51.226484,Alberta,4806014,MD,36461,33173,4806014,4806,Division No.  6,Calgary
+Parkland County,-114.405095,53.483239,Alberta,4811034,MD,30568,29220,4811034,4811,Division No. 11,Edmonton
+Vancouver,-123.107835,49.248621,British Columbia,5915022,CY,603502,578041,5915022,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Surrey,-122.784317,49.116802,British Columbia,5915004,CY,468251,394976,5915004,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Burnaby,-122.965231,49.245627,British Columbia,5915025,CY,223218,202799,5915025,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Richmond,-123.108976,49.162961,British Columbia,5915015,CY,190473,174461,5915015,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Abbotsford,-122.285385,49.069141,British Columbia,5909052,CY,133497,124258,5909052,5909,Fraser Valley,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Coquitlam,-122.771434,49.297332,British Columbia,5915034,CY,126456,114565,5915034,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Kelowna,-119.440336,49.884948,British Columbia,5935010,CY,117312,107035,5935010,5935,Central Okanagan,Thompson--Okanagan
+Saanich,-123.389924,48.496895,British Columbia,5917021,DM,109752,108265,5917021,5917,Capital,Vancouver Island and Coast / le de Vancouver et la cte
+Langley,-122.659729,49.098691,British Columbia,5915001,DM,104177,93726,5915002,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Delta,-123.015943,49.1001,British Columbia,5915011,DM,99863,96635,5915011,5915,Greater Vancouver,Lower Mainland--Southwest / Lower Mainland--Sud-ouest
+Kamloops,-120.32773,50.694238,British Columbia,5933042,CY,85678,80376,5933042,5933,Thompson-Nicola,Thompson--Okanagan
+Winnipeg,-97.157124,49.863678,Manitoba,4611040,CY,663617,633451,4611040,4611,Division No. 11,Winnipeg
+Brandon,-99.920806,49.844888,Manitoba,4607062,CY,46061,41511,4607062,4607,Division No.  7,Southwest / Sud-ouest
+Springfield,-96.700266,49.907754,Manitoba,4612047,RM,14069,12990,4612047,4612,Division No. 12,Southeast / Sud-est
+Hanover,-96.800307,49.474171,Manitoba,4602041,RM,14026,11871,4602041,4602,Division No.  2,Southeast / Sud-est
+Steinbach,-96.683172,49.527614,Manitoba,4602044,CY,13524,11066,4602044,4602,Division No.  2,Southeast / Sud-est
+Portage la Prairie,-98.28844,49.970272,Manitoba,4609029,CY,12996,12728,4609029,4609,Division No.  9,North Central / Centre nord
+Thompson,-97.835119,55.758594,Manitoba,4622026,CY,12829,13446,4622026,4622,Division No. 22,North / Nord
+St. Andrews,-96.997252,50.274503,Manitoba,4613043,RM,11875,11359,4613043,4613,Division No. 13,Interlake
+Winkler,-97.938744,49.181463,Manitoba,4603050,CY,10670,9106,4603050,4603,Division No.  3,South Central / Centre sud
+St. Clements,-96.70247,50.260812,Manitoba,4613056,RM,10505,9706,4613056,4613,Division No. 13,Interlake
+TachŽ,-96.724682,49.730325,Manitoba,4602069,RM,10284,9083,4602069,4602,Division No.  2,Southeast / Sud-est
+Saint John,-66.060524,45.274971,New Brunswick,1301006,CY,70063,68043,1301006,1301,Saint John,Saint John--St. Stephen
+Moncton,-64.812443,46.116791,New Brunswick,1307022,C,69074,64128,1307022,1307,Westmorland,Moncton--Richibucto
+Fredericton,-66.643759,45.955614,New Brunswick,1310032,CY,56224,50535,1310032,1310,York,Fredericton--Oromocto
+Dieppe,-64.690495,46.085717,New Brunswick,1307045,C,23310,18565,1307045,1307,Westmorland,Moncton--Richibucto
+Riverview,-64.809286,46.052906,New Brunswick,1306020,T,19128,17832,1306020,1306,Albert,Moncton--Richibucto
+Quispamsis,-65.935174,45.43465,New Brunswick,1305057,TV,17886,15239,1305057,1305,Kings,Saint John--St. Stephen
+Miramichi,-65.506924,47.019737,New Brunswick,1309050,C,17811,18129,1309050,1309,Northumberland,Campbellton--Miramichi
+Edmundston,-68.32206,47.377857,New Brunswick,1313027,C,16032,16643,1313027,1313,Madawaska,Edmundston--Woodstock
+Bathurst,-65.632299,47.623435,New Brunswick,1315011,CY,12275,12714,1315011,1315,Gloucester,Campbellton--Miramichi
+Rothesay,-65.877635,45.399647,New Brunswick,1305045,TV,11947,11637,1305008,1305,Kings,Saint John--St. Stephen
+St. John's,-52.797082,47.481774,Newfoundland and Labrador,1001519,CY,106172,100646,1001519,1001,Division No.  1,Avalon Peninsula
+Conception Bay South,-52.995103,47.490403,Newfoundland and Labrador,1001485,T,24848,21966,1001485,1001,Division No.  1,Avalon Peninsula
+Mount Pearl,-52.81216,47.519391,Newfoundland and Labrador,1001542,CY,24284,24671,1001542,1001,Division No.  1,Avalon Peninsula
+Corner Brook,-57.925986,48.928706,Newfoundland and Labrador,1005018,CY,19886,20083,1005018,1005,Division No.  5,West Coast--Northern Peninsula--Labrador / Cte-ouest--Northern Peninsula--Labrador
+Paradise,-52.88418,47.53421,Newfoundland and Labrador,1001517,T,17695,12584,1001517,1001,Division No.  1,Avalon Peninsula
+Grand Falls-Windsor,-55.6633,48.957787,Newfoundland and Labrador,1006017,T,13725,13558,1006017,1006,Division No.  6,Notre Dame--Central Bonavista Bay
+Gander,-54.589501,48.957643,Newfoundland and Labrador,1006009,T,11054,9951,1006009,1006,Division No.  6,Notre Dame--Central Bonavista Bay
+Yellowknife,-114.405283,62.470857,Northwest Territories,6106023,CY,19234,18700,6106023,6106,Region 6,Northwest Territories
+Hay River,-115.900391,60.753132,Northwest Territories,6105016,T,3606,3648,6105016,6105,Region 5,Northwest Territories
+Inuvik,-133.609614,68.340721,Northwest Territories,6101017,T,3463,3484,6101017,6101,Region 1,Northwest Territories
+Fort Smith,-112.082082,60.025996,Northwest Territories,6105001,T,2093,2364,6105001,6105,Region 5,Northwest Territories
+Behchok˜,-115.993318,62.818435,Northwest Territories,6103031,CG,1926,1894,6103031,6103,Region 3,Northwest Territories
+Fort Simpson,-121.319934,61.808194,Northwest Territories,6104038,VL,1238,1216,6104038,6104,Region 4,Northwest Territories
+Tuktoyaktuk,-133.006161,69.425226,Northwest Territories,6101036,HAM,854,870,6101036,6101,Region 1,Northwest Territories
+Fort McPherson,-134.826145,67.43327,Northwest Territories,6101015,HAM,792,776,6101015,6101,Region 1,Northwest Territories
+Fort Providence,-117.617562,61.421334,Northwest Territories,6104014,HAM,734,727,6104014,6104,Region 4,Northwest Territories
+Norman Wells,-126.764157,65.292146,Northwest Territories,6102007,T,727,761,6102007,6102,Region 2,Northwest Territories
+Aklavik,-135.06511,68.228885,Northwest Territories,6101025,HAM,633,594,6101025,6101,Region 1,Northwest Territories
+Fort Liard,-123.382601,60.2563,Northwest Territories,6104009,HAM,536,583,6104009,6104,Region 4,Northwest Territories
+Fort Good Hope,-128.578065,66.266619,Northwest Territories,6102009,CC,515,557,6102009,6102,Region 2,Northwest Territories
+What“,-117.17707,63.164861,Northwest Territories,6103034,CG,492,460,6103034,6103,Region 3,Northwest Territories
+Tulita,-125.461086,64.918596,Northwest Territories,6102005,HAM,478,505,6102005,6102,Region 2,Northwest Territories
+Fort Resolution,-113.69149,61.048996,Northwest Territories,6105018,HAM,474,484,6105018,6105,Region 5,Northwest Territories
+DŽline,-123.431723,65.211455,Northwest Territories,6102003,CC,472,525,6102003,6102,Region 2,Northwest Territories
+Ulukhaktok,-117.739521,70.762291,Northwest Territories,6101095,HAM,402,398,6101095,6101,Region 1,Northwest Territories
+Region 5: Unorganized,-108.427629,61.265344,Northwest Territories,6105097,NO,347,37,6105097,6105,Region 5,Northwest Territories
+Paulatuk,-123.985073,69.32534,Northwest Territories,6101014,HAM,313,294,6101014,6101,Region 1,Northwest Territories
+Lutselk'e,-110.680573,62.390779,Northwest Territories,6105020,SET,295,318,6105020,6105,Region 5,Northwest Territories
+Hay River Dene 1,-115.688574,60.79018,Northwest Territories,6104017,IRI,292,309,6104017,6104,Region 4,Northwest Territories
+Gamt“,-117.310235,64.11385,Northwest Territories,6103049,CG,253,283,6103049,6103,Region 3,Northwest Territories
+Detah,-114.306539,62.412192,Northwest Territories,6106021,SET,210,247,6106021,6106,Region 6,Northwest Territories
+Colville Lake,-126.007962,67.001487,Northwest Territories,6102012,SET,149,126,6102012,6102,Region 2,Northwest Territories
+Tsiigehtchic,-133.692577,67.428576,Northwest Territories,6101010,CC,143,175,6101010,6101,Region 1,Northwest Territories
+Wekwet“,-114.187161,64.189099,Northwest Territories,6103052,CG,141,137,6103052,6103,Region 3,Northwest Territories
+Wrigley,-123.353609,63.194174,Northwest Territories,6104044,SET,133,122,6104044,6104,Region 4,Northwest Territories
+Sachs Harbour,-125.23931,72.01749,Northwest Territories,6101041,HAM,112,122,6101041,6101,Region 1,Northwest Territories
+Nahanni Butte,-123.383578,60.999615,Northwest Territories,6104010,SET,102,115,6104010,6104,Region 4,Northwest Territories
+Halifax,-63.146765,44.865298,Nova Scotia,1209034,RGM,390096,372679,1209034,1209,Halifax,Halifax
+Cape Breton,-60.257309,46.009676,Nova Scotia,1217030,RGM,97398,102250,1217030,1217,Cape Breton,Cape Breton
+Lunenburg,-64.319562,44.376926,Nova Scotia,1206001,MD,25118,25164,1206006,1206,Lunenburg,Southern / Sud
+East Hants,-63.701237,45.099055,Nova Scotia,1208008,MD,22111,21397,1208008,1208,Hants,Annapolis Valley
+Kings: Subd. A,-64.756082,44.959881,Nova Scotia,1207001,SC,22103,22161,1207001,1207,Kings,Annapolis Valley
+Iqaluit,-68.510734,63.759806,Nunavut,6204003,CY,6699,6184,6204003,6204,Baffin,Nunavut
+Arviat,-94.168783,61.099562,Nunavut,6205015,HAM,2318,2060,6205015,6205,Keewatin,Nunavut
+Rankin Inlet,-92.132125,62.82999,Nunavut,6205017,HAM,2266,2358,6205017,6205,Keewatin,Nunavut
+Baker Lake,-96.030823,64.32865,Nunavut,6205023,HAM,1872,1728,6205023,6205,Keewatin,Nunavut
+Cambridge Bay,-105.170746,69.15279,Nunavut,6208073,HAM,1608,1477,6208073,6208,Kitikmeot,Nunavut
+Pond Inlet,-77.750273,72.680822,Nunavut,6204020,HAM,1549,1315,6204020,6204,Baffin,Nunavut
+Igloolik,-81.681101,69.381658,Nunavut,6204012,HAM,1454,1538,6204012,6204,Baffin,Nunavut
+Kugluktuk,-115.322312,67.805523,Nunavut,6208059,HAM,1450,1302,6208059,6208,Kitikmeot,Nunavut
+Pangnirtung,-65.682936,66.14361,Nunavut,6204009,HAM,1425,1325,6204009,6204,Baffin,Nunavut
+Cape Dorset,-76.540521,64.223745,Nunavut,6204007,HAM,1363,1236,6204007,6204,Baffin,Nunavut
+Gjoa Haven,-95.891228,68.644751,Nunavut,6208081,HAM,1279,1064,6208081,6208,Kitikmeot,Nunavut
+Repulse Bay,-86.318627,66.562765,Nunavut,6205027,HAM,945,748,6205027,6205,Keewatin,Nunavut
+Clyde River,-68.482168,70.463198,Nunavut,6204015,HAM,934,820,6204015,6204,Baffin,Nunavut
+Taloyoak,-93.497227,69.555358,Nunavut,6208087,HAM,899,809,6208087,6208,Kitikmeot,Nunavut
+Coral Harbour,-83.24778,64.173981,Nunavut,6205014,HAM,834,769,6205014,6205,Keewatin,Nunavut
+Arctic Bay,-85.135787,73.06201,Nunavut,6204018,HAM,823,690,6204018,6204,Baffin,Nunavut
+Sanikiluaq,-79.211807,56.57108,Nunavut,6204001,HAM,812,744,6204001,6204,Baffin,Nunavut
+Kugaaruk,-89.812168,68.532208,Nunavut,6208047,HAM,771,688,6208047,6208,Kitikmeot,Nunavut
+Hall Beach,-81.262617,68.775034,Nunavut,6204011,HAM,546,654,6204011,6204,Baffin,Nunavut
+Qikiqtarjuaq,-63.904204,67.544232,Nunavut,6204010,HAM,520,473,6204010,6204,Baffin,Nunavut
+Kimmirut,-69.874179,62.849029,Nunavut,6204005,HAM,455,411,6204005,6204,Baffin,Nunavut
+Whale Cove,-92.836374,62.317859,Nunavut,6205016,HAM,407,353,6205016,6205,Keewatin,Nunavut
+Chesterfield Inlet,-90.824756,63.311985,Nunavut,6205019,HAM,313,332,6205019,6205,Keewatin,Nunavut
+Resolute,-94.881804,74.719263,Nunavut,6204022,HAM,214,229,6204022,6204,Baffin,Nunavut
+Grise Fiord,-82.75446,76.492543,Nunavut,6204025,HAM,130,141,6204025,6204,Baffin,Nunavut
+Toronto,-79.390462,43.726574,Ontario,3520005,C,2615060,2503281,3520005,3520,Toronto,Toronto
+Ottawa,-75.775304,45.293177,Ontario,3506008,CV,883391,812129,3506008,3506,Ottawa,Ottawa
+Mississauga,-79.662931,43.599395,Ontario,3521005,CY,713443,668599,3521005,3521,Peel,Toronto
+Brampton,-79.752248,43.715648,Ontario,3521010,CY,523911,433806,3521010,3521,Peel,Toronto
+Hamilton,-79.958334,43.252995,Ontario,3525005,C,519949,504559,3525005,3525,Hamilton,Hamilton--Niagara Peninsula
+London,-81.238027,42.953382,Ontario,3539036,CY,366151,352395,3539036,3539,Middlesex,London
+Markham,-79.295015,43.881409,Ontario,3519036,T,301709,261573,3519036,3519,York,Toronto
+Vaughan,-79.564782,43.836665,Ontario,3519028,CY,288301,238866,3519028,3519,York,Toronto
+Kitchener,-80.470336,43.420869,Ontario,3530013,CY,219153,204668,3530013,3530,Waterloo,Kitchener--Waterloo--Barrie
+Windsor,-82.987741,42.286632,Ontario,3537039,CY,210891,216473,3537039,3537,Essex,Windsor--Sarnia
+Richmond Hill,-79.427451,43.9034,Ontario,3519038,T,185541,162704,3519038,3519,York,Toronto
+Oakville,-79.723099,43.456122,Ontario,3524001,T,182520,165613,3524001,3524,Halton,Toronto
+Burlington,-79.845593,43.381365,Ontario,3524002,CY,175779,164415,3524002,3524,Halton,Hamilton--Niagara Peninsula
+Greater Sudbury / Grand Sudbury,-81.044125,46.590349,Ontario,3553005,CV,160274,157857,3553005,3553,Greater Sudbury / Grand Sudbury,Northeast / Nord-est
+Oshawa,-78.878227,43.948817,Ontario,3518013,CY,149607,141590,3518013,3518,Durham,Toronto
+Barrie,-79.686726,44.369895,Ontario,3543042,CY,135711,128430,3543042,3543,Simcoe,Kitchener--Waterloo--Barrie
+St. Catharines,-79.25287,43.162602,Ontario,3526053,CY,131400,131989,3526053,3526,Niagara,Hamilton--Niagara Peninsula
+Cambridge,-80.328494,43.400582,Ontario,3530010,CY,126748,120371,3530010,3530,Waterloo,Kitchener--Waterloo--Barrie
+Kingston,-76.455927,44.312563,Ontario,3510010,CY,123363,117207,3510010,3510,Frontenac,Kingston--Pembroke
+Whitby,-78.965228,43.933076,Ontario,3518009,T,122022,111184,3518009,3518,Durham,Toronto
+Guelph,-80.23696,43.532777,Ontario,3523008,CY,121688,114943,3523008,3523,Wellington,Kitchener--Waterloo--Barrie
+Ajax,-79.027579,43.869094,Ontario,3518005,T,109600,90167,3518005,3518,Durham,Toronto
+Thunder Bay,-89.309134,48.4269,Ontario,3558004,CY,108359,109160,3558004,3558,Thunder Bay,Northwest / Nord-ouest
+Chatham-Kent,-82.132365,42.42287,Ontario,3536020,MU,103671,108177,3536020,3536,Chatham-Kent,Windsor--Sarnia
+Charlottetown,-63.135184,46.2664,Prince Edward Island,1102075,CY,34562,32174,1102075,1102,Queens,Prince Edward Island
+Summerside,-63.787419,46.411993,Prince Edward Island,1103025,CY,14751,14500,1103025,1103,Prince,Prince Edward Island
+Stratford,-63.085348,46.215657,Prince Edward Island,1102080,T,8574,7083,1102080,1102,Queens,Prince Edward Island
+Cornwall,-63.2016,46.23597,Prince Edward Island,1102085,T,5162,4677,1102085,1102,Queens,Prince Edward Island
+MontrŽal,-73.648045,45.532432,Quebec,2466023,V,1649519,1620693,2466023,2466,Montral,Montral
+Puvirnituq,-77.275036,60.047734,Quebec,2499120,VN,1692,1457,2499120,2499,Nord-du-Qubec,Nord-du-Qubec
+Salluit,-75.63294,62.201489,Quebec,2499135,VN,1347,1241,2499135,2499,Nord-du-Qubec,Nord-du-Qubec
+QuŽbec,-71.335423,46.855108,Quebec,2423027,V,516622,491142,2423027,2423,Qubec,Capitale-Nationale
+Laval,-73.725743,45.604849,Quebec,2465005,V,401553,368709,2465005,2465,Laval,Laval
+Gatineau,-75.658462,45.49093,Quebec,2481017,V,265349,242124,2481017,2481,Gatineau,Outaouais
+Longueuil,-73.433576,45.509332,Quebec,2458227,V,231409,229330,2458227,2458,Longueuil,Montrgie
+Sherbrooke,-71.961521,45.40184,Quebec,2443027,V,154601,147427,2443027,2443,Sherbrooke,Estrie
+Saguenay,-71.13248,48.372239,Quebec,2494068,V,144746,143692,2494068,2494,Le Saguenay-et-son-Fjord,Saguenay--Lac-Saint-Jean
+LŽvis,-71.235574,46.706685,Quebec,2425213,V,138769,130006,2425213,2425,Lvis,Chaudire-Appalaches
+Trois-Rivires,-72.614284,46.369679,Quebec,2437067,V,131338,126293,2437067,2437,Francheville,Mauricie
+Terrebonne,-73.686376,45.733325,Quebec,2464008,V,106322,94703,2464008,2464,Les Moulins,Lanaudire
+Kangiqsujuaq,-72.018898,61.576578,Quebec,2499130,VN,696,605,2499888,2499,Nord-du-Qubec,Nord-du-Qubec
+Kangirsuk,-70.026525,60.004484,Quebec,2499110,VN,549,466,2499890,2499,Nord-du-Qubec,Nord-du-Qubec
+Quaqtaq,-69.579577,61.035674,Quebec,2499115,VN,376,315,2499115,2499,Nord-du-Qubec,Nord-du-Qubec
+Ivujivik,-77.860408,62.403611,Quebec,2499140,VN,370,349,2499140,2499,Nord-du-Qubec,Nord-du-Qubec
+Saskatoon,-106.640718,52.141318,Saskatchewan,4711066,CY,222189,202408,4711066,4711,Division No. 11,Saskatoon--Biggar
+Regina,-104.620173,50.45428,Saskatchewan,4706027,CY,193100,179282,4706027,4706,Division No.  6,Regina--Moose Mountain
+Prince Albert,-105.697372,53.215338,Saskatchewan,4715066,CY,35129,34127,4715066,4715,Division No. 15,Prince Albert
+Moose Jaw,-105.549831,50.397457,Saskatchewan,4707039,CY,33274,32132,4707039,4707,Division No.  7,Swift Current--Moose Jaw
+Lloydminster,-109.985517,53.283374,Saskatchewan,4810039,CY,18032,15910,4717029,4717,Division No. 17,Prince Albert
+Yorkton,-102.466305,51.214482,Saskatchewan,4709012,CY,15669,15038,4709012,4709,Division No.  9,Yorkton--Melville
+Swift Current,-107.793404,50.287644,Saskatchewan,4708004,CY,15503,14946,4708004,4708,Division No.  8,Swift Current--Moose Jaw
+North Battleford,-108.281062,52.76945,Saskatchewan,4716029,CY,13888,13190,4716029,4716,Division No. 16,Prince Albert
+Estevan,-102.985601,49.142833,Saskatchewan,4701024,CY,11054,10084,4701024,4701,Division No.  1,Regina--Moose Mountain
+Weyburn,-103.850591,49.664739,Saskatchewan,4702047,CY,10484,9433,4702047,4702,Division No.  2,Regina--Moose Mountain
+Whitehorse,-135.069058,60.702927,Yukon,6001009,CY,23276,20461,6001009,6001,Yukon,Yukon
+Yukon: Unorganized,-135.518956,63.683757,Yukon,6001045,NO,1688,1286,6001045,6001,Yukon,Yukon
+Dawson,-139.389336,64.046397,Yukon,6001029,T,1319,1327,6001029,6001,Yukon,Yukon
+Macpherson-Grizzly Valley,-135.402255,61.033494,Yukon,6001059,NO,1072,851,6001059,6001,Yukon,Yukon
+Watson Lake,-128.6932,60.06202,Yukon,6001003,T,802,846,6001003,6001,Yukon,Yukon
+Marsh Lake,-134.308269,60.487197,Yukon,6001058,NO,619,538,6001058,6001,Yukon,Yukon
+Haines Junction,-137.509081,60.770934,Yukon,6001018,VL,593,589,6001018,6001,Yukon,Yukon
+Carmacks,-136.256773,62.10014,Yukon,6001012,VL,503,425,6001012,6001,Yukon,Yukon
+Mt. Lorne,-134.927907,60.417408,Yukon,6001044,HAM,408,370,6001044,6001,Yukon,Yukon
+Tagish,-134.286634,60.281616,Yukon,6001036,Sƒ,391,222,6001036,6001,Yukon,Yukon
+Ross River,-132.450554,61.971803,Yukon,6001037,Sƒ,352,313,6001037,6001,Yukon,Yukon
+Ibex Valley,-135.629395,60.836889,Yukon,6001055,HAM,346,376,6001055,6001,Yukon,Yukon
+Faro,-133.35555,62.214184,Yukon,6001004,T,344,341,6001004,6001,Yukon,Yukon
+Pelly Crossing,-136.580398,62.820768,Yukon,6001041,Sƒ,336,296,6001041,6001,Yukon,Yukon
+Carcross,-134.715635,60.176741,Yukon,6001048,Sƒ,289,280,6001048,6001,Yukon,Yukon
+Whitehorse: Unorganized,-135.045549,60.546773,Yukon,6001060,NO,287,264,6001060,6001,Yukon,Yukon
+Old Crow,-139.823022,67.570307,Yukon,6001043,Sƒ,245,253,6001043,6001,Yukon,Yukon
+Mayo,-135.896133,63.596525,Yukon,6001022,VL,226,248,6001022,6001,Yukon,Yukon
+Teslin Post 13,-132.74012,60.17078,Yukon,6001007,SG,138,156,6001007,6001,Yukon,Yukon
+Upper Liard,-128.916844,60.053078,Yukon,6001032,Sƒ,132,178,6001032,6001,Yukon,Yukon
+Teslin,-132.714049,60.172925,Yukon,6001006,VL,122,141,6001006,6001,Yukon,Yukon
+Beaver Creek,-140.893188,62.3799,Yukon,6001042,Sƒ,103,112,6001042,6001,Yukon,Yukon

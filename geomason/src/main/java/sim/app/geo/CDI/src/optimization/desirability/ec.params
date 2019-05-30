@@ -1,0 +1,51 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+#
+# This is ecj parameter file for the desirability coefficient
+# calculations. It uses simple real valued EA.
+
+parent.0 = @ec.Evolve ec.params
+
+eval.problem = phases.phase1.Phase1Problem
+
+state = 				ec.simple.SimpleEvolutionState
+init = 					ec.simple.SimpleInitializer
+finish = 	        		ec.simple.SimpleFinisher
+exch = 					ec.simple.SimpleExchanger
+breed =					ec.simple.SimpleBreeder
+eval =					ec.simple.SimpleEvaluator
+stat =					ec.simple.SimpleStatistics
+generations =				50
+quit-on-run-complete =			true
+pop = 					ec.Population
+pop.subpops =				1
+pop.subpop.0 = 				ec.Subpopulation
+pop.subpop.0.duplicate-retries =	2
+pop.subpop.0.species =                  ec.vector.FloatVectorSpecies
+pop.subpop.0.species.pipe = 		ec.vector.breed.VectorMutationPipeline
+pop.subpop.0.species.pipe.source.0 = 	ec.vector.breed.VectorCrossoverPipeline
+pop.subpop.0.species.pipe.source.0.source.0 = ec.select.TournamentSelection
+pop.subpop.0.species.pipe.source.0.source.1 = same
+
+pop.subpop.0.species.fitness =		ec.simple.SimpleFitness
+pop.subpop.0.species.ind =		ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.mutation-bounded =	true
+
+# pop.subpop.0.species.min-gene =	0.0
+pop.subpop.0.species.min-gene =	-1.0
+pop.subpop.0.species.max-gene =	1.0
+
+# You can change this to whatever you want, though Booth requires a genome size of 2
+pop.subpop.0.species.genome-size = 4
+
+# ECJ will complain if this isn't set even if we don't use it, so here's a default
+pop.subpop.0.species.crossover-type = two
+
+select.tournament.size = 		2
+pop.subpop.0.species.mutation-prob =  1.0
+pop.subpop.0.species.mutation-stdev = 0.01
+pop.subpop.0.species.mutation-type = gauss
+
+pop.subpop.0.size =			100
+stat.file				$out.stat

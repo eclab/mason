@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>edu.gmu.eclab</groupId>
+  <artifactId>mpi-openmpi-4.0</artifactId>
+  <versioning>
+    <release>4.0</release>
+    <versions>
+      <version>2.0</version>
+      <version>4.0</version>
+    </versions>
+    <lastUpdated>20190523114811</lastUpdated>
+  </versioning>
+</metadata>

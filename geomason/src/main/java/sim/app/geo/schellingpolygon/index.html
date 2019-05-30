@@ -1,0 +1,27 @@
+<html>
+    <head><title>Schelling Polygon</title></head>
+    <body>
+        <table border=0 cellspacing=0 cellpadding=6>
+            <tr>
+                <td valign=top><img src="schellingpolygon.png"><td valign=top>
+                    <h2>Schelling Polygon Model</h2>
+                    Contact: <a href="mailto:swise5@gmu.edu">Sarah Wise</a>, <a href="mailto:mcoletti@gmu.edu">Mark Coletti</a>, or <a href="mailto:crooks2@gmu.edu">Andrew Crooks</a>,
+        </table>
+        <p>
+        In this model we demonstrate how one can use polygons (such as census
+        tracks) to create an abstract Schelling model stylized on Washington DC.
+        The model reads in a ESRI Polygon shapefile and uses attributes of the
+        shapefile to create Red and Blue agents and a number of Unoccupied areas.
+        As with the traditional Schelling model, Red and Blue agents want to be
+        located in neighborhoods were a certain percentage of their neighbors are
+        of the same type. However, instead of using a Moore or Von Neumann which
+        is common practice in cell based models, neighborhoods are calculated
+        using the neighbors that share a common edge to the agent in question. If
+        an agent is dissatisfied with its current neighborhood, it will move to
+        a random Unoccupied polygon, regardless of whether or not this new location
+        meets its preference.
+    </body>
+</html>
+</body>
+</html>
+

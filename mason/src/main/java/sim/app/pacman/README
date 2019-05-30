@@ -1,0 +1,22 @@
+sim.app.pacman
+
+This is a moderately faithful reimplementation of Pac Man, with a few 
+differences and twists.  Major differences:
+
+- No "scatter" behavior, though the ghost behaviors are otherwise fairly
+  faithful.
+- The Pac's animation is somewhat different
+- No fruit
+
+Major twists:
+
+- You can have as many lives as you want.
+
+- We enable multiple mazes.  Two by default are included.  Mazes are
+  simple PBM files.
+
+- We enable multiple pacs.  By default that's turned on.  Control the
+  second Pac with the adws keys and the first pac with the arrow keys.
+  You might try experimenting with subclasses of Pac to create AI pacs
+  of your own (we've done that in-house).
+

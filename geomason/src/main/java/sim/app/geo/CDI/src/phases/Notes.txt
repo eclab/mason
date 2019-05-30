@@ -1,0 +1,7 @@
+Phase 2 TODO
+
+[ ] Fix areas excluded from desirability map (Ates)
+[ ] Add social attraction to neighboring cells
+[ ] Use desirability bounds in color map
+[ ] Fitness metric (chi-squared, maximum likelihood estimation, etc.?)
+[ ] Use grid bounds of Canada to reduce the amount of looping

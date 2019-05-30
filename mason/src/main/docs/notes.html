@@ -1,0 +1,286 @@
+<html>
+<head>
+<title>MASON Notes</title>
+<style type="text/css">
+
+h2  {
+    text-align:center;
+    font-family:Times,Times New Roman,Serif;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border-top: solid 3px #333355;
+    border-bottom: solid 3px #333355;
+    background-color: #F3F3F3;
+    }
+
+h1  {
+    text-align:center;
+    font-family:Times,Times New Roman,Serif;
+    color: #FFFFFF;
+    font-weight: 100;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    border-bottom: solid 10px #CCCCCC;
+    background-color: #333355;
+    }
+
+</style>
+
+</head>
+<body>
+
+<h1>Notes</h1>
+
+<ol>
+<li><a href="#Checkpointing">Checkpointing</a>
+<li><a href="#Communicating">Communicating Between the Model Thread and the Visualization Thread</a>
+<li><a href="#Multithreading">Using MASON's Multi-threaded Model Facilities</a>
+<li><a href="#Duplication">strictfp and Duplication</a>
+<li><a href="#MacOSX">MacOS X Notes</a>
+<li><a href="#Windows">Windows Notes</a>
+<li><a href="#XWindows">X Windows Notes</a>
+<li><a href="#HotSpot">What You Should Know About Jikes and HotSpot</a>
+</ol>
+
+<a name="Checkpointing"><h2>Checkpointing</h2></a>
+
+<p>Checkpointing is done using Java's serialization facility.  The checkpoint file is a standard Java serialized file, but has been gzipped.  Only model objects are checkpointed out, not visualization objects.
+
+<p>If you want to checkpoint out on one platform and read in on another platform, your classes must all have the same <b>serialversionUIDs</b>.  Different compilers will provide different serialversionUIDs to non-static inner classes (including anonymous classes) and the outer classes they are nested within.  If you've got inner classes in your model code, you must provide your own hard-coded serialversionUID.  See Tutorial3 for an extended discussion of this.  None of this matters if you're writing and reading on the same platform (and with the same compiler).
+
+<p>Some Java classes cannot be checkpointed: for example, various Graphics2D classes.  This presents a problem if you rely on them in your model.  You may need to make custom serializations for your classes which use these classes.  See the MavDemo model code for an example (particularly the Obstacle.java file).
+
+<a name="Communicating"><h2>Communicating Between the Model Thread and the Visualization Thread</h2></a>
+
+<p>MASON's visualization system runs the model underneath in a separate thread.
+This can create race conditions for visualization tools.  Here are some
+synchronization rules for you to follow.
+
+<p><b>How it works.</b>  
+The Console first calls start(), then creates the underlying play thread.
+After the thread dies, the Console calls finish().  Thus code in the start()
+and finish() methods are always executed in the plain Swing event thread.
+
+<P>The model thread does the following:
+
+<ol>
+<li>Stop if it's been asked to.  Else....
+<li>Step the GUIState.  This in turn locks on the schedule, steps
+GUIState's scheduleImmediate(BEFORE) stuff, steps the schedule,
+steps GUIState's scheduleImmediate(AFTER) stuff, then unlocks the schedule.
+Inside the locks, the stepping causes the model to update, and Display2Ds to:
+<ul>
+<li>Issue an asynchronous repaint() request if we're on MacOS X
+<li>Otherwise draw immediately to the screen
+</ul>
+<li>Set the time, rate, and number of steps.  This causes asynchronous requests to update the text field.
+<li>Stop if it's been asked to.  Else...
+<li>Block on the event queue using <tt>SwingUtilities.invokeAndWait(<i>a do-nothing Runnable</i>)</tt>.  This trick causes the model thread to wait until all the Event Queue's repaints and events have gone through.  The model thread should be interrupted from this block only if being requested to stop.  At any rate, note that at this point in time the model thread no longer is holding onto the schedule lock.  Thus if you lock on the schedule in an event in the event queue, you'll block until this point in time, then you'll go through.  
+<li>Stop if it's been asked to.  Else...
+<li>Sleep a little if it's been asked to.  The model thread can be interrupted from this.
+<li>If the simulation has completed (but the thread wasn't stopped by the user), or we're at a requested breakpoint, stop thre thread.  Else...
+<li>Go to #1.
+</ol>
+
+<p>Also, items stepped in the GUIState's 
+"extreme" queues are done so while holding onto the schedule lock.
+
+<p>Thus locking on the schedule is one way to know that you're in a safe situation with regard to the underlying model thread (it's waiting for you).  Additionally, you should be aware that repaints() can <i>occur at any time</i>.  
+
+<p>Most event loop and repaint things should be done by acquiring the schedule lock before getting information from the model.  Remember to make your locks as brief as possible.  
+
+<p>If that's so, then how do we <i>stop</i> the thread from the pause or stop button? Because the play thread blocks ont he event queue at step #5, consider the situation of pausing or stopping
+it.  The play thread has blocked.  The user pressed the stop button.  We try
+to join() the play thread.  Now the event loop has blocked on the play thread
+and the play thread is blocking on the event loop.  Deadlock!  To deal with
+this, we repeatedly interrupt() (with a 50ms spin-wait) the play thread until
+it responds with an "okay, okay, I'm dying, sheesh" signal, and then we join()
+it.
+
+<P><b>General Locking Rules</b>
+
+<ul>
+<li>Your model should never do anything which could block forever or you
+   risk deadlock.
+
+<li>If you need to send information to a Swing Widget FROM anything scheduled
+   in the GUIState or in the Schedule, you should do so asynchronously, using
+   SwingUtilities.invokeLater().  There's no clean way to send a synchronous
+   blocking message without risking deadlock.
+
+<li>If you need to send information FROM a Swing Widget TO the model, or 
+   read model data FROM a Swing Widget method, you can do so either
+   asynchronously, synchronously, or as-a-single-thread.   
+
+<ul>
+     <li>   asynchronously: load up a Steppable with copies of the information
+                you wish to send to the model.  Schedule the Steppable
+                as a scheduleImmediate(...) in the GUIState.
+
+    <li>    synchronously:  synchronize on state.schedule, then do your code.
+
+    <li>    as-a-single-thread: put your code inside a Runnable and pass it into
+                the Controller's doChangeCode(...) method.  Note that this
+                is an expensive method: it pauses the model thread, runs
+                your code, then unpauses the model thread.  Do this only
+                for code that's not in a tight loop: for example it's
+                appropriate for code responding to a user pressing -Return-
+                in a text field.
+	</ul>
+</ul>
+<p>Your other option is to just bag it and risk the race condition.  If you're
+just setting a boolean value or an integer or a float, you're probably safe
+here.  If you're setting a double or a long, or anything bigger (an array?
+class?), you're unsafe.
+</ul>
+
+<a name="Multithreading"><H2>Using MASON's Multi-threaded Model Facilities</h2></a>
+
+<p>MASON provides two opportunities for parallel threading at the model level: parallel Sequences and asynchronous Steppables.  
+
+<p>A <b>ParallelSequence</b> is a Steppable which holds a set of subsidiary Steppables, and which can be scheduled on the Schedule.  Unlike other Sequences which iterate through these Steppables in series, the ParallelSequence calls all of its subsidiary Steppables in parallel, each in its own thread, then waits until they have completed before it returns.  The HeatBugs example code shows one approach to parallelizing the model using a ParallelSequence, resulting in nearly a two-times speedup on a dual-processor machine. ParallelSequences can be serialized.
+
+<p>An <b>AsynchronousSteppable</b> is a Steppable which, when stepped, runs in its own thread.  Such Steppables may run in an infinite loop in their own thread forever until Stopped either by a later action in the Schedule or by the end of the simulation; or they may fire off a separate thread to do a one-shot asynchronous task in the background and then quit.  AsynchronousSteppables can be serialized.  
+
+<p>There are important differences between these two parallel models.  ParallelSequences perform their actions in sync with the schedule: the ParallelSequence is stepped, it spawns its threads and lets them run, it waits for them to complete, and then it returns from its step.  Thus all the actions of a ParallelSequence are done in one timestep and the schedule waits for them to finish.  But an AsynchronousSteppable runs in the background, even while the schedule is being paused, and has no notion of "time" with regard to the schedule at all.
+
+<p>As usual, you need to be very careful when using multi-threaded code.  ParallelSequences merely need to be written such that each separate Steppable in the sequence doesn't step on other steppables' toes.  AsynchronousSteppables are much more fraught with peril -- when modifying or reading from the model, they need to lock on the Schedule to make sure that <i>neither</i> the Swing event thread <i>nor</i> the underlying model thread are reading/writing the model as well.  That goes for the random number generator as well.
+
+<p>AsynchronousSteppables are new to MASON and are certain to have a number of bugs.  If you synchronize on the Schedule in an AsynchronousSteppable, and the model thread is trying to call your stop method, we might have a race condition.  Our cursory glance doesn't show any obvious race condition we've overlooked in the code, but one never knows.
+
+<p>Both ParallelSequences and (especially) AsynchronousSteppables may break guarantees of <b>duplication</b> (see below) because things do not operate in sync any more.
+
+<a name="Duplication"><h2>strictfp and Duplication</h2></a>
+
+MASON is designed to make it as easy as possible for you to have <i>duplicatable results</i>,
+meaning that they will run the same way on MASON regardless of platform.  However,
+because of the different implementations of operations with floating point
+numbers (such as +, -, /, *, %), Java operations with doubles and singles
+are not guaranteed to return identical results on different platforms,
+unless you take the following steps:
+
+<ol>
+<li>In all classes which use floating-point math, add the "strictfp" keyword
+   to the class header.
+<li>Replace all references of <tt>Math.<i>foo</i>()</tt> with <tt>StrictMath.<i>foo</i>()</tt>
+</ol>
+
+<p>This is <i>supposed</i> to guarantee identical results; though some platforms 
+still can get into trouble because they violate the spec.  But it's as close as you can get.
+
+<p>Note that  strictfp and StrictMath are slower than plain floating-point math.  So 
+we've tried to make it possible for you to choose either to use them or to not use them (they're turned off by default).  If you want platform-independent duplication, the following classes in the core of the simcore library should use the
+strictfp keyword declaration: 
+
+<tt><pre>sim.field.continuous.Continuous2D
+sim.field.continuous.Continuous3D
+sim.field.grid.DoubleGrid2D
+sim.field.grid.DoubleGrid3D
+sim.field.grid.IntGrid2D
+sim.field.grid.IntGrid3D</pre></tt>
+
+<p>Additionally, the following classes should be set to use StrictMath class methods rather than Math class methods:
+
+<tt><pre>sim.field.grid.DoubleGrid2D
+sim.field.grid.DoubleGrid3D
+ec.util.MersenneTwisterFast</pre></tt>
+
+<p>Last, you'll need to add the  "strictfp" keyword to the front of all classes in your model; usually 
+this means your <tt>SimState</tt> and <tt>Steppable</tt> subclasses.  Anonymous classes 
+can't be strictfp: you'll need to move them to declared classes instead 
+if they contain floating point math operations and you want them to be strictfp. 
+
+<a name="MacOSX"><h2>MacOS X Notes</h2></a>
+
+<h3>Java3D Only Runs on MacOS X Panther (10.3.x)</h3>
+
+This means you can't presently run MASON's 3D package on MacOS X 10.2.
+
+<h3>MASON does not run on MacOS 9</h3>
+
+MacOS 9 does not support Swing or Java2D.
+
+<h3>Should I use Java 1.4.1 or Java 1.3.1 on MacOS X?</h3>
+
+<p>If you're doing 2D drawing, by all means, use Java 1.3.1.  It's much faster at drawing than 1.4.1 on the Mac (it's hardware accelerated).  If you're doing 3D drawing, you have no choice but to use 1.4.1.  Due to 1.3.1 bugs, if you're making a movie, you <i>definitely</i> want to use 1.4.1.  And if you're only running command-line MASON with no graphics, 1.4.1 is significantly faster.  If you've installed 1.4.1, you can still change a given terminal window to treat the <tt>java</tt> command as Java 1.3.1 rather than 1.4.1 like this:
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size=2>alias java /System/Library/Frameworks/JavaVM.framework/Versions/1.3.1/Home/bin/java</font>
+<br><br>
+
+<h3>How to do fast 2D MacOS X Graphics</h3>
+
+<p>MacOS X is slow at jumping from window to window to draw stuff, so you want to minimize this as much as possible:
+
+<ul>
+<li>Prevent the Time and Rate fields on the Console from updating themselves.  To do so, click on one of them and they will change to say "Hidden" instead.
+<li>Close all inspectors and Empty the inspector list.
+<li>Click on the 2D Display so that it's in front of the other windows and is active.
+</ul>
+
+<h3>How do I get the SDK for MacOS X?</h3>
+
+The SDK, plus the <tt>jikes</tt> is part of the Developer Tools; to get the latest release, register and log into Apple's <a href="http://developer.apple.com/">Apple Developer Connection</a>.  It's free.  To get an even more recent version of jikes, you can go <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/">here</a>.
+
+<h3>Known MacOS X Platform-Specific Bugs</h3>
+
+<ol>
+<li>(1.3.1 only) After a few frames of QuickTime (or writing a few snapshots out),
+further such frames will not draw any text.  See for example Tutorial5.
+This appears to be due to the Java VM smashing the stack when it compiles
+bytecode to machine code.
+<li>(1.3.1 only) The layers menu (the icon in the top-left corner of 2D displays) is flakey.  If you select an item in the menu via dragging, it won't get selected and you'll get a spurious "ArrayIndexOutOfBoundsException", due to bugs in Apple's internal menu handling.  You have to select items by <i>clicking</i> on them.
+<li>(1.3.1 only) Due to other Apple menu bugs, switching to or from the Console may produce spurious, harmless "java.lang.StackOverflowError".
+<li>(1.4.1 only) Multi-line pop-up lists are drawn with a single line.  See for example
+   the dialog which pops up when starting a Quicktime movie.
+<li>(1.4.1 only) Various spurious warnings can show up in the terminal window.  They're all nonsense.
+</ol>
+
+<a name="Windows"><h2>Windows Notes</h2></a>
+
+<h3>Known Windows Platform-Specific Bugs</h3>
+
+<ol>
+<li>A Display2D's backdrop is often not repainted on Windows.
+<li>Reponses to events are very slow when the model is running full-blast; some events may even be dropped.  You can often help matters by lowering the model thread priority in the console, or adding a Delay in the console.
+<li>Java3D is flakey on some systems: it does flashing effects every once in a while; we suspect this is due to Java's garbage collection.
+</ol>
+
+
+<a name="XWindows"><h2>X Windows Notes</h2></a>
+
+<h3>Known X Windows Platform-Specific Bugs</h3>
+
+<ol>
+<li>Sometimes MASON will hang when loading a 3D application: bugs in the Java3D library.
+<li>A Display2D's backdrop is sometimes not repainted properly.
+<li>Reponses to events are very slow when the model is running full-blast; some events may even be dropped.  You can often help matters by lowering the model thread priority in the console, or adding a Delay in the console.
+</ol>
+
+<a name="HotSpot"><h2>What You Should Know About Jikes and HotSpot</h2></a>
+
+By default the Makefile tries to use the <tt>jikes</tt> compiler rather than javac.  That's easily changed -- just change the comments in the Makefile.  jikes is much faster than javac but you may not have it on your platform (we suggest you <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/">download</a> it though!).
+
+<p>Newer versions of jikes are particularly obnoxious about style warnings.  You can turn these style warnings off with the <tt>--nowarn</tt> option.
+
+<h3>Increasing HotSpot's Memory</h3>
+
+<p>MASON's models don't use much memory: but Java3D sure does!  Java3D is a memory hog extraordinaire and it's not hard to require 200 megabytes for a small 50x50x50 cluster of objects.
+
+<p>Unfortunately, Java's default heap sizes are in the 20 Megabyte range and it does not increase them dynamically.  To manually increase your heap size to, say, 100 Megabytes, you can do:
+
+<pre><tt><b>java -Xmx100M -Xms100M ... </b></tt></pre>
+
+<p>This is also useful for making your graphics run faster if you're using the Stretched Image method for drawing grids of rectangles, particularly in Linux, which garbage-collects a lot if you're using the Stretched Image method.  The big thing you want to get rid of is a rapid rate of "Full" Garbage collections (ordinary collections are no big deal).  You can see ordinary and "full" collections occurring with:
+
+<pre><tt><b>java -verbose:gc ... </b></tt></pre>
+
+<p>If you'd like to profile your code, the easiest way is to run:
+
+<pre><tt><b>java -Xprof ... </b></tt></pre>
+
+<p>This prints out a profiling statement for each thread after the thread terminates, showing the piggiest interpreted, compiled, and native functions.
+
+</body>
+</html>

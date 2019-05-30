@@ -1,0 +1,16 @@
+This is an example of extending the "Particles" example in Tutorials 3 
+and 4 to 3D.
+
+Unfortunately, Java3D gets quite slow and memory hungry when drawing large
+numbers of shapes (there are over 27,000 in this example in the worst case
+-- but most are invisible at any time).  There's not enough memory in the
+default Java to handle Java3D's ridiculous memory requirements.  You'll
+need to increase the Java heap like so: 
+
+	java -Xmx200m sim.app.particles3d.Particles3DWithUI
+
+Likewise, applets won't be able to run this example.  The building of all
+these shapes is also what causes the very long pause at the beginning of
+the run, and the "unbuilding" is what causes the even LONGER pause at the
+end of the run.  It's not something we can get around -- it's just a flaw
+in Java3D.  We're working on a better approach for 3D value grids. 

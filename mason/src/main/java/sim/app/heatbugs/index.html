@@ -1,0 +1,22 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>HeatBugs</h2> 
+By Sean Luke
+</table>
+
+<p>HeatBugs is a model originally developed on the <a href="http://www.swarm.org/examples-heatbugs.html">Swarm toolkit.</a>  The environment is a toroidal 100x100 grid of "heat", populated with 100 "bugs" with built-in heaters which heat up their environment.  The bugs prefer it to be not too warm and not too cold (the range differs from bug to bug), and will follow the gradient towards regions more to their liking.  The heat diffuses and evaporates at the provided rate.  We have set up various model parameters you might like to play with.
+
+<p>HeatBugs spends the large majority of its computer time in the diffusion of heat.  Our version of HeatBugs optimizes this in two ways:
+
+<ol>
+<li> We've hand-optimized it carefully.  In the body of the Diffuser.java we have a step-by-step tutorial showing optimization after optimization.  
+<li> We have a special version of Diffuser.java, called ThreadedDiffuser.java, which takes advantage of dual-processor machines to break the diffusion work up among two processors.  If you have more than two processors, ThreadedDiffuser.java can be modified with some elbow grease to take advantage of them as well.
+</ol>
+
+<p>In the <b>Model</b> tab we've added two unusual parameters: BugXPos and BugYPos.  These return arrays of doubles reflecting the x and y coordinates of the bugs respectively.  They're included to show how to make histograms.
+
+<p>You might also try HexaBugs: HeatBugs on a hexagonal grid.  Or try 3D HeatBugs: plain 2D HeatBugs displayed in a 3D fashion.
+
+</body></html>

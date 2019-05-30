@@ -1,0 +1,85 @@
+sim/portrayal/inspector
+
+This package holds Property Inspectors and other kinds of special 
+Inspectors.  Note that PropertyInspectors usually are loaded 
+DYNAMICALLY.  This is done by registering them in the 
+propertyinspector.classes file.
+
+
+
+Classes:
+
+
+TabbedInspector.java
+
+Not a property inspector: this is a simple Inspector which enables you 
+to add multiple subsidiary Inspectors, each appearing in a tabbed 
+interface.  Intended for when your Inspector is getting too big and it'd 
+be nice to break it into pieces.
+
+
+PropertyInspector.java
+
+The abstract superclass of PropertyInspectors, which are inspectors 
+which examine not a whole object but simply a property of that object.  
+Commonly used for creating charts and graphs.
+
+
+StreamingPropertyInspector.java
+
+A PropertyInspector which writes out the values of the property being 
+inspected, over time, to a window or to a file or stdout.
+
+
+ChartingPropertyInspector.java
+
+The superclass of PropertyInspectors which perform charting.  Creates or 
+shares a chart and plots property information on the chart as it changes 
+over time.
+
+
+TimeSeriesChartingPropertyInspector.java
+
+A ChartingPropertyInspector which creates a time-series plot chart of 
+the property as it changes over time.  Intended for properties that are 
+boolean, integer, or double valued (or can provide the same).
+
+
+HistogramChartingPropertyInspector.java
+
+A ChartingPropertyInspector which creates and updates a histogram.  
+Intended for properties that are (typically) arrays or other lists of 
+doubles.
+
+
+ScatterPlotChartingPropertyInspector.java
+
+A ChartingPropertyInspector which creates scatter plots.
+Intended for properties that are (typically) arrays of Double2D or
+Int2D.
+
+
+StableLocation.java
+
+A superclass of wrappers for 2D integer or 2D double locations.  Needed 
+to inspect SparseFields of various sorts because SparseFields 
+continuously return new underlying objects for those locations, which 
+then appear to be "new locations" to the inspectors even though they're 
+not.  You probably don't need to worry about these.
+
+
+StableInt2D.java
+
+A StableLocation concrete implementation for 2D integer locations.
+
+
+StableDouble2D.java 
+
+A StableLocation concrete implementation for 2D double locations.
+
+
+
+
+Other Files:
+
+propertyinspector.classes	List of all registered property inspectors
