@@ -20,6 +20,13 @@ Moreover, the building phase install in your local Maven registry two Maven arch
 - mason-project-archetype, a MASON example project that execute the Flocker simulation.
 - distributed-project-archetype, a Distributed MASON example project that execute the D-Flocker simulation.
 
+### MASON/Distributed MASON Maven archetypes
+
+We provide two different archetypes:
+
+- mason-project-archetype, a simple MASON simulation project with all dependencies included.
+- distributed-mason-project-archetype, a simple Distributed MASON simulation project with all dependencies included.
+
 ### Execute MASON/Distributed MASON simulation
 
 You can build your simulation using Maven. In your project folder:
