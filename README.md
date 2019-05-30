@@ -20,12 +20,38 @@ Moreover, the building phase install in your local Maven registry two Maven arch
 - mason-project-archetype, a MASON example project that execute the Flocker simulation.
 - distributed-project-archetype, a Distributed MASON example project that execute the D-Flocker simulation.
 
+## Import in Eclipse
+
+1. Clone the project on your local machine, and import the Maven project.
+
+```
+File-> Import -> Existing Maven Projects -> Root Directory
+```
+
+2. Build and Install on the mason-build project.
+
+```
+Run as -> Maven install
+```
+
 ### MASON/Distributed MASON Maven archetypes
 
 We provide two different archetypes:
 
 - mason-project-archetype, a simple MASON simulation project with all dependencies included.
 - distributed-mason-project-archetype, a simple Distributed MASON simulation project with all dependencies included.
+
+### Create new MASON/Distributed MASON simulation in Eclipse
+
+1. Create new Maven project.
+```
+File -> New -> Other -> Maven Project -> Next
+```
+2. Select the desired archetypes:
+	- cs.gmu.edu.eclab.mason-project-archetype, for a new MASON simulation.
+	- cs.gmu.edu.eclab.distributed-mason-project-archetype, for a new Distributed MASON simulation.
+	
+3. Continue following the instructions.
 
 ### Execute MASON/Distributed MASON simulation
 
