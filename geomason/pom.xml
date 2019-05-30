@@ -51,7 +51,7 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>cs.gmu.edu.eclab</groupId>
+			<groupId>cs.gmu.edu.eclab.contrib</groupId>
 			<artifactId>socialnets</artifactId>
 			<version>1.0</version>
 		</dependency>
