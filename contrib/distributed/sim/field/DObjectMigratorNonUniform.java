@@ -8,7 +8,6 @@ import sim.util.*;
 import ec.util.*;
 
 import mpi.*;
-import sim.field.DObjectMigrator.AgentOutputStream;
 
 public class DObjectMigratorNonUniform implements Iterable<Object> {
 
@@ -22,40 +21,6 @@ public class DObjectMigratorNonUniform implements Iterable<Object> {
     int[] neighbors;
 
     public ArrayList<Object> objects;
-
-    // class AgentOutputStream {
-    //      public ByteArrayOutputStream out;
-    //      public ObjectOutputStream os;
-
-    //      public AgentOutputStream() throws IOException {
-    //              out = new ByteArrayOutputStream();
-    //              os = new ObjectOutputStream(out);
-    //      }
-
-    //      public void write(Object obj) throws IOException {
-    //              os.writeObject(obj);
-    //      }
-
-    //      public byte[] toByteArray() {
-    //              return out.toByteArray();
-    //      }
-
-    //      public int size() {
-    //              return out.size();
-    //      }
-
-    //      public void flush() throws IOException {
-    //              os.flush();
-    //      }
-
-    //      public void reset() throws IOException {
-    //              os.close();
-    //              out.close();
-    //              out = new ByteArrayOutputStream();
-    //              os = new ObjectOutputStream(out);
-    //      }
-    // }
-
 
     public DObjectMigratorNonUniform(DPartition partition) {
         this.partition = partition;
@@ -267,4 +232,41 @@ public class DObjectMigratorNonUniform implements Iterable<Object> {
             }
         bufferList.clear();
     }
+
+
+    public static class AgentOutputStream {
+        public ByteArrayOutputStream out;
+        public ObjectOutputStream os;
+ 
+        public AgentOutputStream() throws IOException {
+            out = new ByteArrayOutputStream();
+            os = new ObjectOutputStream(out);
+        }
+
+        public void write(Object obj) throws IOException {
+            os.writeObject(obj);
+        }
+
+        public byte[] toByteArray() {
+            return out.toByteArray();
+        }
+
+        public int size() {
+            return out.size();
+        }
+                
+        public void flush() throws IOException
+        {
+            os.flush();
+        }
+
+        public void reset() throws IOException {
+            os.close();
+            out.close();
+            out = new ByteArrayOutputStream();
+            os = new ObjectOutputStream(out);
+        }
+    }
+
+
 }

@@ -45,6 +45,7 @@ public abstract class HaloField implements RemoteField {
     }
 
     protected void registerCallbacks() {
+    /*
         if (ps instanceof DNonUniformPartition) {
             ps.registerPreCommit(arg -> {
                     try {
@@ -64,7 +65,11 @@ public abstract class HaloField implements RemoteField {
                         System.exit(-1);
                     }
                 });
-        } else if (ps instanceof DQuadTreePartition) {
+        } 
+        */
+        //else
+        // if (ps instanceof DQuadTreePartition) 
+        {
             // Used for temporarily storing data when the underlying partition changes
             // The list is used to hold the refernece to the temporary GridStorage
             // because Java's lambda expression limits the variable to final.

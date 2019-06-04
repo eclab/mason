@@ -117,7 +117,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         DoublePoint oldloc = loc;
         loc = (DoublePoint) flock.flockers.getLocation(this);
         if (loc == null) {
-            System.out.printf("pid %d oldx %g oldy %g", flock.partition.pid, oldloc.c[0], oldloc.c[1]);
+            System.out.printf("pid %d oldx %g oldy %g", flock.p.pid, oldloc.c[0], oldloc.c[1]);
             Thread.dumpStack();
             System.exit(-1);
         }
@@ -146,8 +146,8 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
         loc = new DoublePoint(flock.flockers.stx(loc.c[0] + dx), flock.flockers.sty(loc.c[1] + dy));
         
         try {
-            int dst = flock.partition.toPartitionId(new double[] {loc.c[0], loc.c[1]});
-            if (dst != flock.partition.getPid()) {
+            int dst = flock.p.toPartitionId(new double[] {loc.c[0], loc.c[1]});
+            if (dst != flock.p.getPid()) {
                 // Need to migrate to other partition, 
                 // remove from current partition 
                 flock.flockers.removeObject(this);

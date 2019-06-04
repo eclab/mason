@@ -2,7 +2,7 @@ package sim.field;
 
 import java.io.ObjectInputStream;
 
-import sim.field.DObjectMigrator.AgentOutputStream;
+import sim.field.DObjectMigratorNonUniform.AgentOutputStream;
 
 public interface SelfStreamedAgent extends Cloneable
 {       

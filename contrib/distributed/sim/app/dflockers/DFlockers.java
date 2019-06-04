@@ -28,7 +28,6 @@ public class DFlockers extends DSimState {
     public double neighborhood = 10;
     public double jump = 0.7;  // how far do we move in a timestep?
 
-    DNonUniformPartition partition;
     public IntHyperRect myPart;
     public DObjectMigratorNonUniform queue;
 
@@ -42,27 +41,30 @@ public class DFlockers extends DSimState {
                 int[] size = new int[] { (int) width, (int) height };
                 double[] discretizations = new double[] { neighborhood / 1.5, neighborhood / 1.5 };
 
+/*
                 partition = DNonUniformPartition.getPartitionScheme(size, true, aoi);
                 partition.initUniformly(null);
                 partition.commit();
-
                 flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations);
-
                 queue = new DObjectMigratorNonUniform(partition);
+*/
+                flockers = new NContinuous2D<DFlocker>(p, aoi, discretizations);
+                queue = new DObjectMigratorNonUniform(p);
+
 
             } catch (Exception e)
             {
                 e.printStackTrace(System.out);
                 System.exit(-1);
             }
-        myPart = partition.getPartition();
+        myPart = p.getPartition();
 
     }
 
     public void start() {
         super.start();
         int[] size = myPart.getSize();
-        for (int x = 0; x < numFlockers / partition.np; x++) {
+        for (int x = 0; x < numFlockers / p.np; x++) {
             double px, py;
             px = random.nextDouble() * size[0] + myPart.ul().getArray()[0];
             py = random.nextDouble() * size[1] + myPart.ul().getArray()[1];
