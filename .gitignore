@@ -7,3 +7,7 @@ contrib/geomason/target/
 *.out
 *.toc
 
+*.DS_Store
+*.project
+*.classpath
+*.settings
