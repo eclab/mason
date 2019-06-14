@@ -138,7 +138,7 @@ public class DHeatBugs extends DSimState {
 
 	public DHeatBugs(long seed) {
 		// TODO: clean this up
-		this(seed, 1000, 1000, 1000, 5);
+		this(seed, 1000, 1000, 0, 5);
 	}
 
 	public DHeatBugs(long seed, int width, int height, int count, int aoi) {

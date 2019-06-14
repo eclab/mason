@@ -70,8 +70,6 @@ public class DHeatBug implements Steppable {
 
 	public void step(final SimState state) {
 		
-		System.out.println(toString());
-		
 		DHeatBugs hb = (DHeatBugs) state;
 
 		int myx = loc_x;
