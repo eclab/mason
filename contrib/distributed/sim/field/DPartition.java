@@ -11,7 +11,7 @@ import sim.util.NdPoint;
 
 public abstract class DPartition {
 
-    public int pid, np, nd;
+    public int pid, numProcessors, numDimensions;
     public int[] size;
     boolean isToroidal;
     public Comm comm;
@@ -19,13 +19,13 @@ public abstract class DPartition {
     ArrayList<Consumer> preCallbacks, postCallbacks;
 
     DPartition(int[] size, boolean isToroidal) {
-        this.nd = size.length;
-        this.size = Arrays.copyOf(size, nd);
+        this.numDimensions = size.length;
+        this.size = Arrays.copyOf(size, numDimensions);
         this.isToroidal = isToroidal;
 
         try {
             pid = MPI.COMM_WORLD.getRank();
-            np = MPI.COMM_WORLD.getSize();
+            numProcessors = MPI.COMM_WORLD.getSize();
         } catch (MPIException e) {
             e.printStackTrace();
             System.exit(-1);
@@ -52,11 +52,11 @@ public abstract class DPartition {
     }
 
     public int getNumProc() {
-        return np;
+        return numProcessors;
     }
 
     public int getNumDim() {
-        return nd;
+        return numDimensions;
     }
 
     public boolean isToroidal() {
@@ -68,7 +68,7 @@ public abstract class DPartition {
     }
 
     public int[] getFieldSize() {
-        return Arrays.copyOf(size, nd);
+        return Arrays.copyOf(size, numDimensions);
     }
 
     public IntHyperRect getField() {

@@ -87,8 +87,8 @@ public class RemoteProxy {
 
             // Exchange the names with all other LPs so that each LP can create RemoteField clients for all other LPs
             ArrayList<String> names = MPIUtil.<String>allGather(ps, name);
-            remoteFields = new RemoteField[ps.np];
-            for (int i = 0; i < ps.np; i++)
+            remoteFields = new RemoteField[ps.numProcessors];
+            for (int i = 0; i < ps.numProcessors; i++)
                 remoteFields[i] = (RemoteField)reg.lookup(names.get(i));
         } catch (Exception e) {
             e.printStackTrace();

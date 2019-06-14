@@ -1,13 +1,8 @@
 package sim.field.grid;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 
-import mpi.*;
-
 import sim.util.IntPoint;
-import sim.util.IntHyperRect;
-import sim.util.MPITest;
 import sim.field.DPartition;
 //import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
@@ -18,8 +13,8 @@ public class NIntGrid2D extends HaloField {
     public NIntGrid2D(DPartition ps, int[] aoi, int initVal) {
         super(ps, aoi, new IntGridStorage(ps.getPartition(), initVal));
 
-        if (this.nd != 2)
-            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.nd);
+        if (this.numDimensions != 2)
+            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.numDimensions);
     }
 
     public int[] getStorageArray() {

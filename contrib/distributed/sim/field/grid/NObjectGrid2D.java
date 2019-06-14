@@ -22,8 +22,8 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField {
     public NObjectGrid2D(DPartition ps, int[] aoi, IntFunction<T[]> allocator) {
         super(ps, aoi, new ObjectGridStorage<T>(ps.getPartition(), allocator));
 
-        if (this.nd != 2)
-            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.nd);
+        if (this.numDimensions != 2)
+            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.numDimensions);
     }
 
     public T[] getStorageArray() {

@@ -20,8 +20,8 @@ public class NContinuous2D<T extends Serializable> extends HaloField {
     public NContinuous2D(DPartition ps, int[] aoi, double[] discretizations) {
         super(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations));
 
-        if (this.nd != 2)
-            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.nd);
+        if (this.numDimensions != 2)
+            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.numDimensions);
     }
 
     public final NdPoint getLocation(T obj) {

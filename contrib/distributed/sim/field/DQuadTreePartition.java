@@ -17,7 +17,7 @@ public class DQuadTreePartition extends DPartition {
     public DQuadTreePartition(int[] size, boolean isToroidal, int[] aoi) {
         super(size, isToroidal);
         this.aoi = aoi;
-        qt = new QuadTree(new IntHyperRect(size), np);
+        qt = new QuadTree(new IntHyperRect(size), numProcessors);
     }
 
     public IntHyperRect getPartition() {
@@ -93,12 +93,12 @@ public class DQuadTreePartition extends DPartition {
         // np's binary represention only contains a single one i.e., (np & (np - 1)) == 0
         // and the number of zeros before it is evenly divided by nd
         int nz = 0;
-        while ((np >> nz & 0x1) != 0x1)
+        while ((numProcessors >> nz & 0x1) != 0x1)
             nz++;
-        if ((np & np - 1) != 0 || nz % nd != 0)
-            throw new IllegalArgumentException("Currently only support the number processors that is power of " + (2 * nd));
+        if ((numProcessors & numProcessors - 1) != 0 || nz % numDimensions != 0)
+            throw new IllegalArgumentException("Currently only support the number processors that is power of " + (2 * numDimensions));
 
-        for (int level = 0; level < nz / nd; level++) {
+        for (int level = 0; level < nz / numDimensions; level++) {
             List<QTNode> leaves = qt.getAllLeaves();
             for (QTNode leaf : leaves)
                 qt.split(leaf.getShape().getCenter());
@@ -111,11 +111,11 @@ public class DQuadTreePartition extends DPartition {
     protected void mapNodeToProc() {
         List<QTNode> leaves = qt.getAllLeaves();
 
-        if (leaves.size() != np)
-            throw new IllegalArgumentException("The number of leaves " + leaves.size() + " does not equal to the number of processors " + np);
+        if (leaves.size() != numProcessors)
+            throw new IllegalArgumentException("The number of leaves " + leaves.size() + " does not equal to the number of processors " + numProcessors);
 
         // Map the leaf nodes first
-        for (int i = 0; i < np; i++)
+        for (int i = 0; i < numProcessors; i++)
             leaves.get(i).setProc(i);
 
         myLeafNode = leaves.get(pid);

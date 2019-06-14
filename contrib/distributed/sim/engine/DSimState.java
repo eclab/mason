@@ -15,12 +15,12 @@ import java.lang.reflect.*;
 import sim.util.Timing;
 import sim.field.DPartition;
 import sim.field.DQuadTreePartition;
-import sim.field.DObjectMigratorNonUniform;
+import sim.field.DAgentMigrator;
 
 public class DSimState extends SimState
 {
     public DPartition p; // Refactor to "partition" later
-    public DObjectMigratorNonUniform queue; // Maybe make a class that's more abstract so you can choose Uniform vs NonUniform
+    public DAgentMigrator queue; // Maybe make a class that's more abstract so you can choose Uniform vs NonUniform
 //    public LoadBalancer lb; // Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been used: lb = new LoadBalancer(aoi, 100);
     public static Logger logger;
     public int[] aoi; // Area of Interest
@@ -36,7 +36,7 @@ public class DSimState extends SimState
         DQuadTreePartition dq = new DQuadTreePartition(new int[] {width, height}, true, this.aoi);
         p = dq;
         p.initialize();
-        queue = new DObjectMigratorNonUniform(p);
+        queue = new DAgentMigrator(p);
 
     }
 
@@ -47,7 +47,7 @@ public class DSimState extends SimState
         DQuadTreePartition dq = new DQuadTreePartition(new int[] {1000, 1000}, true, this.aoi);
         dq.initialize();
         p = dq;
-        queue = new DObjectMigratorNonUniform(p);
+        queue = new DAgentMigrator(p);
     }
 
     protected DSimState(long seed, Schedule schedule)

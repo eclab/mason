@@ -151,7 +151,7 @@ public class MPIUtil {
         int np = comm.getSize();
         int pid = comm.getRank();
         int[] dstDispl, dstCount = new int[np];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObj, srcBuf);
@@ -181,7 +181,7 @@ public class MPIUtil {
         int np = comm.getSize();
         int pid = comm.getRank();
         int[] dstDispl, dstCount = new int[np];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObj, srcBuf);
@@ -210,7 +210,7 @@ public class MPIUtil {
         int nc = sendObjs.length;
         int[] srcDispl, srcCount = new int[nc];
         int[] dstDispl, dstCount = new int[nc];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObjs, srcBuf, srcCount);

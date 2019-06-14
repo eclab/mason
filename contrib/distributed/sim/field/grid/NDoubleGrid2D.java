@@ -1,24 +1,20 @@
 package sim.field.grid;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 
-import mpi.*;
-
-import sim.util.IntPoint;
-import sim.util.MPITest;
 import sim.field.DPartition;
 //import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.DoubleGridStorage;
+import sim.util.IntPoint;
 
 public class NDoubleGrid2D extends HaloField {
 
     public NDoubleGrid2D(DPartition ps, int[] aoi, int initVal) {
         super(ps, aoi, new DoubleGridStorage(ps.getPartition(), initVal));
 
-        if (this.nd != 2)
-            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.nd);
+        if (this.numDimensions != 2)
+            throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.numDimensions);
     }
 
     public double[] getStorageArray() {

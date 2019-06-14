@@ -5,11 +5,9 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 import sim.util.*;
-import ec.util.*;
-
 import mpi.*;
 
-public class DObjectMigratorNonUniform implements Iterable<Object> {
+public class DAgentMigrator implements Iterable<Object> {
 
     int nc; // number of direct neighbors
     int[] src_count, src_displ, dst_count, dst_displ;
@@ -22,7 +20,7 @@ public class DObjectMigratorNonUniform implements Iterable<Object> {
 
     public ArrayList<Object> objects;
 
-    public DObjectMigratorNonUniform(DPartition partition) {
+    public DAgentMigrator(DPartition partition) {
         this.partition = partition;
         reload();
 

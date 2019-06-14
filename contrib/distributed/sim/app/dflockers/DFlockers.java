@@ -29,7 +29,7 @@ public class DFlockers extends DSimState {
     public double jump = 0.7;  // how far do we move in a timestep?
 
     public IntHyperRect myPart;
-    public DObjectMigratorNonUniform queue;
+    public DAgentMigrator queue;
 
     /** Creates a Flockers simulation with the given random number seed. */
     public DFlockers(long seed)
@@ -49,7 +49,7 @@ public class DFlockers extends DSimState {
                 queue = new DObjectMigratorNonUniform(partition);
 */
                 flockers = new NContinuous2D<DFlocker>(p, aoi, discretizations);
-                queue = new DObjectMigratorNonUniform(p);
+                queue = new DAgentMigrator(p);
 
 
             } catch (Exception e)
@@ -64,7 +64,7 @@ public class DFlockers extends DSimState {
     public void start() {
         super.start();
         int[] size = myPart.getSize();
-        for (int x = 0; x < numFlockers / p.np; x++) {
+        for (int x = 0; x < numFlockers / p.numProcessors; x++) {
             double px, py;
             px = random.nextDouble() * size[0] + myPart.ul().getArray()[0];
             py = random.nextDouble() * size[1] + myPart.ul().getArray()[1];
