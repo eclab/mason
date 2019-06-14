@@ -31,16 +31,7 @@ useful to you when poking around.
 
 ---------------------------------------------------------------------------
 
-
-Quick Start: In the same directory as this file there is a directory
-called 'start'.  Inside this directory there are scripts to fire up MASON. 
-
-	Windows:	double-click on 'mason.bat'
-	OS X:		double-click on 'mason.command'
-	Linux/X11:	exec 'mason.sh'
-
-...and pick an application from the list which appears.  Try
-sim.app.heatbugs.HeatBugsWithUI for example. 
+INSTALLATION AND RUNNING
 
 To run 3D demos, you have to install Java3D.  To make movies, you have to
 install the Java Media Framework (JMF).  To do charting, you have to install
@@ -50,61 +41,44 @@ jfreechart...jar, itext...jar, and jmf.jar files (or other jar files)
 are not in your CLASSPATH, the scripts will still recognize them if you 
 drop them in the 'mason' directory.
 
----------------------------------------------------------------------------
+Quick start using the pre-made jar file.
 
-Using the Jar File:
+1. Optionally install Java3D.
 
-1. Install Java3D.
+2. On the MASON web page (https://cs.gmu.edu/~eclab/projects/mason/) there
+   is a link to a zip file ("Libraries").  Inside that zip file are several
+   jar files.  Add them all to your CLASSPATH.
 
-2. Install JMF (or add the 'cross-platform' jmf.jar file to your
-   CLASSPATH or to your 'mason' directory)
+3. In the 'jar' directory there is a file named something like
+   'mason.jar'.  Try double-clicking on it (you may not be able to run
+   all the 3D demos due to lack of memory).
 
-3. Install JCommon, JFreeChart, and iText (or add the jcommon...jar,
-   jfreechart...jar, and itext...jar files to your CLASSPATH or in the
-   'mason' directory)
+4. Alternatively, you can run the mason.jar file, with expanded
+   memory, like this:
+
+   java -Xmx200M -jar jar/mason.jar sim.display.Console
+
+
+Building from the Makefile
+
+1. Optionally install Java3D.
+
+2. On the MASON web page (https://cs.gmu.edu/~eclab/projects/mason/) there
+   is a link to a zip file ("Libraries").  Inside that zip file are several
+   jar files.  Add them all to your CLASSPATH.
+
+3. Build MASON from the Makefile.  I would do it like this:
+
+	make jar
 
 4. In the 'jar' directory there is a file named something like
-   'mason.jar'.  Try double-clicking on it (you won't be able to run
+   'mason.jar'.  Try double-clicking on it (you may not be able to run
    all the 3D demos due to lack of memory).
 
 5. Alternatively, you can run the mason.jar file, with expanded
    memory, like this:
 
    java -Xmx200M -jar jar/mason.jar sim.display.Console
-
-
---------------------------------------------------------------------------
-
-Not So Quick Start With Full Source:
-
-1. Install Java3D.
-
-2. Install JMF (or add the 'cross-platform' jmf.jar file to your 
-   CLASSPATH or to your 'mason' directory)
-
-3. Install JCommon, JFreeChart, and iText (or add the jcommon...jar,
-   jfreechart...jar, and itext...jar files to your CLASSPATH or in the
-   'mason' directory)
-
-4. Add the 'mason' directory to your CLASSPATH.   Or add the 'jar' file
-   located in the jar/ directory if you don't care about source.
-
-5. Run MASON like this:
-
-   java -Xmx200M sim.display.Console
-
-   ...and pick an application from the pop-up list which appears.  The
-   -Xmx200M is because one application (Particles3D) won't run unless you
-   give Java more memory.  You can also run any particular application by
-   firing up its sim.app.foo.FooWithUI class, such as: 
-
-   java sim.app.heatbugs.HeatBugsWithUI
-
-6. MASON's top-level java packages are the sim and ec directories.  You can
-   use the Makefile to build MASON easily from MacOS X/Linux/UNIX.  To see
-   the Makefile options, try
-
-   make help
 
 ---------------------------------------------------------------------------
 

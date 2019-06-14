@@ -167,7 +167,7 @@ public class Console extends JFrame implements Controller
         }
 
     /** Returns icons for a given filename, such as "NotPlaying.png". A utility function. */
-    static ImageIcon iconFor(String name)
+    public static ImageIcon iconFor(String name)
         {
         return new ImageIcon(Console.class.getResource(name));
         }
@@ -243,6 +243,8 @@ public class Console extends JFrame implements Controller
     JMenuItem saveAsMenu;
     /** The 'Open ...' menu. */
     JMenuItem openMenu;
+    /** The Sweep Parameters menu. */
+    JMenuItem sweepMenu;
     /** The split pane shown under the "Inspectors" tab, holding the list of 
         inspectors at top, and specific inspectors at bottom */
     JSplitPane innerInspectorPanel;
@@ -1026,6 +1028,17 @@ public class Console extends JFrame implements Controller
                 }
             });
         fileMenu.add(saveAsMenu);
+
+        sweepMenu = new JMenuItem("Sweep Parameters");
+        if (SimApplet.isApplet) sweepMenu.setEnabled(false);
+        sweepMenu.addActionListener(new ActionListener()
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                doSweep();
+                }
+            });
+        fileMenu.add(sweepMenu);
 
         JMenuItem _about = new JMenuItem("About MASON");
         _about.addActionListener(new ActionListener()
@@ -2143,6 +2156,21 @@ public class Console extends JFrame implements Controller
                     "An error occurred while saving the simulation to the file " + simulationFile.getName(), null);
                 }
         }
+
+
+    public void doSweep()
+    	{
+         sim.util.sweep.ParameterSweepGUI sweep = 
+         	new sim.util.sweep.ParameterSweepGUI(
+         		sim.util.Properties.getProperties(simulation.state),
+         		simulation);
+         JFrame frame = new JFrame("Parameter Sweep for " + simulation.getName(simulation.getClass()));
+         frame.getContentPane().setLayout(new BorderLayout());
+         frame.getContentPane().add(sweep, BorderLayout.CENTER);
+         frame.pack();
+         frame.show();
+    	}
+
 
 
     /** Reverts the current simulation to the simulation stored at a user-specified checkpoint filename. */
