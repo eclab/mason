@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import mpi.*;
 
 import sim.util.IntHyperRect;
-import sim.util.IntPoint;
 import sim.util.NdPoint;
 
 public abstract class DPartition {

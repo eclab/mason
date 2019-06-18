@@ -97,17 +97,18 @@ public class DHeatBug implements Steppable {
 		try {
 			int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
 			if (dst != hb.partition.getPid()) {
-//				hb.bugs.remove(old_x, old_y, this);
+				hb.bugs.remove(old_x, old_y, this);
 
-				if (!hb.bugs.remove(old_x, old_y, this))
-					System.err.println("Failed to remove!");
-				hb.migrator.migrate(this, dst, new DoublePoint(loc_x, loc_y));
+//				if (!hb.bugs.remove(old_x, old_y, this))
+//					System.err.println("Failed to remove!");
+
+				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y));
 				hb.privBugCount--;
 			} else {
-//				hb.bugs.remove(old_x, old_y, this);
+				hb.bugs.remove(old_x, old_y, this);
 
-				if (!hb.bugs.remove(old_x, old_y, this))
-					System.err.println("Failed to remove!");
+//				if (!hb.bugs.remove(old_x, old_y, this))
+//					System.err.println("Failed to remove!");
 
 				hb.bugs.add(loc_x, loc_y, this);
 				hb.schedule.scheduleOnce(this, 1);

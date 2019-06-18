@@ -3,16 +3,13 @@ package sim.field.continuous;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.*;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 import mpi.*;
 
 import sim.field.DPartition;
-//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.ContStorage;
-import sim.field.storage.TestObj;
 import sim.util.*;
 
 public class NContinuous2D<T extends Serializable> extends HaloField {

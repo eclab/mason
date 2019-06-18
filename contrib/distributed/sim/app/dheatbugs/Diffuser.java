@@ -23,11 +23,10 @@ public class Diffuser implements Steppable {
 		DHeatBugs heatbugs = (DHeatBugs) state;
 
 		// locals are faster than instance variables
-		final NDoubleGrid2D _valgrid = heatbugs.valgrid;
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
 		final double[] _valgrid2_field = heatbugs.valgrid2.getStorageArray();
-		final int _gridWidth = heatbugs.p.getPartition().getSize()[0];
-		final int _gridHeight = heatbugs.p.getPartition().getSize()[1];
+		final int _gridWidth = heatbugs.partition.getPartition().getSize()[0];
+		final int _gridHeight = heatbugs.partition.getPartition().getSize()[1];
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
 		final int aoi = heatbugs.aoi[0];
@@ -35,7 +34,7 @@ public class Diffuser implements Steppable {
 		double average;
 
 		int past, curr, next;
-		int offset = heatbugs.p.getPartition().getSize()[1] + (2 * aoi);
+		int offset = heatbugs.partition.getPartition().getSize()[1] + (2 * aoi);
 
 		// for each x and y position
 		for (int x = aoi; x < _gridWidth + aoi; x++) {

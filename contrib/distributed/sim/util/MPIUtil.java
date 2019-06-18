@@ -30,7 +30,6 @@ public class MPIUtil {
 
 
 	/** Makes a ginormous and inappropriate buffer for sending.  This needs to be fixed. */
-	
      static ByteBuffer initSendBuf() {
         if (pSendBuf == null)
             pSendBuf = ByteBuffer.allocateDirect(MAX_SIZE);
@@ -39,7 +38,6 @@ public class MPIUtil {
 
         return pSendBuf;
     }
-
 	/** Makes a ginormous and inappropriate buffer for receiving.  This needs to be fixed. */
 	
      static ByteBuffer initRecvBuf() {

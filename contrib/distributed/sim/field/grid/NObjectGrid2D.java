@@ -1,21 +1,13 @@
 package sim.field.grid;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.IntFunction;
 
-import mpi.*;
-
 import sim.util.IntPoint;
-import sim.util.IntHyperRect;
-import sim.util.MPITest;
 import sim.field.DPartition;
-//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
-import sim.field.storage.GridStorage;
 import sim.field.storage.ObjectGridStorage;
-import sim.field.storage.TestObj;
 
 public class NObjectGrid2D<T extends Serializable> extends HaloField {
 

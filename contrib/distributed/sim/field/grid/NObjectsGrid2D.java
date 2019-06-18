@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.field.DPartition;
-//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.IntPoint;
@@ -17,8 +16,30 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		super(ps, aoi, new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]));
 
 		if (this.numDimensions != 2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + this.numDimensions);
+			throw new IllegalArgumentException(
+					"The number of dimensions is expected to be 2, got: " + this.numDimensions);
 	}
+
+//	public void move(final IntPoint fromLoc, final IntPoint toLoc, final T t) {
+//		// TODO
+//		// moves anything thats not an agent, the location can be remote or local
+//		throw (new UnsupportedOperationException());
+//	}
+//
+//	public void moveAgent(final IntPoint fromLoc, final IntPoint toLoc, final T t, Schedule schedule) {
+//		// TODO
+//		// moves an agent and schedules it, the location can be remote or local
+//		throw (new UnsupportedOperationException());
+//	}
+//
+//	public void moveAgent(final IntPoint fromLoc, final IntPoint toLoc, final T t, final Stoppable stoppable,
+//			Schedule schedule) {
+//		// TODO
+//		// moves an 'repeating' agent and schedules it,
+//		// the location can be remote or local
+//		// call stoppable.stop()?
+//		throw (new UnsupportedOperationException());
+//	}
 
 	public ArrayList<T>[] getStorageArray() {
 		return (ArrayList<T>[]) field.getStorage();

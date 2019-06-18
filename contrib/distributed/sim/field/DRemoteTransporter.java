@@ -1,270 +1,265 @@
 package sim.field;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import sim.util.*;
-import mpi.*;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.util.DoublePoint;
 
-public class DAgentMigrator implements Iterable<Object> {
+public class DRemoteTransporter {
 
-    int nc; // number of direct neighbors
-    int[] src_count, src_displ, dst_count, dst_displ;
+	int nc; // number of direct neighbors
+	int[] src_count, src_displ, dst_count, dst_displ;
 
-    HashMap<Integer, AgentOutputStream> dstMap;
-    AgentOutputStream[] outputStreams;
+	HashMap<Integer, RemoteOutputStream> dstMap;
+	RemoteOutputStream[] outputStreams;
 
-    DPartition partition;
-    int[] neighbors;
+	DPartition partition;
+	int[] neighbors;
 
-    public ArrayList<Object> objects;
+	// TODO: Should this be Steppable or Objects
+	// what about multiple different types of agents?
+	public ArrayList<Transportee> objectQueue;
 
-    public DAgentMigrator(DPartition partition) {
-        this.partition = partition;
-        reload();
+	public DRemoteTransporter(DPartition partition) {
+		this.partition = partition;
+		reload();
 
-        partition.registerPreCommit(arg -> {
-                try {
-                    sync();
-                } catch (MPIException | IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
-            });
+		partition.registerPreCommit(arg -> {
+			try {
+				sync();
+			} catch (MPIException | IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		});
 
-        partition.registerPostCommit(arg -> {
-                reload();
-                try {
-                    sync();
-                } catch (MPIException | IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
-            });
-    }
+		partition.registerPostCommit(arg -> {
+			reload();
+			try {
+				sync();
+			} catch (MPIException | IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		});
+	}
 
-    public void reload() {
-        // TODO cannot work with one node?
-        neighbors = partition.getNeighborIds();
-        nc = neighbors.length;
+	public void reload() {
+		// TODO cannot work with one node?
+		neighbors = partition.getNeighborIds();
+		nc = neighbors.length;
 
-        objects = new ArrayList<Object>();
+		objectQueue = new ArrayList<>();
 
-        src_count = new int[nc];
-        src_displ = new int[nc];
-        dst_count = new int[nc];
-        dst_displ = new int[nc];
+		src_count = new int[nc];
+		src_displ = new int[nc];
+		dst_count = new int[nc];
+		dst_displ = new int[nc];
 
-        // outputStreams for direct neighbors
-        try {
-            outputStreams = new AgentOutputStream[nc];
-            for (int i = 0; i < nc; i++)
-                outputStreams[i] = new AgentOutputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+		// outputStreams for direct neighbors
+		try {
+			outputStreams = new RemoteOutputStream[nc];
+			for (int i = 0; i < nc; i++)
+				outputStreams[i] = new RemoteOutputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 
-        // neighbors
-        dstMap = new HashMap<Integer, AgentOutputStream>();
-        for (int i = 0; i < nc; i++)
-            dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
-    }
+		// neighbors
+		dstMap = new HashMap<Integer, RemoteOutputStream>();
+		for (int i = 0; i < nc; i++)
+			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
+	}
 
-    @Override
-    public Iterator<Object> iterator() {
-        return objects.iterator();
-    }
+	public int size() {
+		return objectQueue.size();
+	}
 
-    public int size() {
-        return objects.size();
-    }
-        
-    public void clear()
-    {
-        objects.clear();
-    }
+	public void clear() {
+		objectQueue.clear();
+	}
 
-    public void writeHeader(AgentOutputStream aos, MigratingAgent wrapper) throws IOException
-    {
-        String className = wrapper.wrappedAgent.getClass().getName();
-        aos.os.writeObject(className);
-        aos.os.writeInt(wrapper.destination);
-        aos.os.writeBoolean(wrapper.migrate);
-        // TODO, so far assume loc is Double Point 2D
-        aos.os.writeDouble(wrapper.loc.c[0]);
-        aos.os.writeDouble(wrapper.loc.c[1]);
-        aos.os.flush();
-    }
-        
-    public MigratingAgent readHeader(ObjectInputStream is, String className) throws IOException
-    {
-        // read destination
-        int dst = is.readInt();
-        // read Wrapper data
-        boolean migrate = is.readBoolean();
-        // TODO, so far assume loc is Double Point 2D
-        double x = is.readDouble();
-        double y = is.readDouble();
-        // create the new agent
-        SelfStreamedAgent newAgent = null;
-        try
-            {
-                newAgent = (SelfStreamedAgent) Class.forName(className).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-        // read in the data
-        MigratingAgent wrapper = new MigratingAgent(dst, newAgent, new DoublePoint(x, y), migrate);
-        return wrapper;
-    }
-        
-    public void migrate(final Object obj, final int dst, DoublePoint loc) {
-        // Wrap the agent, this is important because we want to keep track of
-        // dst, which could be the diagonal processor
-        MigratingAgent wrapper = new MigratingAgent(dst, obj, loc);
-        assert dstMap.containsKey(dst);
-        try {
-            if(wrapper.wrappedAgent instanceof SelfStreamedAgent)
-                {
-                    // write header information, all agent has this info
-                    writeHeader(dstMap.get(dst), wrapper);
-                    // write agent
-                    ((SelfStreamedAgent) wrapper.wrappedAgent).writeStream(dstMap.get(dst));
-                    // have to flush the data, in case user forget this step
-                    dstMap.get(dst).os.flush();
-                }
-            else {
-                dstMap.get(dst).write(wrapper);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-    }
+	public void migrate(final Object obj, final int dst, DoublePoint loc) {
+		// Wrap the agent, this is important because we want to keep track of
+		// dst, which could be the diagonal processor
+		Transportee wrapper = new Transportee(dst, obj, loc);
+		assert dstMap.containsKey(dst);
+		try {
 
-    public void sync() throws MPIException, IOException, ClassNotFoundException {
-        // Prepare data
-        for (int i = 0, total = 0; i < nc; i++) {
-            outputStreams[i].flush();
-            src_count[i] = outputStreams[i].size();
-            src_displ[i] = total;
-            total += src_count[i];
-        }
+//			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
+//				// write header information, all agent has this info
+//				writeHeader(dstMap.get(dst), wrapper);
+//				// write agent
+//				((SelfStreamedAgent) wrapper.wrappedObject).writeStream(dstMap.get(dst));
+//				// have to flush the data, in case user forget this step
+//				dstMap.get(dst).os.flush();
+//			} else {
+//			dstMap.get(dst).write(wrapper);
+//			}
+			dstMap.get(dst).write(wrapper);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
 
-        // Concat neighbor streams into one
-        ByteArrayOutputStream objstream = new ByteArrayOutputStream();
-        for (int i = 0; i < nc; i++)
-            objstream.write(outputStreams[i].toByteArray());
-        ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
-        sendbuf.put(objstream.toByteArray()).flip();
+	public void sync() throws MPIException, IOException, ClassNotFoundException {
+		// Prepare data
+		for (int i = 0, total = 0; i < nc; i++) {
+			outputStreams[i].flush();
+			src_count[i] = outputStreams[i].size();
+			src_displ[i] = total;
+			total += src_count[i];
+		}
 
-        // First exchange count[] of the send byte buffers with neighbors so that we can setup recvbuf
-        partition.comm.neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
-        for (int i = 0, total = 0; i < nc; i++) {
-            dst_displ[i] = total;
-            total += dst_count[i];
-        }
-        ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[nc - 1] + dst_count[nc - 1]);
+		// Concat neighbor streams into one
+		ByteArrayOutputStream objstream = new ByteArrayOutputStream();
+		for (int i = 0; i < nc; i++)
+			objstream.write(outputStreams[i].toByteArray());
+		ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
+		sendbuf.put(objstream.toByteArray()).flip();
 
-        // exchange the actual object bytes
-        partition.comm.neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ, MPI.BYTE);
+		// First exchange count[] of the send byte buffers with neighbors so that we can
+		// setup recvbuf
+		partition.comm.neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
+		for (int i = 0, total = 0; i < nc; i++) {
+			dst_displ[i] = total;
+			total += dst_count[i];
+		}
+		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[nc - 1] + dst_count[nc - 1]);
 
-        // read and handle incoming objects
-        ArrayList<MigratingAgent> bufferList = new ArrayList<MigratingAgent>();
-        for (int i = 0; i < nc; i++) {
-            byte[] data = new byte[dst_count[i]];
-            recvbuf.position(dst_displ[i]);
-            recvbuf.get(data);
-            ByteArrayInputStream in = new ByteArrayInputStream(data);
-            ObjectInputStream is = new ObjectInputStream(in);
-            boolean more = true;
-            while (more) {
-                try {
-                    MigratingAgent wrapper = null;
-                    Object object = is.readObject();
-                    if (object instanceof String)
-                        {
-                            String className = (String)object;
-                            // return the wrapper with header information filled in
-                            wrapper = readHeader(is, className);
-                            ((SelfStreamedAgent)wrapper.wrappedAgent).readStream(is);                                               
-                        }
-                    else {
-                        wrapper = (MigratingAgent)object;
-                    }
-                    if (partition.pid != wrapper.destination) {
-                        assert dstMap.containsKey(wrapper.destination);
-                        bufferList.add(wrapper);
-                    } else
-                        objects.add(wrapper.wrappedAgent);
-                } catch (EOFException e) {
-                    more = false;
-                }
-            }
-        }
+		// exchange the actual object bytes
+		partition.comm.neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ,
+				MPI.BYTE);
 
-        // Clear previous queues
-        for (int i = 0; i < nc; i++)
-            outputStreams[i].reset();
+		// read and handle incoming objects
+		ArrayList<Transportee> bufferList = new ArrayList<Transportee>();
+		for (int i = 0; i < nc; i++) {
+			byte[] data = new byte[dst_count[i]];
+			recvbuf.position(dst_displ[i]);
+			recvbuf.get(data);
+			ByteArrayInputStream in = new ByteArrayInputStream(data);
+			ObjectInputStream is = new ObjectInputStream(in);
+			boolean more = true;
+			while (more) {
+				try {
+					Transportee wrapper = null;
+					Object object = is.readObject();
+//					if (object instanceof String) {
+//						String className = (String) object;
+//						// return the wrapper with header information filled in
+//						wrapper = readHeader(is, className);
+//						((SelfStreamedAgent) wrapper.wrappedObject).readStream(is);
+//					} else {
+//					wrapper = (Transportee) object;
+//					}
+					wrapper = (Transportee) object;
+					if (partition.pid != wrapper.destination) {
+						assert dstMap.containsKey(wrapper.destination);
+						bufferList.add(wrapper);
+					} else
+						objectQueue.add(wrapper);
+				} catch (EOFException e) {
+					more = false;
+				}
+			}
+		}
 
-        // Handling the agent in bufferList
-        for (int i = 0; i < bufferList.size(); ++i)
-            {
-                MigratingAgent wrapper = (MigratingAgent) bufferList.get(i);
-                int dst = wrapper.destination;
-                if(wrapper.wrappedAgent instanceof SelfStreamedAgent)
-                    {
-                        // write header information, all agent has this info
-                        writeHeader(dstMap.get(dst), wrapper);
-                        // write agent
-                        ((SelfStreamedAgent) wrapper.wrappedAgent).writeStream(dstMap.get(dst));
-                        // have to flush the data, in case user forget this step
-                        dstMap.get(dst).os.flush();
-                    }
-                else {
-                    dstMap.get(dst).write(wrapper);
-                }
-            }
-        bufferList.clear();
-    }
+		// Clear previous queues
+		for (int i = 0; i < nc; i++)
+			outputStreams[i].reset();
 
+		// Handling the agent in bufferList
+		for (int i = 0; i < bufferList.size(); ++i) {
+			Transportee wrapper = (Transportee) bufferList.get(i);
+			int dst = wrapper.destination;
+//			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
+//				// write header information, all agent has this info
+//				writeHeader(dstMap.get(dst), wrapper);
+//				// write agent
+//				((SelfStreamedAgent) wrapper.wrappedObject).writeStream(dstMap.get(dst));
+//				// have to flush the data, in case user forget this step
+//				dstMap.get(dst).os.flush();
+//			} else {
+//			dstMap.get(dst).write(wrapper);
+//			}
+			dstMap.get(dst).write(wrapper);
+		}
+		bufferList.clear();
+	}
 
-    public static class AgentOutputStream {
-        public ByteArrayOutputStream out;
-        public ObjectOutputStream os;
- 
-        public AgentOutputStream() throws IOException {
-            out = new ByteArrayOutputStream();
-            os = new ObjectOutputStream(out);
-        }
+	public static class RemoteOutputStream {
+		public ByteArrayOutputStream out;
+		public ObjectOutputStream os;
 
-        public void write(Object obj) throws IOException {
-            os.writeObject(obj);
-        }
+		public RemoteOutputStream() throws IOException {
+			out = new ByteArrayOutputStream();
+			os = new ObjectOutputStream(out);
+		}
 
-        public byte[] toByteArray() {
-            return out.toByteArray();
-        }
+		public void write(Object obj) throws IOException {
+			os.writeObject(obj);
+		}
 
-        public int size() {
-            return out.size();
-        }
-                
-        public void flush() throws IOException
-        {
-            os.flush();
-        }
+		public byte[] toByteArray() {
+			return out.toByteArray();
+		}
 
-        public void reset() throws IOException {
-            os.close();
-            out.close();
-            out = new ByteArrayOutputStream();
-            os = new ObjectOutputStream(out);
-        }
-    }
+		public int size() {
+			return out.size();
+		}
 
+		public void flush() throws IOException {
+			os.flush();
+		}
+
+		public void reset() throws IOException {
+			os.close();
+			out.close();
+			out = new ByteArrayOutputStream();
+			os = new ObjectOutputStream(out);
+		}
+	}
+
+//	public void writeHeader(RemoteOutputStream aos, Transportee wrapper) throws IOException {
+//		String className = wrapper.wrappedObject.getClass().getName();
+//		aos.os.writeObject(className);
+//		aos.os.writeInt(wrapper.destination);
+//		aos.os.writeBoolean(wrapper.migrate);
+//		// TODO, so far assume loc is Double Point 2D
+//		aos.os.writeDouble(wrapper.loc.c[0]);
+//		aos.os.writeDouble(wrapper.loc.c[1]);
+//		aos.os.flush();
+//	}
+//
+//	public Transportee readHeader(ObjectInputStream is, String className) throws IOException {
+//		// read destination
+//		int dst = is.readInt();
+//		// read Wrapper data
+//		boolean migrate = is.readBoolean();
+//		// TODO, so far assume loc is Double Point 2D
+//		double x = is.readDouble();
+//		double y = is.readDouble();
+//		// create the new agent
+//		SelfStreamedAgent newAgent = null;
+//		try {
+//			newAgent = (SelfStreamedAgent) Class.forName(className).newInstance();
+//		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		// read in the data
+//		Transportee wrapper = new Transportee(dst, newAgent, new DoublePoint(x, y), migrate);
+//		return wrapper;
+//	}
 
 }

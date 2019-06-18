@@ -13,13 +13,13 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.DQuadTreePartition;
 import sim.field.RemoteProxy;
+import sim.field.Transportee;
 import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
 import sim.util.Interval;
 import sim.util.Timing;
 
 public class DHeatBugs extends DSimState {
-	// Import HeatBugs fields
 	private static final long serialVersionUID = 1;
 
 	public double minIdealTemp = 17000;
@@ -37,8 +37,11 @@ public class DHeatBugs extends DSimState {
 	public int bugCount, privBugCount; // the replacement for get/setBugCount ?
 
 	/*
-	 * missing: HeatBug[] bugs
+	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
+	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
+	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
+	public NObjectsGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	// Same getters and setters as HeatBugs
 	public double getMinimumIdealTemperature() {
@@ -125,20 +128,8 @@ public class DHeatBugs extends DSimState {
 		return MAX_HEAT;
 	}
 
-	/*
-	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
-	 */
-
-	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
-	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
-	public NObjectsGrid2D<DHeatBug> bugs; // Instead op SparseGrid2D
-
-	// public IntHyperRect myPart;
-	//
-
 	public DHeatBugs(long seed) {
-		// TODO: clean this up
-		this(seed, 1000, 1000, 0, 5);
+		this(seed, 1000, 1000, 1000, 5);
 	}
 
 	public DHeatBugs(long seed, int width, int height, int count, int aoi) {
@@ -162,7 +153,7 @@ public class DHeatBugs extends DSimState {
 			// ps.commit();
 
 			createGrids();
-			privBugCount = bugCount / p.numProcessors;
+			privBugCount = bugCount / partition.numProcessors;
 
 			// lb = new LoadBalancer(this.aoi, 100);
 		} catch (Exception e) {
@@ -174,15 +165,25 @@ public class DHeatBugs extends DSimState {
 	}
 
 	protected void createGrids() {
-		valgrid = new NDoubleGrid2D(p, aoi, 0);
-		valgrid2 = new NDoubleGrid2D(p, aoi, 0);
-		bugs = new NObjectsGrid2D<DHeatBug>(p, aoi);
+		valgrid = new NDoubleGrid2D(partition, aoi, 0);
+		valgrid2 = new NDoubleGrid2D(partition, aoi, 0);
+		bugs = new NObjectsGrid2D<DHeatBug>(partition, aoi);
 	}
 
 	public void start() {
 		super.start();
 
-		int[] size = p.getPartition().getSize();
+		// TODO: properly init
+		for (int i = 0; i < partition.numProcessors; i++) {
+			RemoteProxy.Init(i);
+		}
+		syncFields();
+		bugs.initRemote();
+		valgrid.initRemote();
+		valgrid2.initRemote();
+		// /init
+
+		int[] size = partition.getPartition().getSize();
 		double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
@@ -191,33 +192,17 @@ public class DHeatBugs extends DSimState {
 			double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px, py; // Why are we doing this? Relationship?
 			do {
-				px = random.nextInt(size[0]) + p.getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + p.getPartition().ul().getArray()[1];
+				px = random.nextInt(size[0]) + partition.getPartition().ul().getArray()[0];
+				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
 			} while (bugs.get(px, py) != null);
 			DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			bugs.add(px, py, b);
 			schedule.scheduleOnce(b, 1);
 		}
-		// TODO: properly init
-		for (int i = 0; i < p.numProcessors; i++) {
-			RemoteProxy.Init(i);
-		}
-		try {
-			bugs.sync();
-			valgrid.sync();
-			valgrid2.sync();
-		} catch (MPIException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		bugs.initRemote();
-		valgrid.initRemote();
-		valgrid2.initRemote();
-		// /init
 
 		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
-		schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
+//		schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
 		schedule.scheduleRepeating(Schedule.EPOCH, 4, new Balancer(), 1);
 		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
@@ -228,42 +213,66 @@ public class DHeatBugs extends DSimState {
 	// Synchronizer, Balancer, Inspector
 	// Doesn't have stop()
 
-	private class Synchronizer implements Steppable {
-		private static final long serialVersionUID = 1;
+//	private class Synchronizer implements Steppable {
+//		private static final long serialVersionUID = 1;
+//
+//		public void step(SimState state) {
+//			DHeatBugs hb = (DHeatBugs) state;
+	// Here we have completed all the computation work - stop the timer
+//			Timing.stop(Timing.LB_RUNTIME);
+//
+//			Timing.start(Timing.MPI_SYNC_OVERHEAD);
+//
+//			try {
+//				hb.valgrid.sync();
+//				hb.bugs.sync();
+//				hb.transporter.sync();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
 
-		public void step(SimState state) {
-			DHeatBugs hb = (DHeatBugs) state;
-			// Here we have completed all the computation work - stop the timer
-			Timing.stop(Timing.LB_RUNTIME);
+//			for (Transportee transportee : hb.transporter.objectQueue) {
+//				privBugCount++;
+//				DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
+//				bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
+//				schedule.scheduleOnce(heatBug, 1);
+//			}
+//			hb.transporter.objectQueue.clear();
+//
+//			Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+//		}
+//	}
 
-			Timing.start(Timing.MPI_SYNC_OVERHEAD);
+	public void addToLocation(Transportee transportee) {
+		// Here we have completed all the computation work - stop the timer
+		privBugCount++;
+		DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
+		bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
+	}
 
-			try {
-				hb.valgrid.sync();
-				hb.bugs.sync();
-				hb.queue.sync();
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-
-			for (Object obj : hb.queue) {
-				privBugCount++;
-				DHeatBug b = (DHeatBug) obj;
-				bugs.add(b.loc_x, b.loc_y, b);
-				schedule.scheduleOnce(b, 1);
-			}
-			hb.queue.objects.clear();
-
-			Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+	public void syncFields() {
+		Timing.stop(Timing.LB_RUNTIME);
+		Timing.start(Timing.MPI_SYNC_OVERHEAD);
+		try {
+			valgrid.sync();
+			bugs.sync();
+			transporter.sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
 		}
+	}
+
+	public void postSync() {
+		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
 
 	private class Balancer implements Steppable {
 		public void step(final SimState state) {
 			DHeatBugs hb = (DHeatBugs) state;
 			try {
-				DQuadTreePartition ps = (DQuadTreePartition) hb.p;
+				DQuadTreePartition ps = (DQuadTreePartition) hb.partition;
 				Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 				Timing.start(Timing.LB_OVERHEAD);
 				ps.balance(runtime, 0);
@@ -289,11 +298,10 @@ public class DHeatBugs extends DSimState {
 			// state.logger.info(String.format("PID %d Step %d Agent Count %d\n", hb.p.pid,
 			// hb.schedule.getSteps(), hb.privBugCount));
 			// if (DNonUniformPartition.getPartitionScheme().getPid() == 0) {
-			((DSimState) state).logger
-					.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
-							hb.p.getPid(), hb.schedule.getSteps(), Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
-							Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
-							Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
+			DSimState.logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
+					hb.partition.getPid(), hb.schedule.getSteps(), Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
+					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
+					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
 			// }
 			// for (Steppable i : hb.queue) {
 			// DHeatBug a = (DHeatBug)i;
