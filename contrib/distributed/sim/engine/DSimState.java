@@ -88,6 +88,7 @@ public abstract class DSimState extends SimState {
 			addToLocation(transportee);
 		}
 		transporter.objectQueue.clear();
+		postSync();
 	}
 
 	private static void initRemoteLogger(String loggerName, String logServAddr, int logServPort) throws IOException {

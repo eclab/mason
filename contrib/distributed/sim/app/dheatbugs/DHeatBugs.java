@@ -262,10 +262,12 @@ public class DHeatBugs extends DSimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		// TODO move to post sync
+		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
 
 	public void postSync() {
-		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+//		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
 
 	private class Balancer implements Steppable {
