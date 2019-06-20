@@ -7,10 +7,7 @@
 package sim.app.dflockers;
 
 import mpi.MPIException;
-import sim.app.dheatbugs.DHeatBug;
 import sim.engine.DSimState;
-import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.DRemoteTransporter;
 import sim.field.Transportee;
 import sim.field.continuous.NContinuous2D;
@@ -62,16 +59,19 @@ public class DFlockers extends DSimState {
 
 	}
 
-	public void addToLocation(Transportee transportee) {
-		// TODO: Move schedule.addAfter stuff here
+	protected void addToLocation(Transportee<?> transportee) {
+		DFlocker flocker = (DFlocker) transportee.wrappedObject;
+		flockers.setLocation(flocker, flocker.loc);
 	}
 
-	public void syncFields() {
-		// TODO: Move schedule.addAfter stuff here
-	}
-
-	public void postSync() {
-		// TODO: Move schedule.addAfter stuff here
+	protected void syncFields() {
+		Timing.stop(Timing.LB_RUNTIME);
+		try {
+			flockers.sync();
+		} catch (MPIException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	public void start() {
@@ -91,36 +91,36 @@ public class DFlockers extends DSimState {
 			schedule.scheduleOnce(flocker, 1);
 		}
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
-		schedule.addAfter(new Steppable() {
-			public void step(SimState state) {
-				DFlockers dflockers = (DFlockers) state;
-				Timing.stop(Timing.LB_RUNTIME);
-				// Timing.start(Timing.MPI_SYNC_OVERHEAD);
-				try {
-					// Sync agents in halo area
-					dflockers.flockers.sync();
-					// Actual migration of agents
-					dflockers.migrator.sync();
-					// String s = String.format("PID %d Steps %d Number of Agents %d\n",
-					// partition.pid, schedule.getSteps(), flockers.size() -
-					// flockers.ghosts.size());
-					// System.out.print(s);
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.exit(-1);
-				}
-
-				// Retrieve the migrated agents from queue and schedule them
-				for (Transportee transportee : dflockers.migrator.objectQueue) {
-					DFlocker flocker = (DFlocker) transportee.wrappedObject;
-					dflockers.flockers.setLocation(flocker, flocker.loc);
-					schedule.scheduleOnce(flocker, 1);
-				}
-				// Clear the queue
-				dflockers.migrator.clear();
-				// Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-			}
-		});
+//		schedule.addAfter(new Steppable() {
+//			public void step(SimState state) {
+//				DFlockers dflockers = (DFlockers) state;
+//				Timing.stop(Timing.LB_RUNTIME);
+//				// Timing.start(Timing.MPI_SYNC_OVERHEAD);
+//				try {
+//					// Sync agents in halo area
+//					dflockers.flockers.sync();
+//					// Actual migration of agents
+//					dflockers.migrator.sync();
+//					// String s = String.format("PID %d Steps %d Number of Agents %d\n",
+//					// partition.pid, schedule.getSteps(), flockers.size() -
+//					// flockers.ghosts.size());
+//					// System.out.print(s);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					System.exit(-1);
+//				}
+//
+//				// Retrieve the migrated agents from queue and schedule them
+//				for (Transportee<?> transportee : dflockers.migrator.objectQueue) {
+//					DFlocker flocker = (DFlocker) transportee.wrappedObject;
+//					dflockers.flockers.setLocation(flocker, flocker.loc);
+//					schedule.scheduleOnce(flocker, 1);
+//				}
+//				// Clear the queue
+//				dflockers.migrator.clear();
+//				// Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+//			}
+//		});
 	}
 
 	public static void main(String[] args) throws MPIException {

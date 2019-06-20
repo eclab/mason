@@ -16,21 +16,23 @@ import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
 
 import ec.util.MersenneTwisterFast;
-import sim.field.DRemoteTransporter;
-import sim.field.Transportee;
+import mpi.MPIException;
 import sim.field.DPartition;
 import sim.field.DQuadTreePartition;
+import sim.field.DRemoteTransporter;
+import sim.field.Transportee;
 import sim.util.Timing;
 
 public abstract class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public DPartition partition;
 	public DRemoteTransporter transporter;
+	public static Logger logger;
+	public int[] aoi; // Area of Interest
+
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
 	// used: lb = new LoadBalancer(aoi, 100);
-	public static Logger logger;
-	public int[] aoi; // Area of Interest
 
 	public DSimState(long seed) {
 		this(seed, 1000, 1000, 5);
@@ -43,7 +45,6 @@ public abstract class DSimState extends SimState {
 		partition = dq;
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
-
 	}
 
 	protected DSimState(MersenneTwisterFast random, Schedule schedule) {
@@ -68,27 +69,39 @@ public abstract class DSimState extends SimState {
 	 * 
 	 * @param transportee
 	 */
-	public abstract void addToLocation(Transportee transportee);
+	protected abstract void addToLocation(Transportee<?> transportee);
 
 	/**
 	 * Calls Sync on all the fields
 	 */
-	public abstract void syncFields();
-
-	public abstract void postSync();
+	protected abstract void syncFields();
 
 	public void preSchedule() {
-		// TODO
-		// Emigrate or Sync the agents
-		// Immigrate or Schedule agents
-		// Synchronizer
 		syncFields();
-		for (Transportee transportee : transporter.objectQueue) {
-			schedule.scheduleOnce((Steppable) transportee.wrappedObject, 1);
-			addToLocation(transportee);
+		try {
+			transporter.sync();
+		} catch (ClassNotFoundException | MPIException | IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		for (Transportee<?> transportee : transporter.objectQueue) {
+			if (transportee.wrappedObject instanceof IterativeRepeat) {
+				IterativeRepeat iterativeRepeat = (IterativeRepeat) transportee.wrappedObject;
+				schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
+						iterativeRepeat.interval);
+			} else if (transportee.wrappedObject instanceof Steppable) {
+//				System.out.println("partition - " + partition + "\nTransportee - " + transportee);
+				schedule.scheduleOnce((Steppable) transportee.wrappedObject, transportee.ordering);
+			}
+
+			// if location is null we assume that
+			// the agent is not supposed to be added to any field
+			if (transportee.loc != null)
+				addToLocation(transportee);
 		}
 		transporter.objectQueue.clear();
-		postSync();
+
+//		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
 
 	private static void initRemoteLogger(String loggerName, String logServAddr, int logServPort) throws IOException {
@@ -148,9 +161,7 @@ public abstract class DSimState extends SimState {
 		else
 			initLocalLogger(loggerName);
 
-		// start do loop
 		doLoop(c, args);
-
 		mpi.MPI.Finalize();
 	}
 

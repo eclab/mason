@@ -34,7 +34,8 @@ public class DHeatBugs extends DSimState {
 
 	public int gridHeight;
 	public int gridWidth;
-	public int bugCount, privBugCount; // the replacement for get/setBugCount ?
+	public int bugCount;
+	public int privBugCount; // the replacement for get/setBugCount ?
 
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
@@ -42,6 +43,46 @@ public class DHeatBugs extends DSimState {
 	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
 	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
 	public NObjectsGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
+
+	public DHeatBugs(long seed) {
+		this(seed, 1000, 1000, 1000, 5);
+	}
+
+	public DHeatBugs(long seed, int width, int height, int count, int aoi) {
+		super(seed, width, height, aoi);
+		gridWidth = width;
+		gridHeight = height;
+		bugCount = count;
+		privBugCount = bugCount / partition.numProcessors;
+		try {
+			createGrids();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+		// try {
+		// DNonUniformPartition ps = DNonUniformPartition.getPartitionScheme(new int[]
+		// {width, height}, true, this.aoi);
+		// assert ps.np == 4;
+		// ps.insertPartition(new IntHyperRect(0, new IntPoint(0, 0), new IntPoint(100,
+		// 100)));
+		// ps.insertPartition(new IntHyperRect(1, new IntPoint(0, 100), new
+		// IntPoint(100, 1000)));
+		// ps.insertPartition(new IntHyperRect(2, new IntPoint(100, 0), new
+		// IntPoint(1000, 100)));
+		// ps.insertPartition(new IntHyperRect(3, new IntPoint(100, 100), new
+		// IntPoint(1000, 1000)));
+		// ps.commit();
+		// createGrids();
+		// lb = new LoadBalancer(this.aoi, 100);
+		// } catch (Exception e) {
+		// e.printStackTrace(System.out);
+		// System.exit(-1);
+		// }
+
+		// myPart = p.getPartition();
+	}
 
 	// Same getters and setters as HeatBugs
 	public double getMinimumIdealTemperature() {
@@ -128,42 +169,6 @@ public class DHeatBugs extends DSimState {
 		return MAX_HEAT;
 	}
 
-	public DHeatBugs(long seed) {
-		this(seed, 1000, 1000, 1000, 5);
-	}
-
-	public DHeatBugs(long seed, int width, int height, int count, int aoi) {
-		super(seed, width, height, aoi);
-		gridWidth = width;
-		gridHeight = height;
-		bugCount = count;
-
-		try {
-			// DNonUniformPartition ps = DNonUniformPartition.getPartitionScheme(new int[]
-			// {width, height}, true, this.aoi);
-			// assert ps.np == 4;
-			// ps.insertPartition(new IntHyperRect(0, new IntPoint(0, 0), new IntPoint(100,
-			// 100)));
-			// ps.insertPartition(new IntHyperRect(1, new IntPoint(0, 100), new
-			// IntPoint(100, 1000)));
-			// ps.insertPartition(new IntHyperRect(2, new IntPoint(100, 0), new
-			// IntPoint(1000, 100)));
-			// ps.insertPartition(new IntHyperRect(3, new IntPoint(100, 100), new
-			// IntPoint(1000, 1000)));
-			// ps.commit();
-
-			createGrids();
-			privBugCount = bugCount / partition.numProcessors;
-
-			// lb = new LoadBalancer(this.aoi, 100);
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			System.exit(-1);
-		}
-
-		// myPart = p.getPartition();
-	}
-
 	protected void createGrids() {
 		valgrid = new NDoubleGrid2D(partition, aoi, 0);
 		valgrid2 = new NDoubleGrid2D(partition, aoi, 0);
@@ -203,73 +208,36 @@ public class DHeatBugs extends DSimState {
 		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 //		schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
-		schedule.scheduleRepeating(Schedule.EPOCH, 4, new Balancer(), 1);
-		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
+
+		// TODO: Balancer is broken,
+		// the items on the edge find themselves in the wrong pId
+
+//		schedule.scheduleRepeating(Schedule.EPOCH, 4, new Balancer(), 1);
+//		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
 
-	// Missing availableProcessors() ; Is this really needed? Maybe not.
-
-	// Includes three private classes
-	// Synchronizer, Balancer, Inspector
-	// Doesn't have stop()
-
-//	private class Synchronizer implements Steppable {
-//		private static final long serialVersionUID = 1;
-//
-//		public void step(SimState state) {
-//			DHeatBugs hb = (DHeatBugs) state;
-	// Here we have completed all the computation work - stop the timer
-//			Timing.stop(Timing.LB_RUNTIME);
-//
-//			Timing.start(Timing.MPI_SYNC_OVERHEAD);
-//
-//			try {
-//				hb.valgrid.sync();
-//				hb.bugs.sync();
-//				hb.transporter.sync();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				System.exit(-1);
-//			}
-
-//			for (Transportee transportee : hb.transporter.objectQueue) {
-//				privBugCount++;
-//				DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-//				bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
-//				schedule.scheduleOnce(heatBug, 1);
-//			}
-//			hb.transporter.objectQueue.clear();
-//
-//			Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-//		}
-//	}
-
-	public void addToLocation(Transportee transportee) {
-		// Here we have completed all the computation work - stop the timer
+	protected void addToLocation(Transportee<?> transportee) {
 		privBugCount++;
 		DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
 		bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
 	}
 
-	public void syncFields() {
+	protected void syncFields() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
 			valgrid.sync();
+			valgrid2.sync();
 			bugs.sync();
-			transporter.sync();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		// TODO move to post sync
+		// TODO: Move this to after objectQueue.clear
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
 
-	public void postSync() {
-//		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-	}
-
+	@SuppressWarnings("serial")
 	private class Balancer implements Steppable {
 		public void step(final SimState state) {
 			DHeatBugs hb = (DHeatBugs) state;
@@ -292,6 +260,7 @@ public class DHeatBugs extends DSimState {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	private class Inspector implements Steppable {
 		public void step(final SimState state) {
 			DHeatBugs hb = (DHeatBugs) state;
@@ -317,4 +286,41 @@ public class DHeatBugs extends DSimState {
 		doLoopMPI(DHeatBugs.class, args);
 		System.exit(0);
 	}
+
+	// Missing availableProcessors() ; Is this really needed? Maybe not.
+
+	// Includes three private classes
+	// Synchronizer, Balancer, Inspector
+	// Doesn't have stop()
+
+//		private class Synchronizer implements Steppable {
+//			private static final long serialVersionUID = 1;
+	//
+//			public void step(SimState state) {
+//				DHeatBugs hb = (DHeatBugs) state;
+	// Here we have completed all the computation work - stop the timer
+//				Timing.stop(Timing.LB_RUNTIME);
+	//
+//				Timing.start(Timing.MPI_SYNC_OVERHEAD);
+	//
+//				try {
+//					hb.valgrid.sync();
+//					hb.bugs.sync();
+//					hb.transporter.sync();
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					System.exit(-1);
+//				}
+
+//				for (Transportee transportee : hb.transporter.objectQueue) {
+//					privBugCount++;
+//					DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
+//					bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
+//					schedule.scheduleOnce(heatBug, 1);
+//				}
+//				hb.transporter.objectQueue.clear();
+	//
+//				Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+//			}
+//		}
 }

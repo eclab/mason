@@ -20,7 +20,7 @@ public class Diffuser implements Steppable {
 	private static final long serialVersionUID = 1;
 
 	public void step(SimState state) {
-		DHeatBugs heatbugs = (DHeatBugs) state;
+		final DHeatBugs heatbugs = (DHeatBugs) state;
 
 		// locals are faster than instance variables
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
@@ -30,11 +30,8 @@ public class Diffuser implements Steppable {
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
 		final int aoi = heatbugs.aoi[0];
-
-		double average;
-
+		final int offset = heatbugs.partition.getPartition().getSize()[1] + (2 * aoi);
 		int past, curr, next;
-		int offset = heatbugs.partition.getPartition().getSize()[1] + (2 * aoi);
 
 		// for each x and y position
 		for (int x = aoi; x < _gridWidth + aoi; x++) {
@@ -43,7 +40,8 @@ public class Diffuser implements Steppable {
 			next = curr + offset;
 
 			for (int y = aoi; y < _gridHeight + aoi; y++) {
-				average = (_valgrid_field[past + y - 1] + _valgrid_field[past + y] + _valgrid_field[past + y + 1]
+				final double average = (_valgrid_field[past + y - 1] + _valgrid_field[past + y]
+						+ _valgrid_field[past + y + 1]
 						+ _valgrid_field[curr + y - 1] + _valgrid_field[curr + y] + _valgrid_field[curr + y + 1]
 						+ _valgrid_field[next + y - 1] + _valgrid_field[next + y] + _valgrid_field[next + y + 1]) / 9.0;
 

@@ -16,7 +16,7 @@ import sim.util.DoublePoint;
 
 public class DRemoteTransporter {
 
-	int nc; // number of direct neighbors
+	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
@@ -25,9 +25,7 @@ public class DRemoteTransporter {
 	DPartition partition;
 	int[] neighbors;
 
-	// TODO: Should this be Steppable or Objects
-	// what about multiple different types of agents?
-	public ArrayList<Transportee> objectQueue;
+	public ArrayList<Transportee<? extends Object>> objectQueue;
 
 	public DRemoteTransporter(DPartition partition) {
 		this.partition = partition;
@@ -56,19 +54,19 @@ public class DRemoteTransporter {
 	public void reload() {
 		// TODO cannot work with one node?
 		neighbors = partition.getNeighborIds();
-		nc = neighbors.length;
+		numNeighbors = neighbors.length;
 
 		objectQueue = new ArrayList<>();
 
-		src_count = new int[nc];
-		src_displ = new int[nc];
-		dst_count = new int[nc];
-		dst_displ = new int[nc];
+		src_count = new int[numNeighbors];
+		src_displ = new int[numNeighbors];
+		dst_count = new int[numNeighbors];
+		dst_displ = new int[numNeighbors];
 
 		// outputStreams for direct neighbors
 		try {
-			outputStreams = new RemoteOutputStream[nc];
-			for (int i = 0; i < nc; i++)
+			outputStreams = new RemoteOutputStream[numNeighbors];
+			for (int i = 0; i < numNeighbors; i++)
 				outputStreams[i] = new RemoteOutputStream();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,7 +75,7 @@ public class DRemoteTransporter {
 
 		// neighbors
 		dstMap = new HashMap<Integer, RemoteOutputStream>();
-		for (int i = 0; i < nc; i++)
+		for (int i = 0; i < numNeighbors; i++)
 			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
 	}
 
@@ -92,10 +90,9 @@ public class DRemoteTransporter {
 	public void migrate(final Object obj, final int dst, DoublePoint loc) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		Transportee wrapper = new Transportee(dst, obj, loc);
+		Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc);
 		assert dstMap.containsKey(dst);
 		try {
-
 //			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
 //				// write header information, all agent has this info
 //				writeHeader(dstMap.get(dst), wrapper);
@@ -113,9 +110,10 @@ public class DRemoteTransporter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
-		for (int i = 0, total = 0; i < nc; i++) {
+		for (int i = 0, total = 0; i < numNeighbors; i++) {
 			outputStreams[i].flush();
 			src_count[i] = outputStreams[i].size();
 			src_displ[i] = total;
@@ -124,7 +122,7 @@ public class DRemoteTransporter {
 
 		// Concat neighbor streams into one
 		ByteArrayOutputStream objstream = new ByteArrayOutputStream();
-		for (int i = 0; i < nc; i++)
+		for (int i = 0; i < numNeighbors; i++)
 			objstream.write(outputStreams[i].toByteArray());
 		ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
@@ -132,57 +130,63 @@ public class DRemoteTransporter {
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
 		partition.comm.neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
-		for (int i = 0, total = 0; i < nc; i++) {
+		for (int i = 0, total = 0; i < numNeighbors; i++) {
 			dst_displ[i] = total;
 			total += dst_count[i];
 		}
-		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[nc - 1] + dst_count[nc - 1]);
+		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
 		partition.comm.neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ,
 				MPI.BYTE);
 
 		// read and handle incoming objects
-		ArrayList<Transportee> bufferList = new ArrayList<Transportee>();
-		for (int i = 0; i < nc; i++) {
+		ArrayList<Transportee<? extends Object>> bufferList = new ArrayList<>();
+		for (int i = 0; i < numNeighbors; i++) {
 			byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
 			recvbuf.get(data);
 			ByteArrayInputStream in = new ByteArrayInputStream(data);
 			ObjectInputStream is = new ObjectInputStream(in);
-			boolean more = true;
-			while (more) {
+
+			while (true) {
 				try {
-					Transportee wrapper = null;
-					Object object = is.readObject();
-//					if (object instanceof String) {
-//						String className = (String) object;
-//						// return the wrapper with header information filled in
-//						wrapper = readHeader(is, className);
-//						((SelfStreamedAgent) wrapper.wrappedObject).readStream(is);
-//					} else {
-//					wrapper = (Transportee) object;
-//					}
-					wrapper = (Transportee) object;
+					Transportee<? extends Object> wrapper = (Transportee<? extends Object>) is.readObject();
 					if (partition.pid != wrapper.destination) {
 						assert dstMap.containsKey(wrapper.destination);
 						bufferList.add(wrapper);
 					} else
 						objectQueue.add(wrapper);
 				} catch (EOFException e) {
-					more = false;
+					break;
 				}
 			}
+//			while (true) {
+//			try {
+//				Transportee<? extends Object> wrapper = null;
+//				Object object = is.readObject();
+//				if (object instanceof String) {
+//					String className = (String) object;
+//					// return the wrapper with header information filled in
+//					wrapper = readHeader(is, className);
+//					((SelfStreamedAgent) wrapper.wrappedObject).readStream(is);
+//				} else {
+//				wrapper = (Transportee) object;
+//				}
 		}
 
 		// Clear previous queues
-		for (int i = 0; i < nc; i++)
+		for (int i = 0; i < numNeighbors; i++)
 			outputStreams[i].reset();
 
 		// Handling the agent in bufferList
-		for (int i = 0; i < bufferList.size(); ++i) {
-			Transportee wrapper = (Transportee) bufferList.get(i);
-			int dst = wrapper.destination;
+		for (Transportee<? extends Object> wrapper : bufferList)
+			dstMap.get(wrapper.destination).write(wrapper);
+		bufferList.clear();
+
+//		for (int i = 0; i < bufferList.size(); ++i) {
+//			Transportee<? extends Object> wrapper = bufferList.get(i);
+//			int dst = wrapper.destination;
 //			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
 //				// write header information, all agent has this info
 //				writeHeader(dstMap.get(dst), wrapper);
@@ -193,9 +197,8 @@ public class DRemoteTransporter {
 //			} else {
 //			dstMap.get(dst).write(wrapper);
 //			}
-			dstMap.get(dst).write(wrapper);
-		}
-		bufferList.clear();
+//		}
+//		bufferList.clear();
 	}
 
 	public static class RemoteOutputStream {

@@ -1,12 +1,26 @@
 package sim.field;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
-import java.util.stream.*;
 
-import mpi.*;
-
-import sim.util.*;
+import mpi.Comm;
+import mpi.Info;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.util.DoublePoint;
+import sim.util.GroupComm;
+import sim.util.IntHyperRect;
+import sim.util.IntPoint;
+import sim.util.MPITest;
+import sim.util.MPIUtil;
+import sim.util.NdPoint;
+import sim.util.QTNode;
+import sim.util.QuadTree;
 
 public class DQuadTreePartition extends DPartition {
     QuadTree qt;
@@ -326,4 +340,10 @@ public class DQuadTreePartition extends DPartition {
 
         MPI.Finalize();
     }
+
+	@Override
+	public String toString() {
+		return "DQuadTreePartition [qt=" + qt + ", myLeafNode=" + myLeafNode + ", groups=" + groups + ", aoi="
+				+ Arrays.toString(aoi) + "]";
+	}
 }

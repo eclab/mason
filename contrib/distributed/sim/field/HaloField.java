@@ -18,7 +18,7 @@ public abstract class HaloField implements RemoteField {
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
-	protected IntHyperRect world, haloPart, origPart, privPart;
+	public IntHyperRect world, haloPart, origPart, privPart;
 	// TODO: Fix the comment -
 	// pointer to the processors who's partitions neighbor me
 	protected Neighbor[] neighbors;

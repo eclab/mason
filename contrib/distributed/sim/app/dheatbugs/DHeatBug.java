@@ -34,6 +34,22 @@ public class DHeatBug implements Steppable {
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;
 		grid.set(x, y, new_heat);
+
+//		try {
+//			double new_heat = grid.get(x, y) + heat;
+//			if (new_heat > DHeatBugs.MAX_HEAT)
+//				new_heat = DHeatBugs.MAX_HEAT;
+//			grid.set(x, y, new_heat);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("HeatBug - " + this +
+//					"\nBugs: haloPart - " + hb.bugs.haloPart +
+//					"\nBugs: origPart - " + hb.bugs.origPart +
+//					"\nBugs: privPart - " + hb.bugs.privPart +
+//					"\nCurrent pId - " + hb.partition.getPid() +
+//					"\npId according to QuadTree - " +
+//					hb.partition.toPartitionId(new int[] { loc_x, loc_y }) + "\nPartition Info - " + hb.partition);
+//		}
 	}
 
 	public void step(final SimState state) {
@@ -101,7 +117,7 @@ public class DHeatBug implements Steppable {
 
 //				if (!hb.bugs.remove(old_x, old_y, this))
 //					System.err.println("Failed to remove!");
-
+//				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
 				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y));
 				hb.privBugCount--;
 			} else {
