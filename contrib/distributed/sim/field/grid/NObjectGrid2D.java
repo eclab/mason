@@ -5,14 +5,16 @@ import java.rmi.RemoteException;
 import java.util.function.IntFunction;
 
 import sim.util.IntPoint;
+import sim.engine.DSimState;
 import sim.field.DPartition;
 import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
 
 public class NObjectGrid2D<T extends Serializable> extends HaloField {
 
-	public NObjectGrid2D(final DPartition ps, final int[] aoi, final IntFunction<T[]> allocator) {
-		super(ps, aoi, new ObjectGridStorage<T>(ps.getPartition(), allocator));
+	public NObjectGrid2D(final DPartition ps, final int[] aoi, final IntFunction<T[]> allocator,
+			final DSimState state) {
+		super(ps, aoi, new ObjectGridStorage<T>(ps.getPartition(), allocator), state);
 
 		if (numDimensions != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + numDimensions);

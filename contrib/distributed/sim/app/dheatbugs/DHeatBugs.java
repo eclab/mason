@@ -54,15 +54,9 @@ public class DHeatBugs extends DSimState {
 		bugCount = count;
 		privBugCount = bugCount / partition.numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(partition, this.aoi, 0);
-			register(valgrid);
-
-			valgrid2 = new NDoubleGrid2D(partition, this.aoi, 0);
-			register(valgrid2);
-
-			bugs = new NObjectsGrid2D<DHeatBug>(partition, this.aoi);
-			register(bugs);
-
+			valgrid = new NDoubleGrid2D(partition, this.aoi, 0, this);
+			valgrid2 = new NDoubleGrid2D(partition, this.aoi, 0, this);
+			bugs = new NObjectsGrid2D<DHeatBug>(partition, this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

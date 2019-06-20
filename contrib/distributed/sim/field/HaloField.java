@@ -1,14 +1,25 @@
 package sim.field;
 
-import java.io.*;
+import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.IntStream;
 
-import mpi.*;
-
+import mpi.Comm;
+import mpi.Datatype;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.engine.DSimState;
 import sim.field.storage.GridStorage;
-import sim.util.*;
+import sim.util.GroupComm;
+import sim.util.IntHyperRect;
+import sim.util.IntPoint;
+import sim.util.IntPointGenerator;
+import sim.util.MPIParam;
+import sim.util.MPIUtil;
 
 // TODO refactor HaloField to accept
 // continuous: double, int, object
@@ -30,10 +41,11 @@ public abstract class HaloField implements RemoteField {
 	protected DPartition ps;
 	protected Comm comm;
 	protected Datatype MPIBaseType;
+	public final int registeredIndex;
 
 	protected RemoteProxy proxy;
 
-	public HaloField(final DPartition ps, final int[] aoi, final GridStorage stor) {
+	public HaloField(final DPartition ps, final int[] aoi, final GridStorage stor, final DSimState state) {
 		this.ps = ps;
 		this.aoi = aoi;
 		field = stor;
@@ -48,6 +60,7 @@ public abstract class HaloField implements RemoteField {
 
 		// init variables that may change with the partition scheme
 		reload();
+		registeredIndex = state.register(this);
 	}
 
 	protected void registerCallbacks() {

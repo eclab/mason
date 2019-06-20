@@ -67,12 +67,17 @@ public abstract class DSimState extends SimState {
 	}
 
 	/**
-	 * Models always need to register all their fields here
+	 * All HaloFields register themselves here.<br>
+	 * Do not call this method explicitly, it's called in the HaloField constructor
 	 *
 	 * @param haloField
+	 * @return index of the field
 	 */
-	protected void register(final HaloField haloField) {
+	public int register(final HaloField haloField) {
+		// Must be called in a deterministic manner
+		final int index = fields.size();
 		fields.add(haloField);
+		return index;
 	}
 
 	/**

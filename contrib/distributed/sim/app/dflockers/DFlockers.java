@@ -35,8 +35,7 @@ public class DFlockers extends DSimState {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
-		flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations);
-		register(flockers);
+		flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations, this);
 
 		/*
 		 * try { // int[] size = new int[] { (int) width, (int) height }; int[] aoi =
