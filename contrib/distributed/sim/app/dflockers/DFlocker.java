@@ -21,7 +21,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 	public DoublePoint lastd = new DoublePoint(0, 0);
 	public boolean dead = false;
 
-	public DFlocker(DoublePoint location) {
+	public DFlocker(final DoublePoint location) {
 		loc = location;
 	}
 
@@ -33,11 +33,11 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		return dead;
 	}
 
-	public void setDead(boolean val) {
+	public void setDead(final boolean val) {
 		dead = val;
 	}
 
-	public void setOrientation2D(double val) {
+	public void setOrientation2D(final double val) {
 		lastd = new DoublePoint(Math.cos(val), Math.sin(val));
 	}
 
@@ -51,7 +51,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		return lastd;
 	}
 
-	public DoublePoint consistency(List<DFlocker> b, NContinuous2D<DFlocker> flockers) {
+	public DoublePoint consistency(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -60,9 +60,9 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		int i = 0;
 		int count = 0;
 		for (i = 0; i < b.size(); i++) {
-			DFlocker other = (DFlocker) (b.get(i));
+			final DFlocker other = (b.get(i));
 			if (!other.dead) {
-				DoublePoint m = ((DFlocker) b.get(i)).momentum();
+				final DoublePoint m = b.get(i).momentum();
 				count++;
 				x += m.c[0];
 				y += m.c[1];
@@ -75,7 +75,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		return new DoublePoint(x, y);
 	}
 
-	public DoublePoint cohesion(List<DFlocker> b, NContinuous2D<DFlocker> flockers) {
+	public DoublePoint cohesion(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -85,10 +85,10 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		int count = 0;
 		int i = 0;
 		for (i = 0; i < b.size(); i++) {
-			DFlocker other = (DFlocker) (b.get(i));
+			final DFlocker other = (b.get(i));
 			if (!other.dead) {
-				double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
+				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
+				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
 				count++;
 				x += dx;
 				y += dy;
@@ -101,7 +101,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		return new DoublePoint(-x / 10, -y / 10);
 	}
 
-	public DoublePoint avoidance(List<DFlocker> b, NContinuous2D<DFlocker> flockers) {
+	public DoublePoint avoidance(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 		double x = 0;
@@ -111,11 +111,11 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		int count = 0;
 
 		for (i = 0; i < b.size(); i++) {
-			DFlocker other = (DFlocker) (b.get(i));
+			final DFlocker other = (b.get(i));
 			if (other != this) {
-				double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
-				double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
-				double lensquared = dx * dx + dy * dy;
+				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
+				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
+				final double lensquared = dx * dx + dy * dy;
 				count++;
 				x += dx / (lensquared * lensquared + 1);
 				y += dy / (lensquared * lensquared + 1);
@@ -128,16 +128,16 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		return new DoublePoint(400 * x, 400 * y);
 	}
 
-	public DoublePoint randomness(MersenneTwisterFast r) {
-		double x = r.nextDouble() * 2 - 1.0;
-		double y = r.nextDouble() * 2 - 1.0;
-		double l = Math.sqrt(x * x + y * y);
+	public DoublePoint randomness(final MersenneTwisterFast r) {
+		final double x = r.nextDouble() * 2 - 1.0;
+		final double y = r.nextDouble() * 2 - 1.0;
+		final double l = Math.sqrt(x * x + y * y);
 		return new DoublePoint(0.05 * x / l, 0.05 * y / l);
 	}
 
-	public void step(SimState state) {
+	public void step(final SimState state) {
 		final DFlockers flock = (DFlockers) state;
-		DoublePoint oldloc = loc;
+		final DoublePoint oldloc = loc;
 		loc = (DoublePoint) flock.flockers.getLocation(this);
 		if (loc == null) {
 			System.out.printf("pid %d oldx %g oldy %g", flock.partition.pid, oldloc.c[0], oldloc.c[1]);
@@ -148,42 +148,44 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		if (dead)
 			return;
 
-		List<DFlocker> b = flock.flockers.getNeighborsWithin(this, flock.neighborhood);
+		final List<DFlocker> b = flock.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
 
-		DoublePoint avoid = avoidance(b, flock.flockers);
-		DoublePoint cohe = cohesion(b, flock.flockers);
-		DoublePoint rand = randomness(flock.random);
-		DoublePoint cons = consistency(b, flock.flockers);
-		DoublePoint mome = momentum();
+		final DoublePoint avoid = avoidance(b, flock.flockers);
+		final DoublePoint cohe = cohesion(b, flock.flockers);
+		final DoublePoint rand = randomness(flock.random);
+		final DoublePoint cons = consistency(b, flock.flockers);
+		final DoublePoint mome = momentum();
 
-		double dx = flock.cohesion * cohe.c[0] + flock.avoidance * avoid.c[0] + flock.consistency * cons.c[0]
-				+ flock.randomness * rand.c[0] + flock.momentum * mome.c[0];
-		double dy = flock.cohesion * cohe.c[1] + flock.avoidance * avoid.c[1] + flock.consistency * cons.c[1]
-				+ flock.randomness * rand.c[1] + flock.momentum * mome.c[1];
+		double dx = DFlockers.cohesion * cohe.c[0] + DFlockers.avoidance * avoid.c[0]
+				+ DFlockers.consistency * cons.c[0]
+				+ DFlockers.randomness * rand.c[0] + DFlockers.momentum * mome.c[0];
+		double dy = DFlockers.cohesion * cohe.c[1] + DFlockers.avoidance * avoid.c[1]
+				+ DFlockers.consistency * cons.c[1]
+				+ DFlockers.randomness * rand.c[1] + DFlockers.momentum * mome.c[1];
 
 		// renormalize to the given step size
-		double dis = Math.sqrt(dx * dx + dy * dy);
+		final double dis = Math.sqrt(dx * dx + dy * dy);
 		if (dis > 0) {
-			dx = dx / dis * flock.jump;
-			dy = dy / dis * flock.jump;
+			dx = dx / dis * DFlockers.jump;
+			dy = dy / dis * DFlockers.jump;
 		}
 
 		lastd = new DoublePoint(dx, dy);
 		loc = new DoublePoint(flock.flockers.stx(loc.c[0] + dx), flock.flockers.sty(loc.c[1] + dy));
 
 		try {
-			int dst = flock.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
+			final int dst = flock.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
 			if (dst != flock.partition.getPid()) {
 				// Need to migrate to other partition,
 				// remove from current partition
 				flock.flockers.removeObject(this);
-				flock.migrator.migrate(this, dst, loc);
+				flock.transporter.migrate(this, dst, loc);
 			} else {
 				// Set to new location in current partition
 				flock.flockers.setLocation(this, loc);
 				flock.schedule.scheduleOnce(this, 1);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace(System.out);
 			System.exit(-1);
 		}

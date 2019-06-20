@@ -45,19 +45,17 @@ public abstract class DSimState extends SimState {
 	public DSimState(final long seed, final int width, final int height, final int aoi) {
 		super(seed);
 		this.aoi = new int[] { aoi, aoi };
-		final DQuadTreePartition dq = new DQuadTreePartition(new int[] { width, height }, true, this.aoi);
-		this.partition = dq;
-		this.partition.initialize();
-		this.transporter = new DRemoteTransporter(this.partition);
+		partition = new DQuadTreePartition(new int[] { width, height }, true, this.aoi);
+		partition.initialize();
+		transporter = new DRemoteTransporter(partition);
 	}
 
 	protected DSimState(final MersenneTwisterFast random, final Schedule schedule) {
 		super(0, random, schedule); // 0 is a bogus value. In fact, MT can't have 0 as its seed value.
-		this.aoi = new int[] { 5, 5 };
-		final DQuadTreePartition dq = new DQuadTreePartition(new int[] { 1000, 1000 }, true, this.aoi);
-		dq.initialize();
-		this.partition = dq;
-		this.transporter = new DRemoteTransporter(this.partition);
+		aoi = new int[] { 5, 5 };
+		partition = new DQuadTreePartition(new int[] { 1000, 1000 }, true, aoi);
+		partition.initialize();
+		transporter = new DRemoteTransporter(partition);
 	}
 
 	protected DSimState(final long seed, final Schedule schedule) {
@@ -74,7 +72,7 @@ public abstract class DSimState extends SimState {
 	 * @param haloField
 	 */
 	protected void register(final HaloField haloField) {
-		this.fields.add(haloField);
+		fields.add(haloField);
 	}
 
 	/**
@@ -86,7 +84,7 @@ public abstract class DSimState extends SimState {
 
 	// Calls Sync on all the fields
 	protected void syncFields() throws MPIException {
-		for (final HaloField haloField : this.fields)
+		for (final HaloField haloField : fields)
 			haloField.sync();
 	}
 
@@ -95,19 +93,19 @@ public abstract class DSimState extends SimState {
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
 			syncFields();
-			this.transporter.sync();
+			transporter.sync();
 		} catch (ClassNotFoundException | MPIException | IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final Transportee<?> transportee : this.transporter.objectQueue) {
+		for (final Transportee<?> transportee : transporter.objectQueue) {
 			if (transportee.wrappedObject instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) transportee.wrappedObject;
-				this.schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
+				schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
 						iterativeRepeat.interval);
 			} else if (transportee.wrappedObject instanceof Steppable) {
 //				System.out.println("partition - " + partition + "\nTransportee - " + transportee);
-				this.schedule.scheduleOnce((Steppable) transportee.wrappedObject, transportee.ordering);
+				schedule.scheduleOnce((Steppable) transportee.wrappedObject, transportee.ordering);
 			}
 
 			// if location is null we assume that
@@ -115,7 +113,7 @@ public abstract class DSimState extends SimState {
 			if (transportee.loc != null)
 				addToLocation(transportee);
 		}
-		this.transporter.objectQueue.clear();
+		transporter.objectQueue.clear();
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
@@ -133,16 +131,16 @@ public abstract class DSimState extends SimState {
 			}
 		});
 
-		logger = Logger.getLogger(loggerName);
-		logger.setUseParentHandlers(false);
-		logger.setLevel(Level.ALL);
-		logger.addHandler(sh);
+		DSimState.logger = Logger.getLogger(loggerName);
+		DSimState.logger.setUseParentHandlers(false);
+		DSimState.logger.setLevel(Level.ALL);
+		DSimState.logger.addHandler(sh);
 	}
 
 	private static void initLocalLogger(final String loggerName) {
-		logger = Logger.getLogger(loggerName);
-		logger.setLevel(Level.ALL);
-		logger.setUseParentHandlers(false);
+		DSimState.logger = Logger.getLogger(loggerName);
+		DSimState.logger.setLevel(Level.ALL);
+		DSimState.logger.setUseParentHandlers(false);
 
 		final ConsoleHandler handler = new ConsoleHandler();
 		handler.setFormatter(new java.util.logging.Formatter() {
@@ -152,7 +150,7 @@ public abstract class DSimState extends SimState {
 						rec.getLevel().getLocalizedName(), rec.getMessage());
 			}
 		});
-		logger.addHandler(handler);
+		DSimState.logger.addHandler(handler);
 	}
 
 	public static void doLoopMPI(final Class<?> c, final String[] args) throws mpi.MPIException {
@@ -185,7 +183,7 @@ public abstract class DSimState extends SimState {
 	public void start() {
 		super.start();
 		// TODO: properly init
-		for (int i = 0; i < this.partition.numProcessors; i++) {
+		for (int i = 0; i < partition.numProcessors; i++) {
 			RemoteProxy.Init(i);
 		}
 		try {
@@ -194,7 +192,7 @@ public abstract class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final HaloField haloField : this.fields)
+		for (final HaloField haloField : fields)
 			haloField.initRemote();
 		// /init
 	}

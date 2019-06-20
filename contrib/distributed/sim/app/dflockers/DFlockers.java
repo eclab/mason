@@ -8,83 +8,64 @@ package sim.app.dflockers;
 
 import mpi.MPIException;
 import sim.engine.DSimState;
-import sim.field.DRemoteTransporter;
 import sim.field.Transportee;
 import sim.field.continuous.NContinuous2D;
 import sim.util.DoublePoint;
-import sim.util.IntHyperRect;
 import sim.util.Timing;
 
 public class DFlockers extends DSimState {
 	private static final long serialVersionUID = 1;
 
-	public NContinuous2D<DFlocker> flockers;
-	public double width = 600;
-	public double height = 600;
-	public int numFlockers = 21600;
-	public double cohesion = 1.0;
-	public double avoidance = 1.0;
-	public double randomness = 1.0;
-	public double consistency = 1.0;
-	public double momentum = 1.0;
-	public double deadFlockerProbability = 0.1;
-	public double neighborhood = 10;
-	public double jump = 0.7; // how far do we move in a timestep?
+	public final static int width = 600;
+	public final static int height = 600;
+	public final static int numFlockers = 21600;
+	public final static double cohesion = 1.0;
+	public final static double avoidance = 1.0;
+	public final static double randomness = 1.0;
+	public final static double consistency = 1.0;
+	public final static double momentum = 1.0;
+	public final static double deadFlockerProbability = 0.1;
+	public final static int neighborhood = 6; // aoi
+	public final static double jump = 0.7; // how far do we move in a time step?
 
-	public IntHyperRect myPart;
-	public DRemoteTransporter migrator;
+	public final NContinuous2D<DFlocker> flockers;
 
 	/** Creates a Flockers simulation with the given random number seed. */
-	public DFlockers(long seed) {
-		super(seed);
-		try {
-			int[] aoi = new int[] { (int) neighborhood, (int) neighborhood };
-			// int[] size = new int[] { (int) width, (int) height };
-			double[] discretizations = new double[] { neighborhood / 1.5, neighborhood / 1.5 };
+	public DFlockers(final long seed) {
+		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
-			/*
-			 * partition = DNonUniformPartition.getPartitionScheme(size, true, aoi);
-			 * partition.initUniformly(null); partition.commit(); flockers = new
-			 * NContinuous2D<DFlocker>(partition, aoi, discretizations); queue = new
-			 * DObjectMigratorNonUniform(partition);
-			 */
-			flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations);
-			migrator = new DRemoteTransporter(partition);
+		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
+		flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations);
+		register(flockers);
 
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			System.exit(-1);
-		}
-		myPart = partition.getPartition();
-
+		/*
+		 * try { // int[] size = new int[] { (int) width, (int) height }; int[] aoi =
+		 * new int[] { (int) this.neighborhood, (int) this.neighborhood }; partition =
+		 * DNonUniformPartition.getPartitionScheme(size, true, aoi);
+		 * partition.initUniformly(null); partition.commit(); flockers = new
+		 * NContinuous2D<DFlocker>(partition, aoi, discretizations); queue = new
+		 * DObjectMigratorNonUniform(partition);
+		 *
+		 * } catch (final Exception e) { e.printStackTrace(System.out); System.exit(-1);
+		 * }
+		 */
 	}
 
-	protected void addToLocation(Transportee<?> transportee) {
-		DFlocker flocker = (DFlocker) transportee.wrappedObject;
+	protected void addToLocation(final Transportee<?> transportee) {
+		final DFlocker flocker = (DFlocker) transportee.wrappedObject;
 		flockers.setLocation(flocker, flocker.loc);
-	}
-
-	protected void syncFields() {
-		Timing.stop(Timing.LB_RUNTIME);
-		try {
-			flockers.sync();
-		} catch (MPIException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
 	}
 
 	public void start() {
 		super.start();
-		int[] size = myPart.getSize();
-		for (int x = 0; x < numFlockers / partition.numProcessors; x++) {
-			double px, py;
-			px = random.nextDouble() * size[0] + myPart.ul().getArray()[0];
-			py = random.nextDouble() * size[1] + myPart.ul().getArray()[1];
-			DoublePoint location = new DoublePoint(px, py);
-			DFlocker flocker = new DFlocker(location);
+		final int[] size = partition.getPartition().getSize();
+		for (int x = 0; x < DFlockers.numFlockers / partition.numProcessors; x++) {
+			final double px = random.nextDouble() * size[0] + partition.getPartition().ul().getArray()[0];
+			final double py = random.nextDouble() * size[1] + partition.getPartition().ul().getArray()[1];
+			final DoublePoint location = new DoublePoint(px, py);
+			final DFlocker flocker = new DFlocker(location);
 
-			if (random.nextBoolean(deadFlockerProbability))
+			if (random.nextBoolean(DFlockers.deadFlockerProbability))
 				flocker.dead = true;
 
 			flockers.setLocation(flocker, location);
@@ -123,7 +104,7 @@ public class DFlockers extends DSimState {
 //		});
 	}
 
-	public static void main(String[] args) throws MPIException {
+	public static void main(final String[] args) throws MPIException {
 		Timing.setWindow(20);
 		doLoopMPI(DFlockers.class, args);
 		System.exit(0);
