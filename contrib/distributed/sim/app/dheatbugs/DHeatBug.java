@@ -21,7 +21,8 @@ public class DHeatBug implements Steppable {
 	public double heatOutput;
 	public double randomMovementProbability;
 
-	public DHeatBug(double idealTemp, double heatOutput, double randomMovementProbability, int loc_x, int loc_y) {
+	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability,
+			final int loc_x, final int loc_y) {
 		this.heatOutput = heatOutput;
 		this.idealTemp = idealTemp;
 		this.randomMovementProbability = randomMovementProbability;
@@ -54,13 +55,13 @@ public class DHeatBug implements Steppable {
 
 	public void step(final SimState state) {
 
-		DHeatBugs hb = (DHeatBugs) state;
+		final DHeatBugs hb = (DHeatBugs) state;
 
 		// Skip addHeat for the first step
-		if (!this.isFirstStep) {
+		if (!isFirstStep) {
 			addHeat(hb.valgrid, loc_x, loc_y, heatOutput);
 		} else {
-			this.isFirstStep = false;
+			isFirstStep = false;
 		}
 
 		final int START = -1;
@@ -74,8 +75,8 @@ public class DHeatBug implements Steppable {
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
 					if (!(x == 0 && y == 0)) {
-						int xx = (x + loc_x);
-						int yy = (y + loc_y);
+						final int xx = (x + loc_x);
+						final int yy = (y + loc_y);
 						if (bestx == START || (hb.valgrid.get(xx, yy) < hb.valgrid.get(bestx, besty))
 								|| (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty)
 										&& state.random.nextBoolean())) // not uniform, but enough to break up the
@@ -89,8 +90,8 @@ public class DHeatBug implements Steppable {
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
 					if (!(x == 0 && y == 0)) {
-						int xx = (x + loc_x);
-						int yy = (y + loc_y);
+						final int xx = (x + loc_x);
+						final int yy = (y + loc_y);
 						if (bestx == START || (hb.valgrid.get(xx, yy) > hb.valgrid.get(bestx, besty))
 								|| (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty)
 										&& state.random.nextBoolean())) // not uniform, but enough to break up the
@@ -111,7 +112,7 @@ public class DHeatBug implements Steppable {
 		loc_y = hb.valgrid.sty(besty);
 
 		try {
-			int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
+			final int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
 			if (dst != hb.partition.getPid()) {
 				hb.bugs.remove(old_x, old_y, this);
 
@@ -129,7 +130,7 @@ public class DHeatBug implements Steppable {
 				hb.bugs.add(loc_x, loc_y, this);
 				hb.schedule.scheduleOnce(this, 1);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace(System.out);
 			System.exit(-1);
 		}
@@ -139,7 +140,7 @@ public class DHeatBug implements Steppable {
 		return idealTemp;
 	}
 
-	public void setIdealTemperature(double t) {
+	public void setIdealTemperature(final double t) {
 		idealTemp = t;
 	}
 
@@ -147,7 +148,7 @@ public class DHeatBug implements Steppable {
 		return heatOutput;
 	}
 
-	public void setHeatOutput(double t) {
+	public void setHeatOutput(final double t) {
 		heatOutput = t;
 	}
 
@@ -159,7 +160,7 @@ public class DHeatBug implements Steppable {
 		return randomMovementProbability;
 	}
 
-	public void setRandomMovementProbability(double t) {
+	public void setRandomMovementProbability(final double t) {
 		if (t >= 0 && t <= 1)
 			randomMovementProbability = t;
 	}

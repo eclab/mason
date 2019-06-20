@@ -19,7 +19,7 @@ import sim.field.grid.NDoubleGrid2D;
 public class Diffuser implements Steppable {
 	private static final long serialVersionUID = 1;
 
-	public void step(SimState state) {
+	public void step(final SimState state) {
 		final DHeatBugs heatbugs = (DHeatBugs) state;
 
 		// locals are faster than instance variables
@@ -56,7 +56,7 @@ public class Diffuser implements Steppable {
 			next += offset;
 		}
 
-		NDoubleGrid2D temp = heatbugs.valgrid;
+		final NDoubleGrid2D temp = heatbugs.valgrid;
 		heatbugs.valgrid = heatbugs.valgrid2;
 		heatbugs.valgrid2 = temp;
 	}

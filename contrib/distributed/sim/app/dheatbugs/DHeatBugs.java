@@ -49,19 +49,19 @@ public class DHeatBugs extends DSimState {
 
 	public DHeatBugs(final long seed, final int width, final int height, final int count, final int aoi) {
 		super(seed, width, height, aoi);
-		this.gridWidth = width;
-		this.gridHeight = height;
-		this.bugCount = count;
-		this.privBugCount = this.bugCount / this.partition.numProcessors;
+		gridWidth = width;
+		gridHeight = height;
+		bugCount = count;
+		privBugCount = bugCount / partition.numProcessors;
 		try {
-			this.valgrid = new NDoubleGrid2D(this.partition, this.aoi, 0);
-			register(this.valgrid);
+			valgrid = new NDoubleGrid2D(partition, this.aoi, 0);
+			register(valgrid);
 
-			this.valgrid2 = new NDoubleGrid2D(this.partition, this.aoi, 0);
-			register(this.valgrid2);
+			valgrid2 = new NDoubleGrid2D(partition, this.aoi, 0);
+			register(valgrid2);
 
-			this.bugs = new NObjectsGrid2D<DHeatBug>(this.partition, this.aoi);
-			register(this.bugs);
+			bugs = new NObjectsGrid2D<DHeatBug>(partition, this.aoi);
+			register(bugs);
 
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -93,48 +93,48 @@ public class DHeatBugs extends DSimState {
 
 	// Same getters and setters as HeatBugs
 	public double getMinimumIdealTemperature() {
-		return this.minIdealTemp;
+		return minIdealTemp;
 	}
 
 	public void setMinimumIdealTemperature(final double temp) {
-		if (temp <= this.maxIdealTemp)
-			this.minIdealTemp = temp;
+		if (temp <= maxIdealTemp)
+			minIdealTemp = temp;
 	}
 
 	public double getMaximumIdealTemperature() {
-		return this.maxIdealTemp;
+		return maxIdealTemp;
 	}
 
 	public void setMaximumIdealTemperature(final double temp) {
-		if (temp >= this.minIdealTemp)
-			this.maxIdealTemp = temp;
+		if (temp >= minIdealTemp)
+			maxIdealTemp = temp;
 	}
 
 	public double getMinimumOutputHeat() {
-		return this.minOutputHeat;
+		return minOutputHeat;
 	}
 
 	public void setMinimumOutputHeat(final double temp) {
-		if (temp <= this.maxOutputHeat)
-			this.minOutputHeat = temp;
+		if (temp <= maxOutputHeat)
+			minOutputHeat = temp;
 	}
 
 	public double getMaximumOutputHeat() {
-		return this.maxOutputHeat;
+		return maxOutputHeat;
 	}
 
 	public void setMaximumOutputHeat(final double temp) {
-		if (temp >= this.minOutputHeat)
-			this.maxOutputHeat = temp;
+		if (temp >= minOutputHeat)
+			maxOutputHeat = temp;
 	}
 
 	public double getEvaporationConstant() {
-		return this.evaporationRate;
+		return evaporationRate;
 	}
 
 	public void setEvaporationConstant(final double temp) {
 		if (temp >= 0 && temp <= 1)
-			this.evaporationRate = temp;
+			evaporationRate = temp;
 	}
 
 	public Object domEvaporationConstant() {
@@ -142,12 +142,12 @@ public class DHeatBugs extends DSimState {
 	}
 
 	public double getDiffusionConstant() {
-		return this.diffusionRate;
+		return diffusionRate;
 	}
 
 	public void setDiffusionConstant(final double temp) {
 		if (temp >= 0 && temp <= 1)
-			this.diffusionRate = temp;
+			diffusionRate = temp;
 	}
 
 	public Object domDiffusionConstant() {
@@ -169,34 +169,34 @@ public class DHeatBugs extends DSimState {
 	}
 
 	public double getRandomMovementProbability() {
-		return this.randomMovementProbability;
+		return randomMovementProbability;
 	}
 
 	public double getMaximumHeat() {
-		return MAX_HEAT;
+		return DHeatBugs.MAX_HEAT;
 	}
 
 	public void start() {
 		super.start();
-		final int[] size = this.partition.getPartition().getSize();
-		final double rangeIdealTemp = this.maxIdealTemp - this.minIdealTemp;
-		final double rangeOutputHeat = this.maxOutputHeat - this.minOutputHeat;
+		final int[] size = partition.getPartition().getSize();
+		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
+		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
-		for (int x = 0; x < this.privBugCount; x++) { // privBugCount = bugCount / p.numProcessors;
-			final double idealTemp = this.random.nextDouble() * rangeIdealTemp + this.minIdealTemp;
-			final double heatOutput = this.random.nextDouble() * rangeOutputHeat + this.minOutputHeat;
+		for (int x = 0; x < privBugCount; x++) { // privBugCount = bugCount / p.numProcessors;
+			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
+			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px, py; // Why are we doing this? Relationship?
 			do {
-				px = this.random.nextInt(size[0]) + this.partition.getPartition().ul().getArray()[0];
-				py = this.random.nextInt(size[1]) + this.partition.getPartition().ul().getArray()[1];
-			} while (this.bugs.get(px, py) != null);
-			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, this.randomMovementProbability, px, py);
-			this.bugs.add(px, py, b);
-			this.schedule.scheduleOnce(b, 1);
+				px = random.nextInt(size[0]) + partition.getPartition().ul().getArray()[0];
+				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
+			} while (bugs.get(px, py) != null);
+			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
+			bugs.add(px, py, b);
+			schedule.scheduleOnce(b, 1);
 		}
 
 		// Does this have to happen here? I guess.
-		this.schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 //		schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
 
 		// TODO: Balancer is broken,
@@ -207,9 +207,9 @@ public class DHeatBugs extends DSimState {
 	}
 
 	protected void addToLocation(final Transportee<?> transportee) {
-		this.privBugCount++;
+		privBugCount++;
 		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-		this.bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
+		bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
 	}
 
 	@SuppressWarnings("serial")

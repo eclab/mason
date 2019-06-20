@@ -33,10 +33,10 @@ public abstract class HaloField implements RemoteField {
 
 	protected RemoteProxy proxy;
 
-	public HaloField(DPartition ps, int[] aoi, GridStorage stor) {
+	public HaloField(final DPartition ps, final int[] aoi, final GridStorage stor) {
 		this.ps = ps;
 		this.aoi = aoi;
-		this.field = stor;
+		field = stor;
 
 		// init variables that don't change with the partition scheme
 		numDimensions = ps.getNumDim();
@@ -54,7 +54,7 @@ public abstract class HaloField implements RemoteField {
 		/*
 		 * if (ps instanceof DNonUniformPartition) { ps.registerPreCommit(arg -> { try {
 		 * sync(); } catch (Exception e) { e.printStackTrace(); System.exit(-1); } });
-		 * 
+		 *
 		 * ps.registerPostCommit(arg -> { try { reload(); sync(); } catch (Exception e)
 		 * { e.printStackTrace(); System.exit(-1); } }); }
 		 */
@@ -68,7 +68,7 @@ public abstract class HaloField implements RemoteField {
 			final DQuadTreePartition q = (DQuadTreePartition) ps;
 
 			ps.registerPreCommit(arg -> {
-				int level = (int) arg;
+				final int level = (int) arg;
 				GridStorage s = null;
 
 				if (q.isGroupMaster(level))
@@ -76,7 +76,7 @@ public abstract class HaloField implements RemoteField {
 
 				try {
 					collectGroup(level, s);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 					System.exit(-1);
 				}
@@ -86,7 +86,7 @@ public abstract class HaloField implements RemoteField {
 			});
 
 			ps.registerPostCommit(arg -> {
-				int level = (int) arg;
+				final int level = (int) arg;
 				GridStorage s = null;
 
 				reload();
@@ -96,7 +96,7 @@ public abstract class HaloField implements RemoteField {
 
 				try {
 					distributeGroup(level, s);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					e.printStackTrace();
 					System.exit(-1);
 				}
@@ -130,16 +130,16 @@ public abstract class HaloField implements RemoteField {
 	}
 
 	// TODO make a copy of the storage which will be used by the remote field access
-	protected Serializable getFromRemote(IntPoint p) {
+	protected Serializable getFromRemote(final IntPoint p) {
 		Serializable ret = null;
-		int pid = ps.toPartitionId(p);
+		final int pid = ps.toPartitionId(p);
 
 		try {
 			ret = proxy.getField(pid).getRMI(p);
-		} catch (RemoteException e) {
+		} catch (final RemoteException e) {
 			e.printStackTrace();
 			System.exit(-1);
-		} catch (NullPointerException e) {
+		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		}
 
@@ -151,40 +151,40 @@ public abstract class HaloField implements RemoteField {
 	}
 
 	// Various stabbing queries
-	public boolean inGlobal(IntPoint p) {
+	public boolean inGlobal(final IntPoint p) {
 		return IntStream.range(0, numDimensions).allMatch(i -> p.c[i] >= 0 && p.c[i] < fieldSize[i]);
 	}
 
-	public boolean inLocal(IntPoint p) {
+	public boolean inLocal(final IntPoint p) {
 		return origPart.contains(p);
 	}
 
-	public boolean inPrivate(IntPoint p) {
+	public boolean inPrivate(final IntPoint p) {
 		return privPart.contains(p);
 	}
 
-	public boolean inLocalAndHalo(IntPoint p) {
+	public boolean inLocalAndHalo(final IntPoint p) {
 		return haloPart.contains(p);
 	}
 
-	public boolean inShared(IntPoint p) {
+	public boolean inShared(final IntPoint p) {
 		return inLocal(p) && !inPrivate(p);
 	}
 
-	public boolean inHalo(IntPoint p) {
+	public boolean inHalo(final IntPoint p) {
 		return inLocalAndHalo(p) && !inLocal(p);
 	}
 
-	public IntPoint toLocalPoint(IntPoint p) {
+	public IntPoint toLocalPoint(final IntPoint p) {
 		return p.rshift(haloPart.ul().getArray());
 	}
 
-	public IntPoint toToroidal(IntPoint p) {
+	public IntPoint toToroidal(final IntPoint p) {
 		return p.toToroidal(world);
 	}
 
-	public int toToroidal(int x, int dim) {
-		int s = fieldSize[dim];
+	public int toToroidal(final int x, final int dim) {
+		final int s = fieldSize[dim];
 		if (x >= s)
 			return x - s;
 		else if (x < 0)
@@ -192,8 +192,8 @@ public abstract class HaloField implements RemoteField {
 		return x;
 	}
 
-	public double toToroidal(double x, int dim) {
-		int s = fieldSize[dim];
+	public double toToroidal(final double x, final int dim) {
+		final int s = fieldSize[dim];
 		if (x >= s)
 			return x - s;
 		else if (x < 0)
@@ -201,12 +201,12 @@ public abstract class HaloField implements RemoteField {
 		return x;
 	}
 
-	public double toToroidalDiff(double x1, double x2, int dim) {
-		int s = fieldSize[dim];
+	public double toToroidalDiff(final double x1, final double x2, final int dim) {
+		final int s = fieldSize[dim];
 		if (Math.abs(x1 - x2) <= s / 2)
 			return x1 - x2; // no wraparounds -- quick and dirty check
 
-		double dx = toToroidal(x1, dim) - toToroidal(x2, dim);
+		final double dx = toToroidal(x1, dim) - toToroidal(x2, dim);
 		if (dx * 2 > s)
 			return dx - s;
 		if (dx * 2 < -s)
@@ -247,52 +247,52 @@ public abstract class HaloField implements RemoteField {
 	}
 
 	public void sync() throws MPIException {
-		Serializable[] sendObjs = new Serializable[numNeighbors];
+		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = field.pack(neighbors[i].sendParam);
 
-		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(ps, sendObjs);
+		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(ps, sendObjs);
 
 		for (int i = 0; i < numNeighbors; i++)
 			field.unpack(neighbors[i].recvParam, recvObjs.get(i));
 	}
 
-	public void collect(int dst, GridStorage fullField) throws MPIException {
-		Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+	public void collect(final int dst, final GridStorage fullField) throws MPIException {
+		final Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
-		ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(ps, sendObj, dst);
+		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(ps, sendObj, dst);
 
 		if (ps.getPid() == dst)
 			for (int i = 0; i < ps.getNumProc(); i++)
 				fullField.unpack(new MPIParam(ps.getPartition(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
-	public void distribute(int src, GridStorage fullField) throws MPIException {
-		Serializable[] sendObjs = new Serializable[ps.getNumProc()];
+	public void distribute(final int src, final GridStorage fullField) throws MPIException {
+		final Serializable[] sendObjs = new Serializable[ps.getNumProc()];
 
 		if (ps.getPid() == src)
 			for (int i = 0; i < ps.getNumProc(); i++)
 				sendObjs[i] = fullField.pack(new MPIParam(ps.getPartition(i), world, MPIBaseType));
 
-		Serializable recvObj = MPIUtil.<Serializable>scatter(ps, sendObjs, src);
+		final Serializable recvObj = MPIUtil.<Serializable>scatter(ps, sendObjs, src);
 		field.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 
 		// Sync the halo
 		sync();
 	}
 
-	public void collectGroup(int level, GridStorage groupField) throws MPIException {
+	public void collectGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(ps instanceof DQuadTreePartition))
 			throw new UnsupportedOperationException(
 					"Can only collect from group with DQuadTreePartition, got " + ps.getClass().getSimpleName());
 
-		DQuadTreePartition qt = (DQuadTreePartition) ps;
-		GroupComm gc = qt.getGroupComm(level);
+		final DQuadTreePartition qt = (DQuadTreePartition) ps;
+		final GroupComm gc = qt.getGroupComm(level);
 
 		if (gc != null) {
-			Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+			final Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
-			ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(gc.comm, sendObj, gc.groupRoot);
+			final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(gc.comm, sendObj, gc.groupRoot);
 
 			if (qt.isGroupMaster(gc))
 				for (int i = 0; i < recvObjs.size(); i++)
@@ -303,13 +303,13 @@ public abstract class HaloField implements RemoteField {
 		MPI.COMM_WORLD.barrier();
 	}
 
-	public void distributeGroup(int level, GridStorage groupField) throws MPIException {
+	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(ps instanceof DQuadTreePartition))
 			throw new UnsupportedOperationException(
 					"Can only distribute to group with DQuadTreePartition, got " + ps.getClass().getSimpleName());
 
-		DQuadTreePartition qt = (DQuadTreePartition) ps;
-		GroupComm gc = qt.getGroupComm(level);
+		final DQuadTreePartition qt = (DQuadTreePartition) ps;
+		final GroupComm gc = qt.getGroupComm(level);
 		Serializable[] sendObjs = null;
 
 		if (gc != null) {
@@ -320,7 +320,7 @@ public abstract class HaloField implements RemoteField {
 							.pack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType));
 			}
 
-			Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
+			final Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
 
 			field.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 		}
@@ -337,10 +337,10 @@ public abstract class HaloField implements RemoteField {
 		int pid;
 		MPIParam sendParam, recvParam;
 
-		public Neighbor(IntHyperRect neighborPart) {
+		public Neighbor(final IntHyperRect neighborPart) {
 			pid = neighborPart.getId();
-			ArrayList<IntHyperRect> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
-			ArrayList<IntHyperRect> recvOverlaps = generateOverlaps(haloPart, neighborPart);
+			final ArrayList<IntHyperRect> sendOverlaps = generateOverlaps(origPart, neighborPart.resize(aoi));
+			final ArrayList<IntHyperRect> recvOverlaps = generateOverlaps(haloPart, neighborPart);
 
 			assert sendOverlaps.size() == recvOverlaps.size();
 
@@ -352,12 +352,13 @@ public abstract class HaloField implements RemoteField {
 			recvParam = new MPIParam(recvOverlaps, haloPart, MPIBaseType);
 		}
 
-		private ArrayList<IntHyperRect> generateOverlaps(IntHyperRect p1, IntHyperRect p2) {
-			ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
+		private ArrayList<IntHyperRect> generateOverlaps(final IntHyperRect p1, final IntHyperRect p2) {
+			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
 
 			if (ps.isToroidal())
-				for (IntPoint p : IntPointGenerator.getLayer(numDimensions, 1)) {
-					IntHyperRect sp = p2.shift(IntStream.range(0, numDimensions).map(i -> p.c[i] * fieldSize[i]).toArray());
+				for (final IntPoint p : IntPointGenerator.getLayer(numDimensions, 1)) {
+					final IntHyperRect sp = p2
+							.shift(IntStream.range(0, numDimensions).map(i -> p.c[i] * fieldSize[i]).toArray());
 					if (p1.isIntersect(sp))
 						overlaps.add(p1.getIntersection(sp));
 				}

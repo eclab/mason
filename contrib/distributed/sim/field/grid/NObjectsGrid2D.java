@@ -12,12 +12,12 @@ import sim.util.IntPoint;
 @SuppressWarnings("unchecked")
 public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 
-	public NObjectsGrid2D(DPartition ps, int[] aoi) {
+	public NObjectsGrid2D(final DPartition ps, final int[] aoi) {
 		super(ps, aoi, new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]));
 
-		if (this.numDimensions != 2)
+		if (numDimensions != 2)
 			throw new IllegalArgumentException(
-					"The number of dimensions is expected to be 2, got: " + this.numDimensions);
+					"The number of dimensions is expected to be 2, got: " + numDimensions);
 	}
 
 //	public void move(final IntPoint fromLoc, final IntPoint toLoc, final T t) {
@@ -45,7 +45,7 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		return (ArrayList<T>[]) field.getStorage();
 	}
 
-	public ArrayList<T> getRMI(IntPoint p) throws RemoteException {
+	public ArrayList<T> getRMI(final IntPoint p) throws RemoteException {
 		if (!inLocal(p))
 			throw new RemoteException(
 					"The point " + p + " does not exist in this partition " + ps.getPid() + " " + ps.getPartition());
@@ -57,7 +57,7 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		return get(new IntPoint(x, y));
 	}
 
-	public final ArrayList<T> get(IntPoint p) {
+	public final ArrayList<T> get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
@@ -78,8 +78,8 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
-		ArrayList<T>[] array = getStorageArray();
-		int idx = field.getFlatIdx(toLocalPoint(p));
+		final ArrayList<T>[] array = getStorageArray();
+		final int idx = field.getFlatIdx(toLocalPoint(p));
 
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
@@ -91,14 +91,14 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		return remove(new IntPoint(x, y), t);
 	}
 
-	public final boolean remove(IntPoint p, final T t) {
+	public final boolean remove(final IntPoint p, final T t) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
-		ArrayList<T>[] array = getStorageArray();
-		int idx = field.getFlatIdx(toLocalPoint(p));
+		final ArrayList<T>[] array = getStorageArray();
+		final int idx = field.getFlatIdx(toLocalPoint(p));
 
 		if (array[idx] == null)
 			return false;

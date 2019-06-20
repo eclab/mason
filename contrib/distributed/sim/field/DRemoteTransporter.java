@@ -27,7 +27,7 @@ public class DRemoteTransporter {
 
 	public ArrayList<Transportee<? extends Object>> objectQueue;
 
-	public DRemoteTransporter(DPartition partition) {
+	public DRemoteTransporter(final DPartition partition) {
 		this.partition = partition;
 		reload();
 
@@ -68,7 +68,7 @@ public class DRemoteTransporter {
 			outputStreams = new RemoteOutputStream[numNeighbors];
 			for (int i = 0; i < numNeighbors; i++)
 				outputStreams[i] = new RemoteOutputStream();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -87,10 +87,10 @@ public class DRemoteTransporter {
 		objectQueue.clear();
 	}
 
-	public void migrate(final Object obj, final int dst, DoublePoint loc) {
+	public void migrate(final Object obj, final int dst, final DoublePoint loc) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc);
+		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc);
 		assert dstMap.containsKey(dst);
 		try {
 //			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
@@ -104,7 +104,7 @@ public class DRemoteTransporter {
 //			dstMap.get(dst).write(wrapper);
 //			}
 			dstMap.get(dst).write(wrapper);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
@@ -121,10 +121,10 @@ public class DRemoteTransporter {
 		}
 
 		// Concat neighbor streams into one
-		ByteArrayOutputStream objstream = new ByteArrayOutputStream();
+		final ByteArrayOutputStream objstream = new ByteArrayOutputStream();
 		for (int i = 0; i < numNeighbors; i++)
 			objstream.write(outputStreams[i].toByteArray());
-		ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
+		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
 
 		// First exchange count[] of the send byte buffers with neighbors so that we can
@@ -134,30 +134,30 @@ public class DRemoteTransporter {
 			dst_displ[i] = total;
 			total += dst_count[i];
 		}
-		ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
+		final ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
 		partition.comm.neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ,
 				MPI.BYTE);
 
 		// read and handle incoming objects
-		ArrayList<Transportee<? extends Object>> bufferList = new ArrayList<>();
+		final ArrayList<Transportee<? extends Object>> bufferList = new ArrayList<>();
 		for (int i = 0; i < numNeighbors; i++) {
-			byte[] data = new byte[dst_count[i]];
+			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
 			recvbuf.get(data);
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			ObjectInputStream is = new ObjectInputStream(in);
+			final ByteArrayInputStream in = new ByteArrayInputStream(data);
+			final ObjectInputStream is = new ObjectInputStream(in);
 
 			while (true) {
 				try {
-					Transportee<? extends Object> wrapper = (Transportee<? extends Object>) is.readObject();
+					final Transportee<? extends Object> wrapper = (Transportee<? extends Object>) is.readObject();
 					if (partition.pid != wrapper.destination) {
 						assert dstMap.containsKey(wrapper.destination);
 						bufferList.add(wrapper);
 					} else
 						objectQueue.add(wrapper);
-				} catch (EOFException e) {
+				} catch (final EOFException e) {
 					break;
 				}
 			}
@@ -180,7 +180,7 @@ public class DRemoteTransporter {
 			outputStreams[i].reset();
 
 		// Handling the agent in bufferList
-		for (Transportee<? extends Object> wrapper : bufferList)
+		for (final Transportee<? extends Object> wrapper : bufferList)
 			dstMap.get(wrapper.destination).write(wrapper);
 		bufferList.clear();
 
@@ -210,7 +210,7 @@ public class DRemoteTransporter {
 			os = new ObjectOutputStream(out);
 		}
 
-		public void write(Object obj) throws IOException {
+		public void write(final Object obj) throws IOException {
 			os.writeObject(obj);
 		}
 
