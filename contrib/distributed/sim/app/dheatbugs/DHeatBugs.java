@@ -15,6 +15,7 @@ import sim.field.DQuadTreePartition;
 import sim.field.Transportee;
 import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
+import sim.util.IntPoint;
 import sim.util.Interval;
 import sim.util.Timing;
 
@@ -185,7 +186,7 @@ public class DHeatBugs extends DSimState {
 				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
 			} while (bugs.get(px, py) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.add(px, py, b);
+			bugs.add(new IntPoint(px, py), b);
 			schedule.scheduleOnce(b, 1);
 		}
 
@@ -200,10 +201,10 @@ public class DHeatBugs extends DSimState {
 //		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
 
-	protected void addToLocation(final Transportee<?> transportee) {
+	protected void addToField(final Transportee<?> transportee) {
 		privBugCount++;
 		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-		bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
+		bugs.add(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
 	}
 
 	@SuppressWarnings("serial")

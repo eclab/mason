@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import mpi.Comm;
@@ -20,11 +21,12 @@ import sim.util.IntPoint;
 import sim.util.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
+import sim.util.NdPoint;
 
 // TODO refactor HaloField to accept
 // continuous: double, int, object
 
-public abstract class HaloField implements RemoteField {
+public abstract class HaloField<T extends Serializable> implements RemoteField {
 
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
@@ -32,7 +34,7 @@ public abstract class HaloField implements RemoteField {
 	public IntHyperRect world, haloPart, origPart, privPart;
 	// TODO: Fix the comment -
 	// pointer to the processors who's partitions neighbor me
-	protected Neighbor[] neighbors;
+	protected List<Neighbor> neighbors;
 	// TODO: Fix the comment -
 	// Local storage
 	protected GridStorage field;
@@ -41,7 +43,7 @@ public abstract class HaloField implements RemoteField {
 	protected DPartition ps;
 	protected Comm comm;
 	protected Datatype MPIBaseType;
-	public final int registeredIndex;
+	public final int fieldIndex;
 
 	protected RemoteProxy proxy;
 
@@ -60,8 +62,14 @@ public abstract class HaloField implements RemoteField {
 
 		// init variables that may change with the partition scheme
 		reload();
-		registeredIndex = state.register(this);
+		fieldIndex = state.register(this);
 	}
+
+	public abstract boolean add(final IntPoint p, final T t);
+
+//	public abstract boolean remove(final IntPoint p, final T t);
+//
+//	public abstract boolean move(final IntPoint fromP, final IntPoint toP, final T t);
 
 	protected void registerCallbacks() {
 		/*
@@ -134,8 +142,8 @@ public abstract class HaloField implements RemoteField {
 
 		// Get the neighbors and create Neighbor objects
 		neighbors = Arrays.stream(ps.getNeighborIds()).mapToObj(x -> new Neighbor(ps.getPartition(x)))
-				.toArray(size -> new Neighbor[size]);
-		numNeighbors = neighbors.length;
+				.collect(Collectors.toList());
+		numNeighbors = neighbors.size();
 	}
 
 	public void initRemote() {
@@ -262,12 +270,12 @@ public abstract class HaloField implements RemoteField {
 	public void sync() throws MPIException {
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
-			sendObjs[i] = field.pack(neighbors[i].sendParam);
+			sendObjs[i] = field.pack(neighbors.get(i).sendParam);
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(ps, sendObjs);
 
 		for (int i = 0; i < numNeighbors; i++)
-			field.unpack(neighbors[i].recvParam, recvObjs.get(i));
+			field.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 	}
 
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {

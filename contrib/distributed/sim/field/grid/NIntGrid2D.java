@@ -9,7 +9,7 @@ import sim.field.DPartition;
 import sim.field.HaloField;
 import sim.field.storage.IntGridStorage;
 
-public class NIntGrid2D extends HaloField {
+public class NIntGrid2D extends HaloField<Integer> {
 
 	public NIntGrid2D(final DPartition ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps, aoi, new IntGridStorage(ps.getPartition(), initVal), state);
@@ -44,17 +44,18 @@ public class NIntGrid2D extends HaloField {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final void set(final int x, final int y, final int val) {
-		set(new IntPoint(x, y), val);
-	}
-
-	public final void set(final IntPoint p, final int val) {
+	public boolean add(final IntPoint p, final int val) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
+		return true;
+	}
+
+	public boolean add(final IntPoint p, final Integer val) {
+		return add(p, val.intValue());
 	}
 
 	/*

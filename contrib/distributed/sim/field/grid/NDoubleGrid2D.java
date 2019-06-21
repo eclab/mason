@@ -9,7 +9,7 @@ import sim.field.HaloField;
 import sim.field.storage.DoubleGridStorage;
 import sim.util.IntPoint;
 
-public class NDoubleGrid2D extends HaloField {
+public class NDoubleGrid2D extends HaloField<Double> {
 
 	public NDoubleGrid2D(final DPartition ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps, aoi, new DoubleGridStorage(ps.getPartition(), initVal), state);
@@ -30,11 +30,11 @@ public class NDoubleGrid2D extends HaloField {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final double get(final int x, final int y) {
+	public double get(final int x, final int y) {
 		return get(new IntPoint(x, y));
 	}
 
-	public final double get(final IntPoint p) {
+	public double get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
@@ -44,16 +44,18 @@ public class NDoubleGrid2D extends HaloField {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final void set(final int x, final int y, final double val) {
-		set(new IntPoint(x, y), val);
-	}
-
-	public final void set(final IntPoint p, final double val) {
+	public boolean add(final IntPoint p, final double val) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
+		return true;
 	}
+
+	public boolean add(final IntPoint p, final Double val) {
+		return add(p, val.doubleValue());
+	}
+
 }

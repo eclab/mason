@@ -16,7 +16,7 @@ import sim.util.IntPoint;
 import sim.util.MPIParam;
 import sim.util.NdPoint;
 
-public class NContinuous2D<T extends Serializable> extends HaloField {
+public class NContinuous2D<T extends Serializable> extends HaloField<T> {
 
 	public NContinuous2D(final DPartition ps, final int[] aoi, final double[] discretizations, final DSimState state) {
 		super(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations), state);
@@ -25,34 +25,38 @@ public class NContinuous2D<T extends Serializable> extends HaloField {
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + numDimensions);
 	}
 
-	public final NdPoint getLocation(final T obj) {
+	public NdPoint getLocation(final T obj) {
 		return ((ContStorage) field).getLocation(obj);
 	}
 
-	public final void setLocation(final T obj, final NdPoint p) {
+	public boolean add(final NdPoint p, final T t) {
 		if (!haloPart.contains(p))
 			throw new IllegalArgumentException(String.format("PID %d Point %s Invalid setLocation() myHalo %s",
 					ps.getPid(), p.toString(), haloPart));
-		((ContStorage) field).setLocation(obj, p);
+		return ((ContStorage) field).setLocation(t, p);
 	}
 
-	public final List<T> getObjects(final NdPoint p) {
+	public boolean add(final IntPoint p, final T t) {
+		return add((NdPoint) p, t);
+	}
+
+	public List<T> getObjects(final NdPoint p) {
 		return ((ContStorage) field).getObjects(p);
 	}
 
-	public final List<T> getNearestNeighbors(final T obj, final int k) {
+	public List<T> getNearestNeighbors(final T obj, final int k) {
 		return ((ContStorage) field).getNearestNeighbors(obj, k);
 	}
 
-	public final List<T> getNeighborsWithin(final T obj, final double r) {
+	public List<T> getNeighborsWithin(final T obj, final double r) {
 		return ((ContStorage) field).getNeighborsWithin(obj, r);
 	}
 
-	public final void removeObject(final T obj) {
+	public void removeObject(final T obj) {
 		((ContStorage) field).removeObject(obj);
 	}
 
-	public final void removeObjects(final NdPoint p) {
+	public void removeObjects(final NdPoint p) {
 		((ContStorage) field).removeObjects(p);
 	}
 

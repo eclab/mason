@@ -7,6 +7,7 @@
 package sim.engine;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +33,7 @@ public abstract class DSimState extends SimState {
 	public DRemoteTransporter transporter;
 	public static Logger logger;
 	public int[] aoi; // Area of Interest
-	ArrayList<HaloField> fields = new ArrayList<>();
+	ArrayList<HaloField<?>> fields = new ArrayList<>();
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
@@ -73,7 +74,7 @@ public abstract class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int register(final HaloField haloField) {
+	public int register(final HaloField<?> haloField) {
 		// Must be called in a deterministic manner
 		final int index = fields.size();
 		fields.add(haloField);
@@ -85,11 +86,15 @@ public abstract class DSimState extends SimState {
 	 *
 	 * @param transportee
 	 */
-	protected abstract void addToLocation(Transportee<?> transportee);
+	protected abstract void addToField(Transportee<?> transportee);
+//	protected void addToField(Transportee<?> transportee) {
+//		if(transportee.fieldIndex>=0)
+//			fields.get(transportee.fieldIndex);
+//	}
 
 	// Calls Sync on all the fields
 	protected void syncFields() throws MPIException {
-		for (final HaloField haloField : fields)
+		for (final HaloField<?> haloField : fields)
 			haloField.sync();
 	}
 
@@ -115,8 +120,7 @@ public abstract class DSimState extends SimState {
 
 			// if location is null we assume that
 			// the agent is not supposed to be added to any field
-			if (transportee.loc != null)
-				addToLocation(transportee);
+			addToField(transportee);
 		}
 		transporter.objectQueue.clear();
 
@@ -197,7 +201,7 @@ public abstract class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final HaloField haloField : fields)
+		for (final HaloField<?> haloField : fields)
 			haloField.initRemote();
 		// /init
 	}

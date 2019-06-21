@@ -10,6 +10,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
 import sim.util.DoublePoint;
+import sim.util.IntPoint;
 
 public class DHeatBug implements Steppable {
 	private static final long serialVersionUID = 1;
@@ -34,7 +35,7 @@ public class DHeatBug implements Steppable {
 		double new_heat = grid.get(x, y) + heat;
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;
-		grid.set(x, y, new_heat);
+		grid.add(new IntPoint(x, y), new_heat);
 
 //		try {
 //			double new_heat = grid.get(x, y) + heat;
@@ -114,20 +115,22 @@ public class DHeatBug implements Steppable {
 		try {
 			final int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
 			if (dst != hb.partition.getPid()) {
-				hb.bugs.remove(old_x, old_y, this);
+				hb.bugs.remove(new IntPoint(old_x, old_y), this);
 
 //				if (!hb.bugs.remove(old_x, old_y, this))
 //					System.err.println("Failed to remove!");
 //				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
-				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y));
+
+				// TODO: Abstract away the migration from the model
+				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y), hb.bugs.fieldIndex);
 				hb.privBugCount--;
 			} else {
-				hb.bugs.remove(old_x, old_y, this);
+				hb.bugs.remove(new IntPoint(old_x, old_y), this);
 
 //				if (!hb.bugs.remove(old_x, old_y, this))
 //					System.err.println("Failed to remove!");
 
-				hb.bugs.add(loc_x, loc_y, this);
+				hb.bugs.add(new IntPoint(loc_x, loc_y), this);
 				hb.schedule.scheduleOnce(this, 1);
 			}
 		} catch (final Exception e) {

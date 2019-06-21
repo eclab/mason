@@ -5,13 +5,14 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.engine.DSimState;
+import sim.engine.Steppable;
 import sim.field.DPartition;
 import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.IntPoint;
 
 @SuppressWarnings("unchecked")
-public class NObjectsGrid2D<T extends Serializable> extends HaloField {
+public class NObjectsGrid2D<T extends Serializable> extends HaloField<T> {
 
 	public NObjectsGrid2D(final DPartition ps, final int[] aoi, final DSimState state) {
 		super(ps, aoi, new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]), state);
@@ -54,11 +55,11 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final ArrayList<T> get(final int x, final int y) {
+	public ArrayList<T> get(final int x, final int y) {
 		return get(new IntPoint(x, y));
 	}
 
-	public final ArrayList<T> get(final IntPoint p) {
+	public ArrayList<T> get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
@@ -68,11 +69,7 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final void add(final int x, final int y, final T t) {
-		add(new IntPoint(x, y), t);
-	}
-
-	public final void add(final IntPoint p, final T t) {
+	public boolean add(final IntPoint p, final T t) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			// TODO: should there be a way to set the remote stuff as well?
@@ -85,14 +82,10 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
 
-		array[idx].add(t);
+		return array[idx].add(t);
 	}
 
-	public final boolean remove(final int x, final int y, final T t) {
-		return remove(new IntPoint(x, y), t);
-	}
-
-	public final boolean remove(final IntPoint p, final T t) {
+	public boolean remove(final IntPoint p, final T t) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
@@ -106,6 +99,12 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField {
 
 		// TODO: if it's empty should it be GCed?
 		return array[idx].remove(t);
+	}
+
+	public boolean move(final IntPoint fromP, final IntPoint toP, final T t) {
+		if (remove(fromP, t))
+			return add(toP, t);
+		return false;
 	}
 
 }

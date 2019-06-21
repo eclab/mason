@@ -87,10 +87,10 @@ public class DRemoteTransporter {
 		objectQueue.clear();
 	}
 
-	public void migrate(final Object obj, final int dst, final DoublePoint loc) {
+	public void migrate(final Object obj, final int dst) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc);
+		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj);
 		assert dstMap.containsKey(dst);
 		try {
 //			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
@@ -103,6 +103,19 @@ public class DRemoteTransporter {
 //			} else {
 //			dstMap.get(dst).write(wrapper);
 //			}
+			dstMap.get(dst).write(wrapper);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+
+	public void migrate(final Object obj, final int dst, final DoublePoint loc, final int fieldindex) {
+		// Wrap the agent, this is important because we want to keep track of
+		// dst, which could be the diagonal processor
+		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc, fieldindex);
+		assert dstMap.containsKey(dst);
+		try {
 			dstMap.get(dst).write(wrapper);
 		} catch (final Exception e) {
 			e.printStackTrace();

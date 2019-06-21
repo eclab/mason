@@ -17,24 +17,24 @@ public abstract class GridStorage {
 
 	int[] stride;
 
-	public GridStorage(IntHyperRect shape) {
+	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;
-		this.stride = getStride(shape.getSize());
+		stride = getStride(shape.getSize());
 	}
-	
-	public GridStorage(Object storage, IntHyperRect shape) {
+
+	public GridStorage(final Object storage, final IntHyperRect shape) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
-		this.stride = shape.getSize();
+		stride = shape.getSize();
 	}
 
-	public GridStorage(Object storage, IntHyperRect shape, Datatype baseType) {
+	public GridStorage(final Object storage, final IntHyperRect shape, final Datatype baseType) {
 		super();
 		this.storage = storage;
 		this.shape = shape;
 		this.baseType = baseType;
-		this.stride = shape.getSize();
+		stride = shape.getSize();
 	}
 
 	public Object getStorage() {
@@ -62,29 +62,29 @@ public abstract class GridStorage {
 	// This method will be called after the new shape has been set
 	protected abstract Object allocate(int size);
 
-	private void reload(IntHyperRect newShape) {
-		this.shape = newShape;
-		this.stride = getStride(newShape.getSize());
-		this.storage = allocate(newShape.getArea());
+	private void reload(final IntHyperRect newShape) {
+		shape = newShape;
+		stride = getStride(newShape.getSize());
+		storage = allocate(newShape.getArea());
 	}
 
-	public void reshape(IntHyperRect newShape) {
+	public void reshape(final IntHyperRect newShape) {
 		if (newShape.equals(shape))
 			return;
 
 		if (newShape.isIntersect(shape)) {
-			IntHyperRect overlap = newShape.getIntersection(shape);
-			MPIParam fromParam = new MPIParam(overlap, shape, baseType);
-			MPIParam toParam = new MPIParam(overlap, newShape, baseType);
+			final IntHyperRect overlap = newShape.getIntersection(shape);
+			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
+			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 
 			try {
-				Serializable buf = pack(fromParam);
+				final Serializable buf = pack(fromParam);
 				reload(newShape);
 				unpack(toParam, buf);
 
 				fromParam.type.free();
 				toParam.type.free();
-			} catch (MPIException e) {
+			} catch (final MPIException e) {
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -92,18 +92,18 @@ public abstract class GridStorage {
 			reload(newShape);
 	}
 
-	public int getFlatIdx(IntPoint p) {
+	public int getFlatIdx(final IntPoint p) {
 		return IntStream.range(0, p.nd).map(i -> p.c[i] * stride[i]).sum();
 	}
 
 	// Get the flatted index with respect to the given size
-	public static int getFlatIdx(IntPoint p, int[] wrtSize) {
-		int[] s = getStride(wrtSize);
+	public static int getFlatIdx(final IntPoint p, final int[] wrtSize) {
+		final int[] s = getStride(wrtSize);
 		return IntStream.range(0, p.nd).map(i -> p.c[i] * s[i]).sum();
 	}
 
-	protected static int[] getStride(int[] size) {
-		int[] ret = new int[size.length];
+	protected static int[] getStride(final int[] size) {
+		final int[] ret = new int[size.length];
 
 		ret[size.length - 1] = 1;
 		for (int i = size.length - 2; i >= 0; i--)
