@@ -29,15 +29,15 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T> {
 		return ((ContStorage) field).getLocation(obj);
 	}
 
-	public boolean add(final NdPoint p, final T t) {
+	public void addObject(final NdPoint p, final T t) {
 		if (!haloPart.contains(p))
 			throw new IllegalArgumentException(String.format("PID %d Point %s Invalid setLocation() myHalo %s",
 					ps.getPid(), p.toString(), haloPart));
-		return ((ContStorage) field).setLocation(t, p);
+		((ContStorage) field).setLocation(t, p);
 	}
 
-	public boolean add(final IntPoint p, final T t) {
-		return add((NdPoint) p, t);
+	public void addObject(final IntPoint p, final T t) {
+		addObject(p, t);
 	}
 
 	public List<T> getObjects(final NdPoint p) {
@@ -56,8 +56,37 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T> {
 		((ContStorage) field).removeObject(obj);
 	}
 
+	public void removeObject(final IntPoint p, final T obj) {
+		removeObject((NdPoint) p, obj);
+	}
+
+	public void removeObject(final NdPoint p, final T obj) {
+		// TODO: Remove from just p
+		((ContStorage) field).removeObject(obj);
+	}
+
 	public void removeObjects(final NdPoint p) {
 		((ContStorage) field).removeObjects(p);
+	}
+
+	public void moveObject(final NdPoint fromP, final NdPoint toP, final T t) {
+		// addObject is also moving the objects in this field
+		addObject(toP, t);
+	}
+
+	public void moveObject(final IntPoint fromP, final IntPoint toP, final T t) {
+		// addObject is also moving the objects in this field
+		addObject(toP, t);
+	}
+
+	public void moveObject(final NdPoint toP, final T t) {
+		// addObject is also moving the objects in this field
+		addObject(toP, t);
+	}
+
+	public void moveObject(final IntPoint toP, final T t) {
+		// addObject is also moving the objects in this field
+		addObject(toP, t);
 	}
 
 	// TODO refactor this after new pack/unpack is introduced in Storage

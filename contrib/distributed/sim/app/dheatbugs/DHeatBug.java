@@ -35,7 +35,7 @@ public class DHeatBug implements Steppable {
 		double new_heat = grid.get(x, y) + heat;
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;
-		grid.add(new IntPoint(x, y), new_heat);
+		grid.addObject(new IntPoint(x, y), new_heat);
 
 //		try {
 //			double new_heat = grid.get(x, y) + heat;
@@ -115,7 +115,7 @@ public class DHeatBug implements Steppable {
 		try {
 			final int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
 			if (dst != hb.partition.getPid()) {
-				hb.bugs.remove(new IntPoint(old_x, old_y), this);
+				hb.bugs.removeObject(new IntPoint(old_x, old_y), this);
 
 //				if (!hb.bugs.remove(old_x, old_y, this))
 //					System.err.println("Failed to remove!");
@@ -125,12 +125,8 @@ public class DHeatBug implements Steppable {
 				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y), hb.bugs.fieldIndex);
 				hb.privBugCount--;
 			} else {
-				hb.bugs.remove(new IntPoint(old_x, old_y), this);
-
-//				if (!hb.bugs.remove(old_x, old_y, this))
-//					System.err.println("Failed to remove!");
-
-				hb.bugs.add(new IntPoint(loc_x, loc_y), this);
+				// TODO: this should be moveAgent
+				hb.bugs.moveObject(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
 				hb.schedule.scheduleOnce(this, 1);
 			}
 		} catch (final Exception e) {

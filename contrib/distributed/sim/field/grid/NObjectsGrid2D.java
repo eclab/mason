@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import sim.engine.DSimState;
-import sim.engine.Steppable;
 import sim.field.DPartition;
 import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
@@ -69,7 +68,7 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField<T> {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public boolean add(final IntPoint p, final T t) {
+	public void addObject(final IntPoint p, final T t) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			// TODO: should there be a way to set the remote stuff as well?
@@ -82,10 +81,10 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField<T> {
 		if (array[idx] == null)
 			array[idx] = new ArrayList<T>();
 
-		return array[idx].add(t);
+		array[idx].add(t);
 	}
 
-	public boolean remove(final IntPoint p, final T t) {
+	public void removeObject(final IntPoint p, final T t) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
@@ -94,17 +93,9 @@ public class NObjectsGrid2D<T extends Serializable> extends HaloField<T> {
 		final ArrayList<T>[] array = getStorageArray();
 		final int idx = field.getFlatIdx(toLocalPoint(p));
 
-		if (array[idx] == null)
-			return false;
-
-		// TODO: if it's empty should it be GCed?
-		return array[idx].remove(t);
-	}
-
-	public boolean move(final IntPoint fromP, final IntPoint toP, final T t) {
-		if (remove(fromP, t))
-			return add(toP, t);
-		return false;
+		if (array[idx] != null)
+			// TODO: if it's empty should it be GCed?
+			array[idx].remove(t);
 	}
 
 }

@@ -101,11 +101,11 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	}
 
 	// Put the object to the given point
-	public boolean setLocation(final T obj, final NdPoint p) {
+	public void setLocation(final T obj, final NdPoint p) {
 		final NdPoint old = m.put(obj, p);
 		if (old != null)
 			getCell(old).remove(obj);
-		return getCell(p).add(obj);
+		getCell(p).add(obj);
 	}
 
 	// Get the location of the given location

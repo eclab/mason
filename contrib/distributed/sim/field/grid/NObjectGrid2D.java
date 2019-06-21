@@ -46,14 +46,17 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T> {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public boolean add(final IntPoint p, final T val) {
+	public void addObject(final IntPoint p, final T val) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
-		return true;
+	}
+
+	public void removeObject(final IntPoint p, final T t) {
+		addObject(p, null);
 	}
 
 	/*

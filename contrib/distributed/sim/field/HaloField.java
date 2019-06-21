@@ -21,7 +21,6 @@ import sim.util.IntPoint;
 import sim.util.IntPointGenerator;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
-import sim.util.NdPoint;
 
 // TODO refactor HaloField to accept
 // continuous: double, int, object
@@ -65,11 +64,14 @@ public abstract class HaloField<T extends Serializable> implements RemoteField {
 		fieldIndex = state.register(this);
 	}
 
-	public abstract boolean add(final IntPoint p, final T t);
+	public abstract void addObject(final IntPoint p, final T t);
 
-//	public abstract boolean remove(final IntPoint p, final T t);
-//
-//	public abstract boolean move(final IntPoint fromP, final IntPoint toP, final T t);
+	public abstract void removeObject(final IntPoint p, final T t);
+
+	public void moveObject(final IntPoint fromP, final IntPoint toP, final T t) {
+		removeObject(fromP, t);
+		addObject(toP, t);
+	}
 
 	protected void registerCallbacks() {
 		/*

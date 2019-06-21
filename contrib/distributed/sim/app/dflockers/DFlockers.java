@@ -52,7 +52,7 @@ public class DFlockers extends DSimState {
 
 	protected void addToField(final Transportee<?> transportee) {
 		final DFlocker flocker = (DFlocker) transportee.wrappedObject;
-		flockers.add(flocker.loc, flocker);
+		flockers.addObject(flocker.loc, flocker);
 	}
 
 	public void start() {
@@ -67,7 +67,7 @@ public class DFlockers extends DSimState {
 			if (random.nextBoolean(DFlockers.deadFlockerProbability))
 				flocker.dead = true;
 
-			flockers.add(location, flocker);
+			flockers.addObject(location, flocker);
 			schedule.scheduleOnce(flocker, 1);
 		}
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);

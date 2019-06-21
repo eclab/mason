@@ -186,7 +186,7 @@ public class DHeatBugs extends DSimState {
 				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
 			} while (bugs.get(px, py) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.add(new IntPoint(px, py), b);
+			bugs.addObject(new IntPoint(px, py), b);
 			schedule.scheduleOnce(b, 1);
 		}
 
@@ -204,7 +204,7 @@ public class DHeatBugs extends DSimState {
 	protected void addToField(final Transportee<?> transportee) {
 		privBugCount++;
 		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-		bugs.add(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
+		bugs.addObject(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
 	}
 
 	@SuppressWarnings("serial")

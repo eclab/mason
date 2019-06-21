@@ -2,20 +2,21 @@ package sim.field.grid;
 
 import java.rmi.RemoteException;
 
-import sim.util.IntPoint;
 import sim.engine.DSimState;
 import sim.field.DPartition;
 //import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.IntGridStorage;
+import sim.util.IntPoint;
 
 public class NIntGrid2D extends HaloField<Integer> {
+	public final int initVal;
 
 	public NIntGrid2D(final DPartition ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps, aoi, new IntGridStorage(ps.getPartition(), initVal), state);
-
 		if (numDimensions != 2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + numDimensions);
+		this.initVal = initVal;
 	}
 
 	public int[] getStorageArray() {
@@ -44,18 +45,25 @@ public class NIntGrid2D extends HaloField<Integer> {
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public boolean add(final IntPoint p, final int val) {
+	public void addObject(final IntPoint p, final int val) {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
 					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
-		return true;
 	}
 
-	public boolean add(final IntPoint p, final Integer val) {
-		return add(p, val.intValue());
+	public void addObject(final IntPoint p, final Integer val) {
+		addObject(p, val.intValue());
+	}
+
+	public void removeObject(final IntPoint p, final Integer t) {
+		removeObject(p);
+	}
+
+	public void removeObject(final IntPoint p) {
+		addObject(p, initVal);
 	}
 
 	/*
