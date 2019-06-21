@@ -127,7 +127,7 @@ public class RemoteProxy {
 	 * MPI.Finalize(); }
 	 */
 
-	static class FakeRemoteField implements RemoteField {
+	static class FakeRemoteField implements RemoteField<IntPoint> {
 		int val;
 
 		public FakeRemoteField(final int val) {

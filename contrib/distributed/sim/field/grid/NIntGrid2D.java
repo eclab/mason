@@ -62,8 +62,19 @@ public class NIntGrid2D extends HaloField<Integer, IntPoint> {
 		removeObject(p);
 	}
 
+	// Overloading to prevent AutoBoxing-UnBoxing
+	public void removeObject(final IntPoint p, final int t) {
+		removeObject(p);
+	}
+
 	public void removeObject(final IntPoint p) {
 		addObject(p, initVal);
+	}
+
+	// Overloading to prevent AutoBoxing-UnBoxing
+	public void moveObject(final IntPoint fromP, final IntPoint toP, final int t) {
+		removeObject(fromP);
+		addObject(toP, t);
 	}
 
 	/*

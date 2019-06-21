@@ -23,10 +23,13 @@ import sim.util.MPIParam;
 import sim.util.MPIUtil;
 import sim.util.NdPoint;
 
-// TODO refactor HaloField to accept
-// continuous: double, int, object
-
-public abstract class HaloField<T extends Serializable, P extends NdPoint> implements RemoteField {
+/**
+ * All fields in the distributed MASON <b>must</b> extend this class.
+ *
+ * @param <T> The Class of Object to store in the field
+ * @param <P> The Type of NdPoint to use
+ */
+public abstract class HaloField<T extends Serializable, P extends NdPoint> implements RemoteField<P> {
 
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;

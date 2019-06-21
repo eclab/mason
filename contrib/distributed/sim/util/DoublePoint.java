@@ -6,20 +6,20 @@ import java.util.stream.IntStream;
 public class DoublePoint extends NdPoint {
 	private static final long serialVersionUID = 1L;
 
-	public double[] c;
+	public final double[] c;
 
 	public DoublePoint(final double c[]) {
-		nd = c.length;
+		super(c.length);
 		this.c = Arrays.copyOf(c, nd);
 	}
 
 	public DoublePoint(final double x, final double y) {
-		nd = 2;
+		super(2);
 		c = new double[] { x, y };
 	}
 
 	public DoublePoint(final double x, final double y, final double z) {
-		nd = 3;
+		super(3);
 		c = new double[] { x, y, z };
 	}
 

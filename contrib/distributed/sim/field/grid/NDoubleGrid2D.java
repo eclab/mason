@@ -64,8 +64,18 @@ public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 		removeObject(p);
 	}
 
+	// Overloading to prevent AutoBoxing-UnBoxing
+	public void removeObject(final IntPoint p, final double t) {
+		removeObject(p);
+	}
+
 	public void removeObject(final IntPoint p) {
 		addObject(p, initVal);
 	}
 
+	// Overloading to prevent AutoBoxing-UnBoxing
+	public void moveObject(final IntPoint fromP, final IntPoint toP, final double t) {
+		removeObject(fromP);
+		addObject(toP, t);
+	}
 }

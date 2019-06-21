@@ -49,11 +49,6 @@ public class DFlockers extends DSimState {
 		 */
 	}
 
-//	protected void addToField(final Transportee<?> transportee) {
-//		final DFlocker flocker = (DFlocker) transportee.wrappedObject;
-//		flockers.addObject(flocker.loc, flocker);
-//	}
-
 	public void start() {
 		super.start();
 		final int[] size = partition.getPartition().getSize();

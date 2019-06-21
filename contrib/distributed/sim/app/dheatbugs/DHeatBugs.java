@@ -207,8 +207,6 @@ public class DHeatBugs extends DSimState {
 	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
 		super.addToField(transportee);
 		privBugCount++;
-//		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-//		bugs.addObject(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
 	}
 
 	@SuppressWarnings("serial")

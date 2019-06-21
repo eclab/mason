@@ -5,22 +5,21 @@ import java.util.stream.IntStream;
 
 public class IntPoint extends NdPoint {
 	private static final long serialVersionUID = 1L;
-	// TODO make these private
 
-	public int[] c;
+	public final int[] c;
 
 	public IntPoint(final int c[]) {
-		nd = c.length;
+		super(c.length);
 		this.c = Arrays.copyOf(c, nd);
 	}
 
 	public IntPoint(final int x, final int y) {
-		nd = 2;
+		super(2);
 		c = new int[] { x, y };
 	}
 
 	public IntPoint(final int x, final int y, final int z) {
-		nd = 3;
+		super(3);
 		c = new int[] { x, y, z };
 	}
 

@@ -88,13 +88,16 @@ public abstract class DSimState extends SimState {
 	 *
 	 * @param transportee
 	 */
-//	protected abstract void addToField(Transportee<?> transportee);
 	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
 		if (transportee.fieldIndex >= 0)
 			fields.get(transportee.fieldIndex).addObject(transportee.loc, transportee.wrappedObject);
 	}
 
-	// Calls Sync on all the fields
+	/**
+	 * Calls Sync on all the fields
+	 *
+	 * @throws MPIException
+	 */
 	protected void syncFields() throws MPIException {
 		for (final HaloField<? extends Serializable, ? extends NdPoint> haloField : fields)
 			haloField.sync();

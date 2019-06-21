@@ -12,7 +12,6 @@ import sim.engine.DSimState;
 import sim.field.DPartition;
 import sim.field.HaloField;
 import sim.field.storage.ContStorage;
-import sim.util.IntPoint;
 import sim.util.MPIParam;
 import sim.util.NdPoint;
 
@@ -67,17 +66,7 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint>
 		addObject(toP, t);
 	}
 
-	public void moveObject(final IntPoint fromP, final IntPoint toP, final T t) {
-		// addObject is also moving the objects in this field
-		addObject(toP, t);
-	}
-
 	public void moveObject(final NdPoint toP, final T t) {
-		// addObject is also moving the objects in this field
-		addObject(toP, t);
-	}
-
-	public void moveObject(final IntPoint toP, final T t) {
 		// addObject is also moving the objects in this field
 		addObject(toP, t);
 	}
@@ -102,7 +91,7 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint>
 	}
 
 	// TODO
-	public Serializable getRMI(final IntPoint p) throws RemoteException {
+	public Serializable getRMI(final NdPoint p) throws RemoteException {
 		// return ((ContStorage)field).getObjects(obj);
 		return null;
 	}

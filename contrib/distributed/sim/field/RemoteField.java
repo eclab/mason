@@ -4,9 +4,14 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sim.util.IntPoint;
+import sim.util.NdPoint;
 
-// TODO replace IntPoint with NdPoint
-public interface RemoteField extends Remote {
-	Serializable getRMI(IntPoint p) throws RemoteException;
+/**
+ * Contains a method to get data from remote field
+ *
+ *
+ * @param <P> The Type of NdPoint to use
+ */
+public interface RemoteField<P extends NdPoint> extends Remote {
+	Serializable getRMI(P p) throws RemoteException;
 }
