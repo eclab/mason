@@ -9,7 +9,7 @@ import sim.field.HaloField;
 import sim.field.storage.DoubleGridStorage;
 import sim.util.IntPoint;
 
-public class NDoubleGrid2D extends HaloField<Double> {
+public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 
 	public final double initVal;
 

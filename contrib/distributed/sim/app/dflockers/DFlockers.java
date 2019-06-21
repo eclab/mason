@@ -8,7 +8,6 @@ package sim.app.dflockers;
 
 import mpi.MPIException;
 import sim.engine.DSimState;
-import sim.field.Transportee;
 import sim.field.continuous.NContinuous2D;
 import sim.util.DoublePoint;
 import sim.util.Timing;
@@ -50,10 +49,10 @@ public class DFlockers extends DSimState {
 		 */
 	}
 
-	protected void addToField(final Transportee<?> transportee) {
-		final DFlocker flocker = (DFlocker) transportee.wrappedObject;
-		flockers.addObject(flocker.loc, flocker);
-	}
+//	protected void addToField(final Transportee<?> transportee) {
+//		final DFlocker flocker = (DFlocker) transportee.wrappedObject;
+//		flockers.addObject(flocker.loc, flocker);
+//	}
 
 	public void start() {
 		super.start();

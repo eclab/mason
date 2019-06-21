@@ -10,7 +10,7 @@ import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.IntPoint;
 
-public class NObjectGrid2D<T extends Serializable> extends HaloField<T> {
+public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint> {
 
 	public NObjectGrid2D(final DPartition ps, final int[] aoi, final IntFunction<T[]> allocator,
 			final DSimState state) {

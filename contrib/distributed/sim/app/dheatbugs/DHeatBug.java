@@ -9,7 +9,6 @@ package sim.app.dheatbugs;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
-import sim.util.DoublePoint;
 import sim.util.IntPoint;
 
 public class DHeatBug implements Steppable {
@@ -122,7 +121,7 @@ public class DHeatBug implements Steppable {
 //				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
 
 				// TODO: Abstract away the migration from the model
-				hb.transporter.migrate(this, dst, new DoublePoint(loc_x, loc_y), hb.bugs.fieldIndex);
+				hb.transporter.migrate(this, dst, new IntPoint(loc_x, loc_y), hb.bugs.fieldIndex);
 				hb.privBugCount--;
 			} else {
 				// TODO: this should be moveAgent

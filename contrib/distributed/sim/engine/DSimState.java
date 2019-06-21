@@ -25,6 +25,7 @@ import sim.field.DRemoteTransporter;
 import sim.field.HaloField;
 import sim.field.RemoteProxy;
 import sim.field.Transportee;
+import sim.util.NdPoint;
 import sim.util.Timing;
 
 public abstract class DSimState extends SimState {
@@ -33,7 +34,7 @@ public abstract class DSimState extends SimState {
 	public DRemoteTransporter transporter;
 	public static Logger logger;
 	public int[] aoi; // Area of Interest
-	ArrayList<HaloField<?>> fields = new ArrayList<>();
+	ArrayList<HaloField<Serializable, NdPoint>> fields = new ArrayList<>();
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
@@ -74,10 +75,11 @@ public abstract class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int register(final HaloField<?> haloField) {
+	@SuppressWarnings("unchecked")
+	public int register(final HaloField<? extends Serializable, ? extends NdPoint> haloField) {
 		// Must be called in a deterministic manner
 		final int index = fields.size();
-		fields.add(haloField);
+		fields.add((HaloField<Serializable, NdPoint>) haloField);
 		return index;
 	}
 
@@ -86,15 +88,15 @@ public abstract class DSimState extends SimState {
 	 *
 	 * @param transportee
 	 */
-	protected abstract void addToField(Transportee<?> transportee);
-//	protected void addToField(Transportee<?> transportee) {
-//		if(transportee.fieldIndex>=0)
-//			fields.get(transportee.fieldIndex);
-//	}
+//	protected abstract void addToField(Transportee<?> transportee);
+	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
+		if (transportee.fieldIndex >= 0)
+			fields.get(transportee.fieldIndex).addObject(transportee.loc, transportee.wrappedObject);
+	}
 
 	// Calls Sync on all the fields
 	protected void syncFields() throws MPIException {
-		for (final HaloField<?> haloField : fields)
+		for (final HaloField<? extends Serializable, ? extends NdPoint> haloField : fields)
 			haloField.sync();
 	}
 
@@ -108,7 +110,7 @@ public abstract class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final Transportee<?> transportee : transporter.objectQueue) {
+		for (final Transportee<? extends Serializable, ? extends NdPoint> transportee : transporter.objectQueue) {
 			if (transportee.wrappedObject instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) transportee.wrappedObject;
 				schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
@@ -201,7 +203,7 @@ public abstract class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final HaloField<?> haloField : fields)
+		for (final HaloField<? extends Serializable, ? extends NdPoint> haloField : fields)
 			haloField.initRemote();
 		// /init
 	}

@@ -2,9 +2,9 @@ package sim.field;
 
 import java.io.Serializable;
 
-import sim.util.DoublePoint;
+import sim.util.NdPoint;
 
-public class Transportee<T> implements Serializable {
+public class Transportee<T extends Serializable, P extends NdPoint> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public T wrappedObject;
 
@@ -12,10 +12,10 @@ public class Transportee<T> implements Serializable {
 	public int ordering;
 	public boolean migrate;
 	// this is null if the object is not associated with a field
-	public DoublePoint loc;
+	public P loc;
 	public int fieldIndex;
 
-	public Transportee(final int dst, final T wrappedObject, final DoublePoint loc, final boolean migrate,
+	public Transportee(final int dst, final T wrappedObject, final P loc, final boolean migrate,
 			final int ordering, final int fieldIndex) {
 		this.destination = dst;
 		this.wrappedObject = wrappedObject;
@@ -25,12 +25,12 @@ public class Transportee<T> implements Serializable {
 		this.fieldIndex = fieldIndex;
 	}
 
-	public Transportee(final int dst, final T wrappedObject, final DoublePoint loc, final boolean migrate,
+	public Transportee(final int dst, final T wrappedObject, final P loc, final boolean migrate,
 			final int fieldIndex) {
 		this(dst, wrappedObject, loc, migrate, 1, fieldIndex);
 	}
 
-	public Transportee(final int dst, final T wrappedObject, final DoublePoint loc, final int fieldIndex) {
+	public Transportee(final int dst, final T wrappedObject, final P loc, final int fieldIndex) {
 		this(dst, wrappedObject, loc, false, 1, fieldIndex);
 	}
 

@@ -11,7 +11,7 @@ import sim.field.storage.ObjectGridStorage;
 import sim.util.IntPoint;
 
 @SuppressWarnings("unchecked")
-public class NObjectsGrid2D<T extends Serializable> extends HaloField<T> {
+public class NObjectsGrid2D<T extends Serializable> extends HaloField<T, IntPoint> {
 
 	public NObjectsGrid2D(final DPartition ps, final int[] aoi, final DSimState state) {
 		super(ps, aoi, new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]), state);

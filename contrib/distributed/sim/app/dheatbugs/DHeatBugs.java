@@ -6,6 +6,8 @@
 
 package sim.app.dheatbugs;
 
+import java.io.Serializable;
+
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
@@ -17,6 +19,7 @@ import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
 import sim.util.IntPoint;
 import sim.util.Interval;
+import sim.util.NdPoint;
 import sim.util.Timing;
 
 public class DHeatBugs extends DSimState {
@@ -201,10 +204,11 @@ public class DHeatBugs extends DSimState {
 //		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
 
-	protected void addToField(final Transportee<?> transportee) {
+	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
+		super.addToField(transportee);
 		privBugCount++;
-		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-		bugs.addObject(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
+//		final DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
+//		bugs.addObject(new IntPoint(heatBug.loc_x, heatBug.loc_y), heatBug);
 	}
 
 	@SuppressWarnings("serial")

@@ -16,7 +16,7 @@ import sim.util.IntPoint;
 import sim.util.MPIParam;
 import sim.util.NdPoint;
 
-public class NContinuous2D<T extends Serializable> extends HaloField<T> {
+public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint> {
 
 	public NContinuous2D(final DPartition ps, final int[] aoi, final double[] discretizations, final DSimState state) {
 		super(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations), state);
@@ -36,10 +36,6 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T> {
 		((ContStorage) field).setLocation(t, p);
 	}
 
-	public void addObject(final IntPoint p, final T t) {
-		addObject(p, t);
-	}
-
 	public List<T> getObjects(final NdPoint p) {
 		return ((ContStorage) field).getObjects(p);
 	}
@@ -52,15 +48,12 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T> {
 		return ((ContStorage) field).getNeighborsWithin(obj, r);
 	}
 
-	public void removeObject(final T obj) {
+	public void removeObject(final NdPoint p, final T obj) {
+		// TODO: Remove from just p
 		((ContStorage) field).removeObject(obj);
 	}
 
-	public void removeObject(final IntPoint p, final T obj) {
-		removeObject((NdPoint) p, obj);
-	}
-
-	public void removeObject(final NdPoint p, final T obj) {
+	public void removeObject(final T obj) {
 		// TODO: Remove from just p
 		((ContStorage) field).removeObject(obj);
 	}

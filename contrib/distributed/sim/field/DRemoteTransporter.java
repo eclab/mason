@@ -6,13 +6,14 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.DoublePoint;
+import sim.util.NdPoint;
 
 public class DRemoteTransporter {
 
@@ -25,7 +26,7 @@ public class DRemoteTransporter {
 	DPartition partition;
 	int[] neighbors;
 
-	public ArrayList<Transportee<? extends Object>> objectQueue;
+	public ArrayList<Transportee<? extends Serializable, ? extends NdPoint>> objectQueue;
 
 	public DRemoteTransporter(final DPartition partition) {
 		this.partition = partition;
@@ -87,10 +88,10 @@ public class DRemoteTransporter {
 		objectQueue.clear();
 	}
 
-	public void migrate(final Object obj, final int dst) {
+	public void migrate(final Serializable obj, final int dst) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj);
+		final Transportee<? extends Serializable, ? extends NdPoint> wrapper = new Transportee<>(dst, obj);
 		assert dstMap.containsKey(dst);
 		try {
 //			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
@@ -110,10 +111,10 @@ public class DRemoteTransporter {
 		}
 	}
 
-	public void migrate(final Object obj, final int dst, final DoublePoint loc, final int fieldindex) {
+	public void migrate(final Serializable obj, final int dst, final NdPoint loc, final int fieldindex) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final Transportee<? extends Object> wrapper = new Transportee<>(dst, obj, loc, fieldindex);
+		final Transportee<Serializable, NdPoint> wrapper = new Transportee<>(dst, obj, loc, fieldindex);
 		assert dstMap.containsKey(dst);
 		try {
 			dstMap.get(dst).write(wrapper);
@@ -154,7 +155,7 @@ public class DRemoteTransporter {
 				MPI.BYTE);
 
 		// read and handle incoming objects
-		final ArrayList<Transportee<? extends Object>> bufferList = new ArrayList<>();
+		final ArrayList<Transportee<? extends Serializable, ? extends NdPoint>> bufferList = new ArrayList<>();
 		for (int i = 0; i < numNeighbors; i++) {
 			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
@@ -164,7 +165,8 @@ public class DRemoteTransporter {
 
 			while (true) {
 				try {
-					final Transportee<? extends Object> wrapper = (Transportee<? extends Object>) is.readObject();
+					final Transportee<Serializable, NdPoint> wrapper = (Transportee<Serializable, NdPoint>) is
+							.readObject();
 					if (partition.pid != wrapper.destination) {
 						assert dstMap.containsKey(wrapper.destination);
 						bufferList.add(wrapper);
@@ -193,7 +195,7 @@ public class DRemoteTransporter {
 			outputStreams[i].reset();
 
 		// Handling the agent in bufferList
-		for (final Transportee<? extends Object> wrapper : bufferList)
+		for (final Transportee<? extends Serializable, ? extends NdPoint> wrapper : bufferList)
 			dstMap.get(wrapper.destination).write(wrapper);
 		bufferList.clear();
 

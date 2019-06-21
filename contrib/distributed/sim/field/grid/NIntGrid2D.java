@@ -9,7 +9,7 @@ import sim.field.HaloField;
 import sim.field.storage.IntGridStorage;
 import sim.util.IntPoint;
 
-public class NIntGrid2D extends HaloField<Integer> {
+public class NIntGrid2D extends HaloField<Integer, IntPoint> {
 	public final int initVal;
 
 	public NIntGrid2D(final DPartition ps, final int[] aoi, final int initVal, final DSimState state) {
