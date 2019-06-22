@@ -68,30 +68,30 @@ public class ObjectGridStorage<T extends Serializable> extends GridStorage {
 		return curr;
 	}
 
-	public static void main(final String[] args) throws MPIException {
-		MPI.Init(args);
-
-		final IntPoint p1 = new IntPoint(new int[] { 0, 0 });
-		final IntPoint p2 = new IntPoint(new int[] { 5, 5 });
-		final IntPoint p3 = new IntPoint(new int[] { 1, 1 });
-		final IntPoint p4 = new IntPoint(new int[] { 4, 4 });
-		final IntHyperRect r1 = new IntHyperRect(0, p1, p2);
-		final IntHyperRect r2 = new IntHyperRect(1, p3, p4);
-		final ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
-		final ObjectGridStorage<TestObj> s2 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
-
-		final TestObj[] stor = (TestObj[]) s1.getStorage();
-		for (final int i : new int[] { 6, 12, 18 })
-			stor[i] = new TestObj(i);
-
-		final MPIParam mp = new MPIParam(r2, r1, s1.getMPIBaseType());
-		s2.unpack(mp, s1.pack(mp));
-
-		final TestObj[] objs = (TestObj[]) s2.getStorage();
-		for (final TestObj obj : objs)
-			System.out.print(obj + " ");
-		System.out.println("");
-
-		MPI.Finalize();
-	}
+//	public static void main(final String[] args) throws MPIException {
+//		MPI.Init(args);
+//
+//		final IntPoint p1 = new IntPoint(new int[] { 0, 0 });
+//		final IntPoint p2 = new IntPoint(new int[] { 5, 5 });
+//		final IntPoint p3 = new IntPoint(new int[] { 1, 1 });
+//		final IntPoint p4 = new IntPoint(new int[] { 4, 4 });
+//		final IntHyperRect r1 = new IntHyperRect(0, p1, p2);
+//		final IntHyperRect r2 = new IntHyperRect(1, p3, p4);
+//		final ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
+//		final ObjectGridStorage<TestObj> s2 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
+//
+//		final TestObj[] stor = (TestObj[]) s1.getStorage();
+//		for (final int i : new int[] { 6, 12, 18 })
+//			stor[i] = new TestObj(i);
+//
+//		final MPIParam mp = new MPIParam(r2, r1, s1.getMPIBaseType());
+//		s2.unpack(mp, s1.pack(mp));
+//
+//		final TestObj[] objs = (TestObj[]) s2.getStorage();
+//		for (final TestObj obj : objs)
+//			System.out.print(obj + " ");
+//		System.out.println("");
+//
+//		MPI.Finalize();
+//	}
 }

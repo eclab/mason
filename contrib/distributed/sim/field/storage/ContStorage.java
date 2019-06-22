@@ -1,12 +1,20 @@
 package sim.field.storage;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.stream.*;
-import java.util.function.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import sim.util.*;
-import sim.field.storage.GridStorage;
+import sim.util.IntHyperRect;
+import sim.util.IntPoint;
+import sim.util.IntPointGenerator;
+import sim.util.MPIParam;
+import sim.util.NdPoint;
 
 public class ContStorage<T extends Serializable> extends GridStorage {
 
@@ -197,110 +205,110 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 		return objs;
 	}
 
-	public static void main(final String[] args) throws mpi.MPIException {
-		mpi.MPI.Init(args);
-
-		final IntPoint ul = new IntPoint(10, 20), br = new IntPoint(50, 80);
-		final IntHyperRect rect = new IntHyperRect(1, ul, br);
-		final double[] discretize = new double[] { 10, 10 };
-
-		final ContStorage<TestObj> f = new ContStorage<TestObj>(rect, discretize);
-
-		final TestObj obj1 = new TestObj(1);
-		final DoublePoint loc1 = new DoublePoint(23.4, 30.2);
-		final TestObj obj2 = new TestObj(2);
-		final DoublePoint loc2 = new DoublePoint(29.99, 39.99);
-		final TestObj obj3 = new TestObj(3);
-		final DoublePoint loc3 = new DoublePoint(31, 45.6);
-		final TestObj obj4 = new TestObj(4);
-		final DoublePoint loc4 = new DoublePoint(31, 45.6);
-		final TestObj obj5 = new TestObj(5);
-		final DoublePoint loc5 = new DoublePoint(31, 45.60001);
-
-		f.setLocation(obj1, loc1);
-		f.setLocation(obj2, loc2);
-		f.setLocation(obj3, loc3);
-		f.setLocation(obj4, loc4);
-		f.setLocation(obj5, loc5);
-
-		System.out.println("get objects at " + loc1);
-		for (final TestObj obj : f.getObjects(loc1))
-			System.out.println(obj);
-
-		System.out.println("get objects at " + loc4);
-		for (final TestObj obj : f.getObjects(loc4))
-			System.out.println(obj);
-
-		System.out.println("get objects at " + loc5);
-		for (final TestObj obj : f.getObjects(loc5))
-			System.out.println(obj);
-
-		final IntHyperRect area = new IntHyperRect(1, new IntPoint(25, 35), new IntPoint(35, 47));
-		System.out.println("get objects in " + area);
-		for (final TestObj obj : f.getObjects(area))
-			System.out.println(obj);
-
-		System.out.println("Move " + obj4 + " from " + loc4 + " to " + loc5 + ", get objects at " + loc4);
-		f.setLocation(obj4, loc5);
-		for (final TestObj obj : f.getObjects(loc4))
-			System.out.println(obj);
-		System.out.println("get objects at " + loc5);
-		for (final TestObj obj : f.getObjects(loc5))
-			System.out.println(obj);
-
-		final IntHyperRect r1 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
-		System.out.println("get objects in " + r1);
-		for (final TestObj obj : f.getObjects(r1))
-			System.out.println(obj);
-
-		for (int count = 1; count <= 5; count++) {
-			System.out.println("get " + count + " neighbors of " + obj2);
-			for (final TestObj obj : f.getNearestNeighbors(obj2, count))
-				System.out.println(obj);
-		}
-
-		double r = 9;
-		System.out.println("get objects within " + r + " from " + obj2);
-		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
-			System.out.println(obj);
-
-		r = 12;
-		System.out.println("get objects within " + r + " from " + obj2);
-		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
-			System.out.println(obj);
-
-		final IntHyperRect r2 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
-		System.out.println("after remove " + obj1 + ", get objects in " + r2);
-		f.removeObject(obj1);
-		for (final TestObj obj : f.getObjects(r2))
-			System.out.println(obj);
-
-		System.out.println("after remove object at " + loc3 + ", get objects in " + rect);
-		f.removeObjects(loc3);
-		for (final TestObj obj : f.getObjects(rect))
-			System.out.println(obj);
-
-		f.setLocation(obj1, loc1);
-		f.setLocation(obj3, loc3);
-		f.setLocation(obj4, loc4);
-		System.out.println("after putting " + obj1 + " " + obj3 + " " + obj4 + " " + "back, get objects in " + rect);
-		System.out.println(f);
-
-		final IntPoint ul2 = new IntPoint(20, 30), br2 = new IntPoint(30, 40);
-		final IntHyperRect rect2 = new IntHyperRect(2, ul2, br2);
-		f.reshape(rect2);
-		System.out.println("after reshaping from " + rect + " to " + rect2 + ", get objects in " + rect2);
-		System.out.println(f);
-
-		r = 12;
-		System.out.println("get objects within " + r + " from " + obj1);
-		for (final TestObj obj : f.getNeighborsWithin(obj1, r))
-			System.out.println(obj);
-
-		System.out.println("get objects at " + loc1);
-		for (final TestObj obj : f.getObjects(loc1))
-			System.out.println(obj);
-
-		mpi.MPI.Finalize();
-	}
+//	public static void main(final String[] args) throws mpi.MPIException {
+//		mpi.MPI.Init(args);
+//
+//		final IntPoint ul = new IntPoint(10, 20), br = new IntPoint(50, 80);
+//		final IntHyperRect rect = new IntHyperRect(1, ul, br);
+//		final double[] discretize = new double[] { 10, 10 };
+//
+//		final ContStorage<TestObj> f = new ContStorage<TestObj>(rect, discretize);
+//
+//		final TestObj obj1 = new TestObj(1);
+//		final DoublePoint loc1 = new DoublePoint(23.4, 30.2);
+//		final TestObj obj2 = new TestObj(2);
+//		final DoublePoint loc2 = new DoublePoint(29.99, 39.99);
+//		final TestObj obj3 = new TestObj(3);
+//		final DoublePoint loc3 = new DoublePoint(31, 45.6);
+//		final TestObj obj4 = new TestObj(4);
+//		final DoublePoint loc4 = new DoublePoint(31, 45.6);
+//		final TestObj obj5 = new TestObj(5);
+//		final DoublePoint loc5 = new DoublePoint(31, 45.60001);
+//
+//		f.setLocation(obj1, loc1);
+//		f.setLocation(obj2, loc2);
+//		f.setLocation(obj3, loc3);
+//		f.setLocation(obj4, loc4);
+//		f.setLocation(obj5, loc5);
+//
+//		System.out.println("get objects at " + loc1);
+//		for (final TestObj obj : f.getObjects(loc1))
+//			System.out.println(obj);
+//
+//		System.out.println("get objects at " + loc4);
+//		for (final TestObj obj : f.getObjects(loc4))
+//			System.out.println(obj);
+//
+//		System.out.println("get objects at " + loc5);
+//		for (final TestObj obj : f.getObjects(loc5))
+//			System.out.println(obj);
+//
+//		final IntHyperRect area = new IntHyperRect(1, new IntPoint(25, 35), new IntPoint(35, 47));
+//		System.out.println("get objects in " + area);
+//		for (final TestObj obj : f.getObjects(area))
+//			System.out.println(obj);
+//
+//		System.out.println("Move " + obj4 + " from " + loc4 + " to " + loc5 + ", get objects at " + loc4);
+//		f.setLocation(obj4, loc5);
+//		for (final TestObj obj : f.getObjects(loc4))
+//			System.out.println(obj);
+//		System.out.println("get objects at " + loc5);
+//		for (final TestObj obj : f.getObjects(loc5))
+//			System.out.println(obj);
+//
+//		final IntHyperRect r1 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
+//		System.out.println("get objects in " + r1);
+//		for (final TestObj obj : f.getObjects(r1))
+//			System.out.println(obj);
+//
+//		for (int count = 1; count <= 5; count++) {
+//			System.out.println("get " + count + " neighbors of " + obj2);
+//			for (final TestObj obj : f.getNearestNeighbors(obj2, count))
+//				System.out.println(obj);
+//		}
+//
+//		double r = 9;
+//		System.out.println("get objects within " + r + " from " + obj2);
+//		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
+//			System.out.println(obj);
+//
+//		r = 12;
+//		System.out.println("get objects within " + r + " from " + obj2);
+//		for (final TestObj obj : f.getNeighborsWithin(obj2, r))
+//			System.out.println(obj);
+//
+//		final IntHyperRect r2 = new IntHyperRect(-1, new IntPoint(20, 30), new IntPoint(31, 41));
+//		System.out.println("after remove " + obj1 + ", get objects in " + r2);
+//		f.removeObject(obj1);
+//		for (final TestObj obj : f.getObjects(r2))
+//			System.out.println(obj);
+//
+//		System.out.println("after remove object at " + loc3 + ", get objects in " + rect);
+//		f.removeObjects(loc3);
+//		for (final TestObj obj : f.getObjects(rect))
+//			System.out.println(obj);
+//
+//		f.setLocation(obj1, loc1);
+//		f.setLocation(obj3, loc3);
+//		f.setLocation(obj4, loc4);
+//		System.out.println("after putting " + obj1 + " " + obj3 + " " + obj4 + " " + "back, get objects in " + rect);
+//		System.out.println(f);
+//
+//		final IntPoint ul2 = new IntPoint(20, 30), br2 = new IntPoint(30, 40);
+//		final IntHyperRect rect2 = new IntHyperRect(2, ul2, br2);
+//		f.reshape(rect2);
+//		System.out.println("after reshaping from " + rect + " to " + rect2 + ", get objects in " + rect2);
+//		System.out.println(f);
+//
+//		r = 12;
+//		System.out.println("get objects within " + r + " from " + obj1);
+//		for (final TestObj obj : f.getNeighborsWithin(obj1, r))
+//			System.out.println(obj);
+//
+//		System.out.println("get objects at " + loc1);
+//		for (final TestObj obj : f.getObjects(loc1))
+//			System.out.println(obj);
+//
+//		mpi.MPI.Finalize();
+//	}
 }
