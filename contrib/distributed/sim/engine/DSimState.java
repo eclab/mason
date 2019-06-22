@@ -34,7 +34,7 @@ public abstract class DSimState extends SimState {
 	public DRemoteTransporter transporter;
 	public static Logger logger;
 	public int[] aoi; // Area of Interest
-	ArrayList<HaloField<Serializable, NdPoint>> fields = new ArrayList<>();
+	ArrayList<HaloField<? extends Serializable, ? extends NdPoint>> fields = new ArrayList<>();
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
@@ -75,11 +75,10 @@ public abstract class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	@SuppressWarnings("unchecked")
 	public int register(final HaloField<? extends Serializable, ? extends NdPoint> haloField) {
 		// Must be called in a deterministic manner
 		final int index = fields.size();
-		fields.add((HaloField<Serializable, NdPoint>) haloField);
+		fields.add(haloField);
 		return index;
 	}
 
@@ -89,8 +88,10 @@ public abstract class DSimState extends SimState {
 	 * @param transportee
 	 */
 	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
+		// If the fieldIndex is correct then the cast will be safe
 		if (transportee.fieldIndex >= 0)
-			fields.get(transportee.fieldIndex).addObject(transportee.loc, transportee.wrappedObject);
+			((HaloField) fields.get(transportee.fieldIndex))
+					.addObject(transportee.loc, transportee.wrappedObject);
 	}
 
 	/**

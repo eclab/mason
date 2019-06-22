@@ -157,11 +157,15 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	// TODO make a copy of the storage which will be used by the remote field access
+	@SuppressWarnings("unchecked")
 	protected Serializable getFromRemote(final IntPoint p) {
 		Serializable ret = null;
 		final int pid = ps.toPartitionId(p);
 
 		try {
+			// TODO: Do we need to check for type safety here?
+			// If the getField method returns the current field then
+			// this cast should work
 			ret = proxy.getField(pid).getRMI(p);
 		} catch (final RemoteException e) {
 			e.printStackTrace();

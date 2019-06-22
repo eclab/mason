@@ -2,7 +2,6 @@ package sim.field;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -10,18 +9,18 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import mpi.MPI;
-import sim.util.IntPoint;
 import sim.util.MPIUtil;
+import sim.util.NdPoint;
 
 public class RemoteProxy {
 
-	RemoteField[] remoteFields;
+	ArrayList<RemoteField<? extends NdPoint>> remoteFields;
 
 	private static boolean isReady = false;
 	private static int hostPort = -1;
 	private static String hostAddr = null;
 	private static Registry registry = null;
-	private static ArrayList<RemoteField> exported = null;
+	private static ArrayList<RemoteField<? extends NdPoint>> exported = null;
 
 	private static int getFreePort() {
 		try (ServerSocket socket = new ServerSocket(0)) {
@@ -54,7 +53,7 @@ public class RemoteProxy {
 			System.exit(-1);
 		}
 
-		RemoteProxy.exported = new ArrayList<RemoteField>();
+		RemoteProxy.exported = new ArrayList<>();
 		RemoteProxy.isReady = true;
 	}
 
@@ -63,7 +62,7 @@ public class RemoteProxy {
 		RemoteProxy.isReady = false;
 
 		try {
-			for (final RemoteField f : RemoteProxy.exported)
+			for (final RemoteField<? extends NdPoint> f : RemoteProxy.exported)
 				UnicastRemoteObject.unexportObject(f, true);
 			if (RemoteProxy.registry != null)
 				UnicastRemoteObject.unexportObject(RemoteProxy.registry, true);
@@ -73,7 +72,7 @@ public class RemoteProxy {
 		}
 	}
 
-	public RemoteProxy(final DPartition ps, final RemoteField field) {
+	public RemoteProxy(final DPartition ps, final RemoteField<? extends NdPoint> field) {
 		if (!RemoteProxy.isReady)
 			throw new IllegalArgumentException("RMI Registry has not been started yet!");
 
@@ -87,9 +86,9 @@ public class RemoteProxy {
 			// Exchange the names with all other LPs so that each LP can create RemoteField
 			// clients for all other LPs
 			final ArrayList<String> names = MPIUtil.<String>allGather(ps, name);
-			remoteFields = new RemoteField[ps.numProcessors];
+			remoteFields = new ArrayList<>(ps.numProcessors);
 			for (int i = 0; i < ps.numProcessors; i++)
-				remoteFields[i] = (RemoteField) reg.lookup(names.get(i));
+				remoteFields.add((RemoteField) reg.lookup(names.get(i)));
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -101,8 +100,9 @@ public class RemoteProxy {
 		RemoteProxy.exported.add(field);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public RemoteField getField(final int pid) {
-		return remoteFields[pid];
+		return remoteFields.get(pid);
 	}
 
 	/*
@@ -127,15 +127,15 @@ public class RemoteProxy {
 	 * MPI.Finalize(); }
 	 */
 
-	static class FakeRemoteField implements RemoteField<IntPoint> {
-		int val;
-
-		public FakeRemoteField(final int val) {
-			this.val = val;
-		}
-
-		public java.io.Serializable getRMI(final IntPoint p) throws RemoteException {
-			return new Integer(val);
-		}
-	}
+//	static class FakeRemoteField<P extends NdPoint> implements RemoteField<P> {
+//		int val;
+//
+//		public FakeRemoteField(final int val) {
+//			this.val = val;
+//		}
+//
+//		public java.io.Serializable getRMI(final P p) throws RemoteException {
+//			return new Integer(val);
+//		}
+//	}
 }
