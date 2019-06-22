@@ -55,11 +55,11 @@ public class DHeatBug implements Steppable {
 
 	public void step(final SimState state) {
 
-		final DHeatBugs hb = (DHeatBugs) state;
+		final DHeatBugs dHeatBugs = (DHeatBugs) state;
 
 		// Skip addHeat for the first step
 		if (!isFirstStep) {
-			addHeat(hb.valgrid, loc_x, loc_y, heatOutput);
+			addHeat(dHeatBugs.valgrid, loc_x, loc_y, heatOutput);
 		} else {
 			isFirstStep = false;
 		}
@@ -71,14 +71,14 @@ public class DHeatBug implements Steppable {
 		if (state.random.nextBoolean(randomMovementProbability)) { // go to random place
 			bestx = state.random.nextInt(3) - 1 + loc_x;
 			besty = state.random.nextInt(3) - 1 + loc_y;
-		} else if (hb.valgrid.get(loc_x, loc_y) > idealTemp) { // go to coldest place
+		} else if (dHeatBugs.valgrid.get(loc_x, loc_y) > idealTemp) { // go to coldest place
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
 					if (!(x == 0 && y == 0)) {
 						final int xx = (x + loc_x);
 						final int yy = (y + loc_y);
-						if (bestx == START || (hb.valgrid.get(xx, yy) < hb.valgrid.get(bestx, besty))
-								|| (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty)
+						if (bestx == START || (dHeatBugs.valgrid.get(xx, yy) < dHeatBugs.valgrid.get(bestx, besty))
+								|| (dHeatBugs.valgrid.get(xx, yy) == dHeatBugs.valgrid.get(bestx, besty)
 										&& state.random.nextBoolean())) // not uniform, but enough to break up the
 																		// go-up-and-to-the-left syndrome
 						{
@@ -86,14 +86,14 @@ public class DHeatBug implements Steppable {
 							besty = yy;
 						}
 					}
-		} else if (hb.valgrid.get(loc_x, loc_y) < idealTemp) { // go to warmest place
+		} else if (dHeatBugs.valgrid.get(loc_x, loc_y) < idealTemp) { // go to warmest place
 			for (int x = -1; x < 2; x++)
 				for (int y = -1; y < 2; y++)
 					if (!(x == 0 && y == 0)) {
 						final int xx = (x + loc_x);
 						final int yy = (y + loc_y);
-						if (bestx == START || (hb.valgrid.get(xx, yy) > hb.valgrid.get(bestx, besty))
-								|| (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty)
+						if (bestx == START || (dHeatBugs.valgrid.get(xx, yy) > dHeatBugs.valgrid.get(bestx, besty))
+								|| (dHeatBugs.valgrid.get(xx, yy) == dHeatBugs.valgrid.get(bestx, besty)
 										&& state.random.nextBoolean())) // not uniform, but enough to break up the
 																		// go-up-and-to-the-left syndrome
 						{
@@ -108,25 +108,24 @@ public class DHeatBug implements Steppable {
 
 		final int old_x = loc_x;
 		final int old_y = loc_y;
-		loc_x = hb.valgrid.stx(bestx);
-		loc_y = hb.valgrid.sty(besty);
+		loc_x = dHeatBugs.valgrid.stx(bestx);
+		loc_y = dHeatBugs.valgrid.sty(besty);
 
 		try {
-			final int dst = hb.partition.toPartitionId(new int[] { loc_x, loc_y });
-			if (dst != hb.partition.getPid()) {
-				hb.bugs.removeObject(new IntPoint(old_x, old_y), this);
+			final int dst = dHeatBugs.partition.toPartitionId(new int[] { loc_x, loc_y });
+			if (dst != dHeatBugs.partition.getPid()) {
+				dHeatBugs.bugs.removeObject(new IntPoint(old_x, old_y), this);
 
 //				if (!hb.bugs.remove(old_x, old_y, this))
 //					System.err.println("Failed to remove!");
 //				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
 
 				// TODO: Abstract away the migration from the model
-				hb.transporter.migrate(this, dst, new IntPoint(loc_x, loc_y), hb.bugs.fieldIndex);
-				hb.privBugCount--;
+				dHeatBugs.transporter.migrate(this, dst, new IntPoint(loc_x, loc_y), dHeatBugs.bugs.fieldIndex);
 			} else {
 				// TODO: this should be moveAgent
-				hb.bugs.moveObject(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
-				hb.schedule.scheduleOnce(this, 1);
+				dHeatBugs.bugs.moveObject(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
+				dHeatBugs.schedule.scheduleOnce(this, 1);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace(System.out);

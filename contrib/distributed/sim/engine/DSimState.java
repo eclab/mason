@@ -30,9 +30,10 @@ import sim.util.Timing;
 
 public abstract class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
-	public DPartition partition;
-	public DRemoteTransporter transporter;
 	public static Logger logger;
+
+	public DPartition partition;
+	public final DRemoteTransporter transporter;
 	public int[] aoi; // Area of Interest
 	ArrayList<HaloField<? extends Serializable, ? extends NdPoint>> fields = new ArrayList<>();
 
@@ -40,32 +41,33 @@ public abstract class DSimState extends SimState {
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
 	// used: lb = new LoadBalancer(aoi, 100);
 
-	public DSimState(final long seed) {
-		this(seed, 1000, 1000, 5);
-	}
-
-	public DSimState(final long seed, final int width, final int height, final int aoi) {
-		super(seed);
+	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule, final int width,
+			final int height, final int aoi) {
+		super(seed, random, schedule);
 		this.aoi = new int[] { aoi, aoi };
 		partition = new DQuadTreePartition(new int[] { width, height }, true, this.aoi);
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
 	}
 
-	protected DSimState(final MersenneTwisterFast random, final Schedule schedule) {
-		super(0, random, schedule); // 0 is a bogus value. In fact, MT can't have 0 as its seed value.
-		aoi = new int[] { 5, 5 };
-		partition = new DQuadTreePartition(new int[] { 1000, 1000 }, true, aoi);
-		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
+	public DSimState(final long seed, final int width, final int height, final int aoi) {
+		this(seed, new MersenneTwisterFast(seed), new Schedule(), width, height, aoi);
 	}
 
 	protected DSimState(final long seed, final Schedule schedule) {
-		super(seed, new MersenneTwisterFast(seed), schedule);
+		this(seed, new MersenneTwisterFast(seed), schedule, 1000, 1000, 5);
+	}
+
+	public DSimState(final long seed) {
+		this(seed, new MersenneTwisterFast(seed), new Schedule(), 1000, 1000, 5);
+	}
+
+	protected DSimState(final MersenneTwisterFast random, final Schedule schedule) {
+		this(0, random, schedule, 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its seed
 	}
 
 	protected DSimState(final MersenneTwisterFast random) {
-		super(0, random, new Schedule()); // 0 is a bogus value. In fact, MT can't have 0 as its seed value.
+		this(0, random, new Schedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its seed
 	}
 
 	/**
@@ -87,6 +89,7 @@ public abstract class DSimState extends SimState {
 	 *
 	 * @param transportee
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
 		// If the fieldIndex is correct then the cast will be safe
 		if (transportee.fieldIndex >= 0)

@@ -6,20 +6,16 @@
 
 package sim.app.dheatbugs;
 
-import java.io.Serializable;
-
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.DQuadTreePartition;
-import sim.field.Transportee;
 import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
 import sim.util.IntPoint;
 import sim.util.Interval;
-import sim.util.NdPoint;
 import sim.util.Timing;
 
 public class DHeatBugs extends DSimState {
@@ -38,7 +34,8 @@ public class DHeatBugs extends DSimState {
 	public int gridHeight;
 	public int gridWidth;
 	public int bugCount;
-	public int privBugCount; // the replacement for get/setBugCount ?
+	// TODO: Should this be updated of migration/balancing
+	public final int privBugCount; // the replacement for get/setBugCount ?
 
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
@@ -204,13 +201,8 @@ public class DHeatBugs extends DSimState {
 //		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
 
-	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
-		super.addToField(transportee);
-		privBugCount++;
-	}
-
 	@SuppressWarnings("serial")
-	private class Balancer implements Steppable {
+	class Balancer implements Steppable {
 		public void step(final SimState state) {
 			final DHeatBugs hb = (DHeatBugs) state;
 			try {
@@ -233,7 +225,7 @@ public class DHeatBugs extends DSimState {
 	}
 
 	@SuppressWarnings("serial")
-	private class Inspector implements Steppable {
+	class Inspector implements Steppable {
 		public void step(final SimState state) {
 			final DHeatBugs hb = (DHeatBugs) state;
 			// String s = String.format("PID %d Step %d Agent Count %d\n", hb.partition.pid,
