@@ -41,7 +41,12 @@ public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
-			return (double) getFromRemote(p);
+			try {
+				return (double) getFromRemote(p);
+			} catch (final RemoteException e) {
+				System.exit(-1);
+				e.printStackTrace();
+			}
 		}
 
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];

@@ -39,7 +39,13 @@ public class NIntGrid2D extends HaloField<Integer, IntPoint> {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
-			return (int) getFromRemote(p);
+			try {
+				return (int) getFromRemote(p);
+			} catch (final RemoteException e) {
+				e.printStackTrace();
+				System.exit(-1);
+
+			}
 		}
 
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];

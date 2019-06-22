@@ -40,7 +40,12 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					ps.getPid(), p.toString()));
-			return (T) getFromRemote(p);
+			try {
+				return (T) getFromRemote(p);
+			} catch (final RemoteException e) {
+				System.exit(-1);
+				e.printStackTrace();
+			}
 		}
 
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];

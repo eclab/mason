@@ -34,7 +34,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
-	public IntHyperRect world, haloPart, origPart, privPart;
+	public IntHyperRect world, haloPart, origPart, privatePart;
 	// TODO: Fix the comment -
 	// pointer to the processors who's partitions neighbor me
 	protected List<Neighbor> neighbors;
@@ -144,7 +144,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
-		privPart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
+		privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 
 		// Get the neighbors and create Neighbor objects
 		neighbors = Arrays.stream(ps.getNeighborIds()).mapToObj(x -> new Neighbor(ps.getPartition(x)))
@@ -158,23 +158,15 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 
 	// TODO make a copy of the storage which will be used by the remote field access
 	@SuppressWarnings("unchecked")
-	protected Serializable getFromRemote(final IntPoint p) {
-		Serializable ret = null;
-		final int pid = ps.toPartitionId(p);
-
+	protected Serializable getFromRemote(final IntPoint p) throws RemoteException {
 		try {
 			// TODO: Do we need to check for type safety here?
 			// If the getField method returns the current field then
 			// this cast should work
-			ret = proxy.getField(pid).getRMI(p);
-		} catch (final RemoteException e) {
-			e.printStackTrace();
-			System.exit(-1);
+			return proxy.getField(ps.toPartitionId(p)).getRMI(p);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		}
-
-		return ret;
 	}
 
 	public GridStorage getStorage() {
@@ -191,7 +183,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public boolean inPrivate(final IntPoint p) {
-		return privPart.contains(p);
+		return privatePart.contains(p);
 	}
 
 	public boolean inLocalAndHalo(final IntPoint p) {
