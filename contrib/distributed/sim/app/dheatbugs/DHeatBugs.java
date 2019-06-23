@@ -34,7 +34,7 @@ public class DHeatBugs extends DSimState {
 	public int gridHeight;
 	public int gridWidth;
 	public int bugCount;
-	// TODO: Should this be updated of migration/balancing
+	// TODO: Should this be updated after migration/balancing?
 	public final int privBugCount; // the replacement for get/setBugCount ?
 
 	/*

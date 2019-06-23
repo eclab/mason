@@ -17,7 +17,7 @@ import ec.util.*;
 public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 	private static final long serialVersionUID = 1;
 
-	public DoublePoint loc = new DoublePoint(0, 0);
+	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);
 	public boolean dead = false;
 
@@ -180,7 +180,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 				// remove from current partition
 				flock.flockers.removeObject(this);
 				// TODO: Abstract away the migration from the model
-				flock.transporter.migrate(this, dst, loc, flock.flockers.fieldIndex);
+				flock.transporter.migrateAndTransportAgent(this, dst, loc, flock.flockers.fieldIndex);
 			} else {
 				// Set to new location in current partition
 				flock.flockers.moveObject(loc, this);

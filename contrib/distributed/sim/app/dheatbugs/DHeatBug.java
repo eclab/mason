@@ -121,7 +121,8 @@ public class DHeatBug implements Steppable {
 //				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
 
 				// TODO: Abstract away the migration from the model
-				dHeatBugs.transporter.migrate(this, dst, new IntPoint(loc_x, loc_y), dHeatBugs.bugs.fieldIndex);
+				dHeatBugs.transporter.migrateAndTransportAgent(this, dst, new IntPoint(loc_x, loc_y),
+						dHeatBugs.bugs.fieldIndex);
 			} else {
 				// TODO: this should be moveAgent
 				dHeatBugs.bugs.moveObject(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);

@@ -1,4 +1,4 @@
-package sim.field;
+package sim.engine;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,8 +13,11 @@ import java.util.HashMap;
 
 import mpi.MPI;
 import mpi.MPIException;
+import sim.engine.Steppable;
+import sim.field.DPartition;
 import sim.util.NdPoint;
 
+// TODO: methods for IterativeRepeat
 public class DRemoteTransporter {
 
 	int numNeighbors; // number of direct neighbors
@@ -26,7 +29,7 @@ public class DRemoteTransporter {
 	DPartition partition;
 	int[] neighbors;
 
-	public ArrayList<Transportee<? extends Serializable, ? extends NdPoint>> objectQueue;
+	public ArrayList<PayloadWrapper> objectQueue;
 
 	public DRemoteTransporter(final DPartition partition) {
 		this.partition = partition;
@@ -88,22 +91,70 @@ public class DRemoteTransporter {
 		objectQueue.clear();
 	}
 
-	public void migrate(final Serializable obj, final int dst) {
+	public void migrateAgent(final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(agent), dst);
+	}
+
+	public void migrateAgent(final int ordering, final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(ordering, agent), dst);
+	}
+
+	public void migrateAgent(final int ordering, final double time, final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(ordering, time, agent), dst);
+	}
+
+	/**
+	 * Internal method. Don't use AgentWrapper, use Steppable instead
+	 *
+	 * @param agentWrapper
+	 * @param dst
+	 */
+	protected void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
+		migrateAndTransportAgent(agentWrapper, dst, null, -1);
+	}
+
+	public void migrateAndTransportAgent(final Steppable agent, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		migrateAndTransportAgent(new AgentWrapper(agent), dst, loc, fieldindex);
+	}
+
+	public void migrateAndTransportAgent(final int ordering, final Steppable agent, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		migrateAndTransportAgent(new AgentWrapper(ordering, agent), dst, loc, fieldindex);
+	}
+
+	public void migrateAndTransportAgent(final int ordering, final double time, final Steppable agent, final int dst,
+			final NdPoint loc, final int fieldindex) {
+		migrateAndTransportAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldindex);
+	}
+
+	/**
+	 * Internal method. Don't use AgentWrapper, use Steppable instead
+	 *
+	 * @param agentWrapper
+	 * @param dst
+	 */
+	protected void migrateAndTransportAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		// These methods differ in just the datatype of the WrappedObject
+		transportObject(agentWrapper, dst, loc, fieldindex);
+	}
+
+	/**
+	 * Transport an Object but don't schedule
+	 *
+	 * @param obj
+	 * @param dst
+	 * @param loc
+	 * @param fieldindex
+	 */
+	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
+			final int fieldindex) {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final Transportee<? extends Serializable, ? extends NdPoint> wrapper = new Transportee<>(dst, obj);
+		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldindex);
 		assert dstMap.containsKey(dst);
 		try {
-//			if (wrapper.wrappedObject instanceof SelfStreamedAgent) {
-//				// write header information, all agent has this info
-//				writeHeader(dstMap.get(dst), wrapper);
-//				// write agent
-//				((SelfStreamedAgent) wrapper.wrappedObject).writeStream(dstMap.get(dst));
-//				// have to flush the data, in case user forget this step
-//				dstMap.get(dst).os.flush();
-//			} else {
-//			dstMap.get(dst).write(wrapper);
-//			}
 			dstMap.get(dst).write(wrapper);
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -111,20 +162,6 @@ public class DRemoteTransporter {
 		}
 	}
 
-	public void migrate(final Serializable obj, final int dst, final NdPoint loc, final int fieldindex) {
-		// Wrap the agent, this is important because we want to keep track of
-		// dst, which could be the diagonal processor
-		final Transportee<Serializable, NdPoint> wrapper = new Transportee<>(dst, obj, loc, fieldindex);
-		assert dstMap.containsKey(dst);
-		try {
-			dstMap.get(dst).write(wrapper);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
@@ -138,6 +175,7 @@ public class DRemoteTransporter {
 		final ByteArrayOutputStream objstream = new ByteArrayOutputStream();
 		for (int i = 0; i < numNeighbors; i++)
 			objstream.write(outputStreams[i].toByteArray());
+
 		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
 
@@ -155,18 +193,16 @@ public class DRemoteTransporter {
 				MPI.BYTE);
 
 		// read and handle incoming objects
-		final ArrayList<Transportee<? extends Serializable, ? extends NdPoint>> bufferList = new ArrayList<>();
+		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
 		for (int i = 0; i < numNeighbors; i++) {
 			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
 			recvbuf.get(data);
-			final ByteArrayInputStream in = new ByteArrayInputStream(data);
-			final ObjectInputStream is = new ObjectInputStream(in);
+			final ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(data));
 
 			while (true) {
 				try {
-					final Transportee<Serializable, NdPoint> wrapper = (Transportee<Serializable, NdPoint>) is
-							.readObject();
+					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.pid != wrapper.destination) {
 						assert dstMap.containsKey(wrapper.destination);
 						bufferList.add(wrapper);
@@ -195,7 +231,7 @@ public class DRemoteTransporter {
 			outputStreams[i].reset();
 
 		// Handling the agent in bufferList
-		for (final Transportee<? extends Serializable, ? extends NdPoint> wrapper : bufferList)
+		for (final PayloadWrapper wrapper : bufferList)
 			dstMap.get(wrapper.destination).write(wrapper);
 		bufferList.clear();
 
@@ -254,7 +290,6 @@ public class DRemoteTransporter {
 //		aos.os.writeObject(className);
 //		aos.os.writeInt(wrapper.destination);
 //		aos.os.writeBoolean(wrapper.migrate);
-//		// TODO, so far assume loc is Double Point 2D
 //		aos.os.writeDouble(wrapper.loc.c[0]);
 //		aos.os.writeDouble(wrapper.loc.c[1]);
 //		aos.os.flush();
@@ -265,7 +300,6 @@ public class DRemoteTransporter {
 //		int dst = is.readInt();
 //		// read Wrapper data
 //		boolean migrate = is.readBoolean();
-//		// TODO, so far assume loc is Double Point 2D
 //		double x = is.readDouble();
 //		double y = is.readDouble();
 //		// create the new agent

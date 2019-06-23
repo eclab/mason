@@ -1,92 +1,77 @@
-package sim.field;
+package sim.engine;
 
 import java.io.Serializable;
 
 import sim.util.NdPoint;
 
+//This class is not supposed to be used by the modelers
 /**
- * Wrapper for transporting objects to remote processors
+ * Wrapper for transporting objects to remote processors<br>
+ * Used Internally
  *
- * @param <T> The Class of the Object to wrap
- * @param <P> The Type of NdPoint to use
  */
-public class Transportee<T extends Serializable, P extends NdPoint> implements Serializable {
+class PayloadWrapper implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public T wrappedObject;
 
 	/**
-	 * The is the pId of the destination
+	 * The is the Object to be transported<br>
+	 * Required to be set by the caller
 	 */
-	public int destination;
+	final Serializable payload;
 
 	/**
-	 * Ordering for the scheduler <br>
-	 * Optional field, only needed if the wrappedObject is to be scheduled as well
-	 * <br>
-	 * <br>
-	 * <b>Default:</b> 1
+	 * The is the pId of the destination<br>
+	 * Required to be set by the caller
 	 */
-	public int ordering = 1;
+	final int destination;
 
 	/**
 	 * Internal flag, do not set it explicitly <br>
 	 * <br>
-	 * <b>Default:</b> false
+	 * Default: false
 	 */
-	public boolean migrate = false;
+	final boolean migrate;
 
 	/**
 	 * Location of the Object in the field <br>
-	 * Optional field, only needed it the wrappedObject is to be added to a field as
-	 * well <br>
+	 * Optional field, only needed it the payload is to be added to a field as well
 	 * <br>
-	 * <b>Default:</b> null
+	 * <br>
+	 * Default: null
 	 */
-	public P loc = null;
+	final NdPoint loc;
 
 	/**
 	 * Internal field, do not set it explicitly <br>
 	 * It is set by the field, if a field is used to migrate an Object <br>
 	 * <br>
-	 * <b>Default:</b> -1
+	 * Default: -1
 	 */
-	public int fieldIndex = -1;
+	final int fieldIndex;
 
-	public Transportee(final int dst, final T wrappedObject, final P loc, final boolean migrate,
-			final int ordering, final int fieldIndex) {
-		this.destination = dst;
-		this.wrappedObject = wrappedObject;
-		this.loc = loc;
-		this.migrate = migrate;
-		this.ordering = ordering;
-		this.fieldIndex = fieldIndex;
-	}
-
-	public Transportee(final int dst, final T wrappedObject, final P loc, final boolean migrate,
+	PayloadWrapper(final int dst, final Serializable payload, final boolean migrate, final NdPoint loc,
 			final int fieldIndex) {
-		this.destination = dst;
-		this.wrappedObject = wrappedObject;
-		this.loc = loc;
+		destination = dst;
+		this.payload = payload;
 		this.migrate = migrate;
-		this.fieldIndex = fieldIndex;
-	}
-
-	public Transportee(final int dst, final T wrappedObject, final P loc, final int fieldIndex) {
-		this.destination = dst;
-		this.wrappedObject = wrappedObject;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 	}
 
-	public Transportee(final int dst, final T wrappedObject, final int ordering) {
-		this.destination = dst;
-		this.wrappedObject = wrappedObject;
-		this.ordering = ordering;
+	PayloadWrapper(final int dst, final Serializable payload, final NdPoint loc, final int fieldIndex) {
+		destination = dst;
+		this.payload = payload;
+		migrate = false;
+		this.loc = loc;
+		this.fieldIndex = fieldIndex;
 	}
 
-	public Transportee(final int dst, final T wrappedObject) {
-		this.destination = dst;
-		this.wrappedObject = wrappedObject;
+	PayloadWrapper(final int dst, final Serializable payload) {
+		destination = dst;
+		this.payload = payload;
+		migrate = false;
+		loc = null;
+		fieldIndex = -1;
 	}
 
 }

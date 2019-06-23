@@ -21,10 +21,8 @@ import ec.util.MersenneTwisterFast;
 import mpi.MPIException;
 import sim.field.DPartition;
 import sim.field.DQuadTreePartition;
-import sim.field.DRemoteTransporter;
 import sim.field.HaloField;
 import sim.field.RemoteProxy;
-import sim.field.Transportee;
 import sim.util.NdPoint;
 import sim.util.Timing;
 
@@ -32,26 +30,26 @@ public abstract class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	public DPartition partition;
+	public final DPartition partition;
 	public final DRemoteTransporter transporter;
-	public int[] aoi; // Area of Interest
-	ArrayList<HaloField<? extends Serializable, ? extends NdPoint>> fields = new ArrayList<>();
+	public final int[] aoi; // Area of Interest
+	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint>> fields = new ArrayList<>();
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
 	// used: lb = new LoadBalancer(aoi, 100);
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule, final int width,
-			final int height, final int aoi) {
+			final int height, final int aoiSize) {
 		super(seed, random, schedule);
-		this.aoi = new int[] { aoi, aoi };
-		partition = new DQuadTreePartition(new int[] { width, height }, true, this.aoi);
+		aoi = new int[] { aoiSize, aoiSize };
+		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
 	}
 
-	public DSimState(final long seed, final int width, final int height, final int aoi) {
-		this(seed, new MersenneTwisterFast(seed), new Schedule(), width, height, aoi);
+	public DSimState(final long seed, final int width, final int height, final int aoiSize) {
+		this(seed, new MersenneTwisterFast(seed), new Schedule(), width, height, aoiSize);
 	}
 
 	protected DSimState(final long seed, final Schedule schedule) {
@@ -84,17 +82,14 @@ public abstract class DSimState extends SimState {
 		return index;
 	}
 
-	/**
-	 * Adds the object to the field
-	 *
-	 * @param transportee
-	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void addToField(final Transportee<? extends Serializable, ? extends NdPoint> transportee) {
-		// If the fieldIndex is correct then the cast will be safe
-		if (transportee.fieldIndex >= 0)
-			((HaloField) fields.get(transportee.fieldIndex))
-					.addObject(transportee.loc, transportee.wrappedObject);
+	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
+		// if the fieldIndex < 0 we assume that
+		// the agent is not supposed to be added to any field
+
+		// If the fieldIndex is correct then the type-cast below will be safe
+		if (fieldIndex >= 0)
+			((HaloField) fields.get(fieldIndex)).addObject(p, obj);
 	}
 
 	/**
@@ -117,19 +112,38 @@ public abstract class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final Transportee<? extends Serializable, ? extends NdPoint> transportee : transporter.objectQueue) {
-			if (transportee.wrappedObject instanceof IterativeRepeat) {
-				final IterativeRepeat iterativeRepeat = (IterativeRepeat) transportee.wrappedObject;
+		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+
+			/*
+			 * Assumptions about what is to be added to the field using addToField method
+			 * rely on the fact that the wrapper classes are not directly used By the
+			 * modelers
+			 *
+			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
+			 * exceptions to be thrown
+			 */
+			if (payloadWrapper.payload instanceof IterativeRepeat) {
+				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
 				schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
 						iterativeRepeat.interval);
-			} else if (transportee.wrappedObject instanceof Steppable) {
-//				System.out.println("partition - " + partition + "\nTransportee - " + transportee);
-				schedule.scheduleOnce((Steppable) transportee.wrappedObject, transportee.ordering);
+				// Add agent to the field
+				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
+
+			} else if (payloadWrapper.payload instanceof AgentWrapper) {
+				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
+
+				if (agentWrapper.time < 0)
+					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
+				else
+					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+
+				// Add agent to the field
+				addToField(agentWrapper.agent, payloadWrapper.loc, payloadWrapper.fieldIndex);
+
+			} else {
+				addToField(payloadWrapper.payload, payloadWrapper.loc, payloadWrapper.fieldIndex);
 			}
 
-			// if location is null we assume that
-			// the agent is not supposed to be added to any field
-			addToField(transportee);
 		}
 		transporter.objectQueue.clear();
 

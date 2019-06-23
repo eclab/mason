@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import sim.util.NdPoint;
 
 /**
- * Contains a method to get data from remote field
+ * Implemented by remote field
  *
  *
  * @param <P> The Type of NdPoint to use
@@ -15,15 +15,15 @@ import sim.util.NdPoint;
 public interface RemoteField<P extends NdPoint> extends Remote {
 
 	/**
-	 * Used internally, returns item(s) stored on the point p if and only if p is
-	 * local to the remote field
+	 * Used internally
 	 *
 	 * @param p location
 	 *
-	 * @return the item(s) stored at the location p
+	 * @return item(s) stored on the point p if and only if p is local to the remote
+	 *         field
 	 *
-	 * @throws RemoteException If the point requested is not <b>local</B> to the
-	 *                         <b>remote</B> field
+	 * @throws RemoteException If the point requested is not local to the remote
+	 *                         field
 	 */
 	Serializable getRMI(P p) throws RemoteException;
 }
