@@ -91,77 +91,6 @@ public class DRemoteTransporter {
 		objectQueue.clear();
 	}
 
-	public void migrateAgent(final Steppable agent, final int dst) {
-		migrateAgent(new AgentWrapper(agent), dst);
-	}
-
-	public void migrateAgent(final int ordering, final Steppable agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst);
-	}
-
-	public void migrateAgent(final int ordering, final double time, final Steppable agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst);
-	}
-
-	/**
-	 * Internal method. Don't use AgentWrapper, use Steppable instead
-	 *
-	 * @param agentWrapper
-	 * @param dst
-	 */
-	protected void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
-		migrateAndTransportAgent(agentWrapper, dst, null, -1);
-	}
-
-	public void migrateAndTransportAgent(final Steppable agent, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		migrateAndTransportAgent(new AgentWrapper(agent), dst, loc, fieldindex);
-	}
-
-	public void migrateAndTransportAgent(final int ordering, final Steppable agent, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		migrateAndTransportAgent(new AgentWrapper(ordering, agent), dst, loc, fieldindex);
-	}
-
-	public void migrateAndTransportAgent(final int ordering, final double time, final Steppable agent, final int dst,
-			final NdPoint loc, final int fieldindex) {
-		migrateAndTransportAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldindex);
-	}
-
-	/**
-	 * Internal method. Don't use AgentWrapper, use Steppable instead
-	 *
-	 * @param agentWrapper
-	 * @param dst
-	 */
-	protected void migrateAndTransportAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		// These methods differ in just the datatype of the WrappedObject
-		transportObject(agentWrapper, dst, loc, fieldindex);
-	}
-
-	/**
-	 * Transport an Object but don't schedule
-	 *
-	 * @param obj
-	 * @param dst
-	 * @param loc
-	 * @param fieldindex
-	 */
-	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		// Wrap the agent, this is important because we want to keep track of
-		// dst, which could be the diagonal processor
-		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldindex);
-		assert dstMap.containsKey(dst);
-		try {
-			dstMap.get(dst).write(wrapper);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-	}
-
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
@@ -250,6 +179,216 @@ public class DRemoteTransporter {
 //			}
 //		}
 //		bufferList.clear();
+	}
+
+	/**
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param agent
+	 * @param dst   destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(agent), dst);
+	}
+
+	/**
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param ordering
+	 * @param agent
+	 * @param dst      destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final int ordering, final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(ordering, agent), dst);
+	}
+
+	/**
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param ordering
+	 * @param time
+	 * @param agent
+	 * @param dst      destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final int ordering, final double time, final Steppable agent, final int dst) {
+		migrateAgent(new AgentWrapper(ordering, time, agent), dst);
+	}
+
+	/**
+	 * Internal method. Don't use AgentWrapper, use Steppable instead <br>
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param agentWrapper
+	 * @param dst          destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
+		migrateAgent(agentWrapper, dst, null, -1);
+	}
+
+	/**
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param agent
+	 * @param dst        destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final Steppable agent, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		migrateAgent(new AgentWrapper(agent), dst, loc, fieldindex);
+	}
+
+	/**
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param ordering
+	 * @param agent
+	 * @param dst        destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final int ordering, final Steppable agent, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		migrateAgent(new AgentWrapper(ordering, agent), dst, loc, fieldindex);
+	}
+
+	/**
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param ordering
+	 * @param time
+	 * @param agent
+	 * @param dst        destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final int ordering, final double time, final Steppable agent, final int dst,
+			final NdPoint loc, final int fieldindex) {
+		migrateAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldindex);
+	}
+
+	/**
+	 * Internal method. Don't use AgentWrapper, use Steppable instead <br>
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param agentWrapper
+	 * @param dst          destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		// These methods differ in just the datatype of the WrappedObject
+		transportObject(agentWrapper, dst, loc, fieldindex);
+	}
+
+	/**
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param ordering
+	 * @param time
+	 * @param interval
+	 * @param agent
+	 * @param dst      destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgentRepeating(final int ordering, final double time, final double interval,
+			final Steppable agent, final int dst) {
+		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst);
+	}
+
+	/**
+	 * Does not transport the Object, only migrates it
+	 *
+	 * @param iterativeRepeat
+	 * @param dst             destination pId
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgentRepeating(final IterativeRepeat iterativeRepeat, final int dst) {
+		migrateAgentRepeating(iterativeRepeat, dst, null, -1);
+	}
+
+	/**
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param ordering
+	 * @param time
+	 * @param interval
+	 * @param agent
+	 * @param dst        destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgentRepeating(final int ordering, final double time, final double interval,
+			final Steppable agent, final int dst, final NdPoint loc, final int fieldindex) {
+		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst, loc, fieldindex);
+	}
+
+	/**
+	 * Transports the Object as well as migrates it
+	 *
+	 * @param iterativeRepeat
+	 * @param dst             destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void migrateAgentRepeating(final IterativeRepeat iterativeRepeat, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		// TODO: do we need to synchronize something to ensure that the stoppable is
+		// stopped before we transport?
+
+		iterativeRepeat.stop();
+		// These methods differ in just the datatype of the WrappedObject
+		transportObject(iterativeRepeat, dst, loc, fieldindex);
+	}
+
+	/**
+	 * Transports the Object but doesn't schedule it
+	 *
+	 * @param obj        Object to be transported
+	 * @param dst        destination pId
+	 * @param loc
+	 * @param fieldindex
+	 *
+	 * @throws IllegalArgumentException if destination (pid) is local
+	 */
+	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
+			final int fieldindex) {
+		if (partition.pid == dst)
+			throw new IllegalArgumentException("Destination cannot be local, must be remote");
+
+		// Wrap the agent, this is important because we want to keep track of
+		// dst, which could be the diagonal processor
+		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldindex);
+		assert dstMap.containsKey(dst);
+		try {
+			dstMap.get(dst).write(wrapper);
+		} catch (final Exception e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	public static class RemoteOutputStream {

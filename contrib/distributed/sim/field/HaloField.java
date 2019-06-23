@@ -24,7 +24,7 @@ import sim.util.MPIUtil;
 import sim.util.NdPoint;
 
 /**
- * All fields in the distributed MASON <b>must</b> extend this class.
+ * All fields in distributed MASON must extend this class.
  *
  * @param <T> The Class of Object to store in the field
  * @param <P> The Type of NdPoint to use

@@ -3,8 +3,6 @@ package sim.field.storage;
 import java.io.Serializable;
 import java.util.function.IntFunction;
 
-import mpi.MPI;
-import mpi.MPIException;
 import sim.util.IntHyperRect;
 import sim.util.IntPoint;
 import sim.util.MPIParam;

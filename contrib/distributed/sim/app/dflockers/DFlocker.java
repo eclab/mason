@@ -180,7 +180,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 				// remove from current partition
 				flock.flockers.removeObject(this);
 				// TODO: Abstract away the migration from the model
-				flock.transporter.migrateAndTransportAgent(this, dst, loc, flock.flockers.fieldIndex);
+				flock.transporter.migrateAgent(this, dst, loc, flock.flockers.fieldIndex);
 			} else {
 				// Set to new location in current partition
 				flock.flockers.moveObject(loc, this);
