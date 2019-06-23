@@ -26,13 +26,6 @@ class PayloadWrapper implements Serializable {
 	final int destination;
 
 	/**
-	 * Internal flag, do not set it explicitly <br>
-	 * <br>
-	 * Default: false
-	 */
-	final boolean migrate;
-
-	/**
 	 * Location of the Object in the field <br>
 	 * Optional field, only needed it the payload is to be added to a field as well
 	 * <br>
@@ -49,19 +42,9 @@ class PayloadWrapper implements Serializable {
 	 */
 	final int fieldIndex;
 
-	PayloadWrapper(final int dst, final Serializable payload, final boolean migrate, final NdPoint loc,
-			final int fieldIndex) {
-		destination = dst;
-		this.payload = payload;
-		this.migrate = migrate;
-		this.loc = loc;
-		this.fieldIndex = fieldIndex;
-	}
-
 	PayloadWrapper(final int dst, final Serializable payload, final NdPoint loc, final int fieldIndex) {
 		destination = dst;
 		this.payload = payload;
-		migrate = false;
 		this.loc = loc;
 		this.fieldIndex = fieldIndex;
 	}
@@ -69,7 +52,6 @@ class PayloadWrapper implements Serializable {
 	PayloadWrapper(final int dst, final Serializable payload) {
 		destination = dst;
 		this.payload = payload;
-		migrate = false;
 		loc = null;
 		fieldIndex = -1;
 	}

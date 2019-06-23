@@ -282,7 +282,6 @@ public class DRemoteTransporter {
 	}
 
 	/**
-	 * Internal method. Don't use AgentWrapper, use Steppable instead <br>
 	 * Transports the Object as well as migrates it
 	 *
 	 * @param agentWrapper
