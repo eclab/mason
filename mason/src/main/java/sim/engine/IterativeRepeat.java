@@ -44,6 +44,21 @@ public class IterativeRepeat implements Steppable, Stoppable
         this.key = key;
         this.ordering = ordering;
         }
+    
+    public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering)
+	    {
+	    if (interval < 0)
+	        throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+	            "\n\n...the interval provided ("+interval+") is less than zero");
+	    else if (interval != interval)  /* NaN */
+	        throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+	            "\n\n...the interval provided ("+interval+") is NaN");
+	
+	    this.step = step;
+	    this.interval = interval;
+	    this.key = new Schedule.Key(time,ordering);
+	    this.ordering = ordering;
+	    }
         
     public synchronized void step(final SimState state)
         {
