@@ -136,11 +136,11 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 	}
 
 	public void step(final SimState state) {
-		final DFlockers flock = (DFlockers) state;
+		final DFlockers dFlockers = (DFlockers) state;
 		final DoublePoint oldloc = loc;
-		loc = (DoublePoint) flock.flockers.getLocation(this);
+		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
 		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", flock.partition.pid, oldloc.c[0], oldloc.c[1]);
+			System.out.printf("pid %d oldx %g oldy %g", dFlockers.partition.pid, oldloc.c[0], oldloc.c[1]);
 			Thread.dumpStack();
 			System.exit(-1);
 		}
@@ -148,12 +148,12 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		if (dead)
 			return;
 
-		final List<DFlocker> b = flock.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		final List<DFlocker> b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
 
-		final DoublePoint avoid = avoidance(b, flock.flockers);
-		final DoublePoint cohe = cohesion(b, flock.flockers);
-		final DoublePoint rand = randomness(flock.random);
-		final DoublePoint cons = consistency(b, flock.flockers);
+		final DoublePoint avoid = avoidance(b, dFlockers.flockers);
+		final DoublePoint cohe = cohesion(b, dFlockers.flockers);
+		final DoublePoint rand = randomness(dFlockers.random);
+		final DoublePoint cons = consistency(b, dFlockers.flockers);
 		final DoublePoint mome = momentum();
 
 		double dx = DFlockers.cohesion * cohe.c[0] + DFlockers.avoidance * avoid.c[0]
@@ -171,20 +171,21 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		}
 
 		lastd = new DoublePoint(dx, dy);
-		loc = new DoublePoint(flock.flockers.stx(loc.c[0] + dx), flock.flockers.sty(loc.c[1] + dy));
+		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
 
 		try {
-			final int dst = flock.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
-			if (dst != flock.partition.getPid()) {
+			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
+			if (dst != dFlockers.partition.getPid()) {
 				// Need to migrate to other partition,
 				// remove from current partition
-				flock.flockers.removeObject(this);
+				dFlockers.flockers.removeObject(this);
 				// TODO: Abstract away the migration from the model
-				flock.transporter.migrateAgent(this, dst, loc, flock.flockers.fieldIndex);
+				dFlockers.transporter.migrateAgent(this, dst, loc, dFlockers.flockers.fieldIndex);
 			} else {
 				// Set to new location in current partition
-				flock.flockers.moveObject(loc, this);
-				flock.schedule.scheduleOnce(this, 1);
+				// TODO: to use moveAgent in the future
+				dFlockers.flockers.moveObject(loc, this);
+				dFlockers.schedule.scheduleOnce(this, 1);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace(System.out);

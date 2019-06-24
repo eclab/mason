@@ -28,7 +28,7 @@ public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 	public Double getRMI(final IntPoint p) throws RemoteException {
 		if (!inLocal(p))
 			throw new RemoteException(
-					"The point " + p + " does not exist in this partition " + ps.getPid() + " " + ps.getPartition());
+					"The point " + p + " does not exist in this partition " + partition.getPid() + " " + partition.getPartition());
 
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
@@ -40,7 +40,7 @@ public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 	public double get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
-					ps.getPid(), p.toString()));
+					partition.getPid(), p.toString()));
 			try {
 				return (double) getFromRemote(p);
 			} catch (final RemoteException e) {
@@ -56,7 +56,7 @@ public class NDoubleGrid2D extends HaloField<Double, IntPoint> {
 		// In this partition but not in ghost cells
 		if (!inLocal(p))
 			throw new IllegalArgumentException(
-					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
+					String.format("PID %d set %s is out of local boundary", partition.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
 	}

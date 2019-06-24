@@ -239,13 +239,13 @@ public class DRemoteTransporter {
 	 * @param agent
 	 * @param dst        destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final Steppable agent, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		migrateAgent(new AgentWrapper(agent), dst, loc, fieldindex);
+			final int fieldIndex) {
+		migrateAgent(new AgentWrapper(agent), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -255,13 +255,13 @@ public class DRemoteTransporter {
 	 * @param agent
 	 * @param dst        destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final Steppable agent, final int dst, final NdPoint loc,
-			final int fieldindex) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst, loc, fieldindex);
+			final int fieldIndex) {
+		migrateAgent(new AgentWrapper(ordering, agent), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -272,13 +272,13 @@ public class DRemoteTransporter {
 	 * @param agent
 	 * @param dst        destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Steppable agent, final int dst,
-			final NdPoint loc, final int fieldindex) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldindex);
+			final NdPoint loc, final int fieldIndex) {
+		migrateAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -287,14 +287,14 @@ public class DRemoteTransporter {
 	 * @param agentWrapper
 	 * @param dst          destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final AgentWrapper agentWrapper, final int dst, final NdPoint loc,
-			final int fieldindex) {
+			final int fieldIndex) {
 		// These methods differ in just the datatype of the WrappedObject
-		transportObject(agentWrapper, dst, loc, fieldindex);
+		transportObject(agentWrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -334,13 +334,13 @@ public class DRemoteTransporter {
 	 * @param agent
 	 * @param dst        destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgentRepeating(final int ordering, final double time, final double interval,
-			final Steppable agent, final int dst, final NdPoint loc, final int fieldindex) {
-		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst, loc, fieldindex);
+			final Steppable agent, final int dst, final NdPoint loc, final int fieldIndex) {
+		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst, loc, fieldIndex);
 	}
 
 	/**
@@ -349,18 +349,19 @@ public class DRemoteTransporter {
 	 * @param iterativeRepeat
 	 * @param dst             destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgentRepeating(final IterativeRepeat iterativeRepeat, final int dst, final NdPoint loc,
-			final int fieldindex) {
+			final int fieldIndex) {
+
 		// TODO: do we need to synchronize something to ensure that the stoppable is
 		// stopped before we transport?
 
 		iterativeRepeat.stop();
 		// These methods differ in just the datatype of the WrappedObject
-		transportObject(iterativeRepeat, dst, loc, fieldindex);
+		transportObject(iterativeRepeat, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -369,18 +370,18 @@ public class DRemoteTransporter {
 	 * @param obj        Object to be transported
 	 * @param dst        destination pId
 	 * @param loc
-	 * @param fieldindex
+	 * @param fieldIndex
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void transportObject(final Serializable obj, final int dst, final NdPoint loc,
-			final int fieldindex) {
+			final int fieldIndex) {
 		if (partition.pid == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
-		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldindex);
+		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
 		assert dstMap.containsKey(dst);
 		try {
 			dstMap.get(dst).write(wrapper);

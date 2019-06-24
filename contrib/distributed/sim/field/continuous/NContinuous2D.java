@@ -31,7 +31,7 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint>
 	public void addObject(final NdPoint p, final T t) {
 		if (!haloPart.contains(p))
 			throw new IllegalArgumentException(String.format("PID %d Point %s Invalid setLocation() myHalo %s",
-					ps.getPid(), p.toString(), haloPart));
+					partition.getPid(), p.toString(), haloPart));
 		((ContStorage) field).setLocation(t, p);
 	}
 

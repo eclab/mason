@@ -43,17 +43,20 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	protected GridStorage field;
 	// TODO: Fix the comment -
 	// Partition data structure
-	protected DPartition ps;
+	protected DPartition partition;
 	protected Comm comm;
 	protected Datatype MPIBaseType;
+
 	public final int fieldIndex;
 
 	protected RemoteProxy proxy;
+	protected final DSimState state;
 
 	public HaloField(final DPartition ps, final int[] aoi, final GridStorage stor, final DSimState state) {
-		this.ps = ps;
+		this.partition = ps;
 		this.aoi = aoi;
 		field = stor;
+		this.state = state;
 
 		// init variables that don't change with the partition scheme
 		numDimensions = ps.getNumDim();
@@ -92,9 +95,9 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 			// The list is used to hold the refernece to the temporary GridStorage
 			// because Java's lambda expression limits the variable to final.
 			final List<GridStorage> tempStor = new ArrayList<GridStorage>();
-			final DQuadTreePartition q = (DQuadTreePartition) ps;
+			final DQuadTreePartition q = (DQuadTreePartition) partition;
 
-			ps.registerPreCommit(arg -> {
+			partition.registerPreCommit(arg -> {
 				final int level = (int) arg;
 				GridStorage s = null;
 
@@ -112,7 +115,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 					tempStor.add(s);
 			});
 
-			ps.registerPostCommit(arg -> {
+			partition.registerPostCommit(arg -> {
 				final int level = (int) arg;
 				GridStorage s = null;
 
@@ -132,8 +135,8 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public void reload() {
-		comm = ps.getCommunicator();
-		origPart = ps.getPartition();
+		comm = partition.getCommunicator();
+		origPart = partition.getPartition();
 
 		// Get the partition representing halo and local area by expanding the original
 		// partition by aoi at each dimension
@@ -147,13 +150,13 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		privatePart = origPart.resize(Arrays.stream(aoi).map(x -> -x).toArray());
 
 		// Get the neighbors and create Neighbor objects
-		neighbors = Arrays.stream(ps.getNeighborIds()).mapToObj(x -> new Neighbor(ps.getPartition(x)))
+		neighbors = Arrays.stream(partition.getNeighborIds()).mapToObj(x -> new Neighbor(partition.getPartition(x)))
 				.collect(Collectors.toList());
 		numNeighbors = neighbors.size();
 	}
 
 	public void initRemote() {
-		proxy = new RemoteProxy(ps, this);
+		proxy = new RemoteProxy(partition, this);
 	}
 
 	// TODO make a copy of the storage which will be used by the remote field access
@@ -163,7 +166,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 			// TODO: Do we need to check for type safety here?
 			// If the getField method returns the current field then
 			// this cast should work
-			return proxy.getField(ps.toPartitionId(p)).getRMI(p);
+			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
 		}
@@ -274,7 +277,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		for (int i = 0; i < numNeighbors; i++)
 			sendObjs[i] = field.pack(neighbors.get(i).sendParam);
 
-		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(ps, sendObjs);
+		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
 
 		for (int i = 0; i < numNeighbors; i++)
 			field.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
@@ -283,21 +286,21 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {
 		final Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
-		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(ps, sendObj, dst);
+		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(partition, sendObj, dst);
 
-		if (ps.getPid() == dst)
-			for (int i = 0; i < ps.getNumProc(); i++)
-				fullField.unpack(new MPIParam(ps.getPartition(i), world, MPIBaseType), recvObjs.get(i));
+		if (partition.getPid() == dst)
+			for (int i = 0; i < partition.getNumProc(); i++)
+				fullField.unpack(new MPIParam(partition.getPartition(i), world, MPIBaseType), recvObjs.get(i));
 	}
 
 	public void distribute(final int src, final GridStorage fullField) throws MPIException {
-		final Serializable[] sendObjs = new Serializable[ps.getNumProc()];
+		final Serializable[] sendObjs = new Serializable[partition.getNumProc()];
 
-		if (ps.getPid() == src)
-			for (int i = 0; i < ps.getNumProc(); i++)
-				sendObjs[i] = fullField.pack(new MPIParam(ps.getPartition(i), world, MPIBaseType));
+		if (partition.getPid() == src)
+			for (int i = 0; i < partition.getNumProc(); i++)
+				sendObjs[i] = fullField.pack(new MPIParam(partition.getPartition(i), world, MPIBaseType));
 
-		final Serializable recvObj = MPIUtil.<Serializable>scatter(ps, sendObjs, src);
+		final Serializable recvObj = MPIUtil.<Serializable>scatter(partition, sendObjs, src);
 		field.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 
 		// Sync the halo
@@ -305,11 +308,11 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public void collectGroup(final int level, final GridStorage groupField) throws MPIException {
-		if (!(ps instanceof DQuadTreePartition))
+		if (!(partition instanceof DQuadTreePartition))
 			throw new UnsupportedOperationException(
-					"Can only collect from group with DQuadTreePartition, got " + ps.getClass().getSimpleName());
+					"Can only collect from group with DQuadTreePartition, got " + partition.getClass().getSimpleName());
 
-		final DQuadTreePartition qt = (DQuadTreePartition) ps;
+		final DQuadTreePartition qt = (DQuadTreePartition) partition;
 		final GroupComm gc = qt.getGroupComm(level);
 
 		if (gc != null) {
@@ -327,11 +330,11 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException {
-		if (!(ps instanceof DQuadTreePartition))
+		if (!(partition instanceof DQuadTreePartition))
 			throw new UnsupportedOperationException(
-					"Can only distribute to group with DQuadTreePartition, got " + ps.getClass().getSimpleName());
+					"Can only distribute to group with DQuadTreePartition, got " + partition.getClass().getSimpleName());
 
-		final DQuadTreePartition qt = (DQuadTreePartition) ps;
+		final DQuadTreePartition qt = (DQuadTreePartition) partition;
 		final GroupComm gc = qt.getGroupComm(level);
 		Serializable[] sendObjs = null;
 
@@ -352,7 +355,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public String toString() {
-		return String.format("PID %d Storage %s", ps.getPid(), field);
+		return String.format("PID %d Storage %s", partition.getPid(), field);
 	}
 
 	// Helper class to organize neighbor-related data structures and methods
@@ -378,7 +381,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		private ArrayList<IntHyperRect> generateOverlaps(final IntHyperRect p1, final IntHyperRect p2) {
 			final ArrayList<IntHyperRect> overlaps = new ArrayList<IntHyperRect>();
 
-			if (ps.isToroidal())
+			if (partition.isToroidal())
 				for (final IntPoint p : IntPointGenerator.getLayer(numDimensions, 1)) {
 					final IntHyperRect sp = p2
 							.shift(IntStream.range(0, numDimensions).map(i -> p.c[i] * fieldSize[i]).toArray());

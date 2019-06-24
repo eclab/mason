@@ -27,7 +27,8 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint
 	public T getRMI(final IntPoint p) throws RemoteException {
 		if (!inLocal(p))
 			throw new RemoteException(
-					"The point " + p + " does not exist in this partition " + ps.getPid() + " " + ps.getPartition());
+					"The point " + p + " does not exist in this partition " + partition.getPid() + " "
+							+ partition.getPartition());
 
 		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
 	}
@@ -39,7 +40,7 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint
 	public T get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
-					ps.getPid(), p.toString()));
+					partition.getPid(), p.toString()));
 			try {
 				return (T) getFromRemote(p);
 			} catch (final RemoteException e) {
@@ -53,9 +54,11 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint
 
 	public void addObject(final IntPoint p, final T val) {
 		// In this partition but not in ghost cells
+		// TODO: Also implement addAgent methods
 		if (!inLocal(p))
-			throw new IllegalArgumentException(
-					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
+			state.transporter.transportObject(val, partition.toPartitionId(p), p, fieldIndex);
+//			throw new IllegalArgumentException(
+//					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
 
 		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
 	}

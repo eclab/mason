@@ -26,7 +26,7 @@ import sim.field.RemoteProxy;
 import sim.util.NdPoint;
 import sim.util.Timing;
 
-public abstract class DSimState extends SimState {
+public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
@@ -119,6 +119,9 @@ public abstract class DSimState extends SimState {
 			 * rely on the fact that the wrapper classes are not directly used By the
 			 * modelers
 			 *
+			 * In case of IterativeRepeat step is added to the field. For PayloadWrapper we
+			 * add agent and, for all other cases we add the object itself to the field
+			 *
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
@@ -131,7 +134,6 @@ public abstract class DSimState extends SimState {
 
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
-
 				if (agentWrapper.time < 0)
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
