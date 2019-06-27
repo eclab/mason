@@ -677,11 +677,13 @@ public class SimState implements java.io.Serializable
                         
                         while((_for == -1 || steps < _for) && schedule.getTime() <= until)
                             {
+                            state.preSchedule();
                             if (!schedule.step(state)) 
                                 {
                                 retval=true; 
                                 break;
                                 }
+                            state.postSchedule();
                             steps = schedule.getSteps();
                             if (time < 0)  // don't know how long to make the time yet
                                 {
@@ -756,6 +758,18 @@ public class SimState implements java.io.Serializable
         {
         return 19.0;
         }
+    
+    /** Hook for distributed MASON, called immediately before stepping the schedule. */
+    public void preSchedule()
+    	{
+    	// does nothing
+    	}
+    	
+    /** Hook for distributed MASON, called immediately after stepping the schedule. */
+    public void postSchedule()
+    	{
+    	// does nothing
+    	}
     
     // compute how much time per step 
     // it's possible this could go into an infinite loop if time is gigantic

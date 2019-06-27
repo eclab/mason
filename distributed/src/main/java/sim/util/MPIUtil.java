@@ -16,7 +16,7 @@ import sim.field.DPartition;
 // Utility class that serialize/exchange/deserialize objects using MPI
 public class MPIUtil {
 
-    private static final int MAX_SIZE = 1 << 30;//1 << 30; // 1024MBytes
+     static final int MAX_SIZE = 1 << 30; // 1024MBytes
 
     // Persistent send and recv direct buffers
     // Those two bufferes will be shared across multiple MPI calls 
@@ -25,11 +25,12 @@ public class MPIUtil {
     // Such shared is not protected with locks or anything
     // so Calls to those MPI functions in a multi-threaded scenario will likely to have race condition
     // Since currently there is no concurrent call implemented, this issue is left as a TODO
-    private static ByteBuffer pSendBuf, pRecvBuf;
+     static ByteBuffer pSendBuf, pRecvBuf;
 
-    private static ByteBuffer initSendBuf() {
 
-    	
+
+	/** Makes a ginormous and inappropriate buffer for sending.  This needs to be fixed. */
+     static ByteBuffer initSendBuf() {
         if (pSendBuf == null)
             pSendBuf = ByteBuffer.allocateDirect(MAX_SIZE);
         else
@@ -37,8 +38,9 @@ public class MPIUtil {
 
         return pSendBuf;
     }
-
-    private static ByteBuffer initRecvBuf() {
+	/** Makes a ginormous and inappropriate buffer for receiving.  This needs to be fixed. */
+	
+     static ByteBuffer initRecvBuf() {
         if (pRecvBuf == null)
             pRecvBuf = ByteBuffer.allocateDirect(MAX_SIZE);
         else
@@ -46,34 +48,41 @@ public class MPIUtil {
 
         return pRecvBuf;
     }
-
+	
+	
     // Serialize a Serializable using Java's builtin serialization and return the ByteBuffer
-    private static void serialize(Serializable obj, ByteBuffer buf) {
+     static void serialize(Serializable obj, ByteBuffer buf) {
         try (
              ByteBufferOutputStream out = new ByteBufferOutputStream(buf);
              ObjectOutputStream os = new ObjectOutputStream(out)
              ) {
             os.writeObject(obj);
-            os.flush();
+            os.flush();							/// SEAN QUESTION: If the try ALREADY closes the stream, why do we need to flush it?
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
         }
     }
 
-    // Serialize each Serializable in objs using Java's builtin serialization
-    // Concatenate their individual ByteBuffer together and return the final ByteBuffer
-    // The length of each byte array will be writtern into the count array
-    private static void serialize(Serializable[] objs, ByteBuffer buf, int[] count) {
+
+	/// SEAN QUESTION: why are we reallocating ByteBufferOutputStream and ObjectOutputStream every single time?
+	/// Why aren't we just writing all of the objects with the same ones and then flushing?
+
+    // Serialize each Serializable in objs into buf.
+    // The length of each byte array will be written into the count array
+     static void serialize(Serializable[] objs, ByteBuffer buf, int[] count) {
         for (int i = 0, prevPos = buf.position(); i < objs.length; i++) {
             serialize(objs[i], buf);
             count[i] = buf.position() - prevPos;
             prevPos = buf.position();
         }
     }
+    
+    
+    
 
     // Deserialize the object of given type T that is stored in [pos, pos + len) in buf
-    private static <T extends Serializable> T deserialize(ByteBuffer buf, int pos, int len) {
+     static <T extends Serializable> T deserialize(ByteBuffer buf, int pos, int len) {
         T obj = null;
 
         buf.position(pos);
@@ -89,14 +98,21 @@ public class MPIUtil {
 
         return obj;
     }
+    
+    
 
+	//// SEAN QUESTION: Why are we using a lambda here?  This is nuts, we should not be using lambdas in this context.
+	//// Also, this looks like it's *terribly* inefficient.
+	
     // Compute the displacement according to the count
-    private static int[] getDispl(int[] count) {
+     static int[] getDispl(int[] count) {
         return IntStream.range(0, count.length)
             .map(x -> Arrays.stream(count).limit(x).sum())
             .toArray();
     }
 
+
+	//// Broadcasts to everyone.  In order to do this, all nodes must call bcast even if they're not root.
     public static <T extends Serializable> T bcast(Comm comm, T obj, int root) throws MPIException {
         int pid = comm.getRank();
         ByteBuffer buf = initSendBuf();
@@ -104,14 +120,15 @@ public class MPIUtil {
         if (pid == root)
             serialize(obj, buf);
 
-        int[] count = new int[] {buf.position()};
-        comm.bcast(count, 1, MPI.INT, root);
+        int[] numBytes = new int[] { buf.position() }; 
+        comm.bcast(numBytes, 1, MPI.INT, root);
+        comm.bcast(buf, numBytes[0], MPI.BYTE, root);
 
-        comm.bcast(buf, count[0], MPI.BYTE, root);
-
-        return MPIUtil.<T>deserialize(buf, 0, count[0]);
+        return MPIUtil.<T>deserialize(buf, 0, numBytes[0]);
     }
+    
 
+	//// Broadcasts to everyone.  In order to do this, all nodes must call bcast even if they're not root.
     public static <T extends Serializable> T bcast(DPartition p, T obj, int root) throws MPIException {
         return MPIUtil.<T>bcast(p.getCommunicator(), obj, root);
     }
@@ -121,11 +138,19 @@ public class MPIUtil {
         return MPIUtil.<T>bcast(MPI.COMM_WORLD, obj, root);
     }
 
+
+
+	// Allows root to send UNIQUE messages to EACH node.  Both root and the nodes call this method.
+
     // Reverse of gather
     // Currently used by collectGroup() and distributedGroup() in HaloField
     public static <T extends Serializable> T scatter(Comm comm, T[] sendObjs, int root) throws MPIException {
-        int pid =  comm.getRank(), np =  comm.getSize(), dstCount;
-        int[] srcDispl = null, srcCount = new int[np];
+        int pid =  comm.getRank();
+        int np = comm.getSize();
+        int dstCount;
+        int[] srcDispl = null;
+        int[] srcCount = new int[np];
+        
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         if (pid == root) {
@@ -141,9 +166,16 @@ public class MPIUtil {
         return MPIUtil.<T>deserialize(dstBuf, 0, dstCount);
     }
 
+
+	// Allows root to send UNIQUE messages to EACH node.  Both root and the nodes call this method.
+
     public static <T extends Serializable> T scatter(DPartition p, T[] sendObjs, int root) throws MPIException {
         return MPIUtil.<T>scatter(p.getCommunicator(), sendObjs, root);
     }
+    
+    
+    
+	// Allows each node to send one message each to the the root. These messages are returned as an arraylist to the root.
 
     // Each LP sends the sendObj to dst
     // dst will return an ArrayList of np objects of type T
@@ -153,7 +185,7 @@ public class MPIUtil {
         int np = comm.getSize();
         int pid = comm.getRank();
         int[] dstDispl, dstCount = new int[np];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObj, srcBuf);
@@ -173,9 +205,18 @@ public class MPIUtil {
         return recvObjs;
     }
 
+
+
+
+	// Allows each node to send one message each to the the root. These messages are returned as an arraylist to the root.
+
     public static <T extends Serializable> ArrayList<T> gather(DPartition p, T sendObj, int dst) throws MPIException {
         return MPIUtil.<T>gather(p.getCommunicator(), sendObj, dst);
     }
+
+
+
+	// Allows all nodes to broadcast to all nodes at once.
 
     // Each LP contributes the sendObj
     // All the LPs will receive all the sendObjs from all the LPs returned in the ArrayList
@@ -183,7 +224,7 @@ public class MPIUtil {
         int np = comm.getSize();
         int pid = comm.getRank();
         int[] dstDispl, dstCount = new int[np];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObj, srcBuf);
@@ -202,9 +243,19 @@ public class MPIUtil {
         return recvObjs;
     }
 
+
+
+	// Allows all nodes to broadcast to all nodes at once.
+
     public static <T extends Serializable> ArrayList<T> allGather(DPartition p, T sendObj) throws MPIException {
         return MPIUtil.<T>allGather(p.getCommunicator(), sendObj);
     }
+
+
+
+	//// SEAN QUESTION: Where is the topology specified?
+
+	// Allows each node to send data to its neighbors as specified by a topology simultaneously
 
     // Each LP sends and receives one object to/from each of its neighbors
     // in the order that is defined in partition scheme
@@ -212,7 +263,7 @@ public class MPIUtil {
         int nc = sendObjs.length;
         int[] srcDispl, srcCount = new int[nc];
         int[] dstDispl, dstCount = new int[nc];
-        ArrayList<T> recvObjs = new ArrayList();
+        ArrayList<T> recvObjs = new ArrayList<>();
         ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
 
         serialize(sendObjs, srcBuf, srcCount);
@@ -229,9 +280,20 @@ public class MPIUtil {
         return recvObjs;
     }
 
+	// Allows each node to send data to its neighbors as specified by a topology simultaneously
+
     public static <T extends Serializable> ArrayList<T> neighborAllToAll(DPartition p, T[] sendObjs) throws MPIException {
         return MPIUtil.<T>neighborAllToAll(p.getCommunicator(), sendObjs);
     }
+
+
+
+	//// SEAN QUESTION: Why is this different from the others?  Why do we not have serialization?
+	//// Is this because we'd never use it?
+	//// SEAN CONCERN: This is horribly inefficient, we're boxing and unboxing vals.  Why not pass in
+	//// The value as a byte, or int, or float, etc.  BTW, we don't need float and long probably, just double and int.
+
+	// Allows all nodes to broadcast to all nodes at once, but only neighbors will receive a given node's message.
 
     // neighborAllGather for primitive type data (fixed length)
     public static Object neighborAllGather(DPartition p, Object val, Datatype type) throws MPIException {
@@ -262,6 +324,7 @@ public class MPIUtil {
         return recvBuf;
     }
 
+/*
     public static void main(String[] args) throws MPIException, IOException {
         MPI.Init(args);
 
@@ -355,6 +418,7 @@ public class MPIUtil {
 
         MPI.Finalize();
     }
+    */
 }
 
 class ByteBufferOutputStream extends OutputStream implements AutoCloseable {

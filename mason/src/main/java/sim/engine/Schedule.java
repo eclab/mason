@@ -719,7 +719,7 @@ public class Schedule implements java.io.Serializable
         {
         if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         Schedule.Key k = new Schedule.Key(time,ordering);
-        IterativeRepeat r = new IterativeRepeat(event,interval,k);
+        IterativeRepeat r = new IterativeRepeat(event, time, interval, ordering, k);
 
         synchronized(lock)
             {
@@ -795,64 +795,3 @@ public class Schedule implements java.io.Serializable
             }
         }
     }
-
-
-/**
-   Handles repeated steps.  This is done by wrapping the Steppable with a IterativeRepeat object
-   which is itself Steppable, and on its step calls its subsidiary Steppable, then reschedules
-   itself.  IterativeRepeat is stopped by setting its subsidiary to null, and so the next time it's
-   scheduled it won't reschedule itself (or call the subsidiary).   A private class for
-   Schedule.  We've moved it out of being an inner class of Schedule and will ultimately make
-   it a separate class in the package.
-*/
-
-class IterativeRepeat implements Steppable, Stoppable
-    {
-    double interval;
-    Steppable step;  // if null, does not reschedule
-    Schedule.Key key;
-        
-    public IterativeRepeat(final Steppable step, final double interval, final Schedule.Key key)
-        {
-        if (interval < 0)
-            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                "\n\n...the interval provided ("+interval+") is less than zero");
-        else if (interval != interval)  /* NaN */
-            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                "\n\n...the interval provided ("+interval+") is NaN");
-
-        this.step = step;
-        this.interval = interval;
-        this.key = key;
-        }
-        
-    public synchronized void step(final SimState state)
-        {
-        if (step!=null)
-            {
-            try
-                {
-                // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
-                key.time += interval;
-                if (key.time < Schedule.AFTER_SIMULATION) 
-                    state.schedule.scheduleOnce(key,this);  // may return false if we couldn't schedule, which is fine
-                }
-            catch (IllegalArgumentException e)
-                {
-                e.printStackTrace(); // something bad happened
-                }
-            assert sim.util.LocationLog.set(step);
-            step.step(state);
-            assert sim.util.LocationLog.clear();
-            }
-        }
-        
-    public synchronized void stop()  
-        {
-        step = null;
-        }
-        
-    public String toString() { return "Schedule.IterativeRepeat[" + step + "]"; }
-    }
-
-

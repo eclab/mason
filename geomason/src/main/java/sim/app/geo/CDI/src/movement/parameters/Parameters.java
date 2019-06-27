@@ -191,7 +191,13 @@ public class Parameters {
 	public double totalDesColorMapLowerBound;
 	public double totalDesColorMapUpperBound;
 
-	
+    // Copied from sim/app/geo/riftland/Parameters.java
+    // TODO: find all Parameters.java files and turn it into a utility....
+    public Parameters(String relativePath, Class reference)
+    {
+        loadParameters(openParameterDatabase(relativePath, reference));
+		checkConstraints();
+    }
 
 	/**
 	 * Create a Parameters class for all parameters from the file
@@ -213,6 +219,25 @@ public class Parameters {
 		checkConstraints();
 	}
 
+    private static ParameterDatabase openParameterDatabase(String relative, Class reproduction)
+    {
+        ParameterDatabase parameter = null;
+        try{
+            parameter = new ParameterDatabase(relative, reproduction);
+        } catch (IOException e){
+            //e.printStackTrace();
+        }
+        if(parameter == null){
+			System.out
+					.println("\nNo parameter file was specified;"
+							+ "\n-default programmatic settings engaged,"
+							+ "\n-command line -p parameters ignored."
+							+ "\nConsider using: -file foo.params [-p bar1=val1 [-p bar2=val2 ... ]]\n");
+            parameter = new ParameterDatabase();
+        }
+        return parameter;
+    }
+
 	/**
 	 * Initialize parameter database from file
 	 * 
@@ -221,7 +246,6 @@ public class Parameters {
 	 * @return newly created parameter data base
 	 * 
 	 */
-
 	private static ParameterDatabase openParameterDatabase(String[] args) {
 		ParameterDatabase parameters = null;
 		for (int x = 0; x < args.length - 1; x++) 

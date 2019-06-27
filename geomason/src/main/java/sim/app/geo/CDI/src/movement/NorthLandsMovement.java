@@ -562,6 +562,17 @@ public class NorthLandsMovement extends SimState {
 		prepareGrids();
 	}
 
+    public NorthLandsMovement(long seed, Class reference, String relativePath)
+    {
+        super(seed);
+        parameters = new Parameters(relativePath, reference);
+        map = new Map(parameters, random);
+        collector = new DataCollector(parameters.filePath, parameters.householdFilePath, this);
+        smoothedTargetPopGrid = new DoubleGrid2D(Map.GRID_WIDTH, Map.GRID_HEIGHT);
+        growthTable = new GrowthRateTable(parameters.growthRateFile);
+        prepareGrids();
+    }
+
 	/**
 	 * This function does the smoothing and other relevant pre-processing before
 	 * the actual desirability calculations, everything was used to be merged in

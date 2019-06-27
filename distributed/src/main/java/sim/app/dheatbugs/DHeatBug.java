@@ -5,117 +5,165 @@
 */
 
 package sim.app.dheatbugs;
-import sim.field.grid.*;
-import sim.util.*;
-import sim.engine.*;
 
-import mpi.*;
-import java.nio.*;
+import sim.engine.SimState;
+import sim.engine.Steppable;
+import sim.field.grid.NDoubleGrid2D;
+import sim.util.IntPoint;
 
 public class DHeatBug implements Steppable {
-    private static final long serialVersionUID = 1;
+	private static final long serialVersionUID = 1;
 
-    public double idealTemp;
-    public double getIdealTemperature() { return idealTemp; }
-    public void setIdealTemperature( double t ) { idealTemp = t; }
+	public int loc_x, loc_y;
+	public boolean isFirstStep = true;
 
-    public double heatOutput;
-    public double getHeatOutput() { return heatOutput; }
-    public void setHeatOutput( double t ) { heatOutput = t; }
+	public double idealTemp;
+	public double heatOutput;
+	public double randomMovementProbability;
 
-    public double randomMovementProbability;
-    public double getRandomMovementProbability() { return randomMovementProbability; }
-    public void setRandomMovementProbability( double t ) { if (t >= 0 && t <= 1) randomMovementProbability = t; }
-    public Object domRandomMovementProbability() { return new Interval(0.0, 1.0); }
+	public DHeatBug(final double idealTemp, final double heatOutput, final double randomMovementProbability,
+			final int loc_x, final int loc_y) {
+		this.heatOutput = heatOutput;
+		this.idealTemp = idealTemp;
+		this.randomMovementProbability = randomMovementProbability;
+		this.loc_x = loc_x;
+		this.loc_y = loc_y;
+	}
 
-    public int loc_x, loc_y;
-    public boolean isFirstStep = true;
+	public void addHeat(final NDoubleGrid2D grid, final int x, final int y, final double heat) {
+		double new_heat = grid.get(x, y) + heat;
+		if (new_heat > DHeatBugs.MAX_HEAT)
+			new_heat = DHeatBugs.MAX_HEAT;
+		grid.addObject(new IntPoint(x, y), new_heat);
 
-    public DHeatBug( double idealTemp, double heatOutput, double randomMovementProbability, int loc_x, int loc_y) {
-        this.heatOutput = heatOutput;
-        this.idealTemp = idealTemp;
-        this.randomMovementProbability = randomMovementProbability;
-        this.loc_x = loc_x;
-        this.loc_y = loc_y;
-    }
+//		try {
+//			double new_heat = grid.get(x, y) + heat;
+//			if (new_heat > DHeatBugs.MAX_HEAT)
+//				new_heat = DHeatBugs.MAX_HEAT;
+//			grid.set(x, y, new_heat);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.out.println("HeatBug - " + this +
+//					"\nBugs: haloPart - " + hb.bugs.haloPart +
+//					"\nBugs: origPart - " + hb.bugs.origPart +
+//					"\nBugs: privPart - " + hb.bugs.privPart +
+//					"\nCurrent pId - " + hb.partition.getPid() +
+//					"\npId according to QuadTree - " +
+//					hb.partition.toPartitionId(new int[] { loc_x, loc_y }) + "\nPartition Info - " + hb.partition);
+//		}
+	}
 
-    public void addHeat(final NDoubleGrid2D grid, final int x, final int y, final double heat) {
-        double new_heat = grid.get(x, y) + heat;
-        if (new_heat > DHeatBugs.MAX_HEAT)
-            new_heat = DHeatBugs.MAX_HEAT;
-        grid.set(x, y, new_heat);
-    }
+	public void step(final SimState state) {
 
-    public void step( final SimState state ) {
-        DHeatBugs hb = (DHeatBugs)state;
+		final DHeatBugs dHeatBugs = (DHeatBugs) state;
 
-        int myx = loc_x;
-        int myy = loc_y;
+		// Skip addHeat for the first step
+		if (!isFirstStep) {
+			addHeat(dHeatBugs.valgrid, loc_x, loc_y, heatOutput);
+		} else {
+			isFirstStep = false;
+		}
 
-        // Skip addHeat for the first step
-        if (!this.isFirstStep) {
-            addHeat(hb.valgrid, loc_x, loc_y, heatOutput);
-        } else {
-            this.isFirstStep = false;
-        }
+		final int START = -1;
+		int bestx = START;
+		int besty = 0;
 
-        final int START = -1;
-        int bestx = START;
-        int besty = 0;
+		if (state.random.nextBoolean(randomMovementProbability)) { // go to random place
+			bestx = state.random.nextInt(3) - 1 + loc_x;
+			besty = state.random.nextInt(3) - 1 + loc_y;
+		} else if (dHeatBugs.valgrid.get(loc_x, loc_y) > idealTemp) { // go to coldest place
+			for (int x = -1; x < 2; x++)
+				for (int y = -1; y < 2; y++)
+					if (!(x == 0 && y == 0)) {
+						final int xx = (x + loc_x);
+						final int yy = (y + loc_y);
+						if (bestx == START || (dHeatBugs.valgrid.get(xx, yy) < dHeatBugs.valgrid.get(bestx, besty))
+								|| (dHeatBugs.valgrid.get(xx, yy) == dHeatBugs.valgrid.get(bestx, besty)
+										&& state.random.nextBoolean())) // not uniform, but enough to break up the
+																		// go-up-and-to-the-left syndrome
+						{
+							bestx = xx;
+							besty = yy;
+						}
+					}
+		} else if (dHeatBugs.valgrid.get(loc_x, loc_y) < idealTemp) { // go to warmest place
+			for (int x = -1; x < 2; x++)
+				for (int y = -1; y < 2; y++)
+					if (!(x == 0 && y == 0)) {
+						final int xx = (x + loc_x);
+						final int yy = (y + loc_y);
+						if (bestx == START || (dHeatBugs.valgrid.get(xx, yy) > dHeatBugs.valgrid.get(bestx, besty))
+								|| (dHeatBugs.valgrid.get(xx, yy) == dHeatBugs.valgrid.get(bestx, besty)
+										&& state.random.nextBoolean())) // not uniform, but enough to break up the
+																		// go-up-and-to-the-left syndrome
+						{
+							bestx = xx;
+							besty = yy;
+						}
+					}
+		} else { // stay put
+			bestx = loc_x;
+			besty = loc_y;
+		}
 
-        if (state.random.nextBoolean(randomMovementProbability)) { // go to random place
-            bestx = state.random.nextInt(3) - 1 + loc_x;  
-            besty = state.random.nextInt(3) - 1 + loc_y;
-        } else if ( hb.valgrid.get(myx, myy) > idealTemp ) { // go to coldest place
-            for (int x = -1; x < 2; x++)
-                for (int y = -1; y < 2; y++)
-                    if (!(x == 0 && y == 0)) {
-                        int xx = (x + loc_x);
-                        int yy = (y + loc_y);
-                        if (bestx == START ||
-                            (hb.valgrid.get(xx, yy) < hb.valgrid.get(bestx, besty)) ||
-                            (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
-                            { bestx = xx; besty = yy; }
-                    }
-        } else if ( hb.valgrid.get(myx, myy) < idealTemp ) { // go to warmest place
-            for (int x = -1; x < 2; x++)
-                for (int y = -1; y < 2; y++)
-                    if (!(x == 0 && y == 0)) {
-                        int xx = (x + loc_x);
-                        int yy = (y + loc_y);
-                        if (bestx == START ||
-                            (hb.valgrid.get(xx, yy) > hb.valgrid.get(bestx, besty)) ||
-                            (hb.valgrid.get(xx, yy) == hb.valgrid.get(bestx, besty) && state.random.nextBoolean()))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
-                            { bestx = xx; besty = yy; }
-                    }
-        } else {        // stay put
-            bestx = loc_x;
-            besty = loc_y;
-        }
+		final int old_x = loc_x;
+		final int old_y = loc_y;
+		loc_x = dHeatBugs.valgrid.stx(bestx);
+		loc_y = dHeatBugs.valgrid.sty(besty);
 
-        int old_x = loc_x;
-        int old_y = loc_y;
-        loc_x = hb.valgrid.stx(bestx);
-        loc_y = hb.valgrid.sty(besty);
+		try {
+			final int dst = dHeatBugs.partition.toPartitionId(new int[] { loc_x, loc_y });
+			if (dst != dHeatBugs.partition.getPid()) {
+				dHeatBugs.bugs.removeObject(new IntPoint(old_x, old_y), this);
 
-        try {
-            int dst = hb.p.toPartitionId(new int[] {loc_x, loc_y});
-            if (dst != hb.p.getPid()) {
-                hb.bugs.set(old_x, old_y, null);
-                hb.queue.migrate(this, dst, new DoublePoint(loc_x, loc_y));
-                hb.privBugCount--;
-            } else {
-                hb.bugs.set(old_x, old_y, null);
-                hb.bugs.set(loc_x, loc_y, this);
-                hb.schedule.scheduleOnce(this, 1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(System.out);
-            System.exit(-1);
-        }
-    }
+//				if (!hb.bugs.remove(old_x, old_y, this))
+//					System.err.println("Failed to remove!");
+//				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
 
-    public String toString() {
-        return String.format("[%d, %d]", loc_x, loc_y);
-    }
+				// TODO: Abstract away the migration from the model
+				dHeatBugs.transporter.migrateAgent(this, dst, new IntPoint(loc_x, loc_y),
+						dHeatBugs.bugs.fieldIndex);
+			} else {
+				// TODO: this should be moveAgent
+				dHeatBugs.bugs.moveObject(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
+				dHeatBugs.schedule.scheduleOnce(this, 1);
+			}
+		} catch (final Exception e) {
+			e.printStackTrace(System.out);
+			System.exit(-1);
+		}
+	}
+
+	public double getIdealTemperature() {
+		return idealTemp;
+	}
+
+	public void setIdealTemperature(final double t) {
+		idealTemp = t;
+	}
+
+	public double getHeatOutput() {
+		return heatOutput;
+	}
+
+	public void setHeatOutput(final double t) {
+		heatOutput = t;
+	}
+
+	// public Object domRandomMovementProbability() {
+	// return new Interval(0.0, 1.0);
+	// }
+
+	public double getRandomMovementProbability() {
+		return randomMovementProbability;
+	}
+
+	public void setRandomMovementProbability(final double t) {
+		if (t >= 0 && t <= 1)
+			randomMovementProbability = t;
+	}
+
+	public String toString() {
+		return String.format("[%d, %d]", loc_x, loc_y);
+	}
 }

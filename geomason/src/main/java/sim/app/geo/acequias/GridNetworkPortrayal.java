@@ -50,10 +50,10 @@ public class GridNetworkPortrayal extends FieldPortrayal2D
         EdgeDrawInfo2D newinfo = new EdgeDrawInfo2D(
                 info.gui,
                 info.fieldPortrayal,
-                   new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replace
+            new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replaced
+
             info.clip, // we don't do further clipping
-            new Point2D.Double(0,0),
-            null
+            new Point2D.Double(0,0)
             );  // these will also get replaced
 
         // draw ALL the edges -- one never knows if an edge will cross into our boundary

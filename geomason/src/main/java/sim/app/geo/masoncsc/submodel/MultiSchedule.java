@@ -1,4 +1,4 @@
-package sim.app.geo.masoncsc.submodel;
+package masoncsc.submodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;

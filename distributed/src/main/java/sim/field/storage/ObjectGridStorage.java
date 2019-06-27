@@ -1,96 +1,95 @@
 package sim.field.storage;
 
-import java.util.Arrays;
-import java.util.function.*;
-import java.io.*;
-
-import mpi.*;
-import static mpi.MPI.slice;
+import java.io.Serializable;
+import java.util.function.IntFunction;
 
 import sim.util.IntHyperRect;
 import sim.util.IntPoint;
 import sim.util.MPIParam;
 
-public class ObjectGridStorage<T> extends GridStorage {
+public class ObjectGridStorage<T extends Serializable> extends GridStorage {
 
-    IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
+	IntFunction<T[]> alloc; // Lambda function which accepts the size as its argument and returns a T array
 
-    public ObjectGridStorage(IntHyperRect shape, IntFunction<T[]> allocator) {
-        super(shape);
-                
-        alloc = allocator;
-        storage = allocate(shape.getArea());
-    }
+	public ObjectGridStorage(final IntHyperRect shape, final IntFunction<T[]> allocator) {
+		super(shape);
 
-    public GridStorage getNewStorage(IntHyperRect shape) {
-        return new ObjectGridStorage(shape, alloc);
-    }
+		alloc = allocator;
+		storage = allocate(shape.getArea());
+	}
 
-    protected Object allocate(int size) {
-        return alloc.apply(size);
-    }
+	public GridStorage getNewStorage(final IntHyperRect shape) {
+		return new ObjectGridStorage<T>(shape, alloc);
+	}
 
-    public String toString() {
-        int[] size = shape.getSize();
-        T[] array = (T[])storage;
-        StringBuffer buf = new StringBuffer(String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
+	protected Object allocate(final int size) {
+		return alloc.apply(size);
+	}
 
-        if (shape.getNd() == 2)
-            for (int i = 0; i < size[0]; i++) {
-                for (int j = 0; j < size[1]; j++)
-                    buf.append(String.format(" %8s ", array[i * size[1] + j]));
-                buf.append("\n");
-            }
+	public String toString() {
+		final int[] size = shape.getSize();
+		final T[] array = (T[]) storage;
+		final StringBuffer buf = new StringBuffer(
+				String.format("ObjectGridStorage<%s>-%s\n", array.getClass().getSimpleName(), shape));
 
-        return buf.toString();
-    }
+		if (shape.getNd() == 2)
+			for (int i = 0; i < size[0]; i++) {
+				for (int j = 0; j < size[1]; j++)
+					buf.append(String.format(" %8s ", array[i * size[1] + j]));
+				buf.append("\n");
+			}
 
-    public Serializable pack(MPIParam mp) {
-        T[] objs = alloc.apply(mp.size), stor = (T[])storage;
-        int curr = 0;
+		return buf.toString();
+	}
 
-        for (IntHyperRect rect : mp.rects)
-            for (IntPoint p : rect)
-                objs[curr++] = stor[getFlatIdx(p)];
+	public Serializable pack(final MPIParam mp) {
+		final T[] objs = alloc.apply(mp.size), stor = (T[]) storage;
+		int curr = 0;
 
-        return objs;
-    }
+		for (final IntHyperRect rect : mp.rects)
+			for (final IntPoint p : rect)
+				objs[curr++] = stor[getFlatIdx(p)];
 
-    public int unpack(MPIParam mp, Serializable buf) {
-        T[] stor = (T[])storage, objs = (T[])buf;
-        int curr = 0;
+		return objs;
+	}
 
-        for (IntHyperRect rect : mp.rects)
-            for (IntPoint p : rect)
-                stor[getFlatIdx(p)] = (T)objs[curr++];
+	public int unpack(final MPIParam mp, final Serializable buf) {
+//		System.out.println(buf);
+		final T[] stor = (T[]) storage;
+		final T[] objs = (T[]) buf;
+		int curr = 0;
 
-        return curr;
-    }
+		for (final IntHyperRect rect : mp.rects)
+			for (final IntPoint p : rect)
+				stor[getFlatIdx(p)] = objs[curr++];
 
-    public static void main(String[] args) throws MPIException {
-        MPI.Init(args);
+		return curr;
+	}
 
-        IntPoint p1 = new IntPoint(new int[] {0, 0});
-        IntPoint p2 = new IntPoint(new int[] {5, 5});
-        IntPoint p3 = new IntPoint(new int[] {1, 1});
-        IntPoint p4 = new IntPoint(new int[] {4, 4});
-        IntHyperRect r1 = new IntHyperRect(0, p1, p2);
-        IntHyperRect r2 = new IntHyperRect(1, p3, p4);
-        ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
-        ObjectGridStorage<TestObj> s2 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
-
-        TestObj[] stor = (TestObj[])s1.getStorage();
-        for (int i : new int[] {6, 12, 18})
-            stor[i] = new TestObj(i);
-
-        MPIParam mp = new MPIParam(r2, r1, s1.getMPIBaseType());
-        s2.unpack(mp, s1.pack(mp));
-
-        TestObj[] objs = (TestObj[])s2.getStorage();
-        for (TestObj obj : objs)
-            System.out.print(obj + " ");
-        System.out.println("");
-
-        MPI.Finalize();
-    }
+//	public static void main(final String[] args) throws MPIException {
+//		MPI.Init(args);
+//
+//		final IntPoint p1 = new IntPoint(new int[] { 0, 0 });
+//		final IntPoint p2 = new IntPoint(new int[] { 5, 5 });
+//		final IntPoint p3 = new IntPoint(new int[] { 1, 1 });
+//		final IntPoint p4 = new IntPoint(new int[] { 4, 4 });
+//		final IntHyperRect r1 = new IntHyperRect(0, p1, p2);
+//		final IntHyperRect r2 = new IntHyperRect(1, p3, p4);
+//		final ObjectGridStorage<TestObj> s1 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
+//		final ObjectGridStorage<TestObj> s2 = new ObjectGridStorage<TestObj>(r1, size -> new TestObj[size]);
+//
+//		final TestObj[] stor = (TestObj[]) s1.getStorage();
+//		for (final int i : new int[] { 6, 12, 18 })
+//			stor[i] = new TestObj(i);
+//
+//		final MPIParam mp = new MPIParam(r2, r1, s1.getMPIBaseType());
+//		s2.unpack(mp, s1.pack(mp));
+//
+//		final TestObj[] objs = (TestObj[]) s2.getStorage();
+//		for (final TestObj obj : objs)
+//			System.out.print(obj + " ");
+//		System.out.println("");
+//
+//		MPI.Finalize();
+//	}
 }

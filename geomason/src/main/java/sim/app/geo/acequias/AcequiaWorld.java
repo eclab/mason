@@ -463,7 +463,7 @@ public class AcequiaWorld extends SimState {
 			// Convert our input stream to a BufferedReader
 
 
-			BufferedReader d = new BufferedReader(new InputStreamReader(AcequiasData.class.getResourceAsStream
+			BufferedReader d = new BufferedReader(new InputStreamReader(sim.app.geo.acequias.acequiasData.AcequiasData.class.getResourceAsStream
 					(filename)));
 
 
@@ -563,7 +563,7 @@ public class AcequiaWorld extends SimState {
 
 			// Convert our input stream to a
 
-			BufferedReader d = new BufferedReader(new InputStreamReader(AcequiasData.class.getResourceAsStream
+			BufferedReader d = new BufferedReader(new InputStreamReader(sim.app.geo.acequias.acequiasData.AcequiasData.class.getResourceAsStream
 					(filename)));
 
 			// get the parameters from the file
