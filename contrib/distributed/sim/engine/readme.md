@@ -1,0 +1,1 @@
+This contains an extended version of SimState which allows the simulation to abstract away various details of distribution-- to the best of its ability. Instead of using SimState in your simulation code, use DSimState instead.

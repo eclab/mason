@@ -227,6 +227,8 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
     public Integer getIntegerAttribute(final String name)
     {
+        AttributeValue a = this.attributes.get(name);
+        if(a == null) { return null; }
         return this.attributes.get(name).getInteger();
     }
 
@@ -237,16 +239,21 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
     public Double getDoubleAttribute(final String name)
     {
+        AttributeValue a = this.attributes.get(name);
+        if(a == null) { return null; }
         return this.attributes.get(name).getDouble();
     }
 
     public void addStringAttribute(final String name, final String value)
     {
+
         this.attributes.put(name, new AttributeValue(value));
     }
 
     public String getStringAttribute(final String name)
     {
+        AttributeValue a = this.attributes.get(name);
+        if(a == null) { return null; }
         return this.attributes.get(name).getString();
     }
 

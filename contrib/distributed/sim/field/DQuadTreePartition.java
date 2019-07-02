@@ -52,7 +52,8 @@ public class DQuadTreePartition extends DPartition {
         return toPartitionId(new DoublePoint(c));
     }
 
-    protected void setMPITopo() {
+    protected void setMPITopo()
+    {
         int[] ns = getNeighborIds();
 
         try {
@@ -259,71 +260,5 @@ public class DQuadTreePartition extends DPartition {
         // call postcommit
         for (Consumer r : postCallbacks)
             r.accept(level);
-    }
-
-    private static void testBalance() throws MPIException {
-        MPITest.printOnlyIn(0, "Testing balance()......");
-
-        DQuadTreePartition p = new DQuadTreePartition(new int[] {100, 100}, false, new int[] {1, 1});
-
-        IntPoint[] splitPoints = new IntPoint[] {
-            new IntPoint(50, 50),
-            new IntPoint(25, 25),
-            new IntPoint(75, 75),
-            new IntPoint(60, 90),
-            new IntPoint(10, 10)
-        };
-
-        p.initQuadTree(Arrays.asList(splitPoints));
-
-        Random rand = new Random();
-        double myRt = rand.nextDouble() * 10;
-
-        p.balance(myRt, 0);
-
-        MPITest.printOnlyIn(0, p.qt.toString());
-    }
-
-    private static void testInitWithPoints() throws MPIException {
-        MPITest.printOnlyIn(0, "Testing init with points......");
-
-        DQuadTreePartition p = new DQuadTreePartition(new int[] {100, 100}, false, new int[] {1, 1});
-
-        IntPoint[] splitPoints = new IntPoint[] {
-            new IntPoint(50, 50),
-            new IntPoint(25, 25),
-            new IntPoint(75, 75),
-            new IntPoint(60, 90),
-            new IntPoint(10, 10)
-        };
-
-        p.initQuadTree(Arrays.asList(splitPoints));
-
-        for (int i = 0; i < 3; i++) {
-            p.testIntraGroupComm(i);
-            p.testInterGroupComm(i);
-        }
-    }
-
-    private static void testInitUniformly() throws MPIException {
-        MPITest.printOnlyIn(0, "Testing init uniformly......");
-
-        DQuadTreePartition p = new DQuadTreePartition(new int[] {100, 100}, false, new int[] {1, 1});
-        p.initUniformly();
-
-        for (int i = 0; i < 3; i++) {
-            p.testIntraGroupComm(i);
-            p.testInterGroupComm(i);
-        }
-    }
-
-    public static void main(String[] args) throws MPIException {
-        MPI.Init(args);
-
-        testInitWithPoints();
-        testInitUniformly();
-        testBalance();
-
-        MPI.Finalize();
     }
 }

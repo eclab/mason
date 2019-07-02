@@ -7,6 +7,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import sim.engine.*;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.*;
+import sim.app.geo.conflictdiamonds.conflictdiamondsData.ConflictDiamondsData;
+import java.net.URL;
 
 /**
  * Conflict Diamonds
@@ -22,6 +24,11 @@ public class ConflictDiamonds extends SimState {
     public SparseGrid2D allPopulation;
     public GeomVectorField allBoundaries;
     public GeomVectorField allDiamonds;
+    public URL regionFile = ConflictDiamondsData.class.getResource("z_landscape.txt");
+    public URL remotenessFile = ConflictDiamondsData.class.getResource("z_cities.txt");
+    public URL diamondFile = ConflictDiamondsData.class.getResource("z_diamonds.txt");
+    public URL diamondproximateFile = ConflictDiamondsData.class.getResource("z_diamondcities.txt");
+    public URL populationFile = ConflictDiamondsData.class.getResource("z_population.txt");
 
     //store objects related to the modeling world
     ArrayList <Parcel> allParcels = new ArrayList <Parcel>();
@@ -72,11 +79,12 @@ public class ConflictDiamonds extends SimState {
     
         // create the grids
         try{
-        ConflictDiamondsBuilder.create("/conflictdiamonds/conflictdiamondsData/z_landscape.txt", "/conflictdiamonds/conflictdiamondsData/z_cities.txt", "/conflictdiamonds/conflictdiamondsData/z_diamonds.txt", "/conflictdiamonds/conflictdiamondsData/z_diamondcities.txt", "/conflictdiamonds/conflictdiamondsData/z_population.txt", this);
+            ConflictDiamondsBuilder.create(regionFile, remotenessFile, diamondFile, diamondproximateFile, populationFile, this);
+            //ConflictDiamondsBuilder.create("", "", "", "", "", this);
         } 
         catch (Exception e)
         {
-            System.err.println(e);
+            e.printStackTrace();
         }
         Steppable chartUpdater = new Steppable() {
             public void step(SimState state) {

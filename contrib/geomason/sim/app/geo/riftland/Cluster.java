@@ -6,7 +6,7 @@
 package sim.app.geo.riftland;
 
 import ec.util.MersenneTwisterFast;
-//import sim.app.geo.riftland.riftlandData.RiftLandData;
+import sim.app.geo.riftland.riftlandData.*;
 
 import java.io.*;
 import java.io.IOException;
@@ -100,11 +100,11 @@ public class Cluster //implements Steppable
                 BufferedReader clusterControl;
                 if (datapath.equals(""))
                 {
-                    clusterControl = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(params.world.getDatapath() + params.world.getWeatherClusterControlFile())));
+                    clusterControl = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(  params.world.getWeatherClusterControlFile())));
                 }
                 else
                 {
-                    clusterControl = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(clusterControlFile)));
+                    clusterControl = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(clusterControlFile)));
                 }
 
                 String line;
@@ -156,11 +156,11 @@ public class Cluster //implements Steppable
             BufferedReader clusterInfo;
             if (datapath.equals(""))
             {
-                clusterInfo = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(params.world.getDatapath() + "ClusterData/ClusterInfo.txt")));
+                clusterInfo = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream( "ClusterData/ClusterInfo.txt")));
             }
             else
             {
-                clusterInfo = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(clusterFile)));
+                clusterInfo = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(clusterFile)));
             }
 
             String line;
@@ -200,11 +200,12 @@ public class Cluster //implements Steppable
             BufferedReader clusterControl;
             if (datapath.equals(""))
             {
-                clusterControl = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(params.world.getDatapath() + params.world.getWeatherClusterControlFile())));
+                System.out.println(params.world.getWeatherClusterControlFile());
+                clusterControl = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(  params.world.getWeatherClusterControlFile())));
             }
             else
             {
-                clusterControl = new BufferedReader(new InputStreamReader(Cluster.class.getResourceAsStream(clusterControlFile)));
+                clusterControl = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(clusterControlFile)));
             }
 
             String line;
