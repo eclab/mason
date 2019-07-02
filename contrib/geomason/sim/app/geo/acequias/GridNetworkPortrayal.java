@@ -53,8 +53,8 @@ public class GridNetworkPortrayal extends FieldPortrayal2D
             new Rectangle2D.Double(0,0, xScale, yScale),  // the first two will get replaced
 
             info.clip, // we don't do further clipping
-            new Point2D.Double(0,0)
-            );  // these will also get replaced
+            new Point2D.Double(0,0),
+            info);  // these will also get replaced
 
         // draw ALL the edges -- one never knows if an edge will cross into our boundary
         

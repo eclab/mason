@@ -281,7 +281,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 		
 		// use this for determining which objects we should be concerned with 
 		GeometryFactory geomFactory = ((MasonGeometry)geometries.objs[0]).getGeometry().getFactory();
-		Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope);
+		//Geometry clipGeometry = geomFactory.toGeometry(geomField.clipEnvelope);
 		
 		for (int i = 0; i < geometries.size(); i++)
 		{
@@ -292,7 +292,7 @@ public class GeomVectorFieldPortrayal extends FieldPortrayal2D
 
 			Geometry geom = gm.getGeometry();
 			
-			if (clipGeometry.intersects(geom.getEnvelope()))
+			if (geomField.clipEnvelope.intersects(geom.getEnvelopeInternal()))
 			{
 				Portrayal p = getPortrayalForObject(gm);
 

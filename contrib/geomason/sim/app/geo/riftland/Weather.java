@@ -19,6 +19,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Int2D;
+import sim.app.geo.riftland.riftlandData.*;
 
 
 
@@ -525,7 +526,7 @@ public class Weather implements Steppable
                 BufferedReader rainfall;
                 if ("".equals(datapath))
                 {
-                    rainfall = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(params.world.getDatapath() + "RainData/" + month + ".txt")));
+                    rainfall = new BufferedReader(new InputStreamReader(RiftlandData.class.getResourceAsStream(params.world.getDatapath() + "RainData/" + month + ".txt")));
                 }
                 else
                 {

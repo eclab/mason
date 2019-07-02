@@ -28,7 +28,8 @@ import sim.app.geo.dcampusworld.DAgent;
 import sim.app.geo.dcampusworld.DCampusWorld;
 import sim.engine.SimState;
 import sim.engine.DSimState;
-import sim.field.DNonUniformPartition;
+//import sim.field.DNonUniformPartition;
+import sim.field.DQuadTreePartition;
 import sim.field.DObjectMigratorNonUniform;
 import sim.field.continuous.NContinuous2D;
 import sim.field.geo.GeomNContinuous2D;
@@ -76,7 +77,8 @@ public class DSchellingSpace extends DSimState
     
     double[] discretizations;
 	public GeomNContinuous2D<DAgent> communicator;
-	DNonUniformPartition partition;
+	//DNonUniformPartition partition;
+    DQuadTreePartition partition;
 	public IntHyperRect myPart;
 	public DObjectMigratorNonUniform queue;
 
@@ -247,7 +249,7 @@ public class DSchellingSpace extends DSimState
         int height = (int) Math.ceil(agents.getHeight());
 		int[] size = new int[] { width, height };
 		discretizations = new double[] { 7, 7 };
-		partition = DNonUniformPartition.getPartitionScheme(size, true, aoi);
+		partition = DQuadTreePartition.getPartitionScheme(size, true, aoi);
 		partition.initUniformly(null);
 		partition.commit();
 		NContinuous2D<DAgent> continuousField = new NContinuous2D<DAgent>(partition, aoi, discretizations);

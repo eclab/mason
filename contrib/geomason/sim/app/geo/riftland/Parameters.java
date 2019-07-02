@@ -568,7 +568,7 @@ public class Parameters
     public class WorldParams
     {
         private String datapath = "/riftland/riftlandData/";
-        private String populationFile = "PopData/riftpopulation.asc";
+        private String populationFile = "popData/riftpopulation.asc";
         private String politicalBoundariesFile = "political/RiftLand_Boundary.shp";
         private String landuseFile = "LandData/landquality.txt";
         private String farmerFile = "LandData/landtenure.txt";

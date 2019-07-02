@@ -29,7 +29,8 @@ import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.DSimState;
 import sim.engine.Steppable;
-import sim.field.DNonUniformPartition;
+//import sim.field.DNonUniformPartition;
+import sim.field.DQuadTreePartition;
 import sim.field.DObjectMigratorNonUniform;
 import sim.field.continuous.NContinuous2D;
 //import sim.field.geo.GeomNContinuous2D;
@@ -72,7 +73,8 @@ public class DCampusWorld extends DSimState
 
 	double[] discretizations;
 	public GeomNContinuous2D<DAgent> communicator;
-	DNonUniformPartition partition;
+	//DNonUniformPartition partition;
+    DQuadTreePartition partition;
 	public IntHyperRect myPart;
 	public DObjectMigratorNonUniform queue;
 
@@ -132,7 +134,7 @@ public class DCampusWorld extends DSimState
 			int[] aoi = new int[] { 10, 10 };
 			int[] size = new int[] { (int) WIDTH, (int) HEIGHT };
 			discretizations = new double[] { 7, 7 };
-			partition = DNonUniformPartition.getPartitionScheme(size, true, aoi);
+			partition = DQuadTreePartition.getPartitionScheme(size, true, aoi);
 			partition.initUniformly(null);
 			partition.commit();
 			NContinuous2D<DAgent> continuousField = new NContinuous2D<DAgent>(partition, aoi, discretizations);

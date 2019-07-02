@@ -508,6 +508,7 @@ final public class Population {
             InputStream populationStream;
             if ("".equals(datapath))
             {
+                System.out.println("params: " + params.world.getPopulationFile());
                 populationStream = new BufferedInputStream(RiftlandData.class.getResourceAsStream(params.world.getPopulationFile()));
             }
             else
@@ -522,6 +523,8 @@ final public class Population {
 
             // This is the grid that holds the LandScan data that is used to
             // populate households biased by population density.
+            System.out.println(populationStream);
+            System.out.println(populationGrid);
             ArcInfoASCGridImporter.read(populationStream, GeomGridField.GridDataType.INTEGER, populationGrid);
 
         } catch (IOException ex)
@@ -593,8 +596,26 @@ final public class Population {
         {
             MasonGeometry geometry = (MasonGeometry) ethnicGeometries.objs[i];
             System.out.println(geometry.toString());
-            int id = geometry.getIntegerAttribute("ID_CULTURE");
+            Integer integer = geometry.getIntegerAttribute("ID_CULTURE");
+            int id;
+            if(integer == null)
+            {
+                System.err.println("WARNING: Missing integer attribute ID_CULTURE in ethnic geometry " + i + "(" + ethnicGeometries.objs[i] +"]");
+                System.err.println("Setting to 0");
+                id = 0;
+            }
+            else
+            {
+                id = (int) integer;
+            }
             String name = geometry.getStringAttribute("NAME");
+            if (name == null)
+            {
+
+                System.err.println("WARNING: Missing integer attribute NAME in ethnic geometry " + i + "(" + ethnicGeometries.objs[i] +"]");
+                System.err.println("Setting to UNKNOWN");
+                name = "UNKNOWN";
+            }
             ethnicIDToName.put(id, name);
         }
     }
