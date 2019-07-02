@@ -1,0 +1,62 @@
+Launching Distribution:
+
+1. Have an AWS account with Root permissions.
+2. Have awscli installed
+3. Configure awscli with the following:
+
+$ aws configure
+
+It will ask you for you Access Key ID, Secret Access Key, AWS region, and output format.
+
+To find this information, in the AWS Management console
+$your_username -> My Security Credentials -> (It'll probably ask you if you want to continue. For the purposes of this, just press Continue)
+-> Access keys
+
+If you don't already know your Secret Access Key or you don't have any keys created, then, go to Create New Access Key.
+It will generate your Access Key ID and Secret Access Key. You'll want to download them for not losing access stuff.
+
+So provide that information.
+
+AWS region, I'm using us-east-1 (being based in GMU, Northern Virginia is a good idea).
+
+An alternative to using $(aws configure) is just creating the following files with the information filled in
+
+#In file ~/.aws/config ; Fill in region as appropriate.
+[default]
+region = us-east-1
+
+#In file ~/.aws/credentials
+[default]
+aws_access_key_id = $access_key_id
+aws_secret_access_key = $secret_access_key
+
+4. Go get your PEM file.
+ec2 -> Network & Security -> Key Pairs -> Create Key Pairs
+I'd name it mason. And then download the pem file and put it in ~/.ssh/
+
+You'll need to chmod it, `chmod g-r ~/.ssh/$pemfile.pem; chmod o-r ~/.ssh/$pemfile.pem`
+
+5. Setup Security Groups
+ec2 -> Network & Security -> Security Groups -> Create Security Group
+
+Name it how you will and give description. The default VPC is fine unless you have a specific VPC for it.
+Not super secure, but using "Add Rule", add two rules:
+1. Custom TCP, TCP, 0-65535, Anywhere
+2. SSH, TCP, 22, Anywhere
+
+Keep the Security Group ID around (referred to as sgid)
+
+6. Setup the Subnet.
+ec2 -> Default VPC -> Virtual Private Cloud -> Subnets
+
+You'll have a subnet already, so if you don't want a specific subnet for a specific VPC, just keep a subnet id around.
+Else, just create the subnet.
+
+7. Edit aws-setup/aws-config
+Change the appropriate variables.
+In particular, the "key", "security_gid", and "subnet_id".
+
+8. Launch aws-setup/aws-setup.sh
+
+9. -- When you're done, Launch, aws-setup/aws-teardown.sh
+

@@ -1,0 +1,42 @@
+This directory contains some scripts to make it easier to launch MASON
+if you prefer not to have to set your CLASSPATH and run MASON from the
+command line as per the tutorial documentation.
+
+If you wish to use charting but don't know how to set up your CLASSPATH,
+just download JMF, JFreeChart, JCommon, and iText (see the ECJ website)
+and place the jmf.jar, jfreechart...jar, jcommon...jar, and itext...jar
+files directly in the ecj directory.  The scripts below will find them. 
+("..." means "plus some numbers and letters and a dot" :-)
+
+
+[MacOS X users]
+
+mason.command
+	Double-click on this file, or alternatively launch it from the
+	command line, to run MASON.  If you have other jar files you'd
+	like to add, just dump them into the 'mason' directory.  This
+	script uses .tcsh.  Runs Java 1.4.x
+
+mason.1.3.1.command
+	Identical to mason.command, except that MASON is launched under
+	Java 1.3.1
+
+
+[Linux / BSD users]
+
+mason.sh	[Linux / BSD]
+	Launch from the command line to run MASON.  If you have other
+	jar files you'd like to add, just dump them into the 'mason'
+	directory.  This script uses .tcsh.  Runs Java 1.4.x
+
+
+[Windows Users]
+
+mason.bat
+	This DOS batch file will launch MASON, provided that you double
+	click on it or an a shortcut to it. It adds the jars files in
+	the 'mason' directory to the class path. 
+	
+ignoreme.bat
+	Auxiliary batch file used by mason.bat to add items to the
+	classpath.  Pay it no mind.

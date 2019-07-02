@@ -1,0 +1,54 @@
+GeoMason has a dependency on the Java Topology Suite (JTS).  Building
+GeoMason presumes that you have a JTS jar file in your java class
+path.
+
+The JTS main web site is http://tsusiatsoftware.net/jts/main.html.
+
+Also, GeoMason has optional dependencies on GeoTools and GDAL/OGR for
+their respective importers.  GeoTools can be downloaded from
+http://geotools.org and OGR can be downloaded from http://gdal.org/.
+Note that in OGR's case you will not only have to include the jar file
+in the class path but also ensure that the shared libraries are
+properly installed as well as the corresponding JNI file.
+
+If you wish to enable GeoTools or OGR GeoMason support, then uncomment
+the corresponding make file variable in the "jar" rule.
+
+And, GeoMason obviously has a dependency on Mason, so please ensure
+that it is included in your class path, too.
+
+                                 ###
+
+To run demos (presuming you've already done a "make demos"):
+
+java sim.app.geo.colorworld.ColorWorldWithUI
+
+java sim.app.geo.touchingworld.TouchingWorldWithUI
+
+java sim.app.geo.networkworld.NetworkWorldWithUI
+
+java sim.app.geo.nearbyworld.NearbyWorldWithUI
+
+java sim.app.geo.campusworld.CampusWorldWithUI
+
+java -Xms1g -Xmx2g sim.app.geo.gridlock.GridlockWithUI
+
+java sim.app.geo.sillypeds.SillyPedsWithUI
+
+java sim.app.geo.waterworld.WaterWorldWithUI
+
+java -Xms1g -Xmx2g sim.app.geo.schellingspace.SchellingSpaceWithUI
+
+java -Xms1g -Xmx2g sim.app.geo.sleuth.SleuthWorldWithUI
+
+java sim.app.geo.schellingpolygon.PolySchellingWithUI
+
+java sim.app.geo.turkana.TurkanaSouthModelWithUI
+
+java -Xms1g -Xmx2g sim.app.geo.sickStudents.SickStudentsModelWithUI
+
+Naturally, you may want to adjust the command line stack and heap
+allocation parameters to better fit available memory.
+
+
+You'll need to build GDAL: http://download.osgeo.org/gdal/

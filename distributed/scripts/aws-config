@@ -1,0 +1,56 @@
+#!/bin/bash
+# Author: Haoling
+
+# Mason repo dir
+MASON_DIR="$(pwd)/../"
+
+# AWS EC2 Configuration
+runId="default"
+count="1"
+instance="c5.large"
+
+# --------------------------------------------------
+
+JAR_NAME="mason.19.jar"
+HF_PUBLIC="hostfile"
+HF_PRIVATE="mpi_hostfile"
+
+# AWS Config
+key=$MASON_KEY
+security_gid=$SECURITY_GID # Set this up via AWS Security Group
+subnet_id=$SUBNET_ID # Set this up in AWS VPC -> Subnet
+
+# ubuntu-xenial-16.04-amd64-server-20180109
+ami="ami-41e0b93b" 
+REMOTE_USERNAME="ubuntu"
+REMOTE_HOME="/home/$REMOTE_USERNAME/"
+REMOTE_MASON_DIR="$REMOTE_HOME/mason/mason"
+
+INST_UP_DELAY="90"
+INST_CREATE_DELAY="15"
+
+# SSH login config
+identity="$HOME/.ssh/$key.pem"
+ssh_opts="-i $identity -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -l $REMOTE_USERNAME"
+
+# Setup the files
+apt_packages="build-essential default-jdk htop"
+openmpi_link="https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-3.1.0.tar.gz"
+code_repo="https://github.com/eclab/mason.git"
+code_branch="master"
+
+file_done_flag="file_setup_done"
+
+compile_openmpi="cd openmpi-3.1.0; ./configure --enable-mpi-java; make -j4; sudo make install; sudo ldconfig; cd .."
+compile_mason="git clone -b $code_branch $code_repo; cd mason/mason; make; cd ../contrib/distributed/; make; cd ../../../"
+
+commands_per_host="sudo apt-get update; \
+sudo apt-get -y install $apt_packages; \
+cd $REMOTE_HOME; \
+curl $openmpi_link | tar xz; \
+$compile_openmpi; \
+$compile_mason; \
+touch $file_done_flag;
+"
+
+MPIJAVA="mpijava() { mpirun -np \$1 --hostfile $REMOTE_HOME/$HF_PRIVATE java -cp $REMOTE_HOME/$JAR_NAME \${@:2};}"

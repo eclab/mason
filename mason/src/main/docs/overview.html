@@ -1,0 +1,401 @@
+<html>
+<head>
+<title>MASON Class Overview</title>
+<style type="text/css">
+
+h2  {
+  text-align:center;
+  font-family:Times,Times New Roman,Serif;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  border-top: solid 3px #333355;
+  border-bottom: solid 3px #333355;
+  background-color: #F3F3F3;
+  }
+
+h1  {
+  text-align:center;
+  font-family:Times,Times New Roman,Serif;
+  color: #FFFFFF;
+  font-weight: 100;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  border-bottom: solid 10px #CCCCCC;
+  background-color: #333355;
+  }
+  
+p  {
+  margin-left: 3em;
+  }
+
+</style>
+
+</head>
+<body>
+
+
+<h1>MASON Class Overview</h1>
+
+<h2>The sim.util and ec.util Packages</h2>
+
+This package contains classes whose function is not MASON-only.  <tt>ec.util</tt> is not a subpackage of <tt>sim</tt> because it contains classes developed for <a href="http://cs.gmu.edu/~eclab/projects/ecj/">ECJ</a>, an evolutionary computation library provided by George Mason University's <a href="http://cs.gmu.edu/~eclab/">ECLab.</a>  The <tt>sim.util</tt> package contains classes developed in conjunction with MASON or converted from other packages gathered online.
+
+<p><b>MersenneTwisterFast</b>&nbsp;&nbsp;&nbsp;(ec.util) MASON's default random number generator.  MersenneTwisterFast is a highly efficient, unsynchronized implementation of the Mersenne Twister RNG.  It needs to be in <tt>ec.util</tt> for MASON to work properly with ECJ.
+
+
+<p><b>Bag, IntBag, DoubleBag</b>&nbsp;&nbsp;&nbsp;Bag is an extensible Object array with public access.  Significantly (3-4 times) faster than ArrayList or Vector.  Bag is a subclass of Collection.  IntBag and DoubleBag are extensible arrays of integers and doubles.
+
+<p><b>Double2D, Double3D, Int2D, Int3D</b>&nbsp;&nbsp;&nbsp;Immutable x,y or x,y,z tuples.  These classes are used extensively to describe locations of objects.  We use them rather than java.awt.Point etc. because you need an immutable class to work properly with a hashtable.  Our tuples have better <a href="http://www.cris.com/~Ttwang/tech/inthash.htm">hash algorithms</a> as well.
+
+<p><b>MutableDouble2D, MutableDouble3D, MutableInt2D, MutableInt3D</b>&nbsp;&nbsp;&nbsp;Mutable versions of Double2D, Double3D, Int2D, and Int3D.  Instances of these classes hash to the same value as their immutable cousins, and so can be used to look up objects stored by their cousins in hash tables (though you wouldn't use a Mutable version as a key <i>store</i> a value in a hash table).
+
+<p><b>Interval</b>&nbsp;&nbsp;&nbsp;A class for specifying full-open intervals between two double values or two long values.
+
+<p><b>MutableDouble</b>&nbsp;&nbsp;&nbsp;A trivial holder for a single, modifiable double value.
+
+<p><b>DoubleDimension2D</b>&nbsp;&nbsp;&nbsp;A Dimension2D subclass which holds doubles (for some reason Java doesn't have this).
+
+<p><b>Valuable</b>&nbsp;&nbsp;&nbsp;A simple interface for objects which return a double value.
+
+<p><b>Properties, SimpleProperties, CollectionProperties, Proxiable</b>&nbsp;&nbsp;&nbsp;A small collection of classes for examining and manipulating the Java Beans properties of objects.  <i>foo</i> is a Java Beans property if there exists a <tt>getFoo()</tt> or <tt>isFoo()</tt> method (and an optional <tt>setFoo(<i>val</i>)</tt> method).  You get the properties from an object with Properties.getProperties(...).  Objects can be declared Proxiable, meaning that they offer to the Properties object a proxy to examine instead of the objects themselves.
+
+<p><b>WordWrap</b>&nbsp;&nbsp;&nbsp;A small class for doing word wrapping either by number of columns or number of pixels (given font information).
+
+<p><b>Heap</b>&nbsp;&nbsp;&nbsp;A simple, fast binary heap class, with Comparables as keys.
+
+<p><b>Utilities</b>&nbsp;&nbsp;&nbsp;A few static utility methods.
+
+<h3>sim.util.media</h3>
+
+Utilities for manipulating media.
+
+<p><b>MovieEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating Quicktime movies from BufferedImages using <a href="http://java.sun.com/products/java-media/jmf">Sun's Java Media Framework (JMF).</a>  Written based largely on <a href="http://java.sun.com/products/java-media/jmf/2.1.1/solutions/JpegImagesToMovie.java">code from Sun</a>, portions of which are subject to a mild BSD-like License from Sun.
+
+<p><b>PngEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating PNG images.  Used because Sun's image framework is not available on all platforms (and the encoder works just fine).  Distributed with permission from David Eisenberg, under the Artistic License.
+
+<p><b>PDFEncoder</b>&nbsp;&nbsp;&nbsp;A class for generating PDF files from Graphics2D objects, using iText.
+
+<h3>sim.util.media.chart</h3>
+
+Utilities for creating Charts using JFreeChart.
+
+<p><b>ChartGenerator</b>&nbsp;&nbsp;&nbsp;An abstract JPanel which displays a chart using the JFreeChart library.
+
+<p><b>SeriesAttributes</b>&nbsp;&nbsp;&nbsp;An abstract LabelledList which contains the drawing attributes of a given data series displayed in a ChartGenerator.
+
+<p><b>HistogramChartGenerator</b>&nbsp;&nbsp;&nbsp;A ChartGenerator which displays data series as histograms.
+
+<p><b>HistogramSeriesAttributes</b>&nbsp;&nbsp;&nbsp;A SeriesAttributes designed to provide drawing attributes for histogram data series.
+
+<p><b>TimeSeriesChartGenerator</b>&nbsp;&nbsp;&nbsp;A ChartGenerator which displays data series as time series.
+
+<p><b>TimeSeriesAttributes</b>&nbsp;&nbsp;&nbsp;A SeriesAttributes designed to provide drawing attributes for time series.
+
+<h3>sim.util.gui</h3>
+
+Graphical Interface Widgets.
+
+<p><b>AbstractScrollable</b>&nbsp;&nbsp;&nbsp;An abstract superclass with basic implementation of the <tt>javax.swing.Scrollable</tt> interface.
+
+<p><b>LabelledList</b>&nbsp;&nbsp;&nbsp;A simple class to make it easy to create a 2xN matrix of widgets (often the left column is labels for the right column).  
+
+<p><b>MovieMaker</b>&nbsp;&nbsp;&nbsp;A GUI front-end for <tt>MovieEncoder</tt>.  Relies on Java's reflection library to tentatively access MovieEncoder; if JMF is not installed on a machine, properly gives a graphical interface warning.
+
+<p><b>NumberTextField</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images).  A widget for entering, displaying, and filtering a numerical value.
+
+<p><b>PropertyTextField</b>&nbsp;&nbsp;&nbsp;A widget for entering, displaying, and filtering a string or boolean value.
+
+<p><b>MiniHistogram</b>&nbsp;&nbsp;&nbsp;A simple class for small histograms which fit nicely into the space the size of a text field.  
+
+<p><b>ColorMap</b>&nbsp;&nbsp;&nbsp;An interface for mapping double or integer values to colors.  
+
+<p><b>SimpleColorMap</b>&nbsp;&nbsp;&nbsp;A basic implementation of the ColorMap interface.
+
+<p><b>ColorWell</b>&nbsp;&nbsp;&nbsp;A widget for displaying and changing a Color.
+
+<p><b>HTMLBrowser</b>&nbsp;&nbsp;&nbsp;A very simple, almost trivial, HTML browser class, used by the Console.
+
+<p><b>DialogToolTip</b>&nbsp;&nbsp;&nbsp;A tool-tip implemented with a JDialog.  This is used to provide tooltips even in Java3D, which does not have any facility for them.
+
+<h2>The sim.util.engine Package</h2>
+
+Contains the main simulation superclass, the schedule, and utilities for scheduling.
+
+<p><b>SimState</b>&nbsp;&nbsp;&nbsp;The superclass that you extend to create your simulation model.  Contains at least a <tt>Schedule</tt> and a <tt>MersenneTwisterFast</tt>.
+
+<p><b>Schedule</b>&nbsp;&nbsp;&nbsp;A discrete-event schedule, using heaps and arrays to perform arbitrary schedules and repeated schedules efficiently.  Represents time in your model.
+
+<p><b>Steppable</b>&nbsp;&nbsp;&nbsp;Something that can be scheduled on the schedule to have its <tt>step()</tt> method called (to be "stepped").
+
+<p><b>Stoppable</b>&nbsp;&nbsp;&nbsp;When a Steppable is scheduled repeating, a Stoppable is returned, with a function called <tt>stop()</tt> to stop the repeating from continuing on.
+
+<p><b>Sequence</b>&nbsp;&nbsp;&nbsp;A Steppable which holds an array of Steppables.  When stepped, steps each of the Steppables in turn.
+
+<p><b>RandomSequence</b>&nbsp;&nbsp;&nbsp;A Sequence which randomizes the order of its Steppables before stepping them.
+
+<p><b>ParallelSequence</b>&nbsp;&nbsp;&nbsp;A Sequence which steps all of its Steppables simultaneously, in different threads.
+
+<p><b>MultiStep</b>&nbsp;&nbsp;&nbsp;A Steppable which holds a subsidiary Steppable.  Can either call step() N times for each MultiStep.step(), or will call step() once every N MultiStep.step() calls.
+
+<p><b>WeakStep</b>&nbsp;&nbsp;&nbsp;A Steppable which only weakly holds an object (letting it GC if desired).
+
+<p><b>TentativeStep</b>&nbsp;&nbsp;&nbsp;A Steppable which provides a Stoppable that can stop it before it is fired.
+
+<p><b>Asynchronous</b>&nbsp;&nbsp;&nbsp;A simple interface for creating asynchronous thread Steppable objects.
+
+<p><b>AsynchronousSteppable</b>&nbsp;&nbsp;&nbsp;A basic implementation of the Asynchronous interface.
+
+<p><b>MakesSimState</b>&nbsp;&nbsp;&nbsp;An interface for classes capable of creating SimState subclasses: largely used internally in SimState.
+
+
+<h2>The sim.field Package</h2>
+
+Contains <i>fields</i>, which represent spatial or other neighborhoods.  Zero or more fields represent space in your model.
+
+<p><b>SparseField</b>&nbsp;&nbsp;&nbsp;An abstract superclass of various <i>sparse fields</i>.  A sparse field is one which uses hash tables rather than arrays to store a sparse number of objects spread over a large area.
+
+<h3>The sim.field.grid Package</h3>
+
+Contains <i>grids</i>, which are discrete fields.  Most grids have a fixed width and height.  Grids can be treated toroidally, and 2D grids can be thought of as holding hexagons rather than squares.
+
+<p><b>Grid2D, Grid3D</b>&nbsp;&nbsp;&nbsp;Top-level interfaces for all grids.  Specify basic grid functions, and toroidal and/or hexagonal conversion functions.
+
+<p><b>AbstractGrid2D, AbstractGrid3D</b>&nbsp;&nbsp;&nbsp;Abstract implementations of the Grid2D and Grid3D interfaces.  Superclasses of all but the sparse grids (which subclass instead from SparseField).
+
+<p><b>IntGrid2D, IntGrid3D</b>&nbsp;&nbsp;&nbsp;Grids of integers.  Literally covers for multidimensional Java integer arrays.
+
+<p><b>DoubleGrid2D, DoubleGrid3D</b>&nbsp;&nbsp;&nbsp;Grids of doubles.  Literally covers for multidimensional Java double arrays.
+
+<p><b>ObjectGrid2D, ObjectGrid3D</b>&nbsp;&nbsp;&nbsp;Grids of Objects.  Literally covers for multidimensional Java Object arrays.
+
+<p><b>SparseGrid2D, SparseGrid3D</b>&nbsp;&nbsp;&nbsp;Sparse grids of Objects.  Allow objects to be located anywhere (rather than in a fixed width/height) if necessary, and for multiple Objects to be located at the same location.  Implemented with a SparseField.  Locations are specified with <tt>Int2D</tt> and <tt>Int3D</tt>.
+
+<h3>The sim.field.continuous Package</h3>
+
+Contains <i>continuous fields</i> which relate Objects to locations defined as tuples of doubles.
+
+<p><b>Continuous2D, Continuous3D</b>&nbsp;&nbsp;&nbsp;Associate any number of Objects with 2D or 3D tuples of doubles as locations.  Efficient neighborhood lookups are done through discretization of the space.  Subclasses of SparseField.  Locations are specified with <tt>Double2D</tt> and <tt>Double3D</tt>.
+
+<h3>The sim.field.network Package</h3>
+
+Contains <i>networks</i> (directed graphs) which relate Objects to one another via binary relationships.
+
+<p><b>Edge</b>&nbsp;&nbsp;&nbsp;A directed relationship between two objects.  Edges may be labelled with an "info" object (a weight, a name, etc.).
+
+<p><b>Network</b>&nbsp;&nbsp;&nbsp;Defines directed graphs and networks between arbitrary objects.  Relationships are defined using <tt>Edge</tt> objects.
+
+<h2>The sim.display Package</h2>
+
+This package holds the main GUI windows in MASON: the Console and Display2D windows.  The Console maintains the simulation and runs the schedule.  The Display2D holds various FieldPortrayal2D objects.
+
+<p><b>Controller</b>&nbsp;&nbsp;&nbsp;The abstract superclass of top-level controllers of a simulation.
+
+<p><b>Console</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images, plus the <i>simulation.classes</i> file).  An elaborate Controller which presents a window allowing the user to start and stop the simulation, change its parameters, and manage its various windows and inspectors.
+
+<p><b>Display2D</b>&nbsp;&nbsp;&nbsp;(and various <i>PNG</i> images).  A window which allows the user to scroll, scale, take snapshots of, and make movies of various FieldPortrayal2Ds as they are updated during the course of the simulation run.
+
+<p><b>GUIState</b>&nbsp;&nbsp;&nbsp;The wrapper which allows graphical interface widgets to synchronize with and communicate with an underlying <tt>SimState</tt>.  Packages implementing a graphical interface will need to subclass from this class.
+
+<p><b>SimApplet</b>&nbsp;&nbsp;&nbsp;A simple class for setting up MASON as an applet.
+
+<h2>The sim.portrayal Package</h2>
+
+This package is the most elaborate of any of MASON's packages.  It contains facilities for <i>portraying</i> (drawing, picking via a graphical interface, inspecting) fields and objects/ints/doubles stored in those fields.  Fields are portrayed with <i>field portrayals</i> stored in the <tt>sim.portrayal.grid</tt>, <tt>sim.portrayal.continuous</tt>, and <tt>sim.portrayal.network</tt> packages.  Objects stored within those fields are portrayed using <i>simple portrayals</i>: some useful ones are in the <tt>sim.portrayal.simple</tt> package.
+
+<p><b>Portrayal</b>&nbsp;&nbsp;&nbsp;The top-level interface for all portrayals.
+
+<p><b>Portrayal2D</b>&nbsp;&nbsp;&nbsp;A Portrayal subinterface.  The top interface for all 2D portrayals.
+
+<p><b>FieldPortrayal</b>&nbsp;&nbsp;&nbsp;The abstract superclass of all Field Portrayals.  Contains facilities for storing SimplePortrayals and relating them with objects in a Field.
+
+<p><b>FieldPortrayal2D</b>&nbsp;&nbsp;&nbsp;The abstract superclass of all 2D Field Portrayals.
+
+<p><b>SimplePotrayal2D</b>&nbsp;&nbsp;&nbsp;The abstract superclass of all 2D Simple Portrayals.
+
+<p><b>Inspector</b>&nbsp;&nbsp;&nbsp;The abstract superclass of GUI widgets responsible for allowing the user to view and manipulate the internal parameters of objects and fields.
+
+<p><b>SimpleInspector</b>&nbsp;&nbsp;&nbsp;A concrete implementation of Inspector which does so by letting the user have access to the Java Bean properties of objects.  This is done using the <tt>Properties</tt> class and subclasses.
+
+<p><b>DrawInfo2D</b>&nbsp;&nbsp;&nbsp;When an object or field needs to be drawn, the scale, location, and clipping information is passed to its portrayal in this wrapper object. 
+
+<p><b>HexaDrawInfo2D</b>&nbsp;&nbsp;&nbsp;A subclass of DrawInfo2D with additional information for Hexagons to draw themselves prettily.
+
+<p><b>Oriented2D</b>&nbsp;&nbsp;&nbsp;Objects adhering to this interface may be portrayed by <tt>sim.portrayal.simple.OrientedPortrayal2D</tt>.
+
+<p><b>LocationWrapper</b>&nbsp;&nbsp;&nbsp;Relates objects with locations in a field.  Used to by fields to assist in the generation of inspectors</b>&nbsp;&nbsp;&nbsp;
+
+<h3>The sim.portrayal.grid Package</h3>
+
+Portrayals for grids.
+
+<p><b>ValueGridPortrayal2D, HexaValueGridPortrayal2D, FastValueGridPortrayal2D, FastHexaValueGridPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrayals for <tt>IntGrid2D</tt> and <tt>DoubleGrid2D</tt>.  <tt>ValueGridPortrayal2D</tt> is flexible, while <tt>FastValueGridPortrayal2D</tt> is faster.  <tt>HexaValueGridPortrayal2D</tt> portrays the fields as hexagonal fields.  <tt>FastHexaValueGridPortrayal2D</tt> is faster (drawing rectangles rather than hexagons).
+
+<p><b>ObjectGridPortrayal2D, HexaObjectGridPortrayal2D, FastObjectGridPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrayals for <tt>ObjectGrid2D</tt>, portraying it in normal fashion or as a hexagonal grid.
+
+<p><b>SparseGridPortrayal2D, HexaSparseGridPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrayals for <tt>SparseGrid2D</tt>, portraying it in normal fashion or as a hexagonal grid.
+
+<p><b>DrawPolicy</b>&nbsp;&nbsp;&nbsp;Since multiple objects may hold the same polsition in a <tt>SparseGrid2D</tt>, its portrayals call this optional object to determine which objects to draw at positions and in which order.
+
+<h3>The sim.portrayal.continuous Package</h3>
+
+Portrayals for continuous fields.
+
+<p><b>ContinuousPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays a <tt>Continuous2D</tt> field.
+
+<h3>The sim.portrayal.network Package</h3>
+
+Portrayals for networks.
+
+<p><b>NetworkPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays the edges in a <tt>Network</tt>.  The nodes in the field must be also stored in a <tt>SparseGrid2D</tt> or <tt>Continuous2D</tt> field, and portrayed with a <tt>SparseGridPortrayal2D</tt> or <tt>ContinuousPortrayal2D</tt> respectively.
+
+<p><b>SpatialNetwork2D</b>&nbsp;&nbsp;&nbsp;Holds the <tt>Network</tt> and either a <tt>SparseGrid2D</tt> or <tt>Continuous2D</tt>.  Used by NetworkPortrayal2D to know where to draw edges (by querying the right field for the node locations).
+
+<p><b>SimpleEdgePortrayal2D</b>&nbsp;&nbsp;&nbsp;A basic SimplePortrayal2D for Edges.
+
+<p><b>EdgeDrawInfo2D</b>&nbsp;&nbsp;&nbsp;A subclass of <tt>DrawInfo2D</tt> which adds additional information for drawing Edges.
+
+<h3>The sim.portrayal.simple Package</h3>
+
+Various SimplePortrayal2Ds for your enjoyment.
+
+<p><b>RectanglePortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as rectangles (usually squares)
+
+<p><b>ValuePortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays values (from ValueGridPortrayal2D) as rectangles colored according to the value.
+
+<p><b>OvalPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as ovals (usually circles).
+
+<p><b>ShapePortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as provided Java2D shapes.
+
+<p><b>ImagePortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as a provided image.
+
+<p><b>HexagonalPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays objects as true hexagons.
+
+<p><b>LabelledPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which adds a text label to them.
+
+<p><b>CircledPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which draws a big circle around them.
+
+<p><b>OrientedPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which draws a line (or other shape) over them pointing in a given direction.  The direction is provided by the underlying portrayed object, assuming that it adheres to <tt>Oriented2D</tt>.
+
+<p><b>TransformedPortrayal2D</b>&nbsp;&nbsp;&nbsp;A wrapper for other 2D Portrayals which draws transforms them according to a provided AffineTransform (rotates, translates, skews them, etc.).
+
+<h3>The sim.portrayal.inspector Package</h3>
+
+Utility inspectors and plug-in property inspectors.
+
+<p><b>TabbedInspector</b>&nbsp;&nbsp;&nbsp;An inspector which can hold multiple subinspectors in a tabbed pane.
+
+<p><b>PropertyInspector</b>&nbsp;&nbsp;&nbsp;The abstract superclass of plug-in inspectors designed to inspect individual properties appearing in the primary inspectors of a simulation.
+
+<p><b>StreamingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A PropertyInspector which can stream a property's values to disk, to a window, to standard out, etc.
+
+<p><b>ChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;An abstract PropertyInspector for creating inspectors which chart a property's values using JFreeChart.
+
+<p><b>TimeSeriesChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A ChartingPropertyInspector which charts a property's values using a time series chart.
+
+<p><b>HistogramChartingPropertyInspector</b>&nbsp;&nbsp;&nbsp;A ChartingPropertyInspector which charts a property's values using a histogram.  The property's values must be in the form of an array or other list.
+
+
+<h2>The sim.display3d Package</h2>
+
+This package holds the GUI system for displaying elements in 3D using Java3D.  Primarily, this is Display3D.
+
+<p><b>Display3D</b>&nbsp;&nbsp;&nbsp;A window which allows the user to scale, translate, rotate, zoom in and out, take snapshots of, and make movies of various Portrayal3Ds as they are updated during the course of a simulation run.
+
+<p><b>CapturingCanvas3D</b>&nbsp;&nbsp;&nbsp;A subclass of Java3D's Canvas3D class which enables Display3D to take snapshots and make movies.
+
+<p><b>SelectionBehavior</b>&nbsp;&nbsp;&nbsp;A Java3D behavior which enables Display3D to select and inspect objects.
+
+<p><b>ToolTipBehavior</b>&nbsp;&nbsp;&nbsp;A Java3D behavior which pops up tool tips.
+
+<h2>The sim.portrayal3d Package</h2>
+
+This package is an extension of the <tt>sim.portrayal</tt> to portray objects in 3D space rather than 2D space.  The system used is Java3D.
+
+<p><b>Portrayal3D</b>&nbsp;&nbsp;&nbsp;An interface which extends <tt>Portrayal</tt> to specify how objects are to be represented in 3D space.
+
+<p><b>FieldPortrayal3D</b>&nbsp;&nbsp;&nbsp;An abstract subclass of <tt>FieldPortrayal</tt> which adheres to the <tt>Portrayal3D</tt> interface.  FieldPortrayal3D is the superclass of all Field Portrayals which draw objects in 3D space.
+
+<p><b>SparseFieldPortrayal3D</b>&nbsp;&nbsp;&nbsp;An abstract subclass of <tt>FieldPortrayal3D</tt> and the superclass of all 3D portrayals of 2D and 3D sparse fields.
+
+<p><b>SimplePortrayal3D</b>&nbsp;&nbsp;&nbsp;A concrete implementation of <tt>Portrayal3D</tt> for simple (non-field) portrayals in 3D.  SimplePortrayal3D by default does not display anything.  Various subclasses display objects in different ways.
+
+<h3>The sim.portrayal3d.continuous Package</h3>
+
+3D Portrayals for continuous fields.
+
+<p><b>ContinuousPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays both Continuous2D and Continuous3D fields in 3D.
+
+<h3>The sim.portrayal3d.network Package</h3>
+
+3D Portrayals for networks.
+
+<p><b>NetworkPortrayal2D</b>&nbsp;&nbsp;&nbsp;Portrays the edges in a <tt>Network</tt>.  The nodes in the field must be also stored in a <tt>SparseGrid3D</tt> or <tt>Continuous3D</tt> field, and portrayed with a <tt>SparseGridPortrayal3D</tt> or <tt>ContinuousPortrayal3D</tt> respectively.
+
+<p><b>SpatialNetwork3D</b>&nbsp;&nbsp;&nbsp;Holds the <tt>Network</tt> and either a <tt>SparseGrid3D</tt> or <tt>Continuous3D</tt>.  Used by NetworkPortrayal3D to know where to draw edges (by querying the right field for the node locations).
+
+<p><b>SimpleEdgePortrayal3D</b>&nbsp;&nbsp;&nbsp;A basic SimplePortrayal3D for Edges.
+
+<h3>The sim.portrayal3d.grid Package</h3>
+
+3D Portrayals for grids.
+
+<p><b>SparseGridPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays both SparseGrid2D and SparseGrid3D fields in 3D.
+
+<p><b>SparseGrid2DPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays SparseGrid2D fields in 3D by piling up multiple objects located at the same [x,y] location.
+
+<p><b>ObjectGridPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays ObjectGrid2D and ObjectGrid3D fields.
+
+<p><b>ValueGridPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays DoubleGrid2D, DoubleGrid3D, IntGrid2D, and IntGrid3D fields.
+
+<p><b>ValueGrid2DPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays DoubleGrid2D and IntGrid2D fields in 3D by warping a mesh of squares.
+
+<p><b>ValueGridCellInfo</b>&nbsp;&nbsp;&nbsp;A class used by ValueGrid2DPortrayal3D to communicate information about underlying values to its mesh of squares.
+
+<h3>The sim.portrayal3d.grid.quad Package</h3>
+
+Various ways a ValueGrid2DPortrayal3D may draw its underlying squares.
+
+<p><b>QuadPortrayal</b>&nbsp;&nbsp;&nbsp;An abstract superclass defining how rectangles are portrayed by the ValueGrid2DPortrayal3D.
+
+<p><b>TilePortrayal</b>&nbsp;&nbsp;&nbsp;A QuadPortrayal which portrays values as the squares themselves (the 'tiles').
+
+<p><b>MeshPortrayal</b>&nbsp;&nbsp;&nbsp;A QuadPortrayal which portrays values as the intersections of the squares.
+
+<h3>The sim.portrayal3d.simple Package</h3>
+
+All manner of SimplePortrayals in 3D.
+
+<p><b>ConePortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as cones.
+
+<p><b>CubePortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as cubes.
+
+<p><b>CylinderPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as cylinders.
+
+<p><b>SpherePortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as spheres.
+
+<p><b>ImagePortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as images floating in 3D space.
+
+<p><b>Shape3DPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as Java3D Shape3D objects (provided by you).
+
+<p><b>SharedGroupPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as Java3D SharedGroup objects (provided by you).
+
+<p><b>LightPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as various kinds of Light objects.
+
+<p><b>WireFrameBoxPortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays objects as wireframe boxes.
+
+<p><b>ValuePortrayal3D</b>&nbsp;&nbsp;&nbsp;Portrays values (from ValueGridPortrayal3D) as cubes colored according to the value.
+
+<p><b>LabelledPortrayal3D</b>&nbsp;&nbsp;&nbsp;A wrapper for other SimplePortrayal3Ds which adds a label.
+
+<p><b>TransformedPortrayal3D</b>&nbsp;&nbsp;&nbsp;A wrapper for other SimplePortrayal3Ds which transforms them using a provided affine transform (translates, rotates, skews them, etc.).
+
+<p><b>CircledPortrayal3D</b>&nbsp;&nbsp;&nbsp;A wrapper for other SimplePortrayal3Ds which surrounds them with a large semitransparent sphere.
+
+<p><b>Axes</b>&nbsp;&nbsp;&nbsp;Draws axes.  Primarily used internally by <tt>Display3D</tt>.
+
+<p><b>Arrow</b>&nbsp;&nbsp;&nbsp;Draws an arrow.  Used to form <tt>Axes</tt>.
+
+</body>
+</html>

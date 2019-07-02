@@ -6,8 +6,23 @@ contrib/geomason/target/
 *.log
 *.out
 *.toc
-
 *.DS_Store
 *.project
 *.classpath
 *.settings
+# Eclipse
+.classpath
+.project
+.settings/
+ 
+# Intellij
+.idea/
+*.iml
+*.iws
+ 
+# Mac
+.DS_Store
+ 
+# Maven
+log/
+target/

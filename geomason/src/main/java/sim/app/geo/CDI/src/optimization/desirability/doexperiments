@@ -1,0 +1,38 @@
+#!/bin/bash
+# A shell script to run multiple ecj runs
+
+# class/library paths
+CLSPATH=.:bin:src:libs/*
+SRCPATH=src/optimization/desirability
+
+# total number of runs
+PARAMFILE=$1
+DESTDIR=$2
+RUN_START=$3
+RUN_END=$4
+
+if [[ ! $# -eq 4 ]]; then
+	echo "Usage: ./doexperiments [ecj parameter file] [destination directory] [run start] [run end]" ;
+	exit 0;
+fi
+
+cd ../../../ ;
+
+# if the output directory does not exist, create it.
+if [ ! -d $SRCPATH/$DESTDIR ]; then
+	mkdir $SRCPATH/$DESTDIR ;
+fi
+
+if [[ -s $SRCPATH/$PARAMFILE ]]; then
+	# run the ec for N times
+	for (( i=$RUN_START; i<=$RUN_END; i++ ))
+	do
+		echo "Starting run $i" ;
+		java -Xmx3000m -cp $CLSPATH ec.Evolve -file $SRCPATH/$PARAMFILE -p stat.file=$DESTDIR/out-$i.stat ;
+	done
+	echo "Done $RUN_START-$RUN_END ec experiments with $SRCPATH/$PARAMFILE" ;
+else
+	echo "File $SRCPATH/$PARAMFILE could not be located!"
+	echo "Usage: ./doexperiments [ecj parameter file] [destination directory] [run start] [run end]" ;
+	exit 0;
+fi

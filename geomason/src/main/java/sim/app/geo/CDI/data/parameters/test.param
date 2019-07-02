@@ -1,0 +1,159 @@
+print-params = true
+
+# coefficient for different grids
+# These values were evolved in phase 1
+#tempCoeff = 0.2377310
+elevCoeff = -0.08117447
+riverCoeff = 0.1122526
+portCoeff = -0.03746687
+
+tempCoeff = 0.9
+
+
+# Phase 2 parameters
+socialWeight = 10
+socialWeightSpread = 0.01
+desExp = 3.0
+popSize = 7000000
+recalculationSkip = 10000
+
+
+# path for different files
+nationsFilename = files/data-files/cdi_country_e2.txt
+populationFilename = files/data-files/cdi_pop_e2.txt
+borealAreaFilename = files/data-files/cdibnd10k.txt
+latFilename = files/data-files/cdilat10k.txt
+lonFilename = files/data-files/cdilon10k.txt
+
+# Baseline run  800AD-1300AD
+#histTempFilename=data/tempData/tas_Amon_CCSM4_piControl_r1i1p1_080001-130012.nc
+#projTempFileOffset=0
+
+#This is historical jan 1851 to dec 2004:
+#histTempFilename=data/tempData/bias_all_ccsm.clm2.h0.TSA.185101-200412.nc
+#histTempFileOffset=720
+#Soil temperature: bias_all_ccsm.clm2.h0.TSOI.185101-200412.nc
+
+#This is RCP 2.6 jan 2005 to dec 2099
+#projTempFilename=data/tempData/bias_all_ccsm_rcp2.6.clm2.h0.TSA.200501-209912.nc
+#projTempFileOffset=0
+#Soil temperature: bias_all_ccsm_rcp2.6.clm2.h0.TSOI.200501-209912.nc
+
+#This is RCP 8.5 jan 2005 to dec 2099
+projTempFilename=data/tempData/bias_all_ccsm_rcp.clm2.h0.TSA.200501-209912.nc
+projTempFileOffset=0
+#Soil temperature: bias_all_ccsm_rcp.clm2.h0.TSOI.200501-209912.nc
+
+
+tempDesFile = files/data-files/canada_temp_zscore.txt
+riverDesFile = files/data-files/canada_lake_zscore.txt
+portDesFile = files/data-files/canada_port_zscore.txt
+elevDesFile = files/data-files/canada_dem_zscore.txt
+riverRawFile = files/data-files/canada_lake_raw.txt
+tempRawFile = files/data-files/canada_temp_raw.txt
+portRawFile = files/data-files/canada_port_raw.txt
+elevRawFile = files/data-files/canada_dem_raw.txt
+cultureGroupFile = files/data-files/can_regcode_culture.txt
+landCoverFile = files/data-files/canada_land_cover.txt
+nppFile = files/data-files/net_primary_productivity.txt
+coastalFile = files/data-files/can_coastal.txt            
+initialzationPopulationFile = files/data-files/can_pop_1911_pop.txt    
+popRegionFile = files/data-files/can_pop_1911_region.txt
+
+# color map bounds for different portrayal 
+popColorMapLowerBound = 100
+popColorMapUpperBound = 10000     
+
+tempColorMapLowerBound = -2.0
+tempColorMapUpperBound = 2.0       
+
+tempDesColorMapLowerBound = -2.0
+tempDesColorMapUpperBound = 2.0
+
+riverDesColorMapLowerBound = -2.0
+riverDesColorMapUpperBound = 2.0
+
+portDesColorMapLowerBound = -2.0
+portDesColorMapUpperBound = 2.0
+
+elevDesColorMapLowerBound = -2.0
+elevDesColorMapUpperBound = 2.0
+
+totalDesColorMapLowerBound = -2.0
+totalDesColorMapUpperBound = 2.0
+
+
+# other parameter used for portrayals
+# white
+cityColor = 0xFFFFFF 
+maxCityPortrayalScale = 5
+minCityPortrayalScale = 2
+# yellow
+resourceColor = 0xFFFF00 
+maxResourcePortrayalScale = 6
+minResourcePortrayalScale = 2
+# red
+rebelResourceColor = 0xFF0000
+
+
+# phase4
+
+recordData = false
+
+meanTempAdjust = 0.0
+stdevTempAdjust = 0.0 
+tempRunnningAvgWindow = 12
+       
+filePath = movement
+urbanTempCoeff = 0.3
+urbanPortCoeff = -0.1
+urbanRiverCoeff = 0.1
+urbanElevCoeff = -0.1
+urbanOpportunityCoeff = 0.01
+urbanSocialWeight = 0.04
+urbanAdjacentSocialDiscount = 0.3
+urbanGrowthRate = 0.003
+#0.003
+urbanMovementWill = 0.2
+urbanDesExp = 20
+
+
+ruralTempCoeff = 0.3
+ruralPortCoeff = -0.1
+ruralRiverCoeff = 0.1
+ruralElevCoeff = -0.1
+ruralOpportunityCoeff = 0.01
+ruralSocialWeight = 0.01
+ruralAdjacentSocialDiscount = 0.3
+ruralGrowthRate = 0.006
+#0.005
+ruralMovementWill = 0.2
+ruralDesExp = 20
+
+
+infrastructureDecreaseRate = 0.005
+infrastructureIncreaseRate = 0.01
+infrastructureDeviationRate = 0.1
+
+
+initSocialWeight = 1
+initSocialWeightSpread = 0.05
+initDesirabilityExp = 12.0
+initRecalculationSkip = 10
+
+recalSkip = 1
+householdSize = 4
+
+initUrbanDensity = 550
+densityIncrement = 0
+densityIncrementInterval = 5
+
+wealthMu = 1
+wealthSigma = 1
+wealthAdjMu = 0.01
+wealthAdjSigma = 0.01
+wealthLossToBirthMu = 0.9
+wealthLossToBirthSigma = 0.05
+wealthAtBirthMu = 1
+wealthAtBirthSigma = 0.1
+moveCost = 1
