@@ -163,33 +163,34 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 				+ DFlockers.consistency * cons.c[1]
 				+ DFlockers.randomness * rand.c[1] + DFlockers.momentum * mome.c[1];
 
-		// renormalize to the given step size
+		// re-normalize to the given step size
 		final double dis = Math.sqrt(dx * dx + dy * dy);
 		if (dis > 0) {
 			dx = dx / dis * DFlockers.jump;
 			dy = dy / dis * DFlockers.jump;
 		}
 
-		lastd = new DoublePoint(dx, dy);
+		final DoublePoint old = loc;
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
 
-		try {
-			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
-			if (dst != dFlockers.partition.getPid()) {
-				// Need to migrate to other partition,
-				// remove from current partition
-				dFlockers.flockers.removeObject(this);
-				// TODO: Abstract away the migration from the model
-				dFlockers.transporter.migrateAgent(this, dst, loc, dFlockers.flockers.fieldIndex);
-			} else {
-				// Set to new location in current partition
-				// TODO: to use moveAgent in the future
-				dFlockers.flockers.moveObject(loc, this);
-				dFlockers.schedule.scheduleOnce(this, 1);
-			}
-		} catch (final Exception e) {
-			e.printStackTrace(System.out);
-			System.exit(-1);
-		}
+		dFlockers.flockers.moveAgent(old, loc, this);
+//		try {
+//			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
+//			if (dst != dFlockers.partition.getPid()) {
+//				// Need to migrate to other partition,
+//				// remove from current partition
+//				dFlockers.flockers.remove(this);
+//				// TODO: Abstract away the migration from the model
+//				dFlockers.transporter.migrateAgent(this, dst, loc, dFlockers.flockers.fieldIndex);
+//			} else {
+//				// Set to new location in current partition
+//				// TODO: to use moveAgent in the future
+//				dFlockers.flockers.move(old, loc, this);
+//				dFlockers.schedule.scheduleOnce(this, 1);
+//			}
+//		} catch (final Exception e) {
+//			e.printStackTrace(System.out);
+//			System.exit(-1);
+//		}
 	}
 }

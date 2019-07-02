@@ -60,4 +60,3 @@ class AgentWrapper implements Serializable {
 	}
 
 }
-

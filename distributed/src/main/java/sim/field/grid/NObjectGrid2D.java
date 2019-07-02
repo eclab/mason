@@ -10,7 +10,7 @@ import sim.field.HaloField;
 import sim.field.storage.ObjectGridStorage;
 import sim.util.IntPoint;
 
-public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint> {
+public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint, ObjectGridStorage<T>> {
 
 	public NObjectGrid2D(final DPartition ps, final int[] aoi, final IntFunction<T[]> allocator,
 			final DSimState state) {
@@ -20,51 +20,40 @@ public class NObjectGrid2D<T extends Serializable> extends HaloField<T, IntPoint
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + numDimensions);
 	}
 
+	@SuppressWarnings("unchecked")
 	public T[] getStorageArray() {
-		return (T[]) field.getStorage();
+		return (T[]) localStorage.getStorage();
+	}
+
+	public T getLocal(final IntPoint p) {
+		return getStorageArray()[localStorage.getFlatIdx(toLocalPoint(p))];
 	}
 
 	public T getRMI(final IntPoint p) throws RemoteException {
-		if (!inLocal(p))
-			throw new RemoteException(
-					"The point " + p + " does not exist in this partition " + partition.getPid() + " "
-							+ partition.getPartition());
-
-		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
+		return getLocal(p);
 	}
 
-	public T get(final int x, final int y) {
-		return get(new IntPoint(x, y));
+	public void addLocal(final IntPoint p, final T t) {
+		getStorageArray()[localStorage.getFlatIdx(toLocalPoint(p))] = t;
 	}
 
+	public void removeLocal(final IntPoint p, final T t) {
+		removeLocal(p);
+	}
+
+	public void removeLocal(final IntPoint p) {
+		addLocal(p, null);
+	}
+
+	@SuppressWarnings("unchecked")
 	public T get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					partition.getPid(), p.toString()));
-			try {
-				return (T) getFromRemote(p);
-			} catch (final RemoteException e) {
-				System.exit(-1);
-				e.printStackTrace();
-			}
-		}
-
-		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
-	}
-
-	public void addObject(final IntPoint p, final T val) {
-		// In this partition but not in ghost cells
-		// TODO: Also implement addAgent methods
-		if (!inLocal(p))
-			state.transporter.transportObject(val, partition.toPartitionId(p), p, fieldIndex);
-//			throw new IllegalArgumentException(
-//					String.format("PID %d set %s is out of local boundary", ps.getPid(), p.toString()));
-
-		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
-	}
-
-	public void removeObject(final IntPoint p, final T t) {
-		addObject(p, null);
+			// Should be the same return type as the getLocal method
+			return (T) getFromRemote(p);
+		} else
+			return getLocal(p);
 	}
 
 	/*

@@ -35,18 +35,6 @@ public class DFlockers extends DSimState {
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
 		flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations, this);
-
-		/*
-		 * try { // int[] size = new int[] { (int) width, (int) height }; int[] aoi =
-		 * new int[] { (int) this.neighborhood, (int) this.neighborhood }; partition =
-		 * DNonUniformPartition.getPartitionScheme(size, true, aoi);
-		 * partition.initUniformly(null); partition.commit(); flockers = new
-		 * NContinuous2D<DFlocker>(partition, aoi, discretizations); queue = new
-		 * DObjectMigratorNonUniform(partition);
-		 *
-		 * } catch (final Exception e) { e.printStackTrace(System.out); System.exit(-1);
-		 * }
-		 */
 	}
 
 	public void start() {
@@ -61,9 +49,10 @@ public class DFlockers extends DSimState {
 			if (random.nextBoolean(DFlockers.deadFlockerProbability))
 				flocker.dead = true;
 
-			flockers.addObject(location, flocker);
+			flockers.add(location, flocker);
 			schedule.scheduleOnce(flocker, 1);
 		}
+
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
 //		schedule.addAfter(new Steppable() {
 //			public void step(SimState state) {

@@ -4,12 +4,11 @@ import java.rmi.RemoteException;
 
 import sim.engine.DSimState;
 import sim.field.DPartition;
-//import sim.field.DNonUniformPartition;
 import sim.field.HaloField;
 import sim.field.storage.IntGridStorage;
 import sim.util.IntPoint;
 
-public class NIntGrid2D extends HaloField<Integer, IntPoint> {
+public class NIntGrid2D extends HaloField<Integer, IntPoint, IntGridStorage> {
 	public final int initVal;
 
 	public NIntGrid2D(final DPartition ps, final int[] aoi, final int initVal, final DSimState state) {
@@ -20,67 +19,71 @@ public class NIntGrid2D extends HaloField<Integer, IntPoint> {
 	}
 
 	public int[] getStorageArray() {
-		return (int[]) field.getStorage();
+		return (int[]) localStorage.getStorage();
 	}
 
-	public Integer getRMI(final IntPoint p) throws RemoteException {
-		if (!inLocal(p))
-			throw new RemoteException(
-					"The point " + p + " does not exist in this partition " + partition.getPid() + " " + partition.getPartition());
-
-		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
+	public int getLocal(final IntPoint p) {
+		return getStorageArray()[localStorage.getFlatIdx(toLocalPoint(p))];
 	}
 
-	public final int get(final int x, final int y) {
-		return get(new IntPoint(x, y));
+	public void addLocal(final IntPoint p, final int t) {
+		getStorageArray()[localStorage.getFlatIdx(toLocalPoint(p))] = t;
+	}
+
+	public Integer getRMI(final IntPoint p) {
+		return getLocal(p);
+	}
+
+	public void addLocal(final IntPoint p, final Integer t) {
+		getStorageArray()[localStorage.getFlatIdx(toLocalPoint(p))] = t;
+	}
+
+	public void removeLocal(final IntPoint p, final Integer t) {
+		removeLocal(p);
+	}
+
+	public void removeLocal(final IntPoint p) {
+		addLocal(p, initVal);
 	}
 
 	public final int get(final IntPoint p) {
 		if (!inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					partition.getPid(), p.toString()));
-			try {
-				return (int) getFromRemote(p);
-			} catch (final RemoteException e) {
-				e.printStackTrace();
-				System.exit(-1);
-
-			}
-		}
-
-		return getStorageArray()[field.getFlatIdx(toLocalPoint(p))];
+			return (int) getFromRemote(p);
+		} else
+			return getLocal(p);
 	}
 
-	public void addObject(final IntPoint p, final int val) {
-		// In this partition but not in ghost cells
+	// Overloading to prevent AutoBoxing-UnBoxing
+	public void add(final IntPoint p, final int t) {
 		if (!inLocal(p))
-			throw new IllegalArgumentException(
-					String.format("PID %d set %s is out of local boundary", partition.getPid(), p.toString()));
-
-		getStorageArray()[field.getFlatIdx(toLocalPoint(p))] = val;
-	}
-
-	public void addObject(final IntPoint p, final Integer val) {
-		addObject(p, val.intValue());
-	}
-
-	public void removeObject(final IntPoint p, final Integer t) {
-		removeObject(p);
+			addToRemote(p, t);
+		else
+			addLocal(p, t);
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
-	public void removeObject(final IntPoint p, final int t) {
-		removeObject(p);
-	}
-
-	public void removeObject(final IntPoint p) {
-		addObject(p, initVal);
+	public void remove(final IntPoint p, final int t) {
+		remove(p);
 	}
 
 	// Overloading to prevent AutoBoxing-UnBoxing
-	public void moveObject(final IntPoint fromP, final IntPoint toP, final int t) {
-		removeObject(fromP);
-		addObject(toP, t);
+	public void move(final IntPoint fromP, final IntPoint toP, final int t) {
+		final int fromPid = partition.toPartitionId(fromP);
+		final int toPid = partition.toPartitionId(fromP);
+
+		if (fromPid == toPid && fromPid != partition.pid) {
+			// So that we make only a single RMI call instead of two
+			try {
+				proxy.getField(partition.toPartitionId(fromP)).moveRMI(fromP, toP, t);
+			} catch (final RemoteException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			remove(fromP, t);
+			add(toP, t);
+		}
 	}
 
 	/*

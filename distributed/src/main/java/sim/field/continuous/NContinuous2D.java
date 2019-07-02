@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.field.DPartition;
 import sim.field.HaloField;
@@ -15,7 +14,7 @@ import sim.field.storage.ContStorage;
 import sim.util.MPIParam;
 import sim.util.NdPoint;
 
-public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint> {
+public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint, ContStorage<T>> {
 
 	public NContinuous2D(final DPartition ps, final int[] aoi, final double[] discretizations, final DSimState state) {
 		super(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations), state);
@@ -25,62 +24,58 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint>
 	}
 
 	public NdPoint getLocation(final T obj) {
-		return ((ContStorage) field).getLocation(obj);
+		return localStorage.getLocation(obj);
 	}
 
-	public void addObject(final NdPoint p, final T t) {
-		if (!haloPart.contains(p))
-			throw new IllegalArgumentException(String.format("PID %d Point %s Invalid setLocation() myHalo %s",
-					partition.getPid(), p.toString(), haloPart));
-		((ContStorage) field).setLocation(t, p);
-	}
-
-	public List<T> getObjects(final NdPoint p) {
-		return ((ContStorage) field).getObjects(p);
+	public List<T> get(final NdPoint p) {
+		return localStorage.getObjects(p);
 	}
 
 	public List<T> getNearestNeighbors(final T obj, final int k) {
-		return ((ContStorage) field).getNearestNeighbors(obj, k);
+		return localStorage.getNearestNeighbors(obj, k);
 	}
 
 	public List<T> getNeighborsWithin(final T obj, final double r) {
-		return ((ContStorage) field).getNeighborsWithin(obj, r);
+		return localStorage.getNeighborsWithin(obj, r);
 	}
 
-	public void removeObject(final NdPoint p, final T obj) {
-		// TODO: Remove from just p
-		((ContStorage) field).removeObject(obj);
+	public void remove(final T obj) {
+		localStorage.removeObject(obj);
 	}
 
-	public void removeObject(final T obj) {
-		// TODO: Remove from just p
-		((ContStorage) field).removeObject(obj);
-	}
+	// Overriding this because
+	// add also moves the objects in this field
+	public void move(final NdPoint fromP, final NdPoint toP, final T t) {
+		final int fromPid = partition.toPartitionId(fromP);
+		final int toPid = partition.toPartitionId(fromP);
 
-	public void removeObjects(final NdPoint p) {
-		((ContStorage) field).removeObjects(p);
-	}
+		if (fromPid == toPid) {
+			if (fromPid != partition.pid)
+				try {
+					proxy.getField(partition.toPartitionId(fromP)).addRMI(toP, t);
+				} catch (final RemoteException e) {
+					throw new RuntimeException(e);
+				}
+			else
+				add(toP, t);
+		} else {
+			// move cannot be with a single call
+			// Since, the fromP and toP are different
 
-	public void moveObject(final NdPoint fromP, final NdPoint toP, final T t) {
-		// addObject is also moving the objects in this field
-		addObject(toP, t);
-	}
+			// Remove from one partition
+			remove(fromP, t);
 
-	public void moveObject(final NdPoint toP, final T t) {
-		// addObject is also moving the objects in this field
-		addObject(toP, t);
+			// add to another
+			add(toP, t);
+		}
 	}
 
 	// TODO refactor this after new pack/unpack is introduced in Storage
+	@SuppressWarnings("unchecked")
 	public final List<T> getAllObjects() {
 		Serializable data = null;
 
-		try {
-			data = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
-		} catch (final MPIException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		data = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
 		final List<T> objs = ((ArrayList<ArrayList<T>>) data).get(0);
 
@@ -90,10 +85,25 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint>
 				.collect(Collectors.toList());
 	}
 
-	// TODO
+	public Serializable getLocal(final NdPoint p) {
+		return localStorage.getObjects(p);
+	}
+
+	public void addLocal(final NdPoint p, final T t) {
+		localStorage.setLocation(t, p);
+	}
+
+	public void removeLocal(final NdPoint p, final T t) {
+		// TODO: Remove from just p
+		localStorage.removeObject(t);
+	}
+
+	public void removeLocal(final NdPoint p) {
+		localStorage.removeObjects(p);
+	}
+
 	public Serializable getRMI(final NdPoint p) throws RemoteException {
-		// return ((ContStorage)field).getObjects(obj);
-		return null;
+		return getLocal(p);
 	}
 
 	/*

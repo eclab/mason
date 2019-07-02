@@ -56,5 +56,9 @@ class PayloadWrapper implements Serializable {
 		fieldIndex = -1;
 	}
 
-}
+	public String toString() {
+		return "PayloadWrapper [payload=" + payload + ", destination=" + destination + ", loc=" + loc + ", fieldIndex="
+				+ fieldIndex + "]";
+	}
 
+}

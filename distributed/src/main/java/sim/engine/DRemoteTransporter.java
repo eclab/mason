@@ -17,7 +17,6 @@ import sim.engine.Steppable;
 import sim.field.DPartition;
 import sim.util.NdPoint;
 
-// TODO: methods for IterativeRepeat
 public class DRemoteTransporter {
 
 	int numNeighbors; // number of direct neighbors
@@ -359,9 +358,10 @@ public class DRemoteTransporter {
 		// TODO: do we need to synchronize something to ensure that the stoppable is
 		// stopped before we transport?
 
-		iterativeRepeat.stop();
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(iterativeRepeat, dst, loc, fieldIndex);
+
+		iterativeRepeat.stop();
 	}
 
 	/**
@@ -454,4 +454,3 @@ public class DRemoteTransporter {
 //	}
 
 }
-

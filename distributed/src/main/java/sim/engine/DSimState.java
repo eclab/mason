@@ -23,6 +23,7 @@ import sim.field.DPartition;
 import sim.field.DQuadTreePartition;
 import sim.field.HaloField;
 import sim.field.RemoteProxy;
+import sim.field.storage.GridStorage;
 import sim.util.NdPoint;
 import sim.util.Timing;
 
@@ -33,7 +34,7 @@ public class DSimState extends SimState {
 	public final DPartition partition;
 	public final DRemoteTransporter transporter;
 	public final int[] aoi; // Area of Interest
-	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint>> fields = new ArrayList<>();
+	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fields = new ArrayList<>();
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
@@ -75,7 +76,7 @@ public class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int register(final HaloField<? extends Serializable, ? extends NdPoint> haloField) {
+	public int register(final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField) {
 		// Must be called in a deterministic manner
 		final int index = fields.size();
 		fields.add(haloField);
@@ -89,7 +90,7 @@ public class DSimState extends SimState {
 
 		// If the fieldIndex is correct then the type-cast below will be safe
 		if (fieldIndex >= 0)
-			((HaloField) fields.get(fieldIndex)).addObject(p, obj);
+			((HaloField) fields.get(fieldIndex)).add(p, obj);
 	}
 
 	/**
@@ -98,8 +99,8 @@ public class DSimState extends SimState {
 	 * @throws MPIException
 	 */
 	protected void syncFields() throws MPIException {
-		for (final HaloField<? extends Serializable, ? extends NdPoint> haloField : fields)
-			haloField.sync();
+		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fields)
+			haloField.syncHalo();
 	}
 
 	public void preSchedule() {
@@ -113,6 +114,7 @@ public class DSimState extends SimState {
 			System.exit(-1);
 		}
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+			System.out.println("Migrating - " + payloadWrapper);
 
 			/*
 			 * Assumptions about what is to be added to the field using addToField method
@@ -226,7 +228,7 @@ public class DSimState extends SimState {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final HaloField<? extends Serializable, ? extends NdPoint> haloField : fields)
+		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fields)
 			haloField.initRemote();
 		// /init
 	}

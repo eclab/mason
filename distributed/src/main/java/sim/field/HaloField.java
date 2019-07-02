@@ -14,6 +14,7 @@ import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSimState;
+import sim.engine.Steppable;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.IntHyperRect;
@@ -28,56 +29,43 @@ import sim.util.NdPoint;
  *
  * @param <T> The Class of Object to store in the field
  * @param <P> The Type of NdPoint to use
+ * @param <S> The Type of Storage to use
  */
-public abstract class HaloField<T extends Serializable, P extends NdPoint> implements RemoteField<P> {
-
+public abstract class HaloField<T extends Serializable, P extends NdPoint, S extends GridStorage>
+		implements DField<T, P>, RemoteField<T, P> {
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
 	public IntHyperRect world, haloPart, origPart, privatePart;
-	// TODO: Fix the comment -
-	// pointer to the processors who's partitions neighbor me
-	protected List<Neighbor> neighbors;
-	// TODO: Fix the comment -
-	// Local storage
-	protected GridStorage field;
-	// TODO: Fix the comment -
-	// Partition data structure
+
+	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
+	protected S localStorage;
 	protected DPartition partition;
 	protected Comm comm;
 	protected Datatype MPIBaseType;
 
 	public final int fieldIndex;
 
-	protected RemoteProxy proxy;
+	protected RemoteProxy<T, P> proxy;
 	protected final DSimState state;
 
-	public HaloField(final DPartition ps, final int[] aoi, final GridStorage stor, final DSimState state) {
+	public HaloField(final DPartition ps, final int[] aoi, final S stor, final DSimState state) {
 		this.partition = ps;
 		this.aoi = aoi;
-		field = stor;
+		localStorage = stor;
 		this.state = state;
 
 		// init variables that don't change with the partition scheme
 		numDimensions = ps.getNumDim();
 		world = ps.getField();
 		fieldSize = ps.getFieldSize();
-		MPIBaseType = field.getMPIBaseType();
+		MPIBaseType = localStorage.getMPIBaseType();
 
 		registerCallbacks();
 
 		// init variables that may change with the partition scheme
 		reload();
 		fieldIndex = state.register(this);
-	}
-
-	public abstract void addObject(final P p, final T t);
-
-	public abstract void removeObject(final P p, final T t);
-
-	public void moveObject(final P fromP, final P toP, final T t) {
-		removeObject(fromP, t);
-		addObject(toP, t);
 	}
 
 	protected void registerCallbacks() {
@@ -102,7 +90,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 				GridStorage s = null;
 
 				if (q.isGroupMaster(level))
-					s = field.getNewStorage(q.getNodeShapeAtLevel(level));
+					s = localStorage.getNewStorage(q.getNodeShapeAtLevel(level));
 
 				try {
 					collectGroup(level, s);
@@ -143,7 +131,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		haloPart = origPart.resize(aoi);
 		haloSize = haloPart.getSize();
 
-		field.reshape(haloPart);
+		localStorage.reshape(haloPart);
 
 		// Get the partition representing private area by shrinking the original
 		// partition by aoi at each dimension
@@ -156,48 +144,184 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	}
 
 	public void initRemote() {
-		proxy = new RemoteProxy(partition, this);
+		proxy = new RemoteProxy<>(partition, this);
 	}
 
-	// TODO make a copy of the storage which will be used by the remote field access
-	@SuppressWarnings("unchecked")
-	protected Serializable getFromRemote(final IntPoint p) throws RemoteException {
-		try {
-			// TODO: Do we need to check for type safety here?
-			// If the getField method returns the current field then
-			// this cast should work
-			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
-		} catch (final NullPointerException e) {
-			throw new IllegalArgumentException("Remote Proxy is not initialized");
+	public void add(final P p, final T t) {
+		// In this partition but not in ghost cells
+		// TODO: Also implement addAgent methods
+
+		// TODO use RMI instead
+		if (!inLocal(p))
+			addToRemote(p, t);
+		else
+			addLocal(p, t);
+	}
+
+	public void remove(final P p, final T t) {
+		if (!inLocal(p))
+			removeFromRemote(p, t);
+		else
+			removeLocal(p, t);
+	}
+
+	public void remove(final P p) {
+		if (!inLocal(p))
+			removeFromRemote(p);
+		else
+			removeLocal(p);
+	}
+
+	public void move(final P fromP, final P toP, final T t) {
+		final int fromPid = partition.toPartitionId(fromP);
+		final int toPid = partition.toPartitionId(toP);
+
+		if (fromPid == toPid && fromPid != partition.pid) {
+			// So that we make only a single RMI call instead of two
+			try {
+				proxy.getField(partition.toPartitionId(fromP)).moveRMI(fromP, toP, t);
+			} catch (final RemoteException e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			remove(fromP, t);
+			add(toP, t);
 		}
 	}
 
+	public void addAgent(final P p, final T t) {
+		// TODO: is there a better way than just doing a Type Cast?
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final Steppable agent = (Steppable) t;
+
+		if (inLocal(p)) {
+			add(p, t);
+			state.schedule.scheduleOnce(agent);
+		} else
+			state.transporter.migrateAgent(agent, partition.toPartitionId(p));
+	}
+
+	public void addAgent(final P p, final T t, final int ordering, final double time) {
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final Steppable agent = (Steppable) t;
+
+		if (inLocal(p)) {
+			add(p, t);
+			state.schedule.scheduleOnce(time, ordering, agent);
+		} else
+			state.transporter.migrateAgent(ordering, time, agent, partition.toPartitionId(p));
+	}
+
+	public void moveAgent(final P fromP, final P toP, final T t) {
+		if (!inLocal(fromP))
+			throw new IllegalArgumentException("fromP must be local");
+
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final Steppable agent = (Steppable) t;
+
+		remove(fromP, t);
+
+		if (inLocal(toP)) {
+			add(toP, t);
+			state.schedule.scheduleOnce(agent);
+		} else
+			state.transporter.migrateAgent(agent,
+					partition.toPartitionId(toP), toP, fieldIndex);
+	}
+
+	// TODO make a copy of the storage which will be used by the remote field access
+
+	// TODO: Do we need to check for type safety here?
+	// If the getField method returns the current field then
+	// this cast should work
+
+	protected Serializable getFromRemote(final P p) {
+		try {
+			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
+		} catch (final NullPointerException e) {
+			throw new IllegalArgumentException("Remote Proxy is not initialized");
+		} catch (final RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected void addToRemote(final P p, final T t) {
+		try {
+			proxy.getField(partition.toPartitionId(p)).addRMI(p, t);
+		} catch (final NullPointerException e) {
+			throw new IllegalArgumentException("Remote Proxy is not initialized");
+		} catch (final RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected void removeFromRemote(final P p, final T t) {
+		try {
+			proxy.getField(partition.toPartitionId(p)).removeRMI(p, t);
+		} catch (final NullPointerException e) {
+			throw new IllegalArgumentException("Remote Proxy is not initialized");
+		} catch (final RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected void removeFromRemote(final P p) {
+		try {
+			proxy.getField(partition.toPartitionId(p)).removeRMI(p);
+		} catch (final NullPointerException e) {
+			throw new IllegalArgumentException("Remote Proxy is not initialized");
+		} catch (final RemoteException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	// TODO: Should we throw exception here if not in local?
+
+	public void addRMI(final P p, final T t) throws RemoteException {
+		addLocal(p, t);
+	}
+
+	public void removeRMI(final P p, final T t) throws RemoteException {
+		removeLocal(p, t);
+	}
+
+	public void removeRMI(final P p) throws RemoteException {
+		removeLocal(p);
+	}
+
 	public GridStorage getStorage() {
-		return field;
+		return localStorage;
 	}
 
 	// Various stabbing queries
 	public boolean inGlobal(final IntPoint p) {
-		return IntStream.range(0, numDimensions).allMatch(i -> p.c[i] >= 0 && p.c[i] < fieldSize[i]);
+		return IntStream.range(0, numDimensions).allMatch(i -> p.c[i] >= 0
+				&& p.c[i] < fieldSize[i]);
 	}
 
-	public boolean inLocal(final IntPoint p) {
+	public boolean inLocal(final P p) {
 		return origPart.contains(p);
 	}
 
-	public boolean inPrivate(final IntPoint p) {
+	public boolean inPrivate(final P p) {
 		return privatePart.contains(p);
 	}
 
-	public boolean inLocalAndHalo(final IntPoint p) {
+	public boolean inLocalAndHalo(final P p) {
 		return haloPart.contains(p);
 	}
 
-	public boolean inShared(final IntPoint p) {
+	public boolean inShared(final P p) {
 		return inLocal(p) && !inPrivate(p);
 	}
 
-	public boolean inHalo(final IntPoint p) {
+	public boolean inHalo(final P p) {
 		return inLocalAndHalo(p) && !inLocal(p);
 	}
 
@@ -272,19 +396,19 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		return fieldSize[1];
 	}
 
-	public void sync() throws MPIException {
+	public void syncHalo() throws MPIException {
 		final Serializable[] sendObjs = new Serializable[numNeighbors];
 		for (int i = 0; i < numNeighbors; i++)
-			sendObjs[i] = field.pack(neighbors.get(i).sendParam);
+			sendObjs[i] = localStorage.pack(neighbors.get(i).sendParam);
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>neighborAllToAll(partition, sendObjs);
 
 		for (int i = 0; i < numNeighbors; i++)
-			field.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
+			localStorage.unpack(neighbors.get(i).recvParam, recvObjs.get(i));
 	}
 
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {
-		final Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+		final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
 		final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(partition, sendObj, dst);
 
@@ -301,10 +425,9 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 				sendObjs[i] = fullField.pack(new MPIParam(partition.getPartition(i), world, MPIBaseType));
 
 		final Serializable recvObj = MPIUtil.<Serializable>scatter(partition, sendObjs, src);
-		field.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
+		localStorage.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 
-		// Sync the halo
-		sync();
+		syncHalo();
 	}
 
 	public void collectGroup(final int level, final GridStorage groupField) throws MPIException {
@@ -316,7 +439,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 		final GroupComm gc = qt.getGroupComm(level);
 
 		if (gc != null) {
-			final Serializable sendObj = field.pack(new MPIParam(origPart, haloPart, MPIBaseType));
+			final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
 			final ArrayList<Serializable> recvObjs = MPIUtil.<Serializable>gather(gc.comm, sendObj, gc.groupRoot);
 
@@ -332,7 +455,8 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 	public void distributeGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(partition instanceof DQuadTreePartition))
 			throw new UnsupportedOperationException(
-					"Can only distribute to group with DQuadTreePartition, got " + partition.getClass().getSimpleName());
+					"Can only distribute to group with DQuadTreePartition, got "
+							+ partition.getClass().getSimpleName());
 
 		final DQuadTreePartition qt = (DQuadTreePartition) partition;
 		final GroupComm gc = qt.getGroupComm(level);
@@ -348,14 +472,14 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint> imple
 
 			final Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
 
-			field.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
+			localStorage.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 		}
 
-		sync();
+		syncHalo();
 	}
 
 	public String toString() {
-		return String.format("PID %d Storage %s", partition.getPid(), field);
+		return String.format("PID %d Storage %s", partition.getPid(), localStorage);
 	}
 
 	// Helper class to organize neighbor-related data structures and methods

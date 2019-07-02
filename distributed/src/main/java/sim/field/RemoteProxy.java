@@ -1,5 +1,6 @@
 package sim.field;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
@@ -12,15 +13,15 @@ import mpi.MPI;
 import sim.util.MPIUtil;
 import sim.util.NdPoint;
 
-public class RemoteProxy {
+public class RemoteProxy<T extends Serializable, P extends NdPoint> {
 
-	ArrayList<RemoteField<? extends NdPoint>> remoteFields;
+	ArrayList<RemoteField<T, P>> remoteFields;
 
 	private static boolean isReady = false;
 	private static int hostPort = -1;
 	private static String hostAddr = null;
 	private static Registry registry = null;
-	private static ArrayList<RemoteField<? extends NdPoint>> exported = null;
+	private static ArrayList<RemoteField<? extends Serializable, ? extends NdPoint>> exported = null;
 
 	private static int getFreePort() {
 		try (ServerSocket socket = new ServerSocket(0)) {
@@ -57,12 +58,13 @@ public class RemoteProxy {
 		RemoteProxy.isReady = true;
 	}
 
+	// TODO: Should Finalize be Static????
 	// TODO hook this to MPI finalize so that this will be called before exit
 	public static void Finalize() {
 		RemoteProxy.isReady = false;
 
 		try {
-			for (final RemoteField<? extends NdPoint> f : RemoteProxy.exported)
+			for (final RemoteField<? extends Serializable, ? extends NdPoint> f : RemoteProxy.exported)
 				UnicastRemoteObject.unexportObject(f, true);
 			if (RemoteProxy.registry != null)
 				UnicastRemoteObject.unexportObject(RemoteProxy.registry, true);
@@ -72,7 +74,7 @@ public class RemoteProxy {
 		}
 	}
 
-	public RemoteProxy(final DPartition ps, final RemoteField<? extends NdPoint> field) {
+	public RemoteProxy(final DPartition ps, final RemoteField<? extends Serializable, ? extends NdPoint> field) {
 		if (!RemoteProxy.isReady)
 			throw new IllegalArgumentException("RMI Registry has not been started yet!");
 
@@ -88,7 +90,7 @@ public class RemoteProxy {
 			final ArrayList<String> names = MPIUtil.<String>allGather(ps, name);
 			remoteFields = new ArrayList<>(ps.numProcessors);
 			for (int i = 0; i < ps.numProcessors; i++)
-				remoteFields.add((RemoteField) reg.lookup(names.get(i)));
+				remoteFields.add((RemoteField<T, P>) reg.lookup(names.get(i)));
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -100,8 +102,7 @@ public class RemoteProxy {
 		RemoteProxy.exported.add(field);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public RemoteField getField(final int pid) {
+	public RemoteField<T, P> getField(final int pid) {
 		return remoteFields.get(pid);
 	}
 

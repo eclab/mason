@@ -184,15 +184,14 @@ public class DHeatBugs extends DSimState {
 			do {
 				px = random.nextInt(size[0]) + partition.getPartition().ul().getArray()[0];
 				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
-			} while (bugs.get(px, py) != null);
+			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.addObject(new IntPoint(px, py), b);
+			bugs.add(new IntPoint(px, py), b);
 			schedule.scheduleOnce(b, 1);
 		}
 
 		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
-//		schedule.scheduleRepeating(Schedule.EPOCH, 3, new Synchronizer(), 1);
 
 		// TODO: Balancer is broken,
 		// the items on the edge find themselves in the wrong pId
@@ -250,41 +249,4 @@ public class DHeatBugs extends DSimState {
 		doLoopMPI(DHeatBugs.class, args);
 		System.exit(0);
 	}
-
-	// Missing availableProcessors() ; Is this really needed? Maybe not.
-
-	// Includes three private classes
-	// Synchronizer, Balancer, Inspector
-	// Doesn't have stop()
-
-//		private class Synchronizer implements Steppable {
-//			private static final long serialVersionUID = 1;
-	//
-//			public void step(SimState state) {
-//				DHeatBugs hb = (DHeatBugs) state;
-	// Here we have completed all the computation work - stop the timer
-//				Timing.stop(Timing.LB_RUNTIME);
-	//
-//				Timing.start(Timing.MPI_SYNC_OVERHEAD);
-	//
-//				try {
-//					hb.valgrid.sync();
-//					hb.bugs.sync();
-//					hb.transporter.sync();
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					System.exit(-1);
-//				}
-
-//				for (Transportee transportee : hb.transporter.objectQueue) {
-//					privBugCount++;
-//					DHeatBug heatBug = (DHeatBug) transportee.wrappedObject;
-//					bugs.add(heatBug.loc_x, heatBug.loc_y, heatBug);
-//					schedule.scheduleOnce(heatBug, 1);
-//				}
-//				hb.transporter.objectQueue.clear();
-	//
-//				Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-//			}
-//		}
 }

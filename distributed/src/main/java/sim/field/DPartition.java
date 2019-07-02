@@ -8,6 +8,8 @@ import mpi.*;
 import sim.util.IntHyperRect;
 import sim.util.NdPoint;
 
+// Consumer is Raw Type because it's parameter is of type int
+@SuppressWarnings("rawtypes")
 public abstract class DPartition {
 
 	public int pid, numProcessors, numDimensions;

@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import sim.util.IntHyperRect;
@@ -30,7 +29,7 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	}
 
 	public GridStorage getNewStorage(final IntHyperRect shape) {
-		return new ContStorage(shape, discretizations);
+		return new ContStorage<>(shape, discretizations);
 	}
 
 	protected Object allocate(final int size) {
@@ -42,7 +41,7 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 		stride = getStride(dsize);
 		this.m = new HashMap<T, NdPoint>();
 		return IntStream.range(0, Arrays.stream(this.dsize).reduce(1, (x, y) -> x * y))
-				.mapToObj(i -> new HashSet()).toArray(s -> new HashSet[s]);
+				.mapToObj(i -> new HashSet<>()).toArray(s -> new HashSet[s]);
 	}
 
 	public String toString() {
@@ -55,11 +54,13 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 		return buf.toString();
 	}
 
+	// This returns a list of a list of dissimilar Objects
+	// They are either of type T or of type NdPoint
 	public Serializable pack(final MPIParam mp) {
-		final ArrayList<ArrayList<Serializable>> ret = new ArrayList<ArrayList<Serializable>>();
+		final ArrayList<ArrayList<Serializable>> ret = new ArrayList<>();
 
 		for (final IntHyperRect rect : mp.rects) {
-			final ArrayList<Serializable> objs = new ArrayList<Serializable>();
+			final ArrayList<Serializable> objs = new ArrayList<>();
 			for (final T obj : getObjects(rect.shift(shape.ul().getArray()))) {
 				objs.add(obj);
 				// Append the object's location relative to the rectangle
@@ -122,8 +123,13 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	}
 
 	// Get all the objects at the given point
-	public List<T> getObjects(final NdPoint p) {
-		return getCell(p).stream().filter(obj -> m.get(obj).equals(p)).collect(Collectors.toList());
+	public ArrayList<T> getObjects(final NdPoint p) {
+		final ArrayList<T> objects = new ArrayList<>();
+		for (final T t : getCell(p)) {
+			if (m.get(t).equals(p))
+				objects.add(t);
+		}
+		return objects;
 	}
 
 	// Get all the objects inside the given rectangle
