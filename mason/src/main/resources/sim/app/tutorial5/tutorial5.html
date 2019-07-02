@@ -1,0 +1,600 @@
+<h2>Tutorial 5: Build a Simulation with Continuous and Network Fields</h2>
+
+<p>In this tutorial we will build a simple pseudo-spring-mass simulation using mass balls and simulated "rubber bands".  The balls will start at different locations and have random mass values.  When balls get close to one another they turn red; balls cannot collide (they'll just pass through one another).  The rubber bands will connect random balls together, will have random strength values, and will have randomly-chosen "lax" lengths.  The rubber bands will follow Hooke's law, which says that the force of a rubber band is proportional to the length of the band minus the lax length, all times the strength.
+
+<p>This tutorial teaches:
+<ul>
+<li> How to use Continuous2D fields
+<li> How to use Network fields
+<li> How to attach NetworkPortrayals onto ContinuousPortrayal2Ds
+<li> How to make a custom SimplePortrayal
+<li> How to use a model object as its own SimplePortrayal
+<li> About Sequences and other custom Steppables 
+</ul>
+
+<h2>Write the Rubber Band class</h2>
+
+<p>The rubber band class is the easiest to write.  Make a directory called <b>sim/app/tutorial5</b>.  In it, create a file called <b>Band.java</b>.  In this file, write:
+
+<pre><tt>
+package sim.app.tutorial5;
+
+public class Band implements java.io.Serializable
+    {
+    private static final long serialVersionUID = 1;
+
+    public double laxDistance;
+    public double strength;
+    
+    public Band(double laxDistance, double strength)
+        { this.laxDistance = laxDistance; this.strength = strength; }
+
+    <font color=gray>// Bean Properties for our Inspector</font>
+    public void setStrength(double val) { if (val > 0) strength = val; }
+    public double getStrength() { return strength; }
+    public void setLaxDistance(double val) { if (val >= 0) laxDistance = val; }
+    public double getLaxDistance() { return laxDistance; }
+
+    public String toString() { return "" + strength + " ( " + laxDistance + ")"; }
+    }
+</tt></pre>
+
+<p>Straightforward enough. The last method will provide the string which is displayed when the Band is
+inspected.
+
+<h2>Write the Model</h2>
+
+<p>We'll write the model class (Tutorial5) before writing the Ball class -- it's easier to explain things that way.  Create a file called <b>Tutorial5.java</b>.  In it add:
+
+<pre><tt>
+package sim.app.tutorial5;
+import sim.engine.*;
+import sim.field.continuous.*;
+import sim.field.network.*;
+import sim.util.*;
+import ec.util.*;
+
+public class Tutorial5 extends SimState
+    {
+    private static final long serialVersionUID = 1;
+
+    public Continuous2D balls;
+    public Network bands;
+
+    public int numBalls = 50;
+    public int numBands = 60;
+    
+    public final static double maxMass = 10.0;
+    public final static double minMass = 1.0;
+    public final static double minLaxBandDistance = 10.0;
+    public final static double maxLaxBandDistance = 50.0;
+    public final static double minBandStrength = 5.0;
+    public final static double maxBandStrength = 10.0;
+    public final static double collisionDistance = 5.0;
+    
+    public int getNumBalls() { return numBalls; }
+    public void setNumBalls(int val) { if (val >= 2 ) numBalls = val; }
+    public int getNumBands() { return numBands; }
+    public void setNumBands(int val) { if (val >= 0 ) numBands = val; }
+
+    public Tutorial5(long seed)
+        {
+        super(seed);
+        balls = new Continuous2D(collisionDistance,100,100);
+        bands = new Network();
+        }
+</tt></pre>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>So objects can belong in more than one field?</b>
+<p>Yes.  There is only one exception: <i>Edges</i> relating objects in a Network can only be associated with a given Network.  To relate the same two objects in two different Networks, you must use two different Edges.  Of course any Edge's <i>info object</i> can be reused in different Fields.
+</font></td></tr></table>We're storing the Balls in a <b>Continuous2D</b> class.  This is a <b>SparseField</b> which relates arbitrary objects to real-valued (<b>Double2D</b>) locations.  Additionally, we'll be adding those same Balls into a <b>Network</b>, and relating them with <b>Edges</b> which store, in their <i>info</i> fields, the Bands that connect them.  An Edge is the class that defines relationships within a Network.  You can make up your own Edge subclasses if you like, but we'll use the default ones which are automagically created with the <b>addEdge(...)</b> method.
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Why pass <i>collisionDistance</i> to the Continuous2D constructor?</b>
+<p>Continuous2D stores objects not only with a Double2D location, but also puts them in a discretized grid associated with an Int2D.  This is to allow you to efficiently get all objects located within some distance of an object in a Continuous2D.  The choice of discretization depends on several factors, but if your objects are just point objects (like our Balls will be) then usually you want a discretization about the same size as the typical lookup-within-distance you'll be asking the Continuous2D for.  In our case, that's <i>collisionDistance</i>.
+<P>For more information, look up the documentation on <b>Continuous2D</b>.
+</font></td></tr></table>
+Now we'll create the balls.  Each ball will be its own agent.  When its step() method is called, a Ball will move itself according to its current force.  Additionally, we want to schedule <i>another</i> agent to compute and update the Ball's current forces.  The "force-computers" should be scheduled all <i>after</i> the Balls; thus they're placed in Order 1 of the schedule.  Additionally, the force-computers don't have to have random order in movement (technically the Balls don't either).  This allows us to demonstrate a new feature of the schedule: <b>Sequences</b>.
+
+<p>A <b>Sequence</b> is a Steppable which contains an array of Steppables.  When it's stepped, it steps all its Steppables in turn.  Plain Sequences step their Steppables in the order of the array, but a <b>RandomSequence</b> will shuffle the array first, and a <b>ParallelSequence</b> will step each one in a separate thread (be careful with that one -- only use it if you know what you're doing threadwise).  There are other kinds of special Steppables available: a <b>WeakStep</b> contains a single Steppable and steps it but only holds onto it as a <b>java.lang.ref.WeakReference</b> (it can be garbage-collected).  A <b>MultiStep</b> contains a single steppable, and either steps it N times when the MultiStep is stepped, or steps it <i>once every</i> N times that the MultiStep is stepped.  A <b>TentativeStep</b> will step its sole child Steppable only if the TentativeStep hasn't had stop() called on it yet.
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>So there's no way to have two different "step()" methods for an Agent registered in a Schedule?</b>
+<p>Nope.  An agent can only "do one thing".  But it's not an issue.  Just make a different agent which does the job -- often just a little anonymous Steppable which calls the right function like we're doing here.
+</font></td></tr></table>Because "force-computers" do a different thing than Balls do when stepped, we can't re-use the Balls' step methods.  So instead we'll make some anonymous Steppables to call <b>computeForce()</b> on the Balls.
+
+<pre><tt>
+    public void start()
+        {
+        super.start();
+
+        balls = new Continuous2D(collisionDistance,100,100);
+        bands = new Network();
+        
+        Steppable[] s = new Steppable[numBalls];
+        
+        <font color=gray>// make the balls</font>
+        for(int i=0; i&lt;numBalls;i++)
+            {
+            <font color=gray>// must be final to be used in the anonymous class below</font>
+            final Ball ball = new Ball(0,0,random.nextDouble() * (maxMass-minMass) + minMass);
+            balls.setObjectLocation(ball,
+                                    new Double2D(random.nextDouble() * 100,
+                                                 random.nextDouble() * 100));
+            bands.addNode(ball);
+            schedule.scheduleRepeating(ball);
+            
+            <font color=gray>// schedule the balls to compute their force after everyone's moved</font>
+            s[i] = new Steppable()
+                {
+		private static final long serialVersionUID = 1;
+
+                public void step(SimState state) { ball.computeForce(state); }
+                <font color=gray>// see Tutorial 3 for why this is helpful</font>
+                static final long serialVersionUID = -4269174171145445918L;
+                };
+            }
+            
+        <font color=gray>// add the sequence</font>
+        schedule.scheduleRepeating(Schedule.EPOCH,1,new Sequence(s),1);
+</tt></pre>
+
+<p>Now we make the Bands.  All the Balls have been dumped into the Network already -- all we need to do is build <b>Edges</b> connecting two balls, labelling the Edges with a given Band.  We'll add random rubber bands.  To keep it simple, it's possible that two edges could connect the same two Balls.
+
+<pre><tt>
+        <font color=gray>// make the bands</font>
+        Bag ballObjs = balls.getAllObjects();
+        for(int i=0;i&lt;numBands;i++)
+            {
+            Band band = new Band(random.nextDouble() * 
+                                (maxLaxBandDistance - minLaxBandDistance) + minLaxBandDistance,
+                            random.nextDouble() *
+                                (maxBandStrength - minBandStrength) + minBandStrength);
+            Ball from;
+            from = (Ball)(ballObjs.objs[random.nextInt(ballObjs.numObjs)]);
+
+            Ball to = from;
+            while(to == from)
+                to = (Ball)(ballObjs.objs[random.nextInt(ballObjs.numObjs)]);
+            
+            bands.addEdge(from,to,band);
+            }
+</tt></pre>
+
+<p>If we stopped here, it'd work fine except that the very first time we display the Balls and Bands (timestep 0) they'd not display their collision information.  Just to make the Balls prettier in a while, let's force them to determine, right here and now, whether they're "close" to one another.  This will make more sense in a while when we get to the computeCollision() method.  Suffice it to say, this little piece of code just makes the visualization prettier.
+
+<pre><tt>
+            <font color=gray>// To make the initial screenshot pretty, let's have all the balls do an initial collision check</font>
+            ballObjs = balls.getAllObjects();
+            for(int i = 0; i &lt; ballObjs.numObjs; i++)
+                ((Ball)(ballObjs.objs[i])).computeCollision(this);
+            }
+</tt></pre>
+
+<p>Finish up with a boilerplate <b>main()</b> which we won't use anyway -- this Tutorial is for visualization.  Plus some serial UID stuff.
+
+<pre><tt>
+        public static void main(String[] args)
+            {
+            doLoop(Tutorial5.class, args);
+            System.exit(0);
+            }
+
+        <font color=gray>// see Tutorial 3 for why this is helpful</font>
+        static final long serialVersionUID = -7164072518609011190L;
+    }
+</tt></pre>
+
+
+
+<h2>Write the Ball class</h2>
+
+<p>This is where most of the physics lies.  Create a file called <b>Ball.java</b>.  In it, add:
+
+<pre><tt>
+package sim.app.tutorial5;
+import sim.engine.*;
+import sim.portrayal.*;
+import sim.util.*;
+import sim.field.network.*;
+import sim.field.continuous.*;
+import java.awt.*;
+import java.awt.geom.*;
+
+public class Ball implements Steppable
+    {
+    <font color=gray>// force on the Ball</font>
+    public double forcex;
+    public double forcey;
+    
+    <font color=gray>// Ball mass</font>
+    public double mass;
+    
+    <font color=gray>// Current Ball velocity</font>
+    public double velocityx;
+    public double velocityy;
+    
+    <font color=gray>// did the Ball collide?</font>
+    public boolean collision;
+    
+    <font color=gray>// for drawing: always sqrt of mass</font>
+    public double diameter;
+        
+    public double getVelocityX() { return velocityx; }
+    public void setVelocityX(double val) { velocityx = val; }
+    public double getVelocityY() { return velocityy; }
+    public void setVelocityY(double val) { velocityy = val; }
+    public double getMass() { return mass; }
+    public void setMass(double val) { if (val > 0) { mass = val; diameter = Math.sqrt(val); } }
+    
+    public Ball(double vx, double vy, double m)
+        {
+        velocityx=vx;
+        velocityy=vy;
+        mass = m;
+        diameter = Math.sqrt(m);
+        }
+</tt></pre>
+
+<p> Our balls have a mass, a velocity in x and y, a current force in x and y, a diameter to display (determined by the mass), and a flag indicating whether or not they've collided on this pass.  When a Ball is stepped, it will apply its current forces, adjusting its velocity and moving one step accordingly.  It will also determine if it's collided with other objects.
+
+<p>We'll start with the collision computation.  What we'll do is grab all the balls within the "collision distance" from the Continuous2D field using <b>getNeighborsExactlyWithinDistance(...)</b>.  This method provides the objects a certain radial distance from a given location.  There are other functions available as well: toroidal distance, rectangular rather than radial, and also "liberal" functions (like <b>getObjectsWithinDistance()</b>) which are more efficient but provide more objects than requested (they're just using the discretized buckets to return objects).  We then examine the objects one by one to see if they're within the distance, and if so, set collision flags in them and in us.  You get the location of a given object in the field, as expected, with <b>getObjectLocation(...)</b>.
+
+<pre><tt>
+    public void computeCollision(Tutorial5 tut)
+        {
+	Double2D me = tut.balls.getObjectLocation(this);
+        Bag b = tut.balls.getNeighborsExactlyWithinDistance(me,Tutorial5.collisionDistance);
+	collision = b.numObjs > 1;  // other than myself of course
+        }
+</tt></pre>
+
+<P>Now let's take the step.  Once we compute the velocity, we get the current position using <b>getObjectLocation</b>, then set the new position with <b>setObjectLocation</b>.  Notice the similarity to <b>SparseGrid2D</b>.  This is because both SparseGrid2D and Continuous2D are subclasses of <b>SparseField</b>.
+
+<pre><tt>
+    public void step(SimState state)
+        {
+        Tutorial5 tut = (Tutorial5) state;
+        
+        <font color=gray>// acceleration = force / mass</font>
+        final double ax = forcex / mass;
+        final double ay = forcey / mass;
+        
+        <font color=gray>// velocity = velocity + acceleration</font>
+        velocityx += ax;
+        velocityy += ay;
+        
+        <font color=gray>// position = position + velocity</font>
+        Double2D pos = tut.balls.getObjectLocation(this);
+        Double2D newpos = new Double2D(pos.x+velocityx, pos.y + velocityy);
+        tut.balls.setObjectLocation(this,newpos);
+        
+        <font color=gray>// compute collisions</font>
+        computeCollision(tut);
+        }
+</tt></pre>
+
+
+<p>Next we need to implement the computeForce(...) funtion used by the force-computer in the Tutorial5 class.  We begin with a function that adds the force from a given rubber band connecting us with another ball.
+
+<pre><tt>
+    public void addForce(Double2D otherBallLoc, Double2D myLoc, Band band)
+        {
+        <font color=gray>// compute difference</font>
+        final double dx = otherBallLoc.x - myLoc.x;
+        final double dy = otherBallLoc.y - myLoc.y;
+        final double len = Math.sqrt(dx*dx + dy*dy);
+        final double l = band.laxDistance;
+
+        <font color=gray>//Hooke's law</font>
+        final double k = band.strength/512.0;  <font color=gray>// cut down reasonably</font>
+        final double forcemagnitude = (len - l) * k;
+        
+        <font color=gray>// add rubber band force</font>
+        if (len - l > 0) 
+            {
+            forcex += (dx * forcemagnitude) / len;
+            forcey += (dy * forcemagnitude) / len;
+            }
+        }
+</tt></pre>
+
+<p>Now to implement the computeForce(...) function, we go to the Network, extract all the edges going into or coming out of us, getting the rubber bands and the "other Ball"s out of those edges, then calling addForce with each of them.  You extract edges from the Network with <b>getEdgesIn(obj)</b> and <b>getEdgesOut(obj)</b>.  The other ball will be in the edge's <b>from()</b> field or <b>to()</b> field respectively, and the Band will be in the object's <b>info</b> field.  Note that from and to are called with functions -- they can't be changed -- but info can be accessed simply by accessing (or modifying at any time) the slot directly.
+
+<pre><tt>
+    public void computeForce(SimState state)
+        {
+        Tutorial5 tut = (Tutorial5) state;
+        Network bands = tut.bands;
+        Continuous2D balls = tut.balls;
+
+        Double2D me = balls.getObjectLocation(this);
+        
+        forcex = 0; forcey = 0;
+        <font color=gray>// rubber bands exert a force both ways --</font>
+        <font color=gray>// so our graph is undirected.  We need to get edges</font>
+        <font color=gray>// both in and out, as they could be located either place</font>
+        Bag in = bands.getEdgesIn(this);
+        Bag out = bands.getEdgesOut(this);
+        if (in!=null)
+            for(int x=0;x&lt;in.numObjs;x++)
+                {
+                Edge e = (Edge)(in.objs[x]);
+                Band b = (Band) (e.info);
+                Ball other = (Ball)(e.from());  <font color=gray>// from him to me</font>
+                Double2D him = balls.getObjectLocation(other);
+                addForce(him,me,b);
+                }
+        if (out!=null)
+            for(int x=0;x&lt;out.numObjs;x++)
+                {
+                Edge e = (Edge)(out.objs[x]);
+                Band b = (Band) (e.info);
+                Ball other = (Ball)(e.to());  <font color=gray>// from me to him</font>
+                Double2D him = balls.getObjectLocation(other);
+                addForce(him,me,b);
+                }
+        }
+    }
+</tt></pre>
+
+<h2>Add the Visualization</h2>
+
+Create a file called <b>Tutorial5WithUI.java</b>.  We'll start with some boilerplate you've seen before:
+
+<pre><tt>
+package sim.app.tutorial5;
+import sim.portrayal.network.*;
+import sim.portrayal.continuous.*;
+import sim.engine.*;
+import sim.display.*;
+import javax.swing.*;
+import java.awt.Color;
+
+public class Tutorial5WithUI extends GUIState
+    {
+    public Display2D display;
+    public JFrame displayFrame;
+
+    NetworkPortrayal2D edgePortrayal = new NetworkPortrayal2D();
+    ContinuousPortrayal2D nodePortrayal = new ContinuousPortrayal2D();
+
+    public static void main(String[] args)
+        {
+        new Tutorial5WithUI().createController();
+        }
+
+    public Tutorial5WithUI() { super(new Tutorial5( System.currentTimeMillis())); }
+    public Tutorial5WithUI(SimState state) { super(state); }
+
+    public static String getName() { return "Tutorial 5: Hooke's Law"; }
+    
+    public static Object getInfo() { return "&lt;H2>Tutorial 5&lt;/H2> Hooke's Law"; }
+
+    public Object getSimulationInspectedObject() { return state; }
+
+    public void start()
+    {
+        super.start();
+        setupPortrayals();
+    }
+
+    public void load(SimState state)
+        {
+        super.load(state);
+        setupPortrayals();
+        }
+</tt></pre>
+
+<p>Now we need to set up the portrayals.  The Continuous2D is portrayed straightforwardly enough.  But the Network needs some explanation.  <b>Network2DPortrayal</b> <i>only draws edges!</i>  Nodes must be stored in <i>another</i> field, either a <b>SparseGrid2D</b> or a <b>Continuous2D</b>.  This field must be passed to a container object called <b>SpatialNetwork2D</b>, which is in turn handed to the <b>Network2DPortrayal</b>.  The locations of the nodes in the <b>SparseGrid2D</b> or <b>Continuous2D</b> determine where the edges are drawn.  But you'll need to draw the nodes yourself by using a <b>SparseGridPortrayal2D</b> or <b>ContinuousPortrayal2D</b> respectively.  I suggest you draw the edges first, then the nodes on top of them.  Here we go:
+
+<pre><tt>
+    public void setupPortrayals()
+        {
+        Tutorial5 tut = (Tutorial5) state;
+        
+        <font color=gray>// tell the portrayals what to portray and how to portray them</font>
+        edgePortrayal.setField( new SpatialNetwork2D( tut.balls, tut.bands ) );
+        edgePortrayal.setPortrayalForAll(new BandPortrayal2D());
+        nodePortrayal.setField( tut.balls );
+
+        <font color=gray>// reschedule the displayer</font>
+        display.reset();
+        display.setBackdrop(Color.white);
+
+        <font color=gray>// redraw the display</font>
+        display.repaint();
+        }
+</tt></pre>
+
+<p>Notice that we specified a special SimplePortrayal to draw our Edges.  This is a subclass of <b>EdgePortrayal2D</b> which we will write, called <b>BandPortrayal2D.java</b>.  More on that later.
+
+<p>Notice also that no portrayal was specified for the Balls.  This is because we'll let the Balls portray <i>themselves</i>.  More on that later as well.
+
+We'll finish up with typical methods:
+
+<pre><tt>
+    public void init(Controller c)
+        {
+        super.init(c);
+
+        <font color=gray>// make the displayer</font>
+        display = new Display2D(600,600,this);
+
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("Tutorial 5 Display");
+        c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        displayFrame.setVisible(true);
+        display.attach( edgePortrayal, "Bands" );
+        display.attach( nodePortrayal, "Balls" );
+        }
+
+    public void quit()
+        {
+        super.quit();
+
+        if (displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;
+        display = null;
+        }
+    }
+</tt></pre>
+
+<h2>Let the Balls Portray Themselves</h2>
+
+Objects can portray themselves if they're subclasses of SimplePortrayal2D.  Open the <b>Ball.java</b> file, and change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+public class Ball implements Steppable
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+public class Ball <font color="blue">extends SimplePortrayal2D</font> implements Steppable
+</tt></pre></td></tr></table>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Couldn't we just use sim.portrayal.simple.OvalPortrayal2D?</b>
+<p>Yes, but we'll roll our own for tutorial purposes. 
+</font></td></tr></table>
+SimplePortrayal provides default versions for most <b>Portrayal2D</b> methods.  But we'll override two of them: drawing the Ball and doing hit-testing on the Ball for mouse-clicking.
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Why not use Graphics2D Affine Transforms?</b>
+<p>They are very very very slow.  Also, font sizes are transformed, so if you draw text labels, then scale it up, the text gets bigger -- usually that's not what you want.  Similarly, lines get thicker, etc.  Instead we give you the scale information and you can do what you like with it.
+</font></td></tr></table>
+The <b>draw(...)</b> method takes an Object to draw, a Graphics2D, and a <b>DrawInfo2D</b> object.  DrawInfo2D contains two rects: <b>draw</b> tells us the origin (x,y) and the scale (in width and height) of our coordinate system.  Most simple objects are drawn within a width-by-height box centered on the origin.  Fields are drawn within a width-by-height box but whose top-right corner is the origin.  The other rect is <b>clip</b>, which tells us the region that needs to be drawn.  Simple objects likely won't get their draw() method called unless they <i>need</i> to be drawn, so we can ignore the clip.  Fields use the clip extensively to figure out which simple objects within them need to be drawn.
+
+<p>We'll draw Balls using the diameter parameter we defined early on.  Add to Ball.java the function:
+
+<pre><tt>
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+        {
+        final double width = info.draw.width * diameter;
+        final double height = info.draw.height * diameter;
+
+        if (collision) graphics.setColor(Color.red);
+        else graphics.setColor(Color.blue);
+
+        final int x = (int)(info.draw.x - width / 2.0);
+        final int y = (int)(info.draw.y - height / 2.0);
+        final int w = (int)(width);
+        final int h = (int)(height);
+
+        <font color=gray>// draw centered on the origin</font>
+        graphics.fillOval(x,y,w,h);
+        }
+</tt></pre>
+
+<p><table width="35%" align=right valign=top bgcolor="#DDDDDD"><tr><td><font size="1">
+<b>Why do we draw with fillOval instead of using an Ellipse2D?</b>
+<p>Ellipse2D, like most of Java2D, is much slower than fillOval (or other java.awt.Graphics primitives).
+</font></td></tr></table>
+Similarly, we need to override the <b>hitObject()</b> method, which takes an Object and a DrawInfo2D.  This method tells us if an object drawn at the provided origin and scale intersects with the provided <b>clip</b> region; perhaps a mouse click, or a dragged rect selection by the mouse.  The easiest way to do this is with Java2D objects, in this case <b>Ellipse2D</b>.  Add to Ball.java:
+
+<pre><tt>
+    public boolean hitObject(Object object, DrawInfo2D range)
+        {
+        final double SLOP = 1.0;  <font color=gray>// need a little extra diameter to hit circles</font>
+        final double width = range.draw.width * diameter;
+        final double height = range.draw.height * diameter;
+        
+        Ellipse2D.Double ellipse = new Ellipse2D.Double( 
+                range.draw.x-width/2-SLOP, 
+                range.draw.y-height/2-SLOP, 
+                width+SLOP*2,
+                height+SLOP*2 );
+        return ( ellipse.intersects( range.clip.x, range.clip.y, range.clip.width, range.clip.height ) );
+        }
+</tt></pre>
+
+<h2>Make a Custom Edge Portrayal</h2>
+
+<p>Now we need to write an </b>SimpleEdgePortrayal2D</b> subclass to draw our Rubber Bands.  The default SimpleEdgePortrayal2D class draws edges directed (red on one end, black on the other), with <i>info</i>.toString() as a label in gray in the middle.  That's not quite what we want.  We'd like it to be black everywhere, with a small strength value in the center, drawn in blue.  So we'll make our own version.
+
+<p>Create a file called <b>BandPortrayal2D.java</b>.  In this file, add:
+
+<pre><tt>
+package sim.app.tutorial5;
+import sim.field.network.*;
+import sim.portrayal.network.*;
+import sim.portrayal.*;
+import java.awt.*;
+
+public class BandPortrayal2D extends SimpleEdgePortrayal2D
+    {
+    <font color=gray>// how our strength should look</font>
+    java.text.NumberFormat strengthFormat;
+    public BandPortrayal2D()
+      {
+      strengthFormat = java.text.NumberFormat.getInstance();
+      strengthFormat.setMinimumIntegerDigits(1);
+      strengthFormat.setMaximumFractionDigits(2);
+      }
+
+    public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+        {
+</tt></pre>
+
+<p>So far, looks like an ordinary <b>draw</b> method.  But Edges expect that their DrawInfo2D be <i>actually</i> an <b>EdgeDrawInfo2D</b> object, which adds a second drawing point (the first one is at the (x,y) origin) to define the line.  Add:
+
+<pre><tt>
+        <font color=gray>// this better be an EdgeDrawInfo2D!  :-)</font>
+        EdgeDrawInfo2D ei = (EdgeDrawInfo2D) info;
+        <font color=gray>// likewise, this better be an Edge!</font>
+        Edge e = (Edge) object;
+
+        <font color=gray>// our start (x,y), ending (x,y), and midpoint (for drawing the label)</font>
+        final int startX = (int)ei.draw.x;
+        final int startY = (int)ei.draw.y;
+        final int endX = (int)ei.secondPoint.x;
+        final int endY = (int)ei.secondPoint.y;
+        final int midX = (int)((ei.draw.x+ei.secondPoint.x) / 2);
+        final int midY = (int)((ei.draw.y+ei.secondPoint.y) / 2);
+</tt></pre>
+
+<p>Now we can draw the line.
+
+<pre><tt>
+        <font color=gray>// draw line</font>
+        Band b = (Band)(e.info);
+        graphics.setColor(Color.black);
+        graphics.drawLine (startX, startY, endX, endY);
+        
+        <font color=gray>// draw label in blue</font>
+        graphics.setColor(Color.blue);
+        graphics.setFont(labelFont);  <font color=gray>// default font for Edge labels</font>
+        String information = strengthFormat.format(((Band)(e.info)).strength);
+        int width = graphics.getFontMetrics().stringWidth(information);
+        graphics.drawString( information, midX - width / 2, midY );
+        }
+    
+    <font color=gray>// use the default hitObject -- don't bother writing that one, it works fine</font>
+    }
+</tt></pre>
+
+<h2>Run that Sucker</h2>
+
+<p>Save and compile all files, then run <b>java sim.app.tutorial5.Tutorial5WithUI</b>.  Notice that the balls bounce well outside of the clip region (try scaling out).  We'd like to be able to scale out and be able to see more of the region, even though it's "out of bounds" so to speak.
+
+<p>We can do this by telling Display2D to turn off its clip.  In the <b>Tutorial5WithUI.java</b> file, change:
+
+<p><table border=1>
+<tr><td align=center><b>FROM...</b></td></tr>
+<tr><td><pre><tt>
+display = new Display2D(600,600,this);
+</tt></pre></td></tr><tr><td align=center><b>CHANGE TO</b></td></tr><tr><td><pre><tt>
+display = new Display2D(600,600,this);<font color="blue">
+<font color=gray>// turn off clipping</font>
+display.setClipping(false);</font></font>
+</tt></pre></td></tr></table>
+
+<p>Recompile the Tutorial5WithUI.java file, and re-run the application.  Scale out and enjoy.
+
+<br>
+<br>
+<br>
+<br>
+
+
+

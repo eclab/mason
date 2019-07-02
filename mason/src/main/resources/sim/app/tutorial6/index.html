@@ -1,0 +1,29 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>Tutorial 6: Planets</h2> 
+By Sean Luke
+</table>
+
+<font size="-1" color="gray">
+[Requires Java3D]&nbsp;&nbsp;&nbsp;[<a href="tutorial6.html">Tutorial 6</a> documentation]
+</font>
+
+<p>Some planetary orbits, primarily to introduce the 3D graphics facility and 3D continuous field.  The orbits are totally ridiculous: they're circles rather than ellipses; they're all on the same plane; and they're at the log of the proper distance so the planets can actually be seen.
+
+<p>This tutorial portrays the planets using planetary texture maps provided, with permission by James Hastings-Trew at <a href="http://planetpixelemporium.com/">JHT's Planet Pixel Emporium</a>.  The Earth texture map is from <a href="http://earthobservatory.nasa.gov/Newsroom/BlueMarble/">NASA</a>.  Java3D is not particularly fast at loading these texture maps: you have to be patient.
+
+<p>The demo is good place for you to try rotation, translation, and scaling of the 3D environment.  You drag in various ways:
+
+<ol>
+<li>Left mouse button: Rotate the environment.
+<li>Middle mouse button or alt/option-left-mouse: Move the camera towards or away from the environment.
+<li>Right mouse button or command-left-mouse: Translate the environment (move it side to side).
+<li>Scale Text Field: change the magnification. This one is particularly useful in this context.
+</ol> 
+
+<p><hr><font color='red'>Note:</font> this description is different from the one which appears after following the tutorial documentation.  This is because the tutorial documentation overrides the <tt>getInfo</tt> method to provide a description.  If this method is not overridden, MASON instead tries to display a file called <tt>index.html</tt> stored in the same directory as the simulation (which is what's going on here). 
+
+
+</body></html>

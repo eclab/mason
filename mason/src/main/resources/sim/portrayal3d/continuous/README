@@ -1,0 +1,10 @@
+sim/portrayal3D/continuous
+
+This package holds a 3D FieldPortrayal for the Continuous2D and 
+Continuous3D fields.
+
+
+ContinuousPortrayal3D.java
+
+A field portrayal for the Continuous2D and Continuous3D fields.
+

@@ -1,0 +1,97 @@
+sim/portrayal/simple
+
+This package holds 2D SimplePortrayals for displaying all sorts of 
+objects in various Fields.  Theses SimplePortrayals are registered for 
+various objects in the FieldPortrayals and called upon to portray those 
+objects when asked.
+
+The SimplePortrayals come in two basic forms: "basic" simple portrayals 
+and "wrapper" portrayals.  Wrapper portrayals have (typically) one 
+subsidiary simple portrayal and do some extra functionality, such as 
+labelling the simple portrayal.  Many simple portrayals can be set up to 
+do something special when the object is selected with the mouse: wrapper 
+portrayals in particular are designed to make this easy so (for example) 
+when you click on an object in the window, a label appears under it, 
+then disappears when you click elsewhere.
+
+
+RectanglePortrayal2D.java
+
+A simple portrayal which draws the object as a rectangle.
+
+
+OvalPortrayal2D.java
+
+A simple portrayal which draws the object as an oval.
+
+
+ShapePortrayal2D.java
+
+A simple portrayal which draws the object as some provided Shape2D object.
+
+
+ImagePortrayal2D.java
+
+A simple portrayal which draws the object as a bitmap image or icon.
+
+
+ValuePortryal2D.java
+
+A special version of RectanglePortrayal2D, intended for use only with 
+ValueGridPortrayal2D, which draws "values" (integers, doubles, etc.) as 
+rectangles of certain colors.
+
+
+CircledPortrayal2D.java
+
+A wrapper portrayal which can draw a large circle around the object to 
+highlight it.
+
+
+LabelledPortrayal2D.java
+
+A wrapper portrayal which can add a textual label to the object.
+
+
+TransformedPortrayal.java
+
+A wrapper portrayal which can transform (scale, rotate, translate) the
+underlying portrayal as desired.
+
+
+OrientedPortrayal.java 
+
+A wrapper portrayal which can draw an orientation marker indicating how 
+the underlying object is "oriented" (assuming the object implements the 
+Oriented2D interface).  Optionally, OrientedPortrayal2D doesn't need a 
+subsidiary portrayal, and can draw various oriented shapes (compasses, 
+kites).
+
+
+TrailedPortrayal2D.java
+
+A special wrapper portrayal which draws "trails" following the object
+as it moves around.
+
+
+FacetedPortrayal2D.java
+
+A wrapper portrayal over several other portrayals which uses one or
+the other based on the integer "value" of the underlying object (if 
+the object is a number, the number is used -- or if the object is
+sim.util.Valuable, its value is used).
+
+
+MovablePortrayal2D.java
+
+A wrapper portrayal which enables the user to move certain objects
+by dragging them with the mouse.
+
+
+AdjustablePortrayal2D.java
+
+A wrapper portrayal which displays the orientation of certain objects,
+and/or enables the user to change their orientation using the mouse,
+and/or enables the user to change their "scale" (notionally size)
+using the mouse.
+

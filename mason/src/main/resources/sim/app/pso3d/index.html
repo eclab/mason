@@ -1,0 +1,35 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png"><td valign=top>
+<h2>3D Particle Swarm Optimization</h2> 
+By Joey Harrison and Ankur Desai
+</table>
+
+<p>Particle Swarm Optimization (PSO) is a population-oriented stochastic search technique similar to genetic algorithms, evolutionary strategies, and other evolutionary computation algorithms.  The technique discovers solutions for N-dimensional parameterized problems: basically it discovers the point in N-dimensional space which maximizes some quality function.
+
+<p>For no particularly good reason, the PSO 3D version has a different notion of "neighborhood" than the 2D version.  Rather than organize the particles in a ring, and letting a particle's "neighborhood" be the M individuals on either side of the particle, the 3D version simply groups the particles into P disjoint sets ("neighborhoods").  We realize this is a nonstandard approach in PSO but thought it would be interesting to try.
+
+<p>PSO works approximately as follows: a "swarm" of candidate solutions ("particles") are placed randomly throughout the space and with a random initial velocity.  Each particle measures the quality of its present location in space.  This velocity vector affects how each particle moves in the space, and it is changed each timestep according to a weighted sum of the following values:
+
+<ul>
+<li>A vector towards the <b>personal best</b>-quality location the particle has been.
+<li>A vector towards the <b>global best</b>-quality location any member of the swarm has ever visited.
+<li>A vector towards the <b>"neighborhood best"</b>: the best particle in the the particle's neighborhood as described earlier.
+<li>The particle's previous velocity vector.
+</ul>
+
+<p>This simulation applies a swarm of particles to simple two-dimensional problems sufficient for visualization.  The model parameters are:
+
+<ul>
+<li><b>NumParticlesPerNeighborhood</b>: how many particles are in each "neighborhood" set.
+<li><b>NumNeighborhoods</b>: how many neighborhoods there are.
+<li><b>InitialVelocityRange</b>: the range of possible initial velocities, which are randomly chosen.
+<li><b>VelocityScalar</b>: multiplies the final velocity vector by a constant (causing the particles to move more rapidly or more cautiously).  A smaller value will cause particles to tend to get stuck in local optima more easily.  A higher value will cause particles to move more rapidly towards good solutions, but they then cannot converge to precise locations as easily.  Very large velocity values cause the swarm to become unstable.
+<li><b>FitnessFunction</b>: the quality function applied to the space.  "Better" values are higher.  There are several available functions, all common to the stochastic search literature:
+	<ul>
+	<li><b>Rastrigin</b>.  1000 - (30 + x<sup>2</sup> - 10cos(2 Pi x) + y<sup>2</sup> - 10cos(2 Pi y) + z<sup>2</sup> - 10cos(2 Pi z))
+	<li><b>Griewangk</b>.  1000 - (1 + (x<sup>2</sup> + y<sup>2</sup> + z<sup>2</sup>) / 4000 - (cos(x)*cos(y / 2<sup>.5</sup>)*cos(z / 3<sup>.5</sup>)))
+	<li><b>Rosenbrock</b>.  1000 - (100  * ((x<sup>2</sup> - y)*(x<sup>2</sup> - y) + (1-x)<sup>2</sup> + ((y<sup>2</sup> - z)*(y<sup>2</sup> - z) + (1-y)<sup>2</sup>))
+	</ul>
+<li><b>SuccessThreshold</b>: A particle must reach this close to 1000 in order to be considered "optimal".  The simulation terminates when all particles have moved to within this threshold.

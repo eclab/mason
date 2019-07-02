@@ -1,0 +1,17 @@
+sim/field/continuous
+
+This package holds common representations of 2D and 3D continuous space.
+
+
+Continuous2D.java
+
+Associates objects with locations in bounded and unbounded 2D continuous
+space.  A subclass of sim/field/SparseField.java
+
+
+Continuous3D.java
+
+Associates objects with locations in bounded and unbounded 3D continuous 
+space.  A subclass of sim/field/SparseField.java
+
+

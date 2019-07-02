@@ -1,0 +1,15 @@
+sim/field/network
+
+This package holds common representations of directed and undirected graphs.
+
+
+Network.java
+
+Places objects either as nodes or as edges in a directed or indirected graph.
+Nodes are simply objects.  Edges are actually the 'Edge' class below, which
+can hold an 'information' object of your choice associated with each edge.
+
+
+Edge.java
+
+The wrapper object for edges.  Holds objects associated with the edges.
