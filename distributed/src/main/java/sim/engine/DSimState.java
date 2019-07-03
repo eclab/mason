@@ -129,8 +129,13 @@ public class DSimState extends SimState {
 			 */
 			if (payloadWrapper.payload instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
-				schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
-						iterativeRepeat.interval);
+
+				if (iterativeRepeat.time < 0)
+					schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
+							iterativeRepeat.interval);
+				else
+					schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering, iterativeRepeat.step,
+							iterativeRepeat.interval);
 				// Add agent to the field
 				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
 

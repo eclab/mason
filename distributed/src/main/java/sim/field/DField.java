@@ -2,6 +2,7 @@ package sim.field;
 
 import java.io.Serializable;
 
+import sim.engine.IterativeRepeat;
 import sim.engine.Steppable;
 import sim.util.NdPoint;
 
@@ -85,6 +86,32 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *                                  is not Steppable
 	 */
 	void moveAgent(final P fromP, final P toP, final T t);
+
+	/**
+	 * Moves and schedules an agent. The toP location can be remote
+	 *
+	 * @param fromP    Move from Location (must be local to the field)
+	 * @param toP      Move to Location
+	 * @param t        Must be of type Steppable
+	 * @param ordering
+	 * @param time
+	 *
+	 * @throws IllegalArgumentException if the fromP location is not local or if t
+	 *                                  is not Steppable
+	 */
+	void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time);
+
+	/**
+	 * Moves and schedules a repeating agent. The toP location can be remote
+	 *
+	 * @param fromP           Move from Location (must be local to the field)
+	 * @param toP             Move to Location
+	 * @param toP
+	 * @param iterativeRepeat must contain a Steppable of type T
+	 *
+	 * @throws IllegalArgumentException if the fromP location is not local
+	 */
+	void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat);
 
 	void addLocal(final P p, final T t);
 

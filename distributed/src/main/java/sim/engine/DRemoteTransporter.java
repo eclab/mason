@@ -296,21 +296,8 @@ public class DRemoteTransporter {
 		transportObject(agentWrapper, dst, loc, fieldIndex);
 	}
 
-	/**
-	 * Does not transport the Object, only migrates it
-	 *
-	 * @param ordering
-	 * @param time
-	 * @param interval
-	 * @param agent
-	 * @param dst      destination pId
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgentRepeating(final int ordering, final double time, final double interval,
-			final Steppable agent, final int dst) {
-		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst);
-	}
+	// No other methods are exposed for migrateRepeatingAgent because we need
+	// iterativeRepeat to call stop() on it
 
 	/**
 	 * Does not transport the Object, only migrates it
@@ -320,26 +307,8 @@ public class DRemoteTransporter {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgentRepeating(final IterativeRepeat iterativeRepeat, final int dst) {
-		migrateAgentRepeating(iterativeRepeat, dst, null, -1);
-	}
-
-	/**
-	 * Transports the Object as well as migrates it
-	 *
-	 * @param ordering
-	 * @param time
-	 * @param interval
-	 * @param agent
-	 * @param dst        destination pId
-	 * @param loc
-	 * @param fieldIndex
-	 *
-	 * @throws IllegalArgumentException if destination (pid) is local
-	 */
-	public void migrateAgentRepeating(final int ordering, final double time, final double interval,
-			final Steppable agent, final int dst, final NdPoint loc, final int fieldIndex) {
-		migrateAgentRepeating(new IterativeRepeat(agent, time, interval, ordering), dst, loc, fieldIndex);
+	public void migrateRepeatingAgent(final IterativeRepeat iterativeRepeat, final int dst) {
+		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
 	}
 
 	/**
@@ -352,7 +321,7 @@ public class DRemoteTransporter {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateAgentRepeating(final IterativeRepeat iterativeRepeat, final int dst, final NdPoint loc,
+	public void migrateRepeatingAgent(final IterativeRepeat iterativeRepeat, final int dst, final NdPoint loc,
 			final int fieldIndex) {
 
 		// TODO: do we need to synchronize something to ensure that the stoppable is

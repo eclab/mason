@@ -14,6 +14,7 @@ import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSimState;
+import sim.engine.IterativeRepeat;
 import sim.engine.Steppable;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
@@ -235,6 +236,39 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
+	public void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time) {
+		if (!inLocal(fromP))
+			throw new IllegalArgumentException("fromP must be local");
+
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final Steppable agent = (Steppable) t;
+
+		remove(fromP, t);
+
+		if (inLocal(toP)) {
+			add(toP, t);
+			state.schedule.scheduleOnce(time, ordering, agent);
+		} else
+			state.transporter.migrateAgent(ordering, time, agent,
+					partition.toPartitionId(toP), toP, fieldIndex);
+	}
+
+	public void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat) {
+		if (!inLocal(fromP))
+			throw new IllegalArgumentException("fromP must be local");
+
+		final T t = (T) iterativeRepeat.getSteppable();
+
+		remove(fromP, t);
+
+		if (inLocal(toP)) {
+			add(toP, t);
+		} else
+			state.transporter.migrateRepeatingAgent(iterativeRepeat,
+					partition.toPartitionId(toP), toP, fieldIndex);
+	}
 	// TODO make a copy of the storage which will be used by the remote field access
 
 	// TODO: Do we need to check for type safety here?
