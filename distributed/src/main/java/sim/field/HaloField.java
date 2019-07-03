@@ -263,9 +263,9 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 
 		remove(fromP, t);
 
-		if (inLocal(toP)) {
+		if (inLocal(toP))
 			add(toP, t);
-		} else
+		else
 			state.transporter.migrateRepeatingAgent(iterativeRepeat,
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
