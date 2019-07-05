@@ -3,7 +3,6 @@ package sim.field;
 import java.io.Serializable;
 
 import sim.engine.IterativeRepeat;
-import sim.engine.Steppable;
 import sim.util.NdPoint;
 
 /**
@@ -102,11 +101,25 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time);
 
 	/**
+	 * Adds and registers a repeating agent. The location can be remote <br>
+	 * <br>
+	 * <b>This does not schedule a repeating agent.</b><br>
+	 * <br>
+	 * The modeler must first schedule an repeating agent. Next, the stoppable
+	 * returned from the scheduleRepeating function must be Type Cast to
+	 * IterativeRepeat. Finally, Use this IterativeRepeat Object to call this
+	 * method.
+	 *
+	 * @param p               add to Location
+	 * @param iterativeRepeat must contain a Steppable of type T
+	 */
+	void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
+
+	/**
 	 * Moves and schedules a repeating agent. The toP location can be remote
 	 *
 	 * @param fromP           Move from Location (must be local to the field)
 	 * @param toP             Move to Location
-	 * @param toP
 	 * @param iterativeRepeat must contain a Steppable of type T
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local

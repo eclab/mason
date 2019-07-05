@@ -66,7 +66,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 
 		// init variables that may change with the partition scheme
 		reload();
-		fieldIndex = state.register(this);
+		fieldIndex = state.registerField(this);
 	}
 
 	protected void registerCallbacks() {
@@ -149,10 +149,6 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 	}
 
 	public void add(final P p, final T t) {
-		// In this partition but not in ghost cells
-		// TODO: Also implement addAgent methods
-
-		// TODO use RMI instead
 		if (!inLocal(p))
 			addToRemote(p, t);
 		else
@@ -255,9 +251,22 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
+	public void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
+		final T t = (T) iterativeRepeat.getSteppable();
+
+		if (inLocal(p)) {
+			add(p, t);
+			state.registerIterativeRepeat(iterativeRepeat);
+		} else
+			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+	}
+
 	public void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat) {
 		if (!inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
+
+		// We cannot use checked cast for generics because of erasure
+		// TODO: is there a safe way of doing this?
 
 		final T t = (T) iterativeRepeat.getSteppable();
 
@@ -265,9 +274,11 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 
 		if (inLocal(toP))
 			add(toP, t);
-		else
+		else {
+			state.stopIterativeRepeat(iterativeRepeat);
 			state.transporter.migrateRepeatingAgent(iterativeRepeat,
 					partition.toPartitionId(toP), toP, fieldIndex);
+		}
 	}
 	// TODO make a copy of the storage which will be used by the remote field access
 
