@@ -116,6 +116,38 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
 
 	/**
+	 * Removes and stops a repeating agent. The location can be remote <br>
+	 *
+	 * @param p               remove from Location (must be local to the field)
+	 * @param iterativeRepeat Must be of type Steppable
+	 *
+	 * @throws IllegalArgumentException if the fromP location is not local or if t
+	 *                                  is not Steppable
+	 */
+	void removeAndStopRepeatingAgent(final P p, final T t);
+
+	/**
+	 * Removes and stops a repeating agent. The location can be remote <br>
+	 *
+	 * @param p               remove from Location (must be local to the field)
+	 * @param iterativeRepeat must contain a Steppable of type T
+	 *
+	 * @throws IllegalArgumentException if the fromP location is not local
+	 */
+	void removeAndStopRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
+
+	/**
+	 * Moves and schedules a repeating agent. The toP location can be remote
+	 *
+	 * @param fromP           Move from Location (must be local to the field)
+	 * @param toP             Move to Location
+	 * @param iterativeRepeat Must be of type Steppable
+	 *
+	 * @throws IllegalArgumentException if the fromP location is not local
+	 */
+	void moveRepeatingAgent(final P fromP, final P toP, final T t);
+
+	/**
 	 * Moves and schedules a repeating agent. The toP location can be remote
 	 *
 	 * @param fromP           Move from Location (must be local to the field)

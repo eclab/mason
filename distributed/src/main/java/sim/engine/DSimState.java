@@ -38,10 +38,10 @@ public class DSimState extends SimState {
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry = new ArrayList<>();
+	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
 
 	// A map from agent to IterativeRepeat (Stoppable) for that Agent
-	final HashMap<Steppable, IterativeRepeat> iterativeRepeatRegistry = new HashMap<>();
+	final HashMap<Steppable, IterativeRepeat> iterativeRepeatRegistry;
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
@@ -54,6 +54,8 @@ public class DSimState extends SimState {
 		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
+		iterativeRepeatRegistry = new HashMap<>();
+		fieldRegistry = new ArrayList<>();
 	}
 
 	public DSimState(final long seed, final int width, final int height, final int aoiSize) {

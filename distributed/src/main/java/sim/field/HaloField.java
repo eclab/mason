@@ -261,6 +261,45 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 	}
 
+	public void removeAndStopRepeatingAgent(final P p, final T t) {
+		if (!inLocal(p))
+			throw new IllegalArgumentException("p must be local");
+
+		// TODO: Should we remove the instanceOf check and assume that the
+		// pre-conditions are always met?
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+		state.stopIterativeRepeat((Steppable) t);
+
+		remove(p, t);
+	}
+
+	public void removeAndStopRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
+		if (!inLocal(p))
+			throw new IllegalArgumentException("p must be local");
+
+		final T t = (T) iterativeRepeat.getSteppable();
+		remove(p, t);
+		state.stopIterativeRepeat(iterativeRepeat);
+	}
+
+	public void moveRepeatingAgent(final P fromP, final P toP, final T t) {
+		if (!inLocal(fromP))
+			throw new IllegalArgumentException("fromP must be local");
+
+		remove(fromP, t);
+
+		// TODO: Should we remove the instanceOf check and assume that the
+		// pre-conditions are always met?
+		if (inLocal(toP))
+			add(toP, t);
+		else if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+		else
+			state.transporter.migrateRepeatingAgent(state.getIterativeRepeat((Steppable) t),
+					partition.toPartitionId(toP), toP, fieldIndex);
+	}
+
 	public void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat) {
 		if (!inLocal(fromP))
 			throw new IllegalArgumentException("fromP must be local");
@@ -274,11 +313,8 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 
 		if (inLocal(toP))
 			add(toP, t);
-		else {
-			state.stopIterativeRepeat(iterativeRepeat);
-			state.transporter.migrateRepeatingAgent(iterativeRepeat,
-					partition.toPartitionId(toP), toP, fieldIndex);
-		}
+		else
+			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP, fieldIndex);
 	}
 	// TODO make a copy of the storage which will be used by the remote field access
 
