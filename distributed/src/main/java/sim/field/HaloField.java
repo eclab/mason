@@ -296,7 +296,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 		else if (!(t instanceof Steppable))
 			throw new IllegalArgumentException("t must be a Steppable");
 		else
-			state.transporter.migrateRepeatingAgent(state.getIterativeRepeat((Steppable) t),
+			state.transporter.migrateRepeatingAgent(state.stopIterativeRepeat((Steppable) t),
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
@@ -313,8 +313,10 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 
 		if (inLocal(toP))
 			add(toP, t);
-		else
+		else {
+			state.stopIterativeRepeat(iterativeRepeat);
 			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP, fieldIndex);
+		}
 	}
 	// TODO make a copy of the storage which will be used by the remote field access
 

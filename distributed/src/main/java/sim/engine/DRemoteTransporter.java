@@ -296,9 +296,6 @@ public class DRemoteTransporter {
 		transportObject(agentWrapper, dst, loc, fieldIndex);
 	}
 
-	// No other methods are exposed for migrateRepeatingAgent because we need
-	// iterativeRepeat to call stop() on it
-
 	/**
 	 * Does not transport the Object, only migrates it
 	 *
@@ -312,7 +309,8 @@ public class DRemoteTransporter {
 	}
 
 	/**
-	 * Transports the Object as well as migrates it
+	 * Transports the Object as well as migrates it. Does not stop() the repeating
+	 * object. Thus, call stop on iterativeRepeat before calling this function
 	 *
 	 * @param iterativeRepeat
 	 * @param dst             destination pId
@@ -329,12 +327,11 @@ public class DRemoteTransporter {
 
 		// These methods differ in just the datatype of the WrappedObject
 		transportObject(iterativeRepeat, dst, loc, fieldIndex);
-
-		iterativeRepeat.stop();
 	}
 
 	/**
-	 * Transports the Object but doesn't schedule it
+	 * Transports the Object but doesn't schedule it. Does not stop() the repeating
+	 * object. Thus, call stop on iterativeRepeat before calling this function
 	 *
 	 * @param obj        Object to be transported
 	 * @param dst        destination pId

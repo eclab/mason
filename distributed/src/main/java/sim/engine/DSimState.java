@@ -186,9 +186,9 @@ public class DSimState extends SimState {
 	 *
 	 * @param iterativeRepeat
 	 */
-	public void stopIterativeRepeat(final IterativeRepeat iterativeRepeat) {
+	public IterativeRepeat stopIterativeRepeat(final IterativeRepeat iterativeRepeat) {
 		iterativeRepeat.stop();
-		iterativeRepeatRegistry.remove(iterativeRepeat.step);
+		return iterativeRepeatRegistry.remove(iterativeRepeat.step);
 	}
 
 	/**
@@ -197,8 +197,10 @@ public class DSimState extends SimState {
 	 *
 	 * @param steppable
 	 */
-	public void stopIterativeRepeat(final Steppable steppable) {
-		iterativeRepeatRegistry.remove(steppable).stop();
+	public IterativeRepeat stopIterativeRepeat(final Steppable steppable) {
+		final IterativeRepeat iterativeRepeat = iterativeRepeatRegistry.remove(steppable);
+		iterativeRepeat.stop();
+		return iterativeRepeat;
 	}
 
 	/**
