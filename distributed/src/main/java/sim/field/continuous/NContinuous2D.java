@@ -27,8 +27,12 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint,
 		return localStorage.getLocation(obj);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<T> get(final NdPoint p) {
-		return localStorage.getObjects(p);
+		if (!inLocalAndHalo(p))
+			return (List<T>) getFromRemote(p);
+		else
+			return getLocal(p);
 	}
 
 	public List<T> getNearestNeighbors(final T obj, final int k) {
@@ -37,10 +41,6 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint,
 
 	public List<T> getNeighborsWithin(final T obj, final double r) {
 		return localStorage.getNeighborsWithin(obj, r);
-	}
-
-	public void remove(final T obj) {
-		localStorage.removeObject(obj);
 	}
 
 	// Overriding this because
@@ -85,7 +85,7 @@ public class NContinuous2D<T extends Serializable> extends HaloField<T, NdPoint,
 				.collect(Collectors.toList());
 	}
 
-	public Serializable getLocal(final NdPoint p) {
+	public ArrayList<T> getLocal(final NdPoint p) {
 		return localStorage.getObjects(p);
 	}
 
