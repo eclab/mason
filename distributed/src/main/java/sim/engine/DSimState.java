@@ -124,7 +124,7 @@ public class DSimState extends SimState {
 			System.exit(-1);
 		}
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
-			System.out.println("Migrating - " + payloadWrapper);
+//			System.out.println("Migrating - " + payloadWrapper);
 
 			/*
 			 * Assumptions about what is to be added to the field using addToField method
@@ -297,10 +297,9 @@ public class DSimState extends SimState {
 
 	public void start() {
 		super.start();
-		// TODO: properly init
-		for (int i = 0; i < partition.numProcessors; i++) {
-			RemoteProxy.Init(i);
-		}
+
+		RemoteProxy.Init();
+
 		try {
 			syncFields();
 		} catch (final MPIException e) {
@@ -309,7 +308,6 @@ public class DSimState extends SimState {
 		}
 		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
 			haloField.initRemote();
-		// /init
 	}
 
 	public boolean isDistributed() {

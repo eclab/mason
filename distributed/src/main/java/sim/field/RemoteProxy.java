@@ -23,6 +23,9 @@ public class RemoteProxy<T extends Serializable, P extends NdPoint> {
 	private static Registry registry = null;
 	private static ArrayList<RemoteField<? extends Serializable, ? extends NdPoint>> exported = null;
 
+//	private static Integer rootHostPort;
+//	private static String rootHostAddr;
+
 	private static int getFreePort() {
 		try (ServerSocket socket = new ServerSocket(0)) {
 			socket.setReuseAddress(true);
@@ -35,20 +38,17 @@ public class RemoteProxy<T extends Serializable, P extends NdPoint> {
 		return -1;
 	}
 
-	public static void Init(final int pid) {
+	public static void Init() {
 		try {
-			if (MPI.COMM_WORLD.getRank() == pid) {
-				RemoteProxy.hostPort = getFreePort();
-				RemoteProxy.hostAddr = InetAddress.getLocalHost().getHostAddress();
-				RemoteProxy.registry = LocateRegistry.createRegistry(RemoteProxy.hostPort);
-				// System.out.printf("Starting rmiregistry in %s on port %d\n", hostAddr,
-				// hostPort);
-			}
+			RemoteProxy.hostPort = getFreePort();
+			RemoteProxy.hostAddr = InetAddress.getLocalHost().getHostAddress();
+			RemoteProxy.registry = LocateRegistry.createRegistry(RemoteProxy.hostPort);
 
-			// Broadcast that LP's ip address/port to other LPs
-			// so they can connect to the registry later
-			RemoteProxy.hostAddr = MPIUtil.<String>bcast(RemoteProxy.hostAddr, pid);
-			RemoteProxy.hostPort = MPIUtil.<Integer>bcast(new Integer(RemoteProxy.hostPort), pid);
+			System.out.printf("Starting rmiregistry in %s on port %d\n", RemoteProxy.hostAddr, RemoteProxy.hostPort);
+
+			// Creating a barrier to ensure that all LP's are initialized
+			// before isReady is true
+			MPI.COMM_WORLD.barrier();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -58,7 +58,6 @@ public class RemoteProxy<T extends Serializable, P extends NdPoint> {
 		RemoteProxy.isReady = true;
 	}
 
-	// TODO: Should Finalize be Static????
 	// TODO hook this to MPI finalize so that this will be called before exit
 	public static void Finalize() {
 		RemoteProxy.isReady = false;
@@ -74,23 +73,35 @@ public class RemoteProxy<T extends Serializable, P extends NdPoint> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public RemoteProxy(final DPartition ps, final RemoteField<? extends Serializable, ? extends NdPoint> field) {
 		if (!RemoteProxy.isReady)
 			throw new IllegalArgumentException("RMI Registry has not been started yet!");
 
 		final String name = UUID.randomUUID().toString();
 
+		// We're creating a registry per LP. For each LP we are then calling allGather
+		// so that we can exchange the remote fields for between all LP's
 		try {
 			// Create a RMI server and register it in the registry
-			final Registry reg = LocateRegistry.getRegistry(RemoteProxy.hostAddr, RemoteProxy.hostPort);
-			reg.bind(name, UnicastRemoteObject.exportObject(field, 0));
+			RemoteProxy.registry.bind(name, UnicastRemoteObject.exportObject(field, 0));
 
-			// Exchange the names with all other LPs so that each LP can create RemoteField
+			// Performance should not be a big concern below since we are only calling this
+			// method once per field
+
+			// Exchange the hosts with all other LPs so that each LP can create RemoteField
 			// clients for all other LPs
-			final ArrayList<String> names = MPIUtil.<String>allGather(ps, name);
+			final ArrayList<String> hosts = MPIUtil.<String>allGather(ps,
+					name + ":" + RemoteProxy.hostAddr + ":" + RemoteProxy.hostPort);
+
 			remoteFields = new ArrayList<>(ps.numProcessors);
-			for (int i = 0; i < ps.numProcessors; i++)
-				remoteFields.add((RemoteField<T, P>) reg.lookup(names.get(i)));
+
+			for (final String host : hosts) {
+				final String[] name_host_Port = host.split(":");
+				final Registry remoteReg = LocateRegistry.getRegistry(name_host_Port[1],
+						Integer.parseInt(name_host_Port[2]));
+				remoteFields.add((RemoteField<T, P>) remoteReg.lookup(name_host_Port[0]));
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

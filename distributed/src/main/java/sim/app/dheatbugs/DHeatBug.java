@@ -6,6 +6,8 @@
 
 package sim.app.dheatbugs;
 
+import java.rmi.RemoteException;
+
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
