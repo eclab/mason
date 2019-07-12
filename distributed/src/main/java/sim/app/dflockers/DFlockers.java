@@ -49,8 +49,8 @@ public class DFlockers extends DSimState {
 			if (random.nextBoolean(DFlockers.deadFlockerProbability))
 				flocker.dead = true;
 
-			flockers.add(location, flocker);
-			schedule.scheduleOnce(flocker, 1);
+			flockers.addAgent(location, flocker);
+//			schedule.scheduleOnce(flocker, 1);
 		}
 
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);

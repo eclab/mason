@@ -186,8 +186,8 @@ public class DHeatBugs extends DSimState {
 				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
 			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.add(new IntPoint(px, py), b);
-			schedule.scheduleOnce(b, 1);
+			bugs.addAgent(new IntPoint(px, py), b);
+//			schedule.scheduleOnce(b, 1);
 		}
 
 		// Does this have to happen here? I guess.

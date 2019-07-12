@@ -6,8 +6,6 @@
 
 package sim.app.dheatbugs;
 
-import java.rmi.RemoteException;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
@@ -56,7 +54,6 @@ public class DHeatBug implements Steppable {
 	}
 
 	public void step(final SimState state) {
-
 		final DHeatBugs dHeatBugs = (DHeatBugs) state;
 
 		// Skip addHeat for the first step
