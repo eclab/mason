@@ -3,6 +3,7 @@ package sim.field;
 import java.io.Serializable;
 
 import sim.engine.IterativeRepeat;
+import sim.engine.Steppable;
 import sim.util.NdPoint;
 
 /**
@@ -99,6 +100,31 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *                                  is not Steppable
 	 */
 	void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time);
+
+	/**
+	 * Adds, schedules and registers a repeating agent. The location can be remote
+	 *
+	 * @param p        add to Location
+	 * @param t        Must be of type Steppable
+	 * @param time
+	 * @param ordering
+	 * @param interval
+	 *
+	 * @throws IllegalArgumentException if t is not Steppable
+	 */
+	void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval);
+
+	/**
+	 * Adds, schedules and registers a repeating agent. The location can be remote
+	 *
+	 * @param p        add to Location
+	 * @param t        Must be of type Steppable
+	 * @param ordering
+	 * @param interval
+	 *
+	 * @throws IllegalArgumentException if t is not Steppable
+	 */
+	void addRepeatingAgent(final P p, final T t, final int ordering, final double interval);
 
 	/**
 	 * Adds and registers a repeating agent. The location can be remote <br>

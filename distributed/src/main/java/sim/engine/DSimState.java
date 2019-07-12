@@ -140,15 +140,14 @@ public class DSimState extends SimState {
 			if (payloadWrapper.payload instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
 
-				if (iterativeRepeat.getTime() < 0)
-					registerIterativeRepeat(
-							(IterativeRepeat) schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
-									iterativeRepeat.interval));
+				// TODO: how to schedule for a specified time?
+				// Not adding it to specific time because we get an error -
+				// "time provided is less than the current time"
 
-				else
-					registerIterativeRepeat(
-							(IterativeRepeat) schedule.scheduleRepeating(iterativeRepeat.time, iterativeRepeat.ordering,
-									iterativeRepeat.step, iterativeRepeat.interval));
+				registerIterativeRepeat(
+						(IterativeRepeat) schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
+								iterativeRepeat.interval));
+
 				// Add agent to the field
 				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
 

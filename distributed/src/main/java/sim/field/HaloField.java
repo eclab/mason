@@ -16,6 +16,7 @@ import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.IterativeRepeat;
 import sim.engine.Steppable;
+import sim.engine.Stoppable;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.IntHyperRect;
@@ -251,6 +252,34 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
+	public void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval) {
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final IterativeRepeat iterativeRepeat = (IterativeRepeat) state.schedule.scheduleRepeating(time, ordering,
+				(Steppable) t, interval);
+
+		if (inLocal(p)) {
+			add(p, t);
+			state.registerIterativeRepeat(iterativeRepeat);
+		} else
+			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+	}
+
+	public void addRepeatingAgent(final P p, final T t, final int ordering, final double interval) {
+		if (!(t instanceof Steppable))
+			throw new IllegalArgumentException("t must be a Steppable");
+
+		final IterativeRepeat iterativeRepeat = (IterativeRepeat) state.schedule.scheduleRepeating((Steppable) t,
+				ordering, interval);
+
+		if (inLocal(p)) {
+			add(p, t);
+			state.registerIterativeRepeat(iterativeRepeat);
+		} else
+			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+	}
+
 	public void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
 		final T t = (T) iterativeRepeat.getSteppable();
 
@@ -269,6 +298,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 		// pre-conditions are always met?
 		if (!(t instanceof Steppable))
 			throw new IllegalArgumentException("t must be a Steppable");
+
 		state.stopIterativeRepeat((Steppable) t);
 
 		remove(p, t);
