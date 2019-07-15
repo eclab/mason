@@ -38,10 +38,10 @@ public class DSimState extends SimState {
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
+	protected final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
 
 	// A map from agent to IterativeRepeat (Stoppable) for that Agent
-	final HashMap<Steppable, IterativeRepeat> iterativeRepeatRegistry;
+	protected final HashMap<Steppable, IterativeRepeat> iterativeRepeatRegistry;
 
 	// public LoadBalancer lb;
 	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
