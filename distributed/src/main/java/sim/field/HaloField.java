@@ -16,7 +16,6 @@ import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.IterativeRepeat;
 import sim.engine.Steppable;
-import sim.engine.Stoppable;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.IntHyperRect;
@@ -280,15 +279,15 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 	}
 
-	public void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
-		final T t = (T) iterativeRepeat.getSteppable();
-
-		if (inLocal(p)) {
-			add(p, t);
-			state.registerIterativeRepeat(iterativeRepeat);
-		} else
-			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
-	}
+//	public void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
+//		final T t = (T) iterativeRepeat.getSteppable();
+//
+//		if (inLocal(p)) {
+//			add(p, t);
+//			state.registerIterativeRepeat(iterativeRepeat);
+//		} else
+//			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+//	}
 
 	public void removeAndStopRepeatingAgent(final P p, final T t) {
 		if (!inLocal(p))
@@ -348,6 +347,12 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP, fieldIndex);
 		}
 	}
+
+	public void moveLocal(final P fromP, final P toP, final T t) {
+		removeLocal(fromP, t);
+		addLocal(toP, t);
+	}
+
 	// TODO make a copy of the storage which will be used by the remote field access
 
 	// TODO: Do we need to check for type safety here?

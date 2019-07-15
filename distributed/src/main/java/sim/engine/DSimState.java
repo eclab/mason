@@ -109,7 +109,7 @@ public class DSimState extends SimState {
 	 * @throws MPIException
 	 */
 	protected void syncFields() throws MPIException {
-		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
+		for (final HaloField<?, ?, ?> haloField : fieldRegistry)
 			haloField.syncHalo();
 	}
 
