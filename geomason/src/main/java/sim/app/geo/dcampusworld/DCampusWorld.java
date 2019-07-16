@@ -127,7 +127,7 @@ public class DCampusWorld extends DSimState {
 
 			// final int[] size = new int[] { DCampusWorld.WIDTH, DCampusWorld.HEIGHT };
 			// partition = DQuadTreeParti÷tion.getPartitionScheme(size, true, aoi);
-			partition.initialize();
+			// partition.initialize();
 			// partition.commit();
 
 			// Now synchronize the MBR for all GeomFields to ensure they cover
