@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.planargraph.Node;
 
@@ -33,7 +34,7 @@ import sim.field.storage.ContStorage;
 import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
-import sim.util.IntHyperRect;
+import sim.util.DoublePoint;
 import sim.util.NdPoint;
 import sim.util.Timing;
 import sim.util.geo.GeomPlanarGraph;
@@ -65,7 +66,6 @@ public class DCampusWorld extends DSimState {
 
 	double[] discretizations;
 	public GeomNContinuous2D<DAgent> communicator;
-	public IntHyperRect myPart;
 
 	// Stores the walkway network connections. We represent the walkways as a
 	// PlanarGraph, which allows
@@ -123,7 +123,6 @@ public class DCampusWorld extends DSimState {
 			final NContinuous2D<DAgent> continuousField = new NContinuous2D<DAgent>(partition,
 					aoi, discretizations, this);
 			communicator = new GeomNContinuous2D<DAgent>(continuousField);
-			myPart = partition.getPartition();
 
 			// final int[] size = new int[] { DCampusWorld.WIDTH, DCampusWorld.HEIGHT };
 			// partition = DQuadTreeParti÷tion.getPartitionScheme(size, true, aoi);
@@ -171,6 +170,10 @@ public class DCampusWorld extends DSimState {
 		super.start();
 		agents.clear();
 		try {
+
+			// TODO: why are we doing this???
+			// Why not just add stuff to the fields locally instead of distributing them?
+
 			// add all agents into agents field in processor 0
 			final ContStorage<DAgent> packgeField = new ContStorage<DAgent>(partition.getField(), discretizations);
 			if (partition.getPid() == 0) {
@@ -188,8 +191,26 @@ public class DCampusWorld extends DSimState {
 			// agents field and schedule them
 			final Set<DAgent> receivedAgents = ((ContStorage) communicator.field.getStorage()).m.keySet();
 			for (final DAgent agent : receivedAgents) {
+
+				// TODO: add all the agents using HaloField.add() method
+
+				// setNewRoute
+				do {
+					// updating position of the agent
+					final int walkway = random.nextInt(walkways.getGeometries().numObjs);
+					final MasonGeometry mg = (MasonGeometry) walkways.getGeometries().objs[walkway];
+					agent.setNewRoute((LineString) mg.getGeometry(), true);
+					final double x = communicator.toXCoord(agent.position.c[0]);
+					final double y = communicator.toYCoord(agent.position.c[1]);
+					agent.position = new DoublePoint(x, y);
+				} while (!communicator.field.inLocal(agent.position));
+
+				// This will effectively move the agent
+				// It will also schedule it
+				communicator.field.addAgent(agent.position, agent);
+				// /setNewRoute
+
 				agents.addGeometry(agent.getGeometry());
-				schedule.scheduleOnce(agent);
 			}
 		} catch (final MPIException e) {
 			e.printStackTrace();

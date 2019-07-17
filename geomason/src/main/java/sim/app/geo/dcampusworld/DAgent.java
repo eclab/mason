@@ -139,7 +139,7 @@ public class DAgent implements Steppable {
 	/**
 	 * randomly selects an adjacent route to traverse
 	 */
-	private void findNewPath(final DCampusWorld geoTest) {
+	 void findNewPath(final DCampusWorld geoTest) {
 		// find all the adjacent junctions
 		final Node currentJunction = geoTest.network.findNode(location.getGeometry().getCoordinate());
 
@@ -177,7 +177,7 @@ public class DAgent implements Steppable {
 	 * @param line  defining new route
 	 * @param start true if agent at start of line else agent placed at end
 	 */
-	private void setNewRoute(final LineString line, final boolean start) {
+	 void setNewRoute(final LineString line, final boolean start) {
 		// update segmentGeometry in case of serialization
 		segmentGeometry = line;
 		segment = new LengthIndexedLine(line);
@@ -214,13 +214,15 @@ public class DAgent implements Steppable {
 
 	public void step(final SimState state) {
 		final DCampusWorld campState = (DCampusWorld) state;
+
+		final DoublePoint old = position;
 		move(campState);
 
 		// update position to coordinate in pixels (see pixelwidth method in
 		// GeomGridField)
 		final double x = campState.communicator.toXCoord(position.c[0]);
 		final double y = campState.communicator.toYCoord(position.c[1]);
-		final DoublePoint old = position;
+
 		position = new DoublePoint(x, y);
 
 		// This will migrate the agent if needed
