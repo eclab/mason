@@ -12,7 +12,6 @@ package sim.app.geo.dcampusworld;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +29,6 @@ import sim.field.HaloField;
 import sim.field.continuous.NContinuous2D;
 import sim.field.geo.GeomNContinuous2D;
 import sim.field.geo.GeomVectorField;
-import sim.field.storage.ContStorage;
 import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
@@ -52,6 +50,7 @@ public class DCampusWorld extends DSimState {
 
 	public static final int WIDTH = 300;
 	public static final int HEIGHT = 300;
+	public static final int AOISIZE = 10;
 
 	/** How many agents in the simulation */
 	public int numAgents = 4000;
@@ -76,7 +75,7 @@ public class DCampusWorld extends DSimState {
 	// intersections
 
 	public DCampusWorld(final long seed) {
-		super(seed);
+		super(seed, DCampusWorld.WIDTH, DCampusWorld.HEIGHT, DCampusWorld.AOISIZE);
 
 		try {
 			System.out.println("reading buildings layer");
@@ -118,7 +117,7 @@ public class DCampusWorld extends DSimState {
 
 			// Each agent move independently, seems neighborhood is not really
 			// playing any role here
-			final int[] aoi = new int[] { 10, 10 };
+			final int[] aoi = new int[] { DCampusWorld.AOISIZE, DCampusWorld.AOISIZE };
 			discretizations = new double[] { 7, 7 };
 			final NContinuous2D<DAgent> continuousField = new NContinuous2D<DAgent>(partition,
 					aoi, discretizations, this);
@@ -129,15 +128,13 @@ public class DCampusWorld extends DSimState {
 			// partition.initialize();
 			// partition.commit();
 
-			// Now synchronize the MBR for all GeomFields to ensure they cover
-			// the same area
+			// Now synchronize the MBR for all GeomFields to ensure they cover the same area
 			buildings.setMBR(MBR);
 			roads.setMBR(MBR);
 			walkways.setMBR(MBR);
 			communicator.setMBR(MBR);
-			// System.out.print(
-			// "width and height is:" + communicator.getPixelWidth() + ", " +
-			// communicator.getPixelHeight());
+			// System.out.print("width and height is:" + communicator.getPixelWidth() + ", "
+			// + communicator.getPixelHeight());
 
 			network.createFromGeomField(walkways);
 
@@ -161,40 +158,17 @@ public class DCampusWorld extends DSimState {
 	public void finish() {
 		super.finish();
 
-		// Save the agents layer, which has no corresponding originating
-		// shape file.
+		// Save the agents layer, which has no corresponding originating shape file
 		ShapeFileExporter.write("agents", agents);
 	}
 
 	public void start() {
 		super.start();
 		agents.clear();
-		try {
 
-			// TODO: why are we doing this???
-			// Why not just add stuff to the fields locally instead of distributing them?
-
-			// add all agents into agents field in processor 0
-			final ContStorage<DAgent> packgeField = new ContStorage<DAgent>(partition.getField(), discretizations);
-			if (partition.getPid() == 0) {
-				for (int i = 0; i < numAgents; ++i) {
-					final DAgent agent = new DAgent(this);
-					// Do not add to agents field, we will add that later
-					// after distribution
-					packgeField.setLocation(agent, agent.position);
-				}
-			}
-			// After distribute is called, communicator will have agents
-			communicator.field.distribute(0, packgeField);
-
-			// Then each processor access these agents, put them in
-			// agents field and schedule them
-			final Set<DAgent> receivedAgents = ((ContStorage) communicator.field.getStorage()).m.keySet();
-			for (final DAgent agent : receivedAgents) {
-
-				// TODO: add all the agents using HaloField.add() method
-
-				// setNewRoute
+		for (int i = 0; i < numAgents / 4; ++i) {
+			try {
+				final DAgent agent = new DAgent(this);
 				do {
 					// updating position of the agent
 					final int walkway = random.nextInt(walkways.getGeometries().numObjs);
@@ -205,15 +179,14 @@ public class DCampusWorld extends DSimState {
 					agent.position = new DoublePoint(x, y);
 				} while (!communicator.field.inLocal(agent.position));
 
-				// This will effectively move the agent
-				// It will also schedule it
+				// This will effectively move the agent and also schedule it
 				communicator.field.addAgent(agent.position, agent);
-				// /setNewRoute
-
 				agents.addGeometry(agent.getGeometry());
+
+			} catch (final MPIException e) {
+				e.printStackTrace();
+				System.exit(-1);
 			}
-		} catch (final MPIException e) {
-			e.printStackTrace();
 		}
 
 		agents.setMBR(buildings.getMBR());
