@@ -9,8 +9,16 @@
 */
 package sim.app.geo.dcampusworld;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +33,9 @@ import com.vividsolutions.jts.planargraph.Node;
 import mpi.MPIException;
 import sim.app.geo.dcampusworld.data.DCampusWorldData;
 import sim.engine.DSimState;
+import sim.engine.Schedule;
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.HaloField;
 import sim.field.continuous.NContinuous2D;
 import sim.field.geo.GeomNContinuous2D;
@@ -33,6 +44,7 @@ import sim.io.geo.ShapeFileExporter;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.DoublePoint;
+import sim.util.MPIUtil;
 import sim.util.NdPoint;
 import sim.util.Timing;
 import sim.util.geo.GeomPlanarGraph;
@@ -52,8 +64,10 @@ public class DCampusWorld extends DSimState {
 	public static final int HEIGHT = 300;
 	public static final int AOISIZE = 10;
 
+	final Path pathToAgentOutput = Paths.get("DCampusAgents.txt");
+
 	/** How many agents in the simulation */
-	public int numAgents = 4000;
+	public int numAgents = 8;
 
 	/** Fields to hold the associated GIS information */
 	public GeomVectorField walkways = new GeomVectorField(DCampusWorld.WIDTH, DCampusWorld.HEIGHT);
@@ -190,11 +204,22 @@ public class DCampusWorld extends DSimState {
 		}
 
 		agents.setMBR(buildings.getMBR());
+
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Printer(), 10);
+
 //		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
 
 		// Ensure that the spatial index is made aware of the new agent
 		// positions. Scheduled to guaranteed to run after all agents moved.
 		schedule.scheduleRepeating(agents.scheduleSpatialIndexUpdater(), Integer.MAX_VALUE, 1.0);
+
+		try {
+//			Files.write(pathToAgentOutput, Arrays.asList(""), StandardCharsets.UTF_8, StandardOpenOption.CREATE);
+			Files.newBufferedWriter(pathToAgentOutput).close();
+		} catch (final IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 
 	/**
@@ -213,6 +238,29 @@ public class DCampusWorld extends DSimState {
 			final Coordinate coord = node.getCoordinate();
 			final Point point = fact.createPoint(coord);
 			junctions.addGeometry(new MasonGeometry(point));
+		}
+	}
+
+	void printAll() throws MPIException {
+		final ArrayList<ArrayList<DAgent>> allObjects = MPIUtil.<ArrayList<DAgent>>gather(partition,
+				(ArrayList<DAgent>) communicator.field.getAllObjects(), 0);
+
+		if (partition.pid == 0) {
+			final ArrayList<String> outputStrings = new ArrayList<>();
+
+			outputStrings.add("Agents - ");
+			for (final ArrayList<DAgent> arrayList : allObjects)
+				for (final DAgent agent : arrayList)
+					outputStrings.add(agent.toString());
+			outputStrings.add("------");
+
+			try {
+				Files.write(pathToAgentOutput, outputStrings, StandardOpenOption.APPEND);
+			} catch (final IOException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+
 		}
 	}
 
@@ -241,6 +289,19 @@ public class DCampusWorld extends DSimState {
 	}
 
 	// Move the Synchronizer login to preSchedule() in DSimState
+
+	private class Printer implements Steppable {
+		public void step(final SimState state) {
+			final DCampusWorld world = (DCampusWorld) state;
+			Timing.stop(Timing.LB_RUNTIME);
+			try {
+				world.printAll();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}
+	}
 
 //	private class Synchronizer implements Steppable {
 //		private static final long serialVersionUID = 1;
