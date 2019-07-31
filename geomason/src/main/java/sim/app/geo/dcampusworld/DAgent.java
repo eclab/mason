@@ -296,9 +296,7 @@ public class DAgent implements Steppable {
 	}
 
 	public String toString() {
-		return "DAgent [location=" + location + ", position=" + position + ", basemoveRate=" + basemoveRate
-				+ ", moveRate=" + moveRate + ", segmentGeometry=" + segmentGeometry + ", startIndex=" + startIndex
-				+ ", endIndex=" + endIndex + ", currentIndex=" + currentIndex + ", pointMoveTo=" + pointMoveTo + "]";
+		return "DAgent [location=" + location + ", position=" + position + "]";
 	}
 
 }
