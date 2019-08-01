@@ -31,6 +31,8 @@ import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
+import sim.app.geo.haiti.data.HaitiData;
+
 @SuppressWarnings("restriction")
 public class HaitiFood extends SimState {
 
