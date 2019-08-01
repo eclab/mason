@@ -10,9 +10,7 @@ import java.util.HashMap;
 import sim.app.geo.acequias.objects.Acequia;
 import sim.app.geo.acequias.objects.Parciante;
 import sim.app.geo.acequias.objects.Tile;
-//import sim.app.geo.acequias.
-//import sim.app.geo.acequias.acequiasData;
-//import sim.app.geo.acequias.acequiasData.AcequiasData;
+import sim.app.geo.acequias.acequiasData.AcequiasData;
 import sim.engine.SimState;
 import sim.field.grid.ObjectGrid2D;
 import sim.field.network.Edge;
@@ -128,28 +126,28 @@ public class AcequiaWorld extends SimState {
 
 		// read in the data
 		System.err.println("read in elevations");
-		setupDoubleFromFile("/acequias/acequiaData/ned.txt", 1);
+		setupDoubleFromFile("ned.txt", 1);
 
 		System.err.println("read in land use");
-		setupIntFromFile("/acequias/acequiaData/landuse.txt", 3);
+		setupIntFromFile("landuse.txt", 3);
 
 		System.err.println("read in hydrology");
-		setupIntFromFile("/acequias/acequiaData/hydrology.txt", 1);
+		setupIntFromFile("hydrology.txt", 1);
 		
 		System.err.println("read in acequia tracts");
-		setupIntFromFile("/acequias/acequiaData/acequiatracts.txt", 2);
+		setupIntFromFile("acequiatracts.txt", 2);
 
 		System.err.println("read in acequias");
-		setupIntFromFile("/acequias/acequiaData/acequias.txt", 4);
+		setupIntFromFile("acequias.txt", 4);
 		
 		System.err.println("read in roads");
-		setupIntFromFile("/acequias/acequiaData/roads.txt", 5);
+		setupIntFromFile("roads.txt", 5);
 
 		System.err.println("read in counties");
-		setupIntFromFile("/acequias/acequiaData/counties.txt", 6);
+		setupIntFromFile("counties.txt", 6);
 
 		System.err.println("read in city center");
-		setupIntFromFile("/acequias/acequiaData/citycenter.txt", 7);
+		setupIntFromFile("citycenter.txt", 7);
 
 		// finished reading in the data
 		
