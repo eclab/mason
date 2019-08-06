@@ -88,8 +88,8 @@ sim/display3d/*.java \
 
 RSRCROOT=src/main/resources/
 SRCROOT=src/main/java/
-DIRS=$(addprefix $(SRCROOT)/, $(SRCS))
-3DDIRS=$(addprefix $(SRCROOT)/, $(3DSRCS))
+DIRS=$(addprefix $(SRCROOT), $(SRCS))
+3DDIRS=$(addprefix $(SRCROOT), $(3DSRCS))
 
 # Make the main MASON code, not including 3D code
 all: SHELL=/bin/bash
