@@ -13068,6 +13068,96 @@ public void load(final SimState state)    /// NOTE WE MADE THIS FINAL
 
 And we're done!
 
+\bump
+
+\section{Parameter Sweeping}
+
+MASON has a multithreaded parameter sweep facility which can run many simulations at once in the background and collect data on them.  The facility can either be run from the command line or from the graphical interface: the result is the same.  We'l'l discuss the GUI first.
+
+\begin{wrapfigure}{r}[0in]{2.8in}
+\vspace{-1em}
+\includegraphics[width=2.8in]{Sweep.png}
+\vspace{-6em}
+\end{wrapfigure}
+
+If, while trying out a simulation, you select {\it Sweep Parameters} from the {\it File} menu, you'll be presented with a window such as the one at right.   This is the {\it Parameter Sweep Console}.  It runs entirely independently from the primary Console.  The Parameter Sweep Console allows you to choose variables to sweep over, set up your sweep experiment, and run or stop it.
+
+Let's begin with the Model Variables at the top of the window.  These are your model's global parameters (the ones which normally appear in the {\it Model} tab of your simulation).  Well, not all of them: just the ones which are integers, doubles, or booleans.    For example, the window at right is the Parameter Sweep Console for the {\it Flockers} model, but you'll notice that Flockers's \texttt{Locations} and \texttt{Inverted Locations} parameters are missing, since they are arrays.
+
+\paragraph{Specifying Variables}
+To do a sweep, we want to specify one or more {\it independent variables} and one or more {\it dependent variables}.  The sweep facility will try various combinations of settings of the independent variables, run simulations, and report on what the dependent variables wound up being as a result.  In the example at right we have chosen \texttt{Avoidance} and \texttt{Cohesion} as our independent variables and \texttt{MeanXLocation} as the dependent variable.  This is because we wish to know the effect of Avoidance and Cohesion on the average X location of the flockers (in fact there is none of consequence).    The rest of the variables are {\it Neither} (the default), meaning that they are neither independent nor dependent variables, and will simply be set to the default values specified in your model.
+
+Independent variables have {\it ranges} that we will sweep over.  A range has a {\it minimum value}, a {\it maximum value}, and a number of {\it divisions}. For Avoidance, we have specified a min of 0.0, a max of 1.0, and 2 divisions.  For Cohesion we have done the same except with 5 divisions.  The number of divisions indicates how many different (evenly spaced) settings between min and max that MASON will try.  With a minimum of 0.0 and a maximum of 1.0, two divisions means that MASON will try the values 0.0 and 1.0, but five divisions means that MASON will try the values 0.0, 0.25, 0.5, 0.75, and 1.0 (note that there are five of them).  The default number of divisions is 1, but that's hardly interesting: you probably want 2 or more.
+
+Thus in this example we have told MASON to try ten combinations of variable settings: 0.0 and 1.0 for Avoidance combined with  0.0, 0.25, 0.5, 0.75, and 1.0 for Cohesion.
+
+\paragraph{Sweep Settings}
+Next we want to tell MASON how to run the experiment.  We begin by stating how many {\it trials} (simulations) it should run for each combination.  Here we have asked MASON to run the experiment 10 times for each combination, each with a different independent random number generator seed.  Thus all told MASON will run 100 simulations (ten combinations with ten trials each).
+
+We also want to tell MASON how long each experiment should be: this is the {\it Max Steps} parameter.  In the above example, MASON will run each simulation for 1000 timesteps.
+
+If we have a multi-core machine we may want to take advantage of it to run many simulations at once.  For example, I have an 8-core machine, so I have chosen 8 threads via the {\it Num Threads} parameter.  It doesn't make sense to run with more threads than you have cores.
+
+Normally MASON will report the results of its dependent variables at the end of the experiment.  But if we set the {\it Step Modulo} to any value other than 0, then MASON will also report the results of its dependent variables every {\it modulo} steps.  For example, if we were to set the Step Modulo to 100, then MASON would report the results of its dependent variables every 100 steps.  Beware that this can make the report very large if you're not careful.  You may find it helpful to select {\it Compress Output File}, which will output the report compressed using GZIP (.gz).  
+
+The {\it Initial Seed} is the random number generator seed for the first job: the other jobs have independent random number generator seeds which are deterministically derived from this one.  MASON is providing an initial seed, but you should set it to something else: MASON should produce the same results with the same initial seed.
+
+\paragraph{Running the Experiment}
+
+Once the variables and sweep settings have been set, you can run the experiment by pressing the Play button on the Parameter Sweep Console.  You will be asked to indicate the file to which the report will be written.   If you need to cancel the experiment, you can press the Stop button at any time. 
+ 
+\paragraph{Interpreting the Report}
+
+The report is a CSV file: this is just a text file of rows (one per simulation job), where all the values on the row are separated by commas.  There is also a {\it header row} which indicates the value of each row.  You should be able to load this CSV file directly into your spreadsheet program (you may need to decompress it first!).  In the example above, we should expect 101 rows: a header row followed by 100 simulation (job) rows.
+
+Each simulation row has the following data, separated by commas.  The header row should be useful in making it clear what's what:
+
+\begin{itemize}
+\item{\it Job Number}\quad Each job has its own unique number.  Here, the numbers are 0 through 99.  Simulations as asynchronous and are entered into the report when they finish, and some simulations may finish earlier than others.  Thus the job rows will not be in the order you expected: but if you sort the rows by job number, things should make more sense.
+\item{\it Trial Number}\quad Each job is assigned to work on a specific {\it trial} for a specific combination of variable values.  Since we specified ten trials above, each of our combination of variable values will have ten trials: they are indicated as trials 0...9 in this example.
+\item{\it Random Number Generator (RNG) Seed}\quad Each job has a unique seed.  This seed makes it possible for you to replicate that simulation in MASON later on by setting the independent variables appropriately and also setting the seed to this value.
+\item{\it Independent Variables}\quad Next come the particular values for each independent variable assigned to this simulation job.
+\item{\it Dependent Variables (Modulo)}\quad For each modulus timestep, the current values of each of the dependent variables appear here, in order.  If your modulo was 0, then nothing will appear here.
+\item{\it Dependent Variables (Final)}\quad The final values of each of the dependent variables appear here, in order.  MASON will provide the {\it final} (last) value of each variable, along with the {\it minimum} and {\it maximum} values which appeared at any time during the simulation, along with the {\it average} value over all timesteps.
+\end{itemize}
+
+\paragraph{Running from the Command Line}
+
+Oh, so you have a supercomputer?  Then you might like running the parameter sweep facility on the command line.    To do this you need to specify a {\it parameter file} with the parameters indicated above.  Here's what the parameter file looks like for our previous example:
+
+\bump
+
+{\footnotesize \begin{verbatim}
+### Parameter Test Example
+
+model = sim.app.flockers.Flockers
+
+## Variables
+independent = Avoidance Cohesion
+min = 0.0 0.0
+max = 1.0 1.0
+divisions = 2 5
+dependent = MeanXLocation
+
+## Sweep Parameters
+trials = 10
+threads = 8
+steps = 1000
+mod = 0
+seed = 1745258451
+compress = false
+out = /tmp/out.csv
+\end{verbatim}}
+
+Notice that the {\it independent, min, max, } and {\it divisions} entries consist of lists of items separated by whitespace.  These are the parameter name, min-value, max-value, and divisions of each independent parameter.  The {\it dependent} entry is also a list of (dependent) variables separated by whitespace, but in our example there is only one of them.
+
+Let's say this file is called {\it in.params}.  Then you'd run the parameter sweep facility on the command line like this:
+
+\script{\textit{java sim.util.sweep.ParameterSweep in.params}}
+
+The report would be located in a file called \texttt{/tmp/out.csv} (or \texttt{/tmp/out.csv.gz} if you compressed it).  Notice that this report may not contain the same lines as your GUI report: because the jobs may be completed in different order.  But if you sorted them by job number, you'd find they were exactly the same.
+
+
 \cleardoublepage
 \footnotesize
 \addcontentsline{toc}{chapter}{Index}
