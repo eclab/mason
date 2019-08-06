@@ -13,13 +13,15 @@ import sim.io.geo.*;
 import sim.util.*;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.text.*;
 import java.util.*;
 
 import net.sf.csv4j.*;
 import sim.util.geo.MasonGeometry;
+
+import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesShapefileData;
 
 /**
  * Created by rohansuri on 7/8/15.
@@ -37,7 +39,7 @@ public class EbolaBuilder
 
     public static HashSet<Geometry> removeGeometry = new HashSet<Geometry>();
     public static HashSet<LineString> allLineStrings = new HashSet<LineString>();
-    public static void initializeWorld(EbolaABM sim, String pop_file, String admin_file, String age_dist_file)
+    public static void initializeWorld(EbolaABM sim, URL pop_file, URL admin_file, URL age_dist_file) throws URISyntaxException
     {
         ebolaSim = sim;
         age_dist = new HashMap<Integer, ArrayList<Double>>();
@@ -65,7 +67,7 @@ public class EbolaBuilder
 
         try
         {
-            String[] files = {Parameters.ROADS_SHAPE_PATH, Parameters.SCHOOLS_PATH, Parameters.FARMS_PATH, Parameters.HOSPITALS_PATH, "/ebola/ebolaData/places_shapefile/all_places.shp"};//all the files we want to read in
+            URL[] files = {Parameters.ROADS_SHAPE_PATH, Parameters.ROADS_DBF_PATH, Parameters.SCHOOLS_PATH, Parameters.SCHOOLS_DBF, Parameters.FARMS_PATH, Parameters.FARMS_DBF, Parameters.HOSPITALS_PATH, Parameters.HOSPITALS_DBF, PlacesShapefileData.class.getResource("all_places.shp"), PlacesShapefileData.class.getResource("all_places.dbf")};//all the files we want to read in
             GeomVectorField[] vectorFields = {ebolaSim.roadLinks, schools_vector, farms_vector, hospitals_vector, places_vector};//all the vector fields we want to fill
             readInShapefile(files, vectorFields);
 
@@ -73,15 +75,15 @@ public class EbolaBuilder
 
             //get a grid as a base for the mbr
             GeomGridField gridField = new GeomGridField();//just to align mbr
-            InputStream inputStream = EbolaBuilder.class.getResourceAsStream(Parameters.ADMIN_ID_PATH);
+            InputStream inputStream = new FileInputStream(new File(Parameters.ADMIN_ID_PATH.toURI()));
             ArcInfoASCGridImporter.read(inputStream, GeomGridField.GridDataType.INTEGER, gridField);
             ebolaSim.admin_id = (IntGrid2D)gridField.getGrid();
             //System.out.println("236, 507 = " + ebolaSim.admin_id.get(236, 507));
-            inputStream = EbolaBuilder.class.getResourceAsStream(Parameters.POP_PATH);
+            inputStream = new FileInputStream(new File(Parameters.POP_PATH.toURI()));
             ArcInfoASCGridImporter.read(inputStream, GeomGridField.GridDataType.INTEGER, gridField);
 
             //align mbr for all vector files read
-            System.out.println("Algining");
+            System.out.println("Aligning");
             alignVectorFields(gridField, vectorFields);
 
             //Read in the road cost file
@@ -179,6 +181,25 @@ public class EbolaBuilder
             }
         }
     }
+    static void readInShapefile(URL[] files, GeomVectorField[] vectorFields)
+    {
+        try
+        {
+            for(int i = 0; i < files.length; i += 2)
+            {
+                URL fileShp = files[i];
+                URL fileDbf = files[i+1];
+                Bag schools_masked = new Bag();
+                // eh
+                ShapeFileImporter.read(fileShp, fileDbf, vectorFields[i/2], schools_masked);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     static void readInShapefile(String[] files, GeomVectorField[] vectorFields)
     {
         try
@@ -188,7 +209,7 @@ public class EbolaBuilder
                 String filePath = files[i];
                 Bag schools_masked = new Bag();
                 System.err.println("URL: " + files[i]);
-                URL shapeURI = getUrl(filePath);;
+                URL shapeURI = getUrl(filePath);
                 URL shapeDBF = getUrl(filePath.replace("shp", "dbf"));;
                 ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i], schools_masked);
             }
@@ -206,7 +227,7 @@ public class EbolaBuilder
             ebolaSim.road_cost = new DoubleGrid2D(ebolaSim.world_width, ebolaSim.world_height);
 
            // FileInputStream fileInputStream = new FileInputStream(new File(Parameters.ROADS_COST_PATH));
-            DataInputStream dataInputStream = new DataInputStream(EbolaBuilder.class.getResourceAsStream(Parameters.ROADS_COST_PATH));
+            DataInputStream dataInputStream = new DataInputStream(new FileInputStream(new File(Parameters.ROADS_COST_PATH.toURI())));
 
             for(int i = 0; i < ebolaSim.world_width; i++)
                 for(int j = 0; j < ebolaSim.world_height; j++)
@@ -217,6 +238,10 @@ public class EbolaBuilder
             e.printStackTrace();
         }
         catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        catch (URISyntaxException e)
         {
             e.printStackTrace();
         }
@@ -697,12 +722,12 @@ public class EbolaBuilder
 
     }
 
-    private static void setUpAgeDist(String age_dist_file)
+    private static void setUpAgeDist(URL age_dist_file) throws URISyntaxException
     {
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new FileReader(new File(age_dist_file)));
+            CSVReader csvReader = new CSVReader(new FileReader(new File(age_dist_file.toURI())));
             csvReader.readLine();//skip the headers
             List<String> line = csvReader.readLine();
             while(!line.isEmpty())
@@ -742,18 +767,18 @@ public class EbolaBuilder
         }
     }
 
-    private static void addHousesAndResidents(String pop_file, String admin_file)
+    private static void addHousesAndResidents(URL pop_file, URL admin_file) throws URISyntaxException
     {
         try
         {
             System.out.print("Adding houses ");
             long time = System.currentTimeMillis();
             // buffer reader - read ascii file for population data
-            BufferedReader pop_reader = new BufferedReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(pop_file)));
+            BufferedReader pop_reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(pop_file.toURI()))));
             String pop_line;
 
             //buffer reader - read ascii file for admin data
-            BufferedReader admin_reader = new BufferedReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(admin_file)));
+            BufferedReader admin_reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(admin_file.toURI()))));
             String admin_line;
             String[] admin_tokens;
 
@@ -1432,12 +1457,12 @@ public class EbolaBuilder
      * Reads in the movement patterns from csv file and populates given map
      * @param file
      */
-    private static void setUpMovementMap(String file)
+    private static void setUpMovementMap(URL file) throws URISyntaxException
     {
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaBuilder.class.getResourceAsStream(file)));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(file.toURI()))));
             csvReader.readLine();//skip the headers
             List<String> line = csvReader.readLine();
             while(!line.isEmpty())

@@ -18,10 +18,10 @@
 	<modules>
 		<module>mason</module>
 		<module>distributed</module>
-		<module>geomason</module>
 		<module>socialnets</module>
 		<module>distributed-mason-project-archetype</module>
 		<module>mason-project-archetype</module>
+		<module>geomason</module>
 	</modules>
 	<build>
 		<plugins>

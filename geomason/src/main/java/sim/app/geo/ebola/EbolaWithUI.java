@@ -229,7 +229,9 @@ public class EbolaWithUI extends GUIState
     public void start()
     {
         super.start();
+        System.err.println("Start Drawing");
         setupPortrayals();
+        System.err.println("Portrayals Done");
     }
 
     public void setupPortrayals()

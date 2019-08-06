@@ -1,7 +1,7 @@
 package sim.app.geo.ebola;
 
 
-//import sim.app.geo.ebola.ebolaData.EbolaData;
+import sim.app.geo.ebola.ebolaData.EbolaData;
 import ec.util.MersenneTwisterFast;
 import net.sf.csv4j.CSVReader;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -24,6 +24,7 @@ import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 
+import java.net.*;
 /**
  * Created by rohansuri on 7/7/15.
  */
@@ -146,10 +147,21 @@ public class EbolaABM extends SimState
     {
         super.start();
         residents = new Bag();
+        try
+        {
         EbolaBuilder.initializeWorld(this, Parameters.POP_PATH, Parameters.ADMIN_PATH, Parameters.AGE_DIST_PATH);
+        System.err.println("Ebola Initialize");
         readInActualCases(actualGuineaCases, Parameters.ACTUAL_CASES_GUINEA);
+        System.err.println("Guinea");
         readInActualCases(actualLiberiaCases, Parameters.ACTUAL_CASES_LIBERIA);
+        System.err.println("Liberia");
         readInActualCases(actualSierraLeoneCases, Parameters.ACTUAL_CASES_SIERRA_LEONE);
+        System.err.println("Sierra Leone");
+        }
+        catch (URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
 
         Steppable chartUpdater = new Steppable()
         {
@@ -344,7 +356,7 @@ public class EbolaABM extends SimState
         public Int2D destination;
     }
 
-    private void readInActualCases(List<Double2D> cases, String file)
+    private void readInActualCases(List<Double2D> cases, URL file) throws URISyntaxException
     {
         int date_started = 30;
 
@@ -354,7 +366,7 @@ public class EbolaABM extends SimState
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new InputStreamReader(EbolaABM.class.getResourceAsStream(file)));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(file.toURI()))));
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers

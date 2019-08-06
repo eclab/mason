@@ -3,7 +3,7 @@
 Inside the folder mason-build:
 
 ```bash
-mvn clean install 
+make
 ```
 
 The output of the package phase should be:

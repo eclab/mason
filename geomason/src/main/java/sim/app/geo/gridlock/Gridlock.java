@@ -218,7 +218,7 @@ public class Gridlock extends SimState
         for (Object o : network.getEdges())
         {
             GeomPlanarGraphEdge e = (GeomPlanarGraphEdge) o;
-            System.out.println(e);
+            //System.out.println(e.getDoubleAttribute("ID_ID"));
             idsToEdges.put(e.getDoubleAttribute("ID_ID").intValue(), e);
 
             e.setData(new ArrayList<Agent>());

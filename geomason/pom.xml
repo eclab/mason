@@ -19,6 +19,10 @@
 
 	<repositories>
 		<repository>
+			<id>repository</id>
+			<url>file:///${project.basedir}/repository/</url>
+		</repository>
+		<repository>
 			<id>repository4</id>
 			<url>http://repo.boundlessgeo.com/main/</url>
 		</repository>
@@ -29,10 +33,6 @@
 		<repository>
 			<id>repository3</id>
 			<url>http://maven.geotoolkit.org/</url>
-		</repository>
-		<repository>
-			<id>repository</id>
-			<url>file:///${project.basedir}/repository</url>
 		</repository>
 	</repositories>
 
@@ -151,6 +151,11 @@
 		<dependency>
 			<groupId>edu.gmu.eclab</groupId>
 			<artifactId>acequiasData</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.gmu.eclab</groupId>
+			<artifactId>ebolaData</artifactId>
 			<version>1.0</version>
 		</dependency>
 

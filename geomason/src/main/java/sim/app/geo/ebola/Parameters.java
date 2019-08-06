@@ -1,4 +1,15 @@
 package sim.app.geo.ebola;
+import sim.app.geo.ebola.ebolaData.EbolaData;
+import sim.app.geo.ebola.ebolaData.actualCases.ActualCasesData;
+import sim.app.geo.ebola.ebolaData.farmsShapefile.FarmsShapefileData;
+import sim.app.geo.ebola.ebolaData.hospitalsShapefile.HospitalsShapefileData;
+import sim.app.geo.ebola.ebolaData.movement.MovementData;
+import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesShapefileData;
+import sim.app.geo.ebola.ebolaData.roadsShapefile.RoadsShapefileData;
+import sim.app.geo.ebola.ebolaData.schoolsShapefile.SchoolsShapefileData;
+import java.net.URL;
+
+
 
 
 /**
@@ -18,19 +29,23 @@ public class Parameters
     public static double WALKING_SPEED = 5.1;//km per hour
 
     //-------File paths-------//
-    public static String POP_PATH = "/ebola/ebolaData/merged_pop.asc"; //Path to liberia population data (LandScan 2013)
-    public static String ADMIN_PATH = "/ebola/ebolaData/merged_admin.asc";//Path to file that has administration and county boundaries for all three countries (LandScan 2013)
-    public static String AGE_DIST_PATH = "/ebola/ebolaData/All_Age_Distribution.csv";//Path to file that has age distribution for each of the counties and provinces (LandScan 2013)
-    public static String ROADS_SHAPE_PATH = "/ebola/ebolaData/roads_shapefile/all_roads_trim.shp";//Path to vector data for all roads
-    public static String ROADS_COST_PATH = "/ebola/ebolaData/road_cost.dat";//Path to cost distance data for all allRoadNodes in the network
-    public static String SCHOOLS_PATH = "/ebola/ebolaData/schools_shapefile/all_schools.shp";//Path to shapefile that has location of all primary schools
-    public static String FARMS_PATH = "/ebola/ebolaData/farms_shapefile/all_farms.shp";
-    public static String HOSPITALS_PATH = "/ebola/ebolaData/hospitals_shapefile/all_hospitals.shp";//Path to shapefile that has location of all health facilities
-    public static String ADMIN_ID_PATH = "/ebola/ebolaData/admin_id.asc";//Path to file that contains the id for each county in each of the three countries, unique within each country but not between countries
-    public static String MOVEMENT_PATH = "/ebola/ebolaData/movement/population_flow.csv";//Path to file containing movement data within each country
-    public static String ACTUAL_CASES_GUINEA = "/ebola/ebolaData/actual_cases/guinea_actual.csv";//path to csv file containing actual cases for guinea
-    public static String ACTUAL_CASES_LIBERIA = "/ebola/ebolaData/actual_cases/liberia_actual.csv";//path to csv file containing actual cases for liberia
-    public static String ACTUAL_CASES_SIERRA_LEONE = "/ebola/ebolaData/actual_cases/sierra_leone_actual.csv";//path to csv file containing actual cases for sierra leone
+    public static URL POP_PATH = EbolaData.class.getResource("merged_pop.asc"); //Path to liberia population data (LandScan 2013)
+    public static URL ADMIN_PATH = EbolaData.class.getResource("merged_admin.asc");//Path to file that has administration and county boundaries for all three countries (LandScan 2013)
+    public static URL AGE_DIST_PATH = EbolaData.class.getResource("All_Age_Distribution.csv");//Path to file that has age distribution for each of the counties and provinces (LandScan 2013)
+    public static URL ROADS_SHAPE_PATH =RoadsShapefileData.class.getResource( "all_roads_trim.shp");//Path to vector data for all roads
+    public static URL ROADS_DBF_PATH =RoadsShapefileData.class.getResource( "all_roads_trim.dbf");//Path to vector data for all roads
+    public static URL ROADS_COST_PATH =EbolaData.class.getResource( "road_cost.dat");//Path to cost distance data for all allRoadNodes in the network
+    public static URL SCHOOLS_PATH = SchoolsShapefileData.class.getResource( "all_schools.shp");//Path to shapefile that has location of all primary schools
+    public static URL SCHOOLS_DBF = SchoolsShapefileData.class.getResource( "all_schools.dbf");//Path to shapefile that has location of all primary schools
+    public static URL FARMS_PATH =FarmsShapefileData.class.getResource( "all_farms.shp");
+    public static URL FARMS_DBF =FarmsShapefileData.class.getResource( "all_farms.dbf");
+    public static URL HOSPITALS_PATH = HospitalsShapefileData.class.getResource( "all_hospitals.shp");//Path to shapefile that has location of all health facilities
+    public static URL HOSPITALS_DBF = HospitalsShapefileData.class.getResource( "all_hospitals.dbf");//Path to shapefile that has location of all health facilities
+    public static URL ADMIN_ID_PATH =EbolaData.class.getResource("admin_id.asc");//Path to file that contains the id for each county in each of the three countries, unique within each country but not between countries
+    public static URL MOVEMENT_PATH = MovementData.class.getResource( "population_flow.csv");//Path to file containing movement data within each country
+    public static URL ACTUAL_CASES_GUINEA = ActualCasesData.class.getResource( "guinea_actual.csv");//path to csv file containing actual cases for guinea
+    public static URL ACTUAL_CASES_LIBERIA = ActualCasesData.class.getResource( "liberia_actual.csv");//path to csv file containing actual cases for liberia
+    public static URL ACTUAL_CASES_SIERRA_LEONE = ActualCasesData.class.getResource( "sierra_leone_actual.csv");//path to csv file containing actual cases for sierra leone
 
     public static double MIN_POP_URBAN = 575.45;//Minimum population density per 926 meters or 1000 people per square mile to be urban. Source: http://cber.cba.ua.edu/asdc/urban_rural.html
     public static double MIN_POP_SURROUNDING = 287.73;//Minimum surrounding population density per 926 meters.  An urban district must be surrounded by
