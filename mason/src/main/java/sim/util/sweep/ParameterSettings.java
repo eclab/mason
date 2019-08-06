@@ -1,3 +1,9 @@
+/*
+  Copyright 2019 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.util.sweep;
 
 import ec.util.*;
@@ -12,6 +18,20 @@ import java.util.List;
  */
 public class ParameterSettings 
     {
+    public static final String MODEL_P = "model";
+    public static final String MIN_P = "min";
+    public static final String MAX_P = "max";
+    public static final String INDEPENDENT_P = "independent";
+    public static final String DEPENDENT_P = "dependent";
+    public static final String DIVISIONS_P = "divisions";
+    public static final String STEPS_P = "steps";
+    public static final String MOD_P = "mod";
+    public static final String COMPRESS_P = "compress";
+    public static final String TRIALS_P = "trials";
+    public static final String THREADS_P = "threads";
+    public static final String SEED_P = "seed";
+    public static final String OUT_P = "out";
+    
     public Properties p;
     public int index;
     public boolean amSet = false;
@@ -63,19 +83,19 @@ public class ParameterSettings
                 	}
                 }
             }
-        pd.set(new Parameter("model"), model.getClass().getName() );
-        pd.set(new Parameter("min"), _min.toString());
-        pd.set(new Parameter("max"), _max.toString());
-        pd.set(new Parameter("independent"), _independent.toString());
-        pd.set(new Parameter("dependent"), _dependent.toString());
-        pd.set(new Parameter("divisions"),   "" + _divisions.toString());
-        pd.set(new Parameter("steps"),  "" + steps  );
-        pd.set(new Parameter("mod"),   "" + mod  );
-        pd.set(new Parameter("compress"),   "" + compress    );
-        pd.set(new Parameter("trials"),   "" + trials);
-        pd.set(new Parameter("threads"), "" + threads);
-        pd.set(new Parameter("seed"), "" + seed);
-        pd.set(new Parameter("out"), path);
+        pd.set(new Parameter(MODEL_P), model.getClass().getName() );
+        pd.set(new Parameter(MIN_P), _min.toString());
+        pd.set(new Parameter(MAX_P), _max.toString());
+        pd.set(new Parameter(INDEPENDENT_P), _independent.toString());
+        pd.set(new Parameter(DEPENDENT_P), _dependent.toString());
+        pd.set(new Parameter(DIVISIONS_P),   "" + _divisions.toString());
+        pd.set(new Parameter(STEPS_P),  "" + steps  );
+        pd.set(new Parameter(MOD_P),   "" + mod  );
+        pd.set(new Parameter(COMPRESS_P),   "" + compress    );
+        pd.set(new Parameter(TRIALS_P),   "" + trials);
+        pd.set(new Parameter(THREADS_P), "" + threads);
+        pd.set(new Parameter(SEED_P), "" + seed);
+        pd.set(new Parameter(OUT_P), path);
         return pd;
         }
 
