@@ -573,7 +573,7 @@ public class Schedule implements java.io.Serializable
         if you need to make the Schedule NOT serialize certain Steppable objects. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
-    public Stoppable scheduleRepeating(final Steppable event)
+    public IterativeRepeat scheduleRepeating(final Steppable event)
         {
         synchronized(lock)
             {
@@ -597,7 +597,7 @@ public class Schedule implements java.io.Serializable
         if you need to make the Schedule NOT serialize certain Steppable objects. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
-    public Stoppable scheduleRepeating(final Steppable event, final double interval)
+    public IterativeRepeat scheduleRepeating(final Steppable event, final double interval)
         {
         synchronized(lock)
             {
@@ -621,7 +621,7 @@ public class Schedule implements java.io.Serializable
         if you need to make the Schedule NOT serialize certain Steppable objects. */
     
     // synchronized so getting the time can be atomic with the subsidiary scheduleRepeating function call
-    public Stoppable scheduleRepeating(final Steppable event, final int ordering, final double interval)
+    public IterativeRepeat scheduleRepeating(final Steppable event, final int ordering, final double interval)
         {
         synchronized(lock)
             {
@@ -646,7 +646,7 @@ public class Schedule implements java.io.Serializable
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
         if you need to make the Schedule NOT serialize certain Steppable objects. */
 
-    public Stoppable scheduleRepeating(final double time, final Steppable event)
+    public IterativeRepeat scheduleRepeating(final double time, final Steppable event)
         {
         // No need to lock -- we're not grabbing time from the schedule
         return scheduleRepeating(time,0,event,1.0);
@@ -669,7 +669,7 @@ public class Schedule implements java.io.Serializable
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
         if you need to make the Schedule NOT serialize certain Steppable objects. */
 
-    public Stoppable scheduleRepeating(final double time, final Steppable event, final double interval)
+    public IterativeRepeat scheduleRepeating(final double time, final Steppable event, final double interval)
         {
         // No need to lock -- we're not grabbing time from the schedule
         return scheduleRepeating(time,0,event,interval);
@@ -692,7 +692,7 @@ public class Schedule implements java.io.Serializable
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
         if you need to make the Schedule NOT serialize certain Steppable objects. */
 
-    public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event)
+    public IterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event)
         {
         // No need to lock -- we're not grabbing time from the schedule
         return scheduleRepeating(time,ordering,event,1.0);
@@ -715,7 +715,7 @@ public class Schedule implements java.io.Serializable
         forget (lose the pointer to) the Steppable scheduled here.  This is particularly useful
         if you need to make the Schedule NOT serialize certain Steppable objects. */
 
-    public Stoppable scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
+    public IterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
         if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         Schedule.Key k = new Schedule.Key(time,ordering);
