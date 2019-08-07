@@ -1,12 +1,12 @@
 package sim.app.geo.ebola;
 import sim.app.geo.ebola.ebolaData.EbolaData;
 import sim.app.geo.ebola.ebolaData.actualCases.ActualCasesData;
-import sim.app.geo.ebola.ebolaData.farmsShapefile.FarmsShapefileData;
-import sim.app.geo.ebola.ebolaData.hospitalsShapefile.HospitalsShapefileData;
+import sim.app.geo.ebola.ebolaData.farmsShapefile.FarmData;
+import sim.app.geo.ebola.ebolaData.hospitalsShapefile.HospitalData;
 import sim.app.geo.ebola.ebolaData.movement.MovementData;
-import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesShapefileData;
-import sim.app.geo.ebola.ebolaData.roadsShapefile.RoadsShapefileData;
-import sim.app.geo.ebola.ebolaData.schoolsShapefile.SchoolsShapefileData;
+import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesData;
+import sim.app.geo.ebola.ebolaData.roadsShapefile.RoadsData;
+import sim.app.geo.ebola.ebolaData.schoolsShapefile.SchoolsData;
 import java.net.URL;
 
 
@@ -22,7 +22,7 @@ public class Parameters
     public static int WORLD_TO_POP_SCALE = 10; //scale up from the population data for each household
     public static double WORLD_DISCRETIZTION = 0.1;//discretization or buckets for world granularity
     public static double POP_BLOCK_METERS = 926.1;//Height and width of one population block. (http://www.esri.com/news/arcuser/0400/wdside.html)
-    public static double WORLD_LENGTH = WORLD_TO_POP_SCALE * POP_BLOCK_METERS;//The size of one grid cell in meters
+    public static double WORLD_LENGTH = Parameters.WORLD_TO_POP_SCALE * Parameters.POP_BLOCK_METERS;//The size of one grid cell in meters
 
     public static double TEMPORAL_RESOLUTION = 1;//steps per hour
 
@@ -32,15 +32,15 @@ public class Parameters
     public static URL POP_PATH = EbolaData.class.getResource("merged_pop.asc"); //Path to liberia population data (LandScan 2013)
     public static URL ADMIN_PATH = EbolaData.class.getResource("merged_admin.asc");//Path to file that has administration and county boundaries for all three countries (LandScan 2013)
     public static URL AGE_DIST_PATH = EbolaData.class.getResource("All_Age_Distribution.csv");//Path to file that has age distribution for each of the counties and provinces (LandScan 2013)
-    public static URL ROADS_SHAPE_PATH =RoadsShapefileData.class.getResource( "all_roads_trim.shp");//Path to vector data for all roads
-    public static URL ROADS_DBF_PATH =RoadsShapefileData.class.getResource( "all_roads_trim.dbf");//Path to vector data for all roads
+    public static URL ROADS_SHAPE_PATH =RoadsData.class.getResource( "all_roads_trim.shp");//Path to vector data for all roads
+    public static URL ROADS_DBF_PATH =RoadsData.class.getResource( "all_roads_trim.dbf");//Path to vector data for all roads
     public static URL ROADS_COST_PATH =EbolaData.class.getResource( "road_cost.dat");//Path to cost distance data for all allRoadNodes in the network
-    public static URL SCHOOLS_PATH = SchoolsShapefileData.class.getResource( "all_schools.shp");//Path to shapefile that has location of all primary schools
-    public static URL SCHOOLS_DBF = SchoolsShapefileData.class.getResource( "all_schools.dbf");//Path to shapefile that has location of all primary schools
-    public static URL FARMS_PATH =FarmsShapefileData.class.getResource( "all_farms.shp");
-    public static URL FARMS_DBF =FarmsShapefileData.class.getResource( "all_farms.dbf");
-    public static URL HOSPITALS_PATH = HospitalsShapefileData.class.getResource( "all_hospitals.shp");//Path to shapefile that has location of all health facilities
-    public static URL HOSPITALS_DBF = HospitalsShapefileData.class.getResource( "all_hospitals.dbf");//Path to shapefile that has location of all health facilities
+    public static URL SCHOOLS_PATH = SchoolsData.class.getResource( "all_schools.shp");//Path to shapefile that has location of all primary schools
+    public static URL SCHOOLS_DBF = SchoolsData.class.getResource( "all_schools.dbf");//Path to shapefile that has location of all primary schools
+    public static URL FARMS_PATH =FarmData.class.getResource( "all_farms.shp");
+    public static URL FARMS_DBF =FarmData.class.getResource( "all_farms.dbf");
+    public static URL HOSPITALS_PATH = HospitalData.class.getResource( "all_hospitals.shp");//Path to shapefile that has location of all health facilities
+    public static URL HOSPITALS_DBF = HospitalData.class.getResource( "all_hospitals.dbf");//Path to shapefile that has location of all health facilities
     public static URL ADMIN_ID_PATH =EbolaData.class.getResource("admin_id.asc");//Path to file that contains the id for each county in each of the three countries, unique within each country but not between countries
     public static URL MOVEMENT_PATH = MovementData.class.getResource( "population_flow.csv");//Path to file containing movement data within each country
     public static URL ACTUAL_CASES_GUINEA = ActualCasesData.class.getResource( "guinea_actual.csv");//path to csv file containing actual cases for guinea
@@ -208,12 +208,12 @@ public class Parameters
     public static double OFF_ROAD_AVERAGE = 0.5;//km
     public static double OFF_ROAD_STDEV = 0.25;//km
 
-    public static double convertToKilometers(double val)
+    public static double convertToKilometers(final double val)
     {
         return (val * (Parameters.POP_BLOCK_METERS/Parameters.WORLD_TO_POP_SCALE))/1000.0;
     }
 
-    public static double convertFromKilometers(double val)
+    public static double convertFromKilometers(final double val)
     {
         return (val*1000.0)/(Parameters.POP_BLOCK_METERS/Parameters.WORLD_TO_POP_SCALE);
     }
