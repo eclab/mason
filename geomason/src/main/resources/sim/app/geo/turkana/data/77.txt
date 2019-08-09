@@ -1,10 +1,3 @@
-ncols         4
-nrows         4
-xllcorner     35.7
-yllcorner     1.8
-cellsize      0.25
-NODATA_value  -9999
-0.0417514 0.06777612 0.1003146 0.09714949 
-0.0431595 0.06338877 0.07822305 0.08231077 
-0.04769811 0.05380692 0.06833418 0.08470108 
-0.0749343 0.06704465 0.07134458 0.09152243 
+version https://git-lfs.github.com/spec/v1
+oid sha256:5a56e54b21e2ef5b8600edbec43cd3ae4da6b3cb50ffc8a9b75ac82f806e7fb2
+size 294

@@ -1,12 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<metadata>
-  <groupId>com.jogamp</groupId>
-  <artifactId>jogamp-fat</artifactId>
-  <versioning>
-    <release>9999</release>
-    <versions>
-      <version>9999</version>
-    </versions>
-    <lastUpdated>20190702175648</lastUpdated>
-  </versioning>
-</metadata>
+version https://git-lfs.github.com/spec/v1
+oid sha256:96db1bb76ea27c4510b201c442268be34b09314bfdbb6c7c5c7e705a248f89e5
+size 298
