@@ -3,6 +3,7 @@
 Inside the folder mason-build:
 
 ```bash
+git lfs pull
 make
 ```
 
