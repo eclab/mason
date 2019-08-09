@@ -125,7 +125,7 @@ public class GDALImporter
 
         for (int currRow = 0; currRow < ySize; currRow++)
         {
-            //result = band.ReadRaster(0, currRow, xSize, 1, line);
+            result = band.ReadRaster(0, currRow, xSize, 1, line);
             if (result != gdalconstConstants.CE_None)
             {
                 throw new RuntimeException("Problem reading raster");
@@ -158,7 +158,7 @@ public class GDALImporter
 
         for (int currRow = 0; currRow < ySize; currRow++)
         {
-            //result = band.ReadRaster(0, currRow, xSize, 1, line);
+            result = band.ReadRaster(0, currRow, xSize, 1, line);
             if (result != gdalconstConstants.CE_None)
             {
                 throw new RuntimeException("Problem reading raster");
