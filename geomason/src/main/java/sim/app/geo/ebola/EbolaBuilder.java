@@ -21,7 +21,7 @@ import java.util.*;
 import net.sf.csv4j.*;
 import sim.util.geo.MasonGeometry;
 
-import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesData;
+import sim.app.geo.ebola.ebolaData.placesShapefile.PlacesShapefileData;
 
 /**
  * Created by rohansuri on 7/8/15.
@@ -67,7 +67,7 @@ public class EbolaBuilder
 
         try
         {
-            final URL[] files = {Parameters.ROADS_SHAPE_PATH, Parameters.ROADS_DBF_PATH, Parameters.SCHOOLS_PATH, Parameters.SCHOOLS_DBF, Parameters.FARMS_PATH, Parameters.FARMS_DBF, Parameters.HOSPITALS_PATH, Parameters.HOSPITALS_DBF, PlacesData.class.getResource("all_places.shp"), PlacesData.class.getResource("all_places.dbf")};//all the files we want to read in
+            final URL[] files = {Parameters.ROADS_SHAPE_PATH, Parameters.ROADS_DBF_PATH, Parameters.SCHOOLS_PATH, Parameters.SCHOOLS_DBF, Parameters.FARMS_PATH, Parameters.FARMS_DBF, Parameters.HOSPITALS_PATH, Parameters.HOSPITALS_DBF, PlacesShapefileData.class.getResource("all_places.shp"), PlacesShapefileData.class.getResource("all_places.dbf")};//all the files we want to read in
             final GeomVectorField[] vectorFields = {EbolaBuilder.ebolaSim.roadLinks, schools_vector, farms_vector, hospitals_vector, places_vector};//all the vector fields we want to fill
             readInShapefile(files, vectorFields);
 
