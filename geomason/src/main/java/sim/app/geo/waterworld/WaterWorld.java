@@ -25,6 +25,7 @@ import sim.field.geo.GeomGridField.GridDataType;
 import sim.field.grid.IntGrid2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
+import sim.app.geo.waterworld.data.WaterWorldData;
 
 
 
@@ -67,7 +68,7 @@ public class WaterWorld extends SimState
         // various options for setting up the landscape
         //landscape = setupLandscape(); // uniform landscape, completely flat
         //landscape = setupLandscapeGradientIn(); // landscape that slopes in
-        landscape = setupLandscapeReadIn("data/elevation.txt.gz"); // read landscape from file
+        landscape = setupLandscapeReadIn("elevation.txt.gz"); // read landscape from file
 
         drops = new ArrayList<Raindrop>();
 
@@ -116,7 +117,7 @@ public class WaterWorld extends SimState
         {
             GeomGridField elevationsField = new GeomGridField();
 
-            InputStream inputStream = WaterWorld.class.getResourceAsStream(filename);
+            InputStream inputStream = WaterWorldData.class.getResourceAsStream(filename);
 
             if (inputStream == null)
             {

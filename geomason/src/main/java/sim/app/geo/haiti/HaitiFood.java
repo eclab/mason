@@ -32,11 +32,13 @@ import sim.util.Bag;
 import sim.util.geo.MasonGeometry;
 
 import sim.app.geo.haiti.data.HaitiData;
+import sim.app.geo.haiti.data.roads.HaitiRoadData;
 
 @SuppressWarnings("restriction")
 public class HaitiFood extends SimState {
 
-	public IntGrid2D roads;
+	URL roadsFile, roadVectorFile, destructionFile, popFile, roadVectorDBF;
+	public IntGrid2D roadsGrid;
 	public IntGrid2D destruction;
 	public SparseGrid2D centers;
 	public SparseGrid2D population;
@@ -77,9 +79,9 @@ public class HaitiFood extends SimState {
 	
 	
 	// Relief File Settings ///
-	String reliefFile = null;
-	String [] reliefFiles = new String [] {"haitiData/relief1.txt", "haitiData/reliefBETTA.txt", 
-			"haitiData/reliefOKBETTA.txt", "haitiData/reliefBAD.txt", "haitiData/reliefSingle.txt"};
+	URL reliefFile = null;
+	URL [] reliefFiles = new URL [] {HaitiData.class.getResource("relief1.txt"), HaitiData.class.getResource("reliefBETTA.txt"), 
+			HaitiData.class.getResource("reliefOKBETTA.txt"), HaitiData.class.getResource("reliefBAD.txt"), HaitiData.class.getResource("reliefSingle.txt")};
 	String [] reliefFilesNames = new String [] {"Neutral", "Good", "Better", "Bad", "Single"};
 	
 	// making the Relief file modifiable
@@ -92,12 +94,13 @@ public class HaitiFood extends SimState {
 	public HaitiFood(long seed) {
 		super(seed);
 		
-		roadsFile = "haitiData/roads1.txt";
-		roadVectorFile ="haitiRoads/Haiti_all_roads_Clip.shp";
-		destructionFile ="haitiData/destruction.txt";
+		roadsFile = HaitiData.class.getResource("roads1.txt");
+		roadVectorFile = HaitiRoadData.class.getResource("Haiti_all_roads_Clip.shp");
+		roadVectorDBF = HaitiRoadData.class.getResource("Haiti_all_roads_Clip.dbf");
+		destructionFile =HaitiData.class.getResource("destruction.txt");
 		if(reliefFile == null)
-			reliefFile ="haitiData/relief1.txt";
-		popFile ="haitiData/pop.txt";
+			reliefFile =HaitiData.class.getResource("relief1.txt");
+		popFile =HaitiData.class.getResource("pop.txt");
 
 	}
 
@@ -116,15 +119,15 @@ public class HaitiFood extends SimState {
 		this.enRiot = enRiot;
 		this.interval = interval;
 
-		roadsFile = "haitiData/roads1.txt";
-		roadVectorFile = "haitiRoads/Haiti_all_roads_Clip.shp";
-		destructionFile = "haitiData/destruction.txt"; 
-		popFile = "haitiData/pop.txt";
+		roadsFile = HaitiData.class.getResource("roads1.txt");
+		roadVectorFile = HaitiRoadData.class.getResource("Haiti_all_roads_Clip.shp");
+		roadVectorDBF = HaitiRoadData.class.getResource("Haiti_all_roads_Clip.dbf");
+		destructionFile = HaitiData.class.getResource("destruction.txt"); 
+		popFile = HaitiData.class.getResource("pop.txt");
 		if (reliefFile == null)
 			reliefFile = reliefFiles[0]; // pick the default
 	}
 	
-	String roadsFile, roadVectorFile, destructionFile, popFile;
 	/** Initialization */
 	public void start(){
 		super.start();
@@ -136,18 +139,17 @@ public class HaitiFood extends SimState {
 
 			// read in the raw roads raster (the situation "on the ground")
 			System.out.println("reading roads layer...");
-			roads = setupFromFile(roadsFile, noRoadValue);
+			roadsGrid = setupFromFile(roadsFile, noRoadValue);
 
 			// store the information about the size of the simulation space
-			gridWidth = roads.getWidth();
-			gridHeight = roads.getHeight();
+			gridWidth = roadsGrid.getWidth();
+			gridHeight = roadsGrid.getHeight();
 
 			// read in the road vector information (the way people *think*s about
 			// the road network)
 			//ShapeFileImporter importer = new ShapeFileImporter();
 			GeomVectorField roadLinks = new GeomVectorField();
-		    String roadDB = roadVectorFile.replace("shp", "dbf");	
-			ShapeFileImporter.read(new File(roadVectorFile).toURI().toURL(), new File(roadDB).toURI().toURL(), roadLinks, new Bag());
+			ShapeFileImporter.read(roadVectorFile, roadVectorDBF, roadLinks, new Bag());
 			nodes = new SparseGrid2D(gridWidth, gridHeight);
 			extractFromRoadLinks(roadLinks); // construct a network of roads
 
@@ -257,8 +259,8 @@ public class HaitiFood extends SimState {
 
 			// calculate the location of the node in question
 			double x = cs.getX(i), y = cs.getY(i);
-			int xint = (int) Math.floor(xcols * (x - xmin) / (xmax - xmin)), yint = (int) (ycols - Math
-					.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y VALUE
+			int xint = (int) Math.floor(xcols * (x - xmin) / (xmax - xmin));
+            int yint = (int) (ycols - Math.floor(ycols * (y - ymin) / (ymax - ymin))); // REMEMBER TO FLIP THE Y VALUE
 
 			if (xint >= gridWidth)
 				continue;
@@ -403,14 +405,14 @@ public class HaitiFood extends SimState {
 	 * @param filename
 	 *            - the name of the file that holds the data
 	 */
-	IntGrid2D setupFromFile(String filename, int defaultValue) {
+	IntGrid2D setupFromFile(URL filename, int defaultValue) {
 
 		IntGrid2D field = null;
 
 		try { // to read in a file
 
 			// Open the file
-			FileInputStream fstream = new FileInputStream(filename);
+			FileInputStream fstream = new FileInputStream(new File(filename.toURI()));
 
 			// Convert our input stream to a BufferedReader
 			BufferedReader d = new BufferedReader(
@@ -464,7 +466,7 @@ public class HaitiFood extends SimState {
 		}
 		// if it messes up, print out the error
 		catch (Exception e) {
-			System.out.println(e);
+            e.printStackTrace();
 		}
 		return field;
 	}
@@ -473,14 +475,14 @@ public class HaitiFood extends SimState {
 	 * @param filename
 	 *            - the name of the file that holds the data
 	 */
-	IntGrid2D setupDestructionFromFile(String filename) {
+	IntGrid2D setupDestructionFromFile(URL filename) {
 
 		IntGrid2D field = null;
 
 		try { // to read in a file
 
 			// Open the file
-			FileInputStream fstream = new FileInputStream(filename);
+			FileInputStream fstream = new FileInputStream(new File(filename.toURI()));
 
 			// Convert our input stream to a BufferedReader
 			BufferedReader d = new BufferedReader(
@@ -555,14 +557,14 @@ public class HaitiFood extends SimState {
 	 * @param filename - the name of the file that holds the data
 	 * @param field - the field to be populated
 	 */
-	SparseGrid2D setupCentersFromFile(String filename) {
+	SparseGrid2D setupCentersFromFile(URL filename) {
 
 		SparseGrid2D field = null;
 
 		try { // to read in a file
 
 			// Open the file
-			FileInputStream fstream = new FileInputStream(filename);
+			FileInputStream fstream = new FileInputStream(new File(filename.toURI()));
 
 			// Convert our input stream to a BufferedReader
 			BufferedReader d = new BufferedReader(

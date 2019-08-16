@@ -222,7 +222,7 @@ public class HaitiFoodWithUI extends GUIState {
 		// --- PORTRAYALS ---
 		
 		// ROADS
-		roads.setField( haitifood.roads );
+		roads.setField( haitifood.roadsGrid );
         Color[] roadColors = new Color[HaitiFood.noRoadValue];
         for(int i = 0; i < roadColors.length - 1; i++)
         	roadColors[i] = new Color(50 + i * 10, i * 10, i * 10);

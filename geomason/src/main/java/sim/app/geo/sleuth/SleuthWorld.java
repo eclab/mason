@@ -26,6 +26,7 @@ import sim.field.grid.IntGrid2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.io.geo.ArcInfoASCGridImporter;
 import sim.util.Bag;
+import sim.app.geo.sleuth.data.SleuthData;
 
 
 
@@ -43,12 +44,12 @@ import sim.util.Bag;
  */
 public class SleuthWorld extends SimState
 {
-    private static final String EXCLUDED_DATA_FILE_NAME = "data/excluded.txt.gz";
-    private static final String HILLSIDE_DATA_FILE_NAME = "data/hillshade.txt.gz";
-    private static final String LAND_USE_DATA_FILE_NAME = "data/landuse.txt.gz";
-    private static final String SLOPE_DATA_FILE_NAME = "data/reclass_slope.txt.gz";
-    private static final String TRANSPORT_DATA_FILE_NAME = "data/roads_0_1.txt.gz";
-    private static final String URBAN_AREA_DATA_FILE_NAME = "data/urban.txt.gz";
+    private static final String EXCLUDED_DATA_FILE_NAME = "excluded.txt.gz";
+    private static final String HILLSIDE_DATA_FILE_NAME = "hillshade.txt.gz";
+    private static final String LAND_USE_DATA_FILE_NAME = "landuse.txt.gz";
+    private static final String SLOPE_DATA_FILE_NAME = "reclass_slope.txt.gz";
+    private static final String TRANSPORT_DATA_FILE_NAME = "roads_0_1.txt.gz";
+    private static final String URBAN_AREA_DATA_FILE_NAME = "urban.txt.gz";
 
     ObjectGrid2D landscape;
     ArrayList<Tile> spreadingCenters = new ArrayList<Tile>();
@@ -221,7 +222,7 @@ public class SleuthWorld extends SimState
 
     private void readData(GeomGridField excludedGridField, final String fileName) throws FileNotFoundException
     {
-        InputStream inputStream = SleuthWorld.class.getResourceAsStream(fileName);
+        InputStream inputStream = SleuthData.class.getResourceAsStream(fileName);
 
         if (inputStream == null)
         {

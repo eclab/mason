@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-//import sim.app.geo.hotspots.hotspotsData.HotSpotsData;
+import sim.app.geo.hotspots.hotspotsData.HotSpotsData;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.field.geo.GeomGridField;
@@ -77,7 +77,6 @@ public class Hotspots extends SimState {
 	
 	/////////////// Data Sources ///////////////////////////////////////
 	
-	String dirName = "/hotspots/hotspotsData/";
 	
 	public static String communicatorFilename = "communicatorEvents.txt";
 	public static String agentFilename = "synthPopulationHOUSEHOLD.txt";
@@ -170,12 +169,12 @@ public class Hotspots extends SimState {
 			///////////// READING IN DATA ////////////////
 			//////////////////////////////////////////////
 		
-			readInVectorLayer(baseLayer, dirName + "focusedArea.shp", "census tracts", new Bag());
-			readInVectorLayer(roadLayer, dirName + "cleanedRoads.shp", "road network", new Bag());
-			readInVectorLayer(evacuationAreas, dirName + "evacuationMETERS.shp", "evacuation areas", new Bag());
-			readInRasterLayer(vegetation, dirName + "landcover_final.txt", "landcover", GridDataType.INTEGER);
-			readInRasterLayer(elevation, dirName + "ned_final.txt", "elevation", GridDataType.DOUBLE);
-			readInRasterLayer(impermeable, dirName + "impermeable_final.txt", "impermeability", GridDataType.INTEGER);
+			readInVectorLayer(baseLayer, HotspotsData.class.getResource("focusedArea.shp"), HotspotsData.class.getResource("focusedArea.dbf"),  "census tracts", new Bag());
+			readInVectorLayer(roadLayer, HotspotsData.class.getResource("cleanedRoads.shp"), HotspotsData.class.getResource("cleanedRoads.dbf"), "road network", new Bag());
+			readInVectorLayer(evacuationAreas, HotspotsData.class.getResource("evacuationMETERS.shp"), HotspotsData.class.getResource("evacuationMETERS.dbf"), "evacuation areas", new Bag());
+			readInRasterLayer(vegetation, Hotspots.class.getResource("landcover_final.txt"), "landcover", GridDataType.INTEGER);
+			readInRasterLayer(elevation, Hotspots.class.getResource("ned_final.txt"), "elevation", GridDataType.DOUBLE);
+			readInRasterLayer(impermeable, Hotspots.class.getResource("impermeable_final.txt"), "impermeability", GridDataType.INTEGER);
 
 			// OPTIONAL: Real Wildfire Data 
 
@@ -842,15 +841,14 @@ public class Hotspots extends SimState {
 	 * @param layerDescription
 	 * @param attributes - optional: include only the given attributes
 	 */
-	synchronized void readInVectorLayer(GeomVectorField layer, String filename, String layerDescription, Bag attributes){
+	synchronized void readInVectorLayer(GeomVectorField layer, URL filename, URL dbf, String layerDescription, Bag attributes){
 		try {
 				System.out.print("Reading in " + layerDescription + "from " + filename + "...");
-                String dbName = filename.replace("shp", "dbf");
 				//File file = new File(filename);
 				if(attributes == null || attributes.size() == 0)
-					ShapeFileImporter.read(getUrl(filename), getUrl(dbName), layer);
+					ShapeFileImporter.read(filename, dbf, layer);
 				else
-					ShapeFileImporter.read(getUrl(filename), getUrl(dbName), layer, attributes);
+					ShapeFileImporter.read(filename, dbName, layer, attributes);
 				System.out.println("done");	
 
 		} catch (Exception e) {
@@ -899,11 +897,11 @@ public class Hotspots extends SimState {
 	 * @param layerDescription
 	 * @param type
 	 */
-	synchronized void readInRasterLayer(GeomGridField layer, String filename, String layerDescription, GridDataType type){
+	synchronized void readInRasterLayer(GeomGridField layer, URL filename, String layerDescription, GridDataType type){
 		try {
 				
 				System.out.print("Reading in " + layerDescription + "from " + filename + "...");
-				FileInputStream fstream = new FileInputStream(filename);
+				FileInputStream fstream = new FileInputStream(new File(filename.toURI()));
 				ArcInfoASCGridImporter.read(fstream, type, layer);
 				fstream.close();
 				System.out.println("done");

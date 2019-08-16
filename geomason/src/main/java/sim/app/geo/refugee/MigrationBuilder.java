@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 
-//import sim.app.geo.refugee.refugeeData;
+import sim.app.geo.refugee.refugeeData;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.SparseGrid2D;
@@ -75,7 +75,11 @@ class MigrationBuilder {
 		migrationSim.roadLinks = new GeomVectorField(sim.world_width, sim.world_height);
 		Bag roadLinksAtt = new Bag(roadLinksAttributes);
 		
-		String[] files = { Parameters.REGION_SHP, Parameters.COUNTRY_SHP,Parameters.ROAD_SHP, Parameters.CITY_SHP, Parameters.ROADLINK_SHP };// shapefiles
+		URL[] files = { Parameters.REGION_SHP, Parameters.REGION_DBF,
+            Parameters.COUNTRY_SHP, Parameters.COUNTRY_DBF,
+            Parameters.ROAD_SHP, Parameters.ROAD_DBF,
+            Parameters.CITY_SHP, Parameters.CITY_DBF,
+            Parameters.ROADLINK_SHP, Parameters.ROADLINK_DBF};// shapefiles
 		Bag[] attfiles = { regionAtt, countryAtt, roadAtt, cityAtt, roadLinksAtt };
 		GeomVectorField[] vectorFields = { migrationSim.regions, migrationSim.countries,migrationSim.roads,migrationSim.cityPoints,migrationSim.roadLinks};
 		readInShapefile(files, attfiles, vectorFields);// read in attributes
@@ -165,15 +169,14 @@ class MigrationBuilder {
 		}
 	}
 
-	static void readInShapefile(String[] files, Bag[] attfiles, GeomVectorField[] vectorFields) {
+	static void readInShapefile(URL[] files, Bag[] attfiles, GeomVectorField[] vectorFields) {
 		try {
-			for (int i = 0; i < files.length; i++) {
-				Bag attributes = attfiles[i];
-				String filePath = files[i];
+			for (int i = 0; i < files.length; i+=2) {
+				Bag attributes = attfiles[i/2];
 
-				URL shapeURI = getUrl(filePath);
-				URL shapeDBF = getUrl(filePath.replace("shp", "dbf"));
-				ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i], attributes);
+				URL shapeURI = files[i];
+				URL shapeDBF = files[i+1];
+				ShapeFileImporter.read(shapeURI, shapeDBF, vectorFields[i/2], attributes);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -307,10 +310,10 @@ class MigrationBuilder {
 
 	}
 
-	private static void setUpPopDist(String pop_dist_file) {
+	private static void setUpPopDist(URL pop_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream(pop_dist_file)));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(pop_dist_file.toURI()))));
 			//csvReader.readLine();// skip the headers
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {
@@ -331,10 +334,10 @@ class MigrationBuilder {
 		}
 	}
 	
-	private static void setUpFinDist(String fin_dist_file) {
+	private static void setUpFinDist(URL fin_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream((fin_dist_file))));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(fin_dist_file.toURI()))));
 			//csvReader.readLine();// skip the headers
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {
@@ -356,10 +359,10 @@ class MigrationBuilder {
 		}
 	}
 	
-	private static void setUpAgeDist(String age_dist_file) {
+	private static void setUpAgeDist(URL age_dist_file) {
 		try {
 			// buffer reader for age distribution data
-			CSVReader csvReader = new CSVReader(new InputStreamReader(MigrationBuilder.class.getResourceAsStream(age_dist_file)));
+			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(age_dist_file.toURI()))));
 			csvReader.readLine();
 			List<String> line = csvReader.readLine();
 			while (!line.isEmpty()) {

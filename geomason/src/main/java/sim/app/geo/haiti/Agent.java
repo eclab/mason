@@ -333,7 +333,7 @@ class Agent implements Steppable {
 	double tileCost(Location loc, HaitiFood hf){
 		Bag people = hf.population.getObjectsAtLocation(loc.x, loc.y);
 		if( people != null && people.size() > hf.riotDensity) return ENERGY_TO_RIOT;
-		int roadType = hf.roads.get(loc.x, loc.y);
+		int roadType = hf.roadsGrid.get(loc.x, loc.y);
 		if( roadType < hf.noRoadValue ) return ENERGY_TO_WALK_UNPAVED;
 		else return ENERGY_TO_WALK_PAVED;
 	}
@@ -366,8 +366,8 @@ class Agent implements Steppable {
 		Location xmove = (Location) world.locations.get(position.x + moveX, position.y);
 		Location ymove = (Location) world.locations.get(position.x, position.y + moveY);
 		
-		boolean xmoveToRoad = ((Integer)world.roads.get(xmove.x, xmove.y)) > -1;
-		boolean ymoveToRoad = ((Integer)world.roads.get(ymove.x, ymove.y)) > -1;
+		boolean xmoveToRoad = ((Integer)world.roadsGrid.get(xmove.x, xmove.y)) > -1;
+		boolean ymoveToRoad = ((Integer)world.roadsGrid.get(ymove.x, ymove.y)) > -1;
 		
 		if( moveX == 0 && moveY == 0){ // we are ON the subgoal, so don't move at all!
 			// both are the same result, so just return the xmove (which is identical)

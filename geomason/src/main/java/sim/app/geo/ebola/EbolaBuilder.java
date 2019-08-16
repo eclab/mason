@@ -1,8 +1,6 @@
 package sim.app.geo.ebola;
 
 import com.vividsolutions.jts.geom.*;
-//import sim.app.geo.ebola.ebolaData.EbolaData;
-//import sim.app.geo.ebola.
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomGridField;
 import sim.field.geo.GeomVectorField;

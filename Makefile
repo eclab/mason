@@ -1,6 +1,9 @@
 All: data
 	mvn clean install
 
+reinstall: squeaky_clean
+	mvn clean install
+
 clean:
 	mvn clean
 
@@ -9,7 +12,7 @@ squeaky_clean: clean
 	rm -rf ~/.m2
 	mvn clean
 
-data: ebola acequias dadaab csv4j psh swiselib toolsui
+data: ebola acequias dadaab csv4j psh swiselib toolsui hotspots refugee kibera
 
 
 ebola:
@@ -46,3 +49,19 @@ toolsui:
 	rm -rf geomason/repository/edu/gmu/eclab/toolsUI-4.6.13/*
 	mvn install:install-file -DlocalRepositoryPath:geomason/repository/ -Dfile=geomason/repository/jars/toolsUI-4.6.13.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=toolsUI-4.6.13 -Dpackaging=jar
 	cp geomason/repository/jars/toolsUI-4.6.13.jar geomason/repository/edu/gmu/eclab/toolsUI-4.6.13/
+
+
+hotspots:
+	rm -rf geomason/repository/edu/gmu/eclab/hotspotsData/*
+	mvn install:install-file -DlocalRepositoryPath:geomason/repository/ -Dfile=geomason/repository/jars/hotspotsData.jar -DgroupId=edu.gmu.eclab -Dversion=1.0 -DartifactId=hotspotsData -Dpackaging=jar
+	cp geomason/repository/jars/hotspotsData.jar geomason/repository/edu/gmu/eclab/hotspotsData/
+
+refugee:
+	rm -rf geomason/repository/edu/gmu/eclab/refugeeData/*
+	mvn install:install-file -DlocalRepositoryPath:geomason/repository/ -Dfile=geomason/repository/jars/refugeeData.jar -DgroupId=edu.gmu.eclab -Dversion=1.0 -DartifactId=refugeeData -Dpackaging=jar
+	cp geomason/repository/jars/refugeeData.jar geomason/repository/edu/gmu/eclab/refugeeData/
+
+kibera:
+	rm -rf geomason/repository/edu/gmu/eclab/kiberaData/*
+	mvn install:install-file -DlocalRepositoryPath:geomason/repository/ -Dfile=geomason/repository/jars/kiberaData.jar -DgroupId=edu.gmu.eclab -Dversion=1.0 -DartifactId=kiberaData -Dpackaging=jar
+	cp geomason/repository/jars/kiberaData.jar geomason/repository/edu/gmu/eclab/kiberaData/
