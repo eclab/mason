@@ -310,7 +310,7 @@ public class Hotspots extends SimState {
 			//////////////////////////////////////////////
 
 			// set up the agents in the simulation
-			setupAgentsFromFile(dirName + agentFilename);
+			setupAgentsFromFile( agentFilename);
 			agentsLayer.setMBR(MBR);
 			
 			// for each of the Agents, set up relevant, environment-specific information
@@ -396,7 +396,7 @@ public class Hotspots extends SimState {
 			}, 12);
 			
 			// set up the evacuation orders to be inserted into the social media environment
-			setupCommunicators(dirName + communicatorFilename);
+			setupCommunicators( communicatorFilename);
 		
 			// seed the simulation randomly
 			seedRandom(System.currentTimeMillis());
@@ -418,13 +418,13 @@ public class Hotspots extends SimState {
 					+ tweet_prob + "_" + retweet_prob + "_" + comfortDistance + "_" + 
 					observationDistance + "_" + decayParam + "_" + speed + "_";
 
-			record_sentiment = new BufferedWriter(new FileWriter(dirName
-					+ record_sentiment_filename + mySettings + mySeed + ".txt"));
-			record_speeds = new BufferedWriter(new FileWriter(dirName
-					+ record_speeds_filename + mySettings + mySeed + ".txt"));
+			record_sentiment = new BufferedWriter(new FileWriter(
+					record_sentiment_filename + mySettings + mySeed + ".txt"));
+			record_speeds = new BufferedWriter(new FileWriter(
+					record_speeds_filename + mySettings + mySeed + ".txt"));
 
-			record_info = new BufferedWriter(new FileWriter(dirName
-					+ record_info_filename + mySettings + mySeed + ".txt"));
+			record_info = new BufferedWriter(new FileWriter(
+					record_info_filename + mySettings + mySeed + ".txt"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -508,7 +508,7 @@ public class Hotspots extends SimState {
 					retweet_prob + "_" + comfortDistance + "_" + observationDistance + "_" + decayParam + "_" + speed + "_";
 
 			// SAVE THE HEATMAP
-			record_heatmap = new BufferedWriter(new FileWriter(dirName + record_heatmap_filename + mySettings + mySeed + ".txt"));
+			record_heatmap = new BufferedWriter(new FileWriter( record_heatmap_filename + mySettings + mySeed + ".txt"));
 			IntGrid2D myHeatmap = ((IntGrid2D) this.heatmap.getGrid());
 
 			// write a header
@@ -848,7 +848,7 @@ public class Hotspots extends SimState {
 				if(attributes == null || attributes.size() == 0)
 					ShapeFileImporter.read(filename, dbf, layer);
 				else
-					ShapeFileImporter.read(filename, dbName, layer, attributes);
+					ShapeFileImporter.read(filename, dbf, layer, attributes);
 				System.out.println("done");	
 
 		} catch (Exception e) {

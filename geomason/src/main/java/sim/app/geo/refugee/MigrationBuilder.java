@@ -16,7 +16,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Point;
 
-import sim.app.geo.refugee.refugeeData;
+//import sim.app.geo.refugee.refugeeData.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.geo.GeomVectorField;
 import sim.field.grid.SparseGrid2D;
