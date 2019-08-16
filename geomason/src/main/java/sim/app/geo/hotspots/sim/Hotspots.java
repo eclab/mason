@@ -169,9 +169,9 @@ public class Hotspots extends SimState {
 			///////////// READING IN DATA ////////////////
 			//////////////////////////////////////////////
 		
-			readInVectorLayer(baseLayer, HotspotsData.class.getResource("focusedArea.shp"), HotspotsData.class.getResource("focusedArea.dbf"),  "census tracts", new Bag());
-			readInVectorLayer(roadLayer, HotspotsData.class.getResource("cleanedRoads.shp"), HotspotsData.class.getResource("cleanedRoads.dbf"), "road network", new Bag());
-			readInVectorLayer(evacuationAreas, HotspotsData.class.getResource("evacuationMETERS.shp"), HotspotsData.class.getResource("evacuationMETERS.dbf"), "evacuation areas", new Bag());
+			readInVectorLayer(baseLayer, HotSpotsData.class.getResource("focusedArea.shp"), HotSpotsData.class.getResource("focusedArea.dbf"),  "census tracts", new Bag());
+			readInVectorLayer(roadLayer, HotSpotsData.class.getResource("cleanedRoads.shp"), HotSpotsData.class.getResource("cleanedRoads.dbf"), "road network", new Bag());
+			readInVectorLayer(evacuationAreas, HotSpotsData.class.getResource("evacuationMETERS.shp"), HotSpotsData.class.getResource("evacuationMETERS.dbf"), "evacuation areas", new Bag());
 			readInRasterLayer(vegetation, Hotspots.class.getResource("landcover_final.txt"), "landcover", GridDataType.INTEGER);
 			readInRasterLayer(elevation, Hotspots.class.getResource("ned_final.txt"), "elevation", GridDataType.DOUBLE);
 			readInRasterLayer(impermeable, Hotspots.class.getResource("impermeable_final.txt"), "impermeability", GridDataType.INTEGER);

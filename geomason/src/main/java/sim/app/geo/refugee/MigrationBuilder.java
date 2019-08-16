@@ -40,7 +40,7 @@ class MigrationBuilder {
 	private static HashMap<Integer, NormalDistribution> fin_dist;
 
 	// initialize world
-	public static void initializeWorld(Migration sim) {
+	public static void initializeWorld(Migration sim) throws java.net.URISyntaxException{
 
 		migrationSim = sim;
 		
@@ -310,7 +310,7 @@ class MigrationBuilder {
 
 	}
 
-	private static void setUpPopDist(URL pop_dist_file) {
+	private static void setUpPopDist(URL pop_dist_file) throws java.net.URISyntaxException {
 		try {
 			// buffer reader for age distribution data
 			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(pop_dist_file.toURI()))));
@@ -334,7 +334,7 @@ class MigrationBuilder {
 		}
 	}
 	
-	private static void setUpFinDist(URL fin_dist_file) {
+	private static void setUpFinDist(URL fin_dist_file) throws java.net.URISyntaxException{
 		try {
 			// buffer reader for age distribution data
 			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(fin_dist_file.toURI()))));
@@ -359,7 +359,7 @@ class MigrationBuilder {
 		}
 	}
 	
-	private static void setUpAgeDist(URL age_dist_file) {
+	private static void setUpAgeDist(URL age_dist_file) throws java.net.URISyntaxException{
 		try {
 			// buffer reader for age distribution data
 			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(age_dist_file.toURI()))));

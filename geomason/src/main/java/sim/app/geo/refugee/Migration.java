@@ -70,7 +70,14 @@ class Migration extends SimState {
 		super.start();
 		refugees = new Bag();
 		refugeeFamilies = new Bag();
+        try
+        {
 		MigrationBuilder.initializeWorld(this);
+        }
+        catch (java.net.URISyntaxException e)
+        {
+            e.printStackTrace();
+        }
 
 		// charts
 
