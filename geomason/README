@@ -17,6 +17,8 @@ the corresponding make file variable in the "jar" rule.
 And, GeoMason obviously has a dependency on Mason, so please ensure
 that it is included in your class path, too.
 
+If using Distributed applications (DCampusWorld, DSchellingSpace), you will also have a dependency on Distributed.
+
                                  ###
 
 To run demos (presuming you've already done a "make demos"):
@@ -52,3 +54,39 @@ allocation parameters to better fit available memory.
 
 
 You'll need to build GDAL: http://download.osgeo.org/gdal/
+
+###
+
+In the newest build os Geomason, only a subset of current simulations work and will be fixed as times go on.
+
+* The ones that work are
+
+CampusWorld
+ColorWorld
+DCampusWorld
+NearbyWorld
+NetworkWorld
+TouchingWorld
+Turkana
+WaterWorld
+MasonCSC
+
+* There are three that was removed and  will be readded later
+
+Riftland
+ConflictDiamonds
+CityMigration
+
+* The rest compiles but have issues
+
+Acequias
+Dadaab
+DSchellingSpace
+Ebola
+Gridlock
+Haiti
+Hotspot
+Kibera
+Refugee
+SchellingPolygon
+SchellingSpace

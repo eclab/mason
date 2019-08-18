@@ -91,9 +91,3 @@ In the <modules> section you have to add:
 <module>socialnets</module> 
 ```
 
-#### Know bugs
-
-- Errors in the ```sim.app.geo.cityMigration```. Missing class `CityMigrationData`. We remove for this version the GeoMASON app:
-	- cityMigration.
-	- conflictdiamonds.
-	- riftland. 
