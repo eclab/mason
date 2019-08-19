@@ -1,3 +1,9 @@
+/*
+  Copyright 2019 by Sean Luke and George Mason University
+  Licensed under the Academic Free License version 3.0
+  See the file "LICENSE" for more information
+*/
+
 package sim.util.sweep;
 
 import sim.engine.*;
@@ -10,6 +16,8 @@ import java.util.zip.GZIPOutputStream;
 
 public class ParameterSweep 
     {
+    public static final String GZIP_POSTFIX = ".gz";
+    
     // Output stream to dump resuts 
     PrintWriter printWriter;
     
@@ -38,16 +46,16 @@ public class ParameterSweep
     public ParameterSweep(ParameterDatabase db) throws ClassNotFoundException
         {
         	// Load class
-	        String modelPath = ((String)(db.getStringWithDefault(new Parameter("model"), null, ""))).replace("/",".");
+	        String modelPath = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.MODEL_P), null, ""))).replace("/",".");
 	        if (modelPath == null) throw new RuntimeException("No valid model provided.");
         	try { modelClass = Class.forName(modelPath); }
         	catch (Exception ex) { throw new RuntimeException("No valid model provided."); }
 
 			// Load independent vars
-        	indNames = ((String)(db.getStringWithDefault(new Parameter("independent"), null, ""))).split("\\s");
-	        indMinValues = db.getDoublesUnconstrained(new Parameter("min"), null, indNames.length);
-	        indMaxValues = db.getDoublesUnconstrained(new Parameter("max"), null, indNames.length);
-	        double[] d = db.getDoubles(new Parameter("divisions"), null, 1, indNames.length);
+        	indNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.INDEPENDENT_P), null, ""))).split("\\s");
+	        indMinValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MIN_P), null, indNames.length);
+	        indMaxValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MAX_P), null, indNames.length);
+	        double[] d = db.getDoubles(new Parameter(ParameterSettings.DIVISIONS_P), null, 1, indNames.length);
 	        if (indNames.length == 0) throw new RuntimeException("must have at least one independent variable");
 	    	if (indMinValues == null) throw new RuntimeException("min is invalid or not the same length as independent");
 	    	if (indMaxValues == null) throw new RuntimeException("max is invalid or not the same length as independent");
@@ -60,27 +68,27 @@ public class ParameterSweep
 				}
         
         	// Load dependent vars
-        	depNames = ((String)(db.getStringWithDefault(new Parameter("dependent"), null, ""))).split("\\s");
+        	depNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.DEPENDENT_P), null, ""))).split("\\s");
 	        if (depNames.length == 0) throw new RuntimeException("Must have at least one dependent variable");
-        	mod = db.getInt(new Parameter("mod"), null, 0);
+        	mod = db.getInt(new Parameter(ParameterSettings.MOD_P), null, 0);
         	if (mod < 0) throw new RuntimeException("Invalid mod value.  You have: " + mod);
 
 			// Load other parameters
-        	numSteps = db.getInt(new Parameter("steps"), null, 0);
+        	numSteps = db.getInt(new Parameter(ParameterSettings.STEPS_P), null, 0);
         	if (numSteps < 0) throw new RuntimeException("Invalid steps value.  You have: " + numSteps);
-			numTrials = db.getInt(new Parameter("trials"), null, 1);
+			numTrials = db.getInt(new Parameter(ParameterSettings.TRIALS_P), null, 1);
         	if (numTrials < 1) throw new RuntimeException("Trials must be at least 1.  You have: " + numTrials);
-        	numThreads = db.getInt(new Parameter("threads"), null, 1);
+        	numThreads = db.getInt(new Parameter(ParameterSettings.THREADS_P), null, 1);
         	if (numThreads < 1) throw new RuntimeException("Threads must be at least 1.  You have: " + numThreads);
-        	baseSeed = db.getLong(new Parameter("seed"), null, 1);
+        	baseSeed = db.getLong(new Parameter(ParameterSettings.SEED_P), null, 1);
         	if (baseSeed < 1) throw new RuntimeException("Seed must be at least 1.  You have: " + baseSeed);
 
 			try
 				{
-				String filename = db.getStringWithDefault(new Parameter("out"), null, "");
-				if (db.getBoolean(new Parameter("compress"), null, false))
+				String filename = db.getStringWithDefault(new Parameter(ParameterSettings.OUT_P), null, "");
+				if (db.getBoolean(new Parameter(ParameterSettings.COMPRESS_P), null, false))
 					{
-					printWriter = new PrintWriter(new GZIPOutputStream(new FileOutputStream(filename + ".gz")), true);
+					printWriter = new PrintWriter(new GZIPOutputStream(new FileOutputStream(filename + GZIP_POSTFIX)), true);
 					}
 				else 
 					{   
