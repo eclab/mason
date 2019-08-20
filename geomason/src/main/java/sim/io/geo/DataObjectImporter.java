@@ -6,12 +6,9 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class DataObjectImporter {
-	public static InputStream open(final URL url) throws IllegalArgumentException, RuntimeException, IOException {
+	public static BufferedInputStream open(final URL url) throws IllegalArgumentException, RuntimeException, IOException {
 		if (url == null)
 			throw new IllegalArgumentException("url is null; file is probably not found");
-		final InputStream urlStream = new BufferedInputStream(url.openStream());
-		if (urlStream == null)
-			throw new RuntimeException("Cannot load URL " + url);
-		return urlStream;
+		return new BufferedInputStream(url.openStream());
 	}
 }

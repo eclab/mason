@@ -19,9 +19,6 @@ import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.geo.GeomPortrayal;
 import sim.portrayal.geo.GeomVectorFieldPortrayal;
 import sim.portrayal.grid.SparseGridPortrayal2D;
-import sim.portrayal.network.NetworkPortrayal2D;
-import sim.portrayal.network.SimpleEdgePortrayal2D;
-import sim.portrayal.network.SpatialNetwork2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.media.chart.TimeSeriesChartGenerator;
@@ -38,13 +35,13 @@ public class EbolaWithUI extends GUIState
     JFrame displayFrame; //frame containing all the displays
 
 
-    public EbolaWithUI(EbolaABM sim)
+    public EbolaWithUI(final EbolaABM sim)
     {
         super(sim);
     }
 
     @Override
-    public void init(Controller c)
+    public void init(final Controller c)
     {
         super.init(c);
         display = new Display2D(1000, 1000, this); //creates the display
@@ -54,21 +51,21 @@ public class EbolaWithUI extends GUIState
 
         JFreeChart roadNetworkChart;
         roadNetworkChart = ChartFactory.createBarChart("Distribution Chart", "Distance",
-                "Frequency", ((EbolaABM) this.state).distribution, PlotOrientation.VERTICAL, false, false,
+                "Frequency", ((EbolaABM) state).distribution, PlotOrientation.VERTICAL, false, false,
                 false);
         roadNetworkChart.setBackgroundPaint(Color.WHITE);
         roadNetworkChart.getTitle().setPaint(Color.BLACK);
 
-        CategoryPlot p4 = roadNetworkChart.getCategoryPlot();
+        final CategoryPlot p4 = roadNetworkChart.getCategoryPlot();
         p4.setBackgroundPaint(Color.WHITE);
         p4.setRangeGridlinePaint(Color.blue);
 
         // set the range axis to display integers only...
-        NumberAxis rangeAxis4 = (NumberAxis) p4.getRangeAxis();
+        final NumberAxis rangeAxis4 = (NumberAxis) p4.getRangeAxis();
         rangeAxis4.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         //rangeAxis4.setRange(0, ((EbolaABM) this.state).max);
 
-        ChartFrame frame4 = new ChartFrame("Road Network Distribution", roadNetworkChart);
+        final ChartFrame frame4 = new ChartFrame("Road Network Distribution", roadNetworkChart);
         frame4.setVisible(false);
         frame4.setSize(700, 350);
 
@@ -77,8 +74,8 @@ public class EbolaWithUI extends GUIState
 
         //health status chart
 
-        Dimension dm = new Dimension(30,30);
-        Dimension dmn = new Dimension(30,30);
+        final Dimension dm = new Dimension(30,30);
+        final Dimension dmn = new Dimension(30,30);
 
         TimeSeriesChartGenerator healthStatus;
         healthStatus = new TimeSeriesChartGenerator();
@@ -92,11 +89,11 @@ public class EbolaWithUI extends GUIState
 //        chartSeriesCholera.setMinimumChartDrawSize(400, 300); // makes it scale at small sizes
 //        chartSeriesCholera.setPreferredChartSize(400, 300); // lets it be small
 
-        healthStatus.addSeries(((EbolaABM) this.state).totalsusceptibleSeries, null);
-        healthStatus.addSeries(((EbolaABM) this.state).totalExposedSeries, null);
-        healthStatus.addSeries(((EbolaABM) this.state).totalInfectedSeries, null);
-        healthStatus.addSeries(((EbolaABM) this.state).totalRecoveredSeries, null);
-        healthStatus.addSeries(((EbolaABM) this.state).totalDeadSeries, null);
+        healthStatus.addSeries(((EbolaABM) state).totalsusceptibleSeries, null);
+        healthStatus.addSeries(((EbolaABM) state).totalExposedSeries, null);
+        healthStatus.addSeries(((EbolaABM) state).totalInfectedSeries, null);
+        healthStatus.addSeries(((EbolaABM) state).totalRecoveredSeries, null);
+        healthStatus.addSeries(((EbolaABM) state).totalDeadSeries, null);
 
         //chart for cumulative cases
         TimeSeriesChartGenerator charSeriesCumalative;
@@ -111,18 +108,18 @@ public class EbolaWithUI extends GUIState
 //        chartSeriesCholera.setMinimumChartDrawSize(400, 300); // makes it scale at small sizes
 //        chartSeriesCholera.setPreferredChartSize(400, 300); // lets it be small
 
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalLiberia , null);
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalGuinea , null);
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalSierra_Leone, null);
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalGuineaActual, null);
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalLiberiaActual, null);
-        charSeriesCumalative.addSeries(((EbolaABM) this.state).totalSierraLeoneActual, null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalLiberia , null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalGuinea , null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalSierra_Leone, null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalGuineaActual, null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalLiberiaActual, null);
+        charSeriesCumalative.addSeries(((EbolaABM) state).totalSierraLeoneActual, null);
 
-        JFrame frameSeries = healthStatus.createFrame(this);
+        final JFrame frameSeries = healthStatus.createFrame(this);
         frameSeries.pack();
         c.registerFrame(frameSeries);
 
-        JFrame cumalativeFrameSeries = charSeriesCumalative.createFrame(this);
+        final JFrame cumalativeFrameSeries = charSeriesCumalative.createFrame(this);
         cumalativeFrameSeries.pack();
         c.registerFrame(cumalativeFrameSeries);
 
@@ -140,30 +137,30 @@ public class EbolaWithUI extends GUIState
 //        chartSeriesCholera.setMinimumChartDrawSize(400, 300); // makes it scale at small sizes
 //        chartSeriesCholera.setPreferredChartSize(400, 300); // lets it be small
 
-        charSeriesCumulativeActual.addSeries(((EbolaABM) this.state).totalGuineaActual, null);
-        charSeriesCumulativeActual.addSeries(((EbolaABM) this.state).totalLiberiaActual, null);
-        charSeriesCumulativeActual.addSeries(((EbolaABM) this.state).totalSierraLeoneActual, null);
+        charSeriesCumulativeActual.addSeries(((EbolaABM) state).totalGuineaActual, null);
+        charSeriesCumulativeActual.addSeries(((EbolaABM) state).totalLiberiaActual, null);
+        charSeriesCumulativeActual.addSeries(((EbolaABM) state).totalSierraLeoneActual, null);
 
-        JFrame frameSeriesActual = charSeriesCumulativeActual.createFrame(this);
+        final JFrame frameSeriesActual = charSeriesCumulativeActual.createFrame(this);
         frameSeriesActual.pack();
         c.registerFrame(frameSeriesActual);
 
         //time chart
-        StandardDialFrame dialFrame = new StandardDialFrame();
-        DialBackground ddb = new DialBackground(Color.white);
+        final StandardDialFrame dialFrame = new StandardDialFrame();
+        final DialBackground ddb = new DialBackground(Color.white);
         dialFrame.setBackgroundPaint(Color.lightGray);
         dialFrame.setForegroundPaint(Color.darkGray);
 
-        DialPlot plot = new DialPlot();
+        final DialPlot plot = new DialPlot();
         plot.setView(0.0, 0.0, 1.0, 1.0);
         plot.setBackground(ddb);
         plot.setDialFrame(dialFrame);
 
-        plot.setDataset(0, ((EbolaABM) this.state).hourDialer);
-        plot.setDataset(1,((EbolaABM) this.state).dayDialer);
+        plot.setDataset(0, ((EbolaABM) state).hourDialer);
+        plot.setDataset(1,((EbolaABM) state).dayDialer);
 
 
-        DialTextAnnotation annotation1 = new DialTextAnnotation("Hour");
+        final DialTextAnnotation annotation1 = new DialTextAnnotation("Hour");
         annotation1.setFont(new Font("Dialog", Font.BOLD, 14));
         annotation1.setRadius(0.1);
         plot.addLayer(annotation1);
@@ -175,18 +172,18 @@ public class EbolaWithUI extends GUIState
 //        plot.addLayer(dvi);
 //
 
-        DialValueIndicator dvi2 = new DialValueIndicator(1);
+        final DialValueIndicator dvi2 = new DialValueIndicator(1);
         dvi2.setFont(new Font("Dialog", Font.PLAIN, 22));
         dvi2.setOutlinePaint(Color.red);
         dvi2.setRadius(0.3);
         plot.addLayer(dvi2);
 
-        DialTextAnnotation annotation2 = new DialTextAnnotation("Day");
+        final DialTextAnnotation annotation2 = new DialTextAnnotation("Day");
         annotation2.setFont(new Font("Dialog", Font.BOLD, 18));
         annotation2.setRadius(0.4);
         plot.addLayer(annotation2);
 
-        StandardDialScale scale = new StandardDialScale(0.0, 23.99, 90, -360, 1.0,59);
+        final StandardDialScale scale = new StandardDialScale(0.0, 23.99, 90, -360, 1.0,59);
         scale.setTickRadius(0.9);
         scale.setTickLabelOffset(0.15);
         scale.setTickLabelFont(new Font("Dialog", Font.PLAIN, 12));
@@ -209,16 +206,16 @@ public class EbolaWithUI extends GUIState
 //        needle2.setRadius(0.40);
         // plot.mapDatasetToScale(1, 1);
 
-        DialPointer needle = new DialPointer.Pointer(0);
+        final DialPointer needle = new DialPointer.Pointer(0);
         plot.addPointer(needle);
 
 
-        DialCap cap = new DialCap();
+        final DialCap cap = new DialCap();
         cap.setRadius(0.10);
         plot.setCap(cap);
 
-        JFreeChart chart1 = new JFreeChart(plot);
-        ChartFrame timeframe = new ChartFrame("Time Chart", chart1);
+        final JFreeChart chart1 = new JFreeChart(plot);
+        final ChartFrame timeframe = new ChartFrame("Time Chart", chart1);
         timeframe.setVisible(false);
         timeframe.setSize(200, 100);
         timeframe.pack();
@@ -236,14 +233,14 @@ public class EbolaWithUI extends GUIState
 
     public void setupPortrayals()
     {
-        FieldPortrayal2D householdortrayal = new SparseGridPortrayal2D();
+        final FieldPortrayal2D householdortrayal = new SparseGridPortrayal2D();
         householdortrayal.setField(((EbolaABM)state).householdGrid);
         householdortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(0, 128, 255), 1.0, false)
         {
             @Override
-            public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+            public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info)
             {
-                Household house = (Household)object;
+                final Household house = (Household)object;
 
                 if(house.getCountry() == Parameters.GUINEA)
                     paint = new Color(216, 10, 255);
@@ -258,13 +255,13 @@ public class EbolaWithUI extends GUIState
         });
         display.attach(householdortrayal, "Household");
 
-        FieldPortrayal2D urbanPortrayal = new SparseGridPortrayal2D();
+        final FieldPortrayal2D urbanPortrayal = new SparseGridPortrayal2D();
         urbanPortrayal.setField(((EbolaABM)state).urbanAreasGrid);
         urbanPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(255, 21, 19), 1.0, false));
         display.attach(urbanPortrayal, "Urban Area");
 
         //---------------------Adding the road portrayal------------------------------
-        GeomVectorFieldPortrayal roadLinkPortrayal = new GeomVectorFieldPortrayal();
+        final GeomVectorFieldPortrayal roadLinkPortrayal = new GeomVectorFieldPortrayal();
         roadLinkPortrayal.setField(((EbolaABM) state).roadLinks);
         roadLinkPortrayal.setPortrayalForAll(new GeomPortrayal(new Color(0.42f, 0.42f, 0.42f, 0.5f), 2.0, true));
         display.attach(roadLinkPortrayal, "Roads");
@@ -274,20 +271,20 @@ public class EbolaWithUI extends GUIState
 //        roadPortrayal.setPortrayalForAll(new OvalPortrayal2D(new Color(255, 64, 240), 1.0, true));
 //        display.attach(roadPortrayal, "Road Node");
 
-        FieldPortrayal2D schoolPortrayal = new SparseGridPortrayal2D();
+        final FieldPortrayal2D schoolPortrayal = new SparseGridPortrayal2D();
         schoolPortrayal.setField(((EbolaABM)state).schoolGrid);
         schoolPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(255, 154, 146), 1.0, false));
         display.attach(schoolPortrayal, "Schools");
 
         //Farms
-        FieldPortrayal2D farmPortrayal = new SparseGridPortrayal2D();
+        final FieldPortrayal2D farmPortrayal = new SparseGridPortrayal2D();
         farmPortrayal.setField(((EbolaABM) state).farmGrid);
         farmPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(17, 202, 255), 1.0, false)
         {
             @Override
-            public void draw(Object object, Graphics2D graphics, DrawInfo2D info)
+            public void draw(final Object object, final Graphics2D graphics, final DrawInfo2D info)
             {
-                WorkLocation wl = (WorkLocation)object;
+                final WorkLocation wl = (WorkLocation)object;
 
                 if(wl.getSector_id() == Constants.HEALTH)
                 {
@@ -309,14 +306,14 @@ public class EbolaWithUI extends GUIState
 //        roadNetworkPortrayal.setPortrayalForAll(new SimpleEdgePortrayal2D());
 //        display.attach(roadNetworkPortrayal, "Road Network");
 
-        ContinuousPortrayal2D residentPortrayal = new ContinuousPortrayal2D();
+        final ContinuousPortrayal2D residentPortrayal = new ContinuousPortrayal2D();
 
-        residentPortrayal.setField(((EbolaABM)this.state).world);
+        residentPortrayal.setField(((EbolaABM)state).world);
         residentPortrayal.setPortrayalForAll(new OvalPortrayal2D()
         {
-            public void draw (Object object, Graphics2D graphics, DrawInfo2D info)
+            public void draw (final Object object, final Graphics2D graphics, final DrawInfo2D info)
             {
-                Resident resident = (Resident)object;
+                final Resident resident = (Resident)object;
                 if(resident.getHealthStatus() == Constants.DEAD)
                     paint = new Color(124, 115, 92);
                 else if(resident.getHealthStatus() == Constants.SUSCEPTIBLE)
@@ -340,7 +337,7 @@ public class EbolaWithUI extends GUIState
         });
         display.attach(residentPortrayal, "Residents");
 
-        FieldPortrayal2D hotspotsPortrayal = new SparseGridPortrayal2D();
+        final FieldPortrayal2D hotspotsPortrayal = new SparseGridPortrayal2D();
         hotspotsPortrayal.setField(((EbolaABM)state).hotSpotsGrid);
         hotspotsPortrayal.setPortrayalForAll(new RectanglePortrayal2D(new Color(255, 21, 19), 1.0, false));
         display.attach(hotspotsPortrayal, "Hotspot Area");
@@ -358,10 +355,10 @@ public class EbolaWithUI extends GUIState
 
     }
 
-    public static void main(String[] args)
+    public static void main(final String[] args)
     {
-        EbolaWithUI ebUI = new EbolaWithUI(new EbolaABM(System.currentTimeMillis()));
-        Console c = new Console(ebUI);
+        final EbolaWithUI ebUI = new EbolaWithUI(new EbolaABM(System.currentTimeMillis()));
+        final Console c = new Console(ebUI);
         c.setVisible(true);
     }
 }
