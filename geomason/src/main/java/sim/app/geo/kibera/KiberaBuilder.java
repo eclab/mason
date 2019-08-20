@@ -1489,10 +1489,8 @@ public class KiberaBuilder extends Stats {
             Bag roadImporter = new Bag();
             roadImporter.add("Type");
                
-            File file=new File("data/Road_Export.shp");
-            File fileD = new File("data/Road_Export.dbf");
-            URL roadShapeUL = file.toURL();
-            URL roadShapeD = fileD.toURL();
+            URL roadShapeUL = KiberaData.class.getResource("Road_Export.shp");
+            URL roadShapeD = KiberaData.class.getResource("Road_Export.dbf");
                
             ShapeFileImporter.read(roadShapeUL, roadShapeD, kibera.roadLinks, roadImporter);
                
