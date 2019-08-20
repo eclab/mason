@@ -366,7 +366,7 @@ public class EbolaABM extends SimState
         try
         {
             // buffer reader for age distribution data
-            CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(new File(file.toURI()))));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(file.openStream()));
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers
             csvReader.readLine();//skip the headers
