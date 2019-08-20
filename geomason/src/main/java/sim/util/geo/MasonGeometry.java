@@ -6,7 +6,7 @@
  * See the file "LICENSE" for more information
  *
  * $Id$
- * 
+ *
  */
 package sim.util.geo;
 
@@ -24,12 +24,12 @@ import sim.util.*;
 
 
 
-/** 
- * A MasonGeometry is a wrapper for a JTS geometry and an associated userData 
+/**
+ * A MasonGeometry is a wrapper for a JTS geometry and an associated userData
  * field.  The userData field can be any MASON object, or general Java object,
  * which will be included in the inspector by default.
  *
- * <p> MasonGeometry implements sim.util.Proxiable to allow the hiding of 
+ * <p> MasonGeometry implements sim.util.Proxiable to allow the hiding of
  * various getXXX and setXXX methods from the inspectors.
  *
  * TODO may have to move new AttributeValue convenience functions to inner
@@ -45,7 +45,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
     /** Optional attribute-value pairs associated with this geometry
      */
-    private Map<String,AttributeValue> attributes;
+    private final Map<String,AttributeValue> attributes;
 
 
     /**
@@ -55,7 +55,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
      */
     public boolean hasHiddenAttributes()
     {
-        for (AttributeValue value : this.attributes.values())
+        for (final AttributeValue value : attributes.values())
         {
             if ( value.isHidden() )
             {
@@ -82,10 +82,10 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
      */
     public boolean hasAttribute(final String name)
     {
-        return this.attributes.containsKey(name);
+        return attributes.containsKey(name);
     }
 
-    
+
     /**
      * @return attributes associated with this geometry
      */
@@ -96,7 +96,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
     }
 
 
-    /** Java2D shape corresponding to this Geometry. Used to 
+    /** Java2D shape corresponding to this Geometry. Used to
      * speed up drawing.
      */
     public GeneralPath shape;
@@ -112,14 +112,14 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
     public int hashCode()
     {
         int hash = 5;
-        hash = 19 * hash + (this.geometry != null ? this.geometry.hashCode() : 0);
+        hash = 19 * hash + (geometry != null ? geometry.hashCode() : 0);
         return hash;
     }
 
 
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(final Object obj)
     {
         if (obj == null)
         {
@@ -132,16 +132,16 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
         final MasonGeometry other = (MasonGeometry) obj;
 
-        if (this.geometry != other.geometry && (this.geometry == null || !this.geometry.equals(other.geometry)))
+        if (geometry != other.geometry && (geometry == null || !geometry.equals(other.geometry)))
         {
             return false;
         }
 
-        if (this.attributes != other.attributes && (this.attributes == null || !this.attributes.equals(other.attributes)))
+        if (attributes != other.attributes && (attributes == null || !attributes.equals(other.attributes)))
         {
             return false;
         }
-        
+
         return true;
     }
 
@@ -149,13 +149,13 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
     /** A cached, optimized version of my Geometry.  Used for fast intersection, union, etc. operations,
      * This instance is not serializable, thus we declare it transient */
     public transient PreparedGeometry preparedGeometry;
-    
-    private void writeObject(ObjectOutputStream out) throws IOException {
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
     	// just do not write preparedGeometry to stream
     	out.defaultWriteObject();
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
     	in.defaultReadObject();
     	// reconstruct preparedGeometry from geometry
     	if (geometry != null)
@@ -176,20 +176,20 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
 
 
-    public MasonGeometry(Geometry g)
+    public MasonGeometry(final Geometry g)
     {
         this(g, null);
     }
 
 
 
-    public MasonGeometry(Geometry g, Object o)
+    public MasonGeometry(final Geometry g, final Object o)
     {
         geometry = g;
         shape = null;
         transform = new AffineTransform();
         preparedGeometry = null;
-        
+
         attributes = new HashMap<String,AttributeValue>();
 
         if (geometry != null)
@@ -212,49 +212,50 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
     public void addAttribute(final String name, final Object value)
     {
-        this.attributes.put(name, new AttributeValue(value));
+        attributes.put(name, new AttributeValue(value));
     }
 
     public Object getAttribute(final String name)
     {
-        return this.attributes.get(name);
+        return attributes.get(name);
     }
 
-    public void addIntegerAttribute(final String name, int value)
+    public void addIntegerAttribute(final String name, final int value)
     {
-        this.attributes.put(name, new AttributeValue(value));
+        attributes.put(name, new AttributeValue(value));
     }
 
     public Integer getIntegerAttribute(final String name)
     {
-        AttributeValue a = this.attributes.get(name);
-        if(a == null) { return null; }
-        return this.attributes.get(name).getInteger();
+        final AttributeValue a = attributes.get(name);
+        if(a == null)
+        	return null;
+        return a.getInteger();
     }
 
-    public void addDoubleAttribute(final String name, double value)
+    public void addDoubleAttribute(final String name, final double value)
     {
-        this.attributes.put(name, new AttributeValue(value));
+        attributes.put(name, new AttributeValue(value));
     }
 
     public Double getDoubleAttribute(final String name)
     {
-        AttributeValue a = this.attributes.get(name);
+        final AttributeValue a = attributes.get(name);
         if(a == null) { return null; }
-        return this.attributes.get(name).getDouble();
+        return attributes.get(name).getDouble();
     }
 
     public void addStringAttribute(final String name, final String value)
     {
 
-        this.attributes.put(name, new AttributeValue(value));
+        attributes.put(name, new AttributeValue(value));
     }
 
     public String getStringAttribute(final String name)
     {
-        AttributeValue a = this.attributes.get(name);
+        final AttributeValue a = attributes.get(name);
         if(a == null) { return null; }
-        return this.attributes.get(name).getString();
+        return attributes.get(name).getString();
     }
 
 
@@ -262,7 +263,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
      *
      * @param o is user supplied object to attach to this geometry
      */
-    final public void setUserData(Object o)
+    final public void setUserData(final Object o)
     {
         geometry.setUserData(o);
     }
@@ -276,7 +277,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
 
 
-    /** 
+    /**
      * @return geometry type and coordinates
      */
     @Override
@@ -313,7 +314,7 @@ public class MasonGeometry implements sim.util.Proxiable, java.io.Serializable
 
 
 
-        /** @return the length of the perimeter of the internal JTS geometry 
+        /** @return the length of the perimeter of the internal JTS geometry
          * object. The units are the same as same as the internal JTS geometry
          * object
          */
