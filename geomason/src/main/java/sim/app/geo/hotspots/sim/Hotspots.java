@@ -172,9 +172,9 @@ public class Hotspots extends SimState {
 			readInVectorLayer(baseLayer, HotSpotsData.class.getResource("focusedArea.shp"), HotSpotsData.class.getResource("focusedArea.dbf"),  "census tracts", new Bag());
 			readInVectorLayer(roadLayer, HotSpotsData.class.getResource("cleanedRoads.shp"), HotSpotsData.class.getResource("cleanedRoads.dbf"), "road network", new Bag());
 			readInVectorLayer(evacuationAreas, HotSpotsData.class.getResource("evacuationMETERS.shp"), HotSpotsData.class.getResource("evacuationMETERS.dbf"), "evacuation areas", new Bag());
-			readInRasterLayer(vegetation, Hotspots.class.getResource("landcover_final.txt"), "landcover", GridDataType.INTEGER);
-			readInRasterLayer(elevation, Hotspots.class.getResource("ned_final.txt"), "elevation", GridDataType.DOUBLE);
-			readInRasterLayer(impermeable, Hotspots.class.getResource("impermeable_final.txt"), "impermeability", GridDataType.INTEGER);
+			readInRasterLayer(vegetation, HotSpotsData.class.getResource("landcover_final.txt"), "landcover", GridDataType.INTEGER);
+			readInRasterLayer(elevation, HotSpotsData.class.getResource("ned_final.txt"), "elevation", GridDataType.DOUBLE);
+			readInRasterLayer(impermeable, HotSpotsData.class.getResource("impermeable_final.txt"), "impermeability", GridDataType.INTEGER);
 
 			// OPTIONAL: Real Wildfire Data 
 
@@ -232,6 +232,11 @@ public class Hotspots extends SimState {
 			// clean up the road network
 			
 			System.out.print("Cleaning the road network...");
+            System.out.println("roadLayer: " + roadLayer);
+            System.out.println("roadNodes: " + roadNodes);
+            System.out.println("resolution: " + resolution);
+            System.out.println("fa: " + fa);
+            System.out.println("random: " + random);
 			
 			roads = NetworkUtilities.multipartNetworkCleanup(roadLayer, roadNodes, resolution, fa, random, 0);
 			roadNodes = roads.getAllNodes();
@@ -901,9 +906,7 @@ public class Hotspots extends SimState {
 		try {
 				
 				System.out.print("Reading in " + layerDescription + "from " + filename + "...");
-				FileInputStream fstream = new FileInputStream(new File(filename.toURI()));
-				ArcInfoASCGridImporter.read(fstream, type, layer);
-				fstream.close();
+				ArcInfoASCGridImporter.read(filename.openStream(), type, layer);
 				System.out.println("done");
 
 		} catch (Exception e) {
