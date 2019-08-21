@@ -227,24 +227,24 @@ public class DadaabGUI extends GUIState {
 					// ArrayList cID = (ArrayList) mg.getAttribute("CAMPID");
 
 					// AttributeValue key = new AttributeValue();
-					System.out.println("ms = " + mg);
-					System.out.println("CAMPID = " + mg.getIntegerAttribute("CAMPID"));
 
-					final int cType = mg.getIntegerAttribute("CAMPID");
+					final Integer cType = mg.getIntegerAttribute("CAMPID");
+					// TODO why is CAMPID not being set?
+					// It seems that while reading Camp_n.dbf the names of all attributes
+					// show up as empty
+					// Why is that??
+
 					// int cType = (Integer) cID.get(afterSize);
-					if (cType == 1) {
-						paint = d;
-
-					} else if (cType == 2) {
-						paint = i;
-
-					} else if (cType == 3) {
-						paint = h;
-
-					} else {
-
+					if (cType == null)
 						paint = o;
-					}
+					else if (cType == 1)
+						paint = d;
+					else if (cType == 2)
+						paint = i;
+					else if (cType == 3)
+						paint = h;
+					else
+						paint = o;
 
 					super.draw(object, graphics, info);
 				} else {

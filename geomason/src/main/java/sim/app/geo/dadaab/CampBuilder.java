@@ -52,7 +52,6 @@ public class CampBuilder {
 		// CampBuilder.random = random;
 		// buffer reader - read ascii file
 
-//		final BufferedReader camp = new BufferedReader(new InputStreamReader(campfile.openStream()));
 		final BufferedReader camp = new BufferedReader(new InputStreamReader(campfile.openStream()));
 
 		// first read the dimensions
@@ -209,7 +208,8 @@ public class CampBuilder {
 				}
 			}
 		}
-
+		fac.close();
+		inputStream.close();
 		// now read road grid
 
 		final BufferedReader road = new BufferedReader(new InputStreamReader(roadfile.openStream()));
@@ -233,6 +233,8 @@ public class CampBuilder {
 			}
 		}
 
+		road.close();
+
 		final BufferedReader dailyRainfall = new BufferedReader(
 				new InputStreamReader(DadaabData.class.getResourceAsStream("dadaabDailyRain.csv")));
 
@@ -245,6 +247,8 @@ public class CampBuilder {
 			dadaab.dailyRain[curr_row] = rain;
 
 		}
+
+		dailyRainfall.close();
 
 		// now read elev file and store in bag
 
@@ -273,6 +277,8 @@ public class CampBuilder {
 			}
 
 		}
+
+		elev.close();
 
 		// read shape file
 
