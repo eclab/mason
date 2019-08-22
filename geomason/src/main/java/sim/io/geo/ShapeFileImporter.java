@@ -243,7 +243,7 @@ public class ShapeFileImporter {
 				masked, masonGeometryClass);
 	}
 
-	public static void seek(final InputStream in, final int num) throws RuntimeException, IOException {
+	public static void skip(final InputStream in, final int num) throws RuntimeException, IOException {
 		final byte[] b = new byte[num];
 		final int chk = in.read(b);
 		if (chk != num || chk == -1) {
@@ -332,16 +332,16 @@ public class ShapeFileImporter {
 			}
 
 			// The header size is 8 bytes in, and is little endian
-			seek(dbFileInputStream, 8);
+			skip(dbFileInputStream, 8);
 
 			final int headerSize = readShort(dbFileInputStream, true);
 			final int recordSize = readShort(dbFileInputStream, true);
 			final int fieldCnt = (short) ((headerSize - 1) / 32 - 1);
 
 			final FieldDirEntry fields[] = new FieldDirEntry[fieldCnt];
-			seek(dbFileInputStream, 32); // Skip 32 ahead.
+			skip(dbFileInputStream, 20); // Skip 20 ahead.
 
-			final byte c[] = new byte[32];
+			final byte c[] = new byte[20];
 			final char type[] = new char[fieldCnt];
 			int length;
 
@@ -359,22 +359,22 @@ public class ShapeFileImporter {
 				length = (b >= 0) ? (int) b : 256 + b; // Allow 0?
 				fields[i].fieldSize = length;
 
-				seek(dbFileInputStream, 15);
+				skip(dbFileInputStream, 15);
 			}
 			dbFileInputStream.close();
 			dbFileInputStream = DataObjectImporter.open(dbFile); // Reopen for new seekin'
-			seek(dbFileInputStream, headerSize); // Skip the initial stuff.
+			skip(dbFileInputStream, headerSize); // Skip the initial stuff.
 
 			final GeometryFactory geomFactory = new GeometryFactory();
 
-			seek(shpFileInputStream, 100);
+			skip(shpFileInputStream, 100);
 
 			while (shpFileInputStream.available() > 0) {
 				// advance past two int: recordNumber and recordLength
 				// byteBuf.position(byteBuf.position() + 8);
 
 				// byteBuf.order(ByteOrder.LITTLE_ENDIAN);
-				seek(shpFileInputStream, 8);
+				skip(shpFileInputStream, 8);
 
 				final int recordType = readInt(shpFileInputStream, true);
 
@@ -470,7 +470,7 @@ public class ShapeFileImporter {
 				case POLYLINE:
 				case POLYGON:
 					// advance past four doubles: minX, minY, maxX, maxY
-					seek(shpFileInputStream, 32);
+					skip(shpFileInputStream, 32);
 
 					final int numParts = readInt(shpFileInputStream, true);
 					final int numPoints = readInt(shpFileInputStream, true);
