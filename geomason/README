@@ -62,6 +62,7 @@ In the newest build os Geomason, only a subset of current simulations work and w
 * The ones that work are
 
 CampusWorld
+Dadaab
 ColorWorld
 DCampusWorld
 NearbyWorld
@@ -71,19 +72,18 @@ Turkana
 WaterWorld
 MasonCSC
 Ebola
+Gridlock
 Haiti
+Kibera
+SchellingPolygon
+SchellingSpace
 
 * The rest compiles but have issues
 
 Acequias
-Dadaab
 DSchellingSpace
-Gridlock
-Hotspot
-Kibera
+Hotspots
 Refugee
-SchellingPolygon
-SchellingSpace
 Riftland
 ConflictDiamonds
 CityMigration
