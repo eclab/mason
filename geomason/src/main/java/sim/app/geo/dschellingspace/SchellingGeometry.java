@@ -15,48 +15,32 @@ package sim.app.geo.dschellingspace;
 import java.util.ArrayList;
 import sim.util.geo.MasonGeometry;
 
+public class SchellingGeometry extends MasonGeometry {
 
-public class SchellingGeometry extends MasonGeometry
-{
+	private static final long serialVersionUID = 1L;
 
-    private int id = -1;
+	public int initRed = 0, initBlue = 0;
 
-    private String soc;
+	public ArrayList<DPerson> residents;
+	public ArrayList<SchellingGeometry> neighbors;
 
-    public int initRed = 0, initBlue = 0;
+	public SchellingGeometry() {
+		super();
+		residents = new ArrayList<DPerson>();
+		neighbors = new ArrayList<SchellingGeometry>();
+	}
 
-    public ArrayList<DPerson> residents;
-    public ArrayList<SchellingGeometry> neighbors;
+	public void init() {
+		initRed = getIntegerAttribute("RED");
+		initBlue = getIntegerAttribute("BLUE");
+	}
 
+	int getID() {
+		return getDoubleAttribute("ID_ID").intValue();
+	}
 
-
-    public SchellingGeometry()
-    {
-        super();
-        residents = new ArrayList<DPerson>();
-        neighbors = new ArrayList<SchellingGeometry>();
-    }
-
-
-
-    public void init()
-    {
-        initRed = getIntegerAttribute("RED");
-        initBlue = getIntegerAttribute("BLUE");
-    }
-
-
-
-    int getID()
-    {
-        return getDoubleAttribute("ID_ID").intValue();
-    }
-
-
-
-    String getSoc()
-    {
-        return getStringAttribute("SOC");
-    }
+	String getSoc() {
+		return getStringAttribute("SOC");
+	}
 
 }

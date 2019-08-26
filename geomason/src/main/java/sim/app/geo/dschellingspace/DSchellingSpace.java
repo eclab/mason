@@ -12,10 +12,10 @@
  **/
 package sim.app.geo.dschellingspace;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
-import java.util.Set;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -24,16 +24,16 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import mpi.MPIException;
-import sim.app.geo.dcampusworld.DAgent;
 import sim.app.geo.dschellingspace.data.DSchellingSpaceData;
 import sim.engine.DSimState;
+import sim.field.DQuadTreePartition;
+import sim.field.HaloField;
 import sim.field.continuous.NContinuous2D;
 import sim.field.geo.GeomNContinuous2D;
 import sim.field.geo.GeomVectorField;
-import sim.field.storage.ContStorage;
 import sim.io.geo.ShapeFileImporter;
 import sim.util.Bag;
-import sim.util.IntHyperRect;
+import sim.util.NdPoint;
 import sim.util.Timing;
 import sim.util.geo.MasonGeometry;
 
@@ -69,30 +69,44 @@ public class DSchellingSpace extends DSimState {
 	public double minDist = 100.0;
 
 	double[] discretizations;
-	public GeomNContinuous2D<DAgent> communicator;
-	// DNonUniformPartition partition;
-	public IntHyperRect myPart;
+	public GeomNContinuous2D<DPerson> communicator;
 
-	/**
-	 * constructor function
-	 */
 	public DSchellingSpace(final long seed) {
 		super(seed);
+	}
+
+	// Overriding here because we want to add Geometry to the
+	// GeomVectorField which is not Distributed
+	// TODO; Is there a better way to handle Geometry?
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
+		// if the fieldIndex < 0 we assume that
+		// the agent is not supposed to be added to any field
+
+		// If the fieldIndex is correct then the type-cast below will be safe
+		if (communicator.field.fieldIndex == fieldIndex) {
+			// if all communicator agents have a geometry associated with them
+			final DPerson person = (DPerson) obj;
+			communicator.add(p, person);
+			agents.addGeometry(person.getGeometry());
+		} else if (fieldIndex >= 0)
+			((HaloField) fieldRegistry.get(fieldIndex)).add(p, obj);
 	}
 
 	void setupPersons() {
 		final GeometryFactory geometryFactory = new GeometryFactory();
 
+		System.out.println("Setting up Persons");
 		// process the polygons for neighbor and Person info
 		for (int i = 0; i < polys.size(); i++) {
-			final SchellingGeometry p1 = polys.get(i);
+			final SchellingGeometry schellingGeometry = polys.get(i);
 			// add all of the Red People in this SchellingGeometry
-			for (int k = 0; k < p1.initRed; k++) {
-
+			for (int k = 0; k < schellingGeometry.initRed; k++) {
 				// initialize the Person
 				final DPerson p = new DPerson(DPerson.Affiliation.RED, minDist);
-				p.region = p1;
-				p.location = randomPointInsidePolygon((Polygon) p1.geometry, geometryFactory);
+				p.region = schellingGeometry;
+				// TODO: Maybe p1.geometry is not local
+				p.location = randomPointInsidePolygon((Polygon) schellingGeometry.geometry, geometryFactory);
 				p.updatePosition();
 				p.location.isMovable = true;
 				p.location.setUserData(p);
@@ -100,15 +114,15 @@ public class DSchellingSpace extends DSimState {
 				// store information
 				agents.addGeometry(p.location);
 				people.add(p);
-				p1.residents.add(p);
+				schellingGeometry.residents.add(p);
 			}
 
 			// add all of the blue People in this SchellingGeometry
-			for (int k = 0; k < p1.initBlue; k++) {
+			for (int k = 0; k < schellingGeometry.initBlue; k++) {
 				// initialize the Person
 				final DPerson p = new DPerson(DPerson.Affiliation.BLUE, minDist);
-				p.region = p1;
-				p.location = randomPointInsidePolygon((Polygon) p1.geometry, geometryFactory);
+				p.region = schellingGeometry;
+				p.location = randomPointInsidePolygon((Polygon) schellingGeometry.geometry, geometryFactory);
 				p.updatePosition();
 				p.location.isMovable = true;
 				p.location.setUserData(p);
@@ -116,12 +130,13 @@ public class DSchellingSpace extends DSimState {
 				// store information
 				agents.addGeometry(p.location);
 				people.add(p);
-				p1.residents.add(p);
+				schellingGeometry.residents.add(p);
 			}
 			// update the total population counts
-			totalReds += p1.initRed;
-			totalBlues += p1.initBlue;
-
+			totalReds += schellingGeometry.initRed;
+			totalBlues += schellingGeometry.initBlue;
+			System.out.println("Tatal Reds = " + totalReds);
+			System.out.println("Tatal Blues = " + totalBlues);
 		}
 	}
 
@@ -224,44 +239,25 @@ public class DSchellingSpace extends DSimState {
 		// partition.initUniformly(null);
 		// partition.commit();
 
-		final NContinuous2D<DAgent> continuousField = new NContinuous2D<DAgent>(partition, aoi, discretizations, this);
-		communicator = new GeomNContinuous2D<DAgent>(continuousField);
-		myPart = partition.getPartition();
+		final int width = (int) Math.ceil(agents.getWidth());
+		final int height = (int) Math.ceil(agents.getHeight());
+
+		setPartition(new DQuadTreePartition(new int[] { width, height }, false, aoi));
+
+		final NContinuous2D<DPerson> continuousField = new NContinuous2D<>(partition, aoi, discretizations, this);
+		communicator = new GeomNContinuous2D<>(continuousField);
 
 		// once the data is read in, set up the Polygons and Persons
 		agents.clear();
 		setupPolygons();
-		try {
-			// add all agents into agents field in processor 0
-			final ContStorage<DPerson> packgeField = new ContStorage<DPerson>(partition.getField(), discretizations);
-			// setup polygons and persons in first node
-			if (partition.getPid() == 0) {
-				setupPersons();
-				for (final DPerson p : people) {
-					packgeField.setLocation(p, p.position);
-				}
-			}
+		setupPersons();
 
-			decoupleRegions();
-			// After distribute is called, communicator will have agents
-			communicator.field.distribute(0, packgeField);
-
-			// Then each processor access these agents, put them in
-			// agents field and schedule them
-			final Set<DPerson> receivedAgents = ((ContStorage) communicator.field.getStorage()).m.keySet();
-			for (final DPerson agent : receivedAgents) {
-				// get region from region id
-				// agent.region =
-				agents.addGeometry(agent.location);
-				schedule.scheduleOnce(agent);
-			}
-		} catch (final MPIException e) {
-			e.printStackTrace();
+		for (final DPerson p : people) {
+			communicator.field.addAgent(p.position, p);
+			// If not local then AddAgent should migrate
+			if (communicator.field.inLocal(p.position))
+				agents.addGeometry(p.getGeometry());
 		}
-	}
-
-	private void decoupleRegions() {
-
 	}
 
 	/**
