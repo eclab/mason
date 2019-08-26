@@ -197,7 +197,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			add(p, t);
 			state.schedule.scheduleOnce(agent);
 		} else
-			state.transporter.migrateAgent(agent, partition.toPartitionId(p));
+			state.getTransporter().migrateAgent(agent, partition.toPartitionId(p));
 	}
 
 	public void addAgent(final P p, final T t, final int ordering, final double time) {
@@ -210,7 +210,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			add(p, t);
 			state.schedule.scheduleOnce(time, ordering, agent);
 		} else
-			state.transporter.migrateAgent(ordering, time, agent, partition.toPartitionId(p));
+			state.getTransporter().migrateAgent(ordering, time, agent, partition.toPartitionId(p));
 	}
 
 	public void moveAgent(final P fromP, final P toP, final T t) {
@@ -228,7 +228,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			add(toP, t);
 			state.schedule.scheduleOnce(agent);
 		} else
-			state.transporter.migrateAgent(agent,
+			state.getTransporter().migrateAgent(agent,
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
@@ -247,7 +247,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			add(toP, t);
 			state.schedule.scheduleOnce(time, ordering, agent);
 		} else
-			state.transporter.migrateAgent(ordering, time, agent,
+			state.getTransporter().migrateAgent(ordering, time, agent,
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
@@ -255,28 +255,28 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 		if (!(t instanceof Steppable))
 			throw new IllegalArgumentException("t must be a Steppable");
 
-		final IterativeRepeat iterativeRepeat = (IterativeRepeat) state.schedule.scheduleRepeating(time, ordering,
+		final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(time, ordering,
 				(Steppable) t, interval);
 
 		if (inLocal(p)) {
 			add(p, t);
 			state.registerIterativeRepeat(iterativeRepeat);
 		} else
-			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 	}
 
 	public void addRepeatingAgent(final P p, final T t, final int ordering, final double interval) {
 		if (!(t instanceof Steppable))
 			throw new IllegalArgumentException("t must be a Steppable");
 
-		final IterativeRepeat iterativeRepeat = (IterativeRepeat) state.schedule.scheduleRepeating((Steppable) t,
+		final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating((Steppable) t,
 				ordering, interval);
 
 		if (inLocal(p)) {
 			add(p, t);
 			state.registerIterativeRepeat(iterativeRepeat);
 		} else
-			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
+			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 	}
 
 //	public void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
@@ -325,7 +325,7 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 		else if (!(t instanceof Steppable))
 			throw new IllegalArgumentException("t must be a Steppable");
 		else
-			state.transporter.migrateRepeatingAgent(state.stopIterativeRepeat((Steppable) t),
+			state.getTransporter().migrateRepeatingAgent(state.stopIterativeRepeat((Steppable) t),
 					partition.toPartitionId(toP), toP, fieldIndex);
 	}
 
@@ -344,7 +344,8 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 			add(toP, t);
 		else {
 			state.stopIterativeRepeat(iterativeRepeat);
-			state.transporter.migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP, fieldIndex);
+			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP,
+					fieldIndex);
 		}
 	}
 

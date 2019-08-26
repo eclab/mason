@@ -16,13 +16,15 @@ public abstract class DPartition {
 	public int[] size;
 	boolean isToroidal;
 	public Comm comm;
+	public int[] aoi;
 
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
-	DPartition(final int[] size, final boolean isToroidal) {
+	DPartition(final int[] size, final boolean isToroidal, final int[] aoi) {
 		numDimensions = size.length;
 		this.size = Arrays.copyOf(size, numDimensions);
 		this.isToroidal = isToroidal;
+		this.aoi = aoi;
 
 		try {
 			pid = MPI.COMM_WORLD.getRank();

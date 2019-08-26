@@ -25,12 +25,12 @@ public class Diffuser implements Steppable {
 		// locals are faster than instance variables
 		final double[] _valgrid_field = heatbugs.valgrid.getStorageArray();
 		final double[] _valgrid2_field = heatbugs.valgrid2.getStorageArray();
-		final int _gridWidth = heatbugs.partition.getPartition().getSize()[0];
-		final int _gridHeight = heatbugs.partition.getPartition().getSize()[1];
+		final int _gridWidth = heatbugs.getPartition().getPartition().getSize()[0];
+		final int _gridHeight = heatbugs.getPartition().getPartition().getSize()[1];
 		final double _evaporationRate = heatbugs.evaporationRate;
 		final double _diffusionRate = heatbugs.diffusionRate;
 		final int aoi = heatbugs.aoi[0];
-		final int offset = heatbugs.partition.getPartition().getSize()[1] + (2 * aoi);
+		final int offset = heatbugs.getPartition().getPartition().getSize()[1] + (2 * aoi);
 		int past, curr, next;
 
 		// for each x and y position

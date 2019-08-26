@@ -34,15 +34,15 @@ public class DFlockers extends DSimState {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
-		flockers = new NContinuous2D<DFlocker>(partition, aoi, discretizations, this);
+		flockers = new NContinuous2D<DFlocker>(getPartition(), aoi, discretizations, this);
 	}
 
 	public void start() {
 		super.start();
-		final int[] size = partition.getPartition().getSize();
-		for (int x = 0; x < DFlockers.numFlockers / partition.numProcessors; x++) {
-			final double px = random.nextDouble() * size[0] + partition.getPartition().ul().getArray()[0];
-			final double py = random.nextDouble() * size[1] + partition.getPartition().ul().getArray()[1];
+		final int[] size = getPartition().getPartition().getSize();
+		for (int x = 0; x < DFlockers.numFlockers / getPartition().numProcessors; x++) {
+			final double px = random.nextDouble() * size[0] + getPartition().getPartition().ul().getArray()[0];
+			final double py = random.nextDouble() * size[1] + getPartition().getPartition().ul().getArray()[1];
 			final DoublePoint location = new DoublePoint(px, py);
 			final DFlocker flocker = new DFlocker(location);
 

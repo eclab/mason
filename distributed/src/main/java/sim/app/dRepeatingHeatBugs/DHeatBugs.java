@@ -50,11 +50,11 @@ public class DHeatBugs extends DSimState {
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / partition.numProcessors;
+		privBugCount = bugCount / getPartition().numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(partition, this.aoi, 0, this);
-			valgrid2 = new NDoubleGrid2D(partition, this.aoi, 0, this);
-			bugs = new NObjectsGrid2D<DHeatBug>(partition, this.aoi, this);
+			valgrid = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
+			valgrid2 = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
+			bugs = new NObjectsGrid2D<DHeatBug>(getPartition(), this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -138,7 +138,7 @@ public class DHeatBugs extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = partition.getPartition().getSize();
+		final int[] size = getPartition().getPartition().getSize();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
@@ -147,8 +147,8 @@ public class DHeatBugs extends DSimState {
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px, py; // Why are we doing this? Relationship?
 			do {
-				px = random.nextInt(size[0]) + partition.getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
+				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
+				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
 			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			// bugs.add(new IntPoint(px, py), b);
@@ -157,7 +157,7 @@ public class DHeatBugs extends DSimState {
 			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
 		}
 
-		registerIterativeRepeat((IterativeRepeat) schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1));
+		registerIterativeRepeat(schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1));
 	}
 
 	public static void main(final String[] args) throws MPIException {

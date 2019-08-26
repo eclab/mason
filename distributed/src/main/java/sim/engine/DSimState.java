@@ -32,9 +32,9 @@ public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	public final DPartition partition;
-	public final DRemoteTransporter transporter;
-	public final int[] aoi; // Area of Interest
+	protected DPartition partition;
+	protected DRemoteTransporter transporter;
+	public int[] aoi; // Area of Interest
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
@@ -52,6 +52,17 @@ public class DSimState extends SimState {
 		super(seed, random, schedule);
 		aoi = new int[] { aoiSize, aoiSize };
 		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
+		partition.initialize();
+		transporter = new DRemoteTransporter(partition);
+		iterativeRepeatRegistry = new HashMap<>();
+		fieldRegistry = new ArrayList<>();
+	}
+
+	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule,
+			final DPartition partition) {
+		super(seed, random, schedule);
+		aoi = partition.aoi;
+		this.partition = partition;
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
 		iterativeRepeatRegistry = new HashMap<>();
@@ -145,7 +156,7 @@ public class DSimState extends SimState {
 				// "time provided is less than the current time"
 
 				registerIterativeRepeat(
-						(IterativeRepeat) schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
+						schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
 								iterativeRepeat.interval));
 
 				// Add agent to the field
@@ -326,6 +337,30 @@ public class DSimState extends SimState {
 			System.exit(-1);
 		}
 		return buf[0];
+	}
+
+	/**
+	 * @return the partition
+	 */
+	public DPartition getPartition() {
+		return partition;
+	}
+
+	/**
+	 * @param partition the partition to set
+	 */
+	public void setPartition(final DPartition partition) {
+		this.partition = partition;
+		aoi = partition.aoi;
+		partition.initialize();
+		transporter = new DRemoteTransporter(partition);
+	}
+
+	/**
+	 * @return the transporter
+	 */
+	public DRemoteTransporter getTransporter() {
+		return transporter;
 	}
 
 }

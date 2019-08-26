@@ -26,11 +26,9 @@ public class DQuadTreePartition extends DPartition {
 	QuadTree qt;
 	QTNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
-	int[] aoi;
 
 	public DQuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
-		super(size, isToroidal);
-		this.aoi = aoi;
+		super(size, isToroidal, aoi);
 		qt = new QuadTree(new IntHyperRect(size), numProcessors);
 	}
 

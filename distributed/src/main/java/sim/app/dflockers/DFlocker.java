@@ -1,5 +1,5 @@
 /*
-  Copyright 2006 by Sean Luke and George Mason University
+\  Copyright 2006 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
 */
@@ -140,7 +140,7 @@ public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
 		final DoublePoint oldloc = loc;
 		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
 		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.partition.pid, oldloc.c[0], oldloc.c[1]);
+			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartition().pid, oldloc.c[0], oldloc.c[1]);
 			Thread.dumpStack();
 			System.exit(-1);
 		}

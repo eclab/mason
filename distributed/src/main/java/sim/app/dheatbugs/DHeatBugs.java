@@ -53,11 +53,11 @@ public class DHeatBugs extends DSimState {
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / partition.numProcessors;
+		privBugCount = bugCount / getPartition().numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(partition, this.aoi, 0, this);
-			valgrid2 = new NDoubleGrid2D(partition, this.aoi, 0, this);
-			bugs = new NObjectsGrid2D<DHeatBug>(partition, this.aoi, this);
+			valgrid = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
+			valgrid2 = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
+			bugs = new NObjectsGrid2D<DHeatBug>(getPartition(), this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -173,7 +173,7 @@ public class DHeatBugs extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = partition.getPartition().getSize();
+		final int[] size = getPartition().getPartition().getSize();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
@@ -182,8 +182,8 @@ public class DHeatBugs extends DSimState {
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px, py; // Why are we doing this? Relationship?
 			do {
-				px = random.nextInt(size[0]) + partition.getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + partition.getPartition().ul().getArray()[1];
+				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
+				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
 			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			bugs.addAgent(new IntPoint(px, py), b);
@@ -205,7 +205,7 @@ public class DHeatBugs extends DSimState {
 		public void step(final SimState state) {
 			final DHeatBugs hb = (DHeatBugs) state;
 			try {
-				final DQuadTreePartition ps = (DQuadTreePartition) hb.partition;
+				final DQuadTreePartition ps = (DQuadTreePartition) hb.getPartition();
 				final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 				Timing.start(Timing.LB_OVERHEAD);
 				ps.balance(runtime, 0);
@@ -233,7 +233,8 @@ public class DHeatBugs extends DSimState {
 			// hb.schedule.getSteps(), hb.privBugCount));
 			// if (DNonUniformPartition.getPartitionScheme().getPid() == 0) {
 			DSimState.logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
-					hb.partition.getPid(), hb.schedule.getSteps(), Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
+					hb.getPartition().getPid(), hb.schedule.getSteps(),
+					Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
 					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
 					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
 			// }
