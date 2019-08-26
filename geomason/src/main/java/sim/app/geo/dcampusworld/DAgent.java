@@ -229,9 +229,9 @@ public class DAgent implements Steppable {
 		campState.communicator.moveAgent(old, position, this);
 
 		try {
-			final int dst = campState.partition.toPartitionId(position);
+			final int dst = campState.getPartition().toPartitionId(position);
 			// TODO: How to handle geometry?
-			if (dst != campState.partition.getPid())
+			if (dst != campState.getPartition().getPid())
 				campState.agents.removeGeometry(this.getGeometry());
 		} catch (final Exception e) {
 			e.printStackTrace(System.out);
