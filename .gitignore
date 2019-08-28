@@ -23,3 +23,5 @@ contrib/geomason/target/
 # Maven
 log/
 target/
+geomason/repository/jars
+geomason/repository/edu
