@@ -1,5 +1,7 @@
 # Build MASON Toolkit
 
+## Build Everything
+
 Inside the folder mason:
 
 ```bash
