@@ -35,12 +35,12 @@ public class ObjectGridPortrayal2D extends FieldPortrayal2D
         {
         super();
         }
-	
-	// the purpose of this method is to allow DenseGridPortrayal2D to call super.super.setField,
-	// thus bypassing the check below to make sure that the field is an ObjectGrid2D -- it isn't,
-	// it would be a DenseGrid2D, which doesn't subclass from ObjectGrid2D
-	void setFieldBypass(Object field) { super.setField(field); }
-	 
+        
+    // the purpose of this method is to allow DenseGridPortrayal2D to call super.super.setField,
+    // thus bypassing the check below to make sure that the field is an ObjectGrid2D -- it isn't,
+    // it would be a DenseGrid2D, which doesn't subclass from ObjectGrid2D
+    void setFieldBypass(Object field) { super.setField(field); }
+         
     public void setField(Object field)
         {
         if (field instanceof ObjectGrid2D ) super.setField(field);

@@ -158,12 +158,12 @@ public /*strictfp*/ class HeatBugs extends SimState
             schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
             }
         else if (HeatBugs.availableProcessors() >= 2)
-        	{
+            {
             diffuser = new ThreadedDiffuser(2);
             schedule.scheduleRepeating(Schedule.EPOCH,1,diffuser,1);
             }
-		else
-			{
+        else
+            {
             schedule.scheduleRepeating(Schedule.EPOCH,1,new Diffuser(),1);
             }
         }
@@ -189,53 +189,53 @@ public /*strictfp*/ class HeatBugs extends SimState
         }
 
 /*
-    // Would you like your model inspector to be broken into tabs?  Here's an example.
-    // To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
-    // See also the getInspector() method in HeatBugsWithUI 
-    public String[] provideTabNames()
-        { return new String[] {"Temps", "Constants", "Pos"}; }
-    public String[][] provideTabProperties()
-        { return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
-                                     {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
-                                     {"BugXPos", "BugYPos"}}; }
-    public String provideExtraTab() { return "Extra"; }
+// Would you like your model inspector to be broken into tabs?  Here's an example.
+// To get this to work, uncomment the "implements sim.portrayal.inspector.Tabbable" at the top of this class
+// See also the getInspector() method in HeatBugsWithUI 
+public String[] provideTabNames()
+{ return new String[] {"Temps", "Constants", "Pos"}; }
+public String[][] provideTabProperties()
+{ return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+{"BugXPos", "BugYPos"}}; }
+public String provideExtraTab() { return "Extra"; }
 */ 
         
 /*
-    // Would you like your model inspector instead to be broken into groups?  Here's an example.
-    // To get this to work, uncomment the "implements sim.portrayal.inspector.Groupable" at the top of this class
-    // and uncomment the following code.
-    // See also the getInspector() method in HeatBugsWithUI 
-    public String[] provideGroupNames()
-        { return new String[] {"Temps", "Constants", "Pos"}; }
-    public String[][] provideGroupProperties()
-        { return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
-                                     {"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
-                                     {"BugXPos", "BugYPos"}}; }
-    public boolean showExtraProperties() { return true; }
- */   
+// Would you like your model inspector instead to be broken into groups?  Here's an example.
+// To get this to work, uncomment the "implements sim.portrayal.inspector.Groupable" at the top of this class
+// and uncomment the following code.
+// See also the getInspector() method in HeatBugsWithUI 
+public String[] provideGroupNames()
+{ return new String[] {"Temps", "Constants", "Pos"}; }
+public String[][] provideGroupProperties()
+{ return new String[][] {{"MinimumIdealTemperature", "MaximumIdealTemperature", "MinimumOutputHeat", "MaximumOutputHeat", "MaximumHeat"},
+{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"},
+{"BugXPos", "BugYPos"}}; }
+public boolean showExtraProperties() { return true; }
+*/   
 
     
- /*
+    /*
     // Would you like your model inspector instead to be broken into tabs AND gropus?  Here's an example.
     // To get this to work, uncomment the "implements sim.portrayal.inspector.TabbableAndGroupable" at the top of this class
     // See also the getInspector() method in HeatBugsWithUI 
     public String[] provideTabNames()
-        { return new String[] {"Temps", "Constants", "Pos"}; }
+    { return new String[] {"Temps", "Constants", "Pos"}; }
     public String[][][] provideTabGroupProperties()
-        { return new String[][][] {{{"MinimumIdealTemperature", "MaximumIdealTemperature"},
-        						  {"MinimumOutputHeat", "MaximumOutputHeat"}, {"MaximumHeat"}},
-                                  {{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"}},
-                                  {{"BugXPos", "BugYPos"}}}; }
+    { return new String[][][] {{{"MinimumIdealTemperature", "MaximumIdealTemperature"},
+    {"MinimumOutputHeat", "MaximumOutputHeat"}, {"MaximumHeat"}},
+    {{"EvaporationConstant", "DiffusionConstant", "RandomMovementProbability"}},
+    {{"BugXPos", "BugYPos"}}}; }
     public String[][] provideTabGroups()
-        { return new String[][] {{"Ideal Temperature",
-        						  "Output Heat"},
-                                  {},
-                                  {"Bug Position"}}; }
+    { return new String[][] {{"Ideal Temperature",
+    "Output Heat"},
+    {},
+    {"Bug Position"}}; }
                         
     public String provideExtraTab()
-        { return "Misc"; }
-*/
+    { return "Misc"; }
+    */
 
     
     public static void main(String[] args)

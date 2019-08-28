@@ -73,46 +73,46 @@ public class GroupedInspector extends Inspector
         String[][] PropertiesNames, String[] groupNames, boolean showExtraProperties)
         { buildGroupedInspector(properties, state, name, PropertiesNames, groupNames, showExtraProperties); }
         
-	/** Creates a GroupedInspector with separate grouped subinspectors for each of the
-		provided properties.  The names of each of these subinspectors is provided in groupNames.
-		Additionaly if extraProperties is provided, its properties are shown
-		immediately before these groups.  If a name is provided, then the entire GroupedInspector
-		will have a bordered layout with that given name.  If a title is provided (and it generally
-		out to be), then this will serve as the GroupedInspector's title (which appears when it is
-		in windows or tabs).   
-	*/
+    /** Creates a GroupedInspector with separate grouped subinspectors for each of the
+        provided properties.  The names of each of these subinspectors is provided in groupNames.
+        Additionaly if extraProperties is provided, its properties are shown
+        immediately before these groups.  If a name is provided, then the entire GroupedInspector
+        will have a bordered layout with that given name.  If a title is provided (and it generally
+        out to be), then this will serve as the GroupedInspector's title (which appears when it is
+        in windows or tabs).   
+    */
     public GroupedInspector(Properties[] properties, Properties extraProperties, 
-								GUIState state, String name, String title, String[] groupNames)
-		{ buildGroupedInspector(properties, extraProperties, state, name, title, groupNames); }
+        GUIState state, String name, String title, String[] groupNames)
+        { buildGroupedInspector(properties, extraProperties, state, name, title, groupNames); }
 
-	/** Creates a GroupedInspector with separate grouped subinspectors for each of the
-		provided objects.  The names of each of these subinspectors is provided in groupNames.
-		Additionaly if extraObject is provided, its properties are shown
-		immediately before these groups.  If a name is provided, then the entire GroupedInspector
-		will have a bordered layout with that given name.  If a title is provided (and it generally
-		out to be), then this will serve as the GroupedInspector's title (which appears when it is
-		in windows or tabs).   
-	*/
+    /** Creates a GroupedInspector with separate grouped subinspectors for each of the
+        provided objects.  The names of each of these subinspectors is provided in groupNames.
+        Additionaly if extraObject is provided, its properties are shown
+        immediately before these groups.  If a name is provided, then the entire GroupedInspector
+        will have a bordered layout with that given name.  If a title is provided (and it generally
+        out to be), then this will serve as the GroupedInspector's title (which appears when it is
+        in windows or tabs).   
+    */
 
     public GroupedInspector(Object[] objects, Object extraObject, 
-								GUIState state, String name, String title, String[] groupNames)
-		{ 
+        GUIState state, String name, String title, String[] groupNames)
+        { 
         if (objects == null)
-        	throw new RuntimeException("Objects array provided is null.");
-    	Properties[] properties = new SimpleProperties[objects.length];
-    	Properties extraProperties = null;
-    	
-    	if (extraObject != null)
-    		extraProperties = Properties.getProperties(extraObject);
-    	
-		for(int i = 0; i < objects.length; i++)
-			properties[i] = Properties.getProperties(objects[i]);
-		
-		buildGroupedInspector(properties, extraProperties, state, name, title, groupNames); 
-		}
+            throw new RuntimeException("Objects array provided is null.");
+        Properties[] properties = new SimpleProperties[objects.length];
+        Properties extraProperties = null;
+        
+        if (extraObject != null)
+            extraProperties = Properties.getProperties(extraObject);
+        
+        for(int i = 0; i < objects.length; i++)
+            properties[i] = Properties.getProperties(objects[i]);
+                
+        buildGroupedInspector(properties, extraProperties, state, name, title, groupNames); 
+        }
 
-	void buildGroupedInspector(Properties[] properties, Properties extraProperties, 
-					GUIState state, String name, String title, String[] groupNames)
+    void buildGroupedInspector(Properties[] properties, Properties extraProperties, 
+        GUIState state, String name, String title, String[] groupNames)
         {
         setVolatile(true);
         setLayout(new BorderLayout());
@@ -122,7 +122,7 @@ public class GroupedInspector extends Inspector
         add(getHeader(), BorderLayout.NORTH);
         
         if (properties == null)
-        	throw new RuntimeException("Properties provided is null.");
+            throw new RuntimeException("Properties provided is null.");
         if (groupNames == null)
             throw new RuntimeException("Group names provided is null.");
         if (groupNames.length != properties.length)
@@ -130,14 +130,14 @@ public class GroupedInspector extends Inspector
             throw new RuntimeException("Properties and group names must have the same length.");
             }
 
-		if (extraProperties != null)
-			{
+        if (extraProperties != null)
+            {
             SimpleInspector insp = new SimpleInspector(extraProperties, state, null);
             PropertiesList.add(insp);
             inspectors.add(insp);
-        	insp.setVolatile(isVolatile());
-        	insp.setShowsUpdate(false);
-			}
+            insp.setVolatile(isVolatile());
+            insp.setShowsUpdate(false);
+            }
         
         for(int i = 0; i < groupNames.length; i++)
             {
@@ -167,8 +167,8 @@ public class GroupedInspector extends Inspector
             throw new RuntimeException("Properties names and group names must have the same length.");
             }
 
-		if (showExtraProperties)
-			{
+        if (showExtraProperties)
+            {
             // flatten all properties
             int count = 0;
             for(int i = 0; i < PropertiesNames.length; i++)
@@ -185,9 +185,9 @@ public class GroupedInspector extends Inspector
             SimpleInspector insp = new SimpleInspector(simp, state, null);
             PropertiesList.add(insp);
             inspectors.add(insp);
-        	insp.setVolatile(isVolatile());
-        	insp.setShowsUpdate(false);
-			}
+            insp.setVolatile(isVolatile());
+            insp.setShowsUpdate(false);
+            }
         
         for(int i = 0; i < PropertiesNames.length; i++)
             {

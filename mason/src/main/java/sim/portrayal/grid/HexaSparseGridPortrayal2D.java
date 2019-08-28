@@ -60,39 +60,39 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         {
         synchronized(gui.state.schedule)
             {
-		if (location != null)
-			{
-			if (location instanceof Int2D)
-				{
-				Int2D loc = (Int2D) location;
-				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
-					return;  // this is deprecated and will be deleted
-				else if (object instanceof Constrained)
-					  loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
-				if (loc != null)
-					((SparseGrid2D)field).setObjectLocation(object, loc);
-				}
-			}
-			}
-        }
-
-   /*
-    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-        {
-        final SparseGrid2D field = (SparseGrid2D)this.field;
-        if (field==null) return;
-        if (field.getObjectLocation(object) == null) return;
-        Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
-        if (location != null)
-            {
-            if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-                return;  // this is deprecated and will be deleted
-            else if (object instanceof Constrained)
-                  location = (Int2D)((Constrained)object).constrainLocation(field, location);
-        	if (location != null)
-            	field.setObjectLocation(object, location);
+            if (location != null)
+                {
+                if (location instanceof Int2D)
+                    {
+                    Int2D loc = (Int2D) location;
+                    if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+                        return;  // this is deprecated and will be deleted
+                    else if (object instanceof Constrained)
+                        loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
+                    if (loc != null)
+                        ((SparseGrid2D)field).setObjectLocation(object, loc);
+                    }
+                }
             }
         }
+
+    /*
+      public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+      {
+      final SparseGrid2D field = (SparseGrid2D)this.field;
+      if (field==null) return;
+      if (field.getObjectLocation(object) == null) return;
+      Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
+      if (location != null)
+      {
+      if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+      return;  // this is deprecated and will be deleted
+      else if (object instanceof Constrained)
+      location = (Int2D)((Constrained)object).constrainLocation(field, location);
+      if (location != null)
+      field.setObjectLocation(object, location);
+      }
+      }
     */
 
     public Double2D getScale(DrawInfo2D info)
@@ -321,20 +321,20 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         //        putInHere.add(getWrapper(portrayedObject, newinfo.gui));
                         //    }
                         //else
-                                {
-                                // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                                //                    graphics.setClip(clip);
-                                newinfo.selected = (objectSelected &&  // there's something there
-                                    selectedWrappers.get(portrayedObject) != null);
+                            {
+                            // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                            //                    graphics.setClip(clip);
+                            newinfo.selected = (objectSelected &&  // there's something there
+                                selectedWrappers.get(portrayedObject) != null);
                                                                 
-                                /* {
-                                   LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                                   portrayal.setSelected(wrapper,true);
-                                   portrayal.draw(portrayedObject, graphics, newinfo);
-                                   portrayal.setSelected(wrapper,false);
-                                   }
-                                   else */ portrayal.draw(portrayedObject, graphics, newinfo);
-                                }
+                            /* {
+                               LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                               portrayal.setSelected(wrapper,true);
+                               portrayal.draw(portrayedObject, graphics, newinfo);
+                               portrayal.setSelected(wrapper,false);
+                               }
+                               else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                            }
                         }
                     }
                 }
@@ -400,13 +400,13 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
                         //                        graphics.setClip(clip);                        
                         newinfo.selected = (objectSelected &&  // there's something there
                             selectedWrappers.get(portrayedObject) != null);
-                       /*     {
-                            LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                            portrayal.setSelected(wrapper,true);
-                            portrayal.draw(portrayedObject, graphics, newinfo);
-                            portrayal.setSelected(wrapper,false);
-                            }
-                        else */portrayal.draw(portrayedObject, graphics, newinfo);
+                        /*     {
+                               LocationWrapper wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                               portrayal.setSelected(wrapper,true);
+                               portrayal.draw(portrayedObject, graphics, newinfo);
+                               portrayal.setSelected(wrapper,false);
+                               }
+                               else */portrayal.draw(portrayedObject, graphics, newinfo);
                         }
                     }
                 }

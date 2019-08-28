@@ -25,10 +25,10 @@ public class IterativeRepeat implements Steppable, Stoppable
     Steppable step;  // if null, does not reschedule
     Schedule.Key key;
     
-	public int getOrdering() { return ordering; }
-	public double getInterval() { return interval; }
-	public double getTime() { return time; }
-	public Steppable getSteppable() { return step; }
+    public int getOrdering() { return ordering; }
+    public double getInterval() { return interval; }
+    public double getTime() { return time; }
+    public Steppable getSteppable() { return step; }
         
     public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering, final Schedule.Key key)
         {
@@ -46,19 +46,19 @@ public class IterativeRepeat implements Steppable, Stoppable
         }
     
     public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering)
-	    {
-	    if (interval < 0)
-	        throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-	            "\n\n...the interval provided ("+interval+") is less than zero");
-	    else if (interval != interval)  /* NaN */
-	        throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-	            "\n\n...the interval provided ("+interval+") is NaN");
-	
-	    this.step = step;
-	    this.interval = interval;
-	    this.key = new Schedule.Key(time,ordering);
-	    this.ordering = ordering;
-	    }
+        {
+        if (interval < 0)
+            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+                "\n\n...the interval provided ("+interval+") is less than zero");
+        else if (interval != interval)  /* NaN */
+            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
+                "\n\n...the interval provided ("+interval+") is NaN");
+        
+        this.step = step;
+        this.interval = interval;
+        this.key = new Schedule.Key(time,ordering);
+        this.ordering = ordering;
+        }
         
     public synchronized void step(final SimState state)
         {

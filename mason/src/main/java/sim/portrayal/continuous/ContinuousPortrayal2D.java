@@ -88,43 +88,43 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
     public void setObjectLocation(Object object, Object location, GUIState gui)
         {
         synchronized(gui.state.schedule)
-        	{
-		if (location != null)
-			{
-			if (location instanceof Double2D)
-				{
-				Double2D loc = (Double2D) location;
-				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
-					return;  // this is deprecated and will be deleted
-				else if (object instanceof Constrained)
-					  loc = (Double2D)((Constrained)object).constrainLocation(field, loc);
-				if (loc != null)
-					((Continuous2D)field).setObjectLocation(object, loc);
-				}
-			}
-			}
-        }
-
-/*
-    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-        {
-        synchronized(fieldPortrayalInfo.gui.state.schedule)
             {
-            final Continuous2D field = (Continuous2D)this.field;
-            if (field==null) return;
-            if (field.getObjectLocation(object) == null) return;
-            Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
             if (location != null)
                 {
-                if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-                    return;  // this is deprecated and will be deleted
-                else if (object instanceof Constrained)
-                      location = (Double2D)((Constrained)object).constrainLocation(field, location);
-                if (location != null)
-                    field.setObjectLocation(object, location);
+                if (location instanceof Double2D)
+                    {
+                    Double2D loc = (Double2D) location;
+                    if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+                        return;  // this is deprecated and will be deleted
+                    else if (object instanceof Constrained)
+                        loc = (Double2D)((Constrained)object).constrainLocation(field, loc);
+                    if (loc != null)
+                        ((Continuous2D)field).setObjectLocation(object, loc);
+                    }
                 }
             }
         }
+
+/*
+  public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+  {
+  synchronized(fieldPortrayalInfo.gui.state.schedule)
+  {
+  final Continuous2D field = (Continuous2D)this.field;
+  if (field==null) return;
+  if (field.getObjectLocation(object) == null) return;
+  Double2D location = (Double2D)(getPositionLocation(position, fieldPortrayalInfo));
+  if (location != null)
+  {
+  if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+  return;  // this is deprecated and will be deleted
+  else if (object instanceof Constrained)
+  location = (Double2D)((Constrained)object).constrainLocation(field, location);
+  if (location != null)
+  field.setObjectLocation(object, location);
+  }
+  }
+  }
 */
 
     public Object getObjectLocation(Object object, GUIState gui)

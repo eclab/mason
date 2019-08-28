@@ -63,38 +63,38 @@ public class ObjectGrid2D extends AbstractGrid2D
         return field[x][y];
         }
 
-        protected void reshape(int width, int height)
+    protected void reshape(int width, int height)
         {
-            this.width = width;
-            this.height = height;
+        this.width = width;
+        this.height = height;
 
-            field = new Object[width][height];
+        field = new Object[width][height];
         }
     /** Sets all the locations in the grid the provided element. <b>WARNING:
         this may conflict with setTo(Object[][]) -- make sure you have casted properly.   */
     public final ObjectGrid2D setTo(Object thisObj)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
-                reshape(w, h);
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            int w = getWidth();
+            int h = getHeight();
+            reshape(w, h);
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
 
-                        {
-                            set(x, y, thisObj);
-                        }
+                    {
+                    set(x, y, thisObj);
+                    }
             }
-            else {
-                Object[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        assert sim.util.LocationLog.it(this, new Int2D(x, y));
-                        fieldx[y] = thisObj;
+        else {
+            Object[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    assert sim.util.LocationLog.it(this, new Int2D(x, y));
+                    fieldx[y] = thisObj;
                     }
                 }
             }
@@ -117,21 +117,21 @@ public class ObjectGrid2D extends AbstractGrid2D
                 throw new RuntimeException("ObjectGrid2D initialized with a non-rectangular field.");
 
         // load
-            reshape(w, h);
-            if (isDistributed())
+        reshape(w, h);
+        if (isDistributed())
             {
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, field[x][y]);
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, field[x][y]);
+                    }
             }
-            else {
-                width = w;
-                height = h;
-                this.field = new Object[w][h];
-                for (int i = 0; i < w; i++)
-                    this.field[i] = (Object[]) field[i].clone();
+        else {
+            width = w;
+            height = h;
+            this.field = new Object[w][h];
+            for (int i = 0; i < w; i++)
+                this.field[i] = (Object[]) field[i].clone();
             }
         return this;
         }
@@ -140,27 +140,27 @@ public class ObjectGrid2D extends AbstractGrid2D
         Returns the grid. */
     public final Object[] toArray()
         {
-            Object[] vals = new Object[getWidth() * getHeight() ];
-            int i = 0;
-            if (isDistributed())
+        Object[] vals = new Object[getWidth() * getHeight() ];
+        int i = 0;
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
-                for(int x = 0;x < w;++x)
-                    for(int y = 0;y < h;++y)
-                            vals[i++] = get(x, y);
+            int w = getWidth();
+            int h = getHeight();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    vals[i++] = get(x, y);
             }
-            else {
-                Object[][] field = this.field;
-                Object[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
+        else {
+            Object[][] field = this.field;
+            Object[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
 
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        assert sim.util.LocationLog.it(this, new Int2D(x, y));
-                        vals[i++] = fieldx[y];
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    assert sim.util.LocationLog.it(this, new Int2D(x, y));
+                    vals[i++] = fieldx[y];
                     }
                 }
             }
@@ -172,25 +172,25 @@ public class ObjectGrid2D extends AbstractGrid2D
     public final Bag elements()
         {
         Bag bag = new Bag();
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0;x < w;++x)
-                    for(int y = 0;y < h;++y)
-                            bag.add(get(x, y));
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    bag.add(get(x, y));
             }
-            else {
-                Object[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        if (fieldx[y] != null) {
-                            assert sim.util.LocationLog.it(this, new Int2D(x, y));
-                            bag.add(fieldx[y]);
+        else {
+            Object[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    if (fieldx[y] != null) {
+                        assert sim.util.LocationLog.it(this, new Int2D(x, y));
+                        bag.add(fieldx[y]);
                         }
                     }
                 }
@@ -204,31 +204,31 @@ public class ObjectGrid2D extends AbstractGrid2D
     public final Bag clear()
         {
         Bag bag = new Bag();
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0;x < w;++x)
-                    for(int y = 0;y < h;++y)
-                        {
-                            Object obj = get(x, y);
-                            if (obj!=null)
-                                bag.add(obj);
-                            set(x, y, null);
-                        }
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    {
+                    Object obj = get(x, y);
+                    if (obj!=null)
+                        bag.add(obj);
+                    set(x, y, null);
+                    }
             }
-            else {
-                Object[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        assert sim.util.LocationLog.it(this, new Int2D(x, y));
-                        if (fieldx[y] != null)
-                            bag.add(fieldx[y]);
-                        fieldx[y] = null;
+        else {
+            Object[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    assert sim.util.LocationLog.it(this, new Int2D(x, y));
+                    if (fieldx[y] != null)
+                        bag.add(fieldx[y]);
+                    fieldx[y] = null;
                     }
                 }
             }
@@ -248,19 +248,19 @@ public class ObjectGrid2D extends AbstractGrid2D
 
             }
 
-            if (isDistributed())
+        if (isDistributed())
             {
-                reshape(values.getWidth(), values.getHeight());
-                int w = getWidth();
-                int h = getHeight();
+            reshape(values.getWidth(), values.getHeight());
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, values.get(x, y));
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, values.get(x, y));
+                    }
             }
-            else if (width != values.width || height != values.height)
+        else if (width != values.width || height != values.height)
             {
             final int width = this.width = values.width;
             /*final int height =*/ this.height = values.height;
@@ -303,33 +303,33 @@ public class ObjectGrid2D extends AbstractGrid2D
 
     public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            Object obj = get(x, y);
-                            if ((obj == null && from == null) ||
-                                    (onlyIfSameObject && obj == from) ||
-                                    (!onlyIfSameObject && obj.equals(from)))
-                                set(x, y, to);
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    Object obj = get(x, y);
+                    if ((obj == null && from == null) ||
+                        (onlyIfSameObject && obj == from) ||
+                        (!onlyIfSameObject && obj.equals(from)))
+                        set(x, y, to);
+                    }
             }
-            else {
-                final int width = this.width;
-                final int height = this.height;
-                Object[] fieldx = null;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        Object obj = fieldx[y];
-                        if ((obj == null && from == null) ||
-                                (onlyIfSameObject && obj == from) ||
-                                (!onlyIfSameObject && obj.equals(from)))
-                            fieldx[y] = to;
+        else {
+            final int width = this.width;
+            final int height = this.height;
+            Object[] fieldx = null;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    Object obj = fieldx[y];
+                    if ((obj == null && from == null) ||
+                        (onlyIfSameObject && obj == from) ||
+                        (!onlyIfSameObject && obj.equals(from)))
+                        fieldx[y] = to;
                     }
                 }
             }

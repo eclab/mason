@@ -47,14 +47,14 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         }
     
     /** Replaces the existing array with a new one of the given width and height,
-    	and with arbitrary values stored. */
+        and with arbitrary values stored. */
     protected void reshape(int width, int height, int length)
-    	{
-    	this.width = width;
+        {
+        this.width = width;
         this.height = height;
         this.length = length;
         field = new int[width][height][length];
-    	}
+        }
         
     /** Sets location (x,y) to val */
     public final int set(final int x, final int y, final int z, final int val)
@@ -74,39 +74,39 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         Returns the grid. */
     public final int[] toArray()
         {
-    	int[] vals = new int[getWidth() * getHeight() * getLength()];
-    	int i = 0;
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		for(int x = 0;x < w;++x)
-    			for(int y = 0;y < h;++y)
-    				for(int z = 0;z < l;++z)
-    					vals[i++] = get(x, y, z);
-    		}
-    	else
-    		{
-    		int[][][] field = this.field;
-    		int[][] fieldx = null;
-    		int[] fieldxy = null;
-    		final int width = getWidth();
-    		final int height = getHeight();
-    		final int length = getLength();
-    		for(int x=0;x<width;x++)
-            	{
-    			fieldx = field[x];
-    			for(int y = 0; y<height;y++)
-                	{
-    				fieldxy = fieldx[y];
-    				for(int z=0;z<length;z++)
-                    	{
-    					vals[i++] = fieldxy[z];
-                    	}
-                	}
-            	}
-    		}
+        int[] vals = new int[getWidth() * getHeight() * getLength()];
+        int i = 0;
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        vals[i++] = get(x, y, z);
+            }
+        else
+            {
+            int[][][] field = this.field;
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        {
+                        vals[i++] = fieldxy[z];
+                        }
+                    }
+                }
+            }
         return vals;
         }
         
@@ -115,38 +115,38 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         {
         int max = Integer.MIN_VALUE;
         if (isDistributed())
-        	{
-        		int w = getWidth();
-        		int h = getHeight();
-        		int l = getLength();
-        		for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                    	for(int z = 0; z < l; z++)
-                    		{                        
-                    		int g = get(x,y,z);
-                    		if (max < g)
-                    			max = g;
-                    		}
-        	}
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {                        
+                        int g = get(x,y,z);
+                        if (max < g)
+                            max = g;
+                        }
+            }
         else
-        	{
-        	int[][] fieldx = null;
-        	int[] fieldxy = null;
-        	final int width = getWidth();
-        	final int height = getHeight();
-        	final int length = getLength();         
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
         
-        	for(int x=0;x<width;x++)
-            	{
-        		fieldx = field[x];
-        		for(int y=0;y<height;y++)
-                	{
-        			fieldxy = fieldx[y];
-        			for(int z=0;z<length;z++)
-        				if (max < fieldxy[z]) max = fieldxy[z];
-                	}
-            	}
-        	}
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        if (max < fieldxy[z]) max = fieldxy[z];
+                    }
+                }
+            }
         return max;
         }
 
@@ -155,37 +155,37 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         {
         int min = Integer.MAX_VALUE;
         if (isDistributed())
-        	{
-        	int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		for(int x = 0; x < w; x++)
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                		{                        
-                		int g = get(x,y,z);
-                		if (min > g)
-                			min = g;
-                		}
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                        
+                        int g = get(x,y,z);
+                        if (min > g)
+                            min = g;
+                        }
+            }
         else 
-        	{
-        	int[][] fieldx = null;
-        	int[] fieldxy = null;
-        	final int width = getWidth();
-        	final int height = getHeight();
-        	final int length = getLength();         
-        	for(int x=0;x<width;x++)
-            	{
-        		fieldx = field[x];
-        		for(int y=0;y<height;y++)
-                	{
-        			fieldxy = fieldx[y];
-        			for(int z=0;z<length;z++)
-        				if (min > fieldxy[z]) min = fieldxy[z];
-                	}
-            	}
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        if (min > fieldxy[z]) min = fieldxy[z];
+                    }
+                }
+            }
         return min;
         }
         
@@ -195,74 +195,74 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         long count = 0;
         double mean = 0;
         if (isDistributed())
-        	{
-        	int w = getWidth();
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                		{                 
-                		mean += get(x,y,z);
-                		count++;
-                		}
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                 
+                        mean += get(x,y,z);
+                        count++;
+                        }
+            }
         else
-        	{
-        	int[][] fieldx = null;
-        	int[] fieldxy = null;
-        	final int width = getWidth();
-        	final int height = getHeight();
-        	final int length = getLength();         
-        	for(int x=0;x<width;x++)
-            	{
-        		fieldx = field[x];
-        		for(int y=0;y<height;y++)
-                	{
-        			fieldxy = fieldx[y];
-        			for(int z=0;z<length;z++)
-                    	{ mean += fieldxy[z]; count++; }
-                	}
-            	}
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        { mean += fieldxy[z]; count++; }
+                    }
+                }
+            }
         return (count == 0 ? 0 : mean / count);
         }
         
     /** Sets all the locations in the grid the provided element */
     public final IntGrid3D setTo(int thisMuch)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		reshape(w, h, l);
-    		for(int x = 0; x < w; x++)
-    			for(int y = 0; y < h; y++)
-    				for(int z = 0; z < l; z++)
-    					{
-    					set(x, y, z, thisMuch);
-    					}
-    		}
-    	else
-    		{
-    		int[][] fieldx = null;
-    		int[] fieldxy = null;
-    		final int width = this.width;
-    		final int height = this.height;
-    		final int length = this.length;
-    		for(int x=0;x<width;x++)
-            	{
-    			fieldx = field[x];
-    			for(int y=0;y<height;y++)
-                	{
-    				fieldxy = fieldx[y];
-    				for(int z=0;z<length;z++)
-    					fieldxy[z]=thisMuch;
-                	}
-            	}
-        	}
-    	return this;
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            reshape(w, h, l);
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, thisMuch);
+                        }
+            }
+        else
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = this.width;
+            final int height = this.height;
+            final int length = this.length;
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]=thisMuch;
+                    }
+                }
+            }
+        return this;
         }
 
     /** Changes the dimensions of the grid to be the same as the one provided, then
@@ -270,20 +270,20 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         provided grid. */
     public final IntGrid3D setTo(IntGrid3D values)
         {
-    	if (isDistributed())
-    		{
-    		reshape(values.getWidth(), values.getHeight(), values.getLength());
-    		int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		for(int x = 0; x < w; x++)
-    			for(int y = 0; y < h; y++)
-    				for(int z = 0; z < l; z++)
-    					{
-    					set(x, y, z, values.get(x, y, z));
-    					}
-    		}
-    	else if (getWidth() != values.getWidth() || getHeight() != values.getHeight() || getLength() != values.getLength() )
+        if (isDistributed())
+            {
+            reshape(values.getWidth(), values.getHeight(), values.getLength());
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, values.get(x, y, z));
+                        }
+            }
+        else if (getWidth() != values.getWidth() || getHeight() != values.getHeight() || getLength() != values.getLength() )
             {
             reshape(values.getWidth(), values.getHeight(), values.getLength());
             int width = getWidth();
@@ -340,22 +340,22 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         // load
         reshape(w, h, l);
         if (isDistributed())
-        	{
-        	for(int x = 0; x < w; x++)
-    			for(int y = 0; y < h; y++)
-    				for(int z = 0; z < l; z++)
-    					{
-    					set(x, y, z, field[x][y][z]);
-    					}
-        	}
+            {
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, field[x][y][z]);
+                        }
+            }
         else
-        	{
-        	for(int i = 0; i < w; i++)
+            {
+            for(int i = 0; i < w; i++)
                 for(int j = 0; j < h; j++)
                     {
                     this.field[i][j] = (int[]) field[i][j].clone();
                     }
-        	}
+            }
         
         return this;
         }
@@ -366,38 +366,38 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
     */
     public final IntGrid3D upperBound(int toNoMoreThanThisMuch)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
+        if (isDistributed())
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                 
-                		if (get(x,y,z) > toNoMoreThanThisMuch)
-                			set(x,y,z,toNoMoreThanThisMuch);
-                    	}
-    		}
-    	else
-    		{    		
-    		int[][] fieldx = null;
-    		int[] fieldxy = null;
-    		final int width = getWidth();
-    		final int height = getHeight();
-    		final int length = getLength();         
-    		for(int x=0;x<width;x++)
-            	{
-    			fieldx = field[x];
-    			for(int y=0;y<height;y++)
-                	{
-    				fieldxy = fieldx[y];
-    				for(int z=0;z<length;z++)
-    					if (fieldxy[z] > toNoMoreThanThisMuch)
-    						fieldxy[z] = toNoMoreThanThisMuch;
-                	}
-            	}
-    		}
+                    for(int z = 0; z < l; z++)
+                        {                 
+                        if (get(x,y,z) > toNoMoreThanThisMuch)
+                            set(x,y,z,toNoMoreThanThisMuch);
+                        }
+            }
+        else
+            {               
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        if (fieldxy[z] > toNoMoreThanThisMuch)
+                            fieldxy[z] = toNoMoreThanThisMuch;
+                    }
+                }
+            }
         return this;
         }
 
@@ -407,38 +407,38 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
 
     public final IntGrid3D lowerBound(int toNoLowerThanThisMuch)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
+        if (isDistributed())
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                 
-                		if (get(x,y,z) < toNoLowerThanThisMuch)
-                			set(x,y,z,toNoLowerThanThisMuch);
-                    	}
-    		}
-    	else
-    		{
-    		int[][] fieldx = null;
-    		int[] fieldxy = null;
-    		final int width = getWidth();
-    		final int height = getHeight();
-    		final int length = getLength();         
-    		for(int x=0;x<width;x++)
-            	{
-    			fieldx = field[x];
-    			for(int y=0;y<height;y++)
-                	{
-    				fieldxy = fieldx[y];
-    				for(int z=0;z<length;z++)
-    					if (fieldxy[z] < toNoLowerThanThisMuch)
-    						fieldxy[z] = toNoLowerThanThisMuch;
-                	}
-            	}
-    		}
+                    for(int z = 0; z < l; z++)
+                        {                 
+                        if (get(x,y,z) < toNoLowerThanThisMuch)
+                            set(x,y,z,toNoLowerThanThisMuch);
+                        }
+            }
+        else
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        if (fieldxy[z] < toNoLowerThanThisMuch)
+                            fieldxy[z] = toNoLowerThanThisMuch;
+                    }
+                }
+            }
         return this;
         }
 
@@ -449,35 +449,35 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         {
         if (withThisMuch==0.0) return this;
         if (isDistributed())
-        	{
-        	int w = getWidth();
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                    
-                		set(x, y, z, get(x, y, z) + withThisMuch);
-                    	}
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                    
+                        set(x, y, z, get(x, y, z) + withThisMuch);
+                        }
+            }
         else
-        	{
-        	int[][] fieldx = null;
-        	int[] fieldxy = null;
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();         
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y=0;y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z=0;z<length;z++)
-	                    fieldxy[z]+=withThisMuch;
-	                }
-	            }
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]+=withThisMuch;
+                    }
+                }
+            }
         return this;
         }
         
@@ -488,41 +488,41 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         {
         checkBounds(withThis);
         if (isDistributed())
-        	{
-        	int w = getWidth();
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                  
-                		set(x, y, z, get(x, y, z) + withThis.get(x, y, z));
-                    	}
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                  
+                        set(x, y, z, get(x, y, z) + withThis.get(x, y, z));
+                        }
+            }
         else
-        	{
-	        int[][] fieldx = null;
-	        int[] fieldxy = null;
-	        int[][][] ofield = withThis.field;
-	        int[][]ofieldx = null;
-	        int[] ofieldxy = null;
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();         
-	                                
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            ofieldx = ofield[x];
-	            for(int y=0;y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                ofieldxy = ofieldx[y];
-	                for(int z=0;z<length;z++)
-	                    fieldxy[z]+=ofieldxy[z];
-	                }
-	            }
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            int[][][] ofield = withThis.field;
+            int[][]ofieldx = null;
+            int[] ofieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+                                        
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                ofieldx = ofield[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    ofieldxy = ofieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]+=ofieldxy[z];
+                    }
+                }
+            }
         return this;
         }
 
@@ -534,35 +534,35 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         if (byThisMuch==1.0) return this;
         
         if (isDistributed())
-        	{
-        	int w = getWidth();
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                    
-                		set(x, y, z, get(x, y, z) * byThisMuch);
-                    	}	
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                    
+                        set(x, y, z, get(x, y, z) * byThisMuch);
+                        }       
+            }
         else
-        	{
-	        int[][] fieldx = null;
-	        int[] fieldxy = null;
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();         
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y=0;y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z=0;z<length;z++)
-	                    fieldxy[z]*=byThisMuch;
-	                }       
-	            }
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();         
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]*=byThisMuch;
+                    }       
+                }
+            }
         return this;
         }
     
@@ -573,40 +573,40 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
         {
         checkBounds(withThis);
         if (isDistributed())
-        	{
-        	int w = getWidth();
+            {
+            int w = getWidth();
             int h = getHeight();
-            int l = getLength();                      	            
+            int l = getLength();                                    
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{                   
-                		set(x, y, z, get(x, y, z) * withThis.get(x, y, z));
-                    	}
-        	}
+                    for(int z = 0; z < l; z++)
+                        {                   
+                        set(x, y, z, get(x, y, z) * withThis.get(x, y, z));
+                        }
+            }
         else
-        	{
-	        int[][] fieldx = null;
-	        int[] fieldxy = null;
-	        int[][][] ofield = withThis.field;
-	        int[][]ofieldx = null;
-	        int[] ofieldxy = null;
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            ofieldx = ofield[x];
-	            for(int y=0;y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                ofieldxy = ofieldx[y];
-	                for(int z=0;z<length;z++)
-	                    fieldxy[z]*=ofieldxy[z];
-	                }
-	            }
-        	}
+            {
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            int[][][] ofield = withThis.field;
+            int[][]ofieldx = null;
+            int[] ofieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                ofieldx = ofield[x];
+                for(int y=0;y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    ofieldxy = ofieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]*=ofieldxy[z];
+                    }
+                }
+            }
         return this;
         }
 
@@ -620,40 +620,40 @@ public /*strictfp*/ class IntGrid3D extends AbstractGrid3D
 
     public final void replaceAll(int from, int to)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
+        if (isDistributed())
+            {
+            int w = getWidth();
             int h = getHeight();
             int l = getLength();
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
-                	for(int z = 0; z < l; z++)
-                    	{
-                		if (get(x, y, z) == from)
-                			set(x, y, z, to);
-                    	}
-    		}
-    	else
-    		{
-    		final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        int[][] fieldx = null;
-	        int[] fieldxy = null;
-	        for(int x = 0; x < width; x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0;  y < height; y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z = 0; z < length; z++)
-	                    {
-	                    if (fieldxy[z] == from)
-	                        fieldxy[z] = to;
-	                    }
-	                }
-	            }
-    		}
+                    for(int z = 0; z < l; z++)
+                        {
+                        if (get(x, y, z) == from)
+                            set(x, y, z, to);
+                        }
+            }
+        else
+            {
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            int[][] fieldx = null;
+            int[] fieldxy = null;
+            for(int x = 0; x < width; x++)
+                {
+                fieldx = field[x];
+                for(int y = 0;  y < height; y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z = 0; z < length; z++)
+                        {
+                        if (fieldxy[z] == from)
+                            fieldxy[z] = to;
+                        }
+                    }
+                }
+            }
         }
 
     

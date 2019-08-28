@@ -368,7 +368,7 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                                 (int)(info.draw.y + leny));
                             break;
                         case SHAPE_LINE_ARROW:
-                        	// [1, 0] to [-1, 0]
+                            // [1, 0] to [-1, 0]
                             graphics.drawLine((int)(info.draw.x + lenx),
                                 (int)(info.draw.y + leny),
                                 (int)(info.draw.x - lenx),
@@ -544,10 +544,10 @@ public class OrientedPortrayal2D extends SimplePortrayal2D
                         simplePolygonYd[1] = (0 + -leny/2 + lenx/2);
                         simplePolygonXd[2] = (0 + -lenx + -leny);
                         simplePolygonYd[2] = (0 + -leny + lenx);
-                                simplePolygonXd[3] = (0 + -lenx + leny);
-                                simplePolygonYd[3] = (0 + -leny + -lenx);
-                                simplePolygonXd[4] = (0 + -lenx/2 + leny/2);
-                                simplePolygonYd[4] = (0 + -leny/2 + -lenx/2);
+                        simplePolygonXd[3] = (0 + -lenx + leny);
+                        simplePolygonYd[3] = (0 + -leny + -lenx);
+                        simplePolygonXd[4] = (0 + -lenx/2 + leny/2);
+                        simplePolygonYd[4] = (0 + -leny/2 + -lenx/2);
                         path = buildPolygon(simplePolygonXd, simplePolygonYd, 5);
                         }
                     return transform.createTransformedShape(path).intersects(range.clip.x, range.clip.y, range.clip.width, range.clip.height);

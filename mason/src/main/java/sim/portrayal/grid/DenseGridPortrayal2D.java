@@ -214,7 +214,7 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
 
                 
     final Message unknown = new Message("It's too costly to figure out where the object went.");
-	// overrides same version in ObjectGrid2D
+    // overrides same version in ObjectGrid2D
     public LocationWrapper getWrapper(Object object, Int2D location)
         {
         final DenseGrid2D field = (DenseGrid2D)(this.field);
@@ -224,7 +224,7 @@ public class DenseGridPortrayal2D extends ObjectGridPortrayal2D
                 { 
                 Int2D loc = (Int2D) super.getLocation();
                 if (field.field[loc.x][loc.y] != null &&
-                	field.field[loc.x][loc.y].contains(getObject()))  // it's still there!
+                    field.field[loc.x][loc.y].contains(getObject()))  // it's still there!
                     {
                     return loc;
                     }

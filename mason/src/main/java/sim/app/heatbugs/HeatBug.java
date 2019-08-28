@@ -101,7 +101,7 @@ public /*strictfp*/ class HeatBug implements Steppable //, sim.portrayal.inspect
         { return new String[] {"Heat", "Probability"}; }
     public String[][] provideTabProperties()
         { return new String[][] {{"IdealTemperature", "HeatOutput"},
-                                     {"RandomMovementProbability", "Me"}}; }
+            {"RandomMovementProbability", "Me"}}; }
     public String provideExtraTab()
         { return null; }
     }

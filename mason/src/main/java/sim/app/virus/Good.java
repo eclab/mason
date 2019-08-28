@@ -99,18 +99,18 @@ public /*strictfp*/ class Good extends Agent
         double dx = desiredLocation.x - agentLocation.x;
         double dy = desiredLocation.y - agentLocation.y;
 
+            {
+            double temp = 0.5 * /*Strict*/Math.sqrt(dx*dx+dy*dy);
+            if( temp < 1 )
                 {
-                double temp = 0.5 * /*Strict*/Math.sqrt(dx*dx+dy*dy);
-                if( temp < 1 )
-                    {
-                    steps = 0;
-                    }
-                else
-                    {
-                    dx /= temp;
-                    dy /= temp;
-                    }
+                steps = 0;
                 }
+            else
+                {
+                dx /= temp;
+                dy /= temp;
+                }
+            }
 
         if( ! hb.acceptablePosition( this, new Double2D(agentLocation.x + dx, agentLocation.y + dy) ) )
             {

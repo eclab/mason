@@ -7,8 +7,8 @@
 package sim.portrayal.inspector;
 
 /** 
-	A Groupable object can have its properties automatically broken up under various
-	disclosure groups in a GroupedInspector.  Properties 
+    A Groupable object can have its properties automatically broken up under various
+    disclosure groups in a GroupedInspector.  Properties 
 */
 public interface Groupable
     {
@@ -20,7 +20,7 @@ public interface Groupable
     public String[][] provideGroupProperties();
     
     /** Returns whether remaining properties (not appearing under provideGroupProperties)
-    	should be displayed.  If true, then they will be inserted individually, ungrouped,
-    	prior to any groups. */
+        should be displayed.  If true, then they will be inserted individually, ungrouped,
+        prior to any groups. */
     public boolean showExtraProperties();
     }

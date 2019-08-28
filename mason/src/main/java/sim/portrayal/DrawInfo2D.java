@@ -62,7 +62,7 @@ public class DrawInfo2D
     public Object location;
     
     /**
-    @deprecated
+       @deprecated
     */
     public DrawInfo2D(GUIState gui, FieldPortrayal2D fieldPortrayal, RectangularShape draw, RectangularShape clip)
         {

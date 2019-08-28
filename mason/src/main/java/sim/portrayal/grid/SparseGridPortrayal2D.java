@@ -100,42 +100,42 @@ public class SparseGridPortrayal2D extends FieldPortrayal2D
         {
         synchronized(gui.state.schedule)
             {
-		if (location != null)
-			{
-			if (location instanceof Int2D)
-				{
-				Int2D loc = (Int2D) location;
-				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
-					return;  // this is deprecated and will be deleted
-				else if (object instanceof Constrained)
-					  loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
-				if (loc != null)
-					((SparseGrid2D)field).setObjectLocation(object, loc);
-				}
-			}
-			}
-        }
-
-/*
-    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-        {
-        synchronized(fieldPortrayalInfo.gui.state.schedule)
-            {
-            final SparseGrid2D field = (SparseGrid2D)this.field;
-            if (field==null) return;
-            if (field.getObjectLocation(object) == null) return;
-            Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
             if (location != null)
                 {
-                if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-                    return;  // this is deprecated and will be deleted
-                else if (object instanceof Constrained)
-                      location = (Int2D)((Constrained)object).constrainLocation(field, location);
-                if (location != null)
-                    field.setObjectLocation(object, location);
+                if (location instanceof Int2D)
+                    {
+                    Int2D loc = (Int2D) location;
+                    if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+                        return;  // this is deprecated and will be deleted
+                    else if (object instanceof Constrained)
+                        loc = (Int2D)((Constrained)object).constrainLocation(field, loc);
+                    if (loc != null)
+                        ((SparseGrid2D)field).setObjectLocation(object, loc);
+                    }
                 }
             }
         }
+
+/*
+  public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+  {
+  synchronized(fieldPortrayalInfo.gui.state.schedule)
+  {
+  final SparseGrid2D field = (SparseGrid2D)this.field;
+  if (field==null) return;
+  if (field.getObjectLocation(object) == null) return;
+  Int2D location = (Int2D)(getPositionLocation(position, fieldPortrayalInfo));
+  if (location != null)
+  {
+  if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+  return;  // this is deprecated and will be deleted
+  else if (object instanceof Constrained)
+  location = (Int2D)((Constrained)object).constrainLocation(field, location);
+  if (location != null)
+  field.setObjectLocation(object, location);
+  }
+  }
+  }
 */
 
     public Object getObjectLocation(Object object, GUIState gui)

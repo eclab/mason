@@ -25,14 +25,14 @@ public class ParameterSweep
     String indNames[];
     double indMinValues[];
     double indMaxValues[];
-    int indIndexes[];	// index into a Properties where the variable is stored
+    int indIndexes[];   // index into a Properties where the variable is stored
     int indDivisions[];
     
     // Dependent Variables
     String depNames[];
     int depIndexes[];
 
-	// Other Stuff
+    // Other Stuff
     Class modelClass;
     int numTrials = 1;
     int numThreads = 1;
@@ -45,79 +45,79 @@ public class ParameterSweep
     
     public ParameterSweep(ParameterDatabase db) throws ClassNotFoundException
         {
-        	// Load class
-	        String modelPath = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.MODEL_P), null, ""))).replace("/",".");
-	        if (modelPath == null) throw new RuntimeException("No valid model provided.");
-        	try { modelClass = Class.forName(modelPath); }
-        	catch (Exception ex) { throw new RuntimeException("No valid model provided."); }
+        // Load class
+        String modelPath = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.MODEL_P), null, ""))).replace("/",".");
+        if (modelPath == null) throw new RuntimeException("No valid model provided.");
+        try { modelClass = Class.forName(modelPath); }
+        catch (Exception ex) { throw new RuntimeException("No valid model provided."); }
 
-			// Load independent vars
-        	indNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.INDEPENDENT_P), null, ""))).split("\\s");
-	        indMinValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MIN_P), null, indNames.length);
-	        indMaxValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MAX_P), null, indNames.length);
-	        double[] d = db.getDoubles(new Parameter(ParameterSettings.DIVISIONS_P), null, 1, indNames.length);
-	        if (indNames.length == 0) throw new RuntimeException("must have at least one independent variable");
-	    	if (indMinValues == null) throw new RuntimeException("min is invalid or not the same length as independent");
-	    	if (indMaxValues == null) throw new RuntimeException("max is invalid or not the same length as independent");
-	    	if (d == null) throw new RuntimeException("divisions is invalid, less than 1, or not the same length as independent");
-			indDivisions = new int[d.length];
-			for(int i = 0; i < d.length; i++)
-				{
-				indDivisions[i] = (int)d[i];
-				if (indDivisions[i] != d[i]) throw new RuntimeException("division #" + (i + 1) + " is not an integer.");
-				}
+        // Load independent vars
+        indNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.INDEPENDENT_P), null, ""))).split("\\s");
+        indMinValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MIN_P), null, indNames.length);
+        indMaxValues = db.getDoublesUnconstrained(new Parameter(ParameterSettings.MAX_P), null, indNames.length);
+        double[] d = db.getDoubles(new Parameter(ParameterSettings.DIVISIONS_P), null, 1, indNames.length);
+        if (indNames.length == 0) throw new RuntimeException("must have at least one independent variable");
+        if (indMinValues == null) throw new RuntimeException("min is invalid or not the same length as independent");
+        if (indMaxValues == null) throw new RuntimeException("max is invalid or not the same length as independent");
+        if (d == null) throw new RuntimeException("divisions is invalid, less than 1, or not the same length as independent");
+        indDivisions = new int[d.length];
+        for(int i = 0; i < d.length; i++)
+            {
+            indDivisions[i] = (int)d[i];
+            if (indDivisions[i] != d[i]) throw new RuntimeException("division #" + (i + 1) + " is not an integer.");
+            }
         
-        	// Load dependent vars
-        	depNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.DEPENDENT_P), null, ""))).split("\\s");
-	        if (depNames.length == 0) throw new RuntimeException("Must have at least one dependent variable");
-        	mod = db.getInt(new Parameter(ParameterSettings.MOD_P), null, 0);
-        	if (mod < 0) throw new RuntimeException("Invalid mod value.  You have: " + mod);
+        // Load dependent vars
+        depNames = ((String)(db.getStringWithDefault(new Parameter(ParameterSettings.DEPENDENT_P), null, ""))).split("\\s");
+        if (depNames.length == 0) throw new RuntimeException("Must have at least one dependent variable");
+        mod = db.getInt(new Parameter(ParameterSettings.MOD_P), null, 0);
+        if (mod < 0) throw new RuntimeException("Invalid mod value.  You have: " + mod);
 
-			// Load other parameters
-        	numSteps = db.getInt(new Parameter(ParameterSettings.STEPS_P), null, 0);
-        	if (numSteps < 0) throw new RuntimeException("Invalid steps value.  You have: " + numSteps);
-			numTrials = db.getInt(new Parameter(ParameterSettings.TRIALS_P), null, 1);
-        	if (numTrials < 1) throw new RuntimeException("Trials must be at least 1.  You have: " + numTrials);
-        	numThreads = db.getInt(new Parameter(ParameterSettings.THREADS_P), null, 1);
-        	if (numThreads < 1) throw new RuntimeException("Threads must be at least 1.  You have: " + numThreads);
-        	baseSeed = db.getLong(new Parameter(ParameterSettings.SEED_P), null, 1);
-        	if (baseSeed < 1) throw new RuntimeException("Seed must be at least 1.  You have: " + baseSeed);
+        // Load other parameters
+        numSteps = db.getInt(new Parameter(ParameterSettings.STEPS_P), null, 0);
+        if (numSteps < 0) throw new RuntimeException("Invalid steps value.  You have: " + numSteps);
+        numTrials = db.getInt(new Parameter(ParameterSettings.TRIALS_P), null, 1);
+        if (numTrials < 1) throw new RuntimeException("Trials must be at least 1.  You have: " + numTrials);
+        numThreads = db.getInt(new Parameter(ParameterSettings.THREADS_P), null, 1);
+        if (numThreads < 1) throw new RuntimeException("Threads must be at least 1.  You have: " + numThreads);
+        baseSeed = db.getLong(new Parameter(ParameterSettings.SEED_P), null, 1);
+        if (baseSeed < 1) throw new RuntimeException("Seed must be at least 1.  You have: " + baseSeed);
 
-			try
-				{
-				String filename = db.getStringWithDefault(new Parameter(ParameterSettings.OUT_P), null, "");
-				if (db.getBoolean(new Parameter(ParameterSettings.COMPRESS_P), null, false))
-					{
-					printWriter = new PrintWriter(new GZIPOutputStream(new FileOutputStream(filename + GZIP_POSTFIX)), true);
-					}
-				else 
-					{   
-					printWriter = new PrintWriter(new FileOutputStream(filename), true);
-					}
-				}
-			catch (IOException e)
-				{
-				throw new RuntimeException("Could not open file.", e);
-				}
+        try
+            {
+            String filename = db.getStringWithDefault(new Parameter(ParameterSettings.OUT_P), null, "");
+            if (db.getBoolean(new Parameter(ParameterSettings.COMPRESS_P), null, false))
+                {
+                printWriter = new PrintWriter(new GZIPOutputStream(new FileOutputStream(filename + GZIP_POSTFIX)), true);
+                }
+            else 
+                {   
+                printWriter = new PrintWriter(new FileOutputStream(filename), true);
+                }
+            }
+        catch (IOException e)
+            {
+            throw new RuntimeException("Could not open file.", e);
+            }
                 
-			SimState simState = newInstance(baseSeed, modelClass);
-			sim.util.Properties properties = sim.util.Properties.getProperties(simState);
-			initializeIndexes(properties);
+        SimState simState = newInstance(baseSeed, modelClass);
+        sim.util.Properties properties = sim.util.Properties.getProperties(simState);
+        initializeIndexes(properties);
         }
                     
     public static void main(String[] args) throws  IOException, ClassNotFoundException
         {
         try
-        	{
-	        ParameterSweep sweep = new ParameterSweep(new ParameterDatabase(new File(new File(args[0]).getAbsolutePath()), args));
-	        sweep.run();
-	        }
-	    catch (Exception e)
-	    	{
-	    	System.err.println("Could not run a parameter sweep.\n\nMESSAGE: " + e);
-	    	System.err.println("Format:   java sim.util.sweep.ParameterSweep [parameter file]");
-	    	}
-		}  
+            {
+            ParameterSweep sweep = new ParameterSweep(new ParameterDatabase(new File(new File(args[0]).getAbsolutePath()), args));
+            sweep.run();
+            }
+        catch (Exception e)
+            {
+            System.err.println("Could not run a parameter sweep.\n\nMESSAGE: " + e);
+            System.err.println("Format:   java sim.util.sweep.ParameterSweep [parameter file]");
+            }
+        }  
   
     Object[] printWriterLock = new Object[0];
     // the only way we print results: one line at a time 
@@ -134,94 +134,94 @@ public class ParameterSweep
     
         
     boolean running;
-	boolean stop;
+    boolean stop;
     Object runningLock = new Object[0];
-	Thread outer;
-	public void stop()
-		{
-		synchronized(runningLock)
-			{
-			if (!running) return;  // already stopped
-			stop = true;
-			}
-		waitUntilStopped();
-		}
-		
-	public void waitUntilStopped()
-		{
-		try { outer.join();	} 		// wait for thread manager to die.  Must be outside runnningLock
-		catch (InterruptedException ex) { } // does not happen
-		}
-		
-	// returns true if we're already running
+    Thread outer;
+    public void stop()
+        {
+        synchronized(runningLock)
+            {
+            if (!running) return;  // already stopped
+            stop = true;
+            }
+        waitUntilStopped();
+        }
+                
+    public void waitUntilStopped()
+        {
+        try { outer.join();     }               // wait for thread manager to die.  Must be outside runnningLock
+        catch (InterruptedException ex) { } // does not happen
+        }
+                
+    // returns true if we're already running
     public void run() 
         {
         synchronized(runningLock)
-        	{
-        	if (running) return;	// already running
+            {
+            if (running) return;    // already running
         
-			generateAllIndependentVariableValueCombinations(new ArrayList<Double>());
-			
-			writeFileHeader(); 
-			running = true;
-			stop = false;
-			outer = new Thread(new Runnable()
-				{
-				public void run()
-				{
-				Thread[] threads = new Thread[numThreads];
-				for(int i = 0; i < threads.length; i++) 
-					{
-					threads[i] = new Thread(new Runnable()
-						{
-						public void run()
-							{
-							SimState simState = null;
-							sim.util.Properties properties = null;
-							ParameterSweepSimulationJob job = null;
-							while ((job = (ParameterSweepSimulationJob)getNextJob()) != null) 
-								{
-								if (stop) 
-									{
-									break;
-									}
+            generateAllIndependentVariableValueCombinations(new ArrayList<Double>());
+                        
+            writeFileHeader(); 
+            running = true;
+            stop = false;
+            outer = new Thread(new Runnable()
+                {
+                public void run()
+                    {
+                    Thread[] threads = new Thread[numThreads];
+                    for(int i = 0; i < threads.length; i++) 
+                        {
+                        threads[i] = new Thread(new Runnable()
+                            {
+                            public void run()
+                                {
+                                SimState simState = null;
+                                sim.util.Properties properties = null;
+                                ParameterSweepSimulationJob job = null;
+                                while ((job = (ParameterSweepSimulationJob)getNextJob()) != null) 
+                                    {
+                                    if (stop) 
+                                        {
+                                        break;
+                                        }
 
-								// initialize simstate and properties
-								if (simState == null)
-									{
-									simState = newInstance(job.jobNumber + baseSeed, modelClass);
-									properties = sim.util.Properties.getProperties(simState);
-									}
-								else
-									{
-									simState.setSeed(job.jobNumber + baseSeed);
-									} 
+                                    // initialize simstate and properties
+                                    if (simState == null)
+                                        {
+                                        simState = newInstance(job.jobNumber + baseSeed, modelClass);
+                                        properties = sim.util.Properties.getProperties(simState);
+                                        }
+                                    else
+                                        {
+                                        simState.setSeed(job.jobNumber + baseSeed);
+                                        } 
 
-								int combination = job.jobNumber / numTrials;  // which variable combination are we doing this time?
-								job.run(simState, properties, allIndependentVariableValueCombinations.get(combination));
-								}
-							}
-						});
-					threads[i].start();
-					}
-			
-				for(int i = 0; i<threads.length; i++) 
-					{
-					try 
-						{
-						threads[i].join();
-						}
-					catch(InterruptedException e)
-						{
-						// doesn't happen
-						}
-					}
-				synchronized(printWriterLock) { printWriter.close(); }
-				synchronized(runningLock) { running = false; }
-				}
-			});
-			outer.start();
-			}
+                                    int combination = job.jobNumber / numTrials;  // which variable combination are we doing this time?
+                                    job.run(simState, properties, allIndependentVariableValueCombinations.get(combination));
+                                    }
+                                }
+                            });
+                        threads[i].start();
+                        }
+                        
+                    for(int i = 0; i<threads.length; i++) 
+                        {
+                        try 
+                            {
+                            threads[i].join();
+                            }
+                        catch(InterruptedException e)
+                            {
+                            // doesn't happen
+                            }
+                        }
+                    synchronized(printWriterLock) { printWriter.close(); }
+                    synchronized(runningLock) { running = false; }
+                    }
+                });
+            outer.start();
+            }
         }
     
     
@@ -236,9 +236,9 @@ public class ParameterSweep
 
         int index = current.size();
         double increment = 0;
-    	if (indDivisions[index] != 1)
-    		increment  = (indMaxValues[index]-indMinValues[index]) / (indDivisions[index]-1);
-        	
+        if (indDivisions[index] != 1)
+            increment  = (indMaxValues[index]-indMinValues[index]) / (indDivisions[index]-1);
+                
         for(int i = 0; i < indDivisions[index]; i++)
             {
             current.add(indMinValues[index] + i * increment);
@@ -332,20 +332,20 @@ public class ParameterSweep
         }
     
     public int getTotalJobs()
-    	{
-    	synchronized(nextJobLock)
-    		{
- 			return allIndependentVariableValueCombinations.size() * numTrials;
-    		}
-    	}
-    	
-    public int getJobCount()
-    	{
+        {
         synchronized(nextJobLock)
-        	{
-        	return jobCount;
-        	}
-    	}
+            {
+            return allIndependentVariableValueCombinations.size() * numTrials;
+            }
+        }
+        
+    public int getJobCount()
+        {
+        synchronized(nextJobLock)
+            {
+            return jobCount;
+            }
+        }
         
     void writeFileHeader() 
         {
@@ -436,10 +436,10 @@ class ParameterSweepSimulationJob
         {
         String str = jobNumber + ", " + (trial + 1) + ", " + seed + ", ";
         
-		for(int i = 0; i < combos.size(); i++)
+        for(int i = 0; i < combos.size(); i++)
             {
-			str += (combos.get(i) + ", ");
-			}
+            str += (combos.get(i) + ", ");
+            }
 
         for(int i = 0; i < sweep.depIndexes.length; i++)
             {

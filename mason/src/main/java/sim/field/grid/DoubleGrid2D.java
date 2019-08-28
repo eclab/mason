@@ -71,27 +71,27 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     /** Sets all the locations in the grid the provided element */
     public final DoubleGrid2D setTo(final double thisMuch)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                reshape(w, h);
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            reshape(w, h);
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
 
-                        {
-                            set(x, y,  thisMuch);
-                        }
+                    {
+                    set(x, y,  thisMuch);
+                    }
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] = thisMuch;
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] = thisMuch;
                 }
             }
         return this;
@@ -118,16 +118,16 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         height = h;
         this.field = new double[w][h];
         if (isDistributed())
-        {
+            {
             for(int x = 0; x < w; x++)
                 for(int y = 0; y < h; y++)
                     {
-                        set(x, y, field[x][y]);
+                    set(x, y, field[x][y]);
                     }
-        }else {
+            }else {
             for (int i = 0; i < w; i++)
                 this.field[i] = (double[]) field[i].clone();
-        }
+            }
         return this;
         }
 
@@ -136,19 +136,19 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         provided grid. */
     public final DoubleGrid2D setTo(final DoubleGrid2D values)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                reshape(values.getWidth(), values.getHeight());
-                int w = getWidth();
-                int h = getHeight();
+            reshape(values.getWidth(), values.getHeight());
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y,  values.get(x, y));
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y,  values.get(x, y));
+                    }
             }
-            else if (width != values.width || height != values.height)
+        else if (width != values.width || height != values.height)
             {
             final int width = this.width = values.width;
             /*final int height =*/ this.height = values.height;
@@ -168,28 +168,28 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
         Returns the grid. */
     public final double[] toArray()
         {
-            double[] vals = new double[width * height];
-            if (isDistributed())
+        double[] vals = new double[width * height];
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
-                int i = 0;
+            int w = getWidth();
+            int h = getHeight();
+            int i = 0;
 
-                for(int x = 0;x < w;++x)
-                    for(int y = 0;y < h;++y)
-                        vals[i++] = get(x, y);
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    vals[i++] = get(x, y);
             }
-            else {
-                double[][] field = this.field;
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
+        else {
+            double[][] field = this.field;
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
 
-                int i = 0;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        vals[i++] = fieldx[y];
+            int i = 0;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    vals[i++] = fieldx[y];
                     }
                 }
             }
@@ -199,28 +199,28 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     /** Returns the maximum value stored in the grid */
     public final double max()
         {
-            double max = Double.NEGATIVE_INFINITY;
-            if (isDistributed())
+        double max = Double.NEGATIVE_INFINITY;
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            double g = get(x,y);
-                            if (max < g)
-                                max = g;
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    double g = get(x,y);
+                    if (max < g)
+                        max = g;
+                    }
             }
-            else {
-                final int width = this.width;
-                final int height = this.height;
-                double[] fieldx = null;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        if (max < fieldx[y]) max = fieldx[y];
+        else {
+            final int width = this.width;
+            final int height = this.height;
+            double[] fieldx = null;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    if (max < fieldx[y]) max = fieldx[y];
                 }
             }
         return max;
@@ -229,29 +229,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     /** Returns the minimum value stored in the grid */
     public final double min()
         {
-            double min = Double.POSITIVE_INFINITY;
-            if (isDistributed())
-                {
-                int w = getWidth();
-                int h = getHeight();
+        double min = Double.POSITIVE_INFINITY;
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                            {
-                            double g = get(x,y);
-                            if (min > g)
-                                min = g;
-                            }
-                }
-            else {
-                final int width = this.width;
-                final int height = this.height;
-                double[] fieldx = null;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        if (min > fieldx[y]) min = fieldx[y];
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    double g = get(x,y);
+                    if (min > g)
+                        min = g;
                     }
+            }
+        else {
+            final int width = this.width;
+            final int height = this.height;
+            double[] fieldx = null;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    if (min > fieldx[y]) min = fieldx[y];
+                }
             }
         return min;
         }
@@ -259,29 +259,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     /** Returns the mean value stored in the grid */
     public final double mean()
         {
-            long count = 0;
-            double mean = 0;
-            if (isDistributed())
+        long count = 0;
+        double mean = 0;
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            mean += get(x,y);
-                            count++;
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    mean += get(x,y);
+                    count++;
+                    }
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        mean += fieldx[y];
-                        count++;
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    mean += fieldx[y];
+                    count++;
                     }
                 }
             }
@@ -293,29 +293,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D upperBound(final double toNoMoreThanThisMuch)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            if (get(x,y) > toNoMoreThanThisMuch)
-                                set(x,y,toNoMoreThanThisMuch);
-                        }
-            }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        if (fieldx[y] > toNoMoreThanThisMuch)
-                            fieldx[y] = toNoMoreThanThisMuch;
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    if (get(x,y) > toNoMoreThanThisMuch)
+                        set(x,y,toNoMoreThanThisMuch);
                     }
+            }
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    if (fieldx[y] > toNoMoreThanThisMuch)
+                        fieldx[y] = toNoMoreThanThisMuch;
                 }
+            }
         return this;
         }
 
@@ -324,27 +324,27 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D lowerBound(final double toNoLowerThanThisMuch)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            if (get(x,y) < toNoLowerThanThisMuch)
-                                set(x,y,toNoLowerThanThisMuch);
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    if (get(x,y) < toNoLowerThanThisMuch)
+                        set(x,y,toNoLowerThanThisMuch);
+                    }
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        if (fieldx[y] < toNoLowerThanThisMuch)
-                            fieldx[y] = toNoLowerThanThisMuch;
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    if (fieldx[y] < toNoLowerThanThisMuch)
+                        fieldx[y] = toNoLowerThanThisMuch;
                 }
             }
         return this;
@@ -356,25 +356,25 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     public final DoubleGrid2D add(final double withThisMuch)
         {
 
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, get(x, y) + withThisMuch);
-                        }
+            int w = getWidth();
+            int h = getHeight();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, get(x, y) + withThisMuch);
+                    }
             }
-            else {
-                final int width = this.width;
-                final int height = this.height;
-                if (withThisMuch == 0.0) return this;
-                double[] fieldx = null;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] += withThisMuch;
+        else {
+            final int width = this.width;
+            final int height = this.height;
+            if (withThisMuch == 0.0) return this;
+            double[] fieldx = null;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] += withThisMuch;
                 }
             }
         return this;
@@ -385,29 +385,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D add(final IntGrid2D withThis)
         {
-            checkBounds(withThis);
-            if (isDistributed())
+        checkBounds(withThis);
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, get(x, y) + withThis.get(x, y));
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, get(x, y) + withThis.get(x, y));
+                    }
             }
-            else {
-                final int[][] otherField = withThis.field;
-                double[] fieldx = null;
-                int[] ofieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    ofieldx = otherField[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] += ofieldx[y];
+        else {
+            final int[][] otherField = withThis.field;
+            double[] fieldx = null;
+            int[] ofieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                ofieldx = otherField[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] += ofieldx[y];
                 }
             }
         return this;
@@ -418,29 +418,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D add(final DoubleGrid2D withThis)
         {
-            checkBounds(withThis);
-            if (isDistributed())
+        checkBounds(withThis);
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
                     {
-                        set(x, y, get(x, y) + withThis.get(x, y));
+                    set(x, y, get(x, y) + withThis.get(x, y));
                     }
             }
-            else {
-                final double[][] otherField = withThis.field;
-                double[] fieldx = null;
-                double[] ofieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    ofieldx = otherField[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] += ofieldx[y];
+        else {
+            final double[][] otherField = withThis.field;
+            double[] fieldx = null;
+            double[] ofieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                ofieldx = otherField[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] += ofieldx[y];
                 }
             }
         return this;
@@ -451,29 +451,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D multiply(final double byThisMuch)
         {
-            if (byThisMuch==1.0) return this;
-            if (isDistributed())
+        if (byThisMuch==1.0) return this;
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, get(x, y) * byThisMuch);
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, get(x, y) * byThisMuch);
+                    }
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] *= byThisMuch;
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] *= byThisMuch;
                 }
             }
-            return this;
+        return this;
 
         }
     
@@ -482,30 +482,30 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D multiply(final IntGrid2D withThis)
         {
-            checkBounds(withThis);
-            if (isDistributed())
+        checkBounds(withThis);
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
 
-                        {
-                            set(x, y, get(x, y) * withThis.get(x, y));
-                        }
+                    {
+                    set(x, y, get(x, y) * withThis.get(x, y));
+                    }
             }
-            else {
-                final int[][] otherField = withThis.field;
-                double[] fieldx = null;
-                int[] ofieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    ofieldx = otherField[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] *= ofieldx[y];
+        else {
+            final int[][] otherField = withThis.field;
+            double[] fieldx = null;
+            int[] ofieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                ofieldx = otherField[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] *= ofieldx[y];
                 }
             }
         return this;
@@ -516,29 +516,29 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D multiply(final DoubleGrid2D withThis)
         {
-            checkBounds(withThis);
-            if (isDistributed())
+        checkBounds(withThis);
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                        {
-                            set(x, y, get(x, y) * withThis.get(x, y));
-                        }
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    {
+                    set(x, y, get(x, y) * withThis.get(x, y));
+                    }
             }
-            else {
-                final double[][] otherField = withThis.field;
-                double[] fieldx = null;
-                double[] ofieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    ofieldx = otherField[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] *= ofieldx[y];
+        else {
+            final double[][] otherField = withThis.field;
+            double[] fieldx = null;
+            double[] ofieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                ofieldx = otherField[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] *= ofieldx[y];
                 }
             }
         return this;
@@ -550,23 +550,23 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
 
     public final DoubleGrid2D floor()
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                            set(x, y, Math.floor(get(x, y)));
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    set(x, y, Math.floor(get(x, y)));
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
                 }
             }
         return this;
@@ -577,24 +577,24 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D ceiling()
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
 
-                            set(x, y, Math.ceil(get(x, y)));
+                    set(x, y, Math.ceil(get(x, y)));
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
                 }
             }
         return this;
@@ -605,26 +605,26 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D  truncate()
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                            set(x, y, ((int) get(x, y)));
+            int w = getWidth();
+            int h = getHeight();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    set(x, y, ((int) get(x, y)));
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] = (int) fieldx[y];
-                    //if (fieldx[y] > 0.0)
-                    //    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
-                    //else
-                    //    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] = (int) fieldx[y];
+                //if (fieldx[y] > 0.0)
+                //    fieldx[y] = /*Strict*/Math.floor(fieldx[y]);
+                //else
+                //    fieldx[y] = /*Strict*/Math.ceil(fieldx[y]);
 
                 }
             }
@@ -638,23 +638,23 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
     */
     public final DoubleGrid2D  rint()
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
-                            set(x, y, Math.rint(get(x, y)));
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    set(x, y, Math.rint(get(x, y)));
             }
-            else {
-                double[] fieldx = null;
-                final int width = this.width;
-                final int height = this.height;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++)
-                        fieldx[y] = /*Strict*/Math.rint(fieldx[y]);
+        else {
+            double[] fieldx = null;
+            final int width = this.width;
+            final int height = this.height;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++)
+                    fieldx[y] = /*Strict*/Math.rint(fieldx[y]);
                 }
             }
         return this;
@@ -668,28 +668,28 @@ public /*strictfp*/ class DoubleGrid2D extends AbstractGrid2D
 
     public final void replaceAll(double from, double to)
         {
-            if (isDistributed())
+        if (isDistributed())
             {
-                int w = getWidth();
-                int h = getHeight();
+            int w = getWidth();
+            int h = getHeight();
 
-                for(int x = 0; x < w; x++)
-                    for(int y = 0; y < h; y++)
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
 
-                        {
-                            if (get(x, y) == from)
-                                set(x, y, to);
-                        }
+                    {
+                    if (get(x, y) == from)
+                        set(x, y, to);
+                    }
             }
-            else {
-                final int width = this.width;
-                final int height = this.height;
-                double[] fieldx = null;
-                for (int x = 0; x < width; x++) {
-                    fieldx = field[x];
-                    for (int y = 0; y < height; y++) {
-                        if (fieldx[y] == from)
-                            fieldx[y] = to;
+        else {
+            final int width = this.width;
+            final int height = this.height;
+            double[] fieldx = null;
+            for (int x = 0; x < width; x++) {
+                fieldx = field[x];
+                for (int y = 0; y < height; y++) {
+                    if (fieldx[y] == from)
+                        fieldx[y] = to;
                     }
                 }
             }

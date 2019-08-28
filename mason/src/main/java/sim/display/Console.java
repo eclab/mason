@@ -1924,7 +1924,7 @@ public class Console extends JFrame implements Controller
                             }
                         catch (Throwable e) 
                             {
-				    e.printStackTrace();
+                            e.printStackTrace();
                             if (!errout) 
                                 System.err.println("WARNING: Not all classes loaded, due to error: probably no Java3D." 
                                     // + " \nFirst problematic class: " + st.sval
@@ -2159,17 +2159,17 @@ public class Console extends JFrame implements Controller
 
 
     public void doSweep()
-    	{
-         sim.util.sweep.ParameterSweepGUI sweep = 
-         	new sim.util.sweep.ParameterSweepGUI(
-         		sim.util.Properties.getProperties(simulation.state),
-         		simulation);
-         JFrame frame = new JFrame("Parameter Sweep for " + simulation.getName(simulation.getClass()));
-         frame.getContentPane().setLayout(new BorderLayout());
-         frame.getContentPane().add(sweep, BorderLayout.CENTER);
-         frame.pack();
-         frame.show();
-    	}
+        {
+        sim.util.sweep.ParameterSweepGUI sweep = 
+            new sim.util.sweep.ParameterSweepGUI(
+                sim.util.Properties.getProperties(simulation.state),
+                simulation);
+        JFrame frame = new JFrame("Parameter Sweep for " + simulation.getName(simulation.getClass()));
+        frame.getContentPane().setLayout(new BorderLayout());
+        frame.getContentPane().add(sweep, BorderLayout.CENTER);
+        frame.pack();
+        frame.show();
+        }
 
 
 
@@ -2920,11 +2920,11 @@ public class Console extends JFrame implements Controller
             };
         playThread = new Thread(run);
         
-		// we'd like the thread to name itself when it's running so it can load the model
-		// and determine the model class etc.  However we can't do that because once Eclipse/NetBeans
-		// notice a class in their profilers, they don't change its name any more.  So it's too late.
-		// As a result we set it here first before starting it up, oh well.
-		playThread.setName("MASON (" + simulation.state.getClass().getSimpleName() + ")");                            
+        // we'd like the thread to name itself when it's running so it can load the model
+        // and determine the model class etc.  However we can't do that because once Eclipse/NetBeans
+        // notice a class in their profilers, they don't change its name any more.  So it's too late.
+        // As a result we set it here first before starting it up, oh well.
+        playThread.setName("MASON (" + simulation.state.getClass().getSimpleName() + ")");                            
 
         playThread.setPriority(getThreadPriority());
         playThread.start();

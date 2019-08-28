@@ -48,7 +48,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         }
 
     /** Returns the location corresponding with the given position -- and assuming that the
-    	location has a z-value of 0. */
+        location has a z-value of 0. */
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
         Double2D scale = getScale(info);
@@ -64,45 +64,45 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         {
         synchronized(gui.state.schedule)
             {
-		if (location != null)
-			{
-			if (location instanceof Int3D)
-				{
-				Int3D loc = (Int3D) location;
-				if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
-					return;  // this is deprecated and will be deleted
-				else if (object instanceof Constrained)
-					  loc = (Int3D)((Constrained)object).constrainLocation(field, loc);
-				if (loc != null)
-					((SparseGrid3D)field).setObjectLocation(object, loc);
-				}
-			}
-			}
-        }
-
-    /*
-    public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
-        {
-        synchronized(fieldPortrayalInfo.gui.state.schedule)
-            {
-            final SparseGrid3D field = (SparseGrid3D)this.field;
-            if (field==null) return;
-            Int3D oldLocation = (Int3D)(field.getObjectLocation(object));
-            if (oldLocation == null) return;
-            Int3D location = (Int3D)(getPositionLocation(position, fieldPortrayalInfo));
             if (location != null)
                 {
-                // since getPositionLocation assumes a z-value of 1, we set the location to the proper z
-                location = new Int3D(location.x, location.y, oldLocation.z);
-                if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
-                    return;
-                else if (object instanceof Constrained)
-                      location = (Int3D)((Constrained)object).constrainLocation(field, location);
-                if (location != null)
-                    field.setObjectLocation(object, location);
+                if (location instanceof Int3D)
+                    {
+                    Int3D loc = (Int3D) location;
+                    if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, loc)))
+                        return;  // this is deprecated and will be deleted
+                    else if (object instanceof Constrained)
+                        loc = (Int3D)((Constrained)object).constrainLocation(field, loc);
+                    if (loc != null)
+                        ((SparseGrid3D)field).setObjectLocation(object, loc);
+                    }
                 }
             }
         }
+
+    /*
+      public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
+      {
+      synchronized(fieldPortrayalInfo.gui.state.schedule)
+      {
+      final SparseGrid3D field = (SparseGrid3D)this.field;
+      if (field==null) return;
+      Int3D oldLocation = (Int3D)(field.getObjectLocation(object));
+      if (oldLocation == null) return;
+      Int3D location = (Int3D)(getPositionLocation(position, fieldPortrayalInfo));
+      if (location != null)
+      {
+      // since getPositionLocation assumes a z-value of 1, we set the location to the proper z
+      location = new Int3D(location.x, location.y, oldLocation.z);
+      if (object instanceof Fixed2D && (!((Fixed2D)object).maySetLocation(field, location)))
+      return;
+      else if (object instanceof Constrained)
+      location = (Int3D)((Constrained)object).constrainLocation(field, location);
+      if (location != null)
+      field.setObjectLocation(object, location);
+      }
+      }
+      }
     */
 
     public Object getObjectLocation(Object object, GUIState gui)
@@ -155,7 +155,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
     //// fall within the drawing region.  Instead, we should gather all the elements 
     //// that fall within the region and THEN sort them by Z.
     //// See also Continuous3DPortrayal2D
-    	
+        
     protected void hitOrDraw(Graphics2D graphics, DrawInfo2D info, Bag putInHere)
         {
         final SparseGrid3D field = (SparseGrid3D) this.field;
@@ -201,27 +201,27 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
             
             // sort here
             bagbag.sort(new Comparator()
-            	{
-            	public int compare(Object o1, Object o2)
-            		{
-            		Bag b1 = (Bag)o1;
-            		Bag b2 = (Bag)o2;
-            		
-            		Int3D i1 = (Int3D)(field.getObjectLocation(b1.get(0)));
-            		Int3D i2 = (Int3D)(field.getObjectLocation(b2.get(0)));
-            		// sort so that smaller objects appear first
-            		if (i1.z < i2.z) return -1;
-            		if (i2.z < i1.z) return 1;
-            		return 0;
-            		}
-				});
-				
-			// now we apply the policy
+                {
+                public int compare(Object o1, Object o2)
+                    {
+                    Bag b1 = (Bag)o1;
+                    Bag b2 = (Bag)o2;
+                        
+                    Int3D i1 = (Int3D)(field.getObjectLocation(b1.get(0)));
+                    Int3D i2 = (Int3D)(field.getObjectLocation(b2.get(0)));
+                    // sort so that smaller objects appear first
+                    if (i1.z < i2.z) return -1;
+                    if (i2.z < i1.z) return 1;
+                    return 0;
+                    }
+                });
+                                
+            // now we apply the policy
             
-	        Bag policyBag = new Bag();
+            Bag policyBag = new Bag();
             for(int i = 0; i < bagbag.size(); i++)
-            	{
-	            Bag objects = (Bag)(bagbag.get(i));
+                {
+                Bag objects = (Bag)(bagbag.get(i));
                                 
                 // restrict the number of objects to draw
                 policyBag.clear();  // fast
@@ -266,20 +266,20 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
             }
         else            // the easy way -- draw the objects one by one
             {
-	        Bag objects = new Bag(field.getAllObjects());  // copy the bag
-    	    objects.sort(new Comparator()
-            	{
-            	public int compare(Object o1, Object o2)
-            		{
-            		Int3D i1 = (Int3D)(field.getObjectLocation(o1));
-            		Int3D i2 = (Int3D)(field.getObjectLocation(o2));
-            		// sort so that smaller objects appear first
-            		if (i1.z < i2.z) return -1;
-            		if (i2.z < i1.z) return 1;
-            		return 0;
-            		}
-				});
-				        		
+            Bag objects = new Bag(field.getAllObjects());  // copy the bag
+            objects.sort(new Comparator()
+                {
+                public int compare(Object o1, Object o2)
+                    {
+                    Int3D i1 = (Int3D)(field.getObjectLocation(o1));
+                    Int3D i2 = (Int3D)(field.getObjectLocation(o2));
+                    // sort so that smaller objects appear first
+                    if (i1.z < i2.z) return -1;
+                    if (i2.z < i1.z) return 1;
+                    return 0;
+                    }
+                });
+                                                        
             for(int x=0;x<objects.numObjs;x++)
                 {
                 final Object portrayedObject = objects.objs[x];

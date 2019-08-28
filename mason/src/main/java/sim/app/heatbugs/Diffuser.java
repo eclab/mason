@@ -353,15 +353,15 @@ public /*strictfp*/ class Diffuser implements Steppable
         
         // oh yeah, we have one last step.
         
-    	// Normaly we'd copy HeatBugs.this.valgrid2 to HeatBugs.this.valgrid, like this
+        // Normaly we'd copy HeatBugs.this.valgrid2 to HeatBugs.this.valgrid, like this
         //_valgrid.setTo(heatbugs.valgrid2);
 
- 		// HOWEVER we can get a big improvement in speed (almost 2x at 8 processors!)
-		// if we just swap the field pointers internally.  This is a hack and there
-		// are obviously other ways to do it but it will work fine here.
-		// We swap the field pointers rather than swapping the grid objects because
-		// that way the field portrayals don't have to be informed to set themselves
-		// to the new field each time.
+        // HOWEVER we can get a big improvement in speed (almost 2x at 8 processors!)
+        // if we just swap the field pointers internally.  This is a hack and there
+        // are obviously other ways to do it but it will work fine here.
+        // We swap the field pointers rather than swapping the grid objects because
+        // that way the field portrayals don't have to be informed to set themselves
+        // to the new field each time.
         double[][] temp = heatbugs.valgrid.field;
         heatbugs.valgrid.field = heatbugs.valgrid2.field;
         heatbugs.valgrid2.field = temp;

@@ -120,29 +120,29 @@ public class NetworkPortrayal2D extends FieldPortrayal2D
                 // here's how we could reduce it if we knew that it intersected with the clip.... [cool job, Liviu -- Sean]
                 // Line2D.Double line = new Line2D.Double(newinfo.draw.x, newinfo.draw.y, newinfo.secondPoint.x, newinfo.secondPoint.y);
                 // if (line.intersects (info.clip))
-                        {
-                        Portrayal p = getPortrayalForObject(edge);
-                        if (!(p instanceof SimpleEdgePortrayal2D))
-                            throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                                edge + " -- expected a SimpleEdgePortrayal2D");
-                        SimpleEdgePortrayal2D portrayal = (SimpleEdgePortrayal2D) p;
+                    {
+                    Portrayal p = getPortrayalForObject(edge);
+                    if (!(p instanceof SimpleEdgePortrayal2D))
+                        throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
+                            edge + " -- expected a SimpleEdgePortrayal2D");
+                    SimpleEdgePortrayal2D portrayal = (SimpleEdgePortrayal2D) p;
                     
-                        newinfo.location = edge;
+                    newinfo.location = edge;
 
-                        if (graphics == null)
+                    if (graphics == null)
+                        {
+                        if (portrayal.hitObject(edge, newinfo))
                             {
-                            if (portrayal.hitObject(edge, newinfo))
-                                {
-                                putInHere.add(getWrapper(edge));
-                                }
-                            }
-                        else
-                            {
-                            // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                            //                        graphics.setClip(clip);
-                            portrayal.draw(edge, graphics, newinfo);
+                            putInHere.add(getWrapper(edge));
                             }
                         }
+                    else
+                        {
+                        // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                        //                        graphics.setClip(clip);
+                        portrayal.draw(edge, graphics, newinfo);
+                        }
+                    }
                 }
             }
         }

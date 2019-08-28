@@ -60,10 +60,10 @@ public class Asteroid extends Element
     final static Shape[][] shapes = new Shape[/* Size */][/* Various Shapes */]
     {
     { new Rectangle.Double(-3,-3,5,5) },
-        { new Rectangle.Double(-4,-4,8,8) },
-        { new Rectangle.Double(-4,-4,8,8) },
-        { new Rectangle.Double(-4,-4,9,9) },
-        { new Rectangle.Double(-5,-5,10,10) },
+    { new Rectangle.Double(-4,-4,8,8) },
+    { new Rectangle.Double(-4,-4,8,8) },
+    { new Rectangle.Double(-4,-4,9,9) },
+    { new Rectangle.Double(-5,-5,10,10) },
     };
         
     /** Maps of possible ways asteroids may break up.  A Map is an array of groups of Asteroids, one Map per size. */
@@ -71,10 +71,10 @@ public class Asteroid extends Element
     final static int[/*My size*/][/*breakUpNumber*/][/*Children*/] breakMap = new int[][][]
     {
     { { } },                                                                // 0
-        { { 0, 0 } },                                                   // 1
-        { { 0, 1 }, { 0, 0, 0 } },                              // 2
-        { { 0, 0, 1 }, { 0, 2 }, { 1, 1 } },    // 3
-        { { 1, 2 }, { 0, 3 }, { 0, 1, 1 } }             // 4
+    { { 0, 0 } },                                                   // 1
+    { { 0, 1 }, { 0, 0, 0 } },                              // 2
+    { { 0, 0, 1 }, { 0, 2 }, { 1, 1 } },    // 3
+    { { 1, 2 }, { 0, 3 }, { 0, 1, 1 } }             // 4
     };
         
     /** Breaks up an Asteroid into smaller Asteroids, removing the original Asteroid and inserting

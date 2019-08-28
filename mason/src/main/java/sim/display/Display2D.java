@@ -503,12 +503,12 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
             call paintComponent(Graphics, buffer).  */
         public synchronized void paintComponent(final Graphics g)
             {
-			// Swing gets overreaching when scaling in.  This allows us to temporarily refuse to paint so we don't do so multiple times.
-			if (paintLock) return; 
-			// I'm likely being updated due to scrolling, so change rect
-			if (SwingUtilities.isEventDispatchThread())
-				setViewRect(port.getViewRect());
-			paintComponent(g, false);
+            // Swing gets overreaching when scaling in.  This allows us to temporarily refuse to paint so we don't do so multiple times.
+            if (paintLock) return; 
+            // I'm likely being updated due to scrolling, so change rect
+            if (SwingUtilities.isEventDispatchThread())
+                setViewRect(port.getViewRect());
+            paintComponent(g, false);
             }
         
         /** The top-level repainting method.  If we're writing to a movie, we do a paintToMovie
@@ -1613,13 +1613,13 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
         // for information on why we use getViewRect, see computeClip()
         Rectangle2D fullComponent = insideDisplay.getViewRect();
         if (fullComponent.getWidth() > (insideDisplay.width * scale))
-        	{
+            {
             fieldWidth = insideDisplay.width*scale;
             origindx = (int)((fullComponent.getWidth() - fieldWidth)/2);
             }
         if (fullComponent.getHeight() > (insideDisplay.height*scale))
-        	{
-        	fieldHeight = insideDisplay.height*scale;
+            {
+            fieldHeight = insideDisplay.height*scale;
             origindy = (int)((fullComponent.getHeight() - fieldHeight)/2);
             }
                                 
@@ -2134,117 +2134,117 @@ public class Display2D extends JComponent implements Steppable, Manipulating2D
     public boolean handleMouseEvent(MouseEvent event)
         {
         synchronized(Display2D.this.simulation.state.schedule)
-        	{
-			// first, we handle our own facility for handling offsets
-			if (mouseChangesOffset && (event.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK)
-				{
-				if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() >= 2)
-					{
-					// reset
-					insideDisplay.xOffset = 0;
-					insideDisplay.yOffset = 0;
-					setScale(1.0);
-					Display2D.this.repaint();
-					}
-				else if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() == 1)
-					{
-					// scroll and scale
-					MouseEvent m = SwingUtilities.convertMouseEvent(insideDisplay, event, port);
-					insideDisplay.xOffset -= m.getX() - port.getWidth() / 2 ;
-					insideDisplay.yOffset -= m.getY() - port.getHeight() / 2 ;
-					setScale(getScale() * 2);
-					Display2D.this.repaint();
-					}
-				else if (event.getID() == MouseEvent.MOUSE_PRESSED)  // middle button
-					{
-					setCursor(OPEN_HAND_CURSOR_C);
-					openHand = true;
-					event = SwingUtilities.convertMouseEvent(this, event, display);
-					originalXOffset = insideDisplay.xOffset;
-					originalYOffset = insideDisplay.yOffset;
-					originalMousePoint = event.getPoint();
-					originalText = scaleField.getText();
-					return true;
-					}
-				else if (event.getID() == MouseEvent.MOUSE_RELEASED)  // middle button
-					{
-					setCursor(new Cursor(Cursor.MOVE_CURSOR));
-					openHand = false;
-				
-					scaleField.setText(originalText);
-					originalMousePoint = null;
-					return true;
-					}
-				else if (event.getID() == MouseEvent.MOUSE_DRAGGED)  // middle button
-					{
-					if (openHand)
-						{
-						setCursor(CLOSED_HAND_CURSOR_C);
-						openHand = false;
-						}
+            {
+            // first, we handle our own facility for handling offsets
+            if (mouseChangesOffset && (event.getModifiers() & MouseEvent.BUTTON3_MASK) == MouseEvent.BUTTON3_MASK)
+                {
+                if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() >= 2)
+                    {
+                    // reset
+                    insideDisplay.xOffset = 0;
+                    insideDisplay.yOffset = 0;
+                    setScale(1.0);
+                    Display2D.this.repaint();
+                    }
+                else if (event.getID() == MouseEvent.MOUSE_CLICKED && event.getClickCount() == 1)
+                    {
+                    // scroll and scale
+                    MouseEvent m = SwingUtilities.convertMouseEvent(insideDisplay, event, port);
+                    insideDisplay.xOffset -= m.getX() - port.getWidth() / 2 ;
+                    insideDisplay.yOffset -= m.getY() - port.getHeight() / 2 ;
+                    setScale(getScale() * 2);
+                    Display2D.this.repaint();
+                    }
+                else if (event.getID() == MouseEvent.MOUSE_PRESSED)  // middle button
+                    {
+                    setCursor(OPEN_HAND_CURSOR_C);
+                    openHand = true;
+                    event = SwingUtilities.convertMouseEvent(this, event, display);
+                    originalXOffset = insideDisplay.xOffset;
+                    originalYOffset = insideDisplay.yOffset;
+                    originalMousePoint = event.getPoint();
+                    originalText = scaleField.getText();
+                    return true;
+                    }
+                else if (event.getID() == MouseEvent.MOUSE_RELEASED)  // middle button
+                    {
+                    setCursor(new Cursor(Cursor.MOVE_CURSOR));
+                    openHand = false;
+                                
+                    scaleField.setText(originalText);
+                    originalMousePoint = null;
+                    return true;
+                    }
+                else if (event.getID() == MouseEvent.MOUSE_DRAGGED)  // middle button
+                    {
+                    if (openHand)
+                        {
+                        setCursor(CLOSED_HAND_CURSOR_C);
+                        openHand = false;
+                        }
 
-					event = SwingUtilities.convertMouseEvent(this, event, display);  // do we need to do this?
-					insideDisplay.xOffset =  originalXOffset - (originalMousePoint.x - event.getX()) / scale;
-					insideDisplay.yOffset =  originalYOffset - (originalMousePoint.y - event.getY()) / scale;
-					optionPane.xOffsetField.setValue(insideDisplay.xOffset);
-					optionPane.yOffsetField.setValue(insideDisplay.yOffset);
-					scaleField.setText("Translating Origin to (" + insideDisplay.xOffset + ", " + insideDisplay.yOffset + ")");
-					Display2D.this.repaint();
-					return true;
-					}
-				}
-		
-			Point2D.Double p = new Point2D.Double(event.getX(), event.getY());
+                    event = SwingUtilities.convertMouseEvent(this, event, display);  // do we need to do this?
+                    insideDisplay.xOffset =  originalXOffset - (originalMousePoint.x - event.getX()) / scale;
+                    insideDisplay.yOffset =  originalYOffset - (originalMousePoint.y - event.getY()) / scale;
+                    optionPane.xOffsetField.setValue(insideDisplay.xOffset);
+                    optionPane.yOffsetField.setValue(insideDisplay.yOffset);
+                    scaleField.setText("Translating Origin to (" + insideDisplay.xOffset + ", " + insideDisplay.yOffset + ")");
+                    Display2D.this.repaint();
+                    return true;
+                    }
+                }
+                
+            Point2D.Double p = new Point2D.Double(event.getX(), event.getY());
 
-			// first, propagate the event to any moving wrapper
-			if (movingWrapper != null)
-				{
-				FieldPortrayal2D f = (FieldPortrayal2D)(movingWrapper.getFieldPortrayal());
-				Object obj = movingWrapper.getObject();
-				SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
-				if (portrayal.handleMouseEvent(simulation, this, movingWrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
-					{
-					simulation.controller.refresh();
-					return true;
-					}
-				}
-		
-			// next, let's propagate the event to any selected objects
-				
-			for(int x=0;x<selectedWrappers.size();x++)
-				{
-				LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
-				FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
-				Object obj = wrapper.getObject();
-				SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
-				if (portrayal.handleMouseEvent(simulation, this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
-					{
-					simulation.controller.refresh();
-					return true;
-					}
-				}
-						
-			// next, let's propagate the event to any objects which have been hit.
-			// We go backwards through the bag lists so top elements are selected first
-				
-			Bag[] hitObjects = objectsHitBy(p);
-			for(int x=hitObjects.length - 1; x >= 0; x--)
-				for(int i = hitObjects[x].numObjs - 1; i >= 0 ; i--)
-					{
-					LocationWrapper wrapper = (LocationWrapper)(hitObjects[x].objs[i]);
-					FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
-					Object obj = wrapper.getObject();
-					SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
-					if (portrayal.handleMouseEvent(simulation, this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_HIT_OBJECT))
-						{
-						simulation.controller.refresh();
-						return true;
-						}
-					}
-						
-			// at this point, nobody consumed the event so we ignore it
-	        return false;
-	        }
+            // first, propagate the event to any moving wrapper
+            if (movingWrapper != null)
+                {
+                FieldPortrayal2D f = (FieldPortrayal2D)(movingWrapper.getFieldPortrayal());
+                Object obj = movingWrapper.getObject();
+                SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+                if (portrayal.handleMouseEvent(simulation, this, movingWrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
+                    {
+                    simulation.controller.refresh();
+                    return true;
+                    }
+                }
+                
+            // next, let's propagate the event to any selected objects
+                                
+            for(int x=0;x<selectedWrappers.size();x++)
+                {
+                LocationWrapper wrapper = ((LocationWrapper)(selectedWrappers.get(x)));
+                FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
+                Object obj = wrapper.getObject();
+                SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+                if (portrayal.handleMouseEvent(simulation, this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_SELECTED_OBJECT))
+                    {
+                    simulation.controller.refresh();
+                    return true;
+                    }
+                }
+                                                
+            // next, let's propagate the event to any objects which have been hit.
+            // We go backwards through the bag lists so top elements are selected first
+                                
+            Bag[] hitObjects = objectsHitBy(p);
+            for(int x=hitObjects.length - 1; x >= 0; x--)
+                for(int i = hitObjects[x].numObjs - 1; i >= 0 ; i--)
+                    {
+                    LocationWrapper wrapper = (LocationWrapper)(hitObjects[x].objs[i]);
+                    FieldPortrayal2D f = (FieldPortrayal2D)(wrapper.getFieldPortrayal());
+                    Object obj = wrapper.getObject();
+                    SimplePortrayal2D portrayal = (SimplePortrayal2D)(f.getPortrayalForObject(obj));
+                    if (portrayal.handleMouseEvent(simulation, this, wrapper, event, getDrawInfo2D(f, p), SimplePortrayal2D.TYPE_HIT_OBJECT))
+                        {
+                        simulation.controller.refresh();
+                        return true;
+                        }
+                    }
+                                                
+            // at this point, nobody consumed the event so we ignore it
+            return false;
+            }
         }
 
     protected void rebuildSkipFrame()

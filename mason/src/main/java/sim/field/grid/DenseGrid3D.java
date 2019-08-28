@@ -48,18 +48,18 @@ public class DenseGrid3D extends AbstractGrid3D
     
     public DenseGrid3D (int width, int height, int length)
         {
-    	reshape(width, height, length);
+        reshape(width, height, length);
         }
     
     /** Replaces the existing array with a new one of the given width and height,
-	and with arbitrary values stored. */
+        and with arbitrary values stored. */
     protected void reshape(int width, int height, int length)
-		{
-    	this.width = width;
+        {
+        this.width = width;
         this.height = height;
         this.length = length;
         field = new Bag[width][height][length];
-		}
+        }
     
     /** Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
@@ -74,9 +74,9 @@ public class DenseGrid3D extends AbstractGrid3D
         }
     
     public void setObjectsAtLocation(final int x, final int y, final int z, final Bag bag)
-    	{
-    	field[x][y][z] = bag;
-    	}
+        {
+        field[x][y][z] = bag;
+        }
                 
     /** Returns a bag containing all the objects at a given location, or null when there are no objects at the location.
         You should NOT MODIFY THIS BAG. This is the actual container bag, and modifying it will almost certainly break
@@ -91,17 +91,17 @@ public class DenseGrid3D extends AbstractGrid3D
         The location is set to null (the bag is removed) regardless of the setting of removeEmptyBags.  */
     public Bag removeObjectsAtLocation(final int x, final int y, final int z)
         {
-    	Bag b = null;
-    	if (isDistributed())
-    		{
-    		b = getObjectsAtLocation(x, y, z);
-    		setObjectsAtLocation(x, y, z, null);
-    		}
-    	else
-    		{
-    		b = field[x][y][z];
-    		field[x][y][z] = null;
-    		}
+        Bag b = null;
+        if (isDistributed())
+            {
+            b = getObjectsAtLocation(x, y, z);
+            setObjectsAtLocation(x, y, z, null);
+            }
+        else
+            {
+            b = field[x][y][z];
+            field[x][y][z] = null;
+            }
         return b;
         }
     
@@ -112,11 +112,11 @@ public class DenseGrid3D extends AbstractGrid3D
 
     public boolean removeObjectAtLocation(final Object obj, final int x, final int y, final int z)
         {
-    	Bag b = null;
-    	if (isDistributed())
-    		b = getObjectsAtLocation(x, y, z);
-    	else
-    		b = field[x][y][z];
+        Bag b = null;
+        if (isDistributed())
+            b = getObjectsAtLocation(x, y, z);
+        else
+            b = field[x][y][z];
         if (b==null) return false;
         boolean result = b.remove(obj);
         int objsNumObjs = b.numObjs;
@@ -130,11 +130,11 @@ public class DenseGrid3D extends AbstractGrid3D
     
     public boolean removeObjectMultiplyAtLocation(final Object obj, final int x, final int y, final int z)
         {
-    	Bag b = null;
-    	if (isDistributed())
-    		b = getObjectsAtLocation(x, y, z);
-    	else
-    		b = field[x][y][z];
+        Bag b = null;
+        if (isDistributed())
+            b = getObjectsAtLocation(x, y, z);
+        else
+            b = field[x][y][z];
         if (b==null) return false;
         boolean result = b.removeMultiply(obj);
         int objsNumObjs = b.numObjs;
@@ -171,11 +171,11 @@ public class DenseGrid3D extends AbstractGrid3D
         
     public int numObjectsAtLocation(final int x, final int y, final int z)
         {
-    	Bag b = null;
-    	if (isDistributed())
-    		b = getObjectsAtLocation(x, y, z);
-    	else
-			b = field[x][y][z];
+        Bag b = null;
+        if (isDistributed())
+            b = getObjectsAtLocation(x, y, z);
+        else
+            b = field[x][y][z];
         if (b == null) return 0;
         return b.numObjs;
         }
@@ -235,43 +235,43 @@ public class DenseGrid3D extends AbstractGrid3D
         {
         Bag bag = new Bag();
         if (isDistributed())
-        	{
-        	int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			for(int x = 0;x < w;++x)
-				for(int y = 0;y < h;++y)
-					for(int z = 0;z < l;++z)
-						{
-						Bag bagAtCell = getObjectsAtLocation(x, y, z);
-						if (bagAtCell!=null)
-							bag.addAll(bagAtCell);
-						removeObjectsAtLocation(x, y, z);
-						}
-						
-        	}
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        {
+                        Bag bagAtCell = getObjectsAtLocation(x, y, z);
+                        if (bagAtCell!=null)
+                            bag.addAll(bagAtCell);
+                        removeObjectsAtLocation(x, y, z);
+                        }
+                                                
+            }
         else
-        	{
-	        Bag[][] fieldx = null;
-	        Bag[] fieldxy = null;
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0; y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z = 0; z < length; z++)
-	                    {
-	                    if (fieldxy[z]!=null) 
-	                        bag.addAll((Bag)(fieldxy[z]));
-	                    fieldxy[z]=null;
-	                    }
-	                }
-	            }
-        	}
+            {
+            Bag[][] fieldx = null;
+            Bag[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z = 0; z < length; z++)
+                        {
+                        if (fieldxy[z]!=null) 
+                            bag.addAll((Bag)(fieldxy[z]));
+                        fieldxy[z]=null;
+                        }
+                    }
+                }
+            }
         return bag;
         }
 
@@ -300,71 +300,71 @@ public class DenseGrid3D extends AbstractGrid3D
 
     public final void removeAll(Object from, boolean onlyIfSameObject)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			for(int x = 0;x < w;++x)
-				for(int y = 0;y < h;++y)
-					for(int z = 0;z < l;++z)
-						{
-						Bag bag = getObjectsAtLocation(x, y, z);
-	                    int len = bag.size();
-	                                        
-	                    // If/when we move to ArrayList, we can use Collections.replaceAll.
-	                    // But because Bag doesn't implement the List interface, we can't.
-	                                        
-	                    for(int i = 0; i < len; i++)
-	                        {
-	                        Object obj = bag.get(i);
-	                        if ((obj == null && from == null) ||
-	                            (onlyIfSameObject && obj == from) ||
-	                            (!onlyIfSameObject && obj.equals(from)))
-	                            {
-	                            bag.remove(i);
-	                            i--;
-	                            len--;
-	                            }
-	                        }	               
-						}
-    		}
-    	else
-    		{
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        Bag[][] fieldx = null;
-	        Bag[] fieldxy = null;
-	        for(int x = 0; x < width; x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0;  y < height; y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z = 0; z < length; z++)
-	                    {
-	                    Bag bag = fieldxy[z];
-	                    int len = bag.size();
-	                                        
-	                    // If/when we move to ArrayList, we can use Collections.replaceAll.
-	                    // But because Bag doesn't implement the List interface, we can't.
-	                                        
-	                    for(int i = 0; i < len; i++)
-	                        {
-	                        Object obj = bag.get(i);
-	                        if ((obj == null && from == null) ||
-	                            (onlyIfSameObject && obj == from) ||
-	                            (!onlyIfSameObject && obj.equals(from)))
-	                            {
-	                            bag.remove(i);
-	                            i--;
-	                            len--;
-	                            }
-	                        }
-	                    }
-	                }
-	            }
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        {
+                        Bag bag = getObjectsAtLocation(x, y, z);
+                        int len = bag.size();
+                                                
+                        // If/when we move to ArrayList, we can use Collections.replaceAll.
+                        // But because Bag doesn't implement the List interface, we can't.
+                                                
+                        for(int i = 0; i < len; i++)
+                            {
+                            Object obj = bag.get(i);
+                            if ((obj == null && from == null) ||
+                                (onlyIfSameObject && obj == from) ||
+                                (!onlyIfSameObject && obj.equals(from)))
+                                {
+                                bag.remove(i);
+                                i--;
+                                len--;
+                                }
+                            }                      
+                        }
+            }
+        else
+            {
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            Bag[][] fieldx = null;
+            Bag[] fieldxy = null;
+            for(int x = 0; x < width; x++)
+                {
+                fieldx = field[x];
+                for(int y = 0;  y < height; y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z = 0; z < length; z++)
+                        {
+                        Bag bag = fieldxy[z];
+                        int len = bag.size();
+                                                
+                        // If/when we move to ArrayList, we can use Collections.replaceAll.
+                        // But because Bag doesn't implement the List interface, we can't.
+                                                
+                        for(int i = 0; i < len; i++)
+                            {
+                            Object obj = bag.get(i);
+                            if ((obj == null && from == null) ||
+                                (onlyIfSameObject && obj == from) ||
+                                (!onlyIfSameObject && obj.equals(from)))
+                                {
+                                bag.remove(i);
+                                i--;
+                                len--;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -394,63 +394,63 @@ public class DenseGrid3D extends AbstractGrid3D
 
     public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)
         {
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			for(int x = 0;x < w;++x)
-				for(int y = 0;y < h;++y)
-					for(int z = 0;z < l;++z)
-						{
-						Bag bag = getObjectsAtLocation(x, y, z);
-	                    int len = bag.size();
-	                                        
-	                    // If/when we move to ArrayList, we can use Collections.replaceAll.
-	                    // But because Bag doesn't implement the List interface, we can't.
-	                                        
-	                    for(int i = 0; i < len; i++)
-	                        {
-	                        Object obj = bag.get(i);
-	                        if ((obj == null && from == null) ||
-	                            (onlyIfSameObject && obj == from) ||
-	                            (!onlyIfSameObject && obj.equals(from)))
-	                            bag.set(i, to);
-	                        }
-						}
-    		}
-    	else 
-    		{			
-	        final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        Bag[][] fieldx = null;
-	        Bag[] fieldxy = null;
-	        for(int x = 0; x < width; x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0;  y < height; y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z = 0; z < length; z++)
-	                    {
-	                    Bag bag = fieldxy[z];
-	                    int len = bag.size();
-	                                        
-	                    // If/when we move to ArrayList, we can use Collections.replaceAll.
-	                    // But because Bag doesn't implement the List interface, we can't.
-	                                        
-	                    for(int i = 0; i < len; i++)
-	                        {
-	                        Object obj = bag.get(i);
-	                        if ((obj == null && from == null) ||
-	                            (onlyIfSameObject && obj == from) ||
-	                            (!onlyIfSameObject && obj.equals(from)))
-	                            bag.set(i, to);
-	                        }
-	                    }
-	                }
-	            }
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        {
+                        Bag bag = getObjectsAtLocation(x, y, z);
+                        int len = bag.size();
+                                                
+                        // If/when we move to ArrayList, we can use Collections.replaceAll.
+                        // But because Bag doesn't implement the List interface, we can't.
+                                                
+                        for(int i = 0; i < len; i++)
+                            {
+                            Object obj = bag.get(i);
+                            if ((obj == null && from == null) ||
+                                (onlyIfSameObject && obj == from) ||
+                                (!onlyIfSameObject && obj.equals(from)))
+                                bag.set(i, to);
+                            }
+                        }
+            }
+        else 
+            {                       
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            Bag[][] fieldx = null;
+            Bag[] fieldxy = null;
+            for(int x = 0; x < width; x++)
+                {
+                fieldx = field[x];
+                for(int y = 0;  y < height; y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z = 0; z < length; z++)
+                        {
+                        Bag bag = fieldxy[z];
+                        int len = bag.size();
+                                                
+                        // If/when we move to ArrayList, we can use Collections.replaceAll.
+                        // But because Bag doesn't implement the List interface, we can't.
+                                                
+                        for(int i = 0; i < len; i++)
+                            {
+                            Object obj = bag.get(i);
+                            if ((obj == null && from == null) ||
+                                (onlyIfSameObject && obj == from) ||
+                                (!onlyIfSameObject && obj.equals(from)))
+                                bag.set(i, to);
+                            }
+                        }
+                    }
+                }
             }
         }
 

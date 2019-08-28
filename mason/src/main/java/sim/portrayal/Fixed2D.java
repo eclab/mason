@@ -22,9 +22,9 @@ package sim.portrayal;
    go directly to their fields and ask the fields to move them about.
 
 
-Fixed2D is deprecated: use Constrained instead.
+   Fixed2D is deprecated: use Constrained instead.
 
-@deprecated
+   @deprecated
 */
 
 public interface Fixed2D
@@ -49,7 +49,7 @@ public interface Fixed2D
         then return true.
         </ul>
 
-    @deprecated
+        @deprecated
     */
     public boolean maySetLocation(Object field, Object newObjectLocation);
     }

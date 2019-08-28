@@ -194,18 +194,18 @@ public class MovieMaker
         {
         if (!isRunning) return false;
         //              ((sim.util.media.MovieEncoder)encoder).add(image);
+            {
+            try  // NOT LIKELY TO HAPPEN
                 {
-                try  // NOT LIKELY TO HAPPEN
-                    {
-                    encoderClass.getMethod("add", new Class[]{BufferedImage.class}).
-                        invoke(encoder, new Object[]{image});
-                    }
-                catch(Exception ex)
-                    {
-                    ex.printStackTrace();
-                    return false;
-                    }
+                encoderClass.getMethod("add", new Class[]{BufferedImage.class}).
+                    invoke(encoder, new Object[]{image});
                 }
+            catch(Exception ex)
+                {
+                ex.printStackTrace();
+                return false;
+                }
+            }
         return true;
         }
     

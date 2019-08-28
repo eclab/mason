@@ -48,4 +48,4 @@ public class LocationWrapper
     public String getLocationName() { return "" + location; }
     
     public String toString() { return "LocationWrapper[" + object + ", " + location + ", " + fieldPortrayal + "]";  }
-	}
+    }

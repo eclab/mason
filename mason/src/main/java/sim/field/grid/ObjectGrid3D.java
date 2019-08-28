@@ -30,7 +30,7 @@ public class ObjectGrid3D extends AbstractGrid3D
     
     public ObjectGrid3D (int width, int height, int length)
         {
-    	reshape(width, height, length);
+        reshape(width, height, length);
         }
     
     public ObjectGrid3D (int width, int height, int length, Object initialValue)
@@ -50,14 +50,14 @@ public class ObjectGrid3D extends AbstractGrid3D
         }
     
     /** Replaces the existing array with a new one of the given width and height,
-	and with arbitrary values stored. */
-	protected void reshape(int width, int height, int length)
-		{
-		this.width = width;
+        and with arbitrary values stored. */
+    protected void reshape(int width, int height, int length)
+        {
+        this.width = width;
         this.height = height;
         this.length = length;
         field = new Object[width][height][length];    
-		}
+        }
         
     public final void set(final int x, final int y, final int z, final Object val)
         {
@@ -72,38 +72,38 @@ public class ObjectGrid3D extends AbstractGrid3D
 
     public final ObjectGrid3D setTo(Object thisObj)
         {
-    	if (isDistributed())
-			{
-			int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			reshape(w, h, l);
-			for(int x = 0; x < w; x++)
-				for(int y = 0; y < h; y++)
-					for(int z = 0; z < l; z++)
-						{
-						set(x, y, z, thisObj);
-						}
-			}
-		else
-			{
-	        Object[][][] field = this.field;
-	        Object[][] fieldx = null;
-	        Object[] fieldxy = null;
-	        final int width = this.width;
-	        final int height = this.height;
-	        final int length = this.length;
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0; y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z=0;z<length;z++)
-	                    fieldxy[z]=thisObj;
-	                }
-	            }
-			}
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            reshape(w, h, l);
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, thisObj);
+                        }
+            }
+        else
+            {
+            Object[][][] field = this.field;
+            Object[][] fieldx = null;
+            Object[] fieldxy = null;
+            final int width = this.width;
+            final int height = this.height;
+            final int length = this.length;
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        fieldxy[z]=thisObj;
+                    }
+                }
+            }
         return this;
         }
 
@@ -132,85 +132,85 @@ public class ObjectGrid3D extends AbstractGrid3D
 
     public final void replaceAll(Object from, Object to, boolean onlyIfSameObject)
         {
-    	if (isDistributed())
-			{
-			int w = getWidth();
-	        int h = getHeight();
-	        int l = getLength();
-	        for(int x = 0; x < w; x++)
-	            for(int y = 0; y < h; y++)
-	            	for(int z = 0; z < l; z++)
-	                	{
-	            		Object obj = get(x, y, z);
-	            		if ((obj == null && from == null) ||
-	            		    (onlyIfSameObject && obj == from) ||
-	        	            (!onlyIfSameObject && obj.equals(from)))
-	            			set(x, y, z, to);
-	                	}
-			}
-    	else
-			{
-			final int width = getWidth();
-	        final int height = getHeight();
-	        final int length = getLength();
-	        Object[][] fieldx = null;
-	        Object[] fieldxy = null;
-	        for(int x = 0; x < width; x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0;  y < height; y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z = 0; z < length; z++)
-	                    {
-	                    Object obj = fieldxy[z];
-	                    if ((obj == null && from == null) ||
-	                        (onlyIfSameObject && obj == from) ||
-	                        (!onlyIfSameObject && obj.equals(from)))
-	                        fieldxy[z] = to;
-	                    }
-	                }
-	            }
-			}
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        Object obj = get(x, y, z);
+                        if ((obj == null && from == null) ||
+                            (onlyIfSameObject && obj == from) ||
+                            (!onlyIfSameObject && obj.equals(from)))
+                            set(x, y, z, to);
+                        }
+            }
+        else
+            {
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            Object[][] fieldx = null;
+            Object[] fieldxy = null;
+            for(int x = 0; x < width; x++)
+                {
+                fieldx = field[x];
+                for(int y = 0;  y < height; y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z = 0; z < length; z++)
+                        {
+                        Object obj = fieldxy[z];
+                        if ((obj == null && from == null) ||
+                            (onlyIfSameObject && obj == from) ||
+                            (!onlyIfSameObject && obj.equals(from)))
+                            fieldxy[z] = to;
+                        }
+                    }
+                }
+            }
         }
 
     /** Flattens the grid to a one-dimensional array, storing the elements in row-major order,including duplicates and null values. 
         Returns the grid. */
     public final Object[] toArray()
         {
-    	Object[] vals = new Object[getWidth() * getHeight() * getLength()];
-    	int i = 0;
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		for(int x = 0;x < w;++x)
-    			for(int y = 0;y < h;++y)
-    				for(int z = 0;z < l;++z)
-    					vals[i++] = get(x, y, z);
-    		}
-    	else
-    		{
-    		Object[][][] field = this.field;
-    		Object[][] fieldx = null;
-    		Object[] fieldxy = null;
-    		final int width = getWidth();
-    		final int height = getHeight();
-    		final int length = getLength();
-    		for(int x=0;x<width;x++)
-            	{
-    			fieldx = field[x];
-    			for(int y = 0; y<height;y++)
-                	{
-    				fieldxy = fieldx[y];
-    				for(int z=0;z<length;z++)
-                    	{
-    					vals[i++] = fieldxy[z];
-                    	}
-                	}
-            	}
-    		}
+        Object[] vals = new Object[getWidth() * getHeight() * getLength()];
+        int i = 0;
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        vals[i++] = get(x, y, z);
+            }
+        else
+            {
+            Object[][][] field = this.field;
+            Object[][] fieldx = null;
+            Object[] fieldxy = null;
+            final int width = getWidth();
+            final int height = getHeight();
+            final int length = getLength();
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        {
+                        vals[i++] = fieldxy[z];
+                        }
+                    }
+                }
+            }
         return vals;
         }
         
@@ -220,38 +220,38 @@ public class ObjectGrid3D extends AbstractGrid3D
     public final Bag elements()
         {
         Bag bag = new Bag();     
-    	if (isDistributed())
-    		{
-    		int w = getWidth();
-    		int h = getHeight();
-    		int l = getLength();
-    		for(int x = 0;x < w;++x)
-    			for(int y = 0;y < h;++y)
-    				for(int z = 0;z < l;++z)
-    					bag.add(get(x, y, z));
-    		}
-    	else
-    		{
-	        Object[][][] field = this.field;
-	        Object[][] fieldx = null;
-	        Object[] fieldxy = null;
-	        final int width = this.width;
-	        final int height = this.height;
-	        final int length = this.length;
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0; y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z=0;z<length;z++)
-	                    {
-	                    if (fieldxy[z]!=null) 
-	                        bag.add(fieldxy[z]);
-	                    }
-	                }
-	            }
-    		}
+        if (isDistributed())
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        bag.add(get(x, y, z));
+            }
+        else
+            {
+            Object[][][] field = this.field;
+            Object[][] fieldx = null;
+            Object[] fieldxy = null;
+            final int width = this.width;
+            final int height = this.height;
+            final int length = this.length;
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        {
+                        if (fieldxy[z]!=null) 
+                            bag.add(fieldxy[z]);
+                        }
+                    }
+                }
+            }
         return bag;
         }
 
@@ -261,65 +261,65 @@ public class ObjectGrid3D extends AbstractGrid3D
         {
         Bag bag = new Bag();
         if (isDistributed())
-			{
-			int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			for(int x = 0;x < w;++x)
-				for(int y = 0;y < h;++y)
-					for(int z = 0;z < l;++z)
-						{
-						Object obj = get(x, y, z);
-						if (obj!=null)
-							bag.add(obj);
-						set(x, y, z, null);
-						}					
-			}
-		else
-			{
-	        Object[][][] field = this.field;
-	        Object[][] fieldx = null;
-	        Object[] fieldxy = null;
-	        final int width = this.width;
-	        final int height = this.height;
-	        final int length = this.length;
-	        for(int x=0;x<width;x++)
-	            {
-	            fieldx = field[x];
-	            for(int y = 0; y<height;y++)
-	                {
-	                fieldxy = fieldx[y];
-	                for(int z=0;z<length;z++)
-	                    {
-	                    if (fieldxy[z]!=null) 
-	                        bag.add(fieldxy[z]);
-	                    fieldxy[z]=null;
-	                    }
-	                }
-	            }
-			}
+            {
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0;x < w;++x)
+                for(int y = 0;y < h;++y)
+                    for(int z = 0;z < l;++z)
+                        {
+                        Object obj = get(x, y, z);
+                        if (obj!=null)
+                            bag.add(obj);
+                        set(x, y, z, null);
+                        }                                       
+            }
+        else
+            {
+            Object[][][] field = this.field;
+            Object[][] fieldx = null;
+            Object[] fieldxy = null;
+            final int width = this.width;
+            final int height = this.height;
+            final int length = this.length;
+            for(int x=0;x<width;x++)
+                {
+                fieldx = field[x];
+                for(int y = 0; y<height;y++)
+                    {
+                    fieldxy = fieldx[y];
+                    for(int z=0;z<length;z++)
+                        {
+                        if (fieldxy[z]!=null) 
+                            bag.add(fieldxy[z]);
+                        fieldxy[z]=null;
+                        }
+                    }
+                }
+            }
         return bag;
         }
 
 
     public final ObjectGrid3D setTo(final ObjectGrid3D values)
         {
-    	if (isDistributed())
-			{
-			reshape(values.getWidth(), values.getHeight(), values.getLength());
-			int w = getWidth();
-			int h = getHeight();
-			int l = getLength();
-			for(int x = 0; x < w; x++)
-				for(int y = 0; y < h; y++)
-					for(int z = 0; z < l; z++)
-						{
-						set(x, y, z, values.get(x, y, z));
-						}
-			}
-    	else if (getWidth() != values.getWidth() || getHeight() != values.getHeight() || getLength() != values.getLength() )
+        if (isDistributed())
             {
-    		reshape(values.getWidth(), values.getHeight(), values.getLength());
+            reshape(values.getWidth(), values.getHeight(), values.getLength());
+            int w = getWidth();
+            int h = getHeight();
+            int l = getLength();
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, values.get(x, y, z));
+                        }
+            }
+        else if (getWidth() != values.getWidth() || getHeight() != values.getHeight() || getLength() != values.getLength() )
+            {
+            reshape(values.getWidth(), values.getHeight(), values.getLength());
             int width = getWidth();
             int height = getHeight();         
             for(int x =0 ; x < width; x++)
@@ -329,7 +329,7 @@ public class ObjectGrid3D extends AbstractGrid3D
                 }
             }
         else
-        	{
+            {
             int width = getWidth();
             int height = getHeight();
             int length = getLength();
@@ -375,22 +375,22 @@ public class ObjectGrid3D extends AbstractGrid3D
         // load
         reshape(w, h, l);
         if (isDistributed())
-        	{
-        	for(int x = 0; x < w; x++)
-    			for(int y = 0; y < h; y++)
-    				for(int z = 0; z < l; z++)
-    					{
-    					set(x, y, z, field[x][y][z]);
-    					}
-        	}
+            {
+            for(int x = 0; x < w; x++)
+                for(int y = 0; y < h; y++)
+                    for(int z = 0; z < l; z++)
+                        {
+                        set(x, y, z, field[x][y][z]);
+                        }
+            }
         else
-        	{
-	        for(int i = 0; i < w; i++)
-	            for(int j=0; j< h; j++)
-	                {
-	                this.field[i][j] = (Object[]) field[i][j].clone();
-	                }
-        	}
+            {
+            for(int i = 0; i < w; i++)
+                for(int j=0; j< h; j++)
+                    {
+                    this.field[i][j] = (Object[]) field[i][j].clone();
+                    }
+            }
         return this;
         }
 

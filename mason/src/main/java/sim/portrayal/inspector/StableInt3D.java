@@ -48,24 +48,24 @@ public class StableInt3D implements StableLocation
         Object p = fieldPortrayal.getObjectLocation(object, gui);
         if (p == null)  { exists = false; }  // purposely don't update x and y and z so they stay the same
         else 
-        	{
-        	if (p instanceof Int3D)
-				{
-				pos = (Int3D)p;
-				}
-			else if (p instanceof Int2D)
-				{
-				pos = new Int3D((Int2D)p);
-				}
-			else 
-				{
-				throw new RuntimeException("StableInt3D expected an Int2D or Int3D position from underlying field portrayal " + fieldPortrayal);
-				}
-			x = pos.x; 
-			y = pos.y; 
-			z = pos.z; 
-			exists = true; 
-			}
+            {
+            if (p instanceof Int3D)
+                {
+                pos = (Int3D)p;
+                }
+            else if (p instanceof Int2D)
+                {
+                pos = new Int3D((Int2D)p);
+                }
+            else 
+                {
+                throw new RuntimeException("StableInt3D expected an Int2D or Int3D position from underlying field portrayal " + fieldPortrayal);
+                }
+            x = pos.x; 
+            y = pos.y; 
+            z = pos.z; 
+            exists = true; 
+            }
         }
             
     public int getX() { update(); return x; }

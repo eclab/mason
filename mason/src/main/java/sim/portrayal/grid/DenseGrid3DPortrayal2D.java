@@ -60,13 +60,13 @@ public class DenseGrid3DPortrayal2D extends ObjectGrid3DPortrayal2D
                     {
                     Object[] fieldxy = fieldx[y];
                     for(int z = 0; z < fieldxy.length; z++)
-						{
-	                    Bag objects = (Bag)(fieldxy[z]);
-	                    if (objects == null || objects.size() == 0) continue;
-	                    for(int i=0;i<objects.numObjs;i++)
-	                        if (objects.objs[i] == object)  // found it!
-	                            return new Int3D(x,y,z);
-	                    }
+                        {
+                        Bag objects = (Bag)(fieldxy[z]);
+                        if (objects == null || objects.size() == 0) continue;
+                        for(int i=0;i<objects.numObjs;i++)
+                            if (objects.objs[i] == object)  // found it!
+                                return new Int3D(x,y,z);
+                        }
                     }
                 }
             return null;  // it wasn't there
@@ -113,65 +113,65 @@ public class DenseGrid3DPortrayal2D extends ObjectGrid3DPortrayal2D
         if( starty < 0 ) starty = 0;
         for(int x=startx;x<endx;x++)
             for(int y=starty;y<endy;y++)
-            	for(int z=0; z < maxZ; z++)
-                {
-                Bag objects = field.field[x][y][z];
+                for(int z=0; z < maxZ; z++)
+                    {
+                    Bag objects = field.field[x][y][z];
                                 
-                if (objects == null || objects.size() == 0) continue;
+                    if (objects == null || objects.size() == 0) continue;
 
-                if (policy != null & graphics != null)
-                    {
-                    policyBag.clear();  // fast
-                    if (policy.objectToDraw(objects,policyBag))  // if this function returns FALSE, we should use objects as is, else use the policy bag.
-                        objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
-                    }
-                locationToPass.x = x;
-                locationToPass.y = y;
-                locationToPass.z = z;
+                    if (policy != null & graphics != null)
+                        {
+                        policyBag.clear();  // fast
+                        if (policy.objectToDraw(objects,policyBag))  // if this function returns FALSE, we should use objects as is, else use the policy bag.
+                            objects = policyBag;  // returned TRUE, so we're going to use the modified policyBag instead.
+                        }
+                    locationToPass.x = x;
+                    locationToPass.y = y;
+                    locationToPass.z = z;
                 
-                for(int i=0;i<objects.numObjs;i++)
-                    {
-                    final Object portrayedObject = objects.objs[i];
-                    Portrayal p = getPortrayalForObject(portrayedObject);
-                    if (!(p instanceof SimplePortrayal2D))
-                        throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                            portrayedObject + " -- expected a SimplePortrayal2D");
-                    SimplePortrayal2D portrayal = (SimplePortrayal2D)p;
-                                        
-                    // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-                    newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-                    newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-                    newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-                    newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
-                                        
-                    // adjust drawX and drawY to center
-                    newinfo.draw.x += newinfo.draw.width / 2.0;
-                    newinfo.draw.y += newinfo.draw.height / 2.0;
-                                        
-                    if (graphics == null)
+                    for(int i=0;i<objects.numObjs;i++)
                         {
-                        if (portrayedObject != null && portrayal.hitObject(portrayedObject, newinfo))
-                            putInHere.add(getWrapper(portrayedObject, new Int3D(x,y,z)));
-                        }
-                    else
-                        {
-                        // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
-                        //                    graphics.setClip(clip);
-                        newinfo.selected = (objectSelected &&  // there's something there
-                            (selectedObject==portrayedObject || selectedWrappers.get(portrayedObject) != null));
-                        /*{
-                          LocationWrapper wrapper = null;
-                          if (selectedObject == portrayedObject) 
-                          wrapper = selectedWrapper;
-                          else wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
-                          portrayal.setSelected(wrapper,true);
-                          portrayal.draw(portrayedObject, graphics, newinfo);
-                          portrayal.setSelected(wrapper,false);
-                          }
-                          else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                        final Object portrayedObject = objects.objs[i];
+                        Portrayal p = getPortrayalForObject(portrayedObject);
+                        if (!(p instanceof SimplePortrayal2D))
+                            throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
+                                portrayedObject + " -- expected a SimplePortrayal2D");
+                        SimplePortrayal2D portrayal = (SimplePortrayal2D)p;
+                                        
+                        // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+                        newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+                        newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+                        newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+                        newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+                                        
+                        // adjust drawX and drawY to center
+                        newinfo.draw.x += newinfo.draw.width / 2.0;
+                        newinfo.draw.y += newinfo.draw.height / 2.0;
+                                        
+                        if (graphics == null)
+                            {
+                            if (portrayedObject != null && portrayal.hitObject(portrayedObject, newinfo))
+                                putInHere.add(getWrapper(portrayedObject, new Int3D(x,y,z)));
+                            }
+                        else
+                            {
+                            // MacOS X 10.3 Panther has a bug which resets the clip, YUCK
+                            //                    graphics.setClip(clip);
+                            newinfo.selected = (objectSelected &&  // there's something there
+                                (selectedObject==portrayedObject || selectedWrappers.get(portrayedObject) != null));
+                            /*{
+                              LocationWrapper wrapper = null;
+                              if (selectedObject == portrayedObject) 
+                              wrapper = selectedWrapper;
+                              else wrapper = (LocationWrapper)(selectedWrappers.get(portrayedObject));
+                              portrayal.setSelected(wrapper,true);
+                              portrayal.draw(portrayedObject, graphics, newinfo);
+                              portrayal.setSelected(wrapper,false);
+                              }
+                              else */ portrayal.draw(portrayedObject, graphics, newinfo);
+                            }
                         }
                     }
-                }
                 
         drawGrid(graphics, xScale, yScale, maxX, maxY, info);
         drawBorder(graphics, xScale, info);
@@ -203,7 +203,7 @@ public class DenseGrid3DPortrayal2D extends ObjectGrid3DPortrayal2D
 
                 
     final Message unknown = new Message("It's too costly to figure out where the object went.");
-	// overrides same version in ObjectGrid3D
+    // overrides same version in ObjectGrid3D
     public LocationWrapper getWrapper(Object object, Int3D location)
         {
         final DenseGrid3D field = (DenseGrid3D)(this.field);
@@ -213,7 +213,7 @@ public class DenseGrid3DPortrayal2D extends ObjectGrid3DPortrayal2D
                 { 
                 Int3D loc = (Int3D) super.getLocation();
                 if (field.field[loc.x][loc.y][loc.z] != null &&
-                	field.field[loc.x][loc.y][loc.z].contains(getObject()))  // it's still there!
+                    field.field[loc.x][loc.y][loc.z].contains(getObject()))  // it's still there!
                     {
                     return loc;
                     }

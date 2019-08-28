@@ -202,13 +202,13 @@ public class Woim3D extends SimplePortrayal3D implements Steppable
     public void step( final SimState state )
         {
         WoimsDemo3D bd = (WoimsDemo3D)state;
-                {
-                Double3D temp = new Double3D(x,y,z);
-                woimPosition.x = x;
-                woimPosition.y = y;
-                woimPosition.z = z;
-                preprocessWoims( bd, temp, MAX_DISTANCE );
-                }
+            {
+            Double3D temp = new Double3D(x,y,z);
+            woimPosition.x = x;
+            woimPosition.y = y;
+            woimPosition.z = z;
+            preprocessWoims( bd, temp, MAX_DISTANCE );
+            }
         Vector3D vel = new Vector3D( 0, 0, 0 );
         vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );
         vel = vel.add( towardsFlockCenterOfMass(bd).amplify(0.5) );

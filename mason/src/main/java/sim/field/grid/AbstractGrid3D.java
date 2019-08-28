@@ -114,21 +114,21 @@ public abstract class AbstractGrid3D implements Grid3D
 
     public final int stx(final int x) 
         {
-    	int width = getWidth();
-    	if (x >= 0) { if (x < width) return x; return x - width; } return x + width;
-    	}
+        int width = getWidth();
+        if (x >= 0) { if (x < width) return x; return x - width; } return x + width;
+        }
     
     public final int sty(final int y)
         {
-    	int height = getHeight();
-    	if (y >= 0) { if (y < height) return y ; return y - height; } return y + height;
-    	}
+        int height = getHeight();
+        if (y >= 0) { if (y < height) return y ; return y - height; } return y + height;
+        }
 
     public final int stz(final int z) 
         {
-    	int length = getLength();
-    	if (z >= 0) { if (z < length) return z ; return z - length; } return z + length;
-    	}
+        int length = getLength();
+        if (z >= 0) { if (z < length) return z ; return z - length; } return z + length;
+        }
 
     // faster version
     final int stx(final int x, final int width) 

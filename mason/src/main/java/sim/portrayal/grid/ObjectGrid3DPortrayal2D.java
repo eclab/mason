@@ -32,21 +32,21 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         {
         super();
         }
-	
-	boolean ignoresEmpty = true;
-	
-	/** Returns whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
-	public boolean getIgnoresEmpty()
-		{
-		return ignoresEmpty;
-		}
-		
-	/** Sets whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
-	public void setIgnoresEmpty(boolean val)
-		{
-		ignoresEmpty = val;
-		}
-	
+        
+    boolean ignoresEmpty = true;
+        
+    /** Returns whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
+    public boolean getIgnoresEmpty()
+        {
+        return ignoresEmpty;
+        }
+                
+    /** Sets whether null (empty) cells are completely ignored for hit-testing and drawing. By default this is true.*/
+    public void setIgnoresEmpty(boolean val)
+        {
+        ignoresEmpty = val;
+        }
+        
     public void setField(Object field)
         {
         if (field instanceof ObjectGrid3D ) setFieldBypass(field);
@@ -70,7 +70,7 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         }
                 
     /** Returns the location corresponding with the given position -- and assuming that the
-    	location has a z-value of 0. */
+        location has a z-value of 0. */
     public Object getPositionLocation(Point2D.Double position, DrawInfo2D info)
         {
         Double2D scale = getScale(info);
@@ -98,11 +98,11 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
                 {
                 Object[][] fieldx = field.field[x];
                 for(int y = 0; y < maxY; y++)
-                	{
-                	Object[] fieldxy = fieldx[y];
-                	for(int z = 0; z < fieldxy.length; z++)
-                		if (object == fieldxy[z])  // found it
-                        	return new Int3D(x,y,z);
+                    {
+                    Object[] fieldxy = fieldx[y];
+                    for(int z = 0; z < fieldxy.length; z++)
+                        if (object == fieldxy[z])  // found it
+                            return new Int3D(x,y,z);
                     }
                 }
             return null;  // it wasn't there
@@ -184,57 +184,57 @@ public class ObjectGrid3DPortrayal2D extends ObjectGridPortrayal2D
         newinfo.location = locationToPass;
         newinfo.fieldPortrayal = this;
 
-		boolean ignoresEmpty = this.ignoresEmpty;  // locals are faster
-		
+        boolean ignoresEmpty = this.ignoresEmpty;  // locals are faster
+                
         if (endx > maxX) endx = maxX;
         if (endy > maxY) endy = maxY;
         if( startx < 0 ) startx = 0;
         if( starty < 0 ) starty = 0;
         for(int x=startx;x<endx;x++)
             for(int y=starty;y<endy;y++)
-            	for(int z = 0; z < maxZ; z++)
-                {
-                Object obj = field.field[x][y][z];
-                if (obj == null && ignoresEmpty) continue;
-                
-                Portrayal p = getPortrayalForObject(obj);
-                if (!(p instanceof SimplePortrayal2D))
-                    throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
-                        obj + " -- expected a SimplePortrayal2D");
-                SimplePortrayal2D portrayal = (SimplePortrayal2D)p;
-                
-                // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
-                newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
-                newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
-                newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
-                newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
-                
-                // adjust drawX and drawY to center
-                newinfo.draw.x += newinfo.draw.width / 2.0;
-                newinfo.draw.y += newinfo.draw.height / 2.0;
-                
-                locationToPass.x = x;
-                locationToPass.y = y;
-                locationToPass.z = z;
-                
-                if (graphics == null)
+                for(int z = 0; z < maxZ; z++)
                     {
-                    if (obj != null && portrayal.hitObject(obj, newinfo))
-                        putInHere.add(getWrapper(obj, new Int3D(x,y,z)));
+                    Object obj = field.field[x][y][z];
+                    if (obj == null && ignoresEmpty) continue;
+                
+                    Portrayal p = getPortrayalForObject(obj);
+                    if (!(p instanceof SimplePortrayal2D))
+                        throw new RuntimeException("Unexpected Portrayal " + p + " for object " + 
+                            obj + " -- expected a SimplePortrayal2D");
+                    SimplePortrayal2D portrayal = (SimplePortrayal2D)p;
+                
+                    // translate --- the   + newinfo.width/2.0  etc. moves us to the center of the object
+                    newinfo.draw.x = (int)(info.draw.x + (xScale) * x);
+                    newinfo.draw.y = (int)(info.draw.y + (yScale) * y);
+                    newinfo.draw.width = (int)(info.draw.x + (xScale) * (x+1)) - newinfo.draw.x;
+                    newinfo.draw.height = (int)(info.draw.y + (yScale) * (y+1)) - newinfo.draw.y;
+                
+                    // adjust drawX and drawY to center
+                    newinfo.draw.x += newinfo.draw.width / 2.0;
+                    newinfo.draw.y += newinfo.draw.height / 2.0;
+                
+                    locationToPass.x = x;
+                    locationToPass.y = y;
+                    locationToPass.z = z;
+                
+                    if (graphics == null)
+                        {
+                        if (obj != null && portrayal.hitObject(obj, newinfo))
+                            putInHere.add(getWrapper(obj, new Int3D(x,y,z)));
+                        }
+                    else
+                        {
+                        newinfo.selected = (objectSelected &&  // there's something there
+                            (selectedObject==obj || selectedWrappers.get(obj) != null));
+                        portrayal.draw(obj, graphics, newinfo);
+                        }
                     }
-                else
-                    {
-                    newinfo.selected = (objectSelected &&  // there's something there
-                        (selectedObject==obj || selectedWrappers.get(obj) != null));
-                    portrayal.draw(obj, graphics, newinfo);
-                    }
-                }
 
         drawGrid(graphics, xScale, yScale, maxX, maxY, info);
         drawBorder(graphics, xScale, info);
         }
 
-	// the others are defined in ObjectGridPortrayal2D
+    // the others are defined in ObjectGridPortrayal2D
     IntBag zPos = new IntBag(49);
         
     Int3D searchForObject(Object object, Int3D loc)

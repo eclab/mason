@@ -83,9 +83,9 @@ public abstract class Inspector extends JPanel
     boolean _volatile = true;
     JPanel header = new JPanel();
 /*        {
-        public Insets getInsets () { return new Insets(2,2,2,2); }
-        };
-    */
+          public Insets getInsets () { return new Insets(2,2,2,2); }
+          };
+*/
         
     public Inspector() { header.setLayout(new BorderLayout()); }
     
@@ -99,11 +99,11 @@ public abstract class Inspector extends JPanel
         else if (obj instanceof ProvidesInspector)
             return ((ProvidesInspector)obj).provideInspector(state, name);
         else if (obj instanceof TabbableAndGroupable)
-        	return new TabbedInspector((TabbableAndGroupable) obj, state, name);
+            return new TabbedInspector((TabbableAndGroupable) obj, state, name);
         else if (obj instanceof Tabbable)
             return new TabbedInspector((Tabbable)obj, state, name);
         else if (obj instanceof Groupable)
-        	return new GroupedInspector((Groupable)obj, state, name);
+            return new GroupedInspector((Groupable)obj, state, name);
         else
             return new SimpleInspector(obj, state, name);
         }
@@ -121,9 +121,9 @@ public abstract class Inspector extends JPanel
     boolean showsUpdate = true;
     public boolean getShowsUpdate() { return showsUpdate; }
     public void setShowsUpdate(boolean val) {  showsUpdate = val; updateRefresh(); }
-     	
+        
     void updateRefresh()
-    	{
+        {
         if (isVolatile() || !getShowsUpdate())
             {
             if (updateButton!=null) 
@@ -151,9 +151,9 @@ public abstract class Inspector extends JPanel
                 revalidate(); 
                 }
             } 
-    	}
-    	
-    	   
+        }
+        
+           
     /** Called by the system to inform the Inspector that it needs to update itself to reflect any
         changed in the underlying data. */
     public abstract void updateInspector();
@@ -209,7 +209,7 @@ public abstract class Inspector extends JPanel
         // quaquaify
         jb.putClientProperty("Quaqua.Button.style","square");
         jb.setToolTipText("Updates this inspector to reflect the current underlying values in the model.");
-		//jb.setBorder(BorderFactory.createEmptyBorder());
+        //jb.setBorder(BorderFactory.createEmptyBorder());
 
         jb.addActionListener(new ActionListener()
             {

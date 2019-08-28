@@ -1402,19 +1402,19 @@ public class ParameterDatabase implements Serializable
         }
 
 
-	double[] extendBag(double[] bag)
-		{
-		double[] newbag = new double[bag.length * 2 + 1];
-		System.arraycopy(bag, 0, newbag, 0, bag.length);
-		return newbag;
-		}
-		
-	double[] collapseBag(double[] bag, int size)
-		{
-		double[] newbag = new double[size];
-		System.arraycopy(bag, 0, newbag, 0, size);
-		return newbag;
-		}
+    double[] extendBag(double[] bag)
+        {
+        double[] newbag = new double[bag.length * 2 + 1];
+        System.arraycopy(bag, 0, newbag, 0, bag.length);
+        return newbag;
+        }
+                
+    double[] collapseBag(double[] bag, int size)
+        {
+        double[] newbag = new double[size];
+        System.arraycopy(bag, 0, newbag, 0, size);
+        return newbag;
+        }
 
     static final int ARRAY_NO_EXPECTED_LENGTH = (-1);
     double[] getDoublesWithMax(Parameter parameter, double minValue, double maxValue, int expectedLength)
@@ -1436,9 +1436,9 @@ public class ParameterDatabase implements Serializable
                 else
                     {
                     if (bagSize == bag.length) bag = extendBag(bag);
-                	bag[bagSize] = val;
-                	bagSize++; 
-                	}
+                    bag[bagSize] = val;
+                    bagSize++; 
+                    }
                 }
             if (scanner.hasNext())
                 return null;  // too long, or garbage afterwards

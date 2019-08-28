@@ -130,7 +130,7 @@ public /*strictfp*/ class IntGrid2D extends AbstractGrid2D
             for(int i = 0; i < w; i++)
                 this.field[i] = (int[]) field[i].clone();
             }
-            return this;
+        return this;
         }
 
     /** Changes the dimensions of the grid to be the same as the one provided, then

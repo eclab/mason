@@ -188,7 +188,7 @@ public class ParallelSequence extends Sequence
         
         // AT THIS POINT:
         // size is the total number of steppables
-    	// n is the total number of threads
+        // n is the total number of threads
         // jump is the nominal number of steppables each thread must do
         // extra is the left over steppables -- we'll share 1 each of these with the early threads
         // current is the current position where the next thread should start its stepping 
@@ -221,19 +221,19 @@ public class ParallelSequence extends Sequence
         // thread 2 : 11 to 16 (extra = 0)
         
         Runnable[] workers = new Runnable[n];
-    	for(int i = 0; i < n; i++)
+        for(int i = 0; i < n; i++)
             {
             if (extra > 0)
-            	{
-            	workers[i] = new Worker(state, current, current + jump + 1, 1);
-            	current += (jump + 1);
-            	extra--;
-            	}
+                {
+                workers[i] = new Worker(state, current, current + jump + 1, 1);
+                current += (jump + 1);
+                extra--;
+                }
             else
-            	{
-            	workers[i] = new Worker(state, current, current + jump, 1);
-            	current += jump;
-            	}
+                {
+                workers[i] = new Worker(state, current, current + jump, 1);
+                current += jump;
+                }
             }
 
         this.threads.startThreads(workers, "ParallelSequence");
@@ -400,7 +400,7 @@ class ThreadPool
     ArrayList threads = new ArrayList();
     int totalThreads = 0;
                 
-	// holds a thread
+    // holds a thread
     class Node implements Runnable
         {
         volatile boolean die = false;  // raised when the Node is asked to kill its thread and die.
@@ -424,22 +424,22 @@ class ThreadPool
                 // elsewhere.  It gives us a small chance of escaping the synchronization
                 // immediately below.
                 if (!go && !die)
-                	{
-		            synchronized(all) 
-	                	{
-	                	while (!go && !die)
-							{
-		                	try { all.wait(0); }
-		                	catch (InterruptedException e) { } // ignore
-		                	}
-	                    }
-	                }
+                    {
+                    synchronized(all) 
+                        {
+                        while (!go && !die)
+                            {
+                            try { all.wait(0); }
+                            catch (InterruptedException e) { } // ignore
+                            }
+                        }
+                    }
 
-	            // at this point either go or die has been raised and toRun won't be updated again
-	            // until after adding back into the list, so we can access them here safely without synchronization
-	            
-				if (die) { die = false; return; }
-				go = false;
+                // at this point either go or die has been raised and toRun won't be updated again
+                // until after adding back into the list, so we can access them here safely without synchronization
+                    
+                if (die) { die = false; return; }
+                go = false;
                 toRun.run();
                 
                 // add myself back in the list
@@ -478,7 +478,7 @@ class ThreadPool
                 Node node = (Node)(threads.remove(size - i - 1));
                 try { node.thread.join(); }
                 catch (InterruptedException e) { } // ignore
-            	totalThreads--;
+                totalThreads--;
                 }
             }
         }
@@ -496,7 +496,7 @@ class ThreadPool
         
     
     void startThreads(Runnable[] run, String name)
-    	{
+        {
         Node[] nodes = new Node[run.length];
         
         // we're going to do this in bulk rather than individually, so
@@ -505,47 +505,47 @@ class ThreadPool
             {
             int available = threads.size();
             for (int i = 0; i < run.length; i++)
-            	{
-				if (available == 0)
-					{
-					nodes[i] = new Node(name + " " + totalThreads);
-                   	nodes[i].toRun = run[i]; 
-                	nodes[i].go = true; 
-					
+                {
+                if (available == 0)
+                    {
+                    nodes[i] = new Node(name + " " + totalThreads);
+                    nodes[i].toRun = run[i]; 
+                    nodes[i].go = true; 
+                                        
                     nodes[i].thread.start();  // since go is already set, this thread won't even bother to wait()
-					totalThreads++;
-					}
-				else  // pull a thread
-					{
-					nodes[i] = (Node)(threads.remove(available-1));  // removes from the head
-					
-					// this can be done without synchronization on the node
-					// because the node is waiting for go or die to be true
-					// before it accesses toRun at this stage
-					nodes[i].toRun = run[i]; 
+                    totalThreads++;
+                    }
+                else  // pull a thread
+                    {
+                    nodes[i] = (Node)(threads.remove(available-1));  // removes from the head
+                                        
+                    // this can be done without synchronization on the node
+                    // because the node is waiting for go or die to be true
+                    // before it accesses toRun at this stage
+                    nodes[i].toRun = run[i]; 
 
-					// this may cause the node to prematurely fire without waiting on 'all',
-					// but that's a good thing.
-					nodes[i].go = true; 
-					available--;
-					}
-				}
+                    // this may cause the node to prematurely fire without waiting on 'all',
+                    // but that's a good thing.
+                    nodes[i].go = true; 
+                    available--;
+                    }
+                }
             }
         
         synchronized(all) 
-        	{
-	       	// get all the nodes going
-	       	all.notifyAll();
-			}
-    	}
+            {
+            // get all the nodes going
+            all.notifyAll();
+            }
+        }
 
     private static final long serialVersionUID = 1;
     }
     
 
 /****
-	Thread Pool using only Spin-waits (ugh, I know).
-	This is for testing and experiment only -- Sean
+     Thread Pool using only Spin-waits (ugh, I know).
+     This is for testing and experiment only -- Sean
 
 // Here we use our own thread pool.  This pool is constructed so that we
 // can fire off N threads with a minimum of locking and wait()ing, which
@@ -553,156 +553,156 @@ class ThreadPool
 // for something like a ParallelSequence.
 
 class ThreadPool
-    {
-	// the main thread waits on threads.
-	// the individual threads wait on all
-    Object[] all = new Object[0];
-	    
-    // Thread pool
-    ArrayList threads = new ArrayList();
-    int totalThreads = 0;
-    
-	// holds a thread
-    class Node implements Runnable
-        {
-        volatile boolean die = false;  // raised when the Node is asked to kill its thread and die.
-        volatile boolean go = false;  // raised when the Node is asked to have its thread run the runnable toRun.
-        volatile public Runnable toRun;  // the runnable to run
-        volatile public int index;
-        public Thread thread;
-        
-        public Node(String name, int index) 
-            {
-            thread = new Thread(this); 
-            thread.setDaemon(true);
-            thread.setName(name);
-            this.index = index;
-            }
-        
-    	volatile boolean notifyRaised = false;
-        public boolean dowait()
-        	{
-			while (!notifyRaised);
-        	notifyRaised = false;         	
-			return true;
-        	}
-        
-		public void donotify()
-			{
-			mainNotifyRaised = true;
-			}
-	
-
-        public void run()
-            {
-            while(true)
-                {
-                // this is outside because these are booleans and are atomic, and it
-                // doesn't matter anyway because they're READ here and only WRITTEN
-                // elsewhere.  It gives us a small chance of escaping the synchronization
-                // immediately below.
-	            while (!go && !die)
-					dowait();
-
-	            // at this point either go or die has been raised and toRun won't be updated again
-	            // until after adding back into the list, so we can access them here safely without synchronization
-	            
-				if (die) { die = false; return; }
-				go = false;
-                toRun.run();
-                
-                threads.set(index, this);
-                
-                boolean last = false;
-                synchronized(threads)
-                    {
-                    last = ((--outstanding) == 0);
-                	}
-                if (last)
-                	donotify();
-                }
-            }
-        }
-    
-	public void donotify(int upto)
-		{
-		for(int i = 0; i < upto; i++)
-			((Node)(threads.get(i))).notifyRaised = true;
-		}
-	
-	volatile boolean mainNotifyRaised = false;
-	public boolean dowait()
-		{
-        while(!mainNotifyRaised);
-		mainNotifyRaised = false;
-		return true; 
-		}
-		
+{
+// the main thread waits on threads.
+// the individual threads wait on all
+Object[] all = new Object[0];
             
-    // Joins and kills all threads, both those running and those sitting in the pool
-    void killThreads()
-        {
-        joinThreads();
-        
-        int size = threads.size();
-        
-        for(int i = 0; i < size; i++)
-			{
-			Node node = (Node)(threads.get(i));
-			node.die = true;  // it's okay if this isn't synchronized
-			}
-        
-        // wake up threads to die
-        donotify(size);
-
-        for(int i = 0; i < size; i++)
-            {
-			Node node = (Node)(threads.get(i));
-            try { node.thread.join(); }
-            catch (InterruptedException e) { } // ignore
-            }
-        
-        threads.clear();
-        }
-            
-    // Waits for all presently running threads to complete
-    void joinThreads()
-        {
-		boolean notdone = false;
-        while(!dowait());
-        }
-        
-    volatile int outstanding = 0;
+// Thread pool
+ArrayList threads = new ArrayList();
+int totalThreads = 0;
     
-    void startThreads(Runnable[] run, String name)
-    	{
-    	// this is only called when we have NO threads running
-    	int size = threads.size();
-    	outstanding = run.length;
-    	int upto = Math.min(size, outstanding);
+// holds a thread
+class Node implements Runnable
+{
+volatile boolean die = false;  // raised when the Node is asked to kill its thread and die.
+volatile boolean go = false;  // raised when the Node is asked to have its thread run the runnable toRun.
+volatile public Runnable toRun;  // the runnable to run
+volatile public int index;
+public Thread thread;
+        
+public Node(String name, int index) 
+{
+thread = new Thread(this); 
+thread.setDaemon(true);
+thread.setName(name);
+this.index = index;
+}
+        
+volatile boolean notifyRaised = false;
+public boolean dowait()
+{
+while (!notifyRaised);
+notifyRaised = false;           
+return true;
+}
+        
+public void donotify()
+{
+mainNotifyRaised = true;
+}
+        
 
-		// start ready threads
-    	for(int i = 0; i < upto; i++)
-    		{
-    		Node node = (Node)(threads.get(i));
-    		node.toRun = run[i];
-    		node.go = true;
-    		}
-    		
-    	donotify(upto);
-    	
-    	// build new threads
-    	for(int i = upto; i < outstanding; i++)
-    		{
-    		Node node = new Node(name + " " + i, i);
-    		threads.add(node);
-    		node.toRun = run[i];
-    		node.go = true;
-    		node.thread.start();  // since go is already set, this thread won't even bother to wait(), no need to notify
-    		}
-    	}
+public void run()
+{
+while(true)
+{
+// this is outside because these are booleans and are atomic, and it
+// doesn't matter anyway because they're READ here and only WRITTEN
+// elsewhere.  It gives us a small chance of escaping the synchronization
+// immediately below.
+while (!go && !die)
+dowait();
 
-    private static final long serialVersionUID = 1;
-    }
+// at this point either go or die has been raised and toRun won't be updated again
+// until after adding back into the list, so we can access them here safely without synchronization
+                    
+if (die) { die = false; return; }
+go = false;
+toRun.run();
+                
+threads.set(index, this);
+                
+boolean last = false;
+synchronized(threads)
+{
+last = ((--outstanding) == 0);
+}
+if (last)
+donotify();
+}
+}
+}
+    
+public void donotify(int upto)
+{
+for(int i = 0; i < upto; i++)
+((Node)(threads.get(i))).notifyRaised = true;
+}
+        
+volatile boolean mainNotifyRaised = false;
+public boolean dowait()
+{
+while(!mainNotifyRaised);
+mainNotifyRaised = false;
+return true; 
+}
+                
+            
+// Joins and kills all threads, both those running and those sitting in the pool
+void killThreads()
+{
+joinThreads();
+        
+int size = threads.size();
+        
+for(int i = 0; i < size; i++)
+{
+Node node = (Node)(threads.get(i));
+node.die = true;  // it's okay if this isn't synchronized
+}
+        
+// wake up threads to die
+donotify(size);
+
+for(int i = 0; i < size; i++)
+{
+Node node = (Node)(threads.get(i));
+try { node.thread.join(); }
+catch (InterruptedException e) { } // ignore
+}
+        
+threads.clear();
+}
+            
+// Waits for all presently running threads to complete
+void joinThreads()
+{
+boolean notdone = false;
+while(!dowait());
+}
+        
+volatile int outstanding = 0;
+    
+void startThreads(Runnable[] run, String name)
+{
+// this is only called when we have NO threads running
+int size = threads.size();
+outstanding = run.length;
+int upto = Math.min(size, outstanding);
+
+// start ready threads
+for(int i = 0; i < upto; i++)
+{
+Node node = (Node)(threads.get(i));
+node.toRun = run[i];
+node.go = true;
+}
+                
+donotify(upto);
+        
+// build new threads
+for(int i = upto; i < outstanding; i++)
+{
+Node node = new Node(name + " " + i, i);
+threads.add(node);
+node.toRun = run[i];
+node.go = true;
+node.thread.start();  // since go is already set, this thread won't even bother to wait(), no need to notify
+}
+}
+
+private static final long serialVersionUID = 1;
+}
 *****/
 

@@ -88,9 +88,9 @@ public abstract class Properties implements java.io.Serializable
     public static Properties getProperties(Object object, boolean expandCollections, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions, boolean allowProxy)
         {
         if (object == null) 
-        	return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions, false);
+            return new SimpleProperties(object, includeSuperclasses, includeGetClass, includeExtensions, false);
         else if (allowProxy && object instanceof sim.util.Proxiable)
-        	object = ((sim.util.Proxiable)object).propertiesProxy();
+            object = ((sim.util.Proxiable)object).propertiesProxy();
         else if (allowProxy && object instanceof sim.util.Propertied)
             return ((sim.util.Propertied)(object)).properties();
             

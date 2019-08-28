@@ -8,23 +8,23 @@ package sim.portrayal.inspector;
 
 
 /** 
-	A Datum is a simple class which provides both a label and a value.
-	It's used as an option in BarChartChartingPropertyInspector and
-	in PieChartChartingPropertyInspector. 
+    A Datum is a simple class which provides both a label and a value.
+    It's used as an option in BarChartChartingPropertyInspector and
+    in PieChartChartingPropertyInspector. 
 */
 
 public class Datum
-	{
-	String label;
-	double value;
-	
-	public Datum(String label, double value)
-		{
-		this.label = label;
-		this.value = value;
-		}
-	
-	public String getLabel() { return label; }
-	public double getValue() { return value; }
-	public String toString() { return "Datum[\"" + label + "\", " + value + "]"; }
-	}
+    {
+    String label;
+    double value;
+        
+    public Datum(String label, double value)
+        {
+        this.label = label;
+        this.value = value;
+        }
+        
+    public String getLabel() { return label; }
+    public double getValue() { return value; }
+    public String toString() { return "Datum[\"" + label + "\", " + value + "]"; }
+    }

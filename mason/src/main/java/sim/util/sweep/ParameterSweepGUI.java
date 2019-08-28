@@ -34,13 +34,13 @@ public class ParameterSweepGUI extends JPanel
     int numMaxSteps = 10000;
     int numTrials = 1;
     int numThreads = 1;
-	long initialSeed = 0;
-	boolean compressOutput = false;
-	int modulo = 0;
-	double minValue = 0;
-	double maxValue = 1;
-	int divisionValue = 1;
-	
+    long initialSeed = 0;
+    boolean compressOutput = false;
+    int modulo = 0;
+    double minValue = 0;
+    double maxValue = 1;
+    int divisionValue = 1;
+        
     JRadioButton independentRadio;
     JRadioButton dependentRadio;
     JRadioButton neitherRadio;
@@ -50,8 +50,8 @@ public class ParameterSweepGUI extends JPanel
     CardLayout cardLayout;
     JProgressBar progressBar;
 
-	boolean running = false;
-	javax.swing.Timer timer;
+    boolean running = false;
+    javax.swing.Timer timer;
 
     /**
      * The current index of the topmost element
@@ -77,17 +77,17 @@ public class ParameterSweepGUI extends JPanel
         setLayout(new BorderLayout());
         
  
- 		///// GLOBAL AND FOOTER
+        ///// GLOBAL AND FOOTER
 
-       	JPanel p = new JPanel();
+        JPanel p = new JPanel();
         add(p, BorderLayout.SOUTH);
         p.setLayout(new BorderLayout());
 
 
-		///// RUN AND STOP BUTTONS IN FOOTER
+        ///// RUN AND STOP BUTTONS IN FOOTER
 
         run = new JButton(sim.display.Console.iconFor("NotPlaying.png"));
-	 	stop = new JButton(sim.display.Console.iconFor("NotStopped.png"));
+        stop = new JButton(sim.display.Console.iconFor("NotStopped.png"));
 
         run.setPressedIcon(sim.display.Console.iconFor("Playing.png"));
         stop.setPressedIcon(sim.display.Console.iconFor("Stopped.png"));
@@ -100,13 +100,13 @@ public class ParameterSweepGUI extends JPanel
         stop.setContentAreaFilled(false);
  
         run.addActionListener(new ActionListener()
-        	{
-        	public void actionPerformed(ActionEvent e)
-        		{
-        		run();
-        		}
-        	});
-        	
+            {
+            public void actionPerformed(ActionEvent e)
+                {
+                run();
+                }
+            });
+                
         stop.addActionListener(new ActionListener() 
             {
             public void actionPerformed(ActionEvent e) 
@@ -116,11 +116,11 @@ public class ParameterSweepGUI extends JPanel
             });
             
         progressBar = new JProgressBar(0, 0);
-		JPanel progressPanel = new JPanel();
-		progressPanel.setLayout(new BorderLayout());
-		progressPanel.add(progressBar, BorderLayout.CENTER);
-		progressPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		
+        JPanel progressPanel = new JPanel();
+        progressPanel.setLayout(new BorderLayout());
+        progressPanel.add(progressBar, BorderLayout.CENTER);
+        progressPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                
         Box footerBox = new Box(BoxLayout.X_AXIS);
         footerBox.add(run);
         footerBox.add(stop);
@@ -132,7 +132,7 @@ public class ParameterSweepGUI extends JPanel
 
 
 
-		// GLOBAL SETTINGS       
+        // GLOBAL SETTINGS       
        
         PropertyField maxStepsField = new PropertyField("" + numMaxSteps)
             {
@@ -168,10 +168,10 @@ public class ParameterSweepGUI extends JPanel
                 {
                 try
                     {
-                	long s = Long.parseLong(value);
-                	if (s != 0)
-                		initialSeed = s; 
-                	}
+                    long s = Long.parseLong(value);
+                    if (s != 0)
+                        initialSeed = s; 
+                    }
                 catch (NumberFormatException ex) { }
                 return "" + initialSeed;
                 }
@@ -208,7 +208,7 @@ public class ParameterSweepGUI extends JPanel
             public String newValue(String value)
                 {
                 compressOutput = (value.equals("true"));
-            	return "" + compressOutput;
+                return "" + compressOutput;
                 }
             };
 
@@ -220,16 +220,16 @@ public class ParameterSweepGUI extends JPanel
         globalSettings.addLabelled("Initial Seed", seedField);
         globalSettings.addLabelled("Compress Output File", compressField);
 
-    	p.add(globalSettings, BorderLayout.CENTER);
+        p.add(globalSettings, BorderLayout.CENTER);
 
 
 
 
-		// Add Property Panel
+        // Add Property Panel
 
-     	independentRadio = new JRadioButton("Independent", true);
-     	dependentRadio = new JRadioButton("Dependent");
-     	neitherRadio = new JRadioButton("Neither");
+        independentRadio = new JRadioButton("Independent", true);
+        dependentRadio = new JRadioButton("Dependent");
+        neitherRadio = new JRadioButton("Neither");
 
         JButton resetParams = new JButton("Reset Params");
         resetParams.addActionListener(new ActionListener() 
@@ -269,39 +269,39 @@ public class ParameterSweepGUI extends JPanel
         JPanel neitherPanel = new JPanel();
         JPanel independentPanel = new JPanel();
         independentPanel.setLayout(new BorderLayout());
-		cards.add(dependentPanel, "dependent");
-		cards.add(independentPanel, "independent");
-		cards.add(neitherPanel, "neither");
-		propertyPanel.add(cards, BorderLayout.CENTER);
-		cardLayout.show(cards, "neither");
-		
-		independentRadio.addActionListener(new ActionListener()
-			{
+        cards.add(dependentPanel, "dependent");
+        cards.add(independentPanel, "independent");
+        cards.add(neitherPanel, "neither");
+        propertyPanel.add(cards, BorderLayout.CENTER);
+        cardLayout.show(cards, "neither");
+                
+        independentRadio.addActionListener(new ActionListener()
+            {
             public void actionPerformed(ActionEvent e) 
                 {
                 cardLayout.show(cards, "independent");
                 changeParameterSettings(propList.getSelectedValue(), true);
                 }
-			});
+            });
 
-		dependentRadio.addActionListener(new ActionListener()
-			{
+        dependentRadio.addActionListener(new ActionListener()
+            {
             public void actionPerformed(ActionEvent e) 
                 {
                 cardLayout.show(cards, "dependent");
                 changeParameterSettings(propList.getSelectedValue(), true);
                 }
-			});
+            });
 
-		neitherRadio.addActionListener(new ActionListener()
-			{
+        neitherRadio.addActionListener(new ActionListener()
+            {
             public void actionPerformed(ActionEvent e) 
                 {
                 cardLayout.show(cards, "neither");
                 changeParameterSettings(propList.getSelectedValue(), true);
                 }
-			});
-			
+            });
+                        
         LabelledList list = new LabelledList();
         PropertyField minField = new PropertyField(null, "" + minValue) // , true, new sim.util.Interval(0,1), PropertyField.SHOW_SLIDER)
             {
@@ -311,20 +311,20 @@ public class ParameterSweepGUI extends JPanel
                     {
                     double m = Double.parseDouble(value);
                     if (m != Double.POSITIVE_INFINITY && 
-                    	m != Double.NEGATIVE_INFINITY && 
-                    	m == m && // NaN
-                    	m <= maxValue)
-                    	{
-                    	minValue = m;
-						changeParameterSettings(propList.getSelectedValue(), false);
-                    	}
+                        m != Double.NEGATIVE_INFINITY && 
+                        m == m && // NaN
+                        m <= maxValue)
+                        {
+                        minValue = m;
+                        changeParameterSettings(propList.getSelectedValue(), false);
+                        }
                     }
                 catch (NumberFormatException ex) { }
                 return "" + minValue;
                 }
             };
         minField.getField().setColumns(8);
-		list.addLabelled("Min ", minField);
+        list.addLabelled("Min ", minField);
 
         PropertyField maxField = new PropertyField(null, "" + maxValue) //   , true, new sim.util.Interval(0,1), PropertyField.SHOW_SLIDER)
             {
@@ -334,19 +334,19 @@ public class ParameterSweepGUI extends JPanel
                     {
                     double m = Double.parseDouble(value);
                     if (m != Double.POSITIVE_INFINITY && 
-                    	m != Double.NEGATIVE_INFINITY && 
-                    	m == m && // NaN
-                    	m >= minValue)
-                    	{
-                    	maxValue = m;
-						changeParameterSettings(propList.getSelectedValue(), false);
-                    	}
+                        m != Double.NEGATIVE_INFINITY && 
+                        m == m && // NaN
+                        m >= minValue)
+                        {
+                        maxValue = m;
+                        changeParameterSettings(propList.getSelectedValue(), false);
+                        }
                     }
                 catch (NumberFormatException ex) { }
                 return "" + maxValue;
                 }
             };
-		list.addLabelled("Max ", maxField);
+        list.addLabelled("Max ", maxField);
         maxField.getField().setColumns(8);
 
         PropertyField divisionField = new PropertyField("" + divisionValue)
@@ -356,19 +356,19 @@ public class ParameterSweepGUI extends JPanel
                 try
                     {
                     divisionValue = Math.max(Integer.parseInt(value), 1);
-					changeParameterSettings(propList.getSelectedValue(), false);
+                    changeParameterSettings(propList.getSelectedValue(), false);
                     }
                 catch (NumberFormatException ex) { }
                 return "" + divisionValue;
                 }
             };
-		list.addLabelled("Divisions ", divisionField);
-		independentPanel.add(list, BorderLayout.CENTER);
-		
-		
-		
-		
-		// Add property list
+        list.addLabelled("Divisions ", divisionField);
+        independentPanel.add(list, BorderLayout.CENTER);
+                
+                
+                
+                
+        // Add property list
         propList = new JList<ParameterSettings>();
         propertySettingsList = new DefaultListModel<ParameterSettings>();
 
@@ -397,13 +397,13 @@ public class ParameterSweepGUI extends JPanel
         
 
 
-		
-		JPanel header = new JPanel();
-		header.setLayout(new BorderLayout());
-		header.setBorder(BorderFactory.createTitledBorder("Model Variables"));
-		header.add(propertyPanel, BorderLayout.SOUTH);
-		header.add(new JScrollPane(propList), BorderLayout.CENTER);		
-		add(header, BorderLayout.CENTER);
+                
+        JPanel header = new JPanel();
+        header.setLayout(new BorderLayout());
+        header.setBorder(BorderFactory.createTitledBorder("Model Variables"));
+        header.add(propertyPanel, BorderLayout.SOUTH);
+        header.add(new JScrollPane(propList), BorderLayout.CENTER);             
+        add(header, BorderLayout.CENTER);
         }
 
 
@@ -433,8 +433,8 @@ public class ParameterSweepGUI extends JPanel
         }
 
 
-	void updateParameterSettings(ParameterSettings currentProp)
-		{
+    void updateParameterSettings(ParameterSettings currentProp)
+        {
         if (currentProp.amSet)
             {
             if (currentProp.amDependent)
@@ -457,124 +457,124 @@ public class ParameterSweepGUI extends JPanel
             cardLayout.show(cards, "neither");
             }
 
-		propList.repaint();
-		cards.repaint();
-		}
+        propList.repaint();
+        cards.repaint();
+        }
 
 
-	void changeParameterSettings(ParameterSettings currentProp, boolean entering)
-		{
-		// update card
-		
-		if (dependentRadio.isSelected())
-			{
-			currentProp.amSet = true;
-			currentProp.amDependent = true;
-			}
-		else if (independentRadio.isSelected())
-			{
-			currentProp.amSet = true;
-			currentProp.amDependent = false;
-			if (entering)
-				{
+    void changeParameterSettings(ParameterSettings currentProp, boolean entering)
+        {
+        // update card
+                
+        if (dependentRadio.isSelected())
+            {
+            currentProp.amSet = true;
+            currentProp.amDependent = true;
+            }
+        else if (independentRadio.isSelected())
+            {
+            currentProp.amSet = true;
+            currentProp.amDependent = false;
+            if (entering)
+                {
                 minValue = currentProp.min;
                 maxValue = currentProp.max;
                 divisionValue = currentProp.divisions;
-				}
-			else
-				{
-				currentProp.min = minValue;
-				currentProp.max = maxValue;
-				currentProp.divisions = divisionValue;
-				}
-			}
-		else // neither
-			{
-			currentProp.amSet = false;
-			}
-		
-		propList.repaint();
-		cards.repaint();
-		}
-	
-	void run()
-		{
-		if	(!isValidConfiguration())
-			{
-			JOptionPane.showMessageDialog(null, "You need to have both an independent and a dependent variable set to run");
-			return;
-			}
-		else
-			{
-			String filePath = getFilePath(); 
-			if (filePath == null) { return; }
-			final ParameterDatabase pd = ParameterSettings.convertToDatabase(propList.getModel(), state.state, numMaxSteps, modulo, numTrials, numThreads, initialSeed, compressOutput, filePath);
-			pd.listNotAccessed(new PrintWriter(new OutputStreamWriter(System.out)));
+                }
+            else
+                {
+                currentProp.min = minValue;
+                currentProp.max = maxValue;
+                currentProp.divisions = divisionValue;
+                }
+            }
+        else // neither
+            {
+            currentProp.amSet = false;
+            }
+                
+        propList.repaint();
+        cards.repaint();
+        }
+        
+    void run()
+        {
+        if      (!isValidConfiguration())
+            {
+            JOptionPane.showMessageDialog(null, "You need to have both an independent and a dependent variable set to run");
+            return;
+            }
+        else
+            {
+            String filePath = getFilePath(); 
+            if (filePath == null) { return; }
+            final ParameterDatabase pd = ParameterSettings.convertToDatabase(propList.getModel(), state.state, numMaxSteps, modulo, numTrials, numThreads, initialSeed, compressOutput, filePath);
+            pd.listNotAccessed(new PrintWriter(new OutputStreamWriter(System.out)));
 
-			// set up ParameterSweep
+            // set up ParameterSweep
 
-			try
-				{
-				parameterSweep = new ParameterSweep(pd);
-				}
-			catch (ClassNotFoundException ex)
-				{
-				ex.printStackTrace();
-				JOptionPane.showMessageDialog(null, "Invalid class " + state.state);
-				return;
-				}
-				
-			new Thread(new Runnable()
-					{
-					public void run() 
-						{
-						System.err.println("STARTED");
-						running = true;
-						run.setIcon(sim.display.Console.iconFor("Playing.png"));
-						stop.setIcon(sim.display.Console.iconFor("NotStopped.png"));
-						try 
-							{
-							timer = new javax.swing.Timer(1000, new ActionListener() 
-								{
-								public void actionPerformed(ActionEvent e)
-									{
-									System.err.println("progress: " + parameterSweep.getJobCount());
-									if (running)
-										{
-										progressBar.setMaximum(parameterSweep.getTotalJobs());
-										progressBar.setMinimum(0);
-										progressBar.setValue(parameterSweep.getJobCount());
-										}
-									}
-								});
-							timer.start();
-							parameterSweep.run();
-							parameterSweep.waitUntilStopped();
-							}
-						catch(Exception e)
-							{
-							e.printStackTrace();
-							}
-						System.err.println("STOPPED");
-						running = false;
-						timer.stop();
-						run.setIcon(sim.display.Console.iconFor("NotPlaying.png"));
-						stop.setIcon(sim.display.Console.iconFor("Stopped.png"));
-						progressBar.setMaximum(0);
-						progressBar.setMinimum(0);
-						progressBar.setValue(0);
-						}
-					}).start();
-			}
-    	}
-		
-	void stop()
-		{
-		// request a stop
-		if (parameterSweep!=null) 
-			{
-			parameterSweep.stop = true;
-			}
+            try
+                {
+                parameterSweep = new ParameterSweep(pd);
+                }
+            catch (ClassNotFoundException ex)
+                {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Invalid class " + state.state);
+                return;
+                }
+                                
+            new Thread(new Runnable()
+                {
+                public void run() 
+                    {
+                    System.err.println("STARTED");
+                    running = true;
+                    run.setIcon(sim.display.Console.iconFor("Playing.png"));
+                    stop.setIcon(sim.display.Console.iconFor("NotStopped.png"));
+                    try 
+                        {
+                        timer = new javax.swing.Timer(1000, new ActionListener() 
+                            {
+                            public void actionPerformed(ActionEvent e)
+                                {
+                                System.err.println("progress: " + parameterSweep.getJobCount());
+                                if (running)
+                                    {
+                                    progressBar.setMaximum(parameterSweep.getTotalJobs());
+                                    progressBar.setMinimum(0);
+                                    progressBar.setValue(parameterSweep.getJobCount());
+                                    }
+                                }
+                            });
+                        timer.start();
+                        parameterSweep.run();
+                        parameterSweep.waitUntilStopped();
+                        }
+                    catch(Exception e)
+                        {
+                        e.printStackTrace();
+                        }
+                    System.err.println("STOPPED");
+                    running = false;
+                    timer.stop();
+                    run.setIcon(sim.display.Console.iconFor("NotPlaying.png"));
+                    stop.setIcon(sim.display.Console.iconFor("Stopped.png"));
+                    progressBar.setMaximum(0);
+                    progressBar.setMinimum(0);
+                    progressBar.setValue(0);
+                    }
+                }).start();
+            }
+        }
+                
+    void stop()
+        {
+        // request a stop
+        if (parameterSweep!=null) 
+            {
+            parameterSweep.stop = true;
+            }
         }
 
 

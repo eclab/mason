@@ -45,18 +45,18 @@ public /*strictfp*/ class CustomNode extends SimplePortrayal2D implements Steppa
         double dx = desiredLocation.x - location.x;
         double dy = desiredLocation.y - location.y;
 
+            {
+            double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
+            if( temp < 1 )
                 {
-                double temp = /*Strict*/Math.sqrt(dx*dx+dy*dy);
-                if( temp < 1 )
-                    {
-                    steps = 0;
-                    }
-                else
-                    {
-                    dx /= temp;
-                    dy /= temp;
-                    }
+                steps = 0;
                 }
+            else
+                {
+                dx /= temp;
+                dy /= temp;
+                }
+            }
 
         if( ! nt.acceptablePosition( this, new Double2D( location.x + dx, location.y + dy ) ) )
             {

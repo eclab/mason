@@ -122,13 +122,13 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     ArrayList nameMethods; // if not hidden (or explicitly shown), that corresponding spot will be null
     Properties auxillary = null;  // if non-null, we use this properties instead
 
-	boolean includeSuperclasses;
-	boolean includeGetClass;
-	boolean includeExtensions;
+    boolean includeSuperclasses;
+    boolean includeGetClass;
+    boolean includeExtensions;
     
     public Comparator makeAlphabeticalComparator()
-    	{
-    	return new Comparator()
+        {
+        return new Comparator()
             {
             public int compare(Object x, Object y)
                 {
@@ -156,20 +156,20 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         }
         
     public Comparator makeSimpleComparator(String[] filter)
-    	{
-    	if (filter == null) filter = new String[0];
+        {
+        if (filter == null) filter = new String[0];
 
-		// load the filter into a hashmap to make things O(1) roughly
-    	final HashMap filterMap = new HashMap();
-		int j = 0;
-		for(int i = 0; i < filter.length; i++)
-			{
-			if (filterMap.containsKey(filter[i]))
-				throw new IllegalArgumentException("Array provided to SimpleProperties.setSortList has duplicate values.");
-			filterMap.put(filter[i], new Integer(i));
-			}
+        // load the filter into a hashmap to make things O(1) roughly
+        final HashMap filterMap = new HashMap();
+        int j = 0;
+        for(int i = 0; i < filter.length; i++)
+            {
+            if (filterMap.containsKey(filter[i]))
+                throw new IllegalArgumentException("Array provided to SimpleProperties.setSortList has duplicate values.");
+            filterMap.put(filter[i], new Integer(i));
+            }
 
-    	return new Comparator()
+        return new Comparator()
             {
             public int compare(Object x, Object y)
                 {
@@ -190,38 +190,38 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             public boolean equals(Object obj)
                 { return this.equals(obj); }  // doesn't really matter
             };
-    	}
+        }
         
     /** 
-    	Sorts the properties by an Alphabetical Comparator (provided by makeAlphabeticalComparator()).
+        Sorts the properties by an Alphabetical Comparator (provided by makeAlphabeticalComparator()).
         If the underlying object is Propertied, sorting has no effect.
-    	Returns the original SimpleProperties, now sorted.
+        Returns the original SimpleProperties, now sorted.
     */
 
     public SimpleProperties sortAlphabetically() 
-    	{
-    	return sort(makeAlphabeticalComparator());
-    	}
+        {
+        return sort(makeAlphabeticalComparator());
+        }
     
     /** 
-    	Sorts the properties by an Simple Comparator (provided by makeSimpleComparator()).
-    	If the underlying object is Propertied, sorting has no effect.
-		Returns the original SimpleProperties, now sorted.
+        Sorts the properties by an Simple Comparator (provided by makeSimpleComparator()).
+        If the underlying object is Propertied, sorting has no effect.
+        Returns the original SimpleProperties, now sorted.
     */
 
     public SimpleProperties sort(String[] filter) 
-    	{
-    	return sort(makeSimpleComparator(filter));
-    	}
+        {
+        return sort(makeSimpleComparator(filter));
+        }
     
     /** 
-    	@deprecated Use sort(...) instead.
+        @deprecated Use sort(...) instead.
     */
     
     public void sortProperties(Comparator c)
-    	{
-    	sort(c);
-    	}
+        {
+        sort(c);
+        }
 
 
     /** Sorts the properties by the following comparator, which 
@@ -244,7 +244,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         if (auxillary != null) return this;
         if (getMethods.size() < 2) return this;  // don't bother!
         if (c == null) return this;
-        	
+                
         // sort the getMethods indices
         Integer[] index = new Integer[getMethods.size()];
         for(int i = 0; i < index.length; i++)
@@ -295,7 +295,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             a.add(nameMethods.get(index[i].intValue()));
         nameMethods = a;
     
-    	return this;
+        return this;
         }
     
     
@@ -326,7 +326,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
     
     /** Gathers all properties for the object, possibly including ones defined in superclasses. 
         If includeGetClass is true, then the Class property will be included. 
-          The domFoo() and hideFoo() property extension methods are respected
+        The domFoo() and hideFoo() property extension methods are respected
         if <tt>includeExtensions</tt> is true.
     */
     public SimpleProperties(Object o, boolean includeSuperclasses, boolean includeGetClass, boolean includeExtensions)
@@ -359,11 +359,11 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         if (object != null && auxillary == null) 
             {
             getMethods = new ArrayList();
-    		setMethods = new ArrayList();
-    		domMethods = new ArrayList();
-    		desMethods = new ArrayList();
-    		hideMethods = new ArrayList();
-    		nameMethods = new ArrayList();
+            setMethods = new ArrayList();
+            domMethods = new ArrayList();
+            desMethods = new ArrayList();
+            hideMethods = new ArrayList();
+            nameMethods = new ArrayList();
 
             // generate the properties
             Class c = object.getClass();
@@ -495,7 +495,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                     e1.printStackTrace();  // try again though
                     }
                 }
-       		sortAlphabetically();
+            sortAlphabetically();
             }
         }
     
@@ -538,22 +538,22 @@ public class SimpleProperties extends Properties implements java.io.Serializable
                 {
                 return name.substring(2);
                 }
-        	else if (name.equals("longValue"))   // Integers of various kinds
-        		{
-	            return "Value";
-	            }
-	        else if (name.equals("doubleValue"))   // Other Numbers
-	        	{
-	            return "Value";
-	            }
-	        else if (name.equals("booleanValue"))   // Booleans
-	        	{
-	            return "Value";
-	            }
-	        else if (name.equals("toString"))   // Strings, StringBuffers
-	        	{
-	            return "Value";
-	            }
+            else if (name.equals("longValue"))   // Integers of various kinds
+                {
+                return "Value";
+                }
+            else if (name.equals("doubleValue"))   // Other Numbers
+                {
+                return "Value";
+                }
+            else if (name.equals("booleanValue"))   // Booleans
+                {
+                return "Value";
+                }
+            else if (name.equals("toString"))   // Strings, StringBuffers
+                {
+                return "Value";
+                }
             else return null;
             }
         catch (Exception e)             // just in case of RuntimeExceptions
@@ -593,23 +593,23 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             {
             String name = getPropertyName(m);
             if (name != null)
-            	{
-            	return c.getMethod("dom" + name, new Class[] {} );
-            	}
+                {
+                return c.getMethod("dom" + name, new Class[] {} );
+                }
             else
-            	{
-            	return null;
-            	}
+                {
+                return null;
+                }
 /*
-            if (m.getName().startsWith("get"))
-                {
-                return c.getMethod("dom" + (m.getName().substring(3)), new Class[] {});
-                }
-            else if (m.getName().startsWith("is"))
-                {
-                return c.getMethod("dom" + (m.getName().substring(2)), new Class[] { });
-                }
-            else return null;
+  if (m.getName().startsWith("get"))
+  {
+  return c.getMethod("dom" + (m.getName().substring(3)), new Class[] {});
+  }
+  else if (m.getName().startsWith("is"))
+  {
+  return c.getMethod("dom" + (m.getName().substring(2)), new Class[] { });
+  }
+  else return null;
 */
             }
         catch (Exception e)             // just in case of RuntimeExceptions
@@ -626,23 +626,23 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             {
             String name = getPropertyName(m);
             if (name != null)
-            	{
-            	return c.getMethod("des" + name, new Class[] {} );
-            	}
+                {
+                return c.getMethod("des" + name, new Class[] {} );
+                }
             else
-            	{
-            	return null;
-            	}
+                {
+                return null;
+                }
             /*
-            if (m.getName().startsWith("get"))
-                {
-                return c.getMethod("des" + (m.getName().substring(3)), new Class[] {});
-                }
-            else if (m.getName().startsWith("is"))
-                {
-                return c.getMethod("des" + (m.getName().substring(2)), new Class[] { });
-                }
-            else return null;
+              if (m.getName().startsWith("get"))
+              {
+              return c.getMethod("des" + (m.getName().substring(3)), new Class[] {});
+              }
+              else if (m.getName().startsWith("is"))
+              {
+              return c.getMethod("des" + (m.getName().substring(2)), new Class[] { });
+              }
+              else return null;
             */
             }
         catch (Exception e)             // just in case of RuntimeExceptions
@@ -659,23 +659,23 @@ public class SimpleProperties extends Properties implements java.io.Serializable
             {
             String name = getPropertyName(m);
             if (name != null)
-            	{
-            	return c.getMethod("name" + name, new Class[] {} );
-            	}
+                {
+                return c.getMethod("name" + name, new Class[] {} );
+                }
             else
-            	{
-            	return null;
-            	}
+                {
+                return null;
+                }
             /*
-            if (m.getName().startsWith("get"))
-                {
-                return c.getMethod("name" + (m.getName().substring(3)), new Class[] {});
-                }
-            else if (m.getName().startsWith("is"))
-                {
-                return c.getMethod("name" + (m.getName().substring(2)), new Class[] { });
-                }
-            else return null;
+              if (m.getName().startsWith("get"))
+              {
+              return c.getMethod("name" + (m.getName().substring(3)), new Class[] {});
+              }
+              else if (m.getName().startsWith("is"))
+              {
+              return c.getMethod("name" + (m.getName().substring(2)), new Class[] { });
+              }
+              else return null;
             */
             }
         catch (Exception e)             // just in case of RuntimeExceptions

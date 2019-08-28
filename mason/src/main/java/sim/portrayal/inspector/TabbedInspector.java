@@ -129,8 +129,8 @@ public class TabbedInspector extends Inspector
         }
     
     /** Creates a TabbedInspector in which the provided properties are collected under various tabs.
-     	The tab names are provided with tabNames,
-		and the properties under each tab are given with the corresponding propertyNames.
+        The tab names are provided with tabNames,
+        and the properties under each tab are given with the corresponding propertyNames.
         extraTab gives the name of a tab holding all extra properties which do not 
         appear among ANY of the propertyNames arrays.  If extraTab is null, these properties 
         will not appear at all.  The subinspectors under each tab are SimpleInspectors. */
@@ -140,11 +140,11 @@ public class TabbedInspector extends Inspector
 
 
     /** Creates a TabbedInspector in which the provided properties are collected under various tabs.
-    	then collected under groups under those tabs.  The tab names are provided with tabNames,
+        then collected under groups under those tabs.  The tab names are provided with tabNames,
         and the groups under each tab are given with the corresponding tabGroups.
-		Properties for each tab/group combination are given under tabGroupProperties.  There may
-		be one additional array of properties under a given tab: these will appear as separate ungrouped
-		properties.  
+        Properties for each tab/group combination are given under tabGroupProperties.  There may
+        be one additional array of properties under a given tab: these will appear as separate ungrouped
+        properties.  
         extraTab gives the name of a tab holding all extra properties which do not 
         appear among ANY of the propertyNames arrays.  If extraTab is null, these properties 
         will not appear at all.  The subinspectors under each tab are SimpleInspectors. */
@@ -153,80 +153,80 @@ public class TabbedInspector extends Inspector
         { buildTabbedInspector(properties, state, name, tabGroupProperties, tabGroups, tabNames, extraTab); }
 
 
-	/** Creates a TabbedInspector with separate tabbed subinspectors for each of the
-		provided objects.  The names of each of these subinspectors is provided in tabNames.
-		If a name is provided, then the entire TabbedInspector
-		will have a bordered layout with that given name.  If a title is provided (and it generally
-		out to be), then this will serve as the TabbedInspector's title (which appears when it is
-		in windows or higher-level tabs).   
-	*/
-	public TabbedInspector(Object[] objects, GUIState state, String name,
-							String title, String[] tabNames)
-		{
+    /** Creates a TabbedInspector with separate tabbed subinspectors for each of the
+        provided objects.  The names of each of these subinspectors is provided in tabNames.
+        If a name is provided, then the entire TabbedInspector
+        will have a bordered layout with that given name.  If a title is provided (and it generally
+        out to be), then this will serve as the TabbedInspector's title (which appears when it is
+        in windows or higher-level tabs).   
+    */
+    public TabbedInspector(Object[] objects, GUIState state, String name,
+        String title, String[] tabNames)
+        {
         if (objects == null)
-        	throw new RuntimeException("Objects array provided is null.");
-    	Properties[] properties = new SimpleProperties[objects.length];
-    	
-		for(int i = 0; i < objects.length; i++)
-			properties[i] = Properties.getProperties(objects[i]);
-		
-		buildTabbedInspector(properties, state, name, title, tabNames);
-		}
+            throw new RuntimeException("Objects array provided is null.");
+        Properties[] properties = new SimpleProperties[objects.length];
+        
+        for(int i = 0; i < objects.length; i++)
+            properties[i] = Properties.getProperties(objects[i]);
+                
+        buildTabbedInspector(properties, state, name, title, tabNames);
+        }
 
-	/** Creates a TabbedInspector with separate tabbed subinspectors for each of the
-		provided properties.  The names of each of these subinspectors is provided in tabNames.
-		If a name is provided, then the entire TabbedInspector
-		will have a bordered layout with that given name.  If a title is provided (and it generally
-		out to be), then this will serve as the TabbedInspector's title (which appears when it is
-		in windows or higher-level tabs).   
-	*/
-	public TabbedInspector(Properties[] properties, GUIState state, String name,
-							String title, String[] tabNames)
-		{
-		buildTabbedInspector(properties, state, name, title, tabNames);
-		}
+    /** Creates a TabbedInspector with separate tabbed subinspectors for each of the
+        provided properties.  The names of each of these subinspectors is provided in tabNames.
+        If a name is provided, then the entire TabbedInspector
+        will have a bordered layout with that given name.  If a title is provided (and it generally
+        out to be), then this will serve as the TabbedInspector's title (which appears when it is
+        in windows or higher-level tabs).   
+    */
+    public TabbedInspector(Properties[] properties, GUIState state, String name,
+        String title, String[] tabNames)
+        {
+        buildTabbedInspector(properties, state, name, title, tabNames);
+        }
 
 
-	// flattens a 2-dimensional array of strings to a single array
-	String[] flatten(String[][] names)
-		{
-		int count = 0;
-		for(int i = 0; i < names.length; i++)
-			count += names[i].length;
-		String[] group = new String[count];
-		count = 0;
-		for(int i = 0; i < names.length; i++)
-			{
-			System.arraycopy(names[i], 0, group, count, names[i].length);
-			count += names[i].length;
-			}
-		return group;
-		}
+    // flattens a 2-dimensional array of strings to a single array
+    String[] flatten(String[][] names)
+        {
+        int count = 0;
+        for(int i = 0; i < names.length; i++)
+            count += names[i].length;
+        String[] group = new String[count];
+        count = 0;
+        for(int i = 0; i < names.length; i++)
+            {
+            System.arraycopy(names[i], 0, group, count, names[i].length);
+            count += names[i].length;
+            }
+        return group;
+        }
 
-	// flattens a 3-dimensional array of strings to a single array
-	String[] flatten(String[][][] names)
-		{
-		String[][] group = new String[names.length][];
-		for(int i = 0; i < names.length; i++)
-			group[i] = flatten(names[i]);
-		return flatten(group);
-		}
+    // flattens a 3-dimensional array of strings to a single array
+    String[] flatten(String[][][] names)
+        {
+        String[][] group = new String[names.length][];
+        for(int i = 0; i < names.length; i++)
+            group[i] = flatten(names[i]);
+        return flatten(group);
+        }
 
-	// builds the inspector for both tabs and groups under the tabs.
-	// tabGroupProperties are per-tab, then per-group, lists of properties.
-	// tabGroups are per-tab lists of group names
-	//
-	// NOTE: It must be the case that tabGroupProperties[tab].length == tabGroups[i].length
-	// or that tabGroupProperties[tab].length == tabGroups[i].length + 1
-	// for a given tab. In the latter case, groups under that tab will be formed
-	// for properties in tabGroupProperties[tab][group] for group = 0 ... tabGroupProperties[tab].length - 2 
-	// and the final group (tabGroupProperties[tab][tabGroupProperties.length-1])
-	// will be displayed as separate ungrouped properties under the tab (they will appear first).
-	// 
-	// 
-	// tabNames is a list of tab names
-	// extraTab is where all properties go that are not found under tabGroupProperties.
-	// If extraTab is null, then these "extra" properties will not be shown.
+    // builds the inspector for both tabs and groups under the tabs.
+    // tabGroupProperties are per-tab, then per-group, lists of properties.
+    // tabGroups are per-tab lists of group names
+    //
+    // NOTE: It must be the case that tabGroupProperties[tab].length == tabGroups[i].length
+    // or that tabGroupProperties[tab].length == tabGroups[i].length + 1
+    // for a given tab. In the latter case, groups under that tab will be formed
+    // for properties in tabGroupProperties[tab][group] for group = 0 ... tabGroupProperties[tab].length - 2 
+    // and the final group (tabGroupProperties[tab][tabGroupProperties.length-1])
+    // will be displayed as separate ungrouped properties under the tab (they will appear first).
+    // 
+    // 
+    // tabNames is a list of tab names
+    // extraTab is where all properties go that are not found under tabGroupProperties.
+    // If extraTab is null, then these "extra" properties will not be shown.
     void buildTabbedInspector(SimpleProperties properties, GUIState state, String name,
         String[][][] tabGroupProperties, String[][] tabGroups, String[] tabNames, String extraTab)
         {
@@ -242,28 +242,28 @@ public class TabbedInspector extends Inspector
             }
         
         for(int i = 0; i < tabNames.length; i++)
-        	{
-        	Inspector insp = null;
-        	if (tabGroupProperties[i].length == tabGroups[i].length)
-        		{
-	         	insp = new GroupedInspector(
-    	    		properties.getPropertiesSubset(flatten(tabGroupProperties[i]), true),
-        			state, tabNames[i], tabGroupProperties[i], tabGroups[i], false);
-        		}
-        	else if (tabGroupProperties[i].length == tabGroups[i].length + 1)
-        		{
-        		String[][] tgb = new String[tabGroupProperties[i].length - 1][];
-        		for(int j = 0; j < tgb.length; j++)
-        			tgb[j] = tabGroupProperties[i][j];
-        			
-	        	insp = new GroupedInspector(
-    	    		properties.getPropertiesSubset(flatten(tabGroupProperties[i]), true),
-        			state, tabNames[i], tgb, tabGroups[i], true);
-        		}
-        	else throw new RuntimeException("Number of tab group property groups for tab " + tabNames[i] + " must be equal to or one more than the number of group names.");
-        	
-        	addInspector(insp, tabNames[i]);
-        	}
+            {
+            Inspector insp = null;
+            if (tabGroupProperties[i].length == tabGroups[i].length)
+                {
+                insp = new GroupedInspector(
+                    properties.getPropertiesSubset(flatten(tabGroupProperties[i]), true),
+                    state, tabNames[i], tabGroupProperties[i], tabGroups[i], false);
+                }
+            else if (tabGroupProperties[i].length == tabGroups[i].length + 1)
+                {
+                String[][] tgb = new String[tabGroupProperties[i].length - 1][];
+                for(int j = 0; j < tgb.length; j++)
+                    tgb[j] = tabGroupProperties[i][j];
+                                
+                insp = new GroupedInspector(
+                    properties.getPropertiesSubset(flatten(tabGroupProperties[i]), true),
+                    state, tabNames[i], tgb, tabGroups[i], true);
+                }
+            else throw new RuntimeException("Number of tab group property groups for tab " + tabNames[i] + " must be equal to or one more than the number of group names.");
+                
+            addInspector(insp, tabNames[i]);
+            }
 
         if (extraTab != null)  // one extra "Misc" tab
             {
@@ -274,11 +274,11 @@ public class TabbedInspector extends Inspector
         setTitle("" + properties.getObject());
         }
 
-	// builds the inspector for tabs only (no groups).
-	// properties are per-tab lists of properties.
-	// tabNames is a list of tab names
+    // builds the inspector for tabs only (no groups).
+    // properties are per-tab lists of properties.
+    // tabNames is a list of tab names
     void buildTabbedInspector(Properties[] properties, GUIState state, String name,
-							String title, String[] tabNames)
+        String title, String[] tabNames)
         {
         buildTabbedInspector(name, true);
         
@@ -300,11 +300,11 @@ public class TabbedInspector extends Inspector
         }
 
 
-	// builds the inspector for tabs only (no groups).
-	// properties are per-tab lists of properties.
-	// tabNames is a list of tab names
-	// extraTab is where all properties go that are not found under tabGroupProperties.
-	// If extraTab is null, then these "extra" properties will not be shown.
+    // builds the inspector for tabs only (no groups).
+    // properties are per-tab lists of properties.
+    // tabNames is a list of tab names
+    // extraTab is where all properties go that are not found under tabGroupProperties.
+    // If extraTab is null, then these "extra" properties will not be shown.
     void buildTabbedInspector(SimpleProperties properties, GUIState state, String name,
         String[][] propertyNames, String[] tabNames, String extraTab)
         {
@@ -398,7 +398,7 @@ public class TabbedInspector extends Inspector
         }
     
     public Inspector removeInspector(String tab)
-    	{
+        {
         int len = inspectors.size();
         int x=0;
         for(x=0;x<len;x++)
@@ -406,7 +406,7 @@ public class TabbedInspector extends Inspector
         if (x==len) return null;  // failed
         tabs.removeTabAt(x);
         return (Inspector)(inspectors.remove(x));
-    	}
+        }
     
     /** Removes and returns the inspector, or null if there is no such inspector in the TabbedInspector */
     public Inspector removeInspector(Inspector i)

@@ -48,24 +48,24 @@ public class StableDouble3D implements StableLocation
         Object p = fieldPortrayal.getObjectLocation(object, gui);
         if (p == null)  { exists = false; }  // purposely don't update x and y and z so they stay the same
         else 
-        	{
-        	if (p instanceof Double3D)
-				{
-				pos = (Double3D)p;
-				}
-			else if (p instanceof Double2D)
-				{
-				pos = new Double3D((Double2D)p);
-				}
-			else 
-				{
-				throw new RuntimeException("StableDouble3D expected an Double2D or Double3D position from underlying field portrayal " + fieldPortrayal);
-				}
-			x = pos.x; 
-			y = pos.y; 
-			z = pos.z; 
-			exists = true; 
-			}
+            {
+            if (p instanceof Double3D)
+                {
+                pos = (Double3D)p;
+                }
+            else if (p instanceof Double2D)
+                {
+                pos = new Double3D((Double2D)p);
+                }
+            else 
+                {
+                throw new RuntimeException("StableDouble3D expected an Double2D or Double3D position from underlying field portrayal " + fieldPortrayal);
+                }
+            x = pos.x; 
+            y = pos.y; 
+            z = pos.z; 
+            exists = true; 
+            }
         }
 
     /* For some reason, the order of the parameters in the MASON windows will be Z, Exists, Y, X.  Oh well! */

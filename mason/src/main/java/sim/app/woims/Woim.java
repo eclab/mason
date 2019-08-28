@@ -208,12 +208,12 @@ public /*strictfp*/ class Woim extends SimplePortrayal2D implements Steppable
     public void step( final SimState state )
         {
         WoimsDemo bd = (WoimsDemo)state;
-                {
-                Double2D temp = new Double2D(x,y);  //bd.environment.getObjectLocation( this );
-                woimPosition.x = x;
-                woimPosition.y = y;
-                preprocessWoims( bd, temp, MAX_DISTANCE );
-                }
+            {
+            Double2D temp = new Double2D(x,y);  //bd.environment.getObjectLocation( this );
+            woimPosition.x = x;
+            woimPosition.y = y;
+            preprocessWoims( bd, temp, MAX_DISTANCE );
+            }
 
         Vector2D vel = new Vector2D( 0, 0 );
         vel = vel.add( avoidObstacles(bd).amplify( 1.5 ) );

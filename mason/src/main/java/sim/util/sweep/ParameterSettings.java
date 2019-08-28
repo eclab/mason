@@ -47,16 +47,16 @@ public class ParameterSettings
         }
     
     public static ParameterDatabase convertToDatabase(
-    	ListModel propertySettings, 
-    	SimState model,
-    	int steps,
-    	int mod,
-    	int trials,
-    	int threads,
-    	long seed,
-    	boolean compress,
-    	String path
-    	)
+        ListModel propertySettings, 
+        SimState model,
+        int steps,
+        int mod,
+        int trials,
+        int threads,
+        long seed,
+        boolean compress,
+        String path
+        )
         {
         StringBuilder _min = new StringBuilder("");
         StringBuilder _max= new StringBuilder("");
@@ -71,16 +71,16 @@ public class ParameterSettings
             if(param.amSet) 
                 {
                 if (param.amDependent)
-                	{
-		            _dependent.append(param.getName() + " ");
-                	}
-                else	// independent
-                	{
-		            _independent.append(param.getName() + " ");
-					_min.append("" + param.min + " ");
-					_max.append("" + param.max + " ");
-					_divisions.append("" + param.divisions + " ");
-                	}
+                    {
+                    _dependent.append(param.getName() + " ");
+                    }
+                else    // independent
+                    {
+                    _independent.append(param.getName() + " ");
+                    _min.append("" + param.min + " ");
+                    _max.append("" + param.max + " ");
+                    _divisions.append("" + param.divisions + " ");
+                    }
                 }
             }
         pd.set(new Parameter(MODEL_P), model.getClass().getName() );
@@ -107,15 +107,15 @@ public class ParameterSettings
     public String toString()
         {
         if (!amSet) 
-        	{
-        	return "<html>" + p.getName(index) + "</html>";
-        	}
+            {
+            return "<html>" + p.getName(index) + "</html>";
+            }
         else if (amDependent) 
             {
             return "<html>" + p.getName(index) + "<font color='blue'>&nbsp;&nbsp;&nbsp;(DEPENDENT) </font></html>";
-			}
-		else // independent
-			{
+            }
+        else // independent
+            {
             return "<html>" + p.getName(index) + "<font color='green'>&nbsp;&nbsp;&nbsp;min=" + min + " max=" + max + " div= " + divisions + "</font></html>";
             }
         }

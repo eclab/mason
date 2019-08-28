@@ -279,31 +279,31 @@ public class Schedule implements java.io.Serializable
         }
         
     /** Called in SimState.finish() to clear the beforeSteps and afterSteps Bags.  
-    	You shouldn't all this manually.  */
+        You shouldn't all this manually.  */
     void clearBeforeAndAfter()
-    	{
-    	beforeSteps = new Bag();
-    	afterSteps = new Bag();
-    	}
-    	
+        {
+        beforeSteps = new Bag();
+        afterSteps = new Bag();
+        }
+        
     /** Adds a steppable to be called every iteration of the Schedule immediately before any other Steppables
-    	are called for that step.  You should do this only in your SimState.start() method (super.start() clears
-    	out all current steppables of this type).  If multiple items are added with this method,
-    	no guarantee is made on the order in which the Schedule will call them. */
+        are called for that step.  You should do this only in your SimState.start() method (super.start() clears
+        out all current steppables of this type).  If multiple items are added with this method,
+        no guarantee is made on the order in which the Schedule will call them. */
     public void addBefore(Steppable step)
-    	{
-    	beforeSteps.add(step);
-    	}
+        {
+        beforeSteps.add(step);
+        }
     
     /** Adds a steppable to be called every iteration of the Schedule immediately after any other Steppables
-    	are called for that step.  You should do this only in your SimState.start() method (super.start() clears
-    	out all current steppables of this type).  If multiple items are added with this method,
-    	no guarantee is made on the order in which the Schedule will call them. */
+        are called for that step.  You should do this only in your SimState.start() method (super.start() clears
+        out all current steppables of this type).  If multiple items are added with this method,
+        no guarantee is made on the order in which the Schedule will call them. */
     public void addAfter(Steppable step)
-    	{
-    	afterSteps.add(step);
-    	}
-    	
+        {
+        afterSteps.add(step);
+        }
+        
     Bag beforeSteps = new Bag();
     Bag afterSteps = new Bag();
     
@@ -374,12 +374,12 @@ public class Schedule implements java.io.Serializable
         int len = currentSteps.numObjs;
         Object[] objs = currentSteps.objs;
 
-		int sz = beforeSteps.size();
-		for(int x = 0; x < sz; x++)
-			{
-			((Steppable)(beforeSteps.get(x))).step(state);
-			}
-            	
+        int sz = beforeSteps.size();
+        for(int x = 0; x < sz; x++)
+            {
+            ((Steppable)(beforeSteps.get(x))).step(state);
+            }
+                
         try
             {
             for(int x=0;x<len;x++)  // if we're not being killed...
@@ -400,12 +400,12 @@ public class Schedule implements java.io.Serializable
             inStep = false;
             }
 
-		sz = afterSteps.size();
-		for(int x = 0; x < sz; x++)
-			{
-			((Steppable)(afterSteps.get(x))).step(state);
-			}
-            	
+        sz = afterSteps.size();
+        for(int x = 0; x < sz; x++)
+            {
+            ((Steppable)(afterSteps.get(x))).step(state);
+            }
+                
         return true;
         }
         

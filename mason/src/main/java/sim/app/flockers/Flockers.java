@@ -58,18 +58,18 @@ public class Flockers extends SimState
         return locs;
         }
 
-	// this is included to demonstrate MASON's parameter sweep facility, see the manual
+    // this is included to demonstrate MASON's parameter sweep facility, see the manual
     public double getMeanXLocation()
         {
         Double2D[] locations = getLocations();
         double avg = 0;
         for(int i = 0; i < locations.length; i++)
-        	{
-        	avg += locations[i].x;
-        	}
+            {
+            avg += locations[i].x;
+            }
         if (locations.length > 0) 
-        	avg /= locations.length;
-		return avg;
+            avg /= locations.length;
+        return avg;
         }
     
     public Double2D[] getInvertedLocations()

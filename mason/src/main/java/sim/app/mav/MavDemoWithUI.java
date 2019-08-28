@@ -58,8 +58,8 @@ public class MavDemoWithUI extends GUIState
         mavPortrayal.setField(mavdemo.mavs);
         
         OrientedPortrayal2D op = new OrientedPortrayal2D(
-                        new OvalPortrayal2D(20),
-                        0,20, Color.red, OrientedPortrayal2D.SHAPE_LINE);
+            new OvalPortrayal2D(20),
+            0,20, Color.red, OrientedPortrayal2D.SHAPE_LINE);
         op.setDrawFilled(true);
         
         mavPortrayal.setPortrayalForAll(
