@@ -1,0 +1,41 @@
+<html><head></head><body>
+<table border=0 cellspacing=0 cellpadding=6>
+<tr>
+<td valign=top><img src="icon.png" width=150 height=150><td valign=top>
+<h2>Preferential Attachment - a demonstration of JUNG and MASON integration</h2> 
+By <a href="http://www.latek.org">Maciek Latek</a> 2007 
+</table>
+
+<font size="-2" color="gray">[Requires JFreeChart and JUNG]</font>
+
+<p> This is a model of simple network dynamics inspired by Barabasi's preferential attachment theory. To compile and run, 
+both MASON as well as JUNG  are required, please refer to <a href="http://cs.gmu.edu/~eclab/projects/mason/">MASON</a> and <a href="http://jung.sourceforge.net/">JUNG</a> 
+for instructions on how to set up project that would have required libraries. The jar file that combines all dependencies can be downloaded from <a href="http://www.css.gmu.edu/~mlatek/downloads/JungDisplay/">here</a>.</p>
+
+<p> Following questions are covered in this demonstration:
+
+<ul>
+
+<li> How to describe interactions between MASON agent's with JUNG's network.
+<li> How to display resulting network in a way that is integrated with GuiState.
+<li> How to code Poisson activation of agents.
+
+</ul>
+
+In addition to that, one way of using MASON's new interfaces to JFreeChart to plot different things (a histogram in this case) is shown. 
+From within the Model tab following parameters of the simulations can be set:
+
+<ul>
+
+<li> <b>N</b> - Number of agents \ nodes. 
+<li> <b>T</b> - Number of activations each agent will undergo.
+<li> <b>Temperature</b> - Constant used in Boltzman transformation - the higher it is the bigger the preference for high degree nodes.
+<li> <b>UpdateInterval</b> - How much time is to elapse between subsequent updates of graph display.
+
+</ul>
+
+Other things, like exact layout algorithm used and maximal degree of nodes, are hard coded.  
+
+
+</body></html>
+
