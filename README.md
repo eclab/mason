@@ -32,7 +32,7 @@ The output of the package phase should be something like:
 [INFO] Archetype - mason-project-archetype 1.0 ............ SUCCESS [  0.037 s]\
 [INFO] geomason 1.0 ....................................... SUCCESS [ 18.783 s]\
 [INFO] ------------------------------------------------------------------------\
-[INFO] BUILD SUCCESS\
+[INFO] BUILD SUCCESS
 
 Moreover, the building phase install in your local Maven registry two Maven archetype:
 
