@@ -1,3 +1,0 @@
-This directory is where MASON builds the physics2d jar package.
-Do NOT put other jar files in here, because if you run 'make clean'
-on the Makefile, MASON will delete all jar files located here.
