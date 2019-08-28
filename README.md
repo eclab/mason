@@ -1,20 +1,28 @@
 # Build MASON Toolkit
 
-Inside the folder mason-build:
+## Build Everything
+
+Inside the folder mason:
 
 ```bash
-git lfs pull
-make
+make -f makefile
 ```
 
-The output of the package phase should be:
+The output of the package phase should be something like:
 
-- on the main group id cs.gmu.edu.eclab
-	- mason/target/mason-core-19.jar 
-	- distributed/target/distributed-1.0.jar
-- on the contrib group id cs.gmu.edu.eclab.contrib
-	- geomason/target/geomason-1.0.jar 
-	- socialnets/target/socialnets-1.0.jar 
+[INFO] ------------------------------------------------------------------------\
+[INFO] Reactor Summary:\
+[INFO]\
+[INFO] mason 19 ........................................... SUCCESS [  0.861 s]\
+[INFO] mason 19 ........................................... SUCCESS [  6.339 s]\
+[INFO] distributed 1.0 .................................... SUCCESS [  0.849 s]\
+[INFO] socialnets 1.0 ..................................... SUCCESS [  0.259 s]\
+[INFO] Archetype - distributed-mason-project-archetype 1.0  SUCCESS [  0.758 s]\
+[INFO] Archetype - mason-project-archetype 1.0 ............ SUCCESS [  0.037 s]\
+[INFO] geomason 1.0 ....................................... SUCCESS [ 18.783 s]\
+[INFO] ------------------------------------------------------------------------\
+[INFO] BUILD SUCCESS\
+[INFO] ------------------------------------------------------------------------
 
 Moreover, the building phase install in your local Maven registry two Maven archetype:
 
@@ -79,15 +87,4 @@ $ docker run -v target:/data -it -t spagnuolocarmine/docker-mpi-java mpirun --al
 
 #### Know bugs
 
-- The `MPIUtil.java` use a large pre-allocated buffer of 1GB. In order to run in a docker container your applications you have to ensure a large amount of memory to your Docker demon, or you can reduce the size of this buffer.
-
-### GeoMASON Module Build
-
-In order to include GeoMASON project you have to change the mason-build project descriptor (mason-build/pom.xml).
-In the <modules> section you have to add:
-
-```xml
-<module>geomason</module>
-<module>socialnets</module> 
-```
-
+- The `MPIUtil.java` use a large pre-allocated buffer of 128 MB. In order to run in a docker container your applications you have to ensure a large amount of memory to your Docker demon, or you can reduce the size of this buffer.
