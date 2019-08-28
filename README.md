@@ -22,7 +22,7 @@ The output of the package phase should be something like:
 [INFO] geomason 1.0 ....................................... SUCCESS [ 18.783 s]\
 [INFO] ------------------------------------------------------------------------\
 [INFO] BUILD SUCCESS\
-[INFO] ------------------------------------------------------------------------\
+[INFO] ------------------------------------------------------------------------
 
 Moreover, the building phase install in your local Maven registry two Maven archetype:
 
