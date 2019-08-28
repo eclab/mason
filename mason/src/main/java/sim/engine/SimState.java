@@ -756,7 +756,7 @@ public class SimState implements java.io.Serializable
     /** Returns MASON's Version */
     public static double version()
         {
-        return 19.0;
+        return 20.0;
         }
     
     /** Hook for distributed MASON, called immediately before stepping the schedule. */
