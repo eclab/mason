@@ -1,5 +1,17 @@
 # Build MASON Toolkit
 
+## Build Core MASON Only
+
+Inside the folder mason/mason:
+
+```bash
+mvn install
+```
+
+The output should say:
+
+[INFO] BUILD SUCCESS
+
 ## Build Everything
 
 Inside the folder mason:
@@ -10,7 +22,6 @@ make -f makefile
 
 The output of the package phase should be something like:
 
-[INFO] ------------------------------------------------------------------------\
 [INFO] Reactor Summary:\
 [INFO]\
 [INFO] mason 19 ........................................... SUCCESS [  0.861 s]\
@@ -22,7 +33,6 @@ The output of the package phase should be something like:
 [INFO] geomason 1.0 ....................................... SUCCESS [ 18.783 s]\
 [INFO] ------------------------------------------------------------------------\
 [INFO] BUILD SUCCESS\
-[INFO] ------------------------------------------------------------------------
 
 Moreover, the building phase install in your local Maven registry two Maven archetype:
 
