@@ -5,11 +5,10 @@
 #### To see all your make options:  type   make help
 #### To add flags (like -O) to javac:  change the FLAGS variable below
 
-JAVAC = javac ${FLAGS}
+JAVAC = javac ${JAVACFLAGS}
 
 CLASSROOT = target/classes
 JAVACFLAGS = -target 1.8 -source 1.8 -g -nowarn -d ${CLASSROOT}
-FLAGS = -g -Xlint:deprecation
 
 VERSION = 20
 
