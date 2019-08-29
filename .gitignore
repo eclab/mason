@@ -25,3 +25,9 @@ log/
 target/
 geomason/repository/jars
 geomason/repository/edu
+contrib/geomason/repository/edu
+contrib/geomason/repository/jars/dadaabData.jar
+contrib/geomason/repository/jars/ebolaData.jar
+contrib/geomason/repository/jars/hotspotsData.jar
+contrib/geomason/repository/jars/refugeeData.jar
+contrib/geomason/repository/jars/swiselib.jar
