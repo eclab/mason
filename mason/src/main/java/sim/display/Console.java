@@ -16,6 +16,7 @@ import ec.util.*;
 import java.io.*;
 import sim.util.*;
 import sim.util.gui.*;
+import sim.util.sweep.*;
 import sim.portrayal.*;
 import java.lang.ref.*;
 import java.lang.reflect.*;
@@ -2160,15 +2161,15 @@ public class Console extends JFrame implements Controller
 
     public void doSweep()
         {
-        sim.util.sweep.ParameterSweepGUI sweep = 
-            new sim.util.sweep.ParameterSweepGUI(
+       ParameterSweepGUI sweep = 
+            new ParameterSweepGUI(
                 sim.util.Properties.getProperties(simulation.state),
                 simulation);
         JFrame frame = new JFrame("Parameter Sweep for " + simulation.getName(simulation.getClass()));
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(sweep, BorderLayout.CENTER);
         frame.pack();
-        frame.show();
+        frame.setVisible(true);
         }
 
 
