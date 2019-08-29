@@ -40,11 +40,11 @@ csv4j:
 	mkdir -p repository/edu/gmu/eclab/csv4j-0.4.0/
 	cp repository/jars/csv4j-0.4.0.jar repository/edu/gmu/eclab/csv4j-0.4.0/
 
-psh:
-	rm -rf repository/edu/gmu/eclab/psh/
-	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/Psh.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=psh -Dpackaging=jar
-	mkdir -p repository/edu/gmu/eclab/psh/
-	cp repository/jars/Psh.jar repository/edu/gmu/eclab/psh/
+#psh:
+#	rm -rf repository/edu/gmu/eclab/psh/
+#	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/Psh.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=psh -Dpackaging=jar
+#	mkdir -p repository/edu/gmu/eclab/psh/
+#	cp repository/jars/Psh.jar repository/edu/gmu/eclab/psh/
 
 swiselib:
 	rm -rf repository/edu/gmu/eclab/swiselib/
