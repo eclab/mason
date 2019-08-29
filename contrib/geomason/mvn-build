@@ -13,7 +13,7 @@ squeaky_clean: clean
 	mvn clean
 
 # data: ebola acequias dadaab csv4j psh swiselib toolsui hotspots refugee kibera
-data: ebola dadaab csv4j psh swiselib toolsui hotspots refugee kibera
+data: ebola dadaab csv4j psh swiselib hotspots refugee kibera
 
 
 ebola:
@@ -52,11 +52,11 @@ swiselib:
 	mkdir -p repository/edu/gmu/eclab/swiselib/
 	cp repository/jars/swiselib.jar repository/edu/gmu/eclab/swiselib/
 
-toolsui:
-	rm -rf repository/edu/gmu/eclab/toolsUI-4.6.13/
-	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/toolsUI-4.6.13.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=toolsUI-4.6.13 -Dpackaging=jar
-	mkdir -p repository/edu/gmu/eclab/toolsUI-4.6.13/
-	cp repository/jars/toolsUI-4.6.13.jar repository/edu/gmu/eclab/toolsUI-4.6.13/
+#toolsui:
+#	rm -rf repository/edu/gmu/eclab/toolsUI-4.6.13/
+#	mvn install:install-file -DlocalRepositoryPath:repository/ -Dfile=repository/jars/toolsUI-4.6.13.jar -DgroupId=edu.gmu.eclab -Dversion=4.0 -DartifactId=toolsUI-4.6.13 -Dpackaging=jar
+#	mkdir -p repository/edu/gmu/eclab/toolsUI-4.6.13/
+#	cp repository/jars/toolsUI-4.6.13.jar repository/edu/gmu/eclab/toolsUI-4.6.13/
 
 
 hotspots:
