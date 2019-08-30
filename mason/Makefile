@@ -139,7 +139,7 @@ jar: 3d
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean 3d doc jar
+dist: clean 3d indent doc jar
 	@ echo If the version is being updated, change it here:
 	@ echo "1. sim.engine.SimState.version()"
 	@ echo "2. manual.tex frontmatter (including copyright year)"
@@ -155,8 +155,8 @@ dist: clean 3d doc jar
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.
 # Anyway, beware that this is quite slow.  But it works!
 indent: 
-	touch ${HOME}/.emacs
-	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
+#	touch ${HOME}/.emacs
+#	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
 
 
 # Print a help message
