@@ -144,9 +144,9 @@ dist: clean 3d indent doc jar
 	@ echo "1. sim.engine.SimState.version()"
 	@ echo "2. manual.tex frontmatter (including copyright year)"
 	@ echo "3. Makefile VERSION variable"
-	touch TODO
-	rm TODO
-	find . -name ".svn" -exec rm -rf {} \;
+	- touch TODO
+	- rm TODO
+	- find . -name ".svn" -exec rm -rf {} \;
 	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
 
@@ -155,8 +155,8 @@ dist: clean 3d indent doc jar
 # format is Whitesmiths at 4 spaces.  Yes, I know.  Idiosyncratic.
 # Anyway, beware that this is quite slow.  But it works!
 indent: 
-#	touch ${HOME}/.emacs
-#	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
+	touch ${HOME}/.emacs
+	find ${SRCROOT} -name "*.java" -print -exec emacs --batch --load ~/.emacs --eval='(progn (find-file "{}") (mark-whole-buffer) (setq indent-tabs-mode nil) (untabify (point-min) (point-max)) (indent-region (point-min) (point-max) nil) (save-buffer))' \;
 
 
 # Print a help message
