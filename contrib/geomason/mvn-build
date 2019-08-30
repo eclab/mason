@@ -13,7 +13,7 @@ squeaky_clean: clean
 	mvn clean
 
 # data: ebola acequias dadaab csv4j psh swiselib toolsui hotspots refugee kibera
-data: ebola dadaab csv4j psh swiselib hotspots refugee kibera
+data: ebola dadaab csv4j swiselib hotspots refugee kibera
 
 
 ebola:
