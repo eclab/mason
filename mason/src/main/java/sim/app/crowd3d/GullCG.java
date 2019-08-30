@@ -6,7 +6,7 @@ import javax.media.j3d.*;
 
 /** New versions of Java3D have deprecated CompressedGeometry, but we're keeping it here. */
 
-@SuppressWarnings("deprecation")			// CompressedGeometry has been deprecated
+@SuppressWarnings("deprecation")                        // CompressedGeometry has been deprecated
 public class GullCG extends CompressedGeometry 
     {
     private static final long serialVersionUID = 1;

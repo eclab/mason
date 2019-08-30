@@ -56,7 +56,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
     static final double HEXAGONAL_RATIO = 2/Math.sqrt(3);
     
     
-@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
+    @SuppressWarnings("deprecation")                        // Fixed2D is of course deprecated
     public void setObjectLocation(Object object, Object location, GUIState gui)
         {
         synchronized(gui.state.schedule)
@@ -78,7 +78,7 @@ public class HexaSparseGridPortrayal2D extends SparseGridPortrayal2D
         }
 
     /*
-@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
+      @SuppressWarnings("deprecation")                        // Fixed2D is of course deprecated
       public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
       {
       final SparseGrid2D field = (SparseGrid2D)this.field;

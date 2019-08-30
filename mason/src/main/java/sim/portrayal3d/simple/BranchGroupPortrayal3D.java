@@ -100,7 +100,7 @@ public class BranchGroupPortrayal3D extends PrimitivePortrayal3D
 
     // traverses the BranchGroup and sets all Shape3D geometries and other attributes
     // sufficient to allow proper picking.  This is done during construction.
-@SuppressWarnings("deprecation")			// CompressedGeometry has been deprecated
+    @SuppressWarnings("deprecation")                        // CompressedGeometry has been deprecated
     void traverseForAttributes(Node n)
         {
         if (n instanceof Shape3D)

@@ -74,7 +74,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         return new Double3D(x,y, 0);
         }
 
-@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
+    @SuppressWarnings("deprecation")                        // Fixed2D is of course deprecated
     public void setObjectLocation(Object object, Object location, GUIState gui)
         {
         synchronized(gui.state.schedule)
@@ -96,7 +96,7 @@ public class Continuous3DPortrayal2D extends ContinuousPortrayal2D
         }
 
 /*
-@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
+  @SuppressWarnings("deprecation")                        // Fixed2D is of course deprecated
   public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
   {
   synchronized(fieldPortrayalInfo.gui.state.schedule)

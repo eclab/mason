@@ -147,6 +147,7 @@ dist: clean 3d indent doc jar
 	- touch TODO
 	- rm TODO
 	- find . -name ".svn" -exec rm -rf {} \;
+	- rm repository
 	@ echo "If there were SVN directories, expect this to end in an error."
 	@ echo "Don't worry about it, things are still fine."
 
