@@ -1180,8 +1180,8 @@ public class Console extends JFrame implements Controller
                  {
                  SwingUtilities.invokeAndWait(runnable);
                  }
-            catch (InterruptedException e) { System.err.println(e); }
-            catch (InvocationTargetException e) { System.err.println(e); }
+            catch (InterruptedException e) { e.printStackTrace(); }
+            catch (InvocationTargetException e) { e.printStackTrace(); }
         }
 
 
