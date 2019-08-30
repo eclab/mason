@@ -2248,6 +2248,7 @@ public class Console extends JFrame implements Controller
         }
 
     /** Called when the "show" button is pressed in the Displays window.  */
+@SuppressWarnings("deprecation")			// getSelectedValues is deprecated
     synchronized void showSelectedFrames()
         {
         // for the time being we're using the old method because the new method is ONLY supported in >= 1.7
@@ -2275,6 +2276,7 @@ public class Console extends JFrame implements Controller
         }
 
     /** Called when the "hide" button is pressed in the Displays window */
+@SuppressWarnings("deprecation")			// getSelectedValues is deprecated
     synchronized void hideSelectedFrames()
         {
         // for the time being we're using the old method because the new method is ONLY supported in >= 1.7

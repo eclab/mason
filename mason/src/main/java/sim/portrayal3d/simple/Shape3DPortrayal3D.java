@@ -50,6 +50,7 @@ public class Shape3DPortrayal3D extends PrimitivePortrayal3D
         }
 
     /** Constructs a Shape3DPortrayal3D with the given shape and appearance. */
+@SuppressWarnings("deprecation")			// CompressedGeometry has been deprecated
     public Shape3DPortrayal3D(Shape3D shape, Appearance appearance)
         {
         this.appearance = appearance;

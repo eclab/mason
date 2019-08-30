@@ -85,6 +85,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         return new Double2D(x,y);
         }
         
+@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
     public void setObjectLocation(Object object, Object location, GUIState gui)
         {
         synchronized(gui.state.schedule)
@@ -106,6 +107,7 @@ public class ContinuousPortrayal2D extends FieldPortrayal2D
         }
 
 /*
+@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
   public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
   {
   synchronized(fieldPortrayalInfo.gui.state.schedule)

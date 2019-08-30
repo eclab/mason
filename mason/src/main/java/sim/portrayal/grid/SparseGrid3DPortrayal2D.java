@@ -60,6 +60,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         return new Int3D(startx, starty, 0);
         }
 
+@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
     public void setObjectLocation(Object object, Object location, GUIState gui)
         {
         synchronized(gui.state.schedule)
@@ -81,6 +82,7 @@ public class SparseGrid3DPortrayal2D extends SparseGridPortrayal2D
         }
 
     /*
+@SuppressWarnings("deprecation")			// Fixed2D is of course deprecated
       public void setObjectPosition(Object object, Point2D.Double position, DrawInfo2D fieldPortrayalInfo)
       {
       synchronized(fieldPortrayalInfo.gui.state.schedule)
