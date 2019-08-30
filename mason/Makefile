@@ -123,8 +123,9 @@ clean:
 	rm -rf target/
 
 # Build the class docs.  They're located in docs/classdocs
+# the "-" at the beginning causes Make to ignore errors from javadoc
 doc:
-	javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display sim.engine sim.util sim.util.gui sim.util.media sim.util.media.chart sim.field sim.field.grid sim.field.continuous sim.field.network sim.portrayal sim.portrayal.grid sim.portrayal.continuous sim.portrayal.network sim.portrayal.simple ec.util sim.portrayal3d sim.portrayal3d.grid sim.portrayal3d.continuous sim.portrayal3d.simple sim.portrayal3d.grid.quad sim.display3d sim.util.distribution
+	- javadoc -classpath ${CLASSPATH}:${SRCROOT} -protected -d docs/classdocs sim.display sim.engine sim.util sim.util.gui sim.util.media sim.util.media.chart sim.field sim.field.grid sim.field.continuous sim.field.network sim.portrayal sim.portrayal.grid sim.portrayal.continuous sim.portrayal.network sim.portrayal.simple ec.util sim.portrayal3d sim.portrayal3d.grid sim.portrayal3d.continuous sim.portrayal3d.simple sim.portrayal3d.grid.quad sim.display3d sim.util.distribution
 
 docs: doc
 
@@ -138,7 +139,7 @@ jar: 3d
 
 # Build a distribution.  Cleans, builds 3d, then builds docs, then
 # removes SVN directories
-dist: clean 3d indent doc jar
+dist: clean 3d doc jar
 	@ echo If the version is being updated, change it here:
 	@ echo "1. sim.engine.SimState.version()"
 	@ echo "2. manual.tex frontmatter (including copyright year)"
