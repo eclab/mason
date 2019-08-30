@@ -16,7 +16,7 @@ Import the Maven project.
 ``File -> Import -> Existing Maven Projects -> Root Directory``
 
 #### Build and Install the mason-build project.
-``In MASON Run as -> Maven install``
+In MASON ``Run as -> Maven install``
 If needed update dependencies for Maven using ``right click -> maven -> update project``
 
 #### Import the Distributed Project
