@@ -135,7 +135,6 @@ public class DSimState extends SimState {
 			System.exit(-1);
 		}
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
-//			System.out.println("Migrating - " + payloadWrapper);
 
 			/*
 			 * Assumptions about what is to be added to the field using addToField method

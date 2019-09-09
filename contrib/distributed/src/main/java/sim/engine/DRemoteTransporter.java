@@ -229,6 +229,7 @@ public class DRemoteTransporter {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final AgentWrapper agentWrapper, final int dst) {
+		// If fieldIndex < 0 then we assume that the payload does not need to be transported
 		migrateAgent(agentWrapper, dst, null, -1);
 	}
 
@@ -305,6 +306,7 @@ public class DRemoteTransporter {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateRepeatingAgent(final IterativeRepeat iterativeRepeat, final int dst) {
+		// If fieldIndex < 0 then we assume that the payload does not need to be transported
 		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
 	}
 
