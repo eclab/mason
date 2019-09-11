@@ -184,7 +184,10 @@ public class DQuadTreePartition extends DPartition {
 		}
 	}
 
-	// Return whether the calling pid is the master node of the given GroupComm
+	/**
+	 * @param gc
+	 * @return whether the calling pid is the master node of the given GroupComm
+	 */
 	public boolean isGroupMaster(final GroupComm gc) {
 		return gc != null && gc.master.getProc() == pid;
 	}
@@ -193,9 +196,18 @@ public class DQuadTreePartition extends DPartition {
 		return isGroupMaster(getGroupComm(level));
 	}
 
-	// return the GroupComm instance if the calling pid should be involved
-	// in the group communication of the given level
-	// return null otherwise
+	public boolean isRoot() {
+		// TODO: is this correct?
+		// assuming that the root of level 0 is the global root for mpi as well
+		return isGroupMaster(0);
+	}
+
+	/**
+	 * @param level
+	 * @return the GroupComm instance if the calling pid should be involved in the
+	 *         group communication of the given level <br>
+	 *         return null otherwise
+	 */
 	public GroupComm getGroupComm(final int level) {
 		return groups.get(level);
 	}

@@ -304,8 +304,18 @@ public class DSimState extends SimState {
 		mpi.MPI.Finalize();
 	}
 
+	/**
+	 * Modelers must override this method if they want to add any logic that is
+	 * unique to the root processor
+	 */
+	protected void startRoot() {
+	}
+
 	public void start() {
 		super.start();
+
+		if (partition.isRoot())
+			startRoot();
 
 		RemoteProxy.Init();
 

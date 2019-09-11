@@ -93,6 +93,12 @@ public abstract class DPartition {
 
 	public abstract int toPartitionId(double[] c);
 
+	/**
+	 *
+	 * @return true if calling pid is the global root
+	 */
+	public abstract boolean isRoot();
+
 	// TODO let other classes who depend on the partition scheme to register proper
 	// actions when partiton changes
 	public void registerPreCommit(final Consumer r) {
