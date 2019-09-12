@@ -309,13 +309,11 @@ public class DSimState extends SimState {
 	 * unique to the root processor
 	 */
 	protected void startRoot() {
+		System.out.println("Master level 0 pid: " + partition.pid);
 	}
 
 	public void start() {
 		super.start();
-
-		if (partition.isRoot())
-			startRoot();
 
 		RemoteProxy.Init();
 
@@ -327,6 +325,9 @@ public class DSimState extends SimState {
 		}
 		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
 			haloField.initRemote();
+
+		if (partition.isRoot())
+			startRoot();
 	}
 
 	public boolean isDistributed() {

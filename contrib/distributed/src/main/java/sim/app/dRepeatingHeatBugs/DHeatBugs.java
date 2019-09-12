@@ -8,7 +8,6 @@ package sim.app.dRepeatingHeatBugs;
 
 import mpi.MPIException;
 import sim.engine.DSimState;
-import sim.engine.IterativeRepeat;
 import sim.engine.Schedule;
 import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
