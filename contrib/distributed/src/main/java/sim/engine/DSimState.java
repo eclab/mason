@@ -328,6 +328,7 @@ public class DSimState extends SimState {
 
 		if (partition.isRoot())
 			startRoot();
+		// TODO: do we need to sync all processors here?
 	}
 
 	public boolean isDistributed() {

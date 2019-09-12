@@ -135,27 +135,50 @@ public class DHeatBugs extends DSimState {
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	public void start() {
-		super.start();
-		final int[] size = getPartition().getPartition().getSize();
+	protected void startRoot() {
+		super.startRoot();
+
+		System.out.println("Starting Root");
+
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
-		for (int x = 0; x < privBugCount; x++) {
+		for (int x = 0; x < bugCount; x++) {
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-			int px, py; // Why are we doing this? Relationship?
+			int px, py;
 			do {
-				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
+				px = random.nextInt(gridWidth);
+				py = random.nextInt(gridHeight);
 			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			// bugs.add(new IntPoint(px, py), b);
-			// schedule.scheduleOnce(b, 1);
-
 			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
 		}
 
+		System.out.println("Root Started");
+	}
+
+	public void start() {
+		super.start();
+//		final int[] size = getPartition().getPartition().getSize();
+//		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
+//		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
+//
+//		for (int x = 0; x < privBugCount; x++) {
+//			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
+//			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
+//			int px, py; // Why are we doing this? Relationship?
+//			do {
+//				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
+//				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
+//			} while (bugs.get(new IntPoint(px, py)) != null);
+//			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
+//			// bugs.add(new IntPoint(px, py), b);
+//			// schedule.scheduleOnce(b, 1);
+//
+//			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
+//		}
+//
 		registerIterativeRepeat(schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1));
 	}
 
