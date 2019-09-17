@@ -11,6 +11,6 @@ package sim.engine;
 public abstract class AbstractStopping implements Steppable, Stopping 
     {
     Stoppable stop = null;
-    public Stoppable getStoppable() { return null; }
+    public Stoppable getStoppable() { return stop; }
     public void setStoppable(Stoppable stop) { this.stop = stop; }
     }

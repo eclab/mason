@@ -19,31 +19,14 @@ public class IterativeRepeat implements Steppable, Stoppable
     {
     private static final long serialVersionUID = 1;
 
-    int ordering;  // so distributed MASON can grab it later if needed
-    double time;  // so distributed MASON can grab it later if needed
     double interval;
     Steppable step;  // if null, does not reschedule
     Schedule.Key key;
     
-    public int getOrdering() { return ordering; }
+    public int getOrdering() { return key.ordering; }
     public double getInterval() { return interval; }
-    public double getTime() { return time; }
+    public double getTime() { return key.time; }
     public Steppable getSteppable() { return step; }
-        
-    public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering, final Schedule.Key key)
-        {
-        if (interval < 0)
-            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                "\n\n...the interval provided ("+interval+") is less than zero");
-        else if (interval != interval)  /* NaN */
-            throw new IllegalArgumentException("For the Steppable...\n\n" + step +
-                "\n\n...the interval provided ("+interval+") is NaN");
-
-        this.step = step;
-        this.interval = interval;
-        this.key = key;
-        this.ordering = ordering;
-        }
     
     public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering)
         {
@@ -57,7 +40,11 @@ public class IterativeRepeat implements Steppable, Stoppable
         this.step = step;
         this.interval = interval;
         this.key = new Schedule.Key(time,ordering);
-        this.ordering = ordering;
+
+        if (step instanceof Stopping)
+        	{
+        	((Stopping)step).setStoppable(this);
+        	}
         }
         
     public synchronized void step(final SimState state)

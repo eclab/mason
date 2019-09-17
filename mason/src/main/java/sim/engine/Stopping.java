@@ -10,7 +10,7 @@ package sim.engine;
 	Notably: TentativeStep and Iterative Repeat are *not* Stopping objects, so the Schedule can
 	distinguish them properly. */
 
-public interface Stopping
+public interface Stopping extends Steppable
     {
     public Stoppable getStoppable();
     public void setStoppable(Stoppable stop);

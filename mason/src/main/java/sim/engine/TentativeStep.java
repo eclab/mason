@@ -41,6 +41,11 @@ public class TentativeStep implements Steppable, Stoppable
     public TentativeStep(Steppable step)
         {
         this.step = step;
+
+		if (step instanceof Stopping)
+			{
+			((Stopping)step).setStoppable(this);
+			}
         }
         
     public synchronized void step(SimState state)
