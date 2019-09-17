@@ -132,11 +132,13 @@ public class DQuadTreePartition extends DPartition {
 		for (int i = 0; i < numProcessors; i++)
 			leaves.get(i).setProc(i);
 
+		// if pid == 0 then myLeafNode is root node
 		myLeafNode = leaves.get(pid);
 
 		// Map non-leaf nodes - Use the first children node to hold itself
 		while (leaves.size() > 0) {
-			final QTNode curr = leaves.remove(0), parent = curr.getParent();
+			final QTNode curr = leaves.remove(0);
+			final QTNode parent = curr.getParent();
 			if (parent == null || parent.getChild(0) != curr)
 				continue;
 			parent.setProc(curr.getProc());
@@ -154,11 +156,8 @@ public class DQuadTreePartition extends DPartition {
 		groups = new HashMap<Integer, GroupComm>();
 
 		// Iterate level by level to create groups
-		List<QTNode> currLevel = new ArrayList<QTNode>() {
-			{
-				add(qt.getRoot());
-			}
-		};
+		List<QTNode> currLevel = new ArrayList<QTNode>();
+		currLevel.add(qt.getRoot());
 		while (currLevel.size() > 0) {
 			final List<QTNode> nextLevel = new ArrayList<QTNode>();
 
@@ -196,9 +195,8 @@ public class DQuadTreePartition extends DPartition {
 		return isGroupMaster(getGroupComm(level));
 	}
 
-	public boolean isRoot() {
-		// TODO: is this correct?
-		// assuming that the root of level 0 is the global root for mpi as well
+	public boolean isGlobalMaster() {
+		// The Global Master of Quad Tree is global root for MPI as well
 		return isGroupMaster(0);
 	}
 
@@ -206,15 +204,18 @@ public class DQuadTreePartition extends DPartition {
 	 * @param level
 	 * @return the GroupComm instance if the calling pid should be involved in the
 	 *         group communication of the given level <br>
-	 *         return null otherwise
+	 *         null otherwise
 	 */
 	public GroupComm getGroupComm(final int level) {
 		return groups.get(level);
 	}
 
-	// return the shape when the calling pid holds one of the master nodes of this
-	// level
-	// return null otherwise
+	/**
+	 * @param level
+	 * @return the shape when the calling pid holds one of the master nodes of this
+	 *         level <br>
+	 *         null otherwise
+	 */
 	public IntHyperRect getNodeShapeAtLevel(final int level) {
 		final GroupComm gc = getGroupComm(level);
 		if (isGroupMaster(gc))
@@ -253,6 +254,7 @@ public class DQuadTreePartition extends DPartition {
 		MPI.COMM_WORLD.barrier();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void balance(final double myRt, final int level) throws MPIException {
 		final GroupComm gc = groups.get(level);
 

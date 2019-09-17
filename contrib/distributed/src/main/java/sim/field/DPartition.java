@@ -97,7 +97,7 @@ public abstract class DPartition {
 	 *
 	 * @return true if calling pid is the global root
 	 */
-	public abstract boolean isRoot();
+	public abstract boolean isGlobalMaster();
 
 	// TODO let other classes who depend on the partition scheme to register proper
 	// actions when partiton changes

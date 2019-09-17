@@ -326,7 +326,7 @@ public class DSimState extends SimState {
 		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
 			haloField.initRemote();
 
-		if (partition.isRoot())
+		if (partition.isGlobalMaster())
 			startRoot();
 		// TODO: do we need to sync all processors here?
 	}
