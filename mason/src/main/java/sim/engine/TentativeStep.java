@@ -53,4 +53,6 @@ public class TentativeStep implements Steppable, Stoppable
         {
         step = null;
         }
+        
+    public Steppable getSteppable() { return step; }
     }

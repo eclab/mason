@@ -526,8 +526,15 @@ public class Schedule implements java.io.Serializable
         schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
         event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
-    boolean _scheduleOnce(Key key, final Steppable event)
+    boolean _scheduleOnce(Key key, Steppable event)
         {
+        if (event instanceof Stopping)
+        	{
+        	TentativeStep tent = new TentativeStep(event);
+        	((Stopping)event).setStoppable(tent);
+        	event = tent;  // schedule this instead
+        	}
+
         // locals are a teeny bit faster
         double time = this.time;
         double t = key.time;
@@ -554,6 +561,7 @@ public class Schedule implements java.io.Serializable
             throw new IllegalArgumentException("The provided Steppable is null");
         
         queue.add(event, key);
+        
         return true;
         }
 
@@ -720,6 +728,11 @@ public class Schedule implements java.io.Serializable
         if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         Schedule.Key k = new Schedule.Key(time,ordering);
         IterativeRepeat r = new IterativeRepeat(event, time, interval, ordering, k);
+
+        if (event instanceof Stopping)
+        	{
+        	((Stopping)event).setStoppable(r);
+        	}
 
         synchronized(lock)
             {
