@@ -51,6 +51,10 @@ public class TentativeStep implements Steppable, Stoppable
     
     public synchronized void stop()
         {
+        if (step != null && step instanceof Stopping)
+        	{
+        	((Stopping)step).setStoppable(null);
+        	}
         step = null;
         }
         
