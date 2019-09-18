@@ -54,7 +54,7 @@ public class DFlockers extends DSimState {
 		}
 
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
-//		schedule.addAfter(new Steppable() {
+//		schedule.addAfter(new Stopping() {
 //			public void step(SimState state) {
 //				DFlockers dflockers = (DFlockers) state;
 //				Timing.stop(Timing.LB_RUNTIME);

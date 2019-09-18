@@ -39,7 +39,6 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * The location can be remote
 	 *
 	 * @param p location
-	 * @param t Object
 	 */
 	void remove(final P p);
 
@@ -48,7 +47,7 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param fromP Move from Location
 	 * @param toP   Move to Location
-	 * @param t
+	 * @param t Object to be moved
 	 */
 	void move(final P fromP, final P toP, final T t);
 
@@ -56,9 +55,9 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * Adds and schedules an agent. The location can be remote
 	 *
 	 * @param p location
-	 * @param t Must be of type Steppable
+	 * @param t Must be of type Stopping
 	 *
-	 * @throws IllegalArgumentException if t is not a Steppable
+	 * @throws IllegalArgumentException if t is not a Stopping
 	 */
 	void addAgent(final P p, final T t);
 
@@ -66,11 +65,11 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * Adds and schedules an agent. The location can be remote
 	 *
 	 * @param p        location
-	 * @param t        Must be of type Steppable
+	 * @param t        Must be of type Stopping
 	 * @param ordering
 	 * @param time
 	 *
-	 * @throws IllegalArgumentException if t is not a Steppable
+	 * @throws IllegalArgumentException if t is not a Stopping
 	 */
 	void addAgent(final P p, final T t, int ordering, double time);
 
@@ -79,10 +78,10 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param fromP Move from Location (must be local to the field)
 	 * @param toP   Move to Location
-	 * @param t     Must be of type Steppable
+	 * @param t     Must be of type Stopping
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local or if t
-	 *                                  is not Steppable
+	 *                                  is not Stopping
 	 */
 	void moveAgent(final P fromP, final P toP, final T t);
 
@@ -91,12 +90,12 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param fromP    Move from Location (must be local to the field)
 	 * @param toP      Move to Location
-	 * @param t        Must be of type Steppable
+	 * @param t        Must be of type Stopping
 	 * @param ordering
 	 * @param time
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local or if t
-	 *                                  is not Steppable
+	 *                                  is not Stopping
 	 */
 	void moveAgent(final P fromP, final P toP, final T t, final int ordering, final double time);
 
@@ -104,12 +103,12 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * Adds, schedules and registers a repeating agent. The location can be remote
 	 *
 	 * @param p        add to Location
-	 * @param t        Must be of type Steppable
+	 * @param t        Must be of type Stopping
 	 * @param time
 	 * @param ordering
 	 * @param interval
 	 *
-	 * @throws IllegalArgumentException if t is not Steppable
+	 * @throws IllegalArgumentException if t is not Stopping
 	 */
 	void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval);
 
@@ -117,11 +116,11 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * Adds, schedules and registers a repeating agent. The location can be remote
 	 *
 	 * @param p        add to Location
-	 * @param t        Must be of type Steppable
+	 * @param t        Must be of type Stopping
 	 * @param ordering
 	 * @param interval
 	 *
-	 * @throws IllegalArgumentException if t is not Steppable
+	 * @throws IllegalArgumentException if t is not Stopping
 	 */
 	void addRepeatingAgent(final P p, final T t, final int ordering, final double interval);
 
@@ -131,18 +130,18 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 //	 * <b>This does not schedule a repeating agent.</b>
 //	 *
 //	 * @param p               add to Location
-//	 * @param iterativeRepeat must contain a Steppable of type T
+//	 * @param iterativeRepeat must contain a Stopping of type T
 //	 */
 //	void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
 
 	/**
 	 * Removes and stops a repeating agent. The location can be remote <br>
 	 *
-	 * @param p               remove from Location (must be local to the field)
-	 * @param iterativeRepeat Must be of type Steppable
+	 * @param p remove from Location (must be local to the field)
+	 * @param t Must be of type Stopping
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local or if t
-	 *                                  is not Steppable
+	 *                                  is not Stopping
 	 */
 	void removeAndStopRepeatingAgent(final P p, final T t);
 
@@ -150,7 +149,7 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 * Removes and stops a repeating agent. The location can be remote <br>
 	 *
 	 * @param p               remove from Location (must be local to the field)
-	 * @param iterativeRepeat must contain a Steppable of type T
+	 * @param iterativeRepeat must contain a Stopping of type T
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local
 	 */
@@ -159,9 +158,9 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	/**
 	 * Moves and schedules a repeating agent. The toP location can be remote
 	 *
-	 * @param fromP           Move from Location (must be local to the field)
-	 * @param toP             Move to Location
-	 * @param iterativeRepeat Must be of type Steppable
+	 * @param fromP Move from Location (must be local to the field)
+	 * @param toP   Move to Location
+	 * @param t     Must be of type Stopping
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local
 	 */
@@ -172,7 +171,7 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param fromP           Move from Location (must be local to the field)
 	 * @param toP             Move to Location
-	 * @param iterativeRepeat must contain a Steppable of type T
+	 * @param iterativeRepeat must contain a Stopping of type T
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local
 	 */

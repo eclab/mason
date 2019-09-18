@@ -2,7 +2,7 @@ package sim.engine;
 
 import java.io.Serializable;
 
-import sim.engine.Steppable;
+import sim.engine.Stopping;
 
 // This class is not supposed to be used by the modelers
 /**
@@ -29,27 +29,27 @@ class AgentWrapper implements Serializable {
 	 */
 	final double time;
 
-	final Steppable agent;
+	final Stopping agent;
 
-	AgentWrapper(final Steppable agent) {
+	AgentWrapper(final Stopping agent) {
 		ordering = 1;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final int ordering, final Steppable agent) {
+	AgentWrapper(final int ordering, final Stopping agent) {
 		this.ordering = ordering;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final double time, final Steppable agent) {
+	AgentWrapper(final double time, final Stopping agent) {
 		ordering = 1;
 		this.time = time;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final int ordering, final double time, final Steppable agent) {
+	AgentWrapper(final int ordering, final double time, final Stopping agent) {
 		this.ordering = ordering;
 		this.time = time;
 		this.agent = agent;

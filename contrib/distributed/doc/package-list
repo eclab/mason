@@ -1,10 +1,1 @@
-sim.app.dRepeatingHeatBugs
-sim.app.dflockers
-sim.app.dheatbugs
-sim.engine
 sim.field
-sim.field.continuous
-sim.field.grid
-sim.field.storage
-sim.util
-test

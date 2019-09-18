@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -40,13 +39,6 @@ public class DSimState extends SimState {
 	// Any HaloField that is created will register itself here
 	protected final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
 
-	// A map from agent to IterativeRepeat (Stoppable) for that Agent
-	protected final HashMap<Steppable, IterativeRepeat> iterativeRepeatRegistry;
-
-	// public LoadBalancer lb;
-	// Maybe refactor to "loadbalancer" ? Also, there's a line that hasn't been
-	// used: lb = new LoadBalancer(aoi, 100);
-
 	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule, final int width,
 			final int height, final int aoiSize) {
 		super(seed, random, schedule);
@@ -54,7 +46,6 @@ public class DSimState extends SimState {
 		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
-		iterativeRepeatRegistry = new HashMap<>();
 		fieldRegistry = new ArrayList<>();
 	}
 
@@ -65,7 +56,6 @@ public class DSimState extends SimState {
 		this.partition = partition;
 		partition.initialize();
 		transporter = new DRemoteTransporter(partition);
-		iterativeRepeatRegistry = new HashMap<>();
 		fieldRegistry = new ArrayList<>();
 	}
 
@@ -152,11 +142,9 @@ public class DSimState extends SimState {
 
 				// TODO: how to schedule for a specified time?
 				// Not adding it to specific time because we get an error -
-				// "time provided is less than the current time"
-
-				registerIterativeRepeat(
-						schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.ordering,
-								iterativeRepeat.interval));
+				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
+				schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.getOrdering(),
+						iterativeRepeat.interval);
 
 				// Add agent to the field
 				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
@@ -179,67 +167,6 @@ public class DSimState extends SimState {
 		transporter.objectQueue.clear();
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-	}
-
-	/**
-	 * Adds the given iterativeRepeat to the Registry
-	 *
-	 * @param iterativeRepeat
-	 */
-	public void registerIterativeRepeat(final IterativeRepeat iterativeRepeat) {
-		iterativeRepeatRegistry.put(iterativeRepeat.step, iterativeRepeat);
-	}
-
-	/**
-	 * Removes the given iterativeRepeat from the Registry and calls stop on it
-	 *
-	 * @param iterativeRepeat
-	 */
-	public IterativeRepeat stopIterativeRepeat(final IterativeRepeat iterativeRepeat) {
-		iterativeRepeat.stop();
-		return iterativeRepeatRegistry.remove(iterativeRepeat.step);
-	}
-
-	/**
-	 * Removes iterativeRepeat corresponding to the given steppable from the
-	 * Registry and calls stop on it
-	 *
-	 * @param steppable
-	 */
-	public IterativeRepeat stopIterativeRepeat(final Steppable steppable) {
-		final IterativeRepeat iterativeRepeat = iterativeRepeatRegistry.remove(steppable);
-		iterativeRepeat.stop();
-		return iterativeRepeat;
-	}
-
-	/**
-	 * Removes the given iterativeRepeat from the Registry
-	 *
-	 * @param iterativeRepeat
-	 * @return iterativeRepeat
-	 */
-	public IterativeRepeat unRegisterIterativeRepeat(final IterativeRepeat iterativeRepeat) {
-		return iterativeRepeatRegistry.remove(iterativeRepeat.step);
-	}
-
-	/**
-	 * Removes iterativeRepeat corresponding to the given steppable from the
-	 * Registry
-	 *
-	 * @param steppable
-	 * @return iterativeRepeat corresponding to the given steppable
-	 */
-	public IterativeRepeat unRegisterIterativeRepeat(final Steppable steppable) {
-		return iterativeRepeatRegistry.remove(steppable);
-	}
-
-	/**
-	 * @param steppable
-	 * @return iterativeRepeat corresponding to the given steppable from the
-	 *         Registry
-	 */
-	public IterativeRepeat getIterativeRepeat(final Steppable steppable) {
-		return iterativeRepeatRegistry.get(steppable);
 	}
 
 	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)

@@ -179,7 +179,7 @@ public class DHeatBugs extends DSimState {
 //			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
 //		}
 //
-		registerIterativeRepeat(schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1));
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 
 	public static void main(final String[] args) throws MPIException {

@@ -7,11 +7,11 @@
 package sim.app.dheatbugs;
 
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
 import sim.util.IntPoint;
+import sim.engine.AbstractStopping;
 
-public class DHeatBug implements Steppable {
+public class DHeatBug extends AbstractStopping {
 	private static final long serialVersionUID = 1;
 
 	public int loc_x, loc_y;

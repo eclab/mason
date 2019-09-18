@@ -14,7 +14,7 @@ import java.util.List;
 
 import ec.util.*;
 
-public class DFlocker implements Steppable, sim.portrayal.Orientable2D {
+public class DFlocker extends AbstractStopping implements sim.portrayal.Orientable2D {
 	private static final long serialVersionUID = 1;
 
 	public DoublePoint loc;

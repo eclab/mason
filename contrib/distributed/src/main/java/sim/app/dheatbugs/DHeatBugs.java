@@ -11,6 +11,7 @@ import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.engine.Stopping;
 import sim.field.DQuadTreePartition;
 import sim.field.grid.NDoubleGrid2D;
 import sim.field.grid.NObjectsGrid2D;
@@ -238,7 +239,7 @@ public class DHeatBugs extends DSimState {
 					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
 					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
 			// }
-			// for (Steppable i : hb.queue) {
+			// for (Stopping i : hb.queue) {
 			// DHeatBug a = (DHeatBug)i;
 			// s += a.toString() + "\n";
 			// }
