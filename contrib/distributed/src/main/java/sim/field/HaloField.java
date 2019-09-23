@@ -43,7 +43,6 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	protected S localStorage;
 	protected DPartition partition;
-	protected Comm comm;
 	protected Datatype MPIBaseType;
 
 	public final int fieldIndex;
@@ -125,7 +124,6 @@ public abstract class HaloField<T extends Serializable, P extends NdPoint, S ext
 	}
 
 	public void reload() {
-		comm = partition.getCommunicator();
 		origPart = partition.getPartition();
 
 		// Get the partition representing halo and local area by expanding the original

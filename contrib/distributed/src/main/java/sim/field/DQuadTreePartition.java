@@ -69,11 +69,7 @@ public class DQuadTreePartition extends DPartition {
 
 		try {
 			// Create a unweighted & undirected graph for neighbor communication
-			comm = MPI.COMM_WORLD.createDistGraphAdjacent(
-					ns,
-					ns,
-					new Info(),
-					false);
+			comm = MPI.COMM_WORLD.createDistGraphAdjacent(ns, ns, new Info(), false);
 
 			// Create the group comms for nodes at the same level (intercomm) and for nodes
 			// and its all leaves (intracomm)
@@ -84,7 +80,12 @@ public class DQuadTreePartition extends DPartition {
 		}
 	}
 
-	public void initQuadTree(final List<IntPoint> splitPoints) {
+	/**
+	 * This method is only used internally, for init use initialize instead
+	 *
+	 * @param splitPoints
+	 */
+	void initQuadTree(final List<IntPoint> splitPoints) {
 		// Create the quad tree based on the given split points
 		qt.split(splitPoints);
 
@@ -93,20 +94,24 @@ public class DQuadTreePartition extends DPartition {
 		setMPITopo();
 	}
 
-	@Override
 	public void initialize() {
 		initUniformly();
 	}
 
-	public void initUniformly() {
+	/**
+	 * This method is only used internally, for init use initialize instead
+	 */
+	void initUniformly() {
 		// Init into a full quad tree
+
 		// Check whether np is power of (2 * nd)
-		// np's binary represention only contains a single one i.e., (np & (np - 1)) ==
-		// 0
+		// np's binary represention only contains a single one i.e.,
+		// (np & (np - 1)) == 0
 		// and the number of zeros before it is evenly divided by nd
 		int nz = 0;
 		while ((numProcessors >> nz & 0x1) != 0x1)
 			nz++;
+
 		if ((numProcessors & numProcessors - 1) != 0 || nz % numDimensions != 0)
 			throw new IllegalArgumentException(
 					"Currently only support the number processors that is power of " + (2 * numDimensions));
@@ -116,7 +121,6 @@ public class DQuadTreePartition extends DPartition {
 			for (final QTNode leaf : leaves)
 				qt.split(leaf.getShape().getCenter());
 		}
-
 		mapNodeToProc();
 		setMPITopo();
 	}
@@ -287,6 +291,8 @@ public class DQuadTreePartition extends DPartition {
 			if (obj[0] != null)
 				qt.moveOrigin((int) obj[0], (IntPoint) obj[1]);
 
+		// Assigns new neighbors after balancing
+		// Recreates MPI topology based on that
 		setMPITopo();
 
 		// call postcommit
@@ -360,7 +366,6 @@ public class DQuadTreePartition extends DPartition {
 		MPI.Finalize();
 	}
 
-	@Override
 	public String toString() {
 		return "DQuadTreePartition [qt=" + qt + ", myLeafNode=" + myLeafNode + ", groups=" + groups + ", aoi="
 				+ Arrays.toString(aoi) + "]";

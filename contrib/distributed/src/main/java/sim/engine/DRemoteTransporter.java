@@ -109,7 +109,7 @@ public class DRemoteTransporter {
 
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
-		partition.comm.neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
+		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
 			dst_displ[i] = total;
 			total += dst_count[i];
@@ -117,8 +117,8 @@ public class DRemoteTransporter {
 		final ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
 
 		// exchange the actual object bytes
-		partition.comm.neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count, dst_displ,
-				MPI.BYTE);
+		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
+				dst_displ, MPI.BYTE);
 
 		// read and handle incoming objects
 		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
