@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import java.util.logging.SocketHandler;
 
 import ec.util.MersenneTwisterFast;
+import mpi.MPI;
 import mpi.MPIException;
 import sim.field.DPartition;
 import sim.field.DQuadTreePartition;
@@ -204,17 +205,17 @@ public class DSimState extends SimState {
 		DSimState.logger.addHandler(handler);
 	}
 
-	public static void doLoopMPI(final Class<?> c, final String[] args) throws mpi.MPIException {
+	public static void doLoopMPI(final Class<?> c, final String[] args) throws MPIException {
 		doLoopMPI(c, args, 20);
 	}
 
-	public static void doLoopMPI(final Class<?> c, final String[] args, final int window) throws mpi.MPIException {
+	public static void doLoopMPI(final Class<?> c, final String[] args, final int window) throws MPIException {
 		Timing.setWindow(window);
-		mpi.MPI.Init(args);
+		MPI.Init(args);
 		Timing.start(Timing.LB_RUNTIME);
 
 		// Setup Logger
-		final String loggerName = String.format("MPI-Job-%d", mpi.MPI.COMM_WORLD.getRank());
+		final String loggerName = String.format("MPI-Job-%d", MPI.COMM_WORLD.getRank());
 		final String logServAddr = argumentForKey("-logserver", args);
 		final String logServPortStr = argumentForKey("-logport", args);
 		if (logServAddr != null && logServPortStr != null)
@@ -228,7 +229,7 @@ public class DSimState extends SimState {
 			initLocalLogger(loggerName);
 
 		doLoop(c, args);
-		mpi.MPI.Finalize();
+		MPI.Finalize();
 	}
 
 	/**
@@ -241,21 +242,22 @@ public class DSimState extends SimState {
 
 	public void start() {
 		super.start();
-
 		RemoteProxy.Init();
-
 		try {
 			syncFields();
+
+			for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
+				haloField.initRemote();
+
+			if (partition.isGlobalMaster())
+				startRoot();
+
+			// On all processors, wait for the root start to finish
+			MPI.COMM_WORLD.barrier();
 		} catch (final MPIException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
-			haloField.initRemote();
-
-		if (partition.isGlobalMaster())
-			startRoot();
-		// TODO: do we need to sync all processors here?
 	}
 
 	public boolean isDistributed() {
@@ -269,7 +271,7 @@ public class DSimState extends SimState {
 	protected double reviseTime(final double localTime) {
 		final double[] buf = new double[] { localTime };
 		try {
-			mpi.MPI.COMM_WORLD.allReduce(buf, 1, mpi.MPI.DOUBLE, mpi.MPI.MIN);
+			MPI.COMM_WORLD.allReduce(buf, 1, MPI.DOUBLE, MPI.MIN);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

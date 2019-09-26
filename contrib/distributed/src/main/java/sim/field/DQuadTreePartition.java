@@ -64,7 +64,7 @@ public class DQuadTreePartition extends DPartition {
 		return toPartitionId(new DoublePoint(c));
 	}
 
-	protected void setMPITopo() {
+	protected void createMPITopo() {
 		final int[] ns = getNeighborIds();
 
 		try {
@@ -91,7 +91,7 @@ public class DQuadTreePartition extends DPartition {
 
 		// map all quad tree nodes to processors
 		mapNodeToProc();
-		setMPITopo();
+		createMPITopo();
 	}
 
 	public void initialize() {
@@ -122,7 +122,7 @@ public class DQuadTreePartition extends DPartition {
 				qt.split(leaf.getShape().getCenter());
 		}
 		mapNodeToProc();
-		setMPITopo();
+		createMPITopo();
 	}
 
 	protected void mapNodeToProc() {
@@ -293,7 +293,7 @@ public class DQuadTreePartition extends DPartition {
 
 		// Assigns new neighbors after balancing
 		// Recreates MPI topology based on that
-		setMPITopo();
+		createMPITopo();
 
 		// call postcommit
 		for (final Consumer r : postCallbacks)

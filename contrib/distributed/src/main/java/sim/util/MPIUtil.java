@@ -10,13 +10,15 @@ import mpi.*;
 
 import sim.field.DPartition;
 
-//TODO Reuse ByteBuffers to minimize allocate/de-allocate overhead
-//TODO Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
+// TODO: Reuse ByteBuffers to minimize allocate/de-allocate overhead
+// TODO: Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
+
+// TODO: Point to point comm
 
 // Utility class that serialize/exchange/deserialize objects using MPI
 public class MPIUtil {
 
-     //static final int MAX_SIZE = 1 << 30; // 1024MBytes
+     // static final int MAX_SIZE = 1 << 30; // 1024MBytes
      static final int MAX_SIZE =  134217728; // 128 MB
 
     // Persistent send and recv direct buffers
