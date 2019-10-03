@@ -55,7 +55,7 @@ public class IterativeRepeat implements Steppable, Stoppable
                 // reuse the Key to save some gc perhaps -- it's been pulled out and discarded at this point
                 key.time += interval;
                 if (key.time < Schedule.AFTER_SIMULATION) 
-                    state.schedule.scheduleOnce(key,this);  // may return false if we couldn't schedule, which is fine
+                    state.schedule.scheduleOnce(key, this);  // may return false if we couldn't schedule, which is fine
                 }
             catch (IllegalArgumentException e)
                 {
