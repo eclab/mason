@@ -16,11 +16,36 @@ public class DistributedSchedule extends Schedule
     {
     private static final long serialVersionUID = 1;
 
-    protected boolean scheduleOnce(Key key, final Steppable event)
+    public boolean scheduleOnce(final Steppable event)
         {
-        return super.scheduleOnce(key, new DistributedTentativeStep(event));
+        return super.scheduleOnce(new DistributedTentativeStep(event));
         }
 
+    public boolean scheduleOnceIn(final double delta, final Steppable event)
+        {
+        return super.scheduleOnceIn(delta, new DistributedTentativeStep(event));
+        }
+        
+    public boolean scheduleOnce(final Steppable event, final int ordering)
+        {
+        return super.scheduleOnce(new DistributedTentativeStep(event), ordering);
+        }
+
+    public boolean scheduleOnceIn(final double delta, final Steppable event, final int ordering)
+        {
+        return super.scheduleOnceIn(delta, new DistributedTentativeStep(event), ordering);
+        }
+
+    public boolean scheduleOnce(double time, final Steppable event)
+        {
+        return super.scheduleOnce(time, new DistributedTentativeStep(event));
+        }
+        
+    public boolean scheduleOnce(double time, final int ordering, final Steppable event)
+        {
+        return super.scheduleOnce(time, ordering, new DistributedTentativeStep(event));
+        }
+    
     public IterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
         if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
@@ -28,7 +53,7 @@ public class DistributedSchedule extends Schedule
 
         synchronized(lock)
             {
-            if (_scheduleOnce(r.key,r)) return r; 	// r.key is package-level access
+            if (_scheduleOnce(r.getKey(),r)) return r;
             else return null;
             }
         }

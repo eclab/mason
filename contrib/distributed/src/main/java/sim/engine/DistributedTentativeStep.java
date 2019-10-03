@@ -17,13 +17,14 @@ public class DistributedTentativeStep extends TentativeStep
 			{
 			((Stopping)step).setStoppable(this);
 			}
+		else throw new RuntimeException("DistributedTentativeStep built on a non-Stopping Steppable");
         }
         
     public void stop()
         {
         synchronized(lock)
         {
-        if (step != null && step instanceof Stopping)
+        if (step != null)
         	{
         	((Stopping)step).setStoppable(null);
         	}

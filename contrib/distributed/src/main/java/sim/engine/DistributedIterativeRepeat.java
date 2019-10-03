@@ -21,13 +21,14 @@ public class DistributedIterativeRepeat extends IterativeRepeat
         	{
         	((Stopping)step).setStoppable(this);
         	}
+		else throw new RuntimeException("DistributedIterativeRepeat built on a non-Stopping Steppable");
         }
         
     public void stop()  
         {
         synchronized(lock)
         	{
-	        if (step != null && step instanceof Stopping)
+	        if (step != null)
 	        	{
 	        	((Stopping)step).setStoppable(null);
 	        	}
