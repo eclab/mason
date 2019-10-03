@@ -18,32 +18,56 @@ public class DistributedSchedule extends Schedule
 
     public boolean scheduleOnce(final Steppable event)
         {
-        return super.scheduleOnce(new DistributedTentativeStep(event));
+        Key k = new Key(/*must lock for:*/time +1.0,0);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k,new DistributedTentativeStep(event, k));
+            }
         }
 
     public boolean scheduleOnceIn(final double delta, final Steppable event)
         {
-        return super.scheduleOnceIn(delta, new DistributedTentativeStep(event));
+        Key k = new Key(/*must lock for:*/ time + delta, 0);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+            }
         }
         
     public boolean scheduleOnce(final Steppable event, final int ordering)
         {
-        return super.scheduleOnce(new DistributedTentativeStep(event), ordering);
+        Key k = new Key(/*must lock for:*/time +1.0,ordering);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k,new DistributedTentativeStep(event, k));
+            }
         }
 
     public boolean scheduleOnceIn(final double delta, final Steppable event, final int ordering)
         {
-        return super.scheduleOnceIn(delta, new DistributedTentativeStep(event), ordering);
+        Key k = new Key(/*must lock for:*/ time + delta, ordering);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k, new DistributedTentativeStep(event, k));
+            }
         }
 
     public boolean scheduleOnce(double time, final Steppable event)
         {
-        return super.scheduleOnce(time, new DistributedTentativeStep(event));
+        Key k = new Key(time,0);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k,new DistributedTentativeStep(event, k));
+            }
         }
         
     public boolean scheduleOnce(double time, final int ordering, final Steppable event)
         {
-        return super.scheduleOnce(time, ordering, new DistributedTentativeStep(event));
+        Key k = new Key(time,ordering);
+        synchronized(lock)
+            {
+            return _scheduleOnce(k,new DistributedTentativeStep(event, k));
+            }
         }
     
     public IterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
