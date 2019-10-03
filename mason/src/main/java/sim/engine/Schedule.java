@@ -512,7 +512,7 @@ public class Schedule implements java.io.Serializable
         schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
         event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
-    protected boolean scheduleOnce(Key key, final Steppable event)
+    boolean scheduleOnce(Key key, final Steppable event)
         {
         synchronized(lock)
             {
@@ -526,7 +526,7 @@ public class Schedule implements java.io.Serializable
         schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
         event is being scheduled for AFTER_SIMULATION.  The method 
         throws an IllegalArgumentException if the event is being scheduled for an invalid time, or is null. */
-    boolean _scheduleOnce(Key key, Steppable event)
+    protected boolean _scheduleOnce(Key key, Steppable event)
         {
         // locals are a teeny bit faster
         double time = this.time;
@@ -723,7 +723,7 @@ public class Schedule implements java.io.Serializable
 
         synchronized(lock)
             {
-            if (_scheduleOnce(r.key,r)) return r; 	// r.key is package-level access
+            if (_scheduleOnce(r.getKey(),r)) return r;
             else return null;
             }
         }

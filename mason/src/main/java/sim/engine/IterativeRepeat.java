@@ -22,11 +22,13 @@ public class IterativeRepeat implements Steppable, Stoppable
     double interval;
     Steppable step;  // if null, does not reschedule
     Schedule.Key key;
+    protected Object[] lock = new Object[0];
     
     public int getOrdering() { return key.ordering; }
     public double getInterval() { return interval; }
     public double getTime() { return key.time; }
     public Steppable getSteppable() { return step; }
+    public Schedule.Key getKey() { return key; }
     
     public IterativeRepeat(final Steppable step, final double time, final double interval, final int ordering)
         {
@@ -40,15 +42,12 @@ public class IterativeRepeat implements Steppable, Stoppable
         this.step = step;
         this.interval = interval;
         this.key = new Schedule.Key(time,ordering);
-
-        if (step instanceof Stopping)
-        	{
-        	((Stopping)step).setStoppable(this);
-        	}
         }
         
-    public synchronized void step(final SimState state)
+    public void step(final SimState state)
         {
+        synchronized(lock)
+        	{
         if (step!=null)
             {
             try
@@ -66,15 +65,15 @@ public class IterativeRepeat implements Steppable, Stoppable
             step.step(state);
             assert sim.util.LocationLog.clear();
             }
+            }
         }
         
-    public synchronized void stop()  
+    public void stop()  
         {
-        if (step != null && step instanceof Stopping)
+        synchronized(lock)
         	{
-        	((Stopping)step).setStoppable(null);
+        	step = null;
         	}
-        step = null;
         }
         
     public String toString() { return "Schedule.IterativeRepeat[" + step + "]"; }
