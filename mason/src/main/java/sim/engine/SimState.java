@@ -786,5 +786,40 @@ public class SimState implements java.io.Serializable
             n = n*10;
             }
         }
+    
+    
+    /** Override this method to return the number of objectives that assess(...) should assess
+    	and return.   This method is only used by the distributed optimization facility and will
+    	not be called otherwise.  By default the value is 0.  */ 
+    public int numberOfObjectives() { return 0; }
+    
+    /** Override this method to return a multiobjective optimization assessment of
+    	the simulation run.  You should return an assessment of the model performance
+    	for each of some N >= 1 objectives (N is the length of the array).  For each
+    	objective i, the returned assessment[i] should be greater than or equal to min[I] and
+    	less than or equal to max[i].  If maximize[i] is true, then max[i] is considered the
+    	optimal score and min[i] is the worst possible score, else it's the other way around.
+    	The number of objectives N is will be the same as as numberOfObjectives().
+    	
+    	<p>This method is only used by the distributed optimization facility
+    	and will be called, possibly repeatedly, after start() and before finish().  If you're
+    	not doing distributed optimization, it'll never be called, so you can ignore this method.
+    	By default the method nonsensically always returns an optimimum score, that is, it 
+    	suggests that the model is ideally calibrated. 
+    	
+    	<p>If min[i] (or max[i]) is a real number, than this number represents the *actual*
+    		minimum (or maximum) possible value.  If min[i] (or max[i]) is negative (or positive)
+    		infinity, then this is *beyond* the actual minimum (or maximum) positive value.
+    		That is, you should always set real values in your assessment, and never NaN.  
+    	*/ 
+    public double[] assess(double[] min, double[] max, boolean maximize[])
+    	{
+    	double[] assessment = new double[min.length];
+    	for(int i = 0; i < assessment.length; i++)
+    		{
+    		assessment[i] = (maximize[i] ? max[i] : min[i]);
+    		}
+    	return assessment;
+    	}
     }
 
