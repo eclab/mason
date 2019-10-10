@@ -40,8 +40,8 @@ public class DSimState extends SimState {
 	// Any HaloField that is created will register itself here
 	protected final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
 
-	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule, final int width,
-			final int height, final int aoiSize) {
+	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
+			final int width, final int height, final int aoiSize) {
 		super(seed, random, schedule);
 		aoi = new int[] { aoiSize, aoiSize };
 		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
@@ -50,7 +50,7 @@ public class DSimState extends SimState {
 		fieldRegistry = new ArrayList<>();
 	}
 
-	protected DSimState(final long seed, final MersenneTwisterFast random, final Schedule schedule,
+	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
 			final DPartition partition) {
 		super(seed, random, schedule);
 		aoi = partition.aoi;
@@ -61,23 +61,24 @@ public class DSimState extends SimState {
 	}
 
 	public DSimState(final long seed, final int width, final int height, final int aoiSize) {
-		this(seed, new MersenneTwisterFast(seed), new Schedule(), width, height, aoiSize);
+		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), width, height, aoiSize);
 	}
 
-	protected DSimState(final long seed, final Schedule schedule) {
+	protected DSimState(final long seed, final DistributedSchedule schedule) {
 		this(seed, new MersenneTwisterFast(seed), schedule, 1000, 1000, 5);
 	}
 
 	public DSimState(final long seed) {
-		this(seed, new MersenneTwisterFast(seed), new Schedule(), 1000, 1000, 5);
+		this(seed, new MersenneTwisterFast(seed), new DistributedSchedule(), 1000, 1000, 5);
 	}
 
-	protected DSimState(final MersenneTwisterFast random, final Schedule schedule) {
+	protected DSimState(final MersenneTwisterFast random, final DistributedSchedule schedule) {
 		this(0, random, schedule, 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its seed
 	}
 
 	protected DSimState(final MersenneTwisterFast random) {
-		this(0, random, new Schedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its seed
+		this(0, random, new DistributedSchedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its
+																	// seed
 	}
 
 	/**

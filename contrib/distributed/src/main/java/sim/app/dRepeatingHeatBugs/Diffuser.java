@@ -6,8 +6,8 @@
 
 package sim.app.dRepeatingHeatBugs;
 
+import sim.engine.AbstractStopping;
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.grid.NDoubleGrid2D;
 
 /**
@@ -16,7 +16,7 @@ import sim.field.grid.NDoubleGrid2D;
  * many-fold in classes such as Diffuser.
  */
 
-public class Diffuser implements Steppable {
+public class Diffuser extends AbstractStopping {
 	private static final long serialVersionUID = 1;
 
 	public void step(final SimState state) {
