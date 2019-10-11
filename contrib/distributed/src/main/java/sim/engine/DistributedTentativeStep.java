@@ -14,21 +14,21 @@ public class DistributedTentativeStep extends TentativeStep
     public int getOrdering() { return key.ordering; }
     public double getTime() { return key.time; }
     public Schedule.Key getKey() { return key; }
-	
-    public DistributedTentativeStep(Steppable step, Schedule.Key key)
+
+    public DistributedTentativeStep(final Steppable step, final Schedule.Key key)
         {
         super(step);
-        
-        System.err.println("Creating DTS for " + System.identityHashCode(step) + " " + key.getTime() + " " + key.getOrdering());
-        new Throwable().printStackTrace();
-        
+
+//        System.err.println("Creating DTS for " + System.identityHashCode(step) + " " + key.getTime() + " " + key.getOrdering());
+//        new Throwable().printStackTrace();
+
 		if (step instanceof Stopping)
 			{
 			((Stopping)step).setStoppable(this);
 			}
 		else throw new RuntimeException("DistributedTentativeStep built on a non-Stopping Steppable");
         }
-        
+
     public void stop()
         {
         synchronized(lock)
