@@ -121,4 +121,25 @@ public class Flockers extends SimState
         doLoop(Flockers.class, args);
         System.exit(0);
         }    
+
+
+
+    public double[] assess(int numObjectives)
+    	{
+    	double[] assessment = new double[numObjectives];
+    	
+    	double avgNeighbors = 0;
+    	
+    	Bag flock = flockers.getAllObjects();
+    	for(int i = 0; i < flock.numObjs; i++)
+    		{
+    		Flocker f = (Flocker)(flock.objs[i]);
+    		avgNeighbors += f.getNeighbors().numObjs;
+    		}
+    		
+    	avgNeighbors /= (double)flock.numObjs;
+    	assessment[0] = avgNeighbors;
+    	System.err.println(assessment[0]);
+    	return assessment;
+    	}
     }
