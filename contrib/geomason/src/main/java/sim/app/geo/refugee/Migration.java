@@ -12,7 +12,7 @@ import sim.util.Bag;
 import java.io.*;
 import java.util.*;
 
-class Migration extends SimState {
+public class Migration extends SimState {
 
 	public Continuous2D world;
 	public SparseGrid2D worldPopResolution;// all agents within each km grid
