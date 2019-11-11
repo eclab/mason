@@ -30,6 +30,7 @@ sim/app/keepaway/*.java \
 sim/app/lsystem/*.java \
 sim/app/lightcycles/*.java \
 sim/app/swarmgame/*.java \
+sim/app/serengeti/*.java \
 sim/app/flockers/*.java \
 sim/app/tutorial1and2/*.java \
 sim/app/tutorial3/*.java \
@@ -50,6 +51,7 @@ sim/util/media/*.java \
 sim/util/media/chart/*.java \
 sim/util/gui/*.java \
 sim/util/distribution/*.java \
+sim/util/opt/*.java \
 sim/util/sweep/*.java \
 sim/field/*.java \
 sim/field/grid/*.java \

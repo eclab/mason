@@ -901,7 +901,7 @@ public class SimpleProperties extends Properties implements java.io.Serializable
         for(int i = 0; i < numProperties(); i++)
             {
             if (i > 0) s += ", ";
-            s += getName(i);
+            s += (getName(i) + "(" + getType(i) + ")=" + getValue(i));
             }
         s += "}";
         return s;

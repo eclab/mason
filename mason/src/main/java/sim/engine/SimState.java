@@ -793,7 +793,7 @@ public class SimState implements java.io.Serializable
     	for each of some N >= 1 objectives (N is the length of the array).  For each
     	objective i, the returned assessment[i] should be between 0 (the lowest quality)
     	and 1 (the highest quality) inclusive.  The default version of this method simply
-    	returns all 0, meaning a horrible, horrible solution.
+    	returns all 0, meaning a horrible, no good, very bad simulation run.
     	
     	<p>This method is only used by the distributed optimization facility
     	and will be called, possibly repeatedly, after start() and before finish().  If you're
@@ -809,6 +809,26 @@ public class SimState implements java.io.Serializable
     		assessment[i] = 0.0;
     		}
     	return assessment;
+    	}
+
+	PrintWriter writer = null;
+	
+	/** This is method is called to set the PrintWriter used in getDescription() [which is more important to you]. */ 
+    public void setDescription(PrintWriter writer)
+    	{
+    	this.writer = writer;
+    	}
+    
+	/** Returns the PrintWriter used to describe a high-quality assessed SimState.  If getDescription() 
+		returns a PrintWriter (as opposed to null), you can use this to write out descriptive statistics,
+		indeed anything you like, as the simulation is running to describe it.  This is done at the end
+		of optimization, when one or more SimState models, typically the best one discovered, will
+		be run one final time with a PrintWriter description.  The description will be set prior to start()
+		and should not be saved nor written to after finish().
+		*/ 
+    public PrintWriter getDescription()
+    	{
+    	return writer;
     	}
     }
 

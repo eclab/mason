@@ -243,6 +243,34 @@ public boolean showExtraProperties() { return true; }
         doLoop(HeatBugs.class, args);
         System.exit(0);
         }    
+
+
+
+    public double[] assess(int numObjectives)
+    	{
+    	double[] assessment = new double[numObjectives];
+		double[] xp = getBugXPos();
+		double sum = 0;
+		for(int i = 0; i < xp.length; i++)
+			{
+			sum += xp[i];
+			}
+		sum /= xp.length;
+		
+		double var = 0;
+		for(int i = 0; i < xp.length; i++)
+			{
+			double d1 = Math.abs(sum - xp[i]);
+			double d2 = Math.abs(100 - (sum - xp[i]));
+			var += Math.min(d1, d2);
+			}
+		var /= xp.length;
+		
+    	assessment[0] = 1 - var;
+    	System.err.println(var);
+    	return assessment;
+    	}
+
     }
     
     
