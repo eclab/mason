@@ -24,14 +24,13 @@ public class TransporterMPI {
 	int[] src_count, src_displ, dst_count, dst_displ;
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
-	RemoteOutputStream[] outputStreams;
 
-	PartitionInterface partition;
+	PartitionInterface<?> partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
-	public TransporterMPI(final PartitionInterface partition) {
+	public TransporterMPI(final PartitionInterface<?> partition) {
 		this.partition = partition;
 		reload();
 
@@ -68,19 +67,20 @@ public class TransporterMPI {
 		dst_displ = new int[numNeighbors];
 
 		// outputStreams for direct neighbors
+		dstMap = new HashMap<Integer, RemoteOutputStream>();
 		try {
-			outputStreams = new RemoteOutputStream[numNeighbors];
-			for (int i = 0; i < numNeighbors; i++)
-				outputStreams[i] = new RemoteOutputStream();
+//			 outputStreams = new RemoteOutputStream[numNeighbors];
+			for (int i : neighbors)
+				dstMap.putIfAbsent(i, new RemoteOutputStream());
 		} catch (final IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
 		// neighbors
-		dstMap = new HashMap<Integer, RemoteOutputStream>();
-		for (int i = 0; i < numNeighbors; i++)
-			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
+//		dstMap = new HashMap<Integer, RemoteOutputStream>();
+//		for (int i = 0; i < numNeighbors; i++)
+//			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
 	}
 
 	public int size() {
@@ -94,16 +94,17 @@ public class TransporterMPI {
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
-			outputStreams[i].flush();
-			src_count[i] = outputStreams[i].size();
+			RemoteOutputStream outputStream = dstMap.get(neighbors[i]);
+			outputStream.flush();
+			src_count[i] = outputStream.size();
 			src_displ[i] = total;
 			total += src_count[i];
 		}
 
 		// Concat neighbor streams into one
 		final ByteArrayOutputStream objstream = new ByteArrayOutputStream();
-		for (int i = 0; i < numNeighbors; i++)
-			objstream.write(outputStreams[i].toByteArray());
+		for (int i : neighbors)
+			objstream.write(dstMap.get(i).toByteArray());
 
 		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
@@ -111,6 +112,7 @@ public class TransporterMPI {
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
 		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
+
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
 			dst_displ[i] = total;
 			total += dst_count[i];
@@ -122,7 +124,7 @@ public class TransporterMPI {
 				dst_displ, MPI.BYTE);
 
 		// read and handle incoming objects
-		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
+//		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
 		for (int i = 0; i < numNeighbors; i++) {
 			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
@@ -133,8 +135,10 @@ public class TransporterMPI {
 				try {
 					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.pid != wrapper.destination) {
-						assert dstMap.containsKey(wrapper.destination);
-						bufferList.add(wrapper);
+						System.err.println("This is not the correct processor");
+						throw new RuntimeException("This is not the correct processor");
+//						assert dstMap.containsKey(wrapper.destination);
+//						bufferList.add(wrapper);
 					} else
 						objectQueue.add(wrapper);
 				} catch (final EOFException e) {
@@ -156,13 +160,13 @@ public class TransporterMPI {
 		}
 
 		// Clear previous queues
-		for (int i = 0; i < numNeighbors; i++)
-			outputStreams[i].reset();
+		for (int i : neighbors)
+			dstMap.get(i).reset();
 
 		// Handling the agent in bufferList
-		for (final PayloadWrapper wrapper : bufferList)
-			dstMap.get(wrapper.destination).write(wrapper);
-		bufferList.clear();
+//		for (final PayloadWrapper wrapper : bufferList)
+//			dstMap.get(wrapper.destination).write(wrapper);
+//		bufferList.clear();
 
 //		for (int i = 0; i < bufferList.size(); ++i) {
 //			Transportee<? extends Object> wrapper = bufferList.get(i);
