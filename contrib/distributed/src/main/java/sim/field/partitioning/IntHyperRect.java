@@ -1,14 +1,15 @@
-package sim.util;
+package sim.field.partitioning;
 
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
+
 // TODO Move to NdRectangle
 public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<IntPoint> {
-    int nd, id;
-    IntPoint ul, br;
+    public int nd, id;
+    public IntPoint ul, br;
 
     public IntHyperRect(int id, IntPoint ul, IntPoint br) {
         this.id = id;
@@ -147,11 +148,7 @@ public class IntHyperRect implements Comparable<IntHyperRect>, Iterable<IntPoint
             .toArray(size -> new IntPoint[size]);
     }
 
-    // Return the segment of the hyper rectangle on the given dimension
-    public Segment getSegment(int dim) {
-        ul.assertEqualDim(dim);
-        return new Segment((double)ul.c[dim], (double)br.c[dim], id);
-    }
+
 
     public IntPoint getCenter() {
         return new IntPoint(IntStream.range(0, nd).map(i -> (br.c[i] - ul.c[i]) / 2 + ul.c[i]).toArray());

@@ -9,13 +9,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
-import sim.util.IntPointGenerator;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.IntPointGenerator;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
-import sim.util.NdPoint;
 
-public class ContStorage<T extends Serializable> extends GridStorage {
+public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	int[] dsize;
 	double[] discretizations;

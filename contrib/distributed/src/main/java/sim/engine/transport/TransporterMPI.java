@@ -1,4 +1,4 @@
-package sim.engine;
+package sim.engine.transport;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,11 +13,12 @@ import java.util.HashMap;
 
 import mpi.MPI;
 import mpi.MPIException;
+import sim.engine.IterativeRepeat;
 import sim.engine.Stopping;
-import sim.field.DPartition;
-import sim.util.NdPoint;
+import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.NdPoint;
 
-public class DRemoteTransporter {
+public class TransporterMPI {
 
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
@@ -25,12 +26,12 @@ public class DRemoteTransporter {
 	HashMap<Integer, RemoteOutputStream> dstMap;
 	RemoteOutputStream[] outputStreams;
 
-	DPartition partition;
+	PartitionInterface partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
-	public DRemoteTransporter(final DPartition partition) {
+	public TransporterMPI(final PartitionInterface partition) {
 		this.partition = partition;
 		reload();
 

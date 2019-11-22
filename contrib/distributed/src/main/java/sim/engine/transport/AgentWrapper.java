@@ -1,4 +1,4 @@
-package sim.engine;
+package sim.engine.transport;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import sim.engine.Stopping;
  * Used internally
  *
  */
-class AgentWrapper implements Serializable {
+public class AgentWrapper implements Serializable, MigratableObject {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,7 +19,7 @@ class AgentWrapper implements Serializable {
 	 * <br>
 	 * Default: 1
 	 */
-	final int ordering;
+	public final int ordering;
 
 	/**
 	 * time for the scheduler. Values less than zero are considered invalid <br>
@@ -27,29 +27,29 @@ class AgentWrapper implements Serializable {
 	 * <br>
 	 * Default: -1.0
 	 */
-	final double time;
+	public final double time;
 
-	final Stopping agent;
+	public final Stopping agent;
 
-	AgentWrapper(final Stopping agent) {
+	public AgentWrapper(final Stopping agent) {
 		ordering = 1;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final int ordering, final Stopping agent) {
+	public AgentWrapper(final int ordering, final Stopping agent) {
 		this.ordering = ordering;
 		time = -1.0;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final double time, final Stopping agent) {
+	public AgentWrapper(final double time, final Stopping agent) {
 		ordering = 1;
 		this.time = time;
 		this.agent = agent;
 	}
 
-	AgentWrapper(final int ordering, final double time, final Stopping agent) {
+	public AgentWrapper(final int ordering, final double time, final Stopping agent) {
 		this.ordering = ordering;
 		this.time = time;
 		this.agent = agent;

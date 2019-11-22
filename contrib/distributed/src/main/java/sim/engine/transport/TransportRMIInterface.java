@@ -1,10 +1,10 @@
-package sim.field;
+package sim.engine.transport;
 
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import sim.util.NdPoint;
+import sim.field.partitioning.NdPoint;
 
 /**
  * Implemented by fields that will be used for RMI
@@ -13,7 +13,7 @@ import sim.util.NdPoint;
  * @param <P> The Type of NdPoint to use
  * @param <T> The Type of Object in the field
  */
-public interface RemoteField<T extends Serializable, P extends NdPoint> extends Remote {
+public interface TransportRMIInterface<T extends Serializable, P > extends Remote {
 
 	/**
 	 * Used internally for RMI

@@ -1,4 +1,4 @@
-package sim.util;
+package sim.field.partitioning;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;

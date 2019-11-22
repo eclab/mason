@@ -1,10 +1,10 @@
-package sim.util;
+package sim.field.partitioning;
 
 import java.util.*;
 import java.util.stream.*;
 
 // TODO Currently all shapes are restricted to IntHyperRect - switch to NdRectangle once it is completed
-public class QTNode {
+public class QuadTreeNode {
 
 	final int nd;
 	int level, id; // which level in the tree the node is in, its node id
@@ -13,14 +13,14 @@ public class QTNode {
 	IntPoint origin;
 	IntHyperRect shape;
 
-	QTNode parent = null;
-	List<QTNode> children;
+	QuadTreeNode parent = null;
+	List<QuadTreeNode> children;
 
-	public QTNode(final IntHyperRect shape, final QTNode parent) {
+	public QuadTreeNode(final IntHyperRect shape, final QuadTreeNode parent) {
 		nd = shape.getNd();
 		this.shape = shape;
 		this.parent = parent;
-		children = new ArrayList<QTNode>();
+		children = new ArrayList<QuadTreeNode>();
 		level = parent == null ? 0 : parent.getLevel() + 1;
 	}
 
@@ -52,16 +52,16 @@ public class QTNode {
 		return shape;
 	}
 
-	public QTNode getParent() {
+	public QuadTreeNode getParent() {
 		return parent;
 	}
 
 	// Get my child of the given index
-	public QTNode getChild(final int i) {
+	public QuadTreeNode getChild(final int i) {
 		return children.get(i);
 	}
 
-	public List<QTNode> getChildren() {
+	public List<QuadTreeNode> getChildren() {
 		return children;
 	}
 
@@ -74,8 +74,8 @@ public class QTNode {
 	}
 
 	// Return whether I am the ancester of the given node
-	public boolean isAncestorOf(final QTNode node) {
-		QTNode curr = node;
+	public boolean isAncestorOf(final QuadTreeNode node) {
+		QuadTreeNode curr = node;
 
 		while (curr != null) {
 			curr = curr.getParent();
@@ -88,8 +88,8 @@ public class QTNode {
 
 	// Return siblings (not including the node itself) if exist, empty list
 	// otherwise
-	public List<QTNode> getSiblings() {
-		final List<QTNode> ret = new ArrayList<QTNode>();
+	public List<QuadTreeNode> getSiblings() {
+		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (isRoot())
 			return ret;
@@ -101,13 +101,13 @@ public class QTNode {
 	}
 
 	// Get the immediate child node that contains the given point
-	public QTNode getChildNode(final NdPoint p) {
+	public QuadTreeNode getChildNode(final NdPoint p) {
 		return children.get(toChildIdx(p));
 	}
 
 	// Get the leaf node that contains the given point
-	public QTNode getLeafNode(final NdPoint p) {
-		QTNode curr = this;
+	public QuadTreeNode getLeafNode(final NdPoint p) {
+		QuadTreeNode curr = this;
 
 		while (!curr.isLeaf())
 			curr = curr.getChildNode(p);
@@ -116,16 +116,16 @@ public class QTNode {
 	}
 
 	// Get all the leaves that are my offsprings
-	public List<QTNode> getLeaves() {
-		final List<QTNode> ret = new ArrayList<QTNode>();
-		final List<QTNode> stack = new ArrayList<QTNode>() {
+	public List<QuadTreeNode> getLeaves() {
+		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
+		final List<QuadTreeNode> stack = new ArrayList<QuadTreeNode>() {
 			{
 				addAll(children);
 			}
 		};
 
 		while (stack.size() > 0) {
-			final QTNode curr = stack.remove(0);
+			final QuadTreeNode curr = stack.remove(0);
 			if (curr.isLeaf())
 				ret.add(curr);
 			else
@@ -138,8 +138,8 @@ public class QTNode {
 	// Split this node based on the given origin or move the origin if already
 	// splitted
 	// return the newly created QTNodes (if any)
-	public List<QTNode> split(final IntPoint newOrigin) {
-		final List<QTNode> ret = new ArrayList<QTNode>();
+	public List<QuadTreeNode> split(final IntPoint newOrigin) {
+		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!shape.contains(newOrigin))
 			throw new IllegalArgumentException("newOrigin " + newOrigin + " is outside the region " + shape);
@@ -148,7 +148,7 @@ public class QTNode {
 
 		if (isLeaf()) {
 			children = IntStream.range(0, 1 << nd)
-					.mapToObj(i -> new QTNode(getChildShape(i), this))
+					.mapToObj(i -> new QuadTreeNode(getChildShape(i), this))
 					.collect(Collectors.toList());
 			ret.addAll(children);
 		} else
@@ -160,11 +160,11 @@ public class QTNode {
 
 	// Merge all the children and make this node a leaf node
 	// return all the nodes that are merged
-	public List<QTNode> merge() {
-		final List<QTNode> ret = new ArrayList<QTNode>();
+	public List<QuadTreeNode> merge() {
+		final List<QuadTreeNode> ret = new ArrayList<QuadTreeNode>();
 
 		if (!isLeaf()) {
-			for (final QTNode child : children) {
+			for (final QuadTreeNode child : children) {
 				ret.addAll(child.merge());
 				ret.add(child);
 			}

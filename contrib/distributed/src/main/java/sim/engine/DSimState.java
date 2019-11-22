@@ -20,43 +20,44 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.DPartition;
-import sim.field.DQuadTreePartition;
-import sim.field.HaloField;
-import sim.field.RemoteProxy;
-import sim.field.storage.GridStorage;
-import sim.util.NdPoint;
+import sim.engine.transport.AgentWrapper;
+import sim.engine.transport.TransporterMPI;
+import sim.engine.transport.PayloadWrapper;
+import sim.engine.transport.RMIProxy;
+import sim.field.Synchronizable;
+import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.QuadTreePartition;
 import sim.util.Timing;
 
 public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	protected DPartition partition;
-	protected DRemoteTransporter transporter;
+	protected PartitionInterface partition;
+	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	protected final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
+	protected final ArrayList<Synchronizable> fieldRegistry;
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
 			final int width, final int height, final int aoiSize) {
 		super(seed, random, schedule);
 		aoi = new int[] { aoiSize, aoiSize };
-		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
+		partition = new QuadTreePartition(new int[] { width, height }, true, aoi);
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
-		fieldRegistry = new ArrayList<>();
+		transporter = new TransporterMPI(partition);
+		fieldRegistry = new ArrayList<Synchronizable>();
 	}
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final DPartition partition) {
+			final PartitionInterface partition) {
 		super(seed, random, schedule);
 		aoi = partition.aoi;
 		this.partition = partition;
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
+		transporter = new TransporterMPI(partition);
 		fieldRegistry = new ArrayList<>();
 	}
 
@@ -88,23 +89,24 @@ public class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int registerField(
-			final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField) {
+	public int registerField(final Synchronizable halo) {
 		// Must be called in a deterministic manner
 		final int index = fieldRegistry.size();
-		fieldRegistry.add(haloField);
+		fieldRegistry.add(halo);
 		return index;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
-		// if the fieldIndex < 0 we assume that
-		// the agent is not supposed to be added to any field
-
-		// If the fieldIndex is correct then the type-cast below will be safe
-		if (fieldIndex >= 0)
-			((HaloField) fieldRegistry.get(fieldIndex)).add(p, obj);
-	}
+//	@SuppressWarnings({ "unchecked", "rawtypes" })
+//	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
+//		// if the fieldIndex < 0 we assume that
+//		// the agent is not supposed to be added to any field
+//
+//		// If the fieldIndex is correct then the type-cast below will be safe
+//		if (fieldIndex >= 0) 
+//			((HaloGrid) fieldRegistry.get(fieldIndex)).add(p, obj);
+//		
+//	//TODO CHANGE HERE
+//	}
 
 	/**
 	 * Calls Sync on all the fields
@@ -112,7 +114,7 @@ public class DSimState extends SimState {
 	 * @throws MPIException
 	 */
 	protected void syncFields() throws MPIException {
-		for (final HaloField<?, ?, ?> haloField : fieldRegistry)
+		for (final Synchronizable haloField : fieldRegistry)
 			haloField.syncHalo();
 	}
 
@@ -127,7 +129,10 @@ public class DSimState extends SimState {
 			System.exit(-1);
 		}
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
-
+			
+			if (payloadWrapper.fieldIndex >= 0) 
+				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).
+					syncObject(payloadWrapper);
 			/*
 			 * Assumptions about what is to be added to the field using addToField method
 			 * rely on the fact that the wrapper classes are not directly used By the
@@ -139,6 +144,7 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
+			
 			if (payloadWrapper.payload instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
 
@@ -149,7 +155,7 @@ public class DSimState extends SimState {
 						iterativeRepeat.interval);
 
 				// Add agent to the field
-				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
+				//addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
 
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
@@ -159,14 +165,17 @@ public class DSimState extends SimState {
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 
 				// Add agent to the field
-				addToField(agentWrapper.agent, payloadWrapper.loc, payloadWrapper.fieldIndex);
-
-			} else {
-				addToField(payloadWrapper.payload, payloadWrapper.loc, payloadWrapper.fieldIndex);
+				//TODO I don't like that! in the simstate is used the location 
+				//addToField(agentWrapper.agent, payloadWrapper.loc, payloadWrapper.fieldIndex);
 			}
+//			else {
+				//addToField(payloadWrapper.payload, payloadWrapper.loc, payloadWrapper.fieldIndex);
+				
+//			}
 
 		}
 		transporter.objectQueue.clear();
+		
 
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 	}
@@ -243,16 +252,26 @@ public class DSimState extends SimState {
 
 	public void start() {
 		super.start();
-		RemoteProxy.Init();
+		RMIProxy.init();
 		try {
 			syncFields();
 
-			for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
+			for (final Synchronizable haloField : fieldRegistry)
 				haloField.initRemote();
 
 			if (partition.isGlobalMaster())
 				startRoot();
-
+			
+			schedule.scheduleRepeating(new AbstractStopping() {
+				
+				@Override
+				public void step(SimState state) {
+					// I' am a Zombie agent. 
+					// When a processor have no agents it schedule is stopped, 
+					// but the simulation, on other processors, must continue.
+					
+				}
+			});
 			// On all processors, wait for the root start to finish
 			MPI.COMM_WORLD.barrier();
 		} catch (final MPIException e) {
@@ -283,24 +302,24 @@ public class DSimState extends SimState {
 	/**
 	 * @return the partition
 	 */
-	public DPartition getPartition() {
+	public PartitionInterface getPartitioning() {
 		return partition;
 	}
 
 	/**
 	 * @param partition the partition to set
 	 */
-	public void setPartition(final DPartition partition) {
+	public void setPartition(final PartitionInterface partition) {
 		this.partition = partition;
 		aoi = partition.aoi;
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
+		transporter = new TransporterMPI(partition);
 	}
 
 	/**
 	 * @return the transporter
 	 */
-	public DRemoteTransporter getTransporter() {
+	public TransporterMPI getTransporter() {
 		return transporter;
 	}
 

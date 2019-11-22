@@ -9,9 +9,9 @@ package sim.app.dRepeatingHeatBugs;
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
-import sim.field.grid.NDoubleGrid2D;
-import sim.field.grid.NObjectsGrid2D;
-import sim.util.IntPoint;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.grid.DDenseGrid2D;
+import sim.field.partitioning.IntPoint;
 import sim.util.Interval;
 
 public class DHeatBugs extends DSimState {
@@ -36,9 +36,9 @@ public class DHeatBugs extends DSimState {
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
-	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
-	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
-	public NObjectsGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
+	public DDoubleGrid2D valgrid; // Instead of DoubleGrid2D
+	public DDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
+	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
 		this(seed, 1000, 1000, 1000, 5);
@@ -49,11 +49,11 @@ public class DHeatBugs extends DSimState {
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / getPartition().numProcessors;
+		privBugCount = bugCount / getPartitioning().numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			valgrid2 = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			bugs = new NObjectsGrid2D<DHeatBug>(getPartition(), this.aoi, this);
+			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

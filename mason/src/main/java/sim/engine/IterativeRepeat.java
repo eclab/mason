@@ -15,7 +15,7 @@ import ec.util.*;
    here to enable access by distributed MASON.  You generally shouldn't play with this class.
 */
 
-public class IterativeRepeat implements Steppable, Stoppable
+public class IterativeRepeat implements  Steppable, Stoppable
     {
     private static final long serialVersionUID = 1;
 

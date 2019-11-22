@@ -1,4 +1,4 @@
-package sim.util;
+package sim.field.partitioning;
 
 import java.util.*;
 import java.util.stream.*;
@@ -6,9 +6,9 @@ import java.util.stream.*;
 public class QuadTree {
 	int depth = 0;
 
-	QTNode root;
+	QuadTreeNode root;
 	List<Integer> availIds;
-	Map<Integer, QTNode> allNodes;
+	Map<Integer, QuadTreeNode> allNodes;
 
 	// Shape of field and the maximum number of partitions it can hold
 	public QuadTree(final IntHyperRect shape, final int np) {
@@ -17,10 +17,10 @@ public class QuadTree {
 		if (np % (div - 1) != 1)
 			throw new IllegalArgumentException("The given number of processors " + np + " is illegal");
 
-		root = new QTNode(shape, null);
+		root = new QuadTreeNode(shape, null);
 		availIds = IntStream.range(1, np / (div - 1) * div + 1).boxed().collect(Collectors.toList());
 
-		allNodes = new HashMap<Integer, QTNode>();
+		allNodes = new HashMap<Integer, QuadTreeNode>();
 		// root node is the 0th node
 		allNodes.put(0, root);
 	}
@@ -29,23 +29,23 @@ public class QuadTree {
 		return depth;
 	}
 
-	public QTNode getRoot() {
+	public QuadTreeNode getRoot() {
 		return root;
 	}
 
-	public QTNode getNode(final int id) {
+	public QuadTreeNode getNode(final int id) {
 		return allNodes.get(id);
 	}
 
-	public QTNode getLeafNode(final NdPoint p) {
+	public QuadTreeNode getLeafNode(final NdPoint p) {
 		return root.getLeafNode(p);
 	}
 
-	public List<QTNode> getAllNodes() {
-		return new ArrayList<QTNode>(allNodes.values());
+	public List<QuadTreeNode> getAllNodes() {
+		return new ArrayList<QuadTreeNode>(allNodes.values());
 	}
 
-	public List<QTNode> getAllLeaves() {
+	public List<QuadTreeNode> getAllLeaves() {
 		return allNodes.values().stream().filter(node -> node.isLeaf()).collect(Collectors.toList());
 	}
 
@@ -61,7 +61,7 @@ public class QuadTree {
 		ps.forEach(p -> split(p));
 	}
 
-	public void moveOrigin(final QTNode node, final IntPoint newOrig) {
+	public void moveOrigin(final QuadTreeNode node, final IntPoint newOrig) {
 		node.split(newOrig).forEach(x -> addNode(x));
 	}
 
@@ -69,7 +69,7 @@ public class QuadTree {
 		moveOrigin(getNode(id), newOrig);
 	}
 
-	public void merge(final QTNode node) {
+	public void merge(final QuadTreeNode node) {
 		node.merge().forEach(x -> delNode(x));
 	}
 
@@ -77,7 +77,7 @@ public class QuadTree {
 		merge(getNode(id));
 	}
 
-	protected void addNode(final QTNode node) {
+	protected void addNode(final QuadTreeNode node) {
 		if (availIds.size() == 0)
 			throw new IllegalArgumentException("Reached maximum number of regions, cannot add more child");
 
@@ -87,7 +87,7 @@ public class QuadTree {
 		depth = Math.max(depth, node.getLevel());
 	}
 
-	protected void delNode(final QTNode node) {
+	protected void delNode(final QuadTreeNode node) {
 		final int id = node.getId();
 		allNodes.remove(id);
 		availIds.add(id);
@@ -96,17 +96,17 @@ public class QuadTree {
 	}
 
 	// Find the neighbors of the given node in the tree
-	public HashSet<QTNode> getNeighbors(final QTNode node, final int[] aoi) {
+	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi) {
 		// Root node has no neighbors
 		if (node.isRoot())
-			return new HashSet<QTNode>();
+			return new HashSet<QuadTreeNode>();
 
 		final IntHyperRect myHalo = node.getShape().resize(aoi);
-		final HashSet<QTNode> ret = new HashSet<QTNode>();
-		final ArrayList<QTNode> stack = new ArrayList<QTNode>();
+		final HashSet<QuadTreeNode> ret = new HashSet<QuadTreeNode>();
+		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
 
 		// Add neighbors from my siblings
-		for (final QTNode sibling : node.getSiblings())
+		for (final QuadTreeNode sibling : node.getSiblings())
 			if (sibling.isLeaf())
 				ret.add(sibling);
 			else
@@ -118,10 +118,10 @@ public class QuadTree {
 
 			// Go up to find the first node that contains my neighbor on the given direction
 			// of the given dimension
-			QTNode curr = node.getParent();
+			QuadTreeNode curr = node.getParent();
 			while (!curr.isRoot() && curr.getDir(dim) == dir)
 				curr = curr.getParent();
-			for (final QTNode sibling : curr.getSiblings())
+			for (final QuadTreeNode sibling : curr.getSiblings())
 				if (sibling.getDir(dim) == dir)
 					stack.add(sibling);
 
@@ -132,7 +132,7 @@ public class QuadTree {
 				else if (curr.isLeaf())
 					ret.add(curr);
 				else
-					for (final QTNode child : curr.getChildren())
+					for (final QuadTreeNode child : curr.getChildren())
 						if (child.getDir(dim) != dir)
 							stack.add(child);
 		}
@@ -140,11 +140,11 @@ public class QuadTree {
 		return ret;
 	}
 
-	public int[] getNeighborIds(final QTNode node, final int[] aoi) {
+	public int[] getNeighborIds(final QuadTreeNode node, final int[] aoi) {
 		return getNeighbors(node, aoi).stream().mapToInt(x -> x.getId()).sorted().toArray();
 	}
 
-	public int[] getNeighborPids(final QTNode node, final int[] aoi) {
+	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi) {
 		return getNeighbors(node, aoi).stream().mapToInt(x -> x.getProc()).sorted().toArray();
 	}
 
@@ -186,7 +186,7 @@ public class QuadTree {
 		System.out.println("Testing neighbor finding in the following tree...\n" + qt);
 
 		for (final Map.Entry<Integer, int[]> test : tests.entrySet()) {
-			final QTNode node = qt.getNode(test.getKey());
+			final QuadTreeNode node = qt.getNode(test.getKey());
 			final int[] got = qt.getNeighborIds(node, aoi);
 			final int[] want = test.getValue();
 			final boolean isPass = Arrays.equals(want, got);
@@ -220,23 +220,23 @@ public class QuadTree {
 
 		System.out.println("------------");
 		System.out.println(qt.availIds);
-		for (final QTNode node : qt.allNodes.values())
+		for (final QuadTreeNode node : qt.allNodes.values())
 			System.out.println(node);
 		System.out.println(qt.depth);
 
 		System.out.println("Merge one of root's children");
 		qt.merge(qt.getRoot().getChild(1));
 		System.out.println(qt.availIds);
-		for (final QTNode node : qt.getAllNodes())
+		for (final QuadTreeNode node : qt.getAllNodes())
 			System.out.println("Node " + node);
-		for (final QTNode node : qt.getAllLeaves())
+		for (final QuadTreeNode node : qt.getAllLeaves())
 			System.out.println("Leaf " + node);
 		System.out.println(qt.depth);
 
 		System.out.println("Merge root");
 		qt.merge(qt.getRoot());
 		System.out.println(qt.availIds);
-		for (final QTNode node : qt.getAllNodes())
+		for (final QuadTreeNode node : qt.getAllNodes())
 			System.out.println("Node " + node);
 		System.out.println(qt.depth);
 

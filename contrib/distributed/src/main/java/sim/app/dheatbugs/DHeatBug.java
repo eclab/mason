@@ -7,8 +7,8 @@
 package sim.app.dheatbugs;
 
 import sim.engine.SimState;
-import sim.field.grid.NDoubleGrid2D;
-import sim.util.IntPoint;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.partitioning.IntPoint;
 import sim.engine.AbstractStopping;
 
 public class DHeatBug extends AbstractStopping {
@@ -30,7 +30,7 @@ public class DHeatBug extends AbstractStopping {
 		this.loc_y = loc_y;
 	}
 
-	public void addHeat(final NDoubleGrid2D grid, final int x, final int y, final double heat) {
+	public void addHeat(final DDoubleGrid2D grid, final int x, final int y, final double heat) {
 		double new_heat = grid.get(new IntPoint(x, y)) + heat;
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;

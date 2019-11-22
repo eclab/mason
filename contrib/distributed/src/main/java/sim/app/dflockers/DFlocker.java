@@ -6,23 +6,25 @@
 
 package sim.app.dflockers;
 
-import sim.engine.*;
-import sim.field.continuous.*;
-import sim.util.*;
-
 import java.util.List;
 
-import ec.util.*;
+import ec.util.MersenneTwisterFast;
+import sim.engine.AbstractStopping;
+import sim.engine.SimState;
+import sim.field.continuous.DContinuous2D;
+import sim.field.partitioning.DoublePoint;
 
 public class DFlocker extends AbstractStopping implements sim.portrayal.Orientable2D {
 	private static final long serialVersionUID = 1;
-
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);
 	public boolean dead = false;
+	
+	public int id;
 
-	public DFlocker(final DoublePoint location) {
+	public DFlocker(final DoublePoint location, final int id) {
 		loc = location;
+		this.id = id;
 	}
 
 	public double getOrientation() {
@@ -51,7 +53,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return lastd;
 	}
 
-	public DoublePoint consistency(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
+	public DoublePoint consistency(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -75,7 +77,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return new DoublePoint(x, y);
 	}
 
-	public DoublePoint cohesion(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
+	public DoublePoint cohesion(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -101,7 +103,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return new DoublePoint(-x / 10, -y / 10);
 	}
 
-	public DoublePoint avoidance(final List<DFlocker> b, final NContinuous2D<DFlocker> flockers) {
+	public DoublePoint avoidance(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 		double x = 0;
@@ -137,10 +139,11 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 
 	public void step(final SimState state) {
 		final DFlockers dFlockers = (DFlockers) state;
+		
 		final DoublePoint oldloc = loc;
 		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
 		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartition().pid, oldloc.c[0], oldloc.c[1]);
+			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c[0], oldloc.c[1]);
 			Thread.dumpStack();
 			System.exit(-1);
 		}
@@ -174,6 +177,9 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
 
 		dFlockers.flockers.moveAgent(old, loc, this);
+		
+		
+		
 //		try {
 //			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
 //			if (dst != dFlockers.partition.getPid()) {

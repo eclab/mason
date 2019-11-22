@@ -11,10 +11,10 @@ import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.DQuadTreePartition;
-import sim.field.grid.NDoubleGrid2D;
-import sim.field.grid.NObjectsGrid2D;
-import sim.util.IntPoint;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.grid.DDenseGrid2D;
+import sim.field.partitioning.QuadTreePartition;
+import sim.field.partitioning.IntPoint;
 import sim.util.Interval;
 import sim.util.Timing;
 
@@ -40,9 +40,9 @@ public class DHeatBugs extends DSimState {
 	/*
 	 * Missing get/setGridHeight get/setGridWidth get/setBugCount
 	 */
-	public NDoubleGrid2D valgrid; // Instead of DoubleGrid2D
-	public NDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
-	public NObjectsGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
+	public DDoubleGrid2D valgrid; // Instead of DoubleGrid2D
+	public DDoubleGrid2D valgrid2; // Instead of DoubleGrid2D
+	public DDenseGrid2D<DHeatBug> bugs; // Instead of SparseGrid2D
 
 	public DHeatBugs(final long seed) {
 		this(seed, 1000, 1000, 1000, 5);
@@ -53,11 +53,11 @@ public class DHeatBugs extends DSimState {
 		gridWidth = width;
 		gridHeight = height;
 		bugCount = count;
-		privBugCount = bugCount / getPartition().numProcessors;
+		privBugCount = bugCount / getPartitioning().numProcessors;
 		try {
-			valgrid = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			valgrid2 = new NDoubleGrid2D(getPartition(), this.aoi, 0, this);
-			bugs = new NObjectsGrid2D<DHeatBug>(getPartition(), this.aoi, this);
+			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
 		} catch (final Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -173,7 +173,7 @@ public class DHeatBugs extends DSimState {
 
 	public void start() {
 		super.start();
-		final int[] size = getPartition().getPartition().getSize();
+		final int[] size = getPartitioning().getPartition().getSize();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
@@ -182,8 +182,8 @@ public class DHeatBugs extends DSimState {
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px, py; // Why are we doing this? Relationship?
 			do {
-				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
+				px = random.nextInt(size[0]) + getPartitioning().getPartition().ul().getArray()[0];
+				py = random.nextInt(size[1]) + getPartitioning().getPartition().ul().getArray()[1];
 			} while (bugs.get(new IntPoint(px, py)) != null);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			bugs.addAgent(new IntPoint(px, py), b);
@@ -205,7 +205,7 @@ public class DHeatBugs extends DSimState {
 		public void step(final SimState state) {
 			final DHeatBugs hb = (DHeatBugs) state;
 			try {
-				final DQuadTreePartition ps = (DQuadTreePartition) hb.getPartition();
+				final QuadTreePartition ps = (QuadTreePartition) hb.getPartitioning();
 				final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 				Timing.start(Timing.LB_OVERHEAD);
 				ps.balance(runtime, 0);
@@ -233,7 +233,7 @@ public class DHeatBugs extends DSimState {
 			// hb.schedule.getSteps(), hb.privBugCount));
 			// if (DNonUniformPartition.getPartitionScheme().getPid() == 0) {
 			DSimState.logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
-					hb.getPartition().getPid(), hb.schedule.getSteps(),
+					hb.getPartitioning().getPid(), hb.schedule.getSteps(),
 					Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
 					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
 					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));

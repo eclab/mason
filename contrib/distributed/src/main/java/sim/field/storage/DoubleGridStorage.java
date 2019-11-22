@@ -1,15 +1,48 @@
 package sim.field.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import mpi.*;
 import static mpi.MPI.slice;
 
-import sim.util.IntHyperRect;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
 
-public class DoubleGridStorage extends GridStorage {
+public class DoubleGridStorage<T extends Serializable> extends GridStorage<T>{
+	
+	//TODO CHANGE HERE TO BE EQUAL TO THE ABSTRACT METHODS
+	@Override
+	public void setLocation(T obj, NdPoint p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public NdPoint getLocation(T obj) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeObject(T obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeObjects(NdPoint p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<T> getObjects(NdPoint p) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     public DoubleGridStorage(IntHyperRect shape, double initVal) {
         super(shape);
@@ -50,4 +83,5 @@ public class DoubleGridStorage extends GridStorage {
     protected Object allocate(int size) {
         return new double[size];
     }
+
 }

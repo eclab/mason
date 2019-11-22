@@ -3,15 +3,16 @@ package sim.util;
 import java.util.List;
 
 import mpi.*;
+import sim.field.partitioning.QuadTreeNode;
 
 public class GroupComm {
-    public QTNode master;
-    public List<QTNode> leaves;
+    public QuadTreeNode master;
+    public List<QuadTreeNode> leaves;
 
     public Comm comm, interComm;
     public int groupRoot;
 
-    public GroupComm(QTNode master) throws MPIException {
+    public GroupComm(QuadTreeNode master) throws MPIException {
         this.master = master;
         this.leaves = master.getLeaves();
 
@@ -24,7 +25,7 @@ public class GroupComm {
         groupRoot = Group.translateRanks(world, new int[] {master.getProc()}, group)[0];
     }
 
-    public void setInterComm(List<QTNode> nodes) throws MPIException {
+    public void setInterComm(List<QuadTreeNode> nodes) throws MPIException {
         Group world = MPI.COMM_WORLD.getGroup();
         Group group = world.incl(nodes.stream()
                                  .filter(node -> !node.isLeaf())
