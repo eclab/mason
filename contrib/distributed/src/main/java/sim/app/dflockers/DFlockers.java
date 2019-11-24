@@ -14,10 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import mpi.MPIException;
-import sim.engine.AbstractStopping;
 import sim.engine.DSimState;
-import sim.engine.Schedule;
-import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 import sim.util.Timing;
@@ -39,12 +36,48 @@ public class DFlockers extends DSimState {
 
 	public final DContinuous2D<DFlocker> flockers;
 
+	final SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
+	String dateString = format.format(new Date());
+	String dirname = System.getProperty("user.dir") + File.separator + dateString;
+
 	/** Creates a Flockers simulation with the given random number seed. */
 	public DFlockers(final long seed) {
 		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
 
 		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
+	}
+
+	@Override
+	public void preSchedule() {
+		super.preSchedule();
+
+		if (schedule.getSteps() == 1 || schedule.getSteps() == 100) {
+			String filename = dirname + File.separator +
+					getPartitioning().pid + "." + (schedule.getSteps());
+
+			File testdir = new File(dirname);
+			testdir.mkdir();
+
+			File myfileagent = new File(filename);
+			System.out.println("Create file " + filename);
+
+			PrintWriter out = null;
+			try {
+				myfileagent.createNewFile();
+				out = new PrintWriter(new FileOutputStream(myfileagent, false));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			for (DFlocker f : flockers.getAllObjects()) {
+				out.println(f.id);
+			}
+
+			out.close();
+		}
+
 	}
 
 	public void start() {
@@ -54,7 +87,7 @@ public class DFlockers extends DSimState {
 			final double px = random.nextDouble() * size[0] + getPartitioning().getPartition().ul().getArray()[0];
 			final double py = random.nextDouble() * size[1] + getPartitioning().getPartition().ul().getArray()[1];
 			final DoublePoint location = new DoublePoint(px, py);
-			final DFlocker flocker = new DFlocker(location, 
+			final DFlocker flocker = new DFlocker(location,
 					(getPartitioning().pid * (DFlockers.numFlockers / getPartitioning().numProcessors)) + x);
 
 			if (random.nextBoolean(DFlockers.deadFlockerProbability))
@@ -63,6 +96,9 @@ public class DFlockers extends DSimState {
 			flockers.addAgent(location, flocker);
 //			schedule.scheduleOnce(flocker, 1);
 		}
+
+		dateString = format.format(new Date());
+		dirname = System.getProperty("user.dir") + File.separator + dateString;
 
 		// schedule.scheduleRepeating(Schedule.EPOCH, 2, new Synchronizer(), 1);
 //		schedule.addAfter(new Stopping() {
@@ -95,52 +131,6 @@ public class DFlockers extends DSimState {
 //				// Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 //			}
 //		});
-		
-
-		SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
-		String dateString = format.format( new Date() );
-		String dirname = System.getProperty("user.dir")+File.separator+dateString;
-		
-		schedule.scheduleRepeating(Schedule.EPOCH - Schedule.BEFORE_SIMULATION, new AbstractStopping() {
-			
-			@Override
-			public void step(SimState state) {
-				final DFlockers dFlockers = (DFlockers) state;
-				
-				if(dFlockers.schedule.getSteps()== 1 || dFlockers.schedule.getSteps() == 100)
-				{
-					String filename = dirname+File.separator+
-							dFlockers.getPartitioning().pid+"."+(dFlockers.schedule.getSteps());
-					
-					File testdir = new File(dirname);
-					testdir.mkdir();
-					
-					File myfileagent = new File(filename);
-					System.out.println("Create file "+filename);
-					
-					PrintWriter out = null;
-					try {
-						myfileagent.createNewFile();
-						out = new PrintWriter(new FileOutputStream(myfileagent, false)); 
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					for(DFlocker f : dFlockers.flockers.getAllObjects())
-					{
-						out.println(f.id);
-					}
-					
-					out.close();
-				}
-				
-				
-			}
-		});
-		
-		
-	
 	}
 
 	public static void main(final String[] args) throws MPIException {
