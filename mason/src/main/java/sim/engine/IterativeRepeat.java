@@ -5,10 +5,6 @@
 */
 
 package sim.engine;
-import java.io.Serializable;
-
-import sim.util.*;
-import ec.util.*;
 
 /**
    This is a helper class used internally in Schedule to schedule steppables repeating.  It's exposed

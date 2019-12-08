@@ -7,7 +7,9 @@
 package sim.engine;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,13 +22,15 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
+import sim.engine.registry.DRegistry;
 import sim.engine.transport.AgentWrapper;
-import sim.engine.transport.TransporterMPI;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
+import sim.engine.transport.TransporterMPI;
 import sim.field.Synchronizable;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
+import sim.util.MPIUtil;
 import sim.util.Timing;
 
 public class DSimState extends SimState {
@@ -40,6 +44,8 @@ public class DSimState extends SimState {
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
 	protected final ArrayList<Synchronizable> fieldRegistry;
+	
+	protected DRegistry registry;
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
 			final int width, final int height, final int aoiSize) {
@@ -81,6 +87,8 @@ public class DSimState extends SimState {
 		this(0, random, new DistributedSchedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its
 																	// seed
 	}
+	
+	
 
 	/**
 	 * All HaloFields register themselves here.<br>
@@ -122,13 +130,58 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
+			
+			//Wait for all nodes that end the steps, before writing the objects buffer, we need 
+			//that all processors have been finished the step in order to be sure that no processors
+			//invoke methods on remote objects in the distributed registry.
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			syncFields();
 			transporter.sync();
+			
+			//All nodes have finished the synchonization and can unregister exported objects.
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//After the synchronization we can unregister migrated object!
+			//remove exported-migrated object from local node
+			for(String mo : DRegistry.getInstance().getMigratedNames()) {
+				try {
+					DRegistry.getInstance().unRegisterObject(mo);
+//					System.out.println("unRegisterObject "+mo);
+				} catch (NotBoundException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			DRegistry.getInstance().clearMigratedNames();
+			
 		} catch (ClassNotFoundException | MPIException | IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+		
+		//All nodes have unregistered their objects, after we can register the migrated objects on new nodes.
+		try {
+			MPI.COMM_WORLD.barrier();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+			
 			
 			if (payloadWrapper.fieldIndex >= 0) 
 				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).
@@ -153,17 +206,29 @@ public class DSimState extends SimState {
 				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
 				schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.getOrdering(),
 						iterativeRepeat.interval);
-
 				// Add agent to the field
 				//addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
 
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
+				
+				if(agentWrapper.getExportedName()!=null)
+				{
+					try {
+						DRegistry.getInstance().registerObject(agentWrapper.getExportedName(), (Remote)agentWrapper.agent);
+//						System.out.println("registerObject "+agentWrapper.getExportedName());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			
 				if (agentWrapper.time < 0)
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
-
+				
+				
 				// Add agent to the field
 				//TODO I don't like that! in the simstate is used the location 
 				//addToField(agentWrapper.agent, payloadWrapper.loc, payloadWrapper.fieldIndex);
@@ -174,10 +239,19 @@ public class DSimState extends SimState {
 //			}
 
 		}
-		transporter.objectQueue.clear();
+		//Wait that all nodes have registered their new objects in the distributed registry.
+		try {
+			MPI.COMM_WORLD.barrier();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-
+		
+		
+		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+	
 	}
 
 	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
@@ -192,7 +266,6 @@ public class DSimState extends SimState {
 						rec.getLevel().getLocalizedName(), rec.getMessage());
 			}
 		});
-
 		DSimState.logger = Logger.getLogger(loggerName);
 		DSimState.logger.setUseParentHandlers(false);
 		DSimState.logger.setLevel(Level.ALL);
@@ -249,10 +322,23 @@ public class DSimState extends SimState {
 	protected void startRoot() {
 		System.out.println("Master level 0 pid: " + partition.pid);
 	}
-
+	
+	/**
+	 * 
+	 * @return the DRegistry instance, or null if the registry is not available. You can call this method after calling the start() method.
+	 */
+	public DRegistry getDRegistry() {
+		return registry;
+	}
+	
 	public void start() {
 		super.start();
 		RMIProxy.init();
+		
+		/*distributed registry inizialization*/
+		registry = DRegistry.getInstance();
+		
+		
 		try {
 			syncFields();
 

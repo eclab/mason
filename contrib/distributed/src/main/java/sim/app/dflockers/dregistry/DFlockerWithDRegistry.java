@@ -1,29 +1,40 @@
-/*
-\  Copyright 2006 by Sean Luke and George Mason University
-  Licensed under the Academic Free License version 3.0
-  See the file "LICENSE" for more information
-*/
+package sim.app.dflockers.dregistry;
 
-package sim.app.dflockers;
-
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import ec.util.MersenneTwisterFast;
+import mpi.MPI;
+import mpi.MPIException;
 import sim.engine.AbstractStopping;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 
-public class DFlocker extends AbstractStopping implements sim.portrayal.Orientable2D, Remote {
+interface DFlockerDummyRemote extends Remote{
+	public  int addAndGetVal() throws RemoteException;
+	public int getVal() throws RemoteException;
+
+}
+
+public class DFlockerWithDRegistry extends AbstractStopping implements sim.portrayal.Orientable2D, DFlockerDummyRemote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);
 	public boolean dead = false;
 	
+	public boolean amItheBoss = false;
 	public int id;
+	
+	public int oldProcessingMPInode = 0;
+	
+	AtomicInteger val = new AtomicInteger(0);
 
-	public DFlocker(final DoublePoint location, final int id) {
+	public DFlockerWithDRegistry(final DoublePoint location, final int id) {
 		loc = location;
 		this.id = id;
 	}
@@ -54,7 +65,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return lastd;
 	}
 
-	public DoublePoint consistency(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
+	public DoublePoint consistency(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -63,7 +74,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		int i = 0;
 		int count = 0;
 		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
+			final DFlockerWithDRegistry other = (b.get(i));
 			if (!other.dead) {
 				final DoublePoint m = b.get(i).momentum();
 				count++;
@@ -78,7 +89,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return new DoublePoint(x, y);
 	}
 
-	public DoublePoint cohesion(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
+	public DoublePoint cohesion(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 
@@ -88,7 +99,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		int count = 0;
 		int i = 0;
 		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
+			final DFlockerWithDRegistry other = (b.get(i));
 			if (!other.dead) {
 				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
 				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
@@ -104,7 +115,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		return new DoublePoint(-x / 10, -y / 10);
 	}
 
-	public DoublePoint avoidance(final List<DFlocker> b, final DContinuous2D<DFlocker> flockers) {
+	public DoublePoint avoidance(final List<DFlockerWithDRegistry> b, final DContinuous2D<DFlockerWithDRegistry> flockers) {
 		if (b == null || b.size() == 0)
 			return new DoublePoint(0, 0);
 		double x = 0;
@@ -114,7 +125,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		int count = 0;
 
 		for (i = 0; i < b.size(); i++) {
-			final DFlocker other = (b.get(i));
+			final DFlockerWithDRegistry other = (b.get(i));
 			if (other != this) {
 				final double dx = flockers.tdx(loc.c[0], other.loc.c[0]);
 				final double dy = flockers.tdy(loc.c[1], other.loc.c[1]);
@@ -137,12 +148,31 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		final double l = Math.sqrt(x * x + y * y);
 		return new DoublePoint(0.05 * x / l, 0.05 * y / l);
 	}
+	
+	public int addAndGetVal() {
+		return val.addAndGet(1);
+	}
+	public  int getVal() {
+		return val.get();
+	}
 
 	public void step(final SimState state) {
-		final DFlockers dFlockers = (DFlockers) state;
+		
+		try {
+			if(amItheBoss && oldProcessingMPInode != MPI.COMM_WORLD.getRank()) {
+				System.out.println(MPI.COMM_WORLD.getRank()+"] cafebabe moved from "+oldProcessingMPInode+" to "+ MPI.COMM_WORLD.getRank());
+				oldProcessingMPInode= MPI.COMM_WORLD.getRank();
+			}
+		} catch (MPIException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		final DFlockersWithDRegistry dFlockers = (DFlockersWithDRegistry) state;
 		
 		final DoublePoint oldloc = loc;
 		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
+	
 		if (loc == null) {
 			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c[0], oldloc.c[1]);
 			Thread.dumpStack();
@@ -152,7 +182,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		if (dead)
 			return;
 
-		final List<DFlocker> b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		final List<DFlockerWithDRegistry> b = dFlockers.flockers.getNeighborsWithin(this, DFlockersWithDRegistry.neighborhood);
 
 		final DoublePoint avoid = avoidance(b, dFlockers.flockers);
 		final DoublePoint cohe = cohesion(b, dFlockers.flockers);
@@ -160,44 +190,39 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		final DoublePoint cons = consistency(b, dFlockers.flockers);
 		final DoublePoint mome = momentum();
 
-		double dx = DFlockers.cohesion * cohe.c[0] + DFlockers.avoidance * avoid.c[0]
-				+ DFlockers.consistency * cons.c[0]
-				+ DFlockers.randomness * rand.c[0] + DFlockers.momentum * mome.c[0];
-		double dy = DFlockers.cohesion * cohe.c[1] + DFlockers.avoidance * avoid.c[1]
-				+ DFlockers.consistency * cons.c[1]
-				+ DFlockers.randomness * rand.c[1] + DFlockers.momentum * mome.c[1];
+		double dx = DFlockersWithDRegistry.cohesion * cohe.c[0] + DFlockersWithDRegistry.avoidance * avoid.c[0]
+				+ DFlockersWithDRegistry.consistency * cons.c[0]
+				+ DFlockersWithDRegistry.randomness * rand.c[0] + DFlockersWithDRegistry.momentum * mome.c[0];
+		double dy = DFlockersWithDRegistry.cohesion * cohe.c[1] + DFlockersWithDRegistry.avoidance * avoid.c[1]
+				+ DFlockersWithDRegistry.consistency * cons.c[1]
+				+ DFlockersWithDRegistry.randomness * rand.c[1] + DFlockersWithDRegistry.momentum * mome.c[1];
 
 		// re-normalize to the given step size
 		final double dis = Math.sqrt(dx * dx + dy * dy);
 		if (dis > 0) {
-			dx = dx / dis * DFlockers.jump;
-			dy = dy / dis * DFlockers.jump;
+			dx = dx / dis * DFlockersWithDRegistry.jump;
+			dy = dy / dis * DFlockersWithDRegistry.jump;
 		}
 
 		final DoublePoint old = loc;
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
 
+		try {
+			DFlockerDummyRemote myfriend = (DFlockerDummyRemote) dFlockers.getDRegistry().getObject("cafebabe");
+			myfriend.addAndGetVal();
+			
+		} catch (AccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NotBoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 		dFlockers.flockers.moveAgent(old, loc, this);
-		
-		
-		
-//		try {
-//			final int dst = dFlockers.partition.toPartitionId(new double[] { loc.c[0], loc.c[1] });
-//			if (dst != dFlockers.partition.getPid()) {
-//				// Need to migrate to other partition,
-//				// remove from current partition
-//				dFlockers.flockers.remove(this);
-//				// TODO: Abstract away the migration from the model
-//				dFlockers.transporter.migrateAgent(this, dst, loc, dFlockers.flockers.fieldIndex);
-//			} else {
-//				// Set to new location in current partition
-//				// TODO: to use moveAgent in the future
-//				dFlockers.flockers.move(old, loc, this);
-//				dFlockers.schedule.scheduleOnce(this, 1);
-//			}
-//		} catch (final Exception e) {
-//			e.printStackTrace(System.out);
-//			System.exit(-1);
-//		}
+
 	}
 }

@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,6 +16,7 @@ import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.IterativeRepeat;
 import sim.engine.Stopping;
+import sim.engine.registry.DRegistry;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.NdPoint;
 
@@ -30,6 +32,8 @@ public class TransporterMPI {
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
+	
+
 
 	public TransporterMPI(final PartitionInterface partition) {
 		this.partition = partition;
@@ -116,7 +120,8 @@ public class TransporterMPI {
 			total += dst_count[i];
 		}
 		final ByteBuffer recvbuf = ByteBuffer.allocateDirect(dst_displ[numNeighbors - 1] + dst_count[numNeighbors - 1]);
-
+		
+		
 		// exchange the actual object bytes
 		partition.getCommunicator().neighborAllToAllv(sendbuf, src_count, src_displ, MPI.BYTE, recvbuf, dst_count,
 				dst_displ, MPI.BYTE);
@@ -163,6 +168,8 @@ public class TransporterMPI {
 		for (final PayloadWrapper wrapper : bufferList)
 			dstMap.get(wrapper.destination).write(wrapper);
 		bufferList.clear();
+		
+		
 
 //		for (int i = 0; i < bufferList.size(); ++i) {
 //			Transportee<? extends Object> wrapper = bufferList.get(i);
@@ -190,7 +197,14 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(agent), dst);
+		
+		AgentWrapper wrapper = new AgentWrapper(agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -203,7 +217,12 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst);
+		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -217,7 +236,12 @@ public class TransporterMPI {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst);
+		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -246,7 +270,12 @@ public class TransporterMPI {
 	 */
 	public void migrateAgent(final Stopping agent, final int dst, final NdPoint loc,
 			final int fieldIndex) {
-		migrateAgent(new AgentWrapper(agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -262,7 +291,12 @@ public class TransporterMPI {
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NdPoint loc,
 			final int fieldIndex) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -279,7 +313,12 @@ public class TransporterMPI {
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
 			final NdPoint loc, final int fieldIndex) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
+		if(DRegistry.getInstance().isExported(agent)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+			DRegistry.getInstance().addMigratedName(agent);
+		}
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -351,6 +390,12 @@ public class TransporterMPI {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
+		
+		if(DRegistry.getInstance().isExported(obj)){
+			wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(obj));
+			DRegistry.getInstance().addMigratedName(obj);
+		}
+		
 		assert dstMap.containsKey(dst);
 		try {
 			dstMap.get(dst).write(wrapper);
@@ -363,6 +408,7 @@ public class TransporterMPI {
 	public static class RemoteOutputStream {
 		public ByteArrayOutputStream out;
 		public ObjectOutputStream os;
+		public ArrayList<Object> obj = new ArrayList<Object>();
 
 		public RemoteOutputStream() throws IOException {
 			out = new ByteArrayOutputStream();
@@ -370,10 +416,13 @@ public class TransporterMPI {
 		}
 
 		public void write(final Object obj) throws IOException {
-			os.writeObject(obj);
+			//os.writeObject(obj);
+			//virtual write really write only at the end of the simulation steps
+			this.obj.add(obj);
 		}
 
-		public byte[] toByteArray() {
+		public byte[] toByteArray() throws IOException{
+			
 			return out.toByteArray();
 		}
 
@@ -382,6 +431,8 @@ public class TransporterMPI {
 		}
 
 		public void flush() throws IOException {
+			//write all objects
+			for(Object o : obj) os.writeObject(o);
 			os.flush();
 		}
 
@@ -390,6 +441,7 @@ public class TransporterMPI {
 			out.close();
 			out = new ByteArrayOutputStream();
 			os = new ObjectOutputStream(out);
+			obj.clear();
 		}
 	}
 

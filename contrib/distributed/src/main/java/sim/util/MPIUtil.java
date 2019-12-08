@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 
 import mpi.Comm;
 import mpi.Datatype;
+import mpi.Intracomm;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.field.partitioning.PartitionInterface;
@@ -330,6 +331,30 @@ public class MPIUtil {
 
 		return recvObjs;
 	}
+	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Intracomm comm, final T[] sendObjs)
+			throws MPIException {
+		final int nc = sendObjs.length;
+		int[] srcDispl;
+		final int[] srcCount = new int[nc];
+		int[] dstDispl;
+		final int[] dstCount = new int[nc];
+		final ArrayList<T> recvObjs = new ArrayList<>();
+		final ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
+
+		serialize(sendObjs, srcBuf, srcCount);
+		srcDispl = getDispl(srcCount);
+
+		comm.neighborAllToAll(srcCount, 1, MPI.INT, dstCount, 1, MPI.INT);
+		dstDispl = getDispl(dstCount);
+
+		comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
+
+		for (int i = 0; i < nc; i++)
+			recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+
+		return recvObjs;
+	}
+
 
 	// Allows each node to send data to its neighbors as specified by a topology
 	// simultaneously

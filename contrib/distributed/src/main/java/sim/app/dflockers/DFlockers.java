@@ -10,9 +10,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.rmi.AccessException;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.AbstractStopping;
 import sim.engine.DSimState;
@@ -61,6 +64,8 @@ public class DFlockers extends DSimState {
 				flocker.dead = true;
 
 			flockers.addAgent(location, flocker);
+			
+		
 //			schedule.scheduleOnce(flocker, 1);
 		}
 
@@ -97,48 +102,48 @@ public class DFlockers extends DSimState {
 //		});
 		
 
-		SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
-		String dateString = format.format( new Date() );
-		String dirname = System.getProperty("user.dir")+File.separator+dateString;
-		
-		schedule.scheduleRepeating(Schedule.EPOCH - Schedule.BEFORE_SIMULATION, new AbstractStopping() {
-			
-			@Override
-			public void step(SimState state) {
-				final DFlockers dFlockers = (DFlockers) state;
-				
-				if(dFlockers.schedule.getSteps()== 1 || dFlockers.schedule.getSteps() == 100)
-				{
-					String filename = dirname+File.separator+
-							dFlockers.getPartitioning().pid+"."+(dFlockers.schedule.getSteps());
-					
-					File testdir = new File(dirname);
-					testdir.mkdir();
-					
-					File myfileagent = new File(filename);
-					System.out.println("Create file "+filename);
-					
-					PrintWriter out = null;
-					try {
-						myfileagent.createNewFile();
-						out = new PrintWriter(new FileOutputStream(myfileagent, false)); 
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					for(DFlocker f : dFlockers.flockers.getAllObjects())
-					{
-						out.println(f.id);
-					}
-					
-					out.close();
-				}
-				
-				
-			}
-		});
-		
+//		SimpleDateFormat format = new SimpleDateFormat("ss-mm-HH-yyyy-MM-dd");
+//		String dateString = format.format( new Date() );
+//		String dirname = System.getProperty("user.dir")+File.separator+dateString;
+//		
+//		schedule.scheduleRepeating(Schedule.EPOCH - Schedule.BEFORE_SIMULATION, new AbstractStopping() {
+//			
+//			@Override
+//			public void step(SimState state) {
+//				final DFlockers dFlockers = (DFlockers) state;
+//				
+//				if(dFlockers.schedule.getSteps()== 1 || dFlockers.schedule.getSteps() == 100 || dFlockers.schedule.getSteps() == 101)
+//				{
+//					String filename = dirname+File.separator+
+//							dFlockers.getPartitioning().pid+"."+(dFlockers.schedule.getSteps());
+//					
+//					File testdir = new File(dirname);
+//					testdir.mkdir();
+//					
+//					File myfileagent = new File(filename);
+//					System.out.println("Create file "+filename);
+//					
+//					PrintWriter out = null;
+//					try {
+//						myfileagent.createNewFile();
+//						out = new PrintWriter(new FileOutputStream(myfileagent, false)); 
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					
+//					for(DFlocker f : dFlockers.flockers.getAllObjects())
+//					{
+//						out.println(f.id);
+//					}
+//					
+//					out.close();
+//				}
+//				
+//				
+//			}
+//		});
+//		
 		
 	
 	}
