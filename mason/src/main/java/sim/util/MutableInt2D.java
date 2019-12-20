@@ -16,8 +16,29 @@ package sim.util;
     a MutableInt2D instead.
 */
 
-public class MutableInt2D implements java.io.Serializable, Cloneable
+public class MutableInt2D extends MutableNumberND
     {
+    public int getNumDimensions() { return 2; }
+    public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
+    public void setVal(int val, double to) 
+        {
+        switch(val)
+            {
+            case 0: x = (int)to; break;
+            case 1: y = (int)to; break;
+            default: { }
+            }
+        }
+        
+    public byte[] toBytes() 
+        { 
+        byte[] b = new byte[9];
+        b[0] = TYPE_MUTABLE_INT_2D;
+        intToBytes(x, b, 1);
+        intToBytes(y, b, 5);
+        return b;
+        }
+        
     private static final long serialVersionUID = 1;
 
     public int x;

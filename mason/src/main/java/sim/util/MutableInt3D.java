@@ -17,8 +17,31 @@ package sim.util;
    a MutableInt3D instead.
 */
 
-public final class MutableInt3D implements java.io.Serializable, Cloneable
+public final class MutableInt3D extends MutableNumberND
     {
+    public int getNumDimensions() { return 3; }
+    public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
+    public void setVal(int val, double to) 
+        {
+        switch(val)
+            {
+            case 0: x = (int)to; break;
+            case 1: y = (int)to; break;
+            case 2: z = (int)to; break;
+            default: { }
+            }
+        }
+        
+    public byte[] toBytes() 
+        { 
+        byte[] b = new byte[13];
+        b[0] = TYPE_MUTABLE_INT_3D;
+        intToBytes(x, b, 1);
+        intToBytes(y, b, 5);
+        intToBytes(z, b, 9);
+        return b;
+        }
+
     private static final long serialVersionUID = 1;
 
     public int x;

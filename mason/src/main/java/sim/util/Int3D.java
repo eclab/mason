@@ -15,8 +15,20 @@ package sim.util;
 
    <p>Int3D.equals(...) can compare by value against other Int3Ds, MutableInt2Ds, and Double3Ds.
 */
-public final class Int3D implements java.io.Serializable
+public final class Int3D extends NumberND
     {
+    public int getNumDimensions() { return 3; }
+    public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : val == 2 ? z : Double.NaN); }
+    public byte[] toBytes() 
+        { 
+        byte[] b = new byte[13];
+        b[0] = TYPE_INT_3D;
+        intToBytes(x, b, 1);
+        intToBytes(y, b, 5);
+        intToBytes(z, b, 9);
+        return b;
+        }
+
     private static final long serialVersionUID = 1;
 
     public final int x;

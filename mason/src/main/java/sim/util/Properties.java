@@ -159,14 +159,14 @@ public abstract class Properties implements java.io.Serializable
     
     /** Returns the index with the given name, else -1 if doesn't exist. O(n^2) */
     public int indexForName(String name)
-    	{
-    	int n = numProperties();
-    	for(int i = 0; i < n; i++)
-    		{
-    		if (getName(i).equals(name)) return i;
-    		}
-    	return -1;
-    	}
+        {
+        int n = numProperties();
+        for(int i = 0; i < n; i++)
+            {
+            if (getName(i).equals(name)) return i;
+            }
+        return -1;
+        }
 
     /** Returns the Class (or for primitive objects, the primitive TYPE) of the property at the given index. */
     public abstract Class getType(int index);
