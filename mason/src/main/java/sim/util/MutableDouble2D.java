@@ -14,8 +14,29 @@ package sim.util;
     objects in a hash table by passing in a MutableDouble2D instead.    
 */
 
-public final class MutableDouble2D implements java.io.Serializable, Cloneable
+public final class MutableDouble2D extends MutableNumberND
     {
+    public int getNumDimensions() { return 3; }
+    public double getVal(int val) { return (val == 0 ? x : val == 1 ? y : Double.NaN); }
+    public void setVal(int val, double to) 
+        {
+        switch(val)
+            {
+            case 0: x = to; break;
+            case 1: y = to; break;
+            default: { }
+            }
+        }
+        
+    public byte[] toBytes() 
+        { 
+        byte[] b = new byte[17];
+        b[0] = TYPE_MUTABLE_DOUBLE_2D;
+        doubleToBytes(x, b, 1);
+        doubleToBytes(y, b, 9);
+        return b;
+        }
+
     private static final long serialVersionUID = 1;
 
     public double x;
