@@ -7,8 +7,8 @@
 package sim.util;
 
 /** 
-    MutableNumber2D is the top-level abstract class of MASON's 2D and 3D mutable ints and doubles,
-    and is a subclass of Number2D.  All MutableNumber2D classes are cloneable.
+    MutableNumberND is the top-level abstract class of MASON's 2D and 3D mutable ints and doubles,
+    and is a subclass of NumberND.  All MutableNumberND classes are cloneable.
 */
 
 public abstract class MutableNumberND extends NumberND implements Cloneable
