@@ -52,11 +52,12 @@ public class DNetwork<K extends Serializable, T extends Serializable, O extends 
 		nodes.put(id,node);
 		adjList.put(id, new ArrayList<DEdge<K,T,O>>());
 		
-		for(DEdge<K,T,O> edge : haloToEdges.get(id)) {
+		for(DEdge<K,T,O> edge : haloToEdges.get(id)) { 
 			edge.setHaloPart(node);
 			haloEdges.remove(edge);
 		}
 	}
+	
 	public boolean addEdge(K node1_id, K node2_id, O value) throws NoSuchAlgorithmException, UnsupportedEncodingException
 	{
 		if(!nodes.containsKey(node1_id) && !nodes.containsKey(node2_id))

@@ -21,7 +21,7 @@ interface DFlockerDummyRemote extends Remote{
 
 }
 
-public class DFlockerWithDRegistry extends AbstractStopping implements sim.portrayal.Orientable2D, DFlockerDummyRemote {
+public class DFlockerWithDRegistry extends AbstractStopping implements DFlockerDummyRemote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);

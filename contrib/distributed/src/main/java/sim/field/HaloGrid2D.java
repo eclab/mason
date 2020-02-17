@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -116,33 +117,33 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		final List<GridStorage> tempStor = new ArrayList<GridStorage>();
 		final QuadTreePartition q = (QuadTreePartition) partition;
 		partition.registerPreCommit(arg -> {
-			final int level = (int) arg;
-			GridStorage s = null;
-
-			if (q.isGroupMaster(level))
-				s = localStorage.getNewStorage(q.getNodeShapeAtLevel(level));
-
-			try { collectGroup(level, s); } catch (final Exception e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-			if (q.isGroupMaster(level)) tempStor.add(s);
+//			final int level = (int) arg;
+//			GridStorage s = null;
+//
+//			if (q.isGroupMaster(level))
+//				s = localStorage.getNewStorage(q.getNodeShapeAtLevel(level));
+//
+//			try { collectGroup(level, s); } catch (final Exception e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
+//			if (q.isGroupMaster(level)) tempStor.add(s);
 		});
 		partition.registerPostCommit(arg -> {
-			final int level = (int) arg;
-			GridStorage s = null;
+//			final int level = (int) arg;
+//			GridStorage s = null;
 
 			reload();
 
-			if (q.isGroupMaster(level))
-				s = tempStor.remove(0);
-
-			try {
-				distributeGroup(level, s);
-			} catch (final Exception e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
+//			if (q.isGroupMaster(level))
+//				s = tempStor.remove(0);
+//
+//			try {
+//				distributeGroup(level, s);
+//			} catch (final Exception e) {
+//				e.printStackTrace();
+//				System.exit(-1);
+//			}
 		});
 
 	}
@@ -172,11 +173,13 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	}
 
 
-	private void add(final P p, final T t) {
-		if (!inLocal(p))
+	public void add(final P p, final T t) {
+		if (!inLocal(p)) {
 			addToRemote(p, t);
-		else
+		}
+		else {
 			localStorage.setLocation(t, p);
+			}
 	}
 
 	public void remove(final P p, final T t) {
@@ -210,6 +213,81 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 			add(toP, t);
 		}
 	}
+	
+//	
+//	// TODO: for abitrary object
+//		public void globalAgentsInitialization(HashMap<P, ArrayList<T>> agents) {
+//
+//			HashMap<P,ArrayList<T>>[] sendObjs = null;
+//			
+//			if(partition.getPid() == 0) {
+//				sendObjs = new HashMap[partition.numProcessors];
+//				for (P pos: agents.keySet()) {
+//					if (sendObjs[partition.toPartitionId(pos)] == null) {
+//						sendObjs[partition.toPartitionId(pos)] = new HashMap<P, ArrayList<T>>();
+//					}
+//					if(sendObjs[partition.toPartitionId(pos)].containsKey(pos)) {
+//						sendObjs[partition.toPartitionId(pos)].get(pos).addAll(agents.get(pos));
+//					}else {
+//						sendObjs[partition.toPartitionId(pos)].put(pos, new ArrayList<>(agents.get(pos)));
+//					}
+//				}
+//			}
+//			//System.out.println("sendbuf "+sendObjs);
+//			//System.out.println("a moment before Scatter");
+//			HashMap<P, ArrayList<T>> recvObject = null;
+//			try {
+//				recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//			}
+//			//System.out.println("a moment after Scatter");
+//			for(P pos : recvObject.keySet()) {
+//				for (T t: recvObject.get(pos)) {
+//					if (t instanceof Stopping)
+//						addAgent(pos, t);
+//					else
+//						add(pos, t);
+//				}
+//			}
+//		}
+//		
+//		// TODO: for abitrary object
+//		public void globalRepeatingAgentsInitialization(HashMap<P, ArrayList<T>> agents) {
+//
+//			HashMap<P,ArrayList<T>>[] sendObjs = null;
+//			
+//			if(partition.getPid() == 0) {
+//				sendObjs = new HashMap[partition.numProcessors];
+//				for (P pos: agents.keySet()) {
+//					if (sendObjs[partition.toPartitionId(pos)] == null) {
+//						sendObjs[partition.toPartitionId(pos)] = new HashMap<P, ArrayList<T>>();
+//					}
+//					if(sendObjs[partition.toPartitionId(pos)].containsKey(pos)) {
+//						sendObjs[partition.toPartitionId(pos)].get(pos).addAll(agents.get(pos));
+//					}else {
+//						sendObjs[partition.toPartitionId(pos)].put(pos, new ArrayList<T>(agents.get(pos)));
+//					}
+//				}
+//			}
+//			//System.out.println("sendbuf "+sendObjs);
+//			//System.out.println("a moment before Scatter");
+//			HashMap<P, ArrayList<T>> recvObject = null;
+//			try {
+//				recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//			}
+//			//System.out.println("a moment after Scatter");
+//			for(P pos : recvObject.keySet()) {
+//				for (T t: recvObject.get(pos)) {
+//					if (t instanceof Stopping)
+//						addRepeatingAgent(pos, t, 1, 1);
+//					else 
+//						add(pos,t);
+//				}
+//			}
+//		}
 
 	public void addAgent(final P p, final T t) {
 		// TODO: is there a better way than just doing a Type Cast?
@@ -239,8 +317,12 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	}
 
 	public void moveAgent(final P fromP, final P toP, final T t) {
-		if (!inLocal(fromP))
+		
+		if (!inLocal(fromP)) {
+			System.out.println("pid "+partition.pid +" agent"+t);
+			System.out.println("partitioning "+partition.getPartition());
 			throw new IllegalArgumentException("fromP must be local");
+			}
 
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
@@ -389,6 +471,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 
 	public Serializable getFromRemote(final P p) {
 		try {
+			//System.out.println(p);
 			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");

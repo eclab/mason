@@ -15,7 +15,7 @@ import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 
-public class DFlocker extends AbstractStopping implements sim.portrayal.Orientable2D, Remote {
+public class DFlocker extends AbstractStopping implements Remote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);
@@ -24,7 +24,7 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 	public int id;
 
 	public DFlocker(final DoublePoint location, final int id) {
-		loc = location;
+		this.loc = location;
 		this.id = id;
 	}
 
@@ -142,17 +142,23 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 		final DFlockers dFlockers = (DFlockers) state;
 		
 		final DoublePoint oldloc = loc;
-		loc = (DoublePoint) dFlockers.flockers.getLocation(this);
-		if (loc == null) {
-			System.out.printf("pid %d oldx %g oldy %g", dFlockers.getPartitioning().pid, oldloc.c[0], oldloc.c[1]);
-			Thread.dumpStack();
-			System.exit(-1);
-		}
+//		loc = (DoublePoint) dFlockers.flockers.getLocation(this); //this give me an error
+//		if (loc == null) {
+//			System.out.println("agent "+this+
+//					" pid "+dFlockers.getPartitioning().pid+" oldx "+oldloc.c[0]+" oldy "+oldloc.c[1]);
+//			Thread.dumpStack();
+//			System.exit(-1);
+//		}
 
 		if (dead)
 			return;
-
-		final List<DFlocker> b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		 List<DFlocker> b = null;
+		
+		try {
+		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		}catch (Exception e) {
+			System.out.println(dFlockers.getPartitioning().getPid());
+		}
 
 		final DoublePoint avoid = avoidance(b, dFlockers.flockers);
 		final DoublePoint cohe = cohesion(b, dFlockers.flockers);
@@ -173,11 +179,9 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 			dx = dx / dis * DFlockers.jump;
 			dy = dy / dis * DFlockers.jump;
 		}
-
-		final DoublePoint old = loc;
+		lastd = new DoublePoint(dx,dy);
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
-
-		dFlockers.flockers.moveAgent(old, loc, this);
+		dFlockers.flockers.moveAgent(oldloc, loc, this);
 		
 		
 		
@@ -200,4 +204,34 @@ public class DFlocker extends AbstractStopping implements sim.portrayal.Orientab
 //			System.exit(-1);
 //		}
 	}
+	
+	
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof DFlocker))
+			return false;
+		DFlocker other = (DFlocker) obj;
+		return (id == other.id);
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "{ "+this.getClass()+"@"+Integer.toHexString(hashCode())+" [ id: "+this.id+" loc: "+loc+"]}";
+	}
+	
 }

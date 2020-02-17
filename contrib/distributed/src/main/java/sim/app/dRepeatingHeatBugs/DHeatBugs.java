@@ -6,6 +6,9 @@
 
 package sim.app.dRepeatingHeatBugs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
@@ -135,50 +138,46 @@ public class DHeatBugs extends DSimState {
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	protected void startRoot() {
-		super.startRoot();
-
-		System.out.println("Starting Root");
-
+	@Override
+	protected HashMap<String, Object>[] startRoot() {
+		HashMap<IntPoint,ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-
-		for (int x = 0; x < bugCount; x++) {
+		for (int x = 0; x < bugCount; x++) { 
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-			int px, py;
-			do {
-				px = random.nextInt(gridWidth);
-				py = random.nextInt(gridHeight);
-			} while (bugs.get(new IntPoint(px, py)) != null);
+			int px = random.nextInt(gridWidth);
+			int	py = random.nextInt(gridHeight);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
+			IntPoint point = new IntPoint(px, py);
+			if(!agents.containsKey(point))
+				agents.put(point, new ArrayList<DHeatBug>());
+			agents.get(point).add(b);
 		}
-
-		System.out.println("Root Started");
+		
+		HashMap<String,Object>[] sendObjs = new HashMap[partition.getNumProc()];
+		for(int i = 0;i<partition.getNumProc();i++) {
+			sendObjs[i] = new HashMap<String, Object>();
+			sendObjs[i].put("agents", agents);
+		}
+		
+		return sendObjs;
 	}
 
 	public void start() {
 		super.start();
-//		final int[] size = getPartition().getPartition().getSize();
-//		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
-//		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-//
-//		for (int x = 0; x < privBugCount; x++) {
-//			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
-//			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-//			int px, py; // Why are we doing this? Relationship?
-//			do {
-//				px = random.nextInt(size[0]) + getPartition().getPartition().ul().getArray()[0];
-//				py = random.nextInt(size[1]) + getPartition().getPartition().ul().getArray()[1];
-//			} while (bugs.get(new IntPoint(px, py)) != null);
-//			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-//			// bugs.add(new IntPoint(px, py), b);
-//			// schedule.scheduleOnce(b, 1);
-//
-//			bugs.addRepeatingAgent(new IntPoint(px, py), b, 1, 1);
-//		}
-//
+
+		HashMap<IntPoint,ArrayList<DHeatBug>>agents = (HashMap<IntPoint,ArrayList<DHeatBug>>) rootInfo.get("agents");
+		
+		for(IntPoint p : agents.keySet()) {
+			for (DHeatBug a : agents.get(p)) {
+				if(partition.getPartition().contains(p))
+					bugs.addRepeatingAgent(p, a, 0, 0);
+			}
+			
+			
+		}
+		
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 

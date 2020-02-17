@@ -3,14 +3,19 @@ package sim.field.grid;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import mpi.MPI;
 import sim.engine.DSimState;
+import sim.engine.IterativeRepeat;
+import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.NdPoint;
 import sim.field.storage.ObjectGridStorage;
+import sim.util.MPIUtil;
 
 public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 
@@ -21,12 +26,47 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 		super(ps);
 		if(ps.getNumDim()!=2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " +ps.getNumDim());
-		
 		halo = new HaloGrid2D<T, NdPoint, ObjectGridStorage<ArrayList<T>>>
 				(ps, aoi,new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]), state);
 
-
 	}
+	
+//	public void globalAgentsInitialization(HashMap<? extends NdPoint,ArrayList<T>> agents) {
+//
+//		HashMap<NdPoint,ArrayList<T>>[] sendObjs = null;
+//		
+//		if(halo.partition.getPid() == 0) {
+//			sendObjs = new HashMap[halo.partition.numProcessors];
+//			for (NdPoint pos: agents.keySet()) {
+//				if (sendObjs[halo.partition.toPartitionId(pos)] == null) {
+//					sendObjs[halo.partition.toPartitionId(pos)] = new HashMap<NdPoint, ArrayList<T>>();
+//				}
+//				if(sendObjs[halo.partition.toPartitionId(pos)].containsKey(pos)) {
+//					sendObjs[halo.partition.toPartitionId(pos)].get(pos).addAll(agents.get(pos));
+//				}else {
+//					sendObjs[halo.partition.toPartitionId(pos)].put(pos, new ArrayList<T>(agents.get(pos)));
+//				}
+//			}
+//		}
+//		HashMap<NdPoint, ArrayList<T>> recvObject = null;
+//		try {
+//			recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//		for(NdPoint pos : recvObject.keySet()) {
+//			for (T t: recvObject.get(pos)) {
+//				if (t instanceof Stopping)
+//					if (t instanceof IterativeRepeat)
+//						halo.addRepeatingAgent(pos, t, ((IterativeRepeat) t).getOrdering(), ((IterativeRepeat) t).getInterval());
+//					else
+//						halo.addAgent(pos, t);
+//				else 
+//					halo.add(pos,t);
+//			}
+//		}
+//	}
+	
 	public void addAgent(final NdPoint p, final T t) {
 		halo.addAgent(p, t);
 	}
@@ -82,11 +122,9 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 	}
 
 	public ArrayList<T> get(final IntPoint p) {
-		if (!halo.inLocalAndHalo(p)) {
-			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
-					halo.partition.getPid(), p.toString()));
+		if (!halo.inLocalAndHalo(p)) 
 			return (ArrayList<T>) halo.getFromRemote(p);
-		} else
+		 else
 			return getLocal(p);
 	}
 	

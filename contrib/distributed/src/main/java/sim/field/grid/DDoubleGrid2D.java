@@ -1,6 +1,7 @@
 package sim.field.grid;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 import sim.engine.DSimState;
 import sim.field.DAbstractGrid2D;
@@ -95,6 +96,16 @@ public class DDoubleGrid2D extends DAbstractGrid2D {
 			add(toP, t);
 		}
 	}
-	
 
+	public DDoubleGrid2D multiply(double byThisMuch) {
+		if (byThisMuch==1.0) return this;
+   
+        for (IntPoint p : halo.partition.getPartition()) {
+        	Double obj = get(p);
+        	removeLocal(p);
+        	add(p, obj*byThisMuch);
+		}
+		return this;
+	}
+		
 }

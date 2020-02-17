@@ -3,10 +3,15 @@ package sim.field.continuous;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import mpi.MPI;
 import sim.engine.DSimState;
+import sim.engine.IterativeRepeat;
+import sim.engine.Stopping;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
 import sim.field.partitioning.PartitionInterface;
@@ -14,6 +19,7 @@ import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.NdPoint;
 import sim.field.storage.ContStorage;
 import sim.util.MPIParam;
+import sim.util.MPIUtil;
 
 public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 	
@@ -29,6 +35,39 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 				(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations), state);
 
 	}
+	
+//	public void globalAgentsInitialization(HashMap<? extends NdPoint,T> agents) {
+//
+//		HashMap<NdPoint,T>[] sendObjs = null;
+//		
+//		if(halo.partition.getPid() == 0) {
+//			sendObjs = new HashMap[halo.partition.numProcessors];
+//			for(int i = 0;i<halo.partition.numProcessors;i++) {
+//				sendObjs[i] = new HashMap<NdPoint, T>();
+//			}
+//			for (NdPoint pos: agents.keySet()) {
+//				sendObjs[halo.partition.toPartitionId(pos)].put(pos,agents.get(pos));
+//			}
+//		}
+//
+//		HashMap<NdPoint, T> recvObject = null;
+//		try {
+//			recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
+//		}catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//		
+//		for(NdPoint pos : recvObject.keySet()) {
+//				T t = recvObject.get(pos);
+//			if (t instanceof Stopping)
+//				if (t instanceof IterativeRepeat)
+//					halo.addRepeatingAgent(pos, t, ((IterativeRepeat) t).getOrdering(), ((IterativeRepeat) t).getInterval());
+//				else
+//					halo.addAgent(pos, t);
+//			else 
+//				halo.add(pos,t);
+//		}
+//	}
 	
 	public void addAgent(final NdPoint p, final T t) {
 		halo.addAgent(p, t);
@@ -73,8 +112,11 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 	}
 
 	public List<T> get(final NdPoint p) {
-		if (!halo.inLocalAndHalo(p))
+		if (!halo.inLocalAndHalo(p)) {
+			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
+					halo.partition.getPid(), p.toString()));
 			return ((List<T>) halo.getFromRemote(p));
+			}
 		else
 			return getLocal(p);
 	}

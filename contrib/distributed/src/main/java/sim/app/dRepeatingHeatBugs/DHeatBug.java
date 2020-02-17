@@ -6,6 +6,8 @@
 
 package sim.app.dRepeatingHeatBugs;
 
+import java.rmi.Remote;
+
 import sim.engine.AbstractStopping;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
@@ -102,8 +104,8 @@ public class DHeatBug extends AbstractStopping {
 		final int old_y = loc_y;
 		loc_x = dHeatBugs.valgrid.stx(bestx);
 		loc_y = dHeatBugs.valgrid.sty(besty);
-
-		dHeatBugs.bugs.moveRepeatingAgent(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
+		
+		dHeatBugs.bugs.moveRepeatingAgent(new IntPoint(old_x, old_y), new IntPoint(loc_x,loc_y), this);
 		
 	}
 

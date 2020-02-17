@@ -10,13 +10,13 @@ import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.NdPoint;
 import sim.field.storage.IntGridStorage;
 
-public class DIntGrid2D2 extends DAbstractGrid2D {
+public class DIntGrid2D extends DAbstractGrid2D {
 
 	private HaloGrid2D<Integer, NdPoint, IntGridStorage<Integer>> halo;
-	public final double initVal;
+	public final int initVal;
 	
 	
-	public DIntGrid2D2(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
+	public DIntGrid2D(final PartitionInterface ps, final int[] aoi, final int initVal, final DSimState state) {
 		super(ps);
 		if(ps.getNumDim()!=2)
 			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " +ps.getNumDim());
@@ -28,23 +28,23 @@ public class DIntGrid2D2 extends DAbstractGrid2D {
 		this.initVal = initVal;
 	}
 	
-	public double[] getStorageArray() {
-		return (double[]) halo.localStorage.getStorage();
+	public int[] getStorageArray() {
+		return (int[]) halo.localStorage.getStorage();
 	}
 
-	public double getLocal(final IntPoint p) {
+	public int getLocal(final IntPoint p) {
 		return getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))];
 	}
 
-	public void addLocal(final IntPoint p, final double t) {
+	public void addLocal(final IntPoint p, final int t) {
 		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
-	public Double getRMI(final IntPoint p) {
+	public Integer getRMI(final IntPoint p) {
 		return getLocal(p);
 	}
 
-	public void addLocal(final IntPoint p, final Double t) {
+	public void addLocal(final IntPoint p, final Integer t) {
 		getStorageArray()[halo.localStorage.getFlatIdx(halo.toLocalPoint(p))] = t;
 	}
 
@@ -56,12 +56,12 @@ public class DIntGrid2D2 extends DAbstractGrid2D {
 		addLocal(p, initVal);
 	}
 
-	public double get(final IntPoint p) {
+	public int get(final IntPoint p) {
 		if (!halo.inLocalAndHalo(p)) {
 			System.out.println(String.format("PID %d get %s is out of local boundary, accessing remotely through RMI",
 					halo.partition.getPid(), p.toString()));
 			// TODO: Should this be (Double)?
-			return (double) halo.getFromRemote(p);
+			return (int) halo.getFromRemote(p);
 		} else
 			return getLocal(p);
 	}

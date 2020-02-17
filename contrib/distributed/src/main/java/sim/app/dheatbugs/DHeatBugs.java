@@ -6,7 +6,12 @@
 
 package sim.app.dheatbugs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import mpi.MPIException;
+import sim.app.dflockers.DFlocker;
+import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -14,6 +19,7 @@ import sim.engine.Steppable;
 import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.partitioning.QuadTreePartition;
+import sim.field.partitioning.DoublePoint;
 import sim.field.partitioning.IntPoint;
 import sim.util.Interval;
 import sim.util.Timing;
@@ -54,36 +60,10 @@ public class DHeatBugs extends DSimState {
 		gridHeight = height;
 		bugCount = count;
 		privBugCount = bugCount / getPartitioning().numProcessors;
-		try {
-			valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-			valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
-			bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
-		} catch (final Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		valgrid = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+		valgrid2 = new DDoubleGrid2D(getPartitioning(), this.aoi, 0, this);
+		bugs = new DDenseGrid2D<DHeatBug>(getPartitioning(), this.aoi, this);
 
-		// try {
-		// DNonUniformPartition ps = DNonUniformPartition.getPartitionScheme(new int[]
-		// {width, height}, true, this.aoi);
-		// assert ps.np == 4;
-		// ps.insertPartition(new IntHyperRect(0, new IntPoint(0, 0), new IntPoint(100,
-		// 100)));
-		// ps.insertPartition(new IntHyperRect(1, new IntPoint(0, 100), new
-		// IntPoint(100, 1000)));
-		// ps.insertPartition(new IntHyperRect(2, new IntPoint(100, 0), new
-		// IntPoint(1000, 100)));
-		// ps.insertPartition(new IntHyperRect(3, new IntPoint(100, 100), new
-		// IntPoint(1000, 1000)));
-		// ps.commit();
-		// createGrids();
-		// lb = new LoadBalancer(this.aoi, 100);
-		// } catch (Exception e) {
-		// e.printStackTrace(System.out);
-		// System.exit(-1);
-		// }
-
-		// myPart = p.getPartition();
 	}
 
 	// Same getters and setters as HeatBugs
@@ -170,25 +150,51 @@ public class DHeatBugs extends DSimState {
 	public double getMaximumHeat() {
 		return DHeatBugs.MAX_HEAT;
 	}
+	
+	
+	@Override
+	protected HashMap<String, Object>[] startRoot() {
+		HashMap<IntPoint,ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
+		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
+		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
+		for (int x = 0; x < bugCount; x++) { 
+			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
+			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
+			int px = random.nextInt(gridWidth);
+			int	py = random.nextInt(gridHeight);
+			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
+			IntPoint point = new IntPoint(px, py);
+			if(!agents.containsKey(point))
+				agents.put(point, new ArrayList<DHeatBug>());
+			agents.get(point).add(b);
+		}
+		
+		HashMap<String,Object>[] sendObjs = new HashMap[partition.getNumProc()];
+		for(int i = 0;i<partition.getNumProc();i++) {
+			sendObjs[i] = new HashMap<String, Object>();
+			sendObjs[i].put("agents", agents);
+		}
+		
+		return sendObjs;
+	}
 
 	public void start() {
 		super.start();
-		final int[] size = getPartitioning().getPartition().getSize();
-		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
-		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
 
-		for (int x = 0; x < privBugCount; x++) { // privBugCount = bugCount / p.numProcessors;
-			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
-			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
-			int px, py; // Why are we doing this? Relationship?
-			do {
-				px = random.nextInt(size[0]) + getPartitioning().getPartition().ul().getArray()[0];
-				py = random.nextInt(size[1]) + getPartitioning().getPartition().ul().getArray()[1];
-			} while (bugs.get(new IntPoint(px, py)) != null);
-			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
-			bugs.addAgent(new IntPoint(px, py), b);
-//			schedule.scheduleOnce(b, 1);
+
+		HashMap<IntPoint,ArrayList<DHeatBug>>agents = (HashMap<IntPoint,ArrayList<DHeatBug>>) rootInfo.get("agents");
+		
+		for(IntPoint p : agents.keySet()) {
+			for (DHeatBug a : agents.get(p)) {
+				if(partition.getPartition().contains(p))
+					bugs.addAgent(p, a );
+			}
+			
+			
 		}
+		
+		//bugs.globalAgentsInitialization(agents);
+		
 
 		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);

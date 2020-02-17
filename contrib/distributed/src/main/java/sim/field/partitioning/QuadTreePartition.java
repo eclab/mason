@@ -37,13 +37,17 @@ public class QuadTreePartition extends PartitionInterface {
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
 	}
+	
+	public QuadTree getQt() {
+		return qt;
+	}
 
 	public int getNumNeighbors() {
 		return getNeighborIds().length;
 	}
 
 	public int[] getNeighborIds() {
-		return qt.getNeighborPids(myLeafNode, aoi);
+		return qt.getNeighborPids(myLeafNode, aoi, isToroidal);
 	}
 
 	public int toPartitionId(final NdPoint p) {

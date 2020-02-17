@@ -95,8 +95,14 @@ public class QuadTree {
 			depth = allNodes.values().stream().mapToInt(x -> x.getLevel()).max().orElse(0);
 	}
 
-	// Find the neighbors of the given node in the tree
-	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi) {
+	public HashSet<QuadTreeNode> getNeighbors(final QuadTreeNode node, final int[] aoi, final boolean isToroidal) {
+		if(isToroidal)
+			return getNeighborsToroidal(node, aoi);
+		else 
+			return getNeighborsNoToroidal(node, aoi);
+	}
+	
+	public HashSet<QuadTreeNode> getNeighborsNoToroidal(final QuadTreeNode node, final int[] aoi){
 		// Root node has no neighbors
 		if (node.isRoot())
 			return new HashSet<QuadTreeNode>();
@@ -124,9 +130,10 @@ public class QuadTree {
 			for (final QuadTreeNode sibling : curr.getSiblings())
 				if (sibling.getDir(dim) == dir)
 					stack.add(sibling);
-
+			
 			// Next go down to find all the leaf nodes that intersect with my halo
 			while (stack.size() > 0 && (curr = stack.remove(0)) != null)
+				
 				if (!myHalo.isIntersect(curr.getShape()))
 					continue;
 				else if (curr.isLeaf())
@@ -139,13 +146,161 @@ public class QuadTree {
 
 		return ret;
 	}
+	
+	public HashSet<QuadTreeNode> getNeighborsToroidal(final QuadTreeNode node, final int[] aoi){
+		// Root node has no neighbors
+		if (node.isRoot())
+			return new HashSet<QuadTreeNode>();
 
-	public int[] getNeighborIds(final QuadTreeNode node, final int[] aoi) {
-		return getNeighbors(node, aoi).stream().mapToInt(x -> x.getId()).sorted().toArray();
+		//calculate all Halo Region
+		final IntHyperRect myShape = node.getShape();
+		
+		
+		//fieldsize
+		final IntHyperRect rootShape = root.getShape();
+		final int width = rootShape.br.c[0] - rootShape.ul.c[0] ;
+		final int height = rootShape.br.c[1] -rootShape.ul.c[1] ;
+		
+		//IntHyperRect point
+		final int[] ul = myShape.ul.c;
+		final int[] br = myShape.br.c;
+	
+		//TODO maybe I can use myShape.toToroidal() --- maybe not
+		//final List<IntHyperRect> haloRegions = myShape.resize(aoi).toToroidal(myShape);
+		final List<IntHyperRect> haloRegions = new ArrayList<IntHyperRect>();
+		
+		//north
+		try {
+		haloRegions.add(new IntHyperRect(-1, new IntPoint((ul[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+				new IntPoint((br[0]+width)%width==0?width:(br[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
+		}catch (Exception e) {
+			System.out.println("error in north of "+ myShape + "heigth "+height+" width "+width );
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//south
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((ul[0]+width)%width,(br[1]+height)%height),
+				new IntPoint((br[0]+width)%width==0?width:(br[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+		}catch (Exception e) {
+			System.out.println("error in south of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//west
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((ul[0]-aoi[0]+width)%width,(ul[1]+height)%height),
+				new IntPoint((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in west of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//east
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((br[0]+width)%width,(ul[1]+height)%height),
+				new IntPoint((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+height)%height==0?height:(br[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in east of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//north-west
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((ul[0]-aoi[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+				new IntPoint((ul[0]+width)%width==0?width:(ul[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in north-west of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//north-east
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((br[0]+width)%width,(ul[1]-aoi[1]+height)%height),
+				new IntPoint((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(ul[1]+height)%height==0?height:(ul[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in north-east of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//south-west
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((ul[0]-aoi[0]+width)%width,(br[1]+height)%height),
+				new IntPoint((ul[0]+width)%width==0?width:(ul[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in south-west of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		//south-east
+		try {
+		haloRegions.add(new IntHyperRect(-1,new IntPoint((br[0]+width)%width,(br[1]+height)%height),
+				new IntPoint((br[0]+aoi[0]+width)%width==0?width:(br[0]+aoi[0]+width)%width,(br[1]+aoi[1]+height)%height==0?height:(br[1]+aoi[1]+height)%height)));
+		}catch (Exception e) {
+			// TODO: handle exception
+			System.out.println("error in south-east of "+ myShape);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
+		final HashSet<QuadTreeNode> ret = new HashSet<QuadTreeNode>();
+		final ArrayList<QuadTreeNode> stack = new ArrayList<QuadTreeNode>();
+		
+		for(final QuadTreeNode sibling : node.getSiblings()) {
+			if(sibling.isLeaf())
+				ret.add(sibling);
+			else
+				for(final QuadTreeNode leaf : sibling.getLeaves()) {
+					// if intersect at least one of my halo regions add to ret
+					for(final IntHyperRect region : haloRegions) {
+						if(leaf.getShape().isIntersect(region)) {
+							ret.add(leaf);
+							break;
+						}
+					}
+				}
+		}
+		
+		QuadTreeNode curr = node.getParent();
+		while(!curr.isRoot()) {
+			for (final QuadTreeNode sibling : curr.getSiblings()) {
+				if (sibling.isLeaf()) {
+					// if intersect at least one of my halo regions add to ret
+					for(final IntHyperRect region : haloRegions) {
+						if(sibling.getShape().isIntersect(region)) {
+							ret.add(sibling);
+							break;
+						}
+					}
+				} else {
+					for(final QuadTreeNode leaf : sibling.getLeaves()) {
+						// if intersect at least one of my halo regions add to ret
+						for(final IntHyperRect region : haloRegions) {
+							if(leaf.getShape().isIntersect(region)) {
+								ret.add(leaf);
+								break;
+							}
+						}
+					}
+				}
+			}
+			curr = curr.getParent();
+		}
+
+		return ret;
 	}
 
-	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi) {
-		return getNeighbors(node, aoi).stream().mapToInt(x -> x.getProc()).sorted().toArray();
+	public int[] getNeighborIds(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
+		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getId()).sorted().toArray();
+	}
+
+	public int[] getNeighborPids(final QuadTreeNode node, final int[] aoi,final boolean isToroidal) {
+		return getNeighbors(node, aoi,isToroidal).stream().mapToInt(x -> x.getProc()).sorted().toArray();
 	}
 
 	private static void testFindNeighbor() {
@@ -187,7 +342,7 @@ public class QuadTree {
 
 		for (final Map.Entry<Integer, int[]> test : tests.entrySet()) {
 			final QuadTreeNode node = qt.getNode(test.getKey());
-			final int[] got = qt.getNeighborIds(node, aoi);
+			final int[] got = qt.getNeighborIds(node, aoi,false);
 			final int[] want = test.getValue();
 			final boolean isPass = Arrays.equals(want, got);
 			System.out.println(
