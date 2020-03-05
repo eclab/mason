@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import mpi.MPI;
+import mpi.MPIException;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.IntPointGenerator;
@@ -111,6 +113,12 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	// Put the object to the given point
 	public void setLocation(final T obj, final NdPoint p) {
+//		try {
+//			System.out.println("PID"+MPI.COMM_WORLD.getRank()+" in set location "+obj+" in position "+p);
+//		} catch (MPIException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		final NdPoint old = m.put(obj, p);
 		if (old != null)
 			getCell(old).remove(obj);
@@ -193,6 +201,7 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		try {
 			tmp = m.get(obj);
 		}catch (Exception e) {
+			System.out.println(  );
 			System.out.println(storage);
 			System.exit(-1);
 		}

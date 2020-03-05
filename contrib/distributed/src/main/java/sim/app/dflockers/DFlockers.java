@@ -60,37 +60,37 @@ public class DFlockers extends DSimState {
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
 	}
 
-	@Override
-	public void preSchedule() {
-		super.preSchedule();
-
-		if (schedule.getSteps() == 1 || schedule.getSteps() == 100) {
-			String filename = dirname + File.separator +
-					getPartitioning().pid + "." + (schedule.getSteps());
-
-			File testdir = new File(dirname);
-			testdir.mkdir();
-
-			File myfileagent = new File(filename);
-			System.out.println("Create file " + filename);
-
-			PrintWriter out = null;
-			try {
-				myfileagent.createNewFile();
-				out = new PrintWriter(new FileOutputStream(myfileagent, false));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			for (DFlocker f : flockers.getAllObjects()) {
-				out.println(f.id);
-			}
-
-			out.close();
-		}
-
-	}
+//	@Override
+//	public void preSchedule() {
+//		super.preSchedule();
+//
+//		if (schedule.getSteps() == 1 || schedule.getSteps() == 100) {
+//			String filename = dirname + File.separator +
+//					getPartitioning().pid + "." + (schedule.getSteps());
+//
+//			File testdir = new File(dirname);
+//			testdir.mkdir();
+//
+//			File myfileagent = new File(filename);
+//			System.out.println("Create file " + filename);
+//
+//			PrintWriter out = null;
+//			try {
+//				myfileagent.createNewFile();
+//				out = new PrintWriter(new FileOutputStream(myfileagent, false));
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//			for (DFlocker f : flockers.getAllObjects()) {
+//				out.println(f.id);
+//			}
+//
+//			out.close();
+//		}
+//
+//	}
 	
 	@Override
 	protected HashMap<String,Object>[] startRoot() {

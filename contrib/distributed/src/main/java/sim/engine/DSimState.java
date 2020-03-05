@@ -37,6 +37,7 @@ import sim.field.continuous.DContinuous2D;
 import sim.field.grid.DDenseGrid2D;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.ContStorage;
@@ -152,6 +153,13 @@ public class DSimState extends SimState {
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 		try {
 			
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Wait for all nodes that end the steps, before writing the objects buffer, we need 
 			//that all processors have been finished the step in order to be sure that no processors
 			//invoke methods on remote objects in the distributed registry.
@@ -166,6 +174,7 @@ public class DSimState extends SimState {
 					}
 				}
 			}
+			
 			
 			try {
 				MPI.COMM_WORLD.barrier();
@@ -244,9 +253,11 @@ public class DSimState extends SimState {
 			 * exceptions to be thrown
 			 */
 			
-			if (payloadWrapper.fieldIndex >= 0) 
+			if (payloadWrapper.fieldIndex >= 0) {
+				System.out.println("PID "+partition.getPid()+" Sync object "+ payloadWrapper.payload);
 				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).
-					syncObject(payloadWrapper); // add the object to the 
+					syncObject(payloadWrapper); // add the object to the field
+				}
 			
 			if (payloadWrapper.payload instanceof IterativeRepeat) {
 				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
@@ -307,7 +318,10 @@ public class DSimState extends SimState {
 			final int old_pid = partition.getPid();
 			final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
 			Timing.start(Timing.LB_OVERHEAD);
+			System.out.println("before partitioning "+ partition);
 			((QuadTreePartition)partition).balance(runtime, level);
+			MPI.COMM_WORLD.barrier();
+			System.out.println("after partitioning "+ partition);
 			ArrayList<Object>  migratedAgents = new ArrayList<>();
 			for(IntPoint p : old_partition) {
 				if (!partition.getPartition().contains(p)){
@@ -320,8 +334,9 @@ public class DSimState extends SimState {
 								if(a instanceof Stopping && !migratedAgents.contains(a)) {
 									System.out.println(st);
 									System.out.println(" step "+schedule.getSteps()+" pid "+partition.getPid()+" position "+p+"cell "+ st.discretize(p) + " in cell "+st.getCell(p) +" move to "+toP);
+									NdPoint loc = st.getLocation((Serializable)a);
 									st.removeObject((Serializable) a);
-									migrateAgent((Stopping) a,toP);
+									migrateAgent((Stopping) a,toP,loc,((HaloGrid2D)field).fieldIndex);
 									System.out.println(" pid "+partition.getPid()+": "+a+" moved ");
 									migratedAgents.add(a);
 								}	
@@ -333,7 +348,7 @@ public class DSimState extends SimState {
 								ArrayList<Stopping> agents = st.getObjects(p);
 								for (int i=0; i<agents.size();i++) {
 									System.out.println("balancing agent migration "+agents.get(i));
-									migrateAgent(agents.get(i),toP);
+									migrateAgent(agents.get(i),toP,p,((HaloGrid2D)field).fieldIndex);
 								}
 							}
 						}
@@ -349,7 +364,7 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.LB_OVERHEAD);
 	}
 	
-	private void migrateAgent(Steppable agent,int dst) {
+	private void migrateAgent(Steppable agent,int dst,NdPoint p,int fieldIndex) {
 		if(agent instanceof Steppable) {
 			if(agent instanceof Stopping) {
 				Stoppable stop = ((Stopping) agent).getStoppable();
@@ -357,8 +372,8 @@ public class DSimState extends SimState {
 					if(stop instanceof DistributedTentativeStep) {
 						//System.out.println("stopping agent "+ stop);
 						stop.stop();
-						AgentWrapper wrap = new AgentWrapper((Stopping) agent);
-						transporter.migrateAgent(wrap,dst);
+						//AgentWrapper wrap = new AgentWrapper((Stopping) agent);
+						transporter.migrateAgent((Stopping) agent, dst, p , fieldIndex);
 						if(withRegistry)
 							DRegistry.getInstance().addMigratedName(agent);
 					} else if(stop instanceof DistributedIterativeRepeat) {

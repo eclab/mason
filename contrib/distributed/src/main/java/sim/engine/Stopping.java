@@ -12,6 +12,7 @@ package sim.engine;
 
 public interface Stopping extends Steppable
 {
+	
 	public Stoppable getStoppable();
 	public void setStoppable(Stoppable stop);
 }

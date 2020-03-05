@@ -11,6 +11,7 @@ import java.util.List;
 
 import ec.util.MersenneTwisterFast;
 import sim.engine.AbstractStopping;
+import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
@@ -142,13 +143,6 @@ public class DFlocker extends AbstractStopping implements Remote {
 		final DFlockers dFlockers = (DFlockers) state;
 		
 		final DoublePoint oldloc = loc;
-//		loc = (DoublePoint) dFlockers.flockers.getLocation(this); //this give me an error
-//		if (loc == null) {
-//			System.out.println("agent "+this+
-//					" pid "+dFlockers.getPartitioning().pid+" oldx "+oldloc.c[0]+" oldy "+oldloc.c[1]);
-//			Thread.dumpStack();
-//			System.exit(-1);
-//		}
 
 		if (dead)
 			return;
@@ -181,7 +175,12 @@ public class DFlocker extends AbstractStopping implements Remote {
 		}
 		lastd = new DoublePoint(dx,dy);
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
-		dFlockers.flockers.moveAgent(oldloc, loc, this);
+		try {
+			dFlockers.flockers.moveAgent(oldloc, loc, this);
+		}catch (Exception e) {
+			System.err.println("error on agent "+this+ " in step "+dFlockers.schedule.getSteps()+ "on pid "+dFlockers.getPartitioning().pid);
+			System.exit(1);
+		}
 		
 		
 		
@@ -205,9 +204,6 @@ public class DFlocker extends AbstractStopping implements Remote {
 //		}
 	}
 	
-	
-	
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

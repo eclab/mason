@@ -164,7 +164,8 @@ public class TransporterMPI {
 //				wrapper = (Transportee) object;
 //				}
 		}
-
+		
+		System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue "+objectQueue);
 		// Clear previous queues
 		for (int i : neighbors)
 			dstMap.get(i).reset();

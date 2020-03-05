@@ -132,9 +132,9 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		partition.registerPostCommit(arg -> {
 //			final int level = (int) arg;
 //			GridStorage s = null;
-
+//
 			reload();
-
+//
 //			if (q.isGroupMaster(level))
 //				s = tempStor.remove(0);
 //
@@ -174,6 +174,12 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 
 
 	public void add(final P p, final T t) {
+//		try {
+//			System.out.println("PID "+MPI.COMM_WORLD.getRank()+" in add method "+t+" to position "+p+" is in local "+inLocal(p));
+//		} catch (MPIException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		if (!inLocal(p)) {
 			addToRemote(p, t);
 		}
@@ -639,7 +645,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 			add((P)payloadWrapper.loc, (T)iterativeRepeat.getSteppable());
 
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
-
+			//System.out.println("in method syncObject "+payloadWrapper.payload);
 			final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
 			add((P)payloadWrapper.loc, (T)agentWrapper.agent);
