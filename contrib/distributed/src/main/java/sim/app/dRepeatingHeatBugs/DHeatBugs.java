@@ -174,8 +174,7 @@ public class DHeatBugs extends DSimState {
 				if(partition.getPartition().contains(p))
 					bugs.addRepeatingAgent(p, a, 0, 0);
 			}
-			
-			
+						
 		}
 		
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);

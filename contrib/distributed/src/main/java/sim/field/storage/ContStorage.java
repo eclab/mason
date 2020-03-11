@@ -113,12 +113,6 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	// Put the object to the given point
 	public void setLocation(final T obj, final NdPoint p) {
-//		try {
-//			System.out.println("PID"+MPI.COMM_WORLD.getRank()+" in set location "+obj+" in position "+p);
-//		} catch (MPIException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		final NdPoint old = m.put(obj, p);
 		if (old != null)
 			getCell(old).remove(obj);
@@ -206,8 +200,6 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 			System.exit(-1);
 		}
 		final NdPoint loc = tmp;
-		//final NdPoint loc = m.get(obj);
-		//System.out.println("in getNeighborsWithin the location of "+obj+" was "+loc);
 		IntPoint tmp2 = null;
 		try {
 			tmp2 = discretize(loc);

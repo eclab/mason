@@ -94,15 +94,8 @@ public class DRegistryDHT {
 		}else {
 			throw new Exception("Error in peer master["+ master_ip+":"+ master_port+"] bootstraping.");
 		}
-
-		/*peer.objectDataReply(new ObjectDataReply() {
-
-			public Object reply(PeerAddress sender, Object request) throws Exception {
-				return _listener.parseMessage(request);
-			}
-		});*/
-
 	}
+	
 	public static DRegistryDHT getInstance(){
 		try {
 			return instance = instance == null? new DRegistryDHT(): instance;

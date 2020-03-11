@@ -35,18 +35,6 @@ public abstract class PartitionInterface<P extends NdPoint> {
 		postCallbacks = new ArrayList<Consumer>();
 	}
 
-	// TODO move the neighbor comm init to here
-	// protected void setNeighborComm() {
-	// int[] nids = getNeighborIds();
-
-	// try {
-	// comm = MPI.COMM_WORLD.createDistGraphAdjacent(ns, ns, new Info(), false);
-	// } catch (MPIException e) {
-	// e.printStackTrace();
-	// System.exit(-1);
-	// }
-	// }
-
 	public int getPid() {
 		return pid;
 	}

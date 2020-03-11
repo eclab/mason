@@ -31,42 +31,6 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 
 	}
 	
-//	public void globalAgentsInitialization(HashMap<? extends NdPoint,ArrayList<T>> agents) {
-//
-//		HashMap<NdPoint,ArrayList<T>>[] sendObjs = null;
-//		
-//		if(halo.partition.getPid() == 0) {
-//			sendObjs = new HashMap[halo.partition.numProcessors];
-//			for (NdPoint pos: agents.keySet()) {
-//				if (sendObjs[halo.partition.toPartitionId(pos)] == null) {
-//					sendObjs[halo.partition.toPartitionId(pos)] = new HashMap<NdPoint, ArrayList<T>>();
-//				}
-//				if(sendObjs[halo.partition.toPartitionId(pos)].containsKey(pos)) {
-//					sendObjs[halo.partition.toPartitionId(pos)].get(pos).addAll(agents.get(pos));
-//				}else {
-//					sendObjs[halo.partition.toPartitionId(pos)].put(pos, new ArrayList<T>(agents.get(pos)));
-//				}
-//			}
-//		}
-//		HashMap<NdPoint, ArrayList<T>> recvObject = null;
-//		try {
-//			recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
-//		}catch (Exception e) {
-//			// TODO: handle exception
-//		}
-//		for(NdPoint pos : recvObject.keySet()) {
-//			for (T t: recvObject.get(pos)) {
-//				if (t instanceof Stopping)
-//					if (t instanceof IterativeRepeat)
-//						halo.addRepeatingAgent(pos, t, ((IterativeRepeat) t).getOrdering(), ((IterativeRepeat) t).getInterval());
-//					else
-//						halo.addAgent(pos, t);
-//				else 
-//					halo.add(pos,t);
-//			}
-//		}
-//	}
-	
 	public void addAgent(final NdPoint p, final T t) {
 		halo.addAgent(p, t);
 	}

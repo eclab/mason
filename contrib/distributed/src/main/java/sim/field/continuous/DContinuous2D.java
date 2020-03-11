@@ -35,40 +35,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 				(ps, aoi, new ContStorage<T>(ps.getPartition(), discretizations), state);
 
 	}
-	
-//	public void globalAgentsInitialization(HashMap<? extends NdPoint,T> agents) {
-//
-//		HashMap<NdPoint,T>[] sendObjs = null;
-//		
-//		if(halo.partition.getPid() == 0) {
-//			sendObjs = new HashMap[halo.partition.numProcessors];
-//			for(int i = 0;i<halo.partition.numProcessors;i++) {
-//				sendObjs[i] = new HashMap<NdPoint, T>();
-//			}
-//			for (NdPoint pos: agents.keySet()) {
-//				sendObjs[halo.partition.toPartitionId(pos)].put(pos,agents.get(pos));
-//			}
-//		}
-//
-//		HashMap<NdPoint, T> recvObject = null;
-//		try {
-//			recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
-//		}catch (Exception e) {
-//			// TODO: handle exception
-//		}
-//		
-//		for(NdPoint pos : recvObject.keySet()) {
-//				T t = recvObject.get(pos);
-//			if (t instanceof Stopping)
-//				if (t instanceof IterativeRepeat)
-//					halo.addRepeatingAgent(pos, t, ((IterativeRepeat) t).getOrdering(), ((IterativeRepeat) t).getInterval());
-//				else
-//					halo.addAgent(pos, t);
-//			else 
-//				halo.add(pos,t);
-//		}
-//	}
-	
+		
 	public void addAgent(final NdPoint p, final T t) {
 		halo.addAgent(p, t);
 	}
@@ -81,7 +48,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 	public void move(final NdPoint fromP, final NdPoint toP, final T t) {
 		
 		halo.move(fromP, toP, t);
-	//TODO CHECK IT WITH R
+	//TODO CHECK IT
 	/**
 		final int toPid = halo.partition.toPartitionId(fromP);
 
@@ -137,6 +104,7 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D {
 	public List<T> getNeighborsWithin(final T obj, final double r) {
 		return halo.localStorage.getNeighborsWithin(obj, r);
 	}
+	
 	// TODO refactor this after new pack/unpack is introduced in Storage
 	@SuppressWarnings("unchecked")
 	public final List<T> getAllObjects() {
