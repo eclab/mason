@@ -32,3 +32,4 @@ contrib/geomason/repository/jars/hotspotsData.jar
 contrib/geomason/repository/jars/refugeeData.jar
 contrib/geomason/repository/jars/swiselib.jar
 kiberaData.jar
+mason/bin

@@ -7,7 +7,6 @@
 package sim.engine;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -15,8 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -31,17 +28,9 @@ import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransporterMPI;
-import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
-import sim.field.continuous.DContinuous2D;
-import sim.field.grid.DDenseGrid2D;
-import sim.field.partitioning.IntHyperRect;
-import sim.field.partitioning.IntPoint;
-import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
-import sim.field.storage.ContStorage;
-import sim.field.storage.ObjectGridStorage;
 import sim.util.MPIUtil;
 import sim.util.Timing;
 
@@ -138,21 +127,21 @@ public class DSimState extends SimState {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
 
-		try {			
-				
+		try {
+
 			MPI.COMM_WORLD.barrier();
-		
+
 			syncFields();
 			transporter.sync();
 
 			if (withRegistry) {
-				//All nodes have finished the synchronization and can unregister exported objects.
+				// All nodes have finished the synchronization and can unregister exported
+				// objects.
 				MPI.COMM_WORLD.barrier();
-				
-				
-				//After the synchronization we can unregister migrated object!
-				//remove exported-migrated object from local node
-				for(String mo : DRegistry.getInstance().getMigratedNames()) {
+
+				// After the synchronization we can unregister migrated object!
+				// remove exported-migrated object from local node
+				for (String mo : DRegistry.getInstance().getMigratedNames()) {
 					try {
 						DRegistry.getInstance().unRegisterObject(mo);
 					} catch (NotBoundException e) {
@@ -161,7 +150,7 @@ public class DSimState extends SimState {
 				}
 
 				DRegistry.getInstance().clearMigratedNames();
-				
+
 				MPI.COMM_WORLD.barrier();
 			}
 		} catch (ClassNotFoundException | MPIException | IOException e) {
@@ -195,13 +184,13 @@ public class DSimState extends SimState {
 			 */
 
 			if (payloadWrapper.fieldIndex >= 0) {
-				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).
-					syncObject(payloadWrapper); // add the object to the field
-				}
+				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
+																											// object to
+																											// the field
+			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
-
 
 				// TODO: how to schedule for a specified time?
 				// Not adding it to specific time because we get an error -
@@ -218,11 +207,11 @@ public class DSimState extends SimState {
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
-				if(withRegistry) {
-					if(agentWrapper.getExportedName()!=null)
-					{
+				if (withRegistry) {
+					if (agentWrapper.getExportedName() != null) {
 						try {
-							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(), (Remote)agentWrapper.agent);
+							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+									(Remote) agentWrapper.agent);
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -318,8 +307,7 @@ public class DSimState extends SimState {
 	 * Modelers must override this method if they want to add any logic that is
 	 * unique to the root processor
 	 */
-	protected HashMap<String, Object>[] startRoot() {
-		return new HashMap[partition.numProcessors];
+	protected void startRoot(HashMap<String, Object>[] maps) {
 	}
 
 	/**
@@ -346,9 +334,14 @@ public class DSimState extends SimState {
 			for (final Synchronizable haloField : fieldRegistry)
 				haloField.initRemote();
 
-			HashMap<String, Object>[] init = new HashMap[partition.numProcessors];
-			if (partition.isGlobalMaster())
-				init = startRoot();
+			HashMap<String, Object>[] init = null;
+
+			if (partition.isGlobalMaster()) {
+				init = new HashMap[partition.numProcessors];
+				for (int i = 0; i < partition.getNumProc(); i++)
+					init[i] = new HashMap<String, Object>();
+				startRoot(init);
+			}
 			// synchronize using one to many communication
 			rootInfo = MPIUtil.scatter(partition.comm, init, 0);
 

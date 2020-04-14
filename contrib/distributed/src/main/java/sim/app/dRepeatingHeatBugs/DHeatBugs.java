@@ -138,8 +138,7 @@ public class DHeatBugs extends DSimState {
 		return DHeatBugs.MAX_HEAT;
 	}
 
-	@Override
-	protected HashMap<String, Object>[] startRoot() {
+	protected void startRoot(HashMap<String, Object>[] maps) {
 		HashMap<IntPoint, ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
@@ -155,12 +154,9 @@ public class DHeatBugs extends DSimState {
 			agents.get(point).add(b);
 		}
 
-		HashMap<String, Object>[] sendObjs = new HashMap[partition.getNumProc()];
-		for (int i = 0; i < partition.getNumProc(); i++) {
-			sendObjs[i] = new HashMap<String, Object>();
-			sendObjs[i].put("agents", agents);
-		}
-		return sendObjs;
+		for (int i = 0; i < partition.getNumProc(); i++)
+			maps[i].put("agents", agents);
+
 	}
 
 	public void start() {

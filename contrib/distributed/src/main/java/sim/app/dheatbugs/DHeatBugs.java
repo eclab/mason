@@ -10,17 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import mpi.MPIException;
-import sim.app.dflockers.DFlocker;
-import sim.app.dflockers.DFlockers;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DDenseGrid2D;
-import sim.field.partitioning.QuadTreePartition;
-import sim.field.partitioning.DoublePoint;
+import sim.field.grid.DDoubleGrid2D;
 import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.QuadTreePartition;
 import sim.util.Interval;
 import sim.util.Timing;
 
@@ -140,47 +137,39 @@ public class DHeatBugs extends DSimState {
 	public double getMaximumHeat() {
 		return DHeatBugs.MAX_HEAT;
 	}
-	
-	
+
 	@Override
-	protected HashMap<String, Object>[] startRoot() {
-		HashMap<IntPoint,ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
+	protected void startRoot(HashMap<String, Object>[] maps) {
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-		for (int x = 0; x < bugCount; x++) { 
+		for (int x = 0; x < bugCount; x++) {
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
-			int	py = random.nextInt(gridHeight);
+			int py = random.nextInt(gridHeight);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			IntPoint point = new IntPoint(px, py);
-			if(!agents.containsKey(point))
+			if (!agents.containsKey(point))
 				agents.put(point, new ArrayList<DHeatBug>());
 			agents.get(point).add(b);
 		}
-		
-		HashMap<String,Object>[] sendObjs = new HashMap[partition.getNumProc()];
-		for(int i = 0;i<partition.getNumProc();i++) {
-			sendObjs[i] = new HashMap<String, Object>();
-			sendObjs[i].put("agents", agents);
-		}
-		
-		return sendObjs;
+
+		for (int i = 0; i < partition.getNumProc(); i++)
+			maps[i].put("agents", agents);
 	}
 
 	public void start() {
 		super.start();
 
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = (HashMap<IntPoint, ArrayList<DHeatBug>>) rootInfo.get("agents");
 
-		HashMap<IntPoint,ArrayList<DHeatBug>>agents = (HashMap<IntPoint,ArrayList<DHeatBug>>) rootInfo.get("agents");
-		
-		for(IntPoint p : agents.keySet()) {
+		for (IntPoint p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
-				if(partition.getPartition().contains(p))
-					bugs.addAgent(p, a );
+				if (partition.getPartition().contains(p))
+					bugs.addAgent(p, a);
 			}
-			
-			
+
 		}
 
 		// Does this have to happen here? I guess.
