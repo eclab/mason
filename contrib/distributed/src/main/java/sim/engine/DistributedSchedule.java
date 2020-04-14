@@ -70,7 +70,7 @@ public class DistributedSchedule extends Schedule
             }
         }
     
-    public IterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
+    public DistributedIterativeRepeat scheduleRepeating(final double time, final int ordering, final Steppable event, final double interval)
         {
         if (interval <= 0) throw new IllegalArgumentException("The steppable " +  event + " was scheduled repeating with an impossible interval ("+interval+")");
         DistributedIterativeRepeat r = new DistributedIterativeRepeat(event, time, interval, ordering);

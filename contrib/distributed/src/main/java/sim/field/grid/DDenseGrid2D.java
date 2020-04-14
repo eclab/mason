@@ -3,48 +3,30 @@ package sim.field.grid;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import mpi.MPI;
 import sim.engine.DSimState;
-import sim.engine.IterativeRepeat;
-import sim.engine.Stopping;
+import sim.engine.DistributedIterativeRepeat;
 import sim.field.DAbstractGrid2D;
+import sim.field.DGrid;
 import sim.field.HaloGrid2D;
-import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.NdPoint;
+import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.ObjectGridStorage;
-import sim.util.MPIUtil;
 
-public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
+public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D implements DGrid<T, NdPoint> {
 
 	private HaloGrid2D<T, NdPoint, ObjectGridStorage<ArrayList<T>>> halo;
-	
-	
+
 	public DDenseGrid2D(final PartitionInterface ps, final int[] aoi, final DSimState state) {
 		super(ps);
-		if(ps.getNumDim()!=2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " +ps.getNumDim());
-		halo = new HaloGrid2D<T, NdPoint, ObjectGridStorage<ArrayList<T>>>
-				(ps, aoi,new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]), state);
+		if (ps.getNumDim() != 2)
+			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
+		halo = new HaloGrid2D<T, NdPoint, ObjectGridStorage<ArrayList<T>>>(ps, aoi,
+				new ObjectGridStorage<ArrayList<T>>(ps.getPartition(), s -> new ArrayList[s]), state);
 
 	}
-	
-	public void addAgent(final NdPoint p, final T t) {
-		halo.addAgent(p, t);
-	}
-	public void moveAgent(final NdPoint fromP, final NdPoint toP, final T t) {
-		 halo.moveAgent(fromP, toP, t);
-	}
-	public void addRepeatingAgent(final NdPoint p, final T t, final int ordering, final double interval) {
-		halo.addRepeatingAgent(p, t, ordering, interval);
-	}
-	public void moveRepeatingAgent(final NdPoint fromP, final NdPoint toP, final T t) {
-	
-		halo.moveRepeatingAgent(fromP, toP, t);
-	}
-	
+
 	public ArrayList<T>[] getStorageArray() {
 		return (ArrayList<T>[]) halo.localStorage.getStorage();
 	}
@@ -86,16 +68,13 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 	}
 
 	public ArrayList<T> get(final IntPoint p) {
-		if (!halo.inLocalAndHalo(p)) 
+		if (!halo.inLocalAndHalo(p))
 			return (ArrayList<T>) halo.getFromRemote(p);
-		 else
+		else
 			return getLocal(p);
 	}
-	
-	
-/*UTILS METHODS*/
-	
 
+	/* UTILS METHODS */
 
 	public int toToroidal(final int x, final int dim) {
 		final int s = fieldSize[dim];
@@ -128,6 +107,61 @@ public class DDenseGrid2D<T extends Serializable> extends DAbstractGrid2D {
 		return dx;
 	}
 
+	public void addAgent(final NdPoint p, final T t) {
+		halo.addAgent(p, t);
+	}
 
+	public void moveAgent(final NdPoint fromP, final NdPoint toP, final T t) {
+		halo.moveAgent(fromP, toP, t);
+	}
+
+	public void addRepeatingAgent(final NdPoint p, final T t, final int ordering, final double interval) {
+		halo.addRepeatingAgent(p, t, ordering, interval);
+	}
+
+	public void moveRepeatingAgent(final NdPoint fromP, final NdPoint toP, final T t) {
+		halo.moveRepeatingAgent(fromP, toP, t);
+	}
+
+	public void add(NdPoint p, T t) {
+		halo.add(p, t);
+	}
+
+	public void remove(NdPoint p, T t) {
+		halo.remove(p, t);
+	}
+
+	public void remove(NdPoint p) {
+		halo.remove(p);
+	}
+
+	public void move(NdPoint fromP, NdPoint toP, T t) {
+		halo.move(fromP, toP, t);
+	}
+
+	public void addAgent(NdPoint p, T t, int ordering, double time) {
+		halo.addAgent(p, t, ordering, time);
+
+	}
+
+	public void moveAgent(NdPoint fromP, NdPoint toP, T t, int ordering, double time) {
+		halo.moveAgent(fromP, toP, t, ordering, time);
+	}
+
+	public void addRepeatingAgent(NdPoint p, T t, double time, int ordering, double interval) {
+		halo.addRepeatingAgent(p, t, time, ordering, interval);
+	}
+
+	public void removeAndStopRepeatingAgent(NdPoint p, T t) {
+		halo.removeAndStopRepeatingAgent(p, t);
+	}
+
+	public void removeAndStopRepeatingAgent(NdPoint p, DistributedIterativeRepeat iterativeRepeat) {
+		halo.removeAndStopRepeatingAgent(p, iterativeRepeat);
+	}
+
+//	public void moveRepeatingAgent(NdPoint fromP, NdPoint toP, DistributedIterativeRepeat iterativeRepeat) {
+//		halo.moveRepeatingAgent(fromP, toP, iterativeRepeat);
+//	}
 
 }
