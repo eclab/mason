@@ -7,8 +7,8 @@
 package sim.util;
 
 /** 
-    Number2D is the top-level abstract class of MASON's 2D and 3D mutable and immutable ints and doubles.
-    All Number2D classes are Serializable
+    NumberND is the top-level abstract class of MASON's 2D and 3D mutable and immutable ints and doubles.
+    All NumberND classes are Serializable
 */
 
 public abstract class NumberND implements java.io.Serializable
