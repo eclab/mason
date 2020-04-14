@@ -129,16 +129,6 @@ public class DHeatBugs extends DSimState {
 		return new Interval(0.0, 1.0);
 	}
 
-	// Missing getBugXPos, getBugYPos
-
-	// public void setRandomMovementProbability( double t ) {
-	// if (t >= 0 && t <= 1) {
-	// randomMovementProbability = t;
-	// for ( int i = 0 ; i < bugCount ; i++ )
-	// if (bugs[i] != null)
-	// bugs[i].setRandomMovementProbability( randomMovementProbability );
-	// }
-	// }
 	public Object domRandomMovementProbability() {
 		return new Interval(0.0, 1.0);
 	}
@@ -192,18 +182,10 @@ public class DHeatBugs extends DSimState {
 			
 			
 		}
-		
-		//bugs.globalAgentsInitialization(agents);
-		
 
 		// Does this have to happen here? I guess.
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 
-		// TODO: Balancer is broken,
-		// the items on the edge find themselves in the wrong pId
-
-//		schedule.scheduleRepeating(Schedule.EPOCH, 4, new Balancer(), 1);
-//		schedule.scheduleRepeating(Schedule.EPOCH, 5, new Inspector(), 10);
 	}
 
 	@SuppressWarnings("serial")
@@ -217,11 +199,6 @@ public class DHeatBugs extends DSimState {
 				ps.balance(runtime, 0);
 				Timing.stop(Timing.LB_OVERHEAD);
 
-				// if (hb.lb.balance((int)hb.schedule.getSteps()) > 0) {
-				// myPart = p.getPartition();
-				// MPITest.execInOrder(x -> System.out.printf("[%d] Balanced at step %d new
-				// Partition %s\n", x, hb.schedule.getSteps(), p.getPartition()), 500);
-				// }
 			} catch (final Exception e) {
 				e.printStackTrace();
 				System.exit(-1);
@@ -233,22 +210,11 @@ public class DHeatBugs extends DSimState {
 	class Inspector implements Steppable {
 		public void step(final SimState state) {
 			final DHeatBugs hb = (DHeatBugs) state;
-			// String s = String.format("PID %d Step %d Agent Count %d\n", hb.partition.pid,
-			// hb.schedule.getSteps(), hb.queue.size());
-			// state.logger.info(String.format("PID %d Step %d Agent Count %d\n", hb.p.pid,
-			// hb.schedule.getSteps(), hb.privBugCount));
-			// if (DNonUniformPartition.getPartitionScheme().getPid() == 0) {
 			DSimState.logger.info(String.format("[%d][%d] Step Runtime: %g \tSync Runtime: %g \t LB Overhead: %g\n",
 					hb.getPartitioning().getPid(), hb.schedule.getSteps(),
 					Timing.get(Timing.LB_RUNTIME).getMovingAverage(),
 					Timing.get(Timing.MPI_SYNC_OVERHEAD).getMovingAverage(),
 					Timing.get(Timing.LB_OVERHEAD).getMovingAverage()));
-			// }
-			// for (Stopping i : hb.queue) {
-			// DHeatBug a = (DHeatBug)i;
-			// s += a.toString() + "\n";
-			// }
-			// System.out.print(s);
 		}
 	}
 

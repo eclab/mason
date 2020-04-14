@@ -35,24 +35,17 @@ public class DAnt extends AbstractStopping implements Remote
     	y=loc_y;
     }
         
-        
-    // at present we have only one algorithm: value iteration.  I might
-    // revise this and add our alternate (TD) algorithm.  See the papers.
-        
-        
+                
     public void depositPheromone( final SimState state)
         {
         final DAntsForage af = (DAntsForage)state;
                 
-//        Int2D location = af.buggrid.getObjectLocation(this);
-//        int x = location.x;
-//        int y = location.y;
         if (DAntsForage.ALGORITHM == DAntsForage.ALGORITHM_VALUE_ITERATION)
             {
             // test all around
             if (hasFoodItem)  // deposit food pheromone
                 {
-                double max = af.toFoodGrid.get(new IntPoint(x, y));//.field[x][y];
+                double max = af.toFoodGrid.get(new IntPoint(x, y));
                 for(int dx = -1; dx < 2; dx++)
                     for(int dy = -1; dy < 2; dy++)
                         {
@@ -65,14 +58,11 @@ public class DAnt extends AbstractStopping implements Remote
                             reward;
                         if (m > max) max = m;
                         }
-                af.toFoodGrid.add(new IntPoint(x, y), max);//(new IntPoint(x, y))] = max;
+                af.toFoodGrid.add(new IntPoint(x, y), max);
                 }
             else
                 {
-            	//System.out.println(af.toHomeGrid.getStorageArray());
-            	if(af.getPartitioning().pid == 0)
-            		System.out.println("x "+x+ " "+y);
-            	double max = af.toHomeGrid.get(new IntPoint(x,y));//.field[x][y];
+            	double max = af.toHomeGrid.get(new IntPoint(x,y));
                 for(int dx = -1; dx < 2; dx++)
                     for(int dy = -1; dy < 2; dy++)
                         {
@@ -86,7 +76,7 @@ public class DAnt extends AbstractStopping implements Remote
                             reward;
                         if (m > max) max = m;
                         }
-                af.toHomeGrid.add(new IntPoint(x,y), max);//.field[x][y] = max;
+                af.toHomeGrid.add(new IntPoint(x,y), max);
                 }
             }
         reward = 0.0;
@@ -95,11 +85,7 @@ public class DAnt extends AbstractStopping implements Remote
     public void act( final SimState state )
         {
         final DAntsForage af = (DAntsForage)state;
-                
-//        Int2D location = af.buggrid.getObjectLocation(this);
-//        int x = location.x;
-//        int y = location.y;
-                
+                                
         if (hasFoodItem)  // follow home pheromone
             {
             double max = DAntsForage.IMPOSSIBLY_BAD_PHEROMONE;
@@ -115,7 +101,7 @@ public class DAnt extends AbstractStopping implements Remote
                         _x < 0 || _y < 0 ||
                         _x >= DAntsForage.GRID_WIDTH || _y >= DAntsForage.GRID_HEIGHT || 
                         af.obstacles.get(new IntPoint(_x,_y)) == 1) continue;  // nothing to see here
-                    double m = af.toHomeGrid.get(new IntPoint(_x,_y));//field[_x][_y];
+                    double m = af.toHomeGrid.get(new IntPoint(_x,_y));
                     if (m > max)
                         {
                         count = 2;
@@ -147,7 +133,7 @@ public class DAnt extends AbstractStopping implements Remote
                 if (!(xd == 0 && yd == 0) && xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new IntPoint(xm,ym)) == 0)
                     { max_x = xm; max_y = ym; }
                 }
-            af.buggrid.addAgent(new IntPoint(max_x, max_y), this);//.setObjectLocation(this, );
+            af.buggrid.addAgent(new IntPoint(max_x, max_y), this);
             x=max_x;
             y=max_y;
             last = new IntPoint(x, y);
@@ -200,7 +186,6 @@ public class DAnt extends AbstractStopping implements Remote
                 if (!(xd == 0 && yd == 0) && xm >= 0 && xm < DAntsForage.GRID_WIDTH && ym >= 0 && ym < DAntsForage.GRID_HEIGHT && af.obstacles.get(new IntPoint(xm,ym)) == 0)
                     { max_x = xm; max_y = ym; }
                 }
-            //af.buggrid.setObjectLocation(this, new Int2D(max_x, max_y));
             af.buggrid.addAgent(new IntPoint(max_x, max_y), this);
             last = new IntPoint(max_x, max_y);
             if (af.sites.get(new IntPoint(max_x,max_y)) == DAntsForage.FOOD)  // reward me next time!  And change my status

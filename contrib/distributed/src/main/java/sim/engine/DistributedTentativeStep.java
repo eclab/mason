@@ -19,9 +19,6 @@ public class DistributedTentativeStep extends TentativeStep
         {
         super(step);
 
-//        System.err.println("Creating DTS for " + System.identityHashCode(step) + " " + key.getTime() + " " + key.getOrdering());
-//        new Throwable().printStackTrace();
-
 		if (step instanceof Stopping)
 			{
 			((Stopping)step).setStoppable(this);

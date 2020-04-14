@@ -73,7 +73,6 @@ public class TransporterMPI {
 		// outputStreams for direct neighbors
 		dstMap = new HashMap<Integer, RemoteOutputStream>();
 		try {
-//			 outputStreams = new RemoteOutputStream[numNeighbors];
 			for (int i : neighbors)
 				dstMap.putIfAbsent(i, new RemoteOutputStream());
 		} catch (final IOException e) {
@@ -81,10 +80,6 @@ public class TransporterMPI {
 			System.exit(-1);
 		}
 
-		// neighbors
-//		dstMap = new HashMap<Integer, RemoteOutputStream>();
-//		for (int i = 0; i < numNeighbors; i++)
-//			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
 	}
 
 	public int size() {
@@ -163,7 +158,8 @@ public class TransporterMPI {
 //				}
 		}
 
-		System.out.println("PID " + MPI.COMM_WORLD.getRank() + " objectQueue " + objectQueue);
+		//System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue "+objectQueue);
+
 		// Clear previous queues
 		for (int i : neighbors)
 			dstMap.get(i).reset();

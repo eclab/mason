@@ -34,39 +34,6 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 
 	}
 
-//	public void globalAgentsInitialization(HashMap<? extends NdPoint,T> agents) {
-//
-//		HashMap<NdPoint,T>[] sendObjs = null;
-//		
-//		if(halo.partition.getPid() == 0) {
-//			sendObjs = new HashMap[halo.partition.numProcessors];
-//			for(int i = 0;i<halo.partition.numProcessors;i++) {
-//				sendObjs[i] = new HashMap<NdPoint, T>();
-//			}
-//			for (NdPoint pos: agents.keySet()) {
-//				sendObjs[halo.partition.toPartitionId(pos)].put(pos,agents.get(pos));
-//			}
-//		}
-//
-//		HashMap<NdPoint, T> recvObject = null;
-//		try {
-//			recvObject = MPIUtil.scatter(MPI.COMM_WORLD, sendObjs, 0);
-//		}catch (Exception e) {
-//			// TODO: handle exception
-//		}
-//		
-//		for(NdPoint pos : recvObject.keySet()) {
-//				T t = recvObject.get(pos);
-//			if (t instanceof Stopping)
-//				if (t instanceof IterativeRepeat)
-//					halo.addRepeatingAgent(pos, t, ((IterativeRepeat) t).getOrdering(), ((IterativeRepeat) t).getInterval());
-//				else
-//					halo.addAgent(pos, t);
-//			else 
-//				halo.add(pos,t);
-//		}
-//	}
-
 	public NdPoint getLocation(final T obj) {
 		return halo.localStorage.getLocation(obj);
 	}

@@ -124,18 +124,6 @@ public class DSimState extends SimState {
 		return index;
 	}
 
-//	@SuppressWarnings({ "unchecked", "rawtypes" })
-//	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
-//		// if the fieldIndex < 0 we assume that
-//		// the agent is not supposed to be added to any field
-//
-//		// If the fieldIndex is correct then the type-cast below will be safe
-//		if (fieldIndex >= 0) 
-//			((HaloGrid) fieldRegistry.get(fieldIndex)).add(p, obj);
-//		
-//	//TODO CHANGE HERE
-//	}
-
 	/**
 	 * Calls Sync on all the fields
 	 *
@@ -149,80 +137,33 @@ public class DSimState extends SimState {
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
-		try {
 
-			try {
-				MPI.COMM_WORLD.barrier();
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			// Wait for all nodes that end the steps, before writing the objects buffer, we
-			// need
-			// that all processors have been finished the step in order to be sure that no
-			// processors
-			// invoke methods on remote objects in the distributed registry.
-
-			if (schedule.getSteps() > 0) {
-				if (schedule.getSteps() % 50 == 0) {
-					balancePartitions(balancerLevel);
-					if (balancerLevel != 0) {
-						balancerLevel--;
-					} else {
-						balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
-					}
-				}
-			}
-
-			try {
-				MPI.COMM_WORLD.barrier();
-			} catch (MPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+		try {			
+				
+			MPI.COMM_WORLD.barrier();
+		
 			syncFields();
 			transporter.sync();
 
 			if (withRegistry) {
-				// All nodes have finished the synchronization and can unregister exported
-				// objects.
-				try {
-					MPI.COMM_WORLD.barrier();
-				} catch (MPIException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				// After the synchronization we can unregister migrated object!
-				// remove exported-migrated object from local node
-				for (String mo : DRegistry.getInstance().getMigratedNames()) {
+				//All nodes have finished the synchronization and can unregister exported objects.
+				MPI.COMM_WORLD.barrier();
+				
+				
+				//After the synchronization we can unregister migrated object!
+				//remove exported-migrated object from local node
+				for(String mo : DRegistry.getInstance().getMigratedNames()) {
 					try {
 						DRegistry.getInstance().unRegisterObject(mo);
-//						System.out.println("unRegisterObject "+mo);
 					} catch (NotBoundException e) {
 						e.printStackTrace();
 					}
 				}
 
 				DRegistry.getInstance().clearMigratedNames();
-
-				try {
-					MPI.COMM_WORLD.barrier();
-				} catch (MPIException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
+				MPI.COMM_WORLD.barrier();
 			}
-
-//			try {
-//				MPI.COMM_WORLD.barrier();
-//			} catch (MPIException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
 		} catch (ClassNotFoundException | MPIException | IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -254,14 +195,13 @@ public class DSimState extends SimState {
 			 */
 
 			if (payloadWrapper.fieldIndex >= 0) {
-				System.out.println("PID " + partition.getPid() + " Sync object " + payloadWrapper.payload);
-				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
-																											// object to
-																											// the field
-			}
+				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).
+					syncObject(payloadWrapper); // add the object to the field
+				}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
 				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
+
 
 				// TODO: how to schedule for a specified time?
 				// Not adding it to specific time because we get an error -
@@ -278,14 +218,15 @@ public class DSimState extends SimState {
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
-				if (agentWrapper.getExportedName() != null) {
-					try {
-						DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
-								(Remote) agentWrapper.agent);
-//						System.out.println("registerObject "+agentWrapper.getExportedName());
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+				if(withRegistry) {
+					if(agentWrapper.getExportedName()!=null)
+					{
+						try {
+							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(), (Remote)agentWrapper.agent);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 
@@ -309,95 +250,6 @@ public class DSimState extends SimState {
 
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-
-	}
-
-	private void balancePartitions(int level) {
-		// TODO Auto-generated method stub
-		try {
-			// System.out.println(((HaloGrid2D) fieldRegistry.get(0)).getStorage());
-			final IntHyperRect old_partition = partition.getPartition();
-			final int old_pid = partition.getPid();
-			final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
-			Timing.start(Timing.LB_OVERHEAD);
-			System.out.println("before partitioning " + partition);
-			((QuadTreePartition) partition).balance(runtime, level);
-			MPI.COMM_WORLD.barrier();
-			System.out.println("after partitioning " + partition);
-			ArrayList<Object> migratedAgents = new ArrayList<>();
-			for (IntPoint p : old_partition) {
-				if (!partition.getPartition().contains(p)) {
-					final int toP = partition.toPartitionId(p);
-					for (Synchronizable field : fieldRegistry) {
-						if (((HaloGrid2D) field).getStorage() instanceof ContStorage) {
-							ContStorage st = (ContStorage) ((HaloGrid2D) field).getStorage();
-							HashSet agents = st.getCell(p);
-							for (Object a : agents) {
-								if (a instanceof Stopping && !migratedAgents.contains(a)) {
-									System.out.println(st);
-									System.out.println(" step " + schedule.getSteps() + " pid " + partition.getPid()
-											+ " position " + p + "cell " + st.discretize(p) + " in cell "
-											+ st.getCell(p) + " move to " + toP);
-									NdPoint loc = st.getLocation((Serializable) a);
-									st.removeObject((Serializable) a);
-									migrateAgent((Stopping) a, toP, loc, ((HaloGrid2D) field).fieldIndex);
-									System.out.println(" pid " + partition.getPid() + ": " + a + " moved ");
-									migratedAgents.add(a);
-								}
-							}
-
-						} else if (((HaloGrid2D) field).getStorage() instanceof ObjectGridStorage) {
-							ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D) field).getStorage();
-							if (st.getObjects(p) != null) {
-								ArrayList<Stopping> agents = st.getObjects(p);
-								for (int i = 0; i < agents.size(); i++) {
-									System.out.println("balancing agent migration " + agents.get(i));
-									migrateAgent(agents.get(i), toP, p, ((HaloGrid2D) field).fieldIndex);
-								}
-							}
-						}
-					}
-				}
-
-			}
-			MPI.COMM_WORLD.barrier();
-		} catch (final Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		Timing.stop(Timing.LB_OVERHEAD);
-	}
-
-	private void migrateAgent(Steppable agent, int dst, NdPoint p, int fieldIndex) {
-		if (agent instanceof Steppable) {
-			if (agent instanceof Stopping) {
-				Stoppable stop = ((Stopping) agent).getStoppable();
-				if (stop != null) {
-					if (stop instanceof DistributedTentativeStep) {
-						// System.out.println("stopping agent "+ stop);
-						stop.stop();
-						// AgentWrapper wrap = new AgentWrapper((Stopping) agent);
-						transporter.migrateAgent((Stopping) agent, dst, p, fieldIndex);
-						if (withRegistry)
-							DRegistry.getInstance().addMigratedName(agent);
-					} else if (stop instanceof DistributedIterativeRepeat) {
-						// System.out.println("stopping agent "+ stop);
-						stop.stop();
-						transporter.migrateRepeatingAgent((DistributedIterativeRepeat) agent, dst);
-						if (withRegistry)
-							DRegistry.getInstance().addMigratedName(agent);
-					} else
-						throw new RuntimeException(
-								"Stopping was not a DistributedTentativeStep or DistributedRepeat.  It was a "
-										+ (stop.getClass()) + ".");
-
-				} else
-					throw new RuntimeException("agents: " + agent + " Stopping has null Steppable.");
-
-			} else
-				throw new RuntimeException("All Steppables that migrate must be Stopping.");
-
-		}
 
 	}
 

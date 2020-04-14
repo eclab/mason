@@ -35,22 +35,6 @@ public class DHeatBug extends AbstractStopping {
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;
 		grid.add(new IntPoint(x, y), new_heat);
-
-//		try {
-//			double new_heat = grid.get(x, y) + heat;
-//			if (new_heat > DHeatBugs.MAX_HEAT)
-//				new_heat = DHeatBugs.MAX_HEAT;
-//			grid.set(x, y, new_heat);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println("HeatBug - " + this +
-//					"\nBugs: haloPart - " + hb.bugs.haloPart +
-//					"\nBugs: origPart - " + hb.bugs.origPart +
-//					"\nBugs: privPart - " + hb.bugs.privPart +
-//					"\nCurrent pId - " + hb.partition.getPid() +
-//					"\npId according to QuadTree - " +
-//					hb.partition.toPartitionId(new int[] { loc_x, loc_y }) + "\nPartition Info - " + hb.partition);
-//		}
 	}
 
 	public void step(final SimState state) {
@@ -120,28 +104,6 @@ public class DHeatBug extends AbstractStopping {
 
 		dHeatBugs.bugs.moveAgent(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
 
-//
-//		try {
-//			final int dst = dHeatBugs.partition.toPartitionId(new int[] { loc_x, loc_y });
-//			if (dst != dHeatBugs.partition.getPid()) {
-//				dHeatBugs.bugs.remove(new IntPoint(old_x, old_y), this);
-//
-////				if (!hb.bugs.remove(old_x, old_y, this))
-////					System.err.println("Failed to remove!");
-////				System.out.println("Migrating Bug from - [" + old_x + ", " + old_y + "] to - [" + loc_x + ", " + loc_y);
-//
-//				// TODO: Abstract away the migration from the model
-//				dHeatBugs.transporter.migrateAgent(this, dst, new IntPoint(loc_x, loc_y),
-//						dHeatBugs.bugs.fieldIndex);
-//			} else {
-//				// TODO: this should be moveAgent
-//				dHeatBugs.bugs.move(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
-//				dHeatBugs.schedule.scheduleOnce(this, 1);
-//			}
-//		} catch (final Exception e) {
-//			e.printStackTrace(System.out);
-//			System.exit(-1);
-//		}
 	}
 
 	public double getIdealTemperature() {

@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dflockers;
+package sim.app.dflockersTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,6 +71,51 @@ public class DFlockers extends DSimState {
 		idAgents = new ArrayList<Integer>();
 		idLocal = new ArrayList<Integer>();
 	}
+
+	@Override
+	public void preSchedule() {
+		super.preSchedule();
+		
+		if(schedule.getSteps()>0) {
+			int[] dstDispl = new int[partition.numProcessors];
+			final int[] dstCount = new int[partition.numProcessors];
+			int[] recv = new int[numFlockers];
+			
+			int[] ids = new int[idLocal.size()];
+			for (int i=0;i< idLocal.size();i++) {
+				ids[i] = idLocal.get(i);
+			}
+			
+			int num = ids.length;
+
+			try {
+				
+				MPI.COMM_WORLD.gather(new int[] {num}, 1, MPI.INT, dstCount, 1, MPI.INT, 0);
+				
+				dstDispl =IntStream.range(0, dstCount.length)
+						.map(x -> Arrays.stream(dstCount).limit(x).sum())
+						.toArray();
+				
+				MPI.COMM_WORLD.gatherv(ids, num, MPI.INT, recv, dstCount, dstDispl, MPI.INT, 0);
+				
+			} catch (MPIException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			if(partition.getPid()==0) {
+				
+				Arrays.sort(recv);
+				for(int i=0;i<idAgents.size();i++) {
+					if(idAgents.get(i)!=recv[i]) {
+						System.err.println("ERROR: something wrong happens");
+						System.exit(1);
+					}
+				}
+			}
+			idLocal.clear();
+		}
+	}
 	
 	@Override
 	protected HashMap<String,Object>[] startRoot() {
@@ -93,6 +138,7 @@ public class DFlockers extends DSimState {
 		return sendObjs;
 		
 	}
+	
 	
 	@Override
 	public void start() {

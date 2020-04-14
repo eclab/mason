@@ -85,28 +85,20 @@ public /*strictfp*/ class DAntsForage extends DSimState
     public Object domRandomActionProbability() { return new Interval(0.0, 1.0); }
 
 
-    public DIntGrid2D sites;// = new DIntGrid2D(GRID_WIDTH, GRID_HEIGHT);
-    public DDoubleGrid2D toFoodGrid; //= new DoubleGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
-    public DDoubleGrid2D toHomeGrid; //= new DoubleGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
-    public DDenseGrid2D<DAnt> buggrid; //= new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-    public DIntGrid2D obstacles; //= new IntGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
+    public DIntGrid2D sites;
+    public DDoubleGrid2D toFoodGrid;
+    public DDoubleGrid2D toHomeGrid;
+    public DDenseGrid2D<DAnt> buggrid;
+    public DIntGrid2D obstacles;
     
-//    public DFlockers(final long seed) {
-//		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
-//
-//		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
-//		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
-//	}
-
     public DAntsForage(long seed)
         { 
     	super(seed,GRID_WIDTH,GRID_HEIGHT,10);
-    	sites = new DIntGrid2D(getPartitioning(), aoi, 0, this);//new IntGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
-        toFoodGrid = new DDoubleGrid2D(getPartitioning(), aoi, 0, this); //new DoubleGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
-        toHomeGrid = new DDoubleGrid2D(partition, aoi, 0, this); //new DoubleGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
-        //valgrid2 = new DoubleGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
-        buggrid = new DDenseGrid2D<DAnt>(getPartitioning(), aoi, this); //new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-        obstacles = new DIntGrid2D(partition, aoi, 0, this); //new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
+    	sites = new DIntGrid2D(getPartitioning(), aoi, 0, this);
+        toFoodGrid = new DDoubleGrid2D(getPartitioning(), aoi, 0, this);
+        toHomeGrid = new DDoubleGrid2D(partition, aoi, 0, this);
+        buggrid = new DDenseGrid2D<DAnt>(getPartitioning(), aoi, this); 
+        obstacles = new DIntGrid2D(partition, aoi, 0, this);
         }
         
     public void start()
@@ -121,37 +113,35 @@ public /*strictfp*/ class DAntsForage extends DSimState
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                        obstacles.add(new IntPoint(x, y), 0);//.field[x][y] = 0;
+                        obstacles.add(new IntPoint(x, y), 0);
                         if( ((x-55)*0.707+(y-35)*0.707)*((x-55)*0.707+(y-35)*0.707)/36+
                             ((x-55)*0.707-(y-35)*0.707)*((x-55)*0.707-(y-35)*0.707)/1024 <= 1 )
                         	obstacles.add(new IntPoint(x, y) , 1);
-                        	//obstacles.field[x][y] = 1;
+              
                         }
                 break;
             case TWO_OBSTACLES:
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                    	obstacles.add(new IntPoint(x, y), 0);//.field[x][y] = 0;
+                    	obstacles.add(new IntPoint(x, y), 0);
                         if( ((x-45)*0.707+(y-25)*0.707)*((x-45)*0.707+(y-25)*0.707)/36+
                             ((x-45)*0.707-(y-25)*0.707)*((x-45)*0.707-(y-25)*0.707)/1024 <= 1 )
                         	obstacles.add(new IntPoint(x, y) , 1);
-                            //obstacles.field[x][y] = 1;
+                           
                         if( ((x-35)*0.707+(y-70)*0.707)*((x-35)*0.707+(y-70)*0.707)/36+
                             ((x-35)*0.707-(y-70)*0.707)*((x-35)*0.707-(y-70)*0.707)/1024 <= 1 )
                         	obstacles.add(new IntPoint(x, y) , 1);
-                        	//obstacles.field[x][y] = 1;
                         }
                 break;
             case ONE_LONG_OBSTACLE:
                 for( int x = 0 ; x < GRID_WIDTH ; x++ )
                     for( int y = 0 ; y < GRID_HEIGHT ; y++ )
                         {
-                    	obstacles.add(new IntPoint(x, y), 0);//.field[x][y] = 0;
+                    	obstacles.add(new IntPoint(x, y), 0);
                         if( (x-60)*(x-60)/1600+
                             (y-50)*(y-50)/25 <= 1 )
                         	obstacles.add(new IntPoint(x, y) , 1);
-                        	//obstacles.field[x][y] = 1;
                         }
                 break;
             }
@@ -160,18 +150,17 @@ public /*strictfp*/ class DAntsForage extends DSimState
         for( int x = HOME_XMIN ; x <= HOME_XMAX ; x++ )
             for( int y = HOME_YMIN ; y <= HOME_YMAX ; y++ )
             	if(getPartitioning().getPartition().contains(new IntPoint(x,y)))
-            		sites.add(new IntPoint(x,y), 1); //.field[x][y] = HOME;
+            		sites.add(new IntPoint(x,y), 1); 
         for( int x = FOOD_XMIN ; x <= FOOD_XMAX ; x++ )
             for( int y = FOOD_YMIN ; y <= FOOD_YMAX ; y++ )
             	if(getPartitioning().getPartition().contains(new IntPoint(x,y)))
-            		sites.add(new IntPoint(x,y), 2);//.field[x][y] = FOOD;
+            		sites.add(new IntPoint(x,y), 2);
 
         for(int x=0; x < numAnts; x++)
             {
 	        	if(getPartitioning().getPartition().contains(new IntPoint((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2))) {
 	        		DAnt ant = new DAnt(reward,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
 	                buggrid.addAgent(new IntPoint((HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2), ant);
-	                //buggrid.setObjectLocation(ant,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
 	                schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
 	        	}	 
             }
