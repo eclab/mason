@@ -1,33 +1,31 @@
 package sim.field.grid;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 import sim.engine.DSimState;
 import sim.field.DAbstractGrid2D;
 import sim.field.HaloGrid2D;
-import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.NdPoint;
+import sim.field.partitioning.PartitionInterface;
 import sim.field.storage.DoubleGridStorage;
 
 public class DDoubleGrid2D extends DAbstractGrid2D {
 
 	private HaloGrid2D<Double, NdPoint, DoubleGridStorage<Double>> halo;
 	public final double initVal;
-	
-	
+
 	public DDoubleGrid2D(final PartitionInterface ps, final int[] aoi, final double initVal, final DSimState state) {
 		super(ps);
-		if(ps.getNumDim()!=2)
-			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " +ps.getNumDim());
-		
-		halo = new HaloGrid2D<Double, NdPoint, DoubleGridStorage<Double>>
-				(ps, aoi, new DoubleGridStorage(ps.getPartition(), initVal), state);
-		
+		if (ps.getNumDim() != 2)
+			throw new IllegalArgumentException("The number of dimensions is expected to be 2, got: " + ps.getNumDim());
+
+		halo = new HaloGrid2D<Double, NdPoint, DoubleGridStorage<Double>>(ps, aoi,
+				new DoubleGridStorage(ps.getPartition(), initVal), state);
+
 		this.initVal = initVal;
 	}
-	
+
 	public double[] getStorageArray() {
 		return (double[]) halo.localStorage.getStorage();
 	}
@@ -98,14 +96,15 @@ public class DDoubleGrid2D extends DAbstractGrid2D {
 	}
 
 	public DDoubleGrid2D multiply(double byThisMuch) {
-		if (byThisMuch==1.0) return this;
-   
-        for (IntPoint p : halo.partition.getPartition()) {
-        	Double obj = get(p);
-        	removeLocal(p);
-        	add(p, obj*byThisMuch);
+		if (byThisMuch == 1.0)
+			return this;
+
+		for (IntPoint p : halo.partition.getPartition()) {
+			Double obj = get(p);
+			removeLocal(p);
+			add(p, obj * byThisMuch);
 		}
 		return this;
 	}
-		
+
 }

@@ -5,7 +5,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,25 +13,24 @@ import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSimState;
+import sim.engine.DistributedIterativeRepeat;
 import sim.engine.IterativeRepeat;
 import sim.engine.Steppable;
 import sim.engine.Stopping;
 import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
-import sim.engine.transport.TransportRMIInterface;
 import sim.engine.transport.RMIProxy;
-import sim.field.partitioning.PartitionInterface;
-import sim.field.partitioning.QuadTreePartition;
+import sim.engine.transport.TransportRMIInterface;
 import sim.field.partitioning.IntHyperRect;
 import sim.field.partitioning.IntPoint;
 import sim.field.partitioning.IntPointGenerator;
 import sim.field.partitioning.NdPoint;
+import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.QuadTreePartition;
 import sim.field.storage.GridStorage;
 import sim.util.GroupComm;
 import sim.util.MPIParam;
 import sim.util.MPIUtil;
-
-import java.rmi.Remote;
 
 /**
  * All fields in distributed MASON must extend this class.
@@ -41,7 +39,8 @@ import java.rmi.Remote;
  * @param <P> The Type of P to use
  * @param <S> The Type of Storage to use
  */
-public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends GridStorage> implements TransportRMIInterface<Serializable, P>, Synchronizable{
+public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends GridStorage>
+		implements TransportRMIInterface<Serializable, P>, Synchronizable, DGrid<T, P> {
 
 	// Helper class to organize neighbor-related data structures and methods
 	class Neighbor {
@@ -80,7 +79,6 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		}
 	}
 
-
 	protected int numDimensions, numNeighbors;
 	protected int[] aoi, fieldSize, haloSize;
 
@@ -88,13 +86,13 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 
 	protected List<Neighbor> neighbors; // pointer to the processors who's partitions neighbor me
 	public S localStorage;
-	public PartitionInterface partition;
+	public PartitionInterface<P> partition;
 	public Datatype MPIBaseType;
 
 	public final int fieldIndex;
 
 	public RMIProxy<T, P> proxy;
-	protected final DSimState state;
+	private final DSimState state;
 
 	public HaloGrid2D(final PartitionInterface ps, final int[] aoi, final S stor, final DSimState state) {
 		this.partition = ps;
@@ -172,7 +170,6 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		return p.toToroidal(world);
 	}
 
-
 	public void add(final P p, final T t) {
 //		try {
 //			System.out.println("PID "+MPI.COMM_WORLD.getRank()+" in add method "+t+" to position "+p+" is in local "+inLocal(p));
@@ -182,10 +179,9 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 //		}
 		if (!inLocal(p)) {
 			addToRemote(p, t);
-		}
-		else {
+		} else {
 			localStorage.setLocation(t, p);
-			}
+		}
 	}
 
 	public void remove(final P p, final T t) {
@@ -209,7 +205,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		if (fromPid == toPid && fromPid != partition.pid) {
 			// So that we make only a single RMI call instead of two
 			try {
-				proxy.getField(partition.toPartitionId(fromP)).moveRMI(fromP, toP, t);
+				proxy.getField(fromPid).moveRMI(fromP, toP, t);
 
 			} catch (final RemoteException e) {
 				throw new RuntimeException(e);
@@ -219,7 +215,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 			add(toP, t);
 		}
 	}
-	
+
 //	
 //	// TODO: for abitrary object
 //		public void globalAgentsInitialization(HashMap<P, ArrayList<T>> agents) {
@@ -323,12 +319,12 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	}
 
 	public void moveAgent(final P fromP, final P toP, final T t) {
-		
+
 		if (!inLocal(fromP)) {
-			System.out.println("pid "+partition.pid +" agent"+t);
-			System.out.println("partitioning "+partition.getPartition());
+			System.out.println("pid " + partition.pid + " agent" + t);
+			System.out.println("partitioning " + partition.getPartition());
 			throw new IllegalArgumentException("fromP must be local");
-			}
+		}
 
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
@@ -367,13 +363,16 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	public void addRepeatingAgent(final P p, final T t, final double time, final int ordering, final double interval) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
+		Stopping stopping = (Stopping) t;
 
 		if (inLocal(p)) {
 			add(p, t);
-			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(time, ordering,
-					(Stopping) t, interval);
+			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(time, ordering, stopping,
+					interval);
+			stopping.setStoppable(iterativeRepeat);
 		} else {
-			final IterativeRepeat iterativeRepeat = new IterativeRepeat((Stopping) t, time, interval, ordering);
+			final DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat(stopping, time, interval,
+					ordering);
 			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 		}
 	}
@@ -381,14 +380,16 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	public void addRepeatingAgent(final P p, final T t, final int ordering, final double interval) {
 		if (!(t instanceof Stopping))
 			throw new IllegalArgumentException("t must be a Stopping");
+		Stopping stopping = (Stopping) t;
 
 		if (inLocal(p)) {
 			add(p, t);
-			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating((Stopping) t,
-					ordering, interval);
+			final IterativeRepeat iterativeRepeat = state.schedule.scheduleRepeating(stopping, ordering, interval);
+			stopping.setStoppable(iterativeRepeat);
 		} else {
 			// TODO: look at the time here
-			final IterativeRepeat iterativeRepeat = new IterativeRepeat((Stopping) t, -1, interval, ordering);
+			final DistributedIterativeRepeat iterativeRepeat = new DistributedIterativeRepeat(stopping, -1, interval,
+					ordering);
 			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(p));
 		}
 	}
@@ -407,7 +408,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		stopping.getStoppable().stop();
 	}
 
-	public void removeAndStopRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat) {
+	public void removeAndStopRepeatingAgent(final P p, final DistributedIterativeRepeat iterativeRepeat) {
 		if (!inLocal(p))
 			throw new IllegalArgumentException("p must be local");
 
@@ -436,37 +437,41 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		else {
 			final Stopping stopping = (Stopping) t;
 			final IterativeRepeat iterativeRepeat = (IterativeRepeat) stopping.getStoppable();
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP,
+
+			final DistributedIterativeRepeat distributedIterativeRepeat = new DistributedIterativeRepeat(stopping,
+					iterativeRepeat.getTime(), iterativeRepeat.getInterval(), iterativeRepeat.getOrdering());
+			state.getTransporter().migrateRepeatingAgent(distributedIterativeRepeat, partition.toPartitionId(toP), toP,
 					fieldIndex);
+
 			iterativeRepeat.stop();
 		}
 	}
 
-	public void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat) {
-		if (!inLocal(fromP))
-			throw new IllegalArgumentException("fromP must be local");
-
-		// We cannot use checked cast for generics because of erasure
-		// TODO: is there a safe way of doing this?
-
-		final T t = (T) iterativeRepeat.getSteppable();
-
-		remove(fromP, t);
-
-		if (inLocal(toP))
-			add(toP, t);
-		else {
-			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP,
-					fieldIndex);
-			iterativeRepeat.stop();
-		}
-	}
+//	public void moveRepeatingAgent(final P fromP, final P toP, final DistributedIterativeRepeat iterativeRepeat) {
+//		if (!inLocal(fromP))
+//			throw new IllegalArgumentException("fromP must be local");
+//
+//		// We cannot use checked cast for generics because of erasure
+//		// TODO: is there a safe way of doing this?
+//
+//		final T t = (T) iterativeRepeat.getSteppable();
+//
+//		remove(fromP, t);
+//
+//		if (inLocal(toP))
+//			add(toP, t);
+//		else {
+//			state.getTransporter().migrateRepeatingAgent(iterativeRepeat, partition.toPartitionId(toP), toP,
+//					fieldIndex);
+//			iterativeRepeat.stop();
+//		}
+//	}
 
 	public void moveLocal(final P fromP, final P toP, final T t) {
-		//removeLocal(fromP, t);
+		// removeLocal(fromP, t);
 		localStorage.removeObject(t);
 		localStorage.setLocation(t, toP);
-		//addLocal(toP, t);
+		// addLocal(toP, t);
 	}
 
 	// TODO make a copy of the storage which will be used by the remote field access
@@ -477,7 +482,7 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 
 	public Serializable getFromRemote(final P p) {
 		try {
-			//System.out.println(p);
+			// System.out.println(p);
 			return proxy.getField(partition.toPartitionId(p)).getRMI(p);
 		} catch (final NullPointerException e) {
 			throw new IllegalArgumentException("Remote Proxy is not initialized");
@@ -516,8 +521,6 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		}
 	}
 
-
-
 	public GridStorage getStorage() {
 		return localStorage;
 	}
@@ -548,9 +551,6 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		return inLocalAndHalo(p) && !inLocal(p);
 	}
 
-
-
-
 	public void collect(final int dst, final GridStorage fullField) throws MPIException {
 		final Serializable sendObj = localStorage.pack(new MPIParam(origPart, haloPart, MPIBaseType));
 
@@ -560,7 +560,6 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 			for (int i = 0; i < partition.getNumProc(); i++)
 				fullField.unpack(new MPIParam(partition.getPartition(i), world, MPIBaseType), recvObjs.get(i));
 	}
-
 
 	public void collectGroup(final int level, final GridStorage groupField) throws MPIException {
 		if (!(partition instanceof QuadTreePartition))
@@ -599,14 +598,12 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 				sendObjs = new Serializable[gc.leaves.size()];
 				for (int i = 0; i < gc.leaves.size(); i++)
 					sendObjs[i] = groupField
-					.pack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType));
+							.pack(new MPIParam(gc.leaves.get(i).getShape(), gc.master.getShape(), MPIBaseType));
 			}
-
 			final Serializable recvObj = MPIUtil.<Serializable>scatter(gc.comm, sendObjs, gc.groupRoot);
 
 			localStorage.unpack(new MPIParam(origPart, haloPart, MPIBaseType), recvObj);
 		}
-
 		syncHalo();
 	}
 
@@ -614,15 +611,12 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 		return String.format("PID %d Storage %s", partition.getPid(), localStorage);
 	}
 
-
-
-	/*METHODS SYNCHO*/
+	/* METHODS SYNCHO */
 
 	@Override
 	public void initRemote() {
 		proxy = new RMIProxy(partition, this);
 	}
-
 
 	@Override
 	public void syncHalo() throws MPIException {
@@ -639,49 +633,47 @@ public class HaloGrid2D<T extends Serializable , P extends NdPoint, S extends Gr
 	@Override
 	public void syncObject(PayloadWrapper payloadWrapper) {
 		// TODO Auto-generated method stub
-		if (payloadWrapper.payload instanceof IterativeRepeat) {
-			final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
+		if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
+			final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
-			add((P)payloadWrapper.loc, (T)iterativeRepeat.getSteppable());
+			add((P) payloadWrapper.loc, (T) iterativeRepeat.getSteppable());
 
 		} else if (payloadWrapper.payload instanceof AgentWrapper) {
-			//System.out.println("in method syncObject "+payloadWrapper.payload);
+			// System.out.println("in method syncObject "+payloadWrapper.payload);
 			final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
 
-			add((P)payloadWrapper.loc, (T)agentWrapper.agent);
+			add((P) payloadWrapper.loc, (T) agentWrapper.agent);
 
 		} else {
-			add((P)payloadWrapper.loc, (T)payloadWrapper.payload);
+			add((P) payloadWrapper.loc, (T) payloadWrapper.payload);
 		}
 
 	}
 
-
-	/*RMI METHODS*/
+	/* RMI METHODS */
 	// TODO: Should we throw exception here if not in local?
-	public void addRMI( P p,  Serializable t) throws RemoteException {
-		//addLocal(p, t);
+	public void addRMI(P p, Serializable t) throws RemoteException {
+		// addLocal(p, t);
 		localStorage.setLocation(t, p);
 
 	}
-	public void removeRMI( P p,  Serializable t) throws RemoteException {
-		//removeLocal(p, t);
+
+	public void removeRMI(P p, Serializable t) throws RemoteException {
+		// removeLocal(p, t);
 		localStorage.removeObject(t);
 	}
+
 	public void removeRMI(final P p) throws RemoteException {
-		//	removeLocal(p);
+		// removeLocal(p);
 		localStorage.removeObjects(p);
 	}
-	public Serializable getRMI(P p) throws RemoteException {
 
+	public Serializable getRMI(P p) throws RemoteException {
 		return localStorage.getObjects(p);
 	}
 
-
-
-
-
-
-
+	public DSimState getState() {
+		return state;
+	}
 
 }

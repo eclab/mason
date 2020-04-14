@@ -12,8 +12,8 @@ import java.util.HashMap;
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
-import sim.field.grid.DDoubleGrid2D;
 import sim.field.grid.DDenseGrid2D;
+import sim.field.grid.DDoubleGrid2D;
 import sim.field.partitioning.IntPoint;
 import sim.util.Interval;
 
@@ -140,44 +140,39 @@ public class DHeatBugs extends DSimState {
 
 	@Override
 	protected HashMap<String, Object>[] startRoot() {
-		HashMap<IntPoint,ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = new HashMap<IntPoint, ArrayList<DHeatBug>>();
 		final double rangeIdealTemp = maxIdealTemp - minIdealTemp;
 		final double rangeOutputHeat = maxOutputHeat - minOutputHeat;
-		for (int x = 0; x < bugCount; x++) { 
+		for (int x = 0; x < bugCount; x++) {
 			final double idealTemp = random.nextDouble() * rangeIdealTemp + minIdealTemp;
 			final double heatOutput = random.nextDouble() * rangeOutputHeat + minOutputHeat;
 			int px = random.nextInt(gridWidth);
-			int	py = random.nextInt(gridHeight);
+			int py = random.nextInt(gridHeight);
 			final DHeatBug b = new DHeatBug(idealTemp, heatOutput, randomMovementProbability, px, py);
 			IntPoint point = new IntPoint(px, py);
-			if(!agents.containsKey(point))
+			if (!agents.containsKey(point))
 				agents.put(point, new ArrayList<DHeatBug>());
 			agents.get(point).add(b);
 		}
-		
-		HashMap<String,Object>[] sendObjs = new HashMap[partition.getNumProc()];
-		for(int i = 0;i<partition.getNumProc();i++) {
+
+		HashMap<String, Object>[] sendObjs = new HashMap[partition.getNumProc()];
+		for (int i = 0; i < partition.getNumProc(); i++) {
 			sendObjs[i] = new HashMap<String, Object>();
 			sendObjs[i].put("agents", agents);
 		}
-		
 		return sendObjs;
 	}
 
 	public void start() {
 		super.start();
 
-		HashMap<IntPoint,ArrayList<DHeatBug>>agents = (HashMap<IntPoint,ArrayList<DHeatBug>>) rootInfo.get("agents");
-		
-		for(IntPoint p : agents.keySet()) {
+		HashMap<IntPoint, ArrayList<DHeatBug>> agents = (HashMap<IntPoint, ArrayList<DHeatBug>>) rootInfo.get("agents");
+		for (IntPoint p : agents.keySet()) {
 			for (DHeatBug a : agents.get(p)) {
-				if(partition.getPartition().contains(p))
-					bugs.addRepeatingAgent(p, a, 0, 0);
+				if (partition.getPartition().contains(p))
+					bugs.addRepeatingAgent(p, a, 1, 1);
 			}
-			
-			
 		}
-		
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 
