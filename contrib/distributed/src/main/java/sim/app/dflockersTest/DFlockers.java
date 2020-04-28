@@ -100,7 +100,7 @@ public class DFlockers extends DSimState {
 		}
 	}
 
-	protected void startRoot(HashMap<String, Object>[] maps) {
+	protected void startRoot() {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
 			final DoublePoint loc = new DoublePoint(random.nextDouble() * width, random.nextDouble() * height);
@@ -111,17 +111,14 @@ public class DFlockers extends DSimState {
 			agents.add(flocker);
 
 		}
-
-		for (int i = 0; i < partition.getNumProc(); i++) {
-			maps[i].put("agents", agents);
-		}
+		addRootInfoToAll("agents",agents);
 	}
 
 	public void start() {
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		ArrayList<Object> agents = (ArrayList<Object>) rootInfo.get("agents");
+		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
 
 		for (Object p : agents) {
 			DFlocker a = (DFlocker) p;

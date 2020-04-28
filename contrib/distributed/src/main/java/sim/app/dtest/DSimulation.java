@@ -90,7 +90,7 @@ public class DSimulation extends DSimState {
 	}
 	
 	@Override
-	protected void startRoot(HashMap<String, Object>[] maps) {
+	protected void startRoot() {
 		ArrayList<DAgent> agents = new ArrayList<DAgent>();
 		for(int i=75;i<600;i=i+150) {
 			for(int j=75;j<600;j=j+150) {
@@ -100,9 +100,7 @@ public class DSimulation extends DSimState {
 			}
 		}
 		
-		for(int i = 0;i<partition.getNumProc();i++) {
-			maps[i].put("agents", agents);
-		}
+		addRootInfoToAll("agents",agents);
 	}
 	
 	
@@ -111,7 +109,7 @@ public class DSimulation extends DSimState {
 		// TODO Auto-generated method stub
 		super.start(); //do not forget this line
 		
-		ArrayList<Object> agents = (ArrayList<Object>) rootInfo.get("agents");
+		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
 		
 		for(Object p : agents) {
 			DAgent a = (DAgent) p;

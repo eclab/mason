@@ -592,5 +592,6 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	public DSimState getState() {
 		return state;
 	}
+	
 
 }

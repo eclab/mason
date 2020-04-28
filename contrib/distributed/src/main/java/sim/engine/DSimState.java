@@ -41,7 +41,8 @@ public class DSimState extends SimState {
 	protected PartitionInterface partition;
 	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
-	public HashMap<String, Object> rootInfo = null;
+	HashMap<String, Object> rootInfo = null;
+	HashMap<String, Object>[] init = null;
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
@@ -307,7 +308,9 @@ public class DSimState extends SimState {
 	 * Modelers must override this method if they want to add any logic that is
 	 * unique to the root processor
 	 */
-	protected void startRoot(HashMap<String, Object>[] maps) {
+	//protected void startRoot(HashMap<String, Object>[] maps) {
+	protected void startRoot() {
+
 	}
 
 	/**
@@ -334,13 +337,12 @@ public class DSimState extends SimState {
 			for (final Synchronizable haloField : fieldRegistry)
 				haloField.initRemote();
 
-			HashMap<String, Object>[] init = null;
-
 			if (partition.isGlobalMaster()) {
 				init = new HashMap[partition.numProcessors];
 				for (int i = 0; i < partition.getNumProc(); i++)
 					init[i] = new HashMap<String, Object>();
-				startRoot(init);
+				//startRoot(init);
+				startRoot();
 			}
 			// synchronize using one to many communication
 			rootInfo = MPIUtil.scatter(partition.comm, init, 0);
@@ -408,6 +410,20 @@ public class DSimState extends SimState {
 	 */
 	public TransporterMPI getTransporter() {
 		return transporter;
+	}
+	
+	public void addRootInfoToAll(String key,Object sendObj) {
+		for (int i = 0; i < partition.getNumProc(); i++) {
+			init[i].put(key, sendObj);
+		}
+	}
+	
+	public void addRootInfoToProc(int pid,String key,Object sendObj) {
+		init[pid].put(key, sendObj);
+	}
+	
+	public Object getRootInfo(String key) {
+		return rootInfo.get(key);
 	}
 
 }
