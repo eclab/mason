@@ -12,6 +12,10 @@ import ec.util.*;
 
 
 
+/**
+ * Overrides scheduleRepeating and scheduleOnce to use DistributedTentativeStep
+ *
+ */
 public class DistributedSchedule extends Schedule
     {
     private static final long serialVersionUID = 1;

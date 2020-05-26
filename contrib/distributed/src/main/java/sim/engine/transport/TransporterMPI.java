@@ -19,6 +19,10 @@ import sim.engine.registry.DRegistry;
 import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 
+/**
+ * Transports/migrates objects and agents
+ *
+ */
 public class TransporterMPI {
 
 	int numNeighbors; // number of direct neighbors

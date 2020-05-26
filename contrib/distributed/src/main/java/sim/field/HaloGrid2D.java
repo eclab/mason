@@ -33,7 +33,8 @@ import sim.util.MPIParam;
 import sim.util.MPIUtil;
 
 /**
- * All fields in distributed MASON must extend this class.
+ * All fields in distributed MASON must contain this class. 
+ * Stores objects/agents and implements methods to add, move and remove them.
  *
  * @param <T> The Class of Object to store in the field
  * @param <P> The Type of P to use
@@ -592,6 +593,5 @@ public class HaloGrid2D<T extends Serializable, P extends NdPoint, S extends Gri
 	public DSimState getState() {
 		return state;
 	}
-	
 
 }

@@ -23,7 +23,10 @@ import sim.field.partitioning.PartitionInterface;
 
 // TODO: Point to point comm
 
-// Utility class that serialize/exchange/deserialize objects using MPI
+/**
+ * Utility class that serialize/exchange/deserialize objects using MPI
+ *
+ */
 public class MPIUtil {
 
 	// static final int MAX_SIZE = 1 << 30; // 1024MBytes
@@ -259,7 +262,8 @@ public class MPIUtil {
 	// Allows each node to send one message each to the the root. These messages are
 	// returned as an arraylist to the root.
 
-	public static <T extends Serializable> ArrayList<T> gather(final PartitionInterface p, final T sendObj, final int dst)
+	public static <T extends Serializable> ArrayList<T> gather(final PartitionInterface p, final T sendObj,
+			final int dst)
 			throws MPIException {
 		return MPIUtil.<T>gather(p.getCommunicator(), sendObj, dst);
 	}
@@ -331,6 +335,7 @@ public class MPIUtil {
 
 		return recvObjs;
 	}
+
 	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Intracomm comm, final T[] sendObjs)
 			throws MPIException {
 		final int nc = sendObjs.length;
@@ -354,7 +359,6 @@ public class MPIUtil {
 
 		return recvObjs;
 	}
-
 
 	// Allows each node to send data to its neighbors as specified by a topology
 	// simultaneously

@@ -6,7 +6,8 @@ import sim.engine.DistributedIterativeRepeat;
 import sim.field.partitioning.NdPoint;
 
 /**
- * Implemented be fields in Distributed MASON
+ * Functions for adding, removing, and moving objects/agents in fields in
+ * Distributed MASON.
  *
  * @param <P> The Type of NdPoint to use
  * @param <T> The Type of Object in the field
