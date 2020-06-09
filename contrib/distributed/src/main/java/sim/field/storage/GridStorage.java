@@ -1,21 +1,33 @@
 package sim.field.storage;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import mpi.Datatype;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
 
-public abstract class GridStorage {
+public abstract class GridStorage<T extends Serializable> {
 	Object storage;
 	IntHyperRect shape;
 	Datatype baseType = MPI.BYTE;
 
 	int[] stride;
+	
+	
+	/*Abstract Method of generic storage based on N-dimensional Point*/
+	public abstract void setLocation(final T obj, final NdPoint p);
+	public abstract NdPoint getLocation(final T obj);
+	public abstract void removeObject(final T obj);
+	public abstract void removeObjects(final NdPoint p);
+	public abstract ArrayList<T> getObjects(final NdPoint p);
+	
+	
 
 	public GridStorage(final IntHyperRect shape) {
 		this.shape = shape;
@@ -73,7 +85,9 @@ public abstract class GridStorage {
 			return;
 
 		if (newShape.isIntersect(shape)) {
+			
 			final IntHyperRect overlap = newShape.getIntersection(shape);
+		
 			final MPIParam fromParam = new MPIParam(overlap, shape, baseType);
 			final MPIParam toParam = new MPIParam(overlap, newShape, baseType);
 

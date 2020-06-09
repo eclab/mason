@@ -8,8 +8,8 @@ package sim.app.dRepeatingHeatBugs;
 
 import sim.engine.AbstractStopping;
 import sim.engine.SimState;
-import sim.field.grid.NDoubleGrid2D;
-import sim.util.IntPoint;
+import sim.field.grid.DDoubleGrid2D;
+import sim.field.partitioning.IntPoint;
 
 public class DHeatBug extends AbstractStopping {
 	private static final long serialVersionUID = 1;
@@ -30,7 +30,7 @@ public class DHeatBug extends AbstractStopping {
 		this.loc_y = loc_y;
 	}
 
-	public void addHeat(final NDoubleGrid2D grid, final int x, final int y, final double heat) {
+	public void addHeat(final DDoubleGrid2D grid, final int x, final int y, final double heat) {
 		double new_heat = grid.get(new IntPoint(x, y)) + heat;
 		if (new_heat > DHeatBugs.MAX_HEAT)
 			new_heat = DHeatBugs.MAX_HEAT;
@@ -103,6 +103,7 @@ public class DHeatBug extends AbstractStopping {
 		loc_y = dHeatBugs.valgrid.sty(besty);
 
 		dHeatBugs.bugs.moveRepeatingAgent(new IntPoint(old_x, old_y), new IntPoint(loc_x, loc_y), this);
+
 	}
 
 	public double getIdealTemperature() {

@@ -9,13 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
-import sim.util.IntPointGenerator;
+import mpi.MPI;
+import mpi.MPIException;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.IntPointGenerator;
+import sim.field.partitioning.NdPoint;
 import sim.util.MPIParam;
-import sim.util.NdPoint;
 
-public class ContStorage<T extends Serializable> extends GridStorage {
+public class ContStorage<T extends Serializable> extends GridStorage<T> {
 
 	int[] dsize;
 	double[] discretizations;
@@ -88,7 +90,7 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 		return objs.stream().mapToInt(x -> x.size()).sum();
 	}
 
-	protected IntPoint discretize(final NdPoint p) {
+	public IntPoint discretize(final NdPoint p) {
 		final double[] offsets = shape.ul().getOffsetsDouble(p);
 		return new IntPoint(IntStream.range(0, offsets.length)
 				.map(i -> -(int) (offsets[i] / discretizations[i]))
@@ -105,7 +107,7 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 	}
 
 	// Get the corresponding cell given a discretized point
-	protected HashSet<T> getCelldp(final IntPoint p) {
+	public HashSet<T> getCelldp(final IntPoint p) {
 		return ((HashSet<T>[]) storage)[getFlatIdx(p)];
 	}
 
@@ -189,8 +191,26 @@ public class ContStorage<T extends Serializable> extends GridStorage {
 
 	// Return a list of neighbors of the given object within the given radius
 	public List<T> getNeighborsWithin(final T obj, final double radius) {
-		final NdPoint loc = m.get(obj);
-		final IntPoint dloc = discretize(loc);
+		NdPoint tmp = null;
+		try {
+			tmp = m.get(obj);
+		}catch (Exception e) {
+			System.out.println(  );
+			System.out.println(storage);
+			System.exit(-1);
+		}
+		final NdPoint loc = tmp;
+		IntPoint tmp2 = null;
+		try {
+			tmp2 = discretize(loc);
+		}catch (Exception e) {
+			
+			System.out.println(this.toString());
+			System.out.println("m: "+ m.keySet());
+			System.out.println("object "+obj+" loc "+loc);
+			e.printStackTrace();
+		}
+		final IntPoint dloc = tmp2;
 		final ArrayList<T> objs = new ArrayList<T>();
 
 		// Calculate how many discretized cells we need to search

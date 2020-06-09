@@ -13,16 +13,20 @@ import java.util.stream.IntStream;
 
 import mpi.Comm;
 import mpi.Datatype;
+import mpi.Intracomm;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.DPartition;
+import sim.field.partitioning.PartitionInterface;
 
 // TODO: Reuse ByteBuffers to minimize allocate/de-allocate overhead
 // TODO: Use ByteBuffer-back output/input streams - need to dynamically adjust the size of backing buffer.
 
 // TODO: Point to point comm
 
-// Utility class that serialize/exchange/deserialize objects using MPI
+/**
+ * Utility class that serialize/exchange/deserialize objects using MPI
+ *
+ */
 public class MPIUtil {
 
 	// static final int MAX_SIZE = 1 << 30; // 1024MBytes
@@ -159,7 +163,7 @@ public class MPIUtil {
 
 	//// Broadcasts to everyone. In order to do this, all nodes must call bcast even
 	//// if they're not root.
-	public static <T extends Serializable> T bcast(final DPartition p, final T obj, final int root)
+	public static <T extends Serializable> T bcast(final PartitionInterface p, final T obj, final int root)
 			throws MPIException {
 		return MPIUtil.<T>bcast(p.getCommunicator(), obj, root);
 	}
@@ -200,7 +204,7 @@ public class MPIUtil {
 	// Allows root to send UNIQUE messages to EACH node. Both root and the nodes
 	// call this method.
 
-	public static <T extends Serializable> T scatter(final DPartition p, final T[] sendObjs, final int root)
+	public static <T extends Serializable> T scatter(final PartitionInterface p, final T[] sendObjs, final int root)
 			throws MPIException {
 		return MPIUtil.<T>scatter(p.getCommunicator(), sendObjs, root);
 	}
@@ -258,7 +262,8 @@ public class MPIUtil {
 	// Allows each node to send one message each to the the root. These messages are
 	// returned as an arraylist to the root.
 
-	public static <T extends Serializable> ArrayList<T> gather(final DPartition p, final T sendObj, final int dst)
+	public static <T extends Serializable> ArrayList<T> gather(final PartitionInterface p, final T sendObj,
+			final int dst)
 			throws MPIException {
 		return MPIUtil.<T>gather(p.getCommunicator(), sendObj, dst);
 	}
@@ -295,7 +300,7 @@ public class MPIUtil {
 
 	// Allows all nodes to broadcast to all nodes at once.
 
-	public static <T extends Serializable> ArrayList<T> allGather(final DPartition p, final T sendObj)
+	public static <T extends Serializable> ArrayList<T> allGather(final PartitionInterface p, final T sendObj)
 			throws MPIException {
 		return MPIUtil.<T>allGather(p.getCommunicator(), sendObj);
 	}
@@ -331,10 +336,34 @@ public class MPIUtil {
 		return recvObjs;
 	}
 
+	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final Intracomm comm, final T[] sendObjs)
+			throws MPIException {
+		final int nc = sendObjs.length;
+		int[] srcDispl;
+		final int[] srcCount = new int[nc];
+		int[] dstDispl;
+		final int[] dstCount = new int[nc];
+		final ArrayList<T> recvObjs = new ArrayList<>();
+		final ByteBuffer srcBuf = initSendBuf(), dstBuf = initRecvBuf();
+
+		serialize(sendObjs, srcBuf, srcCount);
+		srcDispl = getDispl(srcCount);
+
+		comm.neighborAllToAll(srcCount, 1, MPI.INT, dstCount, 1, MPI.INT);
+		dstDispl = getDispl(dstCount);
+
+		comm.neighborAllToAllv(srcBuf, srcCount, srcDispl, MPI.BYTE, dstBuf, dstCount, dstDispl, MPI.BYTE);
+
+		for (int i = 0; i < nc; i++)
+			recvObjs.add(MPIUtil.<T>deserialize(dstBuf, dstDispl[i], dstCount[i]));
+
+		return recvObjs;
+	}
+
 	// Allows each node to send data to its neighbors as specified by a topology
 	// simultaneously
 
-	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final DPartition p, final T[] sendObjs)
+	public static <T extends Serializable> ArrayList<T> neighborAllToAll(final PartitionInterface p, final T[] sendObjs)
 			throws MPIException {
 		return MPIUtil.<T>neighborAllToAll(p.getCommunicator(), sendObjs);
 	}
@@ -351,7 +380,7 @@ public class MPIUtil {
 	// receive a given node's message.
 
 	// neighborAllGather for primitive type data (fixed length)
-	public static Object neighborAllGather(final DPartition p, final Object val, final Datatype type)
+	public static Object neighborAllGather(final PartitionInterface p, final Object val, final Datatype type)
 			throws MPIException {
 		final int nc = p.getNumNeighbors();
 		Object sendBuf, recvBuf;

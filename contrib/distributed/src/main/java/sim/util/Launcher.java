@@ -1,6 +1,7 @@
 package sim.util;
 
 import mpi.*;
+import sim.util.LogServer;
 
 import java.util.*;
 import java.io.*;

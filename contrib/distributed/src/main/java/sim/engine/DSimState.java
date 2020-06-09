@@ -7,10 +7,13 @@
 package sim.engine;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.rmi.NotBoundException;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -20,44 +23,60 @@ import java.util.logging.SocketHandler;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.field.DPartition;
-import sim.field.DQuadTreePartition;
-import sim.field.HaloField;
-import sim.field.RemoteProxy;
-import sim.field.storage.GridStorage;
-import sim.util.NdPoint;
+import sim.engine.registry.DRegistry;
+import sim.engine.transport.AgentWrapper;
+import sim.engine.transport.PayloadWrapper;
+import sim.engine.transport.RMIProxy;
+import sim.engine.transport.TransporterMPI;
+import sim.field.Synchronizable;
+import sim.field.partitioning.PartitionInterface;
+import sim.field.partitioning.QuadTreePartition;
+import sim.util.MPIUtil;
 import sim.util.Timing;
 
 public class DSimState extends SimState {
 	private static final long serialVersionUID = 1L;
 	public static Logger logger;
 
-	protected DPartition partition;
-	protected DRemoteTransporter transporter;
+	protected PartitionInterface partition;
+	protected TransporterMPI transporter;
 	public int[] aoi; // Area of Interest
+	HashMap<String, Object> rootInfo = null;
+	HashMap<String, Object>[] init = null;
 
 	// A list of all fields in the Model.
 	// Any HaloField that is created will register itself here
-	protected final ArrayList<HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage>> fieldRegistry;
+	protected final ArrayList<Synchronizable> fieldRegistry;
+
+	protected DRegistry registry;
+	protected boolean withRegistry;
+
+	protected int balancerLevel;
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
 			final int width, final int height, final int aoiSize) {
 		super(seed, random, schedule);
 		aoi = new int[] { aoiSize, aoiSize };
-		partition = new DQuadTreePartition(new int[] { width, height }, true, aoi);
+		partition = new QuadTreePartition(new int[] { width, height }, true, aoi);
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
-		fieldRegistry = new ArrayList<>();
+		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		transporter = new TransporterMPI(partition);
+		fieldRegistry = new ArrayList<Synchronizable>();
+		rootInfo = new HashMap();
+		withRegistry = false;
 	}
 
 	protected DSimState(final long seed, final MersenneTwisterFast random, final DistributedSchedule schedule,
-			final DPartition partition) {
+			final PartitionInterface partition) {
 		super(seed, random, schedule);
 		aoi = partition.aoi;
 		this.partition = partition;
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
+		balancerLevel = ((QuadTreePartition) partition).getQt().getDepth() - 1;
+		transporter = new TransporterMPI(partition);
 		fieldRegistry = new ArrayList<>();
+		rootInfo = new HashMap();
+		withRegistry = false;
 	}
 
 	public DSimState(final long seed, final int width, final int height, final int aoiSize) {
@@ -88,22 +107,11 @@ public class DSimState extends SimState {
 	 * @param haloField
 	 * @return index of the field
 	 */
-	public int registerField(
-			final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField) {
+	public int registerField(final Synchronizable halo) {
 		// Must be called in a deterministic manner
 		final int index = fieldRegistry.size();
-		fieldRegistry.add(haloField);
+		fieldRegistry.add(halo);
 		return index;
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected void addToField(final Serializable obj, final NdPoint p, final int fieldIndex) {
-		// if the fieldIndex < 0 we assume that
-		// the agent is not supposed to be added to any field
-
-		// If the fieldIndex is correct then the type-cast below will be safe
-		if (fieldIndex >= 0)
-			((HaloField) fieldRegistry.get(fieldIndex)).add(p, obj);
 	}
 
 	/**
@@ -112,20 +120,56 @@ public class DSimState extends SimState {
 	 * @throws MPIException
 	 */
 	protected void syncFields() throws MPIException {
-		for (final HaloField<?, ?, ?> haloField : fieldRegistry)
+		for (final Synchronizable haloField : fieldRegistry)
 			haloField.syncHalo();
 	}
 
 	public void preSchedule() {
 		Timing.stop(Timing.LB_RUNTIME);
 		Timing.start(Timing.MPI_SYNC_OVERHEAD);
+
 		try {
+
+			MPI.COMM_WORLD.barrier();
+
 			syncFields();
 			transporter.sync();
+
+			if (withRegistry) {
+				// All nodes have finished the synchronization and can unregister exported
+				// objects.
+				MPI.COMM_WORLD.barrier();
+
+				// After the synchronization we can unregister migrated object!
+				// remove exported-migrated object from local node
+				for (String mo : DRegistry.getInstance().getMigratedNames()) {
+					try {
+						DRegistry.getInstance().unRegisterObject(mo);
+					} catch (NotBoundException e) {
+						e.printStackTrace();
+					}
+				}
+
+				DRegistry.getInstance().clearMigratedNames();
+
+				MPI.COMM_WORLD.barrier();
+			}
 		} catch (ClassNotFoundException | MPIException | IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
+
+		if (withRegistry) {
+			// All nodes have unregistered their objects, after we can register the migrated
+			// objects on new nodes.
+			try {
+				MPI.COMM_WORLD.barrier();
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
 
 			/*
@@ -139,36 +183,64 @@ public class DSimState extends SimState {
 			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
 			 * exceptions to be thrown
 			 */
-			if (payloadWrapper.payload instanceof IterativeRepeat) {
-				final IterativeRepeat iterativeRepeat = (IterativeRepeat) payloadWrapper.payload;
+
+			if (payloadWrapper.fieldIndex >= 0) {
+				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
+																											// object to
+																											// the field
+			}
+
+			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
+				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
 
 				// TODO: how to schedule for a specified time?
 				// Not adding it to specific time because we get an error -
 				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
-				schedule.scheduleRepeating(iterativeRepeat.step, iterativeRepeat.getOrdering(),
-						iterativeRepeat.interval);
 
+				// TODO: Check for Type Cast here
+				Stopping stopping = (Stopping) iterativeRepeat.step;
+				stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
+						iterativeRepeat.interval));
 				// Add agent to the field
-				addToField(iterativeRepeat.step, payloadWrapper.loc, payloadWrapper.fieldIndex);
+				// addToField(iterativeRepeat.step, payloadWrapper.loc,
+				// payloadWrapper.fieldIndex);
 
 			} else if (payloadWrapper.payload instanceof AgentWrapper) {
 				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
+
+				if (withRegistry) {
+					if (agentWrapper.getExportedName() != null) {
+						try {
+							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+									(Remote) agentWrapper.agent);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
 				if (agentWrapper.time < 0)
 					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
 				else
 					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
 
-				// Add agent to the field
-				addToField(agentWrapper.agent, payloadWrapper.loc, payloadWrapper.fieldIndex);
-
-			} else {
-				addToField(payloadWrapper.payload, payloadWrapper.loc, payloadWrapper.fieldIndex);
 			}
 
 		}
-		transporter.objectQueue.clear();
 
+		// Wait that all nodes have registered their new objects in the distributed
+		// registry.
+		try {
+			MPI.COMM_WORLD.barrier();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
+
 	}
 
 	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
@@ -183,7 +255,6 @@ public class DSimState extends SimState {
 						rec.getLevel().getLocalizedName(), rec.getMessage());
 			}
 		});
-
 		DSimState.logger = Logger.getLogger(loggerName);
 		DSimState.logger.setUseParentHandlers(false);
 		DSimState.logger.setLevel(Level.ALL);
@@ -237,23 +308,56 @@ public class DSimState extends SimState {
 	 * Modelers must override this method if they want to add any logic that is
 	 * unique to the root processor
 	 */
+	//protected void startRoot(HashMap<String, Object>[] maps) {
 	protected void startRoot() {
-		System.out.println("Master level 0 pid: " + partition.pid);
+
+	}
+
+	/**
+	 * 
+	 * @return the DRegistry instance, or null if the registry is not available. You
+	 *         can call this method after calling the start() method.
+	 */
+	public DRegistry getDRegistry() {
+		return registry;
 	}
 
 	public void start() {
 		super.start();
-		RemoteProxy.Init();
+		RMIProxy.init();
+
+		if (withRegistry) {
+			/* distributed registry inizialization */
+			registry = DRegistry.getInstance();
+		}
+
 		try {
 			syncFields();
 
-			for (final HaloField<? extends Serializable, ? extends NdPoint, ? extends GridStorage> haloField : fieldRegistry)
+			for (final Synchronizable haloField : fieldRegistry)
 				haloField.initRemote();
 
-			if (partition.isGlobalMaster())
+			if (partition.isGlobalMaster()) {
+				init = new HashMap[partition.numProcessors];
+				for (int i = 0; i < partition.getNumProc(); i++)
+					init[i] = new HashMap<String, Object>();
+				//startRoot(init);
 				startRoot();
+			}
+			// synchronize using one to many communication
+			rootInfo = MPIUtil.scatter(partition.comm, init, 0);
 
-			// On all processors, wait for the root start to finish
+			// schedule a zombie agent to prevent that a processor with no agent is stopped
+			// when the simulation is still going on
+			schedule.scheduleRepeating(new AbstractStopping() {
+
+				@Override
+				public void step(SimState state) {
+
+				}
+			});
+
+			// On all processors, wait for the start to finish
 			MPI.COMM_WORLD.barrier();
 		} catch (final MPIException e) {
 			e.printStackTrace();
@@ -283,25 +387,43 @@ public class DSimState extends SimState {
 	/**
 	 * @return the partition
 	 */
-	public DPartition getPartition() {
+	public PartitionInterface getPartitioning() {
 		return partition;
+	}
+
+	public boolean isMasterProcess() {
+		return partition.pid == 0;
 	}
 
 	/**
 	 * @param partition the partition to set
 	 */
-	public void setPartition(final DPartition partition) {
+	public void setPartition(final PartitionInterface partition) {
 		this.partition = partition;
 		aoi = partition.aoi;
 		partition.initialize();
-		transporter = new DRemoteTransporter(partition);
+		transporter = new TransporterMPI(partition);
 	}
 
 	/**
 	 * @return the transporter
 	 */
-	public DRemoteTransporter getTransporter() {
+	public TransporterMPI getTransporter() {
 		return transporter;
+	}
+	
+	public void addRootInfoToAll(String key,Object sendObj) {
+		for (int i = 0; i < partition.getNumProc(); i++) {
+			init[i].put(key, sendObj);
+		}
+	}
+	
+	public void addRootInfoToProc(int pid,String key,Object sendObj) {
+		init[pid].put(key, sendObj);
+	}
+	
+	public Object getRootInfo(String key) {
+		return rootInfo.get(key);
 	}
 
 }

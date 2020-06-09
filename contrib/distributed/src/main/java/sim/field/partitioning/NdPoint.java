@@ -1,8 +1,9 @@
-package sim.util;
+package sim.field.partitioning;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+
 
 public abstract class NdPoint implements Comparable<NdPoint>, Serializable {
 
@@ -99,9 +100,5 @@ public abstract class NdPoint implements Comparable<NdPoint>, Serializable {
 					this.toString(), p.toString(), nd, p.getNd()));
 	}
 
-	protected void assertEqualDim(final NdRectangle r) {
-		if (nd != r.getNd())
-			throw new IllegalArgumentException(String.format("%s and %s got different dimensions: %d, %d",
-					this.toString(), r.toString(), nd, r.getNd()));
-	}
+	
 }

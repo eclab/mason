@@ -1,4 +1,4 @@
-package sim.field;
+package sim.field.partitioning;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,22 +12,16 @@ import mpi.Comm;
 import mpi.Info;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.util.DoublePoint;
 import sim.util.GroupComm;
-import sim.util.IntHyperRect;
-import sim.util.IntPoint;
 import sim.util.MPITest;
 import sim.util.MPIUtil;
-import sim.util.NdPoint;
-import sim.util.QTNode;
-import sim.util.QuadTree;
 
-public class DQuadTreePartition extends DPartition {
+public class QuadTreePartition extends PartitionInterface {
 	QuadTree qt;
-	QTNode myLeafNode; // the leaf node that this pid is mapped to
+	QuadTreeNode myLeafNode; // the leaf node that this pid is mapped to
 	Map<Integer, GroupComm> groups; // Map the level to its corresponding comm group
 
-	public DQuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
+	public QuadTreePartition(final int[] size, final boolean isToroidal, final int[] aoi) {
 		super(size, isToroidal, aoi);
 		qt = new QuadTree(new IntHyperRect(size), numProcessors);
 	}
@@ -37,11 +31,15 @@ public class DQuadTreePartition extends DPartition {
 	}
 
 	public IntHyperRect getPartition(final int pid) {
-		for (final QTNode node : qt.getAllLeaves())
+		for (final QuadTreeNode node : qt.getAllLeaves())
 			if (node.getProc() == pid)
 				return node.getShape();
 
 		throw new IllegalArgumentException("The partition for " + pid + " does not exist");
+	}
+	
+	public QuadTree getQt() {
+		return qt;
 	}
 
 	public int getNumNeighbors() {
@@ -49,7 +47,7 @@ public class DQuadTreePartition extends DPartition {
 	}
 
 	public int[] getNeighborIds() {
-		return qt.getNeighborPids(myLeafNode, aoi);
+		return qt.getNeighborPids(myLeafNode, aoi, isToroidal);
 	}
 
 	public int toPartitionId(final NdPoint p) {
@@ -117,8 +115,8 @@ public class DQuadTreePartition extends DPartition {
 					"Currently only support the number processors that is power of " + (2 * numDimensions));
 
 		for (int level = 0; level < nz / numDimensions; level++) {
-			final List<QTNode> leaves = qt.getAllLeaves();
-			for (final QTNode leaf : leaves)
+			final List<QuadTreeNode> leaves = qt.getAllLeaves();
+			for (final QuadTreeNode leaf : leaves)
 				qt.split(leaf.getShape().getCenter());
 		}
 		mapNodeToProc();
@@ -126,7 +124,7 @@ public class DQuadTreePartition extends DPartition {
 	}
 
 	protected void mapNodeToProc() {
-		final List<QTNode> leaves = qt.getAllLeaves();
+		final List<QuadTreeNode> leaves = qt.getAllLeaves();
 
 		if (leaves.size() != numProcessors)
 			throw new IllegalArgumentException("The number of leaves " + leaves.size()
@@ -141,8 +139,8 @@ public class DQuadTreePartition extends DPartition {
 
 		// Map non-leaf nodes - Use the first children node to hold itself
 		while (leaves.size() > 0) {
-			final QTNode curr = leaves.remove(0);
-			final QTNode parent = curr.getParent();
+			final QuadTreeNode curr = leaves.remove(0);
+			final QuadTreeNode parent = curr.getParent();
 			if (parent == null || parent.getChild(0) != curr)
 				continue;
 			parent.setProc(curr.getProc());
@@ -151,7 +149,7 @@ public class DQuadTreePartition extends DPartition {
 
 		// Set the proc id to the IntHyperRect so it can be printed out when debugging
 		// it is not used by the program itself (TODO double-check)
-		for (final QTNode leaf : qt.getAllLeaves())
+		for (final QuadTreeNode leaf : qt.getAllLeaves())
 			leaf.getShape().setId(leaf.getProc());
 	}
 
@@ -160,12 +158,12 @@ public class DQuadTreePartition extends DPartition {
 		groups = new HashMap<Integer, GroupComm>();
 
 		// Iterate level by level to create groups
-		List<QTNode> currLevel = new ArrayList<QTNode>();
+		List<QuadTreeNode> currLevel = new ArrayList<QuadTreeNode>();
 		currLevel.add(qt.getRoot());
 		while (currLevel.size() > 0) {
-			final List<QTNode> nextLevel = new ArrayList<QTNode>();
+			final List<QuadTreeNode> nextLevel = new ArrayList<QuadTreeNode>();
 
-			for (final QTNode node : currLevel) {
+			for (final QuadTreeNode node : currLevel) {
 				nextLevel.addAll(node.getChildren());
 
 				// whether this pid should participate in this group
@@ -283,7 +281,7 @@ public class DQuadTreePartition extends DPartition {
 		final ArrayList<Object[]> newCentroids = MPIUtil.<Object[]>allGather(MPI.COMM_WORLD, sendCentroids);
 
 		// call precommit
-		for (final Consumer r : preCallbacks)
+		for (final Consumer r : (ArrayList<Consumer>)preCallbacks)
 			r.accept(level);
 
 		// apply changes
@@ -296,14 +294,14 @@ public class DQuadTreePartition extends DPartition {
 		createMPITopo();
 
 		// call postcommit
-		for (final Consumer r : postCallbacks)
+		for (final Consumer r : (ArrayList<Consumer>)postCallbacks)
 			r.accept(level);
 	}
 
 	private static void testBalance() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing balance()......");
 
-		final DQuadTreePartition p = new DQuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
 
 		final IntPoint[] splitPoints = new IntPoint[] {
 				new IntPoint(50, 50),
@@ -326,7 +324,7 @@ public class DQuadTreePartition extends DPartition {
 	private static void testInitWithPoints() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing init with points......");
 
-		final DQuadTreePartition p = new DQuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
 
 		final IntPoint[] splitPoints = new IntPoint[] {
 				new IntPoint(50, 50),
@@ -347,7 +345,7 @@ public class DQuadTreePartition extends DPartition {
 	private static void testInitUniformly() throws MPIException {
 		MPITest.printOnlyIn(0, "Testing init uniformly......");
 
-		final DQuadTreePartition p = new DQuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
+		final QuadTreePartition p = new QuadTreePartition(new int[] { 100, 100 }, false, new int[] { 1, 1 });
 		p.initUniformly();
 
 		for (int i = 0; i < 3; i++) {

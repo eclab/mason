@@ -4,11 +4,13 @@
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>cs.gmu.edu.eclab</groupId>
 		<artifactId>mason-build</artifactId>
 		<version>20</version>
 	</parent>
+	
 	<artifactId>mason</artifactId>
 	<name>mason</name>
 	<packaging>jar</packaging>
@@ -20,30 +22,14 @@
 	</properties>
 
 	<build>
-	  <plugins>
-	    <plugin>
-	      <!-- Set main class in the Jar. -->
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-jar-plugin</artifactId>
-	      <configuration>
-		<archive>
-		  <manifest>
-		    <mainClass>sim.display.Console</mainClass>
-		    <addClasspath>true</addClasspath>
-		    <classpathPrefix>dependency/</classpathPrefix>
-		  </manifest>
-		</archive>
-	      </configuration>
-	    </plugin>
-	  </plugins>
-	  <resources>
-	    <resource>
-	      <directory>src/main/java</directory>
-	    </resource>
-	    <resource>
-	      <directory>src/main/resources</directory>
-	    </resource>
-	  </resources>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
 	<repositories>
 		<repository>

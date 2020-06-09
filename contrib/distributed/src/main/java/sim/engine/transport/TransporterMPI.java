@@ -1,4 +1,4 @@
-package sim.engine;
+package sim.engine.transport;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,25 +13,33 @@ import java.util.HashMap;
 
 import mpi.MPI;
 import mpi.MPIException;
+import sim.engine.DistributedIterativeRepeat;
 import sim.engine.Stopping;
-import sim.field.DPartition;
-import sim.util.NdPoint;
+import sim.engine.registry.DRegistry;
+import sim.field.partitioning.NdPoint;
+import sim.field.partitioning.PartitionInterface;
 
-public class DRemoteTransporter {
+/**
+ * Transports/migrates objects and agents
+ *
+ */
+public class TransporterMPI {
 
 	int numNeighbors; // number of direct neighbors
 	int[] src_count, src_displ, dst_count, dst_displ;
 
 	HashMap<Integer, RemoteOutputStream> dstMap;
-	RemoteOutputStream[] outputStreams;
 
-	DPartition partition;
+	PartitionInterface<?> partition;
 	int[] neighbors;
 
 	public ArrayList<PayloadWrapper> objectQueue;
 
-	public DRemoteTransporter(final DPartition partition) {
+	protected boolean withRegistry;
+
+	public TransporterMPI(final PartitionInterface<?> partition) {
 		this.partition = partition;
+		this.withRegistry = false;
 		reload();
 
 		partition.registerPreCommit(arg -> {
@@ -67,19 +75,15 @@ public class DRemoteTransporter {
 		dst_displ = new int[numNeighbors];
 
 		// outputStreams for direct neighbors
+		dstMap = new HashMap<Integer, RemoteOutputStream>();
 		try {
-			outputStreams = new RemoteOutputStream[numNeighbors];
-			for (int i = 0; i < numNeighbors; i++)
-				outputStreams[i] = new RemoteOutputStream();
+			for (int i : neighbors)
+				dstMap.putIfAbsent(i, new RemoteOutputStream());
 		} catch (final IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 
-		// neighbors
-		dstMap = new HashMap<Integer, RemoteOutputStream>();
-		for (int i = 0; i < numNeighbors; i++)
-			dstMap.putIfAbsent(neighbors[i], outputStreams[i]);
 	}
 
 	public int size() {
@@ -93,16 +97,17 @@ public class DRemoteTransporter {
 	public void sync() throws MPIException, IOException, ClassNotFoundException {
 		// Prepare data
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
-			outputStreams[i].flush();
-			src_count[i] = outputStreams[i].size();
+			RemoteOutputStream outputStream = dstMap.get(neighbors[i]);
+			outputStream.flush();
+			src_count[i] = outputStream.size();
 			src_displ[i] = total;
 			total += src_count[i];
 		}
 
 		// Concat neighbor streams into one
 		final ByteArrayOutputStream objstream = new ByteArrayOutputStream();
-		for (int i = 0; i < numNeighbors; i++)
-			objstream.write(outputStreams[i].toByteArray());
+		for (int i : neighbors)
+			objstream.write(dstMap.get(i).toByteArray());
 
 		final ByteBuffer sendbuf = ByteBuffer.allocateDirect(objstream.size());
 		sendbuf.put(objstream.toByteArray()).flip();
@@ -110,6 +115,7 @@ public class DRemoteTransporter {
 		// First exchange count[] of the send byte buffers with neighbors so that we can
 		// setup recvbuf
 		partition.getCommunicator().neighborAllToAll(src_count, 1, MPI.INT, dst_count, 1, MPI.INT);
+
 		for (int i = 0, total = 0; i < numNeighbors; i++) {
 			dst_displ[i] = total;
 			total += dst_count[i];
@@ -121,7 +127,7 @@ public class DRemoteTransporter {
 				dst_displ, MPI.BYTE);
 
 		// read and handle incoming objects
-		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
+//		final ArrayList<PayloadWrapper> bufferList = new ArrayList<>();
 		for (int i = 0; i < numNeighbors; i++) {
 			final byte[] data = new byte[dst_count[i]];
 			recvbuf.position(dst_displ[i]);
@@ -132,8 +138,10 @@ public class DRemoteTransporter {
 				try {
 					final PayloadWrapper wrapper = (PayloadWrapper) inputStream.readObject();
 					if (partition.pid != wrapper.destination) {
-						assert dstMap.containsKey(wrapper.destination);
-						bufferList.add(wrapper);
+						System.err.println("This is not the correct processor");
+						throw new RuntimeException("This is not the correct processor");
+//						assert dstMap.containsKey(wrapper.destination);
+//						bufferList.add(wrapper);
 					} else
 						objectQueue.add(wrapper);
 				} catch (final EOFException e) {
@@ -154,14 +162,16 @@ public class DRemoteTransporter {
 //				}
 		}
 
+		//System.out.println("PID "+MPI.COMM_WORLD.getRank()+" objectQueue "+objectQueue);
+
 		// Clear previous queues
-		for (int i = 0; i < numNeighbors; i++)
-			outputStreams[i].reset();
+		for (int i : neighbors)
+			dstMap.get(i).reset();
 
 		// Handling the agent in bufferList
-		for (final PayloadWrapper wrapper : bufferList)
-			dstMap.get(wrapper.destination).write(wrapper);
-		bufferList.clear();
+//		for (final PayloadWrapper wrapper : bufferList)
+//			dstMap.get(wrapper.destination).write(wrapper);
+//		bufferList.clear();
 
 //		for (int i = 0; i < bufferList.size(); ++i) {
 //			Transportee<? extends Object> wrapper = bufferList.get(i);
@@ -189,7 +199,17 @@ public class DRemoteTransporter {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(agent), dst);
+
+		AgentWrapper wrapper = new AgentWrapper(agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -202,7 +222,16 @@ public class DRemoteTransporter {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst);
+		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -216,7 +245,16 @@ public class DRemoteTransporter {
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst);
+		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst);
 	}
 
 	/**
@@ -245,7 +283,16 @@ public class DRemoteTransporter {
 	 */
 	public void migrateAgent(final Stopping agent, final int dst, final NdPoint loc,
 			final int fieldIndex) {
-		migrateAgent(new AgentWrapper(agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -261,7 +308,16 @@ public class DRemoteTransporter {
 	 */
 	public void migrateAgent(final int ordering, final Stopping agent, final int dst, final NdPoint loc,
 			final int fieldIndex) {
-		migrateAgent(new AgentWrapper(ordering, agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(ordering, agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -278,7 +334,16 @@ public class DRemoteTransporter {
 	 */
 	public void migrateAgent(final int ordering, final double time, final Stopping agent, final int dst,
 			final NdPoint loc, final int fieldIndex) {
-		migrateAgent(new AgentWrapper(ordering, time, agent), dst, loc, fieldIndex);
+		AgentWrapper wrapper = new AgentWrapper(ordering, time, agent);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(agent)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(agent));
+				DRegistry.getInstance().addMigratedName(agent);
+			}
+		}
+
+		migrateAgent(wrapper, dst, loc, fieldIndex);
 	}
 
 	/**
@@ -305,7 +370,7 @@ public class DRemoteTransporter {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateRepeatingAgent(final IterativeRepeat iterativeRepeat, final int dst) {
+	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst) {
 		// If fieldIndex < 0 then the payload does not need to be transported
 		migrateRepeatingAgent(iterativeRepeat, dst, null, -1);
 	}
@@ -321,7 +386,8 @@ public class DRemoteTransporter {
 	 *
 	 * @throws IllegalArgumentException if destination (pid) is local
 	 */
-	public void migrateRepeatingAgent(final IterativeRepeat iterativeRepeat, final int dst, final NdPoint loc,
+	public void migrateRepeatingAgent(final DistributedIterativeRepeat iterativeRepeat, final int dst,
+			final NdPoint loc,
 			final int fieldIndex) {
 
 		// TODO: do we need to synchronize something to ensure that the stoppable is
@@ -350,6 +416,14 @@ public class DRemoteTransporter {
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
+
+		if (withRegistry) {
+			if (DRegistry.getInstance().isExported(obj)) {
+				wrapper.setExportedName(DRegistry.getInstance().getLocalExportedName(obj));
+				DRegistry.getInstance().addMigratedName(obj);
+			}
+		}
+
 		assert dstMap.containsKey(dst);
 		try {
 			dstMap.get(dst).write(wrapper);
@@ -362,6 +436,7 @@ public class DRemoteTransporter {
 	public static class RemoteOutputStream {
 		public ByteArrayOutputStream out;
 		public ObjectOutputStream os;
+		public ArrayList<Object> obj = new ArrayList<Object>();
 
 		public RemoteOutputStream() throws IOException {
 			out = new ByteArrayOutputStream();
@@ -369,10 +444,13 @@ public class DRemoteTransporter {
 		}
 
 		public void write(final Object obj) throws IOException {
-			os.writeObject(obj);
+			// os.writeObject(obj);
+			// virtual write really write only at the end of the simulation steps
+			this.obj.add(obj);
 		}
 
-		public byte[] toByteArray() {
+		public byte[] toByteArray() throws IOException {
+
 			return out.toByteArray();
 		}
 
@@ -381,6 +459,9 @@ public class DRemoteTransporter {
 		}
 
 		public void flush() throws IOException {
+			// write all objects
+			for (Object o : obj)
+				os.writeObject(o);
 			os.flush();
 		}
 
@@ -389,6 +470,7 @@ public class DRemoteTransporter {
 			out.close();
 			out = new ByteArrayOutputStream();
 			os = new ObjectOutputStream(out);
+			obj.clear();
 		}
 	}
 

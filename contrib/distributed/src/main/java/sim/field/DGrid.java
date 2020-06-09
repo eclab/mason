@@ -2,17 +2,17 @@ package sim.field;
 
 import java.io.Serializable;
 
-import sim.engine.IterativeRepeat;
-import sim.util.NdPoint;
+import sim.engine.DistributedIterativeRepeat;
+import sim.field.partitioning.NdPoint;
 
 /**
- * Implemented be fields in Distributed MASON
- *
+ * Functions for adding, removing, and moving objects/agents in fields in
+ * Distributed MASON.
  *
  * @param <P> The Type of NdPoint to use
  * @param <T> The Type of Object in the field
  */
-public interface DField<T extends Serializable, P extends NdPoint> {
+public interface DGrid<T extends Serializable, P extends NdPoint> {
 	// We did not declare get methods because fields may want to return
 	// T[], ArrayList<T>, T or even primitives like int and double
 
@@ -47,7 +47,7 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @param fromP Move from Location
 	 * @param toP   Move to Location
-	 * @param t Object to be moved
+	 * @param t     Object to be moved
 	 */
 	void move(final P fromP, final P toP, final T t);
 
@@ -124,16 +124,6 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 */
 	void addRepeatingAgent(final P p, final T t, final int ordering, final double interval);
 
-//	/**
-//	 * Adds and registers a repeating agent. The location can be remote <br>
-//	 * <br>
-//	 * <b>This does not schedule a repeating agent.</b>
-//	 *
-//	 * @param p               add to Location
-//	 * @param iterativeRepeat must contain a Stopping of type T
-//	 */
-//	void addRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
-
 	/**
 	 * Removes and stops a repeating agent. The location can be remote <br>
 	 *
@@ -153,7 +143,7 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local
 	 */
-	void removeAndStopRepeatingAgent(final P p, final IterativeRepeat iterativeRepeat);
+	void removeAndStopRepeatingAgent(final P p, final DistributedIterativeRepeat iterativeRepeat);
 
 	/**
 	 * Moves and schedules a repeating agent. The toP location can be remote
@@ -175,14 +165,5 @@ public interface DField<T extends Serializable, P extends NdPoint> {
 	 *
 	 * @throws IllegalArgumentException if the fromP location is not local
 	 */
-	void moveRepeatingAgent(final P fromP, final P toP, final IterativeRepeat iterativeRepeat);
-
-	void addLocal(final P p, final T t);
-
-	void removeLocal(final P p, final T t);
-
-	void removeLocal(final P p);
-
-	void moveLocal(final P fromP, final P toP, final T t);
-
+//	void moveRepeatingAgent(final P fromP, final P toP, final DistributedIterativeRepeat iterativeRepeat);
 }

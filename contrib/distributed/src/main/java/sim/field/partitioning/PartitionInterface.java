@@ -1,16 +1,13 @@
-package sim.field;
+package sim.field.partitioning;
 
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 import mpi.*;
 
-import sim.util.IntHyperRect;
-import sim.util.NdPoint;
-
 // Consumer is Raw Type because it's parameter is of type int
 @SuppressWarnings("rawtypes")
-public abstract class DPartition {
+public abstract class PartitionInterface<P extends NdPoint> {
 
 	public int pid, numProcessors, numDimensions;
 	public int[] size;
@@ -20,7 +17,7 @@ public abstract class DPartition {
 
 	ArrayList<Consumer> preCallbacks, postCallbacks;
 
-	DPartition(final int[] size, final boolean isToroidal, final int[] aoi) {
+	PartitionInterface(final int[] size, final boolean isToroidal, final int[] aoi) {
 		numDimensions = size.length;
 		this.size = Arrays.copyOf(size, numDimensions);
 		this.isToroidal = isToroidal;
@@ -37,18 +34,6 @@ public abstract class DPartition {
 		preCallbacks = new ArrayList<Consumer>();
 		postCallbacks = new ArrayList<Consumer>();
 	}
-
-	// TODO move the neighbor comm init to here
-	// protected void setNeighborComm() {
-	// int[] nids = getNeighborIds();
-
-	// try {
-	// comm = MPI.COMM_WORLD.createDistGraphAdjacent(ns, ns, new Info(), false);
-	// } catch (MPIException e) {
-	// e.printStackTrace();
-	// System.exit(-1);
-	// }
-	// }
 
 	public int getPid() {
 		return pid;
@@ -87,7 +72,7 @@ public abstract class DPartition {
 	public abstract int[] getNeighborIds();
 	// public abstract int[][] getNeighborIdsInOrder();
 
-	public abstract int toPartitionId(NdPoint p);
+	public abstract int toPartitionId(P p);
 
 	public abstract int toPartitionId(int[] c);
 

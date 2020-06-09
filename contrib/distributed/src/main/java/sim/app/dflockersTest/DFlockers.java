@@ -4,14 +4,17 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.dflockers;
+package sim.app.dflockersTest;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 
+import mpi.MPI;
 import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
@@ -53,6 +56,50 @@ public class DFlockers extends DSimState {
 	}
 
 	@Override
+	public void preSchedule() {
+		super.preSchedule();
+
+		if (schedule.getSteps() > 0) {
+			int[] dstDispl = new int[partition.numProcessors];
+			final int[] dstCount = new int[partition.numProcessors];
+			int[] recv = new int[numFlockers];
+
+			int[] ids = new int[idLocal.size()];
+			for (int i = 0; i < idLocal.size(); i++) {
+				ids[i] = idLocal.get(i);
+			}
+
+			int num = ids.length;
+
+			try {
+
+				MPI.COMM_WORLD.gather(new int[] { num }, 1, MPI.INT, dstCount, 1, MPI.INT, 0);
+
+				dstDispl = IntStream.range(0, dstCount.length)
+						.map(x -> Arrays.stream(dstCount).limit(x).sum())
+						.toArray();
+
+				MPI.COMM_WORLD.gatherv(ids, num, MPI.INT, recv, dstCount, dstDispl, MPI.INT, 0);
+
+			} catch (MPIException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			if (partition.getPid() == 0) {
+
+				Arrays.sort(recv);
+				for (int i = 0; i < idAgents.size(); i++) {
+					if (idAgents.get(i) != recv[i]) {
+						System.err.println("ERROR: something wrong happens");
+						System.exit(1);
+					}
+				}
+			}
+			idLocal.clear();
+		}
+	}
+
 	protected void startRoot() {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
 		for (int x = 0; x < DFlockers.numFlockers; x++) {
@@ -64,18 +111,15 @@ public class DFlockers extends DSimState {
 			agents.add(flocker);
 
 		}
-		
 		addRootInfoToAll("agents",agents);
 	}
 
-	@Override
 	public void start() {
 		// TODO Auto-generated method stub
 		super.start(); // do not forget this line
 
-		//ArrayList<DFlocker> agents = (ArrayList<DFlocker>) rootInfo.get("agents");
-		ArrayList<DFlocker> agents = (ArrayList<DFlocker>) getRootInfo("agents");
-		
+		ArrayList<Object> agents = (ArrayList<Object>) getRootInfo("agents");
+
 		for (Object p : agents) {
 			DFlocker a = (DFlocker) p;
 			if (partition.getPartition().contains(a.loc))
