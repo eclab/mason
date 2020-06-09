@@ -1,3 +1,46 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:13fac9fa018cab4b53081e0a5e930903d0bb03e2566c2186c037e82c81e656d1
-size 1493
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cs.gmu.edu.eclab</groupId>
+	<artifactId>mason-build</artifactId>
+	<packaging>pom</packaging>
+	<version>20</version>
+	<name>mason</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+	<dependencies>
+		<!-- <dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
+			<version>3.8.1</version> <scope>test</scope> </dependency> -->
+	</dependencies>
+	<modules>
+		<module>mason</module>
+		<!--<module>distributed</module> <module>socialnets</module> <module>distributed-mason-project-archetype</module> 
+			<module>mason-project-archetype</module> <module>geomason</module> -->
+	</modules>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<encoding>ascii</encoding>
+				</configuration>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

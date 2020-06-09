@@ -1,3 +1,10 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c32edc6df2f9ed0b3c0f5625d8efbbb76062348772a49ac1d092d41a6b3dca3a
-size 285
+ncols         4
+nrows         4
+xllcorner     35.7
+yllcorner     1.8
+cellsize      0.25
+NODATA_value  -9999
+0.06511226 0.09500186 0.1047291 0.08136456 
+0.07899819 0.1147469 0.1610243 0.1355559 
+0.09158029 0.1090893 0.1524484 0.151256 
+0.1061391 0.1142981 0.1361281 0.156354 
