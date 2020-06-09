@@ -824,7 +824,7 @@ public class SimState implements java.io.Serializable
 		indeed anything you like, as the simulation is running to describe it.  This is done at the end
 		of optimization, when one or more SimState models, typically the best one discovered, will
 		be run one final time with a PrintWriter description.  The description will be set prior to start()
-		and should not be saved nor written to after finish().
+		and should not be saved nor written to after finish().  
 		*/ 
     public PrintWriter getDescription()
     	{

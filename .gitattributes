@@ -1,6 +1,0 @@
-pom.xml -filter-lfs -diff=lsf -merg=lfs -text
-*.shp filter=lfs diff=lfs merge=lfs -text
-*.jar filter=lfs diff=lfs merge=lfs -text
-*.xml filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
-*.dbf filter=lfs diff=lfs merge=lfs -text

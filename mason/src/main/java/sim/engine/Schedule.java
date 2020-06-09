@@ -426,7 +426,9 @@ public class Schedule implements java.io.Serializable
         }
     
     /** Schedules the event to occur at getTime() + delta, 0 ordering. If this is a valid time
-        and event, schedules the event and returns TRUE.
+        and event, schedules the event and returns TRUE.  If the delta = 0, 
+        then the first event is instead scheduled to occur at getTime() + delta + epsilon (the minimum possible next
+        timestamp).
         This method at present returns FALSE if the schedule cannot
         schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
         event is being scheduled for AFTER_SIMULATION.  The method 
@@ -458,7 +460,8 @@ public class Schedule implements java.io.Serializable
         }
 
     /** Schedules the event to occur at getTime() + delta, and in the ordering provided. If this is a valid time
-        and event, schedules the event and returns TRUE.
+        and event, schedules the event and returns TRUE.  If the delta = 0, 
+        then the first event is instead scheduled to occur
         This method at present returns FALSE if the schedule cannot
         schedule any more events (it's sealed or the time is AFTER_SIMULATION), or if the
         event is being scheduled for AFTER_SIMULATION.  The method 
@@ -535,7 +538,10 @@ public class Schedule implements java.io.Serializable
         // check to see if we're scheduling for the same exact time -- even if of different orderings, that doesn't matter
         if (t == time && t != AFTER_SIMULATION)
             // bump up time to the next possible item, unless we're at infinity already (AFTER_SIMULATION)
-            t = key.time = Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
+            {
+            key.time = Math.nextUp(key.time);  //Double.longBitsToDouble(Double.doubleToRawLongBits(t)+1L);
+			t = key.time; 
+            }
 
         if (sealed || t >= AFTER_SIMULATION)             // situations where no further events can be added
             {

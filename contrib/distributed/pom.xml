@@ -1,3 +1,51 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4d728751a6f0d57c66df677b416a7e832e157d5a9df8121dba9110d900c82cdf
-size 1414
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>distributed</artifactId>
+	<version>1.0</version>
+	<groupId>cs.gmu.edu.eclab</groupId>
+	<name>distributed</name>
+	<packaging>jar</packaging>
+
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>repository</id>
+			<url>file:///${project.parent.basedir}/repository</url>
+		</repository>  
+		<repository>
+			<id>tomp2p.net</id>
+			<url>http://tomp2p.net/dev/mvn/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>net.tomp2p</groupId>
+			<artifactId>tomp2p-all</artifactId>
+			<version>5.0-Beta8</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- mvn install:install-file -Dfile=jars/mpi.jar -DgroupId=edu.gmu.eclab 
+			-DartifactId=mpi-openmpi-4.0 -Dversion=4.0 -Dpackaging=jar -DlocalRepositoryPath=. -->
+		<dependency>
+			<groupId>org.openmpi</groupId>
+			<artifactId>mpi</artifactId>
+			<version>4.0</version>
+		</dependency>
+
+	</dependencies>
+</project>
