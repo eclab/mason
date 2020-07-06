@@ -100,7 +100,7 @@ public class DSimulation extends DSimState {
 			}
 		}
 		
-		addRootInfoToAll("agents",agents);
+		sendRootInfoToAll("agents",agents);
 	}
 	
 	

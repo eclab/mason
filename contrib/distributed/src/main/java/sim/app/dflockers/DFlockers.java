@@ -65,7 +65,7 @@ public class DFlockers extends DSimState {
 
 		}
 		
-		addRootInfoToAll("agents",agents);
+		sendRootInfoToAll("agents",agents);
 	}
 
 	@Override

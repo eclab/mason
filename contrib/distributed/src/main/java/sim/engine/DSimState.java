@@ -7,6 +7,7 @@
 package sim.engine;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -28,9 +30,16 @@ import sim.engine.transport.AgentWrapper;
 import sim.engine.transport.PayloadWrapper;
 import sim.engine.transport.RMIProxy;
 import sim.engine.transport.TransporterMPI;
+import sim.field.HaloGrid2D;
 import sim.field.Synchronizable;
+import sim.field.partitioning.DoublePoint;
+import sim.field.partitioning.IntHyperRect;
+import sim.field.partitioning.IntPoint;
+import sim.field.partitioning.NdPoint;
 import sim.field.partitioning.PartitionInterface;
 import sim.field.partitioning.QuadTreePartition;
+import sim.field.storage.ContStorage;
+import sim.field.storage.ObjectGridStorage;
 import sim.util.MPIUtil;
 import sim.util.Timing;
 
@@ -160,13 +169,27 @@ public class DSimState extends SimState {
 		}
 
 		if (withRegistry) {
-			// All nodes have unregistered their objects, after we can register the migrated
 			// objects on new nodes.
 			try {
 				MPI.COMM_WORLD.barrier();
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+		
+		if(schedule.getSteps()>0) {
+			if (schedule.getSteps()%50==0) {
+				
+				try {
+				balancePartitions(balancerLevel);
+				} catch (MPIException e) {
+					// TODO: handle exception
+				}
+				if(balancerLevel!=0)
+					balancerLevel--;
+				else
+					balancerLevel = ((QuadTreePartition)partition).getQt().getDepth()-1;
 			}
 		}
 
@@ -240,8 +263,55 @@ public class DSimState extends SimState {
 
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
-
+		
 	}
+	
+	private void balancePartitions(int level) throws MPIException {
+		final IntHyperRect old_partition = partition.getPartition();
+		final int old_pid = partition.getPid();
+		final Double runtime = Timing.get(Timing.LB_RUNTIME).getMovingAverage();
+		Timing.start(Timing.LB_OVERHEAD);
+		((QuadTreePartition)partition).balance(runtime, level);
+		MPI.COMM_WORLD.barrier();
+//		System.out.println("pid "+partition.getPid()+" old_partitioning "+old_partition);
+//		System.out.println("pid "+partition.getPid()+" new partition "+partition.getPartition());
+		ArrayList<Object>  migratedAgents = new ArrayList<>();
+		for(IntPoint p : old_partition) {
+			if (!partition.getPartition().contains(p)){
+				final int toP = partition.toPartitionId(p);
+				for (Synchronizable field : fieldRegistry) {
+					if (((HaloGrid2D)field).getStorage() instanceof ContStorage) {
+						ContStorage st = (ContStorage) ((HaloGrid2D)field).getStorage();
+						HashSet agents = st.getCell(p);
+						for (Object a : agents) {
+							NdPoint loc = st.getLocation((Serializable)a);
+							if(a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc) && !partition.getPartition().contains(loc)) { 
+								st.removeObject((Serializable) a);
+								((Stopping)a).getStoppable().stop();
+								transporter.migrateAgent((Stopping) a,toP,loc,((HaloGrid2D)field).fieldIndex);
+								migratedAgents.add(a);
+//								System.out.println("PID: "+partition.pid+" processor "+ old_pid +" move "+a+" from "+loc+" (point "+p+") to processor "+toP);
+							}
+						}
+					}else if(((HaloGrid2D)field).getStorage() instanceof ObjectGridStorage) {
+						ObjectGridStorage st = (ObjectGridStorage) ((HaloGrid2D)field).getStorage();
+						if(st.getObjects(p) != null) {
+							ArrayList<Stopping> agents = st.getObjects(p);
+							for (int i=0; i<agents.size();i++) {
+								Object a = agents.get(i);
+								NdPoint loc = st.getLocation((Serializable)a);
+								((Stopping)a).getStoppable().stop();
+								transporter.migrateAgent((Stopping)a,toP,p,((HaloGrid2D)field).fieldIndex);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		MPI.COMM_WORLD.barrier();
+		Timing.stop(Timing.LB_OVERHEAD);
+    }
 
 	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
 			throws IOException {
@@ -412,13 +482,13 @@ public class DSimState extends SimState {
 		return transporter;
 	}
 	
-	public void addRootInfoToAll(String key,Object sendObj) {
+	public void sendRootInfoToAll(String key,Object sendObj) {
 		for (int i = 0; i < partition.getNumProc(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}
 	
-	public void addRootInfoToProc(int pid,String key,Object sendObj) {
+	public void sendRootInfoToProc(int pid,String key,Object sendObj) {
 		init[pid].put(key, sendObj);
 	}
 	

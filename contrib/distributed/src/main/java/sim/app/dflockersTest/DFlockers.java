@@ -111,7 +111,7 @@ public class DFlockers extends DSimState {
 			agents.add(flocker);
 
 		}
-		addRootInfoToAll("agents",agents);
+		sendRootInfoToAll("agents",agents);
 	}
 
 	public void start() {

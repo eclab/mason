@@ -154,7 +154,7 @@ public class DHeatBugs extends DSimState {
 			agents.get(point).add(b);
 		}
 		
-		addRootInfoToAll("agents",agents);
+		sendRootInfoToAll("agents",agents);
 
 	}
 
