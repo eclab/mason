@@ -21,7 +21,7 @@ import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 import sim.util.Timing;
 
-public class DFlockers extends DSimState {
+public class DFlockersTest extends DSimState {
 	private static final long serialVersionUID = 1;
 
 	public final static int width = 600;
@@ -46,10 +46,10 @@ public class DFlockers extends DSimState {
 	String dirname = System.getProperty("user.dir") + File.separator + dateString;
 
 	/** Creates a Flockers simulation with the given random number seed. */
-	public DFlockers(final long seed) {
-		super(seed, DFlockers.width, DFlockers.height, DFlockers.neighborhood);
+	public DFlockersTest(final long seed) {
+		super(seed, DFlockersTest.width, DFlockersTest.height, DFlockersTest.neighborhood);
 
-		final double[] discretizations = new double[] { DFlockers.neighborhood / 1.5, DFlockers.neighborhood / 1.5 };
+		final double[] discretizations = new double[] { DFlockersTest.neighborhood / 1.5, DFlockersTest.neighborhood / 1.5 };
 		flockers = new DContinuous2D<DFlocker>(getPartitioning(), aoi, discretizations, this);
 		idAgents = new ArrayList<Integer>();
 		idLocal = new ArrayList<Integer>();
@@ -87,11 +87,26 @@ public class DFlockers extends DSimState {
 			}
 
 			if (partition.getPid() == 0) {
-
+//				System.out.println("count ");
+//				for (int i = 0; i < dstCount.length; i++) {
+//					System.out.print(dstCount[i]+" ");
+//				}
+//				System.out.println();
+//				System.out.println("disp ");
+//				for (int i = 0; i < dstDispl.length; i++) {
+//					System.out.print(dstDispl[i]+" ");
+//				}
+//				System.out.println();
+//				try {
+//					Thread.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 				Arrays.sort(recv);
 				for (int i = 0; i < idAgents.size(); i++) {
 					if (idAgents.get(i) != recv[i]) {
-						System.err.println("ERROR: something wrong happens");
+						System.err.println("ERROR: something wrong happens --> idAgents.get(i) "+idAgents.get(i)+" recv[i] "+recv[i]);
 						System.exit(1);
 					}
 				}
@@ -102,7 +117,7 @@ public class DFlockers extends DSimState {
 
 	protected void startRoot() {
 		ArrayList<DFlocker> agents = new ArrayList<DFlocker>();
-		for (int x = 0; x < DFlockers.numFlockers; x++) {
+		for (int x = 0; x < DFlockersTest.numFlockers; x++) {
 			final DoublePoint loc = new DoublePoint(random.nextDouble() * width, random.nextDouble() * height);
 			DFlocker flocker = new DFlocker(loc, x);
 			idAgents.add(x);
@@ -111,6 +126,7 @@ public class DFlockers extends DSimState {
 			agents.add(flocker);
 
 		}
+		//System.out.println(agents);
 		sendRootInfoToAll("agents",agents);
 	}
 
@@ -130,7 +146,7 @@ public class DFlockers extends DSimState {
 
 	public static void main(final String[] args) throws MPIException {
 		Timing.setWindow(20);
-		doLoopMPI(DFlockers.class, args);
+		doLoopMPI(DFlockersTest.class, args);
 		System.exit(0);
 	}
 }

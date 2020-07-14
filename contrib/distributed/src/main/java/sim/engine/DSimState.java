@@ -178,21 +178,6 @@ public class DSimState extends SimState {
 			}
 		}
 		
-		if(schedule.getSteps()>0) {
-			if (schedule.getSteps()%50==0) {
-				
-				try {
-				balancePartitions(balancerLevel);
-				} catch (MPIException e) {
-					// TODO: handle exception
-				}
-				if(balancerLevel!=0)
-					balancerLevel--;
-				else
-					balancerLevel = ((QuadTreePartition)partition).getQt().getDepth()-1;
-			}
-		}
-
 		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
 
 			/*
@@ -264,6 +249,96 @@ public class DSimState extends SimState {
 		transporter.objectQueue.clear();
 		Timing.stop(Timing.MPI_SYNC_OVERHEAD);
 		
+		if(schedule.getSteps()>0) {
+			if (schedule.getSteps()%50==0) {
+				
+				try {
+				balancePartitions(balancerLevel);
+				} catch (MPIException e) {
+					// TODO: handle exception
+				}
+				if(balancerLevel!=0)
+					balancerLevel--;
+				else
+					balancerLevel = ((QuadTreePartition)partition).getQt().getDepth()-1;
+			}
+		}
+		
+		try {
+			syncFields();
+			transporter.sync();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+
+			/*
+			 * Assumptions about what is to be added to the field using addToField method
+			 * rely on the fact that the wrapper classes are not directly used By the
+			 * modelers
+			 *
+			 * In case of IterativeRepeat step is added to the field. For PayloadWrapper we
+			 * add agent and, for all other cases we add the object itself to the field
+			 *
+			 * Improperly using the wrappers and/or fieldIndex will cause Class cast
+			 * exceptions to be thrown
+			 */
+
+			if (payloadWrapper.fieldIndex >= 0) {
+				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
+																											// object to
+																											// the field
+			}
+
+			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
+				final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
+
+				// TODO: how to schedule for a specified time?
+				// Not adding it to specific time because we get an error -
+				// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
+
+				// TODO: Check for Type Cast here
+				Stopping stopping = (Stopping) iterativeRepeat.step;
+				stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
+						iterativeRepeat.interval));
+				// Add agent to the field
+				// addToField(iterativeRepeat.step, payloadWrapper.loc,
+				// payloadWrapper.fieldIndex);
+
+			} else if (payloadWrapper.payload instanceof AgentWrapper) {
+				final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
+
+				if (withRegistry) {
+					if (agentWrapper.getExportedName() != null) {
+						try {
+							DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+									(Remote) agentWrapper.agent);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
+				if (agentWrapper.time < 0)
+					schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
+				else
+					schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+
+			}
+
+		}
+
+		// Wait that all nodes have registered their new objects in the distributed
+		// registry.
+		try {
+			MPI.COMM_WORLD.barrier();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		transporter.objectQueue.clear();
 	}
 	
 	private void balancePartitions(int level) throws MPIException {
@@ -286,11 +361,11 @@ public class DSimState extends SimState {
 						for (Object a : agents) {
 							NdPoint loc = st.getLocation((Serializable)a);
 							if(a instanceof Stopping && !migratedAgents.contains(a) && old_partition.contains(loc) && !partition.getPartition().contains(loc)) { 
-								st.removeObject((Serializable) a);
+								//st.removeObject((Serializable) a);
 								((Stopping)a).getStoppable().stop();
 								transporter.migrateAgent((Stopping) a,toP,loc,((HaloGrid2D)field).fieldIndex);
 								migratedAgents.add(a);
-//								System.out.println("PID: "+partition.pid+" processor "+ old_pid +" move "+a+" from "+loc+" (point "+p+") to processor "+toP);
+								System.out.println("PID: "+partition.pid+" processor "+ old_pid +" move "+a+" from "+loc+" (point "+p+") to processor "+toP);
 							}
 						}
 					}else if(((HaloGrid2D)field).getStorage() instanceof ObjectGridStorage) {

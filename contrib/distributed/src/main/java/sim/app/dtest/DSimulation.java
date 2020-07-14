@@ -92,10 +92,12 @@ public class DSimulation extends DSimState {
 	@Override
 	protected void startRoot() {
 		ArrayList<DAgent> agents = new ArrayList<DAgent>();
+		int c=0;
 		for(int i=75;i<600;i=i+150) {
 			for(int j=75;j<600;j=j+150) {
 				DoublePoint loc = new DoublePoint(i, j);
-				int id = partition.toPartitionId(loc);
+				int id = 100*partition.toPartitionId(loc)+c;
+				c++;
 				agents.add(new DAgent(loc, id));
 			}
 		}
@@ -113,8 +115,10 @@ public class DSimulation extends DSimState {
 		
 		for(Object p : agents) {
 			DAgent a = (DAgent) p;
-			if(partition.getPartition().contains(a.loc))
+			if(partition.getPartition().contains(a.loc)) {
 				field.addAgent(a.loc, a );
+				System.out.println("pid "+partition.getPid()+" add agent "+a);
+			}
 		}
 			
 	}

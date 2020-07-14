@@ -140,7 +140,7 @@ public class DFlocker extends AbstractStopping implements Remote {
 	}
 
 	public void step(final SimState state) {
-		final DFlockers dFlockers = (DFlockers) state;
+		final DFlockersTest dFlockers = (DFlockersTest) state;
 		
 		dFlockers.idLocal.add(this.id);
 		
@@ -151,7 +151,7 @@ public class DFlocker extends AbstractStopping implements Remote {
 		 List<DFlocker> b = null;
 		
 		try {
-		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockers.neighborhood);
+		 b = dFlockers.flockers.getNeighborsWithin(this, DFlockersTest.neighborhood);
 		}catch (Exception e) {
 			System.out.println(dFlockers.getPartitioning().getPid());
 		}
@@ -162,18 +162,18 @@ public class DFlocker extends AbstractStopping implements Remote {
 		final DoublePoint cons = consistency(b, dFlockers.flockers);
 		final DoublePoint mome = momentum();
 
-		double dx = DFlockers.cohesion * cohe.c[0] + DFlockers.avoidance * avoid.c[0]
-				+ DFlockers.consistency * cons.c[0]
-				+ DFlockers.randomness * rand.c[0] + DFlockers.momentum * mome.c[0];
-		double dy = DFlockers.cohesion * cohe.c[1] + DFlockers.avoidance * avoid.c[1]
-				+ DFlockers.consistency * cons.c[1]
-				+ DFlockers.randomness * rand.c[1] + DFlockers.momentum * mome.c[1];
+		double dx = DFlockersTest.cohesion * cohe.c[0] + DFlockersTest.avoidance * avoid.c[0]
+				+ DFlockersTest.consistency * cons.c[0]
+				+ DFlockersTest.randomness * rand.c[0] + DFlockersTest.momentum * mome.c[0];
+		double dy = DFlockersTest.cohesion * cohe.c[1] + DFlockersTest.avoidance * avoid.c[1]
+				+ DFlockersTest.consistency * cons.c[1]
+				+ DFlockersTest.randomness * rand.c[1] + DFlockersTest.momentum * mome.c[1];
 
 		// re-normalize to the given step size
 		final double dis = Math.sqrt(dx * dx + dy * dy);
 		if (dis > 0) {
-			dx = dx / dis * DFlockers.jump;
-			dy = dy / dis * DFlockers.jump;
+			dx = dx / dis * DFlockersTest.jump;
+			dy = dy / dis * DFlockersTest.jump;
 		}
 		lastd = new DoublePoint(dx,dy);
 		loc = new DoublePoint(dFlockers.flockers.stx(loc.c[0] + dx), dFlockers.flockers.sty(loc.c[1] + dy));
