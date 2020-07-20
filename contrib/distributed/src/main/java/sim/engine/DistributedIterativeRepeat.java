@@ -18,22 +18,22 @@ public class DistributedIterativeRepeat extends IterativeRepeat
         {
         super(step, time, interval, ordering);
         if (step instanceof Stopping)
-        	{
-        	((Stopping)step).setStoppable(this);
-        	}
-		else throw new RuntimeException("DistributedIterativeRepeat built on a non-Stopping Steppable");
+            {
+            ((Stopping)step).setStoppable(this);
+            }
+        else throw new RuntimeException("DistributedIterativeRepeat built on a non-Stopping Steppable");
         }
         
     public void stop()  
         {
         synchronized(lock)
-        	{
-	        if (step != null)
-	        	{
-	        	((Stopping)step).setStoppable(null);
-	        	}
-	        super.stop();
-	        }
+            {
+            if (step != null)
+                {
+                ((Stopping)step).setStoppable(null);
+                }
+            super.stop();
+            }
         }
         
     public String toString() { return "Schedule.DistributedIterativeRepeat[" + step + "]"; }
