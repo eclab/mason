@@ -2,7 +2,7 @@
   Copyright 2019 by Sean Luke and George Mason University
   Licensed under the Academic Free License version 3.0
   See the file "LICENSE" for more information
-*/
+ */
 
 package sim.engine;
 
@@ -106,7 +106,7 @@ public class DSimState extends SimState {
 
 	protected DSimState(final MersenneTwisterFast random) {
 		this(0, random, new DistributedSchedule(), 1000, 1000, 5);// 0 is a bogus value. In fact, MT can't have 0 as its
-																	// seed
+		// seed
 	}
 
 	/**
@@ -287,8 +287,7 @@ public class DSimState extends SimState {
 
 			if (payloadWrapper.fieldIndex >= 0) {
 				((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
-																											// object to
-																											// the field
+				// object to the field
 			}
 
 			if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
@@ -340,7 +339,97 @@ public class DSimState extends SimState {
 		}
 		transporter.objectQueue.clear();
 	}
-	
+
+	private void loadBalancing() {
+		if(schedule.getSteps()>0) {
+			if (schedule.getSteps()%50==0) {
+
+				try {
+					balancePartitions(balancerLevel);
+					
+					for (final PayloadWrapper payloadWrapper : transporter.objectQueue) {
+
+						/*
+						 * Assumptions about what is to be added to the field using addToField method
+						 * rely on the fact that the wrapper classes are not directly used By the
+						 * modelers
+						 *
+						 * In case of IterativeRepeat step is added to the field. For PayloadWrapper we
+						 * add agent and, for all other cases we add the object itself to the field
+						 *
+						 * Improperly using the wrappers and/or fieldIndex will cause Class cast
+						 * exceptions to be thrown
+						 */
+
+						if (payloadWrapper.fieldIndex >= 0) {
+							((Synchronizable) fieldRegistry.get(payloadWrapper.fieldIndex)).syncObject(payloadWrapper); // add the
+							// object to
+							// the field
+						}
+
+						if (payloadWrapper.payload instanceof DistributedIterativeRepeat) {
+							final DistributedIterativeRepeat iterativeRepeat = (DistributedIterativeRepeat) payloadWrapper.payload;
+
+							// TODO: how to schedule for a specified time?
+							// Not adding it to specific time because we get an error -
+							// "the time provided (-1.0000000000000002) is < EPOCH (0.0)"
+
+							// TODO: Check for Type Cast here
+							Stopping stopping = (Stopping) iterativeRepeat.step;
+							stopping.setStoppable(schedule.scheduleRepeating(stopping, iterativeRepeat.getOrdering(),
+									iterativeRepeat.interval));
+							// Add agent to the field
+							// addToField(iterativeRepeat.step, payloadWrapper.loc,
+							// payloadWrapper.fieldIndex);
+
+						} else if (payloadWrapper.payload instanceof AgentWrapper) {
+							final AgentWrapper agentWrapper = (AgentWrapper) payloadWrapper.payload;
+
+							if (withRegistry) {
+								if (agentWrapper.getExportedName() != null) {
+									try {
+										DRegistry.getInstance().registerObject(agentWrapper.getExportedName(),
+												(Remote) agentWrapper.agent);
+									} catch (RemoteException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							}
+
+							if (agentWrapper.time < 0)
+								schedule.scheduleOnce(agentWrapper.agent, agentWrapper.ordering);
+							else
+								schedule.scheduleOnce(agentWrapper.time, agentWrapper.ordering, agentWrapper.agent);
+
+						}
+
+					}
+
+					// Wait that all nodes have registered their new objects in the distributed
+					// registry.
+					try {
+						MPI.COMM_WORLD.barrier();
+					} catch (MPIException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					transporter.objectQueue.clear();
+
+					
+				} catch (MPIException e) {
+					// TODO: handle exception
+				}
+				if(balancerLevel!=0)
+					balancerLevel--;
+				else
+					balancerLevel = ((QuadTreePartition)partition).getQt().getDepth()-1;
+			}
+		}
+		
+	}
+
 	private void balancePartitions(int level) throws MPIException {
 		final IntHyperRect old_partition = partition.getPartition();
 		final int old_pid = partition.getPid();
@@ -348,8 +437,8 @@ public class DSimState extends SimState {
 		Timing.start(Timing.LB_OVERHEAD);
 		((QuadTreePartition)partition).balance(runtime, level);
 		MPI.COMM_WORLD.barrier();
-//		System.out.println("pid "+partition.getPid()+" old_partitioning "+old_partition);
-//		System.out.println("pid "+partition.getPid()+" new partition "+partition.getPartition());
+		//		System.out.println("pid "+partition.getPid()+" old_partitioning "+old_partition);
+		//		System.out.println("pid "+partition.getPid()+" new partition "+partition.getPartition());
 		ArrayList<Object>  migratedAgents = new ArrayList<>();
 		for(IntPoint p : old_partition) {
 			if (!partition.getPartition().contains(p)){
@@ -383,10 +472,10 @@ public class DSimState extends SimState {
 				}
 			}
 		}
-		
+
 		MPI.COMM_WORLD.barrier();
 		Timing.stop(Timing.LB_OVERHEAD);
-    }
+	}
 
 	private static void initRemoteLogger(final String loggerName, final String logServAddr, final int logServPort)
 			throws IOException {
@@ -556,17 +645,17 @@ public class DSimState extends SimState {
 	public TransporterMPI getTransporter() {
 		return transporter;
 	}
-	
+
 	public void sendRootInfoToAll(String key,Object sendObj) {
 		for (int i = 0; i < partition.getNumProc(); i++) {
 			init[i].put(key, sendObj);
 		}
 	}
-	
+
 	public void sendRootInfoToProc(int pid,String key,Object sendObj) {
 		init[pid].put(key, sendObj);
 	}
-	
+
 	public Object getRootInfo(String key) {
 		return rootInfo.get(key);
 	}

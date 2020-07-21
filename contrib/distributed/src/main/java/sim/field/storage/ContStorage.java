@@ -195,8 +195,8 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 		try {
 			tmp = m.get(obj);
 		}catch (Exception e) {
-			System.out.println(  );
-			System.out.println(storage);
+			//System.out.println(  );
+			//System.out.println(storage);
 			System.exit(-1);
 		}
 		final NdPoint loc = tmp;
@@ -205,9 +205,9 @@ public class ContStorage<T extends Serializable> extends GridStorage<T> {
 			tmp2 = discretize(loc);
 		}catch (Exception e) {
 			
-			System.out.println(this.toString());
-			System.out.println("m: "+ m.keySet());
-			System.out.println("object "+obj+" loc "+loc);
+			//System.out.println(this.toString());
+			//System.out.println("m: "+ m.keySet());
+			//System.out.println("object "+obj+" loc "+loc);
 			e.printStackTrace();
 		}
 		final IntPoint dloc = tmp2;

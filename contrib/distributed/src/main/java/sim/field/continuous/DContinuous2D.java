@@ -139,8 +139,8 @@ public class DContinuous2D<T extends Serializable> extends DAbstractGrid2D imple
 	// add also moves the objects in this field
 	public void moveAgent(NdPoint fromP, NdPoint toP, T t, int ordering, double time) {
 		if (!halo.inLocal(fromP)) {
-			System.out.println("pid " + halo.partition.pid + " agent" + t);
-			System.out.println("partitioning " + halo.partition.getPartition());
+			//System.out.println("pid " + halo.partition.pid + " agent" + t);
+			//System.out.println("partitioning " + halo.partition.getPartition());
 			throw new IllegalArgumentException("fromP must be local");
 		}
 
