@@ -144,9 +144,9 @@ public class DFlockersTest extends DSimState {
 
 	}
 
-	public static void main(final String[] args) throws MPIException {
+	public static void main(final String[] args) {
 		Timing.setWindow(20);
-		doLoopMPI(DFlockersTest.class, args);
+		doLoopDistributed(DFlockersTest.class, args);
 		System.exit(0);
 	}
 }

@@ -9,7 +9,6 @@ package sim.app.dRepeatingHeatBugs;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.field.grid.DDenseGrid2D;
@@ -171,8 +170,8 @@ public class DHeatBugs extends DSimState {
 		schedule.scheduleRepeating(Schedule.EPOCH, 2, new Diffuser(), 1);
 	}
 
-	public static void main(final String[] args) throws MPIException {
-		doLoopMPI(DHeatBugs.class, args);
+	public static void main(final String[] args) {
+		doLoopDistributed(DHeatBugs.class, args);
 		System.exit(0);
 	}
 }

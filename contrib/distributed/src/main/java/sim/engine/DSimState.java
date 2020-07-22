@@ -511,31 +511,38 @@ public class DSimState extends SimState {
 		DSimState.logger.addHandler(handler);
 	}
 
-	public static void doLoopMPI(final Class<?> c, final String[] args) throws MPIException {
-		doLoopMPI(c, args, 20);
+	public static void doLoopDistributed(final Class<?> c, final String[] args) {
+		doLoopDistributed(c, args, 20);
 	}
 
-	public static void doLoopMPI(final Class<?> c, final String[] args, final int window) throws MPIException {
-		Timing.setWindow(window);
-		MPI.Init(args);
-		Timing.start(Timing.LB_RUNTIME);
+	public static void doLoopDistributed(final Class<?> c, final String[] args, final int window) {
+		try
+			{
+			Timing.setWindow(window);
+			MPI.Init(args);
+			Timing.start(Timing.LB_RUNTIME);
 
-		// Setup Logger
-		final String loggerName = String.format("MPI-Job-%d", MPI.COMM_WORLD.getRank());
-		final String logServAddr = argumentForKey("-logserver", args);
-		final String logServPortStr = argumentForKey("-logport", args);
-		if (logServAddr != null && logServPortStr != null)
-			try {
-				initRemoteLogger(loggerName, logServAddr, Integer.parseInt(logServPortStr));
-			} catch (final IOException e) {
-				e.printStackTrace();
-				System.exit(-1);
+			// Setup Logger
+			final String loggerName = String.format("MPI-Job-%d", MPI.COMM_WORLD.getRank());
+			final String logServAddr = argumentForKey("-logserver", args);
+			final String logServPortStr = argumentForKey("-logport", args);
+			if (logServAddr != null && logServPortStr != null)
+				try {
+					initRemoteLogger(loggerName, logServAddr, Integer.parseInt(logServPortStr));
+				} catch (final IOException e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			else
+				initLocalLogger(loggerName);
+
+			doLoop(c, args);
+			MPI.Finalize();
 			}
-		else
-			initLocalLogger(loggerName);
-
-		doLoop(c, args);
-		MPI.Finalize();
+		catch (MPIException ex)
+			{
+			throw new RuntimeException(ex);
+			}
 	}
 
 	/**
@@ -583,7 +590,7 @@ public class DSimState extends SimState {
 
 			// schedule a zombie agent to prevent that a processor with no agent is stopped
 			// when the simulation is still going on
-			schedule.scheduleRepeating(new AbstractStopping() {
+			schedule.scheduleRepeating(new DSteppable() {
 
 				@Override
 				public void step(SimState state) {

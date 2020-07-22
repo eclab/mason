@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
@@ -84,9 +83,9 @@ public class DFlockers extends DSimState {
 
 	}
 
-	public static void main(final String[] args) throws MPIException {
+	public static void main(final String[] args) {
 		Timing.setWindow(20);
-		doLoopMPI(DFlockers.class, args);
+		doLoopDistributed(DFlockers.class, args);
 		System.exit(0);
 	}
 }

@@ -6,7 +6,6 @@
 
 package sim.app.dantForage;
 
-import mpi.MPIException;
 import sim.app.dflockers.DFlocker;
 import sim.app.dflockers.DFlockers;
 import sim.engine.*;
@@ -173,9 +172,9 @@ public /*strictfp*/ class DAntsForage extends DSimState
 
         }
 
-    public static void main(String[] args) throws MPIException
+    public static void main(String[] args)
         {
-        doLoopMPI(DAntsForage.class, args);
+        doLoopDistributed(DAntsForage.class, args);
         System.exit(0);
         }    
     }

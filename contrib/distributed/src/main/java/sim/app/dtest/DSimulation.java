@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import mpi.MPI;
-import mpi.MPIException;
+//import mpi.MPI;
 import sim.app.flockers.Flocker;
 import sim.engine.DSteppable;
 import sim.engine.DSimState;
@@ -28,7 +27,7 @@ import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 import sim.field.partitioning.NdPoint;
-import sim.util.MPIUtil;
+//import sim.util.MPIUtil;
 import sim.util.Timing;
 
 public class DSimulation extends DSimState {
@@ -123,9 +122,9 @@ public class DSimulation extends DSimState {
 			
 	}
 
-	public static void main(final String[] args) throws MPIException {
+	public static void main(final String[] args) {
 		Timing.setWindow(20);
-		doLoopMPI(DSimulation.class, args);
+		doLoopDistributed(DSimulation.class, args);
 		System.exit(0);
 	}
 }

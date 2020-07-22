@@ -9,7 +9,6 @@ package sim.app.dheatbugs;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import mpi.MPIException;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -207,8 +206,8 @@ public class DHeatBugs extends DSimState {
 		}
 	}
 
-	public static void main(final String[] args) throws MPIException {
-		doLoopMPI(DHeatBugs.class, args);
+	public static void main(final String[] args) {
+		doLoopDistributed(DHeatBugs.class, args);
 		System.exit(0);
 	}
 }
