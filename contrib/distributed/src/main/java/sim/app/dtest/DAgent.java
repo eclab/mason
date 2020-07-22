@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 
-public class DAgent extends AbstractStopping implements Remote {
+public class DAgent extends DSteppable implements Remote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public int id;

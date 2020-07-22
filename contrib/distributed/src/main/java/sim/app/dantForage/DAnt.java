@@ -15,7 +15,7 @@ import sim.engine.*;
 import java.awt.*;
 import java.rmi.Remote;
 
-public class DAnt extends AbstractStopping implements Remote
+public class DAnt extends DSteppable implements Remote
     {
     private static final long serialVersionUID = 1;
 

@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 
 import mpi.MPI;
 import mpi.MPIException;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;
@@ -69,7 +69,7 @@ public class DFlockersWithDRegistry extends DSimState {
 			} 
 		}
 
-		schedule.scheduleRepeating(Schedule.EPOCH, 2, new AbstractStopping() {
+		schedule.scheduleRepeating(Schedule.EPOCH, 2, new DSteppable() {
 
 			private static final long serialVersionUID = 1L;
 

@@ -6,7 +6,7 @@
 
 package sim.app.dheatbugs;
 
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
 
@@ -16,7 +16,7 @@ import sim.field.grid.DDoubleGrid2D;
  * many-fold in classes such as Diffuser.
  */
 
-public class Diffuser extends AbstractStopping {
+public class Diffuser extends DSteppable {
 	private static final long serialVersionUID = 1;
 
 	public void step(final SimState state) {

@@ -9,9 +9,9 @@ package sim.app.dheatbugs;
 import sim.engine.SimState;
 import sim.field.grid.DDoubleGrid2D;
 import sim.field.partitioning.IntPoint;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 
-public class DHeatBug extends AbstractStopping {
+public class DHeatBug extends DSteppable {
 	private static final long serialVersionUID = 1;
 
 	public int loc_x, loc_y;

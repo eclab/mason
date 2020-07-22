@@ -10,13 +10,13 @@ import java.rmi.Remote;
 import java.util.List;
 
 import ec.util.MersenneTwisterFast;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.Schedule;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
 
-public class DFlocker extends AbstractStopping implements Remote {
+public class DFlocker extends DSteppable implements Remote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);

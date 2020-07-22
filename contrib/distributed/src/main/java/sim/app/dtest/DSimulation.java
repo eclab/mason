@@ -21,7 +21,7 @@ import java.util.HashMap;
 import mpi.MPI;
 import mpi.MPIException;
 import sim.app.flockers.Flocker;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.DSimState;
 import sim.engine.Schedule;
 import sim.engine.SimState;

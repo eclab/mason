@@ -166,7 +166,7 @@ public /*strictfp*/ class DAntsForage extends DSimState
             }
 
         // Schedule evaporation to happen after the ants move and update
-        schedule.scheduleRepeating(Schedule.EPOCH,1, new AbstractStopping()
+        schedule.scheduleRepeating(Schedule.EPOCH,1, new DSteppable()
             {
             public void step(SimState state) { toFoodGrid.multiply(evaporationConstant); toHomeGrid.multiply(evaporationConstant); }
             }, 1);

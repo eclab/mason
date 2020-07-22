@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import ec.util.MersenneTwisterFast;
 import mpi.MPI;
 import mpi.MPIException;
-import sim.engine.AbstractStopping;
+import sim.engine.DSteppable;
 import sim.engine.SimState;
 import sim.field.continuous.DContinuous2D;
 import sim.field.partitioning.DoublePoint;
@@ -21,7 +21,7 @@ interface DFlockerDummyRemote extends Remote{
 
 }
 
-public class DFlockerWithDRegistry extends AbstractStopping implements DFlockerDummyRemote {
+public class DFlockerWithDRegistry extends DSteppable implements DFlockerDummyRemote {
 	private static final long serialVersionUID = 1;
 	public DoublePoint loc;
 	public DoublePoint lastd = new DoublePoint(0, 0);
