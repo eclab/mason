@@ -413,6 +413,9 @@ public class TransporterMPI {
 		if (partition.pid == dst)
 			throw new IllegalArgumentException("Destination cannot be local, must be remote");
 
+		System.out.println("transporting: " + obj); //added by Raj Patel (see email from rlather 7/31/2020)
+		
+		
 		// Wrap the agent, this is important because we want to keep track of
 		// dst, which could be the diagonal processor
 		final PayloadWrapper wrapper = new PayloadWrapper(dst, obj, loc, fieldIndex);
