@@ -2,8 +2,7 @@ package sim.util;
 
 import java.util.concurrent.TimeUnit;
 
-public class TimingStat 
-    {
+public class TimingStat {
 
     int cap;
     long cnt, conv, ts;
@@ -11,21 +10,18 @@ public class TimingStat
     MovingAverage mav;
     TimeUnit u;
 
-    public TimingStat(int cap) 
-        {
+    public TimingStat(int cap) {
         this.cap = cap;
         this.setUnit(TimeUnit.MILLISECONDS);
         reset();
-        }
+    }
 
-    public void setUnit(TimeUnit u) 
-        {
+    public void setUnit(TimeUnit u) {
         this.u = u;
         this.conv = TimeUnit.NANOSECONDS.convert(1L, u);
-        }
+    }
 
-    public void add(double val) 
-        {
+    public void add(double val) {
         last = val;
         min = Math.min(min, val);
         max = Math.max(max, val);
@@ -35,10 +31,9 @@ public class TimingStat
         var += (val - avg_old) * (val - avg);
 
         mav.next(val);
-        }
+    }
 
-    public void reset() 
-        {
+    public void reset() {
         mav = new MovingAverage(cap);
         cnt = 0;
         min = Double.MAX_VALUE;
@@ -46,14 +41,13 @@ public class TimingStat
         avg = 0;
         var = 0;
         ts = -1L;
-        }
+    }
 
-    public void start(long curr) 
-        {
+    public void start(long curr) {
         if (ts != -1L)
             throw new IllegalStateException("Timer is already started");
         ts = curr;
-        }
+    }
 
     /**
      * @deprecated
@@ -74,67 +68,57 @@ public class TimingStat
      *
      */
     @Deprecated
-    public void stop(long curr) 
-        {
+    public void stop(long curr) {
         /*if (ts == -1L)
-          throw new IllegalStateException("Timer is not started"); */
+            throw new IllegalStateException("Timer is not started"); */
         add((double)(curr - ts));
         ts = -1L;
-        }
+    }
 
-    public double last() 
-        {
+    public double last() {
         return last / conv;
-        }
+    }
 
-    public long getCount() 
-        {
+    public long getCount() {
         return cnt;
-        }
+    }
 
-    public double getMean() 
-        {
+    public double getMean() {
         return avg / conv;
-        }
+    }
 
-    public double getMin() 
-        {
+    public double getMin() {
         return min / conv;
-        }
+    }
 
-    public double getMax() 
-        {
+    public double getMax() {
         return max / conv;
-        }
+    }
 
-    public double getStdev() 
-        {
+    public double getStdev() {
         if (cnt > 1)
             return Math.sqrt(var / (cnt - 1)) / conv;
         return 0;
-        }
-
-    public double getMovingAverage() 
-        {
-        return mav.average() / conv;
-        }
-
-    public double getMovingStdev() 
-        {
-        return mav.stdev() / conv;
-        }
-
-    public String toString() 
-        {
-        return String.format("%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
-            getCount(),
-            getMin(),
-            getMax(),
-            getMean(),
-            getStdev(),
-            getMovingAverage(),
-            getMovingStdev(),
-            u
-            );
-        }
     }
+
+    public double getMovingAverage() {
+        return mav.average() / conv;
+    }
+
+    public double getMovingStdev() {
+        return mav.stdev() / conv;
+    }
+
+    public String toString() {
+        return String.format("%d\t%f\t%f\t%f\t%f\t%f\t%f\t%s",
+                             getCount(),
+                             getMin(),
+                             getMax(),
+                             getMean(),
+                             getStdev(),
+                             getMovingAverage(),
+                             getMovingStdev(),
+                             u
+                             );
+    }
+}

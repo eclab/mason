@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.stream.IntStream;
 
-public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint> 
-    {
+public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint> {
     int nd, id, proc;
     NdPoint ul, br;
 
-    public NdRectangle(int id, int proc, NdPoint ul, NdPoint br) 
-        {
+    public NdRectangle(int id, int proc, NdPoint ul, NdPoint br) {
         this.id = id;
         this.proc = proc;
 
@@ -25,221 +23,183 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
 
         this.ul = ul;
         this.br = br;
-        }
+    }
 
-    public NdRectangle(int id, NdPoint ul, NdPoint br) 
-        {
+    public NdRectangle(int id, NdPoint ul, NdPoint br) {
         this(id, -1, ul, br);
-        }
+    }
 
-    public NdRectangle(int[] size) 
-        {
+    public NdRectangle(int[] size) {
         this(-1, -1, new IntPoint(new int[size.length]), new IntPoint(size));
-        }
+    }
 
-    public NdRectangle(double[] size) 
-        {
+    public NdRectangle(double[] size) {
         this(-1, -1, new DoublePoint(new double[size.length]), new DoublePoint(size));
-        }
+    }
 
-    public int getLPId() 
-        {
+    public int getLPId() {
         return proc;
-        }
+    }
 
-    public int getId() 
-        {
+    public int getId() {
         return id;
-        }
+    }
 
-    public int getNd() 
-        {
+    public int getNd() {
         return nd;
-        }
+    }
 
-    public NdPoint ul() 
-        {
+    public NdPoint ul() {
         return ul;
-        }
+    }
 
-    public NdPoint br() 
-        {
+    public NdPoint br() {
         return br;
-        }
+    }
 
-    public int getAreaInt() 
-        {
+    public int getAreaInt() {
         return nd == 0 ? 0 : Math.abs(Arrays.stream(getSizeInt()).reduce(1, (x, y) -> x * y));
-        }
+    }
 
-    public double getAreaDouble() 
-        {
+    public double getAreaDouble() {
         return nd == 0 ? 0 : Math.abs(Arrays.stream(getSizeDouble()).reduce(1, (x, y) -> x * y));
-        }
+    }
 
-    public int[] getSizeInt() 
-        {
+    public int[] getSizeInt() {
         return br.getOffsetsInt(ul);
-        }
+    }
 
-    public double[] getSizeDouble() 
-        {
+    public double[] getSizeDouble() {
         return br.getOffsetsDouble(ul);
-        }
+    }
 
-    public boolean contains(NdPoint p) 
-        {
+    public boolean contains(NdPoint p) {
         return p.geq(ul) && p.lt(br);
-        }
+    }
 
-    public boolean contains(NdRectangle r) 
-        {
+    public boolean contains(NdRectangle r) {
         return ul.leq(r.ul()) && br.geq(r.br());
-        }
+    }
 
-    public boolean isIntersect(NdRectangle r) 
-        {
+    public boolean isIntersect(NdRectangle r) {
         return ul.lt(r.br()) && br.gt(r.ul());
-        }
+    }
 
-    public NdRectangle getIntersection(NdRectangle r) 
-        {
+    public NdRectangle getIntersection(NdRectangle r) {
         if (!isIntersect(r))
             throw new IllegalArgumentException(this + " does not intersect with " + r);
 
         return new NdRectangle(-1, -1, ul.max(r.ul()), br.min(r.br()));
-        }
+    }
 
     // Symmetric resize
-    public NdRectangle resize(int dim, int val) 
-        {
+    public NdRectangle resize(int dim, int val) {
         return new NdRectangle(id, proc, ul.shift(dim, -val), br.shift(dim, val));
-        }
+    }
 
-    public NdRectangle resize(int dim, double val) 
-        {
+    public NdRectangle resize(int dim, double val) {
         return new NdRectangle(id, proc, ul.shift(dim, -val), br.shift(dim, val));
-        }
+    }
 
     // Symmetric resize at all dimension
-    public NdRectangle resize(int[] vals) 
-        {
+    public NdRectangle resize(int[] vals) {
         return new NdRectangle(id, proc, ul.rshift(vals), br.shift(vals));
-        }
+    }
 
-    public NdRectangle resize(double[] vals) 
-        {
+    public NdRectangle resize(double[] vals) {
         return new NdRectangle(id, proc, ul.rshift(vals), br.shift(vals));
-        }
+    }
 
     // One-sided resize
-    public NdRectangle resize(int dim, int dir, int val) 
-        {
+    public NdRectangle resize(int dim, int dir, int val) {
         if (dir > 0)
             return new NdRectangle(id, proc, ul.shift(dim, 0), br.shift(dim, val));
         return new NdRectangle(id, proc, ul.shift(dim, -val), br.shift(dim, 0));
-        }
+    }
 
-    public NdRectangle resize(int dim, int dir, double val) 
-        {
+    public NdRectangle resize(int dim, int dir, double val) {
         if (dir > 0)
             return new NdRectangle(id, proc, ul.shift(dim, 0), br.shift(dim, val));
         return new NdRectangle(id, proc, ul.shift(dim, -val), br.shift(dim, 0));
-        }
+    }
 
     // One-sided resize at all dimension
-    public NdRectangle resize(int dir, int[] vals) 
-        {
+    public NdRectangle resize(int dir, int[] vals) {
         if (dir > 0)
             return new NdRectangle(id, proc, ul.shift(0, 0), br.shift(vals));
         return new NdRectangle(id, proc, ul.rshift(vals), br.shift(0, 0));
-        }
+    }
 
-    public NdRectangle resize(int dir, double[] vals) 
-        {
+    public NdRectangle resize(int dir, double[] vals) {
         if (dir > 0)
             return new NdRectangle(id, proc, ul.shift(0, 0), br.shift(vals));
         return new NdRectangle(id, proc, ul.rshift(vals), br.shift(0, 0));
-        }
+    }
 
     // Move the rect by offset in the dimth dimension
-    public NdRectangle shift(int dim, int offset) 
-        {
+    public NdRectangle shift(int dim, int offset) {
         return new NdRectangle(id, proc, ul.shift(dim, offset), br.shift(dim, offset));
-        }
+    }
 
-    public NdRectangle shift(int dim, double offset) 
-        {
+    public NdRectangle shift(int dim, double offset) {
         return new NdRectangle(id, proc, ul.shift(dim, offset), br.shift(dim, offset));
-        }
+    }
 
     // Move the rect by the given offsets
-    public NdRectangle shift(int[] offsets) 
-        {
+    public NdRectangle shift(int[] offsets) {
         return new NdRectangle(id, proc, ul.shift(offsets), br.shift(offsets));
-        }
+    }
 
-    public NdRectangle shift(double[] offsets) 
-        {
+    public NdRectangle shift(double[] offsets) {
         return new NdRectangle(id, proc, ul.shift(offsets), br.shift(offsets));
-        }
+    }
 
     // Move the rect by the given offsets in reverse direction
-    public NdRectangle rshift(int[] offsets) 
-        {
+    public NdRectangle rshift(int[] offsets) {
         return new NdRectangle(id, proc, ul.rshift(offsets), br.rshift(offsets));
-        }
+    }
 
-    public NdRectangle rshift(double[] offsets) 
-        {
+    public NdRectangle rshift(double[] offsets) {
         return new NdRectangle(id, proc, ul.rshift(offsets), br.rshift(offsets));
-        }
+    }
 
-    public NdPoint[] getVertices() 
-        {
-        return new NdPoint[] 
-            {ul, br};
-        }
+    public NdPoint[] getVertices() {
+        return new NdPoint[] {ul, br};
+    }
 
-    public NdPoint[] getAllVertices() 
-        {
-        if ((ul instanceof IntPoint) && (br instanceof IntPoint)) 
-            {
+    public NdPoint[] getAllVertices() {
+        if ((ul instanceof IntPoint) && (br instanceof IntPoint)) {
             int[] a = (int[]) ul.getArray(), b = (int[]) br.getArray();
             return IntStream.range(0, 1 << nd)
                 .mapToObj(k -> new IntPoint(
-                        IntStream.range(0, nd)
-                        .map(i -> ((k >> i) & 1) == 1 ? a[i] : b[i])
-                        .toArray()))
+                                            IntStream.range(0, nd)
+                                            .map(i -> ((k >> i) & 1) == 1 ? a[i] : b[i])
+                                            .toArray()))
                 .toArray(size -> new NdPoint[size]);
-            }
+        }
 
         double[] a = ul.getArrayInDouble(), b = br.getArrayInDouble();
         return IntStream.range(0, 1 << nd)
             .mapToObj(k -> new DoublePoint(
-                    IntStream.range(0, nd)
-                    .mapToDouble(i -> ((k >> i) & 1) == 1 ? a[i] : b[i])
-                    .toArray()))
+                                           IntStream.range(0, nd)
+                                           .mapToDouble(i -> ((k >> i) & 1) == 1 ? a[i] : b[i])
+                                           .toArray()))
             .toArray(size -> new NdPoint[size]);
-        }
+    }
 
-    public Segment getSegment(int dim) 
-        {
+    public Segment getSegment(int dim) {
         return new Segment(ul.getArrayInDouble()[dim], br.getArrayInDouble()[dim], id);
-        }
+    }
 
-    public boolean isAligned(NdRectangle that, int dim) 
-        {
+    public boolean isAligned(NdRectangle that, int dim) {
         return this.reduceDim(dim).equals(that.reduceDim(dim));
-        }
+    }
 
-    public boolean equals(NdRectangle that) 
-        {
+    public boolean equals(NdRectangle that) {
         return this.ul.equals(that.ul) && this.br.equals(that.br);
-        }
+    }
 
-    public int compareTo(NdRectangle that) 
-        {
+    public int compareTo(NdRectangle that) {
         int ret;
 
         if ((ret = this.ul.compareTo(that.ul)) != 0)
@@ -248,20 +208,17 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
             return ret;
 
         return this.id - that.id;
-        }
+    }
 
-    public NdRectangle reduceDim(int dim) 
-        {
+    public NdRectangle reduceDim(int dim) {
         return new NdRectangle(id, proc, ul.reduceDim(dim), br.reduceDim(dim));
-        }
+    }
 
-    public boolean isIntRectangle() 
-        {
+    public boolean isIntRectangle() {
         return (ul instanceof IntPoint) && (br instanceof IntPoint);
-        }
+    }
 
-    public ArrayList<NdRectangle> split(NdPoint[] ps) 
-        {
+    public ArrayList<NdRectangle> split(NdPoint[] ps) {
         if (!isIntRectangle())
             throw new IllegalArgumentException("Split NdRectangle with vertices other than IntPoint are not supported yet");
 
@@ -272,10 +229,9 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
             throw new IllegalArgumentException("Given points must be inside the rectangle");
 
         return splitInt(ps);
-        }
+    }
 
-    public ArrayList<NdRectangle> splitInt(NdPoint[] ps) 
-        {
+    public ArrayList<NdRectangle> splitInt(NdPoint[] ps) {
         ArrayList<NdRectangle> ret = new ArrayList<NdRectangle>();
         final int numDelims = ps.length + 2;
         final int numRects = (int)Math.pow(numDelims - 1, nd);
@@ -283,8 +239,7 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
         int[][] delims = new int[nd][numDelims];
         int[] a = (int[]) ul.getArray(), b = (int[]) br.getArray();
 
-        for (int i = 0; i < nd; i++) 
-            {
+        for (int i = 0; i < nd; i++) {
             delims[i][0] = a[i];
             delims[i][1] = b[i];
 
@@ -292,35 +247,31 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
                 delims[i][j] = ((int[])(ps[j - 2].getArray()))[i];
 
             Arrays.sort(delims[i]);
-            }
+        }
 
-        for (int k = 0; k < numRects; k++) 
-            {
+        for (int k = 0; k < numRects; k++) {
             boolean nonEmpty = true;
             int[] ul = new int[nd], br = new int[nd];
 
-            for (int i = 0; i < nd; i++) 
-                {
+            for (int i = 0; i < nd; i++) {
                 int stride = (int)Math.pow(numDelims - 1, nd - i - 1);
                 int idx = k / stride % (numDelims - 1);
                 ul[i] = delims[i][idx];
                 br[i] = delims[i][idx + 1];
-                if (ul[i] == br[i]) 
-                    {
+                if (ul[i] == br[i]) {
                     nonEmpty = false;
                     break;
-                    }
                 }
+            }
 
             if (nonEmpty)
                 ret.add(new NdRectangle(id, proc, new IntPoint(ul), new IntPoint(br)));
-            }
-
-        return ret;
         }
 
-    public ArrayList<NdRectangle> toToroidal(NdRectangle bound) 
-        {
+        return ret;
+    }
+
+    public ArrayList<NdRectangle> toToroidal(NdRectangle bound) {
         if (!this.isIntRectangle() || !bound.isIntRectangle())
             throw new IllegalArgumentException("Only IntRectangles are supported");
 
@@ -328,8 +279,7 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
         int[] size = bound.getSizeInt();
         int[] bul = (int[])bound.ul().getArray(), bbr = (int[])bound.br().getArray();
 
-        for (NdRectangle rect : this.split(this.getIntersection(bound).getVertices())) 
-            {
+        for (NdRectangle rect : this.split(this.getIntersection(bound).getVertices())) {
             int[] offsets = new int[nd];
             int[] rul = (int[])rect.ul().getArray(), rbr = (int[])rect.br().getArray();
             for (int i = 0; i < nd; i++)
@@ -338,60 +288,53 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
                 else if (rul[i] < bul[i])
                     offsets[i] = size[i];
             ret.add(rect.shift(offsets));
-            }
+        }
 
         return ret;
-        }
+    }
 
-    public Iterator<IntPoint> iterator() 
-        {
+    public Iterator<IntPoint> iterator() {
         if (!(ul instanceof IntPoint) || !(br instanceof IntPoint))
             throw new UnsupportedOperationException("Can only iterate when both ul and br are IntPoint - got "
-                + ul.getClass().getSimpleName() + " " + br.getClass().getSimpleName());
+                                                    + ul.getClass().getSimpleName() + " " + br.getClass().getSimpleName());
         return new NdRectIter();
-        }
+    }
 
-    private class NdRectIter implements Iterator<IntPoint> 
-        {
+    private class NdRectIter implements Iterator<IntPoint> {
         int[] coords, st, sp;
         int curr, ub;
 
-        public NdRectIter() 
-            {
+        public NdRectIter() {
             st = (int[])ul.getArray();
             sp = (int[])br.getArray();
             coords = Arrays.copyOf(st, nd);
             ub = getAreaInt();
             curr = 0;
-            }
+        }
 
-        public boolean hasNext() 
-            {
+        public boolean hasNext() {
             return curr < ub;
-            }
+        }
 
-        public IntPoint next() 
-            {
+        public IntPoint next() {
             IntPoint ret = new IntPoint(coords);
 
-            for (int i = nd - 1; i >= 0; i--) 
-                {
+            for (int i = nd - 1; i >= 0; i--) {
                 coords[i]++;
                 if (coords[i] == sp[i])
                     coords[i] = st[i];
                 else
                     break;
-                }
+            }
 
             curr++;
             return ret;
-            }
         }
+    }
 
-    public String toString() 
-        {
+    public String toString() {
         return String.format("%s<%d, %s, %s>", this.getClass().getSimpleName(), id, ul.toString(), br.toString());
-        }
+    }
 
     // // TODO temporary solution - remove after all related structures has been converted to use NdRectangle
     // public IntHyperRect toIntRect(int newId) {
@@ -410,8 +353,7 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
     //      return new IntHyperRect(newId, nul, nr);
     // }
 
-    public static void main(String[] args) 
-        {
+    public static void main(String[] args) {
         IntPoint p1 = new IntPoint(1, 1);
         IntPoint p2 = new IntPoint(0, 3);
         IntPoint p3 = new IntPoint(4, 4);
@@ -446,5 +388,5 @@ public class NdRectangle implements Comparable<NdRectangle>, Iterable<IntPoint>
         NdRectangle r4 = new NdRectangle(0, 0, p6, p7);
         for (IntPoint p : r4)
             System.out.println(r4 + " Iterating points " + p);
-        }
     }
+}
